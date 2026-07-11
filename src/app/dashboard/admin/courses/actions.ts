@@ -116,26 +116,27 @@ export async function updateLessonAction(formData: FormData) {
   const videoProvider = getNullableString(formData, "video_provider");
   const videoObjectKey = getNullableString(formData, "video_object_key");
 
-  // 课时学习页面内容字段
-  // 这些字段对应学生端课时页面中的学习目标、任务、正文、重点、案例等内容
-  const learningObjectives = getNullableString(
-    formData,
-    "learning_objectives"
-  );
-  const lessonTasks = getNullableString(formData, "lesson_tasks");
-  const teacherNote = getNullableString(formData, "teacher_note");
 
-  const contentText = getNullableString(formData, "content_text");
-  const keyPoints = getNullableString(formData, "key_points");
-  const caseStudy = getNullableString(formData, "case_study");
-  const commonMistakes = getNullableString(formData, "common_mistakes");
+// 课时内容字段
+// 这些字段对应学生端课时学习页面中的学习目标、任务、正文、重点、案例、小结等内容
+const learningObjectives = getNullableString(
+  formData,
+  "learning_objectives"
+);
+const lessonTasks = getNullableString(formData, "lesson_tasks");
+const teacherNote = getNullableString(formData, "teacher_note");
 
-  const summaryText = getNullableString(formData, "summary_text");
-  const reflectionQuestions = getNullableString(
-    formData,
-    "reflection_questions"
-  );
-  const extraNote = getNullableString(formData, "extra_note");
+const contentText = getNullableString(formData, "content_text");
+const keyPoints = getNullableString(formData, "key_points");
+const caseStudy = getNullableString(formData, "case_study");
+const commonMistakes = getNullableString(formData, "common_mistakes");
+
+const summaryText = getNullableString(formData, "summary_text");
+const reflectionQuestions = getNullableString(
+  formData,
+  "reflection_questions"
+);
+const extraNote = getNullableString(formData, "extra_note");
 
   if (!courseId || !lessonId || !slug || !title) {
     return;

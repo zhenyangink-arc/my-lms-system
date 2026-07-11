@@ -128,3 +128,46 @@
     @apply font-sans;
   }
 }
+
+/* 
+  PUFFY 基础主题 class
+
+  作用：
+  1. 让 app-card / app-soft-card / app-input 有默认颜色
+  2. 先不做主题切换，只保证页面显示正常
+  3. 后面重新做主题系统时，可以继续扩展这里
+*/
+
+:root {
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #f9fafb;
+  --app-border: #e5e7eb;
+  --app-text: #111827;
+  --app-muted: #6b7280;
+}
+
+.app-card {
+  background-color: var(--app-card-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.app-soft-card {
+  background-color: var(--app-soft-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.app-input {
+  background-color: var(--app-card-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.app-muted-text {
+  color: var(--app-muted);
+}
+
+.app-divider {
+  border-color: var(--app-border);
+}
