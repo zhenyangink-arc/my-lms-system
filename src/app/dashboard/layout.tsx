@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { ThemeProvider } from "./ThemeProvider";
 
 type Profile = {
   full_name: string | null;
@@ -41,16 +42,18 @@ export default async function DashboardLayout({
   const userRole = profile?.role ?? "student";
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="flex min-h-screen">
-        <DashboardSidebar
-          userName={userName}
-          userEmail={userEmail}
-          userRole={userRole}
-        />
+    <ThemeProvider>
+      <div className="app-shell min-h-screen">
+        <div className="flex min-h-screen">
+          <DashboardSidebar
+            userName={userName}
+            userEmail={userEmail}
+            userRole={userRole}
+          />
 
-        <main className="min-w-0 flex-1">{children}</main>
+          <main className="min-w-0 flex-1">{children}</main>
+        </div>
       </div>
-    </div>
+    </ThemeProvider>
   );
 }

@@ -2,7 +2,6 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  BookOpen,
   CheckCircle2,
   Clock,
   GraduationCap,
@@ -46,44 +45,37 @@ type LessonProgress = {
   progress_percent: number;
 };
 
-const colorMap: Record<
-  string,
-  {
-    iconBox: string;
-    iconText: string;
-    badge: string;
-    progress: string;
-  }
-> = {
+type AccentColor = {
+  accent: string;
+  completed: string;
+  inProgress: string;
+};
+
+const accentColorMap: Record<string, AccentColor> = {
   indigo: {
-    iconBox: "bg-indigo-50",
-    iconText: "text-indigo-600",
-    badge: "bg-indigo-50 text-indigo-600",
-    progress: "bg-indigo-600",
+    accent: "#6366f1",
+    completed: "#16a34a",
+    inProgress: "#2563eb",
   },
   blue: {
-    iconBox: "bg-blue-50",
-    iconText: "text-blue-600",
-    badge: "bg-blue-50 text-blue-600",
-    progress: "bg-blue-600",
+    accent: "#2563eb",
+    completed: "#16a34a",
+    inProgress: "#2563eb",
   },
   emerald: {
-    iconBox: "bg-emerald-50",
-    iconText: "text-emerald-600",
-    badge: "bg-emerald-50 text-emerald-600",
-    progress: "bg-emerald-600",
+    accent: "#059669",
+    completed: "#16a34a",
+    inProgress: "#2563eb",
   },
   purple: {
-    iconBox: "bg-purple-50",
-    iconText: "text-purple-600",
-    badge: "bg-purple-50 text-purple-600",
-    progress: "bg-purple-600",
+    accent: "#9333ea",
+    completed: "#16a34a",
+    inProgress: "#2563eb",
   },
   orange: {
-    iconBox: "bg-orange-50",
-    iconText: "text-orange-600",
-    badge: "bg-orange-50 text-orange-600",
-    progress: "bg-orange-500",
+    accent: "#f97316",
+    completed: "#16a34a",
+    inProgress: "#2563eb",
   },
 };
 
@@ -114,6 +106,26 @@ function resolveProgressStatus(
   }
 
   return "not_started";
+}
+
+function getStatusAccent({
+  isCompleted,
+  isInProgress,
+  color,
+}: {
+  isCompleted: boolean;
+  isInProgress: boolean;
+  color: AccentColor;
+}) {
+  if (isCompleted) {
+    return color.completed;
+  }
+
+  if (isInProgress) {
+    return color.inProgress;
+  }
+
+  return "var(--app-muted)";
 }
 
 export default async function SubcategoryCoursesPage({
@@ -236,8 +248,9 @@ export default async function SubcategoryCoursesPage({
   });
 
   const color =
-    colorMap[subcategory.accent_color ?? parentCategory.accent_color ?? "indigo"] ??
-    colorMap.indigo;
+    accentColorMap[
+    subcategory.accent_color ?? parentCategory.accent_color ?? "indigo"
+    ] ?? accentColorMap.indigo;
 
   /**
    * 7. 当前二级分类整体进度
@@ -268,68 +281,100 @@ export default async function SubcategoryCoursesPage({
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href={`/dashboard/courses/${parentCategory.slug}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+            className="inline-flex items-center gap-2 text-sm font-medium transition"
+            style={{ color: "var(--app-muted)" }}
           >
             <ArrowLeft size={16} />
             返回{parentCategory.title}
           </Link>
 
-          <span className="text-sm text-gray-300">/</span>
+          <span className="text-sm" style={{ color: "var(--app-muted-light)" }}>
+            /
+          </span>
 
           <Link
             href="/dashboard/courses"
-            className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
+            className="text-sm font-medium transition"
+            style={{ color: "var(--app-muted)" }}
           >
             我的课程
           </Link>
         </div>
 
         {/* 页面说明板块 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-6 shadow-sm">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
             {/* 左侧：说明 */}
             <div>
               <div className="mb-3 flex flex-wrap gap-2">
                 <span
-                  className={`rounded-full px-3 py-1 text-xs font-semibold ${color.badge}`}
+                  className="rounded-full border px-3 py-1 text-xs font-semibold"
+                  style={{
+                    backgroundColor: "var(--app-soft-bg)",
+                    borderColor: "var(--app-border)",
+                    color: color.accent,
+                  }}
                 >
                   {parentCategory.title}
                 </span>
 
-                <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-medium">
                   {subcategory.title}
                 </span>
               </div>
 
-              <h2 className="text-2xl font-black tracking-tight text-gray-900">
+              <h2
+                className="text-2xl font-black tracking-tight"
+                style={{ color: "var(--app-text)" }}
+              >
                 选择具体课程
               </h2>
 
-              <p className="mt-2 text-sm leading-6 text-gray-500">
+              <p
+                className="mt-2 text-sm leading-6"
+                style={{ color: "var(--app-muted)" }}
+              >
                 每门课程会显示当前账号的学习进度。你可以从这里查看课程完成率，并继续学习未完成的课程。
               </p>
             </div>
 
             {/* 右侧：当前分类整体进度 */}
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="app-soft-card rounded-2xl border p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-gray-900">课程进度</p>
+                  <p
+                    className="text-sm font-black"
+                    style={{ color: "var(--app-text)" }}
+                  >
+                    课程进度
+                  </p>
 
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p
+                    className="mt-1 text-xs"
+                    style={{ color: "var(--app-muted)" }}
+                  >
                     已完成 {totalCompletedLessons} / {totalCourseLessons} 个课时
                   </p>
                 </div>
 
-                <p className="text-2xl font-black tracking-tight text-gray-900">
+                <p
+                  className="text-2xl font-black tracking-tight"
+                  style={{ color: "var(--app-text)" }}
+                >
                   {overallCourseProgressPercent}%
                 </p>
               </div>
 
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="mt-4 h-2 overflow-hidden rounded-full"
+                style={{ backgroundColor: "var(--app-border)" }}
+              >
                 <div
-                  className="h-full rounded-full bg-orange-500 transition-all"
-                  style={{ width: `${overallCourseProgressPercent}%` }}
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${overallCourseProgressPercent}%`,
+                    backgroundColor: color.accent,
+                  }}
                 />
               </div>
             </div>
@@ -337,20 +382,26 @@ export default async function SubcategoryCoursesPage({
         </section>
 
         {/* 课程列表板块 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900">
+              <h3
+                className="text-lg font-black tracking-tight"
+                style={{ color: "var(--app-text)" }}
+              >
                 课程列表
               </h3>
 
-              <p className="mt-1 text-sm text-gray-500">
-                当前分类下共有 {courses.length} 门课程。
+              <p
+                className="mt-1 text-sm"
+                style={{ color: "var(--app-muted)" }}
+              >
+                当前分类下共有 {totalCourses} 门课程。
               </p>
             </div>
 
-            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-              {courses.length} 门课程
+            <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-semibold">
+              {totalCourses} 门课程
             </span>
           </div>
 
@@ -391,55 +442,63 @@ export default async function SubcategoryCoursesPage({
                         ? "继续学习"
                         : "开始学习";
 
-
                 const levelLabel = getCourseLevelLabel(course.level);
+
+                const statusAccent = getStatusAccent({
+                  isCompleted,
+                  isInProgress,
+                  color,
+                });
 
                 return (
                   <article
                     key={course.id}
-                    className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+                    className="app-card rounded-3xl border p-5 shadow-sm transition hover:shadow-md"
                   >
                     <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px_150px] lg:items-center">
                       {/* 左侧：课程信息 */}
                       <div className="flex items-start gap-4">
                         <div
-                          className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl ${color.iconBox}`}
+                          className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border"
+                          style={{
+                            backgroundColor: "var(--app-soft-bg)",
+                            borderColor: "var(--app-border)",
+                            color: isCompleted ? color.completed : color.accent,
+                          }}
                         >
                           {isCompleted ? (
-                            <CheckCircle2
-                              className="text-green-600"
-                              size={28}
-                            />
+                            <CheckCircle2 size={28} />
                           ) : (
-                            <GraduationCap
-                              className={color.iconText}
-                              size={28}
-                            />
+                            <GraduationCap size={28} />
                           )}
                         </div>
 
                         <div className="min-w-0 flex-1">
                           <div className="mb-2 flex flex-wrap gap-2">
                             <span
-                              className={`rounded-full px-3 py-1 text-xs font-semibold ${color.badge}`}
+                              className="rounded-full border px-3 py-1 text-xs font-semibold"
+                              style={{
+                                backgroundColor: "var(--app-soft-bg)",
+                                borderColor: "var(--app-border)",
+                                color: color.accent,
+                              }}
                             >
                               {subcategory.title}
                             </span>
 
                             {levelLabel && (
-                              <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                              <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-medium">
                                 {levelLabel}
                               </span>
                             )}
 
                             <span
-                              className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                                isCompleted
-                                  ? "bg-green-50 text-green-600"
-                                  : isInProgress
-                                    ? "bg-blue-50 text-blue-600"
-                                    : "bg-gray-100 text-gray-600"
-                              }`}
+                              className="rounded-full border px-3 py-1 text-xs font-semibold"
+                              style={{
+                                backgroundColor: "var(--app-soft-bg)",
+                                borderColor: "var(--app-border)",
+                                color: statusAccent,
+                              }}
                             >
                               {isCompleted
                                 ? "已完成"
@@ -449,30 +508,45 @@ export default async function SubcategoryCoursesPage({
                             </span>
                           </div>
 
-                          <h3 className="text-lg font-black tracking-tight text-gray-900">
+                          <h3
+                            className="text-lg font-black tracking-tight"
+                            style={{ color: "var(--app-text)" }}
+                          >
                             {course.title}
                           </h3>
 
-                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">
+                          <p
+                            className="mt-2 line-clamp-2 text-sm leading-6"
+                            style={{ color: "var(--app-muted)" }}
+                          >
                             {course.description || "暂无课程简介"}
                           </p>
                         </div>
                       </div>
 
                       {/* 中间：学习进度 */}
-                      <div className="rounded-2xl bg-gray-50 p-4">
+                      <div className="app-soft-card rounded-2xl border p-4">
                         <div className="mb-3 flex items-center justify-between gap-3">
-                          <div className="inline-flex items-center gap-1.5 text-xs font-medium text-gray-500">
+                          <div
+                            className="inline-flex items-center gap-1.5 text-xs font-medium"
+                            style={{ color: "var(--app-muted)" }}
+                          >
                             <Clock size={13} />
                             共 {totalLessons} 个课时
                           </div>
 
-                          <span className="text-sm font-black text-gray-900">
+                          <span
+                            className="text-sm font-black"
+                            style={{ color: "var(--app-text)" }}
+                          >
                             {courseProgressPercent}%
                           </span>
                         </div>
 
-                        <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
+                        <div
+                          className="mb-2 flex items-center justify-between text-xs"
+                          style={{ color: "var(--app-muted)" }}
+                        >
                           <span>
                             已完成 {completedCount} / {totalLessons}
                           </span>
@@ -486,12 +560,16 @@ export default async function SubcategoryCoursesPage({
                           </span>
                         </div>
 
-                        <div className="h-2 overflow-hidden rounded-full bg-white">
+                        <div
+                          className="h-2 overflow-hidden rounded-full"
+                          style={{ backgroundColor: "var(--app-border)" }}
+                        >
                           <div
-                            className={`h-full rounded-full transition-all ${
-                              isCompleted ? "bg-green-500" : color.progress
-                            }`}
-                            style={{ width: `${courseProgressPercent}%` }}
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${courseProgressPercent}%`,
+                              backgroundColor: statusAccent,
+                            }}
                           />
                         </div>
                       </div>
@@ -499,13 +577,24 @@ export default async function SubcategoryCoursesPage({
                       {/* 右侧：按钮 */}
                       <Link
                         href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
-                        className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition lg:w-auto ${
-                          isCompleted
-                            ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90 lg:w-auto"
+                        style={{
+                          backgroundColor: isCompleted
+                            ? "var(--lesson-review-bg)"
                             : isInProgress
-                              ? "bg-green-600 text-white hover:bg-green-700"
-                              : "bg-gray-900 text-white hover:bg-gray-800"
-                        }`}
+                              ? "var(--lesson-continue-bg)"
+                              : "var(--lesson-start-bg)",
+                          color: isCompleted
+                            ? "var(--lesson-review-text)"
+                            : isInProgress
+                              ? "var(--lesson-continue-text)"
+                              : "var(--lesson-start-text)",
+                          borderColor: isCompleted
+                            ? "var(--lesson-review-border)"
+                            : isInProgress
+                              ? "var(--lesson-continue-border)"
+                              : "var(--lesson-start-border)",
+                        }}
                       >
                         <PlayCircle size={16} />
                         {buttonLabel}
@@ -516,9 +605,17 @@ export default async function SubcategoryCoursesPage({
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
-              <p className="font-semibold text-gray-900">暂无课程</p>
-              <p className="mt-2 text-sm text-gray-500">
+            <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center">
+              <p
+                className="font-semibold"
+                style={{ color: "var(--app-text)" }}
+              >
+                暂无课程
+              </p>
+              <p
+                className="mt-2 text-sm"
+                style={{ color: "var(--app-muted)" }}
+              >
                 当前分类下还没有发布课程。
               </p>
             </div>

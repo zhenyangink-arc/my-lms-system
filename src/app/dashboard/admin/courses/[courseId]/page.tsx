@@ -477,7 +477,7 @@ export default async function AdminCourseLessonsPage({
                   <input
                     name="title"
                     defaultValue={course.title}
-                    className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition focus:border-gray-900"
+                    className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
                   />
                 </label>
 
@@ -489,7 +489,7 @@ export default async function AdminCourseLessonsPage({
                   <select
                     name="level"
                     defaultValue={course.level ?? "beginner"}
-                    className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-gray-900"
+                    className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
                   >
                     <option value="basic">基础</option>
                     <option value="beginner">入门</option>
@@ -506,7 +506,7 @@ export default async function AdminCourseLessonsPage({
                   name="description"
                   defaultValue={course.description ?? ""}
                   rows={4}
-                  className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2 text-sm outline-none transition focus:border-gray-900"
+                  className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
                 />
               </label>
 

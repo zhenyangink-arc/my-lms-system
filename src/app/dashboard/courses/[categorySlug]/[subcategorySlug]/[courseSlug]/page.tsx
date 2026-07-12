@@ -16,7 +16,6 @@ import {
   getLessonTypeLabel,
 } from "@/lib/course-labels";
 
-
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
 type CourseCategory = {
@@ -57,52 +56,18 @@ type LessonProgress = {
   progress_percent: number;
 };
 
-
 const progressStatusLabelMap: Record<LessonProgressStatus, string> = {
   not_started: "未完成",
   in_progress: "进行中",
   completed: "已完成",
 };
 
-const colorMap: Record<
-  string,
-  {
-    iconBox: string;
-    iconText: string;
-    badge: string;
-    progress: string;
-  }
-> = {
-  indigo: {
-    iconBox: "bg-indigo-50",
-    iconText: "text-indigo-600",
-    badge: "bg-indigo-50 text-indigo-600",
-    progress: "bg-indigo-600",
-  },
-  blue: {
-    iconBox: "bg-blue-50",
-    iconText: "text-blue-600",
-    badge: "bg-blue-50 text-blue-600",
-    progress: "bg-blue-600",
-  },
-  emerald: {
-    iconBox: "bg-emerald-50",
-    iconText: "text-emerald-600",
-    badge: "bg-emerald-50 text-emerald-600",
-    progress: "bg-emerald-600",
-  },
-  purple: {
-    iconBox: "bg-purple-50",
-    iconText: "text-purple-600",
-    badge: "bg-purple-50 text-purple-600",
-    progress: "bg-purple-600",
-  },
-  orange: {
-    iconBox: "bg-orange-50",
-    iconText: "text-orange-600",
-    badge: "bg-orange-50 text-orange-600",
-    progress: "bg-orange-600",
-  },
+const accentColorMap: Record<string, string> = {
+  indigo: "#6366f1",
+  blue: "#2563eb",
+  emerald: "#16a34a",
+  purple: "#9333ea",
+  orange: "#f97316",
 };
 
 function resolveProgressStatus(
@@ -117,6 +82,42 @@ function resolveProgressStatus(
   }
 
   return "not_started";
+}
+
+function getStatusAccent(status: LessonProgressStatus) {
+  if (status === "completed") {
+    return "#16a34a";
+  }
+
+  if (status === "in_progress") {
+    return "#2563eb";
+  }
+
+  return "var(--app-muted)";
+}
+
+function getActionButtonStyle(status: LessonProgressStatus) {
+  if (status === "completed") {
+    return {
+      backgroundColor: "var(--app-soft-bg)",
+      borderColor: "var(--app-border)",
+      color: "var(--app-text)",
+    };
+  }
+
+  if (status === "in_progress") {
+    return {
+      backgroundColor: "#16a34a",
+      borderColor: "#16a34a",
+      color: "#ffffff",
+    };
+  }
+
+  return {
+    backgroundColor: "var(--app-accent)",
+    borderColor: "var(--app-accent)",
+    color: "#ffffff",
+  };
 }
 
 export default async function CourseDetailPage({
@@ -241,10 +242,9 @@ export default async function CourseDetailPage({
   const courseProgressPercent =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
-
-
-  const color =
-    colorMap[subcategory.accent_color ?? "indigo"] ?? colorMap.indigo;
+  const accentColor =
+    accentColorMap[subcategory.accent_color ?? "indigo"] ??
+    accentColorMap.indigo;
 
   return (
     <>
@@ -284,30 +284,54 @@ export default async function CourseDetailPage({
         </div>
 
         {/* 课程信息 + 课程进度 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-6 shadow-sm">
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
             <div className="flex gap-4">
               <div
-                className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl ${color.iconBox}`}
+                className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border"
+                style={{
+                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--app-border)",
+                  color: accentColor,
+                }}
               >
-                <GraduationCap className={color.iconText} size={32} />
+                <GraduationCap size={32} />
               </div>
 
               <div>
                 <div className="mb-3 flex flex-wrap gap-2">
                   <span
-                    className={`rounded-full px-3 py-1 text-xs font-semibold ${color.badge}`}
+                    className="rounded-full border px-3 py-1 text-xs font-semibold"
+                    style={{
+                      backgroundColor: "var(--app-soft-bg)",
+                      borderColor: "var(--app-border)",
+                      color: accentColor,
+                    }}
                   >
                     {subcategory.title}
                   </span>
 
                   {course.level && (
-                    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                    <span
+                      className="rounded-full border px-3 py-1 text-xs font-medium"
+                      style={{
+                        backgroundColor: "var(--app-soft-bg)",
+                        borderColor: "var(--app-border)",
+                        color: "var(--app-text-soft)",
+                      }}
+                    >
                       {getCourseLevelLabel(course.level)}
                     </span>
                   )}
 
-                  <span className="rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600">
+                  <span
+                    className="rounded-full border px-3 py-1 text-xs font-medium"
+                    style={{
+                      backgroundColor: "var(--app-soft-bg)",
+                      borderColor: "var(--app-border)",
+                      color: "var(--app-text-soft)",
+                    }}
+                  >
                     共 {totalLessons} 个课时
                   </span>
                 </div>
@@ -322,7 +346,7 @@ export default async function CourseDetailPage({
               </div>
             </div>
 
-            <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
+            <div className="app-soft-card rounded-2xl border p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p className="text-sm font-black text-gray-900">课程进度</p>
@@ -337,10 +361,16 @@ export default async function CourseDetailPage({
                 </p>
               </div>
 
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="mt-4 h-2 overflow-hidden rounded-full"
+                style={{ backgroundColor: "var(--app-card-bg)" }}
+              >
                 <div
-                  className="h-full rounded-full bg-orange-500 transition-all"
-                  style={{ width: `${courseProgressPercent}%` }}
+                  className="h-full rounded-full transition-all"
+                  style={{
+                    width: `${courseProgressPercent}%`,
+                    backgroundColor: accentColor,
+                  }}
                 />
               </div>
             </div>
@@ -348,7 +378,7 @@ export default async function CourseDetailPage({
         </section>
 
         {/* 课时列表 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -375,21 +405,22 @@ export default async function CourseDetailPage({
 
                 const isCompleted = status === "completed";
                 const isInProgress = status === "in_progress";
+                const statusAccent = getStatusAccent(status);
 
                 return (
                   <div
                     key={lesson.id}
-                    className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm transition hover:border-gray-300 hover:shadow-md"
+                    className="app-card rounded-2xl border p-4 shadow-sm transition hover:shadow-md"
                   >
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                       <div className="flex gap-4">
                         <div
-                          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-sm font-black ${isCompleted
-                            ? "bg-green-50 text-green-600"
-                            : isInProgress
-                              ? "bg-blue-50 text-blue-600"
-                              : "bg-gray-100 text-gray-500"
-                            }`}
+                          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-black"
+                          style={{
+                            backgroundColor: "var(--app-soft-bg)",
+                            borderColor: "var(--app-border)",
+                            color: statusAccent,
+                          }}
                         >
                           {isCompleted ? (
                             <CheckCircle2 size={21} />
@@ -400,28 +431,49 @@ export default async function CourseDetailPage({
 
                         <div>
                           <div className="mb-2 flex flex-wrap gap-2">
-                            <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                            <span
+                              className="rounded-full border px-3 py-1 text-xs font-medium"
+                              style={{
+                                backgroundColor: "var(--app-soft-bg)",
+                                borderColor: "var(--app-border)",
+                                color: "var(--app-text-soft)",
+                              }}
+                            >
                               {lessonTypeLabel}
                             </span>
 
-                            <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600">
+                            <span
+                              className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium"
+                              style={{
+                                backgroundColor: "var(--app-soft-bg)",
+                                borderColor: "var(--app-border)",
+                                color: "var(--app-text-soft)",
+                              }}
+                            >
                               <Clock size={13} />
                               {lesson.duration_minutes} 分钟
                             </span>
 
                             {lesson.is_free_preview && (
-                              <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-600">
+                              <span
+                                className="rounded-full border px-3 py-1 text-xs font-semibold"
+                                style={{
+                                  backgroundColor: "var(--app-soft-bg)",
+                                  borderColor: "var(--app-border)",
+                                  color: "#16a34a",
+                                }}
+                              >
                                 可试看
                               </span>
                             )}
 
                             <span
-                              className={`rounded-full px-3 py-1 text-xs font-semibold ${isCompleted
-                                ? "bg-green-50 text-green-600"
-                                : isInProgress
-                                  ? "bg-blue-50 text-blue-600"
-                                  : "bg-gray-100 text-gray-600"
-                                }`}
+                              className="rounded-full border px-3 py-1 text-xs font-semibold"
+                              style={{
+                                backgroundColor: "var(--app-soft-bg)",
+                                borderColor: "var(--app-border)",
+                                color: statusAccent,
+                              }}
                             >
                               {statusLabel}
                             </span>
@@ -443,22 +495,41 @@ export default async function CourseDetailPage({
                           <span>{progressPercent}%</span>
                         </div>
 
-                        <div className="h-2 overflow-hidden rounded-full bg-gray-100">
+                        <div
+                          className="h-2 overflow-hidden rounded-full"
+                          style={{ backgroundColor: "var(--app-soft-bg)" }}
+                        >
                           <div
-                            className={`h-full rounded-full transition-all ${isCompleted ? "bg-green-500" : "bg-gray-900"
-                              }`}
-                            style={{ width: `${progressPercent}%` }}
+                            className="h-full rounded-full transition-all"
+                            style={{
+                              width: `${progressPercent}%`,
+                              backgroundColor: isCompleted
+                                ? "#16a34a"
+                                : "var(--app-accent)",
+                            }}
                           />
                         </div>
 
                         <Link
                           href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`}
-                          className={`mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${isCompleted
-                            ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                            : isInProgress
-                              ? "bg-green-600 text-white hover:bg-green-700"
-                              : "bg-gray-900 text-white hover:bg-gray-800"
-                            }`}
+                          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
+                          style={{
+                            backgroundColor: isCompleted
+                              ? "var(--lesson-review-bg)"
+                              : isInProgress
+                                ? "var(--lesson-continue-bg)"
+                                : "var(--lesson-start-bg)",
+                            color: isCompleted
+                              ? "var(--lesson-review-text)"
+                              : isInProgress
+                                ? "var(--lesson-continue-text)"
+                                : "var(--lesson-start-text)",
+                            borderColor: isCompleted
+                              ? "var(--lesson-review-border)"
+                              : isInProgress
+                                ? "var(--lesson-continue-border)"
+                                : "var(--lesson-start-border)",
+                          }}
                         >
                           <PlayCircle size={15} />
                           {isCompleted
@@ -474,7 +545,7 @@ export default async function CourseDetailPage({
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center">
               <p className="font-semibold text-gray-900">暂无课时</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前课程还没有发布课时。

@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 
 import { LogoutButton } from "./LogoutButton";
+import { ThemeSwitcher } from "./ThemeSwitcher";
 
 type DashboardSidebarProps = {
   userName: string;
@@ -119,7 +120,7 @@ export function DashboardSidebar({
   });
 
   return (
-    <aside className="hidden w-64 shrink-0 border-r border-gray-200 bg-white md:flex md:flex-col">
+    <aside className="app-sidebar hidden w-64 shrink-0 border-r md:flex md:flex-col">
       <div className="border-b border-gray-100 px-5 py-5">
         <Link href="/dashboard" className="flex items-center gap-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-900 text-white">
@@ -146,11 +147,10 @@ export function DashboardSidebar({
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${
-                active
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${active
                   ? "bg-gray-900 text-white shadow-sm"
                   : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-              }`}
+                }`}
             >
               <Icon
                 size={18}
@@ -160,11 +160,10 @@ export function DashboardSidebar({
 
               {item.adminOnly && (
                 <span
-                  className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold ${
-                    active
+                  className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold ${active
                       ? "bg-white/15 text-white"
                       : "bg-orange-50 text-orange-600"
-                  }`}
+                    }`}
                 >
                   ADMIN
                 </span>
@@ -174,7 +173,12 @@ export function DashboardSidebar({
         })}
       </nav>
 
+
       <div className="border-t border-gray-100 p-4">
+        <div className="mb-3">
+          <ThemeSwitcher />
+        </div>
+
         <div className="mb-3 rounded-2xl bg-gray-50 p-3">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-gray-600 shadow-sm">

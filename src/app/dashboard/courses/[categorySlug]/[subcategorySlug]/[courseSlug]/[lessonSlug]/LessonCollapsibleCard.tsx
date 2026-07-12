@@ -1,80 +1,90 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+type LessonCollapsibleCardTone =
+  | "default"
+  | "indigo"
+  | "blue"
+  | "green"
+  | "yellow"
+  | "red";
 
 type LessonCollapsibleCardProps = {
   title: string;
-  icon: ReactNode;
+  icon?: ReactNode;
   children: ReactNode;
   defaultOpen?: boolean;
-  tone?: "white" | "gray" | "indigo" | "yellow" | "red" | "green";
+  tone?: LessonCollapsibleCardTone;
 };
 
-/**
- * 课时页通用折叠卡片
- * 用于：
- * - 本课学习目标
- * - 本课任务
- * - 课程资料
- * - 老师提示
- * - 学习内容
- * - 本课重点
- * - 案例分析
- * - 常见错误
- * - 本课小结
- * - 课后思考
- */
+const toneAccentMap: Record<LessonCollapsibleCardTone, string> = {
+  default: "var(--app-accent)",
+  indigo: "#6366f1",
+  blue: "#2563eb",
+  green: "#16a34a",
+  yellow: "#d97706",
+  red: "#dc2626",
+};
+
 export function LessonCollapsibleCard({
   title,
   icon,
   children,
-  defaultOpen = true,
-  tone = "white",
+  defaultOpen = false,
+  tone = "default",
 }: LessonCollapsibleCardProps) {
-  const toneClassMap = {
-    white: "border-gray-200 bg-white",
-    gray: "border-gray-200 bg-gray-50",
-    indigo: "border-indigo-100 bg-indigo-50",
-    yellow: "border-yellow-100 bg-yellow-50",
-    red: "border-red-100 bg-red-50",
-    green: "border-green-100 bg-green-50",
-  };
+  const [open, setOpen] = useState(defaultOpen);
+  const accentColor = toneAccentMap[tone] ?? toneAccentMap.default;
 
   return (
-    <Collapsible defaultOpen={defaultOpen}>
-      <section
-        className={`rounded-2xl border shadow-sm ${toneClassMap[tone]}`}
+    <div className="app-card overflow-hidden rounded-2xl border shadow-sm">
+      <button
+        type="button"
+        onClick={() => setOpen((current) => !current)}
+        className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition"
       >
-        <CollapsibleTrigger className="group flex w-full items-center justify-between gap-3 px-5 py-4 text-left">
-          <div className="flex min-w-0 items-center gap-3">
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-white text-gray-700 shadow-sm">
-              {icon}
-            </div>
+        <div className="flex min-w-0 items-center gap-3">
+          <span
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl border"
+            style={{
+              backgroundColor: "var(--app-soft-bg)",
+              borderColor: "var(--app-border)",
+              color: accentColor,
+            }}
+          >
+            {icon}
+          </span>
 
-            <h3 className="truncate text-sm font-bold text-gray-900">
-              {title}
-            </h3>
-          </div>
+          <span
+            className="truncate text-sm font-bold"
+            style={{ color: "var(--app-text)" }}
+          >
+            {title}
+          </span>
+        </div>
 
-          <ChevronDown
-            size={17}
-            className="shrink-0 text-gray-400 transition group-data-[state=open]:rotate-180"
-          />
-        </CollapsibleTrigger>
+        <ChevronDown
+          size={16}
+          className={`shrink-0 transition ${open ? "rotate-180" : ""}`}
+          style={{ color: "var(--app-muted)" }}
+        />
+      </button>
 
-        <CollapsibleContent>
-          <div className="border-t border-black/5 px-5 py-4">
+      {open && (
+        <div
+          className="border-t px-4 py-4"
+          style={{ borderColor: "var(--app-border)" }}
+        >
+          <div
+            className="border-l-2 pl-3"
+            style={{ borderColor: accentColor }}
+          >
             {children}
           </div>
-        </CollapsibleContent>
-      </section>
-    </Collapsible>
+        </div>
+      )}
+    </div>
   );
 }

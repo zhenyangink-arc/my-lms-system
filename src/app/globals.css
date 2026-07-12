@@ -130,38 +130,235 @@
 }
 
 /* 
-  PUFFY 基础主题 class
+  PUFFY Dashboard 全局主题系统 v2
 
   作用：
-  1. 让 app-card / app-soft-card / app-input 有默认颜色
-  2. 先不做主题切换，只保证页面显示正常
-  3. 后面重新做主题系统时，可以继续扩展这里
+  1. 每个用户可以自己选择 dashboard 主题
+  2. 页面背景、侧边栏、卡片、浅色区域、边框、输入框、文字颜色统一跟随主题
+  3. 只影响 .app-shell 内部，不影响登录页和站外页面
+  4. 保留 green / orange / blue / red / yellow 等状态色，避免状态标签失去识别度
 */
 
+/* 默认主题 */
 :root {
+  --app-bg: #f9fafb;
+  --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
-  --app-soft-bg: #f9fafb;
+  --app-soft-bg: #f3f4f6;
   --app-border: #e5e7eb;
+  --app-border-soft: #f3f4f6;
+
   --app-text: #111827;
-  --app-muted: #6b7280;
+  --app-text-soft: #1f2937;
+  --app-muted: #4b5563;
+  --app-muted-light: #6b7280;
+
+  --app-input-bg: #ffffff;
+  --app-accent: #f97316;
 }
 
-.app-card {
+/* 护眼米色 */
+html[data-puffy-theme="warm"] {
+  color-scheme: light;
+
+  --app-bg: #faf7f0;
+  --app-sidebar-bg: #fffaf0;
+  --app-card-bg: #fffaf0;
+  --app-soft-bg: #f5ead8;
+  --app-border: #ead7bd;
+  --app-border-soft: #f1dfc5;
+
+  --app-text: #1c1917;
+  --app-text-soft: #292524;
+  --app-muted: #57534e;
+  --app-muted-light: #78716c;
+
+  --app-input-bg: #fffdf7;
+  --app-accent: #d97706;
+}
+
+/* 低蓝光：适合长时间阅读，减少冷白刺激 */
+html[data-puffy-theme="lowblue"] {
+  color-scheme: light;
+
+  --app-bg: #fbf4df;
+  --app-sidebar-bg: #fff8e7;
+  --app-card-bg: #fffaf0;
+  --app-soft-bg: #f4e7c8;
+  --app-border: #e6d3a8;
+  --app-border-soft: #efdfba;
+
+  --app-text: #1c1917;
+  --app-text-soft: #292524;
+  --app-muted: #57534e;
+  --app-muted-light: #78716c;
+
+  --app-input-bg: #fffdf6;
+  --app-accent: #b7791f;
+}
+
+/* 浅蓝 */
+html[data-puffy-theme="blue"] {
+  color-scheme: light;
+
+  --app-bg: #f0f7ff;
+  --app-sidebar-bg: #f8fbff;
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #e6f0ff;
+  --app-border: #cfe0f5;
+  --app-border-soft: #dbeafe;
+
+  --app-text: #0f172a;
+  --app-text-soft: #1e293b;
+  --app-muted: #475569;
+  --app-muted-light: #64748b;
+
+  --app-input-bg: #ffffff;
+  --app-accent: #2563eb;
+}
+
+/* 浅绿 */
+html[data-puffy-theme="green"] {
+  color-scheme: light;
+
+  --app-bg: #f0fdf4;
+  --app-sidebar-bg: #f7fff9;
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #dcfce7;
+  --app-border: #bbf7d0;
+  --app-border-soft: #d9f99d;
+
+  --app-text: #052e16;
+  --app-text-soft: #14532d;
+  --app-muted: #3f6212;
+  --app-muted-light: #4d7c0f;
+
+  --app-input-bg: #ffffff;
+  --app-accent: #16a34a;
+}
+
+/* 浅紫 */
+html[data-puffy-theme="purple"] {
+  color-scheme: light;
+
+  --app-bg: #faf5ff;
+  --app-sidebar-bg: #fdfaff;
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #f3e8ff;
+  --app-border: #e9d5ff;
+  --app-border-soft: #f3e8ff;
+
+  --app-text: #2e1065;
+  --app-text-soft: #3b0764;
+  --app-muted: #581c87;
+  --app-muted-light: #7e22ce;
+
+  --app-input-bg: #ffffff;
+  --app-accent: #9333ea;
+}
+
+/* 咖啡：比护眼更暖，适合晚上但不想用深色模式时 */
+html[data-puffy-theme="coffee"] {
+  color-scheme: light;
+
+  --app-bg: #f5efe6;
+  --app-sidebar-bg: #fbf3e8;
+  --app-card-bg: #fff8ef;
+  --app-soft-bg: #eadcc8;
+  --app-border: #d8c3a5;
+  --app-border-soft: #ead8bd;
+
+  --app-text: #1c1917;
+  --app-text-soft: #292524;
+  --app-muted: #57534e;
+  --app-muted-light: #78716c;
+
+  --app-input-bg: #fffaf3;
+  --app-accent: #a16207;
+}
+
+/* 夜灰：深色但不纯黑，适合夜间管理后台 */
+html[data-puffy-theme="slate"] {
+  color-scheme: dark;
+
+  --app-bg: #111827;
+  --app-sidebar-bg: #1f2937;
+  --app-card-bg: #1f2937;
+  --app-soft-bg: #111827;
+  --app-border: #374151;
+  --app-border-soft: #2f3a4a;
+
+  --app-text: #f9fafb;
+  --app-text-soft: #f3f4f6;
+  --app-muted: #d1d5db;
+  --app-muted-light: #9ca3af;
+
+  --app-input-bg: #111827;
+  --app-accent: #60a5fa;
+}
+
+/* 夜晚：更深的暗色主题，适合低光环境 */
+html[data-puffy-theme="night"] {
+  color-scheme: dark;
+
+  --app-bg: #020617;
+  --app-sidebar-bg: #0f172a;
+  --app-card-bg: #111827;
+  --app-soft-bg: #0b1120;
+  --app-border: #334155;
+  --app-border-soft: #1e293b;
+
+  --app-text: #f8fafc;
+  --app-text-soft: #f1f5f9;
+  --app-muted: #cbd5e1;
+  --app-muted-light: #94a3b8;
+
+  --app-input-bg: #020617;
+  --app-accent: #38bdf8;
+}
+
+/* 基础主题类 */
+.app-shell {
+  background-color: var(--app-bg);
+  color: var(--app-text);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.app-sidebar {
+  background-color: var(--app-sidebar-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.app-card,
+.app-theme-card {
   background-color: var(--app-card-bg);
   border-color: var(--app-border);
   color: var(--app-text);
 }
 
-.app-soft-card {
+.app-soft-card,
+.app-theme-soft {
   background-color: var(--app-soft-bg);
   border-color: var(--app-border);
   color: var(--app-text);
 }
 
 .app-input {
-  background-color: var(--app-card-bg);
+  background-color: var(--app-input-bg);
   border-color: var(--app-border);
   color: var(--app-text);
+}
+
+.app-input:focus {
+  border-color: var(--app-accent);
+}
+
+.app-input::placeholder {
+  color: var(--app-muted-light);
+  opacity: 1;
 }
 
 .app-muted-text {
@@ -171,3 +368,219 @@
 .app-divider {
   border-color: var(--app-border);
 }
+
+/* 
+  Dashboard 中性 Tailwind 颜色覆盖
+
+  说明：
+  1. 只覆盖 app-shell 内部
+  2. 只覆盖白色、灰色、边框、普通文字
+  3. 不覆盖 green/orange/blue/red/yellow 等状态色
+*/
+.app-shell .bg-white {
+  background-color: var(--app-card-bg);
+}
+
+.app-shell .bg-gray-50,
+.app-shell .bg-gray-100 {
+  background-color: var(--app-soft-bg);
+}
+
+.app-shell .border-gray-100,
+.app-shell .border-gray-200,
+.app-shell .border-gray-300 {
+  border-color: var(--app-border);
+}
+
+/* Dashboard 字体颜色统一跟随主题 */
+.app-shell .text-gray-950,
+.app-shell .text-gray-900 {
+  color: var(--app-text);
+}
+
+.app-shell .text-gray-800,
+.app-shell .text-gray-700,
+.app-shell .text-gray-600 {
+  color: var(--app-text-soft);
+}
+
+.app-shell .text-gray-500,
+.app-shell .text-gray-400,
+.app-shell .text-gray-300 {
+  color: var(--app-muted);
+}
+
+/* opacity 类文字在深色主题下容易太淡，这里提高可读性 */
+.app-shell .opacity-60 {
+  opacity: 0.85;
+}
+
+.app-shell .opacity-50 {
+  opacity: 0.75;
+}
+
+/* 表单控件统一跟随主题 */
+.app-shell input,
+.app-shell textarea,
+.app-shell select {
+  background-color: var(--app-input-bg);
+  border-color: var(--app-border);
+  color: var(--app-text);
+}
+
+.app-shell input::placeholder,
+.app-shell textarea::placeholder {
+  color: var(--app-muted-light);
+  opacity: 1;
+}
+
+.app-shell select option {
+  background-color: var(--app-input-bg);
+  color: var(--app-text);
+}
+
+/* 聚焦状态使用主题强调色 */
+.app-shell input:focus,
+.app-shell textarea:focus,
+.app-shell select:focus,
+.app-shell .focus\:border-gray-900:focus {
+  border-color: var(--app-accent);
+}
+
+/* hover 的灰色背景也跟随主题 */
+.app-shell .hover\:bg-gray-50:hover,
+.app-shell .hover\:bg-gray-100:hover,
+.app-shell .hover\:bg-gray-200:hover {
+  background-color: var(--app-soft-bg);
+}
+
+/* hover 的灰色文字也跟随主题 */
+.app-shell .hover\:text-gray-900:hover {
+  color: var(--app-text);
+}
+
+/* 深色主题下，黑色主按钮改为主题强调色，避免按钮和背景融在一起 */
+html[data-puffy-theme="night"] .app-shell .bg-gray-900,
+html[data-puffy-theme="slate"] .app-shell .bg-gray-900 {
+  background-color: var(--app-accent);
+}
+
+html[data-puffy-theme="night"] .app-shell .hover\:bg-gray-800:hover,
+html[data-puffy-theme="slate"] .app-shell .hover\:bg-gray-800:hover {
+  background-color: #0ea5e9;
+}
+
+/* 深色主题下，让灰色状态标签更清楚 */
+html[data-puffy-theme="night"] .app-shell .bg-gray-100,
+html[data-puffy-theme="slate"] .app-shell .bg-gray-100 {
+  background-color: #334155;
+}
+
+html[data-puffy-theme="night"] .app-shell .text-gray-600,
+html[data-puffy-theme="slate"] .app-shell .text-gray-600 {
+  color: #e2e8f0;
+}
+
+/* 保持图标、边框和卡片过渡更柔和 */
+.app-shell .app-card,
+.app-shell .app-soft-card,
+.app-shell .bg-white,
+.app-shell .bg-gray-50,
+.app-shell .bg-gray-100,
+.app-shell input,
+.app-shell textarea,
+.app-shell select {
+  transition:
+    background-color 160ms ease,
+    border-color 160ms ease,
+    color 160ms ease;
+}
+
+/* 课程学习按钮状态色 */
+:root {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #ffffff;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #2563eb;
+  --lesson-continue-text: #ffffff;
+  --lesson-continue-border: #2563eb;
+
+  --lesson-review-bg: #f59e0b;
+  --lesson-review-text: #111827;
+  --lesson-review-border: #f59e0b;
+}
+
+html[data-puffy-theme="warm"],
+html[data-puffy-theme="lowblue"],
+html[data-puffy-theme="coffee"] {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #ffffff;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #0f766e;
+  --lesson-continue-text: #ffffff;
+  --lesson-continue-border: #0f766e;
+
+  --lesson-review-bg: #ca8a04;
+  --lesson-review-text: #ffffff;
+  --lesson-review-border: #ca8a04;
+}
+
+html[data-puffy-theme="blue"] {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #ffffff;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #0891b2;
+  --lesson-continue-text: #ffffff;
+  --lesson-continue-border: #0891b2;
+
+  --lesson-review-bg: #7c3aed;
+  --lesson-review-text: #ffffff;
+  --lesson-review-border: #7c3aed;
+}
+
+html[data-puffy-theme="green"] {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #ffffff;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #0d9488;
+  --lesson-continue-text: #ffffff;
+  --lesson-continue-border: #0d9488;
+
+  --lesson-review-bg: #d97706;
+  --lesson-review-text: #ffffff;
+  --lesson-review-border: #d97706;
+}
+
+html[data-puffy-theme="purple"] {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #ffffff;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #4f46e5;
+  --lesson-continue-text: #ffffff;
+  --lesson-continue-border: #4f46e5;
+
+  --lesson-review-bg: #db2777;
+  --lesson-review-text: #ffffff;
+  --lesson-review-border: #db2777;
+}
+
+html[data-puffy-theme="slate"],
+html[data-puffy-theme="night"] {
+  --lesson-start-bg: var(--app-accent);
+  --lesson-start-text: #020617;
+  --lesson-start-border: var(--app-accent);
+
+  --lesson-continue-bg: #22c55e;
+  --lesson-continue-text: #052e16;
+  --lesson-continue-border: #22c55e;
+
+  --lesson-review-bg: #fbbf24;
+  --lesson-review-text: #422006;
+  --lesson-review-border: #fbbf24;
+}
+

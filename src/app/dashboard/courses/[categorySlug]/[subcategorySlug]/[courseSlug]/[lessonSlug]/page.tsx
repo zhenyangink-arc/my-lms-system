@@ -145,29 +145,29 @@ const colorMap: Record<
     }
 > = {
     indigo: {
-        iconBox: "bg-indigo-50",
-        iconText: "text-indigo-600",
-        badge: "bg-indigo-50 text-indigo-600",
+        iconBox: "app-soft-card border",
+        iconText: "text-[var(--app-accent)]",
+        badge: "app-soft-card border",
     },
     blue: {
-        iconBox: "bg-blue-50",
-        iconText: "text-blue-600",
-        badge: "bg-blue-50 text-blue-600",
+        iconBox: "app-soft-card border",
+        iconText: "text-[var(--app-accent)]",
+        badge: "app-soft-card border",
     },
     emerald: {
-        iconBox: "bg-emerald-50",
-        iconText: "text-emerald-600",
-        badge: "bg-emerald-50 text-emerald-600",
+        iconBox: "app-soft-card border",
+        iconText: "text-[var(--app-accent)]",
+        badge: "app-soft-card border",
     },
     purple: {
-        iconBox: "bg-purple-50",
-        iconText: "text-purple-600",
-        badge: "bg-purple-50 text-purple-600",
+        iconBox: "app-soft-card border",
+        iconText: "text-[var(--app-accent)]",
+        badge: "app-soft-card border",
     },
     orange: {
-        iconBox: "bg-orange-50",
-        iconText: "text-orange-600",
-        badge: "bg-orange-50 text-orange-600",
+        iconBox: "app-soft-card border",
+        iconText: "text-[var(--app-accent)]",
+        badge: "app-soft-card border",
     },
 };
 
@@ -457,7 +457,7 @@ export default async function LessonDetailPage({
                 </div>
 
                 {/* 课时信息 */}
-                <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-6 shadow-sm">
                     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px_220px] xl:items-start">
                         {/* 左侧：课时标题信息 */}
                         <div className="flex gap-4">
@@ -475,17 +475,17 @@ export default async function LessonDetailPage({
                                         {subcategory.title}
                                     </span>
 
-                                    <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-600">
+                                    <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-medium">
                                         {lessonTypeLabel}
                                     </span>
 
-                                    <span className="inline-flex items-center gap-1 rounded-full bg-gray-50 px-3 py-1 text-xs font-medium text-gray-600">
+                                    <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium">
                                         <Clock size={13} />
                                         {lesson.duration_minutes} 分钟
                                     </span>
 
                                     {lesson.is_free_preview && (
-                                        <span className="rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-600">
+                                        <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-semibold">
                                             可试看
                                         </span>
                                     )}
@@ -529,13 +529,13 @@ export default async function LessonDetailPage({
                                 {previousLesson ? (
                                     <Link
                                         href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
-                                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                                        className="app-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
                                     >
                                         <span className="text-xs">◀</span>
                                         上一课
                                     </Link>
                                 ) : (
-                                    <span className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm font-semibold text-gray-400">
+                                    <span className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold opacity-70">
                                         <span className="text-xs">◀</span>
                                         第一课
                                     </span>
@@ -544,13 +544,13 @@ export default async function LessonDetailPage({
                                 {nextLesson ? (
                                     <Link
                                         href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
-                                        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-sm transition hover:bg-gray-50"
+                                        className="app-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
                                     >
                                         下一课
                                         <span className="text-xs">▶</span>
                                     </Link>
                                 ) : (
-                                    <span className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-gray-100 bg-gray-50 px-3 py-2.5 text-sm font-semibold text-gray-400">
+                                    <span className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold opacity-70">
                                         最后一课
                                         <span className="text-xs">▶</span>
                                     </span>
@@ -569,7 +569,7 @@ export default async function LessonDetailPage({
                     }
                 >
                     {/* 左侧：01 视频学习 */}
-                    <section className="rounded-3xl border border-blue-100 bg-blue-50/40 p-6 shadow-sm">
+                    <section className="app-card rounded-3xl border p-6 shadow-sm">
                         <WorkspaceSectionTitle
                             index="1"
                             title="视频学习"
@@ -588,7 +588,7 @@ export default async function LessonDetailPage({
 
                     {/* 右侧：02 学习引导 */}
                     {hasGuideInfo && (
-                        <section className="rounded-3xl border border-cyan-200 bg-cyan-50/60 p-6 shadow-sm">
+                        <section className="app-card rounded-3xl border p-6 shadow-sm">
                             <WorkspaceSectionTitle
                                 index="2"
                                 title="学习引导"
@@ -630,17 +630,17 @@ export default async function LessonDetailPage({
                                                     resources.map((resource) => (
                                                         <div
                                                             key={resource.id}
-                                                            className="rounded-xl border border-gray-100 bg-gray-50 p-3"
+                                                            className="app-soft-card rounded-xl border p-3"
                                                         >
                                                             <div className="mb-1 flex flex-wrap gap-2">
-                                                                <span className="rounded-full bg-white px-2 py-0.5 text-xs font-medium text-gray-600">
+                                                                <span className="app-card rounded-full border px-2 py-0.5 text-xs font-medium">
                                                                     {resourceTypeLabelMap[
                                                                         resource.resource_type
                                                                     ] ?? "资料"}
                                                                 </span>
 
                                                                 {resource.is_required && (
-                                                                    <span className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
+                                                                    <span className="rounded-full border border-red-500/40 px-2 py-0.5 text-xs font-medium text-red-600">
                                                                         必看
                                                                     </span>
                                                                 )}
@@ -673,7 +673,7 @@ export default async function LessonDetailPage({
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div className="rounded-xl border border-gray-100 bg-gray-50 p-3">
+                                                    <div className="app-soft-card rounded-xl border p-3">
                                                         <p className="text-sm font-semibold text-gray-900">
                                                             {lesson.attachment_label || "课程资料"}
                                                         </p>
@@ -714,7 +714,7 @@ export default async function LessonDetailPage({
                 </div>
 
                 {/* 03 核心学习 */}
-                <section className="rounded-3xl border border-amber-100 bg-amber-50/40 p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-6 shadow-sm">
                     <WorkspaceSectionTitle
                         index="3"
                         title="核心学习"
@@ -766,7 +766,7 @@ export default async function LessonDetailPage({
                 </section>
 
                 {/* 4 学习完成 */}
-                <section className="rounded-3xl border border-green-100 bg-green-50/40 p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-6 shadow-sm">
                     <WorkspaceSectionTitle
                         index="4"
                         title="学习完成"
@@ -808,12 +808,12 @@ export default async function LessonDetailPage({
                 </section>
 
                 {/* 底部：上一课 / 下一课 */}
-                <section className="rounded-3xl border border-white-100 bg-white p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-6 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
                         {previousLesson ? (
                             <Link
                                 href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
-                                className="rounded-2xl border border-gray-200 p-4 transition hover:bg-gray-50"
+                                className="app-card rounded-2xl border p-4 transition hover:opacity-90"
                             >
                                 <p className="text-sm text-gray-500">上一课</p>
                                 <p className="mt-1 font-bold text-gray-900">
@@ -821,7 +821,7 @@ export default async function LessonDetailPage({
                                 </p>
                             </Link>
                         ) : (
-                            <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4">
+                            <div className="app-soft-card rounded-2xl border p-4">
                                 <p className="text-sm text-gray-400">上一课</p>
                                 <p className="mt-1 font-bold text-gray-400">
                                     当前已经是第一课
@@ -832,7 +832,7 @@ export default async function LessonDetailPage({
                         {nextLesson ? (
                             <Link
                                 href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
-                                className="rounded-2xl border border-gray-200 p-4 text-right transition hover:bg-gray-50"
+                                className="app-card rounded-2xl border p-4 text-right transition hover:opacity-90"
                             >
                                 <p className="text-sm text-gray-500">下一课</p>
                                 <p className="mt-1 font-bold text-gray-900">
@@ -840,7 +840,7 @@ export default async function LessonDetailPage({
                                 </p>
                             </Link>
                         ) : (
-                            <div className="rounded-2xl border border-gray-100 bg-gray-50 p-4 text-right">
+                            <div className="app-soft-card rounded-2xl border p-4 text-right">
                                 <p className="text-sm text-gray-400">下一课</p>
                                 <p className="mt-1 font-bold text-gray-400">
                                     当前已经是最后一课
@@ -852,7 +852,8 @@ export default async function LessonDetailPage({
                     <div className="mt-5 flex justify-end">
                         <Link
                             href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
-                            className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
+                            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                            style={{ backgroundColor: "var(--app-accent)" }}
                         >
                             返回课程目录
                             <ArrowRight size={15} />
