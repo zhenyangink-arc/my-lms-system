@@ -12,7 +12,9 @@
  *    - 课时基本信息
  *    - 视频设置
  *    - 发布设置
+ *    - 课时资料管理
  * 6. 支持保存课时、隐藏课时、恢复发布
+ * 7. 支持为每个课时新增、查看、隐藏学习资料
  */
 
 import type { ReactNode } from "react";
@@ -23,6 +25,7 @@ import {
   BookOpen,
   CheckCircle2,
   ChevronDown,
+  Download,
   ExternalLink,
   EyeOff,
   FileText,
@@ -44,7 +47,9 @@ import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import {
   createLessonAction,
+  createLessonResourceAction,
   hideLessonAction,
+  hideLessonResourceAction,
   updateCourseAction,
   updateLessonAction,
 } from "../actions";
@@ -58,6 +63,14 @@ type Course = {
   level: string | null;
   is_published: boolean;
   sort_order: number;
+};
+
+const resourceTypeLabelMap: Record<string, string> = {
+  file: "文件",
+  link: "链接",
+  template: "模板",
+  checklist: "清单",
+  reference: "参考资料",
 };
 
 type CourseCategory = {
@@ -97,13 +110,24 @@ type Lesson = {
   extra_note: string | null;
 };
 
+type LessonResource = {
+  id: string;
+  lesson_id: string;
+  title: string;
+  description: string | null;
+  resource_type: string;
+  resource_url: string | null;
+  is_required: boolean;
+  sort_order: number;
+};
+
 /*
   管理端表单分区组件
 
   作用：
   1. 把很长的编辑表单拆成几个清楚的小区块
-  2. 现在用于：课时基本信息、视频设置、发布设置
-  3. 后面新增“学习引导、核心学习、学习完成”时也继续用这个组件
+  2. 现在用于：课时基本信息、视频设置、学习引导、核心学习、学习完成、课时资料管理、发布设置
+  3. icon 是必填参数；每个分区标题左侧都需要一个图标，方便管理端快速识别区域
 */
 function AdminEditSection({
   title,
@@ -342,6 +366,55 @@ export default async function AdminCourseLessonsPage({
     parentCategory && subcategory
       ? `/dashboard/admin/courses/category/${parentCategory.slug}/${subcategory.slug}`
       : "/dashboard/admin/courses";
+
+  /*
+   * 4. 查询这些课时下面的学习资料
+   *
+   * 为什么要单独查询 lesson_resources？
+   * - lessons 表只保存课时本身的信息，比如标题、视频、正文。
+   * - lesson_resources 表保存“这个课时下面有哪些资料”，比如 PDF、外部链接、模板、清单。
+   * - 一个课时可以有多个资料，所以这里先查出所有课时 id，再一次性查询所有资料。
+   */
+  const lessonIds = lessons.map((lesson) => lesson.id);
+
+  let lessonResources: LessonResource[] = [];
+
+  if (lessonIds.length > 0) {
+    const { data: lessonResourceData } = await supabase
+      .from("lesson_resources")
+      .select(
+        "id, lesson_id, title, description, resource_type, resource_url, is_required, sort_order"
+      )
+      .in("lesson_id", lessonIds)
+      .eq("is_published", true)
+      // 先按 lesson_id 分组，再按 sort_order 排序。
+      // 这样同一个课时下面的资料顺序会更稳定。
+      .order("lesson_id", { ascending: true })
+      .order("sort_order", { ascending: true });
+
+    lessonResources = (lessonResourceData ?? []) as LessonResource[];
+  }
+
+  /*
+   * 5. 把资料按 lesson_id 分组
+   *
+   * resourcesByLessonId 的结构大概是：
+   * {
+   *   "lesson-1-id": [资料1, 资料2],
+   *   "lesson-2-id": [资料3]
+   * }
+   *
+   * 这样在下面 lessons.map((lesson) => ...) 里面，
+   * 就可以通过 resourcesByLessonId.get(lesson.id)
+   * 快速拿到当前课时自己的资料列表。
+   */
+  const resourcesByLessonId = new Map<string, LessonResource[]>();
+
+  lessonResources.forEach((resource) => {
+    const currentResources = resourcesByLessonId.get(resource.lesson_id) ?? [];
+    currentResources.push(resource);
+    resourcesByLessonId.set(resource.lesson_id, currentResources);
+  });
 
   return (
     <>
@@ -645,6 +718,7 @@ export default async function AdminCourseLessonsPage({
             {lessons.length > 0 ? (
               <div className="space-y-4">
                 {lessons.map((lesson) => {
+                  const resources = resourcesByLessonId.get(lesson.id) ?? [];
                   const previewHref =
                     parentCategory && subcategory
                       ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`
@@ -1082,6 +1156,244 @@ export default async function AdminCourseLessonsPage({
                                 </div>
                               </AdminEditSection>
 
+                              {/* 
+                                课时资料管理区
+
+                                这里不是编辑课时正文，而是管理当前课时下面的资料。
+                                例如：
+                                1. 外部链接
+                                2. PDF 文件链接
+                                3. 模板
+                                4. 清单
+                                5. 参考资料
+
+                                注意：
+                                - 这个区块仍然放在当前课时的 form 里面。
+                                - form 顶部已经有 course_id 和 lesson_id 两个 hidden input。
+                                - 所以点击“新增资料”或“隐藏资料”时，action 也能收到当前课程和课时 id。
+                              */}
+                              <AdminEditSection
+                                title="课时资料管理"
+                                description="为当前课时添加学习资料、外部链接、模板、清单或参考资料。"
+                                icon={<Download size={17} />}
+                              >
+                                <div className="space-y-4">
+                                  <div className="app-soft-card rounded-2xl border p-4">
+                                    <div className="mb-4 flex items-center justify-between gap-3">
+                                      <div>
+                                        <h5 className="text-sm font-black" style={{ color: "var(--app-text)" }}>
+                                          新增资料
+                                        </h5>
+
+                                        <p className="mt-1 text-xs" style={{ color: "var(--app-muted)" }}>
+                                          先支持链接资料。后面可以继续扩展为 R2 文件上传。
+                                        </p>
+                                      </div>
+
+                                      <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
+                                        {resources.length} 个资料
+                                      </span>
+                                    </div>
+
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                      <label className="block">
+                                        <span className="text-xs font-bold app-muted-text">
+                                          资料标题
+                                        </span>
+
+                                        <input
+                                          name="resource_title"
+                                          required
+                                          placeholder="例如：大学选择清单 PDF"
+                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                        />
+                                      </label>
+
+                                      <label className="block">
+                                        <span className="text-xs font-bold app-muted-text">
+                                          资料类型
+                                        </span>
+
+                                        <select
+                                          name="resource_type"
+                                          defaultValue="link"
+                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                        >
+                                          <option value="link">链接</option>
+                                          <option value="file">文件</option>
+                                          <option value="template">模板</option>
+                                          <option value="checklist">清单</option>
+                                          <option value="reference">参考资料</option>
+                                        </select>
+                                      </label>
+
+                                      <label className="block md:col-span-2">
+                                        <span className="text-xs font-bold app-muted-text">
+                                          资料 URL
+                                        </span>
+
+                                        <input
+                                          name="resource_url"
+                                          placeholder="https://..."
+                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                        />
+                                      </label>
+
+                                      <label className="block md:col-span-2">
+                                        <span className="text-xs font-bold app-muted-text">
+                                          资料说明
+                                        </span>
+
+                                        <textarea
+                                          name="resource_description"
+                                          required
+                                          rows={3}
+                                          placeholder="简单说明这个资料的用途"
+                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                        />
+                                      </label>
+
+                                      <label className="block">
+                                        <span className="text-xs font-bold app-muted-text">
+                                          排序
+                                        </span>
+
+                                        <input
+                                          type="number"
+                                          name="resource_sort_order"
+                                          defaultValue={0}
+                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                        />
+                                      </label>
+
+                                      <label className="flex items-center gap-2 pt-6 text-sm font-semibold app-muted-text">
+                                        <input
+                                          type="checkbox"
+                                          name="resource_is_required"
+                                          className="h-4 w-4 rounded border-gray-300"
+                                        />
+                                        必看资料
+                                      </label>
+                                    </div>
+
+                                    <div className="mt-4 flex justify-end">
+                                      <button
+                                        type="submit"
+                                        /*
+                                          formAction 的作用：
+                                          - 当前 form 默认提交到 updateLessonAction，也就是“保存课时”。
+                                          - 但这个按钮不是保存课时，而是新增资料。
+                                          - 所以这里用 formAction={createLessonResourceAction}
+                                            覆盖当前按钮的提交目标。
+                                        */
+                                        formAction={createLessonResourceAction}
+                                        className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+                                        style={{
+                                          backgroundColor: "var(--app-accent)",
+                                          borderColor: "var(--app-accent)",
+                                        }}
+                                      >
+                                        新增资料
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {resources.length > 0 ? (
+                                    <div className="space-y-3">
+                                      {resources.map((resource) => (
+                                        <div
+                                          key={resource.id}
+                                          className="app-card rounded-2xl border p-4"
+                                        >
+                                          <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                                            <div className="min-w-0 flex-1">
+                                              <div className="mb-2 flex flex-wrap gap-2">
+                                                <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
+                                                  {resourceTypeLabelMap[resource.resource_type] ?? "资料"}
+                                                </span>
+
+                                                {resource.is_required && (
+                                                  <span
+                                                    className="rounded-full border px-3 py-1 text-xs font-semibold"
+                                                    style={{
+                                                      borderColor: "var(--lesson-review-border)",
+                                                      color: "var(--lesson-review-bg)",
+                                                    }}
+                                                  >
+                                                    必看
+                                                  </span>
+                                                )}
+
+                                                <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
+                                                  排序 {resource.sort_order}
+                                                </span>
+                                              </div>
+
+                                              <p
+                                                className="font-bold"
+                                                style={{ color: "var(--app-text)" }}
+                                              >
+                                                {resource.title}
+                                              </p>
+
+                                              {resource.description && (
+                                                <p className="mt-1 text-sm leading-6 app-muted-text">
+                                                  {resource.description}
+                                                </p>
+                                              )}
+
+                                              {resource.resource_url ? (
+                                                <a
+                                                  href={resource.resource_url}
+                                                  target="_blank"
+                                                  rel="noreferrer"
+                                                  className="mt-2 inline-flex text-xs font-semibold underline"
+                                                  style={{ color: "var(--app-accent)" }}
+                                                >
+                                                  打开资料
+                                                </a>
+                                              ) : (
+                                                <p className="mt-2 text-xs app-muted-text">
+                                                  暂无资料链接
+                                                </p>
+                                              )}
+                                            </div>
+
+                                            <button
+                                              type="submit"
+                                              formNoValidate
+                                              /*
+                                                这里不能写 name="resource_id"。
+                                            
+                                                原因：
+                                                当前按钮使用了 Server Action：
+                                                formAction={hideLessonResourceAction.bind(null, resource.id)}
+                                            
+                                                React 不允许这种按钮再使用 name 属性。
+                                              */
+                                              formAction={hideLessonResourceAction.bind(null, resource.id)}
+                                              className="rounded-xl border px-3 py-2 text-xs font-semibold transition hover:opacity-80"
+                                              style={{
+                                                borderColor: "var(--app-border)",
+                                                color: "var(--app-muted)",
+                                              }}
+                                            >
+                                              隐藏
+                                            </button>
+                                          </div>
+                                        </div>
+                                      ))}
+                                    </div>
+                                  ) : (
+                                    <div className="app-soft-card rounded-2xl border border-dashed p-5 text-center">
+                                      <p className="text-sm font-semibold app-muted-text">
+                                        当前课时还没有添加资料
+                                      </p>
+                                    </div>
+                                  )}
+                                </div>
+                              </AdminEditSection>
+
                               {/* 发布设置 */}
                               <AdminEditSection
                                 title="发布设置"
@@ -1115,6 +1427,7 @@ export default async function AdminCourseLessonsPage({
                                     {lesson.is_published ? (
                                       <button
                                         type="submit"
+                                        formNoValidate
                                         formAction={hideLessonAction}
                                         className="inline-flex items-center gap-2 rounded-xl bg-red-50 px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:bg-red-100"
                                       >
@@ -1130,6 +1443,7 @@ export default async function AdminCourseLessonsPage({
 
                                     <button
                                       type="submit"
+                                      formNoValidate
                                       className="inline-flex items-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800"
                                     >
                                       <Save size={16} />
