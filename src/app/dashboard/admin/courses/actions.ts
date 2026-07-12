@@ -206,17 +206,181 @@ export async function hideLessonAction(formData: FormData) {
 }
 
 
+/*
+  创建课时资料
+
+  使用场景：
+  管理员在某个课时下面点击“新增资料”。
+
+  数据写入表：
+  lesson_resources
+
+  说明：
+  1. lesson_id 表示资料属于哪个课时
+  2. course_id 不写入 lesson_resources，只用于 revalidatePath 刷新当前管理页面
+  3. title 和 description 必填
+  4. resource_url 暂时支持外部链接，以后可以扩展成 R2 文件地址
+  5. is_published 默认 true，表示学生端可见
+*/
 export async function createLessonResourceAction(formData: FormData) {
   const supabase = await createClient();
 
+  /*
+    course_id 来自隐藏字段：
+
+    <input type="hidden" name="course_id" value={course.id} />
+
+    作用：
+    新增资料成功后，用它刷新当前管理页面：
+    /dashboard/admin/courses/[courseId]
+  */
   const courseId = String(formData.get("course_id") ?? "").trim();
+
+  /*
+    lesson_id 来自隐藏字段：
+
+    <input type="hidden" name="lesson_id" value={lesson.id} />
+
+    作用：
+    告诉数据库这条资料属于哪一个课时。
+  */
   const lessonId = String(formData.get("lesson_id") ?? "").trim();
 
+  /*
+    资料基本字段
+
+    注意：
+    String(...).trim() 的作用是：
+    1. 防止 null 报错
+    2. 去掉用户输入前后的空格
+  */
   const title = String(formData.get("resource_title") ?? "").trim();
-  const descriptionValue = String(
+
+  const description = String(
     formData.get("resource_description") ?? ""
   ).trim();
-  const resourceUrlValue = String(formData.get("resource_url") ?? "").trim();
+
+  const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+
+  const resourceTypeValue = String(
+    formData.get("resource_type") ?? "link"
+  ).trim();
+
+  const sortOrderValue = Number(formData.get("resource_sort_order") ?? 0);
+
+  /*
+    限制资料类型，防止用户提交乱七八糟的值。
+
+    即使前端 select 里只有这些选项，
+    后端也要再检查一次，这是安全兜底。
+  */
+  const allowedResourceTypes = [
+    "file",
+    "link",
+    "template",
+    "checklist",
+    "reference",
+  ];
+
+  const resourceType = allowedResourceTypes.includes(resourceTypeValue)
+    ? resourceTypeValue
+    : "link";
+
+  /*
+    必要参数检查
+
+    courseId 和 lessonId 缺失属于系统级错误，
+    说明页面表单结构不完整，所以可以 throw。
+  */
+  if (!courseId) {
+    throw new Error("Missing course_id");
+  }
+
+  if (!lessonId) {
+    throw new Error("Missing lesson_id");
+  }
+
+  /*
+    标题或说明为空时，不新增，也不让页面崩溃。
+
+    为什么不 throw？
+    1. 这是普通表单校验问题，不是系统错误
+    2. throw 会让 Next.js 开发环境显示红色错误页
+    3. 前端已经用 required 做了提示
+    4. 这里是后端兜底，防止有人绕过浏览器直接提交空数据
+  */
+  if (!title || !description) {
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
+    return;
+  }
+
+  /*
+    插入 lesson_resources 表
+
+    is_required:
+    - checkbox 勾选时，formData.get("resource_is_required") === "on"
+    - 不勾选时，formData.get(...) 是 null
+
+    is_published:
+    - 新增资料默认 true
+    - 学生端只读取 is_published = true 的资料
+  */
+  const { error } = await supabase.from("lesson_resources").insert({
+    lesson_id: lessonId,
+    title,
+    description,
+    resource_type: resourceType,
+    resource_url: resourceUrl || null,
+    is_required: formData.get("resource_is_required") === "on",
+    is_published: true,
+    sort_order: Number.isFinite(sortOrderValue) ? sortOrderValue : 0,
+  });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  /*
+    刷新当前管理页面，让新增资料马上显示出来。
+  */
+  revalidatePath(`/dashboard/admin/courses/${courseId}`);
+}
+
+/*
+  更新课时资料
+
+  使用场景：
+  管理员修改某一条已有资料后，点击“保存资料”。
+
+  为什么第一个参数是 resourceId？
+  因为 page.tsx 里会这样调用：
+
+  updateLessonResourceAction.bind(null, resource.id)
+
+  这样每一条资料都能准确知道自己要更新哪条记录。
+*/
+export async function updateLessonResourceAction(
+  resourceId: string,
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  /*
+    course_id 仍然从 formData 里读取。
+
+    作用：
+    更新完成后刷新当前课程管理页。
+  */
+  const courseId = String(formData.get("course_id") ?? "").trim();
+
+  const title = String(formData.get("resource_title") ?? "").trim();
+
+  const description = String(
+    formData.get("resource_description") ?? ""
+  ).trim();
+
+  const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+
   const resourceTypeValue = String(
     formData.get("resource_type") ?? "link"
   ).trim();
@@ -239,31 +403,39 @@ export async function createLessonResourceAction(formData: FormData) {
     throw new Error("Missing course_id");
   }
 
-  if (!lessonId) {
-    throw new Error("Missing lesson_id");
+  if (!resourceId) {
+    throw new Error("Missing resource_id");
   }
 
-  if (!title || !descriptionValue) {
-    /*
-      资料标题或资料说明为空时，不新增资料，也不让页面崩溃。
-  
-      前端已经用 required 做了提示。
-      这里是后端兜底，防止有人绕过浏览器直接提交空数据。
-    */
+  /*
+    标题或说明为空时，不更新，也不让页面崩溃。
+
+    前端编辑表单里有 required。
+    这里是后端兜底。
+  */
+  if (!title || !description) {
     revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return;
   }
 
-  const { error } = await supabase.from("lesson_resources").insert({
-    lesson_id: lessonId,
-    title,
-    description: descriptionValue || null,
-    resource_type: resourceType,
-    resource_url: resourceUrlValue || null,
-    is_required: formData.get("resource_is_required") === "on",
-    is_published: true,
-    sort_order: Number.isFinite(sortOrderValue) ? sortOrderValue : 0,
-  });
+  /*
+    更新当前资料记录。
+
+    注意：
+    这里不会改 lesson_id。
+    因为一条资料创建后，通常不应该随便移动到别的课时。
+  */
+  const { error } = await supabase
+    .from("lesson_resources")
+    .update({
+      title,
+      description,
+      resource_type: resourceType,
+      resource_url: resourceUrl || null,
+      is_required: formData.get("resource_is_required") === "on",
+      sort_order: Number.isFinite(sortOrderValue) ? sortOrderValue : 0,
+    })
+    .eq("id", resourceId);
 
   if (error) {
     throw new Error(error.message);
@@ -272,6 +444,23 @@ export async function createLessonResourceAction(formData: FormData) {
   revalidatePath(`/dashboard/admin/courses/${courseId}`);
 }
 
+/*
+  隐藏课时资料
+
+  使用场景：
+  管理员点击“隐藏资料”。
+
+  注意：
+  这里不是 delete 删除，而是软隐藏。
+
+  软隐藏逻辑：
+  is_published = false
+
+  好处：
+  1. 数据库记录还在
+  2. 学生端不会显示
+  3. 后面可以继续做“恢复资料”
+*/
 export async function hideLessonResourceAction(
   resourceId: string,
   formData: FormData
@@ -279,27 +468,22 @@ export async function hideLessonResourceAction(
   const supabase = await createClient();
 
   /*
-    course_id 仍然从当前课时编辑表单里读取。
+    resourceId 来自 page.tsx 里的：
 
-    为什么 course_id 还要读取？
-    因为隐藏资料之后，需要刷新当前管理页面：
-    /dashboard/admin/courses/[courseId]
+    hideLessonResourceAction.bind(null, resource.id)
+
+    所以这里不用再从 formData.get("resource_id") 读取。
+  */
+
+  /*
+    course_id 来自当前隐藏资料 form 里的 hidden input：
+
+    <input type="hidden" name="course_id" value={course.id} />
+
+    用它刷新当前管理页面。
   */
   const courseId = String(formData.get("course_id") ?? "").trim();
 
-  /*
-    resourceId 不再从 button 的 name/value 读取。
-
-    原因：
-    Next.js Server Action 不允许 button 同时使用：
-    1. formAction={某个函数}
-    2. name="resource_id"
-
-    所以我们会在 page.tsx 里用：
-    hideLessonResourceAction.bind(null, resource.id)
-
-    这样 resource.id 会作为第一个参数传进来。
-  */
   if (!courseId) {
     throw new Error("Missing course_id");
   }
@@ -308,14 +492,6 @@ export async function hideLessonResourceAction(
     throw new Error("Missing resource_id");
   }
 
-  /*
-    这里不是真删除资料，而是软隐藏。
-
-    好处：
-    1. 数据库里还保留记录
-    2. 学生端不会再显示
-    3. 后面可以继续做“恢复资料”功能
-  */
   const { error } = await supabase
     .from("lesson_resources")
     .update({
@@ -327,5 +503,173 @@ export async function hideLessonResourceAction(
     throw new Error(error.message);
   }
 
+  revalidatePath(`/dashboard/admin/courses/${courseId}`);
+}
+/*
+  恢复课时资料
+
+  使用场景：
+  管理员在单独课时编辑页的“已隐藏资料”区域点击“恢复资料”。
+
+  注意：
+  这里不是重新新增资料，而是把原来隐藏的资料重新发布。
+
+  数据库变化：
+  lesson_resources.is_published: false -> true
+*/
+export async function restoreLessonResourceAction(
+  resourceId: string,
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  /*
+    resourceId 来自页面里的：
+
+    restoreLessonResourceAction.bind(null, resource.id)
+
+    所以这里不用再从 formData 里读取 resource_id。
+  */
+
+  /*
+    course_id 来自隐藏 input：
+
+    <input type="hidden" name="course_id" value={course.id} />
+
+    作用：恢复成功后刷新当前课程管理相关页面。
+  */
+  const courseId = String(formData.get("course_id") ?? "").trim();
+
+  if (!courseId) {
+    throw new Error("Missing course_id");
+  }
+
+  if (!resourceId) {
+    throw new Error("Missing resource_id");
+  }
+
+  const { error } = await supabase
+    .from("lesson_resources")
+    .update({
+      is_published: true,
+    })
+    .eq("id", resourceId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  /*
+    刷新课程管理页。
+
+    说明：
+    这个 action 现在是在：
+    /dashboard/admin/courses/[courseId]/lessons/[lessonId]
+
+    但 Next.js 的 revalidatePath 可以刷新课程下相关缓存。
+    你当前页面提交后也会重新渲染，所以恢复后的资料会从“已隐藏资料”移动到“已发布资料”。
+  */
+  revalidatePath(`/dashboard/admin/courses/${courseId}`);
+}
+
+
+/*
+  永久删除课时资料
+
+  使用场景：
+  管理员在“危险操作”区域选择一条已隐藏资料，
+  输入 delete 后，永久删除这条 lesson_resources 记录。
+
+  安全设计：
+  1. 只能删除 is_published = false 的资料
+  2. 必须输入 delete
+  3. 删除后无法恢复
+  4. 当前阶段只删除数据库记录
+     以后做 R2 文件上传后，还需要再考虑是否同时删除 R2 文件
+*/
+export async function deleteLessonResourceAction(formData: FormData) {
+  const supabase = await createClient();
+
+  /*
+    course_id 用于刷新页面
+  */
+  const courseId = String(formData.get("course_id") ?? "").trim();
+
+  /*
+    lesson_id 用于刷新当前课时编辑页
+
+    当前页面路径是：
+    /dashboard/admin/courses/[courseId]/lessons/[lessonId]
+  */
+  const lessonId = String(formData.get("lesson_id") ?? "").trim();
+
+  /*
+    resource_id 来自删除弹窗里的 select
+
+    这里不使用 bind，
+    因为危险操作区域是从下拉框选择要删除哪一条资料。
+  */
+  const resourceId = String(formData.get("resource_id") ?? "").trim();
+
+  /*
+    用户必须输入 delete
+
+    这里统一转成小写：
+    - delete 可以
+    - DELETE 也可以
+    - Delete 也可以
+  */
+  const deleteConfirmText = String(
+    formData.get("delete_confirm") ?? ""
+  )
+    .trim()
+    .toLowerCase();
+
+  if (!courseId) {
+    throw new Error("Missing course_id");
+  }
+
+  if (!lessonId) {
+    throw new Error("Missing lesson_id");
+  }
+
+  if (!resourceId) {
+    throw new Error("Missing resource_id");
+  }
+
+  /*
+    输入内容不等于 delete 时，不删除，也不让页面崩溃。
+  */
+  if (deleteConfirmText !== "delete") {
+    revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
+    return;
+  }
+
+  /*
+    只允许永久删除“已隐藏资料”。
+
+    重点：
+    .eq("is_published", false)
+
+    这样即使有人手动改前端参数，也不能直接删除已发布资料。
+  */
+  const { error } = await supabase
+    .from("lesson_resources")
+    .delete()
+    .eq("id", resourceId)
+    .eq("is_published", false);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  /*
+    同时刷新两个页面：
+    1. 当前课时编辑页
+    2. 课程管理页
+
+    这样资料数量、资料状态都会更新。
+  */
+  revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
   revalidatePath(`/dashboard/admin/courses/${courseId}`);
 }
