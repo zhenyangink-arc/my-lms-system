@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
 import { createClient } from "@/lib/supabase/server";
@@ -7,12 +8,26 @@ import { ThemeProvider } from "./ThemeProvider";
 type Profile = {
   full_name: string | null;
   role: string | null;
+  status: string | null;
 };
+
+/*
+  判断账号是否可用
+
+  active    = 正常
+  inactive  = 已停用
+  suspended = 暂停
+
+  旧账号如果 status 是 null，暂时按 active 处理。
+*/
+function isActiveStatus(status: string | null | undefined) {
+  return !status || status === "active";
+}
 
 export default async function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const supabase = await createClient();
 
@@ -26,11 +41,22 @@ export default async function DashboardLayout({
 
   const { data: profileData } = await supabase
     .from("profiles")
-    .select("full_name, role")
+    .select("full_name, role, status")
     .eq("id", user.id)
     .maybeSingle();
 
   const profile = profileData as Profile | null;
+
+  /*
+    如果账号被停用或暂停，就不允许进入 dashboard。
+
+    现在先跳回 login。
+    后面可以单独做一个页面：
+    /account-disabled
+  */
+  if (!isActiveStatus(profile?.status)) {
+    redirect("/login");
+  }
 
   const userName =
     profile?.full_name ||

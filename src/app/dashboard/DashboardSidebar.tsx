@@ -75,7 +75,16 @@ const sidebarItems: SidebarItem[] = [
 ];
 
 function isAdminRole(role: string) {
-  return role === "admin" || role === "super_admin";
+  /*
+    可以看到管理端菜单的角色：
+
+    super_admin = 老板 / Owner
+    ceo         = CEO
+    admin       = 管理员
+
+    teacher 和 student 不显示管理端菜单。
+  */
+  return role === "admin" || role === "ceo" || role === "super_admin";
 }
 
 function isActivePath(pathname: string, href: string) {
@@ -88,7 +97,11 @@ function isActivePath(pathname: string, href: string) {
 
 function getRoleLabel(role: string) {
   if (role === "super_admin") {
-    return "最高管理员";
+    return "老板";
+  }
+
+  if (role === "ceo") {
+    return "CEO";
   }
 
   if (role === "admin") {
