@@ -584,3 +584,15 @@ html[data-puffy-theme="night"] {
   --lesson-review-border: #fbbf24;
 }
 
+/* 账号状态标签颜色（不随主题变化，保持辨识度） */
+:root {
+  --app-status-active-bg: #16a34a;
+  --app-status-active-text: #ffffff;
+
+  --app-status-inactive-bg: #6b7280;
+  --app-status-inactive-text: #ffffff;
+
+  --app-status-suspended-bg: #ea580c;
+  --app-status-suspended-text: #ffffff;
+}
+

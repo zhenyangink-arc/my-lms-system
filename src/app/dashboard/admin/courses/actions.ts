@@ -1,9 +1,11 @@
 "use server";
 
+import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 import { requireAdmin } from "@/lib/admin";
+import { createR2SignedUploadUrl } from "@/lib/r2";
 
 function getString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -207,6 +209,46 @@ export async function hideLessonAction(formData: FormData) {
 
 
 /*
+  生成资料文件的上传签名 URL
+
+  使用场景：
+  管理员在“新增资料”表单里选好文件后，浏览器调用这个 action，
+  拿到一个一次性的上传地址和随机 object key，然后直接把文件 PUT 到 R2。
+
+  安全考虑：
+  1. 必须先过 requireAdmin()，防止非管理员拿到签名 URL
+  2. objectKey 由服务器随机生成，不使用用户上传的原始文件名，
+     避免撞名覆盖、避免文件名里的特殊字符造成路径问题
+  3. objectKey 里带上 lessonId，方便以后按课时批量清理文件
+*/
+export async function createResourceUploadUrlAction(
+  lessonId: string,
+  originalFileName: string,
+  contentType: string
+) {
+  await requireAdmin();
+
+  if (!lessonId) {
+    throw new Error("Missing lesson_id");
+  }
+
+  const extMatch = originalFileName.match(/\.[^.]+$/);
+  const extension = extMatch ? extMatch[0] : "";
+
+  const objectKey = `lesson-resources/${lessonId}/${randomUUID()}${extension}`;
+
+  const uploadUrl = await createR2SignedUploadUrl(
+    objectKey,
+    contentType || "application/octet-stream"
+  );
+
+  return { uploadUrl, objectKey };
+}
+
+
+
+
+/*
   创建课时资料
 
   使用场景：
@@ -260,7 +302,15 @@ export async function createLessonResourceAction(formData: FormData) {
     formData.get("resource_description") ?? ""
   ).trim();
 
-  const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+    const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+
+  const resourceObjectKey = String(
+    formData.get("resource_object_key") ?? ""
+  ).trim();
+
+  const originalFileName = String(
+    formData.get("original_file_name") ?? ""
+  ).trim();
 
   const resourceTypeValue = String(
     formData.get("resource_type") ?? "link"
@@ -300,16 +350,19 @@ export async function createLessonResourceAction(formData: FormData) {
     throw new Error("Missing lesson_id");
   }
 
-  /*
-    标题或说明为空时，不新增，也不让页面崩溃。
+   if (!title || !description) {
+    revalidatePath(`/dashboard/admin/courses/${courseId}`);
+    return;
+  }
 
-    为什么不 throw？
-    1. 这是普通表单校验问题，不是系统错误
-    2. throw 会让 Next.js 开发环境显示红色错误页
-    3. 前端已经用 required 做了提示
-    4. 这里是后端兜底，防止有人绕过浏览器直接提交空数据
+  /*
+    资料类型不是"链接"时，必须已经上传成功（有 resource_object_key）。
+
+    为什么不用浏览器 required？
+    因为 object key 是隐藏字段，隐藏的 input 浏览器不会做 required 校验，
+    所以这里改成后端兜底：没传文件就不新增，静默返回。
   */
-  if (!title || !description) {
+  if (resourceType !== "link" && !resourceObjectKey) {
     revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return;
   }
@@ -325,12 +378,14 @@ export async function createLessonResourceAction(formData: FormData) {
     - 新增资料默认 true
     - 学生端只读取 is_published = true 的资料
   */
-  const { error } = await supabase.from("lesson_resources").insert({
+   const { error } = await supabase.from("lesson_resources").insert({
     lesson_id: lessonId,
     title,
     description,
     resource_type: resourceType,
-    resource_url: resourceUrl || null,
+    resource_url: resourceType === "link" ? resourceUrl || null : null,
+    resource_object_key: resourceType !== "link" ? resourceObjectKey || null : null,
+    original_file_name: resourceType !== "link" ? originalFileName || null : null,
     is_required: formData.get("resource_is_required") === "on",
     is_published: true,
     sort_order: Number.isFinite(sortOrderValue) ? sortOrderValue : 0,
@@ -572,56 +627,149 @@ export async function restoreLessonResourceAction(
   revalidatePath(`/dashboard/admin/courses/${courseId}`);
 }
 
-
 /*
-  永久删除课时资料
+  软删除课时资料（移入回收站）
 
   使用场景：
-  管理员在“危险操作”区域选择一条已隐藏资料，
-  输入 delete 后，永久删除这条 lesson_resources 记录。
+  管理员在“已隐藏资料”区域点击“删除资料（进回收站）”。
 
-  安全设计：
-  1. 只能删除 is_published = false 的资料
-  2. 必须输入 delete
-  3. 删除后无法恢复
-  4. 当前阶段只删除数据库记录
-     以后做 R2 文件上传后，还需要再考虑是否同时删除 R2 文件
+  注意：
+  这里不是真正的物理删除，只是把 is_deleted 标记为 true。
+
+  安全限制：
+  1. 只能对已经是“隐藏”状态的资料操作（is_published = false）
+     发布中的资料不能直接跳过隐藏这一步进回收站
+  2. 必须填写删除原因（delete_reason）
+
+  数据库变化：
+  lesson_resources.is_deleted: false -> true
+  同时记录 deleted_at / deleted_by / delete_reason
 */
-export async function deleteLessonResourceAction(formData: FormData) {
+export async function moveLessonResourceToRecycleBinAction(
+  resourceId: string,
+  formData: FormData
+) {
   const supabase = await createClient();
 
-  /*
-    course_id 用于刷新页面
-  */
   const courseId = String(formData.get("course_id") ?? "").trim();
+  const lessonId = String(formData.get("lesson_id") ?? "").trim();
+  const reason = String(formData.get("delete_reason") ?? "").trim();
 
-  /*
-    lesson_id 用于刷新当前课时编辑页
+  if (!courseId) {
+    throw new Error("Missing course_id");
+  }
 
-    当前页面路径是：
-    /dashboard/admin/courses/[courseId]/lessons/[lessonId]
-  */
+  if (!lessonId) {
+    throw new Error("Missing lesson_id");
+  }
+
+  if (!resourceId) {
+    throw new Error("Missing resource_id");
+  }
+
+  if (!reason) {
+    throw new Error("Missing delete_reason");
+  }
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { error } = await supabase
+    .from("lesson_resources")
+    .update({
+      is_deleted: true,
+      deleted_at: new Date().toISOString(),
+      deleted_by: user?.id ?? null,
+      delete_reason: reason,
+    })
+    .eq("id", resourceId)
+    .eq("is_published", false);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
+  revalidatePath(`/dashboard/admin/courses/${courseId}`);
+}
+
+/*
+  从回收站恢复课时资料
+
+  使用场景：
+  管理员在“回收站”区域点击“恢复资料”。
+
+  注意：
+  恢复后回到“已隐藏资料”状态，不是直接重新发布。
+  管理员需要再手动点一次“恢复资料”（is_published: true）才会对学生可见。
+
+  数据库变化：
+  lesson_resources.is_deleted: true -> false
+  同时清空 deleted_at / deleted_by / delete_reason
+*/
+export async function restoreLessonResourceFromRecycleBinAction(
+  resourceId: string,
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  const courseId = String(formData.get("course_id") ?? "").trim();
   const lessonId = String(formData.get("lesson_id") ?? "").trim();
 
-  /*
-    resource_id 来自删除弹窗里的 select
+  if (!courseId) {
+    throw new Error("Missing course_id");
+  }
 
-    这里不使用 bind，
-    因为危险操作区域是从下拉框选择要删除哪一条资料。
-  */
+  if (!lessonId) {
+    throw new Error("Missing lesson_id");
+  }
+
+  if (!resourceId) {
+    throw new Error("Missing resource_id");
+  }
+
+  const { error } = await supabase
+    .from("lesson_resources")
+    .update({
+      is_deleted: false,
+      deleted_at: null,
+      deleted_by: null,
+      delete_reason: null,
+    })
+    .eq("id", resourceId);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
+  revalidatePath(`/dashboard/admin/courses/${courseId}`);
+}
+
+/*
+  彻底删除课时资料（不可恢复）
+
+  使用场景：
+  老板在“回收站”区域的“危险操作”里选择一条资料，输入 delete 后彻底删除。
+
+  安全设计：
+  1. 只能删除已经在回收站里的资料（is_deleted = true）
+  2. 必须输入 delete
+  3. 显式检查当前账号是否为老板（调用数据库里的 is_owner_account() 函数）
+     不只依赖 RLS 静默拒绝，而是直接报错，避免 admin 以为删除成功但其实没删掉
+  4. 当前阶段只删除数据库记录，以后接入 R2 后还要同时删 R2 文件
+*/
+export async function permanentlyDeleteLessonResourceAction(
+  formData: FormData
+) {
+  const supabase = await createClient();
+
+  const courseId = String(formData.get("course_id") ?? "").trim();
+  const lessonId = String(formData.get("lesson_id") ?? "").trim();
   const resourceId = String(formData.get("resource_id") ?? "").trim();
 
-  /*
-    用户必须输入 delete
-
-    这里统一转成小写：
-    - delete 可以
-    - DELETE 也可以
-    - Delete 也可以
-  */
-  const deleteConfirmText = String(
-    formData.get("delete_confirm") ?? ""
-  )
+  const deleteConfirmText = String(formData.get("delete_confirm") ?? "")
     .trim()
     .toLowerCase();
 
@@ -637,39 +785,33 @@ export async function deleteLessonResourceAction(formData: FormData) {
     throw new Error("Missing resource_id");
   }
 
-  /*
-    输入内容不等于 delete 时，不删除，也不让页面崩溃。
-  */
   if (deleteConfirmText !== "delete") {
     revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
     return;
   }
 
-  /*
-    只允许永久删除“已隐藏资料”。
+  const { data: isOwner, error: ownerCheckError } = await supabase.rpc(
+    "is_owner_account"
+  );
 
-    重点：
-    .eq("is_published", false)
+  if (ownerCheckError) {
+    throw new Error(ownerCheckError.message);
+  }
 
-    这样即使有人手动改前端参数，也不能直接删除已发布资料。
-  */
+  if (!isOwner) {
+    throw new Error("只有老板账号可以彻底删除资料");
+  }
+
   const { error } = await supabase
     .from("lesson_resources")
     .delete()
     .eq("id", resourceId)
-    .eq("is_published", false);
+    .eq("is_deleted", true);
 
   if (error) {
     throw new Error(error.message);
   }
 
-  /*
-    同时刷新两个页面：
-    1. 当前课时编辑页
-    2. 课程管理页
-
-    这样资料数量、资料状态都会更新。
-  */
   revalidatePath(`/dashboard/admin/courses/${courseId}/lessons/${lessonId}`);
   revalidatePath(`/dashboard/admin/courses/${courseId}`);
 }

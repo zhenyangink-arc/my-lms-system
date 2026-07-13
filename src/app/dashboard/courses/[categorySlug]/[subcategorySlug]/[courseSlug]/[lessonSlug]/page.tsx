@@ -87,6 +87,8 @@ type LessonResource = {
     description: string | null;
     resource_type: string;
     resource_url: string | null;
+    resource_object_key: string | null;
+    original_file_name: string | null;
     is_required: boolean;
     sort_order: number;
 };
@@ -341,7 +343,7 @@ export default async function LessonDetailPage({
     const { data: resourceData } = await supabase
         .from("lesson_resources")
         .select(
-            "id, title, description, resource_type, resource_url, is_required, sort_order"
+            "id, title, description, resource_type, resource_url, resource_object_key, original_file_name, is_required, sort_order"
         )
         .eq("lesson_id", lesson.id)
         .eq("is_published", true)
@@ -656,20 +658,34 @@ export default async function LessonDetailPage({
                                                                 </p>
                                                             )}
 
-                                                            {resource.resource_url ? (
-                                                                <a
-                                                                    href={resource.resource_url}
-                                                                    target="_blank"
-                                                                    rel="noreferrer"
-                                                                    className="mt-2 inline-flex text-xs font-semibold text-gray-900 underline"
-                                                                >
-                                                                    打开资料
-                                                                </a>
-                                                            ) : (
-                                                                <p className="mt-2 text-xs text-gray-400">
-                                                                    文件暂未上传
-                                                                </p>
-                                                            )}
+                                                           <div className="mt-2 flex flex-wrap gap-3">
+                                                                {resource.resource_url && (
+                                                                    
+                                                                    <a  href={resource.resource_url}
+                                                                        target="_blank"
+                                                                        rel="noreferrer"
+                                                                        className="inline-flex text-xs font-semibold text-gray-900 underline"
+                                                                    >
+                                                                        打开资料
+                                                                    </a>
+                                                                )}
+
+                                                                {resource.resource_object_key && (
+                                                                    
+                                                                    <a   href={`/api/lesson-resources/${resource.id}/download`}
+                                                                        className="inline-flex text-xs font-semibold text-gray-900 underline"
+                                                                    >
+                                                                        下载文件（{resource.original_file_name}）
+                                                                    </a>
+                                                                )}
+
+                                                                {!resource.resource_url &&
+                                                                    !resource.resource_object_key && (
+                                                                        <p className="text-xs text-gray-400">
+                                                                            文件暂未上传
+                                                                        </p>
+                                                                    )}
+                                                            </div>
                                                         </div>
                                                     ))
                                                 ) : (

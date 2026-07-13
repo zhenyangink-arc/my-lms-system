@@ -16,18 +16,20 @@
  * 3. 编辑学习引导
  * 4. 编辑核心学习内容
  * 5. 编辑学习完成内容
- * 6. 管理课时资料：新增、编辑、隐藏、恢复
+ * 6. 管理课时资料：新增、编辑、隐藏、恢复、删除（回收站）、彻底删除
  * 7. 课时内容编辑区使用两列折叠卡片，默认收起，减少页面长度
  * 8. 学习完成右侧放置紧凑型发布设置，视觉上保持同一编辑区域
  * 9. 课时资料管理放在课时内容编辑区下方，默认收起
- * 10. 已发布 / 已隐藏资料使用弹窗展示，避免资料列表撑长页面
+ * 10. 已发布 / 已隐藏 / 回收站资料使用弹窗展示，避免资料列表撑长页面
  * 11. 保存课时 / 隐藏课时
+ * 12. 回收站：删除资料先进回收站（is_deleted=true），可恢复；只有老板能彻底删除（真正 DELETE）
  */
 
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
+  Archive,
   ArrowLeft,
   BookOpen,
   CheckCircle2,
@@ -39,6 +41,7 @@ import {
   RotateCcw,
   Save,
   Settings2,
+  Trash2,
   Video,
 } from "lucide-react";
 
@@ -57,15 +60,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
+
+
 import {
   createLessonResourceAction,
-  deleteLessonResourceAction,
   hideLessonAction,
   hideLessonResourceAction,
+  moveLessonResourceToRecycleBinAction,
+  permanentlyDeleteLessonResourceAction,
   restoreLessonResourceAction,
+  restoreLessonResourceFromRecycleBinAction,
   updateLessonAction,
   updateLessonResourceAction,
 } from "../../../actions";
+import { ResourceFileOrLinkField } from "../../../ResourceFileOrLinkField";
 
 /*
   课程类型
@@ -146,9 +154,14 @@ type LessonResource = {
   description: string | null;
   resource_type: string;
   resource_url: string | null;
+  resource_object_key: string | null;
+  original_file_name: string | null;
   is_required: boolean;
   is_published: boolean;
   sort_order: number;
+  is_deleted: boolean;
+  deleted_at: string | null;
+  delete_reason: string | null;
 };
 
 /*
@@ -326,6 +339,16 @@ export default async function AdminLessonEditPage({
 
   const { supabase } = await requireAdmin();
 
+  /*
+    是否是老板（super_admin）。
+
+    只有老板能在回收站里“彻底删除”资料。
+    这里只是用来决定要不要把按钮显示出来，
+    真正的安全边界仍然是 SQL 24 里 is_owner_account() 那条 DELETE policy。
+  */
+  const { data: viewerRoleData } = await supabase.rpc("current_profile_role");
+  const isOwner = viewerRoleData === "super_admin";
+
   /**
    * 1. 查询课程
    */
@@ -398,12 +421,13 @@ export default async function AdminLessonEditPage({
    * 原因：
    * 1. 已发布资料需要显示在“已发布资料”区，可以编辑和隐藏
    * 2. 已隐藏资料需要显示在“已隐藏资料”区，可以恢复
-   * 3. 这样“软隐藏”逻辑才完整
+   * 3. 回收站资料需要显示在“回收站”区，可以恢复或彻底删除
+   * 4. 这样“软隐藏 / 软删除”逻辑才完整
    */
   const { data: lessonResourceData } = await supabase
     .from("lesson_resources")
     .select(
-      "id, lesson_id, title, description, resource_type, resource_url, is_required, is_published, sort_order"
+      "id, lesson_id, title, description, resource_type, resource_url, resource_object_key, original_file_name, is_required, is_published, sort_order, is_deleted, deleted_at, delete_reason"
     )
     .eq("lesson_id", lesson.id)
     .order("is_published", { ascending: false })
@@ -417,16 +441,30 @@ export default async function AdminLessonEditPage({
     这些资料会显示在学生端。
     管理员可以继续编辑，也可以点击“隐藏资料”。
   */
-  const resources = allResources.filter((resource) => resource.is_published);
+  const resources = allResources.filter(
+    (resource) => resource.is_published && !resource.is_deleted
+  );
 
   /*
     已隐藏资料
 
     这些资料不会显示在学生端。
     管理员可以在这里点击“恢复资料”，让它重新发布。
+
+    注意：必须排除 is_deleted，否则回收站资料会混进这里显示。
   */
   const hiddenResources = allResources.filter(
-    (resource) => !resource.is_published
+    (resource) => !resource.is_published && !resource.is_deleted
+  );
+
+  /*
+    回收站资料
+
+    只有这里能看到 is_deleted = true 的资料。
+    可以恢复到“已隐藏资料”，或者由老板彻底删除。
+  */
+  const recycleBinResources = allResources.filter(
+    (resource) => resource.is_deleted
   );
 
   const backToCourseHref = `/dashboard/admin/courses/${course.id}`;
@@ -526,7 +564,7 @@ export default async function AdminLessonEditPage({
                 )}
 
                 <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
-                  资料 {resources.length} / 隐藏 {hiddenResources.length}
+                  资料 {resources.length} / 隐藏 {hiddenResources.length} / 回收站 {recycleBinResources.length}
                 </span>
 
                 <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-600">
@@ -968,7 +1006,7 @@ export default async function AdminLessonEditPage({
 
           原因：
           1. 保存课时只更新 lessons 表
-          2. 新增 / 编辑 / 隐藏 / 恢复资料只操作 lesson_resources 表
+          2. 新增 / 编辑 / 隐藏 / 恢复 / 删除资料只操作 lesson_resources 表
           3. 两者分开后，资料表单的 required 校验不会影响“保存课时”
 
           视觉上它仍然属于课时编辑页的一部分，
@@ -1001,12 +1039,12 @@ export default async function AdminLessonEditPage({
                     </h4>
 
                     <span className="rounded-full border px-2.5 py-1 text-xs font-semibold app-muted-text">
-                      已发布 {resources.length} / 已隐藏 {hiddenResources.length}
+                      已发布 {resources.length} / 已隐藏 {hiddenResources.length} / 回收站 {recycleBinResources.length}
                     </span>
                   </div>
 
                   <p className="mt-1 text-xs leading-5 app-muted-text">
-                    为当前课时添加、修改、隐藏或恢复学习资料。
+                    为当前课时添加、修改、隐藏、删除或恢复学习资料。
                   </p>
                 </div>
               </div>
@@ -1064,33 +1102,7 @@ export default async function AdminLessonEditPage({
                         />
                       </label>
 
-                      <label className="block">
-                        <span className="text-xs font-bold app-muted-text">
-                          资料类型
-                        </span>
-
-                        <select
-                          name="resource_type"
-                          defaultValue="link"
-                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                        >
-                          <option value="link">链接</option>
-                          <option value="file">文件</option>
-                          <option value="template">模板</option>
-                          <option value="checklist">清单</option>
-                          <option value="reference">参考资料</option>
-                        </select>
-                      </label>
-
-                      <label className="block md:col-span-2">
-                        <span className="text-xs font-bold app-muted-text">资料 URL</span>
-
-                        <input
-                          name="resource_url"
-                          placeholder="https://..."
-                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                        />
-                      </label>
+                      <ResourceFileOrLinkField lessonId={lesson.id} />
 
                       <label className="block md:col-span-2">
                         <span className="text-xs font-bold app-muted-text">资料说明</span>
@@ -1146,7 +1158,9 @@ export default async function AdminLessonEditPage({
               1. 放在新增资料右侧
               2. 已发布资料在上面
               3. 已隐藏资料在已发布资料下面
-              4. 两个列表都通过弹窗打开，避免页面变长
+              4. 回收站在已隐藏资料下面
+              5. 危险操作（彻底删除）在最下面，只有老板能看到
+              6. 所有列表都通过弹窗打开，避免页面变长
             */}
                   <div className="space-y-4">
                     {/* 已发布资料弹窗 */}
@@ -1322,8 +1336,8 @@ export default async function AdminLessonEditPage({
 
                                     <div className="flex flex-wrap justify-end gap-2">
                                       {resource.resource_url && (
-                                        <a
-                                          href={resource.resource_url}
+                                        
+                                       <a   href={resource.resource_url}
                                           target="_blank"
                                           rel="noreferrer"
                                           className="inline-flex items-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition hover:opacity-80"
@@ -1333,6 +1347,19 @@ export default async function AdminLessonEditPage({
                                           }}
                                         >
                                           打开资料
+                                        </a>
+                                      )}
+
+                                      {resource.resource_object_key && (
+                                        
+                                        <a href={`/api/lesson-resources/${resource.id}/download`}
+                                          className="inline-flex items-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition hover:opacity-80"
+                                          style={{
+                                            borderColor: "var(--app-border)",
+                                            color: "var(--app-accent)",
+                                          }}
+                                        >
+                                          下载文件（{resource.original_file_name}）
                                         </a>
                                       )}
 
@@ -1400,18 +1427,14 @@ export default async function AdminLessonEditPage({
                             className="mt-1 text-xs leading-5"
                             style={{ color: "var(--app-muted)" }}
                           >
-                            这些资料不会显示在学生端。点击按钮后可以在弹窗中恢复。
+                            这些资料不会显示在学生端。点击按钮后可以在弹窗中恢复或删除（进回收站）。
                           </p>
                         </div>
-
-
-
 
                         <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
                           {hiddenResources.length} 个
                         </span>
                       </div>
-
 
                       <Dialog>
                         <DialogTrigger
@@ -1429,7 +1452,7 @@ export default async function AdminLessonEditPage({
                           <DialogHeader>
                             <DialogTitle>已隐藏资料</DialogTitle>
                             <DialogDescription>
-                              已隐藏资料不会显示在学生端。可以在这里恢复需要重新发布的资料。
+                              已隐藏资料不会显示在学生端。可以在这里恢复需要重新发布的资料，或者删除进回收站。
                             </DialogDescription>
                           </DialogHeader>
 
@@ -1482,8 +1505,8 @@ export default async function AdminLessonEditPage({
                                       )}
 
                                       {resource.resource_url ? (
-                                        <a
-                                          href={resource.resource_url}
+                                        
+                                       <a   href={resource.resource_url}
                                           target="_blank"
                                           rel="noreferrer"
                                           className="mt-2 inline-flex text-xs font-semibold underline"
@@ -1498,24 +1521,65 @@ export default async function AdminLessonEditPage({
                                       )}
                                     </div>
 
-                                    <form
-                                      action={restoreLessonResourceAction.bind(null, resource.id)}
-                                      className="flex justify-end"
-                                    >
-                                      <input type="hidden" name="course_id" value={course.id} />
-
-                                      <button
-                                        type="submit"
-                                        className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
-                                        style={{
-                                          backgroundColor: "var(--app-accent)",
-                                          borderColor: "var(--app-accent)",
-                                        }}
+                                    <div className="flex flex-col gap-2">
+                                      <form
+                                        action={restoreLessonResourceAction.bind(null, resource.id)}
+                                        className="flex justify-end"
                                       >
-                                        <RotateCcw size={15} />
-                                        恢复资料
-                                      </button>
-                                    </form>
+                                        <input type="hidden" name="course_id" value={course.id} />
+
+                                        <button
+                                          type="submit"
+                                          className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+                                          style={{
+                                            backgroundColor: "var(--app-accent)",
+                                            borderColor: "var(--app-accent)",
+                                          }}
+                                        >
+                                          <RotateCcw size={15} />
+                                          恢复资料
+                                        </button>
+                                      </form>
+
+                                      {/*
+                                        删除资料（进回收站）
+                                        单独 form，避免 required 的删除原因影响“恢复资料”
+                                      */}
+                                      <form
+                                        action={moveLessonResourceToRecycleBinAction.bind(null, resource.id)}
+                                        className="flex flex-col gap-2 rounded-xl border border-dashed p-3"
+                                        style={{ borderColor: "rgba(239, 68, 68, 0.35)" }}
+                                      >
+                                        <input type="hidden" name="course_id" value={course.id} />
+                                        <input type="hidden" name="lesson_id" value={lesson.id} />
+
+                                        <label className="block">
+                                          <span className="text-xs font-bold app-muted-text">
+                                            删除原因（必填）
+                                          </span>
+
+                                          <textarea
+                                            name="delete_reason"
+                                            required
+                                            rows={2}
+                                            placeholder="例如：内容已过期，替换为新版资料"
+                                            className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                          />
+                                        </label>
+
+                                        <button
+                                          type="submit"
+                                          className="inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2 text-xs font-semibold transition hover:opacity-80"
+                                          style={{
+                                            borderColor: "rgba(239, 68, 68, 0.45)",
+                                            color: "rgb(185, 28, 28)",
+                                          }}
+                                        >
+                                          <Trash2 size={14} />
+                                          删除资料（进回收站）
+                                        </button>
+                                      </form>
+                                    </div>
                                   </div>
                                 </div>
                               ))}
@@ -1530,128 +1594,255 @@ export default async function AdminLessonEditPage({
                         </DialogContent>
                       </Dialog>
                     </div>
-                    {/* 
-  危险操作
 
-  这里专门处理永久删除。
-  不放在“已隐藏资料”弹窗里，是为了防止老师误点。
+                    {/* 回收站弹窗 */}
+                    <div className="app-card rounded-2xl border p-4">
+                      <div className="flex items-start justify-between gap-3">
+                        <div>
+                          <h5
+                            className="text-sm font-black"
+                            style={{ color: "var(--app-text)" }}
+                          >
+                            回收站
+                          </h5>
 
-  删除规则：
-  1. 只能选择已隐藏资料
-  2. 必须输入 delete
-  3. 删除后无法恢复
-*/}
-                    <div
-                      className="rounded-2xl border p-4"
-                      style={{
-                        borderColor: "rgba(239, 68, 68, 0.35)",
-                        backgroundColor: "rgba(239, 68, 68, 0.06)",
-                      }}
-                    >
-                      <div>
-                        <p
-                          className="text-sm font-black"
-                          style={{ color: "rgb(185, 28, 28)" }}
-                        >
-                          危险操作
-                        </p>
-
-                        <p className="mt-1 text-xs leading-5 app-muted-text">
-                          永久删除只针对已隐藏资料。删除后无法恢复。
-                        </p>
-                      </div>
-
-                      <div className="mt-4">
-                        {hiddenResources.length > 0 ? (
-                          <Dialog>
-                            <DialogTrigger
-                              type="button"
-                              className="inline-flex w-full items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition hover:opacity-80"
-                              style={{
-                                borderColor: "rgba(239, 68, 68, 0.45)",
-                                color: "rgb(185, 28, 28)",
-                              }}
-                            >
-                              打开删除管理
-                            </DialogTrigger>
-
-                            <DialogContent className="max-w-xl">
-                              <DialogHeader>
-                                <DialogTitle>永久删除资料</DialogTitle>
-
-                                <DialogDescription>
-                                  请选择一条已隐藏资料，并输入 delete 后永久删除。这个操作无法恢复。
-                                </DialogDescription>
-                              </DialogHeader>
-
-                              <form action={deleteLessonResourceAction} className="space-y-4">
-                                <input type="hidden" name="course_id" value={course.id} />
-                                <input type="hidden" name="lesson_id" value={lesson.id} />
-
-                                <label className="block">
-                                  <span className="text-xs font-bold app-muted-text">
-                                    选择要永久删除的已隐藏资料
-                                  </span>
-
-                                  <select
-                                    name="resource_id"
-                                    required
-                                    className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                                  >
-                                    <option value="">请选择资料</option>
-
-                                    {hiddenResources.map((resource) => (
-                                      <option key={resource.id} value={resource.id}>
-                                        {resource.title}
-                                      </option>
-                                    ))}
-                                  </select>
-                                </label>
-
-                                <label className="block">
-                                  <span className="text-xs font-bold app-muted-text">
-                                    确认文字
-                                  </span>
-
-                                  <input
-                                    name="delete_confirm"
-                                    required
-                                    pattern="[dD][eE][lL][eE][tT][eE]"
-                                    placeholder="请输入 delete"
-                                    title="请输入 delete 才能永久删除"
-                                    className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                                  />
-                                </label>
-
-                                <div
-                                  className="rounded-xl border px-3 py-2 text-xs leading-5"
-                                  style={{
-                                    borderColor: "rgba(239, 68, 68, 0.35)",
-                                    color: "rgb(185, 28, 28)",
-                                  }}
-                                >
-                                  注意：这里会永久删除数据库中的资料记录。删除后不能通过“恢复资料”找回。
-                                </div>
-
-                                <div className="flex justify-end">
-                                  <button
-                                    type="submit"
-                                    className="inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-                                    style={{ backgroundColor: "rgb(220, 38, 38)" }}
-                                  >
-                                    确认永久删除
-                                  </button>
-                                </div>
-                              </form>
-                            </DialogContent>
-                          </Dialog>
-                        ) : (
-                          <p className="rounded-xl border border-dashed px-3 py-2 text-center text-xs app-muted-text">
-                            当前没有可永久删除的已隐藏资料
+                          <p
+                            className="mt-1 text-xs leading-5"
+                            style={{ color: "var(--app-muted)" }}
+                          >
+                            已删除的资料保留在这里，可以恢复到“已隐藏资料”。
                           </p>
-                        )}
+                        </div>
+
+                        <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
+                          {recycleBinResources.length} 个
+                        </span>
                       </div>
+
+                      <Dialog>
+                        <DialogTrigger
+                          type="button"
+                          className="mt-4 inline-flex w-full items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition hover:opacity-80"
+                          style={{
+                            borderColor: "var(--app-border)",
+                            color: "var(--app-accent)",
+                          }}
+                        >
+                          <Archive size={15} className="mr-1.5" />
+                          查看回收站
+                        </DialogTrigger>
+
+                        <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[1000px]">
+                          <DialogHeader>
+                            <DialogTitle>回收站</DialogTitle>
+                            <DialogDescription>
+                              这些资料已被删除，可以恢复到“已隐藏资料”，恢复后需要再手动点“恢复资料”才会重新发布。
+                            </DialogDescription>
+                          </DialogHeader>
+
+                          {recycleBinResources.length > 0 ? (
+                            <div className="grid gap-4 lg:grid-cols-2">
+                              {recycleBinResources.map((resource) => (
+                                <div
+                                  key={resource.id}
+                                  className="app-soft-card rounded-2xl border border-dashed p-4"
+                                >
+                                  <div className="mb-2 flex flex-wrap gap-2">
+                                    <span className="rounded-full border px-3 py-1 text-xs font-semibold app-muted-text">
+                                      {resourceTypeLabelMap[resource.resource_type] ?? "资料"}
+                                    </span>
+
+                                    <span className="rounded-full border px-3 py-1 text-xs font-semibold text-red-600">
+                                      已删除
+                                    </span>
+                                  </div>
+
+                                  <p
+                                    className="font-bold"
+                                    style={{ color: "var(--app-text)" }}
+                                  >
+                                    {resource.title}
+                                  </p>
+
+                                  {resource.delete_reason && (
+                                    <p className="mt-1 text-xs leading-5 app-muted-text">
+                                      删除原因：{resource.delete_reason}
+                                    </p>
+                                  )}
+
+                                  {resource.deleted_at && (
+                                    <p className="mt-1 text-xs app-muted-text">
+                                      删除时间：
+                                      {new Date(resource.deleted_at).toLocaleString("zh-CN", {
+                                        timeZone: "Asia/Shanghai",
+                                      })}
+                                    </p>
+                                  )}
+
+                                  <form
+                                    action={restoreLessonResourceFromRecycleBinAction.bind(
+                                      null,
+                                      resource.id
+                                    )}
+                                    className="mt-3 flex justify-end"
+                                  >
+                                    <input type="hidden" name="course_id" value={course.id} />
+                                    <input type="hidden" name="lesson_id" value={lesson.id} />
+
+                                    <button
+                                      type="submit"
+                                      className="inline-flex items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+                                      style={{
+                                        backgroundColor: "var(--app-accent)",
+                                        borderColor: "var(--app-accent)",
+                                      }}
+                                    >
+                                      <RotateCcw size={15} />
+                                      恢复资料
+                                    </button>
+                                  </form>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="app-soft-card rounded-2xl border border-dashed p-5 text-center">
+                              <p className="text-sm font-semibold app-muted-text">
+                                回收站是空的
+                              </p>
+                            </div>
+                          )}
+                        </DialogContent>
+                      </Dialog>
                     </div>
+
+                    {/*
+                      危险操作
+
+                      这里专门处理彻底删除。
+                      只有老板（super_admin）能看到，且只能对“回收站”里的资料操作。
+
+                      删除规则：
+                      1. 只能选择回收站里的资料
+                      2. 必须输入 delete
+                      3. 删除后无法恢复
+                    */}
+                    {isOwner && (
+                      <div
+                        className="rounded-2xl border p-4"
+                        style={{
+                          borderColor: "rgba(239, 68, 68, 0.35)",
+                          backgroundColor: "rgba(239, 68, 68, 0.06)",
+                        }}
+                      >
+                        <div>
+                          <p
+                            className="text-sm font-black"
+                            style={{ color: "rgb(185, 28, 28)" }}
+                          >
+                            危险操作
+                          </p>
+
+                          <p className="mt-1 text-xs leading-5 app-muted-text">
+                            彻底删除只针对回收站里的资料，只有老板能操作，删除后无法恢复。
+                          </p>
+                        </div>
+
+                        <div className="mt-4">
+                          {recycleBinResources.length > 0 ? (
+                            <Dialog>
+                              <DialogTrigger
+                                type="button"
+                                className="inline-flex w-full items-center justify-center rounded-xl border px-4 py-2.5 text-sm font-semibold transition hover:opacity-80"
+                                style={{
+                                  borderColor: "rgba(239, 68, 68, 0.45)",
+                                  color: "rgb(185, 28, 28)",
+                                }}
+                              >
+                                <Trash2 size={15} className="mr-1.5" />
+                                打开删除管理
+                              </DialogTrigger>
+
+                              <DialogContent className="max-w-xl">
+                                <DialogHeader>
+                                  <DialogTitle>彻底删除资料</DialogTitle>
+
+                                  <DialogDescription>
+                                    请选择回收站里的一条资料，并输入 delete 后彻底删除。这个操作无法恢复。
+                                  </DialogDescription>
+                                </DialogHeader>
+
+                                <form
+                                  action={permanentlyDeleteLessonResourceAction}
+                                  className="space-y-4"
+                                >
+                                  <input type="hidden" name="course_id" value={course.id} />
+                                  <input type="hidden" name="lesson_id" value={lesson.id} />
+
+                                  <label className="block">
+                                    <span className="text-xs font-bold app-muted-text">
+                                      选择要彻底删除的回收站资料
+                                    </span>
+
+                                    <select
+                                      name="resource_id"
+                                      required
+                                      className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                    >
+                                      <option value="">请选择资料</option>
+
+                                      {recycleBinResources.map((resource) => (
+                                        <option key={resource.id} value={resource.id}>
+                                          {resource.title}
+                                        </option>
+                                      ))}
+                                    </select>
+                                  </label>
+
+                                  <label className="block">
+                                    <span className="text-xs font-bold app-muted-text">
+                                      确认文字
+                                    </span>
+
+                                    <input
+                                      name="delete_confirm"
+                                      required
+                                      pattern="[dD][eE][lL][eE][tT][eE]"
+                                      placeholder="请输入 delete"
+                                      title="请输入 delete 才能彻底删除"
+                                      className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
+                                    />
+                                  </label>
+
+                                  <div
+                                    className="rounded-xl border px-3 py-2 text-xs leading-5"
+                                    style={{
+                                      borderColor: "rgba(239, 68, 68, 0.35)",
+                                      color: "rgb(185, 28, 28)",
+                                    }}
+                                  >
+                                    注意：这里会永久删除数据库中的资料记录。删除后不能通过“恢复资料”找回。
+                                  </div>
+
+                                  <div className="flex justify-end">
+                                    <button
+                                      type="submit"
+                                      className="inline-flex items-center rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
+                                      style={{ backgroundColor: "rgb(220, 38, 38)" }}
+                                    >
+                                      确认彻底删除
+                                    </button>
+                                  </div>
+                                </form>
+                              </DialogContent>
+                            </Dialog>
+                          ) : (
+                            <p className="rounded-xl border border-dashed px-3 py-2 text-center text-xs app-muted-text">
+                              回收站是空的，没有可彻底删除的资料
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

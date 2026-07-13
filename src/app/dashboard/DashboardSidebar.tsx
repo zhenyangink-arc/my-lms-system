@@ -28,7 +28,12 @@ type SidebarItem = {
   href: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   adminOnly?: boolean;
+  // 只有老板 / CEO 能看到，比 adminOnly 更严格
+  // 目前只有"账号管理"这一项用到
+  executiveOnly?: boolean;
 };
+
+
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -72,6 +77,13 @@ const sidebarItems: SidebarItem[] = [
     icon: Settings,
     adminOnly: true,
   },
+  {
+    label: "账号管理",
+    href: "/dashboard/admin/accounts",
+    icon: ShieldCheck,
+    adminOnly: true,
+    executiveOnly: true,
+  },
 ];
 
 function isAdminRole(role: string) {
@@ -85,6 +97,19 @@ function isAdminRole(role: string) {
     teacher 和 student 不显示管理端菜单。
   */
   return role === "admin" || role === "ceo" || role === "super_admin";
+}
+
+/*
+  账号管理入口专用判断，比 isAdminRole 更严格。
+
+  isAdminRole  → admin / ceo / super_admin 都能看到"管理端"菜单大类
+  isExecutiveRole → 只有 ceo / super_admin 能看到"账号管理"这一条子菜单
+
+  管理员 admin 不能看到账号管理入口，
+  因为账号管理涉及角色和状态修改，权限更敏感。
+*/
+function isExecutiveRole(role: string) {
+  return role === "ceo" || role === "super_admin";
 }
 
 function isActivePath(pathname: string, href: string) {
@@ -123,14 +148,20 @@ export function DashboardSidebar({
   const pathname = usePathname();
 
   const isAdmin = isAdminRole(userRole);
+  const isExecutive = isExecutiveRole(userRole);
 
   const visibleItems = sidebarItems.filter((item) => {
+    if (item.executiveOnly) {
+      return isExecutive;
+    }
+
     if (item.adminOnly) {
       return isAdmin;
     }
 
     return true;
   });
+
 
   return (
     <aside className="app-sidebar hidden w-64 shrink-0 border-r md:flex md:flex-col">
@@ -161,8 +192,8 @@ export function DashboardSidebar({
               key={item.href}
               href={item.href}
               className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${active
-                  ? "bg-gray-900 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                ? "bg-gray-900 text-white shadow-sm"
+                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }`}
             >
               <Icon
@@ -174,13 +205,14 @@ export function DashboardSidebar({
               {item.adminOnly && (
                 <span
                   className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold ${active
-                      ? "bg-white/15 text-white"
-                      : "bg-orange-50 text-orange-600"
+                    ? "bg-white/15 text-white"
+                    : "bg-orange-50 text-orange-600"
                     }`}
                 >
-                  ADMIN
+                  {item.executiveOnly ? "EXEC" : "ADMIN"}
                 </span>
               )}
+
             </Link>
           );
         })}
