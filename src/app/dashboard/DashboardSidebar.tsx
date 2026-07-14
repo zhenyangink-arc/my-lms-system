@@ -1,6 +1,7 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
+import type { ComponentType, FocusEvent } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -8,8 +9,6 @@ import {
   BarChart3,
   BookOpen,
   Building2,
-  ChevronLeft,
-  ChevronRight,
   ClipboardList,
   Cog,
   FileText,
@@ -17,11 +16,13 @@ import {
   History,
   LayoutDashboard,
   Library,
+  Landmark,
   Megaphone,
   MessageSquare,
   Settings,
   ShieldCheck,
   UserCircle,
+  Users,
 } from "lucide-react";
 
 import { LogoutButton } from "./LogoutButton";
@@ -36,185 +37,89 @@ type DashboardSidebarProps = {
 type SidebarItem = {
   label: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
-  adminOnly?: boolean;
+  icon: ComponentType<{ size?: number; className?: string }>;
   executiveOnly?: boolean;
 };
 
-/*
-  侧边栏收缩状态的本地存储 key。
+type SidebarGroup = {
+  label: string;
+  items: SidebarItem[];
+  adminOnly?: boolean;
+};
 
-  为什么用 localStorage 而不是 cookie？
-  这个状态只影响当前用户在当前浏览器上的展示偏好，
-  不需要服务器端读取，localStorage 足够简单直接。
-*/
-const SIDEBAR_COLLAPSED_STORAGE_KEY = "puffy-sidebar-collapsed";
-const SIDEBAR_COLLAPSED_CHANGE_EVENT = "puffy-sidebar-collapsed-change";
-
-function subscribeToCollapsedState(onStoreChange: () => void) {
-  window.addEventListener("storage", onStoreChange);
-  window.addEventListener(SIDEBAR_COLLAPSED_CHANGE_EVENT, onStoreChange);
-
-  return () => {
-    window.removeEventListener("storage", onStoreChange);
-    window.removeEventListener(SIDEBAR_COLLAPSED_CHANGE_EVENT, onStoreChange);
-  };
-}
-
-function getCollapsedSnapshot() {
-  const stored = window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
-  return stored === null ? true : stored === "true";
-}
-
-function getCollapsedServerSnapshot() {
-  return true;
-}
-
-const sidebarItems: SidebarItem[] = [
+const navigationGroups: SidebarGroup[] = [
   {
-    label: "学生控制台",
-    href: "/dashboard",
-    icon: LayoutDashboard,
+    label: "学习成长",
+    items: [
+      { label: "成长总览", href: "/dashboard", icon: LayoutDashboard },
+      { label: "我的课程", href: "/dashboard/courses", icon: BookOpen },
+      { label: "学习进度", href: "/dashboard/progress", icon: BarChart3 },
+      { label: "作业与考试", href: "/dashboard/assignments", icon: ClipboardList },
+      { label: "会话练习", href: "/dashboard/conversation-practice", icon: MessageSquare },
+      { label: "成绩管理", href: "/dashboard/grades", icon: Award },
+      { label: "学习记录", href: "/dashboard/records", icon: History },
+      { label: "资料库", href: "/dashboard/library", icon: Library },
+    ],
   },
   {
-    label: "我的课程",
-    href: "/dashboard/courses",
-    icon: BookOpen,
+    label: "留学准备",
+    items: [
+      { label: "目标大学", href: "/dashboard/universities", icon: Building2 },
+      { label: "申请材料", href: "/dashboard/documents", icon: FileText },
+      { label: "签证准备", href: "/dashboard/visa", icon: ShieldCheck },
+    ],
   },
   {
-    label: "学习进度",
-    href: "/dashboard/progress",
-    icon: BarChart3,
+    label: "消息与服务",
+    items: [
+      { label: "通知公告", href: "/dashboard/announcements", icon: Megaphone },
+      { label: "帮助中心", href: "/dashboard/help", icon: HelpCircle },
+      { label: "个人资料", href: "/dashboard/profile", icon: UserCircle },
+      { label: "设置", href: "/dashboard/settings", icon: Cog },
+    ],
   },
   {
-    label: "目标大学",
-    href: "/dashboard/universities",
-    icon: Building2,
-  },
-  {
-    label: "申请材料",
-    href: "/dashboard/documents",
-    icon: FileText,
-  },
-  {
-    label: "签证准备",
-    href: "/dashboard/visa",
-    icon: ShieldCheck,
-  },
-  {
-    label: "个人资料",
-    href: "/dashboard/profile",
-    icon: UserCircle,
-  },
-  {
-    label: "作业与考试",
-    href: "/dashboard/assignments",
-    icon: ClipboardList,
-  },
-  {
-    label: "会话练习",
-    href: "/dashboard/conversation-practice",
-    icon: MessageSquare,
-  },
-  {
-    label: "成绩管理",
-    href: "/dashboard/grades",
-    icon: Award,
-  },
-  {
-    label: "学习记录",
-    href: "/dashboard/records",
-    icon: History,
-  },
-  {
-    label: "资料库",
-    href: "/dashboard/library",
-    icon: Library,
-  },
-  {
-    label: "通知公告",
-    href: "/dashboard/announcements",
-    icon: Megaphone,
-  },
-  {
-    label: "帮助中心",
-    href: "/dashboard/help",
-    icon: HelpCircle,
-  },
-  {
-    label: "设置",
-    href: "/dashboard/settings",
-    icon: Cog,
-  },
-
-
-
-  {
-    label: "课程管理",
-    href: "/dashboard/admin/courses",
-    icon: Settings,
+    label: "管理中心",
     adminOnly: true,
-  },
-  {
-    label: "账号管理",
-    href: "/dashboard/admin/accounts",
-    icon: ShieldCheck,
-    adminOnly: true,
-    executiveOnly: true,
+    items: [
+      { label: "课程管理", href: "/dashboard/admin/courses", icon: Settings },
+      { label: "大学管理", href: "/dashboard/admin/universities", icon: Landmark },
+      {
+        label: "账号管理",
+        href: "/dashboard/admin/accounts",
+        icon: Users,
+        executiveOnly: true,
+      },
+    ],
   },
 ];
 
+const mobileItems: SidebarItem[] = [
+  { label: "总览", href: "/dashboard", icon: LayoutDashboard },
+  { label: "课程", href: "/dashboard/courses", icon: BookOpen },
+  { label: "进度", href: "/dashboard/progress", icon: BarChart3 },
+  { label: "大学", href: "/dashboard/universities", icon: Building2 },
+  { label: "我的", href: "/dashboard/profile", icon: UserCircle },
+];
+
 function isAdminRole(role: string) {
-  /*
-    可以看到管理端菜单的角色：
-
-    super_admin = 老板 / Owner
-    ceo         = CEO
-    admin       = 管理员
-
-    teacher 和 student 不显示管理端菜单。
-  */
   return role === "admin" || role === "ceo" || role === "super_admin";
 }
 
-/*
-  账号管理入口专用判断，比 isAdminRole 更严格。
-
-  isAdminRole  → admin / ceo / super_admin 都能看到"管理端"菜单大类
-  isExecutiveRole → 只有 ceo / super_admin 能看到"账号管理"这一条子菜单
-
-  管理员 admin 不能看到账号管理入口，
-  因为账号管理涉及角色和状态修改，权限更敏感。
-*/
 function isExecutiveRole(role: string) {
   return role === "ceo" || role === "super_admin";
 }
 
 function isActivePath(pathname: string, href: string) {
-  if (href === "/dashboard") {
-    return pathname === "/dashboard";
-  }
-
+  if (href === "/dashboard") return pathname === href;
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 
 function getRoleLabel(role: string) {
-  if (role === "super_admin") {
-    return "老板";
-  }
-
-  if (role === "ceo") {
-    return "CEO";
-  }
-
-  if (role === "admin") {
-    return "管理员";
-  }
-
-  if (role === "teacher") {
-    return "教师";
-  }
-
+  if (role === "super_admin") return "负责人";
+  if (role === "ceo") return "运营负责人";
+  if (role === "admin") return "管理员";
+  if (role === "teacher") return "教师";
   return "学生";
 }
 
@@ -224,70 +129,130 @@ export function DashboardSidebar({
   userRole,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
-
-  /*
-    收缩状态。
-
-    默认值 true（收缩），跟产品需求一致：
-    "页面刚打开时导航栏默认收缩"。
-
-    这样设计还有一个好处：服务器端渲染时不知道 localStorage 里存的什么，
-    只能先按某个默认值渲染。既然默认值本来就是"收缩"，
-    大部分用户（没有主动展开过的新用户）不会看到任何跳动。
-    只有之前手动展开过的用户，会在页面加载完 JS 后有一次很短的展开过渡。
-  */
-  const collapsed = useSyncExternalStore(
-    subscribeToCollapsedState,
-    getCollapsedSnapshot,
-    getCollapsedServerSnapshot
-  );
-
-  function toggleCollapsed() {
-    window.localStorage.setItem(
-      SIDEBAR_COLLAPSED_STORAGE_KEY,
-      String(!collapsed)
-    );
-    window.dispatchEvent(new Event(SIDEBAR_COLLAPSED_CHANGE_EVENT));
-  }
+  const [hovered, setHovered] = useState(false);
+  const collapsed = !hovered;
 
   const isAdmin = isAdminRole(userRole);
   const isExecutive = isExecutiveRole(userRole);
 
-  const visibleItems = sidebarItems.filter((item) => {
-    if (item.executiveOnly) {
-      return isExecutive;
-    }
+  const visibleGroups = navigationGroups
+    .filter((group) => !group.adminOnly || isAdmin)
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => !item.executiveOnly || isExecutive),
+    }));
 
-    if (item.adminOnly) {
-      return isAdmin;
+  function handleSidebarBlur(event: FocusEvent<HTMLElement>) {
+    if (!event.currentTarget.contains(event.relatedTarget)) {
+      setHovered(false);
     }
-
-    return true;
-  });
+  }
 
   return (
-    <aside
-      className={`app-sidebar relative hidden shrink-0 border-r transition-[width] duration-200 ease-in-out md:flex md:flex-col ${collapsed ? "md:w-20" : "md:w-64"
+    <>
+      <aside
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocus={() => setHovered(true)}
+        onBlur={handleSidebarBlur}
+        className={`app-sidebar relative hidden shrink-0 border-r transition-[width] duration-200 md:sticky md:top-[68px] md:flex md:h-[calc(100vh-68px)] md:self-start md:flex-col ${
+          collapsed ? "md:w-[84px]" : "md:w-[264px]"
         }`}
-    >
-      {/*
-        收缩/展开切换按钮
-
-        位置固定：浮在侧边栏右边缘、垂直居中，不管收缩还是展开状态，
-        按钮本身位置不变，只是图标方向和 title 提示跟着状态切换。
-        这样用户不用去找按钮在哪，养成"点这个固定位置"的肌肉记忆。
-      */}
-      <button
-        type="button"
-        onClick={toggleCollapsed}
-        title={collapsed ? "展开导航栏" : "收起导航栏"}
-        className="absolute top-1/2 -right-3 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition hover:text-gray-700"
       >
-        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
-      </button>
+        {/* 桌面端导航随鼠标移入展开、移出收起，不再依赖手动收缩按钮。 */}
+        <nav className="flex-1 overflow-y-auto px-3 py-5" aria-label="控制台导航">
+          <div className="space-y-5">
+            {visibleGroups.map((group) => (
+              <div key={group.label}>
+                {!collapsed ? (
+                  <p className="mb-2 px-3 text-[11px] font-bold tracking-[0.18em] app-muted-text">
+                    {group.label}
+                  </p>
+                ) : (
+                  <div className="mx-3 mb-2 border-t app-divider" />
+                )}
 
-      <nav className="flex-1 space-y-1 px-3 py-4">
-        {visibleItems.map((item) => {
+                <div className="space-y-1">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActivePath(pathname, item.href);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        title={collapsed ? item.label : undefined}
+                        className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold transition ${
+                          collapsed ? "justify-center" : ""
+                        }`}
+                        style={
+                          active
+                            ? {
+                                color: "var(--app-accent-strong)",
+                                backgroundColor: "var(--app-accent-soft)",
+                                boxShadow: "inset 0 0 0 1px var(--app-accent)",
+                              }
+                            : { color: "var(--app-muted)" }
+                        }
+                      >
+                        <Icon
+                          size={18}
+                          className="shrink-0"
+                          aria-hidden="true"
+                        />
+                        {!collapsed && <span className="truncate">{item.label}</span>}
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
+          </div>
+        </nav>
+
+        <div className="border-t p-3 app-divider">
+          {!collapsed && (
+            <div className="mb-3">
+              <ThemeSwitcher />
+            </div>
+          )}
+
+          <Link
+            href="/dashboard/profile"
+            title={collapsed ? `${userName}（${getRoleLabel(userRole)}）` : undefined}
+            className={`app-soft-card mb-2 flex items-center rounded-2xl border p-2.5 transition hover:-translate-y-0.5 ${
+              collapsed ? "justify-center" : "gap-3"
+            }`}
+          >
+            <span
+              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white"
+              style={{ backgroundColor: "var(--app-secondary)" }}
+            >
+              {userName.trim().slice(0, 1) || "学"}
+            </span>
+            {!collapsed && (
+              <span className="min-w-0">
+                <span className="block truncate text-sm font-black">{userName}</span>
+                <span className="block truncate text-[11px] app-muted-text">{userEmail}</span>
+                <span className="mt-0.5 block text-[11px] font-bold" style={{ color: "var(--app-accent-strong)" }}>
+                  {getRoleLabel(userRole)}
+                </span>
+              </span>
+            )}
+          </Link>
+
+          <div className={collapsed ? "flex justify-center" : ""}>
+            <LogoutButton collapsed={collapsed} />
+          </div>
+        </div>
+      </aside>
+
+      {/* 移动端保留五个最高频入口，避免小屏设备完全失去导航。 */}
+      <nav
+        className="app-topbar fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border p-1.5 shadow-lg md:hidden"
+        aria-label="移动端控制台导航"
+      >
+        {mobileItems.map((item) => {
           const Icon = item.icon;
           const active = isActivePath(pathname, item.href);
 
@@ -295,79 +260,22 @@ export function DashboardSidebar({
             <Link
               key={item.href}
               href={item.href}
-              title={collapsed ? item.label : undefined}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${collapsed ? "justify-center" : ""
-                } ${active
-                  ? "bg-gray-900 text-white shadow-sm"
-                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
-                }`}
+              className="flex flex-col items-center gap-1 rounded-xl px-1 py-2 text-[10px] font-bold"
+              style={
+                active
+                  ? {
+                      color: "var(--app-accent-strong)",
+                      backgroundColor: "var(--app-accent-soft)",
+                    }
+                  : { color: "var(--app-muted)" }
+              }
             >
-              <Icon
-                size={18}
-                className={`shrink-0 ${active ? "text-white" : "text-gray-400"}`}
-              />
-
-              {!collapsed && (
-                <>
-                  <span className="truncate">{item.label}</span>
-
-                  {item.adminOnly && (
-                    <span
-                      className={`ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${active
-                          ? "bg-white/15 text-white"
-                          : "bg-orange-50 text-orange-600"
-                        }`}
-                    >
-                      {item.executiveOnly ? "EXEC" : "ADMIN"}
-                    </span>
-                  )}
-                </>
-              )}
+              <Icon size={17} aria-hidden="true" />
+              <span>{item.label}</span>
             </Link>
           );
         })}
       </nav>
-
-      <div className="border-t border-gray-100 p-4">
-        {!collapsed && (
-          <div className="mb-3">
-            <ThemeSwitcher />
-          </div>
-        )}
-
-        <div
-          className={`mb-3 rounded-2xl bg-gray-50 p-3 ${collapsed ? "flex justify-center" : ""
-            }`}
-          title={collapsed ? `${userName}（${getRoleLabel(userRole)}）` : undefined}
-        >
-          <div
-            className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""
-              }`}
-          >
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-gray-600 shadow-sm">
-              <UserCircle size={22} />
-            </div>
-
-            {!collapsed && (
-              <div className="min-w-0">
-                <p className="truncate text-sm font-bold text-gray-900">
-                  {userName}
-                </p>
-
-                <p className="truncate text-xs text-gray-500">{userEmail}</p>
-
-                <p className="mt-1 text-xs font-semibold text-orange-600">
-                  {getRoleLabel(userRole)}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className={collapsed ? "flex justify-center" : ""}>
-          <LogoutButton collapsed={collapsed} />
-        </div>
-      </div>
-    </aside>
+    </>
   );
 }

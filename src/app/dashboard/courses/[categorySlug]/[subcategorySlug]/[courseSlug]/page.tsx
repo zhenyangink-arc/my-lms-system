@@ -218,9 +218,14 @@ export default async function CourseDetailPage({
   const courseProgressPercent =
     totalLessons > 0 ? Math.round((completedCount / totalLessons) * 100) : 0;
 
-  const accentColor =
-    accentColorMap[subcategory.accent_color ?? "indigo"] ??
-    accentColorMap.indigo;
+  const isFocusCategory =
+    parentCategory.slug === "service" || parentCategory.slug === "korean";
+  const accentColor = isFocusCategory
+    ? parentCategory.slug === "service"
+      ? "var(--app-accent)"
+      : "var(--app-secondary)"
+    : accentColorMap[subcategory.accent_color ?? "indigo"] ??
+      accentColorMap.indigo;
 
   return (
     <>
@@ -229,7 +234,13 @@ export default async function CourseDetailPage({
         description={course.description || "查看课程介绍和课时学习进度。"}
       />
 
-      <div className="space-y-6 p-6">
+      <div
+        className={
+          isFocusCategory
+            ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
+            : "space-y-6 p-6"
+        }
+      >
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
@@ -260,7 +271,19 @@ export default async function CourseDetailPage({
         </div>
 
         {/* 课程信息 + 课程进度 */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section
+          className="app-card rounded-[30px] border p-6 shadow-sm"
+          style={
+            isFocusCategory
+              ? {
+                  background:
+                    parentCategory.slug === "service"
+                      ? "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start))"
+                      : "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end))",
+                }
+              : undefined
+          }
+        >
           <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
             <div className="flex gap-4">
               <div

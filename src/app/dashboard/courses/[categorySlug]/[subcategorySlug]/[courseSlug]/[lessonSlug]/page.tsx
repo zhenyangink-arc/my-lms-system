@@ -392,6 +392,9 @@ export default async function LessonDetailPage({
     const color =
         colorMap[subcategory.accent_color ?? "indigo"] ?? colorMap.indigo;
 
+    const isFocusCategory =
+        parentCategory.slug === "service" || parentCategory.slug === "korean";
+
     const supportTeacherStatus = resolveTeacherStatus(
         course.support_teacher_status
     );
@@ -422,7 +425,13 @@ export default async function LessonDetailPage({
                 description={lesson.description || "学习当前课时内容。"}
             />
 
-            <div className="space-y-6 p-6">
+            <div
+                className={
+                    isFocusCategory
+                        ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
+                        : "space-y-6 p-6"
+                }
+            >
                 {/* 返回路径 */}
                 <div className="flex flex-wrap items-center gap-3">
                     <Link

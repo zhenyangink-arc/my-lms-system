@@ -378,6 +378,109 @@ export default async function CoursesPage() {
                 const CategoryIcon =
                   categoryIconMap[category.slug] ?? BookOpen;
 
+                const isFocusCategory =
+                  category.slug === "service" || category.slug === "korean";
+
+                // 只为留学服务课和韩语课程启用新版布局，其他课程保持原样。
+                if (isFocusCategory) {
+                  const isServiceCourse = category.slug === "service";
+                  const accent = isServiceCourse
+                    ? "var(--app-accent)"
+                    : "var(--app-secondary)";
+                  const accentSoft = isServiceCourse
+                    ? "var(--app-accent-soft)"
+                    : "var(--app-secondary-soft)";
+
+                  return (
+                    <article
+                      key={category.id}
+                      className="app-card relative overflow-hidden rounded-[28px] border p-5 transition hover:-translate-y-1"
+                      style={{
+                        background: isServiceCourse
+                          ? "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-start))"
+                          : "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-end))",
+                      }}
+                    >
+                      <div
+                        className="absolute -right-10 -top-12 h-36 w-36 rounded-full opacity-60 blur-3xl"
+                        style={{ backgroundColor: accentSoft }}
+                      />
+                      <div className="relative flex h-full flex-col">
+                        <div className="flex items-start justify-between gap-4">
+                          <span
+                            className="flex h-14 w-14 items-center justify-center rounded-2xl"
+                            style={{ color: accent, backgroundColor: accentSoft }}
+                          >
+                            {isCompleted ? (
+                              <CheckCircle2 size={27} aria-hidden="true" />
+                            ) : (
+                              <CategoryIcon size={27} aria-hidden="true" />
+                            )}
+                          </span>
+                          <span
+                            className="rounded-full px-3 py-1.5 text-[11px] font-black"
+                            style={{ color: accent, backgroundColor: accentSoft }}
+                          >
+                            {isServiceCourse ? "留学规划主线" : "韩语成长主线"}
+                          </span>
+                        </div>
+
+                        <h3 className="mt-5 text-xl font-black tracking-tight">
+                          {category.title}
+                        </h3>
+                        <p className="mt-2 line-clamp-3 text-sm leading-6 app-muted-text">
+                          {category.description ||
+                            (isServiceCourse
+                              ? "从选校、材料到签证，按阶段推进韩国留学准备。"
+                              : "围绕听、说、读、写建立可持续的韩语成长路线。")}
+                        </p>
+
+                        <div className="mt-5 grid grid-cols-3 gap-2">
+                          {[
+                            ["分类", totalSubcategories],
+                            ["课程", totalCourses],
+                            ["课时", totalLessons],
+                          ].map(([label, value]) => (
+                            <div key={label} className="app-soft-card rounded-2xl border p-3 text-center">
+                              <p className="text-lg font-black">{value}</p>
+                              <p className="mt-0.5 text-[10px] font-bold app-muted-text">{label}</p>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="mt-5">
+                          <div className="flex items-center justify-between gap-3 text-xs">
+                            <span className="font-bold app-muted-text">{learningStatusLabel}</span>
+                            <strong style={{ color: accent }}>{progressPercent}%</strong>
+                          </div>
+                          <div className="mt-2 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                            <div
+                              className="h-full rounded-full"
+                              style={{
+                                width: `${progressPercent}%`,
+                                background: `linear-gradient(90deg, ${accent}, var(--app-success))`,
+                              }}
+                            />
+                          </div>
+                          <p className="mt-2 text-[11px] app-muted-text">
+                            已完成 {completedLessons} / {totalLessons} 个课时
+                          </p>
+                        </div>
+
+                        <Link
+                          href={`/dashboard/courses/${category.slug}`}
+                          className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-black text-white shadow-sm transition hover:opacity-90"
+                          style={{ backgroundColor: accent }}
+                        >
+                          <PlayCircle size={17} aria-hidden="true" />
+                          {buttonLabel}
+                          <ArrowRight size={15} aria-hidden="true" />
+                        </Link>
+                      </div>
+                    </article>
+                  );
+                }
+
                 return (
                   <article
                     key={category.id}

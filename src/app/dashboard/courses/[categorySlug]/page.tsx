@@ -2,12 +2,16 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
+  ArrowRight,
   BookOpen,
   CheckCircle2,
   Clock,
+  FileCheck2,
   FolderOpen,
+  Languages,
   PlayCircle,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -275,6 +279,183 @@ export default async function CategoryPage({
     totalParentLessons > 0
       ? Math.round((totalParentCompletedLessons / totalParentLessons) * 100)
       : 0;
+
+  const isFocusCategory =
+    parentCategory.slug === "service" || parentCategory.slug === "korean";
+
+  if (isFocusCategory) {
+    const isServiceCourse = parentCategory.slug === "service";
+    const FocusIcon = isServiceCourse ? FileCheck2 : Languages;
+    const accent = isServiceCourse
+      ? "var(--app-accent)"
+      : "var(--app-secondary)";
+    const accentSoft = isServiceCourse
+      ? "var(--app-accent-soft)"
+      : "var(--app-secondary-soft)";
+
+    return (
+      <>
+        <DashboardPageHeader
+          title={parentCategory.title}
+          description={
+            parentCategory.description ||
+            (isServiceCourse
+              ? "按选校、申请和签证阶段推进你的韩国留学计划。"
+              : "选择适合当前水平的韩语课程，持续积累学习成果。")
+          }
+        />
+
+        <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+          <Link
+            href="/dashboard/courses"
+            className="inline-flex items-center gap-2 text-sm font-bold app-muted-text transition hover:opacity-75"
+          >
+            <ArrowLeft size={16} aria-hidden="true" />
+            返回我的课程
+          </Link>
+
+          <section
+            className="app-card relative overflow-hidden rounded-[30px] border p-6 sm:p-8"
+            style={{
+              background: isServiceCourse
+                ? "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg) 58%, var(--app-accent-soft))"
+                : "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg) 58%, var(--app-secondary-soft))",
+            }}
+          >
+            <div className="grid items-center gap-8 lg:grid-cols-[1fr_320px]">
+              <div>
+                <span
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                  style={{ color: accent, backgroundColor: accentSoft }}
+                >
+                  <Sparkles size={14} aria-hidden="true" />
+                  {isServiceCourse ? "韩国留学规划路线" : "韩语能力成长路线"}
+                </span>
+                <div className="mt-5 flex items-start gap-4">
+                  <span
+                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px]"
+                    style={{ color: accent, backgroundColor: accentSoft }}
+                  >
+                    <FocusIcon size={30} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h2 className="text-2xl font-black tracking-tight sm:text-3xl">
+                      {isServiceCourse ? "一步一步完成留学准备" : "建立可持续的韩语学习节奏"}
+                    </h2>
+                    <p className="mt-2 max-w-2xl text-sm leading-7 app-muted-text">
+                      {isServiceCourse
+                        ? "从目标确认到材料、面试和签证，每个分类都是留学申请中的一个真实阶段。"
+                        : "根据课程分类选择当前最需要加强的能力，并用课时进度记录每一次成长。"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="app-card rounded-3xl border p-5">
+                <div className="flex items-end justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-bold app-muted-text">板块总进度</p>
+                    <p className="mt-1 text-3xl font-black">{parentProgressPercent}%</p>
+                  </div>
+                  <span className="text-xs font-bold app-muted-text">
+                    {totalParentCompletedLessons}/{totalParentLessons} 课时
+                  </span>
+                </div>
+                <div className="mt-4 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${parentProgressPercent}%`,
+                      background: `linear-gradient(90deg, ${accent}, var(--app-success))`,
+                    }}
+                  />
+                </div>
+                <div className="mt-5 grid grid-cols-2 gap-3">
+                  <div className="app-soft-card rounded-2xl border p-3 text-center">
+                    <p className="text-xl font-black">{subcategories.length}</p>
+                    <p className="text-[10px] font-bold app-muted-text">课程分类</p>
+                  </div>
+                  <div className="app-soft-card rounded-2xl border p-3 text-center">
+                    <p className="text-xl font-black">{courses.length}</p>
+                    <p className="text-[10px] font-bold app-muted-text">可学课程</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <div className="mb-4">
+              <h3 className="text-lg font-black">选择学习阶段</h3>
+              <p className="mt-1 text-xs app-muted-text">每个分类会显示课程数量和当前完成情况。</p>
+            </div>
+            {subcategories.length > 0 ? (
+              <div className="grid gap-4 lg:grid-cols-2">
+                {subcategories.map((subcategory, index) => {
+                  const subcategoryCourses = coursesBySubcategoryId.get(subcategory.id) ?? [];
+                  const courseIdSet = new Set(subcategoryCourses.map((course) => course.id));
+                  const subcategoryLessons = lessons.filter((lesson) => courseIdSet.has(lesson.course_id));
+                  const completedLessons = subcategoryLessons.filter(
+                    (lesson) => progressMap.get(lesson.id)?.status === "completed"
+                  ).length;
+                  const inProgressLessons = subcategoryLessons.filter(
+                    (lesson) => progressMap.get(lesson.id)?.status === "in_progress"
+                  ).length;
+                  const progressPercent = subcategoryLessons.length > 0
+                    ? Math.round((completedLessons / subcategoryLessons.length) * 100)
+                    : 0;
+                  const learningStatus = resolveLearningStatus({
+                    totalLessons: subcategoryLessons.length,
+                    completedLessons,
+                    inProgressLessons,
+                  });
+
+                  return (
+                    <Link
+                      key={subcategory.id}
+                      href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
+                      className="app-card group rounded-3xl border p-5 transition hover:-translate-y-1"
+                    >
+                      <div className="flex items-start gap-4">
+                        <span
+                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-black"
+                          style={{ color: accent, backgroundColor: accentSoft }}
+                        >
+                          {String(index + 1).padStart(2, "0")}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start justify-between gap-3">
+                            <div>
+                              <h4 className="text-base font-black">{subcategory.title}</h4>
+                              <p className="mt-1 line-clamp-2 text-xs leading-5 app-muted-text">
+                                {subcategory.description || "查看这一阶段的课程内容。"}
+                              </p>
+                            </div>
+                            <ArrowRight size={17} className="shrink-0 app-muted-text transition group-hover:translate-x-1" aria-hidden="true" />
+                          </div>
+                          <div className="mt-4 flex items-center justify-between gap-3 text-[11px] font-bold app-muted-text">
+                            <span>{subcategoryCourses.length} 门课程 · {subcategoryLessons.length} 个课时</span>
+                            <span style={{ color: accent }}>{learningStatusLabelMap[learningStatus]}</span>
+                          </div>
+                          <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                            <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: accent }} />
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="app-soft-card rounded-3xl border border-dashed p-8 text-center text-sm app-muted-text">
+                当前还没有发布课程分类。
+              </div>
+            )}
+          </section>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>

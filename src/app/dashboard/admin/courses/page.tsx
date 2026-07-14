@@ -32,6 +32,7 @@ import {
 
 import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
+import { FocusCourseAdminCard } from "./FocusCourseManagement";
 
 type CourseCategory = {
   id: string;
@@ -176,6 +177,42 @@ export default async function AdminCoursesPage() {
     (lesson) => lesson.video_provider === "r2" && lesson.video_object_key
   );
 
+  // 留学服务课与韩语课使用新的重点运营工作台，其余三类课程保持原布局。
+  const focusCategories = parentCategories.filter(
+    (category) => category.slug === "service" || category.slug === "korean"
+  );
+  const legacyCategories = parentCategories.filter(
+    (category) => category.slug !== "service" && category.slug !== "korean"
+  );
+
+  function getCategoryMetrics(category: CourseCategory) {
+    const subcategories = subcategoriesByParentId.get(category.id) ?? [];
+    const subcategoryIds = new Set(
+      subcategories.map((subcategory) => subcategory.id)
+    );
+    const categoryCourses = courses.filter(
+      (course) => course.category_id && subcategoryIds.has(course.category_id)
+    );
+    const categoryCourseIds = new Set(
+      categoryCourses.map((course) => course.id)
+    );
+    const categoryLessons = lessons.filter((lesson) =>
+      categoryCourseIds.has(lesson.course_id)
+    );
+
+    return {
+      subcategories,
+      categoryCourses,
+      categoryLessons,
+      publishedCount: categoryLessons.filter((lesson) => lesson.is_published)
+        .length,
+      r2Count: categoryLessons.filter(
+        (lesson) =>
+          lesson.video_provider === "r2" && Boolean(lesson.video_object_key)
+      ).length,
+    };
+  }
+
   return (
     <>
       <DashboardPageHeader
@@ -226,56 +263,69 @@ export default async function AdminCoursesPage() {
           </div>
         </section>
 
+        {/* 两条核心业务线使用更完整的内容运营视图。 */}
+        {focusCategories.length > 0 && (
+          <section>
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <p className="text-xl font-black tracking-tight">重点运营课程</p>
+                <p className="app-muted-text mt-1 text-sm">
+                  同时检查课程路线、课时发布和视频覆盖情况。
+                </p>
+              </div>
+              <span className="app-muted-text text-xs font-bold">
+                留学服务 + 韩语成长双主线
+              </span>
+            </div>
+
+            <div className="grid gap-5 xl:grid-cols-2">
+              {focusCategories.map((category) => {
+                const metrics = getCategoryMetrics(category);
+
+                return (
+                  <FocusCourseAdminCard
+                    key={category.id}
+                    kind={category.slug as "service" | "korean"}
+                    title={category.title}
+                    description={category.description}
+                    categoryCount={metrics.subcategories.length}
+                    courseCount={metrics.categoryCourses.length}
+                    lessonCount={metrics.categoryLessons.length}
+                    publishedCount={metrics.publishedCount}
+                    videoCount={metrics.r2Count}
+                  />
+                );
+              })}
+            </div>
+          </section>
+        )}
+
         {/* 一级课程板块 */}
         <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-black tracking-tight text-gray-900">
-                课程板块
+                其他课程板块
               </h2>
 
               <p className="mt-1 text-sm text-gray-500">
-                先选择一级课程板块，再进入二级分类和具体课程管理。
+                英语、数学和大学课程继续使用原有管理方式。
               </p>
             </div>
 
             <Settings className="text-gray-300" size={28} />
           </div>
 
-          {parentCategories.length > 0 ? (
+          {legacyCategories.length > 0 ? (
             <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {parentCategories.map((category) => {
-                const subcategories =
-                  subcategoriesByParentId.get(category.id) ?? [];
-
-                const subcategoryIds = new Set(
-                  subcategories.map((subcategory) => subcategory.id)
-                );
-
-                const categoryCourses = courses.filter((course) => {
-                  if (!course.category_id) {
-                    return false;
-                  }
-
-                  return subcategoryIds.has(course.category_id);
-                });
-
-                const categoryCourseIds = new Set(
-                  categoryCourses.map((course) => course.id)
-                );
-
-                const categoryLessons = lessons.filter((lesson) =>
-                  categoryCourseIds.has(lesson.course_id)
-                );
-
-                const publishedCount = categoryLessons.filter(
-                  (lesson) => lesson.is_published
-                ).length;
-
-                const r2Count = categoryLessons.filter(
-                  (lesson) =>
-                    lesson.video_provider === "r2" && lesson.video_object_key
-                ).length;
+              {legacyCategories.map((category) => {
+                const {
+                  subcategories,
+                  categoryCourses,
+                  categoryLessons,
+                  publishedCount,
+                  r2Count,
+                } = getCategoryMetrics(category);
 
                 const color =
                   colorMap[category.accent_color ?? "indigo"] ??

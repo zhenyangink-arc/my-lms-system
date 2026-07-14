@@ -25,6 +25,7 @@ import {
 
 import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
+import { FocusCategoryAdminView } from "../../FocusCourseManagement";
 
 type CourseCategory = {
   id: string;
@@ -138,6 +139,45 @@ export default async function AdminCourseCategoryPage({
   const r2VideoLessons = lessons.filter(
     (lesson) => lesson.video_provider === "r2" && lesson.video_object_key
   ).length;
+
+  // 只重做留学服务课与韩语课；其他课程继续执行下方原有页面结构。
+  if (categorySlug === "service" || categorySlug === "korean") {
+    const focusItems = subcategories.map((subcategory) => {
+      const subcategoryCourses =
+        coursesBySubcategoryId.get(subcategory.id) ?? [];
+      const subcategoryCourseIds = new Set(
+        subcategoryCourses.map((course) => course.id)
+      );
+      const subcategoryLessons = lessons.filter((lesson) =>
+        subcategoryCourseIds.has(lesson.course_id)
+      );
+
+      return {
+        id: subcategory.id,
+        slug: subcategory.slug,
+        title: subcategory.title,
+        description: subcategory.description,
+        courseCount: subcategoryCourses.length,
+        lessonCount: subcategoryLessons.length,
+        publishedCount: subcategoryLessons.filter(
+          (lesson) => lesson.is_published
+        ).length,
+        videoCount: subcategoryLessons.filter(
+          (lesson) =>
+            lesson.video_provider === "r2" && Boolean(lesson.video_object_key)
+        ).length,
+      };
+    });
+
+    return (
+      <FocusCategoryAdminView
+        kind={categorySlug}
+        title={parentCategory.title}
+        description={parentCategory.description}
+        items={focusItems}
+      />
+    );
+  }
 
   return (
     <>

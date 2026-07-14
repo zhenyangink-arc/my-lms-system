@@ -247,10 +247,20 @@ export default async function SubcategoryCoursesPage({
     progressMap.set(progress.lesson_id, progress);
   });
 
-  const color =
-    accentColorMap[
-    subcategory.accent_color ?? parentCategory.accent_color ?? "indigo"
-    ] ?? accentColorMap.indigo;
+  const isFocusCategory =
+    parentCategory.slug === "service" || parentCategory.slug === "korean";
+  const focusAccent = parentCategory.slug === "service"
+    ? "var(--app-accent)"
+    : "var(--app-secondary)";
+  const color = isFocusCategory
+    ? {
+        accent: focusAccent,
+        completed: "var(--app-success)",
+        inProgress: focusAccent,
+      }
+    : accentColorMap[
+        subcategory.accent_color ?? parentCategory.accent_color ?? "indigo"
+      ] ?? accentColorMap.indigo;
 
   /**
    * 7. 当前二级分类整体进度
@@ -276,7 +286,13 @@ export default async function SubcategoryCoursesPage({
         description={subcategory.description || "选择具体课程并查看学习进度。"}
       />
 
-      <div className="space-y-6 p-6">
+      <div
+        className={
+          isFocusCategory
+            ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
+            : "space-y-6 p-6"
+        }
+      >
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
@@ -302,7 +318,19 @@ export default async function SubcategoryCoursesPage({
         </div>
 
         {/* 页面说明板块 */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section
+          className="app-card rounded-[30px] border p-6 shadow-sm"
+          style={
+            isFocusCategory
+              ? {
+                  background:
+                    parentCategory.slug === "service"
+                      ? "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start))"
+                      : "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end))",
+                }
+              : undefined
+          }
+        >
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
             {/* 左侧：说明 */}
             <div>

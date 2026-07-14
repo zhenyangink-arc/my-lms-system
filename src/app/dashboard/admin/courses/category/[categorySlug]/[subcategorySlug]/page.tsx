@@ -26,6 +26,7 @@ import {
 
 import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
+import { FocusSubcategoryAdminView } from "../../../FocusCourseManagement";
 
 type CourseCategory = {
   id: string;
@@ -158,6 +159,38 @@ export default async function AdminSubcategoryCoursesPage({
   const r2Lessons = lessons.filter(
     (lesson) => lesson.video_provider === "r2" && lesson.video_object_key
   );
+
+  // 两条重点业务线进入新的课程内容生产台，其余课程保留原页面。
+  if (categorySlug === "service" || categorySlug === "korean") {
+    const focusCourses = courses.map((course) => {
+      const courseLessons = lessonsByCourseId.get(course.id) ?? [];
+
+      return {
+        id: course.id,
+        title: course.title,
+        description: course.description,
+        levelLabel: getCourseLevelLabel(course.level),
+        isPublished: course.is_published,
+        lessonCount: courseLessons.length,
+        publishedCount: courseLessons.filter((lesson) => lesson.is_published)
+          .length,
+        videoCount: courseLessons.filter(
+          (lesson) =>
+            lesson.video_provider === "r2" && Boolean(lesson.video_object_key)
+        ).length,
+      };
+    });
+
+    return (
+      <FocusSubcategoryAdminView
+        kind={categorySlug}
+        parentTitle={parentCategory.title}
+        subcategoryTitle={subcategory.title}
+        description={subcategory.description}
+        courses={focusCourses}
+      />
+    );
+  }
 
   return (
     <>

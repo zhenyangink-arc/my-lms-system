@@ -38,6 +38,7 @@ import {
   createLessonAction,
   updateCourseAction,
 } from "../actions";
+import { FocusCourseQualityPanel } from "../FocusCourseManagement";
 
 /*
   课程类型
@@ -387,6 +388,17 @@ export default async function AdminCourseLessonsPage({
             </>
           )}
         </div>
+
+        {/* 两条重点业务线额外显示内容健康度，其他课程不改变。 */}
+        {(parentCategory?.slug === "service" ||
+          parentCategory?.slug === "korean") && (
+          <FocusCourseQualityPanel
+            kind={parentCategory.slug}
+            lessonCount={lessons.length}
+            publishedCount={publishedLessons.length}
+            videoCount={r2Lessons.length}
+          />
+        )}
 
         {/* 顶部课程概览 */}
         <section className="h-full app-card rounded-3xl border p-6 shadow-sm">

@@ -10,15 +10,8 @@ export function DashboardPageHeader({
   action,
 }: DashboardPageHeaderProps) {
   return (
-    <header
-      className="border-b px-6 py-5"
-      style={{
-        backgroundColor: "var(--app-bg)",
-        borderColor: "var(--app-border)",
-        color: "var(--app-text)",
-      }}
-    >
-      <div className="flex w-full items-center justify-between gap-4">
+    <header className="px-4 pt-6 sm:px-6 lg:px-8">
+      <div className="mx-auto flex w-full max-w-[1500px] flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
           <h1
             className="text-2xl font-black tracking-tight"
@@ -37,7 +30,7 @@ export function DashboardPageHeader({
           )}
         </div>
 
-        {action && <div className="hidden md:block">{action}</div>}
+        {action && <div className="shrink-0 self-start sm:self-auto">{action}</div>}
       </div>
     </header>
   );

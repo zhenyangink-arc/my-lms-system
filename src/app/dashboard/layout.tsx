@@ -33,7 +33,7 @@ export default async function DashboardLayout({
             userRole={userRole}
           />
 
-          <main className="min-w-0 flex-1">{children}</main>
+          <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
         </div>
       </div>
     </ThemeProvider>

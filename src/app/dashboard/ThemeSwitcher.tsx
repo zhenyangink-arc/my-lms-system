@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { Palette } from "lucide-react";
+import { Check, Palette } from "lucide-react";
 
 const THEME_STORAGE_KEY = "puffy-dashboard-theme";
 const THEME_CHANGE_EVENT = "puffy-dashboard-theme-change";
@@ -9,39 +9,33 @@ const THEME_CHANGE_EVENT = "puffy-dashboard-theme-change";
 const themes = [
   {
     value: "default",
-    label: "默认",
+    label: "晴空",
+    description: "珊瑚与天蓝",
+    colors: ["#f47b5f", "#67bed5", "#f6d98b"],
   },
   {
     value: "warm",
-    label: "护眼",
-  },
-  {
-    value: "lowblue",
-    label: "低蓝光",
-  },
-  {
-    value: "blue",
-    label: "浅蓝",
+    label: "暖阳",
+    description: "杏色与琥珀",
+    colors: ["#df8651", "#efb65f", "#ead7bb"],
   },
   {
     value: "green",
-    label: "浅绿",
+    label: "清新",
+    description: "薄荷与青绿",
+    colors: ["#319b7d", "#79c9b1", "#d7efe4"],
   },
   {
-    value: "purple",
-    label: "浅紫",
-  },
-  {
-    value: "coffee",
-    label: "咖啡",
-  },
-  {
-    value: "slate",
-    label: "夜灰",
+    value: "lavender",
+    label: "柔紫",
+    description: "薰衣草与莓果",
+    colors: ["#8c78c6", "#c4b8e8", "#f0dce5"],
   },
   {
     value: "night",
-    label: "夜晚",
+    label: "夜航",
+    description: "深蓝与柔和天青",
+    colors: ["#16283a", "#4fa8c5", "#f08a70"],
   },
 ];
 
@@ -84,29 +78,56 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <div className="app-theme-card rounded-2xl border p-3">
-      <div className="mb-2 flex items-center gap-2">
-        <div className="app-card flex h-8 w-8 items-center justify-center rounded-xl border shadow-sm">
+    <div className="app-theme-card rounded-2xl border p-3.5">
+      <div className="mb-3 flex items-center gap-2.5">
+        <div className="app-soft-card flex h-9 w-9 items-center justify-center rounded-xl border">
           <Palette size={17} />
         </div>
 
         <div>
-          <p className="text-sm font-bold">主题颜色</p>
-          <p className="text-xs opacity-60">每个用户可自行选择</p>
+          <p className="text-sm font-black">界面主题</p>
+          <p className="text-[11px] app-muted-text">白天明亮，夜晚舒适</p>
         </div>
       </div>
 
-      <select
-        value={theme}
-        onChange={(event) => handleThemeChange(event.target.value)}
-        className="app-input w-full rounded-xl border px-3 py-2 text-xs font-semibold outline-none transition"
-      >
+      <div className="grid grid-cols-2 gap-2">
         {themes.map((item) => (
-          <option key={item.value} value={item.value}>
-            {item.label}
-          </option>
+          <button
+            key={item.value}
+            type="button"
+            onClick={() => handleThemeChange(item.value)}
+            aria-pressed={theme === item.value}
+            title={item.description}
+            className={`relative flex items-center gap-2 rounded-xl border p-2 text-left transition hover:-translate-y-0.5 ${
+              item.value === "night" ? "col-span-2" : ""
+            }`}
+            style={{
+              borderColor: theme === item.value
+                ? "var(--app-accent)"
+                : "var(--app-border)",
+              backgroundColor: theme === item.value
+                ? "var(--app-accent-soft)"
+                : "var(--app-card-bg)",
+            }}
+          >
+            <span
+              className="h-7 w-7 shrink-0 rounded-lg shadow-sm"
+              style={{
+                background: `linear-gradient(135deg, ${item.colors[0]} 0 38%, ${item.colors[1]} 38% 70%, ${item.colors[2]} 70%)`,
+              }}
+            />
+            <span className="text-xs font-bold">{item.label}</span>
+            {theme === item.value && (
+              <span
+                className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-white"
+                style={{ backgroundColor: "var(--app-accent)" }}
+              >
+                <Check size={10} strokeWidth={3} />
+              </span>
+            )}
+          </button>
         ))}
-      </select>
+      </div>
     </div>
   );
 }

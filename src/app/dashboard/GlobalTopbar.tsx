@@ -1,31 +1,15 @@
 import Link from "next/link";
-import { Bell, GraduationCap, Globe, Search } from "lucide-react";
+import { Bell, GraduationCap, Home } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
 
-/*
-  全局顶部条
-
-  贯穿页面最顶部的全宽横条，在侧边栏和内容区域之上。
-  Logo 从原来的侧边栏挪到这里，因为它应该是"整个平台"的标识，
-  不该随侧边栏收缩/展开而跟着变化。
-
-  包含：
-  1. Logo（PUFFY） —— 点击回到学生控制台
-  2. 搜索框 —— 视觉占位，暂无搜索后端
-  3. 语言切换 —— 视觉占位，暂无多语言系统
-  4. 通知铃铛 —— 真实数据，仅学生角色统计"老师已回复但未读"的数量
-  5. 用户名 —— 点击跳转个人资料页
-
-  这是 Server Component（不是 "use client"），因为通知数量需要现查数据库。
-*/
+// 顶部栏只保留真实可用的入口，不再展示尚未接入后端的搜索和语言切换。
 export async function GlobalTopbar() {
-  let userName = "";
-  let unreadCount = 0;
-
   const { supabase, user, profile } = await requireActiveUser();
+  const userName =
+    profile?.full_name || user.user_metadata?.name || user.email || "用户";
 
-  userName = profile?.full_name || user.email || "用户";
+  let unreadCount = 0;
 
   if (profile?.role === "student") {
     const { data: answeredQuestions } = await supabase
@@ -42,67 +26,70 @@ export async function GlobalTopbar() {
   }
 
   return (
-    <header
-      className="app-sidebar flex items-center justify-between gap-4 border-b px-5 py-3"
-      style={{ borderColor: "var(--app-border)" }}
-    >
-      <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5">
-        <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gray-900 text-white">
-          <GraduationCap size={19} />
-        </div>
+    <header className="app-topbar sticky top-0 z-30 flex h-[68px] items-center justify-between gap-4 border-b px-4 sm:px-6">
+      <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
         <span
-          className="text-base font-black tracking-tight"
-          style={{ color: "var(--app-text)" }}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
+          style={{
+            background:
+              "linear-gradient(135deg, var(--app-secondary), var(--app-accent))",
+          }}
         >
-          PUFFY <span className="font-medium">(LMS)</span>
+          <GraduationCap size={21} aria-hidden="true" />
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate text-base font-black tracking-tight">
+            元智教育
+          </span>
+          <span className="hidden truncate text-[10px] font-semibold app-muted-text sm:block">
+            韩国留学与韩语成长工作台
+          </span>
         </span>
       </Link>
 
-      <div
-        className="hidden max-w-sm flex-1 items-center gap-2 rounded-xl border px-3 py-2 opacity-60 lg:flex"
-        style={{ borderColor: "var(--app-border)" }}
-      >
-        <Search size={15} className="app-muted-text shrink-0" />
-        <input
-          type="text"
-          readOnly
-          placeholder="搜索课程、内容或公告……（即将上线）"
-          className="w-full bg-transparent text-sm outline-none app-muted-text"
-        />
-      </div>
-
-      <div className="flex shrink-0 items-center gap-2.5">
-        <div
-          className="hidden items-center gap-1.5 rounded-lg border px-2.5 py-1.5 text-xs font-semibold opacity-60 sm:flex"
-          style={{ borderColor: "var(--app-border)" }}
+      <div className="flex shrink-0 items-center gap-2">
+        <Link
+          href="/"
+          className="hidden items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition hover:-translate-y-0.5 sm:flex"
+          style={{
+            color: "var(--app-muted)",
+            backgroundColor: "var(--app-soft-bg)",
+          }}
         >
-          <Globe size={13} className="app-muted-text" />
-          <span className="app-muted-text">中文</span>
-        </div>
+          <Home size={14} aria-hidden="true" />
+          网站首页
+        </Link>
 
         <Link
-          href="/dashboard/announcements"
-          className="relative flex h-9 w-9 items-center justify-center rounded-lg transition hover:opacity-80"
-          style={{ backgroundColor: "var(--app-soft-bg)" }}
-          title={unreadCount > 0 ? `${unreadCount} 条未读提醒` : "暂无未读提醒"}
+          href="/dashboard#reminders"
+          className="app-soft-card relative flex h-10 w-10 items-center justify-center rounded-xl border transition hover:-translate-y-0.5"
+          title={unreadCount > 0 ? `${unreadCount} 条未读回复` : "暂无未读回复"}
+          aria-label={unreadCount > 0 ? `${unreadCount} 条未读回复` : "暂无未读回复"}
         >
-          <Bell size={15} className="app-muted-text" />
+          <Bell size={17} aria-hidden="true" />
           {unreadCount > 0 && (
             <span
-              className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
+              className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white"
               style={{ backgroundColor: "var(--app-accent)" }}
             >
-              {unreadCount}
+              {unreadCount > 9 ? "9+" : unreadCount}
             </span>
           )}
         </Link>
 
         <Link
           href="/dashboard/profile"
-          className="hidden text-sm font-semibold transition hover:opacity-80 sm:block"
-          style={{ color: "var(--app-text)" }}
+          className="app-soft-card flex items-center gap-2 rounded-xl border p-1.5 pr-2.5 transition hover:-translate-y-0.5"
         >
-          {userName}
+          <span
+            className="flex h-7 w-7 items-center justify-center rounded-lg text-xs font-black text-white"
+            style={{ backgroundColor: "var(--app-success)" }}
+          >
+            {userName.trim().slice(0, 1) || "学"}
+          </span>
+          <span className="hidden max-w-28 truncate text-xs font-bold sm:block">
+            {userName}
+          </span>
         </Link>
       </div>
     </header>
