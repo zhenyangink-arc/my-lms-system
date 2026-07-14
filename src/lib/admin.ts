@@ -1,5 +1,8 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
+import {
+  isActiveProfileStatus,
+  requireActiveUser,
+} from "@/lib/auth";
 
 /*
 
@@ -33,14 +36,6 @@ export type UserRole =
 export type UserStatus = "active" | "inactive" | "suspended";
 
 /*
-  profiles 表里本文件需要读取的字段
-*/
-type AdminProfile = {
-  role: string | null;
-  status: string | null;
-};
-
-/*
   判断账号状态是否可用
 
   说明：
@@ -48,7 +43,7 @@ type AdminProfile = {
   - 后面数据库已经给 status 设置 default active
 */
 export function isActiveStatus(status: string | null | undefined) {
-  return !status || status === "active";
+  return isActiveProfileStatus(status);
 }
 
 /*
@@ -111,47 +106,20 @@ export function isExecutiveRole(role: string | null | undefined) {
   3. profiles.role 是 admin / ceo / super_admin
 */
 export async function requireAdmin() {
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("role, status")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const adminProfile = profile as AdminProfile | null;
-
-  /*
-    账号被停用或暂停时，不允许进入管理后台。
-
-    现在先跳回 login。
-    后面可以单独做一个页面：
-    /account-disabled
-  */
-  if (!isActiveStatus(adminProfile?.status)) {
-    redirect("/login");
-  }
+  const { supabase, user, profile } = await requireActiveUser();
 
   /*
     非 admin / ceo / super_admin 不能进入管理后台。
   */
-  if (!isAdminRole(adminProfile?.role)) {
+  if (!isAdminRole(profile?.role)) {
     redirect("/dashboard");
   }
 
   return {
     supabase,
     user,
-    role: adminProfile?.role as UserRole,
-    status: (adminProfile?.status ?? "active") as UserStatus,
+    role: profile?.role as UserRole,
+    status: (profile?.status ?? "active") as UserStatus,
   };
 }
 

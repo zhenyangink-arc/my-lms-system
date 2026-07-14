@@ -18,11 +18,9 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   ArrowRight,
-  BookOpen,
   CheckCircle2,
   FolderOpen,
   Layers3,
-  Video,
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin";

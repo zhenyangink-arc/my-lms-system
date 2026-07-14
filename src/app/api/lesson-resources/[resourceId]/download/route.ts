@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
+import { getAuthContext } from "@/lib/auth";
 import { createR2SignedResourceDownloadUrl } from "@/lib/r2";
 
 /*
@@ -28,15 +28,17 @@ export async function GET(
 ) {
   const { resourceId } = await params;
 
-  const supabase = await createClient();
+  const auth = await getAuthContext();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (auth.status === "unauthenticated") {
     return NextResponse.redirect(new URL("/login", request.url));
   }
+
+  if (auth.status === "inactive") {
+    return NextResponse.redirect(new URL("/account-disabled", request.url));
+  }
+
+  const { supabase } = auth;
 
   const { data: resource } = await supabase
     .from("lesson_resources")

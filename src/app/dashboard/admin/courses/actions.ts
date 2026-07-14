@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 import { requireAdmin } from "@/lib/admin";
-import { createR2SignedUploadUrl } from "@/lib/r2";
+import { createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
 
 function getString(formData: FormData, name: string) {
   const value = formData.get(name);
@@ -302,7 +302,7 @@ export async function createLessonResourceAction(formData: FormData) {
     formData.get("resource_description") ?? ""
   ).trim();
 
-    const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+  const resourceUrl = String(formData.get("resource_url") ?? "").trim();
 
   const resourceObjectKey = String(
     formData.get("resource_object_key") ?? ""
@@ -401,31 +401,12 @@ export async function createLessonResourceAction(formData: FormData) {
   revalidatePath(`/dashboard/admin/courses/${courseId}`);
 }
 
-/*
-  更新课时资料
-
-  使用场景：
-  管理员修改某一条已有资料后，点击“保存资料”。
-
-  为什么第一个参数是 resourceId？
-  因为 page.tsx 里会这样调用：
-
-  updateLessonResourceAction.bind(null, resource.id)
-
-  这样每一条资料都能准确知道自己要更新哪条记录。
-*/
 export async function updateLessonResourceAction(
   resourceId: string,
   formData: FormData
 ) {
   const supabase = await createClient();
 
-  /*
-    course_id 仍然从 formData 里读取。
-
-    作用：
-    更新完成后刷新当前课程管理页。
-  */
   const courseId = String(formData.get("course_id") ?? "").trim();
 
   const title = String(formData.get("resource_title") ?? "").trim();
@@ -435,6 +416,14 @@ export async function updateLessonResourceAction(
   ).trim();
 
   const resourceUrl = String(formData.get("resource_url") ?? "").trim();
+
+  const resourceObjectKey = String(
+    formData.get("resource_object_key") ?? ""
+  ).trim();
+
+  const originalFileName = String(
+    formData.get("original_file_name") ?? ""
+  ).trim();
 
   const resourceTypeValue = String(
     formData.get("resource_type") ?? "link"
@@ -462,31 +451,46 @@ export async function updateLessonResourceAction(
     throw new Error("Missing resource_id");
   }
 
-  /*
-    标题或说明为空时，不更新，也不让页面崩溃。
-
-    前端编辑表单里有 required。
-    这里是后端兜底。
-  */
   if (!title || !description) {
     revalidatePath(`/dashboard/admin/courses/${courseId}`);
     return;
   }
 
   /*
-    更新当前资料记录。
+    重新上传文件的核心逻辑：
 
-    注意：
-    这里不会改 lesson_id。
-    因为一条资料创建后，通常不应该随便移动到别的课时。
+    1. 先查出这条资料现在数据库里存的旧 object key 和旧文件名
+    2. 组装新的字段：
+       - 链接类型：清空文件相关字段
+       - 文件类型：如果这次重新上传了（resourceObjectKey 有值），用新的；
+                   如果没有重新上传，沿用数据库里原本的值，不会误清空
+    3. 更新完成后，如果新旧 object key 不一样，说明真的换了新文件，
+       这时候才去 R2 删除旧文件
   */
+  const { data: existingResource } = await supabase
+    .from("lesson_resources")
+    .select("resource_object_key, original_file_name")
+    .eq("id", resourceId)
+    .maybeSingle();
+
+  const previousObjectKey = existingResource?.resource_object_key ?? null;
+  const previousFileName = existingResource?.original_file_name ?? null;
+
+  const finalObjectKey =
+    resourceType === "link" ? null : resourceObjectKey || previousObjectKey;
+
+  const finalFileName =
+    resourceType === "link" ? null : originalFileName || previousFileName;
+
   const { error } = await supabase
     .from("lesson_resources")
     .update({
       title,
       description,
       resource_type: resourceType,
-      resource_url: resourceUrl || null,
+      resource_url: resourceType === "link" ? resourceUrl || null : null,
+      resource_object_key: finalObjectKey,
+      original_file_name: finalFileName,
       is_required: formData.get("resource_is_required") === "on",
       sort_order: Number.isFinite(sortOrderValue) ? sortOrderValue : 0,
     })
@@ -494,6 +498,22 @@ export async function updateLessonResourceAction(
 
   if (error) {
     throw new Error(error.message);
+  }
+
+  /*
+    如果真的换了新文件（新旧 object key 不一样），
+    并且旧文件确实存在，就去 R2 把旧文件删掉，节省存储空间。
+
+    这里不用 throw：就算删除旧文件失败（比如网络抖动），
+    数据库这边的更新已经成功了，不应该让整个保存操作报错，
+    只是旧文件会遗留在 R2 里，之后可以再手动清理。
+  */
+  if (previousObjectKey && previousObjectKey !== finalObjectKey) {
+    try {
+      await deleteR2Object(previousObjectKey);
+    } catch {
+      // 静默忽略，不影响主流程
+    }
   }
 
   revalidatePath(`/dashboard/admin/courses/${courseId}`);

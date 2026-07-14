@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import { Palette } from "lucide-react";
 
 const THEME_STORAGE_KEY = "puffy-dashboard-theme";
+const THEME_CHANGE_EVENT = "puffy-dashboard-theme-change";
 
 const themes = [
   {
@@ -44,25 +45,42 @@ const themes = [
   },
 ];
 
+function subscribeToTheme(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(THEME_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(THEME_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function getThemeSnapshot() {
+  const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
+
+  return themes.some((item) => item.value === savedTheme)
+    ? (savedTheme as string)
+    : "default";
+}
+
+function getThemeServerSnapshot() {
+  return "default";
+}
+
 export function ThemeSwitcher() {
-  const [theme, setTheme] = useState("default");
+  const theme = useSyncExternalStore(
+    subscribeToTheme,
+    getThemeSnapshot,
+    getThemeServerSnapshot
+  );
 
   useEffect(() => {
-    const savedTheme = window.localStorage.getItem(THEME_STORAGE_KEY);
-
-    if (savedTheme) {
-      setTheme(savedTheme);
-      document.documentElement.setAttribute("data-puffy-theme", savedTheme);
-      return;
-    }
-
-    document.documentElement.setAttribute("data-puffy-theme", "default");
-  }, []);
+    document.documentElement.setAttribute("data-puffy-theme", theme);
+  }, [theme]);
 
   function handleThemeChange(nextTheme: string) {
-    setTheme(nextTheme);
     window.localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
-    document.documentElement.setAttribute("data-puffy-theme", nextTheme);
+    window.dispatchEvent(new Event(THEME_CHANGE_EVENT));
   }
 
   return (

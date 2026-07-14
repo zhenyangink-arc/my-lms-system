@@ -22,7 +22,6 @@ import {
   BookOpen,
   CheckCircle2,
   GraduationCap,
-  Video,
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin";

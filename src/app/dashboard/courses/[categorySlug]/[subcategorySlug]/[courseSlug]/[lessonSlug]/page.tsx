@@ -132,12 +132,6 @@ const resourceTypeLabelMap: Record<string, string> = {
     reference: "参考资料",
 };
 
-const progressStatusLabelMap: Record<LessonProgressStatus, string> = {
-    not_started: "未完成",
-    in_progress: "进行中",
-    completed: "已完成",
-};
-
 const colorMap: Record<
     string,
     {

@@ -1,7 +1,6 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireExecutive } from "@/lib/admin";
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { AccountCard } from "./AccountCard";
 
@@ -48,27 +47,7 @@ export default async function AccountsPage({
   const roleFilter = params.role ?? "all";
   const statusFilter = params.status ?? "all";
 
-  const supabase = await createClient();
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    redirect("/login");
-  }
-
-  const { data: viewerProfile } = await supabase
-    .from("profiles")
-    .select("role")
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const viewerRole = viewerProfile?.role ?? "student";
-
-  if (viewerRole !== "super_admin" && viewerRole !== "ceo") {
-    redirect("/dashboard");
-  }
+  const { supabase, role: viewerRole } = await requireExecutive();
 
    let query = supabase
     .from("profiles")
@@ -84,7 +63,11 @@ export default async function AccountsPage({
     query = query.eq("status", statusFilter);
   }
 
-  const { data: profilesData } = await query;
+  const { data: profilesData, error } = await query;
+
+  if (error) {
+    throw new Error("账号列表加载失败，请稍后重试。");
+  }
   const profiles = (profilesData as Profile[] | null) ?? [];
 
   return (

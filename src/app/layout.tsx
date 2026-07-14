@@ -30,13 +30,13 @@ export default function RootLayout({
     <html lang="zh-CN"> 
       {/* 👇 Next.js 强制要求的 <body> 标签 */}
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-white`}
+        className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-white antialiased`}
       >
         {/* 顶部导航栏 */}
         <SiteHeader />
 
         {/* 主体页面内容会放进这里 */}
-        <main>
+        <main className="flex-1">
           {children}
         </main>
         

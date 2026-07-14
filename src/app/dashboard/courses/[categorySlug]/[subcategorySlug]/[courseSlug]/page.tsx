@@ -96,30 +96,6 @@ function getStatusAccent(status: LessonProgressStatus) {
   return "var(--app-muted)";
 }
 
-function getActionButtonStyle(status: LessonProgressStatus) {
-  if (status === "completed") {
-    return {
-      backgroundColor: "var(--app-soft-bg)",
-      borderColor: "var(--app-border)",
-      color: "var(--app-text)",
-    };
-  }
-
-  if (status === "in_progress") {
-    return {
-      backgroundColor: "#16a34a",
-      borderColor: "#16a34a",
-      color: "#ffffff",
-    };
-  }
-
-  return {
-    backgroundColor: "var(--app-accent)",
-    borderColor: "var(--app-accent)",
-    color: "#ffffff",
-  };
-}
-
 export default async function CourseDetailPage({
   params,
 }: {

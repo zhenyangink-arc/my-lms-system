@@ -50,24 +50,21 @@ export default function LoginPage() {
   async function onSubmit(values: LoginFormValues) {
   const supabase = createClient();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email: values.email,
-    password: values.password,
-  });
-
-  if (error) {
-    form.setError("email", {
-      message: "邮箱或密码错误",
+    const { error } = await supabase.auth.signInWithPassword({
+      email: values.email,
+      password: values.password,
     });
-    return;
+
+    if (error) {
+      form.setError("email", {
+        message: "邮箱或密码错误",
+      });
+      return;
+    }
+
+    router.push("/dashboard");
+    router.refresh();
   }
-
-  console.log("登录成功:", data);
-
-  router.push("/dashboard");
-  router.refresh();
-}
-
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 p-4">
@@ -143,12 +140,9 @@ export default function LoginPage() {
                           密码
                         </FieldLabel>
 
-                        <Link
-                          href="#"
-                          className="text-sm text-indigo-600 hover:text-indigo-500 font-medium"
-                        >
-                          忘记密码？
-                        </Link>
+                        <span className="text-sm font-medium text-gray-500">
+                          忘记密码请联系管理员
+                        </span>
                       </div>
 
                       <Input

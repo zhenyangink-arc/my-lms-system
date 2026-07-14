@@ -1,14 +1,24 @@
 "use client";
 
+import { useSyncExternalStore } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
+  Award,
   BarChart3,
   BookOpen,
   Building2,
+  ChevronLeft,
+  ChevronRight,
+  ClipboardList,
+  Cog,
   FileText,
-  GraduationCap,
+  HelpCircle,
+  History,
   LayoutDashboard,
+  Library,
+  Megaphone,
+  MessageSquare,
   Settings,
   ShieldCheck,
   UserCircle,
@@ -28,12 +38,37 @@ type SidebarItem = {
   href: string;
   icon: React.ComponentType<{ size?: number; className?: string }>;
   adminOnly?: boolean;
-  // 只有老板 / CEO 能看到，比 adminOnly 更严格
-  // 目前只有"账号管理"这一项用到
   executiveOnly?: boolean;
 };
 
+/*
+  侧边栏收缩状态的本地存储 key。
 
+  为什么用 localStorage 而不是 cookie？
+  这个状态只影响当前用户在当前浏览器上的展示偏好，
+  不需要服务器端读取，localStorage 足够简单直接。
+*/
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "puffy-sidebar-collapsed";
+const SIDEBAR_COLLAPSED_CHANGE_EVENT = "puffy-sidebar-collapsed-change";
+
+function subscribeToCollapsedState(onStoreChange: () => void) {
+  window.addEventListener("storage", onStoreChange);
+  window.addEventListener(SIDEBAR_COLLAPSED_CHANGE_EVENT, onStoreChange);
+
+  return () => {
+    window.removeEventListener("storage", onStoreChange);
+    window.removeEventListener(SIDEBAR_COLLAPSED_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function getCollapsedSnapshot() {
+  const stored = window.localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+  return stored === null ? true : stored === "true";
+}
+
+function getCollapsedServerSnapshot() {
+  return true;
+}
 
 const sidebarItems: SidebarItem[] = [
   {
@@ -71,6 +106,49 @@ const sidebarItems: SidebarItem[] = [
     href: "/dashboard/profile",
     icon: UserCircle,
   },
+  {
+    label: "作业与考试",
+    href: "/dashboard/assignments",
+    icon: ClipboardList,
+  },
+  {
+    label: "会话练习",
+    href: "/dashboard/conversation-practice",
+    icon: MessageSquare,
+  },
+  {
+    label: "成绩管理",
+    href: "/dashboard/grades",
+    icon: Award,
+  },
+  {
+    label: "学习记录",
+    href: "/dashboard/records",
+    icon: History,
+  },
+  {
+    label: "资料库",
+    href: "/dashboard/library",
+    icon: Library,
+  },
+  {
+    label: "通知公告",
+    href: "/dashboard/announcements",
+    icon: Megaphone,
+  },
+  {
+    label: "帮助中心",
+    href: "/dashboard/help",
+    icon: HelpCircle,
+  },
+  {
+    label: "设置",
+    href: "/dashboard/settings",
+    icon: Cog,
+  },
+
+
+
   {
     label: "课程管理",
     href: "/dashboard/admin/courses",
@@ -147,6 +225,31 @@ export function DashboardSidebar({
 }: DashboardSidebarProps) {
   const pathname = usePathname();
 
+  /*
+    收缩状态。
+
+    默认值 true（收缩），跟产品需求一致：
+    "页面刚打开时导航栏默认收缩"。
+
+    这样设计还有一个好处：服务器端渲染时不知道 localStorage 里存的什么，
+    只能先按某个默认值渲染。既然默认值本来就是"收缩"，
+    大部分用户（没有主动展开过的新用户）不会看到任何跳动。
+    只有之前手动展开过的用户，会在页面加载完 JS 后有一次很短的展开过渡。
+  */
+  const collapsed = useSyncExternalStore(
+    subscribeToCollapsedState,
+    getCollapsedSnapshot,
+    getCollapsedServerSnapshot
+  );
+
+  function toggleCollapsed() {
+    window.localStorage.setItem(
+      SIDEBAR_COLLAPSED_STORAGE_KEY,
+      String(!collapsed)
+    );
+    window.dispatchEvent(new Event(SIDEBAR_COLLAPSED_CHANGE_EVENT));
+  }
+
   const isAdmin = isAdminRole(userRole);
   const isExecutive = isExecutiveRole(userRole);
 
@@ -162,25 +265,26 @@ export function DashboardSidebar({
     return true;
   });
 
-
   return (
-    <aside className="app-sidebar hidden w-64 shrink-0 border-r md:flex md:flex-col">
-      <div className="border-b border-gray-100 px-5 py-5">
-        <Link href="/dashboard" className="flex items-center gap-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gray-900 text-white">
-            <GraduationCap size={24} />
-          </div>
+    <aside
+      className={`app-sidebar relative hidden shrink-0 border-r transition-[width] duration-200 ease-in-out md:flex md:flex-col ${collapsed ? "md:w-20" : "md:w-64"
+        }`}
+    >
+      {/*
+        收缩/展开切换按钮
 
-          <div>
-            <p className="text-lg font-black tracking-tight text-gray-900">
-              PUFFY
-            </p>
-            <p className="text-xs font-medium text-gray-500">
-              留学学习管理系统
-            </p>
-          </div>
-        </Link>
-      </div>
+        位置固定：浮在侧边栏右边缘、垂直居中，不管收缩还是展开状态，
+        按钮本身位置不变，只是图标方向和 title 提示跟着状态切换。
+        这样用户不用去找按钮在哪，养成"点这个固定位置"的肌肉记忆。
+      */}
+      <button
+        type="button"
+        onClick={toggleCollapsed}
+        title={collapsed ? "展开导航栏" : "收起导航栏"}
+        className="absolute top-1/2 -right-3 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full border border-gray-200 bg-white text-gray-400 shadow-sm transition hover:text-gray-700"
+      >
+        {collapsed ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+      </button>
 
       <nav className="flex-1 space-y-1 px-3 py-4">
         {visibleItems.map((item) => {
@@ -191,60 +295,78 @@ export function DashboardSidebar({
             <Link
               key={item.href}
               href={item.href}
-              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${active
-                ? "bg-gray-900 text-white shadow-sm"
-                : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              title={collapsed ? item.label : undefined}
+              className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition ${collapsed ? "justify-center" : ""
+                } ${active
+                  ? "bg-gray-900 text-white shadow-sm"
+                  : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
                 }`}
             >
               <Icon
                 size={18}
-                className={active ? "text-white" : "text-gray-400"}
+                className={`shrink-0 ${active ? "text-white" : "text-gray-400"}`}
               />
-              {item.label}
 
-              {item.adminOnly && (
-                <span
-                  className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-bold ${active
-                    ? "bg-white/15 text-white"
-                    : "bg-orange-50 text-orange-600"
-                    }`}
-                >
-                  {item.executiveOnly ? "EXEC" : "ADMIN"}
-                </span>
+              {!collapsed && (
+                <>
+                  <span className="truncate">{item.label}</span>
+
+                  {item.adminOnly && (
+                    <span
+                      className={`ml-auto shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${active
+                          ? "bg-white/15 text-white"
+                          : "bg-orange-50 text-orange-600"
+                        }`}
+                    >
+                      {item.executiveOnly ? "EXEC" : "ADMIN"}
+                    </span>
+                  )}
+                </>
               )}
-
             </Link>
           );
         })}
       </nav>
 
-
       <div className="border-t border-gray-100 p-4">
-        <div className="mb-3">
-          <ThemeSwitcher />
-        </div>
+        {!collapsed && (
+          <div className="mb-3">
+            <ThemeSwitcher />
+          </div>
+        )}
 
-        <div className="mb-3 rounded-2xl bg-gray-50 p-3">
-          <div className="flex items-center gap-3">
+        <div
+          className={`mb-3 rounded-2xl bg-gray-50 p-3 ${collapsed ? "flex justify-center" : ""
+            }`}
+          title={collapsed ? `${userName}（${getRoleLabel(userRole)}）` : undefined}
+        >
+          <div
+            className={`flex items-center gap-3 ${collapsed ? "justify-center" : ""
+              }`}
+          >
             <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white text-gray-600 shadow-sm">
               <UserCircle size={22} />
             </div>
 
-            <div className="min-w-0">
-              <p className="truncate text-sm font-bold text-gray-900">
-                {userName}
-              </p>
+            {!collapsed && (
+              <div className="min-w-0">
+                <p className="truncate text-sm font-bold text-gray-900">
+                  {userName}
+                </p>
 
-              <p className="truncate text-xs text-gray-500">{userEmail}</p>
+                <p className="truncate text-xs text-gray-500">{userEmail}</p>
 
-              <p className="mt-1 text-xs font-semibold text-orange-600">
-                {getRoleLabel(userRole)}
-              </p>
-            </div>
+                <p className="mt-1 text-xs font-semibold text-orange-600">
+                  {getRoleLabel(userRole)}
+                </p>
+              </div>
+            )}
           </div>
         </div>
 
-        <LogoutButton />
+        <div className={collapsed ? "flex justify-center" : ""}>
+          <LogoutButton collapsed={collapsed} />
+        </div>
       </div>
     </aside>
   );

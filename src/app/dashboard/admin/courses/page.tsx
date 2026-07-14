@@ -26,7 +26,6 @@ import {
   FolderOpen,
   GraduationCap,
   Languages,
-  Layers3,
   Settings,
   Video,
 } from "lucide-react";

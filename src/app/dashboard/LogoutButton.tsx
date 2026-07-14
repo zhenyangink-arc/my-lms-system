@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { LogOut } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,7 +16,15 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-export function LogoutButton() {
+/*
+  collapsed 由 DashboardSidebar 传入。
+
+  收缩状态下：
+  1. 按钮宽度从 w-full 改成固定的 w-9（正方形，跟其他收缩状态的图标按钮保持一致）
+  2. 文字隐藏，只显示退出图标
+  3. 用原生 title 属性做 hover 文字提示，跟侧边栏其他收缩项的提示方式一致
+*/
+export function LogoutButton({ collapsed = false }: { collapsed?: boolean }) {
   const router = useRouter();
 
   async function handleLogout() {
@@ -30,8 +38,13 @@ export function LogoutButton() {
 
   return (
     <AlertDialog>
-      <AlertDialogTrigger className="inline-flex h-9 w-full items-center justify-center rounded-md border border-gray-200 bg-white px-3 text-sm font-medium shadow-sm transition hover:bg-gray-50">
-        退出登录
+      <AlertDialogTrigger
+        title={collapsed ? "退出登录" : undefined}
+        className={`inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium shadow-sm transition hover:bg-gray-50 ${
+          collapsed ? "w-9" : "w-full px-3"
+        }`}
+      >
+        {collapsed ? <LogOut size={16} /> : "退出登录"}
       </AlertDialogTrigger>
 
       <AlertDialogContent>

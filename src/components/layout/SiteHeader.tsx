@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { ChevronDown } from "lucide-react";
+import { ArrowRight, MapPinned, Menu, X } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
-import { Button } from "@/components/ui/button";
 import { createClient } from "@/lib/supabase/client";
 import {
   AlertDialog,
@@ -21,47 +20,40 @@ import {
 } from "@/components/ui/alert-dialog";
 
 const navItems = [
-  { label: "首页", href: "/" },
-  {
-    label: "产品",
-    items: [
-      { label: "SaaS 系统", href: "/products/saas" },
-      { label: "API 服务", href: "/products/api" },
-    ],
-  },
-  {
-    label: "解决方案",
-    items: [
-      { label: "企业级架构", href: "/solutions/enterprise" },
-      { label: "流程自动化", href: "/solutions/automation" },
-    ],
-  },
-  { label: "定价", href: "/pricing" },
-  { label: "联系我们", href: "/contact" },
+  { label: "双线成长", href: "/#growth-path" },
+  { label: "学习成果", href: "/#outcomes" },
+  { label: "服务支持", href: "/#services" },
+  { label: "开始规划", href: "/#start-plan" },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
+
+  // 控制台使用自己的顶部条，公开站点导航只在非控制台页面显示。
+  if (pathname.startsWith("/dashboard")) {
+    return null;
+  }
+
+  return <PublicSiteHeader />;
+}
+
+function PublicSiteHeader() {
   const router = useRouter();
-
   const supabase = useMemo(() => createClient(), []);
-
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-
-  const isLoggedIn = !!user;
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
 
     async function loadUser() {
       const {
-        data: { user },
+        data: { user: currentUser },
       } = await supabase.auth.getUser();
 
       if (!mounted) return;
-
-      setUser(user);
+      setUser(currentUser);
       setLoading(false);
     }
 
@@ -82,117 +74,160 @@ export function SiteHeader() {
 
   async function handleLogout() {
     await supabase.auth.signOut();
-
     setUser(null);
+    setMenuOpen(false);
     router.push("/login");
     router.refresh();
   }
 
   return (
-    <nav className="sticky top-0 z-50 border-b border-gray-200 bg-white shadow-sm">
-      <div className="container mx-auto flex h-[72px] items-center justify-between px-4 md:px-8">
-        {/* 1. 左侧 Logo 区 */}
-        <Link
-          href="/"
-          className="text-xl font-black tracking-tighter text-indigo-600 transition hover:text-indigo-700"
-        >
-          PUFFY<span className="text-gray-900">.</span>
+    <header className="sticky top-0 z-50 border-b border-[#deedf5] bg-[#fffdf8]/92 backdrop-blur-xl">
+      <nav className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-4 px-5 sm:px-8" aria-label="主导航">
+        {/* 中文品牌标识使用暖橙与天蓝，呼应留学和成长双主线。 */}
+        <Link href="/" className="group flex shrink-0 items-center gap-3">
+          <span className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white bg-[conic-gradient(from_35deg,#ff8c70_0_50%,#78c8ef_50%_100%)] shadow-[0_8px_20px_rgba(73,133,169,0.18)] transition group-hover:-rotate-3 group-hover:scale-105">
+            <span className="grid h-6 w-6 place-items-center rounded-full bg-white/90 text-[#345f78]">
+              <MapPinned size={15} />
+            </span>
+          </span>
+          <span>
+            <span className="block text-xl font-black tracking-[-0.04em] text-[#19425f]">元智教育</span>
+            <span className="hidden text-[11px] font-bold tracking-[0.08em] text-[#7590a2] lg:block">
+              韩国留学与韩语成长
+            </span>
+          </span>
         </Link>
 
-        {/* 2. 中间导航菜单区 */}
-        <div className="hidden items-center gap-6 font-medium text-gray-600 md:flex">
-          {navItems.map((item) =>
-            item.href ? (
-              <Link
-                key={item.label}
-                href={item.href}
-                className={`rounded-lg px-3 py-2 transition ${pathname === item.href
-                  ? "bg-indigo-50 text-indigo-600"
-                  : "hover:bg-gray-50 hover:text-indigo-600"
-                  }`}
-              >
-                {item.label}
-              </Link>
-            ) : (
-              <div key={item.label} className="group relative">
-                <button
-                  type="button"
-                  className="flex items-center gap-1 rounded-lg px-3 py-2 transition hover:text-indigo-600"
-                >
-                  {item.label}
-                  <ChevronDown className="h-4 w-4 opacity-50" />
-                </button>
-
-                <div className="absolute left-0 z-50 hidden pt-2 group-hover:block">
-                  <div className="flex w-40 flex-col overflow-hidden rounded-xl border border-gray-100 bg-white py-2 shadow-xl">
-                    {item.items?.map((child) => (
-                      <Link
-                        key={child.label}
-                        href={child.href}
-                        className="px-4 py-2 text-sm text-gray-600 hover:bg-gray-50 hover:text-indigo-600"
-                      >
-                        {child.label}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )
-          )}
+        <div className="hidden items-center gap-1 md:flex">
+          {navItems.map((item) => (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="rounded-xl px-4 py-2.5 text-sm font-bold text-[#557186] transition hover:bg-[#edf8ff] hover:text-[#2e7ca8]"
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
 
-        {/* 3. 右侧登录状态区 */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          {/* 登录状态加载时保留固定宽度，避免导航左右跳动。 */}
           {loading ? (
-            <div className="h-9 w-24 rounded-md bg-gray-100" />
-          ) : !isLoggedIn ? (
-            <>
-              <Link href="/login">
-                <Button variant="ghost">登录</Button>
+            <div className="hidden h-10 w-32 animate-pulse rounded-xl bg-[#edf3f6] sm:block" />
+          ) : user ? (
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link
+                href="/dashboard"
+                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#2e7299] transition hover:bg-[#edf8ff]"
+              >
+                个人中心
               </Link>
-
-              <Link href="/register">
-                <Button className="bg-green-600 hover:bg-green-700">
-                  加入我们
-                </Button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link href="/dashboard">
-                <Button variant="ghost" className="font-bold text-indigo-600">
-                  个人中心
-                </Button>
-              </Link>
-
               <AlertDialog>
-                <AlertDialogTrigger className="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white px-3 text-sm font-medium shadow-sm transition hover:bg-gray-50">
+                <AlertDialogTrigger className="rounded-xl border border-[#d7e6ee] bg-white px-4 py-2.5 text-sm font-black text-[#61798a] transition hover:bg-[#f6fafc]">
                   退出
                 </AlertDialogTrigger>
-
                 <AlertDialogContent>
                   <AlertDialogHeader>
                     <AlertDialogTitle>确认退出登录？</AlertDialogTitle>
                     <AlertDialogDescription>
-                      退出后需要重新登录才能进入个人中心和学生控制台。
+                      退出后需要重新登录，才能继续查看课程和成长记录。
                     </AlertDialogDescription>
                   </AlertDialogHeader>
-
                   <AlertDialogFooter>
                     <AlertDialogCancel>取消</AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={handleLogout}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
+                    <AlertDialogAction onClick={handleLogout} className="bg-[#e96c52] hover:bg-[#d95f46]">
                       确认退出
                     </AlertDialogAction>
                   </AlertDialogFooter>
                 </AlertDialogContent>
               </AlertDialog>
-            </>
+            </div>
+          ) : (
+            <div className="hidden items-center gap-2 sm:flex">
+              <Link
+                href="/login"
+                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#527084] transition hover:bg-[#edf8ff]"
+              >
+                登录
+              </Link>
+              <Link
+                href="/register"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#f37b5e] px-4 py-2.5 text-sm font-black text-white shadow-[0_10px_24px_rgba(243,123,94,0.22)] transition hover:-translate-y-0.5 hover:bg-[#e86d50]"
+              >
+                免费开始
+                <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
+              </Link>
+            </div>
           )}
+
+          <button
+            type="button"
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex h-11 w-11 items-center justify-center rounded-xl border border-[#d9e8ef] bg-white text-[#315f79] md:hidden"
+            aria-label={menuOpen ? "关闭导航菜单" : "打开导航菜单"}
+            aria-expanded={menuOpen}
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
         </div>
-      </div>
-    </nav>
+      </nav>
+
+      {/* 移动端菜单保持大触控区域，并包含完整的登录入口。 */}
+      {menuOpen && (
+        <div className="border-t border-[#e1edf3] bg-[#fffdf8] px-5 pb-5 pt-3 md:hidden">
+          <div className="mx-auto grid max-w-7xl gap-1">
+            {navItems.map((item) => (
+              <Link
+                key={item.label}
+                href={item.href}
+                onClick={() => setMenuOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm font-black text-[#48677b] hover:bg-[#edf8ff]"
+              >
+                {item.label}
+              </Link>
+            ))}
+            {!loading && (
+              <div className="mt-2 grid grid-cols-2 gap-2 border-t border-[#e2edf3] pt-4">
+                {user ? (
+                  <>
+                    <Link
+                      href="/dashboard"
+                      onClick={() => setMenuOpen(false)}
+                      className="rounded-xl bg-[#e9f6fd] px-4 py-3 text-center text-sm font-black text-[#31799f]"
+                    >
+                      个人中心
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="rounded-xl border border-[#f0d2c8] bg-white px-4 py-3 text-sm font-black text-[#cb664e]"
+                    >
+                      退出登录
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <Link
+                      href="/login"
+                      onClick={() => setMenuOpen(false)}
+                      className="rounded-xl border border-[#d7e6ee] bg-white px-4 py-3 text-center text-sm font-black text-[#527084]"
+                    >
+                      登录
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setMenuOpen(false)}
+                      className="rounded-xl bg-[#f37b5e] px-4 py-3 text-center text-sm font-black text-white"
+                    >
+                      免费开始
+                    </Link>
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </header>
   );
 }

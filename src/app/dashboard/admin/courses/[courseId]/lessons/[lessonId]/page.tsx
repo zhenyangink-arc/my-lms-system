@@ -73,8 +73,11 @@ import {
   updateLessonAction,
   updateLessonResourceAction,
 } from "../../../actions";
+
 import { ResourceFileOrLinkField } from "../../../ResourceFileOrLinkField";
 
+
+import { EditResourceFileOrLinkField } from "../../../EditResourceFileOrLinkField";
 /*
   课程类型
 
@@ -1268,35 +1271,10 @@ export default async function AdminLessonEditPage({
                                         />
                                       </label>
 
-                                      <label className="block">
-                                        <span className="text-xs font-bold app-muted-text">
-                                          资料类型
-                                        </span>
-
-                                        <select
-                                          name="resource_type"
-                                          defaultValue={resource.resource_type}
-                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                                        >
-                                          <option value="link">链接</option>
-                                          <option value="file">文件</option>
-                                          <option value="template">模板</option>
-                                          <option value="checklist">清单</option>
-                                          <option value="reference">参考资料</option>
-                                        </select>
-                                      </label>
-
-                                      <label className="block md:col-span-2">
-                                        <span className="text-xs font-bold app-muted-text">
-                                          资料 URL
-                                        </span>
-
-                                        <input
-                                          name="resource_url"
-                                          defaultValue={resource.resource_url ?? ""}
-                                          className="app-input mt-1 w-full rounded-xl border px-3 py-2 text-sm outline-none transition"
-                                        />
-                                      </label>
+                                        <EditResourceFileOrLinkField
+                                        lessonId={lesson.id}
+                                        resource={resource}
+                                      />
 
                                       <label className="block md:col-span-2">
                                         <span className="text-xs font-bold app-muted-text">
@@ -1504,21 +1482,34 @@ export default async function AdminLessonEditPage({
                                         </p>
                                       )}
 
-                                      {resource.resource_url ? (
-                                        
-                                       <a   href={resource.resource_url}
-                                          target="_blank"
-                                          rel="noreferrer"
-                                          className="mt-2 inline-flex text-xs font-semibold underline"
-                                          style={{ color: "var(--app-accent)" }}
-                                        >
-                                          打开资料
-                                        </a>
-                                      ) : (
-                                        <p className="mt-2 text-xs app-muted-text">
-                                          暂无资料链接
-                                        </p>
-                                      )}
+                                      <div className="mt-2 flex flex-wrap gap-3">
+                                        {resource.resource_url && (
+                                          <a href={resource.resource_url}
+                                            target="_blank"
+                                            rel="noreferrer"
+                                            className="inline-flex text-xs font-semibold underline"
+                                            style={{ color: "var(--app-accent)" }}
+                                          >
+                                            打开资料
+                                          </a>
+                                        )}
+
+                                        {resource.resource_object_key && (
+                                          <a href={`/api/lesson-resources/${resource.id}/download`}
+                                            className="inline-flex text-xs font-semibold underline"
+                                            style={{ color: "var(--app-accent)" }}
+                                          >
+                                            下载文件（{resource.original_file_name}）
+                                          </a>
+                                        )}
+
+                                        {!resource.resource_url &&
+                                          !resource.resource_object_key && (
+                                            <p className="text-xs app-muted-text">
+                                              暂无资料链接
+                                            </p>
+                                          )}
+                                      </div>
                                     </div>
 
                                     <div className="flex flex-col gap-2">

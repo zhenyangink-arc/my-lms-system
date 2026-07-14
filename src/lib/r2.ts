@@ -1,4 +1,4 @@
-import { S3Client, GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, GetObjectCommand, PutObjectCommand, DeleteObjectCommand } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
 function getRequiredEnv(name: string) {
@@ -102,4 +102,25 @@ export async function createR2SignedResourceDownloadUrl(
   return getSignedUrl(r2Client, command, {
     expiresIn: signedUrlExpiresIn,
   });
+}
+
+
+/*
+  删除 R2 里的一个文件
+
+  使用场景：
+  管理员给已有资料重新上传新文件后，把旧文件从 R2 里清理掉，
+  避免旧文件一直占用存储空间。
+
+  注意：
+  这个函数只删 R2 里的物理文件，不碰数据库。
+  数据库这边的 resource_object_key 更新是在 actions.ts 里单独处理的。
+*/
+export async function deleteR2Object(objectKey: string) {
+  const command = new DeleteObjectCommand({
+    Bucket: bucketName,
+    Key: objectKey,
+  });
+
+  await r2Client.send(command);
 }
