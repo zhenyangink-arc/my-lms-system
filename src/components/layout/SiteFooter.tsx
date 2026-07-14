@@ -89,7 +89,7 @@ export function SiteFooter() {
 
       <div className="border-t border-[#dceaf2]">
         <div className="mx-auto flex max-w-7xl flex-col gap-2 px-5 py-5 text-xs font-medium text-[#7b93a2] sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <span>© {currentYear} 元智教育教育　保留所有权利</span>
+          <span>© {currentYear} 元智教育　保留所有权利</span>
           <span>韩国留学规划 · 韩语成长陪伴</span>
         </div>
       </div>

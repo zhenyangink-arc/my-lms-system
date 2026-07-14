@@ -1,0 +1,52 @@
+/* 认证页面使用与主页一致的暖白、天蓝和珊瑚橙，不影响控制台主题。 */
+.authBackdrop {
+  position: relative;
+  overflow: hidden;
+  background-color: #fffdf8;
+  background-image:
+    linear-gradient(rgba(116, 183, 232, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(116, 183, 232, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 8% 18%, rgba(255, 206, 181, 0.42), transparent 26%),
+    radial-gradient(circle at 90% 22%, rgba(188, 229, 251, 0.52), transparent 28%);
+  background-size: 52px 52px, 52px 52px, auto, auto;
+  font-family:
+    "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
+    sans-serif;
+}
+
+.softFloat {
+  animation: auth-soft-float 5.8s ease-in-out infinite;
+}
+
+.cardEnter {
+  animation: auth-card-enter 460ms ease-out both;
+}
+
+@keyframes auth-soft-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+@keyframes auth-card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 尊重用户的系统动态效果偏好。 */
+@media (prefers-reduced-motion: reduce) {
+  .softFloat,
+  .cardEnter {
+    animation: none;
+  }
+}

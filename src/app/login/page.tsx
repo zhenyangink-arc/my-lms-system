@@ -5,29 +5,24 @@ import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { ArrowLeft, GraduationCap } from "lucide-react";
+import {
+  ArrowRight,
+  CircleAlert,
+  LockKeyhole,
+  Mail,
+  ShieldCheck,
+} from "lucide-react";
+
+import { AuthPageShell } from "@/components/auth/AuthPageShell";
+import { PasswordInput } from "@/components/auth/PasswordInput";
+import { Button } from "@/components/ui/button";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
-import { Input } from "@/components/ui/input";
-
 const formSchema = z.object({
-  email: z.string().email({
-    message: "请输入有效的邮箱格式，例如 user@example.com",
+  email: z.string().trim().toLowerCase().email({
+    message: "请输入有效的电子邮箱",
   }),
   password: z.string().min(6, {
     message: "密码至少需要 6 个字符",
@@ -38,7 +33,6 @@ type LoginFormValues = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
   const router = useRouter();
-
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -48,143 +42,128 @@ export default function LoginPage() {
   });
 
   async function onSubmit(values: LoginFormValues) {
-  const supabase = createClient();
-
+    form.clearErrors("root");
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithPassword({
       email: values.email,
       password: values.password,
     });
 
+    // 登录失败统一使用模糊提示，避免暴露邮箱是否已经注册。
     if (error) {
-      form.setError("email", {
-        message: "邮箱或密码错误",
+      form.setError("root", {
+        message: "邮箱或密码不正确，请检查后重试",
       });
       return;
     }
 
-    router.push("/dashboard");
+    router.replace("/dashboard");
     router.refresh();
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 p-4">
-      <Link
-        href="/"
-        className="absolute left-4 top-4 md:left-8 md:top-8 flex items-center gap-2 text-sm font-medium text-gray-500 hover:text-gray-900 transition-colors"
-      >
-        <ArrowLeft size={16} />
-        返回首页
-      </Link>
-
-      <div className="w-full max-w-[400px]">
-        <div className="flex flex-col items-center mb-8">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-600 text-white mb-4 shadow-lg shadow-indigo-200">
-            <GraduationCap size={28} />
-          </div>
-
-          <h1 className="text-2xl font-black tracking-tight text-gray-900">
-            欢迎回到 PUFFY
-          </h1>
-
-          <p className="text-sm text-gray-500 mt-2">
-            登录以继续你的专属学习计划
+    <AuthPageShell variant="login">
+      <section className="rounded-[2rem] border border-white/90 bg-white/94 p-6 shadow-[0_28px_75px_rgba(52,106,140,0.17)] backdrop-blur sm:p-8">
+        <div>
+          <p className="text-sm font-black tracking-[0.12em] text-[#ec7659]">账号登录</p>
+          <h2 className="mt-2 text-3xl font-black tracking-[-0.035em] text-[#183f5b]">
+            欢迎回来
+          </h2>
+          <p className="mt-2 text-sm leading-6 text-[#708897]">
+            输入邮箱和密码，继续你的课程与成长计划。
           </p>
         </div>
 
-        <Card className="border-gray-200 shadow-sm rounded-2xl">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">账号登录</CardTitle>
-            <CardDescription>
-              请输入你的邮箱和密码进入控制台
-            </CardDescription>
-          </CardHeader>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="mt-7 space-y-6" noValidate>
+          <FieldGroup>
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor={field.name} className="font-black text-[#365c74]">
+                    <Mail size={16} className="text-[#4a98c1]" />
+                    电子邮箱
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id={field.name}
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="请输入注册时使用的邮箱"
+                    aria-invalid={fieldState.invalid}
+                    className="h-12 rounded-xl border-[#d8e7ee] bg-[#fbfdfe] px-4 text-base focus-visible:border-[#62add3] focus-visible:ring-[#d7effb]"
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
 
-          <CardContent>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="space-y-6"
+            <Controller
+              name="password"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <div className="flex items-center justify-between gap-3">
+                    <FieldLabel htmlFor={field.name} className="font-black text-[#365c74]">
+                      <LockKeyhole size={16} className="text-[#ef7d60]" />
+                      密码
+                    </FieldLabel>
+                    <span className="text-xs font-bold text-[#8195a2]">忘记密码请联系管理员</span>
+                  </div>
+                  <PasswordInput
+                    {...field}
+                    id={field.name}
+                    autoComplete="current-password"
+                    placeholder="请输入账号密码"
+                    aria-invalid={fieldState.invalid}
+                    className="h-12 rounded-xl border-[#d8e7ee] bg-[#fbfdfe] px-4 text-base focus-visible:border-[#62add3] focus-visible:ring-[#d7effb]"
+                  />
+                  {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+
+          {form.formState.errors.root?.message && (
+            <div
+              role="alert"
+              className="flex items-start gap-2 rounded-xl border border-[#f4d3c9] bg-[#fff4ef] px-4 py-3 text-sm font-bold leading-6 text-[#b95843]"
             >
-              <FieldGroup>
-                <Controller
-                  name="email"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <FieldLabel htmlFor={field.name}>
-                        电子邮箱
-                      </FieldLabel>
-
-                      <Input
-                        {...field}
-                        id={field.name}
-                        type="email"
-                        placeholder="hello@example.com"
-                        aria-invalid={fieldState.invalid}
-                        className="rounded-xl focus-visible:ring-indigo-600"
-                      />
-
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-
-                <Controller
-                  name="password"
-                  control={form.control}
-                  render={({ field, fieldState }) => (
-                    <Field data-invalid={fieldState.invalid}>
-                      <div className="flex items-center justify-between">
-                        <FieldLabel htmlFor={field.name}>
-                          密码
-                        </FieldLabel>
-
-                        <span className="text-sm font-medium text-gray-500">
-                          忘记密码请联系管理员
-                        </span>
-                      </div>
-
-                      <Input
-                        {...field}
-                        id={field.name}
-                        type="password"
-                        placeholder="••••••••"
-                        aria-invalid={fieldState.invalid}
-                        className="rounded-xl focus-visible:ring-indigo-600"
-                      />
-
-                      {fieldState.invalid && (
-                        <FieldError errors={[fieldState.error]} />
-                      )}
-                    </Field>
-                  )}
-                />
-              </FieldGroup>
-
-              <Button
-                type="submit"
-                disabled={form.formState.isSubmitting}
-                className="w-full rounded-xl bg-indigo-600 hover:bg-indigo-700 py-6 text-base font-bold shadow-md shadow-indigo-100"
-              >
-                {form.formState.isSubmitting ? "登录中..." : "安全登录"}
-              </Button>
-            </form>
-          </CardContent>
-
-          <CardFooter className="flex justify-center border-t border-gray-100 pt-6">
-            <div className="text-sm text-gray-500">
-              还没有账号？{" "}
-              <Link
-                href="/register"
-                className="font-bold text-indigo-600 hover:text-indigo-500 transition-colors"
-              >
-                免费注册
-              </Link>
+              <CircleAlert size={17} className="mt-0.5 shrink-0" />
+              {form.formState.errors.root.message}
             </div>
-          </CardFooter>
-        </Card>
-      </div>
-    </div>
+          )}
+
+          <Button
+            type="submit"
+            disabled={form.formState.isSubmitting}
+            className="h-12 w-full rounded-xl bg-[#f2785b] text-base font-black text-white shadow-[0_14px_30px_rgba(242,120,91,0.25)] transition hover:-translate-y-0.5 hover:bg-[#e8684d]"
+          >
+            {form.formState.isSubmitting ? (
+              "正在登录…"
+            ) : (
+              <span className="flex items-center gap-2">
+                进入学习中心
+                <ArrowRight size={17} />
+              </span>
+            )}
+          </Button>
+        </form>
+
+        <div className="mt-6 flex items-center justify-center gap-2 text-xs font-bold text-[#7b929f]">
+          <ShieldCheck size={15} className="text-[#4aa872]" />
+          登录信息通过安全连接发送
+        </div>
+
+        <div className="mt-6 border-t border-[#e5eef3] pt-6 text-center text-sm text-[#708795]">
+          还没有成长档案？
+          <Link href="/register" className="ml-1 font-black text-[#3380aa] transition hover:text-[#ed7357]">
+            免费创建账号
+          </Link>
+        </div>
+      </section>
+    </AuthPageShell>
   );
 }
