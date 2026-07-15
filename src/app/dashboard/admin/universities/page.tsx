@@ -11,7 +11,7 @@ export default async function AdminUniversitiesPage() {
   const { supabase } = await requireAdmin();
   const { data, error } = await supabase
     .from("korean_universities")
-    .select("id, name_zh, name_ko, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, highlights, is_featured, is_published, sort_order, updated_at")
+    .select("id, name_zh, name_ko, logo_url, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, detailed_introduction, highlights, is_featured, is_published, sort_order, updated_at")
     .order("sort_order", { ascending: true });
 
   const universities = (data ?? []) as AdminUniversity[];
@@ -20,7 +20,7 @@ export default async function AdminUniversitiesPage() {
 
   return (
     <>
-      <DashboardPageHeader title="大学管理" description="维护学校介绍、筛选标签、学费和排名；管理员修正后会同步到学生选校页面。" />
+      <DashboardPageHeader title="韩国大学管理" description="维护韩国大学的校徽、介绍、筛选标签、学费和排名；修改会同步到统一学校管理。" />
       <div className="mx-auto w-full max-w-[1600px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
         <section className="grid gap-4 sm:grid-cols-3">
           {[

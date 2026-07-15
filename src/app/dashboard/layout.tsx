@@ -1,7 +1,9 @@
 import type { ReactNode } from "react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardSidebar } from "./DashboardSidebar";
+import { DashboardPermissionGate } from "./DashboardPermissionGate";
 import { GlobalTopbar } from "./GlobalTopbar";
 import { ThemeProvider } from "./ThemeProvider";
 
@@ -18,8 +20,8 @@ export default async function DashboardLayout({
     user.email ||
     "用户";
 
-  const userEmail = user.email ?? "";
   const userRole = profile?.role ?? "student";
+  const membershipTier = normalizeMembershipTier(profile?.membership_tier);
 
   return (
     <ThemeProvider>
@@ -29,11 +31,15 @@ export default async function DashboardLayout({
         <div className="flex min-h-0 flex-1">
           <DashboardSidebar
             userName={userName}
-            userEmail={userEmail}
             userRole={userRole}
+            membershipTier={membershipTier}
           />
 
-          <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
+          <main className="min-w-0 flex-1 pb-24 md:pb-0">
+            <DashboardPermissionGate userRole={userRole} membershipTier={membershipTier}>
+              {children}
+            </DashboardPermissionGate>
+          </main>
         </div>
       </div>
     </ThemeProvider>

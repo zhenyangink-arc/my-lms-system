@@ -11,12 +11,14 @@ import {
     GraduationCap,
     ListChecks,
     Lightbulb,
+    LockKeyhole,
     NotebookPen,
     TriangleAlert,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
+import { requireActiveUser } from "@/lib/auth";
 import { createR2SignedVideoUrl } from "@/lib/r2";
+import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardPageHeader } from "../../../../../DashboardPageHeader";
 import { LessonSupportSheet } from "./LessonSupportSheet";
 import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
@@ -247,7 +249,7 @@ export default async function LessonDetailPage({
     const { categorySlug, subcategorySlug, courseSlug, lessonSlug } =
         await params;
 
-    const supabase = await createClient();
+    const { supabase, user, profile } = await requireActiveUser();
 
     const { data: parentCategoryData } = await supabase
         .from("course_categories")
@@ -308,19 +310,21 @@ export default async function LessonDetailPage({
     }
 
     const lesson = lessonData as Lesson;
-    let resolvedVideoUrl = lesson.video_url;
+    const membershipTier = normalizeMembershipTier(profile?.membership_tier);
+    const hasLessonAccess = canUseStudentFeature(
+        profile?.role ?? "student",
+        membershipTier,
+        "course_preview"
+    ) && (profile?.role !== "student" || lesson.is_free_preview);
+    let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;
 
-    if (lesson.video_provider === "r2" && lesson.video_object_key) {
+    if (hasLessonAccess && lesson.video_provider === "r2" && lesson.video_object_key) {
         resolvedVideoUrl = await createR2SignedVideoUrl(lesson.video_object_key);
     }
 
-    const {
-        data: { user },
-    } = await supabase.auth.getUser();
-
     let questions: LessonQuestion[] = [];
 
-    if (user) {
+    if (hasLessonAccess) {
         const { data: questionData } = await supabase
             .from("lesson_questions")
             .select(
@@ -371,7 +375,7 @@ export default async function LessonDetailPage({
         progress_percent: 0,
     };
 
-    if (user) {
+    if (hasLessonAccess) {
         const { data: progressData } = await supabase
             .from("lesson_progress")
             .select("status, progress_percent")
@@ -405,7 +409,7 @@ export default async function LessonDetailPage({
             : "ai";
 
     const autoVideoProgressEnabled = Boolean(
-        resolvedVideoUrl &&
+        hasLessonAccess && resolvedVideoUrl &&
         (lesson.video_provider === "upload" || lesson.video_provider === "r2")
     );
 
@@ -508,17 +512,17 @@ export default async function LessonDetailPage({
 
                         {/* 中间：学习状态 / 学习进度 */}
                         <div className="xl:-translate-x-10">
-                            <LessonProgressStatusCard
+                            {hasLessonAccess ? <LessonProgressStatusCard
                                 lessonId={lesson.id}
                                 initialStatus={progress.status}
                                 initialProgress={progress.progress_percent}
                                 autoProgressEnabled={autoVideoProgressEnabled}
-                            />
+                            /> : <div className="app-soft-card rounded-2xl border p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>}
                         </div>
 
                         {/* 右侧：学习支持 / 咨询 + 上一课 / 下一课 */}
                         <div className="flex flex-col items-center gap-3 xl:pt-1">
-                            <LessonSupportSheet
+                            {hasLessonAccess && <LessonSupportSheet
                                 courseId={course.id}
                                 lessonId={lesson.id}
                                 teacherName={course.support_teacher_name}
@@ -528,7 +532,7 @@ export default async function LessonDetailPage({
                                 allowQuestions={lesson.allow_questions}
                                 defaultTarget={defaultQuestionTarget}
                                 questions={questions}
-                            />
+                            />}
 
                             <div className="flex items-center justify-center gap-2">
                                 {previousLesson ? (
@@ -581,14 +585,14 @@ export default async function LessonDetailPage({
                             description="通过视频进入本课学习，系统会根据观看进度自动记录学习状态"
                         />
 
-                        <LessonVideoPlayer
-  courseId={course.id}
-  lessonId={lesson.id}
-  videoUrl={resolvedVideoUrl}
-  videoProvider={lesson.video_provider}
-  initialStatus={progress.status}
-  initialProgress={progress.progress_percent}
-/>
+                        {hasLessonAccess ? <LessonVideoPlayer
+                            courseId={course.id}
+                            lessonId={lesson.id}
+                            videoUrl={resolvedVideoUrl}
+                            videoProvider={lesson.video_provider}
+                            initialStatus={progress.status}
+                            initialProgress={progress.progress_percent}
+                        /> : <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-6">VIP1 及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
                     </section>
 
                     {/* 右侧：02 学习引导 */}

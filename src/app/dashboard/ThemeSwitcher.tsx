@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useSyncExternalStore } from "react";
-import { Check, Palette } from "lucide-react";
+import { Check } from "lucide-react";
 
 const THEME_STORAGE_KEY = "puffy-dashboard-theme";
 const THEME_CHANGE_EVENT = "puffy-dashboard-theme-change";
@@ -78,56 +78,26 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <div className="app-theme-card rounded-2xl border p-3.5">
-      <div className="mb-3 flex items-center gap-2.5">
-        <div className="app-soft-card flex h-9 w-9 items-center justify-center rounded-xl border">
-          <Palette size={17} />
-        </div>
-
-        <div>
-          <p className="text-sm font-black">界面主题</p>
-          <p className="text-[11px] app-muted-text">白天明亮，夜晚舒适</p>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-2">
-        {themes.map((item) => (
-          <button
-            key={item.value}
-            type="button"
-            onClick={() => handleThemeChange(item.value)}
-            aria-pressed={theme === item.value}
-            title={item.description}
-            className={`relative flex items-center gap-2 rounded-xl border p-2 text-left transition hover:-translate-y-0.5 ${
-              item.value === "night" ? "col-span-2" : ""
-            }`}
-            style={{
-              borderColor: theme === item.value
-                ? "var(--app-accent)"
-                : "var(--app-border)",
-              backgroundColor: theme === item.value
-                ? "var(--app-accent-soft)"
-                : "var(--app-card-bg)",
-            }}
-          >
-            <span
-              className="h-7 w-7 shrink-0 rounded-lg shadow-sm"
-              style={{
-                background: `linear-gradient(135deg, ${item.colors[0]} 0 38%, ${item.colors[1]} 38% 70%, ${item.colors[2]} 70%)`,
-              }}
-            />
-            <span className="text-xs font-bold">{item.label}</span>
-            {theme === item.value && (
-              <span
-                className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full text-white"
-                style={{ backgroundColor: "var(--app-accent)" }}
-              >
-                <Check size={10} strokeWidth={3} />
-              </span>
-            )}
-          </button>
-        ))}
-      </div>
+    <div className="flex items-center justify-center gap-1.5 py-1" aria-label="界面主题">
+      {/* 主题区只保留色彩图标，名称通过悬停提示和无障碍标签提供。 */}
+      {themes.map((item) => (
+        <button
+          key={item.value}
+          type="button"
+          onClick={() => handleThemeChange(item.value)}
+          aria-label={`${item.label}主题：${item.description}`}
+          aria-pressed={theme === item.value}
+          title={`${item.label} · ${item.description}`}
+          className="relative flex h-8 w-8 items-center justify-center rounded-xl border transition hover:-translate-y-0.5"
+          style={{
+            borderColor: theme === item.value ? "var(--app-accent)" : "var(--app-border)",
+            backgroundColor: "transparent",
+          }}
+        >
+          <span className="h-5 w-5 rounded-lg shadow-sm" style={{ background: `linear-gradient(135deg, ${item.colors[0]} 0 38%, ${item.colors[1]} 38% 70%, ${item.colors[2]} 70%)` }} />
+          {theme === item.value && <span className="absolute -right-1 -top-1 flex h-3.5 w-3.5 items-center justify-center rounded-full text-white" style={{ backgroundColor: "var(--app-accent)" }}><Check size={8} strokeWidth={3} /></span>}
+        </button>
+      ))}
     </div>
   );
 }

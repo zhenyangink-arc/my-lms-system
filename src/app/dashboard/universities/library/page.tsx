@@ -13,7 +13,7 @@ export default async function UniversityLibraryPage() {
   const [universitiesResult, comparisonsResult, targetsResult] = await Promise.all([
     supabase
       .from("korean_universities")
-      .select("id, slug, name_zh, name_ko, name_en, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, highlights, ranking_source_url, is_featured")
+      .select("id, slug, name_zh, name_ko, name_en, logo_url, detailed_introduction, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, highlights, ranking_source_url, is_featured")
       .eq("is_published", true)
       .order("is_featured", { ascending: false })
       .order("sort_order", { ascending: true }),

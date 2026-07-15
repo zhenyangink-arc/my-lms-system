@@ -79,7 +79,7 @@ export default async function UniversityComparisonPage() {
           <Link href="/dashboard/universities" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} /> 返回选校规划中心</Link>
           <div className="flex gap-2">
             <Link href="/dashboard/universities/library" className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><LibraryBig size={13} /> 去学校库选择</Link>
-            {universities.length > 0 && <form action={clearUniversityComparisonsAction}><button type="submit" className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black text-red-600"><Trash2 size={13} /> 清空对比</button></form>}
+            {universities.length > 0 && <form action={clearUniversityComparisonsAction} data-permission="university_comparison"><button type="submit" className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black text-red-600"><Trash2 size={13} /> 清空对比</button></form>}
           </div>
         </div>
 
@@ -92,7 +92,7 @@ export default async function UniversityComparisonPage() {
               const university = universities[index];
               return university ? (
                 <article key={university.id} className="app-soft-card rounded-2xl border p-4">
-                  <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span><form action={removeUniversityComparisonAction.bind(null, university.id)}><button type="submit" className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50" title={`移出${university.name_zh}`} aria-label={`移出${university.name_zh}`}><Trash2 size={14} /></button></form></div>
+                  <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span><form action={removeUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison"><button type="submit" className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50" title={`移出${university.name_zh}`} aria-label={`移出${university.name_zh}`}><Trash2 size={14} /></button></form></div>
                   <h3 className="mt-4 text-sm font-black">{university.name_zh}</h3>
                   <p className="mt-1 text-[10px] font-bold app-muted-text">{university.name_ko} · {university.city}</p>
                 </article>

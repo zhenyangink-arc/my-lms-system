@@ -12,6 +12,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { SchoolCrest } from "@/components/school/SchoolCrest";
 import {
   createUniversityAction,
   toggleUniversityPublishedAction,
@@ -22,6 +23,7 @@ export type AdminUniversity = {
   id: string;
   name_zh: string;
   name_ko: string;
+  logo_url: string | null;
   ownership: "national" | "public" | "private";
   province: string;
   city: string;
@@ -39,6 +41,7 @@ export type AdminUniversity = {
   joongang_rank_sort: number | null;
   joongang_ranking_year: number | null;
   summary: string;
+  detailed_introduction: string | null;
   highlights: string[];
   is_featured: boolean;
   is_published: boolean;
@@ -75,6 +78,7 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
         <Field label="推荐顺序"><input name="sortOrder" type="number" min="0" required defaultValue={university?.sort_order ?? 1100} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
         <Field label="行政地区"><select name="province" defaultValue={university?.province ?? "首尔特别市"} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none">{regionOptions.map((region) => <option key={region}>{region}</option>)}</select></Field>
         <Field label="所在城市"><input name="city" required defaultValue={university?.city ?? "首尔"} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
+        <Field label="校徽图片地址"><input name="logoUrl" type="url" placeholder="https://…" defaultValue={university?.logo_url ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
         <Field label="学费参考年份"><input name="tuitionReferenceYear" type="number" min="2000" required defaultValue={university?.tuition_reference_year ?? 2025} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
         <div className="flex items-end gap-4 pb-3 text-xs font-black">
           <label className="flex items-center gap-2"><input name="isFeatured" type="checkbox" defaultChecked={university?.is_featured ?? false} /> 重点推荐</label>
@@ -86,6 +90,7 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
         <Field label="学校介绍"><textarea name="summary" required minLength={10} maxLength={800} rows={5} defaultValue={university?.summary ?? "请在这里填写学校定位、教学特色、适合学生和申请注意事项。"} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></Field>
         <Field label="院校亮点（逗号或换行分隔，最多八项）"><textarea name="highlights" rows={5} defaultValue={university?.highlights.join("\n") ?? "国际学生支持\n专业选择丰富\n校园生活便利"} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></Field>
       </section>
+      <Field label="学校详细介绍"><textarea name="detailedIntroduction" maxLength={12000} rows={8} defaultValue={university?.detailed_introduction ?? university?.summary ?? ""} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-7 outline-none" /></Field>
 
       <section className="grid gap-4 rounded-2xl border p-4 sm:grid-cols-2 lg:grid-cols-4" style={{ borderColor: "var(--app-border-soft)" }}>
         <Field label="韩元学费下限"><input name="tuitionMinKrw" type="number" min="0" required defaultValue={university?.tuition_min_krw ?? 6_500_000} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
@@ -156,7 +161,7 @@ export function UniversityAdminManager({ universities }: { universities: AdminUn
         <div className="divide-y" style={{ borderColor: "var(--app-border-soft)" }}>
           {filtered.map((university) => (
             <article key={university.id} className="grid gap-3 px-5 py-4 lg:grid-cols-[minmax(260px,1.3fr)_100px_150px_130px_210px] lg:items-center">
-              <div className="min-w-0"><div className="flex items-center gap-2"><h2 className="truncate text-sm font-black">{university.name_zh}</h2>{!university.is_published && <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[9px] font-black text-slate-500">已隐藏</span>}</div><p className="mt-1 truncate text-[10px] font-bold app-muted-text">{university.name_ko} · 顺序 {university.sort_order}</p></div>
+              <div className="flex min-w-0 items-center gap-3"><SchoolCrest logoUrl={university.logo_url} name={university.name_zh} size="sm"/><div className="min-w-0"><div className="flex items-center gap-2"><h2 className="truncate text-sm font-black">{university.name_zh}</h2>{!university.is_published && <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[9px] font-black text-slate-500">已隐藏</span>}</div><p className="mt-1 truncate text-[10px] font-bold app-muted-text">{university.name_ko} · 顺序 {university.sort_order}</p></div></div>
               <p className="text-xs font-black">{ownershipLabels[university.ownership]}</p>
               <p className="text-xs font-bold app-muted-text">{university.province}<br />{university.city}</p>
               <p className="text-[10px] font-bold app-muted-text">世界：{university.qs_rank_display ?? "暂无"}<br />中央：{university.joongang_rank_display ?? "暂无"}</p>

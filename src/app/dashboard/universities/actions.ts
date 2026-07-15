@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireActiveUser } from "@/lib/auth";
+import { requireStudentFeature } from "@/lib/student-permissions-server";
 
 const admissionStages = [
   "language",
@@ -66,7 +66,7 @@ function revalidateUniversityRoutes() {
 export async function toggleUniversityComparisonAction(
   universityId: string
 ) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_comparison");
 
   const { data: university } = await supabase
     .from("korean_universities")
@@ -112,7 +112,7 @@ export async function toggleUniversityComparisonAction(
 
 /** 从对比页明确移除学校，不使用“切换”语义，避免重复提交后重新加入。 */
 export async function removeUniversityComparisonAction(universityId: string) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_comparison");
   const { error } = await supabase
     .from("student_university_comparisons")
     .delete()
@@ -125,7 +125,7 @@ export async function removeUniversityComparisonAction(universityId: string) {
 
 /** 一次清空当前学生的对比清单。 */
 export async function clearUniversityComparisonsAction() {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_comparison");
   const { error } = await supabase
     .from("student_university_comparisons")
     .delete()
@@ -140,7 +140,7 @@ export async function addLibraryUniversityTargetAction(
   universityId: string,
   formData: FormData
 ) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_target");
   const requestedTrack = String(formData.get("admissionTrack") ?? "language");
   const admissionTrack = isAdmissionStage(requestedTrack)
     ? requestedTrack
@@ -194,7 +194,7 @@ export async function addLibraryUniversityTargetAction(
 
 /** 在“我的目标学校”页面填写完整信息后添加或更新目标。 */
 export async function addUniversityTargetFromFormAction(formData: FormData) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_target");
   const universityId = String(formData.get("universityId") ?? "");
   const requestedTrack = String(formData.get("admissionTrack") ?? "language");
   const programName = String(formData.get("programName") ?? "").trim();
@@ -264,7 +264,7 @@ export async function addUniversityTargetFromFormAction(formData: FormData) {
 
 /** 只删除当前学生自己的目标记录。 */
 export async function deleteUniversityTargetAction(targetId: string) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_target");
   const { error } = await supabase
     .from("student_university_targets")
     .delete()
@@ -284,7 +284,7 @@ export async function saveUniversityAssessmentAction(
   _previousState: UniversityAssessmentState,
   formData: FormData
 ): Promise<UniversityAssessmentState> {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user } = await requireStudentFeature("university_target");
   const admissionStage = String(formData.get("admissionStage") ?? "");
   const disciplineGroup = String(formData.get("disciplineGroup") ?? "");
   const academicScore = Number(formData.get("academicScore"));

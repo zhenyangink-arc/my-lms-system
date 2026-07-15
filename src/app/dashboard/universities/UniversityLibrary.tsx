@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useMemo, useState } from "react";
+import Link from "next/link";
 import {
   ArrowUpRight,
   BarChart3,
@@ -30,6 +31,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { SchoolCrest } from "@/components/school/SchoolCrest";
 import {
   addLibraryUniversityTargetAction,
   saveUniversityAssessmentAction,
@@ -43,6 +45,8 @@ export type KoreanUniversity = {
   name_zh: string;
   name_ko: string;
   name_en: string;
+  logo_url: string | null;
+  detailed_introduction: string | null;
   ownership: "national" | "public" | "private";
   province: string;
   city: string;
@@ -358,9 +362,7 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
       <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-2xl">
         <DialogHeader>
           <div className="flex items-center gap-3 pr-8">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black text-white" style={{ background: "linear-gradient(135deg, var(--app-accent), var(--app-secondary))" }}>
-              {university.name_zh.slice(0, 1)}
-            </span>
+            <SchoolCrest logoUrl={university.logo_url} name={university.name_zh} />
             <div>
               <DialogTitle className="text-xl font-black">{university.name_zh}</DialogTitle>
               <DialogDescription className="mt-1">{university.name_ko} · {university.city}</DialogDescription>
@@ -370,7 +372,7 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
 
         <section className="rounded-2xl border p-4" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
           <h3 className="text-sm font-black">学校介绍</h3>
-          <p className="mt-2 leading-7 app-muted-text">{university.summary}</p>
+          <p className="mt-2 whitespace-pre-line leading-7 app-muted-text">{university.detailed_introduction || university.summary}</p>
         </section>
         <div className="grid gap-3 sm:grid-cols-3">
           <RankPanel label="世界大学排名" rank={university.qs_rank_display} year={university.qs_ranking_year} />
@@ -436,9 +438,7 @@ function UniversityCard({
       <div className="relative h-2" style={{ background: "linear-gradient(90deg, var(--app-accent), var(--app-secondary), var(--app-success))" }} />
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
-          <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-lg font-black text-white shadow-sm" style={{ background: "linear-gradient(135deg, var(--app-accent), var(--app-secondary))" }}>
-            {university.name_zh.slice(0, 1)}
-          </span>
+          <SchoolCrest logoUrl={university.logo_url} name={university.name_zh} />
           <div className="flex flex-wrap justify-end gap-1.5">
             {university.is_featured && <span className="rounded-full px-2 py-1 text-[9px] font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>重点院校</span>}
             <span className="rounded-full px-2 py-1 text-[9px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{ownershipLabelMap[university.ownership]}</span>
@@ -471,7 +471,7 @@ function UniversityCard({
         </div>
 
         <div className="mt-auto space-y-2 pt-4">
-          <form action={addLibraryUniversityTargetAction.bind(null, university.id)} className="flex gap-2">
+          <form action={addLibraryUniversityTargetAction.bind(null, university.id)} data-permission="university_target" className="flex gap-2">
             <select name="admissionTrack" disabled={isTarget} defaultValue={university.admission_stages[0]} aria-label={`${university.name_zh}的申请阶段`} className="app-input min-w-0 flex-1 rounded-xl border px-2 py-2.5 text-[10px] font-bold outline-none disabled:opacity-60">
               {university.admission_stages.map((stage) => <option key={stage} value={stage}>{stageLabelMap[stage] ?? stage}</option>)}
             </select>
@@ -480,7 +480,7 @@ function UniversityCard({
             </button>
           </form>
           <div className="flex gap-2">
-            <form action={toggleUniversityComparisonAction.bind(null, university.id)} className="flex-1">
+            <form action={toggleUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison" className="flex-1">
               <button type="submit" className="app-soft-card inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-2 py-2.5 text-[11px] font-black transition hover:opacity-80" style={isCompared ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)" } : undefined}>
                 {isCompared ? <X size={13} /> : <Scale size={13} />}{isCompared ? "移出对比" : "加入对比"}
               </button>
@@ -488,6 +488,7 @@ function UniversityCard({
             <UniversityAssessmentDialog university={university} />
           </div>
           <UniversityDetailsDialog university={university} />
+          <Link href={`/dashboard/universities/library/${university.id}`} className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-[11px] font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入学校页面 <ArrowUpRight size={13}/></Link>
         </div>
       </div>
     </article>
@@ -608,7 +609,7 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
               {[0, 1, 2, 3].map((index) => {
                 const university = comparedUniversities[index];
                 return university ? (
-                  <form key={university.id} action={toggleUniversityComparisonAction.bind(null, university.id)}>
+                  <form key={university.id} action={toggleUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison">
                     <button type="submit" className="group/compare flex min-h-20 w-full min-w-0 items-center gap-2 rounded-xl border px-3 py-2 text-left transition hover:-translate-y-0.5" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
                       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span>
                       <span className="min-w-0 flex-1">

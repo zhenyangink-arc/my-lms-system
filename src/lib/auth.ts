@@ -9,6 +9,7 @@ type AuthProfile = {
   full_name: string | null;
   role: string | null;
   status: string | null;
+  membership_tier: string | null;
 };
 
 export function isActiveProfileStatus(status: string | null | undefined) {
@@ -33,7 +34,7 @@ export const getAuthContext = cache(async () => {
 
   const { data: profileData, error: profileError } = await supabase
     .from("profiles")
-    .select("full_name, role, status")
+    .select("full_name, role, status, membership_tier")
     .eq("id", user.id)
     .maybeSingle();
 

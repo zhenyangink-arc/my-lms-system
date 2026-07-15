@@ -39,6 +39,8 @@ function parseUniversityForm(formData: FormData) {
   const province = String(formData.get("province") ?? "").trim();
   const city = String(formData.get("city") ?? "").trim();
   const summary = String(formData.get("summary") ?? "").trim();
+  const logoUrl = String(formData.get("logoUrl") ?? "").trim();
+  const detailedIntroduction = String(formData.get("detailedIntroduction") ?? "").trim();
   const selectedStages = formData.getAll("admissionStages").map(String).filter((value) => stages.includes(value as (typeof stages)[number]));
   const selectedDisciplines = formData.getAll("disciplineGroups").map(String).filter((value) => disciplines.includes(value as (typeof disciplines)[number]));
   const highlights = String(formData.get("highlights") ?? "")
@@ -52,6 +54,8 @@ function parseUniversityForm(formData: FormData) {
   if (!ownerships.includes(ownership as (typeof ownerships)[number])) throw new Error("请选择有效的学校性质。");
   if (!province || !city) throw new Error("地区和城市不能为空。");
   if (summary.length < 10 || summary.length > 800) throw new Error("学校介绍需要填写 10—800 个字符。");
+  if (logoUrl && !/^https?:\/\//i.test(logoUrl)) throw new Error("校徽地址需要使用 http 或 https 链接。");
+  if (detailedIntroduction.length > 12000) throw new Error("学校详细介绍不能超过 12000 个字符。");
   if (selectedStages.length === 0) throw new Error("至少选择一个申请阶段。");
   if (selectedDisciplines.length === 0) throw new Error("至少选择一个优势学科。");
 
@@ -81,6 +85,8 @@ function parseUniversityForm(formData: FormData) {
     joongang_rank_sort: optionalInteger(formData.get("joongangRankSort")),
     joongang_ranking_year: optionalInteger(formData.get("joongangRankingYear")),
     summary,
+    logo_url: logoUrl || null,
+    detailed_introduction: detailedIntroduction || summary,
     highlights,
     is_featured: formData.get("isFeatured") === "on",
     is_published: formData.get("isPublished") === "on",

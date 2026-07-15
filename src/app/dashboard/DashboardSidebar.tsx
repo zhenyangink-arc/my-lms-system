@@ -12,6 +12,7 @@ import {
   ClipboardList,
   Cog,
   FileText,
+  Files,
   HelpCircle,
   History,
   LayoutDashboard,
@@ -27,11 +28,12 @@ import {
 
 import { LogoutButton } from "./LogoutButton";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { MEMBERSHIP_TIER_LABELS, type MembershipTier } from "@/lib/student-permissions";
 
 type DashboardSidebarProps = {
   userName: string;
-  userEmail: string;
   userRole: string;
+  membershipTier: MembershipTier;
 };
 
 type SidebarItem = {
@@ -83,7 +85,9 @@ const navigationGroups: SidebarGroup[] = [
     adminOnly: true,
     items: [
       { label: "课程管理", href: "/dashboard/admin/courses", icon: Settings },
-      { label: "大学管理", href: "/dashboard/admin/universities", icon: Landmark },
+      { label: "学校管理", href: "/dashboard/admin/schools", icon: Landmark },
+      { label: "资料审核", href: "/dashboard/admin/documents", icon: Files },
+      { label: "签证管理", href: "/dashboard/admin/visa", icon: ShieldCheck },
       {
         label: "账号管理",
         href: "/dashboard/admin/accounts",
@@ -125,8 +129,8 @@ function getRoleLabel(role: string) {
 
 export function DashboardSidebar({
   userName,
-  userEmail,
   userRole,
+  membershipTier,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
   const [hovered, setHovered] = useState(false);
@@ -210,39 +214,24 @@ export function DashboardSidebar({
           </div>
         </nav>
 
-        <div className="border-t p-3 app-divider">
+        <div className="border-t px-3 py-2 app-divider">
           {!collapsed && (
-            <div className="mb-3">
+            <div className="mb-1">
               <ThemeSwitcher />
             </div>
           )}
-
-          <Link
-            href="/dashboard/profile"
-            title={collapsed ? `${userName}（${getRoleLabel(userRole)}）` : undefined}
-            className={`app-soft-card mb-2 flex items-center rounded-2xl border p-2.5 transition hover:-translate-y-0.5 ${
-              collapsed ? "justify-center" : "gap-3"
-            }`}
-          >
-            <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-sm font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+          <div className={`flex gap-1.5 ${collapsed ? "flex-col items-center" : "items-center"}`}>
+            <Link
+              href="/dashboard/profile"
+              title={collapsed ? `${userName}（${getRoleLabel(userRole)}）` : undefined}
+              className={`app-soft-card flex min-w-0 items-center rounded-xl border p-1.5 transition hover:-translate-y-0.5 ${collapsed ? "justify-center" : "flex-1 gap-2"}`}
             >
-              {userName.trim().slice(0, 1) || "学"}
-            </span>
-            {!collapsed && (
-              <span className="min-w-0">
-                <span className="block truncate text-sm font-black">{userName}</span>
-                <span className="block truncate text-[11px] app-muted-text">{userEmail}</span>
-                <span className="mt-0.5 block text-[11px] font-bold" style={{ color: "var(--app-accent-strong)" }}>
-                  {getRoleLabel(userRole)}
-                </span>
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>
+                {userName.trim().slice(0, 1) || "学"}
               </span>
-            )}
-          </Link>
-
-          <div className={collapsed ? "flex justify-center" : ""}>
-            <LogoutButton collapsed={collapsed} />
+              {!collapsed && <span className="min-w-0 flex-1"><span className="block truncate text-xs font-black">{userName}</span><span className="block text-[9px] font-bold app-muted-text">{userRole === "student" ? MEMBERSHIP_TIER_LABELS[membershipTier] : getRoleLabel(userRole)}</span></span>}
+            </Link>
+            <LogoutButton collapsed />
           </div>
         </div>
       </aside>

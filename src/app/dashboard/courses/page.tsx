@@ -8,8 +8,8 @@ import {
   FileCheck2,
   GraduationCap,
   Languages,
+  LoaderCircle,
   PlayCircle,
-  ShieldCheck,
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
@@ -277,11 +277,6 @@ export default async function CoursesPage() {
     progressMap.set(progress.lesson_id, progress);
   });
 
-  const temporaryAccessStatus = {
-    label: "已开通",
-    enabled: true,
-  };
-
   return (
     <>
       <DashboardPageHeader
@@ -505,9 +500,9 @@ export default async function CoursesPage() {
                             {category.title}
                           </span>
 
-                          <span className="inline-flex items-center gap-1 rounded-full bg-green-50 px-3 py-1 text-xs font-semibold text-green-700">
-                            <ShieldCheck size={13} />
-                            {temporaryAccessStatus.label}
+                          <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-3 py-1 text-xs font-semibold text-amber-700">
+                            <LoaderCircle size={13} />
+                            努力完善中
                           </span>
                         </div>
 
@@ -561,20 +556,11 @@ export default async function CoursesPage() {
                       </p>
                     </div>
 
-                    <Link
-                      href={`/dashboard/courses/${category.slug}`}
-                      className={`mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition ${
-                        isCompleted
-                          ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
-                          : isInProgress
-                            ? "bg-green-600 text-white hover:bg-green-700"
-                            : "bg-gray-900 text-white hover:bg-gray-800"
-                      }`}
-                    >
-                      <PlayCircle size={16} />
-                      {buttonLabel}
-                      <ArrowRight size={15} />
-                    </Link>
+                    {/* 英语、数学与大学课程暂不开放入口，避免没有资源时造成误导。 */}
+                    <div className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-amber-50 px-4 py-2.5 text-sm font-semibold text-amber-700">
+                      <LoaderCircle size={16} />
+                      努力完善中
+                    </div>
                   </article>
                 );
               })}
