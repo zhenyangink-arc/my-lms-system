@@ -27,7 +27,7 @@ export default function RootLayout({
 }>) {
   return (
     // 👇 Next.js 强制要求的 <html> 标签
-    <html lang="zh-CN"> 
+    <html lang="zh-CN" suppressHydrationWarning>
       {/* 👇 Next.js 强制要求的 <body> 标签 */}
       <body
         className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-white antialiased`}

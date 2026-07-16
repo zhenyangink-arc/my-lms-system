@@ -24,6 +24,7 @@ const navItems = [
   { label: "学习成果", href: "/#outcomes" },
   { label: "服务支持", href: "/#services" },
   { label: "开始规划", href: "/#start-plan" },
+  { label: "元智AI", href: "/yuanzhi-ai" },
 ];
 
 export function SiteHeader() {

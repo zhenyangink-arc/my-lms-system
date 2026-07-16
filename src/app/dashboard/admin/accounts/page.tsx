@@ -1,10 +1,8 @@
 import Link from "next/link";
 import {
-  Activity,
   CalendarPlus2,
   CheckCircle2,
   CircleUserRound,
-  Clock3,
   Crown,
   Filter,
   Search,
@@ -18,6 +16,7 @@ import { requireExecutive } from "@/lib/admin";
 import { normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { AccountCard, type AccountListProfile } from "./AccountCard";
+import { AccountAuditLogDialog, AccountDeletionAuditDialog } from "./AccountActivityDialogs";
 
 type AccountAuditLog = {
   id: number;
@@ -83,14 +82,6 @@ const GROUP_LABELS: Record<string, string> = {
   student: "学生",
 };
 
-const AUDIT_LABELS: Record<string, string> = {
-  account_created: "创建了账号",
-  role_changed: "调整了账号角色",
-  status_changed: "调整了账号状态",
-  membership_changed: "调整了会员档位",
-  profile_updated: "更新了账号资料",
-};
-
 function buildFilterHref(values: Record<string, string>, overrides: Record<string, string>) {
   const params = new URLSearchParams({ ...values, ...overrides });
 
@@ -131,12 +122,6 @@ function DistributionRow({ label, value, total, color }: { label: string; value:
       <div className="h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-border-soft)" }}><div className="h-full rounded-full transition-all" style={{ width: `${percent}%`, backgroundColor: color }} /></div>
     </div>
   );
-}
-
-function formatAuditTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "时间待确认";
-  return new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
 }
 
 function getThirtyDaysAgoTimestamp() {
@@ -211,7 +196,7 @@ export default async function AccountsPage({
   const attentionCount = allProfiles.filter((profile) => profile.status !== "active").length;
   const vipCount = students.filter((profile) => normalizeMembershipTier(profile.membership_tier) !== "normal").length;
   const pendingProfileCount = allProfiles.filter((profile) => !profile.profile_completed_at).length;
-  const accountNames = new Map(allProfiles.map((profile) => [profile.id, profile.full_name || profile.email || `账号 …${profile.id.slice(-6)}`]));
+  const accountNames = Object.fromEntries(allProfiles.map((profile) => [profile.id, profile.full_name || profile.email || `账号 …${profile.id.slice(-6)}`]));
 
   const filterValues = { role: roleFilter, status: statusFilter, membership: membershipFilter, profile: profileFilter, q: queryText, sort };
   const hasFilters = roleFilter !== "all" || statusFilter !== "all" || membershipFilter !== "all" || profileFilter !== "all" || Boolean(queryText) || sort !== "newest";
@@ -275,22 +260,11 @@ export default async function AccountsPage({
             </div>
           </div>
 
-          <div className="app-card rounded-[1.75rem] border p-5 sm:p-6">
-            <div className="flex items-center justify-between"><div><p className="app-muted-text text-xs font-black">最近记录</p><h2 className="mt-1 text-xl font-black">账号变更动态</h2></div><Activity size={21} style={{ color: "var(--app-secondary)" }} /></div>
-            <div className="mt-5 space-y-3">
-              {auditLogs.slice(0, 5).map((log) => (
-                <div key={log.id} className="flex gap-3">
-                  <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: log.action === "status_changed" ? "var(--app-warm)" : log.action === "membership_changed" ? "var(--app-secondary)" : "var(--app-accent)" }} />
-                  <div className="min-w-0 flex-1 border-b pb-3" style={{ borderColor: "var(--app-border-soft)" }}><p className="truncate text-xs font-black">{accountNames.get(log.actor_id ?? "") ?? "系统管理员"} {AUDIT_LABELS[log.action] ?? "更新了账号"}</p><p className="app-muted-text mt-1 truncate text-[11px]">对象：{accountNames.get(log.target_user_id) ?? `账号 …${log.target_user_id.slice(-6)}`}</p></div>
-                  <span className="app-muted-text shrink-0 text-[10px] font-bold">{formatAuditTime(log.created_at)}</span>
-                </div>
-              ))}
-              {auditLogs.length === 0 && <div className="app-soft-card rounded-2xl border border-dashed p-6 text-center"><Clock3 className="mx-auto opacity-30" size={24} /><p className="mt-2 text-xs font-black">暂无账号变更记录</p></div>}
-            </div>
+          <div className="space-y-4">
+            <AccountAuditLogDialog logs={auditLogs} accountNames={accountNames} />
+            {viewerRole === "super_admin" && <AccountDeletionAuditDialog logs={deletionAuditLogs} />}
           </div>
         </section>
-
-        {viewerRole === "super_admin" && deletionAuditLogs.length > 0 && <section className="app-card rounded-[1.75rem] border border-rose-100 p-5 sm:p-6"><div className="flex items-center justify-between gap-3"><div><p className="text-xs font-black text-rose-600">负责人审计</p><h2 className="mt-1 text-xl font-black">永久删除记录</h2></div><UserRoundX size={22} className="text-rose-500" /></div><div className="mt-5 grid gap-3 lg:grid-cols-2">{deletionAuditLogs.map((log) => { const counts = Object.entries(log.related_data_counts ?? {}).filter(([, value]) => value > 0); return <div key={log.id} className="rounded-2xl border border-rose-100 bg-rose-50/60 p-4"><div className="flex items-start justify-between gap-3"><div className="min-w-0"><p className="truncate text-sm font-black">{log.target_full_name || log.target_email || `账号 …${log.target_user_id.slice(-6)}`}</p><p className="mt-1 break-all text-[11px] text-rose-700">{log.target_email || log.target_role || "历史账号"}</p></div><span className="shrink-0 text-[10px] font-bold text-rose-600">{formatAuditTime(log.deleted_at)}</span></div><p className="mt-3 text-xs leading-5 text-rose-900"><b>删除原因：</b>{log.deletion_reason}</p>{counts.length > 0 && <p className="mt-2 text-[11px] text-rose-700">已清理：{counts.map(([label, value]) => `${label} ${value} 项`).join("、")}</p>}</div>; })}</div></section>}
 
         <div className="space-y-7">
           {GROUP_ORDER.map((role) => {

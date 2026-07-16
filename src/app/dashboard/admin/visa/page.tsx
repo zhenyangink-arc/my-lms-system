@@ -19,7 +19,7 @@ type VisaTask = { id: string; user_id: string; title: string; status: string; up
 type StudentProfile = { id: string; full_name: string | null; email: string | null };
 
 const CASE_STATUS_LABELS: Record<string, string> = { planning: "方案规划", preparing: "材料准备", ready_to_submit: "递签确认", submitted: "已经递签", additional_documents: "补充材料", approved: "审核通过", issued: "签证签发", closed: "流程结束" };
-const VISA_TYPE_LABELS: Record<string, string> = { undecided: "签证类型待定", d2_degree: "学历课程签证", d4_language: "语言研修签证", d10_job: "求职签证", other: "其他签证类型" };
+const VISA_TYPE_LABELS: Record<string, string> = { d4_language: "语言研修签证", d2_bachelor: "本科签证", d2_master: "硕士签证", d2_doctor: "博士签证" };
 const FILTERS = [{ value: "all", label: "全部学生" }, { value: "action", label: "需要处理" }, { value: "preparing", label: "准备阶段" }, { value: "submitted", label: "已经递签" }, { value: "issued", label: "已经获签" }];
 
 function formatDate(value: string) {

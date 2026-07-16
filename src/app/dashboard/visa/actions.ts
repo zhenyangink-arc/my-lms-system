@@ -5,7 +5,7 @@ import { revalidatePath } from "next/cache";
 import { requireStudentFeature } from "@/lib/student-permissions-server";
 import type { VisaActionState } from "./visa-action-state";
 
-const VISA_TYPES = ["undecided", "d2_degree", "d4_language", "d10_job", "other"];
+const VISA_TYPES = ["d4_language", "d2_bachelor", "d2_master", "d2_doctor"];
 const STUDENT_STATUSES = ["pending", "in_progress", "submitted", "blocked"];
 
 function result(status: "success" | "error", message: string): VisaActionState {
