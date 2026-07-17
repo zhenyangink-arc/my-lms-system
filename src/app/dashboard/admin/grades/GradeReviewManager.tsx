@@ -1,0 +1,7 @@
+"use client";
+import { useActionState } from "react";
+import { SearchCheck } from "lucide-react";
+import { initialGradeCenterActionState } from "@/app/dashboard/grades/action-state";
+import { resolveGradeReviewAction } from "@/app/dashboard/grades/actions";
+import { GRADE_REVIEW_STATUS_LABELS } from "@/app/dashboard/grades/config";
+export function GradeReviewManager({ reviewId, response }: { reviewId: string; response: string }) { const action = resolveGradeReviewAction.bind(null, reviewId); const [state, formAction, pending] = useActionState(action, initialGradeCenterActionState); return <form action={formAction} className="space-y-3"><select name="status" defaultValue="reviewing" className="app-input w-full rounded-lg border px-2 py-2 text-xs">{Object.entries(GRADE_REVIEW_STATUS_LABELS).filter(([value]) => value !== "pending").map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select><textarea name="response" maxLength={3000} rows={3} defaultValue={response} placeholder="填写核对结果或调整说明" className="app-input w-full resize-y rounded-lg border px-3 py-2 text-xs leading-5" />{state.message && <p className="text-[9px] font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)" }}>{state.message}</p>}<button type="submit" disabled={pending} className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><SearchCheck size={11} />保存复核结果</button></form>; }

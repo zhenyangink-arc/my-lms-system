@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/server";
+import { getAnnouncementAccess } from "@/lib/announcements";
 
 type LessonProgressRow = {
   lesson_id: string;
@@ -166,6 +167,7 @@ function calculateStreak(completedDateStrings: string[]) {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
 
   const {
     data: { user },
@@ -622,14 +624,18 @@ export default async function DashboardPage() {
       color: "var(--app-secondary)",
       softColor: "var(--app-secondary-soft)",
     },
-    {
-      title: "通知公告",
-      description: "统一接收课程与平台重要消息",
-      href: "/dashboard/announcements",
-      icon: Megaphone,
-      color: "var(--app-accent)",
-      softColor: "var(--app-accent-soft)",
-    },
+    ...(canAccessAnnouncements
+      ? [
+          {
+            title: "通知公告",
+            description: "统一发布课程与平台重要消息",
+            href: "/dashboard/announcements",
+            icon: Megaphone,
+            color: "var(--app-accent)",
+            softColor: "var(--app-accent-soft)",
+          },
+        ]
+      : []),
   ];
 
   return (

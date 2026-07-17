@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { getAnnouncementAccess } from "@/lib/announcements";
 import { normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardPermissionGate } from "./DashboardPermissionGate";
@@ -22,6 +23,7 @@ export default async function DashboardLayout({
 
   const userRole = profile?.role ?? "student";
   const membershipTier = normalizeMembershipTier(profile?.membership_tier);
+  const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
 
   return (
     <ThemeProvider>
@@ -33,6 +35,7 @@ export default async function DashboardLayout({
             userName={userName}
             userRole={userRole}
             membershipTier={membershipTier}
+            canAccessAnnouncements={canAccessAnnouncements}
           />
 
           <main className="min-w-0 flex-1 pb-24 md:pb-0">

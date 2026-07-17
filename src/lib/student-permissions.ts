@@ -3,6 +3,7 @@ export const membershipTiers = ["normal", "vip1", "vip2", "vip3"] as const;
 export type MembershipTier = (typeof membershipTiers)[number];
 export type StudentFeature =
   | "message_services"
+  | "learning_assignments"
   | "university_target"
   | "university_comparison"
   | "application_documents"
@@ -32,7 +33,7 @@ export function canUseStudentFeature(
   feature: StudentFeature
 ) {
   if (staffRoles.has(role)) return true;
-  if (feature === "message_services") return true;
+  if (feature === "message_services" || feature === "learning_assignments") return true;
 
   const hasVipBase = tier === "vip1" || tier === "vip2" || tier === "vip3";
   if (!hasVipBase) return false;

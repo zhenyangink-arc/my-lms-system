@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dialog";
 
 function featureFromPath(pathname: string): StudentFeature {
+  if (pathname.startsWith("/dashboard/assignments")) return "learning_assignments";
   if (pathname.startsWith("/dashboard/documents")) return "application_documents";
   if (pathname.startsWith("/dashboard/visa")) return "visa_tasks";
   if (pathname.startsWith("/dashboard/universities")) return "university_target";

@@ -1,12 +1,29 @@
-import { HelpCircle } from "lucide-react";
-import { ComingSoonPage } from "../ComingSoonPage";
+import Link from "next/link";
+import { ArrowRight, BookOpenText, CheckCircle2, Clock3, Eye, HelpCircle, MessageCircleQuestion, ShieldCheck } from "lucide-react";
 
-export default function HelpCenterPage() {
-  return (
-    <ComingSoonPage
-      title="帮助中心"
-      description="平台使用说明和常见问题解答将在这里提供。"
-      icon={<HelpCircle size={26} style={{ color: "var(--app-accent)" }} />}
-    />
-  );
+import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
+import { getHelpCenterAccess } from "@/lib/help-center";
+import { HelpArticleBrowser } from "./HelpArticleBrowser";
+import { HelpTicketForm } from "./HelpTicketForm";
+import { HELP_TICKET_CATEGORY_LABELS, HELP_TICKET_STATUS_LABELS, helpDateFormatter, type HelpArticleCategory, type HelpTicketCategory, type HelpTicketPriority, type HelpTicketStatus } from "./config";
+
+type ArticleRow = { id: string; title: string; summary: string; content: string; category: HelpArticleCategory; is_featured: boolean };
+type TicketRow = { id: string; subject: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; resolution: string; created_at: string; updated_at: string };
+
+export default async function HelpCenterPage() {
+  const { supabase, user, role, canManage } = await getHelpCenterAccess();
+  const [articlesResult, ticketsResult] = await Promise.all([
+    supabase.from("help_articles").select("id,title,summary,content,category,is_featured").eq("status", "published").order("is_featured", { ascending: false }).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
+    role === "student" ? supabase.from("help_tickets").select("id,subject,category,priority,status,resolution,created_at,updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }) : Promise.resolve({ data: [] as TicketRow[], error: null }),
+  ]);
+  const articles = (articlesResult.data ?? []) as ArticleRow[];
+  const tickets = (ticketsResult.data ?? []) as TicketRow[];
+  const openCount = tickets.filter((item) => item.status === "open" || item.status === "in_progress").length;
+  const solvedCount = tickets.filter((item) => item.status === "resolved" || item.status === "closed").length;
+
+  return <div className="pb-12"><DashboardPageHeader title="帮助中心" description={canManage ? "以学生视角查看已经发布的帮助内容。" : "查找使用指南，提交问题并跟踪后台回复。"} action={canManage ? <Link href="/dashboard/admin/help" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入帮助后台<ArrowRight size={15} /></Link> : undefined} /><div className="mx-auto mt-6 w-full max-w-[1400px] space-y-6 px-4 sm:px-6 lg:px-8"><section className="app-card rounded-[30px] border p-6 sm:p-8" style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-success-soft))" }}><div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end"><div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>{canManage ? <Eye size={14} /> : <HelpCircle size={14} />}{canManage ? "学生端只读预览" : "学习与服务支持"}</span><h1 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl">{canManage ? "检查学生能看到的帮助内容" : "先找答案，解决不了就直接求助"}</h1><p className="app-muted-text mt-4 max-w-2xl text-sm leading-7">帮助文章、求助进度和后台回复都来自同一套数据库。后台处理后，学生页面会同步显示最新状态与消息。</p></div><div className="grid grid-cols-3 gap-3">{[["帮助文章", articles.length, BookOpenText, "var(--app-accent)", "var(--app-accent-soft)"], ["处理中", openCount, Clock3, "var(--app-warm)", "var(--app-warm-soft)"], ["已解决", solvedCount, CheckCircle2, "var(--app-success)", "var(--app-success-soft)" ]].map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof HelpCircle; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-[10px] font-black">{String(label)}</p></div>; })}</div></div></section>
+  {(articlesResult.error || ticketsResult.error) && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>帮助中心数据暂时无法读取，请稍后刷新重试。</section>}
+  <HelpArticleBrowser articles={articles.map((item) => ({ ...item, isFeatured: item.is_featured }))} />
+  {role === "student" && <div className="grid items-start gap-6 xl:grid-cols-[minmax(350px,0.78fr)_minmax(0,1.22fr)]"><HelpTicketForm /><section className="app-card rounded-[28px] border p-5 sm:p-7"><div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><MessageCircleQuestion size={19} /></span><div><h2 className="text-lg font-black">我的求助记录</h2><p className="app-muted-text mt-1 text-xs">共 {tickets.length} 条，点击查看后台回复。</p></div></div><div className="mt-5 space-y-3">{tickets.map((ticket) => { const solved = ticket.status === "resolved" || ticket.status === "closed"; return <Link key={ticket.id} href={`/dashboard/help/tickets/${ticket.id}`} className="app-soft-card group block rounded-2xl border p-4 transition hover:-translate-y-0.5"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</span><span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: solved ? "var(--app-success)" : "var(--app-warm)", backgroundColor: solved ? "var(--app-success-soft)" : "var(--app-warm-soft)" }}>{HELP_TICKET_STATUS_LABELS[ticket.status]}</span>{ticket.priority === "urgent" && <span className="text-[10px] font-black" style={{ color: "#c94f45" }}>紧急</span>}<ArrowRight className="ml-auto transition group-hover:translate-x-1" size={15} /></div><h3 className="mt-3 text-sm font-black">{ticket.subject}</h3><p className="app-muted-text mt-2 text-[10px]">更新于 {helpDateFormatter.format(new Date(ticket.updated_at))}</p></Link>; })}{tickets.length === 0 && <div className="rounded-2xl border border-dashed p-8 text-center"><ShieldCheck className="mx-auto opacity-30" size={28} /><p className="mt-3 text-sm font-black">还没有求助记录</p><p className="app-muted-text mt-1 text-xs">提交后，处理进度会显示在这里。</p></div>}</div></section></div>}
+  </div></div>;
 }

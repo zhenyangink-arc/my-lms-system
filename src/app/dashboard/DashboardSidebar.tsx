@@ -12,18 +12,15 @@ import {
   ClipboardList,
   Cog,
   FileText,
-  Files,
   HelpCircle,
   History,
   LayoutDashboard,
   Library,
-  Landmark,
   Megaphone,
   MessageSquare,
-  Settings,
+  PanelsTopLeft,
   ShieldCheck,
   UserCircle,
-  Users,
 } from "lucide-react";
 
 import { LogoutButton } from "./LogoutButton";
@@ -34,6 +31,7 @@ type DashboardSidebarProps = {
   userName: string;
   userRole: string;
   membershipTier: MembershipTier;
+  canAccessAnnouncements: boolean;
 };
 
 type SidebarItem = {
@@ -41,6 +39,8 @@ type SidebarItem = {
   href: string;
   icon: ComponentType<{ size?: number; className?: string }>;
   executiveOnly?: boolean;
+  announcementOnly?: boolean;
+  teacherVisible?: boolean;
 };
 
 type SidebarGroup = {
@@ -74,26 +74,17 @@ const navigationGroups: SidebarGroup[] = [
   {
     label: "消息与服务",
     items: [
-      { label: "通知公告", href: "/dashboard/announcements", icon: Megaphone },
+      { label: "通知公告", href: "/dashboard/announcements", icon: Megaphone, announcementOnly: true },
       { label: "帮助中心", href: "/dashboard/help", icon: HelpCircle },
       { label: "个人资料", href: "/dashboard/profile", icon: UserCircle },
       { label: "设置", href: "/dashboard/settings", icon: Cog },
     ],
   },
   {
-    label: "管理中心",
+    label: "后台管理",
     adminOnly: true,
     items: [
-      { label: "课程管理", href: "/dashboard/admin/courses", icon: Settings },
-      { label: "学校管理", href: "/dashboard/admin/schools", icon: Landmark },
-      { label: "资料审核", href: "/dashboard/admin/documents", icon: Files },
-      { label: "签证管理", href: "/dashboard/admin/visa", icon: ShieldCheck },
-      {
-        label: "账号管理",
-        href: "/dashboard/admin/accounts",
-        icon: Users,
-        executiveOnly: true,
-      },
+      { label: "管理中心", href: "/dashboard/admin", icon: PanelsTopLeft, teacherVisible: true },
     ],
   },
 ];
@@ -103,6 +94,14 @@ const mobileItems: SidebarItem[] = [
   { label: "课程", href: "/dashboard/courses", icon: BookOpen },
   { label: "进度", href: "/dashboard/progress", icon: BarChart3 },
   { label: "大学", href: "/dashboard/universities", icon: Building2 },
+  { label: "我的", href: "/dashboard/profile", icon: UserCircle },
+];
+
+const staffMobileItems: SidebarItem[] = [
+  { label: "总览", href: "/dashboard", icon: LayoutDashboard },
+  { label: "课程", href: "/dashboard/courses", icon: BookOpen },
+  { label: "作业", href: "/dashboard/assignments", icon: ClipboardList },
+  { label: "管理", href: "/dashboard/admin", icon: PanelsTopLeft },
   { label: "我的", href: "/dashboard/profile", icon: UserCircle },
 ];
 
@@ -131,6 +130,7 @@ export function DashboardSidebar({
   userName,
   userRole,
   membershipTier,
+  canAccessAnnouncements,
 }: DashboardSidebarProps) {
   const pathname = usePathname();
   const [hovered, setHovered] = useState(false);
@@ -138,12 +138,24 @@ export function DashboardSidebar({
 
   const isAdmin = isAdminRole(userRole);
   const isExecutive = isExecutiveRole(userRole);
+  const isTeacher = userRole === "teacher";
+  const visibleMobileItems = isAdmin || isTeacher ? staffMobileItems : mobileItems;
 
   const visibleGroups = navigationGroups
-    .filter((group) => !group.adminOnly || isAdmin)
+    .filter(
+      (group) =>
+        !group.adminOnly ||
+        isAdmin ||
+        (isTeacher && group.items.some((item) => item.teacherVisible))
+    )
     .map((group) => ({
       ...group,
-      items: group.items.filter((item) => !item.executiveOnly || isExecutive),
+      items: group.items.filter(
+        (item) =>
+          (!group.adminOnly || !isTeacher || isAdmin || item.teacherVisible) &&
+          (!item.executiveOnly || isExecutive) &&
+          (!item.announcementOnly || canAccessAnnouncements)
+      ),
     }));
 
   function handleSidebarBlur(event: FocusEvent<HTMLElement>) {
@@ -241,7 +253,7 @@ export function DashboardSidebar({
         className="app-topbar fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border p-1.5 shadow-lg md:hidden"
         aria-label="移动端控制台导航"
       >
-        {mobileItems.map((item) => {
+        {visibleMobileItems.map((item) => {
           const Icon = item.icon;
           const active = isActivePath(pathname, item.href);
 

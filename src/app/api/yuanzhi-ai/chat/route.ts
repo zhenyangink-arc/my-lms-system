@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 type ChatRole = "user" | "assistant";
+type ChatMode = "basic" | "advanced";
 
 type ChatHistoryItem = {
   role: ChatRole;
@@ -11,11 +12,28 @@ type ChatRequestBody = {
   message?: unknown;
   history?: unknown;
   sessionId?: unknown;
+  mode?: unknown;
 };
 
 const DEFAULT_AI_SERVER_URL = "http://100.125.173.55:8000";
 const MAX_MESSAGE_LENGTH = 800;
 const MAX_HISTORY_ITEMS = 12;
+
+function getAdvancedConfig() {
+  return {
+    endpoint: process.env.YUANZHI_AI_ADVANCED_API_URL?.trim() ?? "",
+    apiKey: process.env.YUANZHI_AI_ADVANCED_API_KEY?.trim() ?? "",
+    model: process.env.YUANZHI_AI_ADVANCED_MODEL?.trim() ?? "",
+  };
+}
+
+export async function GET() {
+  const advanced = getAdvancedConfig();
+  return NextResponse.json({
+    basicAvailable: true,
+    advancedAvailable: Boolean(advanced.endpoint && advanced.apiKey && advanced.model),
+  });
+}
 
 function normalizeHistory(value: unknown): ChatHistoryItem[] {
   if (!Array.isArray(value)) return [];
@@ -97,6 +115,78 @@ export async function POST(request: Request) {
       : history;
   const sessionId =
     typeof body.sessionId === "string" ? body.sessionId.trim().slice(0, 120) : undefined;
+  const mode: ChatMode = body.mode === "advanced" ? "advanced" : "basic";
+
+  if (mode === "advanced") {
+    const advanced = getAdvancedConfig();
+    if (!advanced.endpoint || !advanced.apiKey || !advanced.model) {
+      return NextResponse.json(
+        { error: "高级版接口正在准备中，接入大模型服务后即可使用。" },
+        { status: 503 }
+      );
+    }
+
+    let endpoint: URL;
+    try {
+      endpoint = new URL(advanced.endpoint);
+    } catch {
+      return NextResponse.json({ error: "高级版服务器地址配置不正确。" }, { status: 500 });
+    }
+
+    try {
+      const upstream = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${advanced.apiKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          model: advanced.model,
+          messages: [
+            {
+              role: "system",
+              content:
+                "你是元智韩语智能老师。请根据学习者水平进行中韩双语讲解，重点纠正韩语表达，并给出自然、简洁、可练习的回答。",
+            },
+            ...upstreamHistory,
+            { role: "user", content: message },
+          ],
+          stream: false,
+        }),
+        cache: "no-store",
+        signal: AbortSignal.timeout(60_000),
+      });
+
+      if (!upstream.ok) {
+        return NextResponse.json(
+          { error: "高级版暂时没有响应，请稍后再试。" },
+          { status: 502 }
+        );
+      }
+
+      const contentType = upstream.headers.get("content-type") ?? "";
+      const payload = contentType.includes("application/json")
+        ? await upstream.json()
+        : await upstream.text();
+      const reply = extractReply(payload);
+
+      if (!reply) {
+        return NextResponse.json(
+          { error: "高级版已返回结果，但没有找到可展示的回复文字。" },
+          { status: 502 }
+        );
+      }
+
+      return NextResponse.json({ reply, sessionId, mode });
+    } catch (error) {
+      const timedOut = error instanceof DOMException && error.name === "TimeoutError";
+      return NextResponse.json(
+        { error: timedOut ? "高级版思考时间过长，请重新发送。" : "暂时无法连接高级版服务。" },
+        { status: 502 }
+      );
+    }
+  }
+
   const serverUrl =
     process.env.YUANZHI_AI_BASE_URL ??
     process.env.YUANZHI_AI_SERVER_URL ??
@@ -107,7 +197,7 @@ export async function POST(request: Request) {
   try {
     endpoint = new URL(chatPath, serverUrl.endsWith("/") ? serverUrl : `${serverUrl}/`);
   } catch {
-    return NextResponse.json({ error: "元智 AI 服务器地址配置不正确。" }, { status: 500 });
+    return NextResponse.json({ error: "元智服务器地址配置不正确。" }, { status: 500 });
   }
 
   try {
@@ -127,8 +217,8 @@ export async function POST(request: Request) {
       return NextResponse.json(
         {
           error: endpointMissing
-            ? "AI 服务器已连接，但聊天接口尚未开放。请在服务端提供 /chat 接口，或配置 YUANZHI_AI_CHAT_PATH。"
-            : "AI 老师暂时没有响应，请稍后再试。",
+            ? "基础版服务器已连接，但聊天接口尚未开放，请检查服务端聊天接口配置。"
+            : "智能老师暂时没有响应，请稍后再试。",
         },
         { status: 502 }
       );
@@ -142,16 +232,16 @@ export async function POST(request: Request) {
 
     if (!reply) {
       return NextResponse.json(
-        { error: "AI 服务器已返回结果，但没有找到可展示的回复文字。" },
+        { error: "基础版服务器已返回结果，但没有找到可展示的回复文字。" },
         { status: 502 }
       );
     }
 
-    return NextResponse.json({ reply, sessionId });
+    return NextResponse.json({ reply, sessionId, mode });
   } catch (error) {
     const timedOut = error instanceof DOMException && error.name === "TimeoutError";
     return NextResponse.json(
-      { error: timedOut ? "AI 老师思考时间过长，请重新发送。" : "暂时无法连接元智 AI 服务器。" },
+      { error: timedOut ? "智能老师思考时间过长，请重新发送。" : "暂时无法连接元智服务器。" },
       { status: 502 }
     );
   }

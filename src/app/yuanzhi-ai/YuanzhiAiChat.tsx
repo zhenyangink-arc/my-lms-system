@@ -3,11 +3,13 @@
 import {
   Bot,
   Check,
+  Crown,
   Headphones,
   Languages,
   Mic,
   RotateCcw,
   Send,
+  Server,
   Sparkles,
   Square,
   Volume2,
@@ -27,6 +29,7 @@ import styles from "./ai-chat.module.css";
 
 type ChatRole = "user" | "assistant";
 type ChatStatus = "ready" | "recognizing" | "thinking" | "synthesizing" | "playing";
+type ChatMode = "basic" | "advanced";
 
 type ChatMessage = {
   id: string;
@@ -48,13 +51,17 @@ type SocketPayload = {
   sampleRate?: unknown;
 };
 
-const INITIAL_MESSAGE: ChatMessage = {
+const BASIC_INITIAL_MESSAGE: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "안녕하세요! 저는 원지 AI 한국어 선생님이에요. 만나서 반가워요!\n你好，我是元智 AI 韩语老师。你可以直接输入韩语，或按住麦克风和我练习。",
+    "안녕하세요! 저는 원지 인공지능 한국어 선생님이에요. 만나서 반가워요!\n你好，我是元智韩语智能老师。你可以直接输入韩语，或按住麦克风和我练习。",
   createdAt: new Date(0),
 };
+
+function getInitialMessages(mode: ChatMode) {
+  return mode === "advanced" ? [] : [BASIC_INITIAL_MESSAGE];
+}
 
 const PRACTICE_PROMPTS = [
   { label: "自我介绍", text: "한국어로 자기소개를 연습하고 싶어요." },
@@ -77,19 +84,19 @@ const STATUS_CONFIG: Record<ChatStatus, { label: string; detail: string; color: 
   },
   thinking: {
     label: "思考中",
-    detail: "元智 AI 老师正在组织韩语回复",
+    detail: "元智智能老师正在组织韩语回复",
     color: "#3888b5",
     soft: "#eaf7ff",
   },
   synthesizing: {
     label: "语音合成中",
-    detail: "CosyVoice 正在生成中韩双语语音",
+    detail: "正在生成中韩双语语音",
     color: "#7a69b3",
     soft: "#f2edfb",
   },
   playing: {
     label: "播放中",
-    detail: "正在朗读 AI 老师的韩语回复",
+    detail: "正在朗读智能老师的韩语回复",
     color: "#8c6bc0",
     soft: "#f2edfb",
   },
@@ -169,7 +176,8 @@ function readBlobAsBase64(blob: Blob) {
 }
 
 export function YuanzhiAiChat() {
-  const [messages, setMessages] = useState<ChatMessage[]>([INITIAL_MESSAGE]);
+  const [chatMode, setChatMode] = useState<ChatMode>("basic");
+  const [messages, setMessages] = useState<ChatMessage[]>([BASIC_INITIAL_MESSAGE]);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<ChatStatus>("ready");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -178,6 +186,7 @@ export function YuanzhiAiChat() {
   const [requestPending, setRequestPending] = useState(false);
   const [speechPending, setSpeechPending] = useState(false);
   const [socketReady, setSocketReady] = useState(false);
+  const [advancedAvailable, setAdvancedAvailable] = useState(false);
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const wsRef = useRef<WebSocket | null>(null);
@@ -198,6 +207,7 @@ export function YuanzhiAiChat() {
 
   const statusInfo = STATUS_CONFIG[status];
   const isBusy = requestPending || speechPending || isRecording;
+  const advancedUnavailable = chatMode === "advanced" && !advancedAvailable;
 
   const setRequestState = useCallback((pending: boolean) => {
     requestPendingRef.current = pending;
@@ -257,7 +267,7 @@ export function YuanzhiAiChat() {
       const context = await initAudio();
       const bytes = mergeAudioChunks(chunks);
       const sampleCount = Math.floor(bytes.byteLength / 2);
-      if (sampleCount === 0) throw new Error("AI 返回的音频为空。");
+      if (sampleCount === 0) throw new Error("返回的语音为空。");
 
       const buffer = context.createBuffer(1, sampleCount, audioSampleRateRef.current);
       const channel = buffer.getChannelData(0);
@@ -280,7 +290,7 @@ export function YuanzhiAiChat() {
       source.start();
     } catch (error) {
       setStatus("ready");
-      setErrorMessage(error instanceof Error ? error.message : "AI 语音播放失败，请重新尝试。");
+      setErrorMessage(error instanceof Error ? error.message : "语音播放失败，请重新尝试。");
     }
   }, [initAudio, stopPlayback]);
 
@@ -308,7 +318,7 @@ export function YuanzhiAiChat() {
       if (ws?.readyState === WebSocket.OPEN) {
         sendPendingSpeech(ws);
       } else {
-        setErrorMessage("CosyVoice 正在重新连接，语音会在连接恢复后自动生成。");
+        setErrorMessage("语音服务正在重新连接，连接恢复后会自动生成语音。");
       }
     },
     [initAudio, sendPendingSpeech, setSpeechState, stopPlayback]
@@ -317,6 +327,23 @@ export function YuanzhiAiChat() {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, status]);
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    void fetch("/api/yuanzhi-ai/chat", {
+      cache: "no-store",
+      signal: controller.signal,
+    })
+      .then(async (response) => {
+        if (!response.ok) return;
+        const result = (await response.json()) as { advancedAvailable?: unknown };
+        setAdvancedAvailable(result.advancedAvailable === true);
+      })
+      .catch(() => undefined);
+
+    return () => controller.abort();
+  }, []);
 
   useEffect(() => {
     let disposed = false;
@@ -344,7 +371,7 @@ export function YuanzhiAiChat() {
         audioChunksRef.current = [];
         if (speechPendingRef.current) {
           setStatus("synthesizing");
-          setErrorMessage("CosyVoice 连接中断，正在自动重连并重新生成语音。");
+          setErrorMessage("语音服务连接中断，正在自动重连并重新生成语音。");
         }
         reconnectTimer = setTimeout(connect, 2_000);
       };
@@ -431,7 +458,7 @@ export function YuanzhiAiChat() {
 
   async function sendMessage(rawMessage: string) {
     const content = rawMessage.trim();
-    if (!content || requestPendingRef.current) return;
+    if (!content || requestPendingRef.current || advancedUnavailable) return;
 
     void initAudio().catch(() => undefined);
     stopPlayback();
@@ -453,6 +480,7 @@ export function YuanzhiAiChat() {
         body: JSON.stringify({
           message: content,
           sessionId: sessionIdRef.current,
+          mode: chatMode,
           history: nextMessages.slice(-12).map((message) => ({
             role: message.role,
             content: message.content,
@@ -462,7 +490,7 @@ export function YuanzhiAiChat() {
       const result = (await response.json()) as { reply?: string; error?: string };
 
       if (!response.ok || !result.reply) {
-        throw new Error(result.error || "AI 老师暂时没有回复，请稍后再试。");
+        throw new Error(result.error || "智能老师暂时没有回复，请稍后再试。");
       }
 
       setMessages((current) => [...current, createMessage("assistant", result.reply as string)]);
@@ -471,7 +499,7 @@ export function YuanzhiAiChat() {
     } catch (error) {
       setRequestState(false);
       setStatus("ready");
-      setErrorMessage(error instanceof Error ? error.message : "暂时无法连接元智 AI 老师。");
+      setErrorMessage(error instanceof Error ? error.message : "暂时无法连接元智智能老师。");
     }
   }
 
@@ -482,6 +510,10 @@ export function YuanzhiAiChat() {
 
   async function beginVoiceInput() {
     if (isBusy) return;
+    if (chatMode === "advanced") {
+      setErrorMessage("高级版语音输入暂未开放，请先使用文字进行对话。");
+      return;
+    }
     if (!navigator.mediaDevices?.getUserMedia || !("MediaRecorder" in window)) {
       setErrorMessage("当前浏览器不支持录音，请使用最新版 Chrome、Edge 或 Safari。");
       return;
@@ -617,7 +649,7 @@ export function YuanzhiAiChat() {
     }
   }
 
-  function resetConversation() {
+  function resetConversation(targetMode: ChatMode = chatMode) {
     recordingRequestedRef.current = false;
     shouldSendRecordingRef.current = false;
     if (mediaRecorderRef.current && mediaRecorderRef.current.state === "recording") {
@@ -630,7 +662,7 @@ export function YuanzhiAiChat() {
     audioChunksRef.current = [];
     pendingSpeechTextRef.current = null;
     sessionIdRef.current = null;
-    setMessages([INITIAL_MESSAGE]);
+    setMessages(getInitialMessages(targetMode));
     setDraft("");
     setErrorMessage(null);
     setIsRecording(false);
@@ -638,6 +670,12 @@ export function YuanzhiAiChat() {
     setSpeechState(false);
     setRecordingSeconds(0);
     setStatus("ready");
+  }
+
+  function switchChatMode(nextMode: ChatMode) {
+    if (nextMode === chatMode || isBusy) return;
+    setChatMode(nextMode);
+    resetConversation(nextMode);
   }
 
   return (
@@ -651,7 +689,7 @@ export function YuanzhiAiChat() {
           <span className="text-[#ef7357]">真实表达</span>
         </h1>
         <p className="mx-auto mt-4 max-w-3xl text-sm leading-7 text-[#607c8e] sm:text-base">
-          文字提问、按住说话、即时纠正。AI 老师会自动朗读韩语回复，让每次练习都有听力输入和口语反馈。
+          文字提问、按住说话、即时纠正。智能老师会自动朗读韩语回复，让每次练习都有听力输入和口语反馈。
         </p>
       </section>
 
@@ -664,7 +702,7 @@ export function YuanzhiAiChat() {
               </span>
               <div>
                 <p className="font-black text-[#244d69]">원지 선생님</p>
-                <p className="mt-0.5 text-xs font-bold text-[#7390a1]">韩语 AI 口语老师</p>
+                <p className="mt-0.5 text-xs font-bold text-[#7390a1]">韩语智能口语老师</p>
               </div>
             </div>
             <div className="mt-5 space-y-3">
@@ -695,7 +733,7 @@ export function YuanzhiAiChat() {
                   key={prompt.label}
                   type="button"
                   onClick={() => void sendMessage(prompt.text)}
-                  disabled={isBusy}
+                  disabled={isBusy || advancedUnavailable}
                   className="w-full rounded-2xl border border-white bg-white/90 px-4 py-3 text-left text-sm font-black text-[#315c76] shadow-sm transition hover:-translate-y-0.5 hover:border-[#abd7ec] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {prompt.label}
@@ -729,7 +767,7 @@ export function YuanzhiAiChat() {
               </div>
               <button
                 type="button"
-                onClick={resetConversation}
+                onClick={() => resetConversation()}
                 className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce9ef] bg-white text-[#688497] transition hover:bg-[#f4f9fb]"
                 title="重新开始对话"
                 aria-label="重新开始对话"
@@ -738,6 +776,56 @@ export function YuanzhiAiChat() {
               </button>
             </div>
           </header>
+
+          <div className="border-b border-[#e4eef3] bg-[#f7fafc] px-4 py-4 sm:px-6">
+            <div className="grid gap-3 sm:grid-cols-2" aria-label="选择对话版本">
+              <button
+                type="button"
+                onClick={() => switchChatMode("basic")}
+                disabled={isBusy}
+                aria-pressed={chatMode === "basic"}
+                className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${
+                  chatMode === "basic"
+                    ? "border-[#83bed8] bg-white shadow-[0_10px_28px_rgba(66,137,171,0.13)] ring-2 ring-[#dceff7]"
+                    : "border-[#dce8ed] bg-white/70 hover:border-[#b7d5e3] hover:bg-white"
+                }`}
+              >
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${chatMode === "basic" ? "bg-[#e5f5fc] text-[#3686ac]" : "bg-[#eef3f5] text-[#718895]"}`}>
+                  <Server size={19} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2 text-sm font-black text-[#315970]">
+                    基础版
+                    {chatMode === "basic" && <span className="rounded-full bg-[#e7f7ee] px-2 py-0.5 text-[10px] text-[#418c62]">当前使用</span>}
+                  </span>
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => switchChatMode("advanced")}
+                disabled={isBusy}
+                aria-pressed={chatMode === "advanced"}
+                className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${
+                  chatMode === "advanced"
+                    ? "border-[#a99ad0] bg-white shadow-[0_10px_28px_rgba(113,93,166,0.13)] ring-2 ring-[#ece6f8]"
+                    : "border-[#dfe3ed] bg-white/70 hover:border-[#cbc0e3] hover:bg-white"
+                }`}
+              >
+                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${chatMode === "advanced" ? "bg-[#f0eafb] text-[#755fa9]" : "bg-[#f1eff6] text-[#82779a]"}`}>
+                  <Crown size={19} />
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2 text-sm font-black text-[#315970]">
+                    高级版
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] ${advancedAvailable ? "bg-[#e7f7ee] text-[#418c62]" : "bg-[#fff0e9] text-[#cf674f]"}`}>
+                      {advancedAvailable ? "已接入" : "待接入"}
+                    </span>
+                  </span>
+                </span>
+              </button>
+            </div>
+          </div>
 
           <div className={`${styles.chatGrid} flex min-h-[680px] flex-col bg-[#fbfdfe]`}>
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7 sm:py-8">
@@ -778,7 +866,7 @@ export function YuanzhiAiChat() {
                       )}
                     </div>
                     <p className={`mt-1.5 px-1 text-[10px] font-bold text-[#9aabb5] ${message.role === "user" ? "text-right" : "text-left"}`}>
-                      {message.role === "assistant" ? "元智 AI 老师" : "我"} · {formatTime(message.createdAt)}
+                      {message.role === "assistant" ? "元智智能老师" : "我"} · {formatTime(message.createdAt)}
                     </p>
                   </div>
                 </article>
@@ -789,7 +877,7 @@ export function YuanzhiAiChat() {
                   <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#66b8e4] to-[#8471c0] text-white shadow-sm">
                     <Bot size={17} />
                   </span>
-                  <div className="flex items-center gap-1.5 rounded-[1.35rem_1.35rem_1.35rem_0.35rem] border border-[#dceaf1] bg-white px-5 py-4 shadow-sm" aria-label="AI 老师思考中">
+                  <div className="flex items-center gap-1.5 rounded-[1.35rem_1.35rem_1.35rem_0.35rem] border border-[#dceaf1] bg-white px-5 py-4 shadow-sm" aria-label="智能老师思考中">
                     {[0, 1, 2].map((dot) => (
                       <span key={dot} className={`${styles.thinkingDot} h-2 w-2 rounded-full bg-[#65aaca]`} />
                     ))}
@@ -821,10 +909,10 @@ export function YuanzhiAiChat() {
                         void sendMessage(draft);
                       }
                     }}
-                    disabled={isBusy}
+                    disabled={isBusy || advancedUnavailable}
                     rows={1}
                     maxLength={800}
-                    placeholder={isRecording ? "正在识别你说的韩语…" : "输入韩语或中文，例如：请陪我练习自我介绍"}
+                    placeholder={advancedUnavailable ? "高级版接口接入后即可开始对话" : isRecording ? "正在识别你说的韩语…" : "输入韩语或中文，例如：请陪我练习自我介绍"}
                     className="max-h-32 min-h-7 w-full resize-none bg-transparent text-sm leading-7 text-[#294f68] outline-none placeholder:text-[#9badb8] disabled:opacity-70"
                   />
                 </label>
@@ -838,21 +926,21 @@ export function YuanzhiAiChat() {
                     onKeyDown={handleMicKeyDown}
                     onKeyUp={handleMicKeyUp}
                     onContextMenu={(event) => event.preventDefault()}
-                    disabled={requestPending || speechPending}
+                    disabled={requestPending || speechPending || chatMode === "advanced"}
                     className={`${styles.micButton} ${isRecording ? styles.micActive : ""} flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_12px_30px_rgba(239,111,84,0.3)] transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50`}
                     style={{ background: isRecording ? "linear-gradient(135deg,#ed654d,#d94b48)" : "linear-gradient(135deg,#f47b5f,#ed6b54)" }}
-                    aria-label={isRecording ? "松开发送语音" : "按住录音"}
+                    aria-label={chatMode === "advanced" ? "高级版语音输入暂未开放" : isRecording ? "松开发送语音" : "按住录音"}
                   >
                     {isRecording ? <Square size={23} fill="currentColor" /> : <Mic size={27} />}
                   </button>
                   <span className="text-[10px] font-black text-[#7b93a1]">
-                    {isRecording ? `${recordingSeconds}s · 松开发送` : "按住说话"}
+                    {chatMode === "advanced" ? "暂未开放" : isRecording ? `${recordingSeconds} 秒 · 松开发送` : "按住说话"}
                   </span>
                 </div>
 
                 <button
                   type="submit"
-                  disabled={!draft.trim() || isBusy}
+                  disabled={!draft.trim() || isBusy || advancedUnavailable}
                   className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#3388b4] px-5 text-sm font-black text-white shadow-[0_12px_28px_rgba(51,136,180,0.22)] transition hover:-translate-y-0.5 hover:bg-[#287ca6] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   <Send size={17} />
