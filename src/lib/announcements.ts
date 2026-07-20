@@ -17,10 +17,10 @@ export async function getAnnouncementAccess(): Promise<AnnouncementAccess> {
   const { supabase, user, profile } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
 
-  if (role === "super_admin" || role === "ceo") {
+  if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") {
     return {
       canAccess: true,
-      canAssignAdmins: role === "super_admin",
+      canAssignAdmins: role === "tenant_super_admin" || role === "platform_super_admin",
       role,
       supabase,
       user,

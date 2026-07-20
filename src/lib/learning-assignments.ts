@@ -9,7 +9,8 @@ export const assignmentManagerRoles = new Set<UserRole>([
   "teacher",
   "admin",
   "ceo",
-  "super_admin",
+  "tenant_super_admin",
+  "platform_super_admin",
 ]);
 
 export function isAssignmentManagerRole(role: string | null | undefined) {

@@ -6,14 +6,14 @@ import { normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardSidebar } from "./DashboardSidebar";
 import { DashboardPermissionGate } from "./DashboardPermissionGate";
 import { GlobalTopbar } from "./GlobalTopbar";
-import { ThemeProvider } from "./ThemeProvider";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user, profile } = await requireActiveUser();
+  const { user, profile, platformProfile, tenant } = await requireActiveUser();
 
   const userName =
     profile?.full_name ||
@@ -22,29 +22,31 @@ export default async function DashboardLayout({
     "用户";
 
   const userRole = profile?.role ?? "student";
+  const roleLabel = tenant?.role === "tenant_super_admin" && platformProfile?.global_role === "tenant_super_admin"
+    ? "机构负责人"
+    : undefined;
   const membershipTier = normalizeMembershipTier(profile?.membership_tier);
   const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
+  const dashboardBasePath = getDashboardBasePath(tenant?.slug);
 
   return (
-    <ThemeProvider>
-      <div className="app-shell flex min-h-screen flex-col">
-        <GlobalTopbar />
+    <div className="app-shell flex min-h-screen flex-col">
+      <GlobalTopbar />
 
+      <DashboardPermissionGate userRole={userRole} membershipTier={membershipTier}>
         <div className="flex min-h-0 flex-1">
           <DashboardSidebar
-            userName={userName}
-            userRole={userRole}
-            membershipTier={membershipTier}
-            canAccessAnnouncements={canAccessAnnouncements}
+          userName={userName}
+          userRole={userRole}
+          roleLabel={roleLabel}
+          membershipTier={membershipTier}
+          canAccessAnnouncements={canAccessAnnouncements}
+          dashboardBasePath={dashboardBasePath}
           />
 
-          <main className="min-w-0 flex-1 pb-24 md:pb-0">
-            <DashboardPermissionGate userRole={userRole} membershipTier={membershipTier}>
-              {children}
-            </DashboardPermissionGate>
-          </main>
+          <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
         </div>
-      </div>
-    </ThemeProvider>
+      </DashboardPermissionGate>
+    </div>
   );
 }

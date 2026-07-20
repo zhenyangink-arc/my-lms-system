@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { BookOpenCheck, MapPinned, MessageCircleMore } from "lucide-react";
+import { isDashboardPathname } from "@/lib/dashboard-path";
 
 const footerLinks = [
   {
@@ -35,7 +36,7 @@ export function SiteFooter() {
   const pathname = usePathname();
 
   // 控制台拥有独立布局，因此不重复显示公开站点页脚。
-  if (pathname.startsWith("/dashboard")) {
+  if (isDashboardPathname(pathname)) {
     return null;
   }
 
@@ -46,7 +47,7 @@ export function SiteFooter() {
       <div className="mx-auto grid max-w-7xl gap-10 px-5 py-14 sm:px-8 lg:grid-cols-[1.2fr_1.8fr]">
         <div>
           <Link href="/" className="inline-flex items-center gap-3">
-            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#7ac8ed] to-[#f78b6f] text-white shadow-sm">
+            <span className="grid h-11 w-11 place-items-center rounded-2xl bg-gradient-to-br from-[#7ac8ed] to-[#6fa2f7] text-white shadow-sm">
               <MapPinned size={20} />
             </span>
             <span className="text-xl font-black text-[#1c4865]">元智教育</span>
@@ -58,7 +59,7 @@ export function SiteFooter() {
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#3d8ab5] shadow-sm" title="留学规划">
               <MapPinned size={18} />
             </span>
-            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#e67559] shadow-sm" title="韩语课程">
+            <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#598fe6] shadow-sm" title="韩语课程">
               <BookOpenCheck size={18} />
             </span>
             <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white text-[#4ba672] shadow-sm" title="学习支持">
@@ -76,7 +77,7 @@ export function SiteFooter() {
                   <Link
                     key={label}
                     href={href}
-                    className="block text-sm font-medium text-[#6a8495] transition hover:translate-x-1 hover:text-[#e57055]"
+                    className="block text-sm font-medium text-[#6a8495] transition hover:translate-x-1 hover:text-[#558ee5]"
                   >
                     {label}
                   </Link>

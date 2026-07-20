@@ -53,7 +53,7 @@ export function AuthPageShell({
 
   return (
     <div className={`${styles.authBackdrop} min-h-[calc(100vh-76px)] px-5 py-12 sm:px-8 sm:py-16`}>
-      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-[#ffd9c8]/45 blur-3xl" />
+      <div className="pointer-events-none absolute -left-24 top-24 h-72 w-72 rounded-full bg-[#c8d7ff]/45 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 top-12 h-80 w-80 rounded-full bg-[#ccecff]/55 blur-3xl" />
 
       <div className="relative mx-auto grid max-w-6xl items-center gap-12 lg:grid-cols-[0.54fr_0.46fr] lg:gap-16">
@@ -83,14 +83,14 @@ export function AuthPageShell({
                   </p>
                 </div>
               </div>
-              <span className="rounded-full bg-[#fff0e9] px-3 py-1.5 text-xs font-black text-[#dd6b51]">
+              <span className="rounded-full bg-[#e9f4ff] px-3 py-1.5 text-xs font-black text-[#5189dd]">
                 {variant === "login" ? "已保存" : "待建立"}
               </span>
             </div>
 
             <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
               {content.steps.map(([Icon, title, note], index) => (
-                <div key={title} className="rounded-2xl bg-[#f7fbfd] p-4">
+                <div key={title} className="rounded-2xl bg-[#f7fafd] p-4">
                   <div className="flex items-center justify-between">
                     <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-white text-[#4c94bb] shadow-sm">
                       <Icon size={18} />

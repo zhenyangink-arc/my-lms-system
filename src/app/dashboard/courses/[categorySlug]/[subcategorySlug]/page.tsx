@@ -8,8 +8,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
-import { DashboardPageHeader } from "../../../DashboardPageHeader";
+import { requireActiveUser } from "@/lib/auth";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
@@ -138,7 +137,8 @@ export default async function SubcategoryCoursesPage({
 }) {
   const { categorySlug, subcategorySlug } = await params;
 
-  const supabase = await createClient();
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
 
   /**
    * 1. 查询一级课程板块
@@ -210,13 +210,9 @@ export default async function SubcategoryCoursesPage({
   /**
    * 5. 查询当前用户的学习进度
    */
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   let progressList: LessonProgress[] = [];
 
-  if (user && lessonIds.length > 0) {
+  if (!isPlatformAudit && user && lessonIds.length > 0) {
     const { data: progressData } = await supabase
       .from("lesson_progress")
       .select("lesson_id, status, progress_percent")
@@ -281,16 +277,12 @@ export default async function SubcategoryCoursesPage({
 
   return (
     <>
-      <DashboardPageHeader
-        title={subcategory.title}
-        description={subcategory.description || "选择具体课程并查看学习进度。"}
-      />
 
       <div
         className={
           isFocusCategory
-            ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
-            : "space-y-6 p-6"
+            ? "mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8"
+            : "space-y-5 p-5"
         }
       >
         {/* 返回路径 */}
@@ -319,7 +311,7 @@ export default async function SubcategoryCoursesPage({
 
         {/* 页面说明板块 */}
         <section
-          className="app-card rounded-[30px] border p-6 shadow-sm"
+          className="app-card rounded-3xl border p-5 shadow-sm"
           style={
             isFocusCategory
               ? {
@@ -357,17 +349,10 @@ export default async function SubcategoryCoursesPage({
               >
                 选择具体课程
               </h2>
-
-              <p
-                className="mt-2 text-sm leading-6"
-                style={{ color: "var(--app-muted)" }}
-              >
-                每门课程会显示当前账号的学习进度。你可以从这里查看课程完成率，并继续学习未完成的课程。
-              </p>
             </div>
 
             {/* 右侧：当前分类整体进度 */}
-            <div className="app-soft-card rounded-2xl border p-4 shadow-sm">
+            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--app-border)" }}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p
@@ -395,13 +380,13 @@ export default async function SubcategoryCoursesPage({
 
               <div
                 className="mt-4 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-border)" }}
+                style={{ backgroundColor: "var(--app-soft-bg)" }}
               >
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
                     width: `${overallCourseProgressPercent}%`,
-                    backgroundColor: color.accent,
+                    backgroundColor: "var(--app-success)",
                   }}
                 />
               </div>
@@ -410,23 +395,14 @@ export default async function SubcategoryCoursesPage({
         </section>
 
         {/* 课程列表板块 */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <h3
-                className="text-lg font-black tracking-tight"
-                style={{ color: "var(--app-text)" }}
-              >
-                课程列表
-              </h3>
-
-              <p
-                className="mt-1 text-sm"
-                style={{ color: "var(--app-muted)" }}
-              >
-                当前分类下共有 {totalCourses} 门课程。
-              </p>
-            </div>
+            <h3
+              className="text-lg font-black tracking-tight"
+              style={{ color: "var(--app-text)" }}
+            >
+              课程列表
+            </h3>
 
             <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-semibold">
               {totalCourses} 门课程
@@ -462,7 +438,9 @@ export default async function SubcategoryCoursesPage({
                   !isCompleted && (completedCount > 0 || inProgressCount > 0);
 
                 const buttonLabel =
-                  totalLessons === 0
+                  isPlatformAudit
+                    ? "巡检课程"
+                    : totalLessons === 0
                     ? "查看课程"
                     : isCompleted
                       ? "复习课程"
@@ -553,7 +531,7 @@ export default async function SubcategoryCoursesPage({
                       </div>
 
                       {/* 中间：学习进度 */}
-                      <div className="app-soft-card rounded-2xl border p-4">
+                      <div className="lg:border-l lg:pl-5" style={{ borderColor: "var(--app-border)" }}>
                         <div className="mb-3 flex items-center justify-between gap-3">
                           <div
                             className="inline-flex items-center gap-1.5 text-xs font-medium"
@@ -590,13 +568,13 @@ export default async function SubcategoryCoursesPage({
 
                         <div
                           className="h-2 overflow-hidden rounded-full"
-                          style={{ backgroundColor: "var(--app-border)" }}
+                          style={{ backgroundColor: "var(--app-soft-bg)" }}
                         >
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
                               width: `${courseProgressPercent}%`,
-                              backgroundColor: statusAccent,
+                              backgroundColor: "var(--app-success)",
                             }}
                           />
                         </div>
@@ -633,7 +611,7 @@ export default async function SubcategoryCoursesPage({
               })}
             </div>
           ) : (
-            <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center">
+            <div className="app-empty-state rounded-2xl p-6 text-center">
               <p
                 className="font-semibold"
                 style={{ color: "var(--app-text)" }}

@@ -4,7 +4,7 @@
  * 这个页面是课程管理的第一层入口。
  *
  * 功能：
- * 1. 检查当前用户是否为 admin / super_admin
+ * 1. 检查当前用户是否为 admin / tenant_super_admin
  * 2. 统计系统中的课程数量、课时数量、R2 视频绑定数量
  * 3. 只显示一级课程板块，例如：
  *    - 留学服务课程
@@ -220,7 +220,7 @@ export default async function AdminCoursesPage() {
         description="按课程板块管理课程结构、课时信息和 R2 视频路径。"
       />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-5 p-5">
         {/* 顶部统计 */}
         <section className="grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
@@ -229,7 +229,7 @@ export default async function AdminCoursesPage() {
               <GraduationCap className="text-gray-300" size={24} />
             </div>
 
-            <p className="mt-3 text-3xl font-black text-gray-900">
+            <p className="mt-3 text-2xl font-black text-gray-900">
               {totalCourses}
             </p>
 
@@ -242,7 +242,7 @@ export default async function AdminCoursesPage() {
               <BookOpen className="text-gray-300" size={24} />
             </div>
 
-            <p className="mt-3 text-3xl font-black text-gray-900">
+            <p className="mt-3 text-2xl font-black text-gray-900">
               {publishedLessons.length} / {totalLessons}
             </p>
 
@@ -255,7 +255,7 @@ export default async function AdminCoursesPage() {
               <Video className="text-gray-300" size={24} />
             </div>
 
-            <p className="mt-3 text-3xl font-black text-gray-900">
+            <p className="mt-3 text-2xl font-black text-gray-900">
               {r2VideoLessons.length}
             </p>
 
@@ -301,7 +301,7 @@ export default async function AdminCoursesPage() {
         )}
 
         {/* 一级课程板块 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h2 className="text-xl font-black tracking-tight text-gray-900">
@@ -405,7 +405,7 @@ export default async function AdminCoursesPage() {
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程板块</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前还没有发布课程板块。

@@ -1,110 +1,154 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 import { requireStudentFeature } from "@/lib/student-permissions-server";
 import type { DocumentActionState } from "./document-action-state";
 
-const STUDENT_PREPARATION_STATUSES = ["not_started", "preparing"];
-const SUBMITTABLE_STATUSES = ["not_started", "preparing", "pending_review", "revision_required"];
-const MAX_FILE_SIZE = 15 * 1024 * 1024;
-const FILE_TYPES: Record<string, string> = {
-  "application/pdf": "pdf",
-  "image/jpeg": "jpg",
-  "image/png": "png",
-  "image/webp": "webp",
-  "application/msword": "doc",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document": "docx",
-};
+const CHECKLIST_STATUSES = ["preparing", "completed", "not_needed"] as const;
 
 function result(status: "success" | "error", message: string): DocumentActionState {
   return { status, message };
 }
 
-export async function saveApplicationDocumentAction(
-  documentId: string,
+function revalidateDocumentPages(userId: string) {
+  revalidatePath("/dashboard/documents");
+  revalidatePath("/dashboard/admin/documents");
+  revalidatePath(`/dashboard/admin/documents/${userId}`);
+}
+
+export type DocumentDraftChange = {
+  documentId: string;
+  status: "preparing" | "completed" | "not_needed";
+};
+
+export async function saveApplicationDocumentDraftAction(
+  changes: DocumentDraftChange[]
+): Promise<DocumentActionState> {
+  const { supabase, user } = await requireStudentFeature("application_documents");
+
+  if (changes.length === 0) {
+    return result("success", "没有需要保存的修改。");
+  }
+  if (changes.some((change) => !CHECKLIST_STATUSES.includes(change.status))) {
+    return result("error", "包含无效的资料状态。");
+  }
+
+  for (const change of changes) {
+    const { error } = await supabase
+      .from("student_application_documents")
+      .update({ status: change.status })
+      .eq("id", change.documentId)
+      .eq("user_id", user.id);
+
+    if (error) {
+      return result("error", "保存失败，请刷新页面后重试。");
+    }
+  }
+
+  revalidateDocumentPages(user.id);
+  return result("success", "修改已保存。");
+}
+
+export async function submitApplicationDocumentsAction(
+  targetId: string,
+  _previousState: DocumentActionState,
+  _formData: FormData
+): Promise<DocumentActionState> {
+  void _previousState;
+  void _formData;
+  const { supabase, user } = await requireStudentFeature("application_documents");
+
+  const { count: unresolvedCount, error: countError } = await supabase
+    .from("student_application_documents")
+    .select("id", { count: "exact", head: true })
+    .eq("target_id", targetId)
+    .eq("user_id", user.id)
+    .eq("status", "preparing")
+    .is("admin_locked_at", null);
+
+  if (countError) {
+    return result("error", "提交失败，请刷新页面后重试。");
+  }
+  if ((unresolvedCount ?? 0) > 0) {
+    return result("error", "还有材料未标记为「已完成」或「无」，请先处理完所有材料。");
+  }
+
+  const { data: updated, error } = await supabase
+    .from("student_university_targets")
+    .update({ documents_locked_at: new Date().toISOString() })
+    .eq("id", targetId)
+    .eq("user_id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !updated) {
+    return result("error", "提交失败，请刷新页面后重试。");
+  }
+
+  revalidateDocumentPages(user.id);
+  redirect("/dashboard/documents");
+}
+
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+
+export async function saveCourierInfoAction(
+  targetId: string,
   _previousState: DocumentActionState,
   formData: FormData
 ): Promise<DocumentActionState> {
+  void _previousState;
   const { supabase, user } = await requireStudentFeature("application_documents");
-  const requestedStatus = String(formData.get("status") ?? "").trim();
 
-  const { data: currentDocument, error: documentError } = await supabase
-    .from("student_application_documents")
-    .select("id, status")
-    .eq("id", documentId)
+  const mailedAt = String(formData.get("courierMailedAt") ?? "").trim();
+  const estimatedArrivalAt = String(formData.get("courierEstimatedArrivalAt") ?? "").trim();
+
+  if (!mailedAt || !estimatedArrivalAt) {
+    return result("error", "请同时填写快递邮寄时间和预计到达时间。");
+  }
+  if (!DATE_PATTERN.test(mailedAt)) {
+    return result("error", "快递邮寄时间格式不正确。");
+  }
+  if (!DATE_PATTERN.test(estimatedArrivalAt)) {
+    return result("error", "预计到达时间格式不正确。");
+  }
+  if (estimatedArrivalAt < mailedAt) {
+    return result("error", "预计到达时间不能早于快递邮寄时间。");
+  }
+
+  const { data: existing } = await supabase
+    .from("student_university_targets")
+    .select("application_stage, courier_mailed_at, courier_estimated_arrival_at")
+    .eq("id", targetId)
     .eq("user_id", user.id)
     .maybeSingle();
 
-  if (documentError || !currentDocument) return result("error", "找不到要更新的申请材料。");
-
-  if (STUDENT_PREPARATION_STATUSES.includes(requestedStatus)) {
-    if (!STUDENT_PREPARATION_STATUSES.includes(currentDocument.status)) {
-      return result("error", "材料已提交审核，当前不能退回准备状态。");
-    }
-
-    const { data: updatedDocument, error } = await supabase
-      .from("student_application_documents")
-      .update({ status: requestedStatus })
-      .eq("id", documentId)
-      .eq("user_id", user.id)
-      .in("status", STUDENT_PREPARATION_STATUSES)
-      .select("id")
-      .maybeSingle();
-
-    if (error || !updatedDocument) return result("error", "材料准备状态保存失败，请稍后重试。");
-    revalidatePath("/dashboard/documents");
-    return result("success", requestedStatus === "preparing" ? "已标记为准备中。" : "已标记为未开始。");
+  if (!existing) {
+    return result("error", "找不到这份申请表，请刷新页面后重试。");
+  }
+  if (existing.courier_mailed_at && existing.courier_estimated_arrival_at) {
+    return result("error", "快递信息已确认锁定，如需修改请联系管理员。");
+  }
+  if (existing.application_stage < 2) {
+    return result("error", "请等待管理员确认后再填写快递邮寄时间。");
   }
 
-  if (requestedStatus !== "ready") return result("error", "请选择有效的材料状态。");
-  if (!SUBMITTABLE_STATUSES.includes(currentDocument.status)) {
-    return result("error", "当前材料已经提交，请等待管理员审核。");
+  const { data: updated, error } = await supabase
+    .from("student_university_targets")
+    .update({
+      courier_mailed_at: mailedAt,
+      courier_estimated_arrival_at: estimatedArrivalAt,
+    })
+    .eq("id", targetId)
+    .eq("user_id", user.id)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !updated) {
+    return result("error", "快递信息保存失败，请刷新页面后重试。");
   }
 
-  const file = formData.get("document_file");
-  if (!(file instanceof File) || file.size === 0) {
-    return result("error", "选择“已准备”时必须上传材料文件。");
-  }
-
-  const extension = FILE_TYPES[file.type];
-  if (!extension) return result("error", "仅支持 PDF、JPG、PNG、WEBP、DOC 或 DOCX 文件。");
-  if (file.size > MAX_FILE_SIZE) return result("error", "单个申请材料不能超过 15MB。");
-
-  const safeFileName = file.name.trim().slice(0, 180);
-  if (!safeFileName) return result("error", "文件名称无效，请重新选择文件。");
-
-  // 文件路径不包含学生原始文件名，避免特殊字符影响存储；原始名称单独保存在数据库。
-  const storagePath = `${user.id}/${documentId}/${Date.now()}-${crypto.randomUUID()}.${extension}`;
-  const { error: uploadError } = await supabase.storage
-    .from("application-documents")
-    .upload(storagePath, file, { contentType: file.type, upsert: false });
-
-  if (uploadError) return result("error", "文件上传失败，请检查格式和大小后重试。");
-
-  const { error: submitError } = await supabase.rpc("submit_student_application_document", {
-    requested_document_id: documentId,
-    requested_storage_path: storagePath,
-    requested_file_name: safeFileName,
-    requested_file_size: file.size,
-    requested_mime_type: file.type,
-  });
-
-  if (submitError) {
-    // 数据库提交失败时只删除尚未登记的孤立文件，不影响任何历史版本。
-    await supabase.storage.from("application-documents").remove([storagePath]);
-    return result("error", "材料提交失败，请刷新页面后重新上传。");
-  }
-
-  revalidatePath("/dashboard/documents");
-  revalidatePath("/dashboard/admin/documents");
-  revalidatePath(`/dashboard/admin/documents/${user.id}`);
-  return result(
-    "success",
-    currentDocument.status === "pending_review"
-      ? "提交文件已更换，新版本正在等待审核。"
-      : currentDocument.status === "revision_required"
-        ? "新版本已重新提交，等待管理员审核。"
-        : "材料已提交，当前进入待审核状态。"
-  );
+  revalidateDocumentPages(user.id);
+  return result("success", "快递信息已保存。");
 }

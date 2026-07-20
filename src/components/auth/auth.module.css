@@ -2,11 +2,11 @@
 .authBackdrop {
   position: relative;
   overflow: hidden;
-  background-color: #fffdf8;
+  background-color: #f8fbff;
   background-image:
     linear-gradient(rgba(116, 183, 232, 0.1) 1px, transparent 1px),
     linear-gradient(90deg, rgba(116, 183, 232, 0.1) 1px, transparent 1px),
-    radial-gradient(circle at 8% 18%, rgba(255, 206, 181, 0.42), transparent 26%),
+    radial-gradient(circle at 8% 18%, rgba(181, 199, 255, 0.42), transparent 26%),
     radial-gradient(circle at 90% 22%, rgba(188, 229, 251, 0.52), transparent 28%);
   background-size: 52px 52px, 52px 52px, auto, auto;
   font-family:

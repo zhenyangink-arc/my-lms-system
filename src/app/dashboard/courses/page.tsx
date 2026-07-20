@@ -12,8 +12,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
-import { DashboardPageHeader } from "../DashboardPageHeader";
+import { requireActiveUser } from "@/lib/auth";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
@@ -139,7 +138,8 @@ function resolveLearningStatus({
 }
 
 export default async function CoursesPage() {
-  const supabase = await createClient();
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
 
   /**
    * 1. 一级课程板块
@@ -214,13 +214,9 @@ export default async function CoursesPage() {
   /**
    * 5. 当前用户学习进度
    */
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   let progressList: LessonProgress[] = [];
 
-  if (user && lessonIds.length > 0) {
+  if (!isPlatformAudit && user && lessonIds.length > 0) {
     const { data: progressData } = await supabase
       .from("lesson_progress")
       .select("lesson_id, status, progress_percent")
@@ -278,24 +274,14 @@ export default async function CoursesPage() {
   });
 
   return (
-    <>
-      <DashboardPageHeader
-        title="我的课程"
-        description="选择课程板块，查看课程内容和学习进度。"
-      />
-
-      <div className="space-y-6 p-6">
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <h2 className="text-xl font-black tracking-tight text-gray-900">
-                课程板块
-              </h2>
-
-              <p className="mt-1 text-sm text-gray-500">
-                每个板块会显示当前账号的学习进度。
-              </p>
-            </div>
+    <div className="space-y-5 p-5">
+      <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
+        <div className="mb-5 flex items-center justify-between gap-4">
+          <div>
+            <h2 className="text-xl font-black tracking-tight text-gray-900">
+              课程板块
+            </h2>
+          </div>
 
             <BookOpen className="text-gray-300" size={30} />
           </div>
@@ -358,7 +344,9 @@ export default async function CoursesPage() {
                 const isInProgress = learningStatus === "in_progress";
 
                 const buttonLabel =
-                  totalLessons === 0
+                  isPlatformAudit
+                    ? "巡检课程"
+                    : totalLessons === 0
                     ? "查看课程"
                     : isCompleted
                       ? "复习课程"
@@ -389,7 +377,7 @@ export default async function CoursesPage() {
                   return (
                     <article
                       key={category.id}
-                      className="app-card relative overflow-hidden rounded-[28px] border p-5 transition hover:-translate-y-1"
+                      className="app-card relative overflow-hidden rounded-3xl border p-5 transition hover:-translate-y-1"
                       style={{
                         background: isServiceCourse
                           ? "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-start))"
@@ -413,7 +401,7 @@ export default async function CoursesPage() {
                             )}
                           </span>
                           <span
-                            className="rounded-full px-3 py-1.5 text-[11px] font-black"
+                            className="rounded-full px-3 py-1.5 text-xs font-black"
                             style={{ color: accent, backgroundColor: accentSoft }}
                           >
                             {isServiceCourse ? "留学规划主线" : "韩语成长主线"}
@@ -436,9 +424,9 @@ export default async function CoursesPage() {
                             ["课程", totalCourses],
                             ["课时", totalLessons],
                           ].map(([label, value]) => (
-                            <div key={label} className="app-soft-card rounded-2xl border p-3 text-center">
+                            <div key={label} className="app-tile rounded-2xl border p-3 text-center">
                               <p className="text-lg font-black">{value}</p>
-                              <p className="mt-0.5 text-[10px] font-bold app-muted-text">{label}</p>
+                              <p className="mt-0.5 text-xs font-bold app-muted-text">{label}</p>
                             </div>
                           ))}
                         </div>
@@ -446,18 +434,18 @@ export default async function CoursesPage() {
                         <div className="mt-5">
                           <div className="flex items-center justify-between gap-3 text-xs">
                             <span className="font-bold app-muted-text">{learningStatusLabel}</span>
-                            <strong style={{ color: accent }}>{progressPercent}%</strong>
+                            <strong style={{ color: "var(--app-success)" }}>{progressPercent}%</strong>
                           </div>
                           <div className="mt-2 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
                             <div
                               className="h-full rounded-full"
                               style={{
                                 width: `${progressPercent}%`,
-                                background: `linear-gradient(90deg, ${accent}, var(--app-success))`,
+                                backgroundColor: "var(--app-success)",
                               }}
                             />
                           </div>
-                          <p className="mt-2 text-[11px] app-muted-text">
+                          <p className="mt-2 text-xs app-muted-text">
                             已完成 {completedLessons} / {totalLessons} 个课时
                           </p>
                         </div>
@@ -566,7 +554,7 @@ export default async function CoursesPage() {
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程板块</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前还没有发布课程板块。
@@ -575,6 +563,5 @@ export default async function CoursesPage() {
           )}
         </section>
       </div>
-    </>
   );
 }

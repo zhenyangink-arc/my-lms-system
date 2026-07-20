@@ -29,7 +29,7 @@ function RevokeButton({ id }: { id: string }) {
         type="submit"
         disabled={pending}
         title={state.message || undefined}
-        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[10px] font-black disabled:opacity-50"
+        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-black disabled:opacity-50"
         style={{ color: "#c94f45", backgroundColor: "#fff0ed" }}
       >
         <ShieldOff size={11} />
@@ -48,7 +48,7 @@ export function LibraryAdminManager({ admins }: { admins: Admin[] }) {
   const assigned = admins.filter((item) => item.assigned);
 
   return (
-    <section className="app-card rounded-[28px] border p-5 sm:p-7">
+    <section className="app-card rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
@@ -61,7 +61,7 @@ export function LibraryAdminManager({ admins }: { admins: Admin[] }) {
         </span>
         <div>
           <h2 className="text-lg font-black">资料库管理员授权</h2>
-          <p className="app-muted-text mt-1 text-xs leading-6">
+          <p className="app-muted-text mt-1 text-xs leading-5">
             只有负责人可以指定普通管理员，CEO 自动拥有资料库后台权限。
           </p>
         </div>
@@ -114,7 +114,7 @@ export function LibraryAdminManager({ admins }: { admins: Admin[] }) {
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-xs font-black">{item.name}</p>
-              <p className="app-muted-text truncate text-[10px]">{item.email}</p>
+              <p className="app-muted-text truncate text-xs">{item.email}</p>
             </div>
             <RevokeButton id={item.id} />
           </div>

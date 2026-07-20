@@ -2,8 +2,19 @@
 
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
-import { Edit3, Eye, EyeOff, Plus, Save, Search } from "lucide-react";
+import { Edit3, Eye, EyeOff, Plus, Save, Search, Trash2 } from "lucide-react";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import {
   Dialog,
   DialogContent,
@@ -15,9 +26,18 @@ import {
 import { SchoolCrest } from "@/components/school/SchoolCrest";
 import {
   createUniversityAction,
+  deleteUniversityAction,
   toggleUniversityPublishedAction,
   updateUniversityAction,
 } from "./actions";
+import {
+  UniversityRequirementsDialog,
+  type UniversityDocumentRequirement,
+} from "./UniversityRequirementsDialog";
+import {
+  UniversityVisaRequirementsDialog,
+  type UniversityVisaRequirement,
+} from "./UniversityVisaRequirementsDialog";
 
 export type AdminUniversity = {
   id: string;
@@ -43,6 +63,7 @@ export type AdminUniversity = {
   summary: string;
   detailed_introduction: string | null;
   highlights: string[];
+  application_deadlines: Partial<Record<"language" | "bachelor_fresh" | "bachelor_transfer" | "master" | "doctor", string>>;
   is_featured: boolean;
   is_published: boolean;
   sort_order: number;
@@ -90,7 +111,7 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
         <Field label="学校介绍"><textarea name="summary" required minLength={10} maxLength={800} rows={5} defaultValue={university?.summary ?? "请在这里填写学校定位、教学特色、适合学生和申请注意事项。"} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></Field>
         <Field label="院校亮点（逗号或换行分隔，最多八项）"><textarea name="highlights" rows={5} defaultValue={university?.highlights.join("\n") ?? "国际学生支持\n专业选择丰富\n校园生活便利"} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></Field>
       </section>
-      <Field label="学校详细介绍"><textarea name="detailedIntroduction" maxLength={12000} rows={8} defaultValue={university?.detailed_introduction ?? university?.summary ?? ""} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-7 outline-none" /></Field>
+      <Field label="学校详细介绍"><textarea name="detailedIntroduction" maxLength={12000} rows={8} defaultValue={university?.detailed_introduction ?? university?.summary ?? ""} className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></Field>
 
       <section className="grid gap-4 rounded-2xl border p-4 sm:grid-cols-2 lg:grid-cols-4" style={{ borderColor: "var(--app-border-soft)" }}>
         <Field label="韩元学费下限"><input name="tuitionMinKrw" type="number" min="0" required defaultValue={university?.tuition_min_krw ?? 6_500_000} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
@@ -104,6 +125,25 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
         <div><h3 className="text-xs font-black">优势学科</h3><div className="mt-3 flex flex-wrap gap-3">{disciplineOptions.map(([value, label]) => <label key={value} className="flex items-center gap-2 text-xs font-bold"><input name="disciplineGroups" type="checkbox" value={value} defaultChecked={defaultDisciplines.includes(value)} /> {label}</label>)}</div></div>
       </section>
 
+      <section className="rounded-2xl border p-4" style={{ borderColor: "var(--app-border-soft)" }}>
+        <div>
+          <h3 className="text-xs font-black">各申请阶段截止日期</h3>
+          <p className="app-muted-text mt-1 text-xs leading-5">由后台统一维护并同步到学生目标学校；未公布的阶段可以留空。</p>
+        </div>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {stageOptions.map(([value, label]) => (
+            <Field key={value} label={label}>
+              <input
+                name={`deadline_${value}`}
+                type="date"
+                defaultValue={university?.application_deadlines?.[value] ?? ""}
+                className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
+              />
+            </Field>
+          ))}
+        </div>
+      </section>
+
       <section className="grid gap-4 rounded-2xl border p-4 sm:grid-cols-3 lg:grid-cols-6" style={{ borderColor: "var(--app-border-soft)" }}>
         <Field label="世界排名显示"><input name="qsRankDisplay" placeholder="例如：155" defaultValue={university?.qs_rank_display ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
         <Field label="世界排名排序值"><input name="qsRankSort" type="number" min="0" defaultValue={university?.qs_rank_sort ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
@@ -112,7 +152,7 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
         <Field label="中央日报排序值"><input name="joongangRankSort" type="number" min="0" defaultValue={university?.joongang_rank_sort ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
         <Field label="中央日报年份"><input name="joongangRankingYear" type="number" min="2000" defaultValue={university?.joongang_ranking_year ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></Field>
       </section>
-      {isNew && <p className="text-[10px] leading-5 app-muted-text">新增学校的内部技术标识由系统自动生成，管理员只需要维护学生能看到的中文资料。</p>}
+      {isNew && <p className="text-xs leading-5 app-muted-text">新增学校的内部技术标识由系统自动生成，管理员只需要维护学生能看到的中文资料。</p>}
     </div>
   );
 }
@@ -129,9 +169,77 @@ function UniversityEditor({ university }: { university: AdminUniversity }) {
   );
 }
 
-export function UniversityAdminManager({ universities }: { universities: AdminUniversity[] }) {
+function DeleteSubmitButton() {
+  const { pending } = useFormStatus();
+
+  return (
+    <AlertDialogAction
+      type="submit"
+      disabled={pending}
+      className="gap-2 bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
+    >
+      <Trash2 size={14} />
+      {pending ? "正在删除…" : "确认永久删除"}
+    </AlertDialogAction>
+  );
+}
+
+function UniversityDeleteDialog({ university }: { university: AdminUniversity }) {
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger
+        type="button"
+        className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 px-3 py-2 text-xs font-black text-red-600 transition hover:bg-red-50"
+      >
+        <Trash2 size={13} /> 删除
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle className="font-black">永久删除 {university.name_zh}？</AlertDialogTitle>
+          <AlertDialogDescription className="leading-6">
+            此操作无法撤销。该校专业、学生对比和评估记录会一并删除，目标院校记录中的学校关联会被移除。
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>取消</AlertDialogCancel>
+          <form action={deleteUniversityAction.bind(null, university.id)}>
+            <DeleteSubmitButton />
+          </form>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+}
+
+export function UniversityAdminManager({
+  universities,
+  requirements,
+  visaRequirements,
+}: {
+  universities: AdminUniversity[];
+  requirements: UniversityDocumentRequirement[];
+  visaRequirements: UniversityVisaRequirement[];
+}) {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState<"all" | "published" | "hidden">("all");
+  const requirementsByUniversity = useMemo(() => {
+    const grouped = new Map<string, UniversityDocumentRequirement[]>();
+    for (const requirement of requirements) {
+      const items = grouped.get(requirement.university_id) ?? [];
+      items.push(requirement);
+      grouped.set(requirement.university_id, items);
+    }
+    return grouped;
+  }, [requirements]);
+  const visaRequirementsByUniversity = useMemo(() => {
+    const grouped = new Map<string, UniversityVisaRequirement[]>();
+    for (const requirement of visaRequirements) {
+      const items = grouped.get(requirement.university_id) ?? [];
+      items.push(requirement);
+      grouped.set(requirement.university_id, items);
+    }
+    return grouped;
+  }, [visaRequirements]);
   const filtered = useMemo(() => {
     const keyword = search.trim().toLocaleLowerCase("zh-CN");
     return universities.filter((university) => {
@@ -143,7 +251,7 @@ export function UniversityAdminManager({ universities }: { universities: AdminUn
 
   return (
     <div className="space-y-5">
-      <section className="app-card rounded-[28px] border p-4 sm:p-5">
+      <section className="app-card rounded-3xl border p-4 sm:p-5">
         <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex flex-wrap gap-2">{([['all', '全部'], ['published', '学生可见'], ['hidden', '停止展示']] as const).map(([value, label]) => <button key={value} type="button" onClick={() => setStatus(value)} className="rounded-xl px-3 py-2 text-xs font-black" style={status === value ? { color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" } : { color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}>{label}</button>)}</div>
           <div className="flex flex-col gap-2 sm:flex-row">
@@ -156,20 +264,20 @@ export function UniversityAdminManager({ universities }: { universities: AdminUn
         </div>
       </section>
 
-      <section className="app-card overflow-hidden rounded-[28px] border">
-        <div className="hidden grid-cols-[minmax(260px,1.3fr)_100px_150px_130px_210px] gap-3 border-b px-5 py-3 text-[10px] font-black app-muted-text lg:grid" style={{ borderColor: "var(--app-border-soft)" }}><span>大学</span><span>性质</span><span>地区</span><span>排名</span><span>管理</span></div>
+      <section className="app-card overflow-hidden rounded-3xl border">
+        <div className="hidden grid-cols-[minmax(260px,1.3fr)_100px_150px_130px_500px] gap-3 border-b px-5 py-3 text-xs font-black app-muted-text lg:grid" style={{ borderColor: "var(--app-border-soft)" }}><span>大学</span><span>性质</span><span>地区</span><span>排名</span><span>管理</span></div>
         <div className="divide-y" style={{ borderColor: "var(--app-border-soft)" }}>
           {filtered.map((university) => (
-            <article key={university.id} className="grid gap-3 px-5 py-4 lg:grid-cols-[minmax(260px,1.3fr)_100px_150px_130px_210px] lg:items-center">
-              <div className="flex min-w-0 items-center gap-3"><SchoolCrest logoUrl={university.logo_url} name={university.name_zh} size="sm"/><div className="min-w-0"><div className="flex items-center gap-2"><h2 className="truncate text-sm font-black">{university.name_zh}</h2>{!university.is_published && <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[9px] font-black text-slate-500">已隐藏</span>}</div><p className="mt-1 truncate text-[10px] font-bold app-muted-text">{university.name_ko} · 顺序 {university.sort_order}</p></div></div>
+            <article key={university.id} className="grid gap-3 px-5 py-4 lg:grid-cols-[minmax(260px,1.3fr)_100px_150px_130px_500px] lg:items-center">
+              <div className="flex min-w-0 items-center gap-3"><SchoolCrest logoUrl={university.logo_url} name={university.name_zh} size="sm"/><div className="min-w-0"><div className="flex items-center gap-2"><h2 className="truncate text-sm font-black">{university.name_zh}</h2>{!university.is_published && <span className="shrink-0 rounded-full bg-slate-100 px-2 py-1 text-[10px] font-black text-slate-500">已隐藏</span>}</div><p className="mt-1 truncate text-xs font-bold app-muted-text">{university.name_ko} · 顺序 {university.sort_order}</p></div></div>
               <p className="text-xs font-black">{ownershipLabels[university.ownership]}</p>
               <p className="text-xs font-bold app-muted-text">{university.province}<br />{university.city}</p>
-              <p className="text-[10px] font-bold app-muted-text">世界：{university.qs_rank_display ?? "暂无"}<br />中央：{university.joongang_rank_display ?? "暂无"}</p>
-              <div className="flex flex-wrap gap-2"><UniversityEditor university={university} /><form action={toggleUniversityPublishedAction.bind(null, university.id, !university.is_published)}><button type="submit" className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black" style={{ color: university.is_published ? "#dc2626" : "var(--app-success)", borderColor: "var(--app-border)" }}>{university.is_published ? <EyeOff size={13} /> : <Eye size={13} />}{university.is_published ? "停止展示" : "恢复展示"}</button></form></div>
+              <p className="text-xs font-bold app-muted-text">世界：{university.qs_rank_display ?? "暂无"}<br />中央：{university.joongang_rank_display ?? "暂无"}</p>
+              <div className="flex flex-wrap gap-2"><UniversityRequirementsDialog universityId={university.id} universityName={university.name_zh} requirements={requirementsByUniversity.get(university.id) ?? []} /><UniversityVisaRequirementsDialog universityId={university.id} universityName={university.name_zh} requirements={visaRequirementsByUniversity.get(university.id) ?? []} /><UniversityEditor university={university} /><form action={toggleUniversityPublishedAction.bind(null, university.id, !university.is_published)}><button type="submit" className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black" style={{ color: university.is_published ? "#dc2626" : "var(--app-success)", borderColor: "var(--app-border)" }}>{university.is_published ? <EyeOff size={13} /> : <Eye size={13} />}{university.is_published ? "停止展示" : "恢复展示"}</button></form><UniversityDeleteDialog university={university} /></div>
             </article>
           ))}
         </div>
-        {filtered.length === 0 && <div className="p-12 text-center text-sm font-bold app-muted-text">没有符合条件的大学。</div>}
+        {filtered.length === 0 && <div className="p-8 text-center text-sm font-bold app-muted-text">没有符合条件的大学。</div>}
       </section>
     </div>
   );

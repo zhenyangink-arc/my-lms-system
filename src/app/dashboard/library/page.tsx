@@ -8,7 +8,6 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { getLibraryAccess } from "@/lib/resource-library";
 import { LibraryBrowser } from "./LibraryBrowser";
 import type { LibraryCategory, LibraryResourceType } from "./config";
@@ -55,11 +54,9 @@ export default async function LibraryPage() {
 
   return (
     <div className="pb-12">
-      <DashboardPageHeader
-        title="资料库"
-        description="集中查找韩语学习、留学申请、签证和升学就业资料。"
-        action={
-          canManage ? (
+      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
+        {canManage && (
+          <div className="flex justify-end">
             <Link
               href="/dashboard/admin/library"
               className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
@@ -68,19 +65,16 @@ export default async function LibraryPage() {
               进入资料库后台
               <ArrowRight size={15} />
             </Link>
-          ) : undefined
-        }
-      />
-
-      <div className="mx-auto mt-6 w-full max-w-[1500px] space-y-6 px-4 sm:px-6 lg:px-8">
+          </div>
+        )}
         <section
-          className="app-card overflow-hidden rounded-[32px] border p-6 sm:p-8"
+          className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{
             background:
               "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-secondary-soft))",
           }}
         >
-          <div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end">
             <div>
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -92,10 +86,10 @@ export default async function LibraryPage() {
                 <Library size={14} />
                 学习资料一站查找
               </span>
-              <h1 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl">
+              <h1 className="mt-3 text-2xl font-black tracking-tight">
                 把需要的资料，放进自己的学习收藏夹
               </h1>
-              <p className="app-muted-text mt-4 max-w-2xl text-sm leading-7">
+              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">
                 文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。
               </p>
             </div>
@@ -115,7 +109,7 @@ export default async function LibraryPage() {
                       <MetricIcon size={17} />
                     </span>
                     <p className="mt-2 text-2xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-[10px] font-black">{String(label)}</p>
+                    <p className="app-muted-text text-xs font-black">{String(label)}</p>
                   </div>
                 );
               })}
@@ -144,7 +138,7 @@ export default async function LibraryPage() {
 
         <LibraryBrowser resources={resources} favorites={favorites} />
 
-        <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-6 app-muted-text">
+        <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5 app-muted-text">
           <ShieldCheck className="mt-0.5 shrink-0" size={16} />
           <p>
             资料文件保存在私有空间，只有登录且账号状态正常的用户可以获取已发布资料。每次获取都会形成后台记录。

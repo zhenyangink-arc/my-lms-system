@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { DashboardPageHeader } from "../DashboardPageHeader";
 
 type ProgressRow = {
   lesson_id: string;
@@ -126,33 +125,28 @@ export default async function ProgressPage() {
 
   return (
     <>
-      <DashboardPageHeader
-        title="学习进度"
-        description="用真实课程数据查看完成率、学习节奏和课程进展。"
-        action={
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-end">
           <Link href="/dashboard/courses" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
             继续学习 <ArrowRight size={15} aria-hidden="true" />
           </Link>
-        }
-      />
-
-      <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="app-card rounded-[30px] border p-6 sm:p-8" style={{ background: "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-hero-end))" }}>
-          <div className="grid items-center gap-6 lg:grid-cols-[1fr_300px]">
+        </div>
+        <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-hero-end))" }}>
+          <div className="grid items-center gap-5 lg:grid-cols-[1fr_300px]">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
                 <BarChart3 size={14} aria-hidden="true" /> 学习成长报告
               </span>
-              <h2 className="mt-5 text-3xl font-black tracking-tight">你的每一节课，都在形成清晰的成长曲线</h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text">进度来自已开始和已完成的真实课时，不使用虚拟成绩或占位数据。</p>
+              <h2 className="mt-3 text-2xl font-black tracking-tight">你的每一节课，都在形成清晰的成长曲线</h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 app-muted-text">进度来自已开始和已完成的真实课时，不使用虚拟成绩或占位数据。</p>
             </div>
             <div className="app-card rounded-3xl border p-5">
               <div className="flex items-end justify-between">
                 <span className="text-xs font-bold app-muted-text">综合完成度</span>
-                <strong className="text-3xl font-black" style={{ color: "var(--app-accent)" }}>{overallPercent}%</strong>
+                <strong className="text-2xl font-black" style={{ color: "var(--app-success)" }}>{overallPercent}%</strong>
               </div>
               <div className="mt-4 h-3 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                <div className="h-full rounded-full" style={{ width: `${overallPercent}%`, background: "linear-gradient(90deg, var(--app-secondary), var(--app-accent))" }} />
+                <div className="h-full rounded-full" style={{ width: `${overallPercent}%`, backgroundColor: "var(--app-success)" }} />
               </div>
             </div>
           </div>
@@ -171,34 +165,34 @@ export default async function ProgressPage() {
           })}
         </section>
 
-        <div className="grid gap-6 xl:grid-cols-12">
-          <section className="app-card rounded-3xl border p-5 sm:p-6 xl:col-span-7">
+        <div className="grid gap-5 xl:grid-cols-12">
+          <section className="app-card rounded-3xl border p-4 sm:p-5 xl:col-span-7">
             <div className="mb-5 flex items-center justify-between">
-              <div><h2 className="text-lg font-black">课程进展</h2><p className="mt-1 text-xs app-muted-text">按已经学习过的课程汇总</p></div>
+              <h2 className="text-lg font-black">课程进展</h2>
               <BookOpen size={20} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
             </div>
             {courseProgress.length > 0 ? (
-              <div className="space-y-3">
+              <div className="divide-y app-divider">
                 {courseProgress.map((course) => (
-                  <article key={course.id} className="app-soft-card rounded-2xl border p-4">
-                    <div className="flex items-center justify-between gap-3"><h3 className="truncate text-sm font-black">{course.title}</h3><strong style={{ color: "var(--app-accent)" }}>{course.percent}%</strong></div>
+                  <article key={course.id} className="app-flat-row rounded-xl p-3">
+                    <div className="flex items-center justify-between gap-3"><h3 className="truncate text-sm font-black">{course.title}</h3><strong style={{ color: "var(--app-success)" }}>{course.percent}%</strong></div>
                     <p className="mt-1 text-xs app-muted-text">已完成 {course.completed} / {course.total} 个学习课时</p>
-                    <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-card-bg)" }}><div className="h-full rounded-full" style={{ width: `${course.percent}%`, background: "linear-gradient(90deg, var(--app-secondary), var(--app-accent))" }} /></div>
+                    <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}><div className="h-full rounded-full" style={{ width: `${course.percent}%`, backgroundColor: "var(--app-success)" }} /></div>
                   </article>
                 ))}
               </div>
             ) : (
-              <div className="app-soft-card flex min-h-52 flex-col items-center justify-center rounded-2xl border p-6 text-center"><BookOpen size={24} style={{ color: "var(--app-secondary)" }} /><p className="mt-3 text-sm font-black">还没有学习记录</p><p className="mt-1 text-xs app-muted-text">开始第一节课后，进度会自动出现在这里。</p></div>
+              <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-2xl p-5 text-center"><BookOpen size={24} style={{ color: "var(--app-secondary)" }} /><p className="mt-3 text-sm font-black">还没有学习记录</p><p className="mt-1 text-xs app-muted-text">开始第一节课后，进度会自动出现在这里。</p></div>
             )}
           </section>
 
-          <section className="app-card rounded-3xl border p-5 sm:p-6 xl:col-span-5">
-            <div className="mb-5 flex items-center justify-between"><div><h2 className="text-lg font-black">近两周节奏</h2><p className="mt-1 text-xs app-muted-text">每天完成的课时数量</p></div><CalendarDays size={20} style={{ color: "var(--app-success)" }} /></div>
+          <section className="app-card rounded-3xl border p-4 sm:p-5 xl:col-span-5">
+            <div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-black">近两周节奏</h2><CalendarDays size={20} style={{ color: "var(--app-success)" }} /></div>
             <div className="flex h-48 items-end gap-1.5">
               {activityDays.map((day) => (
                 <div key={day.dateString} className="flex h-full min-w-0 flex-1 flex-col items-center justify-end gap-2">
                   <div className="flex h-36 w-full items-end rounded-lg" style={{ backgroundColor: "var(--app-soft-bg)" }}><div title={`${day.dateString}：${day.count} 个课时`} className="w-full rounded-lg" style={{ height: day.count ? `${Math.max(20, (day.count / maxActivity) * 100)}%` : "5%", backgroundColor: day.count ? "var(--app-success)" : "var(--app-border)" }} /></div>
-                  <span className="text-[9px] font-bold app-muted-text">{day.label}</span>
+                  <span className="text-[10px] font-bold app-muted-text">{day.label}</span>
                 </div>
               ))}
             </div>

@@ -151,7 +151,7 @@ export function FocusCourseAdminCard({
   );
 
   return (
-    <article className="app-card group relative overflow-hidden rounded-[2rem] border p-6">
+    <article className="app-card group relative overflow-hidden rounded-[2rem] border p-5">
       <div
         className="pointer-events-none absolute -right-16 -top-20 h-48 w-48 rounded-full opacity-15 blur-2xl"
         style={{ backgroundColor: config.accent }}
@@ -201,7 +201,7 @@ export function FocusCourseAdminCard({
           {config.stages.map((stage, index) => (
             <div key={stage} className="flex items-center gap-2 text-xs font-bold">
               <span
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[11px] text-white"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs text-white"
                 style={{ backgroundColor: config.accent }}
               >
                 {index + 1}
@@ -247,18 +247,18 @@ export function FocusCategoryAdminView({
     <>
       <DashboardPageHeader title={`${title}管理`} description={description || config.summary} />
 
-      <div className="mx-auto w-full max-w-[1480px] space-y-6 p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
         <Link href="/dashboard/admin/courses" className="app-muted-text inline-flex items-center gap-2 text-sm font-bold transition hover:opacity-70">
           <ArrowLeft size={16} />
           返回课程管理
         </Link>
 
-        <section className="app-card relative overflow-hidden rounded-[2rem] border p-6 sm:p-8">
+        <section className="app-card relative overflow-hidden rounded-[2rem] border p-5 sm:p-6">
           <div
             className="pointer-events-none absolute -right-12 -top-24 h-72 w-72 rounded-full opacity-15 blur-3xl"
             style={{ backgroundColor: config.accent }}
           />
-          <div className="relative grid gap-7 xl:grid-cols-[minmax(0,1fr)_440px] xl:items-end">
+          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_440px] xl:items-end">
             <div>
               <div
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -267,10 +267,10 @@ export function FocusCategoryAdminView({
                 <Icon size={15} />
                 {config.eyebrow}
               </div>
-              <h2 className="mt-5 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">
+              <h2 className="mt-3 max-w-3xl text-2xl font-black tracking-tight">
                 从分类到课时，一眼看清内容是否真正可用
               </h2>
-              <p className="app-muted-text mt-4 max-w-2xl text-sm leading-7 sm:text-base">
+              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6 sm:text-base">
                 {description || config.summary} 管理重点不仅是“有内容”，还要同时检查发布状态、视频覆盖和学习闭环。
               </p>
             </div>
@@ -284,7 +284,7 @@ export function FocusCategoryAdminView({
           </div>
         </section>
 
-        <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
           <div className="space-y-4">
             <div className="flex items-end justify-between gap-4">
               <div>
@@ -312,15 +312,15 @@ export function FocusCategoryAdminView({
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
                           <h3 className="text-lg font-black tracking-tight">{item.title}</h3>
-                          <span className="app-soft-card rounded-full border px-2.5 py-1 text-[11px] font-black">
+                          <span className="app-soft-card rounded-full border px-2.5 py-1 text-xs font-black">
                             {item.courseCount} 门课程
                           </span>
                           {needsAttention ? (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-[11px] font-black text-amber-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-1 text-xs font-black text-amber-700">
                               <CircleAlert size={12} />待完善
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-[11px] font-black text-emerald-700">
+                            <span className="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2.5 py-1 text-xs font-black text-emerald-700">
                               <CheckCircle2 size={12} />内容就绪
                             </span>
                           )}
@@ -345,7 +345,7 @@ export function FocusCategoryAdminView({
                 </article>
               );
             }) : (
-              <div className="app-card rounded-[1.75rem] border border-dashed p-10 text-center">
+              <div className="app-card rounded-[1.75rem] border border-dashed p-8 text-center">
                 <FolderKanban className="mx-auto opacity-30" size={34} />
                 <p className="mt-3 font-black">暂时没有二级分类</p>
                 <p className="app-muted-text mt-1 text-sm">请先在数据库中建立课程路线。</p>
@@ -409,7 +409,7 @@ export function FocusSubcategoryAdminView({
     <>
       <DashboardPageHeader title={`${subcategoryTitle}管理`} description={description || "集中管理课程结构、发布状态与视频内容。"} />
 
-      <div className="mx-auto w-full max-w-[1480px] space-y-6 p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
         <div className="flex flex-wrap items-center gap-3">
           <Link href={`/dashboard/admin/courses/category/${kind}`} className="app-muted-text inline-flex items-center gap-2 text-sm font-bold transition hover:opacity-70">
             <ArrowLeft size={16} />返回{parentTitle}管理
@@ -419,14 +419,14 @@ export function FocusSubcategoryAdminView({
         </div>
 
         <section className="app-card overflow-hidden rounded-[2rem] border">
-          <div className="grid gap-6 p-6 sm:p-8 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
+          <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: config.accent, backgroundColor: `color-mix(in srgb, ${config.accent} 12%, var(--app-card-bg))` }}>{parentTitle}</span>
                 <span className="app-soft-card rounded-full border px-3 py-1.5 text-xs font-black">{subcategoryTitle}</span>
               </div>
-              <h2 className="mt-5 text-3xl font-black tracking-tight">课程内容生产台</h2>
-              <p className="app-muted-text mt-3 max-w-2xl text-sm leading-7">{description || config.summary} 从这里进入每门课程，完成课时讲解、视频和资料的最后检查。</p>
+              <h2 className="mt-3 text-2xl font-black tracking-tight">课程内容生产台</h2>
+              <p className="app-muted-text mt-3 max-w-2xl text-sm leading-6">{description || config.summary} 从这里进入每门课程，完成课时讲解、视频和资料的最后检查。</p>
 
               <div className="mt-6 flex flex-wrap gap-2">
                 {config.stages.map((stage, index) => (
@@ -461,8 +461,8 @@ export function FocusSubcategoryAdminView({
                     </div>
                     <div className="min-w-0">
                       <div className="flex flex-wrap gap-2">
-                        {course.levelLabel && <span className="app-soft-card rounded-full border px-2.5 py-1 text-[11px] font-black">{course.levelLabel}</span>}
-                        <span className={`rounded-full px-2.5 py-1 text-[11px] font-black ${course.isPublished ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
+                        {course.levelLabel && <span className="app-soft-card rounded-full border px-2.5 py-1 text-xs font-black">{course.levelLabel}</span>}
+                        <span className={`rounded-full px-2.5 py-1 text-xs font-black ${course.isPublished ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>
                           {course.isPublished ? "课程已发布" : "课程未发布"}
                         </span>
                       </div>
@@ -471,7 +471,7 @@ export function FocusSubcategoryAdminView({
                   </div>
                   <div className="shrink-0 text-right">
                     <p className="text-2xl font-black" style={{ color: config.accent }}>{score}</p>
-                    <p className="app-muted-text text-[11px] font-bold">内容分</p>
+                    <p className="app-muted-text text-xs font-bold">内容分</p>
                   </div>
                 </div>
 
@@ -494,7 +494,7 @@ export function FocusSubcategoryAdminView({
               </article>
             );
           }) : (
-            <div className="app-card col-span-full rounded-[1.75rem] border border-dashed p-10 text-center">
+            <div className="app-card col-span-full rounded-[1.75rem] border border-dashed p-8 text-center">
               <Layers3 className="mx-auto opacity-30" size={34} />
               <p className="mt-3 font-black">当前分类还没有课程</p>
               <p className="app-muted-text mt-1 text-sm">课程建立后会在这里显示内容完成度。</p>
@@ -523,7 +523,7 @@ export function FocusCourseQualityPanel({
   const videoRate = getPercent(videoCount, lessonCount);
 
   return (
-    <section className="app-card relative overflow-hidden rounded-[1.75rem] border p-5 sm:p-6">
+    <section className="app-card relative overflow-hidden rounded-[1.75rem] border p-4 sm:p-5">
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
         <div className="flex items-start gap-4">
           <div className="app-soft-card flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl border" style={{ color: config.accent }}>

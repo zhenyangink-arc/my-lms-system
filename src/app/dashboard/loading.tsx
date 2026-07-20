@@ -1,6 +1,6 @@
 export default function DashboardLoading() {
   return (
-    <div className="animate-pulse space-y-6 p-6">
+    <div className="animate-pulse space-y-5 p-5">
       <div className="app-soft-card h-24 rounded-3xl" />
       <div className="grid gap-5 md:grid-cols-3">
         {[0, 1, 2].map((item) => (

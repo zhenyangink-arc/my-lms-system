@@ -2,14 +2,17 @@ import Link from "next/link";
 import { Bell, GraduationCap, Home } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { ThemeSwitcher } from "./ThemeSwitcher";
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 
 // 顶部栏只保留真实可用的入口，不再展示尚未接入后端的搜索和语言切换。
 export async function GlobalTopbar() {
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
   const userName =
     profile?.full_name || user.user_metadata?.name || user.email || "用户";
 
   let unreadCount = 0;
+  const dashboardBasePath = getDashboardBasePath(tenant?.slug);
 
   if (profile?.role === "student") {
     const { data: answeredQuestions } = await supabase
@@ -27,7 +30,7 @@ export async function GlobalTopbar() {
 
   return (
     <header className="app-topbar sticky top-0 z-30 flex h-[68px] items-center justify-between gap-4 border-b px-4 sm:px-6">
-      <Link href="/dashboard" className="flex min-w-0 items-center gap-3">
+      <Link href={dashboardBasePath} className="flex min-w-0 items-center gap-3">
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
           style={{
@@ -39,15 +42,17 @@ export async function GlobalTopbar() {
         </span>
         <span className="min-w-0">
           <span className="block truncate text-base font-black tracking-tight">
-            元智教育
+            韩语教育
           </span>
-          <span className="hidden truncate text-[10px] font-semibold app-muted-text sm:block">
+          <span className="hidden truncate text-xs font-semibold app-muted-text sm:block">
             韩国留学与韩语成长工作台
           </span>
         </span>
       </Link>
 
       <div className="flex shrink-0 items-center gap-2">
+        <ThemeSwitcher />
+
         <Link
           href="/"
           className="hidden items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold transition hover:-translate-y-0.5 sm:flex"
@@ -61,7 +66,7 @@ export async function GlobalTopbar() {
         </Link>
 
         <Link
-          href="/dashboard#reminders"
+          href={`${dashboardBasePath}#reminders`}
           className="app-soft-card relative flex h-10 w-10 items-center justify-center rounded-xl border transition hover:-translate-y-0.5"
           title={unreadCount > 0 ? `${unreadCount} 条未读回复` : "暂无未读回复"}
           aria-label={unreadCount > 0 ? `${unreadCount} 条未读回复` : "暂无未读回复"}
@@ -78,7 +83,7 @@ export async function GlobalTopbar() {
         </Link>
 
         <Link
-          href="/dashboard/profile"
+          href={scopeDashboardPath("/dashboard/profile", dashboardBasePath)}
           className="app-soft-card flex items-center gap-2 rounded-xl border p-1.5 pr-2.5 transition hover:-translate-y-0.5"
         >
           <span

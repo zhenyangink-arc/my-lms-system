@@ -21,7 +21,7 @@ function RevokeButton({ adminId }: { adminId: string }) {
       <button type="submit" disabled={pending} className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-black disabled:opacity-50" style={{ color: "#c94f45", backgroundColor: "#fff0ed" }}>
         <ShieldMinus size={13} aria-hidden="true" /> {pending ? "撤销中…" : "撤销权限"}
       </button>
-      {state.message && <p className="mt-1 text-[10px] font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)" }}>{state.message}</p>}
+      {state.message && <p className="mt-1 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)" }}>{state.message}</p>}
     </form>
   );
 }
@@ -32,14 +32,14 @@ export function AnnouncementAdminManager({ admins }: { admins: AdminOption[] }) 
   const available = admins.filter((admin) => !admin.assigned);
 
   return (
-    <section className="app-card rounded-[28px] border p-5 sm:p-7">
+    <section className="app-card rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
           <ShieldCheck size={20} aria-hidden="true" />
         </span>
         <div>
           <h2 className="text-lg font-black">公告管理员授权</h2>
-          <p className="mt-1 text-xs leading-6 app-muted-text">只有负责人可以授予或撤销普通管理员的公告权限。</p>
+          <p className="mt-1 text-xs leading-5 app-muted-text">只有负责人可以授予或撤销普通管理员的公告权限。</p>
         </div>
       </div>
 

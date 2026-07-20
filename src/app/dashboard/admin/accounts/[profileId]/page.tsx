@@ -98,7 +98,7 @@ function formatDate(value: string | null, includeTime = false) {
 function DetailItem({ label, value, icon: Icon }: { label: string; value: string; icon: typeof Mail }) {
   return (
     <div className="app-soft-card rounded-2xl border p-4">
-      <div className="flex items-center gap-2"><Icon className="app-muted-text" size={15} /><p className="app-muted-text text-[11px] font-black">{label}</p></div>
+      <div className="flex items-center gap-2"><Icon className="app-muted-text" size={15} /><p className="app-muted-text text-xs font-black">{label}</p></div>
       <p className="mt-2 break-words text-sm font-black">{value}</p>
     </div>
   );
@@ -121,7 +121,7 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
       .from("profiles")
       .select("id, full_name, email, role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience")
       .eq("id", profileId)
-      .neq("role", "super_admin")
+      .neq("role", "tenant_super_admin")
       .maybeSingle(),
     supabase
       .from("account_management_audit_logs")
@@ -168,31 +168,31 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
   return (
     <>
       <DashboardPageHeader title="账号档案" description="查看成员资料、学习背景、服务档位和变更记录。" />
-      <div className="mx-auto w-full max-w-[1380px] space-y-5 p-4 sm:p-6">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
         <Link href="/dashboard/admin/accounts" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回账号管理</Link>
 
-        <section className="app-card overflow-hidden rounded-[2rem] border p-6 sm:p-8" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center">
+        <section className="app-card overflow-hidden rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
+          <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
             <div className="flex items-center gap-4 sm:gap-5">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[1.6rem] text-2xl font-black sm:h-24 sm:w-24" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)", ...(avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center", color: "transparent" } : {}) }}>{displayName.slice(0, 1)}</div>
               <div className="min-w-0">
                 <div className="flex flex-wrap gap-2"><span className="rounded-full px-3 py-1 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</span><span className="app-soft-card rounded-full border px-3 py-1 text-xs font-black">{STATUS_LABELS[profile.status] ?? profile.status}</span>{profile.role === "student" && <span className="rounded-full px-3 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown className="mr-1 inline" size={12} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span>}</div>
-                <h1 className="mt-3 truncate text-2xl font-black tracking-tight sm:text-3xl">{displayName}</h1>
+                <h1 className="mt-3 truncate text-2xl font-black tracking-tight">{displayName}</h1>
                 <p className="app-muted-text mt-1 truncate text-sm">{profile.email || "尚未同步邮箱"}</p>
               </div>
             </div>
 
             <div className="lg:ml-auto lg:min-w-[330px]">
-              <div className="mb-3 flex items-end justify-between"><div><p className="app-muted-text text-xs font-black">资料完整度</p><p className="mt-1 text-3xl font-black">{completionPercent}%</p></div><span className="app-muted-text text-xs font-bold">{completionChecks.filter(Boolean).length}/{completionChecks.length} 项</span></div>
+              <div className="mb-3 flex items-end justify-between"><div><p className="app-muted-text text-xs font-black">资料完整度</p><p className="mt-1 text-2xl font-black">{completionPercent}%</p></div><span className="app-muted-text text-xs font-bold">{completionChecks.filter(Boolean).length}/{completionChecks.length} 项</span></div>
               <div className="h-3 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-border-soft)" }}><div className="h-full rounded-full" style={{ width: `${completionPercent}%`, background: "linear-gradient(90deg, var(--app-accent), var(--app-secondary))" }} /></div>
-              <p className="app-muted-text mt-2 text-[11px]">完整资料可让顾问更准确地制定课程与选校方案。</p>
+              <p className="app-muted-text mt-2 text-xs">完整资料可让顾问更准确地制定课程与选校方案。</p>
             </div>
           </div>
         </section>
 
         <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
           <div className="space-y-5">
-            <section className="app-card rounded-[1.75rem] border p-5 sm:p-6">
+            <section className="app-card rounded-[1.75rem] border p-4 sm:p-5">
               <h2 className="flex items-center gap-2 text-lg font-black"><UserRound size={19} style={{ color: "var(--app-accent)" }} />基本信息</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <DetailItem label="真实姓名" value={displayName} icon={UserRound} />
@@ -204,7 +204,7 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
               </div>
             </section>
 
-            <section className="app-card rounded-[1.75rem] border p-5 sm:p-6">
+            <section className="app-card rounded-[1.75rem] border p-4 sm:p-5">
               <h2 className="flex items-center gap-2 text-lg font-black"><GraduationCap size={20} style={{ color: "var(--app-secondary)" }} />教育与成绩</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 <DetailItem label="教育阶段" value={EDUCATION_LABELS[profile.education_level ?? ""] ?? "未填写"} icon={GraduationCap} />
@@ -215,7 +215,7 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
               {lowerEducation && <div className="mt-3 rounded-2xl px-4 py-3 text-sm font-bold" style={{ backgroundColor: "var(--app-warm-soft)", color: "var(--app-warm)" }}>高考成绩：{profile.gaokao_has_score ? `${profile.gaokao_score ?? "待填写"} 分` : profile.gaokao_has_score === false ? "无高考成绩" : "未填写"}</div>}
             </section>
 
-            <section className="app-card rounded-[1.75rem] border p-5 sm:p-6">
+            <section className="app-card rounded-[1.75rem] border p-4 sm:p-5">
               <h2 className="flex items-center gap-2 text-lg font-black"><Languages size={20} style={{ color: "var(--app-warm)" }} />能力评估</h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                 <AbilityItem label="英语能力" value={profile.english_level || "未评估"} hint="按照 A1 至 C2 六级记录当前能力。" />
@@ -245,17 +245,17 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
           </aside>
         </div>
 
-        <section className="app-card rounded-[1.75rem] border p-5 sm:p-6">
+        <section className="app-card rounded-[1.75rem] border p-4 sm:p-5">
           <div className="flex items-center justify-between gap-3"><div><p className="app-muted-text text-xs font-black">安全审计</p><h2 className="mt-1 text-xl font-black">账号变更记录</h2></div><Activity size={21} style={{ color: "var(--app-secondary)" }} /></div>
           <div className="mt-5 space-y-3">
             {auditLogs.map((log) => (
               <div key={log.id} className="app-soft-card grid gap-3 rounded-2xl border p-4 sm:grid-cols-[160px_minmax(0,1fr)_150px] sm:items-center">
-                <div><span className="inline-flex rounded-full px-2.5 py-1 text-[11px] font-black" style={{ color: log.action === "status_changed" ? "var(--app-warm)" : "var(--app-accent)", backgroundColor: log.action === "status_changed" ? "var(--app-warm-soft)" : "var(--app-accent-soft)" }}>{ACTION_LABELS[log.action] ?? "账号更新"}</span></div>
-                <div><p className="text-xs font-black">{actorNames.get(log.actor_id ?? "") ?? "系统管理员"}</p><p className="app-muted-text mt-1 text-[11px]">变更内容：{(log.changed_fields ?? []).map((field) => FIELD_LABELS[field] ?? field).join("、") || "系统记录"}</p></div>
+                <div><span className="inline-flex rounded-full px-2.5 py-1 text-xs font-black" style={{ color: log.action === "status_changed" ? "var(--app-warm)" : "var(--app-accent)", backgroundColor: log.action === "status_changed" ? "var(--app-warm-soft)" : "var(--app-accent-soft)" }}>{ACTION_LABELS[log.action] ?? "账号更新"}</span></div>
+                <div><p className="text-xs font-black">{actorNames.get(log.actor_id ?? "") ?? "系统管理员"}</p><p className="app-muted-text mt-1 text-xs">变更内容：{(log.changed_fields ?? []).map((field) => FIELD_LABELS[field] ?? field).join("、") || "系统记录"}</p></div>
                 <p className="app-muted-text text-xs font-bold sm:text-right">{formatDate(log.created_at, true)}</p>
               </div>
             ))}
-            {auditLogs.length === 0 && <div className="rounded-2xl border border-dashed p-10 text-center"><CheckCircle2 className="mx-auto opacity-30" size={28} /><p className="mt-3 text-sm font-black">暂无账号变更记录</p></div>}
+            {auditLogs.length === 0 && <div className="rounded-2xl border border-dashed p-8 text-center"><CheckCircle2 className="mx-auto opacity-30" size={28} /><p className="mt-3 text-sm font-black">暂无账号变更记录</p></div>}
           </div>
         </section>
       </div>

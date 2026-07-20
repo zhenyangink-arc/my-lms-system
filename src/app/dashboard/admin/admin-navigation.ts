@@ -1,13 +1,15 @@
 import type { LucideIcon } from "lucide-react";
 import {
   Award,
+  Building2,
+  ChartNoAxesCombined,
   BellRing,
   BookOpenCheck,
   ClipboardCheck,
   Files,
+  GraduationCap,
   Headphones,
   History,
-  Landmark,
   LayoutGrid,
   Library,
   MessagesSquare,
@@ -32,13 +34,25 @@ export type AdminNavigationItem = {
   requiresGradeCenterAccess?: boolean;
   requiresLearningRecordAccess?: boolean;
   requiresLibraryAccess?: boolean;
+  requiresTenantManagementAccess?: boolean;
 };
 
-const allStaffRoles: UserRole[] = ["teacher", "admin", "ceo", "super_admin"];
-const adminRoles: UserRole[] = ["admin", "ceo", "super_admin"];
-const executiveRoles: UserRole[] = ["ceo", "super_admin"];
+const allStaffRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin", "platform_super_admin"];
+const adminRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
+const executiveRoles: UserRole[] = ["ceo", "tenant_super_admin", "platform_super_admin"];
+const tenantManagerRoles: UserRole[] = ["platform_super_admin", "tenant_operator"];
 
 export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
+  {
+    label: "Token 用量",
+    description: "查看 AI 对话的输入、输出和总 Token 消耗。",
+    href: "/dashboard/admin/token-usage",
+    icon: ChartNoAxesCombined,
+    group: "overview",
+    roles: executiveRoles,
+    color: "var(--app-warm)",
+    softColor: "var(--app-warm-soft)",
+  },
   {
     label: "管理首页",
     description: "查看当前身份可用的全部管理模块。",
@@ -136,14 +150,14 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     softColor: "var(--app-secondary-soft)",
   },
   {
-    label: "学校管理",
-    description: "维护韩国院校、专业与招生信息。",
-    href: "/dashboard/admin/schools",
-    icon: Landmark,
+    label: "韩国大学管理",
+    description: "新增韩国大学、维护学费与排名，数据会同步到学生端学校库。",
+    href: "/dashboard/admin/universities",
+    icon: GraduationCap,
     group: "service",
     roles: adminRoles,
-    color: "var(--app-success)",
-    softColor: "var(--app-success-soft)",
+    color: "var(--app-secondary)",
+    softColor: "var(--app-secondary-soft)",
   },
   {
     label: "资料审核",
@@ -175,6 +189,17 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
   },
+  {
+    label: "租户管理",
+    description: "开通和查看多个独立组织的租户。",
+    href: "/dashboard/admin/tenants",
+    icon: Building2,
+    group: "organization",
+    roles: tenantManagerRoles,
+    color: "var(--app-warm)",
+    softColor: "var(--app-warm-soft)",
+    requiresTenantManagementAccess: true,
+  },
 ];
 
 export const ADMIN_GROUP_LABELS: Record<AdminNavigationItem["group"], string> = {
@@ -193,6 +218,7 @@ export function getVisibleAdminNavigation(
     canManageGradeCenter?: boolean;
     canManageLearningRecords?: boolean;
     canManageLibrary?: boolean;
+    canManageTenants?: boolean;
   } = {}
 ) {
   return ADMIN_NAVIGATION.filter(
@@ -203,12 +229,15 @@ export function getVisibleAdminNavigation(
       (!item.requiresHelpCenterAccess || options.canManageHelpCenter === true) &&
       (!item.requiresGradeCenterAccess || options.canManageGradeCenter === true) &&
       (!item.requiresLearningRecordAccess || options.canManageLearningRecords === true) &&
-      (!item.requiresLibraryAccess || options.canManageLibrary === true)
+      (!item.requiresLibraryAccess || options.canManageLibrary === true) &&
+      (!item.requiresTenantManagementAccess || options.canManageTenants === true)
   );
 }
 
 export function getAdminRoleLabel(role: UserRole) {
-  if (role === "super_admin") return "负责人";
+  if (role === "platform_super_admin") return "平台负责人";
+  if (role === "tenant_super_admin") return "机构负责人";
+  if (role === "tenant_operator") return "副负责人";
   if (role === "ceo") return "运营负责人";
   if (role === "admin") return "管理员";
   if (role === "teacher") return "教师";

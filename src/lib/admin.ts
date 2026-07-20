@@ -9,7 +9,8 @@ import {
   当前文件作用：
   1. 在 Next.js 服务端判断当前用户是否能进入管理端
   2. 支持新的权限层级：
-     - super_admin = 老板 / Owner
+     - platform_super_admin = 平台负责人
+     - tenant_super_admin   = 机构负责人
      - ceo         = CEO
      - admin       = 管理员
      - teacher     = 老师 / 员工
@@ -28,7 +29,9 @@ export type UserRole =
   | "teacher"
   | "admin"
   | "ceo"
-  | "super_admin";
+  | "platform_super_admin"
+  | "tenant_super_admin"
+  | "tenant_operator";
 
 /*
   账号状态类型
@@ -55,7 +58,9 @@ export function isValidRole(role: string | null | undefined): role is UserRole {
     role === "teacher" ||
     role === "admin" ||
     role === "ceo" ||
-    role === "super_admin"
+    role === "platform_super_admin" ||
+    role === "tenant_super_admin" ||
+    role === "tenant_operator"
   );
 }
 
@@ -63,7 +68,7 @@ export function isValidRole(role: string | null | undefined): role is UserRole {
   判断是否可以进入管理后台
 
   当前允许：
-  - super_admin 老板
+  - tenant_super_admin 机构负责人
   - ceo CEO
   - admin 管理员
 
@@ -72,14 +77,15 @@ export function isValidRole(role: string | null | undefined): role is UserRole {
   - student
 */
 export function isAdminRole(role: string | null | undefined) {
-  return role === "admin" || role === "ceo" || role === "super_admin";
+  return role === "admin" || role === "ceo" || role === "tenant_super_admin" || role === "platform_super_admin";
 }
 
-/*
-  判断是否是老板
-*/
-export function isOwnerRole(role: string | null | undefined) {
-  return role === "super_admin";
+export function isTenantOwnerRole(role: string | null | undefined) {
+  return role === "tenant_super_admin";
+}
+
+export function isPlatformOwnerRole(role: string | null | undefined) {
+  return role === "platform_super_admin";
 }
 
 /*
@@ -88,7 +94,33 @@ export function isOwnerRole(role: string | null | undefined) {
   后面账号管理、运营管理、回收站管理会用到。
 */
 export function isExecutiveRole(role: string | null | undefined) {
-  return role === "super_admin" || role === "ceo";
+  return role === "tenant_super_admin" || role === "ceo" || role === "platform_super_admin";
+}
+
+export function isPlatformTenantManagerRole(role: string | null | undefined) {
+  return role === "platform_super_admin" || role === "tenant_operator";
+}
+
+async function isTenantProvisionedAccount(
+  supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"],
+  userId: string
+) {
+  const { data, error } = await supabase
+    .from("tenant_provisioned_accounts")
+    .select("tenant_id")
+    .eq("user_id", userId)
+    .limit(1)
+    .maybeSingle();
+
+  // 未部署多租户表时保持旧系统兼容；其他读取错误则拒绝平台级权限。
+  if (error && error.code !== "PGRST205" && error.code !== "42P01") return true;
+  return Boolean(data);
+}
+
+export async function requirePlatformTenantManager() {
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  if (!isPlatformTenantManagerRole(platformProfile?.role) || await isTenantProvisionedAccount(supabase, user.id)) redirect("/dashboard");
+  return { supabase, user, role: platformProfile?.role as UserRole };
 }
 
 /*
@@ -103,13 +135,13 @@ export function isExecutiveRole(role: string | null | undefined) {
   通过条件：
   1. 用户已登录
   2. profiles.status 是 active
-  3. profiles.role 是 admin / ceo / super_admin
+  3. profiles.role 是 admin / ceo / tenant_super_admin
 */
 export async function requireAdmin() {
   const { supabase, user, profile } = await requireActiveUser();
 
   /*
-    非 admin / ceo / super_admin 不能进入管理后台。
+    非 admin / ceo / tenant_super_admin 不能进入管理后台。
   */
   if (!isAdminRole(profile?.role)) {
     redirect("/dashboard");
@@ -132,13 +164,28 @@ export async function requireAdmin() {
   - 系统危险操作
   - 全站回收站
 */
-export async function requireOwner() {
-  const result = await requireAdmin();
-
-  if (!isOwnerRole(result.role)) {
+export async function requirePlatformOwner() {
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  if (!isPlatformOwnerRole(platformProfile?.role) || await isTenantProvisionedAccount(supabase, user.id)) {
     redirect("/dashboard/admin");
   }
+  return {
+    supabase,
+    user,
+    role: platformProfile.role as UserRole,
+    status: (platformProfile.status ?? "active") as UserStatus,
+  };
+}
 
+export async function requireTenantOwner() {
+  const result = await requireAdmin();
+  if (!isTenantOwnerRole(result.role)) redirect("/dashboard/admin");
+  return result;
+}
+
+export async function requireAccountOwner() {
+  const result = await requireAdmin();
+  if (result.role !== "tenant_super_admin" && result.role !== "platform_super_admin") redirect("/dashboard/admin");
   return result;
 }
 

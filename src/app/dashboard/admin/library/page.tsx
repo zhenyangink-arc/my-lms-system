@@ -118,15 +118,15 @@ export default async function LibraryManagementPage() {
         }
       />
 
-      <div className="mx-auto mt-6 w-full max-w-[1550px] space-y-6 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
         <section
-          className="app-card rounded-[30px] border p-6 sm:p-8"
+          className="app-card rounded-3xl border p-5 sm:p-6"
           style={{
             background:
               "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-secondary-soft))",
           }}
         >
-          <div className="grid gap-7 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end">
             <div>
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -136,16 +136,16 @@ export default async function LibraryManagementPage() {
                 }}
               >
                 <ShieldCheck size={14} />
-                {role === "super_admin"
+                {role === "tenant_super_admin"
                   ? "负责人权限"
                   : role === "ceo"
                     ? "CEO 权限"
                     : "已授权管理员"}
               </span>
-              <h1 className="mt-5 text-3xl font-black tracking-tight sm:text-4xl">
+              <h1 className="mt-3 text-2xl font-black tracking-tight">
                 先整理，再发布，让学生始终看到正确版本
               </h1>
-              <p className="app-muted-text mt-4 text-sm leading-7">
+              <p className="app-muted-text mt-2 text-sm leading-6">
                 草稿和已归档资料不会出现在学生端。上传文件保存在私有空间，学生只能通过受保护的下载入口获取。
               </p>
               <Link
@@ -173,7 +173,7 @@ export default async function LibraryManagementPage() {
                       <MetricIcon size={17} />
                     </span>
                     <p className="mt-2 text-2xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-[10px] font-black">{String(label)}</p>
+                    <p className="app-muted-text text-xs font-black">{String(label)}</p>
                   </div>
                 );
               })}
@@ -190,14 +190,14 @@ export default async function LibraryManagementPage() {
           </section>
         )}
 
-        <div className="grid items-start gap-6 xl:grid-cols-[minmax(360px,0.72fr)_minmax(0,1.35fr)]">
-          <div className="space-y-6">
+        <div className="grid items-start gap-5 xl:grid-cols-[minmax(360px,0.72fr)_minmax(0,1.35fr)]">
+          <div className="space-y-5">
             <section
               id="create-library-resource"
-              className="app-card rounded-[28px] border p-5 sm:p-7"
+              className="app-card rounded-3xl border p-4 sm:p-5"
             >
               <h2 className="text-lg font-black">新建资料</h2>
-              <p className="app-muted-text mt-1 text-xs leading-6">
+              <p className="app-muted-text mt-1 text-xs leading-5">
                 可以上传文件，也可以添加经过确认的外部链接。
               </p>
               <div className="mt-5">
@@ -207,7 +207,7 @@ export default async function LibraryManagementPage() {
             {canAssignAdmins && <LibraryAdminManager admins={admins} />}
           </div>
 
-          <section className="app-card rounded-[28px] border p-5 sm:p-7">
+          <section className="app-card rounded-3xl border p-4 sm:p-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
                 <h2 className="text-xl font-black">资料清单</h2>
@@ -215,7 +215,7 @@ export default async function LibraryManagementPage() {
                   共 {resources.length} 项，按最近修改时间排列
                 </p>
               </div>
-              <p className="app-muted-text text-[10px]">
+              <p className="app-muted-text text-xs">
                 修改资料信息不会改变原文件
               </p>
             </div>
@@ -228,7 +228,7 @@ export default async function LibraryManagementPage() {
                 >
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className="rounded-full px-2.5 py-1 text-[9px] font-black"
+                      className="rounded-full px-2.5 py-1 text-[10px] font-black"
                       style={{
                         color:
                           resource.status === "published"
@@ -246,15 +246,15 @@ export default async function LibraryManagementPage() {
                     >
                       {LIBRARY_STATUS_LABELS[resource.status]}
                     </span>
-                    <span className="app-muted-text text-[9px] font-bold">
+                    <span className="app-muted-text text-[10px] font-bold">
                       {LIBRARY_CATEGORY_LABELS[resource.category]}
                     </span>
-                    <span className="app-muted-text text-[9px] font-bold">
+                    <span className="app-muted-text text-[10px] font-bold">
                       {LIBRARY_RESOURCE_TYPE_LABELS[resource.resource_type]}
                     </span>
                     {resource.is_featured && (
                       <span
-                        className="ml-auto text-[9px] font-black"
+                        className="ml-auto text-[10px] font-black"
                         style={{ color: "var(--app-warm)" }}
                       >
                         推荐
@@ -265,10 +265,10 @@ export default async function LibraryManagementPage() {
                   <h3 className="mt-3 text-base font-black leading-6">
                     {resource.title}
                   </h3>
-                  <p className="app-muted-text mt-2 line-clamp-2 text-xs leading-6">
+                  <p className="app-muted-text mt-2 line-clamp-2 text-xs leading-5">
                     {resource.description || "暂无资料说明"}
                   </p>
-                  <div className="app-muted-text mt-3 space-y-1 text-[10px]">
+                  <div className="app-muted-text mt-3 space-y-1 text-xs">
                     <p className="truncate">
                       {resource.original_file_name || "外部链接"} · {formatFileSize(resource.file_size)}
                     </p>
@@ -295,7 +295,7 @@ export default async function LibraryManagementPage() {
               ))}
 
               {resources.length === 0 && (
-                <div className="col-span-full rounded-2xl border border-dashed p-10 text-center">
+                <div className="col-span-full rounded-2xl border border-dashed p-8 text-center">
                   <Files className="mx-auto opacity-30" size={32} />
                   <p className="mt-4 font-black">还没有资料</p>
                   <p className="app-muted-text mt-2 text-xs">

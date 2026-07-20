@@ -9,7 +9,7 @@ export type GradeCenterAccess = { canManage: boolean; canAssignAdmins: boolean; 
 export async function getGradeCenterAccess(): Promise<GradeCenterAccess> {
   const { supabase, user, profile } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
-  if (role === "super_admin" || role === "ceo") return { canManage: true, canAssignAdmins: role === "super_admin", role, supabase, user };
+  if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") return { canManage: true, canAssignAdmins: role === "tenant_super_admin" || role === "platform_super_admin", role, supabase, user };
   if (role !== "admin") return { canManage: false, canAssignAdmins: false, role, supabase, user };
   const { data, error } = await supabase.from("grade_center_admin_assignments").select("admin_id").eq("admin_id", user.id).is("revoked_at", null).maybeSingle();
   return { canManage: !error && Boolean(data), canAssignAdmins: false, role, supabase, user };

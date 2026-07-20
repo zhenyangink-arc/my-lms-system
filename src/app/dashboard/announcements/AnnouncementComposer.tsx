@@ -19,14 +19,14 @@ export function AnnouncementComposer() {
   }, [state]);
 
   return (
-    <section id="publish-announcement" className="app-card scroll-mt-24 rounded-[28px] border p-5 sm:p-7">
+    <section id="publish-announcement" className="app-card scroll-mt-24 rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
           <FilePenLine size={20} aria-hidden="true" />
         </span>
         <div>
           <h2 className="text-lg font-black">新建通知公告</h2>
-          <p className="mt-1 text-xs leading-6 app-muted-text">可以先保存草稿，确认内容后再正式发布。</p>
+          <p className="mt-1 text-xs leading-5 app-muted-text">可以先保存草稿，确认内容后再正式发布。</p>
         </div>
       </div>
 
@@ -67,7 +67,7 @@ export function AnnouncementComposer() {
             maxLength={5000}
             rows={9}
             placeholder="写明通知事项、执行时间、适用人员和需要完成的动作。"
-            className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-7"
+            className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-6"
           />
         </label>
 

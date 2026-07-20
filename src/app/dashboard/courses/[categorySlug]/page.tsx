@@ -14,8 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
-import { DashboardPageHeader } from "../../DashboardPageHeader";
+import { requireActiveUser } from "@/lib/auth";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
@@ -141,7 +140,8 @@ export default async function CategoryPage({
 }) {
   const { categorySlug } = await params;
 
-  const supabase = await createClient();
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
 
   /**
    * 1. 查询一级课程板块
@@ -212,13 +212,9 @@ export default async function CategoryPage({
   /**
    * 5. 查询当前用户的学习进度
    */
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   let progressList: LessonProgress[] = [];
 
-  if (user && lessonIds.length > 0) {
+  if (!isPlatformAudit && user && lessonIds.length > 0) {
     const { data: progressData } = await supabase
       .from("lesson_progress")
       .select("lesson_id, status, progress_percent")
@@ -295,17 +291,7 @@ export default async function CategoryPage({
 
     return (
       <>
-        <DashboardPageHeader
-          title={parentCategory.title}
-          description={
-            parentCategory.description ||
-            (isServiceCourse
-              ? "按选校、申请和签证阶段推进你的韩国留学计划。"
-              : "选择适合当前水平的韩语课程，持续积累学习成果。")
-          }
-        />
-
-        <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+        <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
           <Link
             href="/dashboard/courses"
             className="inline-flex items-center gap-2 text-sm font-bold app-muted-text transition hover:opacity-75"
@@ -315,14 +301,14 @@ export default async function CategoryPage({
           </Link>
 
           <section
-            className="app-card relative overflow-hidden rounded-[30px] border p-6 sm:p-8"
+            className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
             style={{
               background: isServiceCourse
                 ? "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg) 58%, var(--app-accent-soft))"
                 : "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg) 58%, var(--app-secondary-soft))",
             }}
           >
-            <div className="grid items-center gap-8 lg:grid-cols-[1fr_320px]">
+            <div className="grid items-center gap-6 lg:grid-cols-[1fr_320px]">
               <div>
                 <span
                   className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -333,16 +319,16 @@ export default async function CategoryPage({
                 </span>
                 <div className="mt-5 flex items-start gap-4">
                   <span
-                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[22px]"
+                    className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl"
                     style={{ color: accent, backgroundColor: accentSoft }}
                   >
                     <FocusIcon size={30} aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight sm:text-3xl">
+                    <h2 className="text-2xl font-black tracking-tight">
                       {isServiceCourse ? "一步一步完成留学准备" : "建立可持续的韩语学习节奏"}
                     </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-7 app-muted-text">
+                    <p className="mt-2 max-w-2xl text-sm leading-6 app-muted-text">
                       {isServiceCourse
                         ? "从目标确认到材料、面试和签证，每个分类都是留学申请中的一个真实阶段。"
                         : "根据课程分类选择当前最需要加强的能力，并用课时进度记录每一次成长。"}
@@ -355,7 +341,7 @@ export default async function CategoryPage({
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-xs font-bold app-muted-text">板块总进度</p>
-                    <p className="mt-1 text-3xl font-black">{parentProgressPercent}%</p>
+                    <p className="mt-1 text-2xl font-black">{parentProgressPercent}%</p>
                   </div>
                   <span className="text-xs font-bold app-muted-text">
                     {totalParentCompletedLessons}/{totalParentLessons} 课时
@@ -366,18 +352,18 @@ export default async function CategoryPage({
                     className="h-full rounded-full"
                     style={{
                       width: `${parentProgressPercent}%`,
-                      background: `linear-gradient(90deg, ${accent}, var(--app-success))`,
+                      backgroundColor: "var(--app-success)",
                     }}
                   />
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
-                  <div className="app-soft-card rounded-2xl border p-3 text-center">
+                  <div className="app-tile rounded-2xl border p-3 text-center">
                     <p className="text-xl font-black">{subcategories.length}</p>
-                    <p className="text-[10px] font-bold app-muted-text">课程分类</p>
+                    <p className="text-xs font-bold app-muted-text">课程分类</p>
                   </div>
-                  <div className="app-soft-card rounded-2xl border p-3 text-center">
+                  <div className="app-tile rounded-2xl border p-3 text-center">
                     <p className="text-xl font-black">{courses.length}</p>
-                    <p className="text-[10px] font-bold app-muted-text">可学课程</p>
+                    <p className="text-xs font-bold app-muted-text">可学课程</p>
                   </div>
                 </div>
               </div>
@@ -387,7 +373,6 @@ export default async function CategoryPage({
           <section>
             <div className="mb-4">
               <h3 className="text-lg font-black">选择学习阶段</h3>
-              <p className="mt-1 text-xs app-muted-text">每个分类会显示课程数量和当前完成情况。</p>
             </div>
             {subcategories.length > 0 ? (
               <div className="grid gap-4 lg:grid-cols-2">
@@ -433,12 +418,12 @@ export default async function CategoryPage({
                             </div>
                             <ArrowRight size={17} className="shrink-0 app-muted-text transition group-hover:translate-x-1" aria-hidden="true" />
                           </div>
-                          <div className="mt-4 flex items-center justify-between gap-3 text-[11px] font-bold app-muted-text">
+                          <div className="mt-4 flex items-center justify-between gap-3 text-xs font-bold app-muted-text">
                             <span>{subcategoryCourses.length} 门课程 · {subcategoryLessons.length} 个课时</span>
-                            <span style={{ color: accent }}>{learningStatusLabelMap[learningStatus]}</span>
+                            <span style={{ color: accent }}>{isPlatformAudit ? "只读巡检" : learningStatusLabelMap[learningStatus]}</span>
                           </div>
                           <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                            <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: accent }} />
+                            <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
                           </div>
                         </div>
                       </div>
@@ -447,7 +432,7 @@ export default async function CategoryPage({
                 })}
               </div>
             ) : (
-              <div className="app-soft-card rounded-3xl border border-dashed p-8 text-center text-sm app-muted-text">
+              <div className="app-empty-state rounded-3xl p-6 text-center text-sm app-muted-text">
                 当前还没有发布课程分类。
               </div>
             )}
@@ -459,15 +444,7 @@ export default async function CategoryPage({
 
   return (
     <>
-      <DashboardPageHeader
-        title={parentCategory.title}
-        description={
-          parentCategory.description ||
-          "选择课程分类，查看当前账号的学习进度。"
-        }
-      />
-
-      <div className="space-y-6 p-6">
+      <div className="space-y-5 p-5">
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
@@ -480,7 +457,7 @@ export default async function CategoryPage({
         </div>
 
         {/* 页面说明板块 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-center">
             <div>
               <div className="mb-3 flex flex-wrap gap-2">
@@ -531,7 +508,7 @@ export default async function CategoryPage({
         </section>
 
         {/* 二级分类列表 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -593,7 +570,9 @@ export default async function CategoryPage({
                 const isInProgress = learningStatus === "in_progress";
 
                 const buttonLabel =
-                  totalLessons === 0
+                  isPlatformAudit
+                    ? "巡检课程"
+                    : totalLessons === 0
                     ? "查看课程"
                     : isCompleted
                       ? "复习课程"
@@ -714,7 +693,7 @@ export default async function CategoryPage({
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程分类</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前课程板块下还没有发布二级分类。

@@ -2,8 +2,6 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock3, Layers3 } from "lucide-react";
 
-import { DashboardPageHeader } from "./DashboardPageHeader";
-
 type FeatureBlueprint = {
   title: string;
   description: string;
@@ -72,28 +70,15 @@ export function ComingSoonPage({
 
   return (
     <>
-      <DashboardPageHeader
-        title={title}
-        description={description}
-        action={
-          <Link
-            href="/dashboard"
-            className="app-card inline-flex items-center gap-2 rounded-xl border px-3.5 py-2 text-xs font-black transition hover:-translate-y-0.5"
-          >
-            返回成长总览
-          </Link>
-        }
-      />
-
-      <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <section
-          className="app-card relative overflow-hidden rounded-[30px] border p-6 sm:p-8"
+          className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{
             background:
               "linear-gradient(120deg, var(--app-hero-start), var(--app-card-bg) 55%, var(--app-hero-end))",
           }}
         >
-          <div className="grid items-center gap-8 lg:grid-cols-[1fr_320px]">
+          <div className="grid items-center gap-6 lg:grid-cols-[1fr_320px]">
             <div>
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -108,10 +93,10 @@ export function ComingSoonPage({
               >
                 {icon}
               </div>
-              <h2 className="mt-5 text-2xl font-black tracking-tight sm:text-3xl">
+              <h2 className="mt-3 text-2xl font-black tracking-tight">
                 {title}工作台
               </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text">{description}</p>
+              <p className="mt-3 max-w-2xl text-sm leading-6 app-muted-text">{description}</p>
             </div>
 
             <div className="app-card rounded-3xl border p-5">
@@ -156,7 +141,7 @@ export function ComingSoonPage({
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className="rounded-full px-2.5 py-1 text-[10px] font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                  <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>
                     规划中
                   </span>
                 </div>

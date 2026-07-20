@@ -17,6 +17,7 @@ import { normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { AccountCard, type AccountListProfile } from "./AccountCard";
 import { AccountAuditLogDialog, AccountDeletionAuditDialog } from "./AccountActivityDialogs";
+import { AccountCreator } from "./AccountCreator";
 
 type AccountAuditLog = {
   id: number;
@@ -104,12 +105,12 @@ function AccountMetric({ label, value, hint, icon: Icon, tone = "accent" }: { la
     <div className="app-soft-card rounded-2xl border p-4">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="app-muted-text text-[11px] font-black">{label}</p>
+          <p className="app-muted-text text-xs font-black">{label}</p>
           <p className="mt-1.5 text-2xl font-black tracking-tight">{value}</p>
         </div>
         <span className="flex h-9 w-9 items-center justify-center rounded-xl" style={{ color, backgroundColor: soft }}><Icon size={18} /></span>
       </div>
-      <p className="app-muted-text mt-1.5 text-[11px]">{hint}</p>
+      <p className="app-muted-text mt-1.5 text-xs">{hint}</p>
     </div>
   );
 }
@@ -148,14 +149,14 @@ export default async function AccountsPage({
     supabase
       .from("profiles")
       .select("id, full_name, email, role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier")
-      .neq("role", "super_admin")
+      .neq("role", "tenant_super_admin")
       .order("registered_at", { ascending: false, nullsFirst: false }),
     supabase
       .from("account_management_audit_logs")
       .select("id, actor_id, target_user_id, action, changed_fields, created_at")
       .order("created_at", { ascending: false })
       .limit(8),
-    viewerRole === "super_admin"
+    viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin"
       ? supabase
           .from("account_deletion_audit_logs")
           .select("id, target_user_id, target_email, target_full_name, target_role, deletion_reason, related_data_counts, deleted_at")
@@ -205,14 +206,15 @@ export default async function AccountsPage({
     <>
       <DashboardPageHeader title="账号管理" description="统一查看账号身份、会员档位、资料状态与管理记录。" />
 
-      <div className="mx-auto w-full max-w-[1560px] space-y-6 p-4 sm:p-6">
-        <section className="app-card relative overflow-hidden rounded-[2rem] border p-6 sm:p-8" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
+        {viewerRole === "tenant_super_admin" && <AccountCreator />}
+        <section className="app-card relative overflow-hidden rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
           <div className="pointer-events-none absolute -right-16 -top-24 h-72 w-72 rounded-full opacity-15 blur-3xl" style={{ backgroundColor: "var(--app-accent)" }} />
-          <div className="relative grid gap-7 xl:grid-cols-[minmax(0,0.85fr)_minmax(620px,1.15fr)] xl:items-end">
+          <div className="relative grid gap-5 xl:grid-cols-[minmax(0,0.85fr)_minmax(620px,1.15fr)] xl:items-end">
             <div>
               <div className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><ShieldCheck size={15} />账号运营工作台</div>
-              <h2 className="mt-5 max-w-xl text-3xl font-black tracking-tight sm:text-4xl">身份、服务权限和账号状态，一眼看清</h2>
-              <p className="app-muted-text mt-4 max-w-2xl text-sm leading-7">会员档位与后台角色独立管理，所有重要变更由数据库自动记录，便于团队复核与交接。</p>
+              <h2 className="mt-3 max-w-xl text-2xl font-black tracking-tight">身份、服务权限和账号状态，一眼看清</h2>
+              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">会员档位与后台角色独立管理，所有重要变更由数据库自动记录，便于团队复核与交接。</p>
             </div>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-5">
               <AccountMetric label="账号总数" value={allProfiles.length} hint="不含负责人账号" icon={UsersRound} />
@@ -247,26 +249,26 @@ export default async function AccountsPage({
         </section>
 
         <section className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(320px,0.9fr)]">
-          <div className="app-card rounded-[1.75rem] border p-5 sm:p-6">
+          <div className="app-card rounded-[1.75rem] border p-4 sm:p-5">
             <div className="flex items-center justify-between gap-3"><div><p className="app-muted-text text-xs font-black">账号结构</p><h2 className="mt-1 text-xl font-black">团队与学生分布</h2></div><UsersRound size={22} style={{ color: "var(--app-accent)" }} /></div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               <div className="space-y-4">{ROLE_FILTERS.filter((item) => item.value !== "all").map((item, index) => <DistributionRow key={item.value} label={item.label} value={allProfiles.filter((profile) => profile.role === item.value).length} total={allProfiles.length} color={["var(--app-secondary)", "var(--app-accent)", "var(--app-warm)", "#6bbf8b"][index]} />)}</div>
               <div className="grid grid-cols-2 gap-3">
-                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-[11px] font-black">普通学生</p><p className="mt-2 text-2xl font-black">{students.filter((profile) => normalizeMembershipTier(profile.membership_tier) === "normal").length}</p><p className="app-muted-text mt-1 text-[11px]">基础浏览权限</p></div>
-                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-[11px] font-black">会员学生</p><p className="mt-2 text-2xl font-black">{vipCount}</p><p className="app-muted-text mt-1 text-[11px]">已开通服务</p></div>
-                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-[11px] font-black">资料待完善</p><p className="mt-2 text-2xl font-black">{pendingProfileCount}</p><p className="app-muted-text mt-1 text-[11px]">建议顾问跟进</p></div>
-                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-[11px] font-black">状态异常</p><p className="mt-2 text-2xl font-black">{attentionCount}</p><p className="app-muted-text mt-1 text-[11px]">暂停或停用</p></div>
+                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-xs font-black">普通学生</p><p className="mt-2 text-2xl font-black">{students.filter((profile) => normalizeMembershipTier(profile.membership_tier) === "normal").length}</p><p className="app-muted-text mt-1 text-xs">基础浏览权限</p></div>
+                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-xs font-black">会员学生</p><p className="mt-2 text-2xl font-black">{vipCount}</p><p className="app-muted-text mt-1 text-xs">已开通服务</p></div>
+                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-xs font-black">资料待完善</p><p className="mt-2 text-2xl font-black">{pendingProfileCount}</p><p className="app-muted-text mt-1 text-xs">建议顾问跟进</p></div>
+                <div className="app-soft-card rounded-2xl border p-4"><p className="app-muted-text text-xs font-black">状态异常</p><p className="mt-2 text-2xl font-black">{attentionCount}</p><p className="app-muted-text mt-1 text-xs">暂停或停用</p></div>
               </div>
             </div>
           </div>
 
           <div className="space-y-4">
             <AccountAuditLogDialog logs={auditLogs} accountNames={accountNames} />
-            {viewerRole === "super_admin" && <AccountDeletionAuditDialog logs={deletionAuditLogs} />}
+            {(viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") && <AccountDeletionAuditDialog logs={deletionAuditLogs} />}
           </div>
         </section>
 
-        <div className="space-y-7">
+        <div className="space-y-5">
           {GROUP_ORDER.map((role) => {
             const groupProfiles = profiles.filter((profile) => profile.role === role);
             if (groupProfiles.length === 0) return null;
@@ -279,7 +281,7 @@ export default async function AccountsPage({
           })}
 
           {profiles.length === 0 && (
-            <div className="app-card rounded-[1.75rem] border border-dashed p-12 text-center"><Search className="mx-auto opacity-25" size={36} /><p className="mt-4 font-black">没有找到符合条件的账号</p><p className="app-muted-text mt-2 text-sm">可以换一个姓名、邮箱、编号或筛选条件再试。</p><Link href="/dashboard/admin/accounts" className="mt-5 inline-flex rounded-xl px-4 py-2 text-sm font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>查看全部账号</Link></div>
+            <div className="app-card rounded-[1.75rem] border border-dashed p-8 text-center"><Search className="mx-auto opacity-25" size={36} /><p className="mt-4 font-black">没有找到符合条件的账号</p><p className="app-muted-text mt-2 text-sm">可以换一个姓名、邮箱、编号或筛选条件再试。</p><Link href="/dashboard/admin/accounts" className="mt-5 inline-flex rounded-xl px-4 py-2 text-sm font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>查看全部账号</Link></div>
           )}
         </div>
       </div>

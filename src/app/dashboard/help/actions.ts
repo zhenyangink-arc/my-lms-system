@@ -134,7 +134,7 @@ export async function grantHelpCenterAdminAction(_state: HelpCenterActionState, 
   if (!isUuid(adminId)) return result("error", "请选择需要授权的管理员。");
   const { data: target, error: targetError } = await access.supabase.from("profiles").select("id,role,status").eq("id", adminId).maybeSingle();
   if (targetError || !target || target.role !== "admin" || (target.status && target.status !== "active")) return result("error", "只能授权状态正常的管理员账号。");
-  const { error } = await access.supabase.from("help_center_admin_assignments").upsert({ admin_id: adminId, granted_by: access.user.id, granted_at: new Date().toISOString(), revoked_by: null, revoked_at: null }, { onConflict: "admin_id" });
+  const { error } = await access.supabase.from("help_center_admin_assignments").upsert({ admin_id: adminId, granted_by: access.user.id, granted_at: new Date().toISOString(), revoked_by: null, revoked_at: null }, { onConflict: "tenant_id,admin_id" });
   if (error) return result("error", "管理员授权失败。");
   refreshHelp();
   return result("success", "该管理员已经获得帮助中心后台权限。");

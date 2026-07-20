@@ -6,21 +6,25 @@
 - `src/app/login`、`src/app/register`：Supabase Auth 登录注册。
 - `src/app/dashboard`：登录且状态正常的用户区域。
 - `src/app/dashboard/courses`：学生课程、课时、进度、资料与提问。
-- `src/app/dashboard/admin`：管理员、CEO、老板使用的课程和账号管理。
+- `src/app/dashboard/admin`：机构负责人、CEO、管理员使用的租户业务管理，以及平台负责人/副负责人使用的租户控制面。
 - `src/app/api`：需要浏览器导航或文件跳转语义的 Route Handlers。
 
-Dashboard 继续沿用现有 App Router 布局，没有引入新的状态管理框架或改变目录层级。
+Dashboard 内部继续沿用现有 App Router 布局；对外 URL 按身份分成平台空间
+`/platform/dashboard` 与租户空间 `/t/{tenantSlug}/dashboard`。历史 `/dashboard`
+仅作为兼容入口，由 `src/proxy.ts` 根据 `profiles.global_role` 重定向到规范地址。
 
 ## 认证与授权
 
 `src/lib/auth.ts` 是普通登录用户的统一服务端认证入口：
 
 1. 使用 `supabase.auth.getUser()` 在服务端验证用户。
-2. 读取 `profiles` 的姓名、角色和状态。
+2. 读取 `profiles.global_role` 判断平台/租户空间，再从 `tenant_memberships` 读取租户业务角色。
 3. 未登录用户进入 `/login`。
 4. `inactive` 或 `suspended` 用户进入 `/account-disabled`。
 
-`src/lib/admin.ts` 在此基础上继续检查 `admin`、`ceo`、`super_admin` 角色。页面保护只用于导航体验，真正会修改数据的 Server Action 和 Route Handler 仍需在自身入口重新验证权限。
+`src/lib/admin.ts` 将平台 `platform_super_admin` / `tenant_operator` 与租户
+`tenant_super_admin` / `ceo` / `admin` 明确分开。页面保护只用于导航体验，
+真正会修改数据的 Server Action、Route Handler、RPC 与 RLS 仍需在自身入口重新验证权限。
 
 ## 课程数据流
 

@@ -54,7 +54,7 @@ export function AnnouncementEditor({
         </div>
         <label className="block text-xs font-black">
           内容
-          <textarea name="content" required minLength={2} maxLength={5000} rows={7} defaultValue={announcement.content} className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm leading-7" />
+          <textarea name="content" required minLength={2} maxLength={5000} rows={7} defaultValue={announcement.content} className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm leading-6" />
         </label>
         <label className="flex items-center gap-2 text-xs font-bold">
           <input name="is_pinned" type="checkbox" defaultChecked={announcement.isPinned} /> 置顶公告

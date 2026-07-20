@@ -1,0 +1,182 @@
+.pageShell {
+  color: var(--app-text);
+  background:
+    radial-gradient(circle at 8% 14%, color-mix(in srgb, var(--app-hero-start) 72%, transparent), transparent 24rem),
+    radial-gradient(circle at 92% 10%, color-mix(in srgb, var(--app-hero-end) 78%, transparent), transparent 28rem),
+    linear-gradient(180deg, var(--app-bg) 0%, var(--app-hero-end) 52%, var(--app-bg) 100%);
+  font-family:
+    "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
+    sans-serif;
+}
+
+.chatGrid {
+  background: #f3f4f6;
+}
+
+.messageEnter {
+  animation: message-enter 260ms ease-out both;
+}
+
+.micButton {
+  position: relative;
+  isolation: isolate;
+  touch-action: none;
+}
+
+.micButton::before,
+.micButton::after {
+  position: absolute;
+  inset: -8px;
+  z-index: -1;
+  border-radius: 999px;
+  content: "";
+  border: 2px solid color-mix(in srgb, var(--app-accent) 30%, transparent);
+  opacity: 0;
+}
+
+/* The conversation UI predates the app theme. Map its legacy utility colors to
+   the semantic application tokens while preserving the existing layout. */
+.themeScope :global([class*="border-[#"]),
+.themeScope :global([class*="border-white"]),
+.themeScope :global([class*="border-dashed"]) {
+  border-color: var(--app-border) !important;
+}
+
+.themeScope :global([class*="bg-white"]),
+.themeScope :global([class*="bg-[#f"]),
+.themeScope :global([class*="bg-[#e"]),
+.themeScope :global([class*="bg-[#d"]),
+.themeScope :global([class*="bg-[#b"]),
+.themeScope :global([class*="bg-[#9"]),
+.themeScope :global([class*="bg-[#8"]),
+.themeScope :global([class*="bg-[#7"]),
+.themeScope :global([class*="bg-[#6"]),
+.themeScope :global([class*="bg-[#5"]),
+.themeScope :global([class*="bg-[#4"]),
+.themeScope :global([class*="bg-[#3"]) {
+  background-color: var(--app-card-bg) !important;
+}
+
+.themeScope :global([class*="text-[#"]) {
+  color: var(--app-text-soft) !important;
+}
+
+.themeScope :global([class*="placeholder:text-[#"]) {
+  color: var(--app-muted-light) !important;
+}
+
+.themeScope :global([class*="from-[#"]) {
+  --tw-gradient-from: var(--app-secondary) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: color-mix(in srgb, var(--app-secondary) 0%, transparent) var(--tw-gradient-to-position) !important;
+}
+
+.themeScope :global([class*="to-[#"]) {
+  --tw-gradient-to: var(--app-warm) var(--tw-gradient-to-position) !important;
+}
+
+.themeScope :global([class*="ring-[#"]) {
+  --tw-ring-color: var(--app-accent-soft) !important;
+}
+
+.themeScope :global([class*="shadow-["]) {
+  box-shadow: var(--app-shadow) !important;
+}
+
+.themeScope :global([class*="bg-[#5f9af4]"]),
+.themeScope :global([class*="bg-[#3388b4]"]) {
+  background-color: var(--app-accent) !important;
+  color: var(--app-accent-contrast) !important;
+}
+
+.themeScope :global([class*="hover:bg-[#"]:hover) {
+  background-color: var(--app-accent-soft) !important;
+}
+
+.themeScope :global([class*="bg-[#e7f7ee]"]),
+.themeScope :global([class*="bg-[#e9f7ef]"]) {
+  background-color: var(--app-success-soft) !important;
+}
+
+.themeScope :global([class*="text-[#418c62]"]),
+.themeScope :global([class*="text-[#4da374]"]) {
+  color: var(--app-success) !important;
+}
+
+.micActive::before {
+  animation: mic-pulse 1.2s ease-out infinite;
+}
+
+.micActive::after {
+  animation: mic-pulse 1.2s ease-out 0.4s infinite;
+}
+
+.statusDot {
+  animation: status-breathe 1.25s ease-in-out infinite;
+}
+
+.thinkingDot {
+  animation: thinking-bounce 1s ease-in-out infinite;
+}
+
+.thinkingDot:nth-child(2) {
+  animation-delay: 0.14s;
+}
+
+.thinkingDot:nth-child(3) {
+  animation-delay: 0.28s;
+}
+
+@keyframes message-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes mic-pulse {
+  0% {
+    opacity: 0.75;
+    transform: scale(0.88);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.42);
+  }
+}
+
+@keyframes status-breathe {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes thinking-bounce {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .messageEnter,
+  .micActive::before,
+  .micActive::after,
+  .statusDot,
+  .thinkingDot {
+    animation: none;
+  }
+}

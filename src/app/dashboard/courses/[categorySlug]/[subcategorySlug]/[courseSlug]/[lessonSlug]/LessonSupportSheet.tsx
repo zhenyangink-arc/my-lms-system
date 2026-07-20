@@ -134,7 +134,7 @@ export function LessonSupportSheet({
           </SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-6 space-y-5">
           {/* 负责老师区域 */}
           <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-black text-gray-900">负责老师</h3>

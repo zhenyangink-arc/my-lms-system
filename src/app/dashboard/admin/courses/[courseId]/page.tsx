@@ -361,7 +361,7 @@ export default async function AdminCourseLessonsPage({
         description="管理当前课程的基本信息、课时结构和课时编辑入口。"
       />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-5 p-5">
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
@@ -401,7 +401,7 @@ export default async function AdminCourseLessonsPage({
         )}
 
         {/* 顶部课程概览 */}
-        <section className="h-full app-card rounded-3xl border p-6 shadow-sm">
+        <section className="h-full app-card rounded-3xl border p-5 shadow-sm">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_280px] lg:items-center">
             <div>
               <div className="mb-3 flex flex-wrap gap-2">
@@ -476,9 +476,9 @@ export default async function AdminCourseLessonsPage({
           这里保留两列布局。
           下面的“已有课时”单独占满整行，做成 3 列卡片。
         */}
-        <div className="grid gap-6 xl:grid-cols-2">
+        <div className="grid gap-5 xl:grid-cols-2">
           {/* 课程基本信息 */}
-          <section className="app-card rounded-3xl border p-6 shadow-sm">
+          <section className="app-card rounded-3xl border p-5 shadow-sm">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -561,7 +561,7 @@ export default async function AdminCourseLessonsPage({
           </section>
 
           {/* 新增课时 */}
-          <section className="h-full app-card rounded-3xl border p-6 shadow-sm">
+          <section className="h-full app-card rounded-3xl border p-5 shadow-sm">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -661,7 +661,7 @@ export default async function AdminCourseLessonsPage({
           这个区域单独占满屏幕宽度。
           课时不再在当前页展开完整表单，而是以 3 列卡片显示概要。
         */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex flex-wrap items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -681,10 +681,9 @@ export default async function AdminCourseLessonsPage({
               {lessons.map((lesson) => {
                 const resources = resourcesByLessonId.get(lesson.id) ?? [];
 
-                const previewHref =
-                  parentCategory && subcategory
-                    ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`
-                    : null;
+                const previewHref = parentCategory && subcategory
+                  ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`
+                  : `/dashboard/admin/courses/${course.id}/lessons/${lesson.id}/preview`;
 
                 const editHref = `/dashboard/admin/courses/${course.id}/lessons/${lesson.id}`;
 
@@ -807,23 +806,21 @@ export default async function AdminCourseLessonsPage({
                         编辑课时
                       </Link>
 
-                      {previewHref && (
-                        <Link
+                      <Link
                           href={previewHref}
                           target="_blank"
                           className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-900 hover:text-white"
                         >
                           <ExternalLink size={15} />
-                          预览
+                          学生端巡检
                         </Link>
-                      )}
                     </div>
                   </article>
                 );
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课时</p>
 
               <p className="mt-2 text-sm text-gray-500">

@@ -54,6 +54,14 @@ function degreeLevelFromTrack(track: AdmissionStage) {
   return "bachelor";
 }
 
+function applicationDeadlineForStage(value: unknown, stage: AdmissionStage) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const deadline = (value as Record<string, unknown>)[stage];
+  return typeof deadline === "string" && /^\d{4}-\d{2}-\d{2}$/.test(deadline)
+    ? deadline
+    : null;
+}
+
 /** 大学模块拆分为多个页面后，写操作需要同步刷新全部相关入口。 */
 function revalidateUniversityRoutes() {
   revalidatePath("/dashboard/universities");
@@ -148,7 +156,7 @@ export async function addLibraryUniversityTargetAction(
 
   const { data: university } = await supabase
     .from("korean_universities")
-    .select("id, name_zh, admission_stages")
+    .select("id, name_zh, admission_stages, application_deadlines")
     .eq("id", universityId)
     .eq("is_published", true)
     .maybeSingle();
@@ -173,6 +181,10 @@ export async function addLibraryUniversityTargetAction(
     university_name: university.name_zh,
     degree_level: degreeLevelFromTrack(finalTrack),
     admission_track: finalTrack,
+    application_deadline: applicationDeadlineForStage(
+      university.application_deadlines,
+      finalTrack
+    ),
     status: "researching",
   };
 
@@ -198,7 +210,6 @@ export async function addUniversityTargetFromFormAction(formData: FormData) {
   const universityId = String(formData.get("universityId") ?? "");
   const requestedTrack = String(formData.get("admissionTrack") ?? "language");
   const programName = String(formData.get("programName") ?? "").trim();
-  const deadline = String(formData.get("deadline") ?? "").trim();
   const priority = Number(formData.get("priority") ?? 3);
 
   if (!isAdmissionStage(requestedTrack)) {
@@ -207,16 +218,13 @@ export async function addUniversityTargetFromFormAction(formData: FormData) {
   if (programName.length > 120) {
     throw new Error("专业名称不能超过 120 个字符。");
   }
-  if (deadline && !/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
-    throw new Error("请选择有效的申请截止日期。");
-  }
   if (!Number.isInteger(priority) || priority < 1 || priority > 5) {
     throw new Error("目标优先级需要在 1—5 之间。");
   }
 
   const { data: university } = await supabase
     .from("korean_universities")
-    .select("id, name_zh, admission_stages")
+    .select("id, name_zh, admission_stages, application_deadlines")
     .eq("id", universityId)
     .eq("is_published", true)
     .maybeSingle();
@@ -235,7 +243,10 @@ export async function addUniversityTargetFromFormAction(formData: FormData) {
     program_name: programName || null,
     degree_level: degreeLevelFromTrack(finalTrack),
     admission_track: finalTrack,
-    application_deadline: deadline || null,
+    application_deadline: applicationDeadlineForStage(
+      university.application_deadlines,
+      finalTrack
+    ),
     priority,
   };
   const { data: existing } = await supabase
@@ -265,6 +276,18 @@ export async function addUniversityTargetFromFormAction(formData: FormData) {
 /** 只删除当前学生自己的目标记录。 */
 export async function deleteUniversityTargetAction(targetId: string) {
   const { supabase, user } = await requireStudentFeature("university_target");
+
+  const { data: existing } = await supabase
+    .from("student_university_targets")
+    .select("id, documents_locked_at")
+    .eq("id", targetId)
+    .eq("user_id", user.id)
+    .maybeSingle();
+  if (!existing) throw new Error("找不到这个目标大学，可能已经被删除。");
+  if (existing.documents_locked_at !== null) {
+    throw new Error("这份申请表已锁定，请联系管理员解锁后再删除。");
+  }
+
   const { error } = await supabase
     .from("student_university_targets")
     .delete()

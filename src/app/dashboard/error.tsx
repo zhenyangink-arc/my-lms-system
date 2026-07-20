@@ -15,8 +15,8 @@ export default function DashboardError({
   }, [error]);
 
   return (
-    <div className="flex min-h-[70vh] items-center justify-center p-6">
-      <section className="app-card w-full max-w-lg rounded-3xl border p-8 text-center shadow-sm">
+    <div className="flex min-h-[70vh] items-center justify-center p-5">
+      <section className="app-card w-full max-w-lg rounded-3xl border p-6 text-center shadow-sm">
         <p className="text-sm font-bold text-red-600">控制台加载失败</p>
         <h1 className="mt-2 text-2xl font-black">暂时无法读取这部分数据</h1>
         <p className="app-muted-text mt-3 text-sm leading-6">

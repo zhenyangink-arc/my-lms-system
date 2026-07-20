@@ -1,5 +1,5 @@
 export const ROLE_ORDER = [
-  "super_admin",
+  "tenant_super_admin",
   "ceo",
   "admin",
   "teacher",
@@ -9,7 +9,7 @@ export const ROLE_ORDER = [
 export type AppRole = (typeof ROLE_ORDER)[number];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
-  super_admin: "老板",
+  tenant_super_admin: "机构负责人",
   ceo: "CEO",
   admin: "管理员",
   teacher: "老师",
@@ -25,16 +25,16 @@ export const STATUS_LABELS: Record<string, string> = {
 /*
   当前登录者（viewerRole）可以把账号改成哪些角色。
 
-  注意：super_admin（老板）不会出现在这个数组里，
+  注意：tenant_super_admin（机构负责人）不会出现在这个数组里，
   不管是老板自己还是 CEO 在操作，都不能通过这个页面把人改成老板。
   老板身份只能通过数据库手动设置，不走这个 UI。
 
-  老板 super_admin → 可以改成 CEO / 管理员 / 老师 / 学生
+  机构负责人 tenant_super_admin → 可以改成 CEO / 管理员 / 老师 / 学生
   CEO ceo          → 只能改成 管理员 / 老师 / 学生
   其他角色         → 不会进到这个页面，返回空数组兜底
 */
 export function getAssignableRoles(viewerRole: string): AppRole[] {
-  if (viewerRole === "super_admin") {
+  if (viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") {
     return ["ceo", "admin", "teacher", "student"];
   }
 
@@ -55,12 +55,12 @@ export function getAssignableRoles(viewerRole: string): AppRole[] {
   真正的安全边界是 SQL 21 里的 RLS policy。
 */
 export function canManageTarget(viewerRole: string, targetRole: string) {
-  if (viewerRole === "super_admin") {
+  if (viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") {
     return true;
   }
 
   if (viewerRole === "ceo") {
-    return targetRole !== "super_admin" && targetRole !== "ceo";
+    return targetRole !== "tenant_super_admin" && targetRole !== "ceo";
   }
 
   return false;

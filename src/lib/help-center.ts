@@ -16,8 +16,8 @@ export type HelpCenterAccess = {
 export async function getHelpCenterAccess(): Promise<HelpCenterAccess> {
   const { supabase, user, profile } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
-  if (role === "super_admin" || role === "ceo") {
-    return { canManage: true, canAssignAdmins: role === "super_admin", role, supabase, user };
+  if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") {
+    return { canManage: true, canAssignAdmins: role === "tenant_super_admin" || role === "platform_super_admin", role, supabase, user };
   }
   if (role !== "admin") return { canManage: false, canAssignAdmins: false, role, supabase, user };
 

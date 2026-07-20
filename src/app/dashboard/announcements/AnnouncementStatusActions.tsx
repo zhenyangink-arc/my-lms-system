@@ -28,7 +28,7 @@ function StatusButton({
       <button type="submit" disabled={pending} className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black disabled:opacity-50" style={{ color }}>
         <Icon size={13} aria-hidden="true" /> {pending ? "处理中…" : label}
       </button>
-      {state.status === "error" && <span className="mt-1 text-[10px] font-bold" style={{ color: "#c94f45" }}>{state.message}</span>}
+      {state.status === "error" && <span className="mt-1 text-xs font-bold" style={{ color: "#c94f45" }}>{state.message}</span>}
     </form>
   );
 }

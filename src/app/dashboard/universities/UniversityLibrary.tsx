@@ -192,7 +192,7 @@ function FilterButton({
       type="button"
       aria-pressed={active}
       onClick={onClick}
-      className="inline-flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left text-[11px] font-bold transition hover:-translate-y-0.5"
+      className="inline-flex items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left text-xs font-bold transition hover:-translate-y-0.5"
       style={
         active
           ? {
@@ -224,7 +224,7 @@ function RankPanel({
 }) {
   return (
     <div className="rounded-2xl border px-3 py-2.5" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
-      <p className="text-[9px] font-black app-muted-text">{year ? `${year} ${label}` : label}</p>
+      <p className="text-[10px] font-black app-muted-text">{year ? `${year} ${label}` : label}</p>
       <p className="mt-1 text-sm font-black">{rank ? `第 ${rank}` : "暂无"}</p>
     </div>
   );
@@ -248,7 +248,7 @@ function UniversityAssessmentDialog({ university }: { university: KoreanUniversi
     <Dialog>
       <DialogTrigger
         type="button"
-        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[11px] font-black text-white transition hover:opacity-90"
+        className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-xs font-black text-white transition hover:opacity-90"
         style={{ backgroundColor: "var(--app-secondary)" }}
       >
         <Sparkles size={13} aria-hidden="true" /> 在线评估
@@ -316,9 +316,9 @@ function UniversityAssessmentDialog({ university }: { university: KoreanUniversi
                       <p className="text-xs font-black">初步结果</p>
                       <p className="mt-1 text-lg font-black">{state.resultLabel}</p>
                     </div>
-                    <p className="text-3xl font-black">{state.score}<span className="text-xs"> 分</span></p>
+                    <p className="text-2xl font-black">{state.score}<span className="text-xs"> 分</span></p>
                   </div>
-                  <div className="mt-4 grid grid-cols-2 gap-2 text-[10px] font-bold">
+                  <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-bold">
                     {[
                       ["学业基础", state.breakdown.academic],
                       ["韩语能力", state.breakdown.language],
@@ -332,7 +332,7 @@ function UniversityAssessmentDialog({ university }: { university: KoreanUniversi
                   </div>
                 </>
               ) : null}
-              <p className="mt-3 text-[11px] font-bold leading-5">{state.message}</p>
+              <p className="mt-3 text-xs font-bold leading-5">{state.message}</p>
             </div>
           )}
 
@@ -340,7 +340,7 @@ function UniversityAssessmentDialog({ university }: { university: KoreanUniversi
             <ClipboardCheck size={16} aria-hidden="true" />
             {pending ? "正在评估…" : "生成并保存评估"}
           </button>
-          <p className="text-[10px] leading-5 app-muted-text">
+          <p className="text-xs leading-5 app-muted-text">
             评估仅用于初步选校参考，不构成录取承诺。最终条件请以大学当年招生简章与人工顾问复核为准。
           </p>
         </form>
@@ -354,7 +354,7 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
     <Dialog>
       <DialogTrigger
         type="button"
-        className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-[11px] font-black transition hover:-translate-y-0.5"
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-black transition hover:-translate-y-0.5"
         style={{ color: "var(--app-accent-strong)", borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
       >
         学校介绍 <ArrowUpRight size={13} aria-hidden="true" />
@@ -378,7 +378,7 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
           <RankPanel label="世界大学排名" rank={university.qs_rank_display} year={university.qs_ranking_year} />
           <RankPanel label="韩国中央日报" rank={university.joongang_rank_display} year={university.joongang_ranking_year} />
           <div className="rounded-2xl border px-3 py-2.5" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
-            <p className="text-[9px] font-black app-muted-text">{university.tuition_reference_year} 年度学费参考</p>
+            <p className="text-[10px] font-black app-muted-text">{university.tuition_reference_year} 年度学费参考</p>
             <p className="mt-1 text-sm font-black">{formatWan(university.tuition_min_cny)}万—{formatWan(university.tuition_max_cny)}万元</p>
           </div>
         </div>
@@ -387,13 +387,13 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
           <section className="app-soft-card rounded-2xl border p-4">
             <h3 className="flex items-center gap-2 text-sm font-black"><BookOpen size={16} /> 申请阶段</h3>
             <div className="mt-3 flex flex-wrap gap-2">
-              {university.admission_stages.map((stage) => <span key={stage} className="rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-bold">{stageLabelMap[stage] ?? stage}</span>)}
+              {university.admission_stages.map((stage) => <span key={stage} className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold">{stageLabelMap[stage] ?? stage}</span>)}
             </div>
           </section>
           <section className="app-soft-card rounded-2xl border p-4">
             <h3 className="flex items-center gap-2 text-sm font-black"><GraduationCap size={16} /> 优势学科</h3>
             <div className="mt-3 flex flex-wrap gap-2">
-              {university.discipline_groups.map((group) => <span key={group} className="rounded-full bg-white/70 px-2.5 py-1 text-[10px] font-bold">{disciplineLabelMap[group] ?? group}</span>)}
+              {university.discipline_groups.map((group) => <span key={group} className="rounded-full bg-white/70 px-2.5 py-1 text-xs font-bold">{disciplineLabelMap[group] ?? group}</span>)}
             </div>
           </section>
         </div>
@@ -409,7 +409,7 @@ function UniversityDetailsDialog({ university }: { university: KoreanUniversity 
           </div>
         </section>
 
-        <div className="rounded-2xl p-4 text-[11px] leading-5" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>
+        <div className="rounded-2xl p-4 text-xs leading-5" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>
           学费按专业、学期和奖学金情况变化，人民币金额也受汇率影响；排名为标注年份的数据。申请前请由顾问在管理中心复核当年招生简章与缴费通知。
         </div>
         <div className="flex flex-wrap gap-2">
@@ -434,20 +434,20 @@ function UniversityCard({
   isTarget: boolean;
 }) {
   return (
-    <article className="app-card group flex min-h-[530px] flex-col overflow-hidden rounded-[26px] border transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+    <article className="app-card group flex min-h-[530px] flex-col overflow-hidden rounded-3xl border transition duration-300 hover:-translate-y-1 hover:shadow-xl">
       <div className="relative h-2" style={{ background: "linear-gradient(90deg, var(--app-accent), var(--app-secondary), var(--app-success))" }} />
       <div className="flex flex-1 flex-col p-4">
         <div className="flex items-start justify-between gap-3">
           <SchoolCrest logoUrl={university.logo_url} name={university.name_zh} />
           <div className="flex flex-wrap justify-end gap-1.5">
-            {university.is_featured && <span className="rounded-full px-2 py-1 text-[9px] font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>重点院校</span>}
-            <span className="rounded-full px-2 py-1 text-[9px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{ownershipLabelMap[university.ownership]}</span>
+            {university.is_featured && <span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>重点院校</span>}
+            <span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{ownershipLabelMap[university.ownership]}</span>
           </div>
         </div>
 
         <h3 className="mt-4 text-base font-black tracking-tight">{university.name_zh}</h3>
-        <p className="mt-1 truncate text-[10px] font-bold app-muted-text">{university.name_ko}</p>
-        <p className="mt-3 flex items-center gap-1.5 text-[11px] font-bold app-muted-text"><MapPin size={13} style={{ color: "var(--app-accent)" }} /> {university.province} · {university.city}</p>
+        <p className="mt-1 truncate text-xs font-bold app-muted-text">{university.name_ko}</p>
+        <p className="mt-3 flex items-center gap-1.5 text-xs font-bold app-muted-text"><MapPin size={13} style={{ color: "var(--app-accent)" }} /> {university.province} · {university.city}</p>
 
         <div className="mt-4 grid grid-cols-2 gap-2">
           <RankPanel label="世界大学排名" rank={university.qs_rank_display} year={university.qs_ranking_year} />
@@ -456,39 +456,39 @@ function UniversityCard({
 
         <div className="mt-3 rounded-2xl border p-3" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-warm-soft)" }}>
           <div className="flex items-center justify-between gap-2">
-            <p className="text-[9px] font-black app-muted-text">{university.tuition_reference_year} 每年学费参考</p>
+            <p className="text-[10px] font-black app-muted-text">{university.tuition_reference_year} 每年学费参考</p>
             <CircleDollarSign size={13} style={{ color: "var(--app-warm)" }} />
           </div>
           <p className="mt-1 text-sm font-black">{formatWan(university.tuition_min_cny)}万—{formatWan(university.tuition_max_cny)}万元</p>
-          <p className="mt-1 text-[9px] app-muted-text">约 {formatKrw(university.tuition_min_krw)}—{formatKrw(university.tuition_max_krw)}韩元</p>
+          <p className="mt-1 text-[10px] app-muted-text">约 {formatKrw(university.tuition_min_krw)}—{formatKrw(university.tuition_max_krw)}韩元</p>
         </div>
 
         <div className="mt-3 flex min-h-12 flex-wrap content-start gap-1.5">
           {university.discipline_groups.slice(0, 3).map((group) => (
-            <span key={group} className="rounded-full border px-2 py-1 text-[9px] font-bold app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}>{disciplineLabelMap[group] ?? group}</span>
+            <span key={group} className="rounded-full border px-2 py-1 text-[10px] font-bold app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}>{disciplineLabelMap[group] ?? group}</span>
           ))}
-          {university.discipline_groups.length > 3 && <span className="rounded-full border px-2 py-1 text-[9px] font-bold app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}>+{university.discipline_groups.length - 3}</span>}
+          {university.discipline_groups.length > 3 && <span className="rounded-full border px-2 py-1 text-[10px] font-bold app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}>+{university.discipline_groups.length - 3}</span>}
         </div>
 
         <div className="mt-auto space-y-2 pt-4">
           <form action={addLibraryUniversityTargetAction.bind(null, university.id)} data-permission="university_target" className="flex gap-2">
-            <select name="admissionTrack" disabled={isTarget} defaultValue={university.admission_stages[0]} aria-label={`${university.name_zh}的申请阶段`} className="app-input min-w-0 flex-1 rounded-xl border px-2 py-2.5 text-[10px] font-bold outline-none disabled:opacity-60">
+            <select name="admissionTrack" disabled={isTarget} defaultValue={university.admission_stages[0]} aria-label={`${university.name_zh}的申请阶段`} className="app-input min-w-0 flex-1 rounded-xl border px-2 py-2.5 text-xs font-bold outline-none disabled:opacity-60">
               {university.admission_stages.map((stage) => <option key={stage} value={stage}>{stageLabelMap[stage] ?? stage}</option>)}
             </select>
-            <button disabled={isTarget} type="submit" className="inline-flex items-center gap-1 rounded-xl px-3 py-2.5 text-[10px] font-black text-white disabled:cursor-default" style={{ backgroundColor: isTarget ? "var(--app-success)" : "var(--app-accent)" }}>
+            <button disabled={isTarget} type="submit" className="inline-flex items-center gap-1 rounded-xl px-3 py-2.5 text-xs font-black text-white disabled:cursor-default" style={{ backgroundColor: isTarget ? "var(--app-success)" : "var(--app-accent)" }}>
               {isTarget ? <Check size={12} /> : <Target size={12} />}{isTarget ? "已是目标" : "加入目标"}
             </button>
           </form>
           <div className="flex gap-2">
             <form action={toggleUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison" className="flex-1">
-              <button type="submit" className="app-soft-card inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-2 py-2.5 text-[11px] font-black transition hover:opacity-80" style={isCompared ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)" } : undefined}>
+              <button type="submit" className="app-soft-card inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-2 py-2.5 text-xs font-black transition hover:opacity-80" style={isCompared ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)" } : undefined}>
                 {isCompared ? <X size={13} /> : <Scale size={13} />}{isCompared ? "移出对比" : "加入对比"}
               </button>
             </form>
             <UniversityAssessmentDialog university={university} />
           </div>
           <UniversityDetailsDialog university={university} />
-          <Link href={`/dashboard/universities/library/${university.id}`} className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-[11px] font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入学校页面 <ArrowUpRight size={13}/></Link>
+          <Link href={`/dashboard/universities/library/${university.id}`} className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入学校页面 <ArrowUpRight size={13}/></Link>
         </div>
       </div>
     </article>
@@ -551,13 +551,13 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
   }
 
   return (
-    <section className="grid items-start gap-6 lg:grid-cols-[260px_minmax(0,1fr)]">
-      <aside className="app-card rounded-[28px] border p-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
+    <section className="grid items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
+      <aside className="app-card rounded-3xl border p-4 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto">
         <div className="flex items-center justify-between gap-3">
           <div className="flex items-center gap-2"><Filter size={17} style={{ color: "var(--app-accent)" }} /><h2 className="text-sm font-black">选校导航</h2></div>
-          {activeFilterCount > 0 && <span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>{activeFilterCount} 项</span>}
+          {activeFilterCount > 0 && <span className="rounded-full px-2 py-1 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>{activeFilterCount} 项</span>}
         </div>
-        <button type="button" onClick={resetFilters} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-black app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}><RotateCcw size={12} /> 重置全部筛选</button>
+        <button type="button" onClick={resetFilters} className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}><RotateCcw size={12} /> 重置全部筛选</button>
 
         <div className="mt-5 space-y-5">
           <FilterSection title="申请阶段">
@@ -585,7 +585,7 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
       </aside>
 
       <div className="min-w-0 space-y-5">
-        <div className="app-card rounded-[28px] border p-4 sm:p-5">
+        <div className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div>
               <div className="flex items-center gap-2"><Landmark size={18} style={{ color: "var(--app-secondary)" }} /><h2 className="text-lg font-black">韩国大学学校库</h2></div>
@@ -599,11 +599,11 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
           </div>
         </div>
 
-        <section className="app-card rounded-[28px] border p-4 sm:p-5">
+        <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Scale size={18} /></span>
-              <div><h3 className="text-sm font-black">四校对比</h3><p className="mt-0.5 text-[11px] app-muted-text">已选择 {comparedUniversities.length}／4 所，点击已选院校可直接移出。</p></div>
+              <div><h3 className="text-sm font-black">四校对比</h3><p className="mt-0.5 text-xs app-muted-text">已选择 {comparedUniversities.length}／4 所，点击已选院校可直接移出。</p></div>
             </div>
             <div className="grid flex-1 gap-2 sm:grid-cols-2 xl:max-w-3xl xl:grid-cols-4">
               {[0, 1, 2, 3].map((index) => {
@@ -611,17 +611,17 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
                 return university ? (
                   <form key={university.id} action={toggleUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison">
                     <button type="submit" className="group/compare flex min-h-20 w-full min-w-0 items-center gap-2 rounded-xl border px-3 py-2 text-left transition hover:-translate-y-0.5" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span>
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11px] font-black">{university.name_zh}</span>
-                        <span className="mt-1 block truncate text-[9px] font-bold app-muted-text">{ownershipLabelMap[university.ownership]} · {university.city}</span>
-                        <span className="mt-0.5 block truncate text-[9px] font-bold app-muted-text">{formatWan(university.tuition_min_cny)}万—{formatWan(university.tuition_max_cny)}万元 · {university.qs_rank_display ? `世界第 ${university.qs_rank_display}` : "世界排名暂无"}</span>
+                        <span className="block truncate text-xs font-black">{university.name_zh}</span>
+                        <span className="mt-1 block truncate text-[10px] font-bold app-muted-text">{ownershipLabelMap[university.ownership]} · {university.city}</span>
+                        <span className="mt-0.5 block truncate text-[10px] font-bold app-muted-text">{formatWan(university.tuition_min_cny)}万—{formatWan(university.tuition_max_cny)}万元 · {university.qs_rank_display ? `世界第 ${university.qs_rank_display}` : "世界排名暂无"}</span>
                       </span>
                       <X className="shrink-0 opacity-0 transition group-hover/compare:opacity-100" size={12} aria-hidden="true" />
                     </button>
                   </form>
                 ) : (
-                  <div key={`empty-${index}`} className="flex min-h-20 items-center justify-center rounded-xl border border-dashed px-3 py-2 text-[10px] font-bold app-muted-text" style={{ borderColor: "var(--app-border)" }}>待选择</div>
+                  <div key={`empty-${index}`} className="flex min-h-20 items-center justify-center rounded-xl border border-dashed px-3 py-2 text-xs font-bold app-muted-text" style={{ borderColor: "var(--app-border)" }}>待选择</div>
                 );
               })}
             </div>
@@ -635,10 +635,10 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
             ))}
           </div>
         ) : (
-          <div className="app-card flex min-h-80 flex-col items-center justify-center rounded-[28px] border p-8 text-center">
+          <div className="app-card flex min-h-80 flex-col items-center justify-center rounded-3xl border p-6 text-center">
             <BarChart3 size={30} style={{ color: "var(--app-secondary)" }} />
             <h3 className="mt-4 text-base font-black">暂时没有完全符合的大学</h3>
-            <p className="mt-2 max-w-md text-xs leading-6 app-muted-text">可以减少一个排名或地区条件。学费区间会因专业不同而变化，筛选结果采用区间重叠方式计算。</p>
+            <p className="mt-2 max-w-md text-xs leading-5 app-muted-text">可以减少一个排名或地区条件。学费区间会因专业不同而变化，筛选结果采用区间重叠方式计算。</p>
             <button type="button" onClick={resetFilters} className="mt-5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>清除筛选</button>
           </div>
         )}
@@ -649,7 +649,7 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
           </button>
         )}
 
-        <div className="flex items-start gap-2 rounded-2xl border p-4 text-[10px] leading-5 app-muted-text" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-card-bg)" }}>
+        <div className="flex items-start gap-2 rounded-2xl border p-4 text-xs leading-5 app-muted-text" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-card-bg)" }}>
           <BookOpen className="mt-0.5 shrink-0" size={14} />
           <p>本页展示的学费为年度参考区间，人民币换算会受汇率影响；排名按卡片标注年份展示，没有可靠公开值时显示“暂无”。正式申请前请由顾问复核大学当年的招生简章与缴费通知。</p>
         </div>

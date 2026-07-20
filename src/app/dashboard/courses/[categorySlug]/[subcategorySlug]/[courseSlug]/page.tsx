@@ -9,8 +9,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
-import { createClient } from "@/lib/supabase/server";
-import { DashboardPageHeader } from "../../../../DashboardPageHeader";
+import { requireActiveUser } from "@/lib/auth";
 import {
   getCourseLevelLabel,
   getLessonTypeLabel,
@@ -107,7 +106,8 @@ export default async function CourseDetailPage({
 }) {
   const { categorySlug, subcategorySlug, courseSlug } = await params;
 
-  const supabase = await createClient();
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
 
   /**
    * 1. 查询一级课程板块
@@ -179,13 +179,9 @@ export default async function CourseDetailPage({
   /**
    * 5. 查询当前用户的课时学习进度
    */
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
   let progressList: LessonProgress[] = [];
 
-  if (user && lessons.length > 0) {
+  if (!isPlatformAudit && user && lessons.length > 0) {
     const lessonIds = lessons.map((lesson) => lesson.id);
 
     const { data: progressData } = await supabase
@@ -229,16 +225,12 @@ export default async function CourseDetailPage({
 
   return (
     <>
-      <DashboardPageHeader
-        title={course.title}
-        description={course.description || "查看课程介绍和课时学习进度。"}
-      />
 
       <div
         className={
           isFocusCategory
-            ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
-            : "space-y-6 p-6"
+            ? "mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8"
+            : "space-y-5 p-5"
         }
       >
         {/* 返回路径 */}
@@ -272,7 +264,7 @@ export default async function CourseDetailPage({
 
         {/* 课程信息 + 课程进度 */}
         <section
-          className="app-card rounded-[30px] border p-6 shadow-sm"
+          className="app-card rounded-3xl border p-5 shadow-sm"
           style={
             isFocusCategory
               ? {
@@ -284,7 +276,7 @@ export default async function CourseDetailPage({
               : undefined
           }
         >
-          <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_240px] lg:items-start">
             <div className="flex gap-4">
               <div
                 className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border"
@@ -345,30 +337,30 @@ export default async function CourseDetailPage({
               </div>
             </div>
 
-            <div className="app-soft-card rounded-2xl border p-4 shadow-sm">
+            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--app-border)" }}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-gray-900">课程进度</p>
+                  <p className="text-sm font-black text-gray-900">{isPlatformAudit ? "巡检模式" : "课程进度"}</p>
 
                   <p className="mt-1 text-xs text-gray-500">
-                    已完成 {completedCount} / {totalLessons} 个课时
+                    {isPlatformAudit ? `共 ${totalLessons} 个课时 · 不记录进度` : `已完成 ${completedCount} / ${totalLessons} 个课时`}
                   </p>
                 </div>
 
                 <p className="text-2xl font-black tracking-tight text-gray-900">
-                  {courseProgressPercent}%
+                  {isPlatformAudit ? "只读" : `${courseProgressPercent}%`}
                 </p>
               </div>
 
               <div
                 className="mt-4 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-card-bg)" }}
+                style={{ backgroundColor: "var(--app-soft-bg)" }}
               >
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
                     width: `${courseProgressPercent}%`,
-                    backgroundColor: accentColor,
+                    backgroundColor: "var(--app-success)",
                   }}
                 />
               </div>
@@ -377,16 +369,11 @@ export default async function CourseDetailPage({
         </section>
 
         {/* 课时列表 */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900">
-                课时列表
-              </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                按顺序完成课时，系统会自动记录学习状态。
-              </p>
-            </div>
+            <h3 className="text-lg font-black tracking-tight text-gray-900">
+              课时列表
+            </h3>
 
             <BookOpenCheck className="text-gray-300" size={28} />
           </div>
@@ -490,8 +477,8 @@ export default async function CourseDetailPage({
 
                       <div className="w-full shrink-0 lg:w-56">
                         <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
-                          <span>学习进度</span>
-                          <span>{progressPercent}%</span>
+                          <span>{isPlatformAudit ? "巡检状态" : "学习进度"}</span>
+                          <span>{isPlatformAudit ? "不记录" : `${progressPercent}%`}</span>
                         </div>
 
                         <div
@@ -531,7 +518,9 @@ export default async function CourseDetailPage({
                           }}
                         >
                           <PlayCircle size={15} />
-                          {isCompleted
+                          {isPlatformAudit
+                            ? "巡检课时"
+                            : isCompleted
                             ? "复习课时"
                             : isInProgress
                               ? "继续学习"
@@ -544,7 +533,7 @@ export default async function CourseDetailPage({
               })}
             </div>
           ) : (
-            <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center">
+            <div className="app-empty-state rounded-2xl p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课时</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前课程还没有发布课时。

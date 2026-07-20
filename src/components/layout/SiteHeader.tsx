@@ -7,6 +7,7 @@ import { ArrowRight, MapPinned, Menu, X } from "lucide-react";
 import type { User } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/client";
+import { isDashboardPathname } from "@/lib/dashboard-path";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,14 +25,13 @@ const navItems = [
   { label: "学习成果", href: "/#outcomes" },
   { label: "服务支持", href: "/#services" },
   { label: "开始规划", href: "/#start-plan" },
-  { label: "元智AI", href: "/yuanzhi-ai" },
 ];
 
 export function SiteHeader() {
   const pathname = usePathname();
 
   // 控制台使用自己的顶部条，公开站点导航只在非控制台页面显示。
-  if (pathname.startsWith("/dashboard")) {
+  if (isDashboardPathname(pathname)) {
     return null;
   }
 
@@ -82,11 +82,11 @@ function PublicSiteHeader() {
   }
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#deedf5] bg-[#fffdf8]/92 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#deedf5] bg-[#f8fbff]/92 backdrop-blur-xl">
       <nav className="mx-auto flex h-[76px] max-w-7xl items-center justify-between gap-4 px-5 sm:px-8" aria-label="主导航">
         {/* 中文品牌标识使用暖橙与天蓝，呼应留学和成长双主线。 */}
         <Link href="/" className="group flex shrink-0 items-center gap-3">
-          <span className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white bg-[conic-gradient(from_35deg,#ff8c70_0_50%,#78c8ef_50%_100%)] shadow-[0_8px_20px_rgba(73,133,169,0.18)] transition group-hover:-rotate-3 group-hover:scale-105">
+          <span className="relative grid h-11 w-11 place-items-center overflow-hidden rounded-2xl border border-white bg-[conic-gradient(from_35deg,#7dacff_0_50%,#78c8ef_50%_100%)] shadow-[0_8px_20px_rgba(73,133,169,0.18)] transition group-hover:-rotate-3 group-hover:scale-105">
             <span className="grid h-6 w-6 place-items-center rounded-full bg-white/90 text-[#345f78]">
               <MapPinned size={15} />
             </span>
@@ -104,7 +104,7 @@ function PublicSiteHeader() {
             <Link
               key={item.label}
               href={item.href}
-              className="rounded-xl px-4 py-2.5 text-sm font-bold text-[#557186] transition hover:bg-[#edf8ff] hover:text-[#2e7ca8]"
+              className="rounded-xl px-4 py-2.5 text-sm font-bold text-[#557186] transition hover:bg-[#edf6ff] hover:text-[#2e7ca8]"
             >
               {item.label}
             </Link>
@@ -119,12 +119,12 @@ function PublicSiteHeader() {
             <div className="hidden items-center gap-2 sm:flex">
               <Link
                 href="/dashboard"
-                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#2e7299] transition hover:bg-[#edf8ff]"
+                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#2e7299] transition hover:bg-[#edf6ff]"
               >
                 个人中心
               </Link>
               <AlertDialog>
-                <AlertDialogTrigger className="rounded-xl border border-[#d7e6ee] bg-white px-4 py-2.5 text-sm font-black text-[#61798a] transition hover:bg-[#f6fafc]">
+                <AlertDialogTrigger className="rounded-xl border border-[#d7e6ee] bg-white px-4 py-2.5 text-sm font-black text-[#61798a] transition hover:bg-[#f6f9fc]">
                   退出
                 </AlertDialogTrigger>
                 <AlertDialogContent>
@@ -136,7 +136,7 @@ function PublicSiteHeader() {
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>取消</AlertDialogCancel>
-                    <AlertDialogAction onClick={handleLogout} className="bg-[#e96c52] hover:bg-[#d95f46]">
+                    <AlertDialogAction onClick={handleLogout} className="bg-[#5290e9] hover:bg-[#4683d9]">
                       确认退出
                     </AlertDialogAction>
                   </AlertDialogFooter>
@@ -147,13 +147,13 @@ function PublicSiteHeader() {
             <div className="hidden items-center gap-2 sm:flex">
               <Link
                 href="/login"
-                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#527084] transition hover:bg-[#edf8ff]"
+                className="rounded-xl px-4 py-2.5 text-sm font-black text-[#527084] transition hover:bg-[#edf6ff]"
               >
                 登录
               </Link>
               <Link
                 href="/register"
-                className="group inline-flex items-center gap-2 rounded-xl bg-[#f37b5e] px-4 py-2.5 text-sm font-black text-white shadow-[0_10px_24px_rgba(243,123,94,0.22)] transition hover:-translate-y-0.5 hover:bg-[#e86d50]"
+                className="group inline-flex items-center gap-2 rounded-xl bg-[#5e98f3] px-4 py-2.5 text-sm font-black text-white shadow-[0_10px_24px_rgba(94, 152, 243,0.22)] transition hover:-translate-y-0.5 hover:bg-[#508ce8]"
               >
                 免费开始
                 <ArrowRight size={15} className="transition-transform group-hover:translate-x-0.5" />
@@ -175,14 +175,14 @@ function PublicSiteHeader() {
 
       {/* 移动端菜单保持大触控区域，并包含完整的登录入口。 */}
       {menuOpen && (
-        <div className="border-t border-[#e1edf3] bg-[#fffdf8] px-5 pb-5 pt-3 md:hidden">
+        <div className="border-t border-[#e1edf3] bg-[#f8fbff] px-5 pb-5 pt-3 md:hidden">
           <div className="mx-auto grid max-w-7xl gap-1">
             {navItems.map((item) => (
               <Link
                 key={item.label}
                 href={item.href}
                 onClick={() => setMenuOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm font-black text-[#48677b] hover:bg-[#edf8ff]"
+                className="rounded-xl px-4 py-3 text-sm font-black text-[#48677b] hover:bg-[#edf6ff]"
               >
                 {item.label}
               </Link>
@@ -194,14 +194,14 @@ function PublicSiteHeader() {
                     <Link
                       href="/dashboard"
                       onClick={() => setMenuOpen(false)}
-                      className="rounded-xl bg-[#e9f6fd] px-4 py-3 text-center text-sm font-black text-[#31799f]"
+                      className="rounded-xl bg-[#e9f3fd] px-4 py-3 text-center text-sm font-black text-[#31799f]"
                     >
                       个人中心
                     </Link>
                     <button
                       type="button"
                       onClick={handleLogout}
-                      className="rounded-xl border border-[#f0d2c8] bg-white px-4 py-3 text-sm font-black text-[#cb664e]"
+                      className="rounded-xl border border-[#c8d5f0] bg-white px-4 py-3 text-sm font-black text-[#4e7fcb]"
                     >
                       退出登录
                     </button>
@@ -218,7 +218,7 @@ function PublicSiteHeader() {
                     <Link
                       href="/register"
                       onClick={() => setMenuOpen(false)}
-                      className="rounded-xl bg-[#f37b5e] px-4 py-3 text-center text-sm font-black text-white"
+                      className="rounded-xl bg-[#5e98f3] px-4 py-3 text-center text-sm font-black text-white"
                     >
                       免费开始
                     </Link>

@@ -21,14 +21,14 @@ export function PracticeReflectionForm({
   const [state, formAction, pending] = useActionState(action, initialConversationPracticeActionState);
 
   return (
-    <form action={formAction} className="app-card rounded-[28px] border p-5 sm:p-7">
+    <form action={formAction} className="app-card rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
           <CheckCircle2 size={20} aria-hidden="true" />
         </span>
         <div>
           <h2 className="text-lg font-black">记录本次练习</h2>
-          <p className="app-muted-text mt-1 text-xs leading-6">每次保存都会累计练习次数，复盘内容可以继续修改。</p>
+          <p className="app-muted-text mt-1 text-xs leading-5">每次保存都会累计练习次数，复盘内容可以继续修改。</p>
         </div>
       </div>
 
@@ -46,7 +46,7 @@ export function PracticeReflectionForm({
 
       <label className="mt-5 block text-xs font-black">
         练习复盘
-        <textarea name="reflection" defaultValue={reflection} maxLength={1200} rows={5} placeholder="写下卡住的表达、发音问题，或者下次想改进的地方。" className="app-input mt-2 w-full resize-y rounded-2xl border px-4 py-3 text-sm leading-7" />
+        <textarea name="reflection" defaultValue={reflection} maxLength={1200} rows={5} placeholder="写下卡住的表达、发音问题，或者下次想改进的地方。" className="app-input mt-2 w-full resize-y rounded-2xl border px-4 py-3 text-sm leading-6" />
       </label>
 
       <label className="app-soft-card mt-4 flex cursor-pointer items-center gap-3 rounded-xl border px-4 py-3 text-xs font-bold">

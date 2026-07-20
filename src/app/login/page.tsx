@@ -1,7 +1,5 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
@@ -9,8 +7,8 @@ import {
   ArrowRight,
   CircleAlert,
   LockKeyhole,
-  Mail,
   ShieldCheck,
+  UserRound,
 } from "lucide-react";
 
 import { AuthPageShell } from "@/components/auth/AuthPageShell";
@@ -19,11 +17,10 @@ import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
+import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
 
 const formSchema = z.object({
-  email: z.string().trim().toLowerCase().email({
-    message: "请输入有效的电子邮箱",
-  }),
+  account: z.string().trim().min(3, { message: "请输入负责人提供的登录账号" }),
   password: z.string().min(6, {
     message: "密码至少需要 6 个字符",
   }),
@@ -32,11 +29,10 @@ const formSchema = z.object({
 type LoginFormValues = z.infer<typeof formSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      email: "",
+      account: "",
       password: "",
     },
   });
@@ -44,54 +40,67 @@ export default function LoginPage() {
   async function onSubmit(values: LoginFormValues) {
     form.clearErrors("root");
     const supabase = createClient();
+    const account = values.account.trim();
+    // 兼容迁移期的历史邮箱账号；新租户账号始终使用负责人分配的登录账号。
+    const email = account.includes("@")
+      ? account.toLowerCase()
+      : isValidLoginId(account)
+        ? loginIdToInternalEmail(normalizeLoginId(account))
+        : null;
+    if (!email) {
+      form.setError("account", { message: "账号格式不正确" });
+      return;
+    }
     const { error } = await supabase.auth.signInWithPassword({
-      email: values.email,
+      email,
       password: values.password,
     });
 
     // 登录失败统一使用模糊提示，避免暴露邮箱是否已经注册。
     if (error) {
       form.setError("root", {
-        message: "邮箱或密码不正确，请检查后重试",
+        message: "账号或密码不正确，请检查后重试",
       });
       return;
     }
 
-    router.replace("/dashboard");
-    router.refresh();
+    // 不使用客户端软导航：不同角色连续登录时，复用旧 Dashboard 布局会让
+    // 服务端导航与客户端缓存不一致，从而触发 hydration mismatch。
+    window.location.replace("/dashboard");
   }
 
   return (
     <AuthPageShell variant="login">
       <section className="rounded-[2rem] border border-white/90 bg-white/94 p-6 shadow-[0_28px_75px_rgba(52,106,140,0.17)] backdrop-blur sm:p-8">
         <div>
-          <p className="text-sm font-black tracking-[0.12em] text-[#ec7659]">账号登录</p>
+          <p className="text-sm font-black tracking-[0.12em] text-[#5992ec]">账号登录</p>
           <h2 className="mt-2 text-3xl font-black tracking-[-0.035em] text-[#183f5b]">
             欢迎回来
           </h2>
           <p className="mt-2 text-sm leading-6 text-[#708897]">
-            输入邮箱和密码，继续你的课程与成长计划。
+            输入负责人分配的账号和密码，继续你的课程与成长计划。
           </p>
         </div>
 
         <form onSubmit={form.handleSubmit(onSubmit)} className="mt-7 space-y-6" noValidate>
           <FieldGroup>
             <Controller
-              name="email"
+              name="account"
               control={form.control}
               render={({ field, fieldState }) => (
                 <Field data-invalid={fieldState.invalid}>
                   <FieldLabel htmlFor={field.name} className="font-black text-[#365c74]">
-                    <Mail size={16} className="text-[#4a98c1]" />
-                    电子邮箱
+                    <UserRound size={16} className="text-[#4a98c1]" />
+                    登录账号
                   </FieldLabel>
                   <Input
                     {...field}
                     id={field.name}
-                    type="email"
-                    inputMode="email"
-                    autoComplete="email"
-                    placeholder="请输入注册时使用的邮箱"
+                    type="text"
+                    inputMode="text"
+                    autoComplete="username"
+                    autoCapitalize="none"
+                    placeholder="请输入负责人分配的账号"
                     aria-invalid={fieldState.invalid}
                     className="h-12 rounded-xl border-[#d8e7ee] bg-[#fbfdfe] px-4 text-base focus-visible:border-[#62add3] focus-visible:ring-[#d7effb]"
                   />
@@ -107,7 +116,7 @@ export default function LoginPage() {
                 <Field data-invalid={fieldState.invalid}>
                   <div className="flex items-center justify-between gap-3">
                     <FieldLabel htmlFor={field.name} className="font-black text-[#365c74]">
-                      <LockKeyhole size={16} className="text-[#ef7d60]" />
+                      <LockKeyhole size={16} className="text-[#6096ef]" />
                       密码
                     </FieldLabel>
                     <span className="text-xs font-bold text-[#8195a2]">忘记密码请联系管理员</span>
@@ -129,7 +138,7 @@ export default function LoginPage() {
           {form.formState.errors.root?.message && (
             <div
               role="alert"
-              className="flex items-start gap-2 rounded-xl border border-[#f4d3c9] bg-[#fff4ef] px-4 py-3 text-sm font-bold leading-6 text-[#b95843]"
+              className="flex items-start gap-2 rounded-xl border border-[#c9d8f4] bg-[#eff7ff] px-4 py-3 text-sm font-bold leading-6 text-[#4373b9]"
             >
               <CircleAlert size={17} className="mt-0.5 shrink-0" />
               {form.formState.errors.root.message}
@@ -139,7 +148,7 @@ export default function LoginPage() {
           <Button
             type="submit"
             disabled={form.formState.isSubmitting}
-            className="h-12 w-full rounded-xl bg-[#f2785b] text-base font-black text-white shadow-[0_14px_30px_rgba(242,120,91,0.25)] transition hover:-translate-y-0.5 hover:bg-[#e8684d]"
+            className="h-12 w-full rounded-xl bg-[#5b96f2] text-base font-black text-white shadow-[0_14px_30px_rgba(91, 150, 242,0.25)] transition hover:-translate-y-0.5 hover:bg-[#4d8ce8]"
           >
             {form.formState.isSubmitting ? (
               "正在登录…"
@@ -158,10 +167,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 border-t border-[#e5eef3] pt-6 text-center text-sm text-[#708795]">
-          还没有成长档案？
-          <Link href="/register" className="ml-1 font-black text-[#3380aa] transition hover:text-[#ed7357]">
-            免费创建账号
-          </Link>
+          需要开通账号？请联系负责人创建。
         </div>
       </section>
     </AuthPageShell>

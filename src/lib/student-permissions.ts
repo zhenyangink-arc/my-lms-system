@@ -2,6 +2,7 @@ export const membershipTiers = ["normal", "vip1", "vip2", "vip3"] as const;
 
 export type MembershipTier = (typeof membershipTiers)[number];
 export type StudentFeature =
+  | "dashboard_section"
   | "message_services"
   | "learning_assignments"
   | "university_target"
@@ -18,7 +19,14 @@ export const MEMBERSHIP_TIER_LABELS: Record<MembershipTier, string> = {
   vip3: "VIP3 学生",
 };
 
-const staffRoles = new Set(["teacher", "admin", "ceo", "super_admin"]);
+const staffRoles = new Set([
+  "teacher",
+  "admin",
+  "ceo",
+  "platform_super_admin",
+  "tenant_super_admin",
+  "tenant_operator",
+]);
 
 export function normalizeMembershipTier(value: string | null | undefined): MembershipTier {
   return membershipTiers.includes(value as MembershipTier)
@@ -39,6 +47,7 @@ export function canUseStudentFeature(
   if (!hasVipBase) return false;
 
   return (
+    feature === "dashboard_section" ||
     feature === "university_target" ||
     feature === "application_documents" ||
     feature === "visa_tasks" ||
@@ -47,6 +56,9 @@ export function canUseStudentFeature(
 }
 
 export function getFeatureDeniedMessage(feature: StudentFeature) {
+  if (feature === "dashboard_section") {
+    return "您暂无权限，如想新增权限，请联系管理员。管理员授权后即可进入该板块观看。";
+  }
   if (feature === "university_comparison") {
     return "当前会员档位暂未开放学校对比，请联系顾问了解后续权限。";
   }

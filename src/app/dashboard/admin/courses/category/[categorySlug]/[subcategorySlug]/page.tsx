@@ -202,7 +202,7 @@ export default async function AdminSubcategoryCoursesPage({
         }
       />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-5 p-5">
         <div className="flex flex-wrap items-center gap-3">
           <Link
             href={`/dashboard/admin/courses/category/${parentCategory.slug}`}
@@ -223,7 +223,7 @@ export default async function AdminSubcategoryCoursesPage({
         </div>
 
         {/* 当前二级分类概览 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_260px] lg:items-center">
             <div>
               <div className="mb-3 flex flex-wrap gap-2">
@@ -270,7 +270,7 @@ export default async function AdminSubcategoryCoursesPage({
         </section>
 
         {/* 具体课程列表 */}
-        <section className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
               <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -389,7 +389,7 @@ export default async function AdminSubcategoryCoursesPage({
               })}
             </div>
           ) : (
-            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-8 text-center">
+            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程</p>
               <p className="mt-2 text-sm text-gray-500">
                 当前分类下还没有课程。

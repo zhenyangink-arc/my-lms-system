@@ -14,7 +14,6 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { DashboardPageHeader } from "../DashboardPageHeader";
 
 type TargetPreview = {
   id: string;
@@ -105,23 +104,19 @@ export default async function UniversitiesPage() {
 
   return (
     <>
-      <DashboardPageHeader
-        title="目标大学"
-        description="先选择要完成的任务，再进入目标管理、学校库或四校对比。"
-      />
-      <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <section
-          className="app-card relative overflow-hidden rounded-[34px] border p-6 sm:p-9"
+          className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-hero-start))" }}
         >
           <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-25 blur-3xl" style={{ backgroundColor: "var(--app-accent)" }} />
-          <div className="relative grid gap-7 lg:grid-cols-[1fr_440px] lg:items-center">
+          <div className="relative grid gap-5 lg:grid-cols-[1fr_440px] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
                 <Compass size={14} /> 选校规划中心
               </span>
-              <h2 className="mt-5 max-w-3xl text-3xl font-black tracking-tight sm:text-4xl">今天想先完成哪一步？</h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 app-muted-text">目标大学首页只保留清晰入口，不再一打开就展示大量学校。你的目标、学校资料和对比结果分别管理，使用起来更轻松。</p>
+              <h2 className="mt-3 max-w-3xl text-2xl font-black tracking-tight">今天想先完成哪一步？</h2>
+              <p className="mt-2 max-w-2xl text-sm leading-6 app-muted-text">目标大学首页只保留清晰入口，不再一打开就展示大量学校。你的目标、学校资料和对比结果分别管理，使用起来更轻松。</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
               {[
@@ -133,7 +128,7 @@ export default async function UniversitiesPage() {
                 <div key={label} className="app-card rounded-2xl border p-4">
                   <Icon size={17} style={{ color: "var(--app-accent)" }} />
                   <p className="mt-3 text-2xl font-black">{value}</p>
-                  <p className="mt-1 text-[10px] font-bold app-muted-text">{label}</p>
+                  <p className="mt-1 text-xs font-bold app-muted-text">{label}</p>
                 </div>
               ))}
             </div>
@@ -142,19 +137,19 @@ export default async function UniversitiesPage() {
 
         <section className="grid gap-5 lg:grid-cols-3">
           {entrances.map(({ title, description, href, icon: Icon, value, color, soft }) => (
-            <Link key={href} href={href} className="app-card group flex min-h-72 flex-col rounded-[30px] border p-6 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <Link key={href} href={href} className="app-card group flex min-h-72 flex-col rounded-3xl border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="flex items-start justify-between gap-4">
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color, backgroundColor: soft }}><Icon size={25} /></span>
-                <span className="rounded-full px-3 py-1.5 text-[10px] font-black" style={{ color, backgroundColor: soft }}>{value}</span>
+                <span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color, backgroundColor: soft }}>{value}</span>
               </div>
               <h2 className="mt-7 text-xl font-black">{title}</h2>
-              <p className="mt-3 text-sm leading-7 app-muted-text">{description}</p>
+              <p className="mt-3 text-sm leading-6 app-muted-text">{description}</p>
               <span className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-black" style={{ color }}>进入管理 <ArrowRight className="transition group-hover:translate-x-1" size={16} /></span>
             </Link>
           ))}
         </section>
 
-        <section className="app-card rounded-[30px] border p-5 sm:p-6">
+        <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}><GraduationCap size={19} /></span>
@@ -166,11 +161,17 @@ export default async function UniversitiesPage() {
           {targets.length > 0 ? (
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
               {targets.slice(0, 4).map((target) => (
-                <article key={target.id} className="app-soft-card rounded-2xl border p-4">
-                  <div className="flex items-center justify-between gap-2"><Building2 size={17} style={{ color: "var(--app-secondary)" }} /><span className="rounded-full bg-white/60 px-2 py-1 text-[9px] font-black app-muted-text">{statusLabels[target.status] ?? target.status}</span></div>
+                <Link
+                  key={target.id}
+                  href={`/dashboard/universities/targets?target=${encodeURIComponent(target.id)}#target-${target.id}`}
+                  aria-label={`查看${target.university_name}的目标进度`}
+                  className="app-soft-card group rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                >
+                  <div className="flex items-center justify-between gap-2"><Building2 size={17} style={{ color: "var(--app-secondary)" }} /><span className="rounded-full bg-white/60 px-2 py-1 text-[10px] font-black app-muted-text">{statusLabels[target.status] ?? target.status}</span></div>
                   <h3 className="mt-4 truncate text-sm font-black">{target.university_name}</h3>
-                  <p className="mt-1 text-[10px] font-bold app-muted-text">{trackLabels[target.admission_track ?? target.degree_level] ?? "申请规划"}</p>
-                </article>
+                  <p className="mt-1 text-xs font-bold app-muted-text">{trackLabels[target.admission_track ?? target.degree_level] ?? "申请规划"}</p>
+                  <span className="mt-4 inline-flex items-center gap-1 text-xs font-black" style={{ color: "var(--app-accent)" }}>查看进度 <ArrowRight className="transition group-hover:translate-x-0.5" size={11} /></span>
+                </Link>
               ))}
             </div>
           ) : (

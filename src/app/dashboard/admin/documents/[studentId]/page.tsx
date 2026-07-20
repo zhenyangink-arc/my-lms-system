@@ -5,18 +5,25 @@ import {
   CheckCircle2,
   Clock3,
   Crown,
-  Download,
-  FileClock,
-  FileSearch,
   FileText,
-  RotateCcw,
-  ShieldCheck,
+  Lock,
+  MinusCircle,
+  Plus,
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
+import { CATEGORY_ORDER } from "@/app/dashboard/documents/constants";
 import { DashboardPageHeader } from "../../../DashboardPageHeader";
-import { DocumentReviewControls } from "../DocumentReviewControls";
+import { StudentModuleCardDeleteDialog } from "../../StudentModuleCardDeleteDialog";
+import { AdminApplicationStageControl } from "../AdminApplicationStageControl";
+import { AdminCourierInfoForm } from "../AdminCourierInfoForm";
+import { AdminDocumentCategoryList } from "../AdminDocumentCategoryList";
+import { TargetLockButton } from "../TargetLockButton";
+import {
+  createApplicationChecklistItemAction,
+  deleteStudentDocumentCardAction,
+} from "../actions";
 
 type StudentProfile = {
   id: string;
@@ -25,153 +32,208 @@ type StudentProfile = {
   membership_tier: string | null;
 };
 
-type ReviewDocument = {
+type ChecklistDocument = {
   id: string;
+  target_id: string | null;
   title: string;
   category: string;
-  status: string;
-  original_file_name: string | null;
-  file_size_bytes: number | null;
-  submission_version: number;
-  submitted_at: string | null;
-  review_started_at: string | null;
-  reviewed_at: string | null;
-  review_note: string | null;
+  notes: string | null;
+  admin_note: string | null;
+  status: "preparing" | "completed" | "not_needed";
+  due_date: string | null;
+  updated_at: string;
   sort_order: number;
+  admin_locked_at: string | null;
 };
 
-type FileVersion = {
+type TargetApplication = {
   id: string;
-  document_id: string;
-  version: number;
-  original_file_name: string;
-  file_size_bytes: number;
-  submitted_at: string;
+  university_name: string;
+  program_name: string | null;
+  admission_track: string | null;
+  status: string;
+  documents_locked_at: string | null;
+  courier_mailed_at: string | null;
+  courier_estimated_arrival_at: string | null;
+  application_stage: number;
+  visa_application_channel: string | null;
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  not_started: "未开始",
-  preparing: "准备中",
-  pending_review: "待审核",
-  reviewing: "审核中",
-  approved: "已确认",
-  revision_required: "退回重交",
-};
-
-const CATEGORY_LABELS: Record<string, string> = {
-  identity: "身份材料",
-  academic: "学历材料",
-  application: "申请文书",
-  financial: "资金材料",
-  language: "语言材料",
-  other: "其他材料",
-};
-
-const STATUS_TONES: Record<string, { color: string; soft: string }> = {
-  pending_review: { color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  reviewing: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  approved: { color: "var(--app-success)", soft: "var(--app-success-soft)" },
-  revision_required: { color: "#d85b51", soft: "#fff0ed" },
-  preparing: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
-  not_started: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
+const ADMISSION_TRACK_LABELS: Record<string, string> = {
+  language: "语学院",
+  bachelor_fresh: "本科新入",
+  bachelor_transfer: "本科插班",
+  master: "硕士",
+  doctor: "博士",
 };
 
 function formatDate(value: string | null) {
   if (!value) return "暂无记录";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "时间待确认";
-  return new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
 }
 
-function formatFileSize(value: number) {
-  if (value < 1024 * 1024) return `${Math.max(1, Math.round(value / 1024))}KB`;
-  return `${(value / 1024 / 1024).toFixed(1)}MB`;
-}
-
-export default async function StudentDocumentReviewPage({ params }: { params: Promise<{ studentId: string }> }) {
+export default async function StudentDocumentPage({
+  params,
+}: {
+  params: Promise<{ studentId: string }>;
+}) {
   const { studentId } = await params;
   const { supabase } = await requireAdmin();
-  const [profileResult, documentsResult] = await Promise.all([
-    // 学生卡是按提交记录生成的，详情页不能再额外用角色字段过滤，否则历史账号会误报 404。
-    supabase.from("profiles").select("id, full_name, email, membership_tier").eq("id", studentId).maybeSingle(),
-    supabase.from("student_application_documents").select("id, title, category, status, original_file_name, file_size_bytes, submission_version, submitted_at, review_started_at, reviewed_at, review_note, sort_order").eq("user_id", studentId).order("sort_order", { ascending: true }),
+  const [profileResult, documentsResult, targetsResult] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, full_name, email, membership_tier")
+      .eq("id", studentId)
+      .maybeSingle(),
+    supabase
+      .from("student_application_documents")
+      .select("id, target_id, title, category, notes, admin_note, status, due_date, updated_at, sort_order, admin_locked_at")
+      .eq("user_id", studentId)
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from("student_university_targets")
+      .select("id, university_name, program_name, admission_track, status, documents_locked_at, courier_mailed_at, courier_estimated_arrival_at, application_stage, visa_application_channel")
+      .eq("user_id", studentId)
+      .neq("status", "researching")
+      .order("priority", { ascending: false }),
   ]);
 
   if (documentsResult.error) throw new Error("学生申请资料读取失败，请稍后重试。");
-  const documents = (documentsResult.data ?? []) as ReviewDocument[];
-  if (documents.length === 0) notFound();
+  const documents = (documentsResult.data ?? []) as ChecklistDocument[];
+  const targetApplications = (targetsResult.data ?? []) as TargetApplication[];
+  if (!profileResult.data && documents.length === 0 && targetApplications.length === 0) notFound();
+
+  const targetById = new Map(targetApplications.map((target) => [target.id, target]));
   const profile = (profileResult.data ?? {
     id: studentId,
     full_name: null,
     email: null,
     membership_tier: null,
   }) as StudentProfile;
-  const documentIds = documents.map((document) => document.id);
-  const filesResult = documentIds.length > 0
-    ? await supabase.from("student_application_document_files").select("id, document_id, version, original_file_name, file_size_bytes, submitted_at").in("document_id", documentIds).order("version", { ascending: false })
-    : { data: [], error: null };
-  const files = (filesResult.data ?? []) as FileVersion[];
-  const filesByDocument = new Map<string, FileVersion[]>();
-  for (const file of files) {
-    const group = filesByDocument.get(file.document_id) ?? [];
-    group.push(file);
-    filesByDocument.set(file.document_id, group);
-  }
-
   const displayName = profile.full_name || "未填写姓名";
-  const submittedCount = documents.filter((item) => item.submission_version > 0).length;
-  const pendingCount = documents.filter((item) => item.status === "pending_review").length;
-  const reviewingCount = documents.filter((item) => item.status === "reviewing").length;
-  const approvedCount = documents.filter((item) => item.status === "approved").length;
-  const revisionCount = documents.filter((item) => item.status === "revision_required").length;
-  const latestSubmission = [...files].sort((a, b) => new Date(b.submitted_at).getTime() - new Date(a.submitted_at).getTime())[0];
+  const preparingCount = documents.filter((item) => item.status === "preparing").length;
+  const completedCount = documents.filter((item) => item.status === "completed").length;
+  const notNeededCount = documents.filter((item) => item.status === "not_needed").length;
+  const completionPercent = documents.length > 0
+    ? Math.round(((completedCount + notNeededCount) / documents.length) * 100)
+    : 0;
+  const latestUpdate = [...documents].sort(
+    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
+  )[0];
+
+  const documentsWithTargetLabel = documents.map((document) => {
+    const target = document.target_id ? targetById.get(document.target_id) : null;
+    return {
+      ...document,
+      targetLabel: target
+        ? `${target.university_name} · ${ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请阶段"}`
+        : null,
+    };
+  });
+  const documentsByCategory = new Map<string, typeof documentsWithTargetLabel>();
+  for (const document of documentsWithTargetLabel) {
+    const group = documentsByCategory.get(document.category) ?? [];
+    group.push(document);
+    documentsByCategory.set(document.category, group);
+  }
+  const categoryGroups = CATEGORY_ORDER
+    .map((category) => ({ category, items: documentsByCategory.get(category) ?? [] }))
+    .filter((group) => group.items.length > 0);
 
   return (
     <>
-      <DashboardPageHeader title="学生申请资料" description="查看这名学生的全部材料、提交版本与审核状态。" />
-      <div className="mx-auto w-full max-w-[1380px] space-y-5 p-4 sm:p-6">
-        <Link href="/dashboard/admin/documents" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回学生列表</Link>
+      <DashboardPageHeader title="学生申请资料" description="查看这名学生的资料清单与准备进度。" />
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
+        <Link href="/dashboard/admin/documents" className="app-muted-text inline-flex items-center gap-2 text-xs font-black"><ArrowLeft size={14} />返回学生列表</Link>
 
-        <section className="app-card rounded-[2rem] border p-6 sm:p-7" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
+        <section className="app-card rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
             <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] text-2xl font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{displayName === "未填写姓名" ? "?" : displayName.slice(0, 1)}</span>
-            <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-black">{displayName}</h1><span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={11} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span></div><p className="app-muted-text mt-1 text-sm">{profile.email || `账号 …${studentId.slice(-6)}`}</p><p className="app-muted-text mt-2 text-xs">最近提交：{formatDate(latestSubmission?.submitted_at ?? null)}</p></div>
-            <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:ml-auto lg:min-w-[520px]">
-              {[["已提交", submittedCount, FileText], ["待审核", pendingCount, FileSearch], ["审核中", reviewingCount, Clock3], ["待重交", revisionCount, RotateCcw], ["已确认", approvedCount, CheckCircle2]].map(([label, value, Icon]) => { const MetricIcon = Icon as typeof FileText; return <div key={String(label)} className="app-card rounded-xl border p-3 text-center"><MetricIcon className="mx-auto" size={15} style={{ color: "var(--app-accent)" }} /><p className="mt-1.5 text-xl font-black">{String(value)}</p><p className="app-muted-text text-[9px] font-black">{String(label)}</p></div>; })}
+            <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-black">{displayName}</h1><span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={11} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span></div><p className="app-muted-text mt-1 text-sm">{profile.email || `账号 …${studentId.slice(-6)}`}</p><p className="app-muted-text mt-2 text-xs">最近更新：{formatDate(latestUpdate?.updated_at ?? null)}</p>{documents.length > 0 && <div className="mt-3"><StudentModuleCardDeleteDialog action={deleteStudentDocumentCardAction.bind(null, studentId)} studentName={displayName} cardLabel="申请资料卡" description="将永久清空这名学生的全部申请资料清单项目。" /></div>}</div>
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:ml-auto lg:min-w-[420px]">
+              {[
+                ["准备中", preparingCount, Clock3, "var(--app-secondary)"],
+                ["已完成", completedCount, CheckCircle2, "var(--app-success)"],
+                ["无", notNeededCount, MinusCircle, "var(--app-muted)"],
+                ["完成率", `${completionPercent}%`, FileText, "var(--app-accent)"],
+              ].map(([label, value, Icon, color]) => {
+                const MetricIcon = Icon as typeof FileText;
+                return <div key={String(label)} className="app-card rounded-xl border p-3 text-center"><MetricIcon className="mx-auto" size={15} style={{ color: String(color) }} /><p className="mt-1.5 text-xl font-black">{String(value)}</p><p className="app-muted-text text-[10px] font-black">{String(label)}</p></div>;
+              })}
             </div>
           </div>
         </section>
 
-        {documentsResult.error && <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">这名学生的材料暂时无法读取。</div>}
+        <section className="app-card rounded-[1.5rem] border p-5">
+          <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Plus size={17} /></span><div><h2 className="text-base font-black">添加申请资料项目</h2><p className="app-muted-text mt-1 text-xs">选择目标大学申请表后，新增项目会立即显示在学生的资料清单中。截止日期自动使用该校在「大学管理」中设置的申请截止日期，无需手动填写。</p></div></div>
+          {targetApplications.length > 0 ? (
+            <form action={createApplicationChecklistItemAction.bind(null, studentId)} className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1fr)_170px_auto] xl:items-end">
+              <label className="text-xs font-black">目标大学申请表<select name="targetId" required className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm">{targetApplications.map((target) => <option key={target.id} value={target.id}>{target.university_name} · {ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</option>)}</select></label>
+              <label className="text-xs font-black">资料名称<input name="title" required maxLength={100} placeholder="例如：父母在职证明" className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm" /></label>
+              <label className="text-xs font-black">资料分类<select name="category" defaultValue="other" className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"><option value="identity">身份材料</option><option value="academic">学历材料</option><option value="application">申请文书</option><option value="financial">资金材料</option><option value="language">语言材料</option><option value="other">其他材料</option></select></label>
+              <button type="submit" className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><Plus size={14} />添加项目</button>
+            </form>
+          ) : (
+            <p className="app-muted-text mt-4 text-xs">学生还没有进入“准备资料”的目标大学。</p>
+          )}
+        </section>
 
-        <section className="space-y-3">
-          {documents.map((document) => {
-            const tone = STATUS_TONES[document.status] ?? STATUS_TONES.not_started;
-            const versions = filesByDocument.get(document.id) ?? [];
-            return (
-              <article key={document.id} className="app-card rounded-[1.5rem] border p-4 sm:p-5">
-                <div className="grid gap-4 xl:grid-cols-[230px_minmax(0,1fr)_320px]">
-                  <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: tone.color, backgroundColor: tone.soft }}>{document.status === "approved" ? <CheckCircle2 size={18} /> : document.status === "reviewing" ? <FileClock size={18} /> : <FileText size={18} />}</span><div className="min-w-0"><h2 className="text-sm font-black">{document.title}</h2><p className="app-muted-text mt-1 text-[10px]">{CATEGORY_LABELS[document.category] ?? document.category}</p><span className="mt-2 inline-flex rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{STATUS_LABELS[document.status] ?? document.status}</span></div></div>
+        <AdminDocumentCategoryList studentId={studentId} categoryGroups={categoryGroups} />
 
-                  <div className="min-w-0 xl:border-l xl:px-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                    <div className="flex items-center justify-between"><p className="text-xs font-black">提交文件版本</p><span className="app-muted-text text-[10px]">共 {versions.length} 版</span></div>
-                    <div className="mt-2 space-y-2">
-                      {versions.map((file) => <div key={file.id} className="app-soft-card flex items-center gap-3 rounded-xl border px-3 py-2.5"><span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-black" style={{ color: file.version === document.submission_version ? "var(--app-accent)" : "var(--app-muted)", backgroundColor: file.version === document.submission_version ? "var(--app-accent-soft)" : "var(--app-soft-bg)" }}>V{file.version}</span><div className="min-w-0 flex-1"><p className="truncate text-xs font-black">{file.original_file_name}</p><p className="app-muted-text mt-0.5 text-[9px]">{formatFileSize(file.file_size_bytes)} · {formatDate(file.submitted_at)}</p></div><Link href={`/api/application-document-files/${file.id}/download`} className="inline-flex shrink-0 items-center gap-1 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}><Download size={11} />下载</Link></div>)}
-                      {versions.length === 0 && <div className="rounded-xl border border-dashed p-4 text-center text-xs app-muted-text">学生尚未提交文件</div>}
+        <section className="app-card rounded-[1.5rem] border p-5">
+          <div className="flex items-start gap-3">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Lock size={17} /></span>
+            <div>
+              <h2 className="text-base font-black">申请表锁定管理</h2>
+              <p className="app-muted-text mt-1 text-xs">锁定后，学生端这份申请表的所有资料项目都无法修改，只能查看；解锁后学生可以继续编辑。</p>
+            </div>
+          </div>
+          {targetApplications.length > 0 ? (
+            <div className="mt-5 grid gap-3">
+              {targetApplications.map((target) => {
+                const targetLocked = target.documents_locked_at !== null;
+                return (
+                  <div key={target.id} className="app-soft-card rounded-2xl border p-4">
+                    <div className="flex flex-wrap items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-black">{target.university_name}</p>
+                        <p className="app-muted-text mt-1 text-xs">{ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</p>
+                        <span
+                          className="mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black"
+                          style={targetLocked ? { color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" } : { color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}
+                        >
+                          {targetLocked && <Lock size={10} />}
+                          {targetLocked ? "已锁定" : "未锁定"}
+                        </span>
+                      </div>
+                      <TargetLockButton studentId={studentId} targetId={target.id} locked={targetLocked} />
                     </div>
-                    {document.review_note && <div className="mt-2 rounded-xl px-3 py-2 text-[11px] leading-5" style={{ color: document.status === "revision_required" ? "var(--app-warm)" : "var(--app-muted)", backgroundColor: document.status === "revision_required" ? "var(--app-warm-soft)" : "var(--app-soft-bg)" }}><b>审核意见：</b>{document.review_note}</div>}
+                    <AdminCourierInfoForm
+                      studentId={studentId}
+                      targetId={target.id}
+                      courierMailedAt={target.courier_mailed_at}
+                      courierEstimatedArrivalAt={target.courier_estimated_arrival_at}
+                    />
+                    <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
+                      <AdminApplicationStageControl studentId={studentId} targetId={target.id} stage={target.application_stage} visaApplicationChannel={target.visa_application_channel} />
+                    </div>
                   </div>
-
-                  <div className="xl:border-l xl:pl-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                    <DocumentReviewControls documentId={document.id} status={document.status} />
-                    {!["pending_review", "reviewing"].includes(document.status) && <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5 app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}><ShieldCheck className="mt-0.5 shrink-0" size={14} />{document.status === "approved" ? "材料已经审核确认。" : document.status === "revision_required" ? "等待学生按意见上传新版本。" : "学生尚未提交，暂时无需审核。"}</div>}
-                  </div>
-                </div>
-              </article>
-            );
-          })}
-
-          {documents.length === 0 && <div className="app-card rounded-[1.5rem] border border-dashed p-12 text-center"><FileSearch className="mx-auto opacity-30" size={32} /><p className="mt-3 font-black">这名学生还没有材料清单</p></div>}
+                );
+              })}
+            </div>
+          ) : (
+            <p className="app-muted-text mt-4 text-xs">学生还没有进入「准备资料」的目标大学。</p>
+          )}
         </section>
       </div>
     </>

@@ -15,6 +15,7 @@ type LessonVideoPlayerProps = {
   videoProvider: string | null;
   initialStatus: LessonProgressStatus;
   initialProgress: number;
+  trackingDisabled?: boolean;
 };
 
 const COMPLETE_THRESHOLD = 90;
@@ -42,6 +43,7 @@ export function LessonVideoPlayer({
   videoProvider,
   initialStatus,
   initialProgress,
+  trackingDisabled = false,
 }: LessonVideoPlayerProps) {
   const wrapperRef = useRef<HTMLDivElement | null>(null);
 
@@ -63,6 +65,7 @@ export function LessonVideoPlayer({
     status: LessonProgressStatus,
     progressPercent: number
   ) {
+    if (trackingDisabled) return;
     if (completedRef.current && status !== "completed") {
       return;
     }
@@ -122,6 +125,7 @@ export function LessonVideoPlayer({
   }
 
   function handleVideoPlay() {
+    if (trackingDisabled) return;
     if (completedRef.current) {
       return;
     }
@@ -133,6 +137,7 @@ export function LessonVideoPlayer({
   }
 
   function handleVideoTimeUpdate(event: SyntheticEvent<HTMLVideoElement>) {
+    if (trackingDisabled) return;
     if (completedRef.current) {
       return;
     }
@@ -168,6 +173,7 @@ export function LessonVideoPlayer({
   }
 
   function handleVideoEnded() {
+    if (trackingDisabled) return;
     dispatchProgressUpdate(lessonId, "completed", 100);
     void saveProgress("completed", 100);
   }

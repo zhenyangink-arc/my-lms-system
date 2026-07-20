@@ -164,7 +164,7 @@ export async function grantAnnouncementAdminAction(
         revoked_by: null,
         revoked_at: null,
       },
-      { onConflict: "admin_id" }
+      { onConflict: "tenant_id,admin_id" }
     );
 
   if (error) return result("error", "管理员授权失败，请稍后重试。");

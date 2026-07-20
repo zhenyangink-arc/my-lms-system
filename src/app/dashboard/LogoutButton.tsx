@@ -1,6 +1,5 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { LogOut } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
@@ -25,15 +24,13 @@ import {
   3. 用原生 title 属性做 hover 文字提示，跟侧边栏其他收缩项的提示方式一致
 */
 export function LogoutButton({ collapsed = false }: { collapsed?: boolean }) {
-  const router = useRouter();
-
   async function handleLogout() {
     const supabase = createClient();
 
     await supabase.auth.signOut();
 
-    router.push("/login");
-    router.refresh();
+    // 清空当前角色的客户端布局缓存，避免下一个账号继承旧导航。
+    window.location.replace("/login");
   }
 
   return (

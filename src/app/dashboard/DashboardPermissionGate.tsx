@@ -4,6 +4,7 @@ import type { FormEvent, MouseEvent, ReactNode } from "react";
 import { useState } from "react";
 import { LockKeyhole, Sparkles } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { normalizeDashboardPathname } from "@/lib/dashboard-path";
 
 import {
   MEMBERSHIP_TIER_LABELS,
@@ -31,6 +32,21 @@ function featureFromPath(pathname: string): StudentFeature {
   return "restricted_operation";
 }
 
+function isRestrictedDashboardSection(pathname: string) {
+  return [
+    "/dashboard/courses",
+    "/dashboard/progress",
+    "/dashboard/assignments",
+    "/dashboard/conversation-practice",
+    "/dashboard/grades",
+    "/dashboard/records",
+    "/dashboard/library",
+    "/dashboard/universities",
+    "/dashboard/documents",
+    "/dashboard/visa",
+  ].some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
+
 export function DashboardPermissionGate({
   children,
   userRole,
@@ -40,8 +56,9 @@ export function DashboardPermissionGate({
   userRole: string;
   membershipTier: MembershipTier;
 }) {
-  const pathname = usePathname();
+  const pathname = normalizeDashboardPathname(usePathname());
   const [deniedFeature, setDeniedFeature] = useState<StudentFeature | null>(null);
+  const routeIsDenied = isRestrictedDashboardSection(pathname) && !canUseStudentFeature(userRole, membershipTier, "dashboard_section");
 
   function denyWhenNeeded(feature: StudentFeature) {
     if (canUseStudentFeature(userRole, membershipTier, feature)) return false;
@@ -72,24 +89,24 @@ export function DashboardPermissionGate({
 
   return (
     <>
-      <div onSubmitCapture={handleSubmitCapture} onClickCapture={handleClickCapture}>
-        {children}
+      <div className="contents" onSubmitCapture={handleSubmitCapture} onClickCapture={handleClickCapture}>
+        {!routeIsDenied && children}
       </div>
 
-      <Dialog open={deniedFeature !== null} onOpenChange={(open) => !open && setDeniedFeature(null)}>
-        <DialogContent className="sm:max-w-md">
+      <Dialog open={routeIsDenied || deniedFeature !== null} onOpenChange={(open) => !open && !routeIsDenied && setDeniedFeature(null)}>
+        <DialogContent className="sm:max-w-md" showCloseButton={!routeIsDenied} overlayClassName="bg-black/80 supports-backdrop-filter:backdrop-blur-none">
           <DialogHeader>
             <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
               <LockKeyhole size={22} />
             </div>
             <DialogTitle>当前操作暂无权限</DialogTitle>
             <DialogDescription className="leading-6">
-              {deniedFeature ? getFeatureDeniedMessage(deniedFeature) : "当前操作暂未开放。"}
+              {routeIsDenied ? getFeatureDeniedMessage("dashboard_section") : deniedFeature ? getFeatureDeniedMessage(deniedFeature) : "当前操作暂未开放。"}
             </DialogDescription>
           </DialogHeader>
           <div className="app-soft-card flex items-center gap-3 rounded-2xl border p-4 text-sm">
             <Sparkles size={17} style={{ color: "var(--app-secondary)" }} />
-            <div><p className="font-black">当前档位：{MEMBERSHIP_TIER_LABELS[membershipTier]}</p><p className="app-muted-text mt-1 text-xs">页面浏览不受影响，开放后的操作会自动生效。</p></div>
+            <div><p className="font-black">当前档位：{MEMBERSHIP_TIER_LABELS[membershipTier]}</p><p className="app-muted-text mt-1 text-xs">管理员授权后，该板块即可正常进入观看。</p></div>
           </div>
         </DialogContent>
       </Dialog>

@@ -49,14 +49,14 @@ export function AssignmentComposer({ courses, students }: { courses: CourseOptio
   }
 
   return (
-    <section id="create-assignment" className="app-card scroll-mt-24 rounded-[30px] border p-5 sm:p-7">
+    <section id="create-assignment" className="app-card scroll-mt-24 rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
           <ClipboardPlus size={22} aria-hidden="true" />
         </span>
         <div>
           <h2 className="text-xl font-black">布置新任务</h2>
-          <p className="app-muted-text mt-1 text-xs leading-6">一次设置题目、分值、学生范围和截止时间。</p>
+          <p className="app-muted-text mt-1 text-xs leading-5">一次设置题目、分值、学生范围和截止时间。</p>
         </div>
       </div>
 
@@ -84,7 +84,7 @@ export function AssignmentComposer({ courses, students }: { courses: CourseOptio
           <input name="title" required minLength={2} maxLength={120} placeholder="例如：韩语初级第二单元课后作业" className="app-input mt-2 w-full rounded-xl border px-4 py-3 text-sm" />
         </label>
         <label className="block text-xs font-black">任务说明
-          <textarea name="description" maxLength={5000} rows={4} placeholder="说明完成要求、注意事项和评分标准。" className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-7" />
+          <textarea name="description" maxLength={5000} rows={4} placeholder="说明完成要求、注意事项和评分标准。" className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-6" />
         </label>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -106,8 +106,8 @@ export function AssignmentComposer({ courses, students }: { courses: CourseOptio
               {students.map((student) => (
                 <label key={student.id} className="app-card flex cursor-pointer items-center gap-3 rounded-xl border px-3 py-2.5">
                   <input type="checkbox" name="target_ids" value={student.id} className="h-4 w-4" />
-                  <span className="min-w-0 flex-1"><span className="block truncate text-xs font-black">{student.name}</span><span className="app-muted-text block truncate text-[10px]">{student.email}</span></span>
-                  <span className="app-muted-text text-[10px] font-bold">{student.tier}</span>
+                  <span className="min-w-0 flex-1"><span className="block truncate text-xs font-black">{student.name}</span><span className="app-muted-text block truncate text-xs">{student.email}</span></span>
+                  <span className="app-muted-text text-xs font-bold">{student.tier}</span>
                 </label>
               ))}
               {students.length === 0 && <p className="p-4 text-center text-xs app-muted-text">暂无可分配的学生账号。</p>}
@@ -138,15 +138,15 @@ export function AssignmentComposer({ courses, students }: { courses: CourseOptio
               <textarea value={question.prompt} onChange={(event) => updateQuestion(question.id, { prompt: event.target.value })} rows={3} maxLength={3000} placeholder="输入题目或作答要求" className="app-input mt-3 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6" />
               {question.type === "single_choice" && (
                 <div className="mt-3 grid gap-3 md:grid-cols-2">
-                  <label className="text-[11px] font-black">选项（每行一个）
-                    <textarea value={question.optionsText} onChange={(event) => updateQuestion(question.id, { optionsText: event.target.value })} rows={4} placeholder={'选项一\n选项二\n选项三'} className="app-input mt-1.5 w-full rounded-xl border px-3 py-2 text-xs leading-6" />
+                  <label className="text-xs font-black">选项（每行一个）
+                    <textarea value={question.optionsText} onChange={(event) => updateQuestion(question.id, { optionsText: event.target.value })} rows={4} placeholder={'选项一\n选项二\n选项三'} className="app-input mt-1.5 w-full rounded-xl border px-3 py-2 text-xs leading-5" />
                   </label>
-                  <label className="text-[11px] font-black">参考答案
+                  <label className="text-xs font-black">参考答案
                     <input value={question.correctAnswer} onChange={(event) => updateQuestion(question.id, { correctAnswer: event.target.value })} placeholder="填写与某个选项完全一致的内容" className="app-input mt-1.5 w-full rounded-xl border px-3 py-2.5 text-xs" />
                   </label>
                 </div>
               )}
-              <label className="mt-3 block text-[11px] font-black">参考解析（仅管理端可见）
+              <label className="mt-3 block text-xs font-black">参考解析（仅管理端可见）
                 <textarea value={question.explanation} onChange={(event) => updateQuestion(question.id, { explanation: event.target.value })} rows={2} maxLength={3000} placeholder="可选，填写批改参考或知识点解析" className="app-input mt-1.5 w-full rounded-xl border px-3 py-2 text-xs leading-5" />
               </label>
             </article>

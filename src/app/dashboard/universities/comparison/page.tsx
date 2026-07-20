@@ -9,7 +9,6 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { DashboardPageHeader } from "../../DashboardPageHeader";
 import {
   clearUniversityComparisonsAction,
   removeUniversityComparisonAction,
@@ -73,8 +72,7 @@ export default async function UniversityComparisonPage() {
 
   return (
     <>
-      <DashboardPageHeader title="学校对比" description="最多同时比较四所大学，集中查看真正影响选校的关键信息。" />
-      <div className="mx-auto w-full max-w-[1600px] space-y-6 px-4 py-6 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <Link href="/dashboard/universities" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} /> 返回选校规划中心</Link>
           <div className="flex gap-2">
@@ -83,7 +81,7 @@ export default async function UniversityComparisonPage() {
           </div>
         </div>
 
-        <section className="app-card rounded-[30px] border p-5 sm:p-6">
+        <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><Scale size={20} /></span><div><h2 className="text-base font-black">四校对比席位</h2><p className="mt-1 text-xs app-muted-text">当前选择 {universities.length}／4 所，数据库也会强制执行上限。</p></div></div>
           </div>
@@ -94,7 +92,7 @@ export default async function UniversityComparisonPage() {
                 <article key={university.id} className="app-soft-card rounded-2xl border p-4">
                   <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span><form action={removeUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison"><button type="submit" className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50" title={`移出${university.name_zh}`} aria-label={`移出${university.name_zh}`}><Trash2 size={14} /></button></form></div>
                   <h3 className="mt-4 text-sm font-black">{university.name_zh}</h3>
-                  <p className="mt-1 text-[10px] font-bold app-muted-text">{university.name_ko} · {university.city}</p>
+                  <p className="mt-1 text-xs font-bold app-muted-text">{university.name_ko} · {university.city}</p>
                 </article>
               ) : <div key={`empty-${index}`} className="flex min-h-32 items-center justify-center rounded-2xl border border-dashed text-xs font-bold app-muted-text" style={{ borderColor: "var(--app-border)" }}>待选择</div>;
             })}
@@ -102,7 +100,7 @@ export default async function UniversityComparisonPage() {
         </section>
 
         {universities.length > 0 ? (
-          <section className="app-card overflow-hidden rounded-[30px] border">
+          <section className="app-card overflow-hidden rounded-3xl border">
             <div className="overflow-x-auto">
               <div className="min-w-[760px]" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))` }}>
                 <div className="grid border-b" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))`, borderColor: "var(--app-border)" }}>
@@ -119,7 +117,7 @@ export default async function UniversityComparisonPage() {
             </div>
           </section>
         ) : (
-          <section className="app-card flex min-h-72 flex-col items-center justify-center rounded-[30px] border p-8 text-center"><Scale size={30} style={{ color: "var(--app-secondary)" }} /><h2 className="mt-4 text-base font-black">还没有选择对比学校</h2><p className="mt-2 text-xs app-muted-text">进入大学学校库，点击卡片上的“加入对比”即可占用一个席位。</p><Link href="/dashboard/universities/library" className="mt-5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>进入学校库</Link></section>
+          <section className="app-card flex min-h-72 flex-col items-center justify-center rounded-3xl border p-6 text-center"><Scale size={30} style={{ color: "var(--app-secondary)" }} /><h2 className="mt-4 text-base font-black">还没有选择对比学校</h2><p className="mt-2 text-xs app-muted-text">进入大学学校库，点击卡片上的“加入对比”即可占用一个席位。</p><Link href="/dashboard/universities/library" className="mt-5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>进入学校库</Link></section>
         )}
       </div>
     </>

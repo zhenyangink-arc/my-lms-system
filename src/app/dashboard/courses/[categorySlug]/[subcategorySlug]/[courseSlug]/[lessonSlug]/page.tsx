@@ -7,6 +7,7 @@ import {
     CheckCircle2,
     Clock,
     Download,
+    Eye,
     FileText,
     GraduationCap,
     ListChecks,
@@ -19,7 +20,6 @@ import {
 import { requireActiveUser } from "@/lib/auth";
 import { createR2SignedVideoUrl } from "@/lib/r2";
 import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
-import { DashboardPageHeader } from "../../../../../DashboardPageHeader";
 import { LessonSupportSheet } from "./LessonSupportSheet";
 import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
 import { LessonProgressStatusCard } from "./LessonProgressStatusCard";
@@ -202,7 +202,7 @@ function TextContent({ content }: { content: string | null }) {
     }
 
     return (
-        <div className="whitespace-pre-line text-sm leading-7 text-gray-700">
+        <div className="whitespace-pre-line text-sm leading-6 text-gray-700">
             {content}
         </div>
     );
@@ -249,7 +249,8 @@ export default async function LessonDetailPage({
     const { categorySlug, subcategorySlug, courseSlug, lessonSlug } =
         await params;
 
-    const { supabase, user, profile } = await requireActiveUser();
+    const { supabase, user, profile, platformProfile } = await requireActiveUser();
+    const isPlatformAudit = platformProfile?.role === "platform_super_admin";
 
     const { data: parentCategoryData } = await supabase
         .from("course_categories")
@@ -311,7 +312,7 @@ export default async function LessonDetailPage({
 
     const lesson = lessonData as Lesson;
     const membershipTier = normalizeMembershipTier(profile?.membership_tier);
-    const hasLessonAccess = canUseStudentFeature(
+    const hasLessonAccess = isPlatformAudit || canUseStudentFeature(
         profile?.role ?? "student",
         membershipTier,
         "course_preview"
@@ -324,7 +325,7 @@ export default async function LessonDetailPage({
 
     let questions: LessonQuestion[] = [];
 
-    if (hasLessonAccess) {
+    if (hasLessonAccess && !isPlatformAudit) {
         const { data: questionData } = await supabase
             .from("lesson_questions")
             .select(
@@ -375,7 +376,7 @@ export default async function LessonDetailPage({
         progress_percent: 0,
     };
 
-    if (hasLessonAccess) {
+    if (hasLessonAccess && !isPlatformAudit) {
         const { data: progressData } = await supabase
             .from("lesson_progress")
             .select("status, progress_percent")
@@ -409,7 +410,7 @@ export default async function LessonDetailPage({
             : "ai";
 
     const autoVideoProgressEnabled = Boolean(
-        hasLessonAccess && resolvedVideoUrl &&
+        hasLessonAccess && !isPlatformAudit && resolvedVideoUrl &&
         (lesson.video_provider === "upload" || lesson.video_provider === "r2")
     );
 
@@ -424,16 +425,11 @@ export default async function LessonDetailPage({
 
     return (
         <>
-            <DashboardPageHeader
-                title={lesson.title}
-                description={lesson.description || "学习当前课时内容。"}
-            />
-
             <div
                 className={
                     isFocusCategory
-                        ? "mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8"
-                        : "space-y-6 p-6"
+                        ? "mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8"
+                        : "space-y-5 p-5"
                 }
             >
                 {/* 返回路径 */}
@@ -466,7 +462,7 @@ export default async function LessonDetailPage({
                 </div>
 
                 {/* 课时信息 */}
-                <section className="app-card rounded-3xl border p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-5 shadow-sm">
                     <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_280px_220px] xl:items-start">
                         {/* 左侧：课时标题信息 */}
                         <div className="flex gap-4">
@@ -512,17 +508,17 @@ export default async function LessonDetailPage({
 
                         {/* 中间：学习状态 / 学习进度 */}
                         <div className="xl:-translate-x-10">
-                            {hasLessonAccess ? <LessonProgressStatusCard
+                            {isPlatformAudit ? <div className="rounded-2xl border p-4 text-center" style={{ borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Eye size={20} className="mx-auto" style={{ color: "var(--app-accent)" }} /><p className="mt-2 text-xs font-black">只读巡检</p><p className="app-muted-text mt-1 text-[11px]">不记录进度</p></div> : hasLessonAccess ? <LessonProgressStatusCard
                                 lessonId={lesson.id}
                                 initialStatus={progress.status}
                                 initialProgress={progress.progress_percent}
                                 autoProgressEnabled={autoVideoProgressEnabled}
-                            /> : <div className="app-soft-card rounded-2xl border p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>}
+                            /> : <div className="app-empty-state rounded-2xl p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>}
                         </div>
 
                         {/* 右侧：学习支持 / 咨询 + 上一课 / 下一课 */}
                         <div className="flex flex-col items-center gap-3 xl:pt-1">
-                            {hasLessonAccess && <LessonSupportSheet
+                            {hasLessonAccess && !isPlatformAudit && <LessonSupportSheet
                                 courseId={course.id}
                                 lessonId={lesson.id}
                                 teacherName={course.support_teacher_name}
@@ -578,7 +574,7 @@ export default async function LessonDetailPage({
                     }
                 >
                     {/* 左侧：01 视频学习 */}
-                    <section className="app-card rounded-3xl border p-6 shadow-sm">
+                    <section className="app-card rounded-3xl border p-5 shadow-sm">
                         <WorkspaceSectionTitle
                             index="1"
                             title="视频学习"
@@ -592,12 +588,13 @@ export default async function LessonDetailPage({
                             videoProvider={lesson.video_provider}
                             initialStatus={progress.status}
                             initialProgress={progress.progress_percent}
-                        /> : <div className="app-soft-card rounded-2xl border border-dashed p-8 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-6">VIP1 及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
+                            trackingDisabled={isPlatformAudit}
+                        /> : <div className="app-empty-state rounded-2xl p-6 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-5">VIP1 及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
                     </section>
 
                     {/* 右侧：02 学习引导 */}
                     {hasGuideInfo && (
-                        <section className="app-card rounded-3xl border p-6 shadow-sm">
+                        <section className="app-card rounded-3xl border p-5 shadow-sm">
                             <WorkspaceSectionTitle
                                 index="2"
                                 title="学习引导"
@@ -639,7 +636,7 @@ export default async function LessonDetailPage({
                                                     resources.map((resource) => (
                                                         <div
                                                             key={resource.id}
-                                                            className="app-soft-card rounded-xl border p-3"
+                                                            className="app-flat-row rounded-xl p-3"
                                                         >
                                                             <div className="mb-1 flex flex-wrap gap-2">
                                                                 <span className="app-card rounded-full border px-2 py-0.5 text-xs font-medium">
@@ -696,7 +693,7 @@ export default async function LessonDetailPage({
                                                         </div>
                                                     ))
                                                 ) : (
-                                                    <div className="app-soft-card rounded-xl border p-3">
+                                                    <div className="app-flat-row rounded-xl p-3">
                                                         <p className="text-sm font-semibold text-gray-900">
                                                             {lesson.attachment_label || "课程资料"}
                                                         </p>
@@ -737,7 +734,7 @@ export default async function LessonDetailPage({
                 </div>
 
                 {/* 03 核心学习 */}
-                <section className="app-card rounded-3xl border p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-5 shadow-sm">
                     <WorkspaceSectionTitle
                         index="3"
                         title="核心学习"
@@ -789,7 +786,7 @@ export default async function LessonDetailPage({
                 </section>
 
                 {/* 4 学习完成 */}
-                <section className="app-card rounded-3xl border p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-5 shadow-sm">
                     <WorkspaceSectionTitle
                         index="4"
                         title="学习完成"
@@ -831,7 +828,7 @@ export default async function LessonDetailPage({
                 </section>
 
                 {/* 底部：上一课 / 下一课 */}
-                <section className="app-card rounded-3xl border p-6 shadow-sm">
+                <section className="app-card rounded-3xl border p-5 shadow-sm">
                     <div className="grid gap-4 md:grid-cols-2">
                         {previousLesson ? (
                             <Link

@@ -343,14 +343,14 @@ export default async function AdminLessonEditPage({
   const { supabase } = await requireAdmin();
 
   /*
-    是否是老板（super_admin）。
+    是否是老板（tenant_super_admin）。
 
     只有老板能在回收站里“彻底删除”资料。
     这里只是用来决定要不要把按钮显示出来，
     真正的安全边界仍然是 SQL 24 里 is_owner_account() 那条 DELETE policy。
   */
   const { data: viewerRoleData } = await supabase.rpc("current_profile_role");
-  const isOwner = viewerRoleData === "super_admin";
+  const isOwner = viewerRoleData === "tenant_super_admin";
 
   /**
    * 1. 查询课程
@@ -472,10 +472,9 @@ export default async function AdminLessonEditPage({
 
   const backToCourseHref = `/dashboard/admin/courses/${course.id}`;
 
-  const previewHref =
-    parentCategory && subcategory
-      ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`
-      : null;
+  const previewHref = parentCategory && subcategory
+    ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`
+    : `/dashboard/admin/courses/${course.id}/lessons/${lesson.id}/preview`;
 
   const videoBound = Boolean(
     hasText(lesson.video_object_key) || hasText(lesson.video_url)
@@ -498,7 +497,7 @@ export default async function AdminLessonEditPage({
         description="单独管理当前课时的内容、视频、学习资料和发布状态。"
       />
 
-      <div className="space-y-6 p-6">
+      <div className="space-y-5 p-5">
         {/* 返回路径和前台预览 */}
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap items-center gap-3">
@@ -517,20 +516,18 @@ export default async function AdminLessonEditPage({
             </span>
           </div>
 
-          {previewHref && (
-            <Link
+          <Link
               href={previewHref}
               target="_blank"
               className="inline-flex items-center gap-1.5 rounded-xl bg-gray-100 px-4 py-2.5 text-sm font-bold text-gray-600 transition hover:bg-gray-900 hover:text-white"
             >
               <ExternalLink size={15} />
-              前台预览
+              学生端巡检
             </Link>
-          )}
         </div>
 
         {/* 当前课时概览 */}
-        <section className="app-card rounded-3xl border p-6 shadow-sm">
+        <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div className="min-w-0">
               <div className="mb-3 flex flex-wrap gap-2">
@@ -1710,7 +1707,7 @@ export default async function AdminLessonEditPage({
                       危险操作
 
                       这里专门处理彻底删除。
-                      只有老板（super_admin）能看到，且只能对“回收站”里的资料操作。
+                      只有老板（tenant_super_admin）能看到，且只能对“回收站”里的资料操作。
 
                       删除规则：
                       1. 只能选择回收站里的资料

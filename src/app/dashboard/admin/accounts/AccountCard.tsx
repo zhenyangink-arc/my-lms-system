@@ -315,7 +315,7 @@ export function AccountManagementActions({ profile, viewerRole }: { profile: Acc
       {profile.role === "student" && <MembershipDialog profile={profile} displayName={displayName} />}
       <RoleDialog profile={profile} displayName={displayName} viewerRole={viewerRole} />
       <StatusDialog profile={profile} displayName={displayName} />
-      {viewerRole === "super_admin" && <DeleteAccountDialog profile={profile} displayName={displayName} />}
+      {(viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") && <DeleteAccountDialog profile={profile} displayName={displayName} />}
     </div>
   );
 }
@@ -345,15 +345,15 @@ export function AccountCard({ profile, viewerRole }: { profile: AccountListProfi
                 <p className="mt-1 text-xs font-bold text-amber-700">尚未同步邮箱</p>
               )}
             </div>
-            <span className="shrink-0 rounded-full px-2.5 py-1 text-[11px] font-black" style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-black" style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
               {STATUS_LABELS[profile.status] ?? profile.status}
             </span>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-[11px] font-black"><Shield size={12} />{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</span>
+            <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-black"><Shield size={12} />{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</span>
             {profile.role === "student" && (
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={12} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span>
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={12} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span>
             )}
           </div>
         </div>
@@ -361,11 +361,11 @@ export function AccountCard({ profile, viewerRole }: { profile: AccountListProfi
 
       <div className="mt-5 grid grid-cols-2 gap-2">
         <div className="app-soft-card rounded-2xl border px-3 py-3">
-          <div className="flex items-center gap-1.5"><CalendarDays className="app-muted-text" size={14} /><p className="app-muted-text text-[10px] font-black">注册时间</p></div>
+          <div className="flex items-center gap-1.5"><CalendarDays className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">注册时间</p></div>
           <p className="mt-1.5 text-xs font-black">{formatKoreanTime(registeredAt, false)}</p>
         </div>
         <div className="app-soft-card rounded-2xl border px-3 py-3">
-          <div className="flex items-center gap-1.5"><Activity className="app-muted-text" size={14} /><p className="app-muted-text text-[10px] font-black">最近活动</p></div>
+          <div className="flex items-center gap-1.5"><Activity className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">最近活动</p></div>
           <p className="mt-1.5 truncate text-xs font-black">{formatRecentActivity(profile.last_active_at)}</p>
         </div>
       </div>
@@ -375,7 +375,7 @@ export function AccountCard({ profile, viewerRole }: { profile: AccountListProfi
           {isProfileStarted ? <FileCheck2 size={16} style={{ color: "var(--app-accent)" }} /> : <Clock3 size={16} style={{ color: "var(--app-warm)" }} />}
           <p className="truncate text-xs font-black">{isProfileStarted ? "个人资料已开始完善" : "个人资料等待填写"}</p>
         </div>
-        <span className="app-muted-text shrink-0 text-[10px] font-bold">…{profile.id.slice(-6)}</span>
+        <span className="app-muted-text shrink-0 text-xs font-bold">…{profile.id.slice(-6)}</span>
       </div>
 
       {profile.status !== "active" && profile.deactivate_reason && (
