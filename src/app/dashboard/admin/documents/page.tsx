@@ -15,6 +15,8 @@ import { requireAdmin } from "@/lib/admin";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 
+
+export const runtime = "edge";
 type ChecklistDocument = {
   id: string;
   user_id: string;

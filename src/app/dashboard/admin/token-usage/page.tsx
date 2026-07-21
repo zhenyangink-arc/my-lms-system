@@ -3,6 +3,8 @@ import { BarChart3, MessageSquareText, Zap } from "lucide-react";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { requireExecutive } from "@/lib/admin";
 
+
+export const runtime = "edge";
 type TokenUsage = { input_tokens: number; output_tokens: number; total_tokens: number; created_at: string };
 
 export default async function TokenUsagePage() {

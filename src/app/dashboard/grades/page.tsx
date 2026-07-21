@@ -4,6 +4,8 @@ import { getGradeCenterAccess } from "@/lib/grade-center";
 import { GradeReviewForm } from "./GradeReviewForm";
 import { GRADE_ITEM_TYPE_LABELS, GRADE_RECORD_STATUS_LABELS, GRADE_REVIEW_STATUS_LABELS, gradeLevel, type GradeItemType, type GradeRecordStatus, type GradeReviewStatus } from "./config";
 
+
+export const runtime = "edge";
 type Item = { id: string; title: string; description: string; item_type: GradeItemType; term: string; total_points: number; weight_percent: number; source_assignment_id: string | null; published_at: string | null };
 type RecordRow = { id: string; item_id: string; record_status: GradeRecordStatus; score: number | null; feedback: string; graded_at: string };
 type Review = { id: string; record_id: string; status: GradeReviewStatus; reason: string; response: string; updated_at: string };

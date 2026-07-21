@@ -6,6 +6,8 @@ import { getHelpCenterAccess } from "@/lib/help-center";
 import { HelpTicketReplyForm } from "../../HelpTicketReplyForm";
 import { HELP_TICKET_CATEGORY_LABELS, HELP_TICKET_STATUS_LABELS, helpDateFormatter, type HelpTicketCategory, type HelpTicketPriority, type HelpTicketStatus } from "../../config";
 
+
+export const runtime = "edge";
 type Ticket = { id: string; subject: string; description: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; resolution: string; created_at: string; updated_at: string };
 type Message = { id: string; sender_kind: "student" | "staff"; body: string; created_at: string };
 

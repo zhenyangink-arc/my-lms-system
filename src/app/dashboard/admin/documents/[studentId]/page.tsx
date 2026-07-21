@@ -25,6 +25,8 @@ import {
   deleteStudentDocumentCardAction,
 } from "../actions";
 
+
+export const runtime = "edge";
 type StudentProfile = {
   id: string;
   full_name: string | null;

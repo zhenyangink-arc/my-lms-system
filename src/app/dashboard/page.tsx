@@ -27,6 +27,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
 
+
+export const runtime = "edge";
 type LessonProgressRow = {
   lesson_id: string;
   course_id: string;

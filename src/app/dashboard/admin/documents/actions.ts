@@ -1,11 +1,13 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 import { requireAdmin } from "@/lib/admin";
 import type { ModuleCardDeleteState } from "../StudentModuleCardDeleteDialog";
+
+// randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
+const randomUUID = () => crypto.randomUUID();
 
 const DOCUMENT_CATEGORIES = ["identity", "academic", "application", "financial", "language", "other"];
 const VISA_APPLICATION_CHANNELS = ["china_consulate", "korea_immigration"];

@@ -19,6 +19,8 @@ import { AccountCard, type AccountListProfile } from "./AccountCard";
 import { AccountAuditLogDialog, AccountDeletionAuditDialog } from "./AccountActivityDialogs";
 import { AccountCreator } from "./AccountCreator";
 
+
+export const runtime = "edge";
 type AccountAuditLog = {
   id: number;
   actor_id: string | null;

@@ -6,6 +6,8 @@ import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { requireAdmin } from "@/lib/admin";
 import { createR2SignedVideoUrl } from "@/lib/r2";
 
+
+export const runtime = "edge";
 type Course = { id: string; title: string; description: string | null };
 type Lesson = {
   id: string; course_id: string; title: string; description: string | null; lesson_type: string;

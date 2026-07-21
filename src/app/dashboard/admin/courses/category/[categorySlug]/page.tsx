@@ -27,6 +27,8 @@ import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { FocusCategoryAdminView } from "../../FocusCourseManagement";
 
+export const runtime = "edge";
+
 type CourseCategory = {
   id: string;
   parent_id: string | null;

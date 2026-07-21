@@ -6,6 +6,8 @@ import { HelpArticleBrowser } from "./HelpArticleBrowser";
 import { HelpTicketForm } from "./HelpTicketForm";
 import { HELP_TICKET_CATEGORY_LABELS, HELP_TICKET_STATUS_LABELS, helpDateFormatter, type HelpArticleCategory, type HelpTicketCategory, type HelpTicketPriority, type HelpTicketStatus } from "./config";
 
+
+export const runtime = "edge";
 type ArticleRow = { id: string; title: string; summary: string; content: string; category: HelpArticleCategory; is_featured: boolean };
 type TicketRow = { id: string; subject: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; resolution: string; created_at: string; updated_at: string };
 

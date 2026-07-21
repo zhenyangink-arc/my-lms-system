@@ -4,6 +4,8 @@ import { ArrowLeft, ArrowRight, BookOpen, Clock3, MessagesSquare } from "lucide-
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
 import { CONVERSATION_CATEGORY_LABELS, CONVERSATION_DIFFICULTY_LABELS, type ConversationCategory, type ConversationDifficulty } from "../config";
 
+
+export const runtime = "edge";
 type Scenario = { id: string; title: string; description: string; category: ConversationCategory; difficulty: ConversationDifficulty; duration_minutes: number };
 
 export default async function ConversationCoursePage() {

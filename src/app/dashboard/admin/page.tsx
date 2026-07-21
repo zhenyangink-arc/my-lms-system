@@ -18,6 +18,8 @@ import {
   getVisibleAdminNavigation,
 } from "./admin-navigation";
 
+
+export const runtime = "edge";
 export default async function AdminCenterPage() {
   const auth = await requireActiveUser();
   const role = auth.platformProfile?.role === "platform_super_admin" ? "platform_super_admin" : auth.profile?.role;

@@ -9,6 +9,8 @@ import {
   type AnnouncementPriority,
 } from "./config";
 
+
+export const runtime = "edge";
 type AnnouncementRow = {
   id: string;
   title: string;

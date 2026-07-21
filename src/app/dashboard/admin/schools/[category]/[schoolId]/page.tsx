@@ -8,6 +8,8 @@ import { SchoolCrest } from "@/components/school/SchoolCrest";
 import { createSchoolProgramAction, deleteSchoolProgramAction, updateSchoolAction, updateSchoolProgramAction } from "../../actions";
 import { educationStageLabels, getSchoolCategoryBySlug, ownershipLabels } from "../../school-config";
 
+
+export const runtime = "edge";
 type SchoolRow = { id:string; category:string; name_zh:string; name_local:string|null; logo_url:string|null; ownership:string; province:string|null; city:string|null; summary:string|null; detailed_introduction:string|null; is_published:boolean; is_featured:boolean; sort_order:number };
 type ProgramRow = { id:string; name_zh:string; name_local:string|null; education_stage:string; discipline_group:string; introduction:string|null; duration_text:string|null; tuition_note:string|null; admission_requirement:string|null; is_published:boolean; sort_order:number };
 

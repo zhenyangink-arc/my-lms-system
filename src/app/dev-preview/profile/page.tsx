@@ -4,6 +4,11 @@ import { ProfileView, type ProfileChecklistItem } from "@/app/dashboard/profile/
 import { type StudentProfileInitialValue } from "@/app/dashboard/profile/ProfileForm";
 
 // 仅开发环境可用的 UI 预览路由：不需要登录，用模拟数据渲染个人中心，方便调整布局与截图。
+// 必须强制动态渲染：如果被静态预渲染，生产环境下的 notFound() 会在构建期触发，
+// 导致 vercel build 产出的路由清单里找不到对应的 lambda/静态文件（构建直接失败）。
+export const dynamic = "force-dynamic";
+export const runtime = "edge";
+
 export default function ProfilePreviewPage() {
   if (process.env.NODE_ENV === "production") notFound();
 

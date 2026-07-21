@@ -1,9 +1,11 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/admin";
+
+// randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
+const randomUUID = () => crypto.randomUUID();
 
 const ownerships = ["national", "public", "private"] as const;
 const stages = ["language", "bachelor_fresh", "bachelor_transfer", "master", "doctor"] as const;

@@ -9,6 +9,8 @@ import {
   type ConversationDifficulty,
 } from "./config";
 
+
+export const runtime = "edge";
 type ScenarioRow = {
   id: string;
   title: string;

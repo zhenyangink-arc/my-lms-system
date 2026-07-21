@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 export const dynamic = 'force-dynamic';
+export const runtime = "edge";
 
 import { getAuthContext } from "@/lib/auth";
 import { createR2SignedResourceDownloadUrl } from "@/lib/r2";

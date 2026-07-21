@@ -9,6 +9,8 @@ import {
 import type { UniversityDocumentRequirement } from "./UniversityRequirementsDialog";
 import type { UniversityVisaRequirement } from "./UniversityVisaRequirementsDialog";
 
+
+export const runtime = "edge";
 const requirementStages = ["language", "bachelor_fresh", "bachelor_transfer", "master", "doctor"] as const;
 const visaTypes = ["d4_language", "d2_bachelor", "d2_master", "d2_doctor"] as const;
 const REQUIREMENT_PAGE_SIZE = 1000;

@@ -1,10 +1,12 @@
 "use server";
 
-import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
 import { requireAdmin } from "@/lib/admin";
 import { schoolCategories } from "./school-config";
+
+// randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
+const randomUUID = () => crypto.randomUUID();
 
 const categoryValues = schoolCategories.map((item) => item.value) as string[];
 const ownershipValues = ["national", "public", "private", "other"];

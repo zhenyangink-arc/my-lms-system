@@ -1,11 +1,13 @@
 "use server";
 
-import { randomUUID } from "crypto";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 
 import { requireAdmin } from "@/lib/admin";
 import { createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
+
+// randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
+const randomUUID = () => crypto.randomUUID();
 
 function getString(formData: FormData, name: string) {
   const value = formData.get(name);

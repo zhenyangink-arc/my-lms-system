@@ -23,6 +23,8 @@ import { DashboardPageHeader } from "../../../DashboardPageHeader";
 import { AccountManagementActions, type AccountListProfile } from "../AccountCard";
 import { ROLE_LABELS, STATUS_LABELS } from "../permissions";
 
+
+export const runtime = "edge";
 type AccountDetail = AccountListProfile & {
   avatar_path: string | null;
   gender: string | null;

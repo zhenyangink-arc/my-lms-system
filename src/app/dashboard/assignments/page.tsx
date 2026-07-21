@@ -4,6 +4,8 @@ import { ArrowRight, Award, CheckCircle2, ClipboardList, Clock3, FilePenLine, Ro
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import { ASSIGNMENT_TYPE_LABELS, SUBMISSION_STATUS_LABELS, formatAssignmentDate, type AssignmentType, type SubmissionStatus } from "./config";
 
+
+export const runtime = "edge";
 type AssignmentRow = { id: string; title: string; description: string; assignment_type: AssignmentType; course_id: string | null; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean };
 type SubmissionRow = { id: string; assignment_id: string; attempt_number: number; status: SubmissionStatus; score: number | null; overall_feedback: string | null; submitted_at: string };
 type CourseRow = { id: string; title: string };

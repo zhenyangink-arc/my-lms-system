@@ -15,6 +15,8 @@ import {
 
 import { requireActiveUser } from "@/lib/auth";
 
+
+export const runtime = "edge";
 type TargetPreview = {
   id: string;
   university_name: string;

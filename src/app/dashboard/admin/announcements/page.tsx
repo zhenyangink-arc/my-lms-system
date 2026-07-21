@@ -9,6 +9,8 @@ import { AnnouncementStatusActions } from "@/app/dashboard/announcements/Announc
 import { CATEGORY_LABELS, PRIORITY_LABELS, STATUS_LABELS, type AnnouncementCategory, type AnnouncementPriority, type AnnouncementStatus } from "@/app/dashboard/announcements/config";
 import { requireAnnouncementAccess } from "@/lib/announcements";
 
+
+export const runtime = "edge";
 type AnnouncementRow = { id: string; title: string; content: string; category: AnnouncementCategory; priority: AnnouncementPriority; status: AnnouncementStatus; is_pinned: boolean; published_at: string | null; updated_at: string };
 type ProfileRow = { id: string; full_name: string | null; email: string | null };
 

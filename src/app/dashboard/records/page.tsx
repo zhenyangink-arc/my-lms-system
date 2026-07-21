@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ArrowRight, Award, BookOpenCheck, CheckCircle2, Eye, History, MessageCircleMore, NotebookPen, Send, Sparkles } from "lucide-react";
 import { getLearningRecordAccess } from "@/lib/learning-records";
 import { LEARNING_RECORD_TYPE_LABELS, learningRecordDateFormatter, type LearningRecordType } from "./config";
+
+export const runtime = "edge";
 type Progress = { lesson_id:string; course_id:string; status:string; progress_percent:number|null; completed_at:string|null; last_viewed_at:string|null };
 type Submission = { assignment_id:string; status:string; submitted_at:string; graded_at:string|null; score:number|null };
 type Conversation = { scenario_id:string; status:string; practice_count:number; last_practiced_at:string };

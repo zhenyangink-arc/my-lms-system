@@ -10,6 +10,8 @@ import {
 
 import { requireActiveUser } from "@/lib/auth";
 
+
+export const runtime = "edge";
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
 type CourseCategory = {

@@ -78,6 +78,9 @@ import { ResourceFileOrLinkField } from "../../../ResourceFileOrLinkField";
 
 
 import { EditResourceFileOrLinkField } from "../../../EditResourceFileOrLinkField";
+
+export const runtime = "edge";
+
 /*
   课程类型
 

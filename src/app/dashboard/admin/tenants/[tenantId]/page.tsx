@@ -8,6 +8,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { TenantLifecycleControls } from "../TenantLifecycleControls";
 import { AccountCreator } from "../../accounts/AccountCreator";
 
+
+export const runtime = "edge";
 type TenantRow = { id: string; name: string; slug: string; status: "active" | "suspended" | "archived"; plan_key: string; created_at: string };
 type MembershipRow = { user_id: string; role: string; status: string; membership_tier: string; created_at: string };
 type ProfileRow = { id: string; full_name: string | null; login_id: string | null };

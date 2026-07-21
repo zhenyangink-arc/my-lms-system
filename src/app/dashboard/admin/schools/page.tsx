@@ -5,6 +5,8 @@ import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { requireAdmin } from "@/lib/admin";
 import { schoolCategories, schoolOverview } from "./school-config";
 
+
+export const runtime = "edge";
 type SchoolRow = { category: string; is_published: boolean; logo_url: string | null; detailed_introduction: string | null };
 
 export default async function SchoolManagementPage() {

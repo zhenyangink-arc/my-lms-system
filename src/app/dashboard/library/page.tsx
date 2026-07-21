@@ -12,6 +12,8 @@ import { getLibraryAccess } from "@/lib/resource-library";
 import { LibraryBrowser } from "./LibraryBrowser";
 import type { LibraryCategory, LibraryResourceType } from "./config";
 
+
+export const runtime = "edge";
 type Resource = {
   id: string;
   title: string;

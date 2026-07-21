@@ -40,6 +40,8 @@ import {
 } from "../actions";
 import { FocusCourseQualityPanel } from "../FocusCourseManagement";
 
+export const runtime = "edge";
+
 /*
   课程类型
 

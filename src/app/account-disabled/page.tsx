@@ -4,6 +4,8 @@ import { CirclePause, Mail } from "lucide-react";
 import { getAuthContext } from "@/lib/auth";
 import { SignOutButton } from "./SignOutButton";
 
+export const runtime = "edge";
+
 export default async function AccountDisabledPage() {
   const auth = await getAuthContext();
 

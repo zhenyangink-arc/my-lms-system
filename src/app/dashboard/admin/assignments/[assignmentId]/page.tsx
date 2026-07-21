@@ -8,6 +8,8 @@ import { AssignmentStatusActions } from "../AssignmentStatusActions";
 import { AssignmentDeadlineForm } from "../AssignmentDeadlineForm";
 import { SubmissionGradingForm } from "../SubmissionGradingForm";
 
+
+export const runtime = "edge";
 type AssignmentRow = { id: string; title: string; description: string; assignment_type: AssignmentType; target_scope: string; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean; status: AssignmentStatus };
 type QuestionRow = { id: string; question_type: QuestionType; prompt: string; options: unknown; points: number; sort_order: number };
 type KeyRow = { question_id: string; correct_answer: string | null; explanation: string | null };

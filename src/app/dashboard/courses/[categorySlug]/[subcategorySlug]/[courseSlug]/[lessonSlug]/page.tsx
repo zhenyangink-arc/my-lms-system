@@ -25,6 +25,8 @@ import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
 import { LessonProgressStatusCard } from "./LessonProgressStatusCard";
 import { LessonVideoPlayer } from "./LessonVideoPlayer";
 
+
+export const runtime = "edge";
 type TeacherStatus = "online" | "busy" | "away" | "offline";
 
 type QuestionTarget = "teacher" | "ai" | "both";

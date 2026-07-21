@@ -20,6 +20,8 @@ import { VisaCaseForm, VisaTaskForm } from "./VisaWorkspaceForms";
 import { CollapsibleVisaCaseCard } from "./CollapsibleVisaCaseCard";
 import { getVisaCaseStages } from "./visa-case-stages";
 
+
+export const runtime = "edge";
 type VisaCase = {
   id: string;
   source_target_id: string | null;

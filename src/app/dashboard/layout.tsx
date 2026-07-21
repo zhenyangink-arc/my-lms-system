@@ -8,6 +8,8 @@ import { DashboardPermissionGate } from "./DashboardPermissionGate";
 import { GlobalTopbar } from "./GlobalTopbar";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
 
+export const runtime = "edge";
+
 export default async function DashboardLayout({
   children,
 }: {
