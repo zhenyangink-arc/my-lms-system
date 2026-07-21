@@ -11,31 +11,35 @@ function getRequiredEnv(name: string) {
   return value;
 }
 
-const accountId = getRequiredEnv("R2_ACCOUNT_ID");
-const accessKeyId = getRequiredEnv("R2_ACCESS_KEY_ID");
-const secretAccessKey = getRequiredEnv("R2_SECRET_ACCESS_KEY");
-const bucketName = getRequiredEnv("R2_BUCKET_NAME");
+function createR2Context() {
+  const accountId = getRequiredEnv("R2_ACCOUNT_ID");
+  const accessKeyId = getRequiredEnv("R2_ACCESS_KEY_ID");
+  const secretAccessKey = getRequiredEnv("R2_SECRET_ACCESS_KEY");
+  const bucketName = getRequiredEnv("R2_BUCKET_NAME");
+  const signedUrlExpiresIn = Number(
+    process.env.R2_SIGNED_URL_EXPIRES_IN ?? "3600"
+  );
 
-const signedUrlExpiresIn = Number(
-  process.env.R2_SIGNED_URL_EXPIRES_IN ?? "3600"
-);
+  const client = new S3Client({
+    region: "auto",
+    endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId,
+      secretAccessKey,
+    },
+  });
 
-const r2Client = new S3Client({
-  region: "auto",
-  endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId,
-    secretAccessKey,
-  },
-});
+  return { client, bucketName, signedUrlExpiresIn };
+}
 
 export async function createR2SignedVideoUrl(objectKey: string) {
+  const { client, bucketName, signedUrlExpiresIn } = createR2Context();
   const command = new GetObjectCommand({
     Bucket: bucketName,
     Key: objectKey,
   });
 
-  return getSignedUrl(r2Client, command, {
+  return getSignedUrl(client, command, {
     expiresIn: signedUrlExpiresIn,
   });
 }
@@ -57,13 +61,14 @@ export async function createR2SignedUploadUrl(
   objectKey: string,
   contentType: string
 ) {
+  const { client, bucketName, signedUrlExpiresIn } = createR2Context();
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: objectKey,
     ContentType: contentType,
   });
 
-  return getSignedUrl(r2Client, command, {
+  return getSignedUrl(client, command, {
     expiresIn: signedUrlExpiresIn,
   });
 }
@@ -89,6 +94,7 @@ export async function createR2SignedResourceDownloadUrl(
   objectKey: string,
   originalFileName: string
 ) {
+  const { client, bucketName, signedUrlExpiresIn } = createR2Context();
   const encodedFileName = encodeURIComponent(originalFileName);
 
   const contentDisposition = `attachment; filename="${encodedFileName}"; filename*=UTF-8''${encodedFileName}`;
@@ -99,7 +105,7 @@ export async function createR2SignedResourceDownloadUrl(
     ResponseContentDisposition: contentDisposition,
   });
 
-  return getSignedUrl(r2Client, command, {
+  return getSignedUrl(client, command, {
     expiresIn: signedUrlExpiresIn,
   });
 }
@@ -117,10 +123,11 @@ export async function createR2SignedResourceDownloadUrl(
   数据库这边的 resource_object_key 更新是在 actions.ts 里单独处理的。
 */
 export async function deleteR2Object(objectKey: string) {
+  const { client, bucketName } = createR2Context();
   const command = new DeleteObjectCommand({
     Bucket: bucketName,
     Key: objectKey,
   });
 
-  await r2Client.send(command);
+  await client.send(command);
 }
