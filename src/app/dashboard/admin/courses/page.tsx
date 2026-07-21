@@ -34,7 +34,6 @@ import { requireAdmin } from "@/lib/admin";
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { FocusCourseAdminCard } from "./FocusCourseManagement";
 
-export const runtime = "edge";
 
 type CourseCategory = {
   id: string;

@@ -7,7 +7,6 @@ import { GradeItemForm, type GradeItemFormValue } from "../GradeItemForm";
 import { GradeItemStatusActions } from "../GradeItemStatusActions";
 import { GradeRecordForm } from "../GradeRecordForm";
 
-export const runtime = "edge";
 type Item = GradeItemFormValue;
 type RecordRow = { student_id: string; record_status: GradeRecordStatus; score: number | null; feedback: string };
 type Student = { id: string; full_name: string | null; email: string | null; membership_tier: string | null };

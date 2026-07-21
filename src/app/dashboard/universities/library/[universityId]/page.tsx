@@ -7,7 +7,6 @@ import { requireActiveUser } from "@/lib/auth";
 import { SchoolCrest } from "@/components/school/SchoolCrest";
 
 
-export const runtime = "edge";
 type University = { id:string; name_zh:string; name_ko:string; logo_url:string|null; detailed_introduction:string|null; summary:string; ownership:string; province:string; city:string; highlights:string[]; tuition_min_cny:number; tuition_max_cny:number; tuition_reference_year:number; qs_rank_display:string|null; joongang_rank_display:string|null };
 type School = { id:string; detailed_introduction:string|null };
 type Program = { id:string; name_zh:string; name_local:string|null; education_stage:string; discipline_group:string; introduction:string|null; duration_text:string|null; tuition_note:string|null; admission_requirement:string|null };

@@ -7,7 +7,6 @@ import { PracticeReflectionForm } from "../PracticeReflectionForm";
 import { CONVERSATION_CATEGORY_LABELS, CONVERSATION_DIFFICULTY_LABELS, type ConversationCategory, type ConversationDifficulty, type DialogueLine, type KeyExpression } from "../config";
 
 
-export const runtime = "edge";
 type ScenarioRow = { id: string; title: string; description: string; category: ConversationCategory; difficulty: ConversationDifficulty; situation: string; learning_objectives: unknown; sample_dialogue: unknown; key_expressions: unknown; starter_prompt: string; practice_tips: string; duration_minutes: number };
 type ProgressRow = { status: "practicing" | "completed"; practice_count: number; confidence: number | null; reflection: string };
 

@@ -20,7 +20,6 @@ import { AccountAuditLogDialog, AccountDeletionAuditDialog } from "./AccountActi
 import { AccountCreator } from "./AccountCreator";
 
 
-export const runtime = "edge";
 type AccountAuditLog = {
   id: number;
   actor_id: string | null;

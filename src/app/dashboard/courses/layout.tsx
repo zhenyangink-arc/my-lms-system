@@ -2,7 +2,6 @@ import { Eye, ShieldCheck } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
 
-export const runtime = "edge";
 
 export default async function CoursesLayout({
   children,

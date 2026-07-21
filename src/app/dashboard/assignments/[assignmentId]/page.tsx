@@ -7,7 +7,6 @@ import { AssignmentSubmissionForm } from "../AssignmentSubmissionForm";
 import { ASSIGNMENT_TYPE_LABELS, QUESTION_TYPE_LABELS, SUBMISSION_STATUS_LABELS, formatAssignmentDate, type AssignmentType, type QuestionType, type SubmissionStatus } from "../config";
 
 
-export const runtime = "edge";
 type AssignmentRow = { id: string; title: string; description: string; assignment_type: AssignmentType; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean };
 type QuestionRow = { id: string; question_type: QuestionType; prompt: string; options: unknown; points: number; sort_order: number };
 type SubmissionRow = { id: string; attempt_number: number; status: SubmissionStatus; score: number | null; overall_feedback: string | null; submitted_at: string; graded_at: string | null };

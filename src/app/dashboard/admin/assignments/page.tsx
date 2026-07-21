@@ -9,7 +9,6 @@ import { AssignmentComposer } from "./AssignmentComposer";
 import { AssignmentStatusActions } from "./AssignmentStatusActions";
 
 
-export const runtime = "edge";
 type AssignmentRow = { id: string; title: string; description: string; assignment_type: AssignmentType; course_id: string | null; target_scope: string; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean; status: AssignmentStatus; created_at: string };
 type SubmissionRow = { assignment_id: string; student_id: string; status: string; score: number | null; attempt_number: number };
 type CourseRow = { id: string; title: string };

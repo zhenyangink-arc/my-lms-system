@@ -13,7 +13,6 @@ import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
 import { AdminWorkspaceSidebar } from "./AdminWorkspaceSidebar";
 
-export const runtime = "edge";
 
 export default async function AdminWorkspaceLayout({ children }: { children: ReactNode }) {
   const [access, announcementAccess, helpAccess, gradeAccess, recordAccess, libraryAccess, auth] = await Promise.all([

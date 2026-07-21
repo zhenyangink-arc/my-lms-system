@@ -8,7 +8,6 @@ import { ConversationScenarioForm, type ConversationScenarioFormValue } from "..
 import { ConversationScenarioStatusActions } from "../ConversationScenarioStatusActions";
 
 
-export const runtime = "edge";
 type ScenarioRow = ConversationScenarioFormValue;
 type ProgressRow = { user_id: string; status: "practicing" | "completed"; practice_count: number; confidence: number | null; reflection: string; last_practiced_at: string };
 type ProfileRow = { id: string; full_name: string | null; email: string | null };

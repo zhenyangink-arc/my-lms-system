@@ -16,7 +16,6 @@ import {
 import type { KoreanUniversity } from "../UniversityLibrary";
 
 
-export const runtime = "edge";
 const ownershipLabels: Record<string, string> = {
   national: "国立",
   public: "公立",

@@ -7,7 +7,6 @@ import { SchoolCrest } from "@/components/school/SchoolCrest";
 import { schoolCategories } from "../school-config";
 
 
-export const runtime = "edge";
 type SchoolRow = { id: string; category: string; name_zh: string; logo_url: string | null; is_published: boolean; detailed_introduction: string | null };
 
 export default async function SchoolOverviewPage() {

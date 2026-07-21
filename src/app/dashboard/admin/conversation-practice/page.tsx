@@ -9,7 +9,6 @@ import { ConversationScenarioForm } from "./ConversationScenarioForm";
 import { ConversationScenarioStatusActions } from "./ConversationScenarioStatusActions";
 
 
-export const runtime = "edge";
 type ScenarioRow = { id: string; title: string; description: string; category: ConversationCategory; difficulty: ConversationDifficulty; duration_minutes: number; status: ConversationStatus; is_featured: boolean; updated_at: string };
 type ProgressRow = { scenario_id: string; status: "practicing" | "completed"; practice_count: number };
 type ProfileRow = { id: string; full_name: string | null; email: string | null };

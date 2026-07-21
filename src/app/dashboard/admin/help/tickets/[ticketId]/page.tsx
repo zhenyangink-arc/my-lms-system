@@ -8,7 +8,6 @@ import { requireHelpCenterManager } from "@/lib/help-center";
 import { HelpTicketManager } from "../../HelpTicketManager";
 
 
-export const runtime = "edge";
 type Ticket = { id: string; user_id: string; subject: string; description: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; resolution: string; created_at: string };
 type Message = { id: string; sender_kind: "student" | "staff"; body: string; created_at: string };
 type Profile = { full_name: string | null; email: string | null };

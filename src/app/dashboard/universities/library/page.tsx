@@ -8,7 +8,6 @@ import {
 } from "../UniversityLibrary";
 
 
-export const runtime = "edge";
 export default async function UniversityLibraryPage() {
   const { supabase, user } = await requireActiveUser();
   const [universitiesResult, comparisonsResult, targetsResult] = await Promise.all([

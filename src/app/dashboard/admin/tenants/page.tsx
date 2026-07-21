@@ -9,7 +9,6 @@ import { TenantComposer } from "./TenantComposer";
 import { TenantLifecycleControls } from "./TenantLifecycleControls";
 
 
-export const runtime = "edge";
 type TenantRow = {
   id: string;
   name: string;

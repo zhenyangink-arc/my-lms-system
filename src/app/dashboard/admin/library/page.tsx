@@ -24,7 +24,6 @@ import { LibraryResourceForm } from "./LibraryResourceForm";
 import { LibraryStatusActions } from "./LibraryStatusActions";
 
 
-export const runtime = "edge";
 type Resource = {
   id: string;
   title: string;

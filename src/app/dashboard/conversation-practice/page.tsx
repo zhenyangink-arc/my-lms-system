@@ -10,7 +10,6 @@ import {
 } from "./config";
 
 
-export const runtime = "edge";
 type ScenarioRow = {
   id: string;
   title: string;

@@ -5,7 +5,6 @@ import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { requirePlatformTenantManager } from "@/lib/admin";
 
 
-export const runtime = "edge";
 type TenantRow = { id: string; name: string; slug: string; status: "active" | "suspended" | "archived"; updated_at: string };
 type LifecycleLog = { id: number; tenant_id: string; tenant_slug: string; action: "suspended" | "archived" | "restored" | "permanently_deleted"; created_at: string };
 

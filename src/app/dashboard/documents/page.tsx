@@ -21,7 +21,6 @@ import { CourierInfoCard } from "./CourierInfoCard";
 import { CATEGORY_ORDER } from "./constants";
 
 
-export const runtime = "edge";
 type ApplicationDocument = {
   id: string;
   target_id: string | null;

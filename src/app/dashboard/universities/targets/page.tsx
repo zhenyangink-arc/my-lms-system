@@ -20,7 +20,6 @@ import {
 } from "./UniversityTargetForm";
 
 
-export const runtime = "edge";
 type TargetSchool = {
   id: string;
   university_id: string | null;

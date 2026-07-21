@@ -1,10 +1,9 @@
 import type { NextRequest } from "next/server";
 
-import { proxy } from "./proxy";
+import { proxy } from "@/lib/dashboard-request-routing";
 
-// Next.js 15 discovers request interception through middleware.ts.
-// Keep the implementation in proxy.ts so the project can migrate to the
-// Next.js 16 proxy convention later without duplicating the routing logic.
+// OpenNext currently supports Edge Middleware, but not Next.js Node.js Proxy.
+// Keep this compatibility entry until the Cloudflare adapter supports Node Proxy.
 export function middleware(request: NextRequest) {
   return proxy(request);
 }

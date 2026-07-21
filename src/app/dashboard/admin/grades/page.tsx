@@ -10,7 +10,6 @@ import { GradeItemStatusActions } from "./GradeItemStatusActions";
 import { GradeReviewManager } from "./GradeReviewManager";
 
 
-export const runtime = "edge";
 type Item = { id: string; title: string; description: string; item_type: GradeItemType; term: string; total_points: number; weight_percent: number; status: GradeItemStatus; source_assignment_id: string | null; updated_at: string };
 type RecordRow = { id: string; item_id: string; student_id: string; score: number | null };
 type Review = { id: string; record_id: string; student_id: string; reason: string; status: GradeReviewStatus; response: string; requested_at: string };

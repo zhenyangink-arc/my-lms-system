@@ -6,7 +6,6 @@ import { type StudentProfileInitialValue } from "./ProfileForm";
 import { ProfileView, type ProfileChecklistItem } from "./ProfileView";
 
 
-export const runtime = "edge";
 type StudentProfile = {
   full_name: string | null;
   role: string | null;

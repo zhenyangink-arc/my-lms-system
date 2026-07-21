@@ -9,7 +9,6 @@ import { deleteStudentVisaCardAction } from "../actions";
 import { VisaCaseAdminForm, VisaTaskReviewControls } from "../VisaAdminControls";
 
 
-export const runtime = "edge";
 type StudentProfile = { id: string; full_name: string | null; email: string | null };
 type VisaCase = { id: string; user_id: string; source_target_id: string | null; visa_type: string; application_channel: string; case_status: string; target_entry_date: string | null; application_city: string | null; residence_province: string | null; residence_city: string | null; planned_entry_date: string | null; accommodation_status: string | null; airport_pickup_required: boolean | null; departure_province: string | null; departure_airport: string | null; arrival_region: string | null; arrival_airport: string | null; advisor_note: string | null; updated_at: string };
 type VisaTask = { id: string; title: string; description: string | null; stage: string; status: string; student_note: string | null; admin_note: string | null; submission_version: number; submitted_at: string | null; reviewed_at: string | null; sort_order: number };

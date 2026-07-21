@@ -2,7 +2,6 @@ import { Cog } from "lucide-react";
 import { ComingSoonPage } from "../ComingSoonPage";
 
 
-export const runtime = "edge";
 export default function SettingsPage() {
   return (
     <ComingSoonPage

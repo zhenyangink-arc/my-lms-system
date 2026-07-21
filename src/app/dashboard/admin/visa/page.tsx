@@ -16,7 +16,6 @@ import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { getVisaCaseStatusLabel } from "../../visa/visa-case-stages";
 
 
-export const runtime = "edge";
 type VisaCase = { id: string; user_id: string; source_target_id: string | null; visa_type: string; application_channel: string; case_status: string; target_entry_date: string | null; application_city: string | null; updated_at: string };
 type VisaTask = { id: string; user_id: string; title: string; status: string; updated_at: string };
 type StudentProfile = { id: string; full_name: string | null; email: string | null };

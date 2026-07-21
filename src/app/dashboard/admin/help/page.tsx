@@ -9,7 +9,6 @@ import { HelpArticleStatusActions } from "./HelpArticleStatusActions";
 import { HelpCenterAdminManager } from "./HelpCenterAdminManager";
 
 
-export const runtime = "edge";
 type Article = { id: string; title: string; summary: string; content: string; category: HelpArticleCategory; status: HelpArticleStatus; is_featured: boolean; sort_order: number; updated_at: string };
 type Ticket = { id: string; user_id: string; subject: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; updated_at: string };
 type Profile = { id: string; full_name: string | null; email: string | null };

@@ -10,7 +10,6 @@ import { createSchoolAction, toggleSchoolPublishedAction } from "../actions";
 import { getSchoolCategoryBySlug, ownershipLabels } from "../school-config";
 
 
-export const runtime = "edge";
 type SchoolRow = { id: string; name_zh: string; name_local: string | null; logo_url: string | null; ownership: string; province: string | null; city: string | null; summary: string | null; detailed_introduction: string | null; is_published: boolean; is_featured: boolean; sort_order: number };
 
 function NewSchoolFields({ categoryValue }: { categoryValue: string }) {

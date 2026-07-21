@@ -14,7 +14,6 @@ import {
 import { requireActiveUser } from "@/lib/auth";
 
 
-export const runtime = "edge";
 type ProgressRow = {
   lesson_id: string;
   course_id: string;

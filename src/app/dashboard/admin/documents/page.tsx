@@ -16,7 +16,6 @@ import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-p
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 
 
-export const runtime = "edge";
 type ChecklistDocument = {
   id: string;
   user_id: string;

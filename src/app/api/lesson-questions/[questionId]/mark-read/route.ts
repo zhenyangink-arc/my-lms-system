@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { getAuthContext } from "@/lib/auth";
 
-export const runtime = "edge";
 
 /*
   标记一条老师回复为"已读"，然后跳转回对应课时页面。
