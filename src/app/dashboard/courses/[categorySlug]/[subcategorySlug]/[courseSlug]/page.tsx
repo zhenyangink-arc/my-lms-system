@@ -6,14 +6,25 @@ import {
   CheckCircle2,
   Clock,
   GraduationCap,
+  Languages,
+  Lock,
+  MessageCircleMore,
   PlayCircle,
+  Sparkles,
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { isPlatformTenantManagerRole } from "@/lib/admin";
 import {
   getCourseLevelLabel,
   getLessonTypeLabel,
 } from "@/lib/course-labels";
+import { getKoreanBeginnerLesson } from "@/lib/korean-curriculum";
+import {
+  getUnlockedKoreanTestSlugs,
+  KOREAN_LEVEL_ONE_TEST_SEQUENCE,
+} from "@/lib/korean-learning-unlocks";
+import { HangulLessonLaunchLink } from "./HangulLessonLaunchLink";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -108,7 +119,7 @@ export default async function CourseDetailPage({
   const { categorySlug, subcategorySlug, courseSlug } = await params;
 
   const { supabase, user, platformProfile } = await requireActiveUser();
-  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
+  const isPlatformAudit = isPlatformTenantManagerRole(platformProfile?.role);
 
   /**
    * 1. 查询一级课程板块
@@ -217,6 +228,24 @@ export default async function CourseDetailPage({
 
   const isFocusCategory =
     parentCategory.slug === "service" || parentCategory.slug === "korean";
+  const isKoreanBeginner =
+    parentCategory.slug === "korean" &&
+    subcategory.slug === "korean-basic" &&
+    course.slug === "korean-beginner";
+  let koreanLevelOneUnlocked = false;
+  if (isKoreanBeginner && !isPlatformAudit) {
+    const { data: attemptData } = await supabase
+      .from("course_test_attempts")
+      .select("test_slug")
+      .eq("student_id", user.id);
+    const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
+      (attemptData ?? []).map((attempt) => String(attempt.test_slug))
+    );
+    koreanLevelOneUnlocked = unlockedTestSlugs.has(
+      KOREAN_LEVEL_ONE_TEST_SEQUENCE[0]
+    );
+  }
+  if (isPlatformAudit) koreanLevelOneUnlocked = true;
   const accentColor = isFocusCategory
     ? parentCategory.slug === "service"
       ? "var(--app-accent)"
@@ -370,6 +399,30 @@ export default async function CourseDetailPage({
         </section>
 
         {/* 课时列表 */}
+        {isKoreanBeginner && (
+          <section className="overflow-hidden rounded-3xl border border-[#dce9e7] bg-[linear-gradient(135deg,#f7fffd_0%,#f8fbff_55%,#fffaf2_100%)] p-5 shadow-sm sm:p-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+              <div className="max-w-2xl">
+                <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-black text-[#21867a] shadow-sm ring-1 ring-[#d8ebe7]">
+                  <Sparkles size={14} />
+                  零基础三段式学习路径
+                </div>
+                <h3 className="mt-4 text-2xl font-black tracking-tight text-[#173f4a]">
+                  从认识韩文，到完成韩国语 2 级
+                </h3>
+                <p className="mt-2 text-sm leading-6 text-[#617982]">
+                  先建立字母与拼读能力，再进入词汇、句型和生活场景表达。三课依次推进，形成完整的韩语初级学习闭环。
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-black text-[#53727a]">
+                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><Languages className="mx-auto mb-1.5 text-[#2a9485]" size={18} />字母</div>
+                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><MessageCircleMore className="mx-auto mb-1.5 text-[#5f8ee8]" size={18} />表达</div>
+                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><GraduationCap className="mx-auto mb-1.5 text-[#d29345]" size={18} />进阶</div>
+              </div>
+            </div>
+          </section>
+        )}
+
         <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <h3 className="text-lg font-black tracking-tight text-gray-900">
@@ -383,6 +436,14 @@ export default async function CourseDetailPage({
             <div className="space-y-4">
               {lessons.map((lesson, index) => {
                 const progress = progressMap.get(lesson.id);
+                const curatedLesson = isKoreanBeginner
+                  ? getKoreanBeginnerLesson(lesson.slug)
+                  : null;
+                const lessonLocked =
+                  isKoreanBeginner &&
+                  lesson.slug === "basic-pronunciation" &&
+                  !isPlatformAudit &&
+                  !koreanLevelOneUnlocked;
 
                 const status = progress?.status ?? "not_started";
                 const progressPercent = progress?.progress_percent ?? 0;
@@ -418,6 +479,11 @@ export default async function CourseDetailPage({
 
                         <div>
                           <div className="mb-2 flex flex-wrap gap-2">
+                            {curatedLesson && (
+                              <span className="rounded-full bg-[#e8f6f2] px-3 py-1 text-xs font-black text-[#238777]">
+                                {curatedLesson.stage}
+                              </span>
+                            )}
                             <span
                               className="rounded-full border px-3 py-1 text-xs font-medium"
                               style={{
@@ -467,12 +533,17 @@ export default async function CourseDetailPage({
                           </div>
 
                           <h4 className="font-bold text-gray-900">
-                            {lesson.title}
+                            {curatedLesson?.title ?? lesson.title}
                           </h4>
 
                           <p className="mt-1 text-sm leading-6 text-gray-500">
-                            {lesson.description || "暂无课时简介"}
+                            {(curatedLesson?.description ?? lesson.description) || "暂无课时简介"}
                           </p>
+                          {curatedLesson && (
+                            <p className="mt-2 text-xs font-bold tracking-wide text-[#789097]">
+                              学习重点：{curatedLesson.focus}
+                            </p>
+                          )}
                         </div>
                       </div>
 
@@ -497,8 +568,10 @@ export default async function CourseDetailPage({
                           />
                         </div>
 
-                        <Link
+                        <HangulLessonLaunchLink
                           href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`}
+                          shouldEnterFullscreen={lesson.slug === "hangul-introduction" || lesson.slug === "basic-pronunciation"}
+                          locked={lessonLocked}
                           className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
                           style={{
                             backgroundColor: isCompleted
@@ -518,15 +591,21 @@ export default async function CourseDetailPage({
                                 : "var(--lesson-start-border)",
                           }}
                         >
-                          <PlayCircle size={15} />
-                          {isPlatformAudit
+                          {lessonLocked ? (
+                            <Lock size={15} />
+                          ) : (
+                            <PlayCircle size={15} />
+                          )}
+                          {lessonLocked
+                            ? "完成韩语字母入门后开放"
+                            : isPlatformAudit
                             ? "巡检课时"
                             : isCompleted
                             ? "复习课时"
                             : isInProgress
                               ? "继续学习"
                               : "开始学习"}
-                        </Link>
+                        </HangulLessonLaunchLink>
                       </div>
                     </div>
                   </div>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import {
   ArrowRight,
   CheckCircle2,
@@ -13,7 +14,6 @@ import {
 
 import { requireAdmin } from "@/lib/admin";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
-import { DashboardPageHeader } from "../../DashboardPageHeader";
 
 
 type ChecklistDocument = {
@@ -136,14 +136,13 @@ export default async function AdminDocumentsPage({
 
   return (
     <>
-      <DashboardPageHeader title="申请资料管理" description="按学生查看各目标大学申请资料清单与完成进度。" />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5 lg:p-8">
         {params.deleted && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">申请资料卡及其中的清单项目已经删除；学生账号和其他数据保持不变。</div>}
 
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_480px] xl:items-end">
-            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><FileText size={15} />学生资料清单</span><h2 className="mt-3 text-2xl font-black tracking-tight">以学生为单位管理目标大学申请资料</h2><p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">目标大学进入准备资料后会出现在这里。进入学生详情，可以查看完成进度，并为每份申请表增加或删除清单项目。</p></div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_480px] xl:items-center">
+            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><FileText size={15} />学生资料清单</span><DashboardTitleWithHint className="mt-3" title="申请资料管理" description="按学生查看各目标大学申请资料清单与完成进度。" /></div>
+            <div className="dashboard-title-metrics">
               {[
                 ["学生数", userIds.length, UsersRound, "var(--app-accent)"],
                 ["准备中", preparingCount, Clock3, "var(--app-secondary)"],

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { requireAccountOwner, requireExecutive } from "@/lib/admin";
+import { requireAccountOwner, requireExecutive, requirePlatformOwner } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -17,6 +17,7 @@ import {
 const VALID_STATUSES = ["active", "inactive", "suspended"];
 const VALID_MEMBERSHIP_TIERS = ["normal", "vip1", "vip2", "vip3"];
 const CREATABLE_ACCOUNT_ROLES = ["teacher", "student"] as const;
+const CREATABLE_PLATFORM_ROLES = ["platform_deputy", "platform_admin"] as const;
 
 function actionError(message: string): AccountActionState {
   return { status: "error", message };
@@ -102,27 +103,108 @@ export async function createManagedAccountAction(
   return actionSuccess(`${role === "teacher" ? "员工" : "学生"}账号已创建，请安全交付登录账号和初始密码。`);
 }
 
+export async function createPlatformAccountAction(
+  _previousState: AccountActionState,
+  formData: FormData
+): Promise<AccountActionState> {
+  void _previousState;
+  const name = String(formData.get("full_name") ?? "").trim();
+  const loginId = normalizeLoginId(String(formData.get("login_id") ?? ""));
+  const password = String(formData.get("initial_password") ?? "");
+  const role = String(formData.get("role") ?? "");
+
+  if (name.length < 2 || name.length > 50) return actionError("姓名需要填写 2 至 50 个字符。");
+  if (!isValidLoginId(loginId)) return actionError("登录账号只能使用 3 至 32 位小写字母、数字、短横线或下划线。");
+  if (password.length < 8 || password.length > 72 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) {
+    return actionError("初始密码需为 8 至 72 位，并同时包含字母和数字。");
+  }
+  if (!CREATABLE_PLATFORM_ROLES.includes(role as (typeof CREATABLE_PLATFORM_ROLES)[number])) {
+    return actionError("平台账号只能设为平台副负责人或平台管理员。");
+  }
+
+  await requirePlatformOwner();
+  const admin = createAdminClient();
+  const { data: created, error: createError } = await admin.auth.admin.createUser({
+    email: loginIdToInternalEmail(loginId),
+    password,
+    email_confirm: true,
+    user_metadata: { full_name: name, name, login_id: loginId },
+  });
+  if (createError || !created.user) return accountCreationError(createError);
+
+  const profileIdentity = role === "platform_deputy"
+    ? { role: "tenant_operator", global_role: "platform_deputy" }
+    : { role: "admin", global_role: "platform_admin" };
+  const { error: profileError } = await admin
+    .from("profiles")
+    .update({
+      full_name: name,
+      login_id: loginId,
+      ...profileIdentity,
+      status: "active",
+      membership_tier: "normal",
+    })
+    .eq("id", created.user.id);
+  const { error: membershipCleanupError } = await admin
+    .from("tenant_memberships")
+    .delete()
+    .eq("user_id", created.user.id);
+
+  if (profileError || membershipCleanupError) {
+    await admin.auth.admin.deleteUser(created.user.id);
+    return actionError("平台角色配置失败，账号已回滚。");
+  }
+
+  revalidatePath("/dashboard/admin/accounts");
+  return actionSuccess(`${role === "platform_deputy" ? "平台副负责人" : "平台管理员"}账号已创建。`);
+}
+
 async function requireManageableTarget(
-  supabase: Awaited<ReturnType<typeof requireExecutive>>["supabase"],
   viewerRole: string,
+  viewerTenantId: string | null,
   profileId: string
 ) {
-  const { data: target, error } = await supabase
+  const admin = createAdminClient();
+  const [{ data: target, error }, { data: memberships, error: membershipError }] = await Promise.all([
+    admin
     .from("profiles")
-    .select("id, role")
+    .select("id, role, global_role")
     .eq("id", profileId)
-    .maybeSingle();
+    .maybeSingle(),
+    admin
+      .from("tenant_memberships")
+      .select("tenant_id, role")
+      .eq("user_id", profileId),
+  ]);
 
-  if (error || !target) {
+  if (error || membershipError || !target) {
     throw new Error("找不到要管理的账号。");
   }
 
-  // 老板账号不通过普通账号管理页修改，避免误降级或自我停用。
-  if (target.role === "tenant_super_admin" || !canManageTarget(viewerRole, target.role)) {
+  const belongsToViewerScope = viewerTenantId
+    ? (memberships ?? []).some((membership) => membership.tenant_id === viewerTenantId)
+    : (memberships ?? []).length === 0;
+
+  if (!belongsToViewerScope) {
     throw new Error("你没有权限管理这个账号。");
   }
 
-  return target;
+  const effectiveRole = viewerTenantId
+    ? (memberships ?? []).find(
+        (membership) => membership.tenant_id === viewerTenantId
+      )?.role ?? target.role
+    : target.global_role === "platform_deputy" ||
+        target.global_role === "platform_admin"
+      ? target.global_role
+      : target.role;
+  const accountScope = viewerTenantId ? "tenant" : "platform";
+
+  // 老板账号不通过普通账号管理页修改，避免误降级或自我停用。
+  if (effectiveRole === "tenant_super_admin" || !canManageTarget(viewerRole, effectiveRole, accountScope)) {
+    throw new Error("你没有权限管理这个账号。");
+  }
+
+  return { ...target, role: effectiveRole };
 }
 
 export async function updateProfileRoleAction(
@@ -130,28 +212,44 @@ export async function updateProfileRoleAction(
   _previousState: AccountActionState,
   formData: FormData
 ): Promise<AccountActionState> {
-  const { supabase, role: viewerRole } = await requireExecutive();
+  const { tenant, role: viewerRole } = await requireExecutive();
   const newRole = String(formData.get("role") ?? "").trim();
 
   if (!profileId) return actionError("缺少账号编号，请刷新页面后重试。");
 
-  const assignableRoles = getAssignableRoles(viewerRole);
+  const accountScope = tenant ? "tenant" : "platform";
+  const assignableRoles = getAssignableRoles(viewerRole, accountScope);
   if (!assignableRoles.includes(newRole as AppRole)) {
     return actionError("你不能分配这个角色。");
   }
 
   try {
-    const target = await requireManageableTarget(supabase, viewerRole, profileId);
+    const target = await requireManageableTarget(viewerRole, tenant?.id ?? null, profileId);
     if (target.role === newRole) return actionSuccess("账号角色没有变化。");
 
-    const { data: updatedProfile, error } = await supabase
+    const admin = createAdminClient();
+    const profileIdentity = tenant
+      ? { role: newRole }
+      : newRole === "platform_deputy"
+        ? { role: "tenant_operator", global_role: "platform_deputy" }
+        : { role: "admin", global_role: "platform_admin" };
+    const { data: updatedProfile, error } = await admin
       .from("profiles")
-      .update({ role: newRole })
+      .update(profileIdentity)
       .eq("id", profileId)
       .select("id")
       .maybeSingle();
+    const membershipResult = tenant
+      ? await admin
+          .from("tenant_memberships")
+          .update({ role: newRole })
+          .eq("tenant_id", tenant.id)
+          .eq("user_id", profileId)
+          .select("user_id")
+          .maybeSingle()
+      : { data: { user_id: profileId }, error: null };
 
-    if (error || !updatedProfile) {
+    if (error || !updatedProfile || membershipResult.error || !membershipResult.data) {
       return actionError("角色更新失败，请稍后重试。");
     }
 
@@ -168,7 +266,7 @@ export async function updateProfileStatusAction(
   _previousState: AccountActionState,
   formData: FormData
 ): Promise<AccountActionState> {
-  const { supabase, role: viewerRole, user } = await requireExecutive();
+  const { tenant, role: viewerRole, user } = await requireExecutive();
   const newStatus = String(formData.get("status") ?? "").trim();
   const reason = String(formData.get("deactivate_reason") ?? "").trim();
 
@@ -178,7 +276,7 @@ export async function updateProfileStatusAction(
   if (reason.length > 300) return actionError("状态原因不能超过 300 个字。");
 
   try {
-    await requireManageableTarget(supabase, viewerRole, profileId);
+    await requireManageableTarget(viewerRole, tenant?.id ?? null, profileId);
 
     const updatePayload: Record<string, unknown> = { status: newStatus };
     if (newStatus === "active") {
@@ -191,14 +289,24 @@ export async function updateProfileStatusAction(
       updatePayload.deactivate_reason = reason;
     }
 
-    const { data: updatedProfile, error } = await supabase
+    const admin = createAdminClient();
+    const { data: updatedProfile, error } = await admin
       .from("profiles")
       .update(updatePayload)
       .eq("id", profileId)
       .select("id")
       .maybeSingle();
+    const membershipResult = tenant
+      ? await admin
+          .from("tenant_memberships")
+          .update({ status: newStatus })
+          .eq("tenant_id", tenant.id)
+          .eq("user_id", profileId)
+          .select("user_id")
+          .maybeSingle()
+      : { data: { user_id: profileId }, error: null };
 
-    if (error || !updatedProfile) {
+    if (error || !updatedProfile || membershipResult.error || !membershipResult.data) {
       return actionError("账号状态更新失败，请稍后重试。");
     }
 
@@ -216,7 +324,7 @@ export async function updateMembershipTierAction(
   _previousState: AccountActionState,
   formData: FormData
 ): Promise<AccountActionState> {
-  const { supabase, role: viewerRole, user } = await requireExecutive();
+  const { tenant, role: viewerRole, user } = await requireExecutive();
   const membershipTier = String(formData.get("membership_tier") ?? "").trim();
 
   if (!VALID_MEMBERSHIP_TIERS.includes(membershipTier)) {
@@ -224,10 +332,11 @@ export async function updateMembershipTierAction(
   }
 
   try {
-    const target = await requireManageableTarget(supabase, viewerRole, profileId);
+    const target = await requireManageableTarget(viewerRole, tenant?.id ?? null, profileId);
     if (target.role !== "student") return actionError("会员档位只适用于学生账号。");
 
-    const { error } = await supabase
+    const admin = createAdminClient();
+    const { error } = await admin
       .from("profiles")
       .update({
         membership_tier: membershipTier,
@@ -235,8 +344,19 @@ export async function updateMembershipTierAction(
         membership_updated_by: user.id,
       })
       .eq("id", profileId);
+    const membershipResult = tenant
+      ? await admin
+          .from("tenant_memberships")
+          .update({ membership_tier: membershipTier })
+          .eq("tenant_id", tenant.id)
+          .eq("user_id", profileId)
+          .select("user_id")
+          .maybeSingle()
+      : { data: { user_id: profileId }, error: null };
 
-    if (error) return actionError("会员档位更新失败，请稍后重试。");
+    if (error || membershipResult.error || !membershipResult.data) {
+      return actionError("会员档位更新失败，请稍后重试。");
+    }
 
     revalidatePath("/dashboard/admin/accounts");
     revalidatePath(`/dashboard/admin/accounts/${profileId}`);
@@ -256,13 +376,20 @@ export async function deleteAccountAction(
   formData: FormData
 ): Promise<AccountActionState> {
   void _previousState;
-  const { supabase, user } = await requireAccountOwner();
+  const { supabase, tenant, role: viewerRole, user } = await requireAccountOwner();
   const confirmation = String(formData.get("confirmation") ?? "").trim();
   const reason = String(formData.get("deletion_reason") ?? "").trim();
 
   if (!profileId) return actionError("缺少账号编号，请刷新页面后重试。");
   if (profileId === user.id) return actionError("不能删除当前登录的负责人账号。");
   if (reason.length < 2 || reason.length > 300) return actionError("删除原因需要填写 2 至 300 个字。");
+  if (!tenant) return actionError("平台账号暂不支持在此永久删除，请先停用账号。");
+
+  try {
+    await requireManageableTarget(viewerRole, tenant.id, profileId);
+  } catch (error) {
+    return actionError(error instanceof Error ? error.message : "你没有权限删除这个账号。");
+  }
 
   const { data: target, error: targetError } = await supabase
     .from("profiles")

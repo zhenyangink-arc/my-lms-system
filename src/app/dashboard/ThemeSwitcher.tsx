@@ -9,15 +9,15 @@ const THEME_CHANGE_EVENT = "app-dashboard-theme-change";
 const themes = [
   {
     value: "classic",
-    label: "元智蓝",
-    description: "静谧蓝画布与白色玻璃卡片",
-    colors: ["#2563eb", "#0ea5e9", "#eef1f8"],
+    label: "阳光青提",
+    description: "象牙白画布与青提绿点缀",
+    colors: ["#63a867", "#b3936a", "#fcfbf7"],
   },
   {
-    value: "vercel",
-    label: "极简",
-    description: "Vercel 风格的黑白灰与蓝色点缀",
-    colors: ["#171717", "#0070f3", "#fafafa"],
+    value: "terracotta",
+    label: "宣纸陶土",
+    description: "宣纸米色画布与陶土橘点缀",
+    colors: ["#b07c69", "#8c6f52", "#f9f6f0"],
   },
   {
     value: "chatgpt",

@@ -14,9 +14,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: 'try{var t=localStorage.getItem("app-dashboard-theme");if(t==="vercel"||t==="chatgpt"){document.documentElement.setAttribute("data-app-theme",t)}}catch(e){}' }} />
+        <script dangerouslySetInnerHTML={{ __html: 'try{var t=localStorage.getItem("app-dashboard-theme");if(t==="terracotta"||t==="chatgpt"){document.documentElement.setAttribute("data-app-theme",t)}}catch(e){}' }} />
       </head>
-      <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-white antialiased`}>
+      <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-background antialiased`}>
         <main className="flex-1">{children}</main>
       </body>
     </html>

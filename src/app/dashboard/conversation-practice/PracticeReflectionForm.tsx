@@ -5,6 +5,7 @@ import { CheckCircle2, Save } from "lucide-react";
 
 import { initialConversationPracticeActionState } from "./action-state";
 import { saveConversationPracticeProgressAction } from "./actions";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export function PracticeReflectionForm({
   scenarioId,
@@ -27,8 +28,7 @@ export function PracticeReflectionForm({
           <CheckCircle2 size={20} aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-lg font-black">记录本次练习</h2>
-          <p className="app-muted-text mt-1 text-xs leading-5">每次保存都会累计练习次数，复盘内容可以继续修改。</p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>记录本次练习</>} description={<>每次保存都会累计练习次数，复盘内容可以继续修改。</>} />
         </div>
       </div>
 

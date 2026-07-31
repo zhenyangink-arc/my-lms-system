@@ -8,6 +8,7 @@ import {
   grantLibraryAdminAction,
   revokeLibraryAdminAction,
 } from "@/app/dashboard/library/actions";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type Admin = {
   id: string;
@@ -60,10 +61,7 @@ export function LibraryAdminManager({ admins }: { admins: Admin[] }) {
           <ShieldCheck size={19} />
         </span>
         <div>
-          <h2 className="text-lg font-black">资料库管理员授权</h2>
-          <p className="app-muted-text mt-1 text-xs leading-5">
-            只有负责人可以指定普通管理员，CEO 自动拥有资料库后台权限。
-          </p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>资料库管理员授权</>} description={<>只有负责人可以指定普通管理员，CEO 自动拥有资料库后台权限。</>} />
         </div>
       </div>
 

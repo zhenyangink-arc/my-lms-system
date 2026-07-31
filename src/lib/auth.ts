@@ -16,7 +16,11 @@ type AuthProfile = {
 function isPlatformOnlyProfile(profile: AuthProfile | null | undefined) {
   if (profile?.global_role) {
     // 平台身份直接绕过租户归属检查，不伪装成任何机构成员。
-    return profile.global_role === "platform_owner" || profile.global_role === "platform_deputy";
+    return (
+      profile.global_role === "platform_owner" ||
+      profile.global_role === "platform_deputy" ||
+      profile.global_role === "platform_admin"
+    );
   }
 
   // 缺少 global_role 时只认可无歧义的历史副负责人角色；平台负责人必须完成身份迁移。

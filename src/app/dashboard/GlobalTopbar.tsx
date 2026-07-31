@@ -3,6 +3,7 @@ import { Bell, GraduationCap, Home } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { BackgroundBrightnessControl } from "./BackgroundBrightnessControl";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 
 // 顶部栏只保留真实可用的入口，不再展示尚未接入后端的搜索和语言切换。
@@ -52,6 +53,7 @@ export async function GlobalTopbar() {
 
       <div className="flex shrink-0 items-center gap-2">
         <ThemeSwitcher />
+        <BackgroundBrightnessControl />
 
         <Link
           href="/"

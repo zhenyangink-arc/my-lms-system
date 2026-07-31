@@ -12,6 +12,7 @@ import {
   History,
   LayoutGrid,
   Library,
+  LibraryBig,
   MessagesSquare,
   ShieldCheck,
   Users,
@@ -35,12 +36,18 @@ export type AdminNavigationItem = {
   requiresLearningRecordAccess?: boolean;
   requiresLibraryAccess?: boolean;
   requiresTenantManagementAccess?: boolean;
+  requiresQuestionBankAccess?: boolean;
 };
 
 const allStaffRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin", "platform_super_admin"];
+const assessmentPaperRoles: UserRole[] = [...allStaffRoles, "tenant_operator"];
 const adminRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
 const executiveRoles: UserRole[] = ["ceo", "tenant_super_admin", "platform_super_admin"];
 const tenantManagerRoles: UserRole[] = ["platform_super_admin", "tenant_operator"];
+const questionBankRoles: UserRole[] = [
+  "platform_super_admin",
+  "tenant_operator",
+];
 
 export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
   {
@@ -69,9 +76,20 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     href: "/dashboard/admin/assignments",
     icon: ClipboardCheck,
     group: "teaching",
-    roles: allStaffRoles,
+    roles: assessmentPaperRoles,
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
+  },
+  {
+    label: "平台标准题库",
+    description: "仅平台维护标准题目，并用于制作完整标准试卷。",
+    href: "/dashboard/admin/question-bank",
+    icon: LibraryBig,
+    group: "teaching",
+    roles: questionBankRoles,
+    color: "var(--app-secondary)",
+    softColor: "var(--app-secondary-soft)",
+    requiresQuestionBankAccess: true,
   },
   {
     label: "会话练习管理",
@@ -219,6 +237,7 @@ export function getVisibleAdminNavigation(
     canManageLearningRecords?: boolean;
     canManageLibrary?: boolean;
     canManageTenants?: boolean;
+    canAccessQuestionBank?: boolean;
   } = {}
 ) {
   return ADMIN_NAVIGATION.filter(
@@ -230,7 +249,8 @@ export function getVisibleAdminNavigation(
       (!item.requiresGradeCenterAccess || options.canManageGradeCenter === true) &&
       (!item.requiresLearningRecordAccess || options.canManageLearningRecords === true) &&
       (!item.requiresLibraryAccess || options.canManageLibrary === true) &&
-      (!item.requiresTenantManagementAccess || options.canManageTenants === true)
+      (!item.requiresTenantManagementAccess || options.canManageTenants === true) &&
+      (!item.requiresQuestionBankAccess || options.canAccessQuestionBank === true)
   );
 }
 

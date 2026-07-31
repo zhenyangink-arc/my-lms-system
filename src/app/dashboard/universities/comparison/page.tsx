@@ -14,6 +14,7 @@ import {
   removeUniversityComparisonAction,
 } from "../actions";
 import type { KoreanUniversity } from "../UniversityLibrary";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 const ownershipLabels: Record<string, string> = {
@@ -84,7 +85,7 @@ export default async function UniversityComparisonPage() {
 
         <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><Scale size={20} /></span><div><h2 className="text-base font-black">四校对比席位</h2><p className="mt-1 text-xs app-muted-text">当前选择 {universities.length}／4 所，数据库也会强制执行上限。</p></div></div>
+            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><Scale size={20} /></span><div><DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>四校对比席位</>} description={<>当前选择 {universities.length}／4 所，数据库也会强制执行上限。</>} /></div></div>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[0, 1, 2, 3].map((index) => {

@@ -2,10 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import {
-  getConversationPracticeAccess,
-  requireConversationPracticeManager,
-} from "@/lib/conversation-practice";
+import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import { requireStudentFeature } from "@/lib/student-permissions-server";
 import type { ConversationPracticeActionState } from "./action-state";
 import {
   CONVERSATION_CATEGORIES,
@@ -133,7 +131,9 @@ export async function createConversationScenarioAction(
   formData: FormData
 ): Promise<ConversationPracticeActionState> {
   void _previousState;
-  const { supabase } = await requireConversationPracticeManager();
+  const access = await getConversationPracticeAccess();
+  if (!access.canManageContent) return result("error", "没有权限新建会话场景，只有平台负责人和被指定的管理员可以新建。");
+  const { supabase } = access;
   const input = readScenarioInput(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const intent = String(formData.get("intent") ?? "draft");
@@ -156,7 +156,10 @@ export async function updateConversationScenarioAction(
 ): Promise<ConversationPracticeActionState> {
   void _previousState;
   if (!isUuid(scenarioId)) return result("error", "场景编号不正确，请刷新页面重试。");
-  const { supabase } = await requireConversationPracticeManager();
+  await requireStudentFeature("conversation_course");
+  const access = await getConversationPracticeAccess();
+  if (!access.canManageContent) return result("error", "没有权限编辑会话场景，只有平台负责人和被指定的管理员可以编辑。");
+  const { supabase } = access;
   const input = readScenarioInput(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const status = String(formData.get("status") ?? "draft");
@@ -182,7 +185,9 @@ export async function changeConversationScenarioStatusAction(
   void _formData;
   if (!isUuid(scenarioId)) return result("error", "场景编号不正确，请刷新页面重试。");
   if (!(CONVERSATION_STATUSES as readonly string[]).includes(nextStatus)) return result("error", "场景状态不正确。");
-  const { supabase } = await requireConversationPracticeManager();
+  const access = await getConversationPracticeAccess();
+  if (!access.canManageContent) return result("error", "没有权限修改场景发布状态，只有平台负责人和被指定的管理员可以操作。");
+  const { supabase } = access;
   const { error } = await supabase.rpc("change_conversation_practice_scenario_status", {
     p_scenario_id: scenarioId,
     p_status: nextStatus,

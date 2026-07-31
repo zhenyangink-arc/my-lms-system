@@ -138,7 +138,7 @@ export async function requirePlatformTenantManager() {
   3. profiles.role 是 admin / ceo / tenant_super_admin
 */
 export async function requireAdmin() {
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
 
   /*
     非 admin / ceo / tenant_super_admin 不能进入管理后台。
@@ -150,6 +150,7 @@ export async function requireAdmin() {
   return {
     supabase,
     user,
+    tenant,
     role: profile?.role as UserRole,
     status: (profile?.status ?? "active") as UserStatus,
   };

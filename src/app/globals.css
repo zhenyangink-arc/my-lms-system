@@ -44,43 +44,45 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) * 1.4);
   --radius-2xl: calc(var(--radius) * 1.8);
-  --radius-3xl: calc(var(--radius) * 2.2);
-  --radius-4xl: calc(var(--radius) * 2.6);
+  /* 柔和有机风：大圆角封顶 20px，禁止出现更大的档位 */
+  --radius-3xl: calc(var(--radius) * 2);
+  --radius-4xl: calc(var(--radius) * 2);
 }
 
+/* shadcn 基础变量 —— 柔和有机极简风：阳光象牙白画布、深碳黑文字、春日青提绿主色，极致通透明亮 */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --background: #fcfbf7;
+  --foreground: #141413;
+  --card: #ffffff;
+  --card-foreground: #141413;
+  --popover: #ffffff;
+  --popover-foreground: #141413;
+  --primary: #4c8250;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f4ee;
+  --secondary-foreground: #33322e;
+  --muted: #f6f4ee;
+  --muted-foreground: #625f58;
+  --accent: #eef5ee;
+  --accent-foreground: #2f4f32;
+  --destructive: #bc5b47;
+  --border: #ebe9e1;
+  --input: #ebe9e1;
+  --ring: #63a867;
+  --chart-1: #63a867;
+  --chart-2: #b3936a;
+  --chart-3: #d9b45c;
+  --chart-4: #6c8fa4;
+  --chart-5: #8a887f;
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: #ffffff;
+  --sidebar-foreground: #141413;
+  --sidebar-primary: #4c8250;
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: #f6f4ee;
+  --sidebar-accent-foreground: #33322e;
+  --sidebar-border: #ebe9e1;
+  --sidebar-ring: #63a867;
 }
 
 .dark {
@@ -132,77 +134,81 @@
 /*
   元智教育 Dashboard 视觉系统 —— 三套主题
 
-  1. 默认「元智蓝」：静谧蓝画布 + 白色玻璃卡片（:root 下面这组值）
-  2. 「vercel」：Vercel 后台的 Geist 浅色风格 —— #fafafa 画布、黑白灰、黑色主按钮、#0070f3 蓝
+  1. 默认「阳光青提」：柔和有机极简风 —— 极致通透的暖阳象牙白画布、纯白卡片、锐利深碳黑文字、
+     明亮轻盈的春日青提绿点缀、极细干净浅暖灰边框、带青提绿调的弥散空气感光影（:root 下面这组值）
+  2. 「terracotta 宣纸陶土」：韩屋陶土风 —— 宣纸米色画布、纯白卡片、深褐灰文字、
+     低饱和陶土橘点缀、带暖橘色调的弥散空气感阴影
   3. 「chatgpt」：ChatGPT 的中性灰底 + #10a37f 绿 + GPT-4 紫
 
   切换方式：html[data-app-theme="..."]（ThemeSwitcher 写入，localStorage 持久化）
   规则：页面背景、侧边栏、卡片、边框、输入框、文字颜色统一引用这组变量；
-  只影响 .app-shell 内部；green/orange/red 等状态标签色保持固定。
+  只影响 .app-shell 内部；状态标签色统一走 --app-status-* 变量。
 */
 :root {
-  /* 静谧蓝主题：导航（侧边栏/顶栏）用纯白，主内容区用冷调浅蓝灰画布，卡片浮在上面 */
-  --app-bg: #f3f5fb;
+  /* 阳光青提主题：极致通透明亮 —— 画布是充满光感的暖阳象牙白，卡片纯白悬浮，文字锐利深碳黑，点缀轻盈生机的春日青提绿 */
+  --app-bg: #fcfbf7;
   --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
-  --app-soft-bg: #eef1f8;
-  --app-border: #dde3f0;
-  --app-border-soft: #e8ecf5;
+  --app-soft-bg: #f6f4ee;
+  --app-border: #ebe9e1;
+  --app-border-soft: #f1efe8;
 
-  --app-text: #0f1729;
-  --app-text-soft: #38415a;
-  --app-muted: #64708c;
-  --app-muted-light: #93a0bd;
+  --app-text: #141413;
+  --app-text-soft: #33322e;
+  --app-muted: #625f58;
+  --app-muted-light: #9c9890;
 
   --app-input-bg: #ffffff;
-  --app-accent: #2563eb;
-  --app-accent-strong: #1d4ed8;
-  --app-accent-soft: #e6edfd;
+  --app-accent: #63a867;
+  --app-accent-strong: #4c8250;
+  --app-accent-soft: #eef5ee;
   --app-accent-contrast: #ffffff;
-  --app-secondary: #0ea5e9;
-  --app-secondary-soft: #e3f3fc;
-  --app-success: #0f9d76;
-  --app-success-soft: #e0f5ee;
-  --app-warm: #6366f1;
-  --app-warm-soft: #eceefe;
-  --app-hero-start: #e4ecff;
-  --app-hero-end: #e6f5fe;
-  --app-shadow: 0 1px 2px rgba(23, 37, 84, 0.05), 0 24px 48px -12px rgba(23, 37, 84, 0.12);
+  --app-secondary: #b3936a;
+  --app-secondary-soft: #f4ede1;
+  --app-success: #4f9457;
+  --app-success-soft: #e7f4e8;
+  --app-warm: #b08f52;
+  --app-warm-soft: #f4ecdb;
+  --app-hero-start: #f8f6ef;
+  --app-hero-end: #eef6ee;
+  /* 带极弱青提绿调的大面积弥散空气感光影，营造阳光打在树叶上的轻盈感 */
+  --app-shadow: 0 8px 30px rgba(99, 168, 103, 0.06);
 
-  /* 卡片质感（各主题可覆盖）：默认是半透明白玻璃 + 白色描边 + 顶部高光 */
-  --app-card-fill: color-mix(in srgb, var(--app-card-bg) 90%, transparent);
-  --app-card-border: color-mix(in srgb, white 85%, transparent);
-  --app-card-highlight: color-mix(in srgb, white 70%, transparent);
+  /* 卡片质感（各主题可覆盖）：纯白实底 + 极细浅边框，靠留白和空气感阴影撑层次 */
+  --app-card-fill: var(--app-card-bg);
+  --app-card-border: var(--app-border);
+  --app-card-highlight: transparent;
 }
 
-/* 主题 2：Vercel（Geist 浅色后台）—— 灰白画布、扁平白卡片、黑色主操作、蓝色点缀 */
-html[data-app-theme="vercel"] {
-  --app-bg: #fafafa;
+/* 主题 2：宣纸陶土 —— 韩屋陶土风：暖宣纸米色画布、纯白卡片、深褐灰文字、低饱和陶土橘点缀 */
+html[data-app-theme="terracotta"] {
+  --app-bg: #f9f6f0;
   --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
-  --app-soft-bg: #f2f2f2;
-  --app-border: #eaeaea;
-  --app-border-soft: #f0f0f0;
+  --app-soft-bg: #f6efea;
+  --app-border: #ebe4df;
+  --app-border-soft: #f1ebe5;
 
-  --app-text: #171717;
-  --app-text-soft: #404040;
-  --app-muted: #666666;
-  --app-muted-light: #a3a3a3;
+  --app-text: #2d2523;
+  --app-text-soft: #423835;
+  --app-muted: #6f6158;
+  --app-muted-light: #a89890;
 
   --app-input-bg: #ffffff;
-  --app-accent: #171717;
-  --app-accent-strong: #000000;
-  --app-accent-soft: #f0f0f0;
+  --app-accent: #b07c69;
+  --app-accent-strong: #96604e;
+  --app-accent-soft: #f3e2d9;
   --app-accent-contrast: #ffffff;
-  --app-secondary: #0070f3;
-  --app-secondary-soft: #e8f1fd;
-  --app-success: #1a7f37;
-  --app-success-soft: #e7f5ec;
-  --app-warm: #7c3aed;
-  --app-warm-soft: #f2ecfd;
-  --app-hero-start: #f5f5f5;
-  --app-hero-end: #fafafa;
-  --app-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 8px 24px -12px rgba(0, 0, 0, 0.1);
+  --app-secondary: #8c6f52;
+  --app-secondary-soft: #efe6da;
+  --app-success: #6b8f5a;
+  --app-success-soft: #e9f0e3;
+  --app-warm: #a65d3f;
+  --app-warm-soft: #f2e2d8;
+  --app-hero-start: #f5efe6;
+  --app-hero-end: #f8f2ea;
+  /* 带极弱暖橘色调的大面积弥散空气感阴影 */
+  --app-shadow: 0 8px 30px rgba(176, 124, 105, 0.03);
 
   --app-card-fill: var(--app-card-bg);
   --app-card-border: var(--app-border);
@@ -258,20 +264,16 @@ html[data-app-theme="chatgpt"] {
   color: var(--app-text);
 }
 
-/* 卡片用半透明 + 模糊 + 顶部高光，在暖米灰主区域上悬浮出"玻璃"质感；卡片本身用白色边线，靠底色对比和阴影撑出层次，而不是灰色描边 */
+/* 卡片：纯白实底 + 极细浅边框 + 弥散空气感阴影，轻盈悬浮在燕麦画布上；层次靠留白而不是描边 */
 .app-card,
 .app-theme-card {
   background-color: var(--app-card-fill);
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
   border-color: var(--app-card-border);
   color: var(--app-text);
 }
 
 .app-card {
-  box-shadow:
-    var(--app-shadow),
-    inset 0 1px 0 var(--app-card-highlight);
+  box-shadow: var(--app-shadow);
 }
 
 .app-topbar {
@@ -452,37 +454,156 @@ html[data-app-theme="chatgpt"] {
     color 160ms ease;
 }
 
-/* 课程学习按钮状态色 */
+/* 课程学习按钮状态色（低饱和自然色，保持三态可辨识） */
 :root {
   --lesson-start-bg: var(--app-accent);
   --lesson-start-text: #ffffff;
   --lesson-start-border: var(--app-accent);
 
-  --lesson-continue-bg: #0284c7;
+  --lesson-continue-bg: #6c8fa4;
   --lesson-continue-text: #ffffff;
-  --lesson-continue-border: #0284c7;
+  --lesson-continue-border: #6c8fa4;
 
-  --lesson-review-bg: #f59e0b;
-  --lesson-review-text: #111827;
-  --lesson-review-border: #f59e0b;
+  --lesson-review-bg: #d9b45c;
+  --lesson-review-text: #2c2c2b;
+  --lesson-review-border: #d9b45c;
 }
 
-/* 账号状态标签颜色（保持辨识度，固定不变） */
+/* 账号状态标签颜色（低饱和化，色相保持可辨识） */
 :root {
-  --app-status-active-bg: #16a34a;
+  --app-status-active-bg: #5f8759;
   --app-status-active-text: #ffffff;
 
-  --app-status-inactive-bg: #6b7280;
+  --app-status-inactive-bg: #8a887f;
   --app-status-inactive-text: #ffffff;
 
-  --app-status-suspended-bg: #ea580c;
+  --app-status-suspended-bg: #c07b54;
   --app-status-suspended-text: #ffffff;
 }
 
+/* 去线化分割：卡片内的 border-t 分割段落改为纯留白分隔，不画线、不套框 */
 .app-card > .mt-5.border-t.pt-5 {
-  margin-top: 1.25rem;
-  border: 1px solid var(--app-border-soft);
-  border-radius: 1.5rem;
-  padding: 1.25rem;
-  background-color: var(--app-card-bg);
+  margin-top: 1.5rem;
+  border: none;
+  padding-top: 0;
+}
+/* Korean Level 1 books use neutral black copy while retaining colored accents. */
+.book-black-copy :is(h1, h2, h3, h4, p, li, button) {
+  color: #202322 !important;
+}
+
+.book-black-copy
+  :is([class*="bg-[#173f4a]"], [class*="bg-[#294f43]"])
+  :is(h1, h2, h3, h4, p, li, button) {
+  color: #ffffff !important;
+}
+.dashboard-title-metrics {
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  overflow-x: auto;
+  padding-bottom: 0.125rem;
+}
+
+.dashboard-title-metrics > * {
+  display: grid !important;
+  grid-template-columns: 1.75rem minmax(0, 1fr) !important;
+  grid-template-areas:
+    "icon value"
+    "label label";
+  align-items: center;
+  column-gap: 0.375rem;
+  row-gap: 0.125rem;
+  width: 6.5rem;
+  min-width: 6.5rem;
+  min-height: 0;
+  padding: 0.5rem 0.625rem !important;
+  text-align: left !important;
+}
+
+.dashboard-title-metrics > * > :first-child {
+  grid-area: icon;
+  width: 1.75rem !important;
+  height: 1.75rem !important;
+  margin: 0 !important;
+}
+
+.dashboard-title-metrics > * > p:first-of-type {
+  grid-area: value;
+  margin: 0 !important;
+  font-size: 1rem !important;
+  line-height: 1.25rem !important;
+  text-align: right;
+}
+
+.dashboard-title-metrics > * > p:last-of-type {
+  grid-area: label;
+  margin: 0 !important;
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@keyframes knowledge-firework-burst {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateY(0)
+      scale(0.35);
+  }
+  18% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) rotate(var(--angle))
+      translateY(var(--distance)) scale(0.15);
+  }
+}
+
+.knowledge-firework-particle {
+  position: absolute;
+  width: 0.35rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  animation: knowledge-firework-burst 1100ms cubic-bezier(0.17, 0.67, 0.35, 1)
+    var(--delay) both;
+  box-shadow: 0 0 0.5rem currentColor;
+}
+
+@keyframes knowledge-firework-core-flash {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.2);
+  }
+  22% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(2.8);
+  }
+}
+
+.knowledge-firework-core {
+  position: absolute;
+  width: 1.1rem;
+  height: 1.1rem;
+  border: 0.2rem solid currentColor;
+  border-radius: 999px;
+  animation: knowledge-firework-core-flash 700ms ease-out var(--delay) both;
+  box-shadow: 0 0 1.25rem currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .knowledge-firework-particle,
+  .knowledge-firework-core {
+    display: none;
+  }
 }

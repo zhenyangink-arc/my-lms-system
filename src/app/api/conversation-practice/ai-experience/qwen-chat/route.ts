@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 
-import { createClient } from "@/lib/supabase/server";
+import { getAuthContext } from "@/lib/auth";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 
 
 type ChatRole = "user" | "assistant";
@@ -33,6 +37,21 @@ function normalizeHistory(value: unknown): ChatHistoryItem[] {
 }
 
 export async function POST(request: Request) {
+  const auth = await getAuthContext();
+  if (auth.status === "unauthenticated") {
+    return NextResponse.json({ error: "请先登录后再使用 AI 口语陪练。" }, { status: 401 });
+  }
+  if (
+    auth.status !== "active" ||
+    !canUseStudentFeature(
+      auth.profile?.role ?? "student",
+      normalizeMembershipTier(auth.profile?.membership_tier),
+      "ai_conversation_experience"
+    )
+  ) {
+    return NextResponse.json({ error: "当前会员档位没有 AI 交流体验权限。" }, { status: 403 });
+  }
+
   let body: ChatRequestBody;
   try {
     body = (await request.json()) as ChatRequestBody;
@@ -46,11 +65,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: `请输入 1 到 ${MAX_MESSAGE_LENGTH} 个字符的内容。` }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const { data: { user }, error: userError } = await supabase.auth.getUser();
-  if (userError || !user) {
-    return NextResponse.json({ error: "请先登录后再使用 AI 口语陪练。" }, { status: 401 });
-  }
+  const supabase = auth.supabase;
 
   const { data: { session } } = await supabase.auth.getSession();
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;

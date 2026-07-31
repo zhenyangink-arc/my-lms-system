@@ -6,21 +6,8 @@ import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learni
 import type { LearningAssignmentActionState } from "./action-state";
 import {
   ASSIGNMENT_STATUSES,
-  ASSIGNMENT_TYPES,
-  QUESTION_TYPES,
   type AssignmentStatus,
-  type AssignmentType,
-  type QuestionType,
 } from "./config";
-
-type QuestionInput = {
-  type?: unknown;
-  prompt?: unknown;
-  options?: unknown;
-  points?: unknown;
-  correctAnswer?: unknown;
-  explanation?: unknown;
-};
 
 function result(status: "success" | "error", message: string): LearningAssignmentActionState {
   return { status, message };
@@ -53,86 +40,6 @@ function refreshAssignmentPages(assignmentId?: string) {
     revalidatePath(`/dashboard/assignments/${assignmentId}`);
     revalidatePath(`/dashboard/admin/assignments/${assignmentId}`);
   }
-}
-
-export async function createLearningAssignmentAction(
-  _previousState: LearningAssignmentActionState,
-  formData: FormData
-): Promise<LearningAssignmentActionState> {
-  void _previousState;
-  const { supabase } = await requireAssignmentManager();
-  const title = String(formData.get("title") ?? "").trim();
-  const description = String(formData.get("description") ?? "").trim();
-  const assignmentType = String(formData.get("assignment_type") ?? "homework");
-  const courseIdValue = String(formData.get("course_id") ?? "").trim();
-  const targetScope = String(formData.get("target_scope") ?? "all_students");
-  const targetIds = formData.getAll("target_ids").map(String).filter(isUuid);
-  const dueAt = parseKoreanDateTime(String(formData.get("due_at") ?? ""));
-  const durationValue = String(formData.get("duration_minutes") ?? "").trim();
-  const durationMinutes = durationValue ? Number(durationValue) : null;
-  const allowResubmission = formData.get("allow_resubmission") === "on";
-  const publish = String(formData.get("intent") ?? "draft") === "publish";
-
-  if (title.length < 2 || title.length > 120) return result("error", "标题需要填写 2 至 120 个字。");
-  if (description.length > 5000) return result("error", "任务说明不能超过 5000 个字。");
-  if (!ASSIGNMENT_TYPES.includes(assignmentType as AssignmentType)) return result("error", "请选择有效的任务类型。");
-  if (courseIdValue && !isUuid(courseIdValue)) return result("error", "所选课程不正确。");
-  if (!dueAt || dueAt.getTime() <= Date.now()) return result("error", "截止时间必须晚于当前时间。");
-  if (durationMinutes !== null && (!Number.isInteger(durationMinutes) || durationMinutes < 1 || durationMinutes > 600)) {
-    return result("error", "建议用时需要填写 1 至 600 分钟。");
-  }
-  if (!["all_students", "selected_students"].includes(targetScope)) return result("error", "请选择有效的分配范围。");
-  if (targetScope === "selected_students" && targetIds.length === 0) return result("error", "请至少选择一名学生。");
-
-  let rawQuestions: QuestionInput[];
-  try {
-    const parsed = JSON.parse(String(formData.get("questions_json") ?? "[]"));
-    if (!Array.isArray(parsed)) throw new Error("invalid");
-    rawQuestions = parsed as QuestionInput[];
-  } catch {
-    return result("error", "题目数据读取失败，请刷新页面后重试。");
-  }
-  if (rawQuestions.length < 1 || rawQuestions.length > 50) return result("error", "请设置 1 至 50 道题目。");
-
-  const questions = [];
-  for (const [index, rawQuestion] of rawQuestions.entries()) {
-    const questionType = String(rawQuestion.type ?? "");
-    const prompt = String(rawQuestion.prompt ?? "").trim();
-    const points = Number(rawQuestion.points);
-    const options = Array.isArray(rawQuestion.options)
-      ? [...new Set(rawQuestion.options.map(String).map((option) => option.trim()).filter(Boolean))]
-      : [];
-    const correctAnswer = String(rawQuestion.correctAnswer ?? "").trim();
-    const explanation = String(rawQuestion.explanation ?? "").trim();
-
-    if (!QUESTION_TYPES.includes(questionType as QuestionType)) return result("error", `第 ${index + 1} 题类型不正确。`);
-    if (prompt.length < 1 || prompt.length > 3000) return result("error", `第 ${index + 1} 题题目不能为空且不能超过 3000 个字。`);
-    if (!Number.isFinite(points) || points <= 0 || points > 1000) return result("error", `第 ${index + 1} 题分值需要大于 0 且不超过 1000。`);
-    if (questionType === "single_choice" && options.length < 2) return result("error", `第 ${index + 1} 道选择题至少需要两个不同选项。`);
-    if (questionType === "single_choice" && correctAnswer && !options.includes(correctAnswer)) {
-      return result("error", `第 ${index + 1} 题参考答案不在选项中。`);
-    }
-    if (explanation.length > 3000) return result("error", `第 ${index + 1} 题解析不能超过 3000 个字。`);
-    questions.push({ type: questionType, prompt, points, options, correctAnswer, explanation });
-  }
-
-  const { data, error } = await supabase.rpc("create_learning_assignment", {
-    p_title: title,
-    p_description: description,
-    p_assignment_type: assignmentType,
-    p_course_id: courseIdValue || null,
-    p_target_scope: targetScope,
-    p_target_ids: targetScope === "selected_students" ? targetIds : [],
-    p_due_at: dueAt.toISOString(),
-    p_duration_minutes: durationMinutes,
-    p_allow_resubmission: allowResubmission,
-    p_publish: publish,
-    p_questions: questions,
-  });
-
-  if (error || !data) return result("error", friendlyDatabaseError(error?.message, "任务保存失败，请稍后重试。"));
-  refreshAssignmentPages(String(data));
-  return result("success", publish ? "任务已经发布，学生端现在可以查看。" : "任务草稿已经保存。");
 }
 
 export async function changeLearningAssignmentStatusAction(

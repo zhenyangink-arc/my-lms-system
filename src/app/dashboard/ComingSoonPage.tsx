@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock3, Layers3 } from "lucide-react";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type FeatureBlueprint = {
   title: string;
@@ -64,7 +65,7 @@ export function ComingSoonPage({
 }: {
   title: string;
   description: string;
-  icon: ReactNode;
+  icon?: ReactNode;
 }) {
   const blueprints = featureBlueprints[title] ?? defaultBlueprints;
 
@@ -87,16 +88,15 @@ export function ComingSoonPage({
                 <Layers3 size={14} aria-hidden="true" />
                 未来功能蓝图
               </span>
-              <div
-                className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl"
-                style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
-              >
-                {icon}
-              </div>
-              <h2 className="mt-3 text-2xl font-black tracking-tight">
-                {title}工作台
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 app-muted-text">{description}</p>
+              {icon && (
+                <div
+                  className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl"
+                  style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
+                >
+                  {icon}
+                </div>
+              )}
+              <DashboardTitleWithHint className={icon ? "mt-3" : "mt-5"} headingLevel={2} titleClassName="text-2xl font-black tracking-tight" title={<>{title}工作台</>} description={<>{description}</>} />
             </div>
 
             <div className="app-card rounded-3xl border p-5">
@@ -108,8 +108,7 @@ export function ComingSoonPage({
                   <CheckCircle2 size={19} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-sm font-black">页面结构已准备</p>
-                  <p className="mt-0.5 text-xs app-muted-text">等待业务数据接入</p>
+                  <DashboardTitleWithHint headingLevel={3} titleClassName="text-sm font-black" title="页面结构已准备" description="等待业务数据接入" />
                 </div>
               </div>
               <div className="mt-5 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
@@ -128,8 +127,7 @@ export function ComingSoonPage({
 
         <section>
           <div className="mb-4">
-            <h3 className="text-lg font-black">计划功能</h3>
-            <p className="mt-1 text-xs app-muted-text">数据表与业务流程接入后，将按以下结构直接启用。</p>
+            <DashboardTitleWithHint headingLevel={3} titleClassName="text-lg font-black" title="计划功能" description="数据表与业务流程接入后，将按以下结构直接启用。" />
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {blueprints.map((feature, index) => (
@@ -145,8 +143,7 @@ export function ComingSoonPage({
                     规划中
                   </span>
                 </div>
-                <h4 className="mt-5 text-base font-black">{feature.title}</h4>
-                <p className="mt-2 text-sm leading-6 app-muted-text">{feature.description}</p>
+                <DashboardTitleWithHint className="mt-5" headingLevel={4} titleClassName="text-base font-black" title={feature.title} description={feature.description} />
               </article>
             ))}
           </div>

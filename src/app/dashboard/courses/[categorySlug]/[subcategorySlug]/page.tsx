@@ -8,6 +8,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 
 
@@ -515,19 +516,12 @@ export default async function SubcategoryCoursesPage({
                             </span>
                           </div>
 
-                          <h3
-                            className="text-lg font-black tracking-tight"
-                            style={{ color: "var(--app-text)" }}
-                          >
-                            {course.title}
-                          </h3>
-
-                          <p
-                            className="mt-2 line-clamp-2 text-sm leading-6"
-                            style={{ color: "var(--app-muted)" }}
-                          >
-                            {course.description || "暂无课程简介"}
-                          </p>
+                          <DashboardTitleWithHint
+                            headingLevel={3}
+                            titleClassName="text-lg font-black tracking-tight"
+                            title={course.title}
+                            description={course.description || "暂无课程简介"}
+                          />
                         </div>
                       </div>
 

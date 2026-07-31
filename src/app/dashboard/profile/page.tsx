@@ -4,6 +4,7 @@ import { AlertCircle } from "lucide-react";
 import { requireActiveUser } from "@/lib/auth";
 import { type StudentProfileInitialValue } from "./ProfileForm";
 import { ProfileView, type ProfileChecklistItem } from "./ProfileView";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type StudentProfile = {
@@ -62,8 +63,7 @@ export default async function ProfilePage() {
       <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
         <section className="app-card max-w-xl rounded-3xl border p-5">
           <span className="flex h-11 w-11 items-center justify-center rounded-2xl bg-red-50 text-red-600"><AlertCircle size={20} aria-hidden="true" /></span>
-          <h1 className="mt-4 text-xl font-black">个人资料暂时没有读取成功</h1>
-          <p className="mt-2 text-sm leading-6 app-muted-text">其他控制台功能不受影响，请重新加载本页；若登录已过期，系统会自动返回登录页面。</p>
+          <DashboardTitleWithHint className="mt-4" titleClassName="text-xl font-black" title={<>个人资料暂时没有读取成功</>} description={<>其他控制台功能不受影响，请重新加载本页；若登录已过期，系统会自动返回登录页面。</>} />
           <Link href="/dashboard/profile" className="mt-5 inline-flex rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>重新加载资料</Link>
         </section>
       </div>
@@ -80,7 +80,9 @@ export default async function ProfilePage() {
   }
 
   const displayName = profile.full_name || user.user_metadata?.name || user.email || "用户";
-  const roleLabel = roleLabelMap[profile.role ?? "student"] ?? "学生";
+  const roleLabel = profile.global_role === "platform_admin"
+    ? "平台管理员"
+    : roleLabelMap[profile.role ?? "student"] ?? "学生";
   const emailConfirmed = Boolean(user.email_confirmed_at);
   const lowerEducation = ["high_school", "secondary_vocational", "technical_school"].includes(profile.education_level ?? "");
 

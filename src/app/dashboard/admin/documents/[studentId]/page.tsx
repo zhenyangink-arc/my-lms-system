@@ -24,6 +24,7 @@ import {
   createApplicationChecklistItemAction,
   deleteStudentDocumentCardAction,
 } from "../actions";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type StudentProfile = {
@@ -176,7 +177,7 @@ export default async function StudentDocumentPage({
         </section>
 
         <section className="app-card rounded-[1.5rem] border p-5">
-          <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Plus size={17} /></span><div><h2 className="text-base font-black">添加申请资料项目</h2><p className="app-muted-text mt-1 text-xs">选择目标大学申请表后，新增项目会立即显示在学生的资料清单中。截止日期自动使用该校在「大学管理」中设置的申请截止日期，无需手动填写。</p></div></div>
+          <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Plus size={17} /></span><div><DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>添加申请资料项目</>} description={<>选择目标大学申请表后，新增项目会立即显示在学生的资料清单中。截止日期自动使用该校在「大学管理」中设置的申请截止日期，无需手动填写。</>} /></div></div>
           {targetApplications.length > 0 ? (
             <form action={createApplicationChecklistItemAction.bind(null, studentId)} className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1fr)_170px_auto] xl:items-end">
               <label className="text-xs font-black">目标大学申请表<select name="targetId" required className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm">{targetApplications.map((target) => <option key={target.id} value={target.id}>{target.university_name} · {ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</option>)}</select></label>
@@ -195,8 +196,7 @@ export default async function StudentDocumentPage({
           <div className="flex items-start gap-3">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Lock size={17} /></span>
             <div>
-              <h2 className="text-base font-black">申请表锁定管理</h2>
-              <p className="app-muted-text mt-1 text-xs">锁定后，学生端这份申请表的所有资料项目都无法修改，只能查看；解锁后学生可以继续编辑。</p>
+              <DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>申请表锁定管理</>} description={<>锁定后，学生端这份申请表的所有资料项目都无法修改，只能查看；解锁后学生可以继续编辑。</>} />
             </div>
           </div>
           {targetApplications.length > 0 ? (

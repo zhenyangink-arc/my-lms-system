@@ -17,6 +17,7 @@
  */
 
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import type { LucideIcon } from "lucide-react";
 import {
   ArrowRight,
@@ -31,7 +32,6 @@ import {
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin";
-import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { FocusCourseAdminCard } from "./FocusCourseManagement";
 
 
@@ -216,12 +216,10 @@ export default async function AdminCoursesPage() {
 
   return (
     <>
-      <DashboardPageHeader
-        title="课程 / 课时管理"
-        description="按课程板块管理课程结构、课时信息和 R2 视频路径。"
-      />
-
       <div className="space-y-5 p-5">
+        <section className="app-card rounded-3xl border p-5 sm:p-6">
+          <DashboardTitleWithHint title="课程管理" description="按课程板块管理课程结构、课时信息和 R2 视频路径。" />
+        </section>
         {/* 顶部统计 */}
         <section className="grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">

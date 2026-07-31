@@ -23,6 +23,12 @@ import {
 
 function featureFromPath(pathname: string): StudentFeature {
   if (pathname.startsWith("/dashboard/assignments")) return "learning_assignments";
+  if (pathname.startsWith("/dashboard/conversation-practice/ai-experience")) {
+    return "ai_conversation_experience";
+  }
+  if (pathname.startsWith("/dashboard/conversation-practice")) {
+    return "conversation_course";
+  }
   if (pathname.startsWith("/dashboard/documents")) return "application_documents";
   if (pathname.startsWith("/dashboard/visa")) return "visa_tasks";
   if (pathname.startsWith("/dashboard/universities")) return "university_target";
@@ -58,7 +64,16 @@ export function DashboardPermissionGate({
 }) {
   const pathname = normalizeDashboardPathname(usePathname());
   const [deniedFeature, setDeniedFeature] = useState<StudentFeature | null>(null);
-  const routeIsDenied = isRestrictedDashboardSection(pathname) && !canUseStudentFeature(userRole, membershipTier, "dashboard_section");
+  const routeFeature = featureFromPath(pathname);
+  const routeIsDenied =
+    isRestrictedDashboardSection(pathname) &&
+    !canUseStudentFeature(
+      userRole,
+      membershipTier,
+      routeFeature === "restricted_operation"
+        ? "dashboard_section"
+        : routeFeature
+    );
 
   function denyWhenNeeded(feature: StudentFeature) {
     if (canUseStudentFeature(userRole, membershipTier, feature)) return false;

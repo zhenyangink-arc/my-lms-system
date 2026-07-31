@@ -5,6 +5,7 @@ import { Building2, Plus } from "lucide-react";
 
 import { createTenantAction } from "./actions";
 import { initialTenantActionState } from "./action-state";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export function TenantComposer() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -21,8 +22,7 @@ export function TenantComposer() {
           <Building2 size={20} />
         </span>
         <div>
-          <h2 className="text-lg font-black">开通新租户</h2>
-          <p className="app-muted-text mt-1 text-xs leading-5">创建后，负责人自动成为该租户的超级管理员。租户标识会作为系统内稳定地址使用，创建后不建议随意修改。</p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>开通新租户</>} description={<>创建后，负责人自动成为该租户的超级管理员。租户标识会作为系统内稳定地址使用，创建后不建议随意修改。</>} />
         </div>
       </div>
 

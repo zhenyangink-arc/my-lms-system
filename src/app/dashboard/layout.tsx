@@ -25,7 +25,9 @@ export default async function DashboardLayout({
   const userRole = profile?.role ?? "student";
   const roleLabel = tenant?.role === "tenant_super_admin" && platformProfile?.global_role === "tenant_super_admin"
     ? "机构负责人"
-    : undefined;
+    : platformProfile?.global_role === "platform_admin"
+      ? "平台管理员"
+      : undefined;
   const membershipTier = normalizeMembershipTier(profile?.membership_tier);
   const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
   const dashboardBasePath = getDashboardBasePath(tenant?.slug);

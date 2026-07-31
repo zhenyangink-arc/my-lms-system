@@ -18,10 +18,12 @@ import {
 } from "lucide-react";
 
 import { requireExecutive } from "@/lib/admin";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
 import { DashboardPageHeader } from "../../../DashboardPageHeader";
 import { AccountManagementActions, type AccountListProfile } from "../AccountCard";
 import { ROLE_LABELS, STATUS_LABELS } from "../permissions";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type AccountDetail = AccountListProfile & {
@@ -116,29 +118,71 @@ function AbilityItem({ label, value, hint }: { label: string; value: string; hin
 
 export default async function AccountDetailPage({ params }: { params: Promise<{ profileId: string }> }) {
   const { profileId } = await params;
-  const { supabase, role: viewerRole } = await requireExecutive();
+  const { supabase, tenant, role: viewerRole } = await requireExecutive();
+  const admin = createAdminClient();
+  const { data: targetMemberships, error: membershipError } = await admin
+    .from("tenant_memberships")
+    .select("tenant_id, role, status, membership_tier")
+    .eq("user_id", profileId);
+  if (membershipError) notFound();
+  const isInViewerScope = tenant
+    ? (targetMemberships ?? []).some(
+        (membership) => membership.tenant_id === tenant.id
+      )
+    : (targetMemberships ?? []).length === 0;
+  if (!isInViewerScope) notFound();
   const [profileResult, auditResult] = await Promise.all([
-    supabase
+    admin
       .from("profiles")
-      .select("id, full_name, email, role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience")
+      .select("id, full_name, email, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience")
       .eq("id", profileId)
       .neq("role", "tenant_super_admin")
       .maybeSingle(),
-    supabase
-      .from("account_management_audit_logs")
-      .select("id, actor_id, action, changed_fields, before_data, after_data, created_at")
-      .eq("target_user_id", profileId)
-      .order("created_at", { ascending: false })
-      .limit(20),
+    tenant
+      ? admin
+          .from("account_management_audit_logs")
+          .select("id, actor_id, action, changed_fields, before_data, after_data, created_at")
+          .eq("tenant_id", tenant.id)
+          .eq("target_user_id", profileId)
+          .order("created_at", { ascending: false })
+          .limit(20)
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   if (profileResult.error || !profileResult.data) notFound();
-  const profile = profileResult.data as AccountDetail;
+  const storedProfile = profileResult.data as AccountDetail;
+  if (
+    !tenant &&
+    storedProfile.global_role !== "platform_deputy" &&
+    storedProfile.global_role !== "platform_admin"
+  ) {
+    notFound();
+  }
+  const currentMembership = tenant
+    ? (targetMemberships ?? []).find(
+        (membership) => membership.tenant_id === tenant.id
+      )
+    : null;
+  const profile: AccountDetail = currentMembership
+    ? {
+        ...storedProfile,
+        role: currentMembership.role,
+        status: currentMembership.status,
+        membership_tier: currentMembership.membership_tier,
+      }
+    : {
+        ...storedProfile,
+        role:
+          storedProfile.global_role === "platform_deputy" ||
+          storedProfile.global_role === "platform_admin"
+            ? storedProfile.global_role
+            : storedProfile.role,
+      };
   const auditLogs = auditResult.error ? [] : ((auditResult.data as AuditLog[] | null) ?? []);
 
   const actorIds = [...new Set(auditLogs.map((log) => log.actor_id).filter((value): value is string => Boolean(value)))];
   const actorResult = actorIds.length > 0
-    ? await supabase.from("profiles").select("id, full_name, email").in("id", actorIds)
+    ? await admin.from("profiles").select("id, full_name, email").in("id", actorIds)
     : { data: [], error: null };
   const actorNames = new Map((actorResult.data ?? []).map((actor) => [actor.id, actor.full_name || actor.email || `管理员 …${actor.id.slice(-6)}`]));
 
@@ -228,9 +272,8 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
 
           <aside className="space-y-5">
             <section className="app-card rounded-[1.75rem] border p-5">
-              <h2 className="flex items-center gap-2 text-lg font-black"><ShieldCheck size={19} style={{ color: "var(--app-accent)" }} />账号控制</h2>
-              <p className="app-muted-text mt-2 text-xs leading-5">重要操作会写入审计记录。会员档位仅控制学生服务，不改变后台身份。</p>
-              <div className="mt-4"><AccountManagementActions profile={accountListProfile} viewerRole={viewerRole} /></div>
+              <DashboardTitleWithHint headingLevel={2} titleClassName="flex items-center gap-2 text-lg font-black" title={<><ShieldCheck size={19} style={{ color: "var(--app-accent)" }} />账号控制</>} description={<>重要操作会写入审计记录。会员档位仅控制学生服务，不改变后台身份。</>} />
+              <div className="mt-4"><AccountManagementActions profile={accountListProfile} viewerRole={viewerRole} accountScope={tenant ? "tenant" : "platform"} /></div>
               {profile.status !== "active" && profile.deactivate_reason && <div className="mt-4 flex gap-2 rounded-2xl bg-amber-50 p-3 text-xs leading-5 text-amber-800"><CircleAlert className="mt-0.5 shrink-0" size={15} /><span><b>状态原因：</b>{profile.deactivate_reason}</span></div>}
             </section>
 

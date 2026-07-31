@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import {
   ArrowRight,
   CheckCircle2,
@@ -12,7 +13,6 @@ import {
 } from "lucide-react";
 
 import { requireAdmin } from "@/lib/admin";
-import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { getVisaCaseStatusLabel } from "../../visa/visa-case-stages";
 
 
@@ -73,10 +73,9 @@ export default async function AdminVisaPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <DashboardPageHeader title="签证管理" description="按学生跟进签证档案、准备任务、审核意见与获签进度。" />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5 lg:p-8">
         {params.deleted === "1" && <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold text-emerald-800">签证卡、准备任务和审核记录已经删除；学生账号及其他数据保持不变。</div>}
-        <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-success-soft))" }}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_560px] xl:items-end"><div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><ShieldCheck size={15} />管理员签证工作台</span><h2 className="mt-3 text-2xl font-black">一名学生，一套完整的签证路线</h2><p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">集中查看学生签证类型、计划入境日期和每项任务，及时审核学生提交并给出补充意见。</p></div><div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[["签证档案", cases.length, UsersRound, "var(--app-secondary)"], ["等待审核", reviewTaskCount, FileSearch, "var(--app-accent)"], ["需要处理", supportTaskCount, TriangleAlert, "var(--app-warm)"], ["已经获签", issuedCount, CheckCircle2, "var(--app-success)"]].map(([label, value, Icon, color]) => { const MetricIcon = Icon as typeof UsersRound; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><MetricIcon className="mx-auto" size={18} style={{ color: String(color) }} /><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text mt-1 text-xs font-black">{String(label)}</p></div>; })}</div></div></section>
+        <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-success-soft))" }}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_560px] xl:items-center"><div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><ShieldCheck size={15} />管理员签证工作台</span><DashboardTitleWithHint className="mt-3" title="签证管理" description="按学生跟进签证档案、准备任务、审核意见与获签进度。" /></div><div className="dashboard-title-metrics">{[["签证档案", cases.length, UsersRound, "var(--app-secondary)"], ["等待审核", reviewTaskCount, FileSearch, "var(--app-accent)"], ["需要处理", supportTaskCount, TriangleAlert, "var(--app-warm)"], ["已经获签", issuedCount, CheckCircle2, "var(--app-success)"]].map(([label, value, Icon, color]) => { const MetricIcon = Icon as typeof UsersRound; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><MetricIcon className="mx-auto" size={18} style={{ color: String(color) }} /><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text mt-1 text-xs font-black">{String(label)}</p></div>; })}</div></div></section>
 
         {error && <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">签证管理数据暂时无法读取，请确认最新数据库迁移已经执行。</div>}
 

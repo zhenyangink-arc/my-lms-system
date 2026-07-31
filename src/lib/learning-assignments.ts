@@ -4,6 +4,10 @@ import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
 import { isValidRole, type UserRole } from "@/lib/admin";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 
 export const assignmentManagerRoles = new Set<UserRole>([
   "teacher",
@@ -32,6 +36,15 @@ export async function requireAssignmentStudent() {
   const { supabase, user, profile } = await requireActiveUser();
   if (isAssignmentManagerRole(profile?.role)) redirect("/dashboard/admin/assignments");
   if (profile?.role && profile.role !== "student") redirect("/dashboard");
+  if (
+    !canUseStudentFeature(
+      "student",
+      normalizeMembershipTier(profile?.membership_tier),
+      "learning_assignments"
+    )
+  ) {
+    redirect("/dashboard");
+  }
 
   return { supabase, user };
 }
@@ -39,6 +52,16 @@ export async function requireAssignmentStudent() {
 export async function requireAssignmentViewer() {
   const { supabase, user, profile } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
+  if (
+    role === "student" &&
+    !canUseStudentFeature(
+      role,
+      normalizeMembershipTier(profile?.membership_tier),
+      "learning_assignments"
+    )
+  ) {
+    redirect("/dashboard");
+  }
 
   return {
     supabase,

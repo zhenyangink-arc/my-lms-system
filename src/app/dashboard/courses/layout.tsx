@@ -1,6 +1,7 @@
 import { Eye, ShieldCheck } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { CoursesAuditBannerVisibility } from "./CoursesAuditBannerVisibility";
 
 
 export default async function CoursesLayout({
@@ -13,8 +14,10 @@ export default async function CoursesLayout({
 
   return (
     <>
+      <CoursesAuditBannerVisibility />
       {isPlatformAudit && (
         <section
+          id="courses-audit-banner"
           className="mx-5 mt-5 rounded-2xl border p-4"
           style={{
             borderColor: "var(--app-accent)",

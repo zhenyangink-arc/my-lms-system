@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type TargetPreview = {
@@ -116,10 +117,9 @@ export default async function UniversitiesPage() {
               <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
                 <Compass size={14} /> 选校规划中心
               </span>
-              <h2 className="mt-3 max-w-3xl text-2xl font-black tracking-tight">今天想先完成哪一步？</h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 app-muted-text">目标大学首页只保留清晰入口，不再一打开就展示大量学校。你的目标、学校资料和对比结果分别管理，使用起来更轻松。</p>
+              <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="max-w-3xl text-2xl font-black tracking-tight" title={<>今天想先完成哪一步？</>} description={<>目标大学首页只保留清晰入口，不再一打开就展示大量学校。你的目标、学校资料和对比结果分别管理，使用起来更轻松。</>} />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="dashboard-title-metrics">
               {[
                 { label: "目标学校", value: targets.length, icon: BookMarked },
                 { label: "已选对比", value: compareCount, icon: Scale },
@@ -138,13 +138,12 @@ export default async function UniversitiesPage() {
 
         <section className="grid gap-5 lg:grid-cols-3">
           {entrances.map(({ title, description, href, icon: Icon, value, color, soft }) => (
-            <Link key={href} href={href} className="app-card group flex min-h-72 flex-col rounded-3xl border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
+            <Link key={href} href={href} className="app-card group flex min-h-56 flex-col rounded-3xl border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">
               <div className="flex items-start justify-between gap-4">
                 <span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color, backgroundColor: soft }}><Icon size={25} /></span>
                 <span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color, backgroundColor: soft }}>{value}</span>
               </div>
-              <h2 className="mt-7 text-xl font-black">{title}</h2>
-              <p className="mt-3 text-sm leading-6 app-muted-text">{description}</p>
+              <DashboardTitleWithHint className="mt-7" headingLevel={2} titleClassName="text-xl font-black" title={title} description={description} />
               <span className="mt-auto inline-flex items-center gap-2 pt-6 text-sm font-black" style={{ color }}>进入管理 <ArrowRight className="transition group-hover:translate-x-1" size={16} /></span>
             </Link>
           ))}

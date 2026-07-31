@@ -12,6 +12,7 @@ import {
   PlayCircle,
 } from "lucide-react";
 
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 
 
@@ -276,6 +277,30 @@ export default async function CoursesPage() {
 
   return (
     <div className="space-y-5 p-5">
+      <section
+        className="app-card rounded-3xl border p-5 sm:p-6"
+        style={{
+          background:
+            "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
+        }}
+      >
+        <div className="flex min-h-16 items-center justify-between gap-4">
+          <DashboardTitleWithHint
+            title="我的课程"
+            description="按课程板块查看可学习内容、课程数量与当前学习进度。"
+          />
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+            style={{
+              color: "var(--app-accent)",
+              backgroundColor: "var(--app-accent-soft)",
+            }}
+          >
+            <BookOpen size={21} aria-hidden="true" />
+          </span>
+        </div>
+      </section>
+
       <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
         <div className="mb-5 flex items-center justify-between gap-4">
           <div>
@@ -409,15 +434,18 @@ export default async function CoursesPage() {
                           </span>
                         </div>
 
-                        <h3 className="mt-5 text-xl font-black tracking-tight">
-                          {category.title}
-                        </h3>
-                        <p className="mt-2 line-clamp-3 text-sm leading-6 app-muted-text">
-                          {category.description ||
+                        <DashboardTitleWithHint
+                          className="mt-5"
+                          headingLevel={3}
+                          titleClassName="text-xl font-black tracking-tight"
+                          title={category.title}
+                          description={
+                            category.description ||
                             (isServiceCourse
                               ? "从选校、材料到签证，按阶段推进韩国留学准备。"
-                              : "围绕听、说、读、写建立可持续的韩语成长路线。")}
-                        </p>
+                              : "围绕听、说、读、写建立可持续的韩语成长路线。")
+                          }
+                        />
 
                         <div className="mt-5 grid grid-cols-3 gap-2">
                           {[
@@ -495,13 +523,12 @@ export default async function CoursesPage() {
                           </span>
                         </div>
 
-                        <h3 className="line-clamp-1 text-base font-black tracking-tight text-gray-900">
-                          {category.title}
-                        </h3>
-
-                        <p className="mt-2 line-clamp-3 text-sm leading-6 text-gray-500">
-                          {category.description || "暂无课程板块简介"}
-                        </p>
+                        <DashboardTitleWithHint
+                          headingLevel={3}
+                          titleClassName="line-clamp-1 text-base font-black tracking-tight text-gray-900"
+                          title={category.title}
+                          description={category.description || "暂无课程板块简介"}
+                        />
                       </div>
                     </div>
 

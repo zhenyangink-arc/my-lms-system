@@ -18,7 +18,11 @@ function isActiveStatus(status: string | null | undefined) {
 }
 
 function isPlatformProfile(profile: ProfileRow | null) {
-  return profile?.global_role === "platform_owner" || profile?.global_role === "platform_deputy";
+  return (
+    profile?.global_role === "platform_owner" ||
+    profile?.global_role === "platform_deputy" ||
+    profile?.global_role === "platform_admin"
+  );
 }
 
 function dashboardPathFromRequest(pathname: string) {

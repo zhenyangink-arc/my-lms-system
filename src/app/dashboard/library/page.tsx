@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import {
   ArrowRight,
   Download,
@@ -75,7 +76,7 @@ export default async function LibraryPage() {
               "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-secondary-soft))",
           }}
         >
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-end">
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center">
             <div>
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
@@ -87,14 +88,9 @@ export default async function LibraryPage() {
                 <Library size={14} />
                 学习资料一站查找
               </span>
-              <h1 className="mt-3 text-2xl font-black tracking-tight">
-                把需要的资料，放进自己的学习收藏夹
-              </h1>
-              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">
-                文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。
-              </p>
+              <DashboardTitleWithHint className="mt-3" title="把需要的资料，放进自己的学习收藏夹" description="文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。" />
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="dashboard-title-metrics">
               {[
                 ["已发布资料", resources.length, Library, "var(--app-accent)", "var(--app-accent-soft)"],
                 ["我的收藏", favorites.length, FolderHeart, "#d95768", "#fff0f3"],

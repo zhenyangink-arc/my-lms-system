@@ -1,4 +1,6 @@
 export const ROLE_ORDER = [
+  "platform_deputy",
+  "platform_admin",
   "tenant_super_admin",
   "ceo",
   "admin",
@@ -9,6 +11,8 @@ export const ROLE_ORDER = [
 export type AppRole = (typeof ROLE_ORDER)[number];
 
 export const ROLE_LABELS: Record<AppRole, string> = {
+  platform_deputy: "平台副负责人",
+  platform_admin: "平台管理员",
   tenant_super_admin: "机构负责人",
   ceo: "CEO",
   admin: "管理员",
@@ -23,18 +27,24 @@ export const STATUS_LABELS: Record<string, string> = {
 };
 
 /*
-  当前登录者（viewerRole）可以把账号改成哪些角色。
-
-  注意：tenant_super_admin（机构负责人）不会出现在这个数组里，
-  不管是老板自己还是 CEO 在操作，都不能通过这个页面把人改成老板。
-  老板身份只能通过数据库手动设置，不走这个 UI。
-
-  机构负责人 tenant_super_admin → 可以改成 CEO / 管理员 / 老师 / 学生
-  CEO ceo          → 只能改成 管理员 / 老师 / 学生
-  其他角色         → 不会进到这个页面，返回空数组兜底
+  平台和机构角色不能复用：
+  - 平台负责人只能分配平台副负责人、平台管理员。
+  - 机构负责人可以分配 CEO、管理员、老师、学生。
+  - CEO 只能分配管理员、老师、学生。
 */
-export function getAssignableRoles(viewerRole: string): AppRole[] {
-  if (viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") {
+export type AccountScope = "platform" | "tenant";
+
+export function getAssignableRoles(
+  viewerRole: string,
+  scope: AccountScope
+): AppRole[] {
+  if (scope === "platform") {
+    return viewerRole === "platform_super_admin"
+      ? ["platform_deputy", "platform_admin"]
+      : [];
+  }
+
+  if (viewerRole === "tenant_super_admin") {
     return ["ceo", "admin", "teacher", "student"];
   }
 
@@ -46,17 +56,23 @@ export function getAssignableRoles(viewerRole: string): AppRole[] {
 }
 
 /*
-  当前登录者（viewerRole）能不能管理目标账号（targetRole）。
-
-  老板 → 能管理所有人（但老板本来就不会出现在列表里，这条其实用不到）
-  CEO  → 不能管理老板、不能管理其他 CEO
-
-  注意：这个函数只用来在前端隐藏按钮，
-  真正的安全边界是 SQL 21 里的 RLS policy。
+  前端按钮和服务端动作共用同一套范围判断；服务端还会验证账号是否
+  具有当前机构成员关系，或是否属于无机构成员关系的平台账号。
 */
-export function canManageTarget(viewerRole: string, targetRole: string) {
-  if (viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") {
-    return true;
+export function canManageTarget(
+  viewerRole: string,
+  targetRole: string,
+  scope: AccountScope
+) {
+  if (scope === "platform") {
+    return (
+      viewerRole === "platform_super_admin" &&
+      (targetRole === "platform_deputy" || targetRole === "platform_admin")
+    );
+  }
+
+  if (viewerRole === "tenant_super_admin") {
+    return targetRole !== "tenant_super_admin";
   }
 
   if (viewerRole === "ceo") {

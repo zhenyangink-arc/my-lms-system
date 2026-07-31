@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpenText, Check, Clock3, Eye, Lightbulb, MessageCircleMore, Sparkles } from "lucide-react";
 
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import { requireStudentPageFeature } from "@/lib/student-permissions-server";
 import { PracticeReflectionForm } from "../PracticeReflectionForm";
 import { CONVERSATION_CATEGORY_LABELS, CONVERSATION_DIFFICULTY_LABELS, type ConversationCategory, type ConversationDifficulty, type DialogueLine, type KeyExpression } from "../config";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type ScenarioRow = { id: string; title: string; description: string; category: ConversationCategory; difficulty: ConversationDifficulty; situation: string; learning_objectives: unknown; sample_dialogue: unknown; key_expressions: unknown; starter_prompt: string; practice_tips: string; duration_minutes: number };
@@ -15,6 +17,7 @@ function dialogueArray(value: unknown): DialogueLine[] { return Array.isArray(va
 function expressionArray(value: unknown): KeyExpression[] { return Array.isArray(value) ? value.filter((item): item is KeyExpression => Boolean(item) && typeof item === "object" && typeof (item as KeyExpression).korean === "string" && typeof (item as KeyExpression).chinese === "string") : []; }
 
 export default async function ConversationScenarioPage({ params }: { params: Promise<{ scenarioId: string }> }) {
+  await requireStudentPageFeature("conversation_course");
   const { scenarioId } = await params;
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenarioResult, progressResult] = await Promise.all([
@@ -33,7 +36,7 @@ export default async function ConversationScenarioPage({ params }: { params: Pro
       <Link href="/dashboard/conversation-practice" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回会话练习</Link>
       <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))" }}><div className="flex flex-col gap-5 lg:flex-row lg:items-end"><div className="min-w-0 flex-1"><div className="flex flex-wrap gap-2"><span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{CONVERSATION_CATEGORY_LABELS[scenario.category]}</span><span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{CONVERSATION_DIFFICULTY_LABELS[scenario.difficulty]}</span></div><h1 className="mt-3 text-2xl font-black tracking-tight">{scenario.title}</h1><p className="app-muted-text mt-2 text-sm leading-6">{scenario.description || "按照场景任务完成一轮完整会话。"}</p><p className="app-muted-text mt-4 inline-flex items-center gap-1 text-xs"><Clock3 size={13} />建议练习 {scenario.duration_minutes} 分钟</p></div>{progress && <div className="app-card min-w-[190px] rounded-2xl border p-5 text-center"><MessageCircleMore className="mx-auto" size={22} style={{ color: "var(--app-accent)" }} /><p className="mt-2 text-2xl font-black">{progress.practice_count}</p><p className="app-muted-text mt-1 text-xs">累计练习次数</p></div>}</div></section>
 
-      {canManage && <section className="app-card rounded-2xl border p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Eye size={19} /></span><div className="min-w-0 flex-1"><h2 className="font-black">学生端只读预览</h2><p className="app-muted-text mt-1 text-xs leading-5">这里显示学生看到的已发布内容，不会写入练习记录。</p></div><Link href={`/dashboard/admin/conversation-practice/${scenario.id}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入后台编辑<ArrowRight size={13} /></Link></div></section>}
+      {canManage && <section className="app-card rounded-2xl border p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Eye size={19} /></span><div className="min-w-0 flex-1"><DashboardTitleWithHint headingLevel={2} titleClassName="font-black" title={<>学生端只读预览</>} description={<>这里显示学生看到的已发布内容，不会写入练习记录。</>} /></div><Link href={`/dashboard/admin/conversation-practice/${scenario.id}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入后台编辑<ArrowRight size={13} /></Link></div></section>}
 
       <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.75fr)]">
         <div className="space-y-5">

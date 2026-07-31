@@ -6,6 +6,7 @@ import {
   UniversityLibrary,
   type KoreanUniversity,
 } from "../UniversityLibrary";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 export default async function UniversityLibraryPage() {
@@ -48,8 +49,7 @@ export default async function UniversityLibraryPage() {
           <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
             <div>
               <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><LibraryBig size={14} /> 韩国重点院校库</span>
-              <h2 className="mt-3 text-2xl font-black">先筛选，再阅读学校介绍</h2>
-              <p className="mt-3 max-w-3xl text-sm leading-6 app-muted-text">学校库只展示规划需要的信息，不提供学校官网入口。所有介绍、学费和排名数据都可以由管理员在大学管理中心复核并修改。</p>
+              <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-black" title={<>先筛选，再阅读学校介绍</>} description={<>学校库只展示规划需要的信息，不提供学校官网入口。所有介绍、学费和排名数据都可以由管理员在大学管理中心复核并修改。</>} />
             </div>
             <div className="grid grid-cols-3 gap-2 text-center">
               {[{ label: "收录大学", value: universities.length, icon: LibraryBig }, { label: "已选目标", value: targetIds.length, icon: Target }, { label: "已选对比", value: comparedIds.length, icon: Scale }].map(({ label, value, icon: Icon }) => (

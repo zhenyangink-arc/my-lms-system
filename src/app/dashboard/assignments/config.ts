@@ -1,7 +1,16 @@
 export const ASSIGNMENT_TYPES = ["homework", "quiz", "exam"] as const;
 export const ASSIGNMENT_STATUSES = ["draft", "published", "closed"] as const;
-export const QUESTION_TYPES = ["short_text", "long_text", "single_choice", "file_link"] as const;
-export const SUBMISSION_STATUSES = ["submitted", "graded", "revision_required"] as const;
+export const QUESTION_TYPES = [
+  "short_text",
+  "long_text",
+  "single_choice",
+  "file_link",
+] as const;
+export const SUBMISSION_STATUSES = [
+  "submitted",
+  "graded",
+  "revision_required",
+] as const;
 
 export type AssignmentType = (typeof ASSIGNMENT_TYPES)[number];
 export type AssignmentStatus = (typeof ASSIGNMENT_STATUSES)[number];
@@ -10,7 +19,7 @@ export type SubmissionStatus = (typeof SUBMISSION_STATUSES)[number];
 
 export const ASSIGNMENT_TYPE_LABELS: Record<AssignmentType, string> = {
   homework: "课后作业",
-  quiz: "章节测验",
+  quiz: "课程测试",
   exam: "正式考试",
 };
 
@@ -46,5 +55,7 @@ export const assignmentDateFormatter = new Intl.DateTimeFormat("zh-CN", {
 export function formatAssignmentDate(value: string | null) {
   if (!value) return "时间待定";
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? "时间待确认" : assignmentDateFormatter.format(date);
+  return Number.isNaN(date.getTime())
+    ? "时间待确认"
+    : assignmentDateFormatter.format(date);
 }

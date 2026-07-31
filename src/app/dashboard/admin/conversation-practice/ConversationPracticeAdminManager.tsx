@@ -5,6 +5,7 @@ import { ShieldCheck, ShieldOff, UserPlus } from "lucide-react";
 
 import { initialConversationPracticeActionState } from "@/app/dashboard/conversation-practice/action-state";
 import { grantConversationPracticeAdminAction, revokeConversationPracticeAdminAction } from "@/app/dashboard/conversation-practice/actions";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type AdminOption = { id: string; name: string; email: string; assigned: boolean };
 
@@ -20,7 +21,7 @@ export function ConversationPracticeAdminManager({ admins }: { admins: AdminOpti
 
   return (
     <section className="app-card rounded-3xl border p-4 sm:p-5">
-      <div className="flex items-start gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><ShieldCheck size={20} /></span><div><h2 className="text-lg font-black">指定后台管理员</h2><p className="app-muted-text mt-1 text-xs leading-5">负责人可单独授予或撤销普通管理员的编辑权限；CEO 无需单独授权。</p></div></div>
+      <div className="flex items-start gap-3"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><ShieldCheck size={20} /></span><div><DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>指定后台管理员</>} description={<>负责人可单独授予或撤销普通管理员的编辑权限；CEO 无需单独授权。</>} /></div></div>
       <form action={formAction} className="mt-5 flex flex-col gap-2 sm:flex-row">
         <select name="admin_id" required defaultValue="" className="app-input min-w-0 flex-1 rounded-xl border px-3 py-3 text-xs font-bold"><option value="" disabled>选择普通管理员</option>{available.map((admin) => <option key={admin.id} value={admin.id}>{admin.name} · {admin.email}</option>)}</select>
         <button type="submit" disabled={pending || available.length === 0} className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-success)" }}><UserPlus size={14} />{pending ? "正在授权…" : "授予权限"}</button>

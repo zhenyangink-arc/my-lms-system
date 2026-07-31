@@ -1,6 +1,6 @@
 import { Database, Eye, GraduationCap, ShieldCheck } from "lucide-react";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
-import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import { requireAdmin } from "@/lib/admin";
 import {
   UniversityAdminManager,
@@ -86,8 +86,10 @@ export default async function AdminUniversitiesPage() {
 
   return (
     <>
-      <DashboardPageHeader title="韩国大学管理" description="维护韩国大学介绍、申请资料和签证申请资料；修改会同步到学生端。" />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
+        <section className="app-card rounded-3xl border p-5 sm:p-6">
+          <DashboardTitleWithHint title="韩国大学管理" description="维护韩国大学介绍、申请资料和签证申请资料；修改会同步到学生端。" />
+        </section>
         <section className="grid gap-4 sm:grid-cols-3">
           {[
             { label: "学校库总数", value: universities.length, icon: Database, color: "var(--app-accent)", soft: "var(--app-accent-soft)" },

@@ -17,6 +17,7 @@ import {
 
 import { CATEGORY_ICONS, CATEGORY_LABELS, STATUS_LABELS, STATUS_TONES } from "@/app/dashboard/documents/constants";
 import { DeleteChecklistItemButton, DocumentItemControls } from "./DocumentItemControls";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type ChecklistDocument = {
   id: string;
@@ -49,8 +50,7 @@ export function AdminDocumentCategoryList({
     <section className="app-card rounded-[1.75rem] border p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-base font-black">申请资料分类清单</h2>
-          <p className="app-muted-text mt-1 text-xs">按材料分类展示，{categoryGroups.length} 个分类、共 {totalItems} 项资料。</p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>申请资料分类清单</>} description={<>按材料分类展示，{categoryGroups.length} 个分类、共 {totalItems} 项资料。</>} />
         </div>
         <button
           type="button"

@@ -14,6 +14,7 @@ import {
   UserRound,
 } from "lucide-react";
 
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { CHINA_PROVINCES, CHINA_REGION_CITIES } from "./china-cities";
 import { updateProfileAction } from "./actions";
 import { initialUpdateProfileState } from "./profile-state";
@@ -92,10 +93,12 @@ function SectionTitle({
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
         <Icon size={20} aria-hidden="true" />
       </span>
-      <div>
-        <h2 className="text-lg font-black">{title}</h2>
-        <p className="mt-1 text-xs leading-5 app-muted-text">{description}</p>
-      </div>
+      <DashboardTitleWithHint
+        headingLevel={2}
+        titleClassName="text-lg font-black"
+        title={title}
+        description={description}
+      />
     </div>
   );
 }

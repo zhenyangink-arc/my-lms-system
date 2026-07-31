@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 
 import { ProfileForm, type StudentProfileInitialValue } from "./ProfileForm";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export type ProfileChecklistItem = { label: string; done: boolean };
 
@@ -75,15 +76,21 @@ export function ProfileView({
 
           <div className="app-card w-full shrink-0 rounded-3xl border p-5 lg:w-80">
             <div className="flex items-center justify-between gap-4">
-              <span className="text-xs font-bold app-muted-text">资料完成度</span>
+              <DashboardTitleWithHint
+                headingLevel={2}
+                titleClassName="text-xs font-bold app-muted-text"
+                title="资料完成度"
+                description={
+                  pendingItems.length === 0
+                    ? "资料已全部完善，顾问可以给出最准确的规划建议。"
+                    : `已完成 ${doneCount}/${checklist.length} 项，资料越完整，留学与学习建议越准确。`
+                }
+              />
               <strong className="text-lg" style={{ color: "var(--app-success)" }}>{completionPercent}%</strong>
             </div>
             <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
               <div className="h-full rounded-full transition-all" style={{ width: `${completionPercent}%`, background: "linear-gradient(90deg, var(--app-secondary), var(--app-success))" }} />
             </div>
-            <p className="mt-3 text-xs leading-5 app-muted-text">
-              {pendingItems.length === 0 ? "资料已全部完善，顾问可以给出最准确的规划建议。" : `已完成 ${doneCount}/${checklist.length} 项，资料越完整，留学与学习建议越准确。`}
-            </p>
           </div>
         </div>
 
@@ -111,8 +118,7 @@ export function ProfileView({
                 <ListChecks size={19} aria-hidden="true" />
               </span>
               <div>
-                <h2 className="text-sm font-black">资料完善清单</h2>
-                <p className="mt-0.5 text-xs app-muted-text">已完成 {doneCount} / {checklist.length} 项</p>
+                <DashboardTitleWithHint headingLevel={2} titleClassName="text-sm font-black" title={<>资料完善清单</>} description={<>已完成 {doneCount} / {checklist.length} 项</>} />
               </div>
             </div>
             <ul className="mt-4 space-y-1">
@@ -129,9 +135,14 @@ export function ProfileView({
               ))}
             </ul>
             {pendingItems.length > 0 && (
-              <p className="app-soft-card mt-4 rounded-2xl border px-3.5 py-3 text-xs leading-5 app-muted-text">
-                在左侧表单补全对应内容并保存后，清单会自动更新。
-              </p>
+              <div className="app-soft-card mt-4 rounded-2xl border px-3.5 py-3">
+                <DashboardTitleWithHint
+                  headingLevel={3}
+                  titleClassName="text-xs font-black"
+                  title="完善提示"
+                  description="在左侧表单补全对应内容并保存后，清单会自动更新。"
+                />
+              </div>
             )}
           </section>
         </aside>

@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 
 
@@ -326,14 +327,15 @@ export default async function CategoryPage({
                     <FocusIcon size={30} aria-hidden="true" />
                   </span>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight">
-                      {isServiceCourse ? "一步一步完成留学准备" : "建立可持续的韩语学习节奏"}
-                    </h2>
-                    <p className="mt-2 max-w-2xl text-sm leading-6 app-muted-text">
-                      {isServiceCourse
-                        ? "从目标确认到材料、面试和签证，每个分类都是留学申请中的一个真实阶段。"
-                        : "根据课程分类选择当前最需要加强的能力，并用课时进度记录每一次成长。"}
-                    </p>
+                    <DashboardTitleWithHint
+                      headingLevel={2}
+                      title={isServiceCourse ? "一步一步完成留学准备" : "建立可持续的韩语学习节奏"}
+                      description={
+                        isServiceCourse
+                          ? "从目标确认到材料、面试和签证，每个分类都是留学申请中的一个真实阶段。"
+                          : "根据课程分类选择当前最需要加强的能力，并用课时进度记录每一次成长。"
+                      }
+                    />
                   </div>
                 </div>
               </div>
@@ -411,12 +413,12 @@ export default async function CategoryPage({
                         </span>
                         <div className="min-w-0 flex-1">
                           <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <h4 className="text-base font-black">{subcategory.title}</h4>
-                              <p className="mt-1 line-clamp-2 text-xs leading-5 app-muted-text">
-                                {subcategory.description || "查看这一阶段的课程内容。"}
-                              </p>
-                            </div>
+                            <DashboardTitleWithHint
+                              headingLevel={4}
+                              titleClassName="text-base font-black"
+                              title={subcategory.title}
+                              description={subcategory.description || "查看这一阶段的课程内容。"}
+                            />
                             <ArrowRight size={17} className="shrink-0 app-muted-text transition group-hover:translate-x-1" aria-hidden="true" />
                           </div>
                           <div className="mt-4 flex items-center justify-between gap-3 text-xs font-bold app-muted-text">
@@ -473,13 +475,12 @@ export default async function CategoryPage({
                 </span>
               </div>
 
-              <h2 className="text-2xl font-black tracking-tight text-gray-900">
-                选择课程分类
-              </h2>
-
-              <p className="mt-2 text-sm leading-6 text-gray-500">
-                每个分类会显示当前账号的整体学习状态。你可以从这里进入申请、签证、面试等不同课程模块。
-              </p>
+              <DashboardTitleWithHint
+                headingLevel={2}
+                titleClassName="text-2xl font-black tracking-tight text-gray-900"
+                title="选择课程分类"
+                description="每个分类会显示当前账号的整体学习状态。你可以从这里进入申请、签证、面试等不同课程模块。"
+              />
             </div>
 
             {/* 右侧：当前板块整体进度 */}
@@ -635,13 +636,12 @@ export default async function CategoryPage({
                             </span>
                           </div>
 
-                          <h4 className="text-lg font-black tracking-tight text-gray-900">
-                            {subcategory.title}
-                          </h4>
-
-                          <p className="mt-2 line-clamp-2 text-sm leading-6 text-gray-500">
-                            {subcategory.description || "暂无分类简介"}
-                          </p>
+                          <DashboardTitleWithHint
+                            headingLevel={4}
+                            titleClassName="text-lg font-black tracking-tight text-gray-900"
+                            title={subcategory.title}
+                            description={subcategory.description || "暂无分类简介"}
+                          />
                         </div>
                       </div>
 

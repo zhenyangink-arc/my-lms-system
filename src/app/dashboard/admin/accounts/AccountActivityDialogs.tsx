@@ -10,6 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type AccountAuditLog = {
   id: number;
@@ -54,8 +55,7 @@ export function AccountAuditLogDialog({ logs, accountNames }: { logs: AccountAud
       >
         <div>
           <p className="app-muted-text text-xs font-black">最近记录</p>
-          <h2 className="mt-1 text-xl font-black">账号变更动态</h2>
-          <p className="app-muted-text mt-2 text-xs">点击查看最近 {logs.length} 条角色、状态与资料变更</p>
+          <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-black" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
         </div>
         <Activity size={22} style={{ color: "var(--app-secondary)" }} />
       </DialogTrigger>

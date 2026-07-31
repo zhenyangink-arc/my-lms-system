@@ -1,14 +1,13 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import {
   ArrowRight,
   Download,
-  FilePenLine,
   Files,
   Send,
   ShieldCheck,
 } from "lucide-react";
 
-import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import {
   LIBRARY_CATEGORY_LABELS,
   LIBRARY_RESOURCE_TYPE_LABELS,
@@ -104,21 +103,6 @@ export default async function LibraryManagementPage() {
 
   return (
     <div className="pb-12">
-      <DashboardPageHeader
-        title="资料库管理"
-        description="上传文件、添加实用链接，统一完成分类、发布和归档。"
-        action={
-          <Link
-            href="#create-library-resource"
-            className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-            style={{ backgroundColor: "var(--app-accent)" }}
-          >
-            <FilePenLine size={15} />
-            新建资料
-          </Link>
-        }
-      />
-
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
         <section
           className="app-card rounded-3xl border p-5 sm:p-6"
@@ -143,12 +127,7 @@ export default async function LibraryManagementPage() {
                     ? "CEO 权限"
                     : "已授权管理员"}
               </span>
-              <h1 className="mt-3 text-2xl font-black tracking-tight">
-                先整理，再发布，让学生始终看到正确版本
-              </h1>
-              <p className="app-muted-text mt-2 text-sm leading-6">
-                草稿和已归档资料不会出现在学生端。上传文件保存在私有空间，学生只能通过受保护的下载入口获取。
-              </p>
+              <DashboardTitleWithHint className="mt-3" title="资料库管理" description="上传文件、添加实用链接，统一完成分类、发布和归档。" />
               <Link
                 href="/dashboard/library"
                 className="mt-5 inline-flex items-center gap-2 text-xs font-black"
@@ -158,7 +137,7 @@ export default async function LibraryManagementPage() {
                 <ArrowRight size={13} />
               </Link>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="dashboard-title-metrics">
               {[
                 ["全部资料", resources.length, Files, "var(--app-accent)", "var(--app-accent-soft)"],
                 ["已发布", publishedCount, Send, "var(--app-success)", "var(--app-success-soft)"],
@@ -197,10 +176,7 @@ export default async function LibraryManagementPage() {
               id="create-library-resource"
               className="app-card rounded-3xl border p-4 sm:p-5"
             >
-              <h2 className="text-lg font-black">新建资料</h2>
-              <p className="app-muted-text mt-1 text-xs leading-5">
-                可以上传文件，也可以添加经过确认的外部链接。
-              </p>
+              <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>新建资料</>} description={<>可以上传文件，也可以添加经过确认的外部链接。</>} />
               <div className="mt-5">
                 <LibraryResourceForm />
               </div>
@@ -211,10 +187,7 @@ export default async function LibraryManagementPage() {
           <section className="app-card rounded-3xl border p-4 sm:p-5">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div>
-                <h2 className="text-xl font-black">资料清单</h2>
-                <p className="app-muted-text mt-1 text-xs">
-                  共 {resources.length} 项，按最近修改时间排列
-                </p>
+                <DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-black" title={<>资料清单</>} description={<>共 {resources.length} 项，按最近修改时间排列</>} />
               </div>
               <p className="app-muted-text text-xs">
                 修改资料信息不会改变原文件

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
     ArrowLeft,
     ArrowRight,
@@ -10,6 +10,7 @@ import {
     Eye,
     FileText,
     GraduationCap,
+    Hash,
     ListChecks,
     Lightbulb,
     LockKeyhole,
@@ -18,9 +19,23 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { isPlatformTenantManagerRole } from "@/lib/admin";
+import {
+    getKoreanBeginnerLesson,
+    hangulIntroductionChapters,
+} from "@/lib/korean-curriculum";
+import type { KoreanEbookProgressMap } from "@/lib/korean-ebook-progress";
+import {
+    countUnlockedTests,
+    getUnlockedKoreanTestSlugs,
+    HANGUL_TEST_SEQUENCE,
+    KOREAN_LEVEL_ONE_TEST_SEQUENCE,
+} from "@/lib/korean-learning-unlocks";
 import { createR2SignedVideoUrl } from "@/lib/r2";
 import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
 import { LessonSupportSheet } from "./LessonSupportSheet";
+import { HangulInteractiveBook } from "./HangulInteractiveBook";
+import { KoreanLevelOneReader } from "./KoreanLevelOneReader";
 import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
 import { LessonProgressStatusCard } from "./LessonProgressStatusCard";
 import { LessonVideoPlayer } from "./LessonVideoPlayer";
@@ -239,6 +254,7 @@ function WorkspaceSectionTitle({
 
 export default async function LessonDetailPage({
     params,
+    searchParams,
 }: {
     params: Promise<{
         categorySlug: string;
@@ -246,12 +262,20 @@ export default async function LessonDetailPage({
         courseSlug: string;
         lessonSlug: string;
     }>;
+    searchParams: Promise<{
+        chapter?: string | string[];
+    }>;
 }) {
     const { categorySlug, subcategorySlug, courseSlug, lessonSlug } =
         await params;
+    const requestedChapterValue = (await searchParams).chapter;
+    const requestedChapter =
+        typeof requestedChapterValue === "string"
+            ? requestedChapterValue
+            : undefined;
 
     const { supabase, user, profile, platformProfile } = await requireActiveUser();
-    const isPlatformAudit = platformProfile?.role === "platform_super_admin";
+    const isPlatformAudit = isPlatformTenantManagerRole(platformProfile?.role);
 
     const { data: parentCategoryData } = await supabase
         .from("course_categories")
@@ -312,12 +336,80 @@ export default async function LessonDetailPage({
     }
 
     const lesson = lessonData as Lesson;
+    const curatedLesson =
+        parentCategory.slug === "korean" &&
+        subcategory.slug === "korean-basic" &&
+        course.slug === "korean-beginner"
+            ? getKoreanBeginnerLesson(lesson.slug)
+            : null;
+    const isHangulIntroduction = Boolean(
+        curatedLesson && lesson.slug === "hangul-introduction"
+    );
+    const isKoreanLevelOne = Boolean(
+        curatedLesson && lesson.slug === "basic-pronunciation"
+    );
+    let unlockedHangulChapterCount = 1;
+    let unlockedLevelOneLessonCount = 0;
+    const ebookProgress: KoreanEbookProgressMap = {};
+    if ((isHangulIntroduction || isKoreanLevelOne) && !isPlatformAudit) {
+        const { data: attemptData } = await supabase
+            .from("course_test_attempts")
+            .select("test_slug")
+            .eq("student_id", user.id);
+        const attemptedTestSlugs = new Set(
+            (attemptData ?? []).map((attempt) => String(attempt.test_slug))
+        );
+        const unlockedTestSlugs =
+            getUnlockedKoreanTestSlugs(attemptedTestSlugs);
+        unlockedHangulChapterCount = countUnlockedTests(
+            unlockedTestSlugs,
+            HANGUL_TEST_SEQUENCE
+        );
+        unlockedLevelOneLessonCount = countUnlockedTests(
+            unlockedTestSlugs,
+            KOREAN_LEVEL_ONE_TEST_SEQUENCE
+        );
+        const { data: ebookProgressData } = await supabase
+            .from("course_ebook_progress")
+            .select("test_slug,current_page,total_pages,progress_percent,read_pages")
+            .eq("student_id", user.id);
+        for (const item of ebookProgressData ?? []) {
+            ebookProgress[String(item.test_slug)] = {
+                currentPage: Number(item.current_page),
+                totalPages: Number(item.total_pages),
+                progressPercent: Number(item.progress_percent),
+                readPages: Array.isArray(item.read_pages)
+                    ? item.read_pages.map(Number)
+                    : [],
+            };
+        }
+    }
+    if (isPlatformAudit) {
+        unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.length;
+        unlockedLevelOneLessonCount = KOREAN_LEVEL_ONE_TEST_SEQUENCE.length;
+    }
     const membershipTier = normalizeMembershipTier(profile?.membership_tier);
-    const hasLessonAccess = isPlatformAudit || canUseStudentFeature(
-        profile?.role ?? "student",
-        membershipTier,
-        "course_preview"
-    ) && (profile?.role !== "student" || lesson.is_free_preview);
+    const role = profile?.role ?? "student";
+    const hasFullKoreanCourseAccess =
+        parentCategory.slug === "korean" &&
+        canUseStudentFeature(role, membershipTier, "korean_course");
+    const hasPreviewAccess =
+        lesson.is_free_preview &&
+        canUseStudentFeature(role, membershipTier, "course_preview");
+    const hasLessonAccess =
+        isPlatformAudit ||
+        role !== "student" ||
+        hasFullKoreanCourseAccess ||
+        hasPreviewAccess;
+    if (
+        !isPlatformAudit &&
+        isKoreanLevelOne &&
+        unlockedLevelOneLessonCount === 0
+    ) {
+        redirect(
+            `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`
+        );
+    }
     let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;
 
     if (hasLessonAccess && lesson.video_provider === "r2" && lesson.video_object_key) {
@@ -424,6 +516,34 @@ export default async function LessonDetailPage({
         lesson.teacher_note
     );
 
+    if (isHangulIntroduction && hasLessonAccess) {
+        return (
+            <HangulInteractiveBook
+                courseId={course.id}
+                lessonId={lesson.id}
+                initialProgress={progress.progress_percent}
+                initialStatus={progress.status}
+                trackingDisabled={isPlatformAudit}
+                backHref={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                unlockedChapterCount={unlockedHangulChapterCount}
+                initialEbookProgress={ebookProgress}
+                initialChapterSlug={requestedChapter}
+            />
+        );
+    }
+
+    if (isKoreanLevelOne && hasLessonAccess) {
+        return (
+            <KoreanLevelOneReader
+                backHref={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                unlockedLessonCount={unlockedLevelOneLessonCount}
+                initialEbookProgress={ebookProgress}
+                initialChapterSlug={requestedChapter}
+                trackingDisabled={isPlatformAudit}
+            />
+        );
+    }
+
     return (
         <>
             <div
@@ -498,11 +618,11 @@ export default async function LessonDetailPage({
                                 </div>
 
                                 <h2 className="text-2xl font-black tracking-tight text-gray-900">
-                                    {lesson.title}
+                                    {curatedLesson?.title ?? lesson.title}
                                 </h2>
 
                                 <p className="mt-2 text-sm leading-6 text-gray-500">
-                                    {lesson.description || "暂无课时简介"}
+                                    {(curatedLesson?.description ?? lesson.description) || "暂无课时简介"}
                                 </p>
                             </div>
                         </div>
@@ -567,6 +687,59 @@ export default async function LessonDetailPage({
                 </section>
 
                 {/* 01 视频学习 + 02 学习引导 */}
+                {isHangulIntroduction && (
+                    <section className="overflow-hidden rounded-3xl border border-[#dce9e7] bg-[linear-gradient(145deg,#f6fffc_0%,#f7fbff_52%,#fffaf3_100%)] p-5 shadow-sm sm:p-6">
+                        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                            <div>
+                                <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#21867a] shadow-sm ring-1 ring-[#d8ebe7]">
+                                    <BookOpenCheck size={14} />
+                                    章节目录
+                                </span>
+                                <h3 className="mt-3 text-xl font-black tracking-tight text-[#173f4a]">
+                                    韩语字母入门 · 5 个章节
+                                </h3>
+                                <p className="mt-1 text-sm leading-6 text-[#667d84]">
+                                    按照“认识结构 → 学习字母 → 组合拼读 → 收音复习”的顺序完成学习。
+                                </p>
+                            </div>
+                            <p className="text-xs font-bold text-[#789097]">
+                                共 {hangulIntroductionChapters.reduce((total, chapter) => total + chapter.durationMinutes, 0)} 分钟
+                            </p>
+                        </div>
+
+                        <ol className="mt-5 grid gap-3 lg:grid-cols-5">
+                            {hangulIntroductionChapters.map((chapter, index) => (
+                                <li
+                                    key={chapter.slug}
+                                    id={`chapter-${chapter.slug}`}
+                                    className="group relative rounded-2xl border border-white/80 bg-white/85 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-[#b9ddd7] hover:shadow-md"
+                                >
+                                    <div className="flex items-start justify-between gap-3">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e8f6f2] text-sm font-black text-[#238777]">
+                                            {String(index + 1).padStart(2, "0")}
+                                        </span>
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8a9da2]">
+                                            <Clock size={12} />
+                                            {chapter.durationMinutes} 分钟
+                                        </span>
+                                    </div>
+                                    <h4 className="mt-4 font-black text-[#173f4a]">{chapter.title}</h4>
+                                    <p className="mt-1 text-xs font-bold text-[#2b9185]">{chapter.koreanTitle}</p>
+                                    <p className="mt-3 text-xs leading-5 text-[#667d84]">{chapter.description}</p>
+                                    <div className="mt-4 flex flex-wrap gap-1.5">
+                                        {chapter.focus.map((item) => (
+                                            <span key={item} className="inline-flex items-center gap-1 rounded-full bg-[#f1f6f6] px-2 py-1 text-[10px] font-bold text-[#698187]">
+                                                <Hash size={10} />
+                                                {item}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </li>
+                            ))}
+                        </ol>
+                    </section>
+                )}
+
                 <div
                     className={
                         hasGuideInfo

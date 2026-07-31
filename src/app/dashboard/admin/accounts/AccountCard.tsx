@@ -40,6 +40,7 @@ import {
   STATUS_LABELS,
   canManageTarget,
   getAssignableRoles,
+  type AccountScope,
 } from "./permissions";
 
 export type AccountListProfile = {
@@ -56,6 +57,7 @@ export type AccountListProfile = {
   registration_source: string | null;
   deactivate_reason: string | null;
   membership_tier: string;
+  global_role: string | null;
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
@@ -178,12 +180,12 @@ function MembershipDialog({ profile, displayName }: { profile: AccountListProfil
   );
 }
 
-function RoleDialog({ profile, displayName, viewerRole }: { profile: AccountListProfile; displayName: string; viewerRole: string }) {
+function RoleDialog({ profile, displayName, viewerRole, accountScope }: { profile: AccountListProfile; displayName: string; viewerRole: string; accountScope: AccountScope }) {
   const [state, formAction] = useActionState(
     updateProfileRoleAction.bind(null, profile.id),
     initialAccountActionState
   );
-  const assignableRoles = getAssignableRoles(viewerRole);
+  const assignableRoles = getAssignableRoles(viewerRole, accountScope);
 
   return (
     <Dialog>
@@ -302,8 +304,8 @@ function DeleteAccountDialog({ profile, displayName }: { profile: AccountListPro
   );
 }
 
-export function AccountManagementActions({ profile, viewerRole }: { profile: AccountListProfile; viewerRole: string }) {
-  const canManage = canManageTarget(viewerRole, profile.role);
+export function AccountManagementActions({ profile, viewerRole, accountScope }: { profile: AccountListProfile; viewerRole: string; accountScope: AccountScope }) {
+  const canManage = canManageTarget(viewerRole, profile.role, accountScope);
   const displayName = profile.full_name || "未填写姓名";
 
   if (!canManage) {
@@ -313,14 +315,14 @@ export function AccountManagementActions({ profile, viewerRole }: { profile: Acc
   return (
     <div className="grid gap-2 sm:grid-cols-2">
       {profile.role === "student" && <MembershipDialog profile={profile} displayName={displayName} />}
-      <RoleDialog profile={profile} displayName={displayName} viewerRole={viewerRole} />
+      <RoleDialog profile={profile} displayName={displayName} viewerRole={viewerRole} accountScope={accountScope} />
       <StatusDialog profile={profile} displayName={displayName} />
-      {(viewerRole === "tenant_super_admin" || viewerRole === "platform_super_admin") && <DeleteAccountDialog profile={profile} displayName={displayName} />}
+      {accountScope === "tenant" && viewerRole === "tenant_super_admin" && <DeleteAccountDialog profile={profile} displayName={displayName} />}
     </div>
   );
 }
 
-export function AccountCard({ profile, viewerRole }: { profile: AccountListProfile; viewerRole: string }) {
+export function AccountCard({ profile, viewerRole, accountScope }: { profile: AccountListProfile; viewerRole: string; accountScope: AccountScope }) {
   const displayName = profile.full_name || "未填写姓名";
   const avatarText = displayName === "未填写姓名" ? "?" : displayName.slice(0, 1);
   const statusStyle = STATUS_STYLES[profile.status] ?? STATUS_STYLES.inactive;
@@ -390,7 +392,7 @@ export function AccountCard({ profile, viewerRole }: { profile: AccountListProfi
           查看完整账号档案
           <ChevronRight size={15} className="transition group-hover:translate-x-0.5" />
         </Link>
-        <AccountManagementActions profile={profile} viewerRole={viewerRole} />
+        <AccountManagementActions profile={profile} viewerRole={viewerRole} accountScope={accountScope} />
       </div>
     </article>
   );

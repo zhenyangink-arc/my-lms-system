@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { redirect } from "next/navigation";
 import {
   ArrowLeft,
@@ -138,8 +139,7 @@ export default async function DocumentsPage({
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-hero-end))" }}>
           <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}><Sparkles size={14} />申请资料中心</span>
-          <h1 className="mt-3 text-2xl font-black tracking-tight">按目标大学准备申请资料</h1>
-          <p className="app-muted-text mt-3 max-w-2xl text-sm leading-6">目标大学进入“准备资料”后，会在这里生成对应阶段的申请表。点击申请表逐项确认准备进度。</p>
+          <DashboardTitleWithHint className="mt-3" title="按目标大学准备申请资料" description="目标大学进入“准备资料”后，会在这里生成对应阶段的申请表。点击申请表逐项确认准备进度。" />
         </section>
 
         {(documentsResult.error || targetsResult.error) && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>申请表暂时无法读取，请稍后重试。</section>}
@@ -221,8 +221,7 @@ export default async function DocumentsPage({
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}><Sparkles size={14} />申请资料清单</span>
-            <h2 className="mt-3 text-2xl font-black tracking-tight">{selectedTarget.university_name}申请资料</h2>
-            <p className="app-muted-text mt-3 max-w-2xl text-sm leading-6">{ADMISSION_TRACK_LABELS[selectedTarget.admission_track ?? ""] ?? "申请阶段待确认"}{selectedTarget.program_name ? ` · ${selectedTarget.program_name}` : ""}。无需上传文件，请按实际准备情况将每项标记为“准备中”“已完成”或“无”（不需要的材料）。</p>
+            <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-black tracking-tight" title={<>{selectedTarget.university_name}申请资料</>} description={<>{ADMISSION_TRACK_LABELS[selectedTarget.admission_track ?? ""] ?? "申请阶段待确认"}{selectedTarget.program_name ? ` · ${selectedTarget.program_name}` : ""}。无需上传文件，请按实际准备情况将每项标记为“准备中”“已完成”或“无”（不需要的材料）。</>} />
           </div>
 
           <div className="space-y-3">
@@ -248,7 +247,7 @@ export default async function DocumentsPage({
       {documentsResult.error && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>申请材料暂时无法读取，请确认最新数据库迁移已经执行。</section>}
 
       <section className="app-card rounded-3xl border p-4 sm:p-5">
-        <div className="mb-5"><h2 className="text-lg font-black">申请资料清单</h2><p className="app-muted-text mt-1 text-xs">已处理 {resolvedCount}/{documents.length} 项（已完成 + 无需准备）。全部处理后可以点击「上传」提交并锁定该申请表；锁定后需联系管理员协助解锁。</p></div>
+        <div className="mb-5"><DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>申请资料清单</>} description={<>已处理 {resolvedCount}/{documents.length} 项（已完成 + 无需准备）。全部处理后可以点击「上传」提交并锁定该申请表；锁定后需联系管理员协助解锁。</>} /></div>
 
         {documents.length > 0 ? (
           <ApplicationDocumentChecklist

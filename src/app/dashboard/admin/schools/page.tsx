@@ -4,6 +4,7 @@ import { ArrowRight, BadgeCheck, Database, ImageIcon, Layers3 } from "lucide-rea
 import { DashboardPageHeader } from "../../DashboardPageHeader";
 import { requireAdmin } from "@/lib/admin";
 import { schoolCategories, schoolOverview } from "./school-config";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 type SchoolRow = { category: string; is_published: boolean; logo_url: string | null; detailed_introduction: string | null };
@@ -22,9 +23,9 @@ export default async function SchoolManagementPage() {
       <DashboardPageHeader title="学校管理" description="六个入口分开管理学校基础资料、校徽、详细介绍和专业内容。" />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5 lg:p-8">
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
-          <div className="grid gap-5 xl:grid-cols-[1fr_560px] xl:items-end">
-            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Database size={15} />统一学校数据中心</span><h2 className="mt-3 text-2xl font-black tracking-tight">一套结构，分开管理五类学校</h2><p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">韩国大学保留原有 100 所学校与学生目标关联；其他院校独立建档。停用展示不会删除历史数据。</p></div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">{[
+          <div className="grid gap-5 xl:grid-cols-[1fr_560px] xl:items-center">
+            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Database size={15} />统一学校数据中心</span><DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-black tracking-tight" title={<>一套结构，分开管理五类学校</>} description={<>韩国大学保留原有 100 所学校与学生目标关联；其他院校独立建档。停用展示不会删除历史数据。</>} /></div>
+            <div className="dashboard-title-metrics">{[
               { label: "学校总数", value: schools.length, icon: Layers3 },
               { label: "正在展示", value: published, icon: BadgeCheck },
               { label: "已有校徽", value: withLogo, icon: ImageIcon },

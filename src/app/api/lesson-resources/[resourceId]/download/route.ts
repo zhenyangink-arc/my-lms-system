@@ -3,6 +3,10 @@ export const dynamic = 'force-dynamic';
 
 import { getAuthContext } from "@/lib/auth";
 import { createR2SignedResourceDownloadUrl } from "@/lib/r2";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 
 /*
   资料文件下载路由
@@ -43,12 +47,59 @@ export async function GET(
 
   const { data: resource } = await supabase
     .from("lesson_resources")
-    .select("resource_object_key, original_file_name, is_deleted")
+    .select("resource_object_key, original_file_name, is_deleted, lesson_id")
     .eq("id", resourceId)
     .maybeSingle();
 
   if (!resource || !resource.resource_object_key || resource.is_deleted) {
     return NextResponse.json({ error: "Resource not found" }, { status: 404 });
+  }
+
+  const role = auth.profile?.role ?? "student";
+  if (role === "student") {
+    const tier = normalizeMembershipTier(auth.profile?.membership_tier);
+    const { data: lesson } = await supabase
+      .from("lessons")
+      .select("course_id,is_free_preview")
+      .eq("id", resource.lesson_id)
+      .eq("is_published", true)
+      .maybeSingle();
+    const { data: course } = lesson
+      ? await supabase
+          .from("courses")
+          .select("category_id")
+          .eq("id", lesson.course_id)
+          .eq("is_published", true)
+          .maybeSingle()
+      : { data: null };
+    const { data: category } = course
+      ? await supabase
+          .from("course_categories")
+          .select("slug,parent_id")
+          .eq("id", course.category_id)
+          .maybeSingle()
+      : { data: null };
+    const { data: parentCategory } = category?.parent_id
+      ? await supabase
+          .from("course_categories")
+          .select("slug")
+          .eq("id", category.parent_id)
+          .maybeSingle()
+      : { data: null };
+    const isKoreanCourse =
+      category?.slug === "korean" || parentCategory?.slug === "korean";
+    const allowed =
+      (Boolean(lesson?.is_free_preview) &&
+        canUseStudentFeature(role, tier, "course_preview")) ||
+      (isKoreanCourse &&
+        canUseStudentFeature(role, tier, "korean_course"));
+
+    if (!allowed) {
+      return NextResponse.json(
+        { error: "当前会员档位没有此课程资料的下载权限。" },
+        { status: 403 }
+      );
+    }
   }
 
   const downloadUrl = await createR2SignedResourceDownloadUrl(

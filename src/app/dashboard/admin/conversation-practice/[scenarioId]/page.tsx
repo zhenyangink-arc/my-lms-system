@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, BarChart3, CheckCircle2, Eye, MessageCircleMore } from "lucide-react";
 
 import { CONVERSATION_STATUS_LABELS, conversationDateFormatter, type ConversationCategory, type ConversationDifficulty, type ConversationStatus, type DialogueLine, type KeyExpression } from "@/app/dashboard/conversation-practice/config";
-import { requireConversationPracticeManager } from "@/lib/conversation-practice";
+import { requireConversationPracticeContentManager } from "@/lib/conversation-practice";
 import { ConversationScenarioForm, type ConversationScenarioFormValue } from "../ConversationScenarioForm";
 import { ConversationScenarioStatusActions } from "../ConversationScenarioStatusActions";
 
@@ -18,7 +18,7 @@ function expressions(value: unknown): KeyExpression[] { return Array.isArray(val
 
 export default async function ConversationScenarioManagementPage({ params }: { params: Promise<{ scenarioId: string }> }) {
   const { scenarioId } = await params;
-  const { supabase } = await requireConversationPracticeManager();
+  const { supabase } = await requireConversationPracticeContentManager();
   const [scenarioResult, progressResult] = await Promise.all([
     supabase.from("conversation_practice_scenarios").select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes,status,is_featured,sort_order").eq("id", scenarioId).maybeSingle(),
     supabase.from("conversation_practice_progress").select("user_id,status,practice_count,confidence,reflection,last_practiced_at").eq("scenario_id", scenarioId).order("last_practiced_at", { ascending: false }),

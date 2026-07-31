@@ -1,7 +1,14 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { ArrowRight, BookOpen, CheckCircle2, Clock3, Eye, MessageCircleMore, MessagesSquare, Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
 
+import { requireActiveUser } from "@/lib/auth";
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 import {
   CONVERSATION_CATEGORY_LABELS,
   CONVERSATION_DIFFICULTY_LABELS,
@@ -28,6 +35,21 @@ const difficultyTone: Record<ConversationDifficulty, { color: string; soft: stri
 };
 
 export default async function ConversationPracticePage() {
+  const { profile } = await requireActiveUser();
+  const userRole = profile?.role ?? "student";
+  const tier = normalizeMembershipTier(profile?.membership_tier);
+  if (
+    userRole === "student" &&
+    !canUseStudentFeature(userRole, tier, "conversation_course")
+  ) {
+    if (
+      canUseStudentFeature(userRole, tier, "ai_conversation_experience")
+    ) {
+      redirect("/dashboard/conversation-practice/ai-experience");
+    }
+    redirect("/dashboard");
+  }
+
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenariosResult, progressResult] = await Promise.all([
     supabase
@@ -62,9 +84,9 @@ export default async function ConversationPracticePage() {
           </div>
         )}
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-accent-soft))" }}>
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-end">
-            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{canManage ? <Eye size={14} /> : <MessageCircleMore size={14} />}{canManage ? "学生端只读预览" : "情景开口训练"}</span><h2 className="mt-3 text-2xl font-black tracking-tight">{canManage ? "检查学生实际看到的会话内容" : "从一句开场白，练到完整对话"}</h2><p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">{canManage ? "这里仅展示已发布场景，不提供编辑入口。需要修改内容、发布场景或查看练习数据时，请进入后台管理。" : "先读情景和示范对话，再替换重点表达完成自己的版本。每次练习都可以记录自信程度与复盘。"}</p></div>
-            <div className="grid grid-cols-3 gap-3">{metricCards.map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof MessagesSquare; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div>
+          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-center">
+            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{canManage ? <Eye size={14} /> : <MessageCircleMore size={14} />}{canManage ? "学生端只读预览" : "情景开口训练"}</span><DashboardTitleWithHint className="mt-3" headingLevel={2} title={canManage ? "检查学生实际看到的会话内容" : "从一句开场白，练到完整对话"} description={canManage ? "这里仅展示已发布场景，不提供编辑入口。需要修改内容、发布场景或查看练习数据时，请进入后台管理。" : "先读情景和示范对话，再替换重点表达完成自己的版本。每次练习都可以记录自信程度与复盘。"} /></div>
+            <div className="dashboard-title-metrics">{metricCards.map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof MessagesSquare; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div>
           </div>
         </section>
 

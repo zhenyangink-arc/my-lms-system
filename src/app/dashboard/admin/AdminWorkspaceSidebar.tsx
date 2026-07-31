@@ -27,6 +27,7 @@ export function AdminWorkspaceSidebar({
   canManageLearningRecords,
   canManageLibrary,
   canManageTenants,
+  canAccessQuestionBank,
   dashboardBasePath,
 }: {
   role: UserRole;
@@ -37,6 +38,7 @@ export function AdminWorkspaceSidebar({
   canManageLearningRecords: boolean;
   canManageLibrary: boolean;
   canManageTenants: boolean;
+  canAccessQuestionBank: boolean;
   dashboardBasePath: string;
 }) {
   const pathname = normalizeDashboardPathname(usePathname());
@@ -50,20 +52,21 @@ export function AdminWorkspaceSidebar({
     canManageLearningRecords,
     canManageLibrary,
     canManageTenants,
+    canAccessQuestionBank,
   });
   const groups = ["overview", "teaching", "service", "organization"] as const;
 
   const navigation = (
     <nav className="flex-1 overflow-y-auto px-3 py-4" aria-label="管理中心导航">
-      <div className="space-y-5">
+      <div className="space-y-3">
         {groups.map((group) => {
           const groupItems = items.filter((item) => item.group === group);
           if (groupItems.length === 0) return null;
           return (
             <section key={group}>
-              {!collapsed && <p className="mb-2 px-3 text-xs font-black tracking-[0.18em] app-muted-text">{ADMIN_GROUP_LABELS[group]}</p>}
-              {collapsed && <div className="mx-3 mb-2 border-t app-divider" />}
-              <div className="space-y-1">
+              {!collapsed && <p className="mb-1.5 px-2.5 text-xs font-black tracking-[0.18em] app-muted-text">{ADMIN_GROUP_LABELS[group]}</p>}
+              {collapsed && <div className="mx-3 mb-1.5 border-t app-divider" />}
+              <div className="space-y-0.5">
                 {groupItems.map((item) => {
                   const Icon = item.icon;
                   const active = isActivePath(pathname, item.href);
@@ -73,10 +76,10 @@ export function AdminWorkspaceSidebar({
                       href={scopeDashboardPath(item.href, dashboardBasePath)}
                       title={collapsed ? item.label : undefined}
                       onClick={() => setMobileOpen(false)}
-                      className={`flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-black transition ${collapsed ? "justify-center" : ""}`}
+                      className={`flex items-center gap-2 rounded-xl px-2.5 py-1.5 text-[11px] font-semibold transition ${collapsed ? "justify-center" : ""}`}
                       style={active ? { color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)", boxShadow: "inset 0 0 0 1px var(--app-accent)" } : { color: "var(--app-muted)" }}
                     >
-                      <Icon size={18} className="shrink-0" aria-hidden="true" />
+                      <Icon size={15} className="shrink-0" aria-hidden="true" />
                       {!collapsed && <span className="truncate">{item.label}</span>}
                     </Link>
                   );

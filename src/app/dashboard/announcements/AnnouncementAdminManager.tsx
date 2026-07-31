@@ -5,6 +5,7 @@ import { ShieldCheck, ShieldMinus, UserPlus } from "lucide-react";
 
 import { grantAnnouncementAdminAction, revokeAnnouncementAdminAction } from "./actions";
 import { initialAnnouncementActionState } from "./action-state";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type AdminOption = {
   id: string;
@@ -38,8 +39,7 @@ export function AnnouncementAdminManager({ admins }: { admins: AdminOption[] }) 
           <ShieldCheck size={20} aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-lg font-black">公告管理员授权</h2>
-          <p className="mt-1 text-xs leading-5 app-muted-text">只有负责人可以授予或撤销普通管理员的公告权限。</p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>公告管理员授权</>} description={<>只有负责人可以授予或撤销普通管理员的公告权限。</>} />
         </div>
       </div>
 

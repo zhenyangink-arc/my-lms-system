@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { ArrowRight, BellRing, CalendarDays, Megaphone, Pin, ShieldCheck } from "lucide-react";
 
 import { getAnnouncementAccess } from "@/lib/announcements";
@@ -58,9 +59,9 @@ export default async function AnnouncementsPage() {
           </div>
         )}
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-accent-soft))" }}>
-          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-end">
-            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><BellRing size={14} />消息公告栏</span><h2 className="mt-3 text-2xl font-black tracking-tight">重要消息，一处查看</h2><p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">这里只展示已经正式发布的公告。置顶、重要和紧急通知会优先排列，草稿与后台编辑功能不会出现在学生页面。</p></div>
-            <div className="grid grid-cols-3 gap-3">{[["全部公告", announcements.length, Megaphone, "var(--app-accent)", "var(--app-accent-soft)"], ["置顶", pinnedCount, Pin, "var(--app-secondary)", "var(--app-secondary-soft)"], ["需关注", importantCount, ShieldCheck, "var(--app-warm)", "var(--app-warm-soft)" ]].map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof Megaphone; return <div key={String(label)} className="app-card rounded-2xl border p-3 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div>
+          <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_380px] lg:items-center">
+            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><BellRing size={14} />消息公告栏</span><DashboardTitleWithHint className="mt-3" headingLevel={2} title="重要消息，一处查看" description="这里只展示已经正式发布的公告。置顶、重要和紧急通知会优先排列，草稿与后台编辑功能不会出现在学生页面。" /></div>
+            <div className="dashboard-title-metrics">{[["全部公告", announcements.length, Megaphone, "var(--app-accent)", "var(--app-accent-soft)"], ["置顶", pinnedCount, Pin, "var(--app-secondary)", "var(--app-secondary-soft)"], ["需关注", importantCount, ShieldCheck, "var(--app-warm)", "var(--app-warm-soft)" ]].map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof Megaphone; return <div key={String(label)} className="app-card rounded-2xl border p-3 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div>
           </div>
         </section>
 

@@ -6,6 +6,7 @@ import { FilePenLine, Save, Send } from "lucide-react";
 import { createAnnouncementAction } from "./actions";
 import { initialAnnouncementActionState } from "./action-state";
 import { CATEGORY_LABELS, PRIORITY_LABELS } from "./config";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export function AnnouncementComposer() {
   const [state, formAction, pending] = useActionState(
@@ -25,8 +26,7 @@ export function AnnouncementComposer() {
           <FilePenLine size={20} aria-hidden="true" />
         </span>
         <div>
-          <h2 className="text-lg font-black">新建通知公告</h2>
-          <p className="mt-1 text-xs leading-5 app-muted-text">可以先保存草稿，确认内容后再正式发布。</p>
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>新建通知公告</>} description={<>可以先保存草稿，确认内容后再正式发布。</>} />
         </div>
       </div>
 

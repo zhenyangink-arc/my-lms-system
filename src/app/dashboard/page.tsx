@@ -23,6 +23,7 @@ import {
   TriangleAlert,
 } from "lucide-react";
 
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { createClient } from "@/lib/supabase/server";
 import { getAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
@@ -180,11 +181,10 @@ export default async function DashboardPage() {
   let studentName = "同学";
   let recentActivity: ActivityItem[] = [];
   let completedLessonsCount = 0;
-  let activeCoursesCount = 0;
-  let totalCoursesCount = 0;
+  let inProgressLessonsCount = 0;
+  let overallProgressPercent = 0;
   let streakDays = 0;
   let thisWeekCompletedCount = 0;
-  let heroProgressPercent = 0;
   let hero: ActivityItem | null = null;
   let reminders: ReminderItem[] = [];
   let recommendedCourses: { id: string; title: string; level: string | null; href: string | null }[] = [];
@@ -214,11 +214,18 @@ export default async function DashboardPage() {
       (row) => row.status === "completed"
     ).length;
 
-    activeCoursesCount = new Set(
-      progressRows
-        .filter((row) => row.status === "in_progress")
-        .map((row) => row.course_id)
-    ).size;
+    inProgressLessonsCount = progressRows.filter(
+      (row) => row.status === "in_progress"
+    ).length;
+
+    overallProgressPercent = progressRows.length > 0
+      ? Math.round(
+          progressRows.reduce(
+            (sum, row) => sum + (row.status === "completed" ? 100 : row.progress_percent ?? 0),
+            0
+          ) / progressRows.length
+        )
+      : 0;
 
     const weekStart = getWeekStartISOString();
     thisWeekCompletedCount = progressRows.filter(
@@ -303,7 +310,6 @@ export default async function DashboardPage() {
       .eq("is_published", true);
 
     const allCourses = (allCoursesData ?? []) as CourseRow[];
-    totalCoursesCount = allCourses.length;
 
     const subcategories = (allSubcategoriesData ?? []) as CategoryRow[];
     const parentCategories = (allParentCategoriesData ?? []) as CategoryRow[];
@@ -358,25 +364,6 @@ export default async function DashboardPage() {
       .filter((item): item is ActivityItem => item !== null);
 
     hero = recentActivity[0] ?? null;
-
-    if (hero && sortedByRecent[0]) {
-      const heroCourseId = sortedByRecent[0].course_id;
-
-      const { count: publishedLessonCount } = await supabase
-        .from("lessons")
-        .select("id", { count: "exact", head: true })
-        .eq("course_id", heroCourseId)
-        .eq("is_published", true);
-
-      const courseCompletedCount = progressRows.filter(
-        (row) => row.course_id === heroCourseId && row.status === "completed"
-      ).length;
-
-      heroProgressPercent =
-        publishedLessonCount && publishedLessonCount > 0
-          ? Math.round((courseCompletedCount / publishedLessonCount) * 100)
-          : 0;
-    }
 
     if (touchedCourseIdsInOrder.length > 0) {
       const { data: touchedLessonsData } = await supabase
@@ -521,7 +508,6 @@ export default async function DashboardPage() {
 
   const ringRadius = 42;
   const ringCircumference = 2 * Math.PI * ringRadius;
-  const ringOffset = ringCircumference * (1 - heroProgressPercent / 100);
   const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
 
   // 本周学习节奏图表：用真实的近七天完成课时数据画出平滑折线，呼应 iBanko 的 Money Flow 图表。
@@ -561,17 +547,17 @@ export default async function DashboardPage() {
 
   const overviewStats = [
     {
-      label: "全部课程",
-      value: totalCoursesCount,
-      suffix: "门",
-      icon: BookOpen,
+      label: "综合完成度",
+      value: overallProgressPercent,
+      suffix: "%",
+      icon: BarChart3,
       color: "var(--app-secondary)",
       softColor: "var(--app-secondary-soft)",
     },
     {
-      label: "正在学习",
-      value: activeCoursesCount,
-      suffix: "门",
+      label: "进行中课时",
+      value: inProgressLessonsCount,
+      suffix: "个",
       icon: PlayCircle,
       color: "var(--app-accent)",
       softColor: "var(--app-accent-soft)",
@@ -668,7 +654,13 @@ export default async function DashboardPage() {
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       {isPlatformAudit && <section className="rounded-2xl border p-4" style={{ borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 shrink-0" size={18} style={{ color: "var(--app-accent)" }} /><div><p className="text-sm font-black">学生端前台巡检</p><p className="app-muted-text mt-1 text-xs leading-5">你看到的是学生端真实界面，但平台负责人不会被当作学生，也不会产生学习进度、提问或提交记录。</p></div></div></section>}
       {/* 首屏只强调一个下一步，让用户打开控制台后马上知道该做什么。跟其他卡片一样走浅色玻璃质感，不用突兀的深色板块，也不加装饰色块。 */}
-      <section className="app-card relative overflow-hidden rounded-3xl border p-4 sm:p-5 lg:p-3 lg:pl-8">
+      <section
+        className="app-card relative overflow-hidden rounded-3xl border p-4 sm:p-5 lg:p-3 lg:pl-8"
+        style={{
+          background:
+            "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
+        }}
+      >
         <div className="relative grid items-stretch gap-6 lg:grid-cols-[1fr_330px]">
           <div>
             <span
@@ -682,12 +674,24 @@ export default async function DashboardPage() {
               <Sparkles size={14} aria-hidden="true" />
               {isPlatformAudit ? "前台体验巡检" : "今日成长计划"}
             </span>
-            <p className="mt-5 text-sm font-bold app-muted-text">
-              {isPlatformAudit ? "平台负责人 · 上帝视角" : `${getGreeting()}，${studentName}`}
-            </p>
-            <h1 className="mt-1 max-w-2xl text-2xl font-black tracking-tight">
-              {isPlatformAudit ? "以学生看到的真实界面检查平台内容" : "让今天的学习，继续靠近你的韩国留学目标"}
-            </h1>
+            <DashboardTitleWithHint
+              className="mt-5"
+              titleClassName="max-w-2xl text-2xl font-black tracking-tight"
+              title={
+                isPlatformAudit
+                  ? "以学生看到的真实界面检查平台内容"
+                  : "让今天的学习，继续靠近你的韩国留学目标"
+              }
+              description={
+                <>
+                  {isPlatformAudit
+                    ? "平台负责人 · 上帝视角"
+                    : `${getGreeting()}，${studentName}`}
+                  {!hero &&
+                    "。你的学习档案已经准备好。选择第一门课程，我们会从第一节课开始记录成长。"}
+                </>
+              }
+            />
 
             {hero ? (
               <div className="mt-5">
@@ -714,9 +718,6 @@ export default async function DashboardPage() {
               </div>
             ) : (
               <div className="mt-5">
-                <p className="max-w-xl text-sm leading-6 app-muted-text">
-                  你的学习档案已经准备好。选择第一门课程，我们会从第一节课开始记录成长。
-                </p>
                 <Link
                   href="/dashboard/courses"
                   className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
@@ -730,7 +731,7 @@ export default async function DashboardPage() {
           </div>
 
           <div className="grid h-full grid-cols-[118px_1fr] items-center gap-5 lg:border-l lg:pl-8" style={{ borderColor: "var(--app-border)" }}>
-            <div className="relative h-[108px] w-[108px]" aria-label={`当前课程进度 ${heroProgressPercent}%`}>
+            <div className="relative h-[108px] w-[108px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
               <svg width="108" height="108" viewBox="0 0 100 100" className="-rotate-90">
                 <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="9" />
                 <circle
@@ -741,13 +742,13 @@ export default async function DashboardPage() {
                   stroke="var(--app-success)"
                   strokeWidth="9"
                   strokeDasharray={ringCircumference}
-                  strokeDashoffset={ringOffset}
+                  strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)}
                   strokeLinecap="round"
                 />
               </svg>
               <span className="absolute inset-0 flex flex-col items-center justify-center">
-                <strong className="text-xl font-black">{heroProgressPercent}%</strong>
-                <span className="text-xs app-muted-text">课程进度</span>
+                <strong className="text-xl font-black">{overallProgressPercent}%</strong>
+                <span className="text-xs app-muted-text">综合完成度</span>
               </span>
             </div>
             <div>

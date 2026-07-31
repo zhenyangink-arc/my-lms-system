@@ -1,5 +1,7 @@
 import "server-only";
 
+import { redirect } from "next/navigation";
+
 import { requireActiveUser } from "@/lib/auth";
 import {
   canUseStudentFeature,
@@ -16,6 +18,21 @@ export async function requireStudentFeature(feature: StudentFeature) {
 
   if (!canUseStudentFeature(role, tier, feature)) {
     throw new Error(`无权限：${getFeatureDeniedMessage(feature)}`);
+  }
+
+  return { ...context, tier };
+}
+
+export async function requireStudentPageFeature(
+  feature: StudentFeature,
+  fallback = "/dashboard"
+) {
+  const context = await requireActiveUser();
+  const role = context.profile?.role ?? "student";
+  const tier = normalizeMembershipTier(context.profile?.membership_tier);
+
+  if (!canUseStudentFeature(role, tier, feature)) {
+    redirect(fallback);
   }
 
   return { ...context, tier };
