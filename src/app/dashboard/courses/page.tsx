@@ -6,7 +6,9 @@ import {
   Calculator,
   CheckCircle2,
   FileCheck2,
+  FolderOpen,
   GraduationCap,
+  Heart,
   Languages,
   LoaderCircle,
   PlayCircle,
@@ -14,6 +16,11 @@ import {
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
+import { isPlatformCourseAuditorRole } from "@/lib/admin";
+import {
+  addCourseCategoryToCurrentLearningAction,
+  removeCourseCategoryFromCurrentLearningAction,
+} from "./actions";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -141,7 +148,7 @@ function resolveLearningStatus({
 
 export default async function CoursesPage() {
   const { supabase, user, platformProfile } = await requireActiveUser();
-  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
+  const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
   /**
    * 1. 一级课程板块
@@ -275,46 +282,60 @@ export default async function CoursesPage() {
     progressMap.set(progress.lesson_id, progress);
   });
 
+  const { data: plannedCategoryRows } = !isPlatformAudit
+    ? await supabase
+        .from("student_course_category_learning_plans")
+        .select("category_id")
+        .eq("user_id", user.id)
+    : { data: [] as { category_id: string }[] };
+
+  const plannedCategoryIds = new Set(
+    (plannedCategoryRows ?? []).map((row) => row.category_id)
+  );
+  const currentCategoryIds = new Set(plannedCategoryIds);
+
+  categories.forEach((category) => {
+    const categorySubcategoryIds = new Set(
+      (subcategoriesByParentId.get(category.id) ?? []).map(
+        (subcategory) => subcategory.id
+      )
+    );
+    const categoryCourseIds = new Set(
+      courses
+        .filter((course) => course.category_id && categorySubcategoryIds.has(course.category_id))
+        .map((course) => course.id)
+    );
+
+    if (
+      lessons.some(
+        (lesson) =>
+          categoryCourseIds.has(lesson.course_id) &&
+          progressMap.get(lesson.id)?.status === "in_progress"
+      )
+    ) {
+      currentCategoryIds.add(category.id);
+    }
+  });
+  const upcomingCategorySlugs = new Set(["english", "math", "university"]);
+  const upcomingCategories = categories.filter((category) =>
+    upcomingCategorySlugs.has(category.slug)
+  );
+  const currentCategories = categories.filter(
+    (category) =>
+      !upcomingCategorySlugs.has(category.slug) && currentCategoryIds.has(category.id)
+  );
+  const favoriteCategories = categories.filter(
+    (category) =>
+      !upcomingCategorySlugs.has(category.slug) && !currentCategoryIds.has(category.id)
+  );
+
   return (
-    <div className="space-y-5 p-5">
-      <section
-        className="app-card rounded-3xl border p-5 sm:p-6"
-        style={{
-          background:
-            "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
-        }}
-      >
-        <div className="flex min-h-16 items-center justify-between gap-4">
-          <DashboardTitleWithHint
-            title="我的课程"
-            description="按课程板块查看可学习内容、课程数量与当前学习进度。"
-          />
-          <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-            style={{
-              color: "var(--app-accent)",
-              backgroundColor: "var(--app-accent-soft)",
-            }}
-          >
-            <BookOpen size={21} aria-hidden="true" />
-          </span>
-        </div>
-      </section>
-
-      <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-        <div className="mb-5 flex items-center justify-between gap-4">
-          <div>
-            <h2 className="text-xl font-black tracking-tight text-gray-900">
-              课程板块
-            </h2>
-          </div>
-
-            <BookOpen className="text-gray-300" size={30} />
-          </div>
-
+    <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <section className="space-y-5">
           {categories.length > 0 ? (
+            <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {categories.map((category) => {
+              {currentCategories.map((category) => {
                 const categorySubcategories =
                   subcategoriesByParentId.get(category.id) ?? [];
 
@@ -368,11 +389,11 @@ export default async function CoursesPage() {
 
                 const isCompleted = learningStatus === "completed";
                 const isInProgress = learningStatus === "in_progress";
+                const canReturnToFavorites =
+                  plannedCategoryIds.has(category.id) && !isInProgress;
 
                 const buttonLabel =
-                  isPlatformAudit
-                    ? "巡检课程"
-                    : totalLessons === 0
+                  totalLessons === 0
                     ? "查看课程"
                     : isCompleted
                       ? "复习课程"
@@ -488,6 +509,18 @@ export default async function CoursesPage() {
                           {buttonLabel}
                           <ArrowRight size={15} aria-hidden="true" />
                         </Link>
+                        {canReturnToFavorites && !isPlatformAudit && (
+                          <form action={removeCourseCategoryFromCurrentLearningAction}>
+                            <input type="hidden" name="categoryId" value={category.id} />
+                            <button
+                              type="submit"
+                              className="mt-2 inline-flex w-full items-center justify-center rounded-xl border px-4 py-2.5 text-xs font-black transition hover:bg-black/[0.02]"
+                              style={{ borderColor: "var(--app-border)", color: "var(--app-muted)" }}
+                            >
+                              移回收藏夹
+                            </button>
+                          </form>
+                        )}
                       </div>
                     </article>
                   );
@@ -580,7 +613,83 @@ export default async function CoursesPage() {
                   </article>
                 );
               })}
+              {currentCategories.length === 0 && (
+                <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-3xl p-6 text-center md:col-span-2 lg:col-span-3">
+                  <BookOpen size={26} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
+                  <p className="mt-3 text-sm font-black">暂未开始学习</p>
+                  <p className="mt-1 text-xs app-muted-text">从下方收藏夹选择一门课程开始学习。</p>
+                </div>
+              )}
             </div>
+            <div className="grid gap-4 lg:grid-cols-2">
+            <section className="app-soft-card rounded-3xl border p-4 sm:p-5" aria-label="收藏夹">
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
+                  style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+                >
+                  <Heart size={18} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-sm font-black">收藏夹</h2>
+                  <p className="mt-0.5 text-xs app-muted-text">暂时不学的课程会收纳在这里。</p>
+                </div>
+                <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{favoriteCategories.length}</span>
+              </div>
+              {favoriteCategories.length > 0 && (
+                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                  {favoriteCategories.map((category) => {
+                    const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
+                    return (
+                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                        <CategoryIcon size={17} className="shrink-0 app-muted-text" aria-hidden="true" />
+                        <span className="min-w-0 flex-1 truncate text-sm font-bold">{category.title}</span>
+                        {isPlatformAudit ? (
+                          <span className="shrink-0 text-[10px] font-bold app-muted-text">暂未学习</span>
+                        ) : (
+                          <form action={addCourseCategoryToCurrentLearningAction}>
+                            <input type="hidden" name="categoryId" value={category.id} />
+                            <button type="submit" className="shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
+                              加入当前学习
+                            </button>
+                          </form>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+            <section className="app-soft-card rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程">
+              <div className="flex items-center gap-3">
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-700"
+                >
+                  <LoaderCircle size={18} aria-hidden="true" />
+                </span>
+                <div className="min-w-0 flex-1">
+                  <h2 className="text-sm font-black">即将开放的课程</h2>
+                  <p className="mt-0.5 text-xs app-muted-text">课程内容准备完成后，会自动进入收藏夹。</p>
+                </div>
+                <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{upcomingCategories.length}</span>
+              </div>
+              {upcomingCategories.length > 0 && (
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  {upcomingCategories.map((category) => {
+                    const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
+                    return (
+                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                        <CategoryIcon size={17} className="shrink-0 app-muted-text" aria-hidden="true" />
+                        <span className="min-w-0 flex-1 truncate text-sm font-bold">{category.title}</span>
+                        <span className="shrink-0 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[10px] font-black text-amber-700">即将开放</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </section>
+            </div>
+            </>
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程板块</p>

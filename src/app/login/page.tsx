@@ -18,6 +18,7 @@ import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field
 import { Input } from "@/components/ui/input";
 import { createClient } from "@/lib/supabase/client";
 import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
+import { markStudentFullscreenPromptPending } from "@/app/dashboard/StudentFullscreenPrompt";
 
 const formSchema = z.object({
   account: z.string().trim().min(3, { message: "请输入负责人提供的登录账号" }),
@@ -66,6 +67,7 @@ export default function LoginPage() {
 
     // 不使用客户端软导航：不同角色连续登录时，复用旧 Dashboard 布局会让
     // 服务端导航与客户端缓存不一致，从而触发 hydration mismatch。
+    markStudentFullscreenPromptPending();
     window.location.replace("/dashboard");
   }
 

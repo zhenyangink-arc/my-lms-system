@@ -309,23 +309,9 @@ const difficultyProfiles = [
     koreanLabel: "중급",
     prompt: "结合例句判断语法功能和词汇",
   },
-  {
-    key: "hard",
-    code: "h",
-    label: "困难",
-    koreanLabel: "고급",
-    prompt: "比较相近表达并分析使用条件",
-  },
-  {
-    key: "expert",
-    code: "x",
-    label: "极难",
-    koreanLabel: "최상급",
-    prompt: "在综合情境中选择最准确、最自然的表达",
-  },
 ];
 
-const activeQuestionNumbers = new Set([1, 3, 5, 8, 10, 12, 14, 16, 18, 20]);
+const activeQuestionNumbers = new Set([1, 2, 12, 15, 18]);
 
 function rotatedChoices(correct, distractors, rotation) {
   const choices = [...new Set([correct, ...distractors])].slice(0, 4);
@@ -335,19 +321,19 @@ function rotatedChoices(correct, distractors, rotation) {
   return { options, correct_option: options.indexOf(correct) };
 }
 
-function koreanSpellingDistractors(value) {
-  return [
-    `${value}요`,
-    `${value}를`,
-    `${value}에`,
-    `${value}만`,
-  ].filter((item) => item !== value);
+const allVocabularyKorean = lessons.flatMap((item) =>
+  item.vocab.map((vocabulary) => vocabulary[0])
+);
+
+function realVocabularyDistractors(value, lessonNumber) {
+  const pool = allVocabularyKorean.filter((item) => item !== value);
+  const start = (lessonNumber * 3) % Math.max(1, pool.length - 3);
+  return [...pool.slice(start), ...pool.slice(0, start)].slice(0, 3);
 }
 
 function buildDifficultyQuestions(lesson, profile, difficultyIndex) {
   const rows = [];
   const grammarForms = lesson.grammar.map((item) => item[1]);
-  const grammarFunctions = lesson.grammar.map((item) => item[0]);
   const vocabKorean = lesson.vocab.map((item) => item[0]);
   const vocabChinese = lesson.vocab.map((item) => item[1]);
   const lessonNumber = String(lesson.number).padStart(2, "0");
@@ -428,12 +414,12 @@ function buildDifficultyQuestions(lesson, profile, difficultyIndex) {
     } else if (index < 17) {
       const vocab = lesson.vocab[index - 14];
       prompt = koreanOnly
-        ? `[${profile.koreanLabel}] 제${lesson.number}과 핵심 어휘 ${index - 13}의 표기로 정확한 것을 고르세요.`
+        ? `[${profile.koreanLabel}] 제${lesson.number}과의 핵심 어휘 ${index - 13}로 알맞은 것을 고르세요.`
         : `${profile.label}｜要表达“${vocab[1]}”，应选择哪个本课韩语词汇或短语？`;
       choice = koreanOnly
         ? rotatedChoices(
             vocab[0],
-            koreanSpellingDistractors(vocab[0]),
+            realVocabularyDistractors(vocab[0], lesson.number),
             rotation
           )
         : rotatedChoices(
@@ -441,7 +427,9 @@ function buildDifficultyQuestions(lesson, profile, difficultyIndex) {
             [...vocabKorean.filter((item) => item !== vocab[0]), lesson.title],
             rotation
           );
-      explanation = `“${vocab[1]}”对应“${vocab[0]}”。`;
+      explanation = koreanOnly
+        ? `정답은 “${vocab[0]}”입니다. 이 표현은 제${lesson.number}과의 핵심 어휘입니다.`
+        : `“${vocab[1]}”对应“${vocab[0]}”。`;
       skill = "vocabulary";
     } else {
       const situation = lesson.situations[index - 17];
@@ -466,8 +454,18 @@ function buildDifficultyQuestions(lesson, profile, difficultyIndex) {
       skill,
       difficulty: profile.key,
       sort_order: difficultyIndex * 20 + number,
-      is_chapter_test_item:
-        profile.key === "foundation" && activeQuestionNumbers.has(number),
+      is_chapter_test_item: activeQuestionNumbers.has(number),
+      ebook_section_step:
+        skill === "vocabulary"
+          ? "STEP 02"
+          : skill === "grammar" && number >= 9 && number <= 11
+            ? "STEP 04"
+            : skill === "grammar"
+              ? "STEP 03"
+              : skill === "communication"
+                ? "STEP 05"
+                : "STEP 08",
+      ebook_page_reference: "",
     });
   }
 
@@ -500,14 +498,14 @@ async function main() {
   for (const lesson of lessons) {
     const slug = `korean-level-one-${String(lesson.number).padStart(2, "0")}`;
     const { data: test, error: testError } = await db
-      .from("course_tests")
+      .from("chapter_tests")
       .upsert(
         {
           slug,
           lesson_id: courseLesson.id,
           course_key: "korean-level-one",
           chapter_number: lesson.number,
-          title: `第${String(lesson.number).padStart(2, "0")}课`,
+          title: lesson.chinese,
           korean_title: lesson.title,
           description: `依据电子书第${String(lesson.number).padStart(2, "0")}课检查${lesson.goal}。`,
           duration_minutes: 12,
@@ -527,7 +525,7 @@ async function main() {
     if (testError) throw testError;
 
     const { error: deleteError } = await db
-      .from("course_test_questions")
+      .from("chapter_test_questions")
       .delete()
       .eq("test_id", test.id);
     if (deleteError) throw deleteError;
@@ -545,7 +543,7 @@ async function main() {
       ],
     }));
     const { error: questionError } = await db
-      .from("course_test_questions")
+      .from("chapter_test_questions")
       .insert(rows);
     if (questionError) throw questionError;
   }
@@ -553,10 +551,11 @@ async function main() {
   console.log(
     JSON.stringify({
       tests: lessons.length,
-      questions: lessons.length * 80,
-      questionsPerLesson: 80,
+      questions: lessons.length * 40,
+      questionsPerLesson: 40,
       questionsPerDifficulty: 20,
-      activeQuestionsPerTest: activeQuestionNumbers.size,
+      activeQuestionsPerTest:
+        activeQuestionNumbers.size * difficultyProfiles.length,
       courseKey: "korean-level-one",
     })
   );

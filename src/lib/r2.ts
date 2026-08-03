@@ -33,6 +33,11 @@ function createR2Context() {
 }
 
 export async function createR2SignedVideoUrl(objectKey: string) {
+  return createR2SignedObjectUrl(objectKey);
+}
+
+/** 为任意私有 R2 对象生成短时读取地址。 */
+export async function createR2SignedObjectUrl(objectKey: string) {
   const { client, bucketName, signedUrlExpiresIn } = createR2Context();
   const command = new GetObjectCommand({
     Bucket: bucketName,
@@ -59,13 +64,15 @@ export async function createR2SignedVideoUrl(objectKey: string) {
 */
 export async function createR2SignedUploadUrl(
   objectKey: string,
-  contentType: string
+  contentType: string,
+  contentLength?: number,
 ) {
   const { client, bucketName, signedUrlExpiresIn } = createR2Context();
   const command = new PutObjectCommand({
     Bucket: bucketName,
     Key: objectKey,
     ContentType: contentType,
+    ...(contentLength ? { ContentLength: contentLength } : {}),
   });
 
   return getSignedUrl(client, command, {

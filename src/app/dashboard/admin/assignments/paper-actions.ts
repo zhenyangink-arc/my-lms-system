@@ -356,3 +356,46 @@ export async function replaceChapterTestQuestionsAction(
     `已更新当前章节测试，共 ${Number(data)} 道题；学生新进入测试时立即使用。`
   );
 }
+
+export async function updateChapterTestDurationAction(
+  testId: string,
+  _previousState: LearningAssignmentActionState,
+  formData: FormData
+): Promise<LearningAssignmentActionState> {
+  void _previousState;
+  if (!isUuid(testId)) {
+    return result("error", "章节测试编号不正确。");
+  }
+
+  const durationMinutes = Number(
+    String(formData.get("duration_minutes") ?? "").trim()
+  );
+  if (
+    !Number.isInteger(durationMinutes) ||
+    durationMinutes < 1 ||
+    durationMinutes > 180
+  ) {
+    return result("error", "测试时长需要填写 1 至 180 分钟。");
+  }
+
+  const { supabase } = await requireAssessmentPaperManager();
+  const { data, error } = await supabase
+    .from("chapter_tests")
+    .update({ duration_minutes: durationMinutes })
+    .eq("id", testId)
+    .select("id")
+    .maybeSingle();
+
+  if (error || !data) {
+    return result(
+      "error",
+      friendlyDatabaseError(error?.message, "测试时长保存失败，请稍后重试。")
+    );
+  }
+
+  revalidatePath("/dashboard/admin/assignments");
+  revalidatePath("/dashboard/admin/assignments/chapter-tests");
+  revalidatePath("/dashboard/assignments/korean");
+  revalidatePath("/dashboard/assignments/korean/[testSlug]", "page");
+  return result("success", `测试时长已更新为 ${durationMinutes} 分钟。`);
+}

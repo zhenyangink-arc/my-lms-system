@@ -2,7 +2,7 @@ export const HELP_ARTICLE_CATEGORIES = ["platform", "account", "course", "study"
 export const HELP_ARTICLE_STATUSES = ["draft", "published", "archived"] as const;
 export const HELP_TICKET_CATEGORIES = ["technical", "account", "course", "service", "other"] as const;
 export const HELP_TICKET_PRIORITIES = ["normal", "urgent"] as const;
-export const HELP_TICKET_STATUSES = ["open", "in_progress", "resolved", "closed"] as const;
+export const HELP_TICKET_STATUSES = ["open", "in_progress", "waiting_student", "resolved", "closed"] as const;
 
 export type HelpArticleCategory = (typeof HELP_ARTICLE_CATEGORIES)[number];
 export type HelpArticleStatus = (typeof HELP_ARTICLE_STATUSES)[number];
@@ -14,6 +14,6 @@ export const HELP_ARTICLE_CATEGORY_LABELS: Record<HelpArticleCategory, string> =
 export const HELP_ARTICLE_STATUS_LABELS: Record<HelpArticleStatus, string> = { draft: "草稿", published: "已发布", archived: "已归档" };
 export const HELP_TICKET_CATEGORY_LABELS: Record<HelpTicketCategory, string> = { technical: "平台故障", account: "账号问题", course: "课程问题", service: "服务咨询", other: "其他问题" };
 export const HELP_TICKET_PRIORITY_LABELS: Record<HelpTicketPriority, string> = { normal: "普通", urgent: "紧急" };
-export const HELP_TICKET_STATUS_LABELS: Record<HelpTicketStatus, string> = { open: "待处理", in_progress: "处理中", resolved: "已解决", closed: "已关闭" };
+export const HELP_TICKET_STATUS_LABELS: Record<HelpTicketStatus, string> = { open: "待回复", in_progress: "处理中", waiting_student: "等待学生确认", resolved: "已解决", closed: "已关闭" };
 
 export const helpDateFormatter = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });

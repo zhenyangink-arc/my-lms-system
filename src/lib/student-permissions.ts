@@ -43,6 +43,7 @@ export function canUseStudentFeature(
   feature: StudentFeature
 ) {
   if (staffRoles.has(role)) return true;
+  if (role === "platform_course_inspector") return true;
   if (feature === "message_services") return true;
 
   const hasVipBase = tier === "vip1" || tier === "vip2" || tier === "vip3";

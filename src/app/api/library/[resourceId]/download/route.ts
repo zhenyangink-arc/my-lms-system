@@ -1,3 +1,63 @@
-import { NextRequest,NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+
 import { getAuthContext } from "@/lib/auth";
-export async function GET(request:NextRequest,{params}:{params:Promise<{resourceId:string}>}){const{resourceId}=await params;const auth=await getAuthContext();if(auth.status==="unauthenticated")return NextResponse.redirect(new URL("/login",request.url));if(auth.status==="inactive")return NextResponse.redirect(new URL("/account-disabled",request.url));const{data:resource,error}=await auth.supabase.from("library_resources").select("id,resource_type,file_path,original_file_name,external_url").eq("id",resourceId).maybeSingle();if(error||!resource)return NextResponse.json({error:"资料不存在或无权访问"},{status:404});await auth.supabase.rpc("record_library_download",{p_resource_id:resource.id});if(resource.resource_type==="link"&&resource.external_url)return NextResponse.redirect(resource.external_url);if(!resource.file_path)return NextResponse.json({error:"资料文件不存在"},{status:404});const{data:signed,error:signedError}=await auth.supabase.storage.from("library-resources").createSignedUrl(resource.file_path,60*5,{download:resource.original_file_name||"资料文件"});if(signedError||!signed?.signedUrl)return NextResponse.json({error:"下载地址生成失败"},{status:500});return NextResponse.redirect(signed.signedUrl);}
+
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ resourceId: string }> },
+) {
+  const { resourceId } = await params;
+  const auth = await getAuthContext();
+
+  if (auth.status === "unauthenticated") {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+  if (auth.status === "inactive") {
+    return NextResponse.redirect(new URL("/account-disabled", request.url));
+  }
+
+  const { data: resource, error } = await auth.supabase
+    .from("library_resources")
+    .select("id,resource_type,file_path,original_file_name,external_url")
+    .eq("id", resourceId)
+    .maybeSingle();
+
+  if (error || !resource) {
+    return NextResponse.json(
+      { error: "资料不存在或无权访问" },
+      { status: 404 },
+    );
+  }
+
+  const { error: recordError } = await auth.supabase.rpc(
+    "record_library_download",
+    { p_resource_id: resource.id },
+  );
+  if (recordError) {
+    return NextResponse.json({ error: "当前账号无权获取该资料" }, { status: 403 });
+  }
+
+  if (resource.resource_type === "link" && resource.external_url) {
+    return NextResponse.redirect(resource.external_url);
+  }
+  if (!resource.file_path) {
+    return NextResponse.json({ error: "资料文件不存在" }, { status: 404 });
+  }
+
+  const shouldPreview = request.nextUrl.searchParams.get("mode") === "view";
+  const { data: signed, error: signedError } = await auth.supabase.storage
+    .from("library-resources")
+    .createSignedUrl(
+      resource.file_path,
+      60 * 5,
+      shouldPreview
+        ? undefined
+        : { download: resource.original_file_name || "资料文件" },
+    );
+
+  if (signedError || !signed?.signedUrl) {
+    return NextResponse.json({ error: "资料地址生成失败" }, { status: 500 });
+  }
+
+  return NextResponse.redirect(signed.signedUrl);
+}

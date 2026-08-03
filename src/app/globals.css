@@ -136,9 +136,10 @@
 
   1. 默认「阳光青提」：柔和有机极简风 —— 极致通透的暖阳象牙白画布、纯白卡片、锐利深碳黑文字、
      明亮轻盈的春日青提绿点缀、极细干净浅暖灰边框、带青提绿调的弥散空气感光影（:root 下面这组值）
-  2. 「terracotta 宣纸陶土」：韩屋陶土风 —— 宣纸米色画布、纯白卡片、深褐灰文字、
-     低饱和陶土橘点缀、带暖橘色调的弥散空气感阴影
-  3. 「chatgpt」：ChatGPT 的中性灰底 + #10a37f 绿 + GPT-4 紫
+  2. 「极光紫 aurora」：冷调薰衣草画布、纯白卡片、深靛蓝文字、
+     Linear 风紫罗兰主色，紫→蓝渐变点缀，带紫罗兰调的弥散空气感光影
+  3. 「蜜桃珊瑚 coral」：暖调胭脂白画布、纯白卡片、深赭红文字、
+     珊瑚橘主色，珊瑚→蜜桃粉渐变点缀，带珊瑚调的弥散空气感光影
 
   切换方式：html[data-app-theme="..."]（ThemeSwitcher 写入，localStorage 持久化）
   规则：页面背景、侧边栏、卡片、边框、输入框、文字颜色统一引用这组变量；
@@ -180,72 +181,73 @@
   --app-card-highlight: transparent;
 }
 
-/* 主题 2：宣纸陶土 —— 韩屋陶土风：暖宣纸米色画布、纯白卡片、深褐灰文字、低饱和陶土橘点缀 */
-html[data-app-theme="terracotta"] {
-  --app-bg: #f9f6f0;
+/* 主题 2：极光紫 —— 冷调薰衣草画布、纯白卡片、深靛蓝文字、Linear 风紫罗兰主色，紫→蓝渐变点缀 */
+html[data-app-theme="aurora"] {
+  --app-bg: #f7f6fb;
   --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
-  --app-soft-bg: #f6efea;
-  --app-border: #ebe4df;
-  --app-border-soft: #f1ebe5;
+  --app-soft-bg: #eeecf9;
+  --app-border: #e3e0f2;
+  --app-border-soft: #ecebf5;
 
-  --app-text: #2d2523;
-  --app-text-soft: #423835;
-  --app-muted: #6f6158;
-  --app-muted-light: #a89890;
+  --app-text: #1c1b2e;
+  --app-text-soft: #3c3a56;
+  --app-muted: #6f6c8c;
+  --app-muted-light: #a19dbd;
 
   --app-input-bg: #ffffff;
-  --app-accent: #b07c69;
-  --app-accent-strong: #96604e;
-  --app-accent-soft: #f3e2d9;
+  --app-accent: #7c6ff0;
+  --app-accent-strong: #6152d9;
+  --app-accent-soft: #ece9fd;
   --app-accent-contrast: #ffffff;
-  --app-secondary: #8c6f52;
-  --app-secondary-soft: #efe6da;
-  --app-success: #6b8f5a;
-  --app-success-soft: #e9f0e3;
-  --app-warm: #a65d3f;
-  --app-warm-soft: #f2e2d8;
-  --app-hero-start: #f5efe6;
-  --app-hero-end: #f8f2ea;
-  /* 带极弱暖橘色调的大面积弥散空气感阴影 */
-  --app-shadow: 0 8px 30px rgba(176, 124, 105, 0.03);
+  --app-secondary: #5aa9e6;
+  --app-secondary-soft: #e7f2fc;
+  --app-success: #3fae7a;
+  --app-success-soft: #e5f6ee;
+  --app-warm: #d98a3d;
+  --app-warm-soft: #faf0e2;
+  --app-hero-start: #efe9fd;
+  --app-hero-end: #e7f1fd;
+  /* 带紫罗兰调的大面积弥散空气感光影 */
+  --app-shadow: 0 8px 30px rgba(124, 111, 240, 0.08);
 
   --app-card-fill: var(--app-card-bg);
   --app-card-border: var(--app-border);
   --app-card-highlight: transparent;
 }
 
-/* 主题 3：ChatGPT —— 中性灰画布、#10a37f 绿为主、GPT-4 紫做点缀 */
-html[data-app-theme="chatgpt"] {
-  --app-bg: #f7f7f8;
+/* 主题 3：蜜桃珊瑚 —— 暖调胭脂白画布、纯白卡片、深赭红文字、珊瑚橘主色，珊瑚→蜜桃粉渐变点缀 */
+html[data-app-theme="coral"] {
+  --app-bg: #fdf6f5;
   --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
-  --app-soft-bg: #ececf1;
-  --app-border: #e0e0e6;
-  --app-border-soft: #ebebf0;
+  --app-soft-bg: #fbebe9;
+  --app-border: #f3e0dd;
+  --app-border-soft: #f8ece9;
 
-  --app-text: #0d0d0d;
-  --app-text-soft: #40414f;
-  --app-muted: #6e6e80;
-  --app-muted-light: #9c9cad;
+  --app-text: #2c1c1a;
+  --app-text-soft: #4a332f;
+  --app-muted: #8a6b64;
+  --app-muted-light: #c2a29b;
 
   --app-input-bg: #ffffff;
-  --app-accent: #10a37f;
-  --app-accent-strong: #0d8a6c;
-  --app-accent-soft: #e6f4f0;
+  --app-accent: #fb7d72;
+  --app-accent-strong: #e6584c;
+  --app-accent-soft: #fde6e3;
   --app-accent-contrast: #ffffff;
-  --app-secondary: #0d8a6c;
-  --app-secondary-soft: #e3f2ed;
-  --app-success: #10a37f;
-  --app-success-soft: #e6f4f0;
-  --app-warm: #ab68ff;
-  --app-warm-soft: #f5ecff;
-  --app-hero-start: #e9f6f1;
-  --app-hero-end: #f4faf7;
-  --app-shadow: 0 1px 2px rgba(16, 24, 40, 0.04), 0 12px 28px -12px rgba(16, 24, 40, 0.1);
+  --app-secondary: #f4a6c1;
+  --app-secondary-soft: #fdedf3;
+  --app-success: #6b9d5a;
+  --app-success-soft: #ecf5e8;
+  --app-warm: #d98a3d;
+  --app-warm-soft: #faf0e2;
+  --app-hero-start: #fde9ea;
+  --app-hero-end: #fdeef6;
+  /* 带珊瑚调的大面积弥散空气感光影 */
+  --app-shadow: 0 8px 30px rgba(251, 125, 114, 0.07);
 
   --app-card-fill: var(--app-card-bg);
-  --app-card-border: #e5e5e5;
+  --app-card-border: var(--app-border);
   --app-card-highlight: transparent;
 }
 
@@ -256,6 +258,38 @@ html[data-app-theme="chatgpt"] {
   transition:
     background-color 160ms ease,
     color 160ms ease;
+}
+
+/* 学生端无界光感画布：径向渐变让画布本身也带一点空间感，不再是纯色平涂。
+   只用当前主题自己的三个既有色阶（卡片色→画布色→浅底色），不引入新颜色。 */
+.app-shell[data-dashboard-ui="student"] {
+  /* 学生端卡片不使用纯白：从当前主题画布与主题光色中自动调出一层
+     低饱和雾面底色。管理端有自己的变量作用域，不会受到影响。 */
+  --app-card-bg: color-mix(
+    in srgb,
+    var(--app-bg) 78%,
+    var(--app-hero-end) 22%
+  );
+  --app-card-fill: color-mix(
+    in srgb,
+    var(--app-card-bg) var(--app-card-opacity, 96%),
+    transparent
+  );
+  --app-input-bg: color-mix(
+    in srgb,
+    var(--app-soft-bg) 72%,
+    var(--app-card-bg) 28%
+  );
+  background-image: radial-gradient(
+    circle at 0% 0%,
+    var(--app-card-bg) 0%,
+    var(--app-bg) 60%,
+    var(--app-soft-bg) 100%
+  );
+  background-attachment: fixed;
+  /* 建立独立的层叠上下文：没有这行，.app-shell 自己的（不透明）背景会
+     按普通文档流内容的层叠顺序盖在 z-index:-1 的极光光斑上面，光斑等于白做。 */
+  isolation: isolate;
 }
 
 .app-sidebar {
@@ -274,6 +308,83 @@ html[data-app-theme="chatgpt"] {
 
 .app-card {
   box-shadow: var(--app-shadow);
+}
+
+/* 学生端主卡片：雾面半透明，能接住后方的极光，但仍保留足够的文字对比度。
+   显式的成功、提醒、AI 等语义色仍由页面自身控制，不被这里覆盖。 */
+.app-shell[data-dashboard-ui="student"] .app-card,
+.app-shell[data-dashboard-ui="student"] .app-theme-card {
+  backdrop-filter: blur(24px) saturate(125%);
+  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  box-shadow:
+    0 18px 44px -32px color-mix(in srgb, var(--app-accent) 34%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 64%, transparent);
+}
+
+/* 学生端卡片统一使用可调的低饱和渐变：普通卡片同时保留透明度设置，
+   强调卡使用同一强度参数；强度为 0% 时视觉上恢复为纯色。 */
+.app-shell[data-dashboard-ui="student"]
+  .app-card:not(.student-emphasis-card):not(.student-appearance-control) {
+  background-color: var(--app-card-fill) !important;
+  background-image: linear-gradient(
+    145deg,
+    color-mix(
+        in srgb,
+        color-mix(
+            in srgb,
+            var(--app-card-bg),
+            white var(--app-card-gradient-strength, 16%)
+          )
+          var(--app-card-opacity, 96%),
+        transparent
+      )
+      0%,
+    color-mix(
+        in srgb,
+        color-mix(
+            in srgb,
+            var(--app-card-bg),
+            var(--app-hero-end) var(--app-card-gradient-strength, 16%)
+          )
+          var(--app-card-opacity, 96%),
+        transparent
+      )
+      100%
+  ) !important;
+}
+
+.app-shell[data-dashboard-ui="student"] .student-appearance-control {
+  background-color: color-mix(
+    in srgb,
+    var(--app-card-bg) 96%,
+    transparent
+  ) !important;
+  background-image: none !important;
+}
+
+.app-shell[data-dashboard-ui="student"] .student-emphasis-card {
+  background-color: #647abd !important;
+  background-image: linear-gradient(
+    135deg,
+    color-mix(
+      in srgb,
+      #647abd,
+      #8aa0e4 var(--app-card-gradient-strength, 16%)
+    ),
+    color-mix(
+      in srgb,
+      #647abd,
+      #8b84ca var(--app-card-gradient-strength, 16%)
+    )
+  ) !important;
+}
+
+.app-shell[data-dashboard-ui="student"] .app-soft-card,
+.app-shell[data-dashboard-ui="student"] .app-theme-soft {
+  background-color: color-mix(in srgb, var(--app-soft-bg) 78%, transparent);
+  border-color: color-mix(in srgb, var(--app-border) 82%, transparent);
+  backdrop-filter: blur(16px) saturate(115%);
+  -webkit-backdrop-filter: blur(16px) saturate(115%);
 }
 
 .app-topbar {
@@ -300,6 +411,25 @@ html[data-app-theme="chatgpt"] {
   border-color: var(--app-accent);
 }
 
+.app-shell[data-dashboard-ui="student"] .app-input {
+  background-color: var(--app-input-bg);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 48%, transparent);
+}
+
+.app-shell[data-dashboard-ui="student"] .app-input:focus-within,
+.app-shell[data-dashboard-ui="student"] :is(input, textarea, select).app-input:focus {
+  background-color: color-mix(
+    in srgb,
+    var(--app-input-bg) 88%,
+    var(--app-accent-soft) 12%
+  );
+}
+
+.app-shell[data-dashboard-ui="student"] select.app-input option {
+  background-color: var(--app-soft-bg);
+  color: var(--app-text);
+}
+
 .app-input::placeholder {
   color: var(--app-muted-light);
   opacity: 1;
@@ -311,6 +441,299 @@ html[data-app-theme="chatgpt"] {
 
 .app-divider {
   border-color: var(--app-border);
+}
+
+/*
+  学生端外壳：无框化 + 微空间玻璃拟态
+
+  用于右侧「设置与通知」抽屉、左侧「导航」抽屉，以及两侧的边缘触柄。
+  背景/阴影/高光全部用 color-mix 从当前主题的 --app-* 变量派生，
+  这样在 3 套学生端主题下都能自动成立，不需要单独写死颜色。
+  仅限学生端组件使用这些类名，管理端（[data-dashboard-ui="management"]）不引用。
+*/
+.app-glass-panel {
+  background-color: color-mix(in srgb, var(--app-card-bg) 55%, transparent);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  color: var(--app-text);
+  box-shadow:
+    var(--app-shadow),
+    inset 0 1px 2px color-mix(in srgb, white 70%, transparent);
+  border: none;
+}
+
+/* 玻璃卡片：内容区卡片同款质感（高透高模糊折射玻璃+柔和阴影+顶部高光+hover 上浮），
+   圆角仍按项目规范用 rounded-3xl 封顶，这里不内置圆角。 */
+.app-glass-card {
+  background-color: color-mix(in srgb, var(--app-card-bg) 55%, transparent);
+  backdrop-filter: blur(40px) saturate(150%);
+  -webkit-backdrop-filter: blur(40px) saturate(150%);
+  color: var(--app-text);
+  box-shadow:
+    var(--app-shadow),
+    inset 0 1px 2px color-mix(in srgb, white 70%, transparent);
+  border: none;
+  transition:
+    transform 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 240ms ease,
+    background-color 240ms ease;
+}
+
+.app-glass-card:hover {
+  transform: translateY(-4px);
+  background-color: color-mix(in srgb, var(--app-card-bg) 68%, transparent);
+  box-shadow:
+    0 30px 60px -20px color-mix(in srgb, var(--app-text) 12%, transparent),
+    inset 0 1px 2px color-mix(in srgb, white 70%, transparent);
+}
+
+/*
+  极光弥散背景光斑：三个高斯模糊光斑固定在视口后方（z-index: -1），
+  颜色取当前主题的 accent/secondary/warm，切主题时光斑颜色自动跟着变，不写死颜色。
+  只用于学生端（[data-dashboard-ui="student"]），不影响管理端。
+*/
+.app-aurora-orb {
+  position: fixed;
+  z-index: -1;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+.app-aurora-orb-1 {
+  top: -10%;
+  left: 10%;
+  width: 600px;
+  height: 600px;
+  background: var(--app-accent);
+  filter: blur(120px);
+}
+
+.app-aurora-orb-2 {
+  bottom: -10%;
+  right: -5%;
+  width: 700px;
+  height: 700px;
+  background: var(--app-secondary);
+  filter: blur(150px);
+  opacity: 0.4;
+}
+
+.app-aurora-orb-3 {
+  top: 30%;
+  left: 45%;
+  width: 500px;
+  height: 500px;
+  background: var(--app-warm);
+  filter: blur(120px);
+  opacity: 0.3;
+}
+
+.app-edge-handle {
+  position: fixed;
+  top: 50%;
+  z-index: 85;
+  width: 4px;
+  height: 64px;
+  border-radius: 999px;
+  transform: translateY(-50%);
+  background-color: color-mix(in srgb, var(--app-text) 14%, transparent);
+  opacity: 0.35;
+  transition:
+    opacity 200ms ease,
+    transform 200ms ease,
+    background-color 200ms ease;
+}
+
+.app-edge-hover-zone {
+  position: fixed;
+  inset-block: 0;
+  z-index: 84;
+  display: none;
+  width: 12px;
+}
+
+.app-edge-hover-zone[data-side="left"] {
+  left: 0;
+}
+
+.app-edge-hover-zone[data-side="right"] {
+  right: 0;
+}
+
+@media (min-width: 768px) and (hover: hover) {
+  .app-edge-hover-zone {
+    display: block;
+  }
+}
+
+.app-edge-handle[data-side="left"] {
+  left: 6px;
+}
+
+.app-edge-handle[data-side="right"] {
+  right: 6px;
+}
+
+.app-edge-handle-student {
+  --app-edge-drawer-width: 20rem;
+}
+
+.app-edge-handle-management {
+  --app-edge-drawer-width: 17rem;
+}
+
+.app-edge-handle:hover,
+.app-edge-handle:focus-visible,
+.app-edge-handle[data-open="true"] {
+  opacity: 0.9;
+  background-color: var(--app-accent);
+  transform: translateY(-50%) scaleX(1.5);
+}
+
+@media (min-width: 768px) {
+  .app-edge-handle[data-side="left"][data-open="true"] {
+    transform: translateX(var(--app-edge-drawer-width)) translateY(-50%) scaleX(1.5);
+  }
+
+  .app-edge-handle[data-side="right"][data-open="true"] {
+    transform: translateX(calc(-1 * var(--app-edge-drawer-width))) translateY(-50%) scaleX(1.5);
+  }
+}
+
+.app-edge-handle[data-indicator="true"]::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: -14px;
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background-color: var(--app-warm);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-warm) 25%, transparent);
+  animation: app-edge-handle-glow 2.4s ease-in-out infinite;
+}
+
+@keyframes app-edge-handle-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-warm) 20%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 6px color-mix(in srgb, var(--app-warm) 32%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-edge-handle[data-indicator="true"]::after {
+    animation: none;
+  }
+}
+
+/* Management overview: quiet semantic column headers without heavy color blocks. */
+[data-admin-overview] table thead th {
+  border-right: 1px solid var(--app-border);
+  background: #f8fafc;
+  color: #475569;
+}
+
+[data-admin-overview] table thead th:last-child {
+  border-right: 0;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(2) {
+  background: #f0f9ff;
+  color: #0369a1;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(3) {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(4) {
+  background: #fff1f2;
+  color: #be123c;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(5) {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(6) {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(7) {
+  background: #f0fdfa;
+  color: #0f766e;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(9)) thead th:nth-child(8) {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(4):last-child) thead th:nth-child(1) {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(4):last-child) thead th:nth-child(3) {
+  background: #fffbeb;
+  color: #b45309;
+}
+
+[data-admin-overview] table:has(thead th:nth-child(4):last-child) thead th:nth-child(4) {
+  background: #f0fdfa;
+  color: #0f766e;
+}
+
+/* 课程管理弹出工作窗：字段统一为轻量表格行。 */
+.course-editor-window .course-editor-field,
+.course-editor-window .course-editor-file-field {
+  display: grid;
+  grid-template-columns: minmax(8rem, 10rem) minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--app-border-soft);
+  background: var(--app-card-bg);
+}
+
+.course-editor-window .course-editor-field:has(textarea),
+.course-editor-window .course-editor-file-field {
+  align-items: start;
+}
+
+.course-editor-window .course-editor-field > .app-input,
+.course-editor-window .course-editor-file-field > .app-input {
+  min-width: 0;
+  margin-top: 0;
+}
+
+.course-editor-window .grid:has(> .course-editor-field),
+.course-editor-window .grid:has(> .course-editor-file-field) {
+  gap: 0;
+}
+
+.course-editor-window .grid:has(> .course-editor-field) > .course-editor-field,
+.course-editor-window .grid:has(> .course-editor-file-field) > .course-editor-file-field {
+  margin-right: -1px;
+  margin-bottom: -1px;
+}
+
+@media (max-width: 640px) {
+  .course-editor-window .course-editor-field,
+  .course-editor-window .course-editor-file-field {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
 }
 
 /*
@@ -487,6 +910,425 @@ html[data-app-theme="chatgpt"] {
   border: none;
   padding-top: 0;
 }
+
+/*
+  管理端视觉系统 —— Linear / Vercel 方向
+
+  通过 data-dashboard-ui="management" 完整隔离，学生端仍使用上面的主题系统。
+  管理端以瑞士排版、低圆角、1px 发丝线和中性灰阶建立层级，不使用装饰性投影。
+*/
+[data-dashboard-ui="management"] {
+  --app-bg: #fafbfe;
+  --app-sidebar-bg: #f7f8fc;
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #f3f5fa;
+  --app-border: #e2e5ee;
+  --app-border-soft: #eceef4;
+
+  --app-text: #18191f;
+  --app-text-soft: #3f4350;
+  --app-muted: #707585;
+  --app-muted-light: #a2a7b5;
+
+  --app-input-bg: #ffffff;
+  --app-accent: #5e6ad2;
+  --app-accent-strong: #4f5bc4;
+  --app-accent-soft: #eef0ff;
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #3974d8;
+  --app-secondary-soft: #edf4ff;
+  --app-success: #198754;
+  --app-success-soft: #eaf8f1;
+  --app-warm: #b26a00;
+  --app-warm-soft: #fff4df;
+  --app-hero-start: #f7f7ff;
+  --app-hero-end: #f1f6ff;
+  --app-shadow: none;
+
+  --app-card-fill: #ffffff;
+  --app-card-border: #e2e5ee;
+  --app-card-highlight: transparent;
+
+  font-feature-settings: "ss01", "cv02", "cv03", "cv04";
+  letter-spacing: -0.01em;
+}
+
+.dark [data-dashboard-ui="management"] {
+  --app-bg: #0a0a0a;
+  --app-sidebar-bg: #0d0d0d;
+  --app-card-bg: #111111;
+  --app-soft-bg: #171717;
+  --app-border: #292929;
+  --app-border-soft: #222222;
+
+  --app-text: #ededed;
+  --app-text-soft: #d4d4d4;
+  --app-muted: #8f8f8f;
+  --app-muted-light: #666666;
+
+  --app-input-bg: #111111;
+  --app-accent: #8b93ff;
+  --app-accent-strong: #a5abff;
+  --app-accent-soft: #222749;
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #70a7ff;
+  --app-secondary-soft: #172641;
+  --app-success: #4fbf7f;
+  --app-success-soft: #132a20;
+  --app-warm: #e2a83b;
+  --app-warm-soft: #30250f;
+  --app-hero-start: #17182a;
+  --app-hero-end: #142137;
+
+  --app-card-fill: #111111;
+  --app-card-border: #292929;
+}
+
+[data-dashboard-ui="management"] :is(.app-card, .app-theme-card) {
+  box-shadow: none;
+}
+
+[data-dashboard-ui="management"] .app-topbar {
+  background-color: color-mix(in srgb, var(--app-bg) 92%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+[data-dashboard-ui="management"] :is(.rounded-3xl, .rounded-2xl) {
+  border-radius: 8px;
+}
+
+[data-dashboard-ui="management"] :is(.rounded-xl, .rounded-lg) {
+  border-radius: 6px;
+}
+
+[data-dashboard-ui="management"] :is(
+  [class~="rounded-[1.5rem]"],
+  [class~="rounded-[1.75rem]"]
+) {
+  border-radius: 8px;
+}
+
+[data-dashboard-ui="management"] .font-black {
+  font-weight: 600;
+}
+
+[data-dashboard-ui="management"] .font-bold {
+  font-weight: 600;
+}
+
+[data-dashboard-ui="management"] [class*="hover:-translate-y"]:hover {
+  transform: translateY(0);
+}
+
+[data-dashboard-ui="management"] :is(input, textarea, select, button) {
+  border-radius: 6px;
+}
+
+[data-dashboard-ui="management"] :is(input, textarea, select):focus {
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--app-accent) 12%, transparent);
+  outline: none;
+}
+
+.management-topbar-divider {
+  background: var(--app-border);
+}
+
+.management-mark {
+  border: 1px solid var(--app-accent);
+  border-radius: 5px;
+  background: var(--app-accent);
+  color: var(--app-accent-contrast);
+}
+
+.management-status-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--app-success);
+  box-shadow: 0 0 0 2px var(--app-success-soft);
+}
+
+.management-icon-button,
+.management-profile,
+.management-collapse-button,
+.management-sidebar-mark {
+  border-color: var(--app-border);
+  border-radius: 6px;
+  background: var(--app-card-bg);
+  color: var(--app-text-soft);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease,
+    color 120ms ease;
+}
+
+:is(.management-icon-button, .management-profile, .management-collapse-button):hover {
+  border-color: color-mix(in srgb, var(--app-border) 40%, var(--app-text));
+  background: var(--app-soft-bg);
+  color: var(--app-text);
+}
+
+.management-avatar {
+  border-radius: 4px;
+  background: var(--app-accent);
+  color: var(--app-accent-contrast);
+}
+
+.management-sidebar {
+  background: var(--app-sidebar-bg);
+}
+
+.management-sidebar-header,
+.management-mobile-nav {
+  background: var(--app-sidebar-bg);
+}
+
+.management-nav-group,
+.management-kicker {
+  color: var(--app-muted);
+  letter-spacing: 0.1em;
+}
+
+.management-nav-item {
+  position: relative;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  color: var(--app-muted);
+  transition:
+    background-color 100ms ease,
+    border-color 100ms ease,
+    color 100ms ease;
+}
+
+.management-nav-item:hover {
+  background: color-mix(in srgb, var(--app-card-bg) 66%, transparent);
+  color: var(--app-text);
+}
+
+.management-nav-item[data-active="true"] {
+  border-color: color-mix(in srgb, var(--app-accent) 22%, var(--app-border));
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
+.management-nav-item[data-active="true"]::before {
+  position: absolute;
+  top: 50%;
+  left: -3px;
+  width: 2px;
+  height: 14px;
+  border-radius: 99px;
+  background: var(--app-accent);
+  content: "";
+  transform: translateY(-50%);
+}
+
+.management-page {
+  color: var(--app-text);
+}
+
+.management-overview-header,
+.management-permission-note,
+.management-page .divide-y,
+.management-page .divide-y > * {
+  border-color: var(--app-border);
+}
+
+.management-overview-metrics {
+  border-color: var(--app-border);
+  border-radius: 8px;
+  background: var(--app-card-bg);
+}
+
+.management-overview-metrics > * + * {
+  border-color: var(--app-border);
+}
+
+.management-module-grid {
+  border-top: 1px solid var(--app-border);
+  border-left: 1px solid var(--app-border);
+}
+
+.management-module-card {
+  margin-top: -1px;
+  margin-left: -1px;
+  border-color: var(--app-border);
+  background: var(--app-card-bg);
+  transition:
+    background-color 120ms ease,
+    border-color 120ms ease;
+}
+
+.management-module-card:hover {
+  z-index: 1;
+  border-color: color-mix(in srgb, var(--app-accent) 28%, var(--app-border));
+  background: color-mix(in srgb, var(--app-accent-soft) 55%, var(--app-card-bg));
+}
+
+.management-module-icon {
+  border-color: color-mix(in srgb, var(--app-accent) 18%, var(--app-border));
+  border-radius: 5px;
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
+[data-dashboard-ui="management"] .management-overview-header,
+[data-dashboard-ui="management"]
+  section[style*="linear-gradient(125deg"]:not(.management-detail-summary) {
+  display: none;
+}
+
+[data-dashboard-ui="management"] .dashboard-page-header {
+  padding-top: 1.75rem;
+}
+
+[data-dashboard-ui="management"] .dashboard-page-header-inner {
+  padding-bottom: 1.25rem;
+  border-bottom: 1px solid var(--app-border);
+}
+
+[data-dashboard-ui="management"] .dashboard-title-heading {
+  letter-spacing: -0.035em;
+}
+
+[data-dashboard-ui="management"] .dashboard-title-hint {
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--app-border);
+  border-radius: 4px;
+  background: var(--app-card-bg);
+}
+
+[data-dashboard-ui="management"] .dashboard-title-hint svg {
+  width: 11px;
+  height: 11px;
+}
+
+[data-dashboard-ui="management"] .dashboard-title-metrics {
+  gap: 0;
+  border: 1px solid var(--app-border);
+  border-radius: 8px;
+  background: var(--app-card-bg);
+}
+
+[data-dashboard-ui="management"] .dashboard-title-metrics > * {
+  border: 0;
+  border-left: 1px solid var(--app-border);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+[data-dashboard-ui="management"] .dashboard-title-metrics > :first-child {
+  border-left: 0;
+}
+
+[data-dashboard-ui="management"] table {
+  border-collapse: collapse;
+}
+
+[data-dashboard-ui="management"] thead {
+  background: var(--app-soft-bg);
+}
+
+[data-dashboard-ui="management"] th {
+  color: var(--app-muted);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+[data-dashboard-ui="management"] tbody tr {
+  transition: background-color 100ms ease;
+}
+
+[data-dashboard-ui="management"] tbody tr:hover {
+  background: color-mix(in srgb, var(--app-soft-bg) 78%, transparent);
+}
+
+[data-dashboard-ui="management"] details {
+  border-color: var(--app-border);
+}
+
+[data-dashboard-ui="management"] summary {
+  letter-spacing: -0.01em;
+}
+
+[data-dashboard-ui="management"] .app-card > .mt-5.border-t.pt-5 {
+  margin-top: 1.25rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--app-border-soft);
+}
+
+[data-dashboard-ui="management"] main:has(.token-usage-page),
+[data-dashboard-ui="management"] .token-usage-page {
+  background: #fdfbf7;
+}
+
+[data-dashboard-ui="management"] .token-usage-page {
+  min-height: calc(100vh - 56px);
+}
+
+[data-dashboard-ui="management"] .token-usage-metrics-strip {
+  position: relative;
+}
+
+[data-dashboard-ui="management"] .token-usage-metrics-strip::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--app-accent) 0 25%,
+    var(--app-secondary) 25% 50%,
+    var(--app-success) 50% 75%,
+    var(--app-warm) 75% 100%
+  );
+  content: "";
+}
+
+[data-dashboard-ui="management"]
+  .token-usage-table[data-tone="platform"]
+  tbody
+  tr:hover {
+  background: color-mix(in srgb, var(--app-accent-soft) 72%, white);
+}
+
+[data-dashboard-ui="management"]
+  .token-usage-table[data-tone="organization"]
+  tbody
+  tr:hover {
+  background: color-mix(in srgb, var(--app-secondary-soft) 78%, white);
+}
+
+[data-dashboard-ui="management"] .token-usage-table th:not(:last-child),
+[data-dashboard-ui="management"] .token-usage-table tbody > tr > td:not(:last-child) {
+  border-right: 1px solid var(--app-border-soft);
+}
+
+.dark [data-dashboard-ui="management"] main:has(.token-usage-page),
+.dark [data-dashboard-ui="management"] .token-usage-page {
+  background: var(--app-bg);
+}
+
+.dark
+  [data-dashboard-ui="management"]
+  .token-usage-table[data-tone="platform"]
+  tbody
+  tr:hover {
+  background: var(--app-accent-soft);
+}
+
+.dark
+  [data-dashboard-ui="management"]
+  .token-usage-table[data-tone="organization"]
+  tbody
+  tr:hover {
+  background: var(--app-secondary-soft);
+}
+
 /* Korean Level 1 books use neutral black copy while retaining colored accents. */
 .book-black-copy :is(h1, h2, h3, h4, p, li, button) {
   color: #202322 !important;

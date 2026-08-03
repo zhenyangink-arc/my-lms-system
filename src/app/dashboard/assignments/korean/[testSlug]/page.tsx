@@ -22,7 +22,7 @@ export default async function KoreanChapterTestPage({
   const { supabase, user, role, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const { data: testData } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select(
       "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
     )
@@ -32,7 +32,7 @@ export default async function KoreanChapterTestPage({
   if (!testData) notFound();
   const test = testData as CourseTestRow;
   const { data: attemptData } = await supabase
-    .from("course_test_attempts")
+    .from("chapter_test_attempts")
     .select("test_slug")
     .eq("student_id", user.id);
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
@@ -42,10 +42,10 @@ export default async function KoreanChapterTestPage({
     !isPlatformTenantManagerRole(role) &&
     !unlockedTestSlugs.has(test.slug)
   ) {
-    redirect("/dashboard/assignments/korean");
+    redirect("/dashboard/assignments");
   }
   const { data: questionData } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select("id,test_id,question_key,prompt,options,skill,sort_order")
     .eq("test_id", test.id)
     .eq("status", "published")
@@ -56,7 +56,7 @@ export default async function KoreanChapterTestPage({
   const publicTest = buildPublicKoreanChapterTest(test, questionRows);
   if (publicTest.questions.length === 0) notFound();
   const { data: reviewData } = await supabase
-    .from("course_question_reviews")
+    .from("chapter_test_question_reviews")
     .select("question_id")
     .eq("student_id", user.id)
     .eq("test_id", test.id)
@@ -82,7 +82,7 @@ export default async function KoreanChapterTestPage({
     <div className="pb-12">
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-4 px-4 sm:px-6 lg:px-8">
         <Link
-          href="/dashboard/assignments/korean"
+          href="/dashboard/assignments"
           className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
         >
           <ArrowLeft size={14} />

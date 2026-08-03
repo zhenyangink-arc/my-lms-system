@@ -1,60 +1,276 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowLeft, CheckCircle2, Clock3, FileSearch, House, MapPin, PlaneLanding, PlaneTakeoff, ShieldCheck, TriangleAlert } from "lucide-react";
+import { ArrowLeft, ShieldCheck } from "lucide-react";
 
-import { requireAdmin } from "@/lib/admin";
-import { DashboardPageHeader } from "../../../DashboardPageHeader";
+import { requireVisaManager } from "@/lib/visa-management";
 import { StudentModuleCardDeleteDialog } from "../../StudentModuleCardDeleteDialog";
 import { deleteStudentVisaCardAction } from "../actions";
 import { VisaCaseAdminForm, VisaTaskReviewControls } from "../VisaAdminControls";
-
+import { getVisaCaseStatusLabel } from "../../../visa/visa-case-stages";
 
 type StudentProfile = { id: string; full_name: string | null; email: string | null };
-type VisaCase = { id: string; user_id: string; source_target_id: string | null; visa_type: string; application_channel: string; case_status: string; target_entry_date: string | null; application_city: string | null; residence_province: string | null; residence_city: string | null; planned_entry_date: string | null; accommodation_status: string | null; airport_pickup_required: boolean | null; departure_province: string | null; departure_airport: string | null; arrival_region: string | null; arrival_airport: string | null; advisor_note: string | null; updated_at: string };
-type VisaTask = { id: string; title: string; description: string | null; stage: string; status: string; student_note: string | null; admin_note: string | null; submission_version: number; submitted_at: string | null; reviewed_at: string | null; sort_order: number };
+type VisaCase = {
+  id: string;
+  user_id: string;
+  source_target_id: string | null;
+  visa_type: string;
+  application_channel: string;
+  case_status: string;
+  target_entry_date: string | null;
+  application_city: string | null;
+  residence_province: string | null;
+  residence_city: string | null;
+  planned_entry_date: string | null;
+  accommodation_status: string | null;
+  airport_pickup_required: boolean | null;
+  departure_province: string | null;
+  departure_airport: string | null;
+  arrival_region: string | null;
+  arrival_airport: string | null;
+  advisor_note: string | null;
+  updated_at: string;
+};
+type VisaTask = {
+  id: string;
+  title: string;
+  description: string | null;
+  stage: string;
+  status: string;
+  student_note: string | null;
+  admin_note: string | null;
+  submission_version: number;
+  submitted_at: string | null;
+  reviewed_at: string | null;
+  sort_order: number;
+};
 type VisaTarget = { id: string; university_name: string; program_name: string | null; admission_track: string | null };
 
-const VISA_TYPE_LABELS: Record<string, string> = { d4_language: "语言研修签证", d2_bachelor: "本科签证", d2_master: "硕士签证", d2_doctor: "博士签证" };
-const APPLICATION_CHANNEL_LABELS: Record<string, string> = { china_consulate: "驻中韩国领事馆递签证通道", korea_immigration: "韩国出入境返签证通道" };
-const CASE_STATUS_LABELS: Record<string, string> = { admin_preparing: "管理员准备中", ready_to_submit: "材料发送回中国", planning: "材料抵达中国", preparing: "学生确认材料", submitted: "递交签证申请", additional_documents: "是否补充材料", issued: "签证签发" };
-const ADMISSION_TRACK_LABELS: Record<string, string> = { language: "语学堂", bachelor_fresh: "大学 · 本科新入", bachelor_transfer: "大学 · 本科插班", master: "大学 · 硕士", doctor: "大学 · 博士" };
-const STAGE_LABELS: Record<string, string> = { admission: "入学许可", identity: "身份材料", finance: "资金材料", application: "申请表格", appointment: "预约递交", submission: "正式递签", result: "结果查询", entry: "入境安排" };
-const STATUS_LABELS: Record<string, string> = { pending: "未开始", in_progress: "准备中", submitted: "待审核", reviewing: "审核中", approved: "已确认", revision_required: "需要补充", blocked: "需要协助" };
-const STATUS_TONES: Record<string, { color: string; soft: string }> = { pending: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" }, in_progress: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" }, submitted: { color: "var(--app-accent)", soft: "var(--app-accent-soft)" }, reviewing: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" }, approved: { color: "var(--app-success)", soft: "var(--app-success-soft)" }, revision_required: { color: "#d85b51", soft: "#fff0ed" }, blocked: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" } };
-const ACCOMMODATION_STATUS_LABELS: Record<string, string> = { on_campus_dormitory: "校内宿舍", off_campus_dormitory: "校外宿舍", rental: "租房" };
+const VISA_TYPE_LABELS: Record<string, string> = {
+  d4_language: "语言研修签证",
+  d2_bachelor: "本科签证",
+  d2_master: "硕士签证",
+  d2_doctor: "博士签证",
+};
+const CHANNEL_LABELS: Record<string, string> = {
+  china_consulate: "驻华韩国领事馆递签",
+  korea_immigration: "韩国出入境返签证",
+};
+const TRACK_LABELS: Record<string, string> = {
+  language: "语学院",
+  bachelor_fresh: "本科新入",
+  bachelor_transfer: "本科插班",
+  master: "硕士",
+  doctor: "博士",
+};
+const STAGE_LABELS: Record<string, string> = {
+  admission: "入学许可",
+  identity: "身份材料",
+  finance: "资金材料",
+  application: "申请表格",
+  appointment: "预约递交",
+  submission: "正式递签",
+  result: "结果查询",
+  entry: "入境安排",
+};
+const STATUS_LABELS: Record<string, string> = {
+  pending: "未开始",
+  in_progress: "准备中",
+  submitted: "待审核",
+  reviewing: "审核中",
+  approved: "已确认",
+  revision_required: "需要补充",
+  blocked: "需要协助",
+};
+const ACCOMMODATION_LABELS: Record<string, string> = {
+  on_campus_dormitory: "校内宿舍",
+  off_campus_dormitory: "校外宿舍",
+  rental: "租房",
+};
 
-function formatDate(value: string | null) { if (!value) return "暂无记录"; const date = new Date(value); if (Number.isNaN(date.getTime())) return "时间待确认"; return new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date); }
+function formatDate(value: string | null) {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(date);
+}
 
-export default async function StudentVisaManagementPage({ params }: { params: Promise<{ studentId: string }> }) {
+function taskTone(status: string) {
+  if (status === "approved") return "bg-emerald-50 text-emerald-700";
+  if (status === "revision_required" || status === "blocked") return "bg-rose-50 text-rose-700";
+  if (status === "submitted" || status === "reviewing") return "bg-amber-50 text-amber-700";
+  if (status === "in_progress") return "bg-sky-50 text-sky-700";
+  return "bg-zinc-100 text-zinc-500";
+}
+
+export default async function StudentVisaManagementPage({
+  params,
+}: {
+  params: Promise<{ studentId: string }>;
+}) {
   const { studentId } = await params;
-  const { supabase } = await requireAdmin();
+  const { supabase, tenantId } = await requireVisaManager();
   const [profileResult, caseResult, tasksResult, eligibilityResult] = await Promise.all([
-    supabase.from("profiles").select("id, full_name, email").eq("id", studentId).maybeSingle(),
-    supabase.from("student_visa_cases").select("id, user_id, source_target_id, visa_type, application_channel, case_status, target_entry_date, application_city, residence_province, residence_city, planned_entry_date, accommodation_status, airport_pickup_required, departure_province, departure_airport, arrival_region, arrival_airport, advisor_note, updated_at").eq("user_id", studentId).maybeSingle(),
-    supabase.from("student_visa_tasks").select("id, title, description, stage, status, student_note, admin_note, submission_version, submitted_at, reviewed_at, sort_order").eq("user_id", studentId).eq("is_archived", false).order("sort_order", { ascending: true }),
-    supabase.from("student_university_targets").select("id, university_name, program_name, admission_track").eq("user_id", studentId).gte("application_stage", 9),
+    supabase.from("profiles").select("id,full_name,email").eq("id", studentId).maybeSingle(),
+    supabase
+      .from("student_visa_cases")
+      .select("id,user_id,source_target_id,visa_type,application_channel,case_status,target_entry_date,application_city,residence_province,residence_city,planned_entry_date,accommodation_status,airport_pickup_required,departure_province,departure_airport,arrival_region,arrival_airport,advisor_note,updated_at")
+      .eq("tenant_id", tenantId)
+      .eq("user_id", studentId)
+      .maybeSingle(),
+    supabase
+      .from("student_visa_tasks")
+      .select("id,title,description,stage,status,student_note,admin_note,submission_version,submitted_at,reviewed_at,sort_order")
+      .eq("tenant_id", tenantId)
+      .eq("user_id", studentId)
+      .eq("is_archived", false)
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from("student_university_targets")
+      .select("id,university_name,program_name,admission_track")
+      .eq("tenant_id", tenantId)
+      .eq("user_id", studentId)
+      .gte("application_stage", 9),
   ]);
+
   const eligibleTargets = (eligibilityResult.data ?? []) as VisaTarget[];
-  const visaTarget = eligibleTargets.find((target) => target.id === caseResult.data?.source_target_id) ?? eligibleTargets[0] ?? null;
+  const visaTarget =
+    eligibleTargets.find((target) => target.id === caseResult.data?.source_target_id) ??
+    eligibleTargets[0] ??
+    null;
   if (caseResult.error || !caseResult.data || eligibilityResult.error || !visaTarget) notFound();
+
   const visaCase = caseResult.data as VisaCase;
   const profile = (profileResult.data ?? { id: studentId, full_name: null, email: null }) as StudentProfile;
   const tasks = (tasksResult.data ?? []) as VisaTask[];
-  const displayName = profile.full_name || "未填写姓名";
+  const displayName = profile.full_name || profile.email || "未填写姓名";
   const approvedCount = tasks.filter((task) => task.status === "approved").length;
   const reviewCount = tasks.filter((task) => ["submitted", "reviewing"].includes(task.status)).length;
   const supportCount = tasks.filter((task) => ["revision_required", "blocked"].includes(task.status)).length;
 
+  const entryRows = [
+    ["最晚入境", visaCase.target_entry_date ?? "待确认"],
+    ["预计入境", visaCase.planned_entry_date ?? "待填写"],
+    ["住宿安排", visaCase.accommodation_status ? ACCOMMODATION_LABELS[visaCase.accommodation_status] ?? visaCase.accommodation_status : "待填写"],
+    ["接机服务", visaCase.airport_pickup_required === null ? "待填写" : visaCase.airport_pickup_required ? "需要" : "不需要"],
+    ["户籍 / 常住地", [visaCase.residence_province, visaCase.residence_city].filter(Boolean).join(" · ") || "待填写"],
+    ["递签领区", visaCase.application_city ? `${visaCase.application_city}递签` : "待确认"],
+    ["出境安排", [visaCase.departure_province, visaCase.departure_airport].filter(Boolean).join(" · ") || "待填写"],
+    ["到达安排", [visaCase.arrival_region, visaCase.arrival_airport].filter(Boolean).join(" · ") || "待填写"],
+  ];
+
   return (
-    <>
-      <DashboardPageHeader title="学生签证档案" description="查看学生签证路线，处理任务审核并记录顾问意见。" />
-      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5"><Link href="/dashboard/admin/visa" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回签证学生列表</Link>
-        <section className="app-card rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-success-soft))" }}><div className="flex flex-col gap-5 lg:flex-row lg:items-center"><span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] text-2xl font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>{displayName === "未填写姓名" ? "?" : displayName.slice(0, 1)}</span><div className="min-w-0"><h1 className="text-2xl font-black">{displayName}</h1><p className="app-muted-text mt-1 text-sm">{profile.email || `账号 …${studentId.slice(-6)}`}</p><p className="mt-2 text-sm font-black">{visaTarget.university_name}</p><div className="mt-3 flex flex-wrap gap-2"><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{ADMISSION_TRACK_LABELS[visaTarget.admission_track ?? ""] ?? "大学"}{visaTarget.program_name ? ` · ${visaTarget.program_name}` : ""}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{VISA_TYPE_LABELS[visaCase.visa_type] ?? "签证类型待定"}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>{APPLICATION_CHANNEL_LABELS[visaCase.application_channel] ?? "办理通道待定"}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{CASE_STATUS_LABELS[visaCase.case_status] ?? visaCase.case_status}</span></div><div className="mt-3"><StudentModuleCardDeleteDialog action={deleteStudentVisaCardAction.bind(null, studentId)} studentName={displayName} cardLabel="签证卡" description="将永久清空签证档案、全部准备任务和审核记录。" /></div></div><div className="grid grid-cols-3 gap-2 lg:ml-auto lg:min-w-[360px]">{[["待审核", reviewCount, FileSearch], ["待处理", supportCount, TriangleAlert], ["已确认", approvedCount, CheckCircle2]].map(([label, value, Icon]) => { const MetricIcon = Icon as typeof FileSearch; return <div key={String(label)} className="app-card rounded-xl border p-3 text-center"><MetricIcon className="mx-auto" size={15} style={{ color: "var(--app-success)" }} /><p className="mt-1.5 text-xl font-black">{String(value)}</p><p className="app-muted-text text-[10px] font-black">{String(label)}</p></div>; })}</div></div></section>
+    <div className="pb-12">
+      <div className="mx-auto mt-5 w-full max-w-[1720px] px-4 sm:px-6 lg:px-8">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <Link href="/dashboard/admin/visa" className="inline-flex items-center gap-2 text-[10px] font-medium text-zinc-500 hover:text-zinc-950">
+            <ArrowLeft size={13} />返回签证管理
+          </Link>
+          <StudentModuleCardDeleteDialog
+            action={deleteStudentVisaCardAction.bind(null, studentId)}
+            studentName={displayName}
+            cardLabel="签证档案"
+            description="将永久清空签证档案、全部准备任务和审核记录。"
+          />
+        </div>
 
-        <section className="app-card rounded-3xl border p-4 sm:p-5"><div className="mb-4 flex flex-wrap items-center justify-between gap-3"><div><p className="app-muted-text text-xs font-black">整体跟进</p><h2 className="mt-1 text-lg font-black">签证档案管理</h2></div><div className="flex flex-wrap gap-3 text-xs app-muted-text">{visaCase.target_entry_date && <span className="inline-flex items-center gap-1"><Clock3 size={12} />最晚入境 {visaCase.target_entry_date}</span>}{visaCase.planned_entry_date && <span className="inline-flex items-center gap-1"><Clock3 size={12} />预计入境 {visaCase.planned_entry_date}</span>}{visaCase.accommodation_status && <span className="inline-flex items-center gap-1"><House size={12} />住宿 {ACCOMMODATION_STATUS_LABELS[visaCase.accommodation_status] ?? visaCase.accommodation_status}</span>}{visaCase.airport_pickup_required !== null && <span className="inline-flex items-center gap-1"><PlaneLanding size={12} />接机 {visaCase.airport_pickup_required ? "需要" : "不需要"}</span>}{(visaCase.residence_province || visaCase.residence_city) && <span className="inline-flex items-center gap-1"><MapPin size={12} />户籍/常住地 {visaCase.residence_province}{visaCase.residence_city ? ` · ${visaCase.residence_city}` : ""}</span>}{visaCase.application_city && <span className="inline-flex items-center gap-1"><MapPin size={12} />{visaCase.application_city}递签</span>}{(visaCase.departure_province || visaCase.departure_airport) && <span className="inline-flex items-center gap-1"><PlaneTakeoff size={12} />出境 {visaCase.departure_province}{visaCase.departure_airport ? ` · ${visaCase.departure_airport}` : ""}</span>}{(visaCase.arrival_region || visaCase.arrival_airport) && <span className="inline-flex items-center gap-1"><PlaneLanding size={12} />到达 {visaCase.arrival_region}{visaCase.arrival_airport ? ` · ${visaCase.arrival_airport}` : ""}</span>}</div></div><VisaCaseAdminForm studentId={studentId} visaType={visaCase.visa_type} applicationChannel={visaCase.application_channel} targetEntryDate={visaCase.target_entry_date} caseStatus={visaCase.case_status} advisorNote={visaCase.advisor_note} /><div className="mt-5 border-t pt-5" style={{ borderColor: "var(--app-border-soft)" }}><div className="mb-3"><p className="app-muted-text text-xs font-black">学生填写信息</p><h3 className="mt-1 text-sm font-black">入境与安置信息</h3></div><div className="grid gap-2.5 sm:grid-cols-2 xl:grid-cols-4"><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">最晚入境</p><p className="mt-1 text-sm font-black">{visaCase.target_entry_date ?? "待确认"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">预计入境</p><p className="mt-1 text-sm font-black">{visaCase.planned_entry_date ?? "待填写"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">住宿安排</p><p className="mt-1 text-sm font-black">{visaCase.accommodation_status ? (ACCOMMODATION_STATUS_LABELS[visaCase.accommodation_status] ?? visaCase.accommodation_status) : "待填写"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">接机服务</p><p className="mt-1 text-sm font-black">{visaCase.airport_pickup_required === null ? "待填写" : visaCase.airport_pickup_required ? "需要" : "不需要"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">户籍/常住地</p><p className="mt-1 text-sm font-black">{[visaCase.residence_province, visaCase.residence_city].filter(Boolean).join(" · ") || "待填写"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">递签领区</p><p className="mt-1 text-sm font-black">{visaCase.application_city ? `${visaCase.application_city}递签` : "待填写"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">出境安排</p><p className="mt-1 text-sm font-black">{[visaCase.departure_province, visaCase.departure_airport].filter(Boolean).join(" · ") || "待填写"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">到达安排</p><p className="mt-1 text-sm font-black">{[visaCase.arrival_region, visaCase.arrival_airport].filter(Boolean).join(" · ") || "待填写"}</p></div></div></div></section>
+        <section className="border-y border-black/[0.08] bg-white">
+          <header className="flex flex-col gap-4 border-b border-black/[0.08] px-5 py-5 xl:flex-row xl:items-end xl:justify-between">
+            <div>
+              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">学生签证案件 / {studentId.slice(-8)}</p>
+              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">{displayName}</h1>
+              <p className="mt-1 text-[11px] text-zinc-500">{profile.email || "未填写邮箱"}</p>
+            </div>
+            <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
+              {[
+                ["任务", tasks.length, "text-zinc-950"],
+                ["等待审核", reviewCount, "text-amber-700"],
+                ["补件 / 协助", supportCount, "text-rose-700"],
+                ["已经确认", approvedCount, "text-emerald-700"],
+              ].map(([label, value, color], index) => (
+                <div key={String(label)} className={`min-w-[90px] px-4 ${index > 0 ? "border-l border-black/[0.08]" : ""}`}>
+                  <dt className="text-zinc-400">{label}</dt>
+                  <dd className={`mt-0.5 font-mono text-base font-medium tabular-nums ${color}`}>{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </header>
 
-        <section className="space-y-3">{tasks.map((task, index) => { const tone = STATUS_TONES[task.status] ?? STATUS_TONES.pending; return <article key={task.id} className="app-card rounded-[1.5rem] border p-4 sm:p-5"><div className="grid gap-4 xl:grid-cols-[250px_minmax(0,1fr)_320px]"><div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{index + 1}</span><div><p className="app-muted-text text-xs font-black">{STAGE_LABELS[task.stage] ?? "签证准备"}</p><h2 className="mt-1 text-sm font-black">{task.title}</h2><span className="mt-2 inline-flex rounded-full px-2.5 py-1 text-xs font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{STATUS_LABELS[task.status] ?? task.status}</span></div></div><div className="min-w-0 xl:border-l xl:px-4" style={{ borderColor: "var(--app-border-soft)" }}><p className="app-muted-text text-xs leading-5">{task.description}</p><div className="mt-3 grid gap-2 sm:grid-cols-2"><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">学生说明</p><p className="mt-1 text-xs leading-5">{task.student_note || "学生暂未填写说明"}</p></div><div className="app-soft-card rounded-xl border p-3"><p className="app-muted-text text-xs font-black">审核记录</p><p className="mt-1 text-xs leading-5">{task.admin_note || "暂无审核意见"}</p></div></div><p className="app-muted-text mt-2 text-xs">提交 {task.submission_version} 次 · 最近提交 {formatDate(task.submitted_at)}</p></div><div className="xl:border-l xl:pl-4" style={{ borderColor: "var(--app-border-soft)" }}><VisaTaskReviewControls taskId={task.id} status={task.status} />{!["submitted", "reviewing"].includes(task.status) && <div className="flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5 app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}><ShieldCheck className="mt-0.5 shrink-0" size={14} />{task.status === "approved" ? "任务已经审核确认。" : task.status === "revision_required" ? "等待学生按意见补充后重新提交。" : task.status === "blocked" ? "学生标记需要协助，请及时联系。" : "学生正在准备，暂时无需审核。"}</div>}</div></div></article>; })}{tasks.length === 0 && <div className="app-card rounded-[1.5rem] border border-dashed p-8 text-center"><ShieldCheck className="mx-auto opacity-30" size={34} /><p className="mt-3 font-black">这名学生还没有签证任务</p></div>}</section>
+          <div className="overflow-x-auto border-b border-black/[0.08]">
+            <table className="w-full min-w-[1120px] border-collapse text-left text-[10px]">
+              <thead><tr className="h-9 border-b border-black/[0.07] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-400"><th className="px-4 font-medium">申请院校</th><th className="px-4 font-medium">申请项目</th><th className="px-4 font-medium">签证类型</th><th className="px-4 font-medium">办理通道</th><th className="px-4 font-medium">当前阶段</th><th className="px-4 font-medium">最近更新</th></tr></thead>
+              <tbody><tr className="h-12"><td className="px-4 font-medium text-zinc-900">{visaTarget.university_name}</td><td className="px-4 text-zinc-600">{TRACK_LABELS[visaTarget.admission_track ?? ""] ?? "项目待确认"}{visaTarget.program_name ? ` · ${visaTarget.program_name}` : ""}</td><td className="px-4 text-zinc-600">{VISA_TYPE_LABELS[visaCase.visa_type] ?? visaCase.visa_type}</td><td className="px-4 text-zinc-600">{CHANNEL_LABELS[visaCase.application_channel] ?? visaCase.application_channel}</td><td className="px-4 font-medium text-amber-700">{getVisaCaseStatusLabel(visaCase.application_channel, visaCase.case_status)}</td><td className="px-4 font-mono text-zinc-400">{formatDate(visaCase.updated_at)}</td></tr></tbody>
+            </table>
+          </div>
+
+          <div className="border-b border-black/[0.08] px-5 py-4">
+            <div className="mb-3 flex items-center gap-2"><ShieldCheck size={13} className="text-zinc-400" /><h2 className="text-[11px] font-medium text-zinc-900">整体办理设置</h2></div>
+            <VisaCaseAdminForm
+              studentId={studentId}
+              visaType={visaCase.visa_type}
+              applicationChannel={visaCase.application_channel}
+              targetEntryDate={visaCase.target_entry_date}
+              caseStatus={visaCase.case_status}
+              advisorNote={visaCase.advisor_note}
+            />
+          </div>
+
+          <div className="overflow-x-auto border-b border-black/[0.08]">
+            <table className="w-full min-w-[1000px] border-collapse text-left text-[10px]">
+              <thead><tr className="h-9 border-b border-black/[0.07] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-400"><th colSpan={4} className="px-4 font-medium">学生填写的入境与安置信息</th></tr></thead>
+              <tbody>
+                {[entryRows.slice(0, 4), entryRows.slice(4)].map((row, rowIndex) => (
+                  <tr key={rowIndex} className="h-12 border-b border-black/[0.05] last:border-b-0">
+                    {row.map(([label, value]) => <td key={label} className="w-1/4 border-r border-black/[0.05] px-4 last:border-r-0"><span className="block text-[8px] text-zinc-400">{label}</span><span className="mt-0.5 block font-medium text-zinc-700">{value}</span></td>)}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full min-w-[1480px] border-collapse text-left text-[10px]">
+              <thead>
+                <tr className="h-10 border-b border-black/[0.08] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-400">
+                  <th className="w-10 px-3 text-right font-medium">#</th>
+                  <th className="w-[120px] px-3 font-medium">任务阶段</th>
+                  <th className="w-[220px] px-3 font-medium">任务</th>
+                  <th className="w-[100px] px-3 font-medium">状态</th>
+                  <th className="w-[260px] px-3 font-medium">学生说明</th>
+                  <th className="w-[260px] px-3 font-medium">审核记录</th>
+                  <th className="w-[130px] px-3 font-medium">提交信息</th>
+                  <th className="w-[250px] px-5 font-medium">审核操作</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tasks.map((task, index) => (
+                  <tr key={task.id} className="border-b border-black/[0.07] align-top last:border-b-0">
+                    <td className="px-3 py-4 text-right font-mono text-zinc-400">{index + 1}</td>
+                    <td className="px-3 py-4 text-zinc-500">{STAGE_LABELS[task.stage] ?? task.stage}</td>
+                    <td className="px-3 py-4"><p className="font-medium text-zinc-900">{task.title}</p><p className="mt-1 text-[9px] leading-4 text-zinc-400">{task.description || "—"}</p></td>
+                    <td className="px-3 py-4"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${taskTone(task.status)}`}>{STATUS_LABELS[task.status] ?? task.status}</span></td>
+                    <td className="px-3 py-4 leading-5 text-zinc-600">{task.student_note || "—"}</td>
+                    <td className="px-3 py-4 leading-5 text-zinc-600">{task.admin_note || "—"}</td>
+                    <td className="px-3 py-4 font-mono text-[9px] text-zinc-400"><p>第 {task.submission_version} 次</p><p className="mt-1">{formatDate(task.submitted_at)}</p></td>
+                    <td className="px-5 py-3">
+                      <VisaTaskReviewControls taskId={task.id} status={task.status} />
+                      {!(["submitted", "reviewing"].includes(task.status)) && <p className="border border-black/[0.06] bg-zinc-50 px-3 py-2 text-[9px] leading-4 text-zinc-500">{task.status === "approved" ? "任务已经审核确认。" : task.status === "revision_required" ? "等待学生补充后重新提交。" : task.status === "blocked" ? "学生标记需要协助，请及时联系。" : "学生正在准备，暂无需审核。"}</p>}
+                    </td>
+                  </tr>
+                ))}
+                {tasks.length === 0 && <tr><td colSpan={8} className="px-5 py-16 text-center text-zinc-400">这名学生尚未生成签证任务</td></tr>}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </>
+    </div>
   );
 }

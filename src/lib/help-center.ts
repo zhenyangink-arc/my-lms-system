@@ -7,26 +7,87 @@ import { requireActiveUser } from "@/lib/auth";
 
 export type HelpCenterAccess = {
   canManage: boolean;
-  canAssignAdmins: boolean;
+  canHandleTickets: boolean;
+  canManageArticles: boolean;
+  canAssignTickets: boolean;
+  canViewPlatformOverview: boolean;
+  scope: "platform" | "tenant" | null;
+  tenantId: string | null;
   role: UserRole;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
 };
 
 export async function getHelpCenterAccess(): Promise<HelpCenterAccess> {
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
-  if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") {
-    return { canManage: true, canAssignAdmins: role === "tenant_super_admin" || role === "platform_super_admin", role, supabase, user };
-  }
-  if (role !== "admin") return { canManage: false, canAssignAdmins: false, role, supabase, user };
+  const tenantId = tenant?.id ?? null;
 
-  const { data, error } = await supabase.from("help_center_admin_assignments").select("admin_id").eq("admin_id", user.id).is("revoked_at", null).maybeSingle();
-  return { canManage: !error && Boolean(data), canAssignAdmins: false, role, supabase, user };
+  if (!tenantId && role === "platform_super_admin") {
+    return {
+      canManage: true,
+      canHandleTickets: false,
+      canManageArticles: false,
+      canAssignTickets: false,
+      canViewPlatformOverview: true,
+      scope: "platform",
+      tenantId,
+      role,
+      supabase,
+      user,
+    };
+  }
+
+  if (tenantId && (role === "tenant_super_admin" || role === "ceo" || role === "teacher")) {
+    const canManageArticles = role === "tenant_super_admin" || role === "ceo";
+    return {
+      canManage: true,
+      canHandleTickets: true,
+      canManageArticles,
+      canAssignTickets: canManageArticles,
+      canViewPlatformOverview: false,
+      scope: "tenant",
+      tenantId,
+      role,
+      supabase,
+      user,
+    };
+  }
+
+  return {
+    canManage: false,
+    canHandleTickets: false,
+    canManageArticles: false,
+    canAssignTickets: false,
+    canViewPlatformOverview: false,
+    scope: null,
+    tenantId,
+    role,
+    supabase,
+    user,
+  };
 }
 
 export async function requireHelpCenterManager() {
   const access = await getHelpCenterAccess();
-  if (!access.canManage) redirect("/dashboard");
+  if (!access.canManage || !access.scope) redirect("/dashboard");
+  return access;
+}
+
+export async function requireHelpTicketHandler() {
+  const access = await getHelpCenterAccess();
+  if (!access.canHandleTickets || access.scope !== "tenant" || !access.tenantId) redirect("/dashboard/help");
+  return access;
+}
+
+export async function requireHelpArticleManager() {
+  const access = await getHelpCenterAccess();
+  if (!access.canManageArticles || access.scope !== "tenant" || !access.tenantId) redirect("/dashboard/admin/help");
+  return access;
+}
+
+export async function requireHelpTicketAssigner() {
+  const access = await getHelpCenterAccess();
+  if (!access.canAssignTickets || access.scope !== "tenant" || !access.tenantId) redirect("/dashboard/admin/help");
   return access;
 }

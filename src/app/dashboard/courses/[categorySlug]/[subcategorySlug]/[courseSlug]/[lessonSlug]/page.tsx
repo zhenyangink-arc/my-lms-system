@@ -7,7 +7,6 @@ import {
     CheckCircle2,
     Clock,
     Download,
-    Eye,
     FileText,
     GraduationCap,
     Hash,
@@ -19,26 +18,26 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { isPlatformTenantManagerRole } from "@/lib/admin";
+import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import {
     getKoreanBeginnerLesson,
     hangulIntroductionChapters,
 } from "@/lib/korean-curriculum";
 import type { KoreanEbookProgressMap } from "@/lib/korean-ebook-progress";
 import {
-    countUnlockedTests,
-    getUnlockedKoreanTestSlugs,
     HANGUL_TEST_SEQUENCE,
     KOREAN_LEVEL_ONE_TEST_SEQUENCE,
 } from "@/lib/korean-learning-unlocks";
+import { getUnlockedChapterSlugs, isLessonUnlocked } from "@/lib/course-unlocks";
 import { createR2SignedVideoUrl } from "@/lib/r2";
 import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
 import { LessonSupportSheet } from "./LessonSupportSheet";
 import { HangulInteractiveBook } from "./HangulInteractiveBook";
-import { KoreanLevelOneReader } from "./KoreanLevelOneReader";
+import { KoreanLevelOneSmartTextbook } from "./KoreanLevelOneSmartTextbook";
 import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
 import { LessonProgressStatusCard } from "./LessonProgressStatusCard";
 import { LessonVideoPlayer } from "./LessonVideoPlayer";
+import { loadKoreanLevelOneChapterOne } from "@/lib/smart-digital-textbook";
 
 
 type TeacherStatus = "online" | "busy" | "away" | "offline";
@@ -88,6 +87,11 @@ type Lesson = {
     teacher_note: string | null;
     allow_questions: boolean;
     sort_order: number;
+    unlock_mode: string | null;
+    prerequisite_lesson_id: string | null;
+    prerequisite_chapter_id: string | null;
+    available_from: string | null;
+    is_manually_locked: boolean | null;
 
     learning_objectives: string | null;
     lesson_tasks: string | null;
@@ -274,8 +278,8 @@ export default async function LessonDetailPage({
             ? requestedChapterValue
             : undefined;
 
-    const { supabase, user, profile, platformProfile } = await requireActiveUser();
-    const isPlatformAudit = isPlatformTenantManagerRole(platformProfile?.role);
+    const { supabase, user, profile, platformProfile, tenant } = await requireActiveUser();
+    const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
     const { data: parentCategoryData } = await supabase
         .from("course_categories")
@@ -324,7 +328,7 @@ export default async function LessonDetailPage({
     const { data: lessonData } = await supabase
         .from("lessons")
         .select(
-            "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, content_text, video_url, video_provider, video_object_key, video_mime_type, attachment_url, attachment_label, teacher_note, allow_questions, sort_order, learning_objectives, lesson_tasks, key_points, case_study, common_mistakes, summary_text, reflection_questions, extra_note"
+            "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, content_text, video_url, video_provider, video_object_key, video_mime_type, attachment_url, attachment_label, teacher_note, allow_questions, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked, learning_objectives, lesson_tasks, key_points, case_study, common_mistakes, summary_text, reflection_questions, extra_note"
         )
         .eq("slug", lessonSlug)
         .eq("course_id", course.id)
@@ -348,27 +352,96 @@ export default async function LessonDetailPage({
     const isKoreanLevelOne = Boolean(
         curatedLesson && lesson.slug === "basic-pronunciation"
     );
+    const role = profile?.role ?? "student";
+    const bypassLearningSequence = isPlatformAudit || role !== "student";
+    const { data: orderedLessonData } = await supabase
+        .from("lessons")
+        .select("id,unlock_mode,prerequisite_lesson_id,prerequisite_chapter_id,available_from,is_manually_locked")
+        .eq("course_id", course.id)
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true });
+    const orderedLessonRules = (orderedLessonData ?? []) as Array<{
+        id: string;
+        unlock_mode: string | null;
+        prerequisite_lesson_id: string | null;
+        prerequisite_chapter_id: string | null;
+        available_from: string | null;
+        is_manually_locked: boolean | null;
+    }>;
+    const prerequisiteChapterIds = Array.from(
+        new Set(
+            orderedLessonRules
+                .map((item) => item.prerequisite_chapter_id)
+                .filter((id): id is string => Boolean(id)),
+        ),
+    );
+    const prerequisiteChapterSlugById = new Map<string, string>();
+    if (prerequisiteChapterIds.length > 0) {
+        const { data: prerequisiteChapterData } = await supabase
+            .from("course_chapters")
+            .select("id,slug")
+            .in("id", prerequisiteChapterIds);
+        for (const chapter of prerequisiteChapterData ?? []) {
+            prerequisiteChapterSlugById.set(String(chapter.id), String(chapter.slug));
+        }
+    }
+    const passedChapterSlugs = new Set<string>();
+    if (!bypassLearningSequence) {
+        const { data: passedAttemptData } = await supabase
+            .from("chapter_test_attempts")
+            .select("test_slug")
+            .eq("student_id", user.id)
+            .eq("passed", true);
+        for (const attempt of passedAttemptData ?? []) {
+            passedChapterSlugs.add(String(attempt.test_slug));
+        }
+    }
+    const completedLessonIds = new Set<string>();
+    if (!bypassLearningSequence && orderedLessonRules.length > 0) {
+        const { data: completedLessonData } = await supabase
+            .from("lesson_progress")
+            .select("lesson_id")
+            .eq("user_id", user.id)
+            .eq("status", "completed")
+            .in("lesson_id", orderedLessonRules.map((item) => item.id));
+        for (const item of completedLessonData ?? []) completedLessonIds.add(String(item.lesson_id));
+    }
+    const lessonRuleIndex = orderedLessonRules.findIndex((item) => item.id === lesson.id);
+    const currentLessonUnlocked =
+        bypassLearningSequence ||
+        isLessonUnlocked({
+            lesson,
+            lessonIndex: Math.max(0, lessonRuleIndex),
+            orderedLessons: orderedLessonRules,
+            completedLessonIds,
+            prerequisiteChapterSlugById,
+            passedChapterSlugs,
+        });
+    const { data: currentChapterData } = await supabase
+        .from("course_chapters")
+        .select("id,slug,unlock_mode,prerequisite_chapter_id,available_from,is_manually_locked")
+        .eq("lesson_id", lesson.id)
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true });
+    const currentChapters = (currentChapterData ?? []) as Array<{
+        id: string;
+        slug: string;
+        unlock_mode: string | null;
+        prerequisite_chapter_id: string | null;
+        available_from: string | null;
+        is_manually_locked: boolean | null;
+    }>;
+    const unlockedChapterSlugs = bypassLearningSequence
+        ? new Set(currentChapters.map((chapter) => chapter.slug))
+        : getUnlockedChapterSlugs({ chapters: currentChapters, passedChapterSlugs });
     let unlockedHangulChapterCount = 1;
     let unlockedLevelOneLessonCount = 0;
     const ebookProgress: KoreanEbookProgressMap = {};
-    if ((isHangulIntroduction || isKoreanLevelOne) && !isPlatformAudit) {
-        const { data: attemptData } = await supabase
-            .from("course_test_attempts")
-            .select("test_slug")
-            .eq("student_id", user.id);
-        const attemptedTestSlugs = new Set(
-            (attemptData ?? []).map((attempt) => String(attempt.test_slug))
-        );
-        const unlockedTestSlugs =
-            getUnlockedKoreanTestSlugs(attemptedTestSlugs);
-        unlockedHangulChapterCount = countUnlockedTests(
-            unlockedTestSlugs,
-            HANGUL_TEST_SEQUENCE
-        );
-        unlockedLevelOneLessonCount = countUnlockedTests(
-            unlockedTestSlugs,
-            KOREAN_LEVEL_ONE_TEST_SEQUENCE
-        );
+    if (isHangulIntroduction || isKoreanLevelOne) {
+        unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
+        unlockedLevelOneLessonCount = KOREAN_LEVEL_ONE_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
+    }
+    if ((isHangulIntroduction || isKoreanLevelOne) && !bypassLearningSequence) {
         const { data: ebookProgressData } = await supabase
             .from("course_ebook_progress")
             .select("test_slug,current_page,total_pages,progress_percent,read_pages")
@@ -384,12 +457,11 @@ export default async function LessonDetailPage({
             };
         }
     }
-    if (isPlatformAudit) {
+    if (bypassLearningSequence) {
         unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.length;
         unlockedLevelOneLessonCount = KOREAN_LEVEL_ONE_TEST_SEQUENCE.length;
     }
     const membershipTier = normalizeMembershipTier(profile?.membership_tier);
-    const role = profile?.role ?? "student";
     const hasFullKoreanCourseAccess =
         parentCategory.slug === "korean" &&
         canUseStudentFeature(role, membershipTier, "korean_course");
@@ -401,11 +473,7 @@ export default async function LessonDetailPage({
         role !== "student" ||
         hasFullKoreanCourseAccess ||
         hasPreviewAccess;
-    if (
-        !isPlatformAudit &&
-        isKoreanLevelOne &&
-        unlockedLevelOneLessonCount === 0
-    ) {
+    if (!currentLessonUnlocked) {
         redirect(
             `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`
         );
@@ -533,12 +601,41 @@ export default async function LessonDetailPage({
     }
 
     if (isKoreanLevelOne && hasLessonAccess) {
+        const smartTextbook = await loadKoreanLevelOneChapterOne({
+            userId: user.id,
+            tenantId: tenant?.id ?? null,
+            trackingDisabled: isPlatformAudit,
+        });
+
+        if (!smartTextbook) {
+            return (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#F4F7F6] p-8">
+                    <div className="max-w-xl text-center">
+                        <p className="text-xs font-black tracking-[.2em] text-[#6F72E6]">
+                            SMART DIGITAL TEXTBOOK
+                        </p>
+                        <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-900">
+                            第一章教材骨架尚未部署
+                        </h1>
+                        <p className="mt-4 leading-7 text-slate-500">
+                            页面代码已经切换到新版智能教材，请先应用最新数据库迁移后刷新页面。
+                        </p>
+                        <Link
+                            href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                            className="mt-7 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white"
+                        >
+                            <ArrowLeft size={16} />
+                            返回课程
+                        </Link>
+                    </div>
+                </div>
+            );
+        }
+
         return (
-            <KoreanLevelOneReader
+            <KoreanLevelOneSmartTextbook
                 backHref={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
-                unlockedLessonCount={unlockedLevelOneLessonCount}
-                initialEbookProgress={ebookProgress}
-                initialChapterSlug={requestedChapter}
+                textbook={smartTextbook}
                 trackingDisabled={isPlatformAudit}
             />
         );
@@ -629,12 +726,12 @@ export default async function LessonDetailPage({
 
                         {/* 中间：学习状态 / 学习进度 */}
                         <div className="xl:-translate-x-10">
-                            {isPlatformAudit ? <div className="rounded-2xl border p-4 text-center" style={{ borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Eye size={20} className="mx-auto" style={{ color: "var(--app-accent)" }} /><p className="mt-2 text-xs font-black">只读巡检</p><p className="app-muted-text mt-1 text-[11px]">不记录进度</p></div> : hasLessonAccess ? <LessonProgressStatusCard
+                            {!isPlatformAudit && (hasLessonAccess ? <LessonProgressStatusCard
                                 lessonId={lesson.id}
                                 initialStatus={progress.status}
                                 initialProgress={progress.progress_percent}
                                 autoProgressEnabled={autoVideoProgressEnabled}
-                            /> : <div className="app-empty-state rounded-2xl p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>}
+                            /> : <div className="app-empty-state rounded-2xl p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>)}
                         </div>
 
                         {/* 右侧：学习支持 / 咨询 + 上一课 / 下一课 */}

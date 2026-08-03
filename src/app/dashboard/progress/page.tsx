@@ -13,7 +13,6 @@ import {
   Layers3,
   ListTree,
   LockKeyhole,
-  Sparkles,
   Trash2,
   XCircle,
 } from "lucide-react";
@@ -443,7 +442,7 @@ export default async function DeepLearningPage({
       : null;
   const { supabase, user, profile, platformProfile } = await requireActiveUser();
   const { data: reviewData, error: reviewError } = await supabase
-    .from("course_question_reviews")
+    .from("chapter_test_question_reviews")
     .select("question_id,test_id,created_at")
     .eq("student_id", user.id)
     .order("created_at", { ascending: false });
@@ -460,24 +459,24 @@ export default async function DeepLearningPage({
   ] = await Promise.all([
     questionIds.length
       ? admin
-          .from("course_test_questions")
+          .from("chapter_test_questions")
           .select("id,test_id,question_key,prompt,options")
           .in("id", questionIds)
       : Promise.resolve({ data: [] }),
     testIds.length
       ? admin
-          .from("course_tests")
+          .from("chapter_tests")
           .select("id,slug,course_key,chapter_number,title,korean_title")
           .in("id", testIds)
       : Promise.resolve({ data: [] }),
     admin
-      .from("course_tests")
+      .from("chapter_tests")
       .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
       .in("course_key", ["hangul-introduction", "korean-level-one"])
       .eq("status", "published")
       .order("chapter_number", { ascending: true }),
     supabase
-      .from("course_test_attempts")
+      .from("chapter_test_attempts")
       .select("test_slug,score,passed")
       .eq("student_id", user.id),
     supabase
@@ -574,7 +573,7 @@ export default async function DeepLearningPage({
 
   return (
     <div className="mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8">
-      {selectedKnowledgeChapter?.slug !== "meet-hangul" && (
+      {activeArea && selectedKnowledgeChapter?.slug !== "meet-hangul" && (
         <section
           className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{
@@ -582,17 +581,7 @@ export default async function DeepLearningPage({
               "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-secondary-soft))",
           }}
         >
-        <span
-          className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-          style={{
-            color: "var(--app-secondary)",
-            backgroundColor: "var(--app-secondary-soft)",
-          }}
-        >
-          <Sparkles size={14} aria-hidden="true" />
-          进阶成长空间
-        </span>
-        <div className="mt-3 flex items-start justify-between gap-4">
+        <div className="flex items-start justify-between gap-4">
           <DashboardTitleWithHint
             title={
               activeArea === "knowledge"

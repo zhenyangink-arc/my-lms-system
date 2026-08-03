@@ -48,7 +48,7 @@ export default async function KoreanAssignmentTestsPage() {
   const admin = createAdminClient();
   const [{ data: testData }, { data: testQuestionData }] = await Promise.all([
     admin
-      .from("course_tests")
+      .from("chapter_tests")
       .select(
         "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
       )
@@ -56,7 +56,7 @@ export default async function KoreanAssignmentTestsPage() {
       .eq("status", "published")
       .order("chapter_number", { ascending: true }),
     admin
-      .from("course_test_questions")
+      .from("chapter_test_questions")
       .select("test_id")
       .eq("status", "published")
       .eq("question_type", "single_choice")
@@ -86,7 +86,7 @@ export default async function KoreanAssignmentTestsPage() {
   const { data: testAttemptData } =
     allChapterTests.length
       ? await supabase
-          .from("course_test_attempts")
+          .from("chapter_test_attempts")
           .select("test_slug,score,passed")
           .eq("student_id", user.id)
           .in(

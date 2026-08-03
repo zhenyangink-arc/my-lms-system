@@ -35,6 +35,7 @@ const roleLabelMap: Record<string, string> = {
   admin: "管理员",
   ceo: "运营负责人",
   platform_super_admin: "平台负责人",
+  platform_course_inspector: "平台课程巡检员",
   tenant_super_admin: "机构负责人",
   tenant_operator: "平台副负责人",
 };

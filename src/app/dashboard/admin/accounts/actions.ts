@@ -17,7 +17,24 @@ import {
 const VALID_STATUSES = ["active", "inactive", "suspended"];
 const VALID_MEMBERSHIP_TIERS = ["normal", "vip1", "vip2", "vip3"];
 const CREATABLE_ACCOUNT_ROLES = ["teacher", "student"] as const;
-const CREATABLE_PLATFORM_ROLES = ["platform_deputy", "platform_admin"] as const;
+const CREATABLE_PLATFORM_ROLES = [
+  "platform_deputy",
+  "platform_admin",
+  "platform_course_inspector",
+] as const;
+
+function getPlatformProfileIdentity(role: string) {
+  if (role === "platform_deputy") {
+    return { role: "tenant_operator", global_role: "platform_deputy" };
+  }
+  if (role === "platform_course_inspector") {
+    return {
+      role: "platform_course_inspector",
+      global_role: "platform_course_inspector",
+    };
+  }
+  return { role: "admin", global_role: "platform_admin" };
+}
 
 function actionError(message: string): AccountActionState {
   return { status: "error", message };
@@ -119,7 +136,7 @@ export async function createPlatformAccountAction(
     return actionError("初始密码需为 8 至 72 位，并同时包含字母和数字。");
   }
   if (!CREATABLE_PLATFORM_ROLES.includes(role as (typeof CREATABLE_PLATFORM_ROLES)[number])) {
-    return actionError("平台账号只能设为平台副负责人或平台管理员。");
+    return actionError("平台账号只能设为平台副负责人、平台管理员或平台课程巡检员。");
   }
 
   await requirePlatformOwner();
@@ -132,9 +149,7 @@ export async function createPlatformAccountAction(
   });
   if (createError || !created.user) return accountCreationError(createError);
 
-  const profileIdentity = role === "platform_deputy"
-    ? { role: "tenant_operator", global_role: "platform_deputy" }
-    : { role: "admin", global_role: "platform_admin" };
+  const profileIdentity = getPlatformProfileIdentity(role);
   const { error: profileError } = await admin
     .from("profiles")
     .update({
@@ -156,7 +171,12 @@ export async function createPlatformAccountAction(
   }
 
   revalidatePath("/dashboard/admin/accounts");
-  return actionSuccess(`${role === "platform_deputy" ? "平台副负责人" : "平台管理员"}账号已创建。`);
+  const roleLabel = role === "platform_deputy"
+    ? "平台副负责人"
+    : role === "platform_course_inspector"
+      ? "平台课程巡检员"
+      : "平台管理员";
+  return actionSuccess(`${roleLabel}账号已创建。`);
 }
 
 async function requireManageableTarget(
@@ -194,7 +214,8 @@ async function requireManageableTarget(
         (membership) => membership.tenant_id === viewerTenantId
       )?.role ?? target.role
     : target.global_role === "platform_deputy" ||
-        target.global_role === "platform_admin"
+        target.global_role === "platform_admin" ||
+        target.global_role === "platform_course_inspector"
       ? target.global_role
       : target.role;
   const accountScope = viewerTenantId ? "tenant" : "platform";
@@ -230,9 +251,7 @@ export async function updateProfileRoleAction(
     const admin = createAdminClient();
     const profileIdentity = tenant
       ? { role: newRole }
-      : newRole === "platform_deputy"
-        ? { role: "tenant_operator", global_role: "platform_deputy" }
-        : { role: "admin", global_role: "platform_admin" };
+      : getPlatformProfileIdentity(newRole);
     const { data: updatedProfile, error } = await admin
       .from("profiles")
       .update(profileIdentity)

@@ -1,20 +1,19 @@
 "use client";
 
-import { Eye, X } from "lucide-react";
+import { Check, Eye, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 export type ChapterTestViewerQuestion = {
   id: string;
   prompt: string;
   options: string[];
-  difficulty: "foundation" | "medium" | "hard" | "expert";
+  correctOption: number | null;
+  difficulty: "foundation" | "medium";
 };
 
 const difficultyLabels = {
   foundation: "基础",
   medium: "中等",
-  hard: "困难",
-  expert: "极难",
 } as const;
 
 export function ChapterTestQuestionViewer({
@@ -42,15 +41,17 @@ export function ChapterTestQuestionViewer({
       <button
         type="button"
         onClick={() => setIsOpen(true)}
-        className="app-soft-card mt-5 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-3 text-xs font-black"
+        aria-haspopup="dialog"
+        aria-expanded={isOpen}
+        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] hover:underline"
       >
-        <Eye size={14} />
-        查看测试题目
+        <Eye size={12} />
+        查看题目
       </button>
 
       {isOpen && (
         <div
-          className="fixed inset-0 z-[80] flex items-center justify-center bg-[#102f35]/55 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[80] flex justify-end bg-black/20"
           role="presentation"
           onClick={() => setIsOpen(false)}
         >
@@ -58,7 +59,7 @@ export function ChapterTestQuestionViewer({
             role="dialog"
             aria-modal="true"
             aria-labelledby={`chapter-test-viewer-${questions[0]?.id ?? "empty"}`}
-            className="app-card flex max-h-[88vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border shadow-2xl"
+            className="app-card flex h-dvh w-full max-w-[1100px] flex-col overflow-hidden border-l"
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-4 border-b p-5 sm:px-6">
@@ -83,42 +84,100 @@ export function ChapterTestQuestionViewer({
               </button>
             </div>
 
-            <div className="grid min-h-0 flex-1 gap-3 overflow-y-auto p-5 md:grid-cols-2 sm:p-6">
-              {questions.map((question, index) => (
-                <article
-                  key={question.id}
-                  className="app-soft-card rounded-2xl border p-4"
-                >
-                  <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black">第 {index + 1} 题</p>
-                    <span
-                      className="rounded-full px-2 py-0.5 text-[10px] font-black"
-                      style={{
-                        color: "var(--app-secondary)",
-                        backgroundColor: "var(--app-secondary-soft)",
-                      }}
+            <div className="min-h-0 flex-1 overflow-auto">
+              <table className="w-full min-w-[900px] table-fixed border-collapse text-left">
+                <colgroup>
+                  <col className="w-20" />
+                  <col className="w-24" />
+                  <col className="w-[42%]" />
+                  <col />
+                </colgroup>
+                <thead className="sticky top-0 z-10 backdrop-blur-xl">
+                  <tr
+                    className="border-b app-muted-text"
+                    style={{
+                      borderColor: "var(--app-border-soft)",
+                      backgroundColor:
+                        "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                    }}
+                  >
+                    <th className="px-4 py-3 text-center text-[11px] font-bold">
+                      题号
+                    </th>
+                    <th className="border-l px-4 py-3 text-center text-[11px] font-bold">
+                      难度
+                    </th>
+                    <th className="border-l px-4 py-3 text-[11px] font-bold">
+                      题目
+                    </th>
+                    <th className="border-l px-4 py-3 text-[11px] font-bold">
+                      选项
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {questions.map((question, index) => (
+                    <tr
+                      key={question.id}
+                      className="border-b align-top last:border-b-0"
+                      style={{ borderColor: "var(--app-border-soft)" }}
                     >
-                      {difficultyLabels[question.difficulty]}
-                    </span>
-                  </div>
-                  <p className="mt-3 text-sm font-bold leading-6">
-                    {question.prompt}
-                  </p>
-                  <div className="app-muted-text mt-3 space-y-1 text-[11px]">
-                    {question.options.map((option, optionIndex) => (
-                      <p key={`${question.id}-${optionIndex}`}>
-                        {String.fromCharCode(65 + optionIndex)}. {option}
-                      </p>
-                    ))}
-                  </div>
-                </article>
-              ))}
+                      <td className="px-4 py-4 text-center font-mono text-xs tabular-nums">
+                        {String(index + 1).padStart(2, "0")}
+                      </td>
+                      <td className="border-l px-4 py-4 text-center text-xs font-bold">
+                        {difficultyLabels[question.difficulty]}
+                      </td>
+                      <td className="border-l px-4 py-4 text-sm font-bold leading-6">
+                        {question.prompt}
+                      </td>
+                      <td className="app-muted-text border-l px-4 py-4 text-[11px] leading-5">
+                        {question.options.map((option, optionIndex) => {
+                          const isCorrect =
+                            optionIndex === question.correctOption;
 
-              {questions.length === 0 && (
-                <p className="app-muted-text col-span-full rounded-2xl border border-dashed p-8 text-center text-xs">
-                  当前章节还没有设置学生实际使用的测试题目。
-                </p>
-              )}
+                          return (
+                            <p
+                              key={`${question.id}-${optionIndex}`}
+                              className="flex items-center gap-2 py-0.5"
+                              style={{
+                                color: isCorrect
+                                  ? "var(--app-success)"
+                                  : undefined,
+                                fontWeight: isCorrect ? 700 : undefined,
+                              }}
+                            >
+                              <span className="font-mono">
+                                {String.fromCharCode(65 + optionIndex)}.
+                              </span>
+                              <span>{option}</span>
+                              {isCorrect && (
+                                <span
+                                  className="ml-auto inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-bold"
+                                  style={{ color: "var(--app-success)" }}
+                                >
+                                  <Check size={11} />
+                                  正确答案
+                                </span>
+                              )}
+                            </p>
+                          );
+                        })}
+                      </td>
+                    </tr>
+                  ))}
+                  {questions.length === 0 && (
+                    <tr>
+                      <td
+                        colSpan={4}
+                        className="app-muted-text px-5 py-12 text-center text-xs"
+                      >
+                        当前章节还没有设置学生实际使用的测试题目。
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </section>
         </div>

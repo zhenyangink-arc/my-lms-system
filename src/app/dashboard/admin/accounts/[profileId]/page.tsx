@@ -154,7 +154,8 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
   if (
     !tenant &&
     storedProfile.global_role !== "platform_deputy" &&
-    storedProfile.global_role !== "platform_admin"
+    storedProfile.global_role !== "platform_admin" &&
+    storedProfile.global_role !== "platform_course_inspector"
   ) {
     notFound();
   }
@@ -174,7 +175,8 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
         ...storedProfile,
         role:
           storedProfile.global_role === "platform_deputy" ||
-          storedProfile.global_role === "platform_admin"
+          storedProfile.global_role === "platform_admin" ||
+          storedProfile.global_role === "platform_course_inspector"
             ? storedProfile.global_role
             : storedProfile.role,
       };
@@ -216,7 +218,7 @@ export default async function AccountDetailPage({ params }: { params: Promise<{ 
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
         <Link href="/dashboard/admin/accounts" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回账号管理</Link>
 
-        <section className="app-card overflow-hidden rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
+        <section className="management-detail-summary app-card overflow-hidden rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
             <div className="flex items-center gap-4 sm:gap-5">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-[1.6rem] text-2xl font-black sm:h-24 sm:w-24" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)", ...(avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: "cover", backgroundPosition: "center", color: "transparent" } : {}) }}>{displayName.slice(0, 1)}</div>

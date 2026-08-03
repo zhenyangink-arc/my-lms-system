@@ -1,6 +1,7 @@
 export const ROLE_ORDER = [
   "platform_deputy",
   "platform_admin",
+  "platform_course_inspector",
   "tenant_super_admin",
   "ceo",
   "admin",
@@ -13,6 +14,7 @@ export type AppRole = (typeof ROLE_ORDER)[number];
 export const ROLE_LABELS: Record<AppRole, string> = {
   platform_deputy: "平台副负责人",
   platform_admin: "平台管理员",
+  platform_course_inspector: "平台课程巡检员",
   tenant_super_admin: "机构负责人",
   ceo: "CEO",
   admin: "管理员",
@@ -28,7 +30,7 @@ export const STATUS_LABELS: Record<string, string> = {
 
 /*
   平台和机构角色不能复用：
-  - 平台负责人只能分配平台副负责人、平台管理员。
+  - 平台负责人只能分配平台副负责人、平台管理员、平台课程巡检员。
   - 机构负责人可以分配 CEO、管理员、老师、学生。
   - CEO 只能分配管理员、老师、学生。
 */
@@ -40,7 +42,7 @@ export function getAssignableRoles(
 ): AppRole[] {
   if (scope === "platform") {
     return viewerRole === "platform_super_admin"
-      ? ["platform_deputy", "platform_admin"]
+      ? ["platform_deputy", "platform_admin", "platform_course_inspector"]
       : [];
   }
 
@@ -67,7 +69,9 @@ export function canManageTarget(
   if (scope === "platform") {
     return (
       viewerRole === "platform_super_admin" &&
-      (targetRole === "platform_deputy" || targetRole === "platform_admin")
+      (targetRole === "platform_deputy" ||
+        targetRole === "platform_admin" ||
+        targetRole === "platform_course_inspector")
     );
   }
 

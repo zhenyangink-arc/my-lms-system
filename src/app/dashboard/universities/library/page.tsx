@@ -6,7 +6,6 @@ import {
   UniversityLibrary,
   type KoreanUniversity,
 } from "../UniversityLibrary";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 
 export default async function UniversityLibraryPage() {
@@ -46,11 +45,7 @@ export default async function UniversityLibraryPage() {
         </div>
 
         <section className="app-card rounded-3xl border p-4 sm:p-5" style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-hero-start))" }}>
-          <div className="grid gap-5 lg:grid-cols-[1fr_auto] lg:items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><LibraryBig size={14} /> 韩国重点院校库</span>
-              <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-black" title={<>先筛选，再阅读学校介绍</>} description={<>学校库只展示规划需要的信息，不提供学校官网入口。所有介绍、学费和排名数据都可以由管理员在大学管理中心复核并修改。</>} />
-            </div>
+          <div>
             <div className="grid grid-cols-3 gap-2 text-center">
               {[{ label: "收录大学", value: universities.length, icon: LibraryBig }, { label: "已选目标", value: targetIds.length, icon: Target }, { label: "已选对比", value: comparedIds.length, icon: Scale }].map(({ label, value, icon: Icon }) => (
                 <div key={label} className="app-card min-w-24 rounded-2xl border p-3"><Icon className="mx-auto" size={15} style={{ color: "var(--app-accent)" }} /><p className="mt-2 text-xl font-black">{value}</p><p className="mt-1 text-[10px] font-bold app-muted-text">{label}</p></div>

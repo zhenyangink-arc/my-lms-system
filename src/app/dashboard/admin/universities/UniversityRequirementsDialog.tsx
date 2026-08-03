@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   BadgeDollarSign,
@@ -236,40 +236,11 @@ function RequirementEditDialog({
           action={updateUniversityDocumentRequirementAction.bind(null, universityId, requirement.id)}
           className="space-y-4"
         >
-          <label className="block text-xs font-black">
-            资料名称
-            <input
-              name="title"
-              required
-              minLength={1}
-              maxLength={100}
-              defaultValue={requirement.title}
-              className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
-            />
-          </label>
-          <label className="block text-xs font-black">
-            所属分类
-            <select
-              name="category"
-              defaultValue={requirement.category}
-              className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
-            >
-              {categoryOptions.map((category) => (
-                <option key={category.key} value={category.key}>{category.label}</option>
-              ))}
-            </select>
-          </label>
-          <label className="block text-xs font-black">
-            资料备注（学生可见）
-            <textarea
-              name="description"
-              maxLength={300}
-              rows={4}
-              defaultValue={requirement.description ?? ""}
-              placeholder="例如：请上传身份证正反面扫描件，并合并为一个 PDF 文件。"
-              className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none"
-            />
-          </label>
+          <div className="overflow-hidden rounded-xl border"><table className="w-full border-collapse text-left text-xs"><tbody>
+            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="w-[110px] border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>资料名称</th><td className="px-3 py-2"><input name="title" required minLength={1} maxLength={100} defaultValue={requirement.title} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none" /></td></tr>
+            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>所属分类</th><td className="px-3 py-2"><select name="category" defaultValue={requirement.category} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none">{categoryOptions.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></td></tr>
+            <tr><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black align-top" style={{ borderColor: "var(--app-border-soft)" }}>学生备注</th><td className="px-3 py-2"><textarea name="description" maxLength={300} rows={4} defaultValue={requirement.description ?? ""} placeholder="学生可以看到的资料说明" className="app-input w-full resize-y rounded-lg border px-3 py-2.5 leading-6 outline-none" /></td></tr>
+          </tbody></table></div>
           <div className="flex justify-end">
             <EditRequirementButton />
           </div>
@@ -314,10 +285,12 @@ function RequirementDeleteDialog({
 }
 
 export function UniversityRequirementsDialog({
+  canManage,
   universityId,
   universityName,
   requirements,
 }: {
+  canManage: boolean;
   universityId: string;
   universityName: string;
   requirements: UniversityDocumentRequirement[];
@@ -338,7 +311,9 @@ export function UniversityRequirementsDialog({
         <DialogHeader>
           <DialogTitle className="text-lg font-black">{universityName} · 申请资料模板</DialogTitle>
           <DialogDescription className="leading-6">
-            只添加这所大学实际要求的资料。学生把该校目标切换到“准备资料”后，系统会按此模板生成申请资料清单。
+            {canManage
+              ? "维护这所大学实际要求的申请资料，修改会同步到学生端。"
+              : "查看平台已经确认的申请资料要求；当前账号不能新增、修改或删除。"}
           </DialogDescription>
         </DialogHeader>
 
@@ -348,7 +323,7 @@ export function UniversityRequirementsDialog({
         >
           <ShieldCheck className="mt-0.5 shrink-0" size={17} />
           <p>
-            <b>自动同步：</b>新增或修改项目会同步到该校现有学生的申请表；删除项目会移除未提交项，已提交历史不会被误删。
+            <b>{canManage ? "自动同步：" : "机构只读："}</b>{canManage ? "新增或修改项目会同步到该校现有学生的申请表；已提交历史不会被误删。" : "申请资料由平台统一维护，机构端只能查看。"}
           </p>
         </div>
 
@@ -378,94 +353,24 @@ export function UniversityRequirementsDialog({
           </p>
         </section>
 
-        <div key={selectedStage} className="grid gap-4 lg:grid-cols-2">
-          {categoryOptions.map((category, categoryIndex) => {
-            const Icon = category.icon;
+        <div key={selectedStage} className="overflow-x-auto rounded-xl border">
+          <table className="w-full min-w-[860px] border-collapse text-left text-xs">
+            <thead><tr className="border-b bg-[var(--app-soft-bg)] text-[10px] font-black app-muted-text" style={{ borderColor: "var(--app-border)" }}><th className="w-[135px] px-4 py-3">资料分类</th><th className="w-[220px] px-3 py-3">资料名称</th><th className="px-3 py-3">学生可见备注</th><th className="w-[90px] px-3 py-3 text-center">顺序</th><th className="w-[100px] px-4 py-3 text-right">操作</th></tr></thead>
+            <tbody>{categoryOptions.map((category) => {
             const items = requirements
               .filter((requirement) => requirement.admission_stage === selectedStage && requirement.category === category.key)
               .sort((a, b) => a.sort_order - b.sort_order || a.title.localeCompare(b.title, "zh-CN"));
             const dataListId = `requirement-${universityId}-${category.key}`;
 
             return (
-              <section
-                key={category.key}
-                className={`app-card rounded-2xl border p-4 ${categoryIndex === categoryOptions.length - 1 ? "lg:col-span-2" : ""}`}
-              >
-                <div className="flex items-start gap-3">
-                  <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                    style={{ color: category.color, backgroundColor: category.soft }}
-                  >
-                    <Icon size={17} />
-                  </span>
-                  <div className="min-w-0">
-                    <div className="flex items-center gap-2">
-                      <h3 className="text-sm font-black">{category.label}</h3>
-                      <span className="rounded-full px-2 py-0.5 text-[10px] font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                        {items.length} 项
-                      </span>
-                    </div>
-                    <p className="app-muted-text mt-1 text-xs">{category.description}</p>
-                  </div>
-                </div>
-
-                <div className="mt-4 space-y-2">
-                  {items.map((requirement, itemIndex) => (
-                    <div key={requirement.id} className="app-soft-card flex items-center gap-3 rounded-xl border px-3 py-2.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: category.color }} />
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-xs font-black">{requirement.title}</p>
-                        {requirement.description && <p className="app-muted-text mt-1 line-clamp-2 whitespace-pre-wrap text-xs leading-4">{requirement.description}</p>}
-                      </div>
-                      <RequirementSortControls universityId={universityId} requirement={requirement} index={itemIndex} itemCount={items.length} />
-                      <RequirementEditDialog universityId={universityId} requirement={requirement} />
-                      <RequirementDeleteDialog universityId={universityId} requirement={requirement} />
-                    </div>
-                  ))}
-                  {items.length === 0 && (
-                    <div className="rounded-xl border border-dashed p-4 text-center text-xs app-muted-text">
-                      这所大学暂未要求此类资料
-                    </div>
-                  )}
-                </div>
-
-                <form
-                  action={createUniversityDocumentRequirementAction.bind(null, universityId, selectedStage, category.key)}
-                  className="mt-3 space-y-2"
-                >
-                  <label className="block">
-                    <span className="sr-only">新增{category.label}</span>
-                    <input
-                      name="title"
-                      required
-                      minLength={1}
-                      maxLength={100}
-                      list={dataListId}
-                      placeholder={`输入或选择${category.label}`}
-                      className="app-input w-full rounded-xl border px-3 py-2.5 text-xs outline-none"
-                    />
-                    <datalist id={dataListId}>
-                      {category.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}
-                    </datalist>
-                  </label>
-                  <label className="block">
-                    <span className="sr-only">资料备注</span>
-                    <textarea
-                      name="description"
-                      maxLength={300}
-                      rows={2}
-                      placeholder="备注（可选，学生可以看到）"
-                      className="app-input w-full resize-y rounded-xl border px-3 py-2.5 text-xs leading-5 outline-none"
-                    />
-                  </label>
-                  <div className="flex justify-end"><AddRequirementButton /></div>
-                </form>
-                <p className="app-muted-text mt-2 text-[10px] leading-4">
-                  常用选项：{category.suggestions.join("、")}；也可以直接输入新的资料名称。
-                </p>
-              </section>
+              <Fragment key={category.key}>
+                {items.map((requirement, itemIndex) => <tr key={requirement.id} className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{itemIndex === 0 ? category.label : ""}</td><td className="px-3 py-3 font-black">{requirement.title}</td><td className="app-muted-text whitespace-pre-wrap px-3 py-3 leading-5">{requirement.description || "—"}</td><td className="px-3 py-3 text-center">{canManage ? <RequirementSortControls universityId={universityId} requirement={requirement} index={itemIndex} itemCount={items.length} /> : requirement.sort_order}</td><td className="px-4 py-3"><div className="flex justify-end gap-1">{canManage && <><RequirementEditDialog universityId={universityId} requirement={requirement} /><RequirementDeleteDialog universityId={universityId} requirement={requirement} /></>}</div></td></tr>)}
+                {items.length === 0 && !canManage && <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{category.label}</td><td colSpan={4} className="app-muted-text px-3 py-3">暂未要求此类资料</td></tr>}
+                {canManage && <tr className="border-b bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{items.length === 0 ? category.label : "新增"}</td><td colSpan={4} className="px-3 py-2"><form action={createUniversityDocumentRequirementAction.bind(null, universityId, selectedStage, category.key)} className="grid gap-2 sm:grid-cols-[220px_minmax(0,1fr)_80px]"><input name="title" required minLength={1} maxLength={100} list={dataListId} placeholder={`输入或选择${category.label}`} className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><datalist id={dataListId}>{category.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist><input name="description" maxLength={300} placeholder="备注（可选）" className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><AddRequirementButton /></form></td></tr>}
+              </Fragment>
             );
-          })}
+          })}</tbody>
+          </table>
         </div>
       </DialogContent>
     </Dialog>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Dices, Save, X } from "lucide-react";
+import { Check, Dices, Save, X } from "lucide-react";
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 
 import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
@@ -15,6 +15,7 @@ export type ChapterPoolQuestion = {
   id: string;
   prompt: string;
   options: string[];
+  correctOption: number | null;
   difficulty: QuestionDifficulty;
 };
 
@@ -57,10 +58,10 @@ export function ChapterTestRandomPicker({
           setSelectedIds(initialQuestionIds);
           dialogRef.current?.showModal();
         }}
-        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        aria-haspopup="dialog"
+        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] hover:underline"
       >
-        <Dices size={14} />
+        <Dices size={12} />
         一键选题
       </button>
 
@@ -69,12 +70,12 @@ export function ChapterTestRandomPicker({
         onClick={(event) => {
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
-        className="m-auto max-h-[92dvh] w-[min(1080px,calc(100%-2rem))] overflow-hidden rounded-3xl border bg-transparent p-0 shadow-2xl backdrop:bg-black/45"
+        className="ml-auto mr-0 h-dvh max-h-dvh w-full max-w-[1100px] overflow-hidden border-0 border-l bg-transparent p-0 backdrop:bg-black/20"
         style={{ borderColor: "var(--app-border)" }}
       >
-        <div className="app-card max-h-[92dvh] overflow-y-auto rounded-3xl">
+        <div className="app-card flex h-dvh flex-col overflow-hidden">
           <div
-            className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b px-5 py-4 sm:px-6"
+            className="z-10 flex shrink-0 items-start justify-between gap-4 border-b px-5 py-4 sm:px-6"
             style={{
               borderColor: "var(--app-border-soft)",
               backgroundColor: "var(--app-card-bg)",
@@ -99,7 +100,10 @@ export function ChapterTestRandomPicker({
             </button>
           </div>
 
-          <form action={formAction} className="space-y-5 p-5 sm:p-6">
+          <form
+            action={formAction}
+            className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5 sm:p-6"
+          >
             <input
               type="hidden"
               name="selected_questions_json"
@@ -110,10 +114,17 @@ export function ChapterTestRandomPicker({
               questions={questions}
               defaultTotal={initialQuestionIds.length || 10}
               onSelected={setSelectedIds}
+              tableLayout
             />
 
-            <section className="app-soft-card rounded-2xl border p-4">
-              <div className="flex items-end justify-between gap-3">
+            <section
+              className="border"
+              style={{ borderColor: "var(--app-border)" }}
+            >
+              <div
+                className="flex items-end justify-between gap-3 border-b px-4 py-3"
+                style={{ borderColor: "var(--app-border-soft)" }}
+              >
                 <div>
                   <h3 className="font-black">随机选题结果</h3>
                   <p className="app-muted-text mt-1 text-xs">
@@ -121,36 +132,101 @@ export function ChapterTestRandomPicker({
                   </p>
                 </div>
               </div>
-              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                {selectedQuestions.map((question, index) => (
-                  <article
-                    key={question.id}
-                    className="app-card rounded-2xl border p-4"
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs font-black">
-                        第 {index + 1} 题
-                      </span>
-                      <span
-                        className="rounded-full px-2 py-0.5 text-[10px] font-black"
-                        style={{
-                          color: "var(--app-secondary)",
-                          backgroundColor: "var(--app-secondary-soft)",
-                        }}
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[920px] table-fixed border-collapse text-left">
+                  <colgroup>
+                    <col className="w-16" />
+                    <col className="w-20" />
+                    <col className="w-[42%]" />
+                    <col />
+                  </colgroup>
+                  <thead>
+                    <tr
+                      className="border-b app-muted-text"
+                      style={{
+                        borderColor: "var(--app-border-soft)",
+                        backgroundColor: "var(--app-soft-bg)",
+                      }}
+                    >
+                      <th className="w-20 px-4 py-2.5 text-center text-[11px] font-bold">
+                        序号
+                      </th>
+                      <th className="w-28 border-l px-4 py-2.5 text-center text-[11px] font-bold">
+                        难度
+                      </th>
+                      <th className="border-l px-4 py-2.5 text-[11px] font-bold">
+                        题目
+                      </th>
+                      <th className="border-l px-4 py-2.5 text-[11px] font-bold">
+                        选项
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selectedQuestions.map((question, index) => (
+                      <tr
+                        key={question.id}
+                        className="border-b last:border-b-0"
+                        style={{ borderColor: "var(--app-border-soft)" }}
                       >
-                        {QUESTION_DIFFICULTY_LABELS[question.difficulty]}
-                      </span>
-                    </div>
-                    <p className="mt-3 text-xs font-bold leading-5">
-                      {question.prompt}
-                    </p>
-                  </article>
-                ))}
+                        <td className="px-4 py-3 text-center font-mono text-xs tabular-nums">
+                          {String(index + 1).padStart(2, "0")}
+                        </td>
+                        <td className="border-l px-4 py-3 text-center text-xs font-bold">
+                          {QUESTION_DIFFICULTY_LABELS[question.difficulty]}
+                        </td>
+                        <td className="border-l px-4 py-3 text-xs font-bold leading-5">
+                          {question.prompt}
+                        </td>
+                        <td className="app-muted-text border-l px-4 py-3 text-[11px] leading-5">
+                          {question.options.map((option, optionIndex) => {
+                            const isCorrect =
+                              optionIndex === question.correctOption;
+
+                            return (
+                              <p
+                                key={`${question.id}-${optionIndex}`}
+                                className="flex items-center gap-2 py-0.5"
+                                style={{
+                                  color: isCorrect
+                                    ? "var(--app-success)"
+                                    : undefined,
+                                  fontWeight: isCorrect ? 700 : undefined,
+                                }}
+                              >
+                                <span className="font-mono">
+                                  {String.fromCharCode(65 + optionIndex)}.
+                                </span>
+                                <span>{option}</span>
+                                {isCorrect && (
+                                  <span className="ml-auto inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-bold text-[var(--app-success)]">
+                                    <Check size={11} />
+                                    正确答案
+                                  </span>
+                                )}
+                              </p>
+                            );
+                          })}
+                        </td>
+                      </tr>
+                    ))}
+                    {selectedQuestions.length === 0 && (
+                      <tr>
+                        <td
+                          colSpan={4}
+                          className="app-muted-text px-4 py-10 text-center text-xs"
+                        >
+                          暂无随机结果，请先设置难度比例并执行选题。
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </section>
 
             <section
-              className="rounded-2xl border p-4 text-xs leading-5"
+              className="border-y px-4 py-3 text-xs leading-5"
               style={{
                 color: "var(--app-warm)",
                 backgroundColor: "var(--app-warm-soft)",

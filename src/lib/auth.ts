@@ -19,7 +19,8 @@ function isPlatformOnlyProfile(profile: AuthProfile | null | undefined) {
     return (
       profile.global_role === "platform_owner" ||
       profile.global_role === "platform_deputy" ||
-      profile.global_role === "platform_admin"
+      profile.global_role === "platform_admin" ||
+      profile.global_role === "platform_course_inspector"
     );
   }
 

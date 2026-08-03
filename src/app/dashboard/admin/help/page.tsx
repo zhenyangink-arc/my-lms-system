@@ -1,36 +1,178 @@
-import Link from "next/link";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { ArrowRight, BookOpenText, CheckCircle2, Clock3, Headphones, ShieldCheck } from "lucide-react";
+import {
+  HelpCenterManagementWorkspace,
+  type HelpManagementArticle,
+  type HelpManagementTicket,
+  type PlatformHelpOverviewRow,
+} from "./HelpCenterManagementWorkspace";
 
-import { HELP_ARTICLE_CATEGORY_LABELS, HELP_ARTICLE_STATUS_LABELS, HELP_TICKET_CATEGORY_LABELS, HELP_TICKET_STATUS_LABELS, helpDateFormatter, type HelpArticleCategory, type HelpArticleStatus, type HelpTicketCategory, type HelpTicketPriority, type HelpTicketStatus } from "@/app/dashboard/help/config";
+import {
+  type HelpArticleCategory,
+  type HelpArticleStatus,
+  type HelpTicketCategory,
+  type HelpTicketPriority,
+  type HelpTicketStatus,
+} from "@/app/dashboard/help/config";
 import { requireHelpCenterManager } from "@/lib/help-center";
-import { HelpArticleForm } from "./HelpArticleForm";
-import { HelpArticleStatusActions } from "./HelpArticleStatusActions";
-import { HelpCenterAdminManager } from "./HelpCenterAdminManager";
+import { createAdminClient } from "@/lib/supabase/admin";
 
+type TicketRow = {
+  id: string;
+  user_id: string;
+  assigned_to: string | null;
+  subject: string;
+  category: HelpTicketCategory;
+  priority: HelpTicketPriority;
+  status: HelpTicketStatus;
+  created_at: string;
+  updated_at: string;
+};
 
-type Article = { id: string; title: string; summary: string; content: string; category: HelpArticleCategory; status: HelpArticleStatus; is_featured: boolean; sort_order: number; updated_at: string };
-type Ticket = { id: string; user_id: string; subject: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; updated_at: string };
-type Profile = { id: string; full_name: string | null; email: string | null };
+type ArticleRow = {
+  id: string;
+  title: string;
+  summary: string;
+  content: string;
+  category: HelpArticleCategory;
+  status: HelpArticleStatus;
+  is_featured: boolean;
+  sort_order: number;
+  updated_at: string;
+};
+
+type ProfileRow = {
+  id: string;
+  full_name: string | null;
+  email: string | null;
+};
+
+type TenantRow = { id: string; name: string };
+
+type OverviewRpcRow = {
+  tenant_id: string;
+  tenant_name: string;
+  tenant_status: string;
+  active_members: number | string;
+  total_tickets: number | string;
+  open_tickets: number | string;
+  in_progress_tickets: number | string;
+  waiting_student_tickets: number | string;
+  resolved_tickets: number | string;
+  closed_tickets: number | string;
+  urgent_pending_tickets: number | string;
+  overdue_tickets: number | string;
+  resolution_rate: number | string;
+  oldest_waiting_at: string | null;
+  last_updated_at: string | null;
+};
+
+const roleLabels: Record<string, string> = {
+  teacher: "教师处理台",
+  ceo: "运营负责人",
+  tenant_super_admin: "机构负责人",
+  platform_super_admin: "平台负责人",
+};
 
 export default async function HelpCenterManagementPage() {
-  const { supabase, canAssignAdmins, role } = await requireHelpCenterManager();
-  const [articlesResult, ticketsResult] = await Promise.all([
-    supabase.from("help_articles").select("id,title,summary,content,category,status,is_featured,sort_order,updated_at").order("sort_order", { ascending: true }).order("updated_at", { ascending: false }),
-    supabase.from("help_tickets").select("id,user_id,subject,category,priority,status,updated_at").order("updated_at", { ascending: false }),
+  const access = await requireHelpCenterManager();
+
+  if (access.scope === "platform") {
+    const { data, error } = await access.supabase.rpc("get_platform_help_center_overview");
+    const overview: PlatformHelpOverviewRow[] = ((data ?? []) as OverviewRpcRow[]).map((row) => ({
+      tenantId: row.tenant_id,
+      tenantName: row.tenant_name,
+      tenantStatus: row.tenant_status,
+      activeMembers: Number(row.active_members) || 0,
+      totalTickets: Number(row.total_tickets) || 0,
+      openTickets: Number(row.open_tickets) || 0,
+      inProgressTickets: Number(row.in_progress_tickets) || 0,
+      waitingStudentTickets: Number(row.waiting_student_tickets) || 0,
+      resolvedTickets: Number(row.resolved_tickets) || 0,
+      closedTickets: Number(row.closed_tickets) || 0,
+      urgentPendingTickets: Number(row.urgent_pending_tickets) || 0,
+      overdueTickets: Number(row.overdue_tickets) || 0,
+      resolutionRate: Number(row.resolution_rate) || 0,
+      oldestWaitingAt: row.oldest_waiting_at,
+      lastUpdatedAt: row.last_updated_at,
+    }));
+
+    return (
+      <HelpCenterManagementWorkspace
+        scope="platform"
+        tenantName="平台"
+        roleLabel="平台负责人"
+        tickets={[]}
+        articles={[]}
+        overview={overview}
+        canManageArticles={false}
+        hasError={Boolean(error)}
+      />
+    );
+  }
+
+  const tenantId = access.tenantId;
+  const admin = createAdminClient();
+  const [ticketResult, articleResult, tenantResult] = await Promise.all([
+    access.supabase
+      .from("help_tickets")
+      .select("id,user_id,assigned_to,subject,category,priority,status,created_at,updated_at")
+      .eq("tenant_id", tenantId)
+      .order("priority", { ascending: false })
+      .order("updated_at", { ascending: false }),
+    access.canManageArticles
+      ? access.supabase
+          .from("help_articles")
+          .select("id,title,summary,content,category,status,is_featured,sort_order,updated_at")
+          .eq("tenant_id", tenantId)
+          .order("sort_order", { ascending: true })
+          .order("updated_at", { ascending: false })
+      : Promise.resolve({ data: [] as ArticleRow[], error: null }),
+    admin.from("tenants").select("id,name").eq("id", tenantId).maybeSingle(),
   ]);
-  const articles = (articlesResult.data ?? []) as Article[];
-  const tickets = (ticketsResult.data ?? []) as Ticket[];
-  const studentIds = [...new Set(tickets.map((item) => item.user_id))];
-  const { data: studentData } = studentIds.length ? await supabase.from("profiles").select("id,full_name,email").in("id", studentIds) : { data: [] as Profile[] };
-  const names = new Map(((studentData ?? []) as Profile[]).map((item) => [item.id, item.full_name?.trim() || item.email || "学生"]));
-  let admins: Array<{ id: string; name: string; email: string; assigned: boolean }> = [];
-  if (canAssignAdmins) { const [{ data: adminData }, { data: assignments }] = await Promise.all([supabase.from("profiles").select("id,full_name,email").eq("role", "admin").eq("status", "active").order("full_name", { ascending: true }), supabase.from("help_center_admin_assignments").select("admin_id").is("revoked_at", null)]); const assigned = new Set((assignments ?? []).map((item) => item.admin_id as string)); admins = ((adminData ?? []) as Profile[]).map((item) => ({ id: item.id, name: item.full_name?.trim() || "未填写姓名", email: item.email || "未填写邮箱", assigned: assigned.has(item.id) })); }
-  const openCount = tickets.filter((item) => item.status === "open").length;
-  const processingCount = tickets.filter((item) => item.status === "in_progress").length;
-  const resolvedCount = tickets.filter((item) => item.status === "resolved" || item.status === "closed").length;
-  return <div className="pb-12"><div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8"><section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-success-soft))" }}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center"><div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><ShieldCheck size={14} />{role === "tenant_super_admin" ? "负责人权限" : role === "ceo" ? "运营负责人权限" : "已授权管理员"}</span><DashboardTitleWithHint className="mt-3" title="帮助中心管理" description="维护帮助文章，接收并处理学生求助。" /></div><div className="dashboard-title-metrics">{[["待处理", openCount, Clock3, "var(--app-warm)", "var(--app-warm-soft)"], ["处理中", processingCount, Headphones, "var(--app-accent)", "var(--app-accent-soft)"], ["已解决", resolvedCount, CheckCircle2, "var(--app-success)", "var(--app-success-soft)" ]].map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof Headphones; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div></div></section>
-  {(articlesResult.error || ticketsResult.error) && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>帮助中心后台数据暂时无法读取，请确认数据库迁移已经执行。</section>}
-  <div className="grid items-start gap-5 xl:grid-cols-[minmax(360px,0.75fr)_minmax(0,1.35fr)]"><div className="space-y-5"><section id="create-help-article" className="app-card rounded-3xl border p-4 sm:p-5"><h2 className="flex items-center gap-2 text-lg font-black"><BookOpenText size={19} style={{ color: "var(--app-accent)" }} />新建帮助文章</h2><div className="mt-5"><HelpArticleForm /></div></section>{canAssignAdmins && <HelpCenterAdminManager admins={admins} />}</div><div className="space-y-5"><section className="app-card rounded-3xl border p-4 sm:p-5"><DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-black" title={<>学生求助</>} description={<>共 {tickets.length} 条求助，未处理与紧急问题优先显示。</>} /><div className="mt-5 grid gap-3 lg:grid-cols-2">{tickets.map((ticket) => { const solved = ticket.status === "resolved" || ticket.status === "closed"; return <Link key={ticket.id} href={`/dashboard/admin/help/tickets/${ticket.id}`} className="app-soft-card group rounded-2xl border p-4"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</span><span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: solved ? "var(--app-success)" : "var(--app-warm)", backgroundColor: solved ? "var(--app-success-soft)" : "var(--app-warm-soft)" }}>{HELP_TICKET_STATUS_LABELS[ticket.status]}</span>{ticket.priority === "urgent" && <span className="text-[10px] font-black" style={{ color: "#c94f45" }}>紧急</span>}<ArrowRight className="ml-auto transition group-hover:translate-x-1" size={14} /></div><h3 className="mt-3 text-sm font-black">{ticket.subject}</h3><p className="app-muted-text mt-2 text-xs">{names.get(ticket.user_id) || "学生"} · {helpDateFormatter.format(new Date(ticket.updated_at))}</p></Link>; })}{tickets.length === 0 && <p className="app-muted-text col-span-full rounded-2xl border border-dashed p-6 text-center text-xs">当前没有学生求助。</p>}</div></section><section className="app-card rounded-3xl border p-4 sm:p-5"><DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-black" title={<>帮助文章</>} description={<>共 {articles.length} 篇，草稿不会显示在学生端。</>} /><div className="mt-5 space-y-4">{articles.map((article) => <article key={article.id} className="app-soft-card rounded-2xl border p-4"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{HELP_ARTICLE_CATEGORY_LABELS[article.category]}</span><span className="rounded-full px-2 py-1 text-[10px] font-black" style={{ color: article.status === "published" ? "var(--app-success)" : "var(--app-muted)", backgroundColor: article.status === "published" ? "var(--app-success-soft)" : "var(--app-soft-bg)" }}>{HELP_ARTICLE_STATUS_LABELS[article.status]}</span></div><h3 className="mt-3 text-sm font-black">{article.title}</h3><p className="app-muted-text mt-2 text-xs leading-5">{article.summary || "暂未填写摘要"}</p><div className="mt-4 space-y-3 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}><HelpArticleStatusActions id={article.id} status={article.status} /><details className="app-card rounded-xl border p-3"><summary className="cursor-pointer list-none text-xs font-black">修改文章内容</summary><div className="mt-4 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}><HelpArticleForm article={article} /></div></details></div></article>)}{articles.length === 0 && <p className="app-muted-text rounded-2xl border border-dashed p-6 text-center text-xs">还没有帮助文章。</p>}</div></section></div></div>
-  </div></div>;
+
+  const ticketRows = (ticketResult.data ?? []) as TicketRow[];
+  const personIds = [...new Set(ticketRows.flatMap((ticket) => [ticket.user_id, ...(ticket.assigned_to ? [ticket.assigned_to] : [])]))];
+  const profileResult = personIds.length
+    ? await admin.from("profiles").select("id,full_name,email").in("id", personIds)
+    : { data: [] as ProfileRow[], error: null };
+  const profileNames = new Map(((profileResult.data ?? []) as ProfileRow[]).map((profile) => [
+    profile.id,
+    profile.full_name?.trim() || profile.email?.trim() || "未填写姓名",
+  ]));
+
+  const tickets: HelpManagementTicket[] = ticketRows.map((ticket) => ({
+    id: ticket.id,
+    studentName: profileNames.get(ticket.user_id) ?? "学生",
+    subject: ticket.subject,
+    category: ticket.category,
+    priority: ticket.priority,
+    status: ticket.status,
+    assignedTeacherName: ticket.assigned_to ? profileNames.get(ticket.assigned_to) ?? "已离职教师" : "待分配",
+    createdAt: ticket.created_at,
+    updatedAt: ticket.updated_at,
+  }));
+
+  const articles: HelpManagementArticle[] = ((articleResult.data ?? []) as ArticleRow[]).map((article) => ({
+    id: article.id,
+    title: article.title,
+    summary: article.summary,
+    content: article.content,
+    category: article.category,
+    status: article.status,
+    is_featured: article.is_featured,
+    sort_order: article.sort_order,
+    updatedAt: article.updated_at,
+  }));
+
+  return (
+    <HelpCenterManagementWorkspace
+      scope="tenant"
+      tenantName={(tenantResult.data as TenantRow | null)?.name ?? "本机构"}
+      roleLabel={roleLabels[access.role] ?? "帮助中心"}
+      tickets={tickets}
+      articles={articles}
+      overview={[]}
+      canManageArticles={access.canManageArticles}
+      hasError={Boolean(ticketResult.error || articleResult.error || tenantResult.error || profileResult.error)}
+    />
+  );
 }

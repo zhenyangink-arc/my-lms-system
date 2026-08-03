@@ -20,6 +20,8 @@ import { AccountCard, type AccountListProfile } from "./AccountCard";
 import { AccountAuditLogDialog, AccountDeletionAuditDialog } from "./AccountActivityDialogs";
 import { AccountCreator } from "./AccountCreator";
 import { PlatformAccountCreator } from "./PlatformAccountCreator";
+import { PlatformAccountTableActions } from "./PlatformAccountTableActions";
+import { STATUS_LABELS } from "./permissions";
 
 
 type AccountAuditLog = {
@@ -54,6 +56,7 @@ const PLATFORM_ROLE_FILTERS = [
   { value: "all", label: "全部平台账号" },
   { value: "platform_deputy", label: "平台副负责人" },
   { value: "platform_admin", label: "平台管理员" },
+  { value: "platform_course_inspector", label: "平台课程巡检员" },
 ];
 
 const STATUS_FILTERS = [
@@ -85,10 +88,15 @@ const SORT_OPTIONS = [
 ];
 
 const TENANT_GROUP_ORDER = ["ceo", "admin", "teacher", "student"] as const;
-const PLATFORM_GROUP_ORDER = ["platform_deputy", "platform_admin"] as const;
+const PLATFORM_GROUP_ORDER = [
+  "platform_deputy",
+  "platform_admin",
+  "platform_course_inspector",
+] as const;
 const GROUP_LABELS: Record<string, string> = {
   platform_deputy: "平台副负责人",
   platform_admin: "平台管理员",
+  platform_course_inspector: "平台课程巡检员",
   ceo: "运营负责人",
   admin: "管理员",
   teacher: "老师",
@@ -137,6 +145,186 @@ function getThirtyDaysAgoTimestamp() {
   return new Date().getTime() - 30 * 24 * 60 * 60 * 1000;
 }
 
+const PLATFORM_ROLE_TONES: Record<string, { color: string; backgroundColor: string }> = {
+  platform_deputy: { color: "#8a5a16", backgroundColor: "#fff7df" },
+  platform_admin: { color: "#235fa6", backgroundColor: "#edf5ff" },
+  platform_course_inspector: { color: "#7a4aa0", backgroundColor: "#f7efff" },
+};
+
+const PLATFORM_STATUS_TONES: Record<string, { dot: string; text: string }> = {
+  active: { dot: "#1f9d68", text: "#18754f" },
+  inactive: { dot: "#9ca3af", text: "#6b7280" },
+  suspended: { dot: "#e89b24", text: "#a5650d" },
+};
+
+function formatPlatformAccountTime(value: string | null | undefined, includeTime = false) {
+  if (!value) return "暂无记录";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "待确认";
+
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    ...(includeTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {}),
+  }).format(date);
+}
+
+function PlatformAccountsView({
+  allProfiles,
+  profiles,
+  roleFilter,
+  statusFilter,
+  queryText,
+  sort,
+  hasFilters,
+  viewerRole,
+}: {
+  allProfiles: AccountListProfile[];
+  profiles: AccountListProfile[];
+  roleFilter: string;
+  statusFilter: string;
+  queryText: string;
+  sort: string;
+  hasFilters: boolean;
+  viewerRole: string;
+}) {
+  const activeCount = allProfiles.filter((profile) => profile.status === "active").length;
+  const deputyCount = allProfiles.filter((profile) => profile.role === "platform_deputy").length;
+  const adminCount = allProfiles.filter((profile) => profile.role === "platform_admin").length;
+  const inspectorCount = allProfiles.filter((profile) => profile.role === "platform_course_inspector").length;
+  const canManage = viewerRole === "platform_super_admin";
+
+  return (
+    <div className="mx-auto w-full max-w-[1600px] space-y-4 p-4 sm:p-5">
+      <section className="app-card overflow-hidden rounded-xl border">
+        <div className="flex flex-col gap-4 px-5 py-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="app-muted-text text-[11px] font-semibold tracking-[0.16em]">账号与权限</p>
+            <h1 className="mt-1 text-xl font-semibold tracking-tight">平台账号</h1>
+            <p className="app-muted-text mt-1 text-xs">只管理直属平台的后台成员，不包含任何机构负责人、老师或学生。</p>
+          </div>
+          {canManage && <PlatformAccountCreator />}
+        </div>
+        <div className="grid border-t sm:grid-cols-2 lg:grid-cols-5" style={{ borderColor: "var(--app-border)" }}>
+          {[
+            ["账号总数", allProfiles.length],
+            ["正常使用", activeCount],
+            ["副负责人", deputyCount],
+            ["平台管理员", adminCount],
+            ["课程巡检员", inspectorCount],
+          ].map(([label, value], index) => (
+            <div
+              key={String(label)}
+              className={`px-5 py-3 ${index > 0 ? "sm:border-l" : ""} ${index > 1 ? "border-t sm:border-t-0" : ""}`}
+              style={{ borderColor: "var(--app-border)" }}
+            >
+              <p className="app-muted-text text-[11px] font-medium">{label}</p>
+              <p className="mt-0.5 text-lg font-semibold tabular-nums">{value}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="app-card overflow-hidden rounded-xl border">
+        <form action="/dashboard/admin/accounts" method="get" className="grid gap-2 border-b p-3 md:grid-cols-[minmax(240px,1fr)_170px_145px_145px_auto]" style={{ borderColor: "var(--app-border)" }}>
+          <label className="app-input flex h-9 items-center gap-2 rounded-md border px-2.5">
+            <Search className="app-muted-text shrink-0" size={14} />
+            <span className="sr-only">搜索平台账号</span>
+            <input name="q" defaultValue={queryText} maxLength={80} placeholder="搜索姓名、登录账号或编号" className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:opacity-50" />
+          </label>
+          <label>
+            <span className="sr-only">平台角色</span>
+            <select name="role" defaultValue={roleFilter} className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
+              {PLATFORM_ROLE_FILTERS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span className="sr-only">账号状态</span>
+            <select name="status" defaultValue={statusFilter} className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
+              {STATUS_FILTERS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
+          <label>
+            <span className="sr-only">排序方式</span>
+            <select name="sort" defaultValue={sort} className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
+              {SORT_OPTIONS.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}
+            </select>
+          </label>
+          <button type="submit" className="h-9 rounded-md bg-neutral-950 px-4 text-xs font-semibold text-white transition hover:bg-neutral-800">筛选</button>
+        </form>
+
+        <div className="flex items-center justify-between gap-4 border-b px-4 py-2.5 text-[11px]" style={{ borderColor: "var(--app-border)" }}>
+          <span className="app-muted-text">当前显示 {profiles.length} / {allProfiles.length} 个平台账号</span>
+          {hasFilters && <Link href="/dashboard/admin/accounts" className="font-semibold hover:underline">清除筛选</Link>}
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[1060px] border-collapse text-left">
+            <thead>
+              <tr className="border-b text-[11px] font-medium" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}>
+                <th className="px-4 py-2.5 font-medium">账号</th>
+                <th className="px-4 py-2.5 font-medium">平台角色</th>
+                <th className="px-4 py-2.5 font-medium">状态</th>
+                <th className="px-4 py-2.5 font-medium">最近活跃</th>
+                <th className="px-4 py-2.5 font-medium">创建时间</th>
+                <th className="px-4 py-2.5 font-medium">账号编号</th>
+                <th className="px-4 py-2.5 text-right font-medium">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              {profiles.map((profile) => {
+                const displayName = profile.full_name || "未命名账号";
+                const roleTone = PLATFORM_ROLE_TONES[profile.role] ?? PLATFORM_ROLE_TONES.platform_admin;
+                const statusTone = PLATFORM_STATUS_TONES[profile.status] ?? PLATFORM_STATUS_TONES.inactive;
+                const registeredAt = profile.registered_at || profile.created_at;
+                const loginId = profile.login_id || profile.email?.split("@")[0] || "登录账号待同步";
+
+                return (
+                  <tr key={profile.id} className="border-b text-xs transition last:border-b-0 hover:bg-black/[0.018]" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-3">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>{displayName.slice(0, 1)}</span>
+                        <div className="min-w-0">
+                          <p className="truncate font-semibold">{displayName}</p>
+                          <p className="app-muted-text mt-0.5 truncate text-[11px]">{loginId}</p>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex rounded-md px-2 py-1 text-[11px] font-semibold" style={roleTone}>{GROUP_LABELS[profile.role] ?? profile.role}</span>
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className="inline-flex items-center gap-2 font-medium" style={{ color: statusTone.text }}><span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: statusTone.dot }} />{STATUS_LABELS[profile.status] ?? profile.status}</span>
+                    </td>
+                    <td className="app-muted-text px-4 py-3 tabular-nums">{formatPlatformAccountTime(profile.last_active_at, true)}</td>
+                    <td className="app-muted-text px-4 py-3 tabular-nums">{formatPlatformAccountTime(registeredAt)}</td>
+                    <td className="app-muted-text px-4 py-3 font-mono text-[11px]">…{profile.id.slice(-8)}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/dashboard/admin/accounts/${profile.id}`} className="inline-flex h-8 items-center rounded-md px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]">详情</Link>
+                        {canManage && <PlatformAccountTableActions profile={profile} />}
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        {profiles.length === 0 && (
+          <div className="border-t px-5 py-12 text-center" style={{ borderColor: "var(--app-border)" }}>
+            <p className="text-sm font-semibold">没有符合条件的平台账号</p>
+            <p className="app-muted-text mt-1 text-xs">请调整搜索词、角色或状态后再试。</p>
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
 export default async function AccountsPage({
   searchParams,
 }: {
@@ -174,7 +362,7 @@ export default async function AccountsPage({
   const [profilesResult, auditResult, deletionAuditResult] = await Promise.all([
     admin
       .from("profiles")
-      .select("id, full_name, email, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier")
+      .select("id, full_name, email, login_id, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier")
       .neq("role", "tenant_super_admin")
       .order("registered_at", { ascending: false, nullsFirst: false }),
     tenant
@@ -205,7 +393,8 @@ export default async function AccountsPage({
         ? membershipUserIds.has(profile.id)
         : !membershipUserIds.has(profile.id) &&
           (profile.global_role === "platform_deputy" ||
-            profile.global_role === "platform_admin")
+            profile.global_role === "platform_admin" ||
+            profile.global_role === "platform_course_inspector")
     )
     .map((profile) => {
       if (!tenant) {
@@ -257,6 +446,21 @@ export default async function AccountsPage({
 
   const filterValues = { role: roleFilter, status: statusFilter, membership: membershipFilter, profile: profileFilter, q: queryText, sort };
   const hasFilters = roleFilter !== "all" || statusFilter !== "all" || (Boolean(tenant) && membershipFilter !== "all") || profileFilter !== "all" || Boolean(queryText) || sort !== "newest";
+
+  if (!tenant) {
+    return (
+      <PlatformAccountsView
+        allProfiles={allProfiles}
+        profiles={profiles}
+        roleFilter={roleFilter}
+        statusFilter={statusFilter}
+        queryText={queryText}
+        sort={sort}
+        hasFilters={hasFilters}
+        viewerRole={viewerRole}
+      />
+    );
+  }
 
   return (
     <>

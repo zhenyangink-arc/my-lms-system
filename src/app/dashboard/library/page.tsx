@@ -27,7 +27,7 @@ type Resource = {
 };
 
 export default async function LibraryPage() {
-  const { supabase, user, canManage } = await getLibraryAccess();
+  const { supabase, user, canManage, canCurate } = await getLibraryAccess();
   const [resourcesResult, favoritesResult] = await Promise.all([
     supabase
       .from("library_resources")
@@ -64,20 +64,20 @@ export default async function LibraryPage() {
               className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
               style={{ backgroundColor: "var(--app-secondary)" }}
             >
-              进入资料库后台
+              {canCurate ? "进入资料库后台" : "查看机构资料清单"}
               <ArrowRight size={15} />
             </Link>
           </div>
         )}
-        <section
+        {canManage && <section
           className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{
             background:
               "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-secondary-soft))",
           }}
         >
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center">
-            <div>
+          <div className={canManage ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center" : "grid"}>
+            {canManage && <div>
               <span
                 className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
                 style={{
@@ -89,8 +89,8 @@ export default async function LibraryPage() {
                 学习资料一站查找
               </span>
               <DashboardTitleWithHint className="mt-3" title="把需要的资料，放进自己的学习收藏夹" description="文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。" />
-            </div>
-            <div className="dashboard-title-metrics">
+            </div>}
+            <div className={canManage ? "dashboard-title-metrics" : "grid grid-cols-3 gap-2"}>
               {[
                 ["已发布资料", resources.length, Library, "var(--app-accent)", "var(--app-accent-soft)"],
                 ["我的收藏", favorites.length, FolderHeart, "#d95768", "#fff0f3"],
@@ -122,7 +122,7 @@ export default async function LibraryPage() {
               当前有 {featuredCount} 项推荐资料
             </div>
           )}
-        </section>
+        </section>}
 
         {(resourcesResult.error || favoritesResult.error) && (
           <section

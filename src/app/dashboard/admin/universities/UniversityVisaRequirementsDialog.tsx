@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { useFormStatus } from "react-dom";
 import {
   BadgeCheck,
@@ -55,6 +55,7 @@ export type UniversityVisaRequirement = {
   title: string;
   description: string | null;
   sort_order: number;
+  applicable_scopes: Array<"language" | "bachelor_fresh" | "bachelor_transfer" | "master" | "doctor">;
 };
 
 type VisaType = UniversityVisaRequirement["visa_type"];
@@ -126,9 +127,12 @@ function RequirementEditDialog({ universityId, requirement }: { universityId: st
           <DialogDescription className="leading-6">修改会同步到该校现有学生的对应签证任务，不会清除提交次数和审核记录。</DialogDescription>
         </DialogHeader>
         <form action={updateUniversityVisaRequirementAction.bind(null, universityId, requirement.id)} className="space-y-4">
-          <label className="block text-xs font-black">资料名称<input name="title" required minLength={1} maxLength={100} defaultValue={requirement.title} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none" /></label>
-          <label className="block text-xs font-black">办理阶段<select name="stage" defaultValue={requirement.stage} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none">{stageOptions.map((stage) => <option key={stage.key} value={stage.key}>{stage.label}</option>)}</select></label>
-          <label className="block text-xs font-black">资料备注（学生可见）<textarea name="description" maxLength={300} rows={4} defaultValue={requirement.description ?? ""} placeholder="例如：请上传近一个月内开具的原件扫描件。" className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none" /></label>
+          {requirement.visa_type === "d2_bachelor" && (requirement.applicable_scopes.length > 0 ? requirement.applicable_scopes : ["bachelor_fresh", "bachelor_transfer"]).map((scope) => <input key={scope} type="hidden" name="applicableScopes" value={scope} />)}
+          <div className="overflow-hidden rounded-xl border"><table className="w-full border-collapse text-left text-xs"><tbody>
+            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="w-[110px] border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>资料名称</th><td className="px-3 py-2"><input name="title" required minLength={1} maxLength={100} defaultValue={requirement.title} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none" /></td></tr>
+            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>办理阶段</th><td className="px-3 py-2"><select name="stage" defaultValue={requirement.stage} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none">{stageOptions.map((stage) => <option key={stage.key} value={stage.key}>{stage.label}</option>)}</select></td></tr>
+            <tr><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black align-top" style={{ borderColor: "var(--app-border-soft)" }}>学生备注</th><td className="px-3 py-2"><textarea name="description" maxLength={300} rows={4} defaultValue={requirement.description ?? ""} placeholder="学生可以看到的资料说明" className="app-input w-full resize-y rounded-lg border px-3 py-2.5 leading-6 outline-none" /></td></tr>
+          </tbody></table></div>
           <div className="flex justify-end"><SaveButton /></div>
         </form>
       </DialogContent>
@@ -154,7 +158,7 @@ function RequirementDeleteDialog({ universityId, requirement }: { universityId: 
   );
 }
 
-export function UniversityVisaRequirementsDialog({ universityId, universityName, requirements }: { universityId: string; universityName: string; requirements: UniversityVisaRequirement[] }) {
+export function UniversityVisaRequirementsDialog({ canManage, universityId, universityName, requirements }: { canManage: boolean; universityId: string; universityName: string; requirements: UniversityVisaRequirement[] }) {
   const [selectedVisaType, setSelectedVisaType] = useState<VisaType>("d4_language");
   const selectedVisaMeta = visaTypeOptions.find((visaType) => visaType.key === selectedVisaType) ?? visaTypeOptions[0];
 
@@ -164,12 +168,12 @@ export function UniversityVisaRequirementsDialog({ universityId, universityName,
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-6xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-black">{universityName} · 签证申请资料</DialogTitle>
-          <DialogDescription className="leading-6">按签证类型维护学校实际要求的资料。管理员点亮第 9 步后，学生会收到对应学校和签证类型的清单。</DialogDescription>
+          <DialogDescription className="leading-6">{canManage ? "按签证类型维护学校实际要求的资料，修改会同步到学生端。" : "查看平台已经确认的签证资料；当前账号不能新增、修改或删除。"}</DialogDescription>
         </DialogHeader>
 
         <div className="flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5" style={{ color: "var(--app-success)", borderColor: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
           <ShieldCheck className="mt-0.5 shrink-0" size={17} />
-          <p><b>自动同步：</b>新增和修改会立即同步到对应学生；停用资料不会删除已有提交和审核记录。</p>
+          <p><b>{canManage ? "自动同步：" : "机构只读："}</b>{canManage ? "新增和修改会立即同步到对应学生；已有提交和审核记录会保留。" : "签证资料由平台统一维护，机构端只能查看。"}</p>
         </div>
 
         <section className="rounded-2xl border p-3" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
@@ -188,43 +192,26 @@ export function UniversityVisaRequirementsDialog({ universityId, universityName,
           <p className="app-muted-text mt-2 px-1 text-xs">当前维护：<b>{selectedVisaMeta.label}</b> · {selectedVisaMeta.description}</p>
         </section>
 
-        <div key={selectedVisaType} className="grid gap-4 lg:grid-cols-2">
+        <div key={selectedVisaType} className="overflow-x-auto rounded-xl border">
+          <table className="w-full min-w-[900px] border-collapse text-left text-xs">
+            <thead><tr className="border-b bg-[var(--app-soft-bg)] text-[10px] font-black app-muted-text" style={{ borderColor: "var(--app-border)" }}><th className="w-[135px] px-4 py-3">办理阶段</th><th className="w-[220px] px-3 py-3">资料名称</th><th className="px-3 py-3">学生可见备注</th><th className="w-[90px] px-3 py-3 text-center">顺序</th><th className="w-[100px] px-4 py-3 text-right">操作</th></tr></thead>
+            <tbody>
           {stageOptions.map((stage) => {
-            const Icon = stage.icon;
             const items = requirements
               .filter((requirement) => requirement.visa_type === selectedVisaType && requirement.stage === stage.key)
               .sort((left, right) => left.sort_order - right.sort_order || left.title.localeCompare(right.title, "zh-CN"));
             const dataListId = `visa-requirement-${universityId}-${selectedVisaType}-${stage.key}`;
 
             return (
-              <section key={stage.key} className="app-card rounded-2xl border p-4">
-                <div className="flex items-start gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: stage.color, backgroundColor: stage.soft }}><Icon size={17} /></span>
-                  <div className="min-w-0"><div className="flex items-center gap-2"><h3 className="text-sm font-black">{stage.label}</h3><span className="rounded-full px-2 py-0.5 text-[10px] font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>{items.length} 项</span></div><p className="app-muted-text mt-1 text-xs">{stage.description}</p></div>
-                </div>
-
-                <div className="mt-4 space-y-2">
-                  {items.map((requirement, index) => (
-                    <div key={requirement.id} className="app-soft-card flex items-center gap-3 rounded-xl border px-3 py-2.5">
-                      <span className="h-2 w-2 shrink-0 rounded-full" style={{ backgroundColor: stage.color }} />
-                      <div className="min-w-0 flex-1"><p className="truncate text-xs font-black">{requirement.title}</p>{requirement.description && <p className="app-muted-text mt-1 line-clamp-2 whitespace-pre-wrap text-xs leading-4">{requirement.description}</p>}</div>
-                      <RequirementSortControls universityId={universityId} requirement={requirement} index={index} itemCount={items.length} />
-                      <RequirementEditDialog universityId={universityId} requirement={requirement} />
-                      <RequirementDeleteDialog universityId={universityId} requirement={requirement} />
-                    </div>
-                  ))}
-                  {items.length === 0 && <div className="rounded-xl border border-dashed p-4 text-center text-xs app-muted-text">这所大学暂未要求此阶段资料</div>}
-                </div>
-
-                <form action={createUniversityVisaRequirementAction.bind(null, universityId, selectedVisaType, stage.key)} className="mt-3 space-y-2">
-                  <label className="block"><span className="sr-only">新增{stage.label}资料</span><input name="title" required minLength={1} maxLength={100} list={dataListId} placeholder={`输入或选择${stage.label}资料`} className="app-input w-full rounded-xl border px-3 py-2.5 text-xs outline-none" /><datalist id={dataListId}>{stage.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist></label>
-                  <label className="block"><span className="sr-only">资料备注</span><textarea name="description" maxLength={300} rows={2} placeholder="备注（可选，学生可以看到）" className="app-input w-full resize-y rounded-xl border px-3 py-2.5 text-xs leading-5 outline-none" /></label>
-                  <div className="flex justify-end"><AddButton /></div>
-                </form>
-                <p className="app-muted-text mt-2 text-[10px] leading-4">常用选项：{stage.suggestions.join("、")}；也可以直接输入新的资料名称。</p>
-              </section>
+              <Fragment key={stage.key}>
+                {items.map((requirement, index) => <tr key={requirement.id} className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: stage.color }}>{index === 0 ? stage.label : ""}</td><td className="px-3 py-3 font-black">{requirement.title}</td><td className="app-muted-text whitespace-pre-wrap px-3 py-3 leading-5">{requirement.description || "—"}</td><td className="px-3 py-3 text-center">{canManage ? <RequirementSortControls universityId={universityId} requirement={requirement} index={index} itemCount={items.length} /> : requirement.sort_order}</td><td className="px-4 py-3"><div className="flex justify-end gap-1">{canManage && <><RequirementEditDialog universityId={universityId} requirement={requirement} /><RequirementDeleteDialog universityId={universityId} requirement={requirement} /></>}</div></td></tr>)}
+                {items.length === 0 && !canManage && <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: stage.color }}>{stage.label}</td><td colSpan={4} className="app-muted-text px-3 py-3">暂未要求此阶段资料</td></tr>}
+                {canManage && <tr className="border-b bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: stage.color }}>{items.length === 0 ? stage.label : "新增"}</td><td colSpan={4} className="px-3 py-2"><form action={createUniversityVisaRequirementAction.bind(null, universityId, selectedVisaType, stage.key)} className="grid gap-2 sm:grid-cols-[220px_minmax(0,1fr)_80px]">{selectedVisaType === "d2_bachelor" && <><input type="hidden" name="applicableScopes" value="bachelor_fresh" /><input type="hidden" name="applicableScopes" value="bachelor_transfer" /></>}<input name="title" required minLength={1} maxLength={100} list={dataListId} placeholder={`输入或选择${stage.label}资料`} className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><datalist id={dataListId}>{stage.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist><input name="description" maxLength={300} placeholder="备注（可选）" className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><AddButton /></form></td></tr>}
+              </Fragment>
             );
           })}
+            </tbody>
+          </table>
         </div>
       </DialogContent>
     </Dialog>

@@ -5,6 +5,7 @@ import {
   AlertCircle,
   BriefcaseBusiness,
   Camera,
+  CalendarDays,
   CheckCircle2,
   Gauge,
   GraduationCap,
@@ -81,17 +82,20 @@ function isValidDottedDate(value: string) {
 
 function SectionTitle({
   icon: Icon,
+  step,
   title,
   description,
 }: {
   icon: typeof UserRound;
+  step: number;
   title: string;
   description: string;
 }) {
   return (
     <div className="flex items-start gap-3">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
+      <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
         <Icon size={20} aria-hidden="true" />
+        <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>{step}</span>
       </span>
       <DashboardTitleWithHint
         headingLevel={2}
@@ -104,7 +108,6 @@ function SectionTitle({
 }
 
 const fieldClass = "app-input mt-2 w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
-const fieldWithoutMarginClass = fieldClass.replace("mt-2 ", "");
 
 export function ProfileForm({ initialValue }: { initialValue: StudentProfileInitialValue }) {
   const [state, formAction, pending] = useActionState(updateProfileAction, initialUpdateProfileState);
@@ -154,11 +157,11 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
   }
 
   return (
-    <form action={formAction} className="space-y-5">
-      <section className="app-card rounded-3xl border p-4 sm:p-5">
-        <SectionTitle icon={UserRound} title="基本信息" description="这些信息将用于留学评估、课程安排和顾问服务。" />
+    <form action={formAction} className="app-card rounded-3xl border p-4 sm:p-6">
+      <section>
+        <SectionTitle icon={UserRound} step={1} title="基本信息" description="这些信息将用于留学评估、课程安排和顾问服务。" />
 
-        <div className="app-divider mt-5 grid gap-5 border-t pt-6 lg:grid-cols-[176px_minmax(0,1fr)]">
+        <div className="mt-5 grid gap-5 lg:grid-cols-[176px_minmax(0,1fr)]">
           <div className="flex items-start gap-5 lg:block">
             <div
               className="flex aspect-square w-32 shrink-0 items-end overflow-hidden rounded-3xl border bg-cover bg-center lg:w-full lg:max-w-[176px]"
@@ -197,15 +200,15 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
             </fieldset>
 
             <div>
-              <span className="text-sm font-black">出生日期</span>
-              <div className="mt-2 grid grid-cols-[1.3fr_1fr_1fr] gap-2">
-                <select name="birthYear" required value={birthYear} onChange={(event) => setBirthYear(event.target.value)} className={fieldWithoutMarginClass} aria-label="出生年份">
+              <div className="flex items-center gap-2 text-sm font-black"><CalendarDays size={15} aria-hidden="true" />出生日期</div>
+              <div className="app-input mt-2 grid grid-cols-[1.3fr_1fr_1fr] overflow-hidden rounded-2xl border">
+                <select name="birthYear" required value={birthYear} onChange={(event) => setBirthYear(event.target.value)} className="bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生年份">
                   <option value="">年</option>{BIRTH_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
                 </select>
-                <select name="birthMonth" required value={birthMonth} onChange={(event) => setBirthMonth(event.target.value)} className={fieldWithoutMarginClass} aria-label="出生月份">
+                <select name="birthMonth" required value={birthMonth} onChange={(event) => setBirthMonth(event.target.value)} className="app-divider border-l bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生月份">
                   <option value="">月</option>{MONTHS.map((month) => <option key={month} value={month}>{month}</option>)}
                 </select>
-                <select name="birthDay" required value={birthDay} onChange={(event) => setBirthDay(event.target.value)} className={fieldWithoutMarginClass} aria-label="出生日期">
+                <select name="birthDay" required value={birthDay} onChange={(event) => setBirthDay(event.target.value)} className="app-divider border-l bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生日期">
                   <option value="">日</option>{dayOptions.map((day) => <option key={day} value={day}>{day}</option>)}
                 </select>
               </div>
@@ -213,11 +216,11 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
 
             <div>
               <div className="flex items-center gap-2 text-sm font-black"><MapPin size={15} aria-hidden="true" />住址（精确至市级）</div>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <select name="province" required value={province} onChange={handleProvinceChange} className={fieldWithoutMarginClass}>
+              <div className="app-input mt-2 grid grid-cols-2 overflow-hidden rounded-2xl border">
+                <select name="province" required value={province} onChange={handleProvinceChange} className="bg-transparent px-3.5 py-3 text-sm font-semibold outline-none">
                   <option value="">省级地区</option>{CHINA_PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
-                <select name="city" required value={city} onChange={(event) => setCity(event.target.value)} disabled={!province} className={fieldWithoutMarginClass}>
+                <select name="city" required value={city} onChange={(event) => setCity(event.target.value)} disabled={!province} className="app-divider border-l bg-transparent px-3.5 py-3 text-sm font-semibold outline-none disabled:opacity-50">
                   <option value="">市级地区</option>{cityOptions.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
               </div>
@@ -226,9 +229,9 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
         </div>
       </section>
 
-      <section className="app-card rounded-3xl border p-4 sm:p-5">
-        <SectionTitle icon={GraduationCap} title="教育经历与在校成绩" description="按照当前或最近就读阶段填写，毕业日期请使用年.月.日格式。" />
-        <div className="app-divider mt-5 grid gap-x-5 gap-y-5 border-t pt-6 sm:grid-cols-2">
+      <section className="mt-9">
+        <SectionTitle icon={GraduationCap} step={2} title="教育经历与在校成绩" description="按照当前或最近就读阶段填写，毕业日期请使用年.月.日格式。" />
+        <div className="mt-5 grid gap-x-5 gap-y-5 sm:grid-cols-2">
           <label className="text-sm font-black">教育阶段
             <select name="educationLevel" required value={educationLevel} onChange={(event) => setEducationLevel(event.target.value)} className={fieldClass}>
               <option value="">请选择</option><option value="bachelor">本科</option><option value="associate">大专</option><option value="high_school">高中</option><option value="secondary_vocational">中专</option><option value="technical_school">技工学校</option>
@@ -303,10 +306,10 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
         </div>
       </section>
 
-      <section className="app-card rounded-3xl border p-4 sm:p-5">
-        <SectionTitle icon={Gauge} title="能力评估" description="选择最接近当前水平的等级，后续可以随学习进度更新。" />
-        <div className="app-divider mt-5 grid grid-cols-3 gap-2 border-t pt-6 sm:grid-cols-6">
-          {ABILITY_LEVELS.map(([level, description]) => <div key={level} className="app-soft-card rounded-xl border px-2 py-2 text-center"><strong className="block text-xs">{level}</strong><span className="text-xs app-muted-text">{description}</span></div>)}
+      <section className="mt-9">
+        <SectionTitle icon={Gauge} step={3} title="能力评估" description="选择最接近当前水平的等级，后续可以随学习进度更新。" />
+        <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
+          {ABILITY_LEVELS.map(([level, description]) => <div key={level} className="app-tile rounded-xl border px-2 py-2.5 text-center"><strong className="block text-xs">{level}</strong><span className="text-xs app-muted-text">{description}</span></div>)}
         </div>
         <div className="mt-6 grid gap-x-5 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
           {[{ name: "englishLevel", label: "英语能力", value: initialValue.englishLevel }, { name: "mathLevel", label: "数学能力", value: initialValue.mathLevel }].map((item) => (
@@ -344,10 +347,10 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
         </div>
       </section>
 
-      {state.message && <p aria-live="polite" className="app-card flex items-center gap-2 rounded-2xl border px-4 py-3 text-sm font-bold" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
+      {state.message && <p aria-live="polite" className="mt-8 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
 
-      {/* 保存区跟随表单正常排版，避免手机端悬浮按钮遮挡输入项。 */}
-      <div className="app-card flex flex-col gap-3 rounded-3xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+      {/* 保存区收进同一张卡片内部，用浅底带出操作区分量，不再单独起卡片 */}
+      <div className="mt-8 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5" style={{ backgroundColor: "var(--app-soft-bg)" }}>
         <p className="text-xs leading-5 app-muted-text">保存后资料立即生效，右侧完善清单会同步更新。</p>
         <button type="submit" disabled={pending} className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" style={{ backgroundColor: "var(--app-accent)" }}>
           {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}

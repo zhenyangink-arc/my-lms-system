@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
+import { hasExplicitPermission } from "@/lib/permissions/access";
 
 export type StandardQuestionGroup = {
   id: string;
@@ -28,6 +29,8 @@ export type StandardQuestion = {
   correct_answer: string | null;
   explanation: string;
   skill: string;
+  ebook_section_step: string;
+  ebook_page_reference: string;
   default_points: number;
   difficulty: "foundation" | "medium" | "hard" | "expert";
   tags: unknown;
@@ -41,7 +44,6 @@ export type StandardQuestionBankAccess = {
   canView: boolean;
   canUse: boolean;
   canManage: boolean;
-  canAssignManagers: boolean;
   role: UserRole;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
@@ -55,12 +57,14 @@ export async function getStandardQuestionBankAccess(): Promise<StandardQuestionB
       ? "platform_super_admin"
       : profile?.role;
   const role = isValidRole(roleValue) ? roleValue : "student";
-  const canAssignManagers = role === "platform_super_admin";
-
-  const { data: canManageData, error: canManageError } = await supabase.rpc(
-    "current_user_can_manage_standard_question_bank"
-  );
-  const canManage = !canManageError && canManageData === true;
+  const canManage =
+    role === "platform_super_admin" ||
+    await hasExplicitPermission(
+      supabase,
+      user.id,
+      "standard_question_bank.manage",
+      null
+    );
   // 标准题库不再直接开放给机构。平台先把题目组成完整试卷，
   // 机构只能预览和发布平台已经发布的整套试卷。
   const canUse = canManage;
@@ -69,7 +73,6 @@ export async function getStandardQuestionBankAccess(): Promise<StandardQuestionB
     canView: canUse,
     canUse,
     canManage,
-    canAssignManagers,
     role,
     supabase,
     user,

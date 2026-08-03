@@ -33,7 +33,7 @@ function hasHangul(value) {
 async function main() {
   const tests = await fetchAll(() =>
     db
-      .from("course_tests")
+      .from("chapter_tests")
       .select(
         "id,lesson_id,slug,course_key,chapter_number,title,korean_title,duration_minutes,passing_score,status"
       )
@@ -44,9 +44,9 @@ async function main() {
   const testIds = tests.map((test) => test.id);
   const questions = await fetchAll(() =>
     db
-      .from("course_test_questions")
+      .from("chapter_test_questions")
       .select(
-        "id,test_id,question_key,prompt,options,correct_option,difficulty,status,question_type,is_chapter_test_item"
+        "id,test_id,question_key,prompt,options,correct_option,difficulty,status,question_type,is_chapter_test_item,skill,ebook_section_step,ebook_page_reference"
       )
       .in("test_id", testIds)
       .order("test_id")
@@ -54,7 +54,7 @@ async function main() {
   );
   const attempts = await fetchAll(() =>
     db
-      .from("course_test_attempts")
+      .from("chapter_test_attempts")
       .select(
         "id,tenant_id,student_id,test_id,test_slug,score,correct_count,total_questions,passed"
       )
@@ -62,7 +62,7 @@ async function main() {
   );
   const reviews = await fetchAll(() =>
     db
-      .from("course_question_reviews")
+      .from("chapter_test_question_reviews")
       .select("id,student_id,test_id,question_id")
       .order("created_at")
   );
@@ -80,7 +80,7 @@ async function main() {
   const lessonsById = new Map(
     (lessonData ?? []).map((lesson) => [lesson.id, lesson])
   );
-  const difficulties = ["foundation", "medium", "hard", "expert"];
+  const difficulties = ["foundation", "medium"];
   const expected = {
     "hangul-introduction": {
       count: 4,
@@ -198,6 +198,25 @@ async function main() {
       (!hasHangul(question.prompt) ||
         question.options.some((option) => !hasHangul(String(option))))
   );
+  const validEbookSections = new Set(
+    Array.from({ length: 8 }, (_, index) => `STEP 0${index + 1}`)
+  );
+  const invalidEbookSections = questions.filter(
+    (question) => !validEbookSections.has(question.ebook_section_step)
+  );
+  const unbalancedLevelOneActive = tests
+    .filter((test) => test.course_key === "korean-level-one")
+    .filter((test) => {
+      const active = levelOneQuestions.filter(
+        (question) =>
+          question.test_id === test.id && question.is_chapter_test_item
+      );
+      return (
+        active.filter((question) => question.skill === "grammar").length !== 4 ||
+        active.filter((question) => question.skill === "vocabulary").length !== 4 ||
+        active.filter((question) => question.skill === "communication").length !== 2
+      );
+    });
 
   const invalidAttempts = attempts.filter((attempt) => {
     const test = testsById.get(attempt.test_id);
@@ -244,7 +263,7 @@ async function main() {
         report.passingScoresCorrect &&
         report.chapters.every(
           (chapter) =>
-            chapter.total === 80 &&
+            chapter.total === 40 &&
             chapter.active === 10 &&
             difficulties.every(
               (difficulty) => chapter.difficulty[difficulty] === 20
@@ -255,7 +274,7 @@ async function main() {
   );
   const valid =
     tests.length === 20 &&
-    questions.length === 1600 &&
+    questions.length === 800 &&
     courseShapeValid &&
     invalidOptions.length === 0 &&
     invalidAnswers.length === 0 &&
@@ -264,6 +283,8 @@ async function main() {
     levelOneFoundationWithoutChinese.length === 0 &&
     levelOneAdvancedWithChinese.length === 0 &&
     levelOneAdvancedWithoutHangul.length === 0 &&
+    invalidEbookSections.length === 0 &&
+    unbalancedLevelOneActive.length === 0 &&
     invalidAttempts.length === 0 &&
     duplicateAttempts.length === 0 &&
     invalidReviews.length === 0 &&
@@ -289,6 +310,8 @@ async function main() {
             levelOneFoundationWithoutChinese.length,
           levelOneAdvancedWithChinese: levelOneAdvancedWithChinese.length,
           levelOneAdvancedWithoutHangul: levelOneAdvancedWithoutHangul.length,
+          invalidEbookSections: invalidEbookSections.length,
+          unbalancedLevelOneActive: unbalancedLevelOneActive.length,
           invalidAttempts: invalidAttempts.length,
           duplicateAttempts: duplicateAttempts.length,
           invalidReviews: invalidReviews.length,

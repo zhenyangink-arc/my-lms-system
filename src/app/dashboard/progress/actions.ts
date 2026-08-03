@@ -5,7 +5,10 @@ import { revalidatePath } from "next/cache";
 import { requireActiveUser } from "@/lib/auth";
 
 export async function removeCourseQuestionReviewAction(questionId: string) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user, profile } = await requireActiveUser();
+  if (profile?.role === "platform_course_inspector") {
+    throw new Error("课程巡检员处于只读巡检模式，不能修改学生学习记录。");
+  }
   const normalizedQuestionId = String(questionId ?? "").trim();
 
   if (
@@ -17,7 +20,7 @@ export async function removeCourseQuestionReviewAction(questionId: string) {
   }
 
   const { error } = await supabase
-    .from("course_question_reviews")
+    .from("chapter_test_question_reviews")
     .delete()
     .eq("student_id", user.id)
     .eq("question_id", normalizedQuestionId);

@@ -204,11 +204,6 @@ export default async function VisaPage({
   if (!visaUnlocked || !visaCase || params.case !== visaCase.id) {
     return (
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-success-soft))" }}>
-          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><Sparkles size={14} />签证准备中心</span>
-          <DashboardTitleWithHint className="mt-3" titleClassName="text-2xl font-black tracking-tight" title={<>我的签证申请</>} description={<>管理员点亮第 9 步“请进入申请签证页面”后，这里会自动生成个人签证卡片。点击卡片进入签证资料准备和任务审核流程。</>} />
-        </section>
-
         {hasDatabaseError && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>签证准备数据暂时无法读取，请确认最新数据库迁移已经执行。</section>}
 
         {visaTarget && visaCase ? (

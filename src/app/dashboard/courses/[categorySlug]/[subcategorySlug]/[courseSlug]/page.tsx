@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   ArrowLeft,
   BookOpenCheck,
@@ -14,16 +14,14 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { isPlatformTenantManagerRole } from "@/lib/admin";
+import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import {
   getCourseLevelLabel,
   getLessonTypeLabel,
 } from "@/lib/course-labels";
 import { getKoreanBeginnerLesson } from "@/lib/korean-curriculum";
-import {
-  getUnlockedKoreanTestSlugs,
-  KOREAN_LEVEL_ONE_TEST_SEQUENCE,
-} from "@/lib/korean-learning-unlocks";
+import { isLessonUnlocked } from "@/lib/course-unlocks";
+import { isCourseUnlocked } from "@/lib/course-unlocks";
 import { HangulLessonLaunchLink } from "./HangulLessonLaunchLink";
 
 
@@ -47,6 +45,10 @@ type Course = {
   level: string | null;
   icon_name: string | null;
   cover_url: string | null;
+  unlock_mode: string | null;
+  prerequisite_course_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
 };
 
 type Lesson = {
@@ -59,6 +61,11 @@ type Lesson = {
   duration_minutes: number;
   is_free_preview: boolean;
   sort_order: number;
+  unlock_mode: string | null;
+  prerequisite_lesson_id: string | null;
+  prerequisite_chapter_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
 };
 
 type LessonProgress = {
@@ -107,6 +114,14 @@ function getStatusAccent(status: LessonProgressStatus) {
   return "var(--app-muted)";
 }
 
+function getLessonLockLabel(unlockMode: string | null) {
+  if (unlockMode === "scheduled") return "尚未到开放时间";
+  if (unlockMode === "previous_completed") return "完成上一单元后开放";
+  if (unlockMode === "prerequisite_completed") return "完成前置单元后开放";
+  if (unlockMode === "prerequisite_passed") return "通过前置章节后开放";
+  return "当前单元暂未开放";
+}
+
 export default async function CourseDetailPage({
   params,
 }: {
@@ -118,8 +133,9 @@ export default async function CourseDetailPage({
 }) {
   const { categorySlug, subcategorySlug, courseSlug } = await params;
 
-  const { supabase, user, platformProfile } = await requireActiveUser();
-  const isPlatformAudit = isPlatformTenantManagerRole(platformProfile?.role);
+  const { supabase, user, profile, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
+  const bypassLearningSequence = isPlatformAudit || profile?.role !== "student";
 
   /**
    * 1. 查询一级课程板块
@@ -161,7 +177,7 @@ export default async function CourseDetailPage({
   const { data: courseData } = await supabase
     .from("courses")
     .select(
-      "id, category_id, slug, title, description, level, icon_name, cover_url"
+      "id, category_id, slug, title, description, level, icon_name, cover_url, unlock_mode, prerequisite_course_id, available_from, is_manually_locked"
     )
     .eq("slug", courseSlug)
     .eq("category_id", subcategory.id)
@@ -174,13 +190,70 @@ export default async function CourseDetailPage({
 
   const course = courseData as Course;
 
+  if (!bypassLearningSequence) {
+    const { data: orderedCourseData } = await supabase
+      .from("courses")
+      .select("id,unlock_mode,prerequisite_course_id,available_from,is_manually_locked")
+      .eq("category_id", subcategory.id)
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true });
+    const orderedCourseRules = (orderedCourseData ?? []) as Array<{
+      id: string;
+      unlock_mode: string | null;
+      prerequisite_course_id: string | null;
+      available_from: string | null;
+      is_manually_locked: boolean | null;
+    }>;
+    const currentCourseIndex = orderedCourseRules.findIndex((item) => item.id === course.id);
+    const previousCourseId = currentCourseIndex > 0 ? orderedCourseRules[currentCourseIndex - 1]?.id : null;
+    const completionCandidateIds = Array.from(
+      new Set([course.prerequisite_course_id, previousCourseId].filter((id): id is string => Boolean(id))),
+    );
+    const completedCourseIds = new Set<string>();
+    if (completionCandidateIds.length > 0) {
+      const { data: prerequisiteLessonData } = await supabase
+        .from("lessons")
+        .select("id,course_id")
+        .in("course_id", completionCandidateIds)
+        .eq("is_published", true);
+      const prerequisiteLessons = prerequisiteLessonData ?? [];
+      const { data: prerequisiteProgressData } = prerequisiteLessons.length
+        ? await supabase
+            .from("lesson_progress")
+            .select("lesson_id,status")
+            .eq("user_id", user.id)
+            .in("lesson_id", prerequisiteLessons.map((item) => item.id))
+        : { data: [] };
+      const completedLessonIds = new Set(
+        (prerequisiteProgressData ?? [])
+          .filter((item) => item.status === "completed")
+          .map((item) => String(item.lesson_id)),
+      );
+      for (const candidateId of completionCandidateIds) {
+        const candidateLessons = prerequisiteLessons.filter((item) => item.course_id === candidateId);
+        if (candidateLessons.length > 0 && candidateLessons.every((item) => completedLessonIds.has(String(item.id)))) {
+          completedCourseIds.add(candidateId);
+        }
+      }
+    }
+    const courseUnlocked = isCourseUnlocked({
+      course,
+      courseIndex: Math.max(0, currentCourseIndex),
+      orderedCourses: orderedCourseRules,
+      completedCourseIds,
+    });
+    if (!courseUnlocked) {
+      redirect(`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`);
+    }
+  }
+
   /**
    * 4. 查询课程下的课时
    */
   const { data: lessonData } = await supabase
     .from("lessons")
     .select(
-      "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order"
+      "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked"
     )
     .eq("course_id", course.id)
     .eq("is_published", true)
@@ -232,20 +305,39 @@ export default async function CourseDetailPage({
     parentCategory.slug === "korean" &&
     subcategory.slug === "korean-basic" &&
     course.slug === "korean-beginner";
-  let koreanLevelOneUnlocked = false;
-  if (isKoreanBeginner && !isPlatformAudit) {
-    const { data: attemptData } = await supabase
-      .from("course_test_attempts")
-      .select("test_slug")
-      .eq("student_id", user.id);
-    const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
-      (attemptData ?? []).map((attempt) => String(attempt.test_slug))
-    );
-    koreanLevelOneUnlocked = unlockedTestSlugs.has(
-      KOREAN_LEVEL_ONE_TEST_SEQUENCE[0]
-    );
+  const completedLessonIds = new Set(
+    progressList
+      .filter((progress) => progress.status === "completed")
+      .map((progress) => progress.lesson_id),
+  );
+  const prerequisiteChapterIds = Array.from(
+    new Set(
+      lessons
+        .map((lesson) => lesson.prerequisite_chapter_id)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  );
+  const prerequisiteChapterSlugById = new Map<string, string>();
+  if (prerequisiteChapterIds.length > 0) {
+    const { data: prerequisiteChapterData } = await supabase
+      .from("course_chapters")
+      .select("id,slug")
+      .in("id", prerequisiteChapterIds);
+    for (const chapter of prerequisiteChapterData ?? []) {
+      prerequisiteChapterSlugById.set(String(chapter.id), String(chapter.slug));
+    }
   }
-  if (isPlatformAudit) koreanLevelOneUnlocked = true;
+  const passedChapterSlugs = new Set<string>();
+  if (!isPlatformAudit && prerequisiteChapterIds.length > 0) {
+    const { data: attemptData } = await supabase
+      .from("chapter_test_attempts")
+      .select("test_slug")
+      .eq("student_id", user.id)
+      .eq("passed", true);
+    for (const attempt of attemptData ?? []) {
+      passedChapterSlugs.add(String(attempt.test_slug));
+    }
+  }
   const accentColor = isFocusCategory
     ? parentCategory.slug === "service"
       ? "var(--app-accent)"
@@ -370,15 +462,15 @@ export default async function CourseDetailPage({
             <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--app-border)" }}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-gray-900">{isPlatformAudit ? "巡检模式" : "课程进度"}</p>
+                  <p className="text-sm font-black text-gray-900">课程进度</p>
 
                   <p className="mt-1 text-xs text-gray-500">
-                    {isPlatformAudit ? `共 ${totalLessons} 个课时 · 不记录进度` : `已完成 ${completedCount} / ${totalLessons} 个课时`}
+                    已完成 {completedCount} / {totalLessons} 个课时
                   </p>
                 </div>
 
                 <p className="text-2xl font-black tracking-tight text-gray-900">
-                  {isPlatformAudit ? "只读" : `${courseProgressPercent}%`}
+                  {courseProgressPercent}%
                 </p>
               </div>
 
@@ -440,10 +532,15 @@ export default async function CourseDetailPage({
                   ? getKoreanBeginnerLesson(lesson.slug)
                   : null;
                 const lessonLocked =
-                  isKoreanBeginner &&
-                  lesson.slug === "basic-pronunciation" &&
                   !isPlatformAudit &&
-                  !koreanLevelOneUnlocked;
+                  !isLessonUnlocked({
+                    lesson,
+                    lessonIndex: index,
+                    orderedLessons: lessons,
+                    completedLessonIds,
+                    prerequisiteChapterSlugById,
+                    passedChapterSlugs,
+                  });
 
                 const status = progress?.status ?? "not_started";
                 const progressPercent = progress?.progress_percent ?? 0;
@@ -549,8 +646,8 @@ export default async function CourseDetailPage({
 
                       <div className="w-full shrink-0 lg:w-56">
                         <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
-                          <span>{isPlatformAudit ? "巡检状态" : "学习进度"}</span>
-                          <span>{isPlatformAudit ? "不记录" : `${progressPercent}%`}</span>
+                          <span>学习进度</span>
+                          <span>{progressPercent}%</span>
                         </div>
 
                         <div
@@ -597,9 +694,7 @@ export default async function CourseDetailPage({
                             <PlayCircle size={15} />
                           )}
                           {lessonLocked
-                            ? "完成韩语字母入门后开放"
-                            : isPlatformAudit
-                            ? "巡检课时"
+                            ? getLessonLockLabel(lesson.unlock_mode)
                             : isCompleted
                             ? "复习课时"
                             : isInProgress

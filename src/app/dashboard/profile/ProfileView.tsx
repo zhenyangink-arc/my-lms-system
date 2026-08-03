@@ -40,6 +40,8 @@ export function ProfileView({
   const doneCount = checklist.filter((item) => item.done).length;
   const completionPercent = Math.round((doneCount / checklist.length) * 100);
   const pendingItems = checklist.filter((item) => !item.done);
+  const ringRadius = 40;
+  const ringCircumference = 2 * Math.PI * ringRadius;
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
@@ -69,28 +71,41 @@ export function ProfileView({
                   <ShieldCheck size={12} aria-hidden="true" />{emailConfirmed ? "邮箱已验证" : "邮箱待验证"}
                 </span>
               </div>
-              <h1 className="mt-2.5 truncate text-2xl font-black">{displayName}</h1>
+              <h2 className="mt-2.5 truncate text-2xl font-black">{displayName}</h2>
               <p className="mt-1.5 flex items-center gap-1.5 truncate text-sm app-muted-text"><Mail size={14} className="shrink-0" aria-hidden="true" />{email}</p>
             </div>
           </div>
 
-          <div className="app-card w-full shrink-0 rounded-3xl border p-5 lg:w-80">
-            <div className="flex items-center justify-between gap-4">
-              <DashboardTitleWithHint
-                headingLevel={2}
-                titleClassName="text-xs font-bold app-muted-text"
-                title="资料完成度"
-                description={
-                  pendingItems.length === 0
-                    ? "资料已全部完善，顾问可以给出最准确的规划建议。"
-                    : `已完成 ${doneCount}/${checklist.length} 项，资料越完整，留学与学习建议越准确。`
-                }
-              />
-              <strong className="text-lg" style={{ color: "var(--app-success)" }}>{completionPercent}%</strong>
+          <div className="flex w-full shrink-0 items-center gap-4 lg:w-72 lg:border-l lg:pl-8" style={{ borderColor: "var(--app-border)" }}>
+            <div className="relative h-[84px] w-[84px] shrink-0" aria-label={`资料完成度 ${completionPercent}%`}>
+              <svg width="84" height="84" viewBox="0 0 100 100" className="-rotate-90">
+                <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="10" />
+                <circle
+                  cx="50"
+                  cy="50"
+                  r={ringRadius}
+                  fill="none"
+                  stroke="var(--app-success)"
+                  strokeWidth="10"
+                  strokeDasharray={ringCircumference}
+                  strokeDashoffset={ringCircumference * (1 - completionPercent / 100)}
+                  strokeLinecap="round"
+                />
+              </svg>
+              <span className="absolute inset-0 flex items-center justify-center">
+                <strong className="text-lg font-black">{completionPercent}%</strong>
+              </span>
             </div>
-            <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-              <div className="h-full rounded-full transition-all" style={{ width: `${completionPercent}%`, background: "linear-gradient(90deg, var(--app-secondary), var(--app-success))" }} />
-            </div>
+            <DashboardTitleWithHint
+              headingLevel={2}
+              titleClassName="text-xs font-bold app-muted-text"
+              title="资料完成度"
+              description={
+                pendingItems.length === 0
+                  ? "资料已全部完善，顾问可以给出最准确的规划建议。"
+                  : `已完成 ${doneCount}/${checklist.length} 项，资料越完整，留学与学习建议越准确。`
+              }
+            />
           </div>
         </div>
 
@@ -135,14 +150,7 @@ export function ProfileView({
               ))}
             </ul>
             {pendingItems.length > 0 && (
-              <div className="app-soft-card mt-4 rounded-2xl border px-3.5 py-3">
-                <DashboardTitleWithHint
-                  headingLevel={3}
-                  titleClassName="text-xs font-black"
-                  title="完善提示"
-                  description="在左侧表单补全对应内容并保存后，清单会自动更新。"
-                />
-              </div>
+              <p className="mt-4 text-xs leading-5 app-muted-text">在左侧表单补全对应内容并保存后，清单会自动更新。</p>
             )}
           </section>
         </aside>

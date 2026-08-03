@@ -2,36 +2,30 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import {
   ArrowLeft,
-  CheckCircle2,
-  Clock3,
-  Crown,
-  FileText,
-  Lock,
-  MinusCircle,
+  ChevronRight,
+  FileCheck2,
+  LockKeyhole,
   Plus,
+  UnlockKeyhole,
 } from "lucide-react";
 
-import { requireAdmin } from "@/lib/admin";
-import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
-import { CATEGORY_ORDER } from "@/app/dashboard/documents/constants";
-import { DashboardPageHeader } from "../../../DashboardPageHeader";
-import { StudentModuleCardDeleteDialog } from "../../StudentModuleCardDeleteDialog";
+import {
+  APPLICATION_STAGE_LABELS,
+  CATEGORY_LABELS,
+} from "@/app/dashboard/documents/constants";
+import { requireDocumentReviewManager } from "@/lib/document-reviews";
 import { AdminApplicationStageControl } from "../AdminApplicationStageControl";
 import { AdminCourierInfoForm } from "../AdminCourierInfoForm";
-import { AdminDocumentCategoryList } from "../AdminDocumentCategoryList";
-import { TargetLockButton } from "../TargetLockButton";
 import {
-  createApplicationChecklistItemAction,
-  deleteStudentDocumentCardAction,
-} from "../actions";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-
+  DeleteChecklistItemButton,
+  DocumentItemControls,
+} from "../DocumentItemControls";
+import { createApplicationChecklistItemAction } from "../actions";
 
 type StudentProfile = {
   id: string;
   full_name: string | null;
   email: string | null;
-  membership_tier: string | null;
 };
 
 type ChecklistDocument = {
@@ -48,17 +42,25 @@ type ChecklistDocument = {
   admin_locked_at: string | null;
 };
 
+type ReviewStatus =
+  | "preparing"
+  | "pending_review"
+  | "revision_required"
+  | "approved";
+
 type TargetApplication = {
   id: string;
   university_name: string;
   program_name: string | null;
   admission_track: string | null;
-  status: string;
   documents_locked_at: string | null;
   courier_mailed_at: string | null;
   courier_estimated_arrival_at: string | null;
   application_stage: number;
   visa_application_channel: string | null;
+  document_review_status: ReviewStatus;
+  document_review_note: string | null;
+  updated_at: string;
 };
 
 const ADMISSION_TRACK_LABELS: Record<string, string> = {
@@ -69,13 +71,25 @@ const ADMISSION_TRACK_LABELS: Record<string, string> = {
   doctor: "博士",
 };
 
+const REVIEW_META: Record<ReviewStatus, { label: string; dot: string; text: string }> = {
+  preparing: { label: "准备中", dot: "bg-slate-400", text: "text-slate-600" },
+  pending_review: { label: "待确认", dot: "bg-amber-500", text: "text-amber-700" },
+  revision_required: { label: "需补充", dot: "bg-rose-500", text: "text-rose-700" },
+  approved: { label: "已确认", dot: "bg-emerald-500", text: "text-emerald-700" },
+};
+
+const ITEM_META: Record<ChecklistDocument["status"], { label: string; dot: string; text: string }> = {
+  preparing: { label: "准备中", dot: "bg-amber-500", text: "text-amber-700" },
+  completed: { label: "已完成", dot: "bg-emerald-500", text: "text-emerald-700" },
+  not_needed: { label: "无需准备", dot: "bg-slate-300", text: "text-slate-500" },
+};
+
 function formatDate(value: string | null) {
-  if (!value) return "暂无记录";
+  if (!value) return "—";
   const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "时间待确认";
+  if (Number.isNaN(date.getTime())) return "—";
   return new Intl.DateTimeFormat("zh-CN", {
     timeZone: "Asia/Seoul",
-    year: "numeric",
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
@@ -86,157 +100,177 @@ function formatDate(value: string | null) {
 
 export default async function StudentDocumentPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ studentId: string }>;
+  searchParams: Promise<{ target?: string }>;
 }) {
-  const { studentId } = await params;
-  const { supabase } = await requireAdmin();
+  const [{ studentId }, query] = await Promise.all([params, searchParams]);
+  const { supabase, tenantId } = await requireDocumentReviewManager();
   const [profileResult, documentsResult, targetsResult] = await Promise.all([
     supabase
       .from("profiles")
-      .select("id, full_name, email, membership_tier")
+      .select("id,full_name,email")
       .eq("id", studentId)
       .maybeSingle(),
     supabase
       .from("student_application_documents")
-      .select("id, target_id, title, category, notes, admin_note, status, due_date, updated_at, sort_order, admin_locked_at")
+      .select("id,target_id,title,category,notes,admin_note,status,due_date,updated_at,sort_order,admin_locked_at")
+      .eq("tenant_id", tenantId)
       .eq("user_id", studentId)
       .order("sort_order", { ascending: true }),
     supabase
       .from("student_university_targets")
-      .select("id, university_name, program_name, admission_track, status, documents_locked_at, courier_mailed_at, courier_estimated_arrival_at, application_stage, visa_application_channel")
+      .select("id,university_name,program_name,admission_track,documents_locked_at,courier_mailed_at,courier_estimated_arrival_at,application_stage,visa_application_channel,document_review_status,document_review_note,updated_at")
+      .eq("tenant_id", tenantId)
       .eq("user_id", studentId)
       .neq("status", "researching")
       .order("priority", { ascending: false }),
   ]);
 
-  if (documentsResult.error) throw new Error("学生申请资料读取失败，请稍后重试。");
-  const documents = (documentsResult.data ?? []) as ChecklistDocument[];
-  const targetApplications = (targetsResult.data ?? []) as TargetApplication[];
-  if (!profileResult.data && documents.length === 0 && targetApplications.length === 0) notFound();
+  if (documentsResult.error || targetsResult.error) {
+    throw new Error("学生申请资料读取失败，请稍后重试。");
+  }
 
-  const targetById = new Map(targetApplications.map((target) => [target.id, target]));
+  const documents = (documentsResult.data ?? []) as ChecklistDocument[];
+  const targets = (targetsResult.data ?? []) as TargetApplication[];
+  if (!profileResult.data && documents.length === 0 && targets.length === 0) notFound();
+
   const profile = (profileResult.data ?? {
     id: studentId,
     full_name: null,
     email: null,
-    membership_tier: null,
   }) as StudentProfile;
-  const displayName = profile.full_name || "未填写姓名";
-  const preparingCount = documents.filter((item) => item.status === "preparing").length;
-  const completedCount = documents.filter((item) => item.status === "completed").length;
-  const notNeededCount = documents.filter((item) => item.status === "not_needed").length;
-  const completionPercent = documents.length > 0
-    ? Math.round(((completedCount + notNeededCount) / documents.length) * 100)
-    : 0;
-  const latestUpdate = [...documents].sort(
-    (a, b) => new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime()
-  )[0];
-
-  const documentsWithTargetLabel = documents.map((document) => {
-    const target = document.target_id ? targetById.get(document.target_id) : null;
-    return {
-      ...document,
-      targetLabel: target
-        ? `${target.university_name} · ${ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请阶段"}`
-        : null,
-    };
-  });
-  const documentsByCategory = new Map<string, typeof documentsWithTargetLabel>();
-  for (const document of documentsWithTargetLabel) {
-    const group = documentsByCategory.get(document.category) ?? [];
+  const displayName = profile.full_name || profile.email || "未填写姓名";
+  const documentsByTarget = new Map<string, ChecklistDocument[]>();
+  for (const document of documents) {
+    if (!document.target_id) continue;
+    const group = documentsByTarget.get(document.target_id) ?? [];
     group.push(document);
-    documentsByCategory.set(document.category, group);
+    documentsByTarget.set(document.target_id, group);
   }
-  const categoryGroups = CATEGORY_ORDER
-    .map((category) => ({ category, items: documentsByCategory.get(category) ?? [] }))
-    .filter((group) => group.items.length > 0);
+  const latestUpdate = [
+    ...targets.map((target) => target.updated_at),
+    ...documents.map((document) => document.updated_at),
+  ].sort((a, b) => new Date(b).getTime() - new Date(a).getTime())[0] ?? null;
+  const resolvedCount = documents.filter((document) => document.status !== "preparing").length;
 
   return (
-    <>
-      <DashboardPageHeader title="学生申请资料" description="查看这名学生的资料清单与准备进度。" />
-      <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
-        <Link href="/dashboard/admin/documents" className="app-muted-text inline-flex items-center gap-2 text-xs font-black"><ArrowLeft size={14} />返回学生列表</Link>
+    <div className="pb-12">
+      <div className="mx-auto mt-5 w-full max-w-[1680px] px-4 sm:px-6 lg:px-8">
+        <Link href="/dashboard/admin/documents" className="mb-3 inline-flex items-center gap-1.5 text-[10px] font-medium text-zinc-500 hover:text-zinc-950">
+          <ArrowLeft size={12} />返回资料审核
+        </Link>
 
-        <section className="app-card rounded-[2rem] border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-hero-end))" }}>
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-center">
-            <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-[1.35rem] text-2xl font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{displayName === "未填写姓名" ? "?" : displayName.slice(0, 1)}</span>
-            <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h1 className="text-2xl font-black">{displayName}</h1><span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={11} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span></div><p className="app-muted-text mt-1 text-sm">{profile.email || `账号 …${studentId.slice(-6)}`}</p><p className="app-muted-text mt-2 text-xs">最近更新：{formatDate(latestUpdate?.updated_at ?? null)}</p>{documents.length > 0 && <div className="mt-3"><StudentModuleCardDeleteDialog action={deleteStudentDocumentCardAction.bind(null, studentId)} studentName={displayName} cardLabel="申请资料卡" description="将永久清空这名学生的全部申请资料清单项目。" /></div>}</div>
-            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:ml-auto lg:min-w-[420px]">
-              {[
-                ["准备中", preparingCount, Clock3, "var(--app-secondary)"],
-                ["已完成", completedCount, CheckCircle2, "var(--app-success)"],
-                ["无", notNeededCount, MinusCircle, "var(--app-muted)"],
-                ["完成率", `${completionPercent}%`, FileText, "var(--app-accent)"],
-              ].map(([label, value, Icon, color]) => {
-                const MetricIcon = Icon as typeof FileText;
-                return <div key={String(label)} className="app-card rounded-xl border p-3 text-center"><MetricIcon className="mx-auto" size={15} style={{ color: String(color) }} /><p className="mt-1.5 text-xl font-black">{String(value)}</p><p className="app-muted-text text-[10px] font-black">{String(label)}</p></div>;
-              })}
-            </div>
-          </div>
-        </section>
-
-        <section className="app-card rounded-[1.5rem] border p-5">
-          <div className="flex items-start gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Plus size={17} /></span><div><DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>添加申请资料项目</>} description={<>选择目标大学申请表后，新增项目会立即显示在学生的资料清单中。截止日期自动使用该校在「大学管理」中设置的申请截止日期，无需手动填写。</>} /></div></div>
-          {targetApplications.length > 0 ? (
-            <form action={createApplicationChecklistItemAction.bind(null, studentId)} className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-[minmax(220px,1.3fr)_minmax(180px,1fr)_170px_auto] xl:items-end">
-              <label className="text-xs font-black">目标大学申请表<select name="targetId" required className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm">{targetApplications.map((target) => <option key={target.id} value={target.id}>{target.university_name} · {ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</option>)}</select></label>
-              <label className="text-xs font-black">资料名称<input name="title" required maxLength={100} placeholder="例如：父母在职证明" className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm" /></label>
-              <label className="text-xs font-black">资料分类<select name="category" defaultValue="other" className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"><option value="identity">身份材料</option><option value="academic">学历材料</option><option value="application">申请文书</option><option value="financial">资金材料</option><option value="language">语言材料</option><option value="other">其他材料</option></select></label>
-              <button type="submit" className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><Plus size={14} />添加项目</button>
-            </form>
-          ) : (
-            <p className="app-muted-text mt-4 text-xs">学生还没有进入“准备资料”的目标大学。</p>
-          )}
-        </section>
-
-        <AdminDocumentCategoryList studentId={studentId} categoryGroups={categoryGroups} />
-
-        <section className="app-card rounded-[1.5rem] border p-5">
-          <div className="flex items-start gap-3">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Lock size={17} /></span>
+        <section className="border-y border-black/[0.08] bg-white">
+          <header className="flex flex-col gap-4 border-b border-black/[0.08] px-5 py-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>申请表锁定管理</>} description={<>锁定后，学生端这份申请表的所有资料项目都无法修改，只能查看；解锁后学生可以继续编辑。</>} />
+              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">学生资料 / 管理</p>
+              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">{displayName}</h1>
+              <p className="mt-1 text-[10px] text-zinc-500">{profile.email || `账号 …${studentId.slice(-6)}`} · 最近更新 {formatDate(latestUpdate)}</p>
             </div>
-          </div>
-          {targetApplications.length > 0 ? (
-            <div className="mt-5 grid gap-3">
-              {targetApplications.map((target) => {
-                const targetLocked = target.documents_locked_at !== null;
+            <dl className="flex flex-wrap items-center text-[10px]">
+              {[
+                ["申请单", targets.length],
+                ["资料项目", documents.length],
+                ["已处理", resolvedCount],
+              ].map(([label, value], index) => (
+                <div key={String(label)} className={`min-w-[82px] px-4 ${index > 0 ? "border-l border-black/[0.08]" : ""}`}>
+                  <dt className="text-zinc-400">{label}</dt>
+                  <dd className="mt-0.5 font-mono text-base font-medium tabular-nums text-zinc-950">{value}</dd>
+                </div>
+              ))}
+            </dl>
+          </header>
+
+          <details className="group border-b border-black/[0.08]">
+            <summary className="flex h-11 cursor-pointer list-none items-center gap-2 px-5 text-[11px] font-medium text-zinc-700 hover:bg-zinc-50/60">
+              <ChevronRight className="text-zinc-400 transition group-open:rotate-90" size={13} />
+              <Plus size={12} />新增申请资料项目
+              <span className="ml-auto text-[9px] font-normal text-zinc-400">默认收起</span>
+            </summary>
+            <form action={createApplicationChecklistItemAction.bind(null, studentId)} className="grid border-t border-black/[0.06] bg-zinc-50/45 lg:grid-cols-[minmax(240px,1.2fr)_minmax(220px,1fr)_170px_100px]">
+              <label className="border-b border-black/[0.06] p-3 text-[9px] font-medium uppercase tracking-[0.05em] text-zinc-400 lg:border-b-0 lg:border-r">
+                目标大学申请单
+                <select name="targetId" required className="mt-1.5 h-8 w-full rounded-md border border-black/10 bg-white px-2 text-[11px] font-normal normal-case tracking-normal text-zinc-800 outline-none">
+                  {targets.map((target) => <option key={target.id} value={target.id}>{target.university_name} · {ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请项目"}{target.program_name ? ` · ${target.program_name}` : ""}</option>)}
+                </select>
+              </label>
+              <label className="border-b border-black/[0.06] p-3 text-[9px] font-medium uppercase tracking-[0.05em] text-zinc-400 lg:border-b-0 lg:border-r">
+                资料名称
+                <input name="title" required maxLength={100} placeholder="例如：父母在职证明" className="mt-1.5 h-8 w-full rounded-md border border-black/10 bg-white px-2 text-[11px] font-normal normal-case tracking-normal text-zinc-800 outline-none" />
+              </label>
+              <label className="border-b border-black/[0.06] p-3 text-[9px] font-medium uppercase tracking-[0.05em] text-zinc-400 lg:border-b-0 lg:border-r">
+                资料分类
+                <select name="category" defaultValue="other" className="mt-1.5 h-8 w-full rounded-md border border-black/10 bg-white px-2 text-[11px] font-normal normal-case tracking-normal text-zinc-800 outline-none">
+                  {Object.entries(CATEGORY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+                </select>
+              </label>
+              <div className="flex items-end p-3"><button type="submit" disabled={targets.length === 0} className="h-8 w-full rounded-md bg-zinc-950 text-[10px] font-medium text-white disabled:opacity-35">添加</button></div>
+            </form>
+          </details>
+
+          <div className="overflow-x-auto">
+            <div className="min-w-[1180px]">
+              <div className="grid h-10 grid-cols-[38px_260px_135px_145px_105px_125px_1fr] items-center border-b border-black/[0.08] bg-zinc-50/40 px-3 text-[9px] uppercase tracking-[0.07em] text-zinc-500">
+                <span />
+                <span>目标大学 / 项目</span>
+                <span>资料进度</span>
+                <span>申请阶段</span>
+                <span>审核状态</span>
+                <span>更新时间</span>
+                <span className="text-right">学生端</span>
+              </div>
+
+              {targets.map((target) => {
+                const targetDocuments = documentsByTarget.get(target.id) ?? [];
+                const targetResolved = targetDocuments.filter((document) => document.status !== "preparing").length;
+                const review = REVIEW_META[target.document_review_status];
                 return (
-                  <div key={target.id} className="app-soft-card rounded-2xl border p-4">
-                    <div className="flex flex-wrap items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-black">{target.university_name}</p>
-                        <p className="app-muted-text mt-1 text-xs">{ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</p>
-                        <span
-                          className="mt-2 inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black"
-                          style={targetLocked ? { color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" } : { color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}
-                        >
-                          {targetLocked && <Lock size={10} />}
-                          {targetLocked ? "已锁定" : "未锁定"}
-                        </span>
-                      </div>
-                      <TargetLockButton studentId={studentId} targetId={target.id} locked={targetLocked} />
+                  <details key={target.id} open={query.target === target.id} className="group border-b border-black/[0.08] last:border-b-0">
+                    <summary className="grid h-[52px] cursor-pointer list-none grid-cols-[38px_260px_135px_145px_105px_125px_1fr] items-center px-3 text-[11px] transition hover:bg-zinc-50/60">
+                      <ChevronRight className="text-zinc-400 transition group-open:rotate-90" size={13} />
+                      <span className="min-w-0 pr-4"><b className="block truncate font-medium text-zinc-950">{target.university_name}</b><small className="mt-0.5 block truncate text-[9px] font-normal text-zinc-400">{ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请项目"}{target.program_name ? ` · ${target.program_name}` : ""}</small></span>
+                      <span className="font-mono text-[10px] tabular-nums text-zinc-600">{targetResolved}/{targetDocuments.length}</span>
+                      <span className="truncate pr-3 text-zinc-500">{APPLICATION_STAGE_LABELS[target.application_stage] ?? "阶段待确认"}</span>
+                      <span className={`inline-flex items-center gap-1.5 ${review.text}`}><span className={`size-1.5 rounded-full ${review.dot}`} />{review.label}</span>
+                      <span className="font-mono text-[10px] text-zinc-400">{formatDate(target.updated_at)}</span>
+                      <span className="flex justify-end pr-1 text-zinc-400">{target.documents_locked_at ? <LockKeyhole size={12} /> : <UnlockKeyhole size={12} />}</span>
+                    </summary>
+
+                    <div className="border-t border-black/[0.06] bg-zinc-50/35 px-12 py-3">
+                      <table className="w-full border-collapse text-left text-[10px]">
+                        <thead><tr className="h-8 border-b border-black/[0.06] text-[8px] uppercase tracking-[0.06em] text-zinc-400"><th className="w-[115px] px-2 font-medium">分类</th><th className="w-[230px] px-2 font-medium">资料名称</th><th className="w-[100px] px-2 font-medium">学生状态</th><th className="px-2 font-medium">学生说明 / 管理员备注</th><th className="w-[95px] px-2 font-medium">截止日期</th><th className="w-[205px] px-2 text-right font-medium">操作</th></tr></thead>
+                        <tbody>
+                          {targetDocuments.map((document) => {
+                            const item = ITEM_META[document.status];
+                            const locked = document.admin_locked_at !== null;
+                            return <tr key={document.id} className="min-h-10 border-b border-black/[0.05] last:border-b-0"><td className="px-2 py-2.5 text-zinc-500">{CATEGORY_LABELS[document.category] ?? document.category}</td><td className="px-2 py-2.5 font-medium text-zinc-900">{document.title}</td><td className="px-2 py-2.5"><span className={`inline-flex items-center gap-1.5 ${item.text}`}><span className={`size-1.5 rounded-full ${item.dot}`} />{item.label}</span></td><td className="max-w-[360px] px-2 py-2.5 text-zinc-500"><p className="truncate">{document.notes || "—"}</p>{document.admin_note && <p className="mt-0.5 truncate text-amber-700">审核：{document.admin_note}</p>}</td><td className="px-2 py-2.5 font-mono text-[9px] text-zinc-400">{document.due_date || "—"}</td><td className="px-2 py-2.5"><div className="flex items-center justify-end gap-2"><DocumentItemControls studentId={studentId} documentId={document.id} title={document.title} adminNote={document.admin_note} locked={locked} /><DeleteChecklistItemButton studentId={studentId} documentId={document.id} title={document.title} locked={locked} /></div></td></tr>;
+                          })}
+                          {targetDocuments.length === 0 && <tr><td colSpan={6} className="px-2 py-8 text-center text-zinc-400">这份申请单还没有资料项目</td></tr>}
+                        </tbody>
+                      </table>
+
+                      {target.document_review_note && <div className={`mt-3 border-l-2 px-3 py-2 text-[10px] ${review.text}`}><b>最近审核意见：</b>{target.document_review_note}</div>}
+
+                      <details className="group/settings mt-3 border-t border-black/[0.07]">
+                        <summary className="flex h-10 cursor-pointer list-none items-center gap-2 text-[10px] font-medium text-zinc-600"><ChevronRight className="transition group-open/settings:rotate-90" size={12} />申请进程与寄送设置<span className="ml-auto text-[9px] font-normal text-zinc-400">默认收起</span></summary>
+                        <div className="border-t border-black/[0.06] bg-white px-4 py-4">
+                          <div className="flex items-center justify-between gap-3"><div><p className="text-[10px] font-medium text-zinc-800">学生端资料编辑</p><p className="mt-0.5 text-[9px] text-zinc-400">提交后自动锁定；需要学生修改时，请从资料审核主表执行“退回补充”。</p></div><span className={`inline-flex items-center gap-1.5 text-[10px] font-medium ${target.documents_locked_at ? "text-amber-700" : "text-emerald-700"}`}>{target.documents_locked_at ? <LockKeyhole size={12} /> : <UnlockKeyhole size={12} />}{target.documents_locked_at ? "已锁定" : "可编辑"}</span></div>
+                          <AdminCourierInfoForm studentId={studentId} targetId={target.id} courierMailedAt={target.courier_mailed_at} courierEstimatedArrivalAt={target.courier_estimated_arrival_at} />
+                          <div className="mt-4 border-t border-black/[0.07] pt-4"><AdminApplicationStageControl studentId={studentId} targetId={target.id} stage={target.application_stage} visaApplicationChannel={target.visa_application_channel} /></div>
+                        </div>
+                      </details>
                     </div>
-                    <AdminCourierInfoForm
-                      studentId={studentId}
-                      targetId={target.id}
-                      courierMailedAt={target.courier_mailed_at}
-                      courierEstimatedArrivalAt={target.courier_estimated_arrival_at}
-                    />
-                    <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                      <AdminApplicationStageControl studentId={studentId} targetId={target.id} stage={target.application_stage} visaApplicationChannel={target.visa_application_channel} />
-                    </div>
-                  </div>
+                  </details>
                 );
               })}
+
+              {targets.length === 0 && <div className="py-16 text-center"><FileCheck2 className="mx-auto text-zinc-300" size={24} /><p className="mt-3 text-xs font-medium text-zinc-700">这名学生还没有进入资料准备阶段的申请单</p></div>}
             </div>
-          ) : (
-            <p className="app-muted-text mt-4 text-xs">学生还没有进入「准备资料」的目标大学。</p>
-          )}
+          </div>
         </section>
       </div>
-    </>
+    </div>
   );
 }

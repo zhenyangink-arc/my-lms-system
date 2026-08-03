@@ -25,7 +25,7 @@ function StatusButton({
 
   return (
     <form action={formAction} className="inline-flex flex-col items-start">
-      <button type="submit" disabled={pending} className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black disabled:opacity-50" style={{ color }}>
+      <button type="submit" disabled={pending} className="inline-flex h-7 items-center gap-1.5 border border-black/[0.08] bg-white px-2.5 text-[9px] font-medium disabled:opacity-50" style={{ color }}>
         <Icon size={13} aria-hidden="true" /> {pending ? "处理中…" : label}
       </button>
       {state.status === "error" && <span className="mt-1 text-xs font-bold" style={{ color: "#c94f45" }}>{state.message}</span>}
@@ -35,7 +35,7 @@ function StatusButton({
 
 export function AnnouncementStatusActions({ id, status }: { id: string; status: AnnouncementStatus }) {
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className="flex flex-wrap gap-1">
       {status !== "published" && <StatusButton announcementId={id} status="published" label="发布" tone="accent" />}
       {status !== "draft" && <StatusButton announcementId={id} status="draft" label="转为草稿" tone="muted" />}
       {status !== "archived" && <StatusButton announcementId={id} status="archived" label="归档" tone="warm" />}

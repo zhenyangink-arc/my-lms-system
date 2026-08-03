@@ -35,8 +35,7 @@ function SaveNoteButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-60"
-      style={{ backgroundColor: "var(--app-accent)" }}
+      className="inline-flex h-8 items-center justify-center gap-1.5 rounded-md bg-zinc-950 px-3 text-[10px] font-medium text-white disabled:opacity-60"
     >
       {pending ? "保存中…" : "保存备注"}
     </button>
@@ -62,31 +61,20 @@ function NoteEditDialog({
         type="button"
         disabled={locked}
         title={locked ? "已锁定，请先解锁再修改" : undefined}
-        className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-black disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
+        className="inline-flex items-center gap-1 text-[10px] font-medium text-zinc-500 hover:text-zinc-950 disabled:cursor-not-allowed disabled:opacity-35"
       >
         <MessageSquarePlus size={12} />修改
       </DialogTrigger>
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="font-black">给「{title}」写管理员备注</DialogTitle>
-          <DialogDescription className="leading-6">
+      <DialogContent className="gap-0 overflow-hidden rounded-lg border-black/10 bg-white p-0 sm:max-w-[560px]">
+        <DialogHeader className="border-b border-black/[0.08] px-5 py-4 text-left">
+          <DialogTitle className="text-sm font-semibold">编辑管理员备注</DialogTitle>
+          <DialogDescription className="text-[10px] leading-5">
             管理员备注会显示在学生这项资料卡片下方，用于反馈修改要求或说明情况。
           </DialogDescription>
         </DialogHeader>
-        <form action={updateApplicationChecklistItemNoteAction.bind(null, studentId, documentId)} className="space-y-4">
-          <label className="block text-xs font-black">
-            管理员备注（学生可见）
-            <textarea
-              name="adminNote"
-              maxLength={300}
-              rows={5}
-              defaultValue={adminNote ?? ""}
-              placeholder="例如：护照复印件不清晰，请重新上传扫描件。"
-              className="app-input mt-2 w-full resize-y rounded-xl border px-3 py-3 text-sm leading-6 outline-none"
-            />
-          </label>
-          <div className="flex justify-end">
+        <form action={updateApplicationChecklistItemNoteAction.bind(null, studentId, documentId)}>
+          <table className="w-full border-collapse text-left text-[11px]"><tbody><tr className="border-b border-black/[0.07]"><th className="w-[120px] border-r border-black/[0.07] bg-zinc-50/50 px-4 py-3 align-top text-[9px] font-medium uppercase tracking-[0.06em] text-zinc-500">资料项目</th><td className="px-4 py-3 font-medium text-zinc-900">{title}</td></tr><tr><th className="border-r border-black/[0.07] bg-zinc-50/50 px-4 py-3 align-top text-[9px] font-medium uppercase tracking-[0.06em] text-zinc-500">学生可见备注</th><td className="p-3"><textarea name="adminNote" maxLength={300} rows={5} defaultValue={adminNote ?? ""} placeholder="例如：证明内容不清晰，请重新准备。" className="w-full resize-y rounded-md border border-black/10 bg-white px-3 py-2.5 text-[11px] leading-5 outline-none focus:border-black/25" /></td></tr></tbody></table>
+          <div className="flex justify-end border-t border-black/[0.08] px-5 py-3">
             <SaveNoteButton />
           </div>
         </form>
@@ -101,12 +89,7 @@ function LockToggleButton({ locked }: { locked: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-xs font-black disabled:opacity-60"
-      style={
-        locked
-          ? { color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }
-          : { color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }
-      }
+      className={`inline-flex items-center gap-1 text-[10px] font-medium disabled:opacity-50 ${locked ? "text-amber-700 hover:text-amber-900" : "text-zinc-500 hover:text-zinc-950"}`}
     >
       {locked ? <Unlock size={12} /> : <Lock size={12} />}
       {pending ? "处理中…" : locked ? "解锁" : "锁定"}
@@ -145,7 +128,7 @@ export function DeleteChecklistItemButton({
         type="button"
         disabled={locked}
         title={locked ? "已锁定，请先解锁再删除" : undefined}
-        className="inline-flex items-center gap-1 text-xs font-black text-red-600 disabled:cursor-not-allowed disabled:text-red-300"
+        className="inline-flex items-center gap-1 text-[10px] font-medium text-rose-600 disabled:cursor-not-allowed disabled:text-rose-300"
       >
         <Trash2 size={11} />删除项目
       </AlertDialogTrigger>

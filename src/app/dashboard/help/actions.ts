@@ -2,7 +2,12 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getHelpCenterAccess, requireHelpCenterManager } from "@/lib/help-center";
+import {
+  getHelpCenterAccess,
+  requireHelpArticleManager,
+  requireHelpTicketAssigner,
+  requireHelpTicketHandler,
+} from "@/lib/help-center";
 import type { HelpCenterActionState } from "./action-state";
 import {
   HELP_ARTICLE_CATEGORIES,
@@ -46,7 +51,7 @@ function readArticle(formData: FormData) {
 
 export async function createHelpArticleAction(_state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
-  const { supabase } = await requireHelpCenterManager();
+  const { supabase } = await requireHelpArticleManager();
   const input = readArticle(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const status: HelpArticleStatus = formData.get("intent") === "publish" ? "published" : "draft";
@@ -59,7 +64,7 @@ export async function createHelpArticleAction(_state: HelpCenterActionState, for
 export async function updateHelpArticleAction(articleId: string, _state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
   if (!isUuid(articleId)) return result("error", "文章编号不正确。");
-  const { supabase } = await requireHelpCenterManager();
+  const { supabase } = await requireHelpArticleManager();
   const input = readArticle(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const status = String(formData.get("status") ?? "draft");
@@ -73,7 +78,7 @@ export async function updateHelpArticleAction(articleId: string, _state: HelpCen
 export async function changeHelpArticleStatusAction(articleId: string, nextStatus: HelpArticleStatus, _state: HelpCenterActionState, _formData: FormData): Promise<HelpCenterActionState> {
   void _state; void _formData;
   if (!isUuid(articleId) || !(HELP_ARTICLE_STATUSES as readonly string[]).includes(nextStatus)) return result("error", "文章编号或状态不正确。");
-  const { supabase } = await requireHelpCenterManager();
+  const { supabase } = await requireHelpArticleManager();
   const { error } = await supabase.rpc("change_help_article_status", { p_article_id: articleId, p_status: nextStatus });
   if (error) return result("error", "文章状态更新失败。");
   refreshHelp();
@@ -113,7 +118,7 @@ export async function replyHelpTicketAction(ticketId: string, _state: HelpCenter
 export async function updateHelpTicketAction(ticketId: string, _state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
   if (!isUuid(ticketId)) return result("error", "求助编号不正确。");
-  const { supabase } = await requireHelpCenterManager();
+  const { supabase } = await requireHelpTicketHandler();
   const status = String(formData.get("status") ?? "open");
   const priority = String(formData.get("priority") ?? "normal");
   const resolution = String(formData.get("resolution") ?? "").trim();
@@ -126,27 +131,28 @@ export async function updateHelpTicketAction(ticketId: string, _state: HelpCente
   return result("success", "求助处理状态已经更新。");
 }
 
-export async function grantHelpCenterAdminAction(_state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
+export async function assignHelpTicketAction(ticketId: string, _state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
-  const access = await getHelpCenterAccess();
-  if (!access.canAssignAdmins) return result("error", "只有负责人可以指定帮助中心管理员。");
-  const adminId = String(formData.get("admin_id") ?? "");
-  if (!isUuid(adminId)) return result("error", "请选择需要授权的管理员。");
-  const { data: target, error: targetError } = await access.supabase.from("profiles").select("id,role,status").eq("id", adminId).maybeSingle();
-  if (targetError || !target || target.role !== "admin" || (target.status && target.status !== "active")) return result("error", "只能授权状态正常的管理员账号。");
-  const { error } = await access.supabase.from("help_center_admin_assignments").upsert({ admin_id: adminId, granted_by: access.user.id, granted_at: new Date().toISOString(), revoked_by: null, revoked_at: null }, { onConflict: "tenant_id,admin_id" });
-  if (error) return result("error", "管理员授权失败。");
-  refreshHelp();
-  return result("success", "该管理员已经获得帮助中心后台权限。");
+  if (!isUuid(ticketId)) return result("error", "求助编号不正确。");
+  const { supabase } = await requireHelpTicketAssigner();
+  const teacherId = String(formData.get("teacher_id") ?? "").trim();
+  if (teacherId && !isUuid(teacherId)) return result("error", "请选择有效的负责老师。");
+  const { error } = await supabase.rpc("assign_help_ticket", {
+    p_ticket_id: ticketId,
+    p_teacher_id: teacherId || null,
+  });
+  if (error) return result("error", "工单分配失败，请确认老师仍在本机构任职。");
+  refreshHelp(ticketId);
+  return result("success", teacherId ? "工单已经分配给所选老师。" : "工单已经恢复为待分配状态。");
 }
 
-export async function revokeHelpCenterAdminAction(adminId: string, _state: HelpCenterActionState, _formData: FormData): Promise<HelpCenterActionState> {
-  void _state; void _formData;
+export async function confirmHelpTicketResolvedAction(ticketId: string, _formData: FormData): Promise<void> {
+  void _formData;
+  if (!isUuid(ticketId)) return;
   const access = await getHelpCenterAccess();
-  if (!access.canAssignAdmins) return result("error", "只有负责人可以撤销帮助中心管理员权限。");
-  if (!isUuid(adminId)) return result("error", "管理员编号不正确。");
-  const { data, error } = await access.supabase.from("help_center_admin_assignments").update({ revoked_by: access.user.id, revoked_at: new Date().toISOString() }).eq("admin_id", adminId).is("revoked_at", null).select("admin_id").maybeSingle();
-  if (error || !data) return result("error", "管理员权限撤销失败。");
-  refreshHelp();
-  return result("success", "该管理员的帮助中心后台权限已经撤销。");
+  if (access.role !== "student") return;
+  const { error } = await access.supabase.rpc("confirm_help_ticket_resolved", {
+    p_ticket_id: ticketId,
+  });
+  if (!error) refreshHelp(ticketId);
 }

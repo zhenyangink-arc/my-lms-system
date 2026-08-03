@@ -1,15 +1,5 @@
 import Link from "next/link";
-import {
-  ArrowLeft,
-  ArrowRight,
-  BookOpenCheck,
-  ClipboardList,
-  Clock3,
-  FileText,
-  Layers3,
-  Send,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import {
@@ -36,9 +26,9 @@ import {
   type ReleasePaper,
   type ReleasePaperQuestion,
 } from "./AssessmentPaperReleaseCatalog";
+import { AssessmentPaperQuestionDrawer } from "./AssessmentPaperQuestionDrawer";
 import { AssessmentPaperStatusActions } from "./AssessmentPaperStatusActions";
 import { AssignmentStatusActions } from "./AssignmentStatusActions";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type PaperRow = {
   id: string;
@@ -89,6 +79,11 @@ type SubmissionRow = {
   status: string;
 };
 
+type AssignmentTargetRow = {
+  assignment_id: string;
+  student_id: string;
+};
+
 type CourseRow = {
   id: string;
   title: string;
@@ -126,8 +121,10 @@ const paperStatusTones = {
 
 export async function PaperTypeWorkspace({
   paperType,
+  embedded = false,
 }: {
   paperType: "homework" | "exam";
+  embedded?: boolean;
 }) {
   const access = await requireAssessmentPaperWorkspace();
   const { supabase, canManagePapers, canPublishPapers } = access;
@@ -148,7 +145,7 @@ export async function PaperTypeWorkspace({
       )
       .order("sort_order", { ascending: true }),
     supabase
-      .from("course_tests")
+      .from("chapter_tests")
       .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,status")
       .eq("status", "published")
       .order("chapter_number", { ascending: true }),
@@ -168,7 +165,7 @@ export async function PaperTypeWorkspace({
   let bankQuestions: PaperBankQuestion[] = [];
   if (canManagePapers) {
     const { data } = await supabase
-      .from("course_test_questions")
+      .from("chapter_test_questions")
       .select(
         "id,test_id,question_key,question_type,prompt,options,correct_option,correct_answer,explanation,skill,default_points,difficulty,tags,status,version,sort_order,updated_at"
       )
@@ -188,6 +185,7 @@ export async function PaperTypeWorkspace({
 
   let assignments: AssignmentRow[] = [];
   let submissions: SubmissionRow[] = [];
+  let assignmentTargets: AssignmentTargetRow[] = [];
   let courses: CourseRow[] = [];
   let students: StudentRow[] = [];
   let assignmentReadError = false;
@@ -196,6 +194,7 @@ export async function PaperTypeWorkspace({
     const [
       assignmentsResult,
       submissionsResult,
+      targetsResult,
       coursesResult,
       categoriesResult,
       studentsResult,
@@ -211,6 +210,9 @@ export async function PaperTypeWorkspace({
         .from("learning_submissions")
         .select("assignment_id,student_id,status"),
       supabase
+        .from("learning_assignment_targets")
+        .select("assignment_id,student_id"),
+      supabase
         .from("courses")
         .select("id,title,slug,category_id")
         .eq("is_published", true)
@@ -222,6 +224,7 @@ export async function PaperTypeWorkspace({
     ]);
     assignments = (assignmentsResult.data ?? []) as AssignmentRow[];
     submissions = (submissionsResult.data ?? []) as SubmissionRow[];
+    assignmentTargets = (targetsResult.data ?? []) as AssignmentTargetRow[];
     students = (studentsResult.data ?? []) as StudentRow[];
 
     const allCourses = (coursesResult.data ?? []) as CourseRow[];
@@ -245,6 +248,7 @@ export async function PaperTypeWorkspace({
     assignmentReadError = Boolean(
       assignmentsResult.error ||
         submissionsResult.error ||
+        targetsResult.error ||
         coursesResult.error ||
         categoriesResult.error ||
         studentsResult.error
@@ -268,6 +272,18 @@ export async function PaperTypeWorkspace({
     submissionsByAssignment.set(submission.assignment_id, current);
   });
   const courseNameById = new Map(courses.map((course) => [course.id, course.title]));
+  const studentNameById = new Map(
+    students.map((student) => [
+      student.id,
+      student.full_name?.trim() || student.email || "未填写姓名",
+    ])
+  );
+  const targetsByAssignment = new Map<string, AssignmentTargetRow[]>();
+  assignmentTargets.forEach((target) => {
+    const current = targetsByAssignment.get(target.assignment_id) ?? [];
+    current.push(target);
+    targetsByAssignment.set(target.assignment_id, current);
+  });
 
   const releasePapers: ReleasePaper[] = papers
     .filter((paper) => paper.status === "published")
@@ -301,106 +317,76 @@ export async function PaperTypeWorkspace({
   );
 
   return (
-    <div className="pb-12">
-      <DashboardPageHeader
-        title={`${typeLabel}管理`}
-        description={
-          canManagePapers
-            ? `平台统一制作和管理标准${typeLabel}卷，机构只能整卷选择。`
-            : `从平台标准${typeLabel}卷中选择整套试卷，安排学生和时间后发布。`
-        }
-        action={
-          canManagePapers ? (
-            <AssessmentPaperComposer
-              paperType={paperType}
-              groups={groups.map((group) => ({
-                id: group.id,
-                title: group.title,
-                koreanTitle: group.korean_title,
-                chapterNumber: group.chapter_number,
-              }))}
-              questions={bankQuestions}
-            />
-          ) : undefined
-        }
-      />
+    <div className={embedded ? "" : "pb-12"}>
+      {!embedded && (
+        <DashboardPageHeader
+          title={`${typeLabel}管理`}
+          description={
+            canManagePapers
+              ? `平台统一制作和管理标准${typeLabel}卷，机构只能整卷选择。`
+              : `从平台标准${typeLabel}卷中选择整套试卷，安排学生和时间后发布。`
+          }
+          action={
+            canManagePapers ? (
+              <AssessmentPaperComposer
+                paperType={paperType}
+                groups={groups.map((group) => ({
+                  id: group.id,
+                  title: group.title,
+                  koreanTitle: group.korean_title,
+                  chapterNumber: group.chapter_number,
+                }))}
+                questions={bankQuestions}
+              />
+            ) : undefined
+          }
+        />
+      )}
 
-      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
-        <Link
-          href="/dashboard/admin/assignments"
-          className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
-        >
-          <ArrowLeft size={14} />
-          返回作业考试管理
-        </Link>
+      <div
+        className={`mx-auto w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8 ${
+          embedded ? "" : "mt-5"
+        }`}
+      >
+        {!embedded && (
+          <Link
+            href="/dashboard/admin/assignments"
+            className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+          >
+            <ArrowLeft size={14} />
+            返回作业考试管理
+          </Link>
+        )}
 
-        <section
-          className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6"
-          style={{
-            background:
-              "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-accent-soft))",
-          }}
-        >
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-end">
+        <section className="border-y py-4">
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{
-                  color: "var(--app-accent)",
-                  backgroundColor: "var(--app-accent-soft)",
-                }}
-              >
-                <ShieldCheck size={15} />
-                {canManagePapers ? "平台标准试卷工作台" : "机构整卷发布工作台"}
-              </span>
-              <h2 className="mt-3 text-2xl font-black tracking-tight">
+              <p className="text-sm font-black">
                 {canManagePapers
-                  ? `${typeLabel}卷可以持续新增，不限制为 A—E`
-                  : `机构只能选择完整${typeLabel}卷，不能接触标准题库`}
-              </h2>
-              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">
-                {canManagePapers
-                  ? "试卷发布后会作为固定版本提供给机构；停止提供只阻止新发布，不影响既有学生任务。"
-                  : "预览用于核对题目，发布时只能设置本机构课程、学生范围、开始时间、截止时间和补充通知。"}
+                  ? `平台标准${typeLabel}卷`
+                  : `机构${typeLabel}发布`}
               </p>
             </div>
-            <div className="grid grid-cols-3 gap-3">
+            <dl className="flex flex-wrap items-center gap-y-3 text-sm">
               {[
-                [
-                  canManagePapers ? "机构可用" : "可选试卷",
-                  publishedPaperCount,
-                  Send,
-                ],
-                [
-                  canManagePapers ? "试卷草稿" : "已发布",
-                  canManagePapers ? draftPaperCount : activeAssignmentCount,
-                  Clock3,
-                ],
-                [
-                  canManagePapers ? "全部试卷" : "发布记录",
-                  canManagePapers ? papers.length : assignments.length,
-                  Layers3,
-                ],
-              ].map(([label, value, Icon]) => {
-                const MetricIcon = Icon as typeof Send;
-                return (
-                  <div
-                    key={String(label)}
-                    className="app-card rounded-2xl border p-4 text-center"
-                  >
-                    <MetricIcon
-                      className="mx-auto"
-                      size={17}
-                      style={{ color: "var(--app-accent)" }}
-                    />
-                    <p className="mt-2 text-2xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-[11px] font-black">
-                      {String(label)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+                [canManagePapers ? "全部试卷" : "可选试卷", canManagePapers ? papers.length : publishedPaperCount],
+                [canManagePapers ? "机构可用" : "已发布", canManagePapers ? publishedPaperCount : activeAssignmentCount],
+                [canManagePapers ? "草稿" : "发布记录", canManagePapers ? draftPaperCount : assignments.length],
+              ].map(([label, value], index) => (
+                <div
+                  key={String(label)}
+                  className={`min-w-28 px-5 text-center ${index === 0 ? "" : "border-l"}`}
+                  style={{ borderColor: "var(--app-border-soft)" }}
+                >
+                  <dd className="font-mono text-xl font-bold tabular-nums">
+                    {String(value)}
+                  </dd>
+                  <dt className="app-muted-text mt-0.5 text-[11px]">
+                    {String(label)}
+                  </dt>
+                </div>
+              ))}
+            </dl>
           </div>
         </section>
 
@@ -421,112 +407,139 @@ export async function PaperTypeWorkspace({
         )}
 
         {canManagePapers && (
-          <section className="app-card rounded-3xl border p-4 sm:p-5">
-            <div className="flex flex-wrap items-end justify-between gap-3">
+          <section
+            className="border"
+            style={{
+              borderColor: "var(--app-border)",
+              backgroundColor: "var(--app-card-bg)",
+            }}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3.5">
               <div>
-                <DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-black" title={<>标准{typeLabel}卷</>} description={<>共 {papers.length} 套；点击试卷内容可展开或收起。</>} />
+                <h2 className="text-sm font-black">标准{typeLabel}卷</h2>
+                <p className="app-muted-text mt-0.5 text-[11px]">
+                  共 {papers.length} 套
+                </p>
               </div>
-              <BookOpenCheck
-                size={22}
-                style={{ color: "var(--app-accent)" }}
-              />
-            </div>
-            <div className="mt-5 grid items-start gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {papers.map((paper) => {
-                const group = groupById.get(paper.source_test_id);
-                const tone = paperStatusTones[paper.status];
-                const questions = questionsByPaper.get(paper.id) ?? [];
-                return (
-                  <article
-                    key={paper.id}
-                    className="app-soft-card rounded-3xl border p-5"
-                  >
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                        style={{
-                          color: "var(--app-accent)",
-                          backgroundColor: "var(--app-accent-soft)",
-                        }}
-                      >
-                        {paper.paper_code}
-                      </span>
-                      <span
-                        className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                        style={{
-                          color: tone.color,
-                          backgroundColor: tone.soft,
-                        }}
-                      >
-                        {paperStatusLabels[paper.status]}
-                      </span>
-                      <span className="app-muted-text ml-auto text-[10px] font-black">
-                        v{paper.version}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-lg font-black">{paper.title}</h3>
-                    <p className="app-muted-text mt-1 text-xs">
-                      {group
-                        ? `第${group.chapter_number}章 · ${group.title}`
-                        : "综合题库"}
-                    </p>
-                    <p className="app-muted-text mt-3 line-clamp-2 text-xs leading-5">
-                      {paper.description || "暂未填写试卷说明。"}
-                    </p>
-                    <div className="mt-4 grid grid-cols-3 gap-2">
-                      <div className="app-card rounded-xl border p-2 text-center">
-                        <p className="font-black">{paper.question_count}</p>
-                        <p className="app-muted-text text-[10px]">题目</p>
-                      </div>
-                      <div className="app-card rounded-xl border p-2 text-center">
-                        <p className="font-black">{paper.total_points}</p>
-                        <p className="app-muted-text text-[10px]">总分</p>
-                      </div>
-                      <div className="app-card rounded-xl border p-2 text-center">
-                        <p className="font-black">
-                          {paper.duration_minutes ?? "—"}
-                        </p>
-                        <p className="app-muted-text text-[10px]">分钟</p>
-                      </div>
-                    </div>
-                    <details className="mt-4 rounded-2xl border">
-                      <summary className="cursor-pointer list-none px-4 py-3 text-xs font-black">
-                        查看完整试卷内容
-                      </summary>
-                      <div className="space-y-3 border-t p-3" style={{ borderColor: "var(--app-border-soft)" }}>
-                        {questions.map((question, index) => (
-                          <div
-                            key={question.id}
-                            className="app-card rounded-xl border p-3"
-                          >
-                            <div className="flex justify-between gap-3 text-[10px] font-black">
-                              <span>第 {index + 1} 题</span>
-                              <span style={{ color: "var(--app-secondary)" }}>
-                                {question.points} 分
-                              </span>
-                            </div>
-                            <p className="mt-2 text-xs font-bold leading-5">
-                              {question.prompt}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </details>
-                    <div className="mt-4 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                      <AssessmentPaperStatusActions
-                        paperId={paper.id}
-                        paperType={paperType}
-                        status={paper.status}
-                      />
-                    </div>
-                  </article>
-                );
-              })}
-              {papers.length === 0 && (
-                <div className="app-muted-text col-span-full rounded-3xl border border-dashed p-10 text-center text-sm">
-                  还没有标准{typeLabel}卷，点击右上角开始新增。
-                </div>
+              {embedded && (
+                <AssessmentPaperComposer
+                  paperType={paperType}
+                  groups={groups.map((group) => ({
+                    id: group.id,
+                    title: group.title,
+                    koreanTitle: group.korean_title,
+                    chapterNumber: group.chapter_number,
+                  }))}
+                  questions={bankQuestions}
+                />
               )}
+            </div>
+            <div className="overflow-x-auto">
+              <table className="w-full table-fixed border-collapse text-left">
+                <colgroup>
+                  <col className="w-[17%]" />
+                  <col className="w-[15%]" />
+                  <col className="w-[10%]" />
+                  <col className="w-[7%]" />
+                  <col className="w-[8%]" />
+                  <col className="w-[10%]" />
+                  <col className="w-[6%]" />
+                  <col className="w-[12%]" />
+                  <col className="w-[15%]" />
+                </colgroup>
+                <thead
+                  className="sticky top-0 z-20 backdrop-blur-xl"
+                  style={{
+                    backgroundColor:
+                      "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                  }}
+                >
+                  <tr className="border-b app-muted-text">
+                    {[`${typeLabel}卷`, "来源章节", "题量 / 总分", "时长", "及格线", "状态", "版本", "更新时间", "操作"].map((label, index) => (
+                      <th
+                        key={label}
+                        className={`${index > 0 ? "border-l" : ""} px-3 py-3 text-[11px] font-bold ${index >= 2 && index <= 7 ? "text-center" : index === 8 ? "text-right" : ""}`}
+                      >
+                        {label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {papers.map((paper) => {
+                    const group = groupById.get(paper.source_test_id);
+                    const tone = paperStatusTones[paper.status];
+                    const questions = questionsByPaper.get(paper.id) ?? [];
+                    return (
+                      <tr
+                        key={paper.id}
+                        className="border-b align-middle last:border-b-0 hover:bg-[var(--app-soft-bg)]"
+                        style={{ borderColor: "var(--app-border-soft)" }}
+                      >
+                        <td className="px-3 py-3.5">
+                          <p className="text-sm font-bold">{paper.title}</p>
+                          <p className="app-muted-text mt-0.5 font-mono text-[10px]">
+                            {paper.paper_code}
+                          </p>
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-xs">
+                          {group ? `第${group.chapter_number}章 · ${group.title}` : "综合题库"}
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
+                          {paper.question_count} / {paper.total_points}
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
+                          {paper.duration_minutes ?? "—"}
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
+                          {paper.passing_score ?? "—"}
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center">
+                          <span className="inline-flex items-center gap-1.5 text-[11px] font-bold" style={{ color: tone.color }}>
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.color }} />
+                            {paperStatusLabels[paper.status]}
+                          </span>
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center font-mono text-xs">
+                          v{paper.version}
+                        </td>
+                        <td className="border-l px-3 py-3.5 text-center text-[11px]">
+                          {formatAssignmentDate(paper.updated_at)}
+                        </td>
+                        <td className="border-l px-3 py-3.5">
+                          <div className="flex items-center justify-end gap-2">
+                            <AssessmentPaperQuestionDrawer
+                              title={paper.title}
+                              paperCode={paper.paper_code}
+                              questions={questions.map((question) => ({
+                                id: question.id,
+                                prompt: question.prompt,
+                                options: questionOptions(question.options),
+                                points: Number(question.points),
+                                difficulty: question.difficulty,
+                                skill: question.skill,
+                              }))}
+                            />
+                            <span className="app-muted-text">·</span>
+                            <AssessmentPaperStatusActions
+                              paperId={paper.id}
+                              paperType={paperType}
+                              status={paper.status}
+                            />
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                  {papers.length === 0 && (
+                    <tr>
+                      <td colSpan={9} className="app-muted-text px-5 py-12 text-center text-sm">
+                        还没有标准{typeLabel}卷。
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
             </div>
           </section>
         )}
@@ -552,125 +565,104 @@ export async function PaperTypeWorkspace({
               }))}
             />
 
-            <section className="app-card rounded-3xl border p-4 sm:p-5">
-              <div className="flex items-end justify-between gap-3">
+            <section
+              className="border"
+              style={{
+                borderColor: "var(--app-border)",
+                backgroundColor: "var(--app-card-bg)",
+              }}
+            >
+              <div className="flex items-center justify-between gap-3 border-b px-4 py-3.5">
                 <div>
-                  <DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-black" title={<>本机构发布记录</>} description={<>共 {assignments.length} 个{typeLabel}任务</>} />
+                  <h2 className="text-sm font-black">本机构发布记录</h2>
                 </div>
-                <ClipboardList
-                  size={22}
-                  style={{ color: "var(--app-accent)" }}
-                />
               </div>
-              <div className="mt-5 grid gap-4 xl:grid-cols-2">
-                {assignments.map((assignment) => {
-                  const assignmentSubmissions =
-                    submissionsByAssignment.get(assignment.id) ?? [];
-                  const submittedStudents = new Set(
-                    assignmentSubmissions.map(
-                      (submission) => submission.student_id
-                    )
-                  ).size;
-                  const waiting = assignmentSubmissions.filter(
-                    (submission) => submission.status === "submitted"
-                  ).length;
-                  return (
-                    <article
-                      key={assignment.id}
-                      className="app-soft-card rounded-3xl border p-5"
-                    >
-                      <div className="flex flex-wrap items-center gap-2">
-                        <span
-                          className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                          style={{
-                            color: "var(--app-accent)",
-                            backgroundColor: "var(--app-accent-soft)",
-                          }}
-                        >
-                          {assignment.source_paper_code ?? "历史任务"} · v
-                          {assignment.source_paper_version ?? 1}
-                        </span>
-                        <span
-                          className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                          style={{
-                            color:
-                              assignment.status === "published"
-                                ? "var(--app-success)"
-                                : "var(--app-muted)",
-                            backgroundColor:
-                              assignment.status === "published"
-                                ? "var(--app-success-soft)"
-                                : "var(--app-soft-bg)",
-                          }}
-                        >
-                          {ASSIGNMENT_STATUS_LABELS[assignment.status]}
-                        </span>
-                      </div>
-                      <h3 className="mt-4 text-lg font-black">
-                        {assignment.title}
-                      </h3>
-                      <p className="app-muted-text mt-2 text-xs">
-                        {assignment.course_id
-                          ? courseNameById.get(assignment.course_id) ??
-                            "关联课程"
-                          : "未关联具体课程"}
-                      </p>
-                      <div className="mt-4 grid grid-cols-3 gap-2">
-                        {[
-                          ["提交学生", submittedStudents],
-                          ["待批改", waiting],
-                          ["总分", assignment.total_points],
-                        ].map(([label, value]) => (
-                          <div
-                            key={String(label)}
-                            className="app-card rounded-xl border p-2.5 text-center"
-                          >
-                            <p className="text-lg font-black">
-                              {String(value)}
-                            </p>
-                            <p className="app-muted-text text-[10px]">
-                              {String(label)}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="app-muted-text mt-4 space-y-1 text-xs">
-                        <p>开始：{formatAssignmentDate(assignment.starts_at)}</p>
-                        <p>截止：{formatAssignmentDate(assignment.due_at)}</p>
-                      </div>
-                      <div className="mt-4 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "var(--app-border-soft)" }}>
-                        <AssignmentStatusActions
-                          id={assignment.id}
-                          status={assignment.status}
-                        />
-                        <Link
-                          href={`/dashboard/admin/assignments/${assignment.id}`}
-                          className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-                          style={{ backgroundColor: "var(--app-secondary)" }}
-                        >
-                          查看与批改
-                          <ArrowRight size={13} />
-                        </Link>
-                      </div>
-                    </article>
-                  );
-                })}
-                {assignments.length === 0 && (
-                  <div className="app-muted-text col-span-full rounded-3xl border border-dashed p-10 text-center text-sm">
-                    还没有发布记录，从上方选择一套完整试卷即可发布。
-                  </div>
-                )}
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed border-collapse text-left">
+                  <colgroup>
+                    <col className="w-[17%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[12%]" />
+                    <col className="w-[14%]" />
+                    <col className="w-[15%]" />
+                    <col className="w-[10%]" />
+                    <col className="w-[8%]" />
+                    <col className="w-[14%]" />
+                  </colgroup>
+                  <thead className="sticky top-0 z-20 backdrop-blur-xl" style={{ backgroundColor: "color-mix(in srgb, var(--app-card-bg) 84%, transparent)" }}>
+                    <tr className="border-b app-muted-text">
+                      {["作业任务", "使用试卷", "关联课程", "指向学生", "开始 / 截止", "提交 / 待批改", "状态", "操作"].map((label, index) => (
+                        <th key={label} className={`${index > 0 ? "border-l" : ""} px-3 py-3 text-[11px] font-bold ${index >= 3 && index <= 6 ? "text-center" : index === 7 ? "text-right" : ""}`}>
+                          {label}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {assignments.map((assignment) => {
+                      const assignmentSubmissions = submissionsByAssignment.get(assignment.id) ?? [];
+                      const submittedStudents = new Set(assignmentSubmissions.map((submission) => submission.student_id)).size;
+                      const waiting = assignmentSubmissions.filter((submission) => submission.status === "submitted").length;
+                      const targets = targetsByAssignment.get(assignment.id) ?? [];
+                      const targetLabel =
+                        assignment.target_scope === "all_students"
+                          ? "全部学生"
+                          : targets.length === 0
+                            ? "未找到学生"
+                            : targets.length <= 2
+                              ? targets.map((target) => studentNameById.get(target.student_id) ?? "未知学生").join("、")
+                              : `${targets.map((target) => studentNameById.get(target.student_id) ?? "未知学生").slice(0, 2).join("、")} 等 ${targets.length} 人`;
+                      return (
+                        <tr key={assignment.id} className="border-b align-middle last:border-b-0 hover:bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }}>
+                          <td className="px-3 py-3.5">
+                            <p className="text-sm font-bold">{assignment.title}</p>
+                            <p className="app-muted-text mt-0.5 text-[10px]">{assignment.total_points} 分</p>
+                          </td>
+                          <td className="border-l px-3 py-3.5 font-mono text-[11px]">
+                            {assignment.source_paper_code ?? "历史任务"} · v{assignment.source_paper_version ?? 1}
+                          </td>
+                          <td className="border-l px-3 py-3.5 text-xs">
+                            {assignment.course_id ? courseNameById.get(assignment.course_id) ?? "关联课程" : "未关联课程"}
+                          </td>
+                          <td className="border-l px-3 py-3.5 text-center text-xs">
+                            <span title={targetLabel}>{targetLabel}</span>
+                          </td>
+                          <td className="border-l px-3 py-3.5 text-center text-[11px] leading-5">
+                            <p>{formatAssignmentDate(assignment.starts_at)}</p>
+                            <p className="app-muted-text">{formatAssignmentDate(assignment.due_at)}</p>
+                          </td>
+                          <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
+                            {submittedStudents} / {waiting}
+                          </td>
+                          <td className="border-l px-3 py-3.5 text-center text-[11px] font-bold">
+                            {ASSIGNMENT_STATUS_LABELS[assignment.status]}
+                          </td>
+                          <td className="border-l px-3 py-3.5">
+                            <div className="flex items-center justify-end gap-2">
+                              <AssignmentStatusActions id={assignment.id} status={assignment.status} />
+                              <Link href={`/dashboard/admin/assignments/${assignment.id}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-secondary)] hover:underline">
+                                查看与批改
+                                <ArrowRight size={12} />
+                              </Link>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                    {assignments.length === 0 && (
+                      <tr>
+                        <td colSpan={8} className="app-muted-text px-5 py-12 text-center text-sm">
+                          还没有发布记录，从上方选择一套完整试卷即可发布。
+                        </td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               </div>
             </section>
           </>
         )}
 
-        <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5 app-muted-text">
-          <FileText className="mt-0.5 shrink-0" size={16} />
-          <p>
-            标准题库只对平台试卷管理员开放。机构端只能查看平台已经发布的完整试卷，并创建不可编辑的发布快照。
-          </p>
-        </section>
       </div>
     </div>
   );

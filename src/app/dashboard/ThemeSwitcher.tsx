@@ -14,16 +14,16 @@ const themes = [
     colors: ["#63a867", "#b3936a", "#fcfbf7"],
   },
   {
-    value: "terracotta",
-    label: "宣纸陶土",
-    description: "宣纸米色画布与陶土橘点缀",
-    colors: ["#b07c69", "#8c6f52", "#f9f6f0"],
+    value: "aurora",
+    label: "极光紫",
+    description: "薰衣草画布与紫罗兰点缀",
+    colors: ["#7c6ff0", "#5aa9e6", "#f7f6fb"],
   },
   {
-    value: "chatgpt",
-    label: "清雅",
-    description: "ChatGPT 风格的中性灰与绿色",
-    colors: ["#10a37f", "#ab68ff", "#f7f7f8"],
+    value: "coral",
+    label: "蜜桃珊瑚",
+    description: "胭脂白画布与珊瑚橘点缀",
+    colors: ["#fb7d72", "#f4a6c1", "#fdf6f5"],
   },
 ];
 
@@ -66,7 +66,7 @@ export function ThemeSwitcher() {
   }
 
   return (
-    <div className="hidden items-center gap-1.5 sm:flex" aria-label="界面主题">
+    <div className="flex items-center gap-1.5" aria-label="界面主题">
       {themes.map((item) => (
         <button
           key={item.value}

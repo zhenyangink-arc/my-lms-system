@@ -16,6 +16,7 @@ import {
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
+import { isPlatformCourseAuditorRole } from "@/lib/admin";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -143,7 +144,7 @@ export default async function CategoryPage({
   const { categorySlug } = await params;
 
   const { supabase, user, platformProfile } = await requireActiveUser();
-  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
+  const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
   /**
    * 1. 查询一级课程板块
@@ -423,7 +424,7 @@ export default async function CategoryPage({
                           </div>
                           <div className="mt-4 flex items-center justify-between gap-3 text-xs font-bold app-muted-text">
                             <span>{subcategoryCourses.length} 门课程 · {subcategoryLessons.length} 个课时</span>
-                            <span style={{ color: accent }}>{isPlatformAudit ? "只读巡检" : learningStatusLabelMap[learningStatus]}</span>
+                            <span style={{ color: accent }}>{learningStatusLabelMap[learningStatus]}</span>
                           </div>
                           <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
                             <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
@@ -572,9 +573,7 @@ export default async function CategoryPage({
                 const isInProgress = learningStatus === "in_progress";
 
                 const buttonLabel =
-                  isPlatformAudit
-                    ? "巡检课程"
-                    : totalLessons === 0
+                  totalLessons === 0
                     ? "查看课程"
                     : isCompleted
                       ? "复习课程"

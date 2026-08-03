@@ -39,40 +39,39 @@ export function AdminCourierInfoForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="app-card mt-3 rounded-xl border px-3 py-2.5 text-xs">
-      <div className="flex items-center gap-1.5 font-black">
-        <PackageCheck size={12} style={{ color: "var(--app-accent)" }} />
+    <form onSubmit={handleSubmit} className="mt-4 border-t border-black/[0.07] pt-4 text-[10px]">
+      <div className="flex items-center gap-1.5 font-medium text-zinc-800">
+        <PackageCheck size={12} className="text-zinc-500" />
         中国到韩国材料寄送（管理员可随时修改，保存后同步到学生端）
       </div>
       <div className="mt-2 grid grid-cols-2 gap-2">
-        <label className="block font-black">
+        <label className="block font-medium text-zinc-600">
           快递邮寄时间
           <ChineseDateInput
             value={mailedAt}
             onChange={setMailedAt}
             required
-            className="app-input mt-1 w-full rounded-lg border px-2 py-1.5 text-left text-xs outline-none"
+            className="mt-1.5 w-full rounded-md border border-black/10 bg-white px-2 py-2 text-left text-[10px] outline-none focus:border-black/25"
           />
         </label>
-        <label className="block font-black">
+        <label className="block font-medium text-zinc-600">
           预计到达时间
           <ChineseDateInput
             value={estimatedArrivalAt}
             onChange={setEstimatedArrivalAt}
             required
-            className="app-input mt-1 w-full rounded-lg border px-2 py-1.5 text-left text-xs outline-none"
+            className="mt-1.5 w-full rounded-md border border-black/10 bg-white px-2 py-2 text-left text-[10px] outline-none focus:border-black/25"
           />
         </label>
       </div>
       <button
         type="submit"
         disabled={isPending || !canSubmit}
-        className="mt-2.5 rounded-lg px-3 py-1.5 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-50"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        className="mt-2.5 rounded-md bg-zinc-950 px-3 py-2 text-[10px] font-medium text-white disabled:cursor-not-allowed disabled:opacity-40"
       >
         {isPending ? "保存中…" : "保存并同步到学生端"}
       </button>
-      {error && <p className="mt-2 rounded-lg bg-rose-50 px-2.5 py-1.5 font-bold text-rose-700">{error}</p>}
+      {error && <p className="mt-2 border-l-2 border-rose-400 bg-rose-50 px-2.5 py-1.5 font-medium text-rose-700">{error}</p>}
     </form>
   );
 }

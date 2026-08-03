@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdmin } from "@/lib/admin";
+import {
+  requireUniversityContentManager,
+  requireUniversityDeletionManager,
+} from "@/lib/university-management";
 
 // randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
 const randomUUID = () => crypto.randomUUID();
@@ -13,6 +16,15 @@ const disciplines = ["humanities_social", "science", "natural_sciences", "medici
 const documentCategories = ["identity", "academic", "application", "financial", "language"] as const;
 const visaTypes = ["d4_language", "d2_bachelor", "d2_master", "d2_doctor"] as const;
 const visaStages = ["admission", "identity", "finance", "application", "appointment", "submission", "result", "entry"] as const;
+
+function parseVisaApplicableScopes(visaType: string, formData: FormData) {
+  if (visaType === "d4_language") return ["language"];
+  if (visaType === "d2_master") return ["master"];
+  if (visaType === "d2_doctor") return ["doctor"];
+  const scopes = formData.getAll("applicableScopes").map(String).filter((value) => value === "bachelor_fresh" || value === "bachelor_transfer");
+  if (scopes.length === 0) throw new Error("D-2 本科签证要求至少选择本科新入或本科插班。");
+  return [...new Set(scopes)];
+}
 
 function optionalInteger(value: FormDataEntryValue | null) {
   if (value === null || String(value).trim() === "") return null;
@@ -126,7 +138,7 @@ function parseUniversityForm(formData: FormData) {
 
 /** 管理员新增大学，技术标识由服务端自动生成，不暴露英文配置。 */
 export async function createUniversityAction(formData: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const payload = parseUniversityForm(formData);
   const { error } = await supabase.from("korean_universities").insert({
     ...payload,
@@ -140,7 +152,7 @@ export async function createUniversityAction(formData: FormData) {
 
 /** 管理员修正学校介绍、地区、学费、排名和筛选标签。 */
 export async function updateUniversityAction(universityId: string, formData: FormData) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const payload = parseUniversityForm(formData);
   const { error } = await supabase
     .from("korean_universities")
@@ -153,7 +165,16 @@ export async function updateUniversityAction(universityId: string, formData: For
 
 /** 管理员永久删除大学及其关联专业、对比和评估记录。 */
 export async function deleteUniversityAction(universityId: string) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityDeletionManager();
+  const [targets, comparisons, assessments] = await Promise.all([
+    supabase.from("student_university_targets").select("id", { count: "exact", head: true }).eq("university_id", universityId),
+    supabase.from("student_university_comparisons").select("id", { count: "exact", head: true }).eq("university_id", universityId),
+    supabase.from("student_university_assessments").select("id", { count: "exact", head: true }).eq("university_id", universityId),
+  ]);
+  const relatedCount = (targets.count ?? 0) + (comparisons.count ?? 0) + (assessments.count ?? 0);
+  if (relatedCount > 0) {
+    throw new Error("该大学仍有关联学生记录，请先停止展示，不能永久删除。");
+  }
   const { data, error } = await supabase
     .from("korean_universities")
     .delete()
@@ -168,7 +189,7 @@ export async function deleteUniversityAction(universityId: string) {
 
 /** “停止展示”保留历史目标和评估记录，比直接删除学校数据更安全。 */
 export async function toggleUniversityPublishedAction(universityId: string, nextPublished: boolean) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const { error } = await supabase
     .from("korean_universities")
     .update({ is_published: nextPublished })
@@ -185,7 +206,7 @@ export async function createUniversityDocumentRequirementAction(
   category: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
 
@@ -279,7 +300,7 @@ export async function updateUniversityDocumentRequirementAction(
   requirementId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const title = String(formData.get("title") ?? "").trim();
   const category = String(formData.get("category") ?? "");
   const description = String(formData.get("description") ?? "").trim();
@@ -360,7 +381,7 @@ export async function moveUniversityDocumentRequirementAction(
   requirementId: string,
   direction: "up" | "down"
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   if (direction !== "up" && direction !== "down") {
     throw new Error("申请资料排序方向无效。");
   }
@@ -414,7 +435,7 @@ export async function deleteUniversityDocumentRequirementAction(
   universityId: string,
   requirementId: string
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const { data, error } = await supabase
     .from("university_application_document_requirements")
     .update({ is_active: false })
@@ -435,13 +456,14 @@ export async function createUniversityVisaRequirementAction(
   stage: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
 
   if (!visaTypes.includes(visaType as (typeof visaTypes)[number])) {
     throw new Error("签证类型无效。");
   }
+  const applicableScopes = parseVisaApplicableScopes(visaType, formData);
   if (!visaStages.includes(stage as (typeof visaStages)[number])) {
     throw new Error("签证资料阶段无效。");
   }
@@ -479,7 +501,7 @@ export async function createUniversityVisaRequirementAction(
   if (existing) {
     const { error } = await supabase
       .from("university_visa_application_requirements")
-      .update({ is_active: true, title, description: description || null })
+      .update({ is_active: true, title, description: description || null, applicable_scopes: applicableScopes })
       .eq("id", existing.id)
       .eq("university_id", universityId);
 
@@ -510,6 +532,7 @@ export async function createUniversityVisaRequirementAction(
       stage,
       title,
       description: description || null,
+      applicable_scopes: applicableScopes,
       sort_order: (lastRequirement?.sort_order ?? 0) + 10,
     });
 
@@ -522,7 +545,7 @@ export async function updateUniversityVisaRequirementAction(
   requirementId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const title = String(formData.get("title") ?? "").trim();
   const stage = String(formData.get("stage") ?? "");
   const description = String(formData.get("description") ?? "").trim();
@@ -547,6 +570,7 @@ export async function updateUniversityVisaRequirementAction(
 
   if (currentError) throw new Error(`签证资料读取失败：${currentError.message}`);
   if (!current) throw new Error("签证资料不存在或已经删除。");
+  const applicableScopes = parseVisaApplicableScopes(current.visa_type, formData);
 
   const { data: stageRequirements, error: duplicateError } = await supabase
     .from("university_visa_application_requirements")
@@ -584,7 +608,7 @@ export async function updateUniversityVisaRequirementAction(
 
   const { data, error } = await supabase
     .from("university_visa_application_requirements")
-    .update({ title, stage, description: description || null, sort_order: sortOrder })
+    .update({ title, stage, description: description || null, applicable_scopes: applicableScopes, sort_order: sortOrder })
     .eq("id", requirementId)
     .eq("university_id", universityId)
     .eq("is_active", true)
@@ -601,7 +625,7 @@ export async function moveUniversityVisaRequirementAction(
   requirementId: string,
   direction: "up" | "down"
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   if (direction !== "up" && direction !== "down") throw new Error("签证资料排序方向无效。");
 
   const { data: current, error: currentError } = await supabase
@@ -652,7 +676,7 @@ export async function deleteUniversityVisaRequirementAction(
   universityId: string,
   requirementId: string
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireUniversityContentManager();
   const { data, error } = await supabase
     .from("university_visa_application_requirements")
     .update({ is_active: false })

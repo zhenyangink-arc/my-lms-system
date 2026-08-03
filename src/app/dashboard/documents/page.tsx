@@ -137,11 +137,6 @@ export default async function DocumentsPage({
   if (!selectedTarget) {
     return (
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-hero-end))" }}>
-          <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}><Sparkles size={14} />申请资料中心</span>
-          <DashboardTitleWithHint className="mt-3" title="按目标大学准备申请资料" description="目标大学进入“准备资料”后，会在这里生成对应阶段的申请表。点击申请表逐项确认准备进度。" />
-        </section>
-
         {(documentsResult.error || targetsResult.error) && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>申请表暂时无法读取，请稍后重试。</section>}
 
         {targetApplications.length > 0 ? (

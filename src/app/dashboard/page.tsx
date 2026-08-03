@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   Award,
   ArrowRight,
@@ -7,7 +8,6 @@ import {
   BookOpen,
   CalendarDays,
   CheckCircle2,
-  Compass,
   ClipboardList,
   FileCheck2,
   Flame,
@@ -27,6 +27,7 @@ import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { createClient } from "@/lib/supabase/server";
 import { getAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 
 
 type LessonProgressRow = {
@@ -170,7 +171,18 @@ function calculateStreak(completedDateStrings: string[]) {
 
 export default async function DashboardPage() {
   const auth = await requireActiveUser();
-  const isPlatformAudit = auth.platformProfile?.role === "platform_super_admin";
+  const userRole = auth.profile?.role ?? "student";
+  const organizationName = auth.tenant?.name?.trim() || "平台";
+
+  if (userRole !== "student" && userRole !== "platform_course_inspector") {
+    redirect(
+      scopeDashboardPath(
+        "/dashboard/admin",
+        getDashboardBasePath(auth.tenant?.slug)
+      )
+    );
+  }
+
   const supabase = await createClient();
   const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
 
@@ -187,7 +199,6 @@ export default async function DashboardPage() {
   let thisWeekCompletedCount = 0;
   let hero: ActivityItem | null = null;
   let reminders: ReminderItem[] = [];
-  let recommendedCourses: { id: string; title: string; level: string | null; href: string | null }[] = [];
   const heatmapDays: { dateString: string; count: number }[] = [];
   let courseProgressList: CourseProgressItem[] = [];
 
@@ -272,7 +283,6 @@ export default async function DashboardPage() {
     const touchedCourseIdsInOrder = [
       ...new Set(sortedByRecent.map((row) => row.course_id)),
     ];
-    const touchedCourseIds = new Set(touchedCourseIdsInOrder);
 
     const lessonIdsNeeded = [
       ...new Set([
@@ -440,16 +450,6 @@ export default async function DashboardPage() {
       });
     }
 
-    recommendedCourses = allCourses
-      .filter((course) => !touchedCourseIds.has(course.id))
-      .slice(0, 3)
-      .map((course) => ({
-        id: course.id,
-        title: course.title,
-        level: course.level,
-        href: buildCourseHref(course.id),
-      }));
-
     const { data: answeredQuestionsData } = await supabase
       .from("lesson_questions")
       .select(
@@ -509,40 +509,6 @@ export default async function DashboardPage() {
   const ringRadius = 42;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
-
-  // 本周学习节奏图表：用真实的近七天完成课时数据画出平滑折线，呼应 iBanko 的 Money Flow 图表。
-  const weeklyChartWidth = 640;
-  const weeklyChartHeight = 180;
-  const weeklyChartPadX = 16;
-  const weeklyChartPadTop = 34;
-  const weeklyChartPadBottom = 26;
-  const weeklyPlotWidth = weeklyChartWidth - weeklyChartPadX * 2;
-  const weeklyPlotHeight = weeklyChartHeight - weeklyChartPadTop - weeklyChartPadBottom;
-
-  const weeklyPoints = heatmapDays.map((day, index) => {
-    const x =
-      heatmapDays.length > 1
-        ? weeklyChartPadX + (index / (heatmapDays.length - 1)) * weeklyPlotWidth
-        : weeklyChartPadX + weeklyPlotWidth / 2;
-    const y =
-      weeklyChartPadTop + weeklyPlotHeight - (day.count / maxHeatmapCount) * weeklyPlotHeight;
-    return { x, y, day };
-  });
-
-  const weeklyLinePath = weeklyPoints
-    .map((point, index) => `${index === 0 ? "M" : "L"} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`)
-    .join(" ");
-
-  const weeklyAreaBaseline = weeklyChartHeight - weeklyChartPadBottom;
-  const weeklyAreaPath =
-    weeklyPoints.length > 0
-      ? `${weeklyLinePath} L ${weeklyPoints[weeklyPoints.length - 1].x.toFixed(1)} ${weeklyAreaBaseline} L ${weeklyPoints[0].x.toFixed(1)} ${weeklyAreaBaseline} Z`
-      : "";
-
-  const weeklyPeakPoint = weeklyPoints.reduce(
-    (peak, point) => (point.day.count > peak.day.count ? point : peak),
-    weeklyPoints[0]
-  );
   const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
 
   const overviewStats = [
@@ -652,16 +618,17 @@ export default async function DashboardPage() {
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      {isPlatformAudit && <section className="rounded-2xl border p-4" style={{ borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><div className="flex items-start gap-3"><ShieldCheck className="mt-0.5 shrink-0" size={18} style={{ color: "var(--app-accent)" }} /><div><p className="text-sm font-black">学生端前台巡检</p><p className="app-muted-text mt-1 text-xs leading-5">你看到的是学生端真实界面，但平台负责人不会被当作学生，也不会产生学习进度、提问或提交记录。</p></div></div></section>}
+      {/* Bento 网格：每张卡片各占独立格子，桌面端 3 列，卡片按 1/2 列宽拼接。 */}
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:grid-flow-dense">
+      <div className="grid grid-cols-1 gap-5 md:col-span-3 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
       {/* 首屏只强调一个下一步，让用户打开控制台后马上知道该做什么。跟其他卡片一样走浅色玻璃质感，不用突兀的深色板块，也不加装饰色块。 */}
       <section
-        className="app-card relative overflow-hidden rounded-3xl border p-4 sm:p-5 lg:p-3 lg:pl-8"
+        className="app-glass-card relative overflow-hidden rounded-3xl p-4 sm:p-5"
         style={{
           background:
             "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
         }}
       >
-        <div className="relative grid items-stretch gap-6 lg:grid-cols-[1fr_330px]">
           <div>
             <span
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold"
@@ -672,21 +639,16 @@ export default async function DashboardPage() {
               }}
             >
               <Sparkles size={14} aria-hidden="true" />
-              {isPlatformAudit ? "前台体验巡检" : "今日成长计划"}
+              {organizationName}
             </span>
             <DashboardTitleWithHint
               className="mt-5"
+              headingLevel={2}
               titleClassName="max-w-2xl text-2xl font-black tracking-tight"
-              title={
-                isPlatformAudit
-                  ? "以学生看到的真实界面检查平台内容"
-                  : "让今天的学习，继续靠近你的韩国留学目标"
-              }
+              title="让今天的学习，继续靠近你的韩国留学目标"
               description={
                 <>
-                  {isPlatformAudit
-                    ? "平台负责人 · 上帝视角"
-                    : `${getGreeting()}，${studentName}`}
+                  {`${getGreeting()}，${studentName}`}
                   {!hero &&
                     "。你的学习档案已经准备好。选择第一门课程，我们会从第一节课开始记录成长。"}
                 </>
@@ -729,78 +691,54 @@ export default async function DashboardPage() {
               </div>
             )}
           </div>
+      </section>
 
-          <div className="grid h-full grid-cols-[118px_1fr] items-center gap-5 lg:border-l lg:pl-8" style={{ borderColor: "var(--app-border)" }}>
-            <div className="relative h-[108px] w-[108px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
-              <svg width="108" height="108" viewBox="0 0 100 100" className="-rotate-90">
-                <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="9" />
-                <circle
-                  cx="50"
-                  cy="50"
-                  r={ringRadius}
-                  fill="none"
-                  stroke="var(--app-success)"
-                  strokeWidth="9"
-                  strokeDasharray={ringCircumference}
-                  strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span className="absolute inset-0 flex flex-col items-center justify-center">
-                <strong className="text-xl font-black">{overallProgressPercent}%</strong>
-                <span className="text-xs app-muted-text">综合完成度</span>
-              </span>
-            </div>
-            <div>
-              <p className="text-xs font-bold app-muted-text">成长概览</p>
-              <p className="mt-1 text-2xl font-black">{completedLessonsCount}</p>
-              <p className="text-xs app-muted-text">累计完成课时</p>
-              <div className="mt-3 border-t pt-3" style={{ borderColor: "var(--app-border)" }}>
-                <p className="text-xs app-muted-text">本周已完成</p>
-                <p className="mt-0.5 font-black" style={{ color: "var(--app-success)" }}>
-                  {thisWeekCompletedCount} 个课时
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* 综合完成度圆环：从首屏卡片里拆出来，独立成一个 Bento 格子。 */}
+      <section className="app-glass-card grid grid-cols-[104px_minmax(0,1fr)_minmax(0,1fr)] grid-rows-2 items-center rounded-3xl p-3 text-center sm:grid-cols-[128px_minmax(0,1fr)_minmax(0,1fr)] sm:p-5" aria-label="学习完成概览">
+        <div className="relative row-span-2 h-[88px] w-[88px] self-center sm:h-[108px] sm:w-[108px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
+          <svg width="100%" height="100%" viewBox="0 0 100 100" className="-rotate-90">
+            <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="9" />
+            <circle
+              cx="50"
+              cy="50"
+              r={ringRadius}
+              fill="none"
+              stroke="var(--app-success)"
+              strokeWidth="9"
+              strokeDasharray={ringCircumference}
+              strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)}
+              strokeLinecap="round"
+            />
+          </svg>
+          <span className="absolute inset-0 flex flex-col items-center justify-center">
+            <strong className="text-lg font-black sm:text-xl">{overallProgressPercent}%</strong>
+            <span className="text-[10px] app-muted-text sm:text-xs">综合完成度</span>
+          </span>
+        </div>
+        <div className="min-w-0 border-l px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
+          <p className="text-[11px] font-bold app-muted-text sm:text-xs">累计完成课时</p>
+          <p className="mt-1 text-xl font-black sm:text-2xl">{completedLessonsCount}</p>
+        </div>
+        <div className="min-w-0 border-l px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
+          <p className="text-[11px] font-bold app-muted-text sm:text-xs">进行中课时</p>
+          <p className="mt-1 text-xl font-black sm:text-2xl" style={{ color: "var(--app-accent-strong)" }}>{inProgressLessonsCount}</p>
+        </div>
+        <div className="min-w-0 border-l border-t px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
+          <p className="text-[11px] font-bold app-muted-text sm:text-xs">本周已完成</p>
+          <p className="mt-1 text-lg font-black sm:text-xl" style={{ color: "var(--app-success)" }}>
+            {thisWeekCompletedCount} <span className="text-xs sm:text-sm">个课时</span>
+          </p>
+        </div>
+        <div className="min-w-0 border-l border-t px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
+          <p className="text-[11px] font-bold app-muted-text sm:text-xs">学习天数</p>
+          <p className="mt-1 text-lg font-black sm:text-xl" style={{ color: "var(--app-warm)" }}>
+            {streakDays} <span className="text-xs sm:text-sm">天</span>
+          </p>
         </div>
       </section>
+      </div>
 
-      <section className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:max-w-[50%]" aria-label="学习数据概览">
-        {overviewStats.map((item) => {
-          const Icon = item.icon;
-          return (
-            <div
-              key={item.label}
-              className="rounded-2xl p-4 sm:p-3"
-              style={{ backgroundColor: item.softColor, boxShadow: "var(--app-shadow)" }}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="text-xs font-bold" style={{ color: item.color }}>
-                    {item.label}
-                  </p>
-                  <p className="mt-2 text-2xl font-black" style={{ color: "var(--app-text)" }}>
-                    {item.value}
-                    <span className="ml-1 text-xs font-bold app-muted-text">{item.suffix}</span>
-                  </p>
-                </div>
-                <span
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl"
-                  style={{ color: item.color, backgroundColor: "rgba(255, 255, 255, 0.65)" }}
-                >
-                  <Icon size={19} aria-hidden="true" />
-                </span>
-              </div>
-            </div>
-          );
-        })}
-      </section>
-
-      {/* 参考 iBanko：主内容占据更宽的左列，右侧留出常驻的窄栏放需要关注的信息。 */}
-      <div className="grid gap-5 xl:grid-cols-3">
-        <div className="space-y-5 xl:col-span-2">
-          <section className="app-card rounded-3xl border p-4 sm:p-5">
+          <section className="app-glass-card order-1 rounded-3xl p-4 sm:p-5">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <p className="text-lg font-black">课程成长进度</p>
@@ -866,7 +804,7 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <section className="app-card rounded-3xl border p-4 sm:p-5">
+          <section className="app-glass-card order-2 rounded-3xl p-4 sm:p-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p className="text-lg font-black">本周学习节奏</p>
@@ -880,75 +818,35 @@ export default async function DashboardPage() {
             </div>
 
             {hasWeeklyActivity ? (
-              <div className="relative mt-6">
-                {weeklyPeakPoint && weeklyPeakPoint.day.count > 0 && (
-                  <div
-                    className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-full px-3 py-1.5 text-xs font-black shadow-lg"
-                    style={{
-                      left: `${(weeklyPeakPoint.x / weeklyChartWidth) * 100}%`,
-                      top: `${(weeklyPeakPoint.y / weeklyChartHeight) * 100}%`,
-                      marginTop: "-8px",
-                      backgroundColor: "var(--app-text)",
-                      color: "var(--app-card-bg)",
-                    }}
-                  >
-                    {weeklyPeakPoint.day.count} 课时
-                  </div>
-                )}
-                <svg
-                  viewBox={`0 0 ${weeklyChartWidth} ${weeklyChartHeight}`}
-                  preserveAspectRatio="none"
-                  className="h-56 w-full overflow-visible"
-                  role="img"
-                  aria-label="近七天完成课时折线图"
-                >
-                  <defs>
-                    <linearGradient id="weeklyRhythmArea" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--app-accent)" stopOpacity="0.3" />
-                      <stop offset="100%" stopColor="var(--app-accent)" stopOpacity="0" />
-                    </linearGradient>
-                  </defs>
-                  <path d={weeklyAreaPath} fill="url(#weeklyRhythmArea)" stroke="none" />
-                  <path
-                    d={weeklyLinePath}
-                    fill="none"
-                    stroke="var(--app-accent)"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  {weeklyPoints.map((point) => (
-                    <circle
-                      key={point.day.dateString}
-                      cx={point.x}
-                      cy={point.y}
-                      r={point.day.dateString === weeklyPeakPoint.day.dateString ? 5 : 3.5}
-                      fill={point.day.count > 0 ? "var(--app-accent)" : "var(--app-card-bg)"}
-                      stroke="var(--app-accent)"
-                      strokeWidth="2"
-                    >
-                      <title>{`${point.day.dateString} · 完成 ${point.day.count} 个课时`}</title>
-                    </circle>
-                  ))}
-                </svg>
-                <div className="mt-2 flex items-center justify-between">
-                  {heatmapDays.map((day) => {
-                    const weekdayLabel = new Intl.DateTimeFormat("zh-CN", {
-                      timeZone: "Asia/Seoul",
-                      weekday: "narrow",
-                    }).format(new Date(`${day.dateString}T12:00:00Z`));
+              <div className="mt-6 flex items-end justify-between gap-2 px-1">
+                {heatmapDays.map((day) => {
+                  const weekdayLabel = new Intl.DateTimeFormat("zh-CN", {
+                    timeZone: "Asia/Seoul",
+                    weekday: "narrow",
+                  }).format(new Date(`${day.dateString}T12:00:00Z`));
+                  const barHeightPercent = Math.max(6, (day.count / maxHeatmapCount) * 100);
 
-                    return (
-                      <time
-                        key={day.dateString}
-                        dateTime={day.dateString}
-                        className="flex-1 text-center text-xs font-bold app-muted-text"
+                  return (
+                    <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
+                      <div
+                        className="flex h-40 w-full max-w-9 items-end overflow-hidden rounded-2xl"
+                        style={{ backgroundColor: "var(--app-soft-bg)" }}
+                        title={`${day.dateString} · 完成 ${day.count} 个课时`}
                       >
+                        <div
+                          className="w-full rounded-2xl transition-[height]"
+                          style={{
+                            height: `${day.count > 0 ? barHeightPercent : 0}%`,
+                            backgroundColor: "var(--app-accent)",
+                          }}
+                        />
+                      </div>
+                      <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">
                         {weekdayLabel}
                       </time>
-                    );
-                  })}
-                </div>
+                    </div>
+                  );
+                })}
               </div>
             ) : (
               <div className="app-empty-state mt-6 flex min-h-40 flex-col items-center justify-center rounded-2xl p-5 text-center">
@@ -964,40 +862,51 @@ export default async function DashboardPage() {
             </div>
           </section>
 
-          <section className="app-card rounded-3xl border p-4 sm:p-5">
-            <div className="mb-5">
-              <p className="text-lg font-black">韩国留学准备路线</p>
+          <Link
+            href="/dashboard/universities"
+            className="app-glass-card group order-4 flex flex-col justify-between rounded-3xl p-4 sm:p-5"
+            aria-label="查看韩国留学准备路线"
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+              >
+                <Target size={16} aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-black">韩国留学准备路线</p>
+                <p className="mt-0.5 text-[10px] font-bold app-muted-text">三步规划</p>
+              </div>
+              <ArrowRight size={16} className="shrink-0 app-muted-text transition group-hover:translate-x-0.5" aria-hidden="true" />
             </div>
-            <div className="grid gap-3 md:grid-cols-3">
-              {studyAbroadSteps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <Link
-                    key={step.href}
-                    href={step.href}
-                    className="app-tile group relative overflow-hidden rounded-2xl border p-4 transition hover:-translate-y-1"
-                  >
-                    {index < studyAbroadSteps.length - 1 && (
-                      <span className="absolute right-3 top-4 hidden text-lg app-muted-text md:block">→</span>
-                    )}
-                    <span
-                      className="flex h-10 w-10 items-center justify-center rounded-2xl"
-                      style={{
-                        color: index === 0 ? "var(--app-secondary)" : index === 1 ? "var(--app-accent)" : "var(--app-success)",
-                        backgroundColor: index === 0 ? "var(--app-secondary-soft)" : index === 1 ? "var(--app-accent-soft)" : "var(--app-success-soft)",
-                      }}
-                    >
-                      <Icon size={18} aria-hidden="true" />
-                    </span>
-                    <span className="mt-4 block text-xs font-black tracking-[0.16em] app-muted-text">{step.label}</span>
-                    <span className="mt-1 block text-sm font-black">{step.title}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
 
-          <section className="app-card rounded-3xl border p-4 sm:p-5">
+            <div className="mt-5 flex items-center" aria-label="留学准备路线进度">
+              {studyAbroadSteps.map((step, index) => (
+                <div key={step.title} className="flex min-w-0 flex-1 items-center">
+                  <div className="flex min-w-0 flex-col items-center justify-center text-center">
+                    <span
+                      className="mx-auto block h-2.5 w-2.5 rounded-full"
+                      style={{
+                        backgroundColor: index === 0 ? "var(--app-accent)" : "var(--app-border)",
+                        boxShadow: index === 0 ? "0 0 0 4px var(--app-accent-soft)" : "none",
+                      }}
+                    />
+                    <span className="mt-2 block text-[10px] font-bold leading-4 app-muted-text">{step.title}</span>
+                  </div>
+                  {index < studyAbroadSteps.length - 1 && (
+                    <span className="h-px flex-1" style={{ backgroundColor: "var(--app-border)" }} />
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <p className="mt-4 text-xs font-bold" style={{ color: "var(--app-accent-strong)" }}>
+              从目标院校开始准备
+            </p>
+          </Link>
+
+          <section className="app-glass-card order-4 rounded-3xl p-4 sm:p-5 md:col-span-2">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-lg font-black">成长工具箱</p>
@@ -1032,7 +941,7 @@ export default async function DashboardPage() {
           </section>
 
           {recentActivity.length > 0 && (
-            <section className="app-card rounded-3xl border p-4 sm:p-5">
+            <section className="app-glass-card order-4 rounded-3xl p-4 sm:p-5 md:col-span-3">
               <div className="mb-4 flex items-center gap-2">
                 <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
                 <p className="text-lg font-black">最近学习记录</p>
@@ -1064,11 +973,8 @@ export default async function DashboardPage() {
               </div>
             </section>
           )}
-        </div>
 
-        {/* 常驻右侧窄栏：呼应 iBanko 右列一直可见的 Transactions / Available Card。 */}
-        <div className="space-y-5 xl:col-span-1 xl:sticky xl:top-[92px] xl:self-start">
-          <section id="reminders" className="app-card scroll-mt-24 rounded-3xl border p-4 sm:p-5">
+          <section id="reminders" className="app-glass-card order-3 scroll-mt-24 rounded-3xl p-4 sm:p-5">
             <div className="mb-5 flex items-start justify-between gap-4">
               <div>
                 <p className="text-lg font-black">需要你关注</p>
@@ -1123,32 +1029,6 @@ export default async function DashboardPage() {
               </div>
             )}
           </section>
-
-          {recommendedCourses.length > 0 && (
-            <section className="app-card rounded-3xl border p-4 sm:p-5">
-              <div className="mb-4 flex items-center gap-2">
-                <Compass size={18} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-                <p className="text-lg font-black">为你推荐</p>
-              </div>
-              <div className="divide-y app-divider">
-                {recommendedCourses.map((course) => {
-                  const content = (
-                    <div className="app-flat-row flex items-center gap-3 rounded-xl p-2.5">
-                      <BookOpen size={17} className="shrink-0" style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                      <span className="min-w-0 flex-1 truncate text-sm font-black">{course.title}</span>
-                      {course.level && <span className="shrink-0 text-xs font-bold app-muted-text">{course.level}</span>}
-                    </div>
-                  );
-                  return course.href ? (
-                    <Link key={course.id} href={course.href}>{content}</Link>
-                  ) : (
-                    <div key={course.id}>{content}</div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-        </div>
       </div>
     </div>
   );

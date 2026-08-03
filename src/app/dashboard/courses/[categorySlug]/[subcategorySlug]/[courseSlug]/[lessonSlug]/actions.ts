@@ -16,7 +16,10 @@ export async function saveKoreanEbookProgressAction(input: {
   totalPages: number;
   readPages?: number[];
 }) {
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user, profile } = await requireActiveUser();
+  if (profile?.role === "platform_course_inspector") {
+    return { status: "success" as const };
+  }
   const testSlug = String(input.testSlug ?? "").trim();
   const currentPage = Math.max(0, Math.floor(Number(input.currentPage)));
   const totalPages = Math.max(1, Math.floor(Number(input.totalPages)));
@@ -43,7 +46,7 @@ export async function saveKoreanEbookProgressAction(input: {
 
   const admin = createAdminClient();
   const { data: test } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select("slug")
     .eq("slug", testSlug)
     .in("course_key", ["hangul-introduction", "korean-level-one"])
@@ -105,7 +108,7 @@ export async function checkKoreanBookReviewAnswer(
 
   const admin = createAdminClient();
   const { data: test } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select("id,lesson_id")
     .eq("slug", testSlug)
     .eq("status", "published")
@@ -133,7 +136,7 @@ export async function checkKoreanBookReviewAnswer(
   }
 
   const { data: question } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select("options,correct_option")
     .eq("test_id", test.id)
     .eq("question_key", questionKey)

@@ -1,11 +1,7 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BarChart3,
-  BookMarked,
   Building2,
-  CheckCircle2,
-  Compass,
   GraduationCap,
   LibraryBig,
   Scale,
@@ -46,7 +42,7 @@ const statusLabels: Record<string, string> = {
 
 export default async function UniversitiesPage() {
   const { supabase, user } = await requireActiveUser();
-  const [targetsResult, comparisonsResult, universitiesResult, assessmentsResult] =
+  const [targetsResult, comparisonsResult, universitiesResult] =
     await Promise.all([
       supabase
         .from("student_university_targets")
@@ -62,17 +58,11 @@ export default async function UniversitiesPage() {
         .from("korean_universities")
         .select("id", { count: "exact", head: true })
         .eq("is_published", true),
-      supabase
-        .from("student_university_assessments")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id),
     ]);
 
   const targets = (targetsResult.data ?? []) as TargetPreview[];
   const compareCount = comparisonsResult.count ?? 0;
   const universityCount = universitiesResult.count ?? 0;
-  const assessmentCount = assessmentsResult.count ?? 0;
-  const offerCount = targets.filter((target) => target.status === "offer").length;
 
   const entrances = [
     {
@@ -107,35 +97,6 @@ export default async function UniversitiesPage() {
   return (
     <>
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section
-          className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
-          style={{ background: "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg), var(--app-hero-start))" }}
-        >
-          <div className="absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-25 blur-3xl" style={{ backgroundColor: "var(--app-accent)" }} />
-          <div className="relative grid gap-5 lg:grid-cols-[1fr_440px] lg:items-center">
-            <div>
-              <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
-                <Compass size={14} /> 选校规划中心
-              </span>
-              <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="max-w-3xl text-2xl font-black tracking-tight" title={<>今天想先完成哪一步？</>} description={<>目标大学首页只保留清晰入口，不再一打开就展示大量学校。你的目标、学校资料和对比结果分别管理，使用起来更轻松。</>} />
-            </div>
-            <div className="dashboard-title-metrics">
-              {[
-                { label: "目标学校", value: targets.length, icon: BookMarked },
-                { label: "已选对比", value: compareCount, icon: Scale },
-                { label: "评估记录", value: assessmentCount, icon: BarChart3 },
-                { label: "录取结果", value: offerCount, icon: CheckCircle2 },
-              ].map(({ label, value, icon: Icon }) => (
-                <div key={label} className="app-card rounded-2xl border p-4">
-                  <Icon size={17} style={{ color: "var(--app-accent)" }} />
-                  <p className="mt-3 text-2xl font-black">{value}</p>
-                  <p className="mt-1 text-xs font-bold app-muted-text">{label}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         <section className="grid gap-5 lg:grid-cols-3">
           {entrances.map(({ title, description, href, icon: Icon, value, color, soft }) => (
             <Link key={href} href={href} className="app-card group flex min-h-56 flex-col rounded-3xl border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl">

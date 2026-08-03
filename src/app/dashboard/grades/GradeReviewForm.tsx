@@ -2,5 +2,70 @@
 import { useActionState } from "react";
 import { SearchCheck } from "lucide-react";
 import { initialGradeCenterActionState } from "./action-state";
-import { requestGradeReviewAction } from "./actions";
-export function GradeReviewForm({ recordId }: { recordId: string }) { const action = requestGradeReviewAction.bind(null, recordId); const [state, formAction, pending] = useActionState(action, initialGradeCenterActionState); return <details className="app-soft-card rounded-xl border p-3"><summary className="cursor-pointer list-none text-xs font-black">申请成绩复核</summary><form action={formAction} className="mt-3 space-y-3 border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}><textarea name="reason" required minLength={2} maxLength={2000} rows={3} placeholder="说明需要核对的题目、分数或评语" className="app-input w-full resize-y rounded-xl border px-3 py-2 text-xs leading-5" />{state.message && <p className="text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)" }}>{state.message}</p>}<button type="submit" disabled={pending} className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-accent)" }}><SearchCheck size={12} />{pending ? "正在提交…" : "提交复核"}</button></form></details>; }
+import {
+  requestSourceGradeReviewAction,
+  type LiveGradeSourceType,
+} from "./actions";
+
+export function GradeReviewForm({
+  sourceType,
+  sourceResultId,
+}: {
+  sourceType: LiveGradeSourceType;
+  sourceResultId: string;
+}) {
+  const action = requestSourceGradeReviewAction.bind(
+    null,
+    sourceType,
+    sourceResultId,
+  );
+  const [state, formAction, pending] = useActionState(
+    action,
+    initialGradeCenterActionState,
+  );
+
+  return (
+    <details className="app-soft-card rounded-xl border p-3">
+      <summary className="cursor-pointer list-none text-xs font-black">
+        申请成绩复核
+      </summary>
+      <form
+        action={formAction}
+        className="mt-3 space-y-3 border-t pt-3"
+        style={{ borderColor: "var(--app-border-soft)" }}
+      >
+        <textarea
+          name="reason"
+          required
+          minLength={2}
+          maxLength={2000}
+          rows={3}
+          placeholder="说明需要核对的题目、分数或评语"
+          className="app-input w-full resize-y rounded-xl border px-3 py-2 text-xs leading-5"
+        />
+        {state.message && (
+          <p
+            className="text-xs font-bold"
+            style={{
+              color:
+                state.status === "error"
+                  ? "#c94f45"
+                  : "var(--app-success)",
+            }}
+          >
+            {state.message}
+          </p>
+        )}
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-black text-white disabled:opacity-50"
+          style={{ backgroundColor: "var(--app-accent)" }}
+        >
+          <SearchCheck size={12} />
+          {pending ? "正在提交…" : "提交复核"}
+        </button>
+      </form>
+    </details>
+  );
+}

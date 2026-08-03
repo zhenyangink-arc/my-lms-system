@@ -4,17 +4,11 @@ import { revalidatePath } from "next/cache";
 
 import {
   requireStandardQuestionBankManager,
-  requireStandardQuestionBankViewer,
 } from "@/lib/question-bank";
 
 export type QuestionBankActionState = {
   status: "idle" | "success" | "error";
   message: string;
-};
-
-export const initialQuestionBankActionState: QuestionBankActionState = {
-  status: "idle",
-  message: "",
 };
 
 function result(
@@ -82,6 +76,12 @@ export async function saveStandardQuestionAction(
     ),
   ];
   const status = String(formData.get("status") ?? "draft");
+  const ebookSectionStep = String(
+    formData.get("ebook_section_step") ?? ""
+  ).trim();
+  const ebookPageReference = String(
+    formData.get("ebook_page_reference") ?? ""
+  ).trim();
 
   if (questionId && !isUuid(questionId)) {
     return result("error", "题目编号不正确。");
@@ -89,12 +89,8 @@ export async function saveStandardQuestionAction(
   if (!isUuid(testId)) {
     return result("error", "请选择课程章节。");
   }
-  if (
-    !["short_text", "long_text", "single_choice", "file_link"].includes(
-      questionType
-    )
-  ) {
-    return result("error", "题型不正确。");
+  if (questionType !== "single_choice") {
+    return result("error", "章节测试题库只允许四选一题。");
   }
   if (prompt.length < 1 || prompt.length > 3000) {
     return result("error", "题目不能为空且不能超过 3000 个字。");
@@ -123,8 +119,14 @@ export async function saveStandardQuestionAction(
   if (explanation.length > 3000) {
     return result("error", "解析不能超过 3000 个字。");
   }
-  if (!["foundation", "medium", "hard", "expert"].includes(difficulty)) {
-    return result("error", "难度必须是基础、中等、困难或极难。");
+  if (!["foundation", "medium"].includes(difficulty)) {
+    return result("error", "章节测试题难度必须是基础或中等。");
+  }
+  if (!/^STEP 0[1-8]$/u.test(ebookSectionStep)) {
+    return result("error", "请选择电子书目录来源。");
+  }
+  if (ebookPageReference.length > 80) {
+    return result("error", "电子书页码说明不能超过 80 个字。");
   }
 
   const { error } = await supabase.rpc("save_standard_question", {
@@ -143,6 +145,8 @@ export async function saveStandardQuestionAction(
     p_difficulty: difficulty,
     p_tags: tags,
     p_status: status,
+    p_ebook_section_step: ebookSectionStep,
+    p_ebook_page_reference: ebookPageReference,
   });
 
   if (error) {
@@ -155,7 +159,7 @@ export async function saveStandardQuestionAction(
   refreshQuestionBank();
   return result(
     "success",
-    questionId ? "题目已经更新并生成新版本。" : "标准题目已经创建。"
+    questionId ? "题目已经更新并生成新版本。" : "章节测试题已经创建。"
   );
 }
 
@@ -182,58 +186,4 @@ export async function deleteStandardQuestionAction(
 
   refreshQuestionBank();
   return result("success", "题目已经从标准题库删除。");
-}
-
-export async function grantQuestionBankAdminAction(
-  _previousState: QuestionBankActionState,
-  formData: FormData
-): Promise<QuestionBankActionState> {
-  void _previousState;
-  const access = await requireStandardQuestionBankViewer();
-  if (!access.canAssignManagers) {
-    return result("error", "只有平台负责人可以授权题库管理员。");
-  }
-
-  const adminId = String(formData.get("admin_id") ?? "").trim();
-  if (!isUuid(adminId)) return result("error", "请选择平台管理员。");
-
-  const { error } = await access.supabase.rpc("grant_question_bank_admin", {
-    p_admin_id: adminId,
-  });
-  if (error) {
-    return result(
-      "error",
-      databaseMessage(error.message, "题库管理员授权失败。")
-    );
-  }
-
-  refreshQuestionBank();
-  return result("success", "已授予标准题库增、删、改权限。");
-}
-
-export async function revokeQuestionBankAdminAction(
-  adminId: string,
-  _previousState: QuestionBankActionState,
-  _formData: FormData
-): Promise<QuestionBankActionState> {
-  void _previousState;
-  void _formData;
-  const access = await requireStandardQuestionBankViewer();
-  if (!access.canAssignManagers) {
-    return result("error", "只有平台负责人可以收回题库管理员权限。");
-  }
-  if (!isUuid(adminId)) return result("error", "管理员编号不正确。");
-
-  const { error } = await access.supabase.rpc("revoke_question_bank_admin", {
-    p_admin_id: adminId,
-  });
-  if (error) {
-    return result(
-      "error",
-      databaseMessage(error.message, "题库管理员权限收回失败。")
-    );
-  }
-
-  refreshQuestionBank();
-  return result("success", "题库管理员权限已经收回。");
 }

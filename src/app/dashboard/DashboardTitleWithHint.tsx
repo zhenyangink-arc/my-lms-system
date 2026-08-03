@@ -72,9 +72,9 @@ export function DashboardTitleWithHint({
 
   return (
     <div
-      className={`relative flex w-fit max-w-full items-center justify-start gap-1.5 text-left ${className}`}
+      className={`dashboard-title-with-hint relative flex w-fit max-w-full items-center justify-start gap-1.5 text-left ${className}`}
     >
-      <Heading className={`min-w-0 text-left ${titleClassName}`}>{title}</Heading>
+      <Heading className={`dashboard-title-heading min-w-0 text-left ${titleClassName}`}>{title}</Heading>
       <span
         ref={triggerRef}
         tabIndex={0}
@@ -90,7 +90,7 @@ export function DashboardTitleWithHint({
           setIsOpen(true);
         }}
         onBlur={() => setIsOpen(false)}
-        className="app-muted-text flex shrink-0 cursor-help items-center justify-center self-center rounded-full outline-none focus-visible:ring-2"
+        className="dashboard-title-hint app-muted-text flex shrink-0 cursor-help items-center justify-center self-center rounded-full outline-none focus-visible:ring-2"
       >
         <Info size={15} aria-hidden="true" />
       </span>

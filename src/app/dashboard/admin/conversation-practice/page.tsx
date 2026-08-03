@@ -1,59 +1,255 @@
 import Link from "next/link";
-import { ArrowRight, BarChart3, BookOpenCheck, CheckCircle2, Clock3, Eye, FilePenLine, Info, MessageCircleMore, ShieldCheck } from "lucide-react";
+import { Eye, MessageCircleMore } from "lucide-react";
 
-import { CONVERSATION_CATEGORY_LABELS, CONVERSATION_DIFFICULTY_LABELS, CONVERSATION_STATUS_LABELS, type ConversationCategory, type ConversationDifficulty, type ConversationStatus } from "@/app/dashboard/conversation-practice/config";
+import {
+  CONVERSATION_CATEGORY_LABELS,
+  CONVERSATION_DIFFICULTY_LABELS,
+  CONVERSATION_STATUS_LABELS,
+  conversationDateFormatter,
+  type ConversationCategory,
+  type ConversationDifficulty,
+  type ConversationStatus,
+  type DialogueLine,
+  type KeyExpression,
+} from "@/app/dashboard/conversation-practice/config";
 import { requireConversationPracticeManager } from "@/lib/conversation-practice";
-import { ConversationPracticeAdminManager } from "./ConversationPracticeAdminManager";
-import { ConversationScenarioForm } from "./ConversationScenarioForm";
+import { ConversationScenarioForm, type ConversationScenarioFormValue } from "./ConversationScenarioForm";
 import { ConversationScenarioStatusActions } from "./ConversationScenarioStatusActions";
+import { ConversationScenarioTable, type ConversationScenarioTableRow } from "./ConversationScenarioTable";
 
-
-type ScenarioRow = { id: string; title: string; description: string; category: ConversationCategory; difficulty: ConversationDifficulty; duration_minutes: number; status: ConversationStatus; is_featured: boolean; updated_at: string };
-type ProgressRow = { scenario_id: string; status: "practicing" | "completed"; practice_count: number };
-type ProfileRow = { id: string; full_name: string | null; email: string | null };
-
-const statusTone: Record<ConversationStatus, { color: string; soft: string }> = {
-  draft: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
-  published: { color: "var(--app-success)", soft: "var(--app-success-soft)" },
-  archived: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
+type ScenarioRow = {
+  id: string;
+  title: string;
+  description: string;
+  category: ConversationCategory;
+  difficulty: ConversationDifficulty;
+  situation: string;
+  learning_objectives: unknown;
+  sample_dialogue: unknown;
+  key_expressions: unknown;
+  starter_prompt: string;
+  practice_tips: string;
+  duration_minutes: number;
+  status: ConversationStatus;
+  is_featured: boolean;
+  sort_order: number;
+  updated_at: string;
 };
 
-export default async function ConversationPracticeManagementPage() {
-  const { supabase, canAssignAdmins, canManageContent, role } = await requireConversationPracticeManager();
-  const [scenariosResult, progressResult] = await Promise.all([
-    supabase.from("conversation_practice_scenarios").select("id,title,description,category,difficulty,duration_minutes,status,is_featured,updated_at").order("sort_order", { ascending: true }).order("updated_at", { ascending: false }),
-    supabase.from("conversation_practice_progress").select("scenario_id,status,practice_count"),
+type ProgressRow = {
+  scenario_id: string;
+  user_id: string;
+  status: "practicing" | "completed";
+  practice_count: number;
+  confidence: number | null;
+  reflection: string;
+  last_practiced_at: string;
+};
+
+type ProfileRow = { id: string; full_name: string | null; email: string | null };
+
+function strings(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function dialogues(value: unknown): DialogueLine[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is DialogueLine =>
+          Boolean(item) &&
+          typeof item === "object" &&
+          typeof (item as DialogueLine).speaker === "string" &&
+          typeof (item as DialogueLine).korean === "string" &&
+          typeof (item as DialogueLine).chinese === "string"
+      )
+    : [];
+}
+
+function expressions(value: unknown): KeyExpression[] {
+  return Array.isArray(value)
+    ? value.filter(
+        (item): item is KeyExpression =>
+          Boolean(item) &&
+          typeof item === "object" &&
+          typeof (item as KeyExpression).korean === "string" &&
+          typeof (item as KeyExpression).chinese === "string"
+      )
+    : [];
+}
+
+function toFormValue(row: ScenarioRow): ConversationScenarioFormValue {
+  return {
+    ...row,
+    learning_objectives: strings(row.learning_objectives),
+    sample_dialogue: dialogues(row.sample_dialogue),
+    key_expressions: expressions(row.key_expressions),
+  };
+}
+
+function getCompleteness(row: ScenarioRow) {
+  const checks = [
+    ["场景简介", Boolean(row.description.trim())],
+    ["情景说明", Boolean(row.situation.trim())],
+    ["学习目标", strings(row.learning_objectives).length > 0],
+    ["示范对话", dialogues(row.sample_dialogue).length > 0],
+    ["重点表达", expressions(row.key_expressions).length > 0],
+    ["开场任务", Boolean(row.starter_prompt.trim())],
+    ["练习提示", Boolean(row.practice_tips.trim())],
+  ] as const;
+  const missingItems = checks.filter(([, ready]) => !ready).map(([label]) => label);
+  return { completeness: Math.round(((checks.length - missingItems.length) / checks.length) * 100), missingItems };
+}
+
+function PracticeDataTable({ progress, studentNames }: { progress: ProgressRow[]; studentNames: Map<string, string> }) {
+  return (
+    <section className="mt-8 border-t pt-6" style={{ borderColor: "var(--app-border)" }}>
+      <div className="mb-3 flex items-end justify-between gap-3">
+        <div>
+          <h3 className="text-[13px] font-semibold">学生练习记录</h3>
+          <p className="app-muted-text mt-1 text-[10px]">当前场景共有 {progress.length} 名学生留下练习记录</p>
+        </div>
+        <span className="app-muted-text font-mono text-[10px]">{progress.length} RESULTS</span>
+      </div>
+      <div className="overflow-x-auto border-y" style={{ borderColor: "var(--app-border)" }}>
+        <table className="w-full min-w-[780px] border-collapse text-left">
+          <thead>
+            <tr className="app-muted-text border-b text-[10px]" style={{ borderColor: "var(--app-border)" }}>
+              <th className="px-3 py-2.5 font-medium">学生</th>
+              <th className="px-3 py-2.5 font-medium">状态</th>
+              <th className="px-3 py-2.5 font-medium">练习次数</th>
+              <th className="px-3 py-2.5 font-medium">自信等级</th>
+              <th className="px-3 py-2.5 font-medium">最近练习</th>
+              <th className="w-[36%] px-3 py-2.5 font-medium">练习复盘</th>
+            </tr>
+          </thead>
+          <tbody>
+            {progress.map((item) => (
+              <tr key={item.user_id} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                <td className="px-3 py-3 font-medium">{studentNames.get(item.user_id) || "学生"}</td>
+                <td className="px-3 py-3">
+                  <span className="inline-flex rounded-full px-2 py-1 text-[9px] font-medium" style={{ color: item.status === "completed" ? "var(--app-success)" : "var(--app-accent)", backgroundColor: item.status === "completed" ? "var(--app-success-soft)" : "var(--app-accent-soft)" }}>
+                    {item.status === "completed" ? "已掌握" : "练习中"}
+                  </span>
+                </td>
+                <td className="app-muted-text px-3 py-3">{item.practice_count} 次</td>
+                <td className="app-muted-text px-3 py-3">{item.confidence ? `${item.confidence} / 5` : "未评价"}</td>
+                <td className="app-muted-text whitespace-nowrap px-3 py-3 text-[10px]">{conversationDateFormatter.format(new Date(item.last_practiced_at))}</td>
+                <td className="app-muted-text px-3 py-3 leading-5">{item.reflection || "—"}</td>
+              </tr>
+            ))}
+            {progress.length === 0 && (
+              <tr><td colSpan={6} className="app-muted-text px-4 py-10 text-center text-[11px]">还没有学生练习记录，场景发布后会在这里汇总。</td></tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+export default async function ConversationPracticeManagementPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ scenario?: string; mode?: string }>;
+}) {
+  const [{ supabase, canManageContent }, params] = await Promise.all([
+    requireConversationPracticeManager(),
+    searchParams,
   ]);
+  const [scenariosResult, progressResult] = await Promise.all([
+    supabase
+      .from("conversation_practice_scenarios")
+      .select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes,status,is_featured,sort_order,updated_at")
+      .order("sort_order", { ascending: true })
+      .order("updated_at", { ascending: false }),
+    supabase
+      .from("conversation_practice_progress")
+      .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at"),
+  ]);
+
   const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
   const progress = (progressResult.data ?? []) as ProgressRow[];
   const progressByScenario = new Map<string, ProgressRow[]>();
-  progress.forEach((item) => { const current = progressByScenario.get(item.scenario_id) ?? []; current.push(item); progressByScenario.set(item.scenario_id, current); });
+  progress.forEach((item) => {
+    const current = progressByScenario.get(item.scenario_id) ?? [];
+    current.push(item);
+    progressByScenario.set(item.scenario_id, current);
+  });
 
-  let adminOptions: Array<{ id: string; name: string; email: string; assigned: boolean }> = [];
-  if (canAssignAdmins) {
-    const [{ data: admins }, { data: assignments }] = await Promise.all([
-      supabase.from("profiles").select("id,full_name,email").eq("role", "admin").eq("status", "active").order("full_name", { ascending: true }),
-      supabase.from("conversation_practice_admin_assignments").select("admin_id").is("revoked_at", null),
-    ]);
-    const assignedIds = new Set((assignments ?? []).map((assignment) => assignment.admin_id as string));
-    adminOptions = ((admins ?? []) as ProfileRow[]).map((admin) => ({ id: admin.id, name: admin.full_name?.trim() || "未填写姓名", email: admin.email || "未填写邮箱", assigned: assignedIds.has(admin.id) }));
-  }
+  const selectedRaw = canManageContent ? scenarios.find((item) => item.id === params.scenario) ?? null : null;
+  const selectedScenario = selectedRaw ? toFormValue(selectedRaw) : null;
+  const selectedProgress = selectedRaw ? progressByScenario.get(selectedRaw.id) ?? [] : [];
+  const selectedStudentIds = [...new Set(selectedProgress.map((item) => item.user_id))];
+  const { data: selectedProfiles } = selectedStudentIds.length
+    ? await supabase.from("profiles").select("id,full_name,email").in("id", selectedStudentIds)
+    : { data: [] as ProfileRow[] };
+  const studentNames = new Map(
+    ((selectedProfiles ?? []) as ProfileRow[]).map((student) => [student.id, student.full_name?.trim() || student.email || "学生"])
+  );
 
-  const publishedCount = scenarios.filter((item) => item.status === "published").length;
-  const completedCount = progress.filter((item) => item.status === "completed").length;
-  const practiceTotal = progress.reduce((sum, item) => sum + item.practice_count, 0);
+  const rows: ConversationScenarioTableRow[] = scenarios.map((scenario) => {
+    const scenarioProgress = progressByScenario.get(scenario.id) ?? [];
+    const quality = getCompleteness(scenario);
+    return {
+      id: scenario.id,
+      title: scenario.title,
+      description: scenario.description,
+      category: scenario.category,
+      categoryLabel: CONVERSATION_CATEGORY_LABELS[scenario.category],
+      difficultyLabel: CONVERSATION_DIFFICULTY_LABELS[scenario.difficulty],
+      durationMinutes: scenario.duration_minutes,
+      status: scenario.status,
+      statusLabel: CONVERSATION_STATUS_LABELS[scenario.status],
+      isFeatured: scenario.is_featured,
+      studentCount: scenarioProgress.length,
+      completedCount: scenarioProgress.filter((item) => item.status === "completed").length,
+      practiceCount: scenarioProgress.reduce((sum, item) => sum + item.practice_count, 0),
+      completeness: quality.completeness,
+      missingItems: quality.missingItems,
+      editHref: `/dashboard/admin/conversation-practice?scenario=${scenario.id}`,
+      active: scenario.id === selectedRaw?.id,
+    };
+  });
+
+  const createOpen = canManageContent && params.mode === "create";
 
   return (
     <div className="pb-12">
-      <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 pt-6 sm:px-6 lg:px-8">
-        <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-secondary-soft))" }}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-center"><div><div className="flex flex-wrap items-center justify-between gap-3"><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><ShieldCheck size={14} />{canManageContent ? (role === "ceo" ? "运营负责人权限" : "已授权管理员") : "仅浏览 · 无编辑权限"}</span>{canManageContent && <Link href="#create-scenario" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><FilePenLine size={16} />新建场景</Link>}</div><div className="group relative mt-3 flex w-fit items-center gap-1.5"><h1 className="text-2xl font-black tracking-tight">会话练习管理</h1><Info className="app-muted-text shrink-0 cursor-help" size={15} /><div className="invisible absolute left-0 top-full z-20 w-80 pt-2 opacity-0 transition group-hover:visible group-hover:opacity-100"><div role="tooltip" className="app-card rounded-2xl border p-3 text-xs leading-5 app-muted-text shadow-lg">创建情景会话、控制发布状态并查看学生练习数据。</div></div></div></div><div className="dashboard-title-metrics">{[["已发布", publishedCount, BookOpenCheck, "var(--app-success)", "var(--app-success-soft)"], ["累计练习", practiceTotal, MessageCircleMore, "var(--app-accent)", "var(--app-accent-soft)"], ["已经掌握", completedCount, CheckCircle2, "var(--app-secondary)", "var(--app-secondary-soft)"]].map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof BookOpenCheck; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} /></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div></div></section>
+      <div className="mx-auto w-full max-w-[1500px] space-y-4 px-4 pt-6 sm:px-6 lg:px-8">
+        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]"><MessageCircleMore size={18} />会话练习管理</h1>
+            <p className="app-muted-text mt-1 text-[11px]">管理会话场景和学生练习记录</p>
+          </div>
+          <Link href="/dashboard/conversation-practice" className="app-soft-card inline-flex w-fit items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[10px] font-medium"><Eye size={12} />学生端预览</Link>
+        </header>
 
-        {(scenariosResult.error || progressResult.error) && <section className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>会话练习后台数据暂时无法读取，请确认最新数据库迁移已经执行。</section>}
+        {(scenariosResult.error || progressResult.error) && (
+          <section className="border-y px-4 py-3 text-[11px] font-medium" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>
+            会话练习后台数据暂时无法完整读取，请确认最新数据库迁移已经执行。
+          </section>
+        )}
 
-        <div className="grid items-start gap-5 xl:grid-cols-[minmax(0,1.35fr)_minmax(360px,0.7fr)]">
-          <section className="app-card rounded-3xl border p-4 sm:p-5"><div className="flex items-center justify-between gap-3"><div><h2 className="text-xl font-black">场景记录</h2><p className="app-muted-text mt-1 text-xs">共 {scenarios.length} 个场景</p></div><BarChart3 size={22} style={{ color: "var(--app-accent)" }} /></div><div className="mt-5 grid gap-4 lg:grid-cols-2">{scenarios.map((scenario) => { const scenarioProgress = progressByScenario.get(scenario.id) ?? []; const tone = statusTone[scenario.status]; return <article key={scenario.id} className="app-soft-card rounded-3xl border p-5"><div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{CONVERSATION_CATEGORY_LABELS[scenario.category]}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{CONVERSATION_STATUS_LABELS[scenario.status]}</span>{scenario.is_featured && <span className="text-xs font-black" style={{ color: "var(--app-warm)" }}>推荐</span>}</div><h3 className="mt-4 text-lg font-black">{scenario.title}</h3><p className="app-muted-text mt-2 line-clamp-2 text-xs leading-5">{scenario.description || "暂未填写场景简介。"}</p><div className="mt-4 grid grid-cols-3 gap-2"><div className="app-card rounded-xl border p-2.5 text-center"><p className="text-lg font-black">{scenarioProgress.length}</p><p className="app-muted-text text-[10px] font-bold">练习学生</p></div><div className="app-card rounded-xl border p-2.5 text-center"><p className="text-lg font-black">{scenarioProgress.filter((item) => item.status === "completed").length}</p><p className="app-muted-text text-[10px] font-bold">已经掌握</p></div><div className="app-card rounded-xl border p-2.5 text-center"><p className="text-lg font-black">{scenarioProgress.reduce((sum, item) => sum + item.practice_count, 0)}</p><p className="app-muted-text text-[10px] font-bold">练习次数</p></div></div><div className="app-muted-text mt-4 flex items-center gap-3 text-xs"><span>{CONVERSATION_DIFFICULTY_LABELS[scenario.difficulty]}</span><span className="inline-flex items-center gap-1"><Clock3 size={11} />{scenario.duration_minutes} 分钟</span></div>{canManageContent && <div className="mt-4 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "var(--app-border-soft)" }}><ConversationScenarioStatusActions id={scenario.id} status={scenario.status} /><Link href={`/dashboard/admin/conversation-practice/${scenario.id}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>编辑与数据<ArrowRight size={13} /></Link></div>}</article>; })}{scenarios.length === 0 && <div className="col-span-full rounded-3xl border border-dashed p-8 text-center"><BookOpenCheck className="mx-auto opacity-30" size={32} /><p className="mt-3 font-black">还没有会话场景</p><p className="app-muted-text mt-2 text-xs">{canManageContent ? "使用右侧表单创建第一项练习。" : "请联系平台负责人添加会话场景。"}</p></div>}</div></section>
-          <div className="space-y-5">{canManageContent && <ConversationScenarioForm />}{canAssignAdmins && <ConversationPracticeAdminManager admins={adminOptions} />}<Link href="/dashboard/conversation-practice" className="app-soft-card flex items-center gap-3 rounded-2xl border p-4 text-xs font-black"><Eye size={16} style={{ color: "var(--app-accent)" }} />查看学生端已发布内容<ArrowRight className="ml-auto" size={14} /></Link></div>
-        </div>
+        <ConversationScenarioTable rows={rows} canManage={canManageContent} createOpen={createOpen}>
+          {createOpen ? (
+            <ConversationScenarioForm workspace />
+          ) : selectedScenario ? (
+            <>
+              <div className="mb-6 flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "var(--app-border)" }}>
+                <div>
+                  <p className="app-muted-text text-[10px]">当前状态</p>
+                  <p className="mt-1 text-[12px] font-semibold">{CONVERSATION_STATUS_LABELS[selectedScenario.status]}</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <ConversationScenarioStatusActions id={selectedScenario.id} status={selectedScenario.status} />
+                  <Link href={`/dashboard/conversation-practice/${selectedScenario.id}`} className="app-soft-card inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[10px] font-medium"><Eye size={12} />学生端预览</Link>
+                </div>
+              </div>
+              <ConversationScenarioForm scenario={selectedScenario} workspace />
+              <PracticeDataTable progress={selectedProgress} studentNames={studentNames} />
+            </>
+          ) : null}
+        </ConversationScenarioTable>
       </div>
     </div>
   );

@@ -66,14 +66,14 @@ export function AdminApplicationStageControl({
 
   return (
     <div>
-      <div className="mb-4 rounded-2xl border p-3.5" style={{ borderColor: channelConfirmed ? "var(--app-success)" : "var(--app-border-soft)", backgroundColor: channelConfirmed ? "var(--app-success-soft)" : "var(--app-soft-bg)" }}>
+      <div className="mb-4 border-y border-black/[0.07] px-3 py-3" style={{ backgroundColor: channelConfirmed ? "var(--app-success-soft)" : "var(--app-soft-bg)" }}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
-            <p className="text-xs font-black">第9步前确认签证办理方式</p>
-            <p className="app-muted-text mt-1 text-xs font-bold">选择办理通道并点击确认后，才能点亮“请进入申请签证页面”。</p>
+            <p className="text-[10px] font-medium">第9步前确认签证办理方式</p>
+            <p className="app-muted-text mt-1 text-[9px]">选择办理通道并点击确认后，才能点亮“请进入申请签证页面”。</p>
           </div>
           {channelConfirmed && (
-            <span className="inline-flex items-center gap-1 text-xs font-black" style={{ color: "var(--app-success)" }}>
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: "var(--app-success)" }}>
               <CircleCheckBig size={12} />已确认
             </span>
           )}
@@ -88,7 +88,7 @@ export function AdminApplicationStageControl({
                 disabled={isPending}
                 aria-pressed={selected}
                 onClick={() => setSelectedChannel(option.value)}
-                className="rounded-xl border px-3 py-2.5 text-left text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-60"
+                className="rounded-md border px-3 py-2 text-left text-[10px] font-medium transition disabled:cursor-not-allowed disabled:opacity-60"
                 style={selected
                   ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }
                   : { color: "var(--app-muted)", borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-card-bg)" }}
@@ -102,13 +102,12 @@ export function AdminApplicationStageControl({
           type="button"
           disabled={isPending || !selectedChannel || (channelConfirmed && !channelChanged)}
           onClick={handleChannelConfirm}
-          className="mt-3 rounded-xl px-4 py-2 text-xs font-black text-white transition disabled:cursor-not-allowed disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          className="mt-3 rounded-md bg-zinc-950 px-4 py-2 text-[10px] font-medium text-white transition disabled:cursor-not-allowed disabled:opacity-50"
         >
           {isPending ? "正在确认..." : channelConfirmed && !channelChanged ? "办理方式已确认" : "确认办理方式"}
         </button>
       </div>
-      <p className="app-muted-text text-xs font-black">申请进程（实心圆为当前阶段，点击已点亮步骤可退回）</p>
+      <p className="app-muted-text text-[10px] font-medium">申请进程（实心圆为当前阶段，点击已点亮步骤可退回）</p>
       <div className="mt-2 grid grid-cols-9 gap-x-1.5">
         {APPLICATION_STAGE_LABELS.map((label, index) => {
           const stepNumber = index + 1;

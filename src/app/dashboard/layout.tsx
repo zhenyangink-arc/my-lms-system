@@ -1,20 +1,18 @@
 import type { ReactNode } from "react";
 
-import { requireActiveUser } from "@/lib/auth";
 import { getAnnouncementAccess } from "@/lib/announcements";
-import { normalizeMembershipTier } from "@/lib/student-permissions";
-import { DashboardSidebar } from "./DashboardSidebar";
-import { DashboardPermissionGate } from "./DashboardPermissionGate";
-import { GlobalTopbar } from "./GlobalTopbar";
+import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
-
+import { normalizeMembershipTier } from "@/lib/student-permissions";
+import { ManagementDashboardLayout } from "./layouts/ManagementDashboardLayout";
+import { StudentDashboardLayout } from "./layouts/StudentDashboardLayout";
 
 export default async function DashboardLayout({
   children,
 }: {
   children: ReactNode;
 }) {
-  const { user, profile, platformProfile, tenant } = await requireActiveUser();
+  const { user, profile, tenant } = await requireActiveUser();
 
   const userName =
     profile?.full_name ||
@@ -23,33 +21,48 @@ export default async function DashboardLayout({
     "用户";
 
   const userRole = profile?.role ?? "student";
-  const roleLabel = tenant?.role === "tenant_super_admin" && platformProfile?.global_role === "tenant_super_admin"
-    ? "机构负责人"
-    : platformProfile?.global_role === "platform_admin"
-      ? "平台管理员"
-      : undefined;
+
+  if (userRole === "platform_course_inspector") {
+    return (
+      <StudentDashboardLayout
+        userName={userName}
+        userRole={userRole}
+        membershipTier="vip3"
+        canAccessAnnouncements
+        dashboardBasePath={getDashboardBasePath(null)}
+      >
+        {children}
+      </StudentDashboardLayout>
+    );
+  }
+
+  if (!tenant) {
+    return (
+      <ManagementDashboardLayout workspace="platform">
+        {children}
+      </ManagementDashboardLayout>
+    );
+  }
+
+  if (userRole !== "student") {
+    return (
+      <ManagementDashboardLayout workspace="tenant">
+        {children}
+      </ManagementDashboardLayout>
+    );
+  }
+
   const membershipTier = normalizeMembershipTier(profile?.membership_tier);
   const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
-  const dashboardBasePath = getDashboardBasePath(tenant?.slug);
 
   return (
-    <div className="app-shell flex min-h-screen flex-col">
-      <GlobalTopbar />
-
-      <DashboardPermissionGate userRole={userRole} membershipTier={membershipTier}>
-        <div className="flex min-h-0 flex-1">
-          <DashboardSidebar
-          userName={userName}
-          userRole={userRole}
-          roleLabel={roleLabel}
-          membershipTier={membershipTier}
-          canAccessAnnouncements={canAccessAnnouncements}
-          dashboardBasePath={dashboardBasePath}
-          />
-
-          <main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main>
-        </div>
-      </DashboardPermissionGate>
-    </div>
+    <StudentDashboardLayout
+      userName={userName}
+      membershipTier={membershipTier}
+      canAccessAnnouncements={canAccessAnnouncements}
+      dashboardBasePath={getDashboardBasePath(tenant.slug)}
+    >
+      {children}
+    </StudentDashboardLayout>
   );
 }

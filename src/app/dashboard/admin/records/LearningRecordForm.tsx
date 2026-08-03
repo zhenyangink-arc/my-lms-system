@@ -1,10 +1,202 @@
 "use client";
+
 import { useActionState } from "react";
 import { Save } from "lucide-react";
+
 import { initialLearningRecordActionState } from "@/app/dashboard/records/action-state";
-import { createLearningRecordNoteAction, updateLearningRecordNoteAction } from "@/app/dashboard/records/actions";
-import { LEARNING_RECORD_TYPE_LABELS, LEARNING_RECORD_VISIBILITY_LABELS, type LearningRecordType, type LearningRecordVisibility } from "@/app/dashboard/records/config";
+import {
+  createLearningRecordNoteAction,
+  updateLearningRecordNoteAction,
+} from "@/app/dashboard/records/actions";
+import {
+  LEARNING_RECORD_TYPE_LABELS,
+  LEARNING_RECORD_VISIBILITY_LABELS,
+  type LearningRecordType,
+  type LearningRecordVisibility,
+} from "@/app/dashboard/records/config";
+
 type Student = { id: string; name: string; email: string };
-export type LearningRecordFormValue = { id: string; student_id: string; record_type: LearningRecordType; title: string; content: string; next_action: string; visibility: LearningRecordVisibility; occurred_at: string };
-function localDate(value?: string) { const date = value ? new Date(value) : new Date(); const offset = date.getTimezoneOffset() * 60000; return new Date(date.getTime() - offset).toISOString().slice(0,16); }
-export function LearningRecordForm({ students, note }: { students: Student[]; note?: LearningRecordFormValue }) { const action = note ? updateLearningRecordNoteAction.bind(null, note.id) : createLearningRecordNoteAction; const [state, formAction, pending] = useActionState(action, initialLearningRecordActionState); return <form action={formAction} className="space-y-4"><label className="block text-xs font-black">学生<select name="student_id" required defaultValue={note?.student_id ?? ""} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"><option value="" disabled>选择学生账号</option>{students.map((item) => <option key={item.id} value={item.id}>{item.name} · {item.email}</option>)}</select></label><div className="grid gap-3 sm:grid-cols-2"><label className="text-xs font-black">记录类型<select name="record_type" defaultValue={note?.record_type ?? "coaching"} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm">{Object.entries(LEARNING_RECORD_TYPE_LABELS).map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className="text-xs font-black">可见范围<select name="visibility" defaultValue={note?.visibility ?? "student_visible"} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm">{Object.entries(LEARNING_RECORD_VISIBILITY_LABELS).map(([value,label]) => <option key={value} value={value}>{label}</option>)}</select></label></div><label className="block text-xs font-black">记录时间<input type="datetime-local" name="occurred_at" required defaultValue={localDate(note?.occurred_at)} className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm" /></label><label className="block text-xs font-black">标题<input name="title" required minLength={2} maxLength={120} defaultValue={note?.title} className="app-input mt-2 w-full rounded-xl border px-4 py-3 text-sm" /></label><label className="block text-xs font-black">记录内容<textarea name="content" required minLength={2} maxLength={5000} rows={6} defaultValue={note?.content} className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-6" /></label><label className="block text-xs font-black">下一步建议<textarea name="next_action" maxLength={2000} rows={3} defaultValue={note?.next_action} className="app-input mt-2 w-full resize-y rounded-xl border px-4 py-3 text-sm leading-6" /></label>{state.message && <p className="rounded-xl px-3 py-2.5 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)", backgroundColor: state.status === "error" ? "#fff0ed" : "var(--app-success-soft)" }}>{state.message}</p>}<button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-secondary)" }}><Save size={14} />{pending ? "正在保存…" : note ? "保存修改" : "添加学习记录"}</button></form>; }
+
+export type LearningRecordFormValue = {
+  id: string;
+  student_id: string;
+  record_type: LearningRecordType;
+  title: string;
+  content: string;
+  next_action: string;
+  visibility: LearningRecordVisibility;
+  occurred_at: string;
+};
+
+function localDate(value?: string) {
+  const date = value ? new Date(value) : new Date();
+  const offset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - offset).toISOString().slice(0, 16);
+}
+
+const labelCellClass =
+  "w-[130px] border-b bg-[var(--app-soft-bg)] px-4 py-3 text-[11px] font-black align-top";
+const fieldCellClass = "border-b px-4 py-3";
+
+export function LearningRecordForm({
+  students,
+  note,
+}: {
+  students: Student[];
+  note?: LearningRecordFormValue;
+}) {
+  const action = note
+    ? updateLearningRecordNoteAction.bind(null, note.id)
+    : createLearningRecordNoteAction;
+  const [state, formAction, pending] = useActionState(
+    action,
+    initialLearningRecordActionState,
+  );
+
+  return (
+    <form action={formAction}>
+      <div className="overflow-x-auto rounded-2xl border">
+        <table className="w-full min-w-[760px] border-collapse text-left">
+          <tbody>
+            <tr>
+              <th className={labelCellClass}>学生</th>
+              <td className={fieldCellClass}>
+                <select
+                  name="student_id"
+                  required
+                  defaultValue={note?.student_id ?? ""}
+                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                >
+                  <option value="" disabled>
+                    选择学生账号
+                  </option>
+                  {students.map((student) => (
+                    <option key={student.id} value={student.id}>
+                      {student.name} · {student.email}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <th className={labelCellClass}>记录类型</th>
+              <td className={fieldCellClass}>
+                <select
+                  name="record_type"
+                  defaultValue={note?.record_type ?? "coaching"}
+                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                >
+                  {Object.entries(LEARNING_RECORD_TYPE_LABELS).map(
+                    ([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </td>
+            </tr>
+            <tr>
+              <th className={labelCellClass}>可见范围</th>
+              <td className={fieldCellClass}>
+                <select
+                  name="visibility"
+                  defaultValue={note?.visibility ?? "student_visible"}
+                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                >
+                  {Object.entries(LEARNING_RECORD_VISIBILITY_LABELS).map(
+                    ([value, label]) => (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    ),
+                  )}
+                </select>
+              </td>
+              <th className={labelCellClass}>记录时间</th>
+              <td className={fieldCellClass}>
+                <input
+                  type="datetime-local"
+                  name="occurred_at"
+                  required
+                  defaultValue={localDate(note?.occurred_at)}
+                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th className={labelCellClass}>标题</th>
+              <td className={fieldCellClass} colSpan={3}>
+                <input
+                  name="title"
+                  required
+                  minLength={2}
+                  maxLength={120}
+                  defaultValue={note?.title}
+                  placeholder="填写本次记录主题"
+                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th className={labelCellClass}>记录内容</th>
+              <td className={fieldCellClass} colSpan={3}>
+                <textarea
+                  name="content"
+                  required
+                  minLength={2}
+                  maxLength={5000}
+                  rows={4}
+                  defaultValue={note?.content}
+                  placeholder="记录学生当前表现、辅导过程或阶段评价"
+                  className="app-input w-full resize-y rounded-lg border px-3 py-2.5 text-xs leading-5"
+                />
+              </td>
+            </tr>
+            <tr>
+              <th className="w-[130px] bg-[var(--app-soft-bg)] px-4 py-3 text-[11px] font-black align-top">
+                下一步建议
+              </th>
+              <td className="px-4 py-3" colSpan={3}>
+                <textarea
+                  name="next_action"
+                  maxLength={2000}
+                  rows={2}
+                  defaultValue={note?.next_action}
+                  placeholder="可选：填写后续学习安排或关注事项"
+                  className="app-input w-full resize-y rounded-lg border px-3 py-2.5 text-xs leading-5"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
+        {state.message ? (
+          <p
+            className="rounded-lg px-3 py-2 text-xs font-bold"
+            style={{
+              color: state.status === "error" ? "#c94f45" : "var(--app-success)",
+              backgroundColor:
+                state.status === "error" ? "#fff0ed" : "var(--app-success-soft)",
+            }}
+          >
+            {state.message}
+          </p>
+        ) : (
+          <span className="app-muted-text text-[10px]">
+            学生可见记录会同步到学生端成长档案。
+          </span>
+        )}
+        <button
+          type="submit"
+          disabled={pending}
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
+          style={{ backgroundColor: "var(--app-secondary)" }}
+        >
+          <Save size={14} />
+          {pending ? "正在保存…" : note ? "保存修改" : "添加学习记录"}
+        </button>
+      </div>
+    </form>
+  );
+}

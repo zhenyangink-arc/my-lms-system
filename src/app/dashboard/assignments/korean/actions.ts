@@ -74,7 +74,7 @@ export async function addKoreanQuestionToReviewAction(input: {
 
   const admin = createAdminClient();
   const { data: testData } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select("id")
     .eq("slug", testSlug)
     .eq("status", "published")
@@ -85,7 +85,7 @@ export async function addKoreanQuestionToReviewAction(input: {
   }
 
   const { data: questionData } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select("id")
     .eq("test_id", testData.id)
     .eq("question_key", questionKey)
@@ -97,7 +97,7 @@ export async function addKoreanQuestionToReviewAction(input: {
     return { status: "error", message: "没有找到这道题，请刷新后重试。" };
   }
 
-  const { error } = await supabase.from("course_question_reviews").upsert(
+  const { error } = await supabase.from("chapter_test_question_reviews").upsert(
     {
       student_id: user.id,
       test_id: testData.id,
@@ -143,7 +143,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
 
   const admin = createAdminClient();
   const { data: testData } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select("id")
     .eq("slug", testSlug)
     .eq("status", "published")
@@ -154,7 +154,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
   }
 
   const { data: questionData } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select("id")
     .eq("test_id", testData.id)
     .eq("question_key", questionKey)
@@ -167,7 +167,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
   }
 
   const { error } = await supabase
-    .from("course_question_reviews")
+    .from("chapter_test_question_reviews")
     .delete()
     .eq("student_id", user.id)
     .eq("question_id", questionData.id);
@@ -225,7 +225,7 @@ async function scoreManagerPreview(
 ): Promise<KoreanChapterTestResult> {
   const admin = createAdminClient();
   const { data: testData } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select(
       "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
     )
@@ -239,7 +239,7 @@ async function scoreManagerPreview(
 
   const test = testData as CourseTestRow;
   const { data: questionData } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select(
       "id,test_id,question_key,prompt,options,correct_option,explanation,skill,sort_order"
     )

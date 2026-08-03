@@ -47,6 +47,7 @@ export type AccountListProfile = {
   id: string;
   full_name: string | null;
   email: string | null;
+  login_id?: string | null;
   role: string;
   status: string;
   created_at: string;

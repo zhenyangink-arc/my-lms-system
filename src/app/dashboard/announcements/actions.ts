@@ -2,7 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
-import { getAnnouncementAccess, requireAnnouncementAccess } from "@/lib/announcements";
+import { requireAnnouncementAccess } from "@/lib/announcements";
+import { requireActiveUser } from "@/lib/auth";
 import type { AnnouncementActionState } from "./action-state";
 import {
   ANNOUNCEMENT_CATEGORIES,
@@ -54,6 +55,7 @@ function readAnnouncementInput(formData: FormData) {
 
 function refreshAnnouncements() {
   revalidatePath("/dashboard/announcements");
+  revalidatePath("/dashboard/admin/announcements");
   revalidatePath("/dashboard");
 }
 
@@ -62,7 +64,7 @@ export async function createAnnouncementAction(
   formData: FormData
 ): Promise<AnnouncementActionState> {
   void _previousState;
-  const { supabase, user } = await requireAnnouncementAccess();
+  const { supabase, user, scope, tenantId } = await requireAnnouncementAccess();
   const input = readAnnouncementInput(formData);
   if ("error" in input && input.error) return result("error", input.error);
 
@@ -72,6 +74,8 @@ export async function createAnnouncementAction(
     .from("announcements")
     .insert({
       ...input.data,
+      scope,
+      tenant_id: scope === "platform" ? null : tenantId,
       status,
       created_by: user.id,
       updated_by: user.id,
@@ -91,14 +95,19 @@ export async function updateAnnouncementAction(
 ): Promise<AnnouncementActionState> {
   void _previousState;
   if (!isUuid(announcementId)) return result("error", "公告编号不正确，请刷新页面重试。");
-  const { supabase, user } = await requireAnnouncementAccess();
+  const { supabase, user, scope, tenantId } = await requireAnnouncementAccess();
   const input = readAnnouncementInput(formData);
   if ("error" in input && input.error) return result("error", input.error);
 
-  const { data, error } = await supabase
+  let updateQuery = supabase
     .from("announcements")
     .update({ ...input.data, updated_by: user.id })
     .eq("id", announcementId)
+    .eq("scope", scope);
+  updateQuery = scope === "platform"
+    ? updateQuery.is("tenant_id", null)
+    : updateQuery.eq("tenant_id", tenantId);
+  const { data, error } = await updateQuery
     .select("id")
     .maybeSingle();
 
@@ -118,11 +127,16 @@ export async function changeAnnouncementStatusAction(
   if (!isUuid(announcementId)) return result("error", "公告编号不正确，请刷新页面重试。");
   if (!ANNOUNCEMENT_STATUSES.includes(nextStatus)) return result("error", "公告状态不正确。");
 
-  const { supabase, user } = await requireAnnouncementAccess();
-  const { data, error } = await supabase
+  const { supabase, user, scope, tenantId } = await requireAnnouncementAccess();
+  let updateQuery = supabase
     .from("announcements")
     .update({ status: nextStatus, updated_by: user.id })
     .eq("id", announcementId)
+    .eq("scope", scope);
+  updateQuery = scope === "platform"
+    ? updateQuery.is("tenant_id", null)
+    : updateQuery.eq("tenant_id", tenantId);
+  const { data, error } = await updateQuery
     .select("id")
     .maybeSingle();
 
@@ -134,67 +148,12 @@ export async function changeAnnouncementStatusAction(
   );
 }
 
-export async function grantAnnouncementAdminAction(
-  _previousState: AnnouncementActionState,
-  formData: FormData
-): Promise<AnnouncementActionState> {
-  void _previousState;
-  const access = await getAnnouncementAccess();
-  if (!access.canAssignAdmins) return result("error", "只有负责人可以指定公告管理员。");
-
-  const adminId = String(formData.get("admin_id") ?? "").trim();
-  if (!isUuid(adminId)) return result("error", "请选择需要授权的管理员。");
-
-  const { data: target, error: targetError } = await access.supabase
-    .from("profiles")
-    .select("id, role, status")
-    .eq("id", adminId)
-    .maybeSingle();
-  if (targetError || !target || target.role !== "admin" || (target.status && target.status !== "active")) {
-    return result("error", "只能授权状态正常的管理员账号。");
-  }
-
-  const { error } = await access.supabase
-    .from("announcement_admin_assignments")
-    .upsert(
-      {
-        admin_id: adminId,
-        granted_by: access.user.id,
-        granted_at: new Date().toISOString(),
-        revoked_by: null,
-        revoked_at: null,
-      },
-      { onConflict: "tenant_id,admin_id" }
-    );
-
-  if (error) return result("error", "管理员授权失败，请稍后重试。");
-  refreshAnnouncements();
-  return result("success", "该管理员已经获得公告查看与发布权限。");
-}
-
-export async function revokeAnnouncementAdminAction(
-  adminId: string,
-  _previousState: AnnouncementActionState,
-  _formData: FormData
-): Promise<AnnouncementActionState> {
-  void _previousState;
-  void _formData;
-  const access = await getAnnouncementAccess();
-  if (!access.canAssignAdmins) return result("error", "只有负责人可以撤销公告管理员权限。");
-  if (!isUuid(adminId)) return result("error", "管理员编号不正确，请刷新页面重试。");
-
-  const { data, error } = await access.supabase
-    .from("announcement_admin_assignments")
-    .update({
-      revoked_by: access.user.id,
-      revoked_at: new Date().toISOString(),
-    })
-    .eq("admin_id", adminId)
-    .is("revoked_at", null)
-    .select("admin_id")
-    .maybeSingle();
-
-  if (error || !data) return result("error", "管理员权限撤销失败，请刷新页面重试。");
-  refreshAnnouncements();
-  return result("success", "该管理员的公告权限已经撤销。");
+export async function markAnnouncementsReadAction(announcementIds: string[]) {
+  const validIds = [...new Set(announcementIds.filter(isUuid))].slice(0, 100);
+  if (validIds.length === 0) return;
+  const { supabase } = await requireActiveUser();
+  const { error } = await supabase.rpc("mark_visible_announcements_read", {
+    requested_ids: validIds,
+  });
+  if (error) throw new Error("公告阅读状态保存失败，请稍后重试。");
 }

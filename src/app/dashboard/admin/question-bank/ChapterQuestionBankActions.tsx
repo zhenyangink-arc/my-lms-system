@@ -1,6 +1,6 @@
 "use client";
 
-import { Eye, KeyRound, Plus, X } from "lucide-react";
+import { Eye, Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import type {
@@ -8,15 +8,10 @@ import type {
   StandardQuestionGroup,
 } from "@/lib/question-bank";
 import { CreateStandardQuestionForm } from "./QuestionBankForms";
+import { koreanEbookSectionLabel } from "@/lib/korean-ebook-sections";
 
 function questionOptions(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
-}
-
-function questionTags(value: unknown) {
-  return Array.isArray(value)
-    ? value.filter((item): item is string => typeof item === "string")
-    : [];
 }
 
 function standardQuestionAnswer(question: StandardQuestion) {
@@ -83,11 +78,11 @@ export function ChapterQuestionBankActions({
 
   return (
     <>
-      <div className="mt-3 grid grid-cols-2 gap-2 border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}>
+      <div className="flex shrink-0 items-center gap-1">
         <button
           type="button"
           onClick={() => setOpenModal("view")}
-          className="app-soft-card inline-flex items-center justify-center gap-2 rounded-xl border px-2 py-2.5 text-xs font-black"
+          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-black hover:bg-[var(--app-soft-bg)]"
           style={{ color: "var(--app-secondary)" }}
         >
           <Eye size={14} />
@@ -96,11 +91,9 @@ export function ChapterQuestionBankActions({
         <button
           type="button"
           onClick={() => setOpenModal("create")}
-          className="inline-flex items-center justify-center gap-2 rounded-xl border px-2 py-2.5 text-xs font-black"
+          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-black hover:bg-[var(--app-soft-bg)]"
           style={{
             color: "var(--app-accent)",
-            borderColor: "var(--app-accent)",
-            backgroundColor: "var(--app-accent-soft)",
           }}
         >
           <Plus size={14} />
@@ -120,7 +113,7 @@ export function ChapterQuestionBankActions({
             role="dialog"
             aria-modal="true"
             aria-labelledby={`question-bank-modal-${group.id}`}
-            className="app-card flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-3xl border shadow-2xl"
+            className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden border bg-[var(--app-card-bg)] shadow-2xl"
           >
             <header
               className="flex items-start justify-between gap-4 border-b p-4 sm:p-5"
@@ -142,7 +135,7 @@ export function ChapterQuestionBankActions({
               <button
                 type="button"
                 onClick={() => setOpenModal(null)}
-                className="app-soft-card flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border"
+                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md border"
                 aria-label="关闭弹窗"
               >
                 <X size={17} />
@@ -156,7 +149,7 @@ export function ChapterQuestionBankActions({
                   lockedGroup={group}
                 />
               ) : questions.length === 0 ? (
-                <div className="rounded-2xl border border-dashed p-10 text-center">
+                <div className="border-y py-10 text-center">
                   <p className="font-black">当前章节还没有标准题目</p>
                   <button
                     type="button"
@@ -169,100 +162,31 @@ export function ChapterQuestionBankActions({
                   </button>
                 </div>
               ) : (
-                <div className="grid items-start gap-3 lg:grid-cols-2">
+                <div className="overflow-x-auto border-y">
+                  <table className="w-full min-w-[1050px] border-collapse text-left">
+                    <thead><tr className="border-b bg-[var(--app-soft-bg)] app-muted-text"><th className="px-3 py-2.5 text-[11px]">序号</th><th className="border-l px-3 py-2.5 text-[11px]">电子书目录</th><th className="border-l px-3 py-2.5 text-center text-[11px]">难度</th><th className="border-l px-3 py-2.5 text-[11px]">题目</th><th className="border-l px-3 py-2.5 text-[11px]">A–D 选项</th><th className="border-l px-3 py-2.5 text-[11px]">答案与解析</th><th className="border-l px-3 py-2.5 text-[11px]">状态</th></tr></thead>
+                    <tbody>
                   {questions.map((question, index) => {
                     const options = questionOptions(question.options);
-                    const tags = questionTags(question.tags);
                     const answer = standardQuestionAnswer(question);
 
                     return (
-                      <article
+                      <tr
                         key={question.id}
-                        className="app-soft-card rounded-2xl border p-4"
+                        className="border-b align-top last:border-b-0"
                       >
-                        <div className="flex items-start gap-3">
-                          <span
-                            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black"
-                            style={{
-                              color: "var(--app-secondary)",
-                              backgroundColor: "var(--app-secondary-soft)",
-                            }}
-                          >
-                            {index + 1}
-                          </span>
-                          <div className="min-w-0 flex-1">
-                            <div className="flex flex-wrap items-center gap-2 text-[10px] font-black">
-                              <span>{QUESTION_TYPE_LABELS[question.question_type]}</span>
-                              <span className="app-muted-text rounded-full border px-2 py-0.5">
-                                {DIFFICULTY_LABELS[question.difficulty]}
-                              </span>
-                              <span className="app-muted-text rounded-full border px-2 py-0.5">
-                                {STATUS_LABELS[question.status]} · {question.default_points} 分
-                              </span>
-                            </div>
-                            <h3 className="mt-2 whitespace-pre-wrap text-sm font-black leading-6">
-                              {question.prompt}
-                            </h3>
-                            <p className="app-muted-text mt-2 text-[11px]">
-                              知识点：{question.skill}
-                              {tags.length > 0 ? ` · ${tags.map((tag) => `#${tag}`).join(" ")}` : ""}
-                            </p>
-                          </div>
-                        </div>
-
-                        {question.question_type === "single_choice" && (
-                          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                            {options.map((option, optionIndex) => (
-                              <div
-                                key={`${question.id}-${optionIndex}`}
-                                className="app-card flex items-center gap-2 rounded-xl border px-3 py-2 text-xs"
-                              >
-                                <span
-                                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg font-black"
-                                  style={
-                                    optionIndex === question.correct_option
-                                      ? {
-                                          color: "var(--app-success)",
-                                          backgroundColor:
-                                            "var(--app-success-soft)",
-                                        }
-                                      : undefined
-                                  }
-                                >
-                                  {String.fromCharCode(65 + optionIndex)}
-                                </span>
-                                {option}
-                              </div>
-                            ))}
-                          </div>
-                        )}
-
-                        <div
-                          className="mt-3 rounded-xl border p-3"
-                          style={{
-                            borderColor: "var(--app-success)",
-                            backgroundColor: "var(--app-success-soft)",
-                          }}
-                        >
-                          <p
-                            className="flex items-center gap-1.5 text-xs font-black"
-                            style={{ color: "var(--app-success)" }}
-                          >
-                            <KeyRound size={13} />
-                            标准答案
-                          </p>
-                          <p className="mt-1.5 text-xs leading-5">
-                            {answer || "本题由机构人工批改"}
-                          </p>
-                          {question.explanation && (
-                            <p className="app-muted-text mt-2 border-t pt-2 text-xs leading-5">
-                              解析：{question.explanation}
-                            </p>
-                          )}
-                        </div>
-                      </article>
+                        <td className="px-3 py-3 text-center font-mono text-xs font-black text-[var(--app-secondary)]">{index + 1}</td>
+                        <td className="border-l px-3 py-3 text-[11px] leading-5"><span className="font-black">{koreanEbookSectionLabel(question.ebook_section_step)}</span>{question.ebook_page_reference && <span className="app-muted-text block">{question.ebook_page_reference}</span>}</td>
+                        <td className="border-l px-3 py-3 text-center text-xs font-bold">{DIFFICULTY_LABELS[question.difficulty]}</td>
+                        <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-black leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {question.skill}</p></td>
+                        <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-black text-[var(--app-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
+                        <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-black text-[var(--app-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
+                        <td className="border-l px-3 py-3 text-xs"><p className="font-black">{STATUS_LABELS[question.status]}</p><p className="app-muted-text mt-1">{question.default_points} 分</p></td>
+                      </tr>
                     );
                   })}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>

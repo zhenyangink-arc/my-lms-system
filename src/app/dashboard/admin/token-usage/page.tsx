@@ -1,8 +1,11 @@
-import { BarChart3, Building2, MessageSquareText, Zap } from "lucide-react";
+import { Database } from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireExecutive } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  TokenUsageTable,
+  type TokenUsageTableRow,
+} from "./TokenUsageTable";
 
 type TokenUsage = {
   tenant_id: string;
@@ -24,93 +27,51 @@ const total = (
   field: keyof Pick<TokenUsage, "input_tokens" | "output_tokens" | "total_tokens">,
 ) => items.reduce((sum, item) => sum + item[field], 0);
 
-function TokenUsageGroup({
+function createUsageTableRow({
+  id,
   name,
   slug,
+  kind,
+  isCurrent,
   rows,
   now,
-  badge,
 }: {
+  id: string;
   name: string;
   slug: string;
+  kind: TokenUsageTableRow["kind"];
+  isCurrent: boolean;
   rows: TokenUsage[];
   now: number;
-  badge?: string;
-}) {
-  const dayRows = rows.filter(
-    (row) => now - new Date(row.created_at).getTime() < 86_400_000,
-  );
+}): TokenUsageTableRow {
+  const trend = Array<number>(6).fill(0);
+  const dayRows = rows.filter((row) => {
+    const age = now - new Date(row.created_at).getTime();
+    if (age < 0 || age >= 86_400_000) return false;
+    const bucket = 5 - Math.min(5, Math.floor(age / 14_400_000));
+    trend[bucket] += row.total_tokens;
+    return true;
+  });
 
-  return (
-    <article className="app-card rounded-3xl border p-5 sm:p-6">
-      <div className="flex flex-wrap items-center gap-3">
-        <span
-          className="flex h-10 w-10 items-center justify-center rounded-2xl"
-          style={{
-            color: "var(--app-secondary)",
-            backgroundColor: "var(--app-secondary-soft)",
-          }}
-        >
-          <Building2 size={19} />
-        </span>
-        <div className="min-w-0">
-          <h3 className="truncate text-lg font-black">{name}</h3>
-          <p className="app-muted-text text-xs">{slug}</p>
-        </div>
-        {badge && (
-          <span
-            className="ml-auto rounded-full px-3 py-1 text-xs font-black"
-            style={{
-              color: "var(--app-success)",
-              backgroundColor: "var(--app-success-soft)",
-            }}
-          >
-            {badge}
-          </span>
-        )}
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-3">
-        {[
-          ["累计 Token", total(rows, "total_tokens")],
-          ["输入 Token", total(rows, "input_tokens")],
-          ["今日 Token", total(dayRows, "total_tokens")],
-        ].map(([label, value]) => (
-          <div key={String(label)} className="app-soft-card rounded-2xl border p-4">
-            <p className="text-xl font-black">{Number(value).toLocaleString()}</p>
-            <p className="app-muted-text mt-1 text-xs font-black">{String(label)}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 border-t pt-5" style={{ borderColor: "var(--app-border-soft)" }}>
-        <DashboardTitleWithHint
-          headingLevel={4}
-          titleClassName="text-sm font-black"
-          title="最近调用"
-          description={<>共计 {rows.length} 条用量记录</>}
-        />
-        <div className="mt-3 space-y-2">
-          {rows.slice(0, 20).map((row, index) => (
-            <div
-              key={`${row.created_at}-${index}`}
-              className="app-soft-card flex flex-col gap-1 rounded-xl border p-3 text-sm sm:flex-row sm:items-center sm:justify-between"
-            >
-              <span>{new Date(row.created_at).toLocaleString("zh-CN")}</span>
-              <span className="font-black">
-                输入 {row.input_tokens} · 输出 {row.output_tokens} · 共 {row.total_tokens}
-              </span>
-            </div>
-          ))}
-          {rows.length === 0 && (
-            <p className="app-muted-text rounded-xl border border-dashed py-6 text-center text-sm">
-              暂时没有 Token 使用记录。
-            </p>
-          )}
-        </div>
-      </div>
-    </article>
-  );
+  return {
+    id,
+    name,
+    slug,
+    kind,
+    isCurrent,
+    totalTokens: total(rows, "total_tokens"),
+    inputTokens: total(rows, "input_tokens"),
+    outputTokens: total(rows, "output_tokens"),
+    dayTokens: total(dayRows, "total_tokens"),
+    logCount: rows.length,
+    trend,
+    logs: rows.slice(0, 20).map((row) => ({
+      createdAt: row.created_at,
+      inputTokens: row.input_tokens,
+      outputTokens: row.output_tokens,
+      totalTokens: row.total_tokens,
+    })),
+  };
 }
 
 export default async function TokenUsagePage() {
@@ -175,122 +136,149 @@ export default async function TokenUsagePage() {
   const dayRows = rows.filter(
     (row) => now - new Date(row.created_at).getTime() < 86_400_000,
   );
+  const platformTableRows: TokenUsageTableRow[] = canViewAllTenants
+    ? [
+        createUsageTableRow({
+          id: "platform",
+          name: "平台负责人",
+          slug: "platform",
+          kind: "platform",
+          isCurrent: false,
+          rows: platformRows,
+          now,
+        }),
+      ]
+    : [];
+  const organizationTableRows: TokenUsageTableRow[] = visibleTenantIds.map(
+    (tenantId) => {
+      const item = tenantById.get(tenantId);
+      return createUsageTableRow({
+        id: `tenant-${tenantId}`,
+        name: item?.name ?? "未识别机构",
+        slug: item?.slug ?? tenantId,
+        kind: "organization",
+        isCurrent: tenantId === tenant?.id,
+        rows: rowsByTenant.get(tenantId) ?? [],
+        now,
+      });
+    },
+  );
+  const metrics = [
+    {
+      label: "总 Token (Total)",
+      value: total(rows, "total_tokens"),
+      color: "var(--app-accent)",
+    },
+    {
+      label: "输入 Token (Input)",
+      value: total(rows, "input_tokens"),
+      color: "var(--app-secondary)",
+    },
+    {
+      label: "输出 Token (Output)",
+      value: total(rows, "output_tokens"),
+      color: "var(--app-success)",
+    },
+    {
+      label: "24 小时增量",
+      value: total(dayRows, "total_tokens"),
+      color: "var(--app-warm)",
+    },
+  ];
 
   return (
-    <div className="pb-12">
-      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
-        <section
-          className="app-card rounded-3xl border p-5 sm:p-6"
-          style={{
-            background:
-              "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-accent-soft))",
-          }}
-        >
-          <span
-            className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-            style={{
-              color: "var(--app-accent)",
-              backgroundColor: "var(--app-accent-soft)",
-            }}
-          >
-            <Zap size={14} />
-            AI 用量监控
-          </span>
-          <DashboardTitleWithHint
-            className="mt-3"
-            title="Token 用量"
-            description={
-              canViewAllTenants
-                ? "按机构统计文字版 AI 对话用量，并查看各机构最近调用记录。"
-                : "查看我的机构产生的文字版 AI 对话用量。"
-            }
-          />
-        </section>
+    <div className="token-usage-page min-h-full pb-12">
+      <div className="mx-auto w-full max-w-[1600px] space-y-9 px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
+        <header className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
+          <div>
+            <h1 className="text-3xl font-semibold tracking-[-0.04em]">
+              Token 用量
+            </h1>
+            <p className="app-muted-text mt-2 max-w-2xl text-[13px] leading-6">
+              {canViewAllTenants
+                ? "按平台与机构查看 AI 对话用量，并展开最近调用明细。"
+                : "查看当前机构产生的 AI 对话用量与最近调用。"}
+            </p>
+          </div>
+          <div className="app-muted-text flex items-center gap-2 text-[12px]">
+            <Database size={12} strokeWidth={1.7} />
+            最近 5,000 条记录
+          </div>
+        </header>
 
         {(error || tenantsResult.error || platformProfilesResult.error) && (
           <p
-            className="rounded-2xl border p-4 text-sm font-bold"
+            className="border-y px-1 py-3 text-[13px] font-medium"
             style={{
               color: "var(--app-warm)",
               backgroundColor: "var(--app-warm-soft)",
+              borderColor: "color-mix(in srgb, var(--app-warm) 28%, var(--app-border))",
             }}
           >
             暂时无法读取完整的 Token 或机构数据，请稍后刷新重试。
           </p>
         )}
 
-        <section className="grid gap-4 sm:grid-cols-3">
-          {[
-            ["总 Token", total(rows, "total_tokens"), Zap],
-            ["输入 Token", total(rows, "input_tokens"), MessageSquareText],
-            ["今日 Token", total(dayRows, "total_tokens"), BarChart3],
-          ].map(([label, value, Icon]) => {
-            const MetricIcon = Icon as typeof Zap;
-            return (
-              <article key={String(label)} className="app-card rounded-3xl border p-5">
-                <MetricIcon size={20} style={{ color: "var(--app-accent)" }} />
-                <p className="mt-4 text-3xl font-black">{Number(value).toLocaleString()}</p>
-                <p className="app-muted-text mt-1 text-sm font-black">{String(label)}</p>
-              </article>
-            );
-          })}
+        <section>
+          <div
+            className="token-usage-metrics-strip grid gap-x-8 gap-y-6 pb-7 sm:grid-cols-2 xl:grid-cols-4"
+          >
+            {metrics.map((metric) => (
+              <div key={metric.label} className="text-center">
+                <div className="flex items-center justify-center gap-2">
+                  <span
+                    className="h-0.5 w-3"
+                    style={{ backgroundColor: metric.color }}
+                    aria-hidden="true"
+                  />
+                  <p
+                    className="text-[11px] font-semibold uppercase tracking-[0.07em]"
+                    style={{ color: metric.color }}
+                  >
+                    {metric.label}
+                  </p>
+                </div>
+                <p
+                  className="mt-2 font-mono text-[34px] font-semibold tabular-nums tracking-[-0.04em]"
+                  style={{ color: metric.color }}
+                >
+                  {metric.value.toLocaleString()}
+                </p>
+              </div>
+            ))}
+          </div>
         </section>
 
         {canViewAllTenants && (
-          <section className="space-y-4">
-            <DashboardTitleWithHint
-              headingLevel={2}
-              titleClassName="text-xl font-black"
-              title="平台负责人用量"
-              description="单独统计平台负责人及平台运营账号产生的 Token 用量。"
-            />
-            <TokenUsageGroup
-              name="平台负责人"
-              slug="platform"
-              rows={platformRows}
-              now={now}
-              badge="平台用量"
-            />
+          <section>
+            <div
+              className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-2 pl-3"
+              style={{ borderColor: "var(--app-accent)" }}
+            >
+              <div>
+                <h2 className="text-[16px] font-semibold">平台用量明细</h2>
+              </div>
+              <p className="text-[12px]" style={{ color: "var(--app-accent)" }}>
+                平台负责人及平台运营账号
+              </p>
+            </div>
+            <TokenUsageTable rows={platformTableRows} />
           </section>
         )}
 
-        <section className="space-y-4">
-          <DashboardTitleWithHint
-            headingLevel={2}
-            titleClassName="text-xl font-black"
-            title="机构用量"
-            description={
-              canViewAllTenants
-                ? `共 ${visibleTenantIds.length} 个机构，调用记录分别计入对应机构。`
-                : "这里只显示当前登录所属机构的用量。"
-            }
-          />
-
-          <div className="grid items-start gap-4 lg:grid-cols-2">
-          {visibleTenantIds.map((tenantId) => {
-            const item = tenantById.get(tenantId);
-            const tenantRows = rowsByTenant.get(tenantId) ?? [];
-            const isMine = tenantId === tenant?.id;
-
-            return (
-              <TokenUsageGroup
-                key={tenantId}
-                name={item?.name ?? "未识别机构"}
-                slug={item?.slug ?? tenantId}
-                rows={tenantRows}
-                now={now}
-                badge={isMine ? "我的机构" : undefined}
-              />
-            );
-          })}
-          </div>
-
-          {!canViewAllTenants && visibleTenantIds.length === 0 && (
-            <div className="app-card rounded-3xl border border-dashed p-8 text-center">
-              <Building2 className="mx-auto opacity-30" size={30} />
-              <p className="mt-3 font-black">暂时没有可显示的机构</p>
+        <section>
+          <div
+            className="mb-4 flex flex-wrap items-end justify-between gap-3 border-l-2 pl-3"
+            style={{ borderColor: "var(--app-secondary)" }}
+          >
+            <div>
+              <h2 className="text-[16px] font-semibold">机构用量明细</h2>
             </div>
-          )}
+            <p className="text-[12px]" style={{ color: "var(--app-secondary)" }}>
+              共 {organizationTableRows.length.toLocaleString()} 个机构
+            </p>
+          </div>
+          <TokenUsageTable rows={organizationTableRows} />
         </section>
       </div>
     </div>

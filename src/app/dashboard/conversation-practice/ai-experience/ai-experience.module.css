@@ -1,9 +1,6 @@
 .pageShell {
   color: var(--app-text);
-  background:
-    radial-gradient(circle at 8% 14%, color-mix(in srgb, var(--app-hero-start) 72%, transparent), transparent 24rem),
-    radial-gradient(circle at 92% 10%, color-mix(in srgb, var(--app-hero-end) 78%, transparent), transparent 28rem),
-    linear-gradient(180deg, var(--app-bg) 0%, var(--app-hero-end) 52%, var(--app-bg) 100%);
+  background: transparent;
   font-family:
     "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
     sans-serif;

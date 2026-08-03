@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock3, Layers3 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type FeatureBlueprint = {
@@ -60,46 +59,15 @@ const defaultBlueprints: FeatureBlueprint[] = [
 
 export function ComingSoonPage({
   title,
-  description,
-  icon,
 }: {
   title: string;
-  description: string;
-  icon?: ReactNode;
 }) {
   const blueprints = featureBlueprints[title] ?? defaultBlueprints;
 
   return (
     <>
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section
-          className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
-          style={{
-            background:
-              "linear-gradient(120deg, var(--app-hero-start), var(--app-card-bg) 55%, var(--app-hero-end))",
-          }}
-        >
-          <div className="grid items-center gap-6 lg:grid-cols-[1fr_320px]">
-            <div>
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
-              >
-                <Layers3 size={14} aria-hidden="true" />
-                未来功能蓝图
-              </span>
-              {icon && (
-                <div
-                  className="mt-5 flex h-14 w-14 items-center justify-center rounded-2xl"
-                  style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
-                >
-                  {icon}
-                </div>
-              )}
-              <DashboardTitleWithHint className={icon ? "mt-3" : "mt-5"} headingLevel={2} titleClassName="text-2xl font-black tracking-tight" title={<>{title}工作台</>} description={<>{description}</>} />
-            </div>
-
-            <div className="app-card rounded-3xl border p-5">
+        <section className="app-card rounded-3xl border p-5">
               <div className="flex items-center gap-3">
                 <span
                   className="flex h-10 w-10 items-center justify-center rounded-2xl"
@@ -121,8 +89,6 @@ export function ComingSoonPage({
                 <Clock3 size={13} aria-hidden="true" />
                 导航与功能分区已经保留
               </p>
-            </div>
-          </div>
         </section>
 
         <section>

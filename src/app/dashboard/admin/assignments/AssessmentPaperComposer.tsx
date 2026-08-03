@@ -251,7 +251,7 @@ export function AssessmentPaperComposer({
                   className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"
                 />
               </label>
-              <label className="app-soft-card flex items-center gap-3 rounded-2xl border p-4 text-xs font-black md:col-span-2">
+              <label className="flex items-center gap-3 border-y py-3 text-xs font-black md:col-span-2">
                 <input
                   name="allow_resubmission"
                   type="checkbox"
@@ -323,58 +323,48 @@ export function AssessmentPaperComposer({
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-3 md:grid-cols-2">
-                {visible.map((question) => {
-                  const isSelected = selectedIds.has(question.id);
-                  return (
-                    <article
-                      key={question.id}
-                      className="app-soft-card rounded-2xl border p-4"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="rounded-full px-2 py-1 text-[10px] font-black"
-                          style={{
-                            color: "var(--app-secondary)",
-                            backgroundColor: "var(--app-secondary-soft)",
-                          }}
-                        >
-                          {difficultyLabels[question.difficulty] ??
-                            question.difficulty}
-                        </span>
-                        <span className="app-muted-text text-[10px] font-bold">
-                          {question.skill || "综合"}
-                        </span>
-                        <button
-                          type="button"
-                          disabled={isSelected}
-                          onClick={() => addQuestion(question)}
-                          className="ml-auto inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white disabled:opacity-50"
-                          style={{
-                            backgroundColor: isSelected
-                              ? "var(--app-success)"
-                              : "var(--app-accent)",
-                          }}
-                        >
-                          {isSelected ? <Check size={11} /> : <Plus size={11} />}
-                          {isSelected ? "已加入" : "加入试卷"}
-                        </button>
-                      </div>
-                      <p className="mt-3 text-sm font-bold leading-6">
-                        {question.prompt}
-                      </p>
-                      {question.options.length > 0 && (
-                        <div className="app-muted-text mt-2 grid gap-1 text-[11px]">
-                          {question.options.map((option, index) => (
-                            <span key={`${question.id}-${index}`}>
-                              {String.fromCharCode(65 + index)}. {option}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </article>
-                  );
-                })}
+              <div className="mt-4 overflow-x-auto border">
+                <table className="w-full min-w-[820px] table-fixed border-collapse text-left">
+                  <colgroup>
+                    <col className="w-20" />
+                    <col className="w-28" />
+                    <col className="w-[38%]" />
+                    <col />
+                    <col className="w-24" />
+                  </colgroup>
+                  <thead className="bg-[var(--app-soft-bg)]">
+                    <tr className="border-b app-muted-text">
+                      <th className="px-3 py-2.5 text-center text-[11px] font-bold">难度</th>
+                      <th className="border-l px-3 py-2.5 text-center text-[11px] font-bold">技能</th>
+                      <th className="border-l px-4 py-2.5 text-[11px] font-bold">题目</th>
+                      <th className="border-l px-4 py-2.5 text-[11px] font-bold">选项</th>
+                      <th className="border-l px-3 py-2.5 text-right text-[11px] font-bold">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {visible.map((question) => {
+                      const isSelected = selectedIds.has(question.id);
+                      return (
+                        <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                          <td className="px-3 py-3 text-center text-xs font-bold">{difficultyLabels[question.difficulty] ?? question.difficulty}</td>
+                          <td className="app-muted-text border-l px-3 py-3 text-center text-xs">{question.skill || "综合"}</td>
+                          <td className="border-l px-4 py-3 text-xs font-bold leading-5">{question.prompt}</td>
+                          <td className="app-muted-text border-l px-4 py-3 text-[11px] leading-5">
+                            {question.options.length > 0 ? question.options.map((option, index) => (
+                              <p key={`${question.id}-${index}`}>{String.fromCharCode(65 + index)}. {option}</p>
+                            )) : "—"}
+                          </td>
+                          <td className="border-l px-3 py-3 text-right">
+                            <button type="button" disabled={isSelected} onClick={() => addQuestion(question)} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] disabled:text-[var(--app-success)]">
+                              {isSelected ? <Check size={11} /> : <Plus size={11} />}
+                              {isSelected ? "已加入" : "加入"}
+                            </button>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
               </div>
 
               <div className="mt-4 flex items-center justify-between">
@@ -406,8 +396,8 @@ export function AssessmentPaperComposer({
               </div>
             </section>
 
-            <section className="app-soft-card rounded-2xl border p-4">
-              <div className="flex items-center justify-between gap-3">
+            <section className="border">
+              <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
                 <div>
                   <h3 className="font-black">已选试卷内容</h3>
                   <p className="app-muted-text mt-1 text-xs">
@@ -415,74 +405,41 @@ export function AssessmentPaperComposer({
                   </p>
                 </div>
               </div>
-              <div className="mt-4 space-y-2">
-                {selected.map((item, index) => {
-                  const question = questionMap.get(item.questionId);
-                  if (!question) return null;
-                  return (
-                    <div
-                      key={item.questionId}
-                      className="app-card flex items-center gap-3 rounded-xl border p-3"
-                    >
-                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
-                        {index + 1}
-                      </span>
-                      <p className="min-w-0 flex-1 truncate text-xs font-bold">
-                        {question.prompt}
-                      </p>
-                      <input
-                        type="number"
-                        min={0.01}
-                        max={1000}
-                        step="0.01"
-                        value={item.points}
-                        onChange={(event) =>
-                          setSelected((current) =>
-                            current.map((currentItem) =>
-                              currentItem.questionId === item.questionId
-                                ? {
-                                    ...currentItem,
-                                    points: Number(event.target.value),
-                                  }
-                                : currentItem
-                            )
-                          )
-                        }
-                        className="app-input w-20 rounded-lg border px-2 py-2 text-xs"
-                        aria-label={`第 ${index + 1} 题分值`}
-                      />
-                      <button
-                        type="button"
-                        disabled={index === 0}
-                        onClick={() => moveQuestion(index, -1)}
-                        className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30"
-                        aria-label="上移"
-                      >
-                        <ArrowUp size={13} />
-                      </button>
-                      <button
-                        type="button"
-                        disabled={index === selected.length - 1}
-                        onClick={() => moveQuestion(index, 1)}
-                        className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30"
-                        aria-label="下移"
-                      >
-                        <ArrowDown size={13} />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => removeQuestion(item.questionId)}
-                        className="flex h-8 w-8 items-center justify-center rounded-lg"
-                        style={{ color: "#c94f45", backgroundColor: "#fff0ed" }}
-                        aria-label="移除题目"
-                      >
-                        <Trash2 size={13} />
-                      </button>
-                    </div>
-                  );
-                })}
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[760px] border-collapse text-left">
+                  <thead className="bg-[var(--app-soft-bg)]">
+                    <tr className="border-b app-muted-text">
+                      <th className="w-16 px-3 py-2.5 text-center text-[11px] font-bold">顺序</th>
+                      <th className="border-l px-4 py-2.5 text-[11px] font-bold">题目</th>
+                      <th className="w-24 border-l px-3 py-2.5 text-center text-[11px] font-bold">分值</th>
+                      <th className="w-36 border-l px-3 py-2.5 text-right text-[11px] font-bold">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {selected.map((item, index) => {
+                      const question = questionMap.get(item.questionId);
+                      if (!question) return null;
+                      return (
+                        <tr key={item.questionId} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                          <td className="px-3 py-3 text-center font-mono text-xs">{String(index + 1).padStart(2, "0")}</td>
+                          <td className="border-l px-4 py-3 text-xs font-bold">{question.prompt}</td>
+                          <td className="border-l px-3 py-2 text-center">
+                            <input type="number" min={0.01} max={1000} step={0.01} value={item.points} onChange={(event) => setSelected((current) => current.map((currentItem) => currentItem.questionId === item.questionId ? { ...currentItem, points: Number(event.target.value) } : currentItem))} className="app-input w-20 rounded-lg border px-2 py-2 text-center text-xs" aria-label={`第 ${index + 1} 题分值`} />
+                          </td>
+                          <td className="border-l px-3 py-2">
+                            <div className="flex items-center justify-end gap-1">
+                              <button type="button" disabled={index === 0} onClick={() => moveQuestion(index, -1)} className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30" aria-label="上移"><ArrowUp size={13} /></button>
+                              <button type="button" disabled={index === selected.length - 1} onClick={() => moveQuestion(index, 1)} className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30" aria-label="下移"><ArrowDown size={13} /></button>
+                              <button type="button" onClick={() => removeQuestion(item.questionId)} className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ color: "#c94f45", backgroundColor: "#fff0ed" }} aria-label="移除题目"><Trash2 size={13} /></button>
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
                 {selected.length === 0 && (
-                  <p className="app-muted-text rounded-xl border border-dashed p-6 text-center text-xs">
+                  <p className="app-muted-text p-6 text-center text-xs">
                     从上方题库加入题目后，会在这里形成完整试卷。
                   </p>
                 )}

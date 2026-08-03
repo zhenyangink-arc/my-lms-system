@@ -2,6 +2,9 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
+import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
+import type { CourseTestRow } from "@/lib/korean-chapter-tests";
+import { createAdminClient } from "@/lib/supabase/admin";
 import {
   type AssignmentType,
   type SubmissionStatus,
@@ -45,6 +48,13 @@ type CategoryRow = {
   title: string;
 };
 
+type ChapterTestAttemptRow = {
+  test_slug: string;
+  score: number;
+  passed: boolean;
+  attempted_at: string;
+};
+
 function getLatestSubmissions(submissions: SubmissionRow[]) {
   const latest = new Map<string, SubmissionRow>();
 
@@ -60,11 +70,19 @@ function getLatestSubmissions(submissions: SubmissionRow[]) {
 
 export default async function AssignmentsPage() {
   const { supabase, user, isManager } = await requireAssignmentViewer();
+  const admin = createAdminClient();
   // Request-time snapshot keeps all deadline labels consistent for this render.
   // eslint-disable-next-line react-hooks/purity
   const currentTime = Date.now();
 
-  const [assignmentsResult, submissionsResult, coursesResult, categoriesResult] =
+  const [
+    assignmentsResult,
+    submissionsResult,
+    coursesResult,
+    categoriesResult,
+    chapterTestsResult,
+    chapterQuestionsResult,
+  ] =
     await Promise.all([
       supabase
         .from("learning_assignments")
@@ -86,12 +104,77 @@ export default async function AssignmentsPage() {
       supabase
         .from("course_categories")
         .select("id,parent_id,slug,title"),
+      admin
+        .from("chapter_tests")
+        .select(
+          "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+        )
+        .in("course_key", ["hangul-introduction", "korean-level-one"])
+        .eq("status", "published")
+        .order("chapter_number", { ascending: true }),
+      admin
+        .from("chapter_test_questions")
+        .select("test_id")
+        .eq("status", "published")
+        .eq("question_type", "single_choice")
+        .eq("is_chapter_test_item", true),
     ]);
 
   const allAssignments = (assignmentsResult.data ?? []) as AssignmentRow[];
   const submissions = (submissionsResult.data ?? []) as SubmissionRow[];
   const courses = (coursesResult.data ?? []) as CourseRow[];
   const categories = (categoriesResult.data ?? []) as CategoryRow[];
+  const allChapterTests = (chapterTestsResult.data ?? []) as CourseTestRow[];
+
+  const { data: chapterAttemptData } = allChapterTests.length
+    ? await supabase
+        .from("chapter_test_attempts")
+        .select("test_slug,score,passed,attempted_at")
+        .eq("student_id", user.id)
+        .in(
+          "test_slug",
+          allChapterTests.map((test) => test.slug)
+        )
+        .order("attempted_at", { ascending: false })
+    : { data: [] as ChapterTestAttemptRow[] };
+
+  const latestAttemptBySlug = new Map<string, ChapterTestAttemptRow>();
+  for (const attempt of (chapterAttemptData ?? []) as ChapterTestAttemptRow[]) {
+    if (!latestAttemptBySlug.has(attempt.test_slug)) {
+      latestAttemptBySlug.set(attempt.test_slug, attempt);
+    }
+  }
+  const unlockedTestSlugs = isManager
+    ? new Set(allChapterTests.map((test) => test.slug))
+    : getUnlockedKoreanTestSlugs(latestAttemptBySlug.keys());
+  const questionCountByTestId = new Map<string, number>();
+  for (const question of chapterQuestionsResult.data ?? []) {
+    const testId = String(question.test_id);
+    questionCountByTestId.set(testId, (questionCountByTestId.get(testId) ?? 0) + 1);
+  }
+
+  const chapterTests = allChapterTests
+    .filter((test) => unlockedTestSlugs.has(test.slug))
+    .map((test) => {
+      const attempt = latestAttemptBySlug.get(test.slug);
+      return {
+        id: test.id,
+        slug: test.slug,
+        title: test.title,
+        koreanTitle: test.korean_title,
+        description: test.description,
+        chapterNumber: test.chapter_number,
+        courseTitle:
+          test.course_key === "hangul-introduction" ? "韩语字母入门" : "韩国语 1级",
+        courseGroup: "韩语课程",
+        durationMinutes: test.duration_minutes,
+        passingScore: test.passing_score,
+        questionCount: questionCountByTestId.get(test.id) ?? 0,
+        attempt: attempt
+          ? { score: attempt.score, passed: attempt.passed }
+          : null,
+      };
+    });
 
   const categoryById = new Map(categories.map((category) => [category.id, category]));
   const courseById = new Map(courses.map((course) => [course.id, course]));
@@ -158,7 +241,9 @@ export default async function AssignmentsPage() {
     Boolean(assignmentsResult.error) ||
     Boolean(submissionsResult.error) ||
     Boolean(coursesResult.error) ||
-    Boolean(categoriesResult.error);
+    Boolean(categoriesResult.error) ||
+    Boolean(chapterTestsResult.error) ||
+    Boolean(chapterQuestionsResult.error);
 
   return (
     <div className="pb-12">
@@ -191,6 +276,7 @@ export default async function AssignmentsPage() {
 
         <AssignmentBoard
           items={boardItems}
+          chapterTests={chapterTests}
           isManager={isManager}
           currentTime={currentTime}
         />

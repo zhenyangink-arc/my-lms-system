@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { useMemo, useState } from "react";
 import {
   AlertCircle,
@@ -9,26 +8,22 @@ import {
   Award,
   BookOpenCheck,
   CheckCircle2,
-  ChevronRight,
   ClipboardCheck,
-  ClipboardList,
   Clock3,
   FilePenLine,
   RotateCcw,
   Search,
-  ShieldCheck,
   Sparkles,
   Timer,
 } from "lucide-react";
 
 import {
-  ASSIGNMENT_TYPE_LABELS,
   formatAssignmentDate,
   type AssignmentType,
   type SubmissionStatus,
 } from "./config";
 
-type BoardItem = {
+type AssignmentItem = {
   id: string;
   title: string;
   description: string;
@@ -50,492 +45,379 @@ type BoardItem = {
   } | null;
 };
 
-type ViewStatus =
+type ChapterTestItem = {
+  id: string;
+  slug: string;
+  title: string;
+  koreanTitle: string;
+  description: string;
+  chapterNumber: number;
+  courseTitle: string;
+  courseGroup: string;
+  durationMinutes: number;
+  passingScore: number;
+  questionCount: number;
+  attempt: { score: number; passed: boolean } | null;
+};
+
+type TaskKind = "chapter_test" | "homework" | "exam";
+type TaskState =
   | "pending"
+  | "revision_required"
   | "submitted"
   | "graded"
-  | "revision_required"
   | "upcoming"
   | "overdue"
   | "preview";
+type StatusFilter = "all" | "todo" | "revision" | "submitted" | "completed";
+type TaskTypeFilter = "all" | TaskKind;
 
-type StatusFilter = "all" | "todo" | "submitted" | "graded";
-type TaskTypeFilter = "all" | "homework" | "exam";
+type UnifiedTask = {
+  id: string;
+  href: string;
+  kind: TaskKind;
+  state: TaskState;
+  title: string;
+  courseTitle: string;
+  courseGroup: string;
+  description: string;
+  durationMinutes: number | null;
+  score: number | null;
+  totalPoints: number;
+  questionCount: number | null;
+  chapterNumber: number | null;
+  startsAt: string | null;
+  dueAt: string | null;
+  allowResubmission: boolean;
+};
 
-const statusPresentation: Record<
-  ViewStatus,
-  { label: string; color: string; soft: string }
-> = {
-  pending: {
-    label: "待完成",
+const kindPresentation = {
+  chapter_test: {
+    label: "章节测试",
+    shortLabel: "课后练习",
+    icon: BookOpenCheck,
+    color: "var(--app-secondary)",
+    soft: "var(--app-secondary-soft)",
+  },
+  homework: {
+    label: "老师作业",
+    shortLabel: "需提交",
+    icon: FilePenLine,
     color: "var(--app-accent)",
     soft: "var(--app-accent-soft)",
   },
-  submitted: {
-    label: "已提交 · 待批改",
+  exam: {
+    label: "正式考试",
+    shortLabel: "限时",
+    icon: ClipboardCheck,
     color: "var(--app-warm)",
     soft: "var(--app-warm-soft)",
   },
-  graded: {
-    label: "已出分",
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
-  },
-  revision_required: {
-    label: "需修改",
-    color: "#c94f45",
-    soft: "#fff0ed",
-  },
-  upcoming: {
-    label: "即将开始",
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
-  },
-  overdue: {
-    label: "已截止",
-    color: "#8b5d56",
-    soft: "#f7eeec",
-  },
-  preview: {
-    label: "学生端预览",
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
-  },
+} satisfies Record<
+  TaskKind,
+  { label: string; shortLabel: string; icon: typeof BookOpenCheck; color: string; soft: string }
+>;
+
+const statePresentation: Record<TaskState, { label: string; color: string; soft: string }> = {
+  pending: { label: "待完成", color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
+  revision_required: { label: "需修改", color: "#c94f45", soft: "#fff0ed" },
+  submitted: { label: "待批改", color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
+  graded: { label: "已完成", color: "var(--app-success)", soft: "var(--app-success-soft)" },
+  upcoming: { label: "未开放", color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
+  overdue: { label: "已截止", color: "#8b5d56", soft: "#f7eeec" },
+  preview: { label: "学生端预览", color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
 };
 
-function getViewStatus(
-  item: BoardItem,
-  isManager: boolean,
-  now: number
-): ViewStatus {
-  if (isManager) {
-    return new Date(item.due_at).getTime() < now ? "overdue" : "preview";
-  }
-
+function getAssignmentState(item: AssignmentItem, isManager: boolean, now: number): TaskState {
+  if (isManager) return new Date(item.due_at).getTime() < now ? "overdue" : "preview";
   if (item.latestSubmission) return item.latestSubmission.status;
   if (new Date(item.starts_at).getTime() > now) return "upcoming";
   return new Date(item.due_at).getTime() < now ? "overdue" : "pending";
 }
 
-function getDeadlineText(date: string, now: number) {
-  const difference = new Date(date).getTime() - now;
-  const days = Math.ceil(difference / 86_400_000);
+function getDeadlineLabel(task: UnifiedTask, now: number) {
+  if (task.kind === "chapter_test") return task.state === "graded" ? "已完成" : "建议现在完成";
+  if (task.state === "upcoming" && task.startsAt) return `${formatAssignmentDate(task.startsAt)} 开放`;
+  if (!task.dueAt) return "时间待定";
 
+  const difference = new Date(task.dueAt).getTime() - now;
+  const days = Math.ceil(difference / 86_400_000);
   if (difference < 0) return "已截止";
-  if (days === 0) return "今天截止";
+  if (days <= 0) return "今天截止";
   if (days === 1) return "明天截止";
-  if (days <= 7) return `${days} 天后截止`;
-  return formatAssignmentDate(date);
+  if (days <= 7) return `还剩 ${days} 天`;
+  return formatAssignmentDate(task.dueAt);
+}
+
+function getActionLabel(task: UnifiedTask) {
+  if (task.state === "revision_required") return task.kind === "chapter_test" ? "重新测试" : "查看反馈";
+  if (task.state === "pending") return task.kind === "chapter_test" ? "开始测试" : "开始作答";
+  if (task.state === "upcoming") return "查看安排";
+  if (task.state === "submitted") return "查看提交";
+  if (task.state === "graded") return task.kind === "chapter_test" ? "查看成绩" : "查看批改";
+  return task.state === "preview" ? "查看预览" : "查看详情";
+}
+
+function sortTasks(a: UnifiedTask, b: UnifiedTask) {
+  const rank: Record<TaskState, number> = {
+    revision_required: 0,
+    pending: 1,
+    upcoming: 2,
+    submitted: 3,
+    preview: 4,
+    graded: 5,
+    overdue: 6,
+  };
+  const stateDifference = rank[a.state] - rank[b.state];
+  if (stateDifference !== 0) return stateDifference;
+
+  const aTime = a.dueAt ? new Date(a.dueAt).getTime() : Number.MAX_SAFE_INTEGER;
+  const bTime = b.dueAt ? new Date(b.dueAt).getTime() : Number.MAX_SAFE_INTEGER;
+  if (aTime !== bTime) return aTime - bTime;
+  return (a.chapterNumber ?? 999) - (b.chapterNumber ?? 999);
 }
 
 export function AssignmentBoard({
   items,
+  chapterTests,
   isManager,
   currentTime,
 }: {
-  items: BoardItem[];
+  items: AssignmentItem[];
+  chapterTests: ChapterTestItem[];
   isManager: boolean;
   currentTime: number;
 }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-  const [taskTypeFilter, setTaskTypeFilter] =
-    useState<TaskTypeFilter>("all");
+  const [taskTypeFilter, setTaskTypeFilter] = useState<TaskTypeFilter>("all");
   const [courseFilter, setCourseFilter] = useState("all");
   const [query, setQuery] = useState("");
-  const now = currentTime;
 
-  const itemsWithStatus = useMemo(
-    () =>
-      items.map((item) => ({
-        ...item,
-        viewStatus: getViewStatus(item, isManager, now),
-      })),
-    [isManager, items, now]
-  );
+  const tasks = useMemo<UnifiedTask[]>(() => {
+    const assignmentTasks = items.map<UnifiedTask>((item) => ({
+      id: item.id,
+      href: `/dashboard/assignments/${item.id}`,
+      kind: item.assignment_type === "exam" ? "exam" : "homework",
+      state: getAssignmentState(item, isManager, currentTime),
+      title: item.title,
+      courseTitle: item.courseTitle,
+      courseGroup: item.courseGroup,
+      description: item.description,
+      durationMinutes: item.duration_minutes,
+      score: item.latestSubmission?.score ?? null,
+      totalPoints: item.total_points,
+      questionCount: null,
+      chapterNumber: null,
+      startsAt: item.starts_at,
+      dueAt: item.due_at,
+      allowResubmission: item.allow_resubmission,
+    }));
 
-  const courseGroups = useMemo(
-    () =>
-      [...new Set(items.map((item) => item.courseGroup))].sort((a, b) =>
-        a.localeCompare(b, "zh-CN")
-      ),
-    [items]
-  );
+    const testTasks = chapterTests.map<UnifiedTask>((test) => ({
+      id: `chapter-test-${test.id}`,
+      href: `/dashboard/assignments/korean/${test.slug}`,
+      kind: "chapter_test",
+      state: isManager
+        ? "preview"
+        : test.attempt
+          ? test.attempt.passed
+            ? "graded"
+            : "revision_required"
+          : "pending",
+      title: test.title,
+      courseTitle: test.courseTitle,
+      courseGroup: test.courseGroup,
+      description: test.koreanTitle || test.description,
+      durationMinutes: test.durationMinutes,
+      score: test.attempt?.score ?? null,
+      totalPoints: 100,
+      questionCount: test.questionCount,
+      chapterNumber: test.chapterNumber,
+      startsAt: null,
+      dueAt: null,
+      allowResubmission: true,
+    }));
+
+    return [...assignmentTasks, ...testTasks].sort(sortTasks);
+  }, [chapterTests, currentTime, isManager, items]);
 
   const counts = {
-    todo: itemsWithStatus.filter((item) =>
-      ["pending", "revision_required"].includes(item.viewStatus)
-    ).length,
-    submitted: itemsWithStatus.filter(
-      (item) => item.viewStatus === "submitted"
-    ).length,
-    graded: itemsWithStatus.filter((item) => item.viewStatus === "graded")
-      .length,
+    todo: tasks.filter((task) => task.state === "pending").length,
+    revision: tasks.filter((task) => task.state === "revision_required").length,
+    submitted: tasks.filter((task) => task.state === "submitted").length,
+    completed: tasks.filter((task) => task.state === "graded").length,
   };
 
-  const filteredItems = itemsWithStatus.filter((item) => {
-    const typeMatches =
-      taskTypeFilter === "all" || item.assignment_type === taskTypeFilter;
+  const typeCounts = {
+    chapter_test: tasks.filter((task) => task.kind === "chapter_test").length,
+    homework: tasks.filter((task) => task.kind === "homework").length,
+    exam: tasks.filter((task) => task.kind === "exam").length,
+  };
+
+  const courseGroups = useMemo(
+    () => [...new Set(tasks.map((task) => task.courseGroup))].sort((a, b) => a.localeCompare(b, "zh-CN")),
+    [tasks]
+  );
+
+  const nextTask = tasks.find((task) =>
+    ["revision_required", "pending"].includes(task.state)
+  );
+
+  const filteredTasks = tasks.filter((task) => {
+    const typeMatches = taskTypeFilter === "all" || task.kind === taskTypeFilter;
     const statusMatches =
       statusFilter === "all" ||
-      (statusFilter === "todo" &&
-        ["pending", "revision_required"].includes(item.viewStatus)) ||
-      item.viewStatus === statusFilter;
-    const courseMatches =
-      courseFilter === "all" || item.courseGroup === courseFilter;
+      (statusFilter === "todo" && ["pending", "upcoming"].includes(task.state)) ||
+      (statusFilter === "revision" && task.state === "revision_required") ||
+      (statusFilter === "submitted" && task.state === "submitted") ||
+      (statusFilter === "completed" && task.state === "graded");
+    const courseMatches = courseFilter === "all" || task.courseGroup === courseFilter;
     const normalizedQuery = query.trim().toLocaleLowerCase("zh-CN");
     const queryMatches =
       !normalizedQuery ||
-      `${item.title} ${item.description} ${item.courseTitle}`
+      `${task.title} ${task.description} ${task.courseTitle}`
         .toLocaleLowerCase("zh-CN")
         .includes(normalizedQuery);
-
     return typeMatches && statusMatches && courseMatches && queryMatches;
   });
 
-  const nearestTask = itemsWithStatus.find((item) =>
-    ["pending", "revision_required"].includes(item.viewStatus)
-  );
-  const homeworkCount = items.filter(
-    (item) => item.assignment_type === "homework"
-  ).length;
-  const examCount = items.filter(
-    (item) => item.assignment_type === "exam"
-  ).length;
-
-  const filters: Array<{
-    value: StatusFilter;
-    label: string;
-    count: number;
-  }> = [
-    { value: "all", label: "全部任务", count: items.length },
+  const statusFilters: Array<{ value: StatusFilter; label: string; count: number }> = [
+    { value: "all", label: "全部", count: tasks.length },
     { value: "todo", label: "待完成", count: counts.todo },
+    { value: "revision", label: "需修改", count: counts.revision },
     { value: "submitted", label: "待批改", count: counts.submitted },
-    { value: "graded", label: "已完成", count: counts.graded },
+    { value: "completed", label: "已完成", count: counts.completed },
   ];
 
   return (
-    <>
-      <section
-        className="app-card relative overflow-hidden rounded-[2rem] border p-5 sm:p-7"
+    <div className="space-y-4">
+      {isManager && <section
+        className="app-card overflow-hidden rounded-[2rem] border p-5 sm:p-6"
         style={{
           background:
-            "linear-gradient(130deg, var(--app-hero-end), var(--app-card-bg) 54%, var(--app-secondary-soft))",
+            "linear-gradient(130deg, var(--app-hero-end), var(--app-card-bg) 56%, var(--app-secondary-soft))",
         }}
       >
-        <div
-          className="absolute -right-16 -top-20 h-56 w-56 rounded-full opacity-70 blur-3xl"
-          style={{ backgroundColor: "var(--app-accent-soft)" }}
-        />
-        <div className="relative grid gap-6 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-center">
-          <div>
-            <span
-              className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-              style={{
-                color: "var(--app-secondary)",
-                backgroundColor: "var(--app-secondary-soft)",
-              }}
-            >
-              <ClipboardCheck size={15} />
-              {isManager ? "学生端任务预览" : "我的作业与考试"}
-            </span>
-            <DashboardTitleWithHint className="mt-4" titleClassName="max-w-3xl text-2xl font-black tracking-tight sm:text-3xl" title="课程测试、老师作业、正式考试，分开处理" description="学完章节后进入课程测试进行自测；作业和考试由老师发布，按截止时间完成。选校、材料、签证等留学服务事项不会进入本页。" />
-
-            {nearestTask && !isManager && (
-              <Link
-                href={`/dashboard/assignments/${nearestTask.id}`}
-                className="mt-5 inline-flex max-w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                style={{ backgroundColor: "var(--app-secondary)" }}
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          {isManager && (
+            <div>
+              <span
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
               >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-white/15">
-                  <Sparkles size={16} />
-                </span>
-                <span className="min-w-0 text-left">
-                  <span className="block text-[10px] opacity-75">建议下一步</span>
-                  <span className="block truncate">{nearestTask.title}</span>
-                </span>
-                <ArrowRight className="shrink-0" size={16} />
-              </Link>
-            )}
-          </div>
+                <ClipboardCheck size={15} />
+                学生端任务预览
+              </span>
+              <h1 className="mt-3 text-3xl font-black tracking-tight">学习任务</h1>
+            </div>
+          )}
 
-          <div className="dashboard-title-metrics">
+          <div className={`grid grid-cols-3 gap-2 ${isManager ? "sm:min-w-[360px]" : "w-full"}`}>
             {[
               ["待完成", counts.todo, FilePenLine, "var(--app-accent)", "var(--app-accent-soft)"],
-              ["待批改", counts.submitted, Clock3, "var(--app-warm)", "var(--app-warm-soft)"],
-              ["已出分", counts.graded, Award, "var(--app-success)", "var(--app-success-soft)"],
+              ["需修改", counts.revision, RotateCcw, "#c94f45", "#fff0ed"],
+              ["已完成", counts.completed, Award, "var(--app-success)", "var(--app-success-soft)"],
             ].map(([label, value, Icon, color, soft]) => {
               const MetricIcon = Icon as typeof Award;
               return (
-                <div
-                  key={String(label)}
-                  className="app-card rounded-2xl border p-3 text-center sm:p-4"
-                >
+                <div key={String(label)} className="app-card flex items-center gap-3 rounded-2xl border px-3 py-3">
                   <span
-                    className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl"
-                    style={{
-                      color: String(color),
-                      backgroundColor: String(soft),
-                    }}
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                    style={{ color: String(color), backgroundColor: String(soft) }}
                   >
-                    <MetricIcon size={17} />
+                    <MetricIcon size={16} />
                   </span>
-                  <p className="mt-2 text-2xl font-black">{String(value)}</p>
-                  <p className="app-muted-text text-[11px] font-black">
-                    {String(label)}
-                  </p>
+                  <div>
+                    <p className="text-xl font-black leading-none">{String(value)}</p>
+                    <p className="app-muted-text mt-1 text-[10px] font-black">{String(label)}</p>
+                  </div>
                 </div>
               );
             })}
           </div>
         </div>
+      </section>}
+
+      {!isManager && (
+        nextTask ? (
+          <section className="app-card rounded-3xl border p-4 sm:p-5">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
+              <span
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
+                style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+              >
+                <Sparkles size={21} />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-black" style={{ color: "var(--app-secondary)" }}>下一项</p>
+                <h2 className="mt-1 truncate text-lg font-black">{nextTask.title}</h2>
+                <div className="app-muted-text mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs font-bold">
+                  <span>{nextTask.courseTitle}</span>
+                  <span>{kindPresentation[nextTask.kind].label}</span>
+                  <span>{getDeadlineLabel(nextTask, currentTime)}</span>
+                </div>
+              </div>
+              <Link
+                href={nextTask.href}
+                className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black text-white"
+                style={{ backgroundColor: "var(--app-secondary)" }}
+              >
+                {getActionLabel(nextTask)}
+                <ArrowRight size={15} />
+              </Link>
+            </div>
+          </section>
+        ) : (
+          <section className="app-card flex flex-col gap-4 rounded-3xl border p-5 sm:flex-row sm:items-center">
+            <CheckCircle2 size={34} style={{ color: "var(--app-success)" }} />
+            <div className="flex-1">
+              <h2 className="font-black">当前没有待完成任务</h2>
+              <p className="app-muted-text mt-1 text-xs font-bold">可以继续课程学习，新的任务会自动出现在这里。</p>
+            </div>
+            <Link
+              href="/dashboard/courses"
+              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black text-white"
+              style={{ backgroundColor: "var(--app-secondary)" }}
+            >
+              继续学习 <ArrowRight size={13} />
+            </Link>
+          </section>
+        )
+      )}
+
+      <section className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+        {(Object.keys(kindPresentation) as TaskKind[]).map((kind) => {
+          const item = kindPresentation[kind];
+          const Icon = item.icon;
+          const active = taskTypeFilter === kind;
+          return (
+            <button
+              key={kind}
+              type="button"
+              onClick={() => setTaskTypeFilter(active ? "all" : kind)}
+              className="app-card flex items-center gap-3 rounded-2xl border p-3 text-left transition hover:-translate-y-0.5"
+              style={{ outline: active ? `2px solid ${item.color}` : undefined }}
+            >
+              <span
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+                style={{ color: item.color, backgroundColor: item.soft }}
+              >
+                <Icon size={20} />
+              </span>
+              <span className="min-w-0 flex-1">
+                <span className="block font-black">{item.label}</span>
+                <span className="app-muted-text mt-0.5 block text-[10px] font-black">{item.shortLabel}</span>
+              </span>
+              <span className="text-xl font-black" style={{ color: item.color }}>{typeCounts[kind]}</span>
+            </button>
+          );
+        })}
       </section>
 
-      <section>
-        <div className="mb-3 px-1">
-          <p className="text-xs font-black" style={{ color: "var(--app-accent)" }}>
-            选择学习入口
-          </p>
-          <h2 className="mt-1 text-xl font-black">你现在要做哪一类事情？</h2>
-        </div>
-        <div className="grid gap-4 lg:grid-cols-3">
-          <Link
-            href="/dashboard/assignments/korean"
-            className="app-card group relative overflow-hidden rounded-3xl border p-5 transition hover:-translate-y-1 hover:shadow-lg"
-            style={{
-              background:
-                "linear-gradient(140deg, var(--app-card-bg), var(--app-secondary-soft))",
-            }}
-          >
-            <div className="flex items-start justify-between gap-4">
-              <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{
-                  color: "var(--app-secondary)",
-                  backgroundColor: "var(--app-secondary-soft)",
-                }}
-              >
-                <BookOpenCheck size={22} />
-              </span>
-              <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                style={{
-                  color: "var(--app-success)",
-                  backgroundColor: "var(--app-success-soft)",
-                }}
-              >
-                学完即测
-              </span>
-            </div>
-            <p className="mt-5 text-xs font-black" style={{ color: "var(--app-secondary)" }}>
-              入口 01
-            </p>
-            <DashboardTitleWithHint
-              className="mt-1"
-              headingLevel={3}
-              titleClassName="text-xl font-black"
-              title="章节测试"
-              description="跟随课程进度开放，用来检验知识点；不是老师布置的作业，也不是正式考试。"
-            />
-            <span
-              className="mt-5 inline-flex items-center gap-1.5 text-xs font-black"
-              style={{ color: "var(--app-secondary)" }}
-            >
-              进入测试中心
-              <ArrowRight
-                className="transition group-hover:translate-x-1"
-                size={14}
-              />
-            </span>
-          </Link>
-
-          <a
-            href="#task-list"
-            onClick={() => {
-              setTaskTypeFilter("homework");
-              setStatusFilter("all");
-            }}
-            className="app-card group rounded-3xl border p-5 transition hover:-translate-y-1 hover:shadow-lg"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{
-                  color: "var(--app-accent)",
-                  backgroundColor: "var(--app-accent-soft)",
-                }}
-              >
-                <FilePenLine size={22} />
-              </span>
-              <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                style={{
-                  color: "var(--app-accent)",
-                  backgroundColor: "var(--app-accent-soft)",
-                }}
-              >
-                {homeworkCount} 项
-              </span>
-            </div>
-            <p className="mt-5 text-xs font-black" style={{ color: "var(--app-accent)" }}>
-              入口 02
-            </p>
-            <DashboardTitleWithHint
-              className="mt-1"
-              headingLevel={3}
-              titleClassName="text-xl font-black"
-              title="老师作业"
-              description="由老师发布，有提交要求和截止时间；提交后等待老师批改或退回修改。"
-            />
-            <span
-              className="mt-5 inline-flex items-center gap-1.5 text-xs font-black"
-              style={{ color: "var(--app-accent)" }}
-            >
-              查看全部作业
-              <ArrowRight
-                className="transition group-hover:translate-x-1"
-                size={14}
-              />
-            </span>
-          </a>
-
-          <a
-            href="#task-list"
-            onClick={() => {
-              setTaskTypeFilter("exam");
-              setStatusFilter("all");
-            }}
-            className="app-card group rounded-3xl border p-5 transition hover:-translate-y-1 hover:shadow-lg"
-          >
-            <div className="flex items-start justify-between gap-4">
-              <span
-                className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{
-                  color: "var(--app-warm)",
-                  backgroundColor: "var(--app-warm-soft)",
-                }}
-              >
-                <ClipboardCheck size={22} />
-              </span>
-              <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-black"
-                style={{
-                  color: "var(--app-warm)",
-                  backgroundColor: "var(--app-warm-soft)",
-                }}
-              >
-                {examCount} 场
-              </span>
-            </div>
-            <p className="mt-5 text-xs font-black" style={{ color: "var(--app-warm)" }}>
-              入口 03
-            </p>
-            <DashboardTitleWithHint
-              className="mt-1"
-              headingLevel={3}
-              titleClassName="text-xl font-black"
-              title="正式考试"
-              description="由老师发布，强调考试时间、限时和交卷规则；与日常章节自测完全分开。"
-            />
-            <span
-              className="mt-5 inline-flex items-center gap-1.5 text-xs font-black"
-              style={{ color: "var(--app-warm)" }}
-            >
-              查看考试安排
-              <ArrowRight
-                className="transition group-hover:translate-x-1"
-                size={14}
-              />
-            </span>
-          </a>
-        </div>
-      </section>
-
-      <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <div className="app-card rounded-3xl border p-5 sm:p-6">
-          <div className="flex items-start gap-3">
-            <span
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-              style={{
-                color: "var(--app-accent)",
-                backgroundColor: "var(--app-accent-soft)",
-              }}
-            >
-              <BookOpenCheck size={20} />
-            </span>
-            <div>
-              <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>这里会出现哪些课程？</>} description={<>章节测试跟随“我的课程”进度；老师发布的作业和考试按韩语、
-                英语、数学或大学课程自动归类。未关联课程的内容归为“综合任务”。</>} />
-            </div>
-          </div>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {courseGroups.length > 0 ? (
-              courseGroups.map((group) => (
-                <span
-                  key={group}
-                  className="rounded-full border px-3 py-1.5 text-xs font-black"
-                  style={{
-                    color: "var(--app-secondary)",
-                    backgroundColor: "var(--app-secondary-soft)",
-                    borderColor: "var(--app-border-soft)",
-                  }}
-                >
-                  {group}
-                </span>
-              ))
-            ) : (
-              <span className="app-muted-text text-xs">暂无课程任务</span>
-            )}
-          </div>
-        </div>
-
-        <div className="app-card rounded-3xl border p-5 sm:p-6">
-          <div className="flex items-start gap-3">
-            <span
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-              style={{
-                color: "var(--app-success)",
-                backgroundColor: "var(--app-success-soft)",
-              }}
-            >
-              <ShieldCheck size={20} />
-            </span>
-            <div>
-              <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>留学服务已排除</>} description={<>申请规划、材料清单、院校方案和签证跟进不属于课程考核，
-                请继续在对应的留学服务板块处理。</>} />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section id="task-list" className="app-card scroll-mt-5 rounded-3xl border p-4 sm:p-5">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex flex-wrap gap-2">
-            {[
-              ["all", "全部"],
-              ["homework", "只看作业"],
-              ["exam", "只看考试"],
-            ].map(([value, label]) => {
-              const active = taskTypeFilter === value;
-              return (
-                <button
-                  key={value}
-                  type="button"
-                  onClick={() => setTaskTypeFilter(value as TaskTypeFilter)}
-                  className="rounded-xl px-3 py-2.5 text-xs font-black transition"
-                  style={{
-                    color: active ? "white" : "var(--app-muted)",
-                    backgroundColor: active
-                      ? "var(--app-secondary)"
-                      : "var(--app-soft-bg)",
-                  }}
-                >
-                  {label}
-                </button>
-              );
-            })}
-          </div>
+      <section id="task-list" className="app-card scroll-mt-5 rounded-3xl border p-3 sm:p-4">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
           <div className="flex gap-2 overflow-x-auto pb-1">
-            {filters.map((filter) => {
+            {statusFilters.map((filter) => {
               const active = statusFilter === filter.value;
               return (
                 <button
@@ -545,20 +427,11 @@ export function AssignmentBoard({
                   className="inline-flex shrink-0 items-center gap-2 rounded-xl px-3 py-2.5 text-xs font-black transition"
                   style={{
                     color: active ? "white" : "var(--app-muted)",
-                    backgroundColor: active
-                      ? "var(--app-secondary)"
-                      : "var(--app-soft-bg)",
+                    backgroundColor: active ? "var(--app-secondary)" : "var(--app-soft-bg)",
                   }}
                 >
                   {filter.label}
-                  <span
-                    className="rounded-md px-1.5 py-0.5 text-[10px]"
-                    style={{
-                      backgroundColor: active
-                        ? "rgba(255,255,255,.18)"
-                        : "var(--app-card-bg)",
-                    }}
-                  >
+                  <span className="rounded-md px-1.5 py-0.5 text-[10px]" style={{ backgroundColor: active ? "rgba(255,255,255,.18)" : "var(--app-card-bg)" }}>
                     {filter.count}
                   </span>
                 </button>
@@ -566,197 +439,107 @@ export function AssignmentBoard({
             })}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:w-[560px]">
-            <label className="relative">
-              <span className="sr-only">搜索任务</span>
-              <Search
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 app-muted-text"
-                size={15}
-              />
-              <input
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="搜索作业、考试或课程"
-                className="app-input w-full rounded-xl border py-2.5 pl-9 pr-3 text-xs"
-              />
-            </label>
-            <label>
-              <span className="sr-only">按课程分类筛选</span>
-              <select
-                value={courseFilter}
-                onChange={(event) => setCourseFilter(event.target.value)}
-                className="app-input w-full rounded-xl border px-3 py-2.5 text-xs font-bold"
-              >
-                <option value="all">全部课程分类</option>
-                {courseGroups.map((group) => (
-                  <option key={group} value={group}>
-                    {group}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
+          {(tasks.length > 6 || courseGroups.length > 1) && (
+            <div className="grid gap-2 sm:grid-cols-2 xl:w-[520px]">
+              <label className="relative">
+                <span className="sr-only">搜索任务</span>
+                <Search className="app-muted-text pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" size={15} />
+                <input
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="搜索任务或课程"
+                  className="app-input w-full rounded-xl border py-2.5 pl-9 pr-3 text-xs"
+                />
+              </label>
+              {courseGroups.length > 1 && (
+                <label>
+                  <span className="sr-only">按课程筛选</span>
+                  <select
+                    value={courseFilter}
+                    onChange={(event) => setCourseFilter(event.target.value)}
+                    className="app-input w-full rounded-xl border px-3 py-2.5 text-xs font-bold"
+                  >
+                    <option value="all">全部课程</option>
+                    {courseGroups.map((group) => <option key={group} value={group}>{group}</option>)}
+                  </select>
+                </label>
+              )}
+            </div>
+          )}
         </div>
       </section>
 
       <section>
-        <div className="mb-3 flex items-end justify-between gap-3 px-1">
-          <DashboardTitleWithHint
-            headingLevel={2}
-            titleClassName="text-xl font-black"
-            title="任务清单"
-            description={
-              <>
-                {taskTypeFilter === "homework"
-                  ? "老师发布的作业"
-                  : taskTypeFilter === "exam"
-                    ? "老师发布的考试"
-                    : "老师发布的作业与考试"}
-                · 当前显示 {filteredItems.length} 项
-              </>
-            }
-          />
-          <ClipboardList
-            size={23}
-            style={{ color: "var(--app-accent)" }}
-          />
+        <div className="mb-3 flex items-center justify-between px-1">
+          <h2 className="text-xl font-black">任务列表</h2>
+          <span className="app-muted-text text-xs font-black">{filteredTasks.length} 项</span>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-          {filteredItems.map((item) => {
-            const presentation = statusPresentation[item.viewStatus];
-            const isUrgent =
-              ["pending", "revision_required"].includes(item.viewStatus) &&
-              new Date(item.due_at).getTime() - now <= 3 * 86_400_000;
+        <div className="grid gap-3 lg:grid-cols-2 2xl:grid-cols-3">
+          {filteredTasks.map((task) => {
+            const kind = kindPresentation[task.kind];
+            const state = statePresentation[task.state];
+            const KindIcon = kind.icon;
+            const deadlineLabel = getDeadlineLabel(task, currentTime);
+            const urgent =
+              task.dueAt &&
+              ["pending", "revision_required"].includes(task.state) &&
+              new Date(task.dueAt).getTime() - currentTime <= 3 * 86_400_000;
 
             return (
               <Link
-                key={item.id}
-                href={`/dashboard/assignments/${item.id}`}
-                className="app-card group flex min-h-[300px] flex-col rounded-[1.75rem] border p-5 transition hover:-translate-y-1 hover:shadow-lg"
+                key={task.id}
+                href={task.href}
+                className="app-card group flex min-h-[210px] flex-col rounded-3xl border p-4 transition hover:-translate-y-1 hover:shadow-lg sm:p-5"
               >
-                <div className="flex flex-wrap items-center gap-2">
-                  <span
-                    className="rounded-full px-2.5 py-1 text-[11px] font-black"
-                    style={{
-                      color: "var(--app-secondary)",
-                      backgroundColor: "var(--app-secondary-soft)",
-                    }}
-                  >
-                    {ASSIGNMENT_TYPE_LABELS[item.assignment_type]}
+                <div className="flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: kind.color, backgroundColor: kind.soft }}>
+                    <KindIcon size={12} /> {kind.label}
                   </span>
-                  <span
-                    className="rounded-full px-2.5 py-1 text-[11px] font-black"
-                    style={{
-                      color: presentation.color,
-                      backgroundColor: presentation.soft,
-                    }}
-                  >
-                    {presentation.label}
+                  <span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: state.color, backgroundColor: state.soft }}>
+                    {state.label}
                   </span>
-                  <ChevronRight
-                    className="ml-auto transition group-hover:translate-x-1"
-                    size={18}
-                    style={{ color: "var(--app-muted)" }}
-                  />
+                  <ArrowRight className="ml-auto transition group-hover:translate-x-1" size={16} style={{ color: "var(--app-muted)" }} />
                 </div>
 
                 <div className="mt-4">
-                  <p
-                    className="text-[11px] font-black"
-                    style={{ color: "var(--app-accent)" }}
-                  >
-                    {item.courseGroup} · {item.courseTitle}
-                  </p>
-                  <h3 className="mt-2 text-lg font-black leading-7">
-                    {item.title}
-                  </h3>
-                  <p className="app-muted-text mt-2 line-clamp-2 text-xs leading-5">
-                    {item.description || "打开任务查看完整要求与作答内容。"}
-                  </p>
+                  <p className="text-[11px] font-black" style={{ color: kind.color }}>{task.courseTitle}</p>
+                  <h3 className="mt-1.5 text-lg font-black leading-7">{task.title}</h3>
+                  {task.description && <p className="app-muted-text mt-1 line-clamp-1 text-xs font-bold">{task.description}</p>}
                 </div>
 
-                <div className="mt-4 flex flex-wrap gap-2 text-[11px] font-bold app-muted-text">
-                  <span
-                    className="rounded-lg px-2.5 py-1.5"
-                    style={{ backgroundColor: "var(--app-soft-bg)" }}
-                  >
-                    {item.total_points} 分
-                  </span>
-                  {item.duration_minutes && (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5"
-                      style={{ backgroundColor: "var(--app-soft-bg)" }}
-                    >
-                      <Timer size={11} />
-                      约 {item.duration_minutes} 分钟
+                <div className="app-muted-text mt-3 flex flex-wrap gap-2 text-[10px] font-black">
+                  {task.chapterNumber && <span className="rounded-lg px-2 py-1.5" style={{ backgroundColor: "var(--app-soft-bg)" }}>第 {task.chapterNumber} 章</span>}
+                  {task.questionCount !== null && <span className="rounded-lg px-2 py-1.5" style={{ backgroundColor: "var(--app-soft-bg)" }}>{task.questionCount} 题</span>}
+                  {task.durationMinutes && (
+                    <span className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                      <Timer size={11} /> {task.durationMinutes} 分钟
                     </span>
                   )}
-                  {item.allow_resubmission && (
-                    <span
-                      className="inline-flex items-center gap-1 rounded-lg px-2.5 py-1.5"
-                      style={{ backgroundColor: "var(--app-soft-bg)" }}
-                    >
-                      <RotateCcw size={11} />
-                      可再次提交
+                  {task.kind !== "chapter_test" && <span className="rounded-lg px-2 py-1.5" style={{ backgroundColor: "var(--app-soft-bg)" }}>{task.totalPoints} 分</span>}
+                  {task.allowResubmission && task.kind !== "chapter_test" && (
+                    <span className="inline-flex items-center gap-1 rounded-lg px-2 py-1.5" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                      <RotateCcw size={11} /> 可再次提交
                     </span>
                   )}
                 </div>
 
-                <div
-                  className="mt-auto flex items-end justify-between gap-4 border-t pt-4"
-                  style={{ borderColor: "var(--app-border-soft)" }}
-                >
+                <div className="mt-auto flex items-end justify-between gap-4 border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}>
                   <div>
-                    <p
-                      className="flex items-center gap-1.5 text-xs font-black"
-                      style={{
-                        color: isUrgent ? "#c94f45" : "var(--app-foreground)",
-                      }}
-                    >
-                      {isUrgent ? (
-                        <AlertCircle size={13} />
-                      ) : (
-                        <Clock3 size={13} />
-                      )}
-                      {item.viewStatus === "upcoming"
-                        ? `开始 ${formatAssignmentDate(item.starts_at)}`
-                        : getDeadlineText(item.due_at, now)}
+                    <p className="flex items-center gap-1.5 text-xs font-black" style={{ color: urgent ? "#c94f45" : "var(--app-foreground)" }}>
+                      {urgent ? <AlertCircle size={13} /> : <Clock3 size={13} />}
+                      {deadlineLabel}
                     </p>
-                    <p className="app-muted-text mt-1 text-[10px]">
-                      {formatAssignmentDate(item.due_at)}
-                    </p>
+                    {task.dueAt && <p className="app-muted-text mt-1 text-[10px]">{formatAssignmentDate(task.dueAt)}</p>}
                   </div>
 
-                  {item.viewStatus === "graded" ? (
-                    <p
-                      className="text-2xl font-black"
-                      style={{ color: "var(--app-success)" }}
-                    >
-                      {item.latestSubmission?.score ?? 0}
-                      <span className="ml-1 text-[10px] app-muted-text">
-                        / {item.total_points}
-                      </span>
+                  {task.score !== null && task.state === "graded" ? (
+                    <p className="text-2xl font-black" style={{ color: "var(--app-success)" }}>
+                      {task.score}<span className="ml-1 text-[10px] app-muted-text">/ {task.totalPoints}</span>
                     </p>
-                  ) : item.viewStatus === "revision_required" ? (
-                    <span
-                      className="inline-flex items-center gap-1 text-xs font-black"
-                      style={{ color: "#c94f45" }}
-                    >
-                      <RotateCcw size={13} />
-                      查看反馈
-                    </span>
                   ) : (
-                    <span
-                      className="inline-flex items-center gap-1 text-xs font-black"
-                      style={{ color: "var(--app-secondary)" }}
-                    >
-                      {item.viewStatus === "pending"
-                        ? "开始作答"
-                        : item.viewStatus === "upcoming"
-                          ? "查看安排"
-                          : "查看详情"}
-                      <ArrowRight size={13} />
+                    <span className="inline-flex items-center gap-1 text-xs font-black" style={{ color: state.color }}>
+                      {getActionLabel(task)} <ArrowRight size={13} />
                     </span>
                   )}
                 </div>
@@ -765,47 +548,26 @@ export function AssignmentBoard({
           })}
         </div>
 
-        {filteredItems.length === 0 && (
-          <div className="app-card rounded-[1.75rem] border border-dashed p-10 text-center">
-            <CheckCircle2
-              className="mx-auto"
-              size={36}
-              style={{ color: "var(--app-success)" }}
-            />
-            <div className="mt-4 flex justify-center">
-              <DashboardTitleWithHint
-                headingLevel={3}
-                titleClassName="font-black"
-                title={
-                  items.length === 0
-                    ? "当前没有课程作业或考试"
-                    : "没有符合筛选条件的任务"
-                }
-                description={
-                  items.length === 0
-                    ? "老师发布新的教学任务后会自动显示在这里。"
-                    : "可以切换状态、课程分类，或清空搜索关键词。"
-                }
-              />
-            </div>
-            {items.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setStatusFilter("all");
-                  setTaskTypeFilter("all");
-                  setCourseFilter("all");
-                  setQuery("");
-                }}
-                className="mt-4 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-                style={{ backgroundColor: "var(--app-secondary)" }}
-              >
-                清除筛选
-              </button>
-            )}
+        {filteredTasks.length === 0 && (
+          <div className="app-card rounded-3xl border border-dashed p-10 text-center">
+            <CheckCircle2 className="mx-auto" size={34} style={{ color: "var(--app-success)" }} />
+            <h3 className="mt-3 font-black">没有符合条件的任务</h3>
+            <button
+              type="button"
+              onClick={() => {
+                setStatusFilter("all");
+                setTaskTypeFilter("all");
+                setCourseFilter("all");
+                setQuery("");
+              }}
+              className="mt-4 rounded-xl px-4 py-2.5 text-xs font-black text-white"
+              style={{ backgroundColor: "var(--app-secondary)" }}
+            >
+              清除筛选
+            </button>
           </div>
         )}
       </section>
-    </>
+    </div>
   );
 }

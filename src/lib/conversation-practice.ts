@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
+import { hasExplicitPermission } from "@/lib/permissions/access";
 
 export type ConversationPracticeAccess = {
   /** 能否进入这个管理页面（浏览场景列表和数据） */
@@ -11,7 +12,6 @@ export type ConversationPracticeAccess = {
   /** 能否新建/编辑场景、修改发布状态——只留给平台负责人和平台单独指定的管理员，
    *  机构负责人和机构内其他角色即使能进页面，也只能浏览，不能新建或更改 */
   canManageContent: boolean;
-  canAssignAdmins: boolean;
   role: UserRole;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
@@ -26,29 +26,26 @@ export async function getConversationPracticeAccess(): Promise<ConversationPract
     return {
       canManage: true,
       canManageContent,
-      canAssignAdmins: canManageContent,
       role,
       supabase,
       user,
     };
   }
 
-  if (role !== "admin") {
-    return { canManage: false, canManageContent: false, canAssignAdmins: false, role, supabase, user };
+  if (role !== "admin" || !tenant) {
+    return { canManage: false, canManageContent: false, role, supabase, user };
   }
 
-  const { data, error } = await supabase
-    .from("conversation_practice_admin_assignments")
-    .select("admin_id")
-    .eq("admin_id", user.id)
-    .is("revoked_at", null)
-    .maybeSingle();
-  const assigned = !error && Boolean(data);
+  const assigned = await hasExplicitPermission(
+    supabase,
+    user.id,
+    "conversation_practice.manage",
+    tenant.id
+  );
 
   return {
     canManage: assigned,
-    canManageContent: assigned && !tenant,
-    canAssignAdmins: false,
+    canManageContent: false,
     role,
     supabase,
     user,

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { requireAdmin } from "@/lib/admin";
+import { requireVisaManager } from "@/lib/visa-management";
 import type { ModuleCardDeleteState } from "../StudentModuleCardDeleteDialog";
 import type { VisaAdminActionState } from "./action-state";
 import { getVisaCaseStages } from "../../visa/visa-case-stages";
@@ -28,7 +28,7 @@ export async function deleteStudentVisaCardAction(
 ): Promise<ModuleCardDeleteState> {
   void _previousState;
   void _formData;
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireVisaManager();
   const { error } = await supabase.rpc("delete_student_visa_card", {
     requested_user_id: studentId,
   });
@@ -47,7 +47,7 @@ export async function updateVisaCaseAdminAction(
   formData: FormData
 ): Promise<VisaAdminActionState> {
   void _previousState;
-  const { supabase, user } = await requireAdmin();
+  const { supabase, user, tenantId } = await requireVisaManager();
   const visaType = String(formData.get("visa_type") ?? "").trim();
   const applicationChannel = String(formData.get("application_channel") ?? "").trim();
   const targetEntryDate = String(formData.get("target_entry_date") ?? "").trim();
@@ -62,6 +62,7 @@ export async function updateVisaCaseAdminAction(
   const { data: existingCase, error: existingCaseError } = await supabase
     .from("student_visa_cases")
     .select("id, source_target_id")
+    .eq("tenant_id", tenantId)
     .eq("user_id", studentId)
     .maybeSingle();
 
@@ -73,6 +74,7 @@ export async function updateVisaCaseAdminAction(
     const { error: targetError } = await supabase
       .from("student_university_targets")
       .update({ visa_application_channel: applicationChannel })
+      .eq("tenant_id", tenantId)
       .eq("id", existingCase.source_target_id)
       .eq("user_id", studentId);
 
@@ -91,6 +93,7 @@ export async function updateVisaCaseAdminAction(
       assigned_admin_id: user.id,
       last_reviewed_at: new Date().toISOString(),
     })
+    .eq("tenant_id", tenantId)
     .eq("id", existingCase.id)
     .eq("user_id", studentId)
     .select("id")
@@ -108,7 +111,7 @@ export async function startVisaTaskReviewAction(
 ): Promise<VisaAdminActionState> {
   void _previousState;
   void _formData;
-  const { supabase, user } = await requireAdmin();
+  const { supabase, user, tenantId } = await requireVisaManager();
   const { data, error } = await supabase
     .from("student_visa_tasks")
     .update({
@@ -117,6 +120,7 @@ export async function startVisaTaskReviewAction(
       reviewed_at: null,
       reviewed_by: user.id,
     })
+    .eq("tenant_id", tenantId)
     .eq("id", taskId)
     .eq("status", "submitted")
     .select("id, user_id")
@@ -133,7 +137,7 @@ export async function completeVisaTaskReviewAction(
   formData: FormData
 ): Promise<VisaAdminActionState> {
   void _previousState;
-  const { supabase, user } = await requireAdmin();
+  const { supabase, user, tenantId } = await requireVisaManager();
   const decision = String(formData.get("decision") ?? "").trim();
   const adminNote = String(formData.get("admin_note") ?? "").trim();
   if (!["approved", "revision_required"].includes(decision)) return result("error", "请选择有效的审核结果。");
@@ -148,6 +152,7 @@ export async function completeVisaTaskReviewAction(
       reviewed_at: new Date().toISOString(),
       reviewed_by: user.id,
     })
+    .eq("tenant_id", tenantId)
     .eq("id", taskId)
     .eq("status", "reviewing")
     .select("id, user_id")

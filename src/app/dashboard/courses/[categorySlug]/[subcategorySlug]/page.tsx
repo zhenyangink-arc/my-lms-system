@@ -5,11 +5,14 @@ import {
   CheckCircle2,
   Clock,
   GraduationCap,
+  Lock,
   PlayCircle,
 } from "lucide-react";
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
+import { isPlatformCourseAuditorRole } from "@/lib/admin";
+import { isCourseUnlocked } from "@/lib/course-unlocks";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -33,6 +36,10 @@ type Course = {
   icon_name: string | null;
   cover_url: string | null;
   sort_order: number;
+  unlock_mode: string | null;
+  prerequisite_course_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
 };
 
 type Lesson = {
@@ -139,8 +146,9 @@ export default async function SubcategoryCoursesPage({
 }) {
   const { categorySlug, subcategorySlug } = await params;
 
-  const { supabase, user, platformProfile } = await requireActiveUser();
-  const isPlatformAudit = platformProfile?.role === "platform_super_admin";
+  const { supabase, user, profile, platformProfile } = await requireActiveUser();
+  const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
+  const bypassLearningSequence = isPlatformAudit || profile?.role !== "student";
 
   /**
    * 1. 查询一级课程板块
@@ -182,7 +190,7 @@ export default async function SubcategoryCoursesPage({
   const { data: courseData } = await supabase
     .from("courses")
     .select(
-      "id, category_id, slug, title, description, level, icon_name, cover_url, sort_order"
+      "id, category_id, slug, title, description, level, icon_name, cover_url, sort_order, unlock_mode, prerequisite_course_id, available_from, is_manually_locked"
     )
     .eq("category_id", subcategory.id)
     .eq("is_published", true)
@@ -244,6 +252,16 @@ export default async function SubcategoryCoursesPage({
   progressList.forEach((progress) => {
     progressMap.set(progress.lesson_id, progress);
   });
+  const completedCourseIds = new Set(
+    courses
+      .filter((course) => {
+        const courseLessons = lessonsByCourseId.get(course.id) ?? [];
+        return courseLessons.length > 0 && courseLessons.every(
+          (lesson) => progressMap.get(lesson.id)?.status === "completed",
+        );
+      })
+      .map((course) => course.id),
+  );
 
   const isFocusCategory =
     parentCategory.slug === "service" || parentCategory.slug === "korean";
@@ -413,7 +431,7 @@ export default async function SubcategoryCoursesPage({
 
           {courses.length > 0 ? (
             <div className="space-y-4">
-              {courses.map((course) => {
+              {courses.map((course, courseIndex) => {
                 const courseLessons = lessonsByCourseId.get(course.id) ?? [];
 
                 const totalLessons = courseLessons.length;
@@ -439,9 +457,18 @@ export default async function SubcategoryCoursesPage({
                 const isInProgress =
                   !isCompleted && (completedCount > 0 || inProgressCount > 0);
 
+                const courseLocked =
+                  !bypassLearningSequence &&
+                  !isCourseUnlocked({
+                    course,
+                    courseIndex,
+                    orderedCourses: courses,
+                    completedCourseIds,
+                  });
+
                 const buttonLabel =
-                  isPlatformAudit
-                    ? "巡检课程"
+                  courseLocked
+                    ? "完成前置课程后开放"
                     : totalLessons === 0
                     ? "查看课程"
                     : isCompleted
@@ -576,30 +603,39 @@ export default async function SubcategoryCoursesPage({
                       </div>
 
                       {/* 右侧：按钮 */}
-                      <Link
-                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
-                        className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90 lg:w-auto"
-                        style={{
-                          backgroundColor: isCompleted
-                            ? "var(--lesson-review-bg)"
-                            : isInProgress
-                              ? "var(--lesson-continue-bg)"
-                              : "var(--lesson-start-bg)",
-                          color: isCompleted
-                            ? "var(--lesson-review-text)"
-                            : isInProgress
-                              ? "var(--lesson-continue-text)"
-                              : "var(--lesson-start-text)",
-                          borderColor: isCompleted
-                            ? "var(--lesson-review-border)"
-                            : isInProgress
-                              ? "var(--lesson-continue-border)"
-                              : "var(--lesson-start-border)",
-                        }}
-                      >
-                        <PlayCircle size={16} />
-                        {buttonLabel}
-                      </Link>
+                      {courseLocked ? (
+                        <span
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-center text-sm font-semibold lg:w-auto"
+                          style={{ color: "var(--app-muted)", borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+                        >
+                          <Lock size={15} />{buttonLabel}
+                        </span>
+                      ) : (
+                        <Link
+                          href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                          className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90 lg:w-auto"
+                          style={{
+                            backgroundColor: isCompleted
+                              ? "var(--lesson-review-bg)"
+                              : isInProgress
+                                ? "var(--lesson-continue-bg)"
+                                : "var(--lesson-start-bg)",
+                            color: isCompleted
+                              ? "var(--lesson-review-text)"
+                              : isInProgress
+                                ? "var(--lesson-continue-text)"
+                                : "var(--lesson-start-text)",
+                            borderColor: isCompleted
+                              ? "var(--lesson-review-border)"
+                              : isInProgress
+                                ? "var(--lesson-continue-border)"
+                                : "var(--lesson-start-border)",
+                          }}
+                        >
+                          <PlayCircle size={16} />
+                          {buttonLabel}
+                        </Link>
+                      )}
                     </div>
                   </article>
                 );

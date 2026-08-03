@@ -30,6 +30,7 @@ export type UserRole =
   | "admin"
   | "ceo"
   | "platform_super_admin"
+  | "platform_course_inspector"
   | "tenant_super_admin"
   | "tenant_operator";
 
@@ -59,6 +60,7 @@ export function isValidRole(role: string | null | undefined): role is UserRole {
     role === "admin" ||
     role === "ceo" ||
     role === "platform_super_admin" ||
+    role === "platform_course_inspector" ||
     role === "tenant_super_admin" ||
     role === "tenant_operator"
   );
@@ -101,6 +103,10 @@ export function isPlatformTenantManagerRole(role: string | null | undefined) {
   return role === "platform_super_admin" || role === "tenant_operator";
 }
 
+export function isPlatformCourseAuditorRole(role: string | null | undefined) {
+  return role === "platform_course_inspector";
+}
+
 async function isTenantProvisionedAccount(
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"],
   userId: string
@@ -129,8 +135,6 @@ export async function requirePlatformTenantManager() {
   使用位置：
   - /dashboard/admin
   - /dashboard/admin/courses
-  - /dashboard/admin/courses/[courseId]
-  - /dashboard/admin/courses/[courseId]/lessons/[lessonId]
 
   通过条件：
   1. 用户已登录
@@ -138,7 +142,7 @@ export async function requirePlatformTenantManager() {
   3. profiles.role 是 admin / ceo / tenant_super_admin
 */
 export async function requireAdmin() {
-  const { supabase, user, profile, tenant } = await requireActiveUser();
+  const { supabase, user, profile, platformProfile, tenant } = await requireActiveUser();
 
   /*
     非 admin / ceo / tenant_super_admin 不能进入管理后台。
@@ -152,7 +156,31 @@ export async function requireAdmin() {
     user,
     tenant,
     role: profile?.role as UserRole,
+    globalRole: platformProfile?.global_role ?? null,
     status: (profile?.status ?? "active") as UserStatus,
+  };
+}
+
+/**
+ * 平台课程目录写权限。
+ *
+ * 平台课程巡检员只拥有学生端只读巡检能力，不能借由 Server Action
+ * 创建、修改或发布课程内容。平台副负责人负责机构协作，同样不进入
+ * 平台课程内容的写入范围。
+ */
+export async function requirePlatformCourseManager() {
+  const { supabase, user, platformProfile } = await requireActiveUser();
+  const globalRole = platformProfile?.global_role ?? null;
+
+  if (globalRole !== "platform_owner" && globalRole !== "platform_admin") {
+    redirect("/dashboard/admin");
+  }
+
+  return {
+    supabase,
+    user,
+    globalRole,
+    role: platformProfile?.role as UserRole,
   };
 }
 

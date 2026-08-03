@@ -77,7 +77,14 @@ export async function submitApplicationDocumentsAction(
 
   const { data: updated, error } = await supabase
     .from("student_university_targets")
-    .update({ documents_locked_at: new Date().toISOString() })
+    .update({
+      documents_locked_at: new Date().toISOString(),
+      document_review_status: "pending_review",
+      document_review_submitted_at: new Date().toISOString(),
+      document_reviewed_at: null,
+      document_reviewed_by: null,
+      document_review_note: "",
+    })
     .eq("id", targetId)
     .eq("user_id", user.id)
     .select("id")

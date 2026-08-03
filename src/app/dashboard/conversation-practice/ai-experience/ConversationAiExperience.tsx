@@ -3,6 +3,7 @@
 import {
   Bot,
   Check,
+  Clock3,
   Crown,
   Headphones,
   ImageIcon,
@@ -32,6 +33,20 @@ type ChatRole = "user" | "assistant";
 type ChatStatus = "ready" | "recognizing" | "thinking" | "synthesizing" | "playing";
 type ChatMode = "text" | "voice" | "image";
 type ReplyLanguageMode = "match" | "korean" | "beginner";
+
+export type FormalPracticeConfig = {
+  scenario: string;
+  difficulty: "beginner" | "intermediate" | "advanced";
+  durationMinutes: 5 | 10 | 15;
+  replyLanguageMode: ReplyLanguageMode;
+};
+
+export type FormalPracticeSummary = {
+  config: FormalPracticeConfig;
+  elapsedSeconds: number;
+  userTurns: number;
+  assistantTurns: number;
+};
 
 type ChatMessage = {
   id: string;
@@ -129,6 +144,12 @@ function formatTime(date: Date) {
   }).format(date);
 }
 
+function formatElapsedTime(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const remainingSeconds = seconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+}
+
 function parseSocketPayload(value: unknown): SocketPayload | null {
   if (typeof value !== "string") return null;
 
@@ -184,12 +205,25 @@ function readBlobAsBase64(blob: Blob) {
   });
 }
 
-export function ConversationAiExperience() {
-  const brandName = "口语 AI 陪练";
+export function ConversationAiExperience({
+  variant = "quick",
+  formalConfig,
+  onFormalFinish,
+}: {
+  variant?: "quick" | "formal";
+  formalConfig?: FormalPracticeConfig;
+  onFormalFinish?: (summary: FormalPracticeSummary) => void;
+}) {
+  const isFormal = variant === "formal" && Boolean(formalConfig);
   const assistantName = "口语 AI 陪练老师";
-  const [chatMode, setChatMode] = useState<ChatMode>("text");
-  const [replyLanguageMode, setReplyLanguageMode] = useState<ReplyLanguageMode | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>(() => getInitialMessages(assistantName, "text"));
+  const [chatMode, setChatMode] = useState<ChatMode>(isFormal ? "voice" : "text");
+  const [replyLanguageMode, setReplyLanguageMode] = useState<ReplyLanguageMode | null>(
+    formalConfig?.replyLanguageMode ?? null
+  );
+  const [messages, setMessages] = useState<ChatMessage[]>(() =>
+    getInitialMessages(assistantName, isFormal ? "voice" : "text")
+  );
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<ChatStatus>("ready");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -215,6 +249,7 @@ export function ConversationAiExperience() {
   const shouldSendRecordingRef = useRef(false);
   const requestPendingRef = useRef(false);
   const speechPendingRef = useRef(false);
+  const formalFinishedRef = useRef(false);
   const pendingSpeechTextRef = useRef<string | null>(null);
 
   const readyDetail = chatMode === "voice"
@@ -731,24 +766,44 @@ export function ConversationAiExperience() {
     resetConversation(nextMode);
   }
 
-  return (
-    <div className={`${styles.themeScope} mx-auto w-full max-w-[1500px] px-4 py-8 sm:px-6 sm:py-12 lg:px-8`}>
-      <section className="mb-7 text-center">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[#cce8f6] bg-white/80 px-4 py-2 text-sm font-black text-[#367da4] shadow-sm backdrop-blur">
-          <Sparkles size={16} /> {brandName} · 韩语口语老师
-        </span>
-        <h1 className="mt-3 text-2xl font-black tracking-tight text-[#173b57]">
-          随时开口，把韩语练成
-          <span className="text-[#5794ef]">真实表达</span>
-        </h1>
-        <p className="mx-auto mt-2 max-w-3xl text-sm leading-6 text-[#607c8e] sm:text-base">
-          文字版专注文字交流，语音版支持文字或语音输入并用语音回答，图片版支持文字和图片输入并输出文字。
-        </p>
-      </section>
+  const finishFormalPractice = useCallback(() => {
+    if (!isFormal || !formalConfig || formalFinishedRef.current) return;
+    formalFinishedRef.current = true;
+    recordingRequestedRef.current = false;
+    shouldSendRecordingRef.current = false;
+    if (mediaRecorderRef.current?.state === "recording") mediaRecorderRef.current.stop();
+    stopPlayback();
+    onFormalFinish?.({
+      config: formalConfig,
+      elapsedSeconds,
+      userTurns: messages.filter((message) => message.role === "user").length,
+      assistantTurns: messages.filter(
+        (message) => message.role === "assistant" && message.id !== "welcome"
+      ).length,
+    });
+  }, [elapsedSeconds, formalConfig, isFormal, messages, onFormalFinish, stopPlayback]);
 
-      <div className="grid gap-5 lg:grid-cols-[280px_minmax(0,1fr)]">
-        <aside className="space-y-4 lg:sticky lg:top-[96px] lg:self-start">
-          <section className="rounded-[1.75rem] border border-white/90 bg-white/86 p-5 shadow-[0_20px_55px_rgba(46,104,139,0.11)] backdrop-blur">
+  useEffect(() => {
+    if (!isFormal) return;
+    const timer = window.setInterval(() => setElapsedSeconds((seconds) => seconds + 1), 1_000);
+    return () => window.clearInterval(timer);
+  }, [isFormal]);
+
+  useEffect(() => {
+    if (
+      isFormal &&
+      formalConfig &&
+      elapsedSeconds >= formalConfig.durationMinutes * 60
+    ) {
+      finishFormalPractice();
+    }
+  }, [elapsedSeconds, finishFormalPractice, formalConfig, isFormal]);
+
+  return (
+    <div className={`${styles.themeScope} mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8`}>
+      <div className={`grid gap-5 ${isFormal ? "grid-cols-1" : "lg:grid-cols-[250px_minmax(0,1fr)]"}`}>
+        {!isFormal && <aside className="space-y-4 lg:sticky lg:top-[96px] lg:self-start">
+          <section className="hidden">
             <div className="flex items-center gap-3">
               <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#71bfe8] to-[#8775c3] text-white shadow-sm">
                 <Bot size={23} />
@@ -795,9 +850,35 @@ export function ConversationAiExperience() {
               ))}
             </div>
           </section>
-        </aside>
+        </aside>}
 
         <section className="overflow-hidden rounded-[2rem] border border-white/90 bg-white/90 shadow-[0_28px_80px_rgba(46,104,139,0.16)] backdrop-blur">
+          {isFormal && formalConfig && (
+            <div
+              className="flex flex-col gap-3 border-b px-4 py-4 text-white sm:flex-row sm:items-center sm:px-6"
+              style={{ borderColor: "rgba(255,255,255,.14)", backgroundColor: "#647abd" }}
+            >
+              <div className="min-w-0 flex-1">
+                <p className="text-[10px] font-black tracking-[0.14em] text-white/65">正式练习</p>
+                <h1 className="mt-1 truncate text-lg font-black">{formalConfig.scenario}</h1>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-black">
+                  {formalConfig.difficulty === "beginner" ? "初级" : formalConfig.difficulty === "intermediate" ? "中级" : "高级"}
+                </span>
+                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1.5 text-xs font-black">
+                  <Clock3 size={13} /> {formatElapsedTime(elapsedSeconds)} / {formalConfig.durationMinutes}:00
+                </span>
+                <button
+                  type="button"
+                  onClick={finishFormalPractice}
+                  className="rounded-xl bg-white px-4 py-2 text-xs font-black text-[#475f94] transition hover:bg-white/90"
+                >
+                  结束练习
+                </button>
+              </div>
+            </div>
+          )}
           <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e4eef3] bg-white/94 px-4 py-4 sm:px-6">
             <div className="flex items-center gap-3">
               <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eaf4ff] text-[#3b8db8]">
@@ -830,7 +911,7 @@ export function ConversationAiExperience() {
             </div>
           </header>
 
-          <div className="border-b border-[#e4eef3] bg-[#f7fafc] px-4 py-4 sm:px-6">
+          {!isFormal && <div className="border-b border-[#e4eef3] bg-[#f7fafc] px-4 py-4 sm:px-6">
             <div className="grid gap-3 sm:grid-cols-3" aria-label="选择对话版本">
               <button
                 type="button"
@@ -889,7 +970,7 @@ export function ConversationAiExperience() {
               ))}
               <span className={`self-center text-xs ${replyLanguageMode ? "text-[#7893a3]" : "font-black text-[#a87300]"}`}>{replyLanguageMode === "beginner" ? "韩语回答会附简短中文辅助" : replyLanguageMode === "korean" ? "韩语输入仅用韩语回答" : replyLanguageMode === "match" ? "按你的输入语言回答" : "请先选择一种回复语言模式，才能开始输入。"}</span>
             </div>
-          </div>
+          </div>}
 
           <div className={`${styles.chatGrid} flex min-h-[680px] flex-col`}>
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7 sm:py-8">
@@ -999,7 +1080,7 @@ export function ConversationAiExperience() {
                     {isRecording ? <Square size={23} fill="currentColor" /> : <Mic size={27} />}
                   </button>
                   <span className="text-xs font-black text-[#7b93a1]">
-                    {chatMode !== "voice" ? "不支持语音" : isRecording ? `${recordingSeconds} 秒 · 松开发送` : "按住说话"}
+                    {chatMode !== "voice" ? "切换语音版" : isRecording ? `${recordingSeconds} 秒 · 松开发送` : "按住说话"}
                   </span>
                 </div>
 

@@ -21,7 +21,7 @@ const anonymous = createClient(url, publishableKey, {
 
 async function main() {
   const { data: tests, error: testsError } = await admin
-    .from("course_tests")
+    .from("chapter_tests")
     .select("id,slug,chapter_number,title")
     .eq("course_key", "hangul-introduction")
     .order("chapter_number");
@@ -29,7 +29,7 @@ async function main() {
 
   const testIds = tests.map((test) => test.id);
   const { data: questions, error: questionError } = await admin
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select(
       "test_id,question_key,prompt,options,correct_option,difficulty,status,question_type,is_chapter_test_item"
     )
@@ -39,7 +39,7 @@ async function main() {
     .order("sort_order");
   if (questionError) throw questionError;
 
-  const difficulties = ["foundation", "medium", "hard", "expert"];
+  const difficulties = ["foundation", "medium"];
   const chapters = tests.map((test) => {
     const rows = questions.filter((question) => question.test_id === test.id);
     return {
@@ -74,15 +74,15 @@ async function main() {
     ) !== index
   );
   const { error: anonymousAnswerError } = await anonymous
-    .from("course_test_questions")
+    .from("chapter_test_questions")
     .select("correct_option")
     .limit(1);
 
   const valid =
-    questions.length === 320 &&
+    questions.length === 160 &&
     chapters.every(
       (chapter) =>
-        chapter.total === 80 &&
+        chapter.total === 40 &&
         chapter.chapterTestItems === 10 &&
         difficulties.every(
           (difficulty) => chapter.difficulty[difficulty] === 20

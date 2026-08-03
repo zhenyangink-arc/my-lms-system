@@ -16,6 +16,10 @@ export async function requireStudentFeature(feature: StudentFeature) {
   const role = context.profile?.role ?? "student";
   const tier = normalizeMembershipTier(context.profile?.membership_tier);
 
+  if (role === "platform_course_inspector") {
+    throw new Error("课程巡检员处于只读巡检模式，不能产生学生端操作记录。");
+  }
+
   if (!canUseStudentFeature(role, tier, feature)) {
     throw new Error(`无权限：${getFeatureDeniedMessage(feature)}`);
   }

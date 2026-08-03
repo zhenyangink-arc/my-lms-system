@@ -1,11 +1,18 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { Building2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { createTenantAction } from "./actions";
 import { initialTenantActionState } from "./action-state";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export function TenantComposer() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -16,55 +23,60 @@ export function TenantComposer() {
   }, [state.status]);
 
   return (
-    <section className="app-card rounded-3xl border p-5 sm:p-6">
-      <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
-          <Building2 size={20} />
-        </span>
-        <div>
-          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>开通新租户</>} description={<>创建后，负责人自动成为该租户的超级管理员。租户标识会作为系统内稳定地址使用，创建后不建议随意修改。</>} />
-        </div>
-      </div>
+    <Dialog>
+      <DialogTrigger type="button" className="inline-flex h-9 items-center gap-2 rounded-md bg-neutral-950 px-3.5 text-xs font-semibold text-white transition hover:bg-neutral-800">
+        <Plus size={15} />
+        开通新租户
+      </DialogTrigger>
+      <DialogContent className="max-w-[780px] gap-0 overflow-hidden p-0">
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+          <DialogTitle className="text-base">开通新租户</DialogTitle>
+          <DialogDescription className="text-xs">创建独立机构空间，并同时建立该机构的负责人登录账号。</DialogDescription>
+        </DialogHeader>
 
-      <form ref={formRef} action={formAction} className="mt-5 space-y-4">
-        <label className="block text-xs font-black">
-          租户名称
-          <input name="name" required minLength={2} maxLength={80} placeholder="例如：首尔语言学院" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm" />
-        </label>
-        <label className="block text-xs font-black">
-          租户标识
-          <input name="slug" required minLength={2} maxLength={48} pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="例如：seoul-language" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm" />
-          <span className="app-muted-text mt-1 block text-[11px] font-medium">仅限小写字母、数字与短横线。</span>
-        </label>
-        <label className="block text-xs font-black">
-          套餐
-          <select name="plan_key" defaultValue="starter" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm">
-            <option value="starter">Starter · 起步版</option>
-            <option value="growth">Growth · 成长版</option>
-            <option value="enterprise">Enterprise · 企业版</option>
-          </select>
-        </label>
-        <div className="space-y-4 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
-          <div><p className="text-sm font-black">租户管理员账号</p><p className="app-muted-text mt-1 text-xs">该账号将成为此租户的超级管理员。用户只使用账号和密码登录，不需要邮箱。</p></div>
-          <label className="block text-xs font-black">
-            管理员姓名
-            <input name="manager_name" required minLength={2} maxLength={50} placeholder="例如：张老师" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm" />
+        <form ref={formRef} action={formAction}>
+          <div className="grid border-b sm:grid-cols-2" style={{ borderColor: "var(--app-border)" }}>
+            <label className="border-b sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>租户名称</span>
+              <span className="block px-5 py-3"><input name="name" required minLength={2} maxLength={80} placeholder="例如：首尔语言学院" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></span>
+            </label>
+            <label>
+              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>租户标识</span>
+              <span className="block px-5 py-3"><input name="slug" required minLength={2} maxLength={48} pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="例如：seoul-language" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /><small className="app-muted-text mt-1.5 block text-[10px]">仅限小写字母、数字和短横线，创建后保持稳定。</small></span>
+            </label>
+          </div>
+
+          <label className="grid border-b sm:grid-cols-[160px_minmax(0,1fr)]" style={{ borderColor: "var(--app-border)" }}>
+            <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>服务套餐</span>
+            <span className="px-5 py-3">
+              <select name="plan_key" defaultValue="starter" className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
+                <option value="starter">Starter · 起步版</option>
+                <option value="growth">Growth · 成长版</option>
+                <option value="enterprise">Enterprise · 企业版</option>
+              </select>
+            </span>
           </label>
-          <label className="block text-xs font-black">
-            登录账号
-            <input name="manager_login_id" required minLength={3} maxLength={32} pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}" autoCapitalize="none" placeholder="例如：seoul-admin" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm" />
-            <span className="app-muted-text mt-1 block text-[11px] font-medium">3 至 32 位小写字母、数字、短横线或下划线。</span>
-          </label>
-          <label className="block text-xs font-black">
-            初始密码
-            <input name="initial_password" required type="password" minLength={8} maxLength={72} autoComplete="new-password" placeholder="至少 8 位，包含字母和数字" className="app-input mt-2 w-full rounded-xl border px-3 py-2.5 text-sm" />
-          </label>
-        </div>
-        {state.message && <p aria-live="polite" className="rounded-xl px-3 py-2.5 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)", backgroundColor: state.status === "error" ? "#fff0ed" : "var(--app-success-soft)" }}>{state.message}</p>}
-        <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-accent)" }}>
-          <Plus size={16} />{pending ? "正在开通…" : "开通租户"}
-        </button>
-      </form>
-    </section>
+
+          <div className="border-b" style={{ borderColor: "var(--app-border)" }}>
+            <div className="px-5 py-3" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+              <p className="text-xs font-semibold">机构负责人账号</p>
+              <p className="app-muted-text mt-1 text-[10px]">该账号只属于新租户，并自动获得机构负责人权限。</p>
+            </div>
+            <div className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0" style={{ borderColor: "var(--app-border)" }}>
+              <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">负责人姓名</span><input name="manager_name" required minLength={2} maxLength={50} placeholder="例如：张老师" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>
+              <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">登录账号</span><input name="manager_login_id" required minLength={3} maxLength={32} pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}" autoCapitalize="none" placeholder="例如：seoul-admin" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>
+              <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">初始密码</span><input name="initial_password" required type="password" minLength={8} maxLength={72} autoComplete="new-password" placeholder="至少 8 位，含字母和数字" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>
+            </div>
+          </div>
+
+          {state.message && <p aria-live="polite" className={`border-b px-5 py-3 text-xs font-semibold ${state.status === "error" ? "border-rose-200 bg-rose-50 text-rose-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}>{state.message}</p>}
+
+          <div className="flex items-center justify-between gap-4 px-5 py-4">
+            <p className="app-muted-text text-[10px]">开通后可在租户总表中停用、恢复或重置负责人密码。</p>
+            <button type="submit" disabled={pending} className="h-9 rounded-md bg-neutral-950 px-4 text-xs font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50">{pending ? "正在开通…" : "确认开通"}</button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }

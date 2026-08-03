@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
-import { requireAdmin } from "@/lib/admin";
+import { requireDocumentReviewManager } from "@/lib/document-reviews";
 import type { ModuleCardDeleteState } from "../StudentModuleCardDeleteDialog";
 
 // randomUUID() 用 Web Crypto API 全局对象获取，node:crypto 在 Edge Runtime 下不可用
@@ -26,7 +26,7 @@ export async function deleteStudentDocumentCardAction(
 ): Promise<ModuleCardDeleteState> {
   void _previousState;
   void _formData;
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
 
   const { error } = await supabase.rpc("delete_student_application_document_card", {
     requested_user_id: studentId,
@@ -44,7 +44,7 @@ export async function createApplicationChecklistItemAction(
   studentId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const targetId = String(formData.get("targetId") ?? "").trim();
   const title = String(formData.get("title") ?? "").trim();
   const category = String(formData.get("category") ?? "other").trim();
@@ -90,7 +90,7 @@ export async function deleteApplicationChecklistItemAction(
   studentId: string,
   documentId: string
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
 
   const { data: existing } = await supabase
     .from("student_application_documents")
@@ -125,7 +125,7 @@ export async function updateApplicationChecklistItemNoteAction(
   documentId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const adminNote = String(formData.get("adminNote") ?? "").trim();
 
   if (adminNote.length > 300) {
@@ -165,7 +165,7 @@ export async function toggleApplicationChecklistItemLockAction(
   documentId: string,
   locked: boolean
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const { data, error } = await supabase
     .from("student_application_documents")
     .update({ admin_locked_at: locked ? new Date().toISOString() : null })
@@ -185,7 +185,7 @@ export async function toggleTargetDocumentsLockAction(
   targetId: string,
   locked: boolean
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const { data, error } = await supabase
     .from("student_university_targets")
     .update({ documents_locked_at: locked ? new Date().toISOString() : null })
@@ -206,7 +206,7 @@ export async function updateApplicationStageAction(
   targetId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const stage = Number(formData.get("stage"));
 
   if (!Number.isInteger(stage) || stage < 0 || stage > 9) {
@@ -258,7 +258,7 @@ export async function updateCourierInfoAction(
   targetId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
 
   const mailedAt = String(formData.get("courierMailedAt") ?? "").trim();
   const estimatedArrivalAt = String(formData.get("courierEstimatedArrivalAt") ?? "").trim();
@@ -296,7 +296,7 @@ export async function confirmVisaApplicationChannelAction(
   targetId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireAdmin();
+  const { supabase } = await requireDocumentReviewManager();
   const applicationChannel = String(formData.get("applicationChannel") ?? "").trim();
 
   if (!VISA_APPLICATION_CHANNELS.includes(applicationChannel)) {
@@ -320,4 +320,112 @@ export async function confirmVisaApplicationChannelAction(
   revalidatePath("/dashboard/admin/visa");
   revalidatePath(`/dashboard/admin/visa/${studentId}`);
   redirect(`/dashboard/admin/documents/${studentId}`);
+}
+
+export type DocumentReviewActionState = {
+  status: "idle" | "success" | "error";
+  message: string;
+  completedAt?: string;
+};
+
+export async function reviewApplicationAction(
+  targetId: string,
+  decision: "revision_required" | "approved",
+  _previousState: DocumentReviewActionState,
+  formData: FormData
+): Promise<DocumentReviewActionState> {
+  void _previousState;
+  const { supabase, user, tenantId } = await requireDocumentReviewManager();
+  const note = String(formData.get("reviewNote") ?? "").trim();
+
+  if (decision === "revision_required" && note.length < 2) {
+    return {
+      status: "error",
+      message: "退回补充时请填写至少 2 个字符的原因。",
+    };
+  }
+  if (note.length > 2000) {
+    return { status: "error", message: "审核意见不能超过 2000 个字符。" };
+  }
+
+  const { data: target, error: targetError } = await supabase
+    .from("student_university_targets")
+    .select("id,user_id,application_stage,document_review_status")
+    .eq("tenant_id", tenantId)
+    .eq("id", targetId)
+    .maybeSingle();
+
+  if (targetError || !target) {
+    return { status: "error", message: "找不到这份申请单，请刷新后重试。" };
+  }
+  if (target.document_review_status !== "pending_review") {
+    return {
+      status: "error",
+      message: "这份申请单当前不在待确认状态，请刷新页面查看最新结果。",
+    };
+  }
+
+  if (decision === "approved") {
+    const { count, error: countError } = await supabase
+      .from("student_application_documents")
+      .select("id", { count: "exact", head: true })
+      .eq("tenant_id", tenantId)
+      .eq("target_id", targetId)
+      .eq("status", "preparing")
+      .is("admin_locked_at", null);
+
+    if (countError) {
+      return { status: "error", message: "资料完整性检查失败，请稍后重试。" };
+    }
+    if ((count ?? 0) > 0) {
+      return {
+        status: "error",
+        message: `还有 ${count} 项资料处于准备中，不能确认通过。`,
+      };
+    }
+  }
+
+  const reviewedAt = new Date().toISOString();
+  const updatePayload =
+    decision === "approved"
+      ? {
+          document_review_status: "approved",
+          document_review_note: note,
+          document_reviewed_at: reviewedAt,
+          document_reviewed_by: user.id,
+          documents_locked_at: reviewedAt,
+          application_stage: Math.max(Number(target.application_stage ?? 0), 2),
+        }
+      : {
+          document_review_status: "revision_required",
+          document_review_note: note,
+          document_reviewed_at: reviewedAt,
+          document_reviewed_by: user.id,
+          documents_locked_at: null,
+        };
+
+  const { data: updated, error } = await supabase
+    .from("student_university_targets")
+    .update(updatePayload)
+    .eq("tenant_id", tenantId)
+    .eq("id", targetId)
+    .eq("document_review_status", "pending_review")
+    .select("id")
+    .maybeSingle();
+
+  if (error || !updated) {
+    return {
+      status: "error",
+      message: "审核结果未保存，申请单可能已被其他管理员处理。",
+    };
+  }
+
+  revalidateDocumentPages(target.user_id);
+  revalidatePath("/dashboard/admin/visa");
+
+  return {
+    status: "success",
+    message: decision === "approved" ? "申请资料已确认通过。" : "已退回学生补充资料。",
+    completedAt: reviewedAt,
+  };
 }

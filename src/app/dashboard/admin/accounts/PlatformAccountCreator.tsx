@@ -1,8 +1,16 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
-import { ShieldPlus } from "lucide-react";
+import { Plus } from "lucide-react";
 
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { initialAccountActionState } from "./action-state";
 import { createPlatformAccountAction } from "./actions";
 
@@ -18,105 +26,71 @@ export function PlatformAccountCreator() {
   }, [state.status]);
 
   return (
-    <section className="app-card rounded-[1.75rem] border p-4 sm:p-5">
-      <div className="flex items-start gap-3">
-        <span
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-          style={{
-            color: "var(--app-secondary)",
-            backgroundColor: "var(--app-secondary-soft)",
-          }}
-        >
-          <ShieldPlus size={18} />
-        </span>
-        <div>
-          <h2 className="text-lg font-black">新增平台账号</h2>
-          <p className="app-muted-text mt-1 text-xs">
-            平台账号不加入任何机构，只能设为平台副负责人或平台管理员。
-          </p>
-        </div>
-      </div>
-
-      <form
-        ref={formRef}
-        action={formAction}
-        className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5"
+    <Dialog>
+      <DialogTrigger
+        type="button"
+        className="inline-flex h-9 items-center justify-center gap-2 rounded-md bg-neutral-950 px-3.5 text-xs font-semibold text-white transition hover:bg-neutral-800"
       >
-        <label className="text-xs font-black">
-          姓名
-          <input
-            name="full_name"
-            required
-            minLength={2}
-            maxLength={50}
-            className="app-input mt-1.5 w-full rounded-xl border px-3 py-2.5 text-sm"
-          />
-        </label>
-        <label className="text-xs font-black">
-          登录账号
-          <input
-            name="login_id"
-            required
-            minLength={3}
-            maxLength={32}
-            pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}"
-            autoCapitalize="none"
-            className="app-input mt-1.5 w-full rounded-xl border px-3 py-2.5 text-sm"
-          />
-        </label>
-        <label className="text-xs font-black">
-          初始密码
-          <input
-            name="initial_password"
-            required
-            type="password"
-            minLength={8}
-            maxLength={72}
-            autoComplete="new-password"
-            placeholder="至少 8 位，含字母和数字"
-            className="app-input mt-1.5 w-full rounded-xl border px-3 py-2.5 text-sm"
-          />
-        </label>
-        <label className="text-xs font-black">
-          平台角色
-          <select
-            name="role"
-            defaultValue="platform_admin"
-            className="app-input mt-1.5 w-full rounded-xl border px-3 py-2.5 text-sm"
-          >
-            <option value="platform_deputy">平台副负责人</option>
-            <option value="platform_admin">平台管理员</option>
-          </select>
-        </label>
-        <div className="flex items-end">
-          <button
-            disabled={pending}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white disabled:opacity-50"
-            style={{ backgroundColor: "var(--app-secondary)" }}
-          >
-            <ShieldPlus size={16} />
-            {pending ? "创建中…" : "创建平台账号"}
-          </button>
-        </div>
-        {state.message && (
-          <p
-            aria-live="polite"
-            className="rounded-xl px-3 py-2.5 text-xs font-bold sm:col-span-2 xl:col-span-5"
-            style={{
-              color:
-                state.status === "error"
-                  ? "#c94f45"
-                  : "var(--app-success)",
-              backgroundColor:
-                state.status === "error"
-                  ? "#fff0ed"
-                  : "var(--app-success-soft)",
-            }}
-          >
-            {state.message}
-          </p>
-        )}
-      </form>
-    </section>
+        <Plus size={15} />
+        新增平台账号
+      </DialogTrigger>
+      <DialogContent className="max-w-[760px] gap-0 overflow-hidden p-0">
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+          <DialogTitle className="text-base">新增平台账号</DialogTitle>
+          <DialogDescription className="text-xs">
+            新账号直属平台，不会加入任何机构。创建后可在总表中继续调整角色与状态。
+          </DialogDescription>
+        </DialogHeader>
+
+        <form ref={formRef} action={formAction}>
+          <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+            <label className="grid sm:grid-cols-[160px_minmax(0,1fr)]">
+              <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>姓名</span>
+              <span className="px-5 py-3">
+                <input name="full_name" required minLength={2} maxLength={50} placeholder="请输入成员姓名" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" />
+              </span>
+            </label>
+            <label className="grid sm:grid-cols-[160px_minmax(0,1fr)]">
+              <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>登录账号</span>
+              <span className="px-5 py-3">
+                <input name="login_id" required minLength={3} maxLength={32} pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}" autoCapitalize="none" placeholder="小写字母、数字、- 或 _" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" />
+              </span>
+            </label>
+            <label className="grid sm:grid-cols-[160px_minmax(0,1fr)]">
+              <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>初始密码</span>
+              <span className="px-5 py-3">
+                <input name="initial_password" required type="password" minLength={8} maxLength={72} autoComplete="new-password" placeholder="至少 8 位，同时包含字母和数字" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" />
+              </span>
+            </label>
+            <label className="grid sm:grid-cols-[160px_minmax(0,1fr)]">
+              <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>平台角色</span>
+              <span className="px-5 py-3">
+                <select name="role" defaultValue="platform_admin" className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
+                  <option value="platform_deputy">平台副负责人</option>
+                  <option value="platform_admin">平台管理员</option>
+                  <option value="platform_course_inspector">平台课程巡检员</option>
+                </select>
+              </span>
+            </label>
+          </div>
+
+          {state.message && (
+            <p
+              aria-live="polite"
+              className={`border-t px-5 py-3 text-xs font-semibold ${state.status === "error" ? "border-rose-200 bg-rose-50 text-rose-700" : "border-emerald-200 bg-emerald-50 text-emerald-700"}`}
+            >
+              {state.message}
+            </p>
+          )}
+
+          <div className="flex items-center justify-between gap-4 border-t px-5 py-4" style={{ borderColor: "var(--app-border)" }}>
+            <p className="app-muted-text text-[11px]">平台负责人账号不会出现在可分配角色中。</p>
+            <button disabled={pending} className="h-9 rounded-md bg-neutral-950 px-4 text-xs font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50">
+              {pending ? "创建中…" : "确认创建"}
+            </button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 }
