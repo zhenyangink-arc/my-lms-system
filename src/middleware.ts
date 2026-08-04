@@ -1,9 +1,9 @@
 import type { NextRequest } from "next/server";
 
-import { proxy as routeDashboardRequest } from "@/lib/dashboard-request-routing";
+import { updateSession } from "@/lib/supabase/middleware";
 
-export function proxy(request: NextRequest) {
-  return routeDashboardRequest(request);
+export async function middleware(request: NextRequest) {
+  return updateSession(request);
 }
 
 export const config = {

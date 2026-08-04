@@ -1,0 +1,344 @@
+
+> my-lms-system@0.1.0 start
+> next start -p 3110
+
+▲ Next.js 16.2.10
+- Local:         http://localhost:3110
+- Network:       http://100.71.192.21:3110
+✓ Ready in 336ms
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:32:26163
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:32:26240
+    at new Promise (<anonymous>)
+    at fZ._refreshAccessToken (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26094)
+    at fZ._callRefreshToken (D:\projects\my-lms-system\.next\server\src\middleware.js:32:29091) {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+AuthRetryableFetchError: fetch failed
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46107)
+    at async ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45572)
+    at async c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25894)
+    at async (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+AuthRetryableFetchError: fetch failed
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46107)
+    at async ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45572)
+    at async c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25894)
+    at async (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+Error [AuthRetryableFetchError]: fetch failed
+    at cf (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:46094)
+    at async ce (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:45559)
+    at async c (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:25894)
+    at async (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+Error [AuthRetryableFetchError]: fetch failed
+    at cf (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:46094)
+    at async ce (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:45559)
+    at async c (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:25894)
+    at async (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:32:26163
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:32:26240
+    at new Promise (<anonymous>)
+    at fZ._refreshAccessToken (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26094)
+    at fZ._callRefreshToken (D:\projects\my-lms-system\.next\server\src\middleware.js:32:29091) {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+Error: fetch failed
+    at context.fetch (D:\projects\my-lms-system\node_modules\next\dist\server\web\sandbox\context.js:321:60)
+    at D:\projects\my-lms-system\.next\server\src\middleware.js:19:40635
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46050)
+    at ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45578)
+    at c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25900)
+    at async D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157 {
+  
+}
+AuthRetryableFetchError: fetch failed
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46107)
+    at async ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45572)
+    at async c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25894)
+    at async (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+AuthRetryableFetchError: fetch failed
+    at fg (D:\projects\my-lms-system\.next\server\src\middleware.js:19:46107)
+    at async ff (D:\projects\my-lms-system\.next\server\src\middleware.js:19:45572)
+    at async c (D:\projects\my-lms-system\.next\server\src\middleware.js:32:25894)
+    at async (D:\projects\my-lms-system\.next\server\src\middleware.js:32:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+[TypeError: fetch failed] {
+  [cause]: AggregateError: 
+      at ignore-listed frames {
+    code: 'EACCES',
+    [errors]: [ [Error], [Error] ]
+  }
+}
+Error [AuthRetryableFetchError]: fetch failed
+    at cf (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:46094)
+    at async ce (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:45559)
+    at async c (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:25894)
+    at async (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
+Error [AuthRetryableFetchError]: fetch failed
+    at cf (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:46094)
+    at async ce (D:\projects\my-lms-system\.next\server\chunks\9287.js:11:45559)
+    at async c (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:25894)
+    at async (D:\projects\my-lms-system\.next\server\chunks\9287.js:24:26157) {
+  __isAuthError: true,
+  status: 0,
+  code: undefined
+}
