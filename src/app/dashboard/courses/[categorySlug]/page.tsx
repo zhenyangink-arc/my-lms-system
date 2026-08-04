@@ -17,6 +17,7 @@ import {
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
+import { KoreanLearningCenter } from "./KoreanLearningCenter";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -40,11 +41,28 @@ type Course = {
   title: string;
   description: string | null;
   sort_order: number;
+  level: string | null;
+  unlock_mode: string | null;
+  prerequisite_course_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
 };
 
 type Lesson = {
   id: string;
   course_id: string;
+  slug: string;
+  title: string;
+  description: string | null;
+  lesson_type: string;
+  duration_minutes: number;
+  is_free_preview: boolean;
+  sort_order: number;
+  unlock_mode: string | null;
+  prerequisite_lesson_id: string | null;
+  prerequisite_chapter_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
 };
 
 type LessonProgress = {
@@ -143,8 +161,9 @@ export default async function CategoryPage({
 }) {
   const { categorySlug } = await params;
 
-  const { supabase, user, platformProfile } = await requireActiveUser();
+  const { supabase, user, profile, platformProfile } = await requireActiveUser();
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
+  const bypassLearningSequence = isPlatformAudit || profile?.role !== "student";
 
   /**
    * 1. 查询一级课程板块
@@ -185,7 +204,7 @@ export default async function CategoryPage({
   if (subcategoryIds.length > 0) {
     const { data: courseData } = await supabase
       .from("courses")
-      .select("id, category_id, slug, title, description, sort_order")
+      .select("id, category_id, slug, title, description, sort_order, level, unlock_mode, prerequisite_course_id, available_from, is_manually_locked")
       .in("category_id", subcategoryIds)
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
@@ -203,9 +222,10 @@ export default async function CategoryPage({
   if (courseIds.length > 0) {
     const { data: lessonData } = await supabase
       .from("lessons")
-      .select("id, course_id")
+      .select("id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked")
       .in("course_id", courseIds)
-      .eq("is_published", true);
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true });
 
     lessons = (lessonData ?? []) as Lesson[];
   }
@@ -260,6 +280,75 @@ export default async function CategoryPage({
     progressMap.set(progress.lesson_id, progress);
   });
 
+  const prerequisiteChapterIds = Array.from(
+    new Set(
+      lessons
+        .map((lesson) => lesson.prerequisite_chapter_id)
+        .filter((id): id is string => Boolean(id)),
+    ),
+  );
+  const prerequisiteChapterSlugById = new Map<string, string>();
+  const passedChapterSlugs = new Set<string>();
+  const readingProgressByLessonId = new Map<string, number>();
+
+  if (parentCategory.slug === "korean") {
+    const { data: chapterData } = lessonIds.length > 0
+      ? await supabase
+          .from("course_chapters")
+          .select("id, lesson_id, slug")
+          .in("lesson_id", lessonIds)
+          .eq("is_published", true)
+      : { data: [] as Array<{ id: string; lesson_id: string; slug: string }> };
+
+    for (const chapter of chapterData ?? []) {
+      if (prerequisiteChapterIds.includes(String(chapter.id))) {
+        prerequisiteChapterSlugById.set(String(chapter.id), String(chapter.slug));
+      }
+    }
+
+    if (prerequisiteChapterIds.length > 0 && prerequisiteChapterSlugById.size < prerequisiteChapterIds.length) {
+      const { data: prerequisiteChapterData } = await supabase
+      .from("course_chapters")
+      .select("id, slug")
+      .in("id", prerequisiteChapterIds);
+
+      for (const chapter of prerequisiteChapterData ?? []) {
+        prerequisiteChapterSlugById.set(String(chapter.id), String(chapter.slug));
+      }
+    }
+
+    if (!isPlatformAudit) {
+      const [{ data: attemptData }, { data: ebookProgressData }] = await Promise.all([
+        supabase
+          .from("chapter_test_attempts")
+          .select("test_slug")
+          .eq("student_id", user.id)
+          .eq("passed", true),
+        supabase
+          .from("course_ebook_progress")
+          .select("test_slug, progress_percent")
+          .eq("student_id", user.id),
+      ]);
+
+      for (const attempt of attemptData ?? []) {
+        passedChapterSlugs.add(String(attempt.test_slug));
+      }
+
+      const lessonIdByChapterSlug = new Map(
+        (chapterData ?? []).map((chapter) => [String(chapter.slug), String(chapter.lesson_id)]),
+      );
+      for (const progress of ebookProgressData ?? []) {
+        const lessonId = lessonIdByChapterSlug.get(String(progress.test_slug));
+        if (!lessonId) continue;
+        const currentProgress = readingProgressByLessonId.get(lessonId) ?? 0;
+        readingProgressByLessonId.set(
+          lessonId,
+          Math.max(currentProgress, Number(progress.progress_percent) || 0),
+        );
+      }
+    }
+  }
+
   const color =
     colorMap[parentCategory.accent_color ?? "indigo"] ?? colorMap.indigo;
 
@@ -281,6 +370,23 @@ export default async function CategoryPage({
 
   const isFocusCategory =
     parentCategory.slug === "service" || parentCategory.slug === "korean";
+
+  if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
+    return (
+      <KoreanLearningCenter
+        variant={parentCategory.slug}
+        parentCategory={parentCategory}
+        subcategories={subcategories}
+        courses={courses}
+        lessons={lessons}
+        progressList={progressList}
+        prerequisiteChapterSlugEntries={Array.from(prerequisiteChapterSlugById.entries())}
+        passedChapterSlugs={Array.from(passedChapterSlugs)}
+        readingProgressEntries={Array.from(readingProgressByLessonId.entries())}
+        bypassLearningSequence={bypassLearningSequence}
+      />
+    );
+  }
 
   if (isFocusCategory) {
     const isServiceCourse = parentCategory.slug === "service";

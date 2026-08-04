@@ -9,7 +9,6 @@ import {
   CalendarDays,
   CheckCircle2,
   ClipboardList,
-  FileCheck2,
   Flame,
   GraduationCap,
   History,
@@ -17,9 +16,7 @@ import {
   Megaphone,
   MessageSquare,
   PlayCircle,
-  ShieldCheck,
   Sparkles,
-  Target,
   TriangleAlert,
 } from "lucide-react";
 
@@ -506,7 +503,7 @@ export default async function DashboardPage() {
     reminders = [...teacherReplyReminders, ...requiredResourceReminders].slice(0, 5);
   }
 
-  const ringRadius = 42;
+  const ringRadius = 74;
   const ringCircumference = 2 * Math.PI * ringRadius;
   const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
   const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
@@ -543,27 +540,6 @@ export default async function DashboardPage() {
       icon: Flame,
       color: "var(--app-warm)",
       softColor: "var(--app-warm-soft)",
-    },
-  ];
-
-  const studyAbroadSteps = [
-    {
-      label: "第一步",
-      title: "明确目标大学",
-      href: "/dashboard/universities",
-      icon: Target,
-    },
-    {
-      label: "第二步",
-      title: "完善申请材料",
-      href: "/dashboard/documents",
-      icon: FileCheck2,
-    },
-    {
-      label: "第三步",
-      title: "推进签证准备",
-      href: "/dashboard/visa",
-      icon: ShieldCheck,
     },
   ];
 
@@ -617,19 +593,18 @@ export default async function DashboardPage() {
   ];
 
   return (
-    <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      {/* Bento 网格：每张卡片各占独立格子，桌面端 3 列，卡片按 1/2 列宽拼接。 */}
-      <div className="grid grid-cols-1 gap-5 md:grid-cols-3 md:grid-flow-dense">
-      <div className="grid grid-cols-1 gap-5 md:col-span-3 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)]">
+    <div className="mx-auto w-full max-w-[1500px] px-8 pb-14 pt-9">
+      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1.15fr_0.85fr_1fr]">
+        <div className="flex min-w-0 flex-col gap-5">
       {/* 首屏只强调一个下一步，让用户打开控制台后马上知道该做什么。跟其他卡片一样走浅色玻璃质感，不用突兀的深色板块，也不加装饰色块。 */}
       <section
-        className="app-glass-card relative overflow-hidden rounded-3xl p-4 sm:p-5"
+        className="app-glass-card relative overflow-hidden rounded-[20px] p-4"
         style={{
           background:
             "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
         }}
       >
-          <div>
+          <div className="h-[380px] overflow-hidden rounded-[14px]">
             <span
               className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold"
               style={{
@@ -693,52 +668,82 @@ export default async function DashboardPage() {
           </div>
       </section>
 
-      {/* 综合完成度圆环：从首屏卡片里拆出来，独立成一个 Bento 格子。 */}
-      <section className="app-glass-card grid grid-cols-[104px_minmax(0,1fr)_minmax(0,1fr)] grid-rows-2 items-center rounded-3xl p-3 text-center sm:grid-cols-[128px_minmax(0,1fr)_minmax(0,1fr)] sm:p-5" aria-label="学习完成概览">
-        <div className="relative row-span-2 h-[88px] w-[88px] self-center sm:h-[108px] sm:w-[108px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
-          <svg width="100%" height="100%" viewBox="0 0 100 100" className="-rotate-90">
-            <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="9" />
-            <circle
-              cx="50"
-              cy="50"
-              r={ringRadius}
-              fill="none"
-              stroke="var(--app-success)"
-              strokeWidth="9"
-              strokeDasharray={ringCircumference}
-              strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)}
-              strokeLinecap="round"
-            />
-          </svg>
-          <span className="absolute inset-0 flex flex-col items-center justify-center">
-            <strong className="text-lg font-black sm:text-xl">{overallProgressPercent}%</strong>
-            <span className="text-[10px] app-muted-text sm:text-xs">综合完成度</span>
-          </span>
+          <section className="app-glass-card rounded-[20px] px-[22px] pb-6 pt-[22px]">
+            <div className="flex items-start justify-between gap-4">
+              <p className="text-lg font-black">本周学习节奏</p>
+              <span className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
+                <BarChart3 size={19} aria-hidden="true" />
+              </span>
+            </div>
+            {hasWeeklyActivity ? (
+              <div className="mt-6 flex items-end justify-between gap-2 px-1">
+                {heatmapDays.map((day) => {
+                  const weekdayLabel = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "narrow" }).format(new Date(`${day.dateString}T12:00:00Z`));
+                  const barHeightPercent = Math.max(6, (day.count / maxHeatmapCount) * 100);
+                  return (
+                    <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
+                      <div className="flex h-40 w-full max-w-9 items-end overflow-hidden rounded-2xl" style={{ backgroundColor: "var(--app-soft-bg)" }} title={`${day.dateString} · 完成 ${day.count} 个课时`}>
+                        <div className="w-full rounded-2xl transition-[height]" style={{ height: `${day.count > 0 ? barHeightPercent : 0}%`, backgroundColor: "var(--app-accent)" }} />
+                      </div>
+                      <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">{weekdayLabel}</time>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="app-empty-state mt-6 flex min-h-40 flex-col items-center justify-center rounded-2xl p-5 text-center">
+                <BarChart3 size={22} style={{ color: "var(--app-success)" }} aria-hidden="true" />
+                <p className="mt-3 text-sm font-black">本周还没有学习记录</p>
+                <p className="mt-1 text-xs app-muted-text">完成一节课时，这里就会画出你的学习曲线</p>
+              </div>
+            )}
+            <div className="mt-5 flex items-center justify-between rounded-2xl px-4 py-3" style={{ backgroundColor: "var(--app-success-soft)" }}>
+              <span className="text-xs font-bold app-muted-text">本周累计</span>
+              <strong style={{ color: "var(--app-success)" }}>{thisWeekCompletedCount} 个课时</strong>
+            </div>
+          </section>
         </div>
-        <div className="min-w-0 border-l px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
-          <p className="text-[11px] font-bold app-muted-text sm:text-xs">累计完成课时</p>
-          <p className="mt-1 text-xl font-black sm:text-2xl">{completedLessonsCount}</p>
-        </div>
-        <div className="min-w-0 border-l px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
-          <p className="text-[11px] font-bold app-muted-text sm:text-xs">进行中课时</p>
-          <p className="mt-1 text-xl font-black sm:text-2xl" style={{ color: "var(--app-accent-strong)" }}>{inProgressLessonsCount}</p>
-        </div>
-        <div className="min-w-0 border-l border-t px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
-          <p className="text-[11px] font-bold app-muted-text sm:text-xs">本周已完成</p>
-          <p className="mt-1 text-lg font-black sm:text-xl" style={{ color: "var(--app-success)" }}>
-            {thisWeekCompletedCount} <span className="text-xs sm:text-sm">个课时</span>
-          </p>
-        </div>
-        <div className="min-w-0 border-l border-t px-2 py-2 sm:px-5" style={{ borderColor: "var(--app-border)" }}>
-          <p className="text-[11px] font-bold app-muted-text sm:text-xs">学习天数</p>
-          <p className="mt-1 text-lg font-black sm:text-xl" style={{ color: "var(--app-warm)" }}>
-            {streakDays} <span className="text-xs sm:text-sm">天</span>
-          </p>
-        </div>
-      </section>
-      </div>
 
-          <section className="app-glass-card order-1 rounded-3xl p-4 sm:p-5">
+        <div className="flex min-w-0 flex-col gap-5">
+          <section id="reminders" className="app-glass-card scroll-mt-24 rounded-[20px] p-4 sm:p-5">
+            <div className="mb-5 flex items-start justify-between gap-4">
+              <p className="text-lg font-black">需要你关注</p>
+              <span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>{reminders.length} 项</span>
+            </div>
+            {reminders.length > 0 ? (
+              <div className="divide-y app-divider">
+                {reminders.map((item) => {
+                  const Icon = item.kind === "teacher_reply" ? BellRing : TriangleAlert;
+                  const content = (
+                    <div className="app-flat-row flex items-start gap-3 rounded-xl p-2.5 text-left">
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ color: item.kind === "teacher_reply" ? "var(--app-accent)" : "var(--app-warm)", backgroundColor: item.kind === "teacher_reply" ? "var(--app-accent-soft)" : "var(--app-warm-soft)" }}>
+                        <Icon size={16} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-black">{item.title}</span>
+                        <span className="mt-0.5 block truncate text-xs app-muted-text">{item.subtitle}</span>
+                      </span>
+                      <ArrowRight size={15} className="mt-2 shrink-0 app-muted-text" aria-hidden="true" />
+                    </div>
+                  );
+                  if (!item.href) return <div key={item.id}>{content}</div>;
+                  return item.kind === "teacher_reply" ? (
+                    <form key={item.id} action={item.href} method="post"><button type="submit" className="block w-full">{content}</button></form>
+                  ) : (
+                    <Link key={item.id} href={item.href}>{content}</Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="app-empty-state flex min-h-44 flex-col items-center justify-center rounded-2xl p-5 text-center">
+                <CheckCircle2 size={25} style={{ color: "var(--app-success)" }} aria-hidden="true" />
+                <p className="mt-3 text-sm font-black">目前没有待处理事项</p>
+                <p className="mt-1 text-xs app-muted-text">可以安心继续今天的学习计划</p>
+              </div>
+            )}
+          </section>
+
+          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
             <div className="mb-5 flex items-center justify-between gap-4">
               <div>
                 <p className="text-lg font-black">课程成长进度</p>
@@ -804,109 +809,29 @@ export default async function DashboardPage() {
             )}
           </section>
 
-          <section className="app-glass-card order-2 rounded-3xl p-4 sm:p-5">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-lg font-black">本周学习节奏</p>
-              </div>
-              <span
-                className="flex h-10 w-10 items-center justify-center rounded-2xl"
-                style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}
-              >
-                <BarChart3 size={19} aria-hidden="true" />
+        </div>
+
+        <div className="flex min-w-0 flex-col gap-5">
+          <section className="app-glass-card rounded-[20px] p-5 text-center" aria-label="学习完成概览">
+            <div className="relative mx-auto h-[180px] w-[180px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
+              <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90">
+                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="14" />
+                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="var(--app-success)" strokeWidth="14" strokeDasharray={ringCircumference} strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)} strokeLinecap="round" />
+              </svg>
+              <span className="absolute inset-0 flex flex-col items-center justify-center">
+                <strong className="text-3xl font-black">{overallProgressPercent}%</strong>
+                <span className="mt-1 text-xs app-muted-text">综合完成度</span>
               </span>
             </div>
-
-            {hasWeeklyActivity ? (
-              <div className="mt-6 flex items-end justify-between gap-2 px-1">
-                {heatmapDays.map((day) => {
-                  const weekdayLabel = new Intl.DateTimeFormat("zh-CN", {
-                    timeZone: "Asia/Seoul",
-                    weekday: "narrow",
-                  }).format(new Date(`${day.dateString}T12:00:00Z`));
-                  const barHeightPercent = Math.max(6, (day.count / maxHeatmapCount) * 100);
-
-                  return (
-                    <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
-                      <div
-                        className="flex h-40 w-full max-w-9 items-end overflow-hidden rounded-2xl"
-                        style={{ backgroundColor: "var(--app-soft-bg)" }}
-                        title={`${day.dateString} · 完成 ${day.count} 个课时`}
-                      >
-                        <div
-                          className="w-full rounded-2xl transition-[height]"
-                          style={{
-                            height: `${day.count > 0 ? barHeightPercent : 0}%`,
-                            backgroundColor: "var(--app-accent)",
-                          }}
-                        />
-                      </div>
-                      <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">
-                        {weekdayLabel}
-                      </time>
-                    </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="app-empty-state mt-6 flex min-h-40 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <BarChart3 size={22} style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">本周还没有学习记录</p>
-                <p className="mt-1 text-xs app-muted-text">完成一节课时，这里就会画出你的学习曲线</p>
-              </div>
-            )}
-
-            <div className="mt-5 flex items-center justify-between rounded-2xl px-4 py-3" style={{ backgroundColor: "var(--app-success-soft)" }}>
-              <span className="text-xs font-bold app-muted-text">本周累计</span>
-              <strong style={{ color: "var(--app-success)" }}>{thisWeekCompletedCount} 个课时</strong>
+            <div className="mt-5 grid grid-cols-2">
+              <div className="border-r px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">累计完成课时</p><p className="mt-1 text-xl font-black">{completedLessonsCount}</p></div>
+              <div className="px-2 py-3"><p className="text-xs font-bold app-muted-text">进行中课时</p><p className="mt-1 text-xl font-black" style={{ color: "var(--app-accent-strong)" }}>{inProgressLessonsCount}</p></div>
+              <div className="border-r border-t px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">本周已完成</p><p className="mt-1 text-lg font-black" style={{ color: "var(--app-success)" }}>{thisWeekCompletedCount} <span className="text-xs">个课时</span></p></div>
+              <div className="border-t px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">学习天数</p><p className="mt-1 text-lg font-black" style={{ color: "var(--app-warm)" }}>{streakDays} <span className="text-xs">天</span></p></div>
             </div>
           </section>
 
-          <Link
-            href="/dashboard/universities"
-            className="app-glass-card group order-4 flex flex-col justify-between rounded-3xl p-4 sm:p-5"
-            aria-label="查看韩国留学准备路线"
-          >
-            <div className="flex items-center gap-3">
-              <span
-                className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
-              >
-                <Target size={16} aria-hidden="true" />
-              </span>
-              <div className="min-w-0 flex-1">
-                <p className="text-sm font-black">韩国留学准备路线</p>
-                <p className="mt-0.5 text-[10px] font-bold app-muted-text">三步规划</p>
-              </div>
-              <ArrowRight size={16} className="shrink-0 app-muted-text transition group-hover:translate-x-0.5" aria-hidden="true" />
-            </div>
-
-            <div className="mt-5 flex items-center" aria-label="留学准备路线进度">
-              {studyAbroadSteps.map((step, index) => (
-                <div key={step.title} className="flex min-w-0 flex-1 items-center">
-                  <div className="flex min-w-0 flex-col items-center justify-center text-center">
-                    <span
-                      className="mx-auto block h-2.5 w-2.5 rounded-full"
-                      style={{
-                        backgroundColor: index === 0 ? "var(--app-accent)" : "var(--app-border)",
-                        boxShadow: index === 0 ? "0 0 0 4px var(--app-accent-soft)" : "none",
-                      }}
-                    />
-                    <span className="mt-2 block text-[10px] font-bold leading-4 app-muted-text">{step.title}</span>
-                  </div>
-                  {index < studyAbroadSteps.length - 1 && (
-                    <span className="h-px flex-1" style={{ backgroundColor: "var(--app-border)" }} />
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <p className="mt-4 text-xs font-bold" style={{ color: "var(--app-accent-strong)" }}>
-              从目标院校开始准备
-            </p>
-          </Link>
-
-          <section className="app-glass-card order-4 rounded-3xl p-4 sm:p-5 md:col-span-2">
+          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
               <div>
                 <p className="text-lg font-black">成长工具箱</p>
@@ -915,14 +840,14 @@ export default async function DashboardPage() {
                 持续建设中
               </span>
             </div>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3">
               {growthTools.map((tool) => {
                 const Icon = tool.icon;
                 return (
                   <Link
                     key={tool.href}
                     href={tool.href}
-                    className="app-tile flex items-center gap-3 rounded-2xl border p-4 transition hover:-translate-y-0.5"
+                    className="app-tile flex items-center gap-3 rounded-2xl border p-[14px] transition hover:-translate-y-0.5"
                   >
                     <span
                       className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
@@ -939,9 +864,11 @@ export default async function DashboardPage() {
               })}
             </div>
           </section>
+        </div>
+      </div>
 
-          {recentActivity.length > 0 && (
-            <section className="app-glass-card order-4 rounded-3xl p-4 sm:p-5 md:col-span-3">
+      {recentActivity.length > 0 && (
+            <section className="app-glass-card mt-5 rounded-[20px] p-4 sm:p-5">
               <div className="mb-4 flex items-center gap-2">
                 <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
                 <p className="text-lg font-black">最近学习记录</p>
@@ -973,63 +900,6 @@ export default async function DashboardPage() {
               </div>
             </section>
           )}
-
-          <section id="reminders" className="app-glass-card order-3 scroll-mt-24 rounded-3xl p-4 sm:p-5">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="text-lg font-black">需要你关注</p>
-              </div>
-              <span
-                className="rounded-full px-2.5 py-1 text-xs font-black"
-                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
-              >
-                {reminders.length} 项
-              </span>
-            </div>
-
-            {reminders.length > 0 ? (
-              <div className="divide-y app-divider">
-                {reminders.map((item) => {
-                  const Icon = item.kind === "teacher_reply" ? BellRing : TriangleAlert;
-                  const content = (
-                    <div className="app-flat-row flex items-start gap-3 rounded-xl p-2.5 text-left">
-                      <span
-                        className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                        style={{
-                          color: item.kind === "teacher_reply" ? "var(--app-accent)" : "var(--app-warm)",
-                          backgroundColor: item.kind === "teacher_reply" ? "var(--app-accent-soft)" : "var(--app-warm-soft)",
-                        }}
-                      >
-                        <Icon size={16} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black">{item.title}</span>
-                        <span className="mt-0.5 block truncate text-xs app-muted-text">{item.subtitle}</span>
-                      </span>
-                      <ArrowRight size={15} className="mt-2 shrink-0 app-muted-text" aria-hidden="true" />
-                    </div>
-                  );
-
-                  if (!item.href) return <div key={item.id}>{content}</div>;
-
-                  return item.kind === "teacher_reply" ? (
-                    <form key={item.id} action={item.href} method="post">
-                      <button type="submit" className="block w-full">{content}</button>
-                    </form>
-                  ) : (
-                    <Link key={item.id} href={item.href}>{content}</Link>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="app-empty-state flex min-h-44 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <CheckCircle2 size={25} style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">目前没有待处理事项</p>
-                <p className="mt-1 text-xs app-muted-text">可以安心继续今天的学习计划</p>
-              </div>
-            )}
-          </section>
-      </div>
     </div>
   );
 }

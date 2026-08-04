@@ -25,6 +25,56 @@ export async function GET(
     return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
   }
 
+  const { data: node } = await admin
+    .from("digital_textbook_nodes")
+    .select("module_id")
+    .eq("id", activity.node_id)
+    .maybeSingle();
+
+  if (!node) {
+    return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
+  }
+
+  const { data: module_ } = await admin
+    .from("digital_textbook_modules")
+    .select("chapter_id")
+    .eq("id", node.module_id)
+    .maybeSingle();
+
+  if (!module_) {
+    return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
+  }
+
+  const { data: chapter } = await admin
+    .from("digital_textbook_chapters")
+    .select("status,version_id")
+    .eq("id", module_.chapter_id)
+    .maybeSingle();
+
+  if (!chapter || chapter.status !== "published") {
+    return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
+  }
+
+  const { data: version } = await admin
+    .from("digital_textbook_versions")
+    .select("status,textbook_id")
+    .eq("id", chapter.version_id)
+    .maybeSingle();
+
+  if (!version || version.status !== "published") {
+    return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
+  }
+
+  const { data: textbook } = await admin
+    .from("digital_textbooks")
+    .select("status")
+    .eq("id", version.textbook_id)
+    .maybeSingle();
+
+  if (!textbook || textbook.status !== "published") {
+    return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
+  }
+
   const { data: secret } = await admin
     .from("digital_textbook_activity_secrets")
     .select("audio_object_key")

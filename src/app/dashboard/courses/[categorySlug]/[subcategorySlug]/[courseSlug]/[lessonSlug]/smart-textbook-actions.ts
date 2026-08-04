@@ -226,6 +226,7 @@ export async function submitSmartTextbookActivityAction(
     };
   }
 
+  const completed = result.correct !== false;
   const masteryScore =
     result.correct === true ? (attemptNumber === 1 ? 100 : 80) : result.correct === false ? 35 : 60;
   await admin.from("digital_textbook_node_progress").upsert(
@@ -234,8 +235,8 @@ export async function submitSmartTextbookActivityAction(
       student_id: user.id,
       node_id: activity.node_id,
       version_id: versionId,
-      status: "completed",
-      completion_percent: 100,
+      status: completed ? "completed" : "in_progress",
+      completion_percent: completed ? 100 : 35,
       mastery_score: masteryScore,
       attempt_count: attemptNumber,
       last_activity_at: new Date().toISOString(),

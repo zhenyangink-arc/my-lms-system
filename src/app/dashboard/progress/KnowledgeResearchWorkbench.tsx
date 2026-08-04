@@ -358,7 +358,10 @@ export function KnowledgeResearchWorkbench({
   const [isFullscreen, setIsFullscreen] = useState(true);
   const [hasInteractionStarted, setHasInteractionStarted] = useState(false);
   const [isInteractionOpen, setIsInteractionOpen] = useState(false);
-  const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [isGuideOpen, setIsGuideOpen] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("knowledge-workbench-guide-v1") !== "seen";
+  });
 
   const syllable = composeHangul(initial.index, vowel.index, finalLetter.index);
   const sample = syllableSamples[sampleIndex];
@@ -451,12 +454,6 @@ export function KnowledgeResearchWorkbench({
   function toggleFullscreen() {
     setIsFullscreen((current) => !current);
   }
-
-  useEffect(() => {
-    if (window.localStorage.getItem("knowledge-workbench-guide-v1") !== "seen") {
-      setIsGuideOpen(true);
-    }
-  }, []);
 
   const handleGuideModeChange = useCallback((nextMode: WorkbenchMode) => {
     setMode(nextMode);

@@ -3,19 +3,15 @@
 import { ChangeEvent, useActionState, useMemo, useState } from "react";
 import {
   AlertCircle,
-  BriefcaseBusiness,
   Camera,
-  CalendarDays,
   CheckCircle2,
   Gauge,
   GraduationCap,
   LoaderCircle,
-  MapPin,
   Save,
   UserRound,
 } from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { CHINA_PROVINCES, CHINA_REGION_CITIES } from "./china-cities";
 import { updateProfileAction } from "./actions";
 import { initialUpdateProfileState } from "./profile-state";
@@ -80,34 +76,58 @@ function isValidDottedDate(value: string) {
   return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
 }
 
-function SectionTitle({
+function ProfileTableSection({
   icon: Icon,
-  step,
   title,
-  description,
 }: {
   icon: typeof UserRound;
-  step: number;
   title: string;
-  description: string;
 }) {
   return (
-    <div className="flex items-start gap-3">
-      <span className="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
-        <Icon size={20} aria-hidden="true" />
-        <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>{step}</span>
-      </span>
-      <DashboardTitleWithHint
-        headingLevel={2}
-        titleClassName="text-lg font-black"
-        title={title}
-        description={description}
-      />
-    </div>
+    <tr
+      className="border-y"
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--app-accent-soft) 58%, var(--app-accent) 42%)",
+        borderColor: "color-mix(in srgb, var(--app-accent) 62%, var(--app-border))",
+      }}
+    >
+      <th colSpan={3} className="px-4 py-4 text-left sm:px-5">
+        <span className="flex items-center gap-2.5 text-base font-black" style={{ color: "var(--app-accent-strong)" }}>
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/65">
+            <Icon size={18} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
+          </span>
+          {title}
+        </span>
+      </th>
+    </tr>
   );
 }
 
-const fieldClass = "app-input mt-2 w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
+function ProfileTableRow({
+  number,
+  label,
+  children,
+}: {
+  number: number;
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <tr className="border-t align-top app-divider">
+      <td className="w-14 px-3 py-4 text-center sm:w-16 sm:px-4 sm:py-5">
+        <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
+          {number}
+        </span>
+      </td>
+      <th scope="row" className="w-32 px-3 py-5 text-left text-sm font-black sm:w-44 sm:px-5">
+        {label}
+      </th>
+      <td className="min-w-[260px] px-3 py-4 sm:px-5 sm:py-5">{children}</td>
+    </tr>
+  );
+}
+
+const fieldClass = "profile-table-input w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
 
 export function ProfileForm({ initialValue }: { initialValue: StudentProfileInitialValue }) {
   const [state, formAction, pending] = useActionState(updateProfileAction, initialUpdateProfileState);
@@ -156,52 +176,59 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
     reader.readAsDataURL(file);
   }
 
+  const abilityRowStart = needsGaokao ? 11 : 10;
+
   return (
-    <form action={formAction} className="app-card rounded-3xl border p-4 sm:p-6">
-      <section>
-        <SectionTitle icon={UserRound} step={1} title="基本信息" description="这些信息将用于留学评估、课程安排和顾问服务。" />
-
-        <div className="mt-5 grid gap-5 lg:grid-cols-[176px_minmax(0,1fr)]">
-          <div className="flex items-start gap-5 lg:block">
-            <div
-              className="flex aspect-square w-32 shrink-0 items-end overflow-hidden rounded-3xl border bg-cover bg-center lg:w-full lg:max-w-[176px]"
-              style={{
-                backgroundColor: "var(--app-soft-bg)",
-                backgroundImage: photoPreview ? `url("${photoPreview}")` : undefined,
-              }}
-            >
-              {!photoPreview && <span className="m-auto text-2xl font-black" style={{ color: "var(--app-secondary)" }}>{initialValue.fullName.slice(0, 1) || "学"}</span>}
-              <label className="m-2 flex cursor-pointer items-center gap-1.5 rounded-xl bg-white/90 px-3 py-2 text-xs font-black text-slate-700 shadow-sm backdrop-blur">
-                <Camera size={14} aria-hidden="true" />
-                上传照片
-                <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handlePhotoChange} />
-              </label>
-            </div>
-            <p className="mt-0 max-w-[200px] text-xs leading-5 app-muted-text lg:mt-3 lg:max-w-none">支持 JPG、PNG、WEBP，最大 2MB。上传后会立即显示预览。</p>
-          </div>
-
-          <div className="grid content-start gap-x-5 gap-y-5 sm:grid-cols-2">
-            <label className="text-sm font-black">
-              真实姓名
+    <form action={formAction} className="app-card overflow-hidden rounded-3xl border">
+      <div className="overflow-x-auto">
+        <table className="w-full min-w-[680px] border-collapse">
+          <colgroup>
+            <col className="w-16" />
+            <col className="w-44" />
+            <col />
+          </colgroup>
+          <thead>
+            <tr style={{ backgroundColor: "color-mix(in srgb, var(--app-secondary) 68%, var(--app-text-soft) 32%)" }}>
+              <th className="px-3 py-4 text-center text-sm font-black text-white">序号</th>
+              <th className="px-5 py-4 text-left text-sm font-black text-white">填写项目</th>
+              <th className="px-5 py-4 text-left text-sm font-black text-white">填写内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ProfileTableSection icon={UserRound} title="基本信息" />
+            <ProfileTableRow number={1} label="个人照片">
+              <div className="flex items-center gap-4">
+                <span
+                  className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-black"
+                  style={{
+                    color: "var(--app-secondary)",
+                    backgroundColor: "var(--app-soft-bg)",
+                    backgroundImage: photoPreview ? `url("${photoPreview}")` : undefined,
+                  }}
+                >
+                  {!photoPreview && (initialValue.fullName.slice(0, 1) || "学")}
+                </span>
+                <label className="profile-table-input inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-black">
+                  <Camera size={15} aria-hidden="true" />上传照片
+                  <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handlePhotoChange} />
+                </label>
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={2} label="真实姓名">
               <input name="fullName" required minLength={2} maxLength={50} autoComplete="name" defaultValue={initialValue.fullName} className={fieldClass} />
               {state.fieldErrors?.fullName && <span className="mt-1.5 block text-xs text-red-600">{state.fieldErrors.fullName}</span>}
-            </label>
-
-            <fieldset>
-              <legend className="text-sm font-black">性别</legend>
-              <div className="mt-2 grid grid-cols-2 gap-2">
+            </ProfileTableRow>
+            <ProfileTableRow number={3} label="性别">
+              <div className="grid max-w-sm grid-cols-2 gap-2">
                 {[["male", "男"], ["female", "女"]].map(([value, label]) => (
-                  <label key={value} className="app-soft-card flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-bold">
-                    <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--app-accent)]" />
-                    {label}
+                  <label key={value} className="profile-table-input flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-bold">
+                    <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--app-accent)]" />{label}
                   </label>
                 ))}
               </div>
-            </fieldset>
-
-            <div>
-              <div className="flex items-center gap-2 text-sm font-black"><CalendarDays size={15} aria-hidden="true" />出生日期</div>
-              <div className="app-input mt-2 grid grid-cols-[1.3fr_1fr_1fr] overflow-hidden rounded-2xl border">
+            </ProfileTableRow>
+            <ProfileTableRow number={4} label="出生日期">
+              <div className="profile-table-input grid max-w-xl grid-cols-[1.3fr_1fr_1fr] overflow-hidden rounded-2xl border">
                 <select name="birthYear" required value={birthYear} onChange={(event) => setBirthYear(event.target.value)} className="bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生年份">
                   <option value="">年</option>{BIRTH_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
                 </select>
@@ -212,11 +239,9 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                   <option value="">日</option>{dayOptions.map((day) => <option key={day} value={day}>{day}</option>)}
                 </select>
               </div>
-            </div>
-
-            <div>
-              <div className="flex items-center gap-2 text-sm font-black"><MapPin size={15} aria-hidden="true" />住址（精确至市级）</div>
-              <div className="app-input mt-2 grid grid-cols-2 overflow-hidden rounded-2xl border">
+            </ProfileTableRow>
+            <ProfileTableRow number={5} label="居住地址">
+              <div className="profile-table-input grid max-w-xl grid-cols-2 overflow-hidden rounded-2xl border">
                 <select name="province" required value={province} onChange={handleProvinceChange} className="bg-transparent px-3.5 py-3 text-sm font-semibold outline-none">
                   <option value="">省级地区</option>{CHINA_PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
@@ -224,134 +249,91 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                   <option value="">市级地区</option>{cityOptions.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
+            </ProfileTableRow>
 
-      <section className="mt-9">
-        <SectionTitle icon={GraduationCap} step={2} title="教育经历与在校成绩" description="按照当前或最近就读阶段填写，毕业日期请使用年.月.日格式。" />
-        <div className="mt-5 grid gap-x-5 gap-y-5 sm:grid-cols-2">
-          <label className="text-sm font-black">教育阶段
-            <select name="educationLevel" required value={educationLevel} onChange={(event) => setEducationLevel(event.target.value)} className={fieldClass}>
-              <option value="">请选择</option><option value="bachelor">本科</option><option value="associate">大专</option><option value="high_school">高中</option><option value="secondary_vocational">中专</option><option value="technical_school">技工学校</option>
-            </select>
-          </label>
-          <label className="text-sm font-black">就读状态
-            <select name="educationStatus" required value={educationStatus} onChange={(event) => setEducationStatus(event.target.value)} className={fieldClass}>
-              <option value="">请选择</option><option value="graduated">毕业</option><option value="studying">在读</option>
-            </select>
-          </label>
-          <label className="text-sm font-black">{educationStatus === "studying" ? "预计毕业日期" : "毕业日期"}
-            <input
-              name="completionDate"
-              type="text"
-              required
-              inputMode="numeric"
-              maxLength={10}
-              pattern="[0-9]{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])"
-              placeholder="例如：2020.06.01"
-              title="请按照 2020.06.01 的格式填写"
-              value={completionDate}
-              onChange={(event) => setCompletionDate(event.target.value)}
-              aria-invalid={completionDateWarning || Boolean(state.fieldErrors?.completionDate)}
-              className={fieldClass}
-              style={completionDateWarning ? { borderColor: "#dc2626" } : undefined}
-            />
-            {(completionDateWarning || state.fieldErrors?.completionDate) ? (
-              <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.completionDate ?? "日期格式必须为 2020.06.01，并且日期真实有效。"}</span>
-            ) : (
-              <span className="mt-1.5 block text-xs font-medium app-muted-text">格式：年.月.日，例如 2020.06.01</span>
-            )}
-          </label>
-          <label className="text-sm font-black">平均成绩（百分制）
-            <span className="app-input mt-2 flex items-center overflow-hidden rounded-2xl border" style={academicAverageWarning ? { borderColor: "#dc2626" } : undefined}>
+            <ProfileTableSection icon={GraduationCap} title="教育经历与在校成绩" />
+            <ProfileTableRow number={6} label="教育阶段">
+              <select name="educationLevel" required value={educationLevel} onChange={(event) => setEducationLevel(event.target.value)} className={fieldClass}>
+                <option value="">请选择</option><option value="bachelor">本科</option><option value="associate">大专</option><option value="high_school">高中</option><option value="secondary_vocational">中专</option><option value="technical_school">技工学校</option>
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={7} label="就读状态">
+              <select name="educationStatus" required value={educationStatus} onChange={(event) => setEducationStatus(event.target.value)} className={fieldClass}>
+                <option value="">请选择</option><option value="graduated">毕业</option><option value="studying">在读</option>
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={8} label={educationStatus === "studying" ? "预计毕业日期" : "毕业日期"}>
               <input
-                name="academicAverage"
-                type="number"
-                required
-                min="0"
-                max="100"
-                step="0.01"
-                inputMode="decimal"
-                value={academicAverage}
-                onChange={(event) => setAcademicAverage(event.target.value)}
-                placeholder="例如：86.50"
-                aria-invalid={academicAverageWarning || Boolean(state.fieldErrors?.academicAverage)}
-                className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-sm font-semibold outline-none"
+                name="completionDate" type="text" required inputMode="numeric" maxLength={10}
+                pattern="[0-9]{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])"
+                placeholder="例如：2020.06.01" title="请按照 2020.06.01 的格式填写"
+                value={completionDate} onChange={(event) => setCompletionDate(event.target.value)}
+                aria-invalid={completionDateWarning || Boolean(state.fieldErrors?.completionDate)}
+                className={fieldClass} style={completionDateWarning ? { borderColor: "#dc2626" } : undefined}
               />
-              <span className="border-l px-3 text-sm font-black app-muted-text app-divider">%</span>
-            </span>
-            {(academicAverageWarning || state.fieldErrors?.academicAverage) ? (
-              <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.academicAverage ?? "平均成绩必须在 0—100 之间，不能超过 100。"}</span>
-            ) : (
-              <span className="mt-1.5 block text-xs font-medium app-muted-text">请输入 0—100 之间的百分制成绩</span>
-            )}
-          </label>
-
-          {needsGaokao && (
-            <div className="app-soft-card rounded-2xl border p-4 sm:col-span-2">
-              <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2">
-                <label className="text-sm font-black">高考成绩
+              {(completionDateWarning || state.fieldErrors?.completionDate) && (
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.completionDate ?? "日期格式不正确。"}</span>
+              )}
+            </ProfileTableRow>
+            <ProfileTableRow number={9} label="平均成绩（百分制）">
+              <span className="profile-table-input flex items-center overflow-hidden rounded-2xl border" style={academicAverageWarning ? { borderColor: "#dc2626" } : undefined}>
+                <input
+                  name="academicAverage" type="number" required min="0" max="100" step="0.01" inputMode="decimal"
+                  value={academicAverage} onChange={(event) => setAcademicAverage(event.target.value)} placeholder="例如：86.50"
+                  aria-invalid={academicAverageWarning || Boolean(state.fieldErrors?.academicAverage)}
+                  className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-sm font-semibold outline-none"
+                />
+                <span className="border-l px-3 text-sm font-black app-muted-text app-divider">%</span>
+              </span>
+              {(academicAverageWarning || state.fieldErrors?.academicAverage) && (
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.academicAverage ?? "成绩必须在 0—100 之间。"}</span>
+              )}
+            </ProfileTableRow>
+            {needsGaokao && (
+              <ProfileTableRow number={10} label="高考成绩">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <select name="gaokaoHasScore" required value={gaokaoHasScore} onChange={(event) => setGaokaoHasScore(event.target.value)} className={fieldClass}>
-                    <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
+                    <option value="">请选择有或无</option><option value="yes">有</option><option value="no">无</option>
                   </select>
-                </label>
-                {gaokaoHasScore === "yes" && <label className="text-sm font-black">高考分数
-                  <input name="gaokaoScore" type="number" required min="0" max="750" step="0.01" defaultValue={initialValue.gaokaoScore} className={fieldClass} />
-                </label>}
-              </div>
-            </div>
-          )}
-        </div>
-      </section>
+                  {gaokaoHasScore === "yes" && <input name="gaokaoScore" aria-label="高考分数" type="number" required min="0" max="750" step="0.01" placeholder="高考分数" defaultValue={initialValue.gaokaoScore} className={fieldClass} />}
+                </div>
+              </ProfileTableRow>
+            )}
 
-      <section className="mt-9">
-        <SectionTitle icon={Gauge} step={3} title="能力评估" description="选择最接近当前水平的等级，后续可以随学习进度更新。" />
-        <div className="mt-5 grid grid-cols-3 gap-2 sm:grid-cols-6">
-          {ABILITY_LEVELS.map(([level, description]) => <div key={level} className="app-tile rounded-xl border px-2 py-2.5 text-center"><strong className="block text-xs">{level}</strong><span className="text-xs app-muted-text">{description}</span></div>)}
-        </div>
-        <div className="mt-6 grid gap-x-5 gap-y-5 sm:grid-cols-2 xl:grid-cols-3">
-          {[{ name: "englishLevel", label: "英语能力", value: initialValue.englishLevel }, { name: "mathLevel", label: "数学能力", value: initialValue.mathLevel }].map((item) => (
-            <label key={item.name} className="text-sm font-black">{item.label}
-              <select name={item.name} required defaultValue={item.value} className={fieldClass}>
+            <ProfileTableSection icon={Gauge} title="能力评估" />
+            <ProfileTableRow number={abilityRowStart} label="英语能力">
+              <select name="englishLevel" required defaultValue={initialValue.englishLevel} className={fieldClass}>
                 <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description]) => <option key={level} value={level}>{level} · {description}</option>)}
               </select>
-            </label>
-          ))}
-          <label className="text-sm font-black"><span className="flex items-center gap-2"><BriefcaseBusiness size={15} aria-hidden="true" />工作经历</span>
-            <select name="hasWorkExperience" required defaultValue={booleanValue(initialValue.hasWorkExperience)} className={fieldClass}>
-              <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
-            </select>
-          </label>
-
-          {/* 韩语证书属于语言证明，单独成组后不会挤乱通用能力与工作经历的网格。 */}
-          <div className="app-soft-card rounded-2xl border p-4 sm:col-span-2 xl:col-span-3">
-            <div className="mb-3">
-              <p className="text-sm font-black">韩语能力证明</p>
-              <p className="mt-1 text-xs app-muted-text">没有韩语成绩也可以正常保存，后续取得 TOPIK 成绩后再补充。</p>
-            </div>
-            <div className="grid gap-x-5 gap-y-4 sm:grid-cols-2 xl:grid-cols-3">
-              <label className="text-sm font-black">是否已有韩语成绩
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 1} label="数学能力">
+              <select name="mathLevel" required defaultValue={initialValue.mathLevel} className={fieldClass}>
+                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description]) => <option key={level} value={level}>{level} · {description}</option>)}
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 2} label="韩语能力">
+              <div className="grid gap-3 sm:grid-cols-2">
                 <select name="hasKorean" required value={hasKorean} onChange={(event) => setHasKorean(event.target.value)} className={fieldClass}>
-                  <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
+                  <option value="">请选择有或无</option><option value="yes">有韩语成绩</option><option value="no">无韩语成绩</option>
                 </select>
-              </label>
-              {hasKorean === "yes" && <label className="text-sm font-black">TOPIK 等级
-                <select name="topikLevel" required defaultValue={initialValue.topikLevel} className={fieldClass}>
-                  <option value="">请选择</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>TOPIK {level} 级</option>)}
-                </select>
-              </label>}
-            </div>
-          </div>
-        </div>
-      </section>
+                {hasKorean === "yes" && <select name="topikLevel" required aria-label="TOPIK 等级" defaultValue={initialValue.topikLevel} className={fieldClass}>
+                  <option value="">请选择 TOPIK 等级</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>TOPIK {level} 级</option>)}
+                </select>}
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 3} label="工作经历">
+              <select name="hasWorkExperience" required defaultValue={booleanValue(initialValue.hasWorkExperience)} className={fieldClass}>
+                <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
+              </select>
+            </ProfileTableRow>
+          </tbody>
+        </table>
+      </div>
 
-      {state.message && <p aria-live="polite" className="mt-8 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
+      {state.message && <p aria-live="polite" className="mx-4 mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold sm:mx-6" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
 
-      {/* 保存区收进同一张卡片内部，用浅底带出操作区分量，不再单独起卡片 */}
-      <div className="mt-8 flex flex-col gap-3 rounded-2xl p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-        <p className="text-xs leading-5 app-muted-text">保存后资料立即生效，右侧完善清单会同步更新。</p>
+      <div className="flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+        <p className="text-sm font-bold app-muted-text">请确认全部项目后统一保存。</p>
         <button type="submit" disabled={pending} className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" style={{ backgroundColor: "var(--app-accent)" }}>
           {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}
           {pending ? "正在保存资料" : "保存全部资料"}

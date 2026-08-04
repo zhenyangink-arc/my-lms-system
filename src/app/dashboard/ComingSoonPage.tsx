@@ -120,7 +120,7 @@ export function ComingSoonPage({
           className="app-card flex items-center justify-between gap-4 rounded-2xl border p-4 transition hover:-translate-y-0.5"
         >
           <span>
-            <span className="block text-sm font-black">先回到成长总览继续今天的计划</span>
+            <span className="block text-sm font-black">先回到成长首页继续今天的计划</span>
             <span className="mt-1 block text-xs app-muted-text">未来功能会一直保留在导航中</span>
           </span>
           <ArrowRight size={18} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />

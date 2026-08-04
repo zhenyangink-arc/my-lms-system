@@ -5,8 +5,8 @@ import {
   BookOpen,
   Calculator,
   CheckCircle2,
+  ChevronDown,
   FileCheck2,
-  FolderOpen,
   GraduationCap,
   Heart,
   Languages,
@@ -18,8 +18,8 @@ import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import {
-  addCourseCategoryToCurrentLearningAction,
-  removeCourseCategoryFromCurrentLearningAction,
+  addCourseCategoryToFavoritesAction,
+  removeCourseCategoryFromFavoritesAction,
 } from "./actions";
 
 
@@ -256,77 +256,35 @@ export default async function CoursesPage() {
     subcategoriesByParentId.set(subcategory.parent_id, currentSubcategories);
   });
 
-  const coursesBySubcategoryId = new Map<string, Course[]>();
-
-  courses.forEach((course) => {
-    if (!course.category_id) {
-      return;
-    }
-
-    const currentCourses = coursesBySubcategoryId.get(course.category_id) ?? [];
-    currentCourses.push(course);
-    coursesBySubcategoryId.set(course.category_id, currentCourses);
-  });
-
-  const lessonsByCourseId = new Map<string, Lesson[]>();
-
-  lessons.forEach((lesson) => {
-    const currentLessons = lessonsByCourseId.get(lesson.course_id) ?? [];
-    currentLessons.push(lesson);
-    lessonsByCourseId.set(lesson.course_id, currentLessons);
-  });
-
   const progressMap = new Map<string, LessonProgress>();
 
   progressList.forEach((progress) => {
     progressMap.set(progress.lesson_id, progress);
   });
 
-  const { data: plannedCategoryRows } = !isPlatformAudit
+  const { data: favoriteCategoryRows } = !isPlatformAudit
     ? await supabase
-        .from("student_course_category_learning_plans")
+        .from("student_course_category_favorites")
         .select("category_id")
         .eq("user_id", user.id)
     : { data: [] as { category_id: string }[] };
 
-  const plannedCategoryIds = new Set(
-    (plannedCategoryRows ?? []).map((row) => row.category_id)
+  const favoriteCategoryIds = new Set(
+    (favoriteCategoryRows ?? []).map((row) => row.category_id)
   );
-  const currentCategoryIds = new Set(plannedCategoryIds);
-
-  categories.forEach((category) => {
-    const categorySubcategoryIds = new Set(
-      (subcategoriesByParentId.get(category.id) ?? []).map(
-        (subcategory) => subcategory.id
-      )
-    );
-    const categoryCourseIds = new Set(
-      courses
-        .filter((course) => course.category_id && categorySubcategoryIds.has(course.category_id))
-        .map((course) => course.id)
-    );
-
-    if (
-      lessons.some(
-        (lesson) =>
-          categoryCourseIds.has(lesson.course_id) &&
-          progressMap.get(lesson.id)?.status === "in_progress"
-      )
-    ) {
-      currentCategoryIds.add(category.id);
-    }
-  });
   const upcomingCategorySlugs = new Set(["english", "math", "university"]);
   const upcomingCategories = categories.filter((category) =>
     upcomingCategorySlugs.has(category.slug)
   );
-  const currentCategories = categories.filter(
+  const availableCategories = categories.filter(
     (category) =>
-      !upcomingCategorySlugs.has(category.slug) && currentCategoryIds.has(category.id)
+      !upcomingCategorySlugs.has(category.slug) &&
+      !favoriteCategoryIds.has(category.id)
   );
   const favoriteCategories = categories.filter(
     (category) =>
-      !upcomingCategorySlugs.has(category.slug) && !currentCategoryIds.has(category.id)
+      !upcomingCategorySlugs.has(category.slug) &&
+      favoriteCategoryIds.has(category.id)
   );
 
   return (
@@ -334,8 +292,9 @@ export default async function CoursesPage() {
       <section className="space-y-5">
           {categories.length > 0 ? (
             <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {currentCategories.map((category) => {
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(300px,0.85fr)] lg:items-start">
+            <div className="grid gap-4 md:grid-cols-2">
+              {availableCategories.map((category) => {
                 const categorySubcategories =
                   subcategoriesByParentId.get(category.id) ?? [];
 
@@ -389,9 +348,6 @@ export default async function CoursesPage() {
 
                 const isCompleted = learningStatus === "completed";
                 const isInProgress = learningStatus === "in_progress";
-                const canReturnToFavorites =
-                  plannedCategoryIds.has(category.id) && !isInProgress;
-
                 const buttonLabel =
                   totalLessons === 0
                     ? "查看课程"
@@ -509,15 +465,19 @@ export default async function CoursesPage() {
                           {buttonLabel}
                           <ArrowRight size={15} aria-hidden="true" />
                         </Link>
-                        {canReturnToFavorites && !isPlatformAudit && (
-                          <form action={removeCourseCategoryFromCurrentLearningAction}>
+                        {!isPlatformAudit && (
+                          <form
+                            action={addCourseCategoryToFavoritesAction}
+                            data-permission="dashboard_section"
+                          >
                             <input type="hidden" name="categoryId" value={category.id} />
                             <button
                               type="submit"
-                              className="mt-2 inline-flex w-full items-center justify-center rounded-xl border px-4 py-2.5 text-xs font-black transition hover:bg-black/[0.02]"
+                              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-black transition hover:bg-black/[0.02]"
                               style={{ borderColor: "var(--app-border)", color: "var(--app-muted)" }}
                             >
-                              移回收藏夹
+                              <Heart size={14} aria-hidden="true" />
+                              移入收藏夹
                             </button>
                           </form>
                         )}
@@ -613,17 +573,17 @@ export default async function CoursesPage() {
                   </article>
                 );
               })}
-              {currentCategories.length === 0 && (
-                <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-3xl p-6 text-center md:col-span-2 lg:col-span-3">
+              {availableCategories.length === 0 && (
+                <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-3xl p-6 text-center md:col-span-2">
                   <BookOpen size={26} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                  <p className="mt-3 text-sm font-black">暂未开始学习</p>
-                  <p className="mt-1 text-xs app-muted-text">从下方收藏夹选择一门课程开始学习。</p>
+                  <p className="mt-3 text-sm font-black">暂无可学课程</p>
+                  <p className="mt-1 text-xs app-muted-text">课程开放后会直接显示在这里。</p>
                 </div>
               )}
             </div>
-            <div className="grid gap-4 lg:grid-cols-2">
-            <section className="app-soft-card rounded-3xl border p-4 sm:p-5" aria-label="收藏夹">
-              <div className="flex items-center gap-3">
+            <div className="space-y-4">
+            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="收藏夹" open>
+              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
                   style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
@@ -632,12 +592,13 @@ export default async function CoursesPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-sm font-black">收藏夹</h2>
-                  <p className="mt-0.5 text-xs app-muted-text">暂时不学的课程会收纳在这里。</p>
+                  <p className="mt-0.5 text-xs app-muted-text">暂时不学的课程可以收纳在这里，之后随时恢复。</p>
                 </div>
                 <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{favoriteCategories.length}</span>
-              </div>
-              {favoriteCategories.length > 0 && (
-                <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
+              </summary>
+              {favoriteCategories.length > 0 ? (
+                <div className="mt-4 grid gap-2">
                   {favoriteCategories.map((category) => {
                     const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
                     return (
@@ -645,12 +606,15 @@ export default async function CoursesPage() {
                         <CategoryIcon size={17} className="shrink-0 app-muted-text" aria-hidden="true" />
                         <span className="min-w-0 flex-1 truncate text-sm font-bold">{category.title}</span>
                         {isPlatformAudit ? (
-                          <span className="shrink-0 text-[10px] font-bold app-muted-text">暂未学习</span>
+                          <span className="shrink-0 text-[10px] font-bold app-muted-text">仅查看</span>
                         ) : (
-                          <form action={addCourseCategoryToCurrentLearningAction}>
+                          <form
+                            action={removeCourseCategoryFromFavoritesAction}
+                            data-permission="dashboard_section"
+                          >
                             <input type="hidden" name="categoryId" value={category.id} />
                             <button type="submit" className="shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
-                              加入当前学习
+                              移出收藏夹
                             </button>
                           </form>
                         )}
@@ -658,10 +622,14 @@ export default async function CoursesPage() {
                     );
                   })}
                 </div>
+              ) : (
+                <p className="mt-4 rounded-2xl border border-dashed p-4 text-center text-xs app-muted-text" style={{ borderColor: "var(--app-border)" }}>
+                  收藏夹还是空的
+                </p>
               )}
-            </section>
-            <section className="app-soft-card rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程">
-              <div className="flex items-center gap-3">
+            </details>
+            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程" open>
+              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-700"
                 >
@@ -669,12 +637,13 @@ export default async function CoursesPage() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-sm font-black">即将开放的课程</h2>
-                  <p className="mt-0.5 text-xs app-muted-text">课程内容准备完成后，会自动进入收藏夹。</p>
+                  <p className="mt-0.5 text-xs app-muted-text">课程内容准备完成后，会直接显示在上方。</p>
                 </div>
                 <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{upcomingCategories.length}</span>
-              </div>
+                <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
+              </summary>
               {upcomingCategories.length > 0 && (
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                <div className="mt-4 grid gap-2">
                   {upcomingCategories.map((category) => {
                     const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
                     return (
@@ -687,7 +656,8 @@ export default async function CoursesPage() {
                   })}
                 </div>
               )}
-            </section>
+            </details>
+            </div>
             </div>
             </>
           ) : (

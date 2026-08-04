@@ -22,6 +22,7 @@ import {
   UserCircle,
 } from "lucide-react";
 
+import { GuideAgentChat } from "@/components/guide-agent/GuideAgentChat";
 import { normalizeDashboardPathname } from "@/lib/dashboard-path";
 
 type HeaderConfig = {
@@ -31,7 +32,7 @@ type HeaderConfig = {
 
 function resolveHeaderConfig(pathname: string): HeaderConfig {
   if (pathname === "/dashboard") {
-    return { title: "成长总览", icon: LayoutDashboard };
+    return { title: "成长首页", icon: LayoutDashboard };
   }
 
   if (pathname.startsWith("/dashboard/conversation-practice/ai-experience/practice")) {
@@ -104,7 +105,13 @@ function resolveHeaderConfig(pathname: string): HeaderConfig {
   return { title: "学习中心", icon: LayoutDashboard };
 }
 
-export function StudentPageHeader() {
+export function StudentPageHeader({
+  studentId,
+  dashboardBasePath,
+}: {
+  studentId?: string;
+  dashboardBasePath: string;
+}) {
   const pathname = normalizeDashboardPathname(usePathname());
   const { title, icon: PageIcon } = resolveHeaderConfig(pathname);
 
@@ -122,16 +129,23 @@ export function StudentPageHeader() {
           </h1>
         </div>
 
-        <button
-          type="button"
-          disabled
-          aria-label="智能辅助（即将开放）"
-          title="智能辅助功能即将开放"
-          className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-black sm:px-4"
-        >
-          <Bot size={17} aria-hidden="true" />
-          <span>智能辅助</span>
-        </button>
+        {studentId ? (
+          <GuideAgentChat
+            studentId={studentId}
+            dashboardBasePath={dashboardBasePath}
+          />
+        ) : (
+          <button
+            type="button"
+            disabled
+            aria-label="智能辅助仅对学生开放"
+            title="智能辅助仅对学生开放"
+            className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-black opacity-60 sm:px-4"
+          >
+            <Bot size={17} aria-hidden="true" />
+            <span>智能辅助</span>
+          </button>
+        )}
       </header>
     </div>
   );

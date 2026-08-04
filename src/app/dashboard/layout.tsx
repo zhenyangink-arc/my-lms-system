@@ -57,6 +57,7 @@ export default async function DashboardLayout({
 
   return (
     <StudentDashboardLayout
+      studentId={user.id}
       userName={userName}
       membershipTier={membershipTier}
       canAccessAnnouncements={canAccessAnnouncements}

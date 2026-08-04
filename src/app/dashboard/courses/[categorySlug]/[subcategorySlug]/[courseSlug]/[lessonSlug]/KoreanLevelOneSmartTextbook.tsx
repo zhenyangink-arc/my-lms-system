@@ -3,7 +3,7 @@
 import Link from "next/link";
 import {
   ArrowLeft,
-  Bot,
+  BookOpen,
   Check,
   CheckCircle2,
   ChevronDown,
@@ -15,7 +15,13 @@ import {
   Headphones,
   Languages,
   Lightbulb,
+  Menu,
+  MessageCircle,
   Mic,
+  PanelLeftClose,
+  PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
   Pause,
   RotateCcw,
   Send,
@@ -76,8 +82,8 @@ const ui = {
     previous: "上一步",
     next: "下一步",
     chapterTest: "进入章节测试",
-    tutor: "AI 学习助手",
-    grounded: "只围绕本章内容提供解释与练习",
+    tutor: "本章学习助手",
+    grounded: "提供本章预设解释与练习提示",
     explain: "解释当前内容",
     hint: "给我一个提示",
     example: "再给一个例句",
@@ -89,14 +95,17 @@ const ui = {
     correct: "回答正确",
     retry: "再想一想",
     preview: "平台预览：结果不会写入学生记录",
-    listenPrivate: "受保护听力",
-    audioPending: "本章听力原文已存入后端密表；音频录制完成后将从私有通道播放。",
-    playWord: "播放读音",
+    listenPrivate: "听力音频",
+    audioPending: "音频正在制作，当前听力练习暂不可用。",
+    playWord: "播放设备语音",
     moveUp: "上移",
     moveDown: "下移",
     startRecording: "开始录音",
     stopRecording: "停止录音",
     recorded: "已完成录音，可以回听后提交",
+    recordingDenied: "无法使用麦克风，请检查浏览器权限后重试。",
+    speakingPracticeComplete: "录音练习已完成，本次不进行自动发音评分。",
+    testUnavailable: "章节测试尚未配置",
     writingCount: "韩文字数",
     objective: "本章达成目标",
     scene: "真实场景",
@@ -129,8 +138,8 @@ const ui = {
     previous: "이전 단계",
     next: "다음 단계",
     chapterTest: "단원 평가 시작",
-    tutor: "AI 학습 도우미",
-    grounded: "이 단원의 내용만 바탕으로 설명하고 연습합니다",
+    tutor: "단원 학습 도우미",
+    grounded: "이 단원의 미리 준비된 설명과 연습 힌트를 제공합니다",
     explain: "현재 내용 설명",
     hint: "힌트 하나",
     example: "예문 하나 더",
@@ -142,14 +151,17 @@ const ui = {
     correct: "정답입니다",
     retry: "다시 생각해 보세요",
     preview: "플랫폼 미리보기: 학생 기록에 저장되지 않습니다",
-    listenPrivate: "보호된 듣기",
-    audioPending: "듣기 대본은 서버의 비공개 영역에 저장되었습니다. 녹음 후 비공개 경로로 재생됩니다.",
-    playWord: "발음 듣기",
+    listenPrivate: "듣기 음원",
+    audioPending: "음원을 제작하고 있어 현재 듣기 연습을 사용할 수 없습니다.",
+    playWord: "기기 음성으로 듣기",
     moveUp: "위로",
     moveDown: "아래로",
     startRecording: "녹음 시작",
     stopRecording: "녹음 중지",
     recorded: "녹음이 끝났습니다. 다시 듣고 제출하세요",
+    recordingDenied: "마이크를 사용할 수 없습니다. 브라우저 권한을 확인해 주세요.",
+    speakingPracticeComplete: "녹음 연습을 마쳤습니다. 자동 발음 평가는 제공하지 않습니다.",
+    testUnavailable: "단원 평가가 아직 준비되지 않았습니다",
     writingCount: "글자 수",
     objective: "단원 성취 목표",
     scene: "실제 상황",
@@ -241,12 +253,12 @@ function ContentRenderer({
                 key={`${String(target.ko)}-${index}`}
                 type="button"
                 onClick={() => speakKorean(String(target.ko))}
-                className="grid w-full grid-cols-[44px_minmax(0,1fr)_minmax(0,.8fr)] items-center gap-4 border-b border-slate-100 px-1 py-4 text-left last:border-b-0 hover:bg-slate-50"
+                className="grid w-full grid-cols-[36px_minmax(0,1fr)] items-center gap-x-3 gap-y-1 border-b border-slate-100 px-1 py-4 text-left last:border-b-0 hover:bg-slate-50 sm:grid-cols-[44px_minmax(0,1fr)_minmax(0,.8fr)] sm:gap-4"
                 title={t.playWord}
               >
                 <span className="text-xs font-bold text-slate-300">0{index + 1}</span>
                 <span className="text-lg font-semibold text-slate-900">{String(target.ko)}</span>
-                {showChinese && <span className="text-sm text-slate-500">{String(target.zh)}</span>}
+                {showChinese && <span className="col-start-2 text-sm text-slate-500 sm:col-start-auto">{String(target.zh)}</span>}
               </button>
             ))}
           </div>
@@ -254,7 +266,8 @@ function ContentRenderer({
       )}
 
       {vocabulary.length > 0 && (
-        <div className="overflow-hidden border-y border-slate-200">
+        <div className="overflow-x-auto border-y border-slate-200">
+          <div className="min-w-[620px]">
           <div className="grid grid-cols-[1.15fr_.85fr_.55fr_1.5fr] bg-slate-50/80 px-4 py-3 text-xs font-bold tracking-wide text-slate-500">
             <span>{t.word}</span>
             <span>{t.meaning}</span>
@@ -281,11 +294,13 @@ function ContentRenderer({
               <span className="font-medium text-slate-700">{String(word.collocation)}</span>
             </div>
           ))}
+          </div>
         </div>
       )}
 
       {rules.length > 0 && (
-        <div className="border-y border-slate-200">
+        <div className="overflow-x-auto border-y border-slate-200">
+          <div className="min-w-[600px]">
           <div className="grid grid-cols-[1fr_1.3fr_1.3fr] bg-slate-50/80 px-4 py-3 text-xs font-bold text-slate-500">
             <span>{t.form}</span>
             <span>{t.exampleLabel}</span>
@@ -298,6 +313,7 @@ function ContentRenderer({
               <span className="text-sm leading-6 text-slate-500">{showChinese ? String(rule.zh) : "받침 유무를 확인하세요."}</span>
             </div>
           ))}
+          </div>
         </div>
       )}
 
@@ -330,7 +346,7 @@ function ContentRenderer({
           <p className="mb-3 text-xs font-bold tracking-[.18em] text-slate-400">{t.dialogue.toUpperCase()}</p>
           <div className="border-y border-slate-200">
             {dialogue.map((line, index) => (
-              <button key={index} type="button" onClick={() => speakKorean(String(line.line))} className="grid w-full grid-cols-[80px_1fr_24px] items-center border-b border-slate-100 px-2 py-4 text-left last:border-b-0 hover:bg-slate-50">
+              <button key={index} type="button" onClick={() => speakKorean(String(line.line))} className="grid w-full grid-cols-[56px_minmax(0,1fr)_20px] items-center gap-2 border-b border-slate-100 px-2 py-4 text-left last:border-b-0 hover:bg-slate-50 sm:grid-cols-[80px_1fr_24px]">
                 <span className="text-xs font-bold text-[#5C9ECF]">{String(line.speaker)}</span>
                 <span className="text-[16px] font-medium text-slate-800">{String(line.line)}</span>
                 <Volume2 size={14} className="text-slate-300" />
@@ -371,10 +387,10 @@ function ContentRenderer({
           <p className="mb-3 text-xs font-bold tracking-[.18em] text-slate-400">{t.checklist.toUpperCase()}</p>
           <div className="border-y border-slate-200">
             {checklist.map((item, index) => (
-              <div key={index} className="grid grid-cols-[28px_1fr_1fr] items-center border-b border-slate-100 py-4 last:border-b-0">
+              <div key={index} className="grid grid-cols-[28px_minmax(0,1fr)] items-center gap-y-1 border-b border-slate-100 py-4 last:border-b-0 sm:grid-cols-[28px_1fr_1fr]">
                 <Check size={16} className="text-[#2F8F7D]" />
                 <span className="font-semibold text-slate-800">{String(item.ko)}</span>
-                {showChinese && <span className="text-sm text-slate-500">{String(item.zh)}</span>}
+                {showChinese && <span className="col-start-2 text-sm text-slate-500 sm:col-start-auto">{String(item.zh)}</span>}
               </div>
             ))}
           </div>
@@ -403,6 +419,7 @@ function RecordingControl({
   const chunksRef = useRef<Blob[]>([]);
   const [recording, setRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [recordingError, setRecordingError] = useState("");
 
   useEffect(() => () => {
     if (audioUrl) URL.revokeObjectURL(audioUrl);
@@ -414,20 +431,28 @@ function RecordingControl({
       setRecording(false);
       return;
     }
-    if (!navigator.mediaDevices?.getUserMedia) return;
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const recorder = new MediaRecorder(stream);
-    chunksRef.current = [];
-    recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
-    recorder.onstop = () => {
-      const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
-      setAudioUrl(URL.createObjectURL(blob));
-      stream.getTracks().forEach((track) => track.stop());
-      onReady();
-    };
-    recorderRef.current = recorder;
-    recorder.start();
-    setRecording(true);
+    if (!navigator.mediaDevices?.getUserMedia) {
+      setRecordingError(t.recordingDenied);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      chunksRef.current = [];
+      setRecordingError("");
+      recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
+      recorder.onstop = () => {
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+        setAudioUrl(URL.createObjectURL(blob));
+        stream.getTracks().forEach((track) => track.stop());
+        onReady();
+      };
+      recorderRef.current = recorder;
+      recorder.start();
+      setRecording(true);
+    } catch {
+      setRecordingError(t.recordingDenied);
+    }
   }
 
   return (
@@ -436,8 +461,9 @@ function RecordingControl({
         {recording ? <Square size={14} /> : <Mic size={15} />}
         {recording ? t.stopRecording : t.startRecording}
       </button>
-      {audioUrl && <audio src={audioUrl} controls className="h-9" />}
+      {audioUrl && <audio src={audioUrl} controls className="h-9 max-w-full" />}
       {audioUrl && <span className="text-xs font-semibold text-[#2F8F7D]">{t.recorded}</span>}
+      {recordingError && <p className="w-full text-xs font-semibold text-[#B45E3E]">{recordingError}</p>}
     </div>
   );
 }
@@ -494,7 +520,7 @@ function Activity({
 
   return (
     <section className="mt-12 border-t-2 border-slate-900 pt-7">
-      <div className="flex items-start justify-between gap-6">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
           <p className="text-xs font-black tracking-[.18em] text-slate-400">INTERACTION · {activity.type.replace("_", " ").toUpperCase()}</p>
           <h3 className="mt-3 text-xl font-bold leading-8 text-slate-900">{activity.prompt[locale]}</h3>
@@ -516,7 +542,7 @@ function Activity({
       )}
 
       {activity.type === "listening" && !hasPendingAudio && (
-        <div className="mt-6 flex items-center gap-4 border-y border-slate-200 bg-[#EAF3F9]/55 px-5 py-5">
+        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[#EAF3F9]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#5C9ECF] shadow-sm">
             <Headphones size={19} />
           </span>
@@ -578,17 +604,22 @@ function Activity({
         </div>
       )}
 
-      <div className="mt-6 flex items-center justify-between gap-5">
+      <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
           {message && <p className="text-sm text-[#B45E3E]">{message}</p>}
           {feedback && (
             <div className={`flex items-start gap-2 text-sm leading-6 ${feedback.correct === false ? "text-[#B45E3E]" : "text-[#247565]"}`}>
               {feedback.correct === false ? <RotateCcw size={16} className="mt-1 shrink-0" /> : <CheckCircle2 size={16} className="mt-1 shrink-0" />}
-              <span><strong>{feedback.correct === false ? t.retry : t.correct}</strong> · {feedback.explanation}{feedback.preview || trackingDisabled ? ` · ${t.preview}` : ""}</span>
+              <span>
+                <strong>{activity.type === "speaking" ? t.submitted : feedback.correct === false ? t.retry : t.correct}</strong>
+                {" · "}
+                {activity.type === "speaking" ? t.speakingPracticeComplete : feedback.explanation}
+                {feedback.preview || trackingDisabled ? ` · ${t.preview}` : ""}
+              </span>
             </div>
           )}
         </div>
-        <button type="button" onClick={submit} disabled={pending || hasPendingAudio} className="inline-flex shrink-0 items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40">
+        <button type="button" onClick={submit} disabled={pending || hasPendingAudio} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : <Send size={15} />} {t.submit}
         </button>
       </div>
@@ -601,6 +632,9 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const [pathCollapsed, setPathCollapsed] = useState(false);
+  const [assistantCollapsed, setAssistantCollapsed] = useState(false);
+  const [mobilePanel, setMobilePanel] = useState<"path" | "assistant" | null>(null);
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
   const [tutorText, setTutorText] = useState("");
   const [tutorInput, setTutorInput] = useState("");
@@ -612,13 +646,21 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
 
   const completedNodeIds = useMemo(() => new Set(textbook.progress.filter((item) => item.status === "completed").map((item) => item.nodeId)), [textbook.progress]);
   const moduleDone = (moduleIndex: number) => {
-    const module = textbook.modules[moduleIndex];
-    if (!module) return false;
-    const activityIds = module.nodes.flatMap((node) => node.activities.map((activity) => activity.id));
-    return module.nodes.every((node) => completedNodeIds.has(node.id)) || (activityIds.length > 0 && activityIds.every((id) => completedActivities.has(id)));
+    const currentModule = textbook.modules[moduleIndex];
+    if (!currentModule) return false;
+    return currentModule.nodes.every(
+      (node) =>
+        completedNodeIds.has(node.id) ||
+        (node.activities.length > 0 &&
+          node.activities.every((activity) => completedActivities.has(activity.id))),
+    );
   };
   const completeCount = textbook.modules.filter((_, index) => moduleDone(index)).length;
   const progressPercent = Math.round((completeCount / Math.max(textbook.modules.length, 1)) * 100);
+  const chapterTestHref = textbook.chapter.chapterTestSlug
+    ? `/dashboard/assignments/korean/${encodeURIComponent(textbook.chapter.chapterTestSlug)}`
+    : null;
+  const isLastModule = activeIndex === textbook.modules.length - 1;
 
   function localize(value: { "zh-CN": string; "ko-KR": string }) {
     return value[locale];
@@ -664,37 +706,193 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [textbook.modules.length]);
 
+  function renderPathNavigation(compact = false) {
+    return (
+      <nav className={compact ? "mt-3 space-y-1" : "mt-5"} aria-label={t.learnerPath}>
+        {textbook.modules.map((module, index) => {
+          const active = index === activeIndex;
+          const done = moduleDone(index);
+          const moduleAccent = accentMap[module.accent];
+          return (
+            <button
+              key={module.id}
+              type="button"
+              onClick={() => {
+                setActiveIndex(index);
+                setMobilePanel(null);
+              }}
+              aria-current={active ? "step" : undefined}
+              aria-label={`${t.learnerPath} ${index + 1}: ${localize(module.title)}`}
+              title={compact ? localize(module.title) : undefined}
+              className={`relative flex w-full items-start transition ${compact ? "justify-center rounded-xl px-2 py-3" : "gap-3 rounded-2xl px-3 py-3.5 text-left"} ${active ? "bg-white/85 shadow-[0_10px_28px_rgba(31,46,42,.07)]" : "hover:bg-white/50"}`}
+            >
+              {!compact && index < textbook.modules.length - 1 && (
+                <span className="absolute left-[19px] top-9 h-[35px] w-px bg-slate-200" />
+              )}
+              <span
+                className="relative z-10 mt-0.5 bg-[#F4F7F6]"
+                style={{ color: active ? moduleAccent.solid : undefined }}
+              >
+                <StepStatus done={done} active={active} />
+              </span>
+              {!compact && (
+                <span className="min-w-0">
+                  <span className={`block text-[11px] font-black tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>
+                    STEP {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span className={`mt-0.5 block truncate text-sm font-bold ${active ? "text-slate-900" : "text-slate-600"}`}>
+                    {localize(module.title)}
+                  </span>
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+    );
+  }
+
+  function renderTutorPanel(showHeader = true) {
+    return (
+      <div className="flex h-full flex-col overflow-hidden rounded-[26px] bg-white/78 shadow-[0_24px_80px_rgba(31,46,42,.08)] ring-1 ring-white">
+        {showHeader && <div className="border-b border-white px-5 py-5">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EEEFFD] text-[#6F72E6]">
+              <MessageCircle size={18} />
+            </span>
+            <div>
+              <p className="font-black text-slate-900">{t.tutor}</p>
+              <p className="mt-0.5 text-[10px] leading-4 text-slate-400">{t.grounded}</p>
+            </div>
+          </div>
+        </div>}
+        <div className="flex-1 overflow-y-auto p-5">
+          <div className="text-xs font-bold tracking-wide text-slate-400">{t.currentMission}</div>
+          <p className="mt-2 text-sm font-bold leading-6 text-slate-800">{localize(activeModule.title)}</p>
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            {([['explain', t.explain], ['hint', t.hint], ['example', t.example], ['roleplay', t.roleplay]] as const).map(([intent, label]) => (
+              <button
+                key={intent}
+                type="button"
+                onClick={() => tutorReply(intent)}
+                className="min-h-14 rounded-xl bg-white/85 px-3 py-2 text-left text-xs font-semibold leading-5 text-slate-600 shadow-[0_6px_24px_rgba(31,46,42,.05)] hover:text-[#6F72E6]"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {tutorText && (
+            <div className="mt-5 whitespace-pre-line rounded-xl bg-[#F4F7F6] px-4 py-4 text-sm leading-6 text-slate-600">
+              <Sparkles size={15} className="mb-2 text-[#6F72E6]" />
+              {tutorText}
+            </div>
+          )}
+        </div>
+        <div className="border-t border-white p-4">
+          <textarea
+            value={tutorInput}
+            onChange={(event) => setTutorInput(event.target.value)}
+            rows={2}
+            placeholder={t.ask}
+            className="w-full resize-none rounded-xl bg-white/85 px-3 py-2 text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-300"
+          />
+          <button
+            type="button"
+            onClick={() => tutorReply('ask')}
+            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#6F72E6] px-4 py-2.5 text-sm font-bold text-white"
+          >
+            <Send size={14} /> {t.send}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   if (!activeModule) return null;
 
   return (
-    <div className="fixed inset-0 z-50 min-w-[1180px] overflow-hidden bg-[#F4F7F6] text-slate-900" style={{ backgroundImage: `radial-gradient(circle at 18% 8%, ${accent.glow}, transparent 28%), radial-gradient(circle at 90% 86%, rgba(111,114,230,.10), transparent 24%)` }}>
-      <header className="absolute inset-x-0 top-0 z-20 h-[74px] border-b border-white/70 bg-white/72 px-7 backdrop-blur-2xl">
-        <div className="flex h-full items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link href={backHref} className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900"><ArrowLeft size={17} /> {t.back}</Link>
-            <span className="h-5 w-px bg-slate-200" />
-            <div>
-              <div className="flex items-center gap-2"><span className="text-xs font-black tracking-[.18em] text-[#6F72E6]">{textbook.levelCode}</span><span className="text-xs text-slate-300">/</span><span className="text-xs font-semibold text-slate-500">{t.chapter}</span></div>
-              <h1 className="mt-0.5 text-lg font-black tracking-tight text-slate-900">{localize(textbook.chapter.title)}</h1>
+    <div
+      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col overflow-hidden bg-[#F4F7F6] text-slate-900"
+      style={{ backgroundImage: `radial-gradient(circle at 18% 8%, ${accent.glow}, transparent 28%), radial-gradient(circle at 90% 86%, rgba(111,114,230,.10), transparent 24%)` }}
+    >
+      <header className="relative z-30 h-[66px] shrink-0 border-b border-white/70 bg-white/72 px-3 backdrop-blur-2xl sm:px-5 lg:h-[74px] lg:px-7">
+        <div className="flex h-full items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3 sm:gap-5">
+            <button
+              type="button"
+              onClick={() => setMobilePanel("path")}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm lg:hidden"
+              aria-label={t.learnerPath}
+            >
+              <Menu size={18} />
+            </button>
+            <Link href={backHref} className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900">
+              <ArrowLeft size={17} />
+              <span className="hidden sm:inline">{t.back}</span>
+            </Link>
+            <span className="hidden h-5 w-px bg-slate-200 sm:block" />
+            <div className="min-w-0">
+              <div className="hidden items-center gap-2 sm:flex">
+                <span className="text-xs font-black tracking-[.18em] text-[#6F72E6]">{textbook.levelCode}</span>
+                <span className="text-xs text-slate-300">/</span>
+                <span className="text-xs font-semibold text-slate-500">{t.chapter}</span>
+              </div>
+              <h1 className="truncate text-sm font-black tracking-tight text-slate-900 sm:mt-0.5 sm:text-lg">
+                {localize(textbook.chapter.title)}
+              </h1>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="w-48">
-              <div className="mb-1.5 flex justify-between text-[11px] font-bold text-slate-500"><span>{t.progress}</span><span>{progressPercent}%</span></div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-slate-200"><div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "#2F8F7D" }} /></div>
+          <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
+            <div className="hidden w-36 md:block lg:w-48">
+              <div className="mb-1.5 flex justify-between text-[11px] font-bold text-slate-500">
+                <span>{t.progress}</span><span>{progressPercent}%</span>
+              </div>
+              <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "#2F8F7D" }} />
+              </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setMobilePanel("assistant")}
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#6F72E6] shadow-sm lg:hidden"
+              aria-label={t.tutor}
+            >
+              <MessageCircle size={17} />
+            </button>
             <div className="relative">
-              <button type="button" onClick={() => setSettingsOpen((value) => !value)} className="inline-flex items-center gap-2 rounded-full bg-white/85 px-4 py-2 text-sm font-bold text-slate-700 shadow-[0_8px_30px_rgba(31,46,42,.08)] ring-1 ring-white"><Languages size={16} className="text-[#6F72E6]" /> 中 / 한 <ChevronDown size={14} /></button>
+              <button
+                type="button"
+                onClick={() => setSettingsOpen((value) => !value)}
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/85 px-3 text-sm font-bold text-slate-700 shadow-[0_8px_30px_rgba(31,46,42,.08)] ring-1 ring-white sm:px-4"
+                aria-expanded={settingsOpen}
+              >
+                <Languages size={16} className="text-[#6F72E6]" />
+                <span className="hidden sm:inline">中 / 한</span>
+                <ChevronDown size={14} />
+              </button>
               {settingsOpen && (
-                <div className="absolute right-0 top-12 w-80 overflow-hidden rounded-[22px] bg-white/92 p-5 shadow-[0_24px_80px_rgba(31,46,42,.18)] ring-1 ring-white backdrop-blur-2xl">
-                  <div className="mb-5 flex items-center justify-between"><span className="font-black text-slate-900">{t.language}</span><button type="button" onClick={() => setSettingsOpen(false)} className="p-1 text-slate-400"><X size={16} /></button></div>
+                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[22px] bg-white/95 p-5 shadow-[0_24px_80px_rgba(31,46,42,.18)] ring-1 ring-white backdrop-blur-2xl">
+                  <div className="mb-5 flex items-center justify-between">
+                    <span className="font-black text-slate-900">{t.language}</span>
+                    <button type="button" onClick={() => setSettingsOpen(false)} className="p-1 text-slate-400" aria-label="关闭">
+                      <X size={16} />
+                    </button>
+                  </div>
                   <p className="mb-2 text-xs font-bold text-slate-400">{t.interfaceLanguage}</p>
                   <div className="grid grid-cols-2 gap-2">
-                    {(["zh-CN", "ko-KR"] as SmartLocale[]).map((item) => <button key={item} type="button" onClick={() => savePreference(item, supportMode)} className={`rounded-xl px-3 py-2 text-sm font-bold ${locale === item ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>{item === "zh-CN" ? "中文" : "한국어"}</button>)}
+                    {(["zh-CN", "ko-KR"] as SmartLocale[]).map((item) => (
+                      <button key={item} type="button" onClick={() => savePreference(item, supportMode)} className={`rounded-xl px-3 py-2 text-sm font-bold ${locale === item ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+                        {item === "zh-CN" ? "中文" : "한국어"}
+                      </button>
+                    ))}
                   </div>
                   <p className="mb-2 mt-5 text-xs font-bold text-slate-400">{t.supportMode}</p>
                   <div className="space-y-1">
-                    {(["chinese", "bilingual", "immersion"] as SmartSupportMode[]).map((item) => <button key={item} type="button" onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold ${supportMode === item ? "bg-[#EEEFFD] text-[#5053BD]" : "text-slate-600 hover:bg-slate-50"}`}><span>{t[item]}</span>{supportMode === item && <Check size={15} />}</button>)}
+                    {(["chinese", "bilingual", "immersion"] as SmartSupportMode[]).map((item) => (
+                      <button key={item} type="button" onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold ${supportMode === item ? "bg-[#EEEFFD] text-[#5053BD]" : "text-slate-600 hover:bg-slate-50"}`}>
+                        <span>{t[item]}</span>{supportMode === item && <Check size={15} />}
+                      </button>
+                    ))}
                   </div>
                   {isPending && <p className="mt-3 text-xs text-slate-400">{t.saved}…</p>}
                 </div>
@@ -704,69 +902,120 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
         </div>
       </header>
 
-      <aside className="absolute bottom-[76px] left-0 top-[74px] w-[268px] overflow-y-auto px-5 py-7">
-        <p className="px-3 text-[11px] font-black tracking-[.2em] text-slate-400">{t.learnerPath.toUpperCase()}</p>
-        <nav className="mt-5">
-          {textbook.modules.map((module, index) => {
-            const active = index === activeIndex;
-            const done = moduleDone(index);
-            const moduleAccent = accentMap[module.accent];
-            return (
-              <button key={module.id} type="button" onClick={() => setActiveIndex(index)} className={`relative flex w-full items-start gap-3 px-3 py-3.5 text-left transition ${active ? "bg-white/75 shadow-[0_10px_28px_rgba(31,46,42,.06)]" : "hover:bg-white/40"}`}>
-                {index < textbook.modules.length - 1 && <span className="absolute left-[19px] top-9 h-[35px] w-px bg-slate-200" />}
-                <span className="relative z-10 mt-0.5 bg-[#F4F7F6]" style={{ color: active ? moduleAccent.solid : undefined }}><StepStatus done={done} active={active} /></span>
-                <span className="min-w-0"><span className={`block text-[11px] font-black tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>STEP {String(index + 1).padStart(2, "0")}</span><span className={`mt-0.5 block truncate text-sm font-bold ${active ? "text-slate-900" : "text-slate-600"}`}>{localize(module.title)}</span></span>
+      <div className="flex min-h-0 flex-1">
+        <aside className={`hidden shrink-0 overflow-y-auto px-3 py-5 transition-[width] duration-200 lg:block ${pathCollapsed ? "w-[72px]" : "w-[268px]"}`}>
+          <div className={`flex items-center ${pathCollapsed ? "justify-center" : "justify-between px-3"}`}>
+            {!pathCollapsed && <p className="text-[11px] font-black tracking-[.2em] text-slate-400">{t.learnerPath.toUpperCase()}</p>}
+            <button type="button" onClick={() => setPathCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800" aria-label={pathCollapsed ? "展开学习路径" : "收起学习路径"}>
+              {pathCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
+            </button>
+          </div>
+          {renderPathNavigation(pathCollapsed)}
+        </aside>
+
+        <main className="min-w-0 flex-1 overflow-y-auto bg-white">
+          <div className="mx-auto max-w-[900px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 xl:px-14">
+            {activeIndex === 0 && (
+              <div className="mb-9 grid gap-6 border-b border-slate-200 pb-8 sm:grid-cols-2 sm:gap-8 lg:mb-12 lg:pb-10">
+                <div>
+                  <p className="text-xs font-black tracking-[.18em] text-[#5C9ECF]">{t.scene.toUpperCase()}</p>
+                  <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.scenario)}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-black tracking-[.18em] text-[#2F8F7D]">{t.objective.toUpperCase()}</p>
+                  <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.goal)}</p>
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+              <div>
+                <p className="text-xs font-black tracking-[.22em]" style={{ color: accent.solid }}>STEP {String(activeIndex + 1).padStart(2, "0")}</p>
+                <h2 className="mt-3 text-2xl font-black tracking-[-.04em] text-slate-950 sm:text-[34px]">{localize(activeModule.title)}</h2>
+                <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500 sm:text-[16px]">{localize(activeModule.description)}</p>
+              </div>
+              <div className="flex shrink-0 items-center gap-2 text-xs font-semibold text-slate-400 sm:pt-1">
+                <Clock3 size={15} /> {activeNodes.reduce((total, node) => total + node.minutes, 0)} {t.minutes}
+              </div>
+            </div>
+            {activeNodes.map((node) => (
+              <article key={node.id} className="mt-10 sm:mt-12">
+                <div className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} />
+                  <h3 className="text-lg font-black text-slate-900">{localize(node.title)}</h3>
+                </div>
+                <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
+                {node.activities.map((activity) => (
+                  <Activity key={activity.id} activity={activity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={(id) => setCompletedActivities((current) => new Set(current).add(id))} />
+                ))}
+              </article>
+            ))}
+            <div className="h-12" />
+          </div>
+        </main>
+
+        <aside className={`hidden shrink-0 flex-col border-l border-white/70 bg-white/48 p-3 backdrop-blur-xl transition-[width] duration-200 lg:flex ${assistantCollapsed ? "w-[72px]" : "w-[328px]"}`}>
+          <div className={`mb-2 flex shrink-0 ${assistantCollapsed ? "justify-center" : "justify-start"}`}>
+            <button type="button" onClick={() => setAssistantCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/70 hover:text-slate-800" aria-label={assistantCollapsed ? "展开学习助手" : "收起学习助手"}>
+              {assistantCollapsed ? <PanelRightOpen size={17} /> : <PanelRightClose size={17} />}
+            </button>
+          </div>
+          {assistantCollapsed ? (
+            <button type="button" onClick={() => setAssistantCollapsed(false)} className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#EEEFFD] text-[#6F72E6]" aria-label={t.tutor}>
+              <MessageCircle size={18} />
+            </button>
+          ) : <div className="min-h-0 flex-1">{renderTutorPanel()}</div>}
+        </aside>
+      </div>
+
+      <footer className="relative z-30 h-[70px] shrink-0 border-t border-white/70 bg-white/78 px-3 backdrop-blur-2xl sm:px-5 lg:h-[76px] lg:px-7">
+        <div className="flex h-full items-center justify-between gap-3">
+          <button type="button" disabled={activeIndex === 0} onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="inline-flex min-w-0 items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:text-sm">
+            <ChevronLeft size={18} /> <span className="hidden min-[360px]:inline">{t.previous}</span>
+          </button>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-slate-400">{activeIndex + 1} / {textbook.modules.length}</span>
+            <div className="hidden items-center gap-1.5 sm:flex">
+              {textbook.modules.map((module, index) => (
+                <button key={module.id} type="button" onClick={() => setActiveIndex(index)} aria-label={`Step ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-8" : "w-1.5"}`} style={{ backgroundColor: index === activeIndex ? accent.solid : moduleDone(index) ? "#2F8F7D" : "#CBD5E1" }} />
+              ))}
+            </div>
+          </div>
+          {isLastModule ? (
+            chapterTestHref ? (
+              <Link href={chapterTestHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-900 px-3.5 py-2.5 text-xs font-bold text-white hover:bg-slate-700 sm:gap-2 sm:px-5 sm:text-sm">
+                {t.chapterTest} <ChevronRight size={18} />
+              </Link>
+            ) : (
+              <button type="button" disabled className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-200 px-3.5 py-2.5 text-xs font-bold text-slate-400 sm:px-5 sm:text-sm">
+                {t.testUnavailable}
               </button>
-            );
-          })}
-        </nav>
-      </aside>
-
-      <main className="absolute bottom-[76px] left-[268px] right-[328px] top-[74px] overflow-y-auto bg-white">
-        <div className="mx-auto max-w-[900px] px-12 py-12 xl:px-16">
-          {activeIndex === 0 && (
-            <div className="mb-12 grid grid-cols-2 gap-8 border-b border-slate-200 pb-10">
-              <div><p className="text-xs font-black tracking-[.18em] text-[#5C9ECF]">{t.scene.toUpperCase()}</p><p className="mt-3 text-[16px] leading-7 text-slate-600">{localize(textbook.chapter.scenario)}</p></div>
-              <div><p className="text-xs font-black tracking-[.18em] text-[#2F8F7D]">{t.objective.toUpperCase()}</p><p className="mt-3 text-[16px] leading-7 text-slate-600">{localize(textbook.chapter.goal)}</p></div>
-            </div>
+            )
+          ) : (
+            <button type="button" onClick={() => setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1))} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-900 px-3.5 py-2.5 text-xs font-bold text-white hover:bg-slate-700 sm:gap-2 sm:px-5 sm:text-sm">
+              {t.next} <ChevronRight size={18} />
+            </button>
           )}
-          <div className="flex items-start justify-between gap-8">
-            <div><p className="text-xs font-black tracking-[.22em]" style={{ color: accent.solid }}>STEP {String(activeIndex + 1).padStart(2, "0")}</p><h2 className="mt-3 text-[34px] font-black tracking-[-.04em] text-slate-950">{localize(activeModule.title)}</h2><p className="mt-3 max-w-2xl text-[16px] leading-7 text-slate-500">{localize(activeModule.description)}</p></div>
-            <div className="flex shrink-0 items-center gap-2 pt-1 text-xs font-semibold text-slate-400"><Clock3 size={15} /> {activeNodes.reduce((total, node) => total + node.minutes, 0)} {t.minutes}</div>
-          </div>
-          {activeNodes.map((node) => (
-            <article key={node.id} className="mt-12">
-              <div className="flex items-center gap-3"><span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} /><h3 className="text-lg font-black text-slate-900">{localize(node.title)}</h3></div>
-              <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
-              {node.activities.map((activity) => <Activity key={activity.id} activity={activity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={(id) => setCompletedActivities((current) => new Set(current).add(id))} />)}
-            </article>
-          ))}
-          <div className="h-16" />
-        </div>
-      </main>
-
-      <aside className="absolute bottom-[76px] right-0 top-[74px] w-[328px] border-l border-white/70 bg-white/48 p-5 backdrop-blur-xl">
-        <div className="flex h-full flex-col overflow-hidden rounded-[26px] bg-white/70 shadow-[0_24px_80px_rgba(31,46,42,.08)] ring-1 ring-white">
-          <div className="border-b border-white px-5 py-5"><div className="flex items-center gap-3"><span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EEEFFD] text-[#6F72E6]"><Bot size={19} /></span><div><p className="font-black text-slate-900">{t.tutor}</p><p className="mt-0.5 text-[10px] leading-4 text-slate-400">{t.grounded}</p></div></div></div>
-          <div className="flex-1 overflow-y-auto p-5">
-            <div className="text-xs font-bold tracking-wide text-slate-400">{t.currentMission}</div>
-            <p className="mt-2 text-sm font-bold leading-6 text-slate-800">{localize(activeModule.title)}</p>
-            <div className="mt-5 grid grid-cols-2 gap-2">
-              {([['explain',t.explain],['hint',t.hint],['example',t.example],['roleplay',t.roleplay]] as const).map(([intent,label]) => <button key={intent} type="button" onClick={() => tutorReply(intent)} className="min-h-14 bg-white/80 px-3 py-2 text-left text-xs font-semibold leading-5 text-slate-600 shadow-[0_6px_24px_rgba(31,46,42,.05)] hover:text-[#6F72E6]">{label}</button>)}
-            </div>
-            {tutorText && <div className="mt-5 whitespace-pre-line bg-[#F4F7F6] px-4 py-4 text-sm leading-6 text-slate-600"><Sparkles size={15} className="mb-2 text-[#6F72E6]" />{tutorText}</div>}
-          </div>
-          <div className="border-t border-white p-4"><textarea value={tutorInput} onChange={(event) => setTutorInput(event.target.value)} rows={2} placeholder={t.ask} className="w-full resize-none bg-white/80 px-3 py-2 text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-300" /><button type="button" onClick={() => tutorReply('ask')} className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#6F72E6] px-4 py-2.5 text-sm font-bold text-white"><Send size={14} /> {t.send}</button></div>
-        </div>
-      </aside>
-
-      <footer className="absolute inset-x-0 bottom-0 z-20 h-[76px] border-t border-white/70 bg-white/72 px-7 backdrop-blur-2xl">
-        <div className="flex h-full items-center justify-between">
-          <button type="button" disabled={activeIndex === 0} onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="inline-flex items-center gap-2 text-sm font-bold text-slate-500 hover:text-slate-900 disabled:opacity-25"><ChevronLeft size={18} /> {t.previous}</button>
-          <div className="flex items-center gap-2"><span className="text-xs font-semibold text-slate-400">{activeIndex + 1} / {textbook.modules.length}</span>{textbook.modules.map((module, index) => <button key={module.id} type="button" onClick={() => setActiveIndex(index)} aria-label={`Step ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-8" : "w-1.5"}`} style={{ backgroundColor: index === activeIndex ? accent.solid : moduleDone(index) ? "#2F8F7D" : "#CBD5E1" }} />)}</div>
-          <button type="button" disabled={activeIndex === textbook.modules.length - 1} onClick={() => setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1))} className="inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white hover:bg-slate-700 disabled:opacity-30">{activeIndex === textbook.modules.length - 1 ? t.chapterTest : t.next} <ChevronRight size={18} /></button>
         </div>
       </footer>
+
+      {mobilePanel && (
+        <div className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm lg:hidden" role="presentation" onClick={() => setMobilePanel(null)}>
+          <aside className={`absolute bottom-0 top-0 w-[min(88vw,360px)] bg-[#F4F7F6] p-4 shadow-2xl ${mobilePanel === "path" ? "left-0" : "right-0"}`} onClick={(event) => event.stopPropagation()} aria-label={mobilePanel === "path" ? t.learnerPath : t.tutor}>
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2 font-black text-slate-900">
+                {mobilePanel === "path" ? <BookOpen size={18} className="text-[#2F8F7D]" /> : <MessageCircle size={18} className="text-[#6F72E6]" />}
+                {mobilePanel === "path" ? t.learnerPath : t.tutor}
+              </div>
+              <button type="button" onClick={() => setMobilePanel(null)} className="rounded-full bg-white p-2 text-slate-500" aria-label="关闭">
+                <X size={17} />
+              </button>
+            </div>
+            <div className="h-[calc(100%-3.25rem)] overflow-y-auto">
+              {mobilePanel === "path" ? renderPathNavigation(false) : renderTutorPanel(false)}
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   );
 }

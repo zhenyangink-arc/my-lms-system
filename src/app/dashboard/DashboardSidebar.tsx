@@ -14,7 +14,7 @@ type Item={label:string;href:string;icon:ComponentType<{size?:number;className?:
 type Group={label:string;items:Item[];adminOnly?:boolean};
 const groups:Group[]=[
  {label:"学习成长",items:[
-  {label:"成长总览",href:"/dashboard",icon:LayoutDashboard},
+  {label:"成长首页",href:"/dashboard",icon:LayoutDashboard},
   {label:"我的课程",href:"/dashboard/courses",icon:BookOpen,requiresStudentSectionAccess:true},
   {label:"深化学习",href:"/dashboard/progress",icon:BarChart3,requiresStudentSectionAccess:true},
   {label:"作业与考试",href:"/dashboard/assignments",icon:ClipboardList,requiresStudentSectionAccess:true,studentFeature:"learning_assignments"},

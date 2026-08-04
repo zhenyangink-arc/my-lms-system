@@ -190,6 +190,10 @@ export default async function CourseDetailPage({
 
   const course = courseData as Course;
 
+  if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
+    redirect(`/dashboard/courses/${parentCategory.slug}#course-${course.slug}`);
+  }
+
   if (!bypassLearningSequence) {
     const { data: orderedCourseData } = await supabase
       .from("courses")

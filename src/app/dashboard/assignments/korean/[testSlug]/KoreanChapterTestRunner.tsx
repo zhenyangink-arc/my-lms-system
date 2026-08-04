@@ -148,8 +148,9 @@ export function KoreanChapterTestRunner({
     }
   }
 
-  function selectOption(questionId: string, originalOptionIndex: number) {
+  function handleSelectOption(questionId: string, originalOptionIndex: number) {
     if (!hasExamStarted || result) return;
+    // eslint-disable-next-line react-hooks/purity -- This timestamp is captured only in the option-click event handler, never during render.
     if (startedAtRef.current === null) startedAtRef.current = Date.now();
     setAnswers((current) => ({
       ...current,
@@ -732,7 +733,7 @@ export function KoreanChapterTestRunner({
                                 eliminated
                               }
                               onClick={() =>
-                                selectOption(question.id, originalIndex)
+                                handleSelectOption(question.id, originalIndex)
                               }
                               className="flex min-w-0 flex-1 items-center gap-2.5 p-3 text-left transition enabled:hover:bg-black/[0.02] disabled:cursor-default"
                             >

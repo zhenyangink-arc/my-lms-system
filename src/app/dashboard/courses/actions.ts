@@ -10,7 +10,7 @@ function isUuid(value: string) {
 
 const UPCOMING_CATEGORY_SLUGS = new Set(["english", "math", "university"]);
 
-export async function addCourseCategoryToCurrentLearningAction(formData: FormData) {
+export async function addCourseCategoryToFavoritesAction(formData: FormData) {
   const categoryId = String(formData.get("categoryId") ?? "").trim();
   if (!isUuid(categoryId)) return;
 
@@ -30,7 +30,7 @@ export async function addCourseCategoryToCurrentLearningAction(formData: FormDat
   if (UPCOMING_CATEGORY_SLUGS.has(category.slug)) return;
 
   await supabase
-    .from("student_course_category_learning_plans")
+    .from("student_course_category_favorites")
     .upsert(
       {
         user_id: user.id,
@@ -43,7 +43,7 @@ export async function addCourseCategoryToCurrentLearningAction(formData: FormDat
   revalidatePath("/dashboard/courses");
 }
 
-export async function removeCourseCategoryFromCurrentLearningAction(
+export async function removeCourseCategoryFromFavoritesAction(
   formData: FormData
 ) {
   const categoryId = String(formData.get("categoryId") ?? "").trim();
@@ -53,7 +53,7 @@ export async function removeCourseCategoryFromCurrentLearningAction(
   if (profile?.role !== "student") return;
 
   await supabase
-    .from("student_course_category_learning_plans")
+    .from("student_course_category_favorites")
     .delete()
     .eq("user_id", user.id)
     .eq("category_id", categoryId);

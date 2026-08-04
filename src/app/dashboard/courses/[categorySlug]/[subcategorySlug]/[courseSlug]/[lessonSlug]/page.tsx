@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import {
     ArrowLeft,
     ArrowRight,
@@ -26,7 +26,6 @@ import {
 import type { KoreanEbookProgressMap } from "@/lib/korean-ebook-progress";
 import {
     HANGUL_TEST_SEQUENCE,
-    KOREAN_LEVEL_ONE_TEST_SEQUENCE,
 } from "@/lib/korean-learning-unlocks";
 import { getUnlockedChapterSlugs, isLessonUnlocked } from "@/lib/course-unlocks";
 import { createR2SignedVideoUrl } from "@/lib/r2";
@@ -340,6 +339,13 @@ export default async function LessonDetailPage({
     }
 
     const lesson = lessonData as Lesson;
+    const usesLearningCenter = parentCategory.slug === "korean" || parentCategory.slug === "service";
+    const courseDirectoryHref = usesLearningCenter
+        ? `/dashboard/courses/${parentCategory.slug}#course-${course.slug}`
+        : `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`;
+    const stageDirectoryHref = usesLearningCenter
+        ? `/dashboard/courses/${parentCategory.slug}#stage-${subcategory.slug}`
+        : `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`;
     const curatedLesson =
         parentCategory.slug === "korean" &&
         subcategory.slug === "korean-basic" &&
@@ -356,12 +362,14 @@ export default async function LessonDetailPage({
     const bypassLearningSequence = isPlatformAudit || role !== "student";
     const { data: orderedLessonData } = await supabase
         .from("lessons")
-        .select("id,unlock_mode,prerequisite_lesson_id,prerequisite_chapter_id,available_from,is_manually_locked")
+        .select("id,slug,title,unlock_mode,prerequisite_lesson_id,prerequisite_chapter_id,available_from,is_manually_locked")
         .eq("course_id", course.id)
         .eq("is_published", true)
         .order("sort_order", { ascending: true });
     const orderedLessonRules = (orderedLessonData ?? []) as Array<{
         id: string;
+        slug: string;
+        title: string;
         unlock_mode: string | null;
         prerequisite_lesson_id: string | null;
         prerequisite_chapter_id: string | null;
@@ -376,13 +384,15 @@ export default async function LessonDetailPage({
         ),
     );
     const prerequisiteChapterSlugById = new Map<string, string>();
+    const prerequisiteChapterTitleById = new Map<string, string>();
     if (prerequisiteChapterIds.length > 0) {
         const { data: prerequisiteChapterData } = await supabase
             .from("course_chapters")
-            .select("id,slug")
+            .select("id,slug,title")
             .in("id", prerequisiteChapterIds);
         for (const chapter of prerequisiteChapterData ?? []) {
             prerequisiteChapterSlugById.set(String(chapter.id), String(chapter.slug));
+            prerequisiteChapterTitleById.set(String(chapter.id), String(chapter.title));
         }
     }
     const passedChapterSlugs = new Set<string>();
@@ -435,11 +445,9 @@ export default async function LessonDetailPage({
         ? new Set(currentChapters.map((chapter) => chapter.slug))
         : getUnlockedChapterSlugs({ chapters: currentChapters, passedChapterSlugs });
     let unlockedHangulChapterCount = 1;
-    let unlockedLevelOneLessonCount = 0;
     const ebookProgress: KoreanEbookProgressMap = {};
     if (isHangulIntroduction || isKoreanLevelOne) {
         unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
-        unlockedLevelOneLessonCount = KOREAN_LEVEL_ONE_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
     }
     if ((isHangulIntroduction || isKoreanLevelOne) && !bypassLearningSequence) {
         const { data: ebookProgressData } = await supabase
@@ -459,7 +467,6 @@ export default async function LessonDetailPage({
     }
     if (bypassLearningSequence) {
         unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.length;
-        unlockedLevelOneLessonCount = KOREAN_LEVEL_ONE_TEST_SEQUENCE.length;
     }
     const membershipTier = normalizeMembershipTier(profile?.membership_tier);
     const hasFullKoreanCourseAccess =
@@ -474,8 +481,74 @@ export default async function LessonDetailPage({
         hasFullKoreanCourseAccess ||
         hasPreviewAccess;
     if (!currentLessonUnlocked) {
-        redirect(
-            `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`
+        const currentRule = orderedLessonRules[lessonRuleIndex];
+        const prerequisiteLesson = currentRule?.prerequisite_lesson_id
+            ? orderedLessonRules.find((item) => item.id === currentRule.prerequisite_lesson_id)
+            : null;
+        const prerequisiteChapterSlug = currentRule?.prerequisite_chapter_id
+            ? prerequisiteChapterSlugById.get(currentRule.prerequisite_chapter_id)
+            : null;
+        const prerequisiteChapterTitle = currentRule?.prerequisite_chapter_id
+            ? prerequisiteChapterTitleById.get(currentRule.prerequisite_chapter_id)
+            : null;
+        const prerequisiteHref = prerequisiteLesson
+            ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${prerequisiteLesson.slug}${prerequisiteChapterSlug ? `?chapter=${encodeURIComponent(prerequisiteChapterSlug)}` : ""}`
+            : courseDirectoryHref;
+
+        return (
+            <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F4F7F6] text-slate-900">
+                <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
+                    <Link
+                        href={courseDirectoryHref}
+                        className="inline-flex w-fit items-center gap-2 text-sm font-bold text-slate-500 transition hover:text-slate-900"
+                    >
+                        <ArrowLeft size={16} />
+                        返回课程路线
+                    </Link>
+                    <main className="my-auto py-10">
+                        <section className="relative overflow-hidden rounded-[32px] border border-white bg-white/85 p-6 shadow-[0_30px_100px_rgba(31,46,42,.12)] backdrop-blur-xl sm:p-10 lg:p-12">
+                            <span className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#EEEFFD]" aria-hidden="true" />
+                            <div className="relative max-w-2xl">
+                                <span className="inline-flex items-center gap-2 rounded-full bg-[#FBEEE9] px-3 py-1.5 text-xs font-black text-[#B45E3E]">
+                                    <LockKeyhole size={14} />
+                                    前置学习尚未完成
+                                </span>
+                                <p className="mt-6 text-xs font-black tracking-[.18em] text-[#6F72E6]">
+                                    {curatedLesson?.stage ?? subcategory.title}
+                                </p>
+                                <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+                                    {curatedLesson?.title ?? lesson.title}
+                                </h1>
+                                <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-base">
+                                    这门课需要按学习路线逐步开放。完成前置内容后，系统会自动解锁，不需要重新收藏或报名。
+                                </p>
+                                <div className="mt-7 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:p-5">
+                                    <p className="text-xs font-black text-slate-400">下一步</p>
+                                    <p className="mt-2 text-sm font-bold leading-6 text-slate-800 sm:text-base">
+                                        {prerequisiteChapterTitle
+                                            ? `完成前置课程中的「${prerequisiteChapterTitle}」章节测试`
+                                            : "完成前置课程及其章节测试"}
+                                    </p>
+                                </div>
+                                <div className="mt-7 flex flex-col gap-3 sm:flex-row">
+                                    <Link
+                                        href={prerequisiteHref}
+                                        className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-700"
+                                    >
+                                        继续前置学习 <ArrowRight size={16} />
+                                    </Link>
+                                    <Link
+                                        href={courseDirectoryHref}
+                                        className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-600 transition hover:border-slate-300"
+                                    >
+                                        查看完整课程路线
+                                    </Link>
+                                </div>
+                            </div>
+                        </section>
+                    </main>
+                </div>
+            </div>
         );
     }
     let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;
@@ -592,7 +665,7 @@ export default async function LessonDetailPage({
                 initialProgress={progress.progress_percent}
                 initialStatus={progress.status}
                 trackingDisabled={isPlatformAudit}
-                backHref={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                backHref={courseDirectoryHref}
                 unlockedChapterCount={unlockedHangulChapterCount}
                 initialEbookProgress={ebookProgress}
                 initialChapterSlug={requestedChapter}
@@ -621,7 +694,7 @@ export default async function LessonDetailPage({
                             页面代码已经切换到新版智能教材，请先应用最新数据库迁移后刷新页面。
                         </p>
                         <Link
-                            href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                            href={courseDirectoryHref}
                             className="mt-7 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white"
                         >
                             <ArrowLeft size={16} />
@@ -634,7 +707,7 @@ export default async function LessonDetailPage({
 
         return (
             <KoreanLevelOneSmartTextbook
-                backHref={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                backHref={courseDirectoryHref}
                 textbook={smartTextbook}
                 trackingDisabled={isPlatformAudit}
             />
@@ -653,7 +726,7 @@ export default async function LessonDetailPage({
                 {/* 返回路径 */}
                 <div className="flex flex-wrap items-center gap-3">
                     <Link
-                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                        href={courseDirectoryHref}
                         className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
                     >
                         <ArrowLeft size={16} />
@@ -663,7 +736,7 @@ export default async function LessonDetailPage({
                     <span className="text-sm text-gray-300">/</span>
 
                     <Link
-                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
+                        href={stageDirectoryHref}
                         className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
                     >
                         {subcategory.title}
@@ -1142,7 +1215,7 @@ export default async function LessonDetailPage({
 
                     <div className="mt-5 flex justify-end">
                         <Link
-                            href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                            href={courseDirectoryHref}
                             className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
                             style={{ backgroundColor: "var(--app-accent)" }}
                         >

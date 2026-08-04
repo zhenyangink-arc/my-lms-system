@@ -545,6 +545,32 @@ html[data-app-theme="coral"] {
     background-color 200ms ease;
 }
 
+/* 个人档案表使用略深的柔和底色，让可填写区域与白色表格行清楚分层。 */
+.profile-table-input {
+  background-color: color-mix(
+    in srgb,
+    var(--app-soft-bg) 56%,
+    var(--app-accent-soft) 44%
+  );
+  border-color: color-mix(
+    in srgb,
+    var(--app-border) 60%,
+    var(--app-accent) 40%
+  );
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 42%, transparent);
+}
+
+.profile-table-input:focus,
+.profile-table-input:focus-within {
+  border-color: var(--app-accent);
+  background-color: color-mix(
+    in srgb,
+    var(--app-accent-soft) 72%,
+    var(--app-card-bg) 28%
+  );
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--app-accent) 14%, transparent);
+}
+
 .app-edge-hover-zone {
   position: fixed;
   inset-block: 0;
@@ -1447,5 +1473,31 @@ html[data-app-theme="coral"] {
   .knowledge-firework-particle,
   .knowledge-firework-core {
     display: none;
+  }
+}
+
+@keyframes guide-agent-highlight-pulse {
+  0%,
+  100% {
+    box-shadow:
+      0 0 0 3px color-mix(in srgb, var(--app-accent) 82%, transparent),
+      0 0 0 10px color-mix(in srgb, var(--app-accent) 12%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0 0 4px color-mix(in srgb, var(--app-accent) 95%, transparent),
+      0 0 0 18px color-mix(in srgb, var(--app-accent) 5%, transparent);
+  }
+}
+
+.guide-agent-highlight {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 78%, transparent);
+  outline-offset: 5px;
+  animation: guide-agent-highlight-pulse 900ms ease-in-out 3;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .guide-agent-highlight {
+    animation: none;
   }
 }

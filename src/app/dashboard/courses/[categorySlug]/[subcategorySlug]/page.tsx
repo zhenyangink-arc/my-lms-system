@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -183,6 +183,10 @@ export default async function SubcategoryCoursesPage({
   }
 
   const subcategory = subcategoryData as CourseCategory;
+
+  if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
+    redirect(`/dashboard/courses/${parentCategory.slug}#stage-${subcategory.slug}`);
+  }
 
   /**
    * 3. 查询当前二级分类下的具体课程

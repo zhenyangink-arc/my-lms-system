@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-require-imports */
 const { loadEnvConfig } = require("@next/env");
 const { createClient } = require("@supabase/supabase-js");
 

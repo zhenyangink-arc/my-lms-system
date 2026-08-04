@@ -68,6 +68,7 @@ export type SmartTextbookData = {
     scenario: LocalizedText;
     goal: LocalizedText;
     chapterTestId: string | null;
+    chapterTestSlug: string | null;
   };
   modules: SmartTextbookModule[];
   preference: {
@@ -132,13 +133,14 @@ export async function loadKoreanLevelOneChapterOne(options: {
 
   const { data: chapter, error: chapterError } = await admin
     .from("digital_textbook_chapters")
-    .select("id,slug,chapter_number,title,scenario,goal,chapter_test_id")
+    .select("id,slug,chapter_number,title,scenario,goal,chapter_test_id,chapter_tests(slug)")
     .eq("version_id", version.id)
     .eq("chapter_number", 1)
     .eq("status", "published")
     .maybeSingle();
   if (chapterError) throw new Error(`无法读取教材章节：${chapterError.message}`);
   if (!chapter) return null;
+  const chapterTest = asObject(chapter.chapter_tests);
 
   const { data: modules, error: moduleError } = await admin
     .from("digital_textbook_modules")
@@ -260,6 +262,7 @@ export async function loadKoreanLevelOneChapterOne(options: {
       scenario: localized(chapter.scenario),
       goal: localized(chapter.goal),
       chapterTestId: chapter.chapter_test_id ? String(chapter.chapter_test_id) : null,
+      chapterTestSlug: chapterTest.slug ? String(chapterTest.slug) : null,
     },
     modules: mappedModules,
     preference,
