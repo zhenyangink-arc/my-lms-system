@@ -1,9 +1,9 @@
 const PLATFORM_DASHBOARD_BASE = "/platform/dashboard";
-const TENANT_DASHBOARD_PATTERN = /^\/t\/[^/]+(\/dashboard(?:\/.*)?$)/;
+const TENANT_DASHBOARD_PATTERN = /^\/[^/]+(\/dashboard(?:\/.*)?$)/;
 
 export function getDashboardBasePath(tenantSlug?: string | null) {
   return tenantSlug
-    ? `/t/${encodeURIComponent(tenantSlug)}/dashboard`
+    ? `/${encodeURIComponent(tenantSlug)}/dashboard`
     : PLATFORM_DASHBOARD_BASE;
 }
 

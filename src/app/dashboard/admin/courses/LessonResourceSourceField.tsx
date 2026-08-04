@@ -3,7 +3,10 @@
 import { useState } from "react";
 import { CheckCircle2, UploadCloud, XCircle } from "lucide-react";
 
-import { createCourseResourceUploadUrlAction } from "./catalog-actions";
+import {
+  confirmCourseResourceUploadAction,
+  createCourseResourceUploadUrlAction,
+} from "./catalog-actions";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024;
 
@@ -60,6 +63,11 @@ export function LessonResourceSourceField({
         body: file,
       });
       if (!response.ok) throw new Error("上传失败，请重试。");
+      await confirmCourseResourceUploadAction({
+        lessonId,
+        objectKey: signed.objectKey,
+        fileSize: file.size,
+      });
       setObjectKey(signed.objectKey);
       setFileName(file.name);
     } catch (error) {

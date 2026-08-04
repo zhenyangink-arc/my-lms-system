@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/wrangler/config-schema.json",
-  "name": "my-lms-system",
+  "name": "lmssystem",
   "main": ".open-next/worker.js",
   "compatibility_date": "2026-07-21",
   "compatibility_flags": ["nodejs_compat"],
@@ -8,6 +8,12 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "puffy-lms-videos"
+    }
+  ],
   "observability": {
     "enabled": true
   }

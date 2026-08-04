@@ -7,9 +7,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: [
-    "/dashboard/:path*",
-    "/platform/dashboard/:path*",
-    "/t/:tenantSlug/dashboard/:path*",
-  ],
+  matcher: ["/dashboard/:path*", "/:space/dashboard/:path*"],
 };

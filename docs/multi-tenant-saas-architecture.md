@@ -34,7 +34,7 @@ tenants.id
 
 身份分层：
 
-- `profiles.global_role` 只决定 URL 空间：`platform_owner` / `platform_deputy` 进入 `/platform/dashboard`，其余身份进入 `/t/{tenantSlug}/dashboard`。
+- `profiles.global_role` 只决定 URL 空间：`platform_owner` / `platform_deputy` 进入 `/platform/dashboard`，其余身份进入 `/{tenantSlug}/dashboard`。
 - `profiles.role` 保存账号级角色镜像；平台负责人使用 `platform_super_admin`，机构负责人使用 `tenant_super_admin`，不再共用 `super_admin`。
 - `tenant_memberships.role` 是租户业务授权事实来源，最高角色只能是 `tenant_super_admin`，不能出现平台角色。
 

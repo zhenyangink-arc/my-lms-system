@@ -10,7 +10,7 @@
 - `src/app/api`：需要浏览器导航或文件跳转语义的 Route Handlers。
 
 Dashboard 内部继续沿用现有 App Router 布局；对外 URL 按身份分成平台空间
-`/platform/dashboard` 与租户空间 `/t/{tenantSlug}/dashboard`。历史 `/dashboard`
+`/platform/dashboard` 与租户空间 `/{tenantSlug}/dashboard`。历史 `/dashboard`
 仅作为兼容入口，由 `src/proxy.ts` 根据 `profiles.global_role` 重定向到规范地址。
 
 ## 认证与授权

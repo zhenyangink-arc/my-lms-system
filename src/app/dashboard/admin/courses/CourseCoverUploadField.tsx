@@ -3,7 +3,10 @@
 import { useEffect, useId, useState } from "react";
 import { Check, ImagePlus, LoaderCircle } from "lucide-react";
 
-import { createCourseCoverUploadUrlAction } from "./catalog-actions";
+import {
+  confirmCourseCoverUploadAction,
+  createCourseCoverUploadUrlAction,
+} from "./catalog-actions";
 
 type CoverEntityKind = "category" | "course" | "lesson" | "chapter";
 
@@ -52,6 +55,12 @@ export function CourseCoverUploadField({
         body: file,
       });
       if (!response.ok) throw new Error("R2 上传失败，请稍后重试。");
+      await confirmCourseCoverUploadAction({
+        kind,
+        entityId,
+        objectKey: nextObjectKey,
+        fileSize: file.size,
+      });
 
       setObjectKey(nextObjectKey);
       setPreviewUrl(URL.createObjectURL(file));

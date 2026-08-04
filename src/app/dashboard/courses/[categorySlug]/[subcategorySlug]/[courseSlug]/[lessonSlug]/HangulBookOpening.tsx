@@ -1,7 +1,9 @@
 "use client";
 
 import { forwardRef, useEffect, useRef, useState } from "react";
-import HTMLFlipBook from "react-pageflip";
+import dynamic from "next/dynamic";
+
+const HTMLFlipBook = dynamic(() => import("react-pageflip"), { ssr: false });
 
 type PageProps = {
   children: React.ReactNode;

@@ -3,13 +3,6 @@ const path = require("node:path");
 
 const projectRoot = path.resolve(__dirname, "..");
 const sharedRoot = path.join(projectRoot, "src", "app", "dashboard");
-const mode = process.argv[2];
-
-if (mode !== "platform" && mode !== "tenant") {
-  throw new Error(
-    "Usage: node scripts/generate-dashboard-route-adapters.cjs <platform|tenant>"
-  );
-}
 
 function assertInside(target, root) {
   const relative = path.relative(root, target);
@@ -87,7 +80,7 @@ function prepareSharedRouteFiles() {
   return pageDirectories.sort();
 }
 
-function platformLayoutSource() {
+function spaceLayoutSource() {
   return `import type { ReactNode } from "react";
 
 import DashboardRouteLayout from "@/app/dashboard/DashboardRouteLayout";
@@ -95,55 +88,29 @@ import { requireDashboardAccess } from "@/lib/dashboard-access";
 
 export const dynamic = "force-dynamic";
 
-export default async function PlatformDashboardLayout({
-  children,
-}: {
-  children: ReactNode;
-}) {
-  await requireDashboardAccess("platform");
-  return <DashboardRouteLayout>{children}</DashboardRouteLayout>;
-}
-`;
-}
-
-function tenantLayoutSource() {
-  return `import type { ReactNode } from "react";
-
-import DashboardRouteLayout from "@/app/dashboard/DashboardRouteLayout";
-import { requireDashboardAccess } from "@/lib/dashboard-access";
-
-export const dynamic = "force-dynamic";
-
-export default async function TenantDashboardLayout({
+export default async function SpaceDashboardLayout({
   children,
   params,
 }: {
   children: ReactNode;
-  params: Promise<{ tenantSlug: string }>;
+  params: Promise<{ space: string }>;
 }) {
-  const { tenantSlug } = await params;
-  await requireDashboardAccess("tenant", tenantSlug);
+  const { space } = await params;
+  await requireDashboardAccess(
+    space === "platform" ? "platform" : "tenant",
+    space === "platform" ? null : space,
+  );
   return <DashboardRouteLayout>{children}</DashboardRouteLayout>;
 }
 `;
 }
 
 function generateRouteTree(pageDirectories) {
-  const routeRoot =
-    mode === "platform"
-      ? path.join(projectRoot, "src", "app", "platform", "dashboard")
-      : path.join(
-          projectRoot,
-          "src",
-          "app",
-          "t",
-          "[tenantSlug]",
-          "dashboard"
-        );
+  const routeRoot = path.join(projectRoot, "src", "app", "[space]", "dashboard");
 
   writeGeneratedFile(
     path.join(routeRoot, "layout.tsx"),
-    mode === "platform" ? platformLayoutSource() : tenantLayoutSource()
+    spaceLayoutSource()
   );
   writeGeneratedFile(
     path.join(routeRoot, "page.tsx"),
@@ -179,7 +146,7 @@ const generatedRoot = generateRouteTree(pageDirectories);
 process.stdout.write(
   JSON.stringify(
     {
-      mode,
+      mode: "space",
       sharedPageCount: pageDirectories.length + 1,
       generatedAdapterCount: pageDirectories.length + 1,
       generatedRoot: path.relative(projectRoot, generatedRoot),

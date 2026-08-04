@@ -1,6 +1,8 @@
 "use client";
 
-import HTMLFlipBook from "react-pageflip";
+import dynamic from "next/dynamic";
+
+const HTMLFlipBook = dynamic(() => import("react-pageflip"), { ssr: false });
 import { forwardRef, useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,

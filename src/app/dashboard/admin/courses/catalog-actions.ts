@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
 import { requirePlatformCourseManager } from "@/lib/admin";
-import { createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
+import { assertR2ObjectUpload, createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -425,6 +425,26 @@ export async function createCourseCoverUploadUrlAction(input: {
   return { uploadUrl, objectKey };
 }
 
+export async function confirmCourseCoverUploadAction(input: {
+  kind: CoverEntityKind;
+  entityId: string;
+  objectKey: string;
+  fileSize: number;
+}) {
+  const { supabase } = await requirePlatformCourseManager();
+  if (!UUID_PATTERN.test(input.entityId)) throw new Error("目录记录 ID 格式不正确。");
+  if (!coverTableByKind[input.kind]) throw new Error("不支持该目录类型的配图。");
+  if (!Number.isInteger(input.fileSize) || input.fileSize < 1 || input.fileSize > COVER_MAX_BYTES) {
+    throw new Error("配图大小必须在 5MB 以内。");
+  }
+  if (!input.objectKey.startsWith(`course-covers/${input.kind}/${input.entityId}/`)) {
+    throw new Error("配图对象路径不正确。");
+  }
+
+  await assertPlatformRecord(supabase, coverTableByKind[input.kind], input.entityId);
+  await assertR2ObjectUpload(input.objectKey, input.fileSize);
+}
+
 export async function createCourseResourceUploadUrlAction(input: {
   lessonId: string;
   fileName: string;
@@ -444,6 +464,24 @@ export async function createCourseResourceUploadUrlAction(input: {
   const contentType = input.contentType || "application/octet-stream";
   const uploadUrl = await createR2SignedUploadUrl(objectKey, contentType, input.fileSize);
   return { uploadUrl, objectKey };
+}
+
+export async function confirmCourseResourceUploadAction(input: {
+  lessonId: string;
+  objectKey: string;
+  fileSize: number;
+}) {
+  const { supabase } = await requirePlatformCourseManager();
+  if (!UUID_PATTERN.test(input.lessonId)) throw new Error("课时 ID 格式不正确。");
+  if (!Number.isInteger(input.fileSize) || input.fileSize < 1 || input.fileSize > RESOURCE_MAX_BYTES) {
+    throw new Error("资料文件大小必须在 10MB 以内。");
+  }
+  if (!input.objectKey.startsWith(`lesson-resources/${input.lessonId}/`)) {
+    throw new Error("资料对象路径不正确。");
+  }
+
+  await assertPlatformRecord(supabase, "lessons", input.lessonId);
+  await assertR2ObjectUpload(input.objectKey, input.fileSize);
 }
 
 async function getPlatformResource(
