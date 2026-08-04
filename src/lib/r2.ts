@@ -1,14 +1,4 @@
-import { getCloudflareContext } from "@opennextjs/cloudflare";
 import { AwsClient } from "aws4fetch";
-
-type R2BucketBinding = {
-  head(key: string): Promise<{ size: number } | null>;
-  delete(key: string): Promise<void>;
-};
-
-type R2CloudflareEnv = CloudflareEnv & {
-  R2_BUCKET: R2BucketBinding;
-};
 
 function getRequiredEnv(name: string) {
   const value = process.env[name];
@@ -45,6 +35,12 @@ function encodeObjectKey(objectKey: string) {
   return objectKey.split("/").map(encodeURIComponent).join("/");
 }
 
+function createObjectUrl(accountId: string, bucketName: string, objectKey: string) {
+  return new URL(
+    `https://${accountId}.r2.cloudflarestorage.com/${encodeURIComponent(bucketName)}/${encodeObjectKey(objectKey)}`,
+  );
+}
+
 async function createSignedUrl(
   method: "GET" | "PUT",
   objectKey: string,
@@ -54,9 +50,7 @@ async function createSignedUrl(
   } = {},
 ) {
   const { accountId, bucketName, signedUrlExpiresIn, signer } = getSigningContext();
-  const url = new URL(
-    `https://${accountId}.r2.cloudflarestorage.com/${encodeURIComponent(bucketName)}/${encodeObjectKey(objectKey)}`,
-  );
+  const url = createObjectUrl(accountId, bucketName, objectKey);
   url.searchParams.set("X-Amz-Expires", String(signedUrlExpiresIn));
   if (options.responseContentDisposition) {
     url.searchParams.set("response-content-disposition", options.responseContentDisposition);
@@ -73,12 +67,13 @@ async function createSignedUrl(
   return signedRequest.url;
 }
 
-async function getR2Bucket() {
-  const { env } = await getCloudflareContext({ async: true });
-  const bucket = (env as R2CloudflareEnv).R2_BUCKET;
+async function fetchSignedObject(method: "HEAD" | "DELETE", objectKey: string) {
+  const { accountId, bucketName, signer } = getSigningContext();
+  const signedRequest = await signer.sign(
+    new Request(createObjectUrl(accountId, bucketName, objectKey), { method }),
+  );
 
-  if (!bucket) throw new Error("Missing Cloudflare R2 binding: R2_BUCKET");
-  return bucket;
+  return fetch(signedRequest);
 }
 
 export async function createR2SignedVideoUrl(objectKey: string) {
@@ -114,16 +109,23 @@ export async function createR2SignedResourceDownloadUrl(
 }
 
 export async function assertR2ObjectUpload(objectKey: string, expectedSize: number) {
-  const bucket = await getR2Bucket();
-  const object = await bucket.head(objectKey);
+  const response = await fetchSignedObject("HEAD", objectKey);
 
-  if (!object) throw new Error("R2 upload was not found");
-  if (object.size !== expectedSize) {
-    throw new Error(`R2 upload size mismatch: expected ${expectedSize}, received ${object.size}`);
+  if (response.status === 404) throw new Error("R2 upload was not found");
+  if (!response.ok) {
+    throw new Error(`R2 upload validation failed with status ${response.status}`);
+  }
+
+  const actualSize = Number(response.headers.get("content-length"));
+  if (!Number.isSafeInteger(actualSize) || actualSize !== expectedSize) {
+    throw new Error(`R2 upload size mismatch: expected ${expectedSize}, received ${actualSize}`);
   }
 }
 
 export async function deleteR2Object(objectKey: string) {
-  const bucket = await getR2Bucket();
-  await bucket.delete(objectKey);
+  const response = await fetchSignedObject("DELETE", objectKey);
+
+  if (!response.ok && response.status !== 404) {
+    throw new Error(`R2 object deletion failed with status ${response.status}`);
+  }
 }
