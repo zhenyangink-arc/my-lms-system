@@ -259,14 +259,14 @@ export function GuideAgentChat({
         aria-expanded={isOpen}
         aria-controls="guide-agent-chat-panel"
         onClick={() => setIsOpen((current) => !current)}
-        className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-black transition hover:-translate-y-0.5 sm:px-4"
+        className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight transition hover:-translate-y-0.5 sm:px-4 sm:text-lg"
         style={{
           color: isOpen ? "var(--app-accent-strong)" : "var(--app-text)",
           borderColor: isOpen ? "var(--app-accent)" : undefined,
         }}
       >
         <span className="relative">
-          <Bot size={17} aria-hidden="true" />
+          <Bot size={18} aria-hidden="true" />
           <span
             className="absolute -right-1 -top-1 h-2 w-2 rounded-full ring-2"
             style={{

@@ -481,7 +481,6 @@ export function UniversityAdminManager({
             <span className="font-mono text-[10px] tabular-nums text-zinc-400">{universities.length} 所大学 · {universities.filter((university) => university.is_published).length} 所已发布</span>
             {isInstitutionViewer && <span className="text-[10px] text-zinc-400">只读模式</span>}
           </div>
-          <p className="mt-1 text-[10px] text-zinc-500">统一维护大学、申请材料与签证要求</p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
           <label className="relative block sm:w-56">

@@ -657,6 +657,112 @@ html[data-app-theme="coral"] {
   }
 }
 
+/* ── 学生端左侧导航：固定窄图标栏，hover 展开文字 ── */
+.app-student-sidebar {
+  --sidebar-collapsed-w: 52px;
+  --sidebar-expanded-w: 208px;
+  width: var(--sidebar-collapsed-w);
+  transition:
+    width 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 240ms ease;
+  background-color: color-mix(in srgb, var(--app-card-bg) 62%, transparent);
+  backdrop-filter: blur(32px) saturate(150%);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
+  border-right: 1px solid var(--app-border);
+  box-shadow: 2px 0 20px -10px color-mix(in srgb, var(--app-text) 6%, transparent);
+}
+
+.app-student-sidebar:hover {
+  width: var(--sidebar-expanded-w);
+  box-shadow: 6px 0 32px -12px color-mix(in srgb, var(--app-text) 12%, transparent);
+}
+
+/* 分组标签：折叠时隐藏，hover 后延迟淡入 */
+.app-student-sidebar-group-label {
+  opacity: 0;
+  white-space: nowrap;
+  transition: opacity 180ms ease 80ms;
+}
+.app-student-sidebar:hover .app-student-sidebar-group-label {
+  opacity: 1;
+}
+
+/* 链接文字标签：折叠时隐藏，hover 后延迟淡入 */
+.app-student-sidebar-link-label {
+  opacity: 0;
+  transition: opacity 150ms ease 60ms;
+}
+.app-student-sidebar:hover .app-student-sidebar-link-label {
+  opacity: 1;
+}
+
+/* 侧边栏链接 hover 微底色 */
+.app-student-sidebar-link:hover {
+  background-color: color-mix(in srgb, var(--app-accent-soft) 40%, transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-student-sidebar,
+  .app-student-sidebar-group-label,
+  .app-student-sidebar-link-label {
+    transition: none;
+  }
+}
+
+/* ── 学生端右侧工具面板：固定窄图标栏，hover 展开 ── */
+.app-student-utility-sidebar {
+  --utility-collapsed-w: 48px;
+  --utility-expanded-w: 216px;
+  width: var(--utility-collapsed-w);
+  transition:
+    width 240ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 240ms ease;
+  background-color: color-mix(in srgb, var(--app-card-bg) 62%, transparent);
+  backdrop-filter: blur(32px) saturate(150%);
+  -webkit-backdrop-filter: blur(32px) saturate(150%);
+  border-left: 1px solid var(--app-border);
+  box-shadow: -2px 0 20px -10px color-mix(in srgb, var(--app-text) 6%, transparent);
+}
+
+.app-student-utility-sidebar:hover {
+  width: var(--utility-expanded-w);
+  box-shadow: -6px 0 32px -12px color-mix(in srgb, var(--app-text) 12%, transparent);
+}
+
+/* 每个 section 折叠时只留图标居中，展开时显示全部内容 */
+.app-student-utility-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-student-utility-sidebar:hover .app-student-utility-section {
+  align-items: stretch;
+}
+
+/* 展开内容：折叠时隐藏，hover 后延迟淡入 */
+.app-student-utility-expanded {
+  display: none;
+  opacity: 0;
+  transition: opacity 150ms ease 60ms;
+}
+.app-student-utility-sidebar:hover .app-student-utility-expanded {
+  display: block;
+  opacity: 1;
+}
+
+/* 分组标签样式，与左侧栏保持一致 */
+.app-student-utility-sidebar .text-\[9px\].font-bold.tracking-\[0\.18em\] {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-student-utility-sidebar,
+  .app-student-utility-expanded {
+    transition: none;
+  }
+}
+
 /* Management overview: quiet semantic column headers without heavy color blocks. */
 [data-admin-overview] table thead th {
   border-right: 1px solid var(--app-border);

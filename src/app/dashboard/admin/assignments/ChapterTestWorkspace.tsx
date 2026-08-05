@@ -285,9 +285,6 @@ export async function ChapterTestWorkspace({
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-sm font-black">课程章节树</p>
-              <p className="app-muted-text mt-1 text-xs">
-                按课程通道折叠；章节测试题库只保留基础与中等难度。
-              </p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-3 text-sm">
               {[

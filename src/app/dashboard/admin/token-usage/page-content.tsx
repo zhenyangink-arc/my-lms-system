@@ -194,11 +194,6 @@ export default async function TokenUsagePage() {
             <h1 className="text-3xl font-semibold tracking-[-0.04em]">
               Token 用量
             </h1>
-            <p className="app-muted-text mt-2 max-w-2xl text-[13px] leading-6">
-              {canViewAllTenants
-                ? "按平台与机构查看 AI 对话用量，并展开最近调用明细。"
-                : "查看当前机构产生的 AI 对话用量与最近调用。"}
-            </p>
           </div>
           <div className="app-muted-text flex items-center gap-2 text-[12px]">
             <Database size={12} strokeWidth={1.7} />

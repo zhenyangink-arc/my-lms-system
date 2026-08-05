@@ -97,9 +97,6 @@ export function PlatformDocumentReviewOverview({
               <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 资料审核管理
               </h1>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                逐家查看机构的申请单、处理积压、补充情况、完成量和更新时间；展开机构可查看流程分布。
-              </p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[

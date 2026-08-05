@@ -1,9 +1,9 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Bell, GraduationCap, Home } from "lucide-react";
+import { Bell, GraduationCap, Home, Palette, SlidersHorizontal } from "lucide-react";
 
-import { Sheet, SheetContent, SheetTitle } from "@/components/ui/sheet";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import {
   BackgroundBrightnessControl,
@@ -12,15 +12,15 @@ import {
   DashboardAppearanceSync,
 } from "./BackgroundBrightnessControl";
 import { LogoutButton } from "./LogoutButton";
+import { ReminderDialog, type TeacherReplyReminder } from "./ReminderDialog";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
-import { EdgeHandle } from "./shell/EdgeHandle";
-import { useHoverDrawer } from "./shell/useHoverDrawer";
 
 type Props = {
   tenantName: string;
   userName: string;
   accountLabel: string;
   unreadCount: number;
+  teacherReminders: TeacherReplyReminder[];
   dashboardBasePath: string;
 };
 
@@ -29,141 +29,169 @@ export function StudentUtilityDrawer({
   userName,
   accountLabel,
   unreadCount,
+  teacherReminders,
   dashboardBasePath,
 }: Props) {
-  const { open, setOpen, handleProps, panelProps } = useHoverDrawer();
+  const userInitial = userName.trim().slice(0, 1) || "学";
+  const [reminderOpen, setReminderOpen] = useState(false);
 
   return (
     <>
       <DashboardAppearanceSync />
-      <div
-        className="app-edge-hover-zone"
-        data-side="right"
-        aria-hidden="true"
-        onMouseEnter={handleProps.onMouseEnter}
-      />
-      <EdgeHandle
-        side="right"
-        className="app-edge-handle-student"
-        label={open ? "关闭设置与通知" : "打开设置与通知"}
-        open={open}
-        indicator={unreadCount > 0}
-        {...handleProps}
+
+      {/* 通知提醒 Dialog */}
+      <ReminderDialog
+        open={reminderOpen}
+        onOpenChange={setReminderOpen}
+        reminders={teacherReminders}
       />
 
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent
-          side="right"
-          showCloseButton={false}
-          className="app-glass-panel gap-6 overflow-y-auto rounded-l-3xl p-5 data-[side=right]:w-full data-[side=right]:sm:max-w-xs"
-          {...panelProps}
-        >
-          <SheetTitle className="sr-only">设置与通知</SheetTitle>
+      {/* 桌面端：固定右侧窄栏，hover 展开 */}
+      <aside
+        className="app-student-utility-sidebar group fixed right-0 top-0 z-40 hidden h-dvh flex-col md:flex"
+        aria-label="设置与通知"
+      >
+        <nav className="flex flex-1 flex-col overflow-y-auto py-3">
 
-          <Link
-            href={dashboardBasePath}
-            className="flex min-w-0 items-center gap-3"
-            onClick={() => setOpen(false)}
-          >
+          {/* 机构标识 */}
+          <div className="app-student-utility-section px-1.5">
             <span
-              className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
+              className="mx-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
               style={{
-                background:
-                  "linear-gradient(135deg, var(--app-secondary), var(--app-accent))",
+                background: "linear-gradient(135deg, var(--app-secondary), var(--app-accent))",
               }}
             >
-              <GraduationCap size={21} aria-hidden="true" />
+              <GraduationCap size={18} aria-hidden="true" />
             </span>
-            <span className="min-w-0">
-              <span className="block truncate text-base font-black tracking-tight">
-                {tenantName}
-              </span>
-              <span className="block truncate text-xs font-semibold app-muted-text">
-                韩国留学与韩语成长工作台
-              </span>
-            </span>
-          </Link>
+            <div className="app-student-utility-expanded min-w-0 text-center">
+              <p className="truncate text-xs font-black tracking-tight">{tenantName}</p>
+              <p className="truncate text-[9px] font-semibold app-muted-text">
+                韩语成长工作台
+              </p>
+            </div>
+          </div>
 
-          <div className="flex flex-col gap-2">
+          <hr className="app-divider mx-2 my-2" />
+
+          {/* 快捷入口 */}
+          <div className="app-student-utility-section px-1.5">
             <Link
               href="/"
-              className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold transition hover:-translate-y-0.5"
-              style={{ color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}
+              title="网站首页"
+              className="flex items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
+              style={{ color: "var(--app-muted)" }}
             >
-              <Home size={16} aria-hidden="true" />
-              网站首页
+              <Home size={18} className="shrink-0" />
+              <span className="app-student-utility-expanded truncate">网站首页</span>
             </Link>
 
-            <Link
-              href={`${dashboardBasePath}#reminders`}
-              onClick={() => setOpen(false)}
-              className="flex items-center justify-between rounded-xl px-3 py-2.5 text-sm font-bold transition hover:-translate-y-0.5"
-              style={{ color: "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}
+            <button
+              type="button"
+              onClick={() => setReminderOpen(true)}
+              title={unreadCount > 0 ? `${unreadCount} 条未读提醒` : "通知提醒"}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
+              style={{ color: "var(--app-muted)" }}
             >
-              <span className="flex items-center gap-2">
-                <Bell size={16} aria-hidden="true" />
-                通知提醒
+              <span className="relative shrink-0">
+                <Bell size={18} aria-hidden="true" />
+                {unreadCount > 0 && (
+                  <span
+                    className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2"
+                    style={{
+                      backgroundColor: "var(--app-warm)",
+                      borderColor: "var(--app-card-bg)",
+                    }}
+                  />
+                )}
               </span>
+              <span className="app-student-utility-expanded min-w-0 truncate">通知提醒</span>
               {unreadCount > 0 && (
                 <span
-                  className="flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white"
+                  className="app-student-utility-expanded flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white"
                   style={{ backgroundColor: "var(--app-accent)" }}
                 >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>
               )}
-            </Link>
+            </button>
+          </div>
 
-            <div className="flex items-center gap-1.5">
-              <Link
-                href={scopeDashboardPath("/dashboard/profile", dashboardBasePath)}
-                onClick={() => setOpen(false)}
-                className="app-soft-card flex min-w-0 flex-1 items-center gap-2 rounded-xl border p-1.5 pr-2.5 transition hover:-translate-y-0.5"
+          <hr className="app-divider mx-2 my-2" />
+
+          {/* 个人资料 */}
+          <div className="app-student-utility-section px-1.5">
+            <Link
+              href={scopeDashboardPath("/dashboard/profile", dashboardBasePath)}
+              title={userName}
+              className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
+            >
+              <span
+                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white"
+                style={{ backgroundColor: "var(--app-success)" }}
               >
-                <span
-                  className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white"
-                  style={{ backgroundColor: "var(--app-success)" }}
-                >
-                  {userName.trim().slice(0, 1) || "学"}
+                {userInitial}
+              </span>
+              <span className="app-student-utility-expanded min-w-0">
+                <span className="block truncate text-xs font-bold">{userName}</span>
+                <span className="block truncate text-[10px] font-bold app-muted-text">
+                  {accountLabel}
                 </span>
-                <span className="min-w-0">
-                  <span className="block truncate text-xs font-bold">{userName}</span>
-                  <span className="block truncate text-[10px] font-bold app-muted-text">{accountLabel}</span>
-                </span>
-              </Link>
-              <LogoutButton collapsed />
+              </span>
+            </Link>
+          </div>
+
+          <hr className="app-divider mx-2 my-2" />
+
+          {/* 界面主题 */}
+          <div className="app-student-utility-section px-1.5">
+            <div className="flex items-center justify-center py-1 group-hover:hidden">
+              <Palette size={18} style={{ color: "var(--app-muted)" }} />
+            </div>
+            <div className="app-student-utility-expanded min-w-0 space-y-1.5">
+              <p className="text-[9px] font-bold tracking-[0.18em] app-muted-text">
+                界面主题
+              </p>
+              <ThemeSwitcher />
             </div>
           </div>
 
-          <div className="flex flex-col gap-2 border-t pt-4 app-divider">
-            <span className="px-1 text-xs font-bold tracking-[0.18em] app-muted-text">
-              界面主题
-            </span>
-            <ThemeSwitcher />
+          {/* 外观调节 */}
+          <div className="app-student-utility-section px-1.5">
+            <div className="flex items-center justify-center py-1 group-hover:hidden">
+              <SlidersHorizontal size={18} style={{ color: "var(--app-muted)" }} />
+            </div>
+            <div className="app-student-utility-expanded min-w-0 space-y-2.5">
+              <p className="text-[9px] font-bold tracking-[0.18em] app-muted-text">
+                外观调节
+              </p>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-semibold app-muted-text">背景亮度</span>
+                <BackgroundBrightnessControl />
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-semibold app-muted-text">卡片透明度</span>
+                <CardOpacityControl />
+              </div>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[10px] font-semibold app-muted-text">卡片渐变</span>
+                <CardGradientControl />
+              </div>
+            </div>
           </div>
 
-          <div className="space-y-3 border-t pt-4 app-divider">
-            <div className="flex items-center justify-between">
-              <span className="px-1 text-xs font-bold tracking-[0.18em] app-muted-text">
-                背景亮度
-              </span>
-              <BackgroundBrightnessControl />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="px-1 text-xs font-bold tracking-[0.18em] app-muted-text">
-                卡片透明度
-              </span>
-              <CardOpacityControl />
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="px-1 text-xs font-bold tracking-[0.18em] app-muted-text">
-                卡片渐变
-              </span>
-              <CardGradientControl />
+          {/* 底部退出按钮 */}
+          <div className="mt-auto border-t pt-2 app-divider">
+            <div className="app-student-utility-section px-1.5">
+              <div className="flex justify-center group-hover:hidden">
+                <LogoutButton collapsed />
+              </div>
+              <div className="app-student-utility-expanded w-full">
+                <LogoutButton />
+              </div>
             </div>
           </div>
-        </SheetContent>
-      </Sheet>
+        </nav>
+      </aside>
     </>
   );
 }

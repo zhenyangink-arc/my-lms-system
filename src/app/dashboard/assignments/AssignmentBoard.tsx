@@ -338,8 +338,7 @@ export function AssignmentBoard({
         </div>
       </section>}
 
-      {!isManager && (
-        nextTask ? (
+      {!isManager && nextTask && (
           <section className="app-card rounded-3xl border p-4 sm:p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
               <span
@@ -367,22 +366,6 @@ export function AssignmentBoard({
               </Link>
             </div>
           </section>
-        ) : (
-          <section className="app-card flex flex-col gap-4 rounded-3xl border p-5 sm:flex-row sm:items-center">
-            <CheckCircle2 size={34} style={{ color: "var(--app-success)" }} />
-            <div className="flex-1">
-              <h2 className="font-black">当前没有待完成任务</h2>
-              <p className="app-muted-text mt-1 text-xs font-bold">可以继续课程学习，新的任务会自动出现在这里。</p>
-            </div>
-            <Link
-              href="/dashboard/courses"
-              className="inline-flex h-10 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
-            >
-              继续学习 <ArrowRight size={13} />
-            </Link>
-          </section>
-        )
       )}
 
       <section className="grid grid-cols-1 gap-2 sm:grid-cols-3">

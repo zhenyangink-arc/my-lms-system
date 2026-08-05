@@ -582,7 +582,7 @@ export default async function CoursesPage() {
               )}
             </div>
             <div className="space-y-4">
-            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="收藏夹" open>
+            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="收藏夹">
               <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
@@ -628,7 +628,7 @@ export default async function CoursesPage() {
                 </p>
               )}
             </details>
-            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程" open>
+            <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程">
               <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-700"

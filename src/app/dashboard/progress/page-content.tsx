@@ -15,7 +15,6 @@ import {
   XCircle,
 } from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
@@ -133,7 +132,10 @@ function ChapterDirectory({
       style={{ borderColor: "var(--app-border)" }}
       open={defaultOpen}
     >
-      <summary className="flex cursor-pointer list-none items-center gap-3 p-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-accent)] sm:p-5 [&::-webkit-details-marker]:hidden">
+      <summary
+        className="flex cursor-pointer list-none items-center gap-3 p-4 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-accent)] sm:p-5 [&::-webkit-details-marker]:hidden"
+        style={{ backgroundColor: "var(--app-soft-bg)" }}
+      >
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
           style={{ color, backgroundColor: soft }}
@@ -415,13 +417,8 @@ export default async function DeepLearningPage({
   const passedChapterCount = knowledgeChapters.filter(
     (chapter) => attemptByTestSlug.get(chapter.slug)?.passed === true,
   ).length;
-  const deepProgressPercent = knowledgeChapters.length > 0
-    ? Math.round(
-        knowledgeChapters.reduce((total, chapter) => {
-          const passed = attemptByTestSlug.get(chapter.slug)?.passed === true;
-          return total + (passed ? 100 : ebookProgressBySlug.get(chapter.slug) ?? 0);
-        }, 0) / knowledgeChapters.length,
-      )
+  const knowledgeProgressPercent = knowledgeChapters.length > 0
+    ? Math.round((passedChapterCount / knowledgeChapters.length) * 100)
     : 0;
   const recommendedChapter =
     unlockedChapters.find(
@@ -448,48 +445,11 @@ export default async function DeepLearningPage({
 
   return (
     <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-      {!selectedKnowledgeChapter && !selectedListeningChapter && (
-        <section
-          className="app-card relative overflow-hidden rounded-[28px] border p-5 sm:p-6"
-          style={{
-            background:
-              "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg) 58%, var(--app-accent-soft))",
-          }}
-        >
-          <span className="pointer-events-none absolute -right-10 -top-14 h-36 w-36 rounded-full opacity-60" style={{ backgroundColor: "var(--app-accent-soft)" }} aria-hidden="true" />
-          <div className="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-            <div className="flex items-start gap-4">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
-                <BarChart3 size={23} aria-hidden="true" />
-              </span>
-              <DashboardTitleWithHint
-                title="今天继续学习"
-                description="继续上次的章节，把阅读、测试和薄弱题目集中学透。"
-              />
-            </div>
-            <div className="grid grid-cols-3 gap-2 sm:gap-3 xl:w-[410px]">
-              <div className="app-card rounded-2xl border p-3 sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{deepProgressPercent}%</p>
-                <p className="mt-0.5 text-[10px] font-bold app-muted-text">深化进度</p>
-              </div>
-              <div className="app-card rounded-2xl border p-3 sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{unlockedChapters.length}</p>
-                <p className="mt-0.5 text-[10px] font-bold app-muted-text">已开放章节</p>
-              </div>
-              <div className="app-card rounded-2xl border p-3 sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{reviewItems.length}</p>
-                <p className="mt-0.5 text-[10px] font-bold app-muted-text">待复习题</p>
-              </div>
-            </div>
-          </div>
-        </section>
-      )}
-
       <nav className="app-card mt-4 grid grid-cols-3 gap-1 rounded-2xl border p-1.5" aria-label="深化学习功能">
         <Link
           href="?area=knowledge"
           className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[10px] font-black transition sm:text-xs"
-          style={activeArea === "knowledge" ? { color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" } : { color: "var(--app-muted)" }}
+          style={activeArea === "knowledge" ? { color: "var(--app-accent-strong)", backgroundColor: "color-mix(in srgb, var(--app-accent) 28%, transparent)" } : { color: "var(--app-muted)" }}
         >
           <Layers3 size={14} className="shrink-0" />
           <span className="truncate">知识精研</span>
@@ -497,7 +457,7 @@ export default async function DeepLearningPage({
         <Link
           href="?area=listening"
           className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[10px] font-black transition sm:text-xs"
-          style={activeArea === "listening" ? { color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" } : { color: "var(--app-muted)" }}
+          style={activeArea === "listening" ? { color: "var(--app-secondary)", backgroundColor: "color-mix(in srgb, var(--app-secondary) 28%, transparent)" } : { color: "var(--app-muted)" }}
         >
           <Headphones size={14} className="shrink-0" />
           <span className="truncate">听音训练</span>
@@ -506,7 +466,7 @@ export default async function DeepLearningPage({
         <Link
           href="?area=review"
           className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[10px] font-black transition sm:text-xs"
-          style={activeArea === "review" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "var(--app-muted)" }}
+          style={activeArea === "review" ? { color: "var(--app-success)", backgroundColor: "color-mix(in srgb, var(--app-success) 28%, transparent)" } : { color: "var(--app-muted)" }}
         >
           <BookmarkCheck size={14} className="shrink-0" />
           <span className="truncate">待复习题</span>
@@ -517,15 +477,38 @@ export default async function DeepLearningPage({
       {activeArea === "knowledge" && !selectedKnowledgeChapter && (
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_340px]">
           <section className="app-card rounded-[28px] border p-4 sm:p-5" aria-labelledby="knowledge-route-title">
-            <div className="mb-4 flex items-end justify-between gap-3 px-1">
+            <div
+              className="mb-4 flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5"
+              style={{ backgroundColor: "color-mix(in srgb, var(--app-warm-soft) 70%, transparent)" }}
+            >
               <div>
-                <h2 id="knowledge-route-title" className="text-lg font-black sm:text-xl">课程与章节路线</h2>
-                <p className="mt-1 text-xs app-muted-text">展开课程，直接进入需要精研的章节。</p>
+                <div className="flex items-center gap-2.5">
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                    style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+                  >
+                    <ListTree size={18} aria-hidden="true" />
+                  </span>
+                  <h2 id="knowledge-route-title" className="text-lg font-black sm:text-xl">课程与章节路线</h2>
+                </div>
               </div>
-              <span className="hidden text-[10px] font-bold app-muted-text sm:inline">{passedChapterCount}/{knowledgeChapters.length} 章通过</span>
+              <div className="flex items-center gap-2">
+                <div className="app-card rounded-xl border px-3 py-2 text-center w-[88px]">
+                  <p className="text-base font-black">{knowledgeProgressPercent}%</p>
+                  <p className="text-[10px] font-bold app-muted-text whitespace-nowrap">知识精研总进度</p>
+                </div>
+                <div className="app-card rounded-xl border px-3 py-2 text-center w-[88px]">
+                  <p className="text-base font-black">{unlockedChapters.length}</p>
+                  <p className="text-[10px] font-bold app-muted-text whitespace-nowrap">已开放章节</p>
+                </div>
+                <div className="app-card rounded-xl border px-3 py-2 text-center w-[88px]">
+                  <p className="text-base font-black">{knowledgeChapters.length}</p>
+                  <p className="text-[10px] font-bold app-muted-text whitespace-nowrap">总章节</p>
+                </div>
+              </div>
             </div>
             <div className="space-y-3">
-              {knowledgeCourses.map((course, index) => (
+              {knowledgeCourses.map((course) => (
                 <ChapterDirectory
                   key={course.key}
                   area="knowledge"
@@ -535,7 +518,7 @@ export default async function DeepLearningPage({
                   attemptByTestSlug={attemptByTestSlug}
                   selectedChapterSlug={params.chapter}
                   reviewCountByTestSlug={reviewCountByTestSlug}
-                  defaultOpen={course.key === selectedCourseKey || course.key === recommendedCourse?.key || (!selectedCourseKey && index === 0)}
+                  defaultOpen={false}
                 />
               ))}
             </div>
@@ -697,7 +680,7 @@ export default async function DeepLearningPage({
             </span>
           </div>
           <div className="space-y-3">
-            {knowledgeCourses.map((course, index) => (
+            {knowledgeCourses.map((course) => (
               <ChapterDirectory
                 key={course.key}
                 area="listening"
@@ -706,7 +689,7 @@ export default async function DeepLearningPage({
                 ebookProgressBySlug={ebookProgressBySlug}
                 attemptByTestSlug={attemptByTestSlug}
                 selectedChapterSlug={params.chapter}
-                defaultOpen={course.key === selectedCourseKey || (!selectedCourseKey && index === 0)}
+                defaultOpen={false}
               />
             ))}
           </div>

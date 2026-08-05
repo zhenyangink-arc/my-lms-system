@@ -140,9 +140,9 @@ export function StudentPageHeader({
             disabled
             aria-label="智能辅助仅对学生开放"
             title="智能辅助仅对学生开放"
-            className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-sm font-black opacity-60 sm:px-4"
+            className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight opacity-60 sm:px-4 sm:text-lg"
           >
-            <Bot size={17} aria-hidden="true" />
+            <Bot size={18} aria-hidden="true" />
             <span>智能辅助</span>
           </button>
         )}

@@ -12,12 +12,12 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
-import { updateUniversityStatusAction } from "../../planning-actions";
 import { deleteUniversityTargetAction } from "../actions";
 import {
   UniversityTargetForm,
   type UniversityTargetOption,
 } from "./UniversityTargetForm";
+import { TargetStatusForm } from "./TargetStatusForm";
 
 
 type TargetSchool = {
@@ -100,7 +100,7 @@ export default async function UniversityTargetsPage({
         <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex items-center gap-3">
             <span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Plus size={19} /></span>
-            <div><h2 className="text-base font-black">添加目标学校</h2><p className="mt-1 text-xs app-muted-text">再次选择已有目标学校时会更新原记录，不会重复添加。</p></div>
+            <div><h2 className="text-base font-black">添加目标学校</h2></div>
           </div>
 
           <UniversityTargetForm universities={availableUniversities} />
@@ -109,7 +109,8 @@ export default async function UniversityTargetsPage({
         {targets.length > 0 ? (
           <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
             {targets.map((target) => {
-              const targetLocked = target.documents_locked_at !== null;
+              const targetLocked =
+                target.documents_locked_at !== null || target.status === "applied";
               return (
                 <article
                   key={target.id}
@@ -130,21 +131,17 @@ export default async function UniversityTargetsPage({
                     {target.application_deadline && <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-2.5 py-1"><CalendarDays size={11} /> 截止 {target.application_deadline}</span>}
                   </div>
                   <div className="mt-5 border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                    {targetLocked ? (
-                      <p className="app-muted-text flex items-center gap-1.5 text-xs font-bold"><Lock size={12} style={{ color: "var(--app-warm)" }} />申请阶段已锁定，无法修改或删除，请联系管理员协助解锁。</p>
-                    ) : (
                       <div className="flex items-center gap-2">
-                        <form action={updateUniversityStatusAction.bind(null, target.id)} className="flex min-w-0 flex-1 gap-2">
-                          <select name="status" defaultValue={target.status} aria-label={`${target.university_name}的申请状态`} className="app-input min-w-0 flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold outline-none">
-                            {statusOptions.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
-                          </select>
-                          <button type="submit" className="rounded-xl px-3 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>保存</button>
-                        </form>
+                        <TargetStatusForm
+                          targetId={target.id}
+                          initialStatus={target.status}
+                          universityName={target.university_name}
+                          locked={targetLocked}
+                        />
                         <form action={deleteUniversityTargetAction.bind(null, target.id)}>
-                          <button type="submit" title={`删除${target.university_name}`} aria-label={`删除${target.university_name}`} className="flex h-10 w-10 items-center justify-center rounded-xl border text-red-600 transition hover:bg-red-50" style={{ borderColor: "var(--app-border)" }}><Trash2 size={15} /></button>
+                          <button type="submit" disabled={targetLocked} title={`删除${target.university_name}`} aria-label={`删除${target.university_name}`} className="flex h-10 w-10 items-center justify-center rounded-xl border text-red-600 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40" style={{ borderColor: "var(--app-border)" }}><Trash2 size={15} /></button>
                         </form>
                       </div>
-                    )}
                   </div>
                 </article>
               );

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Eye, MessageCircleMore } from "lucide-react";
+import { MessageCircleMore } from "lucide-react";
 
 import {
   CONVERSATION_CATEGORY_LABELS,
@@ -219,9 +219,7 @@ export default async function ConversationPracticeManagementPage({
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]"><MessageCircleMore size={18} />会话练习管理</h1>
-            <p className="app-muted-text mt-1 text-[11px]">管理会话场景和学生练习记录</p>
           </div>
-          <Link href="/dashboard/conversation-practice" className="app-soft-card inline-flex w-fit items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[10px] font-medium"><Eye size={12} />学生端预览</Link>
         </header>
 
         {(scenariosResult.error || progressResult.error) && (
@@ -242,7 +240,6 @@ export default async function ConversationPracticeManagementPage({
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <ConversationScenarioStatusActions id={selectedScenario.id} status={selectedScenario.status} />
-                  <Link href={`/dashboard/conversation-practice/${selectedScenario.id}`} className="app-soft-card inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[10px] font-medium"><Eye size={12} />学生端预览</Link>
                 </div>
               </div>
               <ConversationScenarioForm scenario={selectedScenario} workspace />

@@ -46,7 +46,11 @@ export async function updateUniversityStatusAction(id: string, formData: FormDat
 
   const { error } = await supabase
     .from("student_university_targets")
-    .update({ status })
+    // 状态为「准备材料」时点提交，记录即固定（锁定），不可再修改。
+    .update({
+      status,
+      ...(status === "preparing" ? { documents_locked_at: new Date().toISOString() } : {}),
+    })
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw new Error("申请阶段更新失败。");

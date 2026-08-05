@@ -155,6 +155,11 @@ export default async function AssignmentsPage() {
 
   const chapterTests = allChapterTests
     .filter((test) => unlockedTestSlugs.has(test.slug))
+    // 去掉「认识韩文」章节测试卡片（韩语字母入门 · 第 1 章）
+    .filter(
+      (test) =>
+        !(test.course_key === "hangul-introduction" && test.chapter_number === 1)
+    )
     .map((test) => {
       const attempt = latestAttemptBySlug.get(test.slug);
       return {

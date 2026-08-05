@@ -246,9 +246,6 @@ export function LibraryCourseResourceTable({
         >
           <div>
             <h2 className="text-sm font-black">全部课程</h2>
-            <p className="app-muted-text mt-1 text-[10px]">
-              在课程行直接上传；已有资料通过“管理资料”集中查看。
-            </p>
           </div>
           <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
             <button

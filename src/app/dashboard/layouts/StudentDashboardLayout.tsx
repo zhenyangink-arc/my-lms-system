@@ -75,7 +75,7 @@ export function StudentDashboardLayout({
             dashboardBasePath={dashboardBasePath}
           />
 
-          <main className="min-w-0 flex-1 pb-24 md:pb-0">
+          <main className="min-w-0 flex-1 pb-24 md:pb-0 md:ml-[52px] md:mr-[48px]">
             <StudentPageHeader
               studentId={studentId}
               dashboardBasePath={dashboardBasePath}

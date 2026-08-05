@@ -1,28 +1,23 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
-  Award,
   ArrowRight,
   BarChart3,
   BellRing,
   BookOpen,
+  BookText,
   CalendarDays,
   CheckCircle2,
-  ClipboardList,
+  Ear,
   Flame,
   GraduationCap,
-  History,
-  Library,
-  Megaphone,
-  MessageSquare,
+  Mic,
   PlayCircle,
-  Sparkles,
   TriangleAlert,
 } from "lucide-react";
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { createClient } from "@/lib/supabase/server";
-import { getAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 
@@ -169,7 +164,7 @@ function calculateStreak(completedDateStrings: string[]) {
 export default async function DashboardHomePage() {
   const auth = await requireActiveUser();
   const userRole = auth.profile?.role ?? "student";
-  const organizationName = auth.tenant?.name?.trim() || "平台";
+
 
   if (userRole !== "student" && userRole !== "platform_course_inspector") {
     redirect(
@@ -181,8 +176,6 @@ export default async function DashboardHomePage() {
   }
 
   const supabase = await createClient();
-  const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
-
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -505,8 +498,10 @@ export default async function DashboardHomePage() {
 
   const ringRadius = 74;
   const ringCircumference = 2 * Math.PI * ringRadius;
-  const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
   const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
+  const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
+
+
 
   const overviewStats = [
     {
@@ -543,53 +538,11 @@ export default async function DashboardHomePage() {
     },
   ];
 
-  const growthTools = [
-    {
-      title: "作业与考试",
-      href: "/dashboard/assignments",
-      icon: ClipboardList,
-      color: "var(--app-accent)",
-      softColor: "var(--app-accent-soft)",
-    },
-    {
-      title: "会话练习",
-      href: "/dashboard/conversation-practice",
-      icon: MessageSquare,
-      color: "var(--app-secondary)",
-      softColor: "var(--app-secondary-soft)",
-    },
-    {
-      title: "成绩管理",
-      href: "/dashboard/grades",
-      icon: Award,
-      color: "var(--app-warm)",
-      softColor: "var(--app-warm-soft)",
-    },
-    {
-      title: "学习记录",
-      href: "/dashboard/records",
-      icon: History,
-      color: "var(--app-success)",
-      softColor: "var(--app-success-soft)",
-    },
-    {
-      title: "学习资料库",
-      href: "/dashboard/library",
-      icon: Library,
-      color: "var(--app-secondary)",
-      softColor: "var(--app-secondary-soft)",
-    },
-    ...(canAccessAnnouncements
-      ? [
-          {
-            title: "通知公告",
-            href: "/dashboard/announcements",
-            icon: Megaphone,
-            color: "var(--app-accent)",
-            softColor: "var(--app-accent-soft)",
-          },
-        ]
-      : []),
+  const practiceTools = [
+    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", icon: BookText, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
+    { title: "口语练习", subtitle: "第 1 章 · 元音发音", icon: Mic, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
+    { title: "语法练习", subtitle: "第 3 章 · 助词用法", icon: BookOpen, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
+    { title: "听力练习", subtitle: "第 4 章 · 对话理解", icon: Ear, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
   ];
 
   return (
@@ -605,22 +558,27 @@ export default async function DashboardHomePage() {
         }}
       >
           <div className="h-[380px] overflow-hidden rounded-[14px]">
-            <span
-              className="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold"
+            {/* 头像占位图 */}
+            <div
+              className="mx-[10px] mt-[10px] flex items-center justify-center rounded-2xl"
               style={{
-                color: "var(--app-accent-strong)",
-                borderColor: "var(--app-accent)",
-                backgroundColor: "var(--app-accent-soft)",
+                width: "calc(100% - 20px)",
+                height: "190px",
+                backgroundColor: "color-mix(in srgb, var(--app-accent-soft) 35%, transparent)",
               }}
             >
-              <Sparkles size={14} aria-hidden="true" />
-              {organizationName}
-            </span>
+              <GraduationCap
+                size={52}
+                style={{ color: "var(--app-accent)", opacity: 0.55 }}
+                aria-hidden="true"
+              />
+            </div>
+
             <DashboardTitleWithHint
-              className="mt-5"
+              className="mt-5 px-5"
               headingLevel={2}
               titleClassName="max-w-2xl text-2xl font-black tracking-tight"
-              title="让今天的学习，继续靠近你的韩国留学目标"
+              title={`${studentName}，继续你的学习目标`}
               description={
                 <>
                   {`${getGreeting()}，${studentName}`}
@@ -657,7 +615,7 @@ export default async function DashboardHomePage() {
               <div className="mt-5">
                 <Link
                   href="/dashboard/courses"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                  className="mt-4 ml-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
                   style={{ backgroundColor: "var(--app-accent)" }}
                 >
                   挑选第一门课程
@@ -669,20 +627,27 @@ export default async function DashboardHomePage() {
       </section>
 
           <section className="app-glass-card rounded-[20px] px-[22px] pb-6 pt-[22px]">
-            <div className="flex items-start justify-between gap-4">
-              <p className="text-lg font-black">本周学习节奏</p>
-              <span className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
-                <BarChart3 size={19} aria-hidden="true" />
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-lg font-black">本周学习活动</p>
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-black"
+                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+              >
+                8 月
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </span>
             </div>
+
             {hasWeeklyActivity ? (
-              <div className="mt-6 flex items-end justify-between gap-2 px-1">
+              <div className="mt-5 flex items-end justify-between gap-2 px-1">
                 {heatmapDays.map((day) => {
                   const weekdayLabel = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "narrow" }).format(new Date(`${day.dateString}T12:00:00Z`));
                   const barHeightPercent = Math.max(6, (day.count / maxHeatmapCount) * 100);
                   return (
                     <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
-                      <div className="flex h-40 w-full max-w-9 items-end overflow-hidden rounded-2xl" style={{ backgroundColor: "var(--app-soft-bg)" }} title={`${day.dateString} · 完成 ${day.count} 个课时`}>
+                      <div className="flex h-36 w-full max-w-9 items-end overflow-hidden rounded-2xl" style={{ backgroundColor: "var(--app-soft-bg)" }} title={`${day.dateString} · 完成 ${day.count} 个课时`}>
                         <div className="w-full rounded-2xl transition-[height]" style={{ height: `${day.count > 0 ? barHeightPercent : 0}%`, backgroundColor: "var(--app-accent)" }} />
                       </div>
                       <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">{weekdayLabel}</time>
@@ -691,20 +656,114 @@ export default async function DashboardHomePage() {
                 })}
               </div>
             ) : (
-              <div className="app-empty-state mt-6 flex min-h-40 flex-col items-center justify-center rounded-2xl p-5 text-center">
+              <div className="app-empty-state mt-5 flex min-h-36 flex-col items-center justify-center rounded-2xl p-5 text-center">
                 <BarChart3 size={22} style={{ color: "var(--app-success)" }} aria-hidden="true" />
                 <p className="mt-3 text-sm font-black">本周还没有学习记录</p>
                 <p className="mt-1 text-xs app-muted-text">完成一节课时，这里就会画出你的学习曲线</p>
               </div>
             )}
-            <div className="mt-5 flex items-center justify-between rounded-2xl px-4 py-3" style={{ backgroundColor: "var(--app-success-soft)" }}>
-              <span className="text-xs font-bold app-muted-text">本周累计</span>
-              <strong style={{ color: "var(--app-success)" }}>{thisWeekCompletedCount} 个课时</strong>
+
+            <div className="mt-5 space-y-2.5">
+              {[
+                { name: "单词", icon: BookText, pct: 70, color: "#f97316" },
+                { name: "语法", icon: BookOpen, pct: 58, color: "#8b5cf6" },
+                { name: "口语", icon: Mic, pct: 30, color: "#eab308" },
+                { name: "听力", icon: Ear, pct: 45, color: "#3b82f6" },
+              ].map((item) => {
+                const Icon = item.icon;
+                return (
+                  <div key={item.name} className="flex items-center gap-3">
+                    <span
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
+                      style={{ color: item.color, backgroundColor: `${item.color}18` }}
+                    >
+                      <Icon size={14} aria-hidden="true" />
+                    </span>
+                    <span className="w-10 text-xs font-bold app-muted-text">{item.name}</span>
+                    <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--app-border) 85%, var(--app-text))" }}>
+                      <div
+                        className="h-full rounded-full"
+                        style={{ width: `${item.pct}%`, backgroundColor: item.color }}
+                      />
+                    </div>
+                    <span className="w-9 text-right text-xs font-black" style={{ color: "var(--app-text)" }}>
+                      {item.pct}%
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </section>
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
+          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-lg font-black">课程成长进度</p>
+              <p className="text-sm font-bold app-muted-text">今天 · 08.04（周二）</p>
+            </div>
+
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <span
+                className="rounded-full px-3 py-1 text-xs font-black"
+                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+              >
+                Lv.3 初级
+              </span>
+              <span className="text-sm font-semibold app-muted-text">
+                正在学习在咖啡店点单
+              </span>
+            </div>
+
+            <div className="mt-5 space-y-2.5">
+              {[
+                { name: "单词练习", duration: 15, color: "#f97316" },
+                { name: "语法练习", duration: 20, color: "#8b5cf6" },
+                { name: "口语练习", duration: 25, color: "#eab308" },
+                { name: "听力练习", duration: 25, color: "#3b82f6" },
+              ].map((task) => (
+                <div
+                  key={task.name}
+                  className="flex items-center justify-between rounded-xl px-3 py-2.5"
+                  style={{ backgroundColor: "var(--app-soft-bg)" }}
+                >
+                  <span className="flex items-center gap-2.5">
+                    <span
+                      className="h-3 w-3 shrink-0 rounded-full"
+                      style={{ backgroundColor: task.color }}
+                    />
+                    <span className="text-xs font-bold">
+                      今天任务 · {task.name}
+                    </span>
+                  </span>
+                  <span className="text-xs font-black app-muted-text">
+                    {task.duration} 分钟
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-5 flex items-center gap-3">
+              <span
+                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black"
+                style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}
+              >
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: "var(--app-success)" }}
+                />
+                出勤 18 天
+              </span>
+              <span className="inline-flex items-center gap-1.5 text-xs font-bold app-muted-text">
+                <span
+                  className="h-2 w-2 rounded-full"
+                  style={{ backgroundColor: "var(--app-warm)" }}
+                />
+                目标 30 天
+              </span>
+            </div>
+          </section>
+
           <section id="reminders" className="app-glass-card scroll-mt-24 rounded-[20px] p-4 sm:p-5">
             <div className="mb-5 flex items-start justify-between gap-4">
               <p className="text-lg font-black">需要你关注</p>
@@ -743,79 +802,13 @@ export default async function DashboardHomePage() {
             )}
           </section>
 
-          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
-            <div className="mb-5 flex items-center justify-between gap-4">
-              <div>
-                <p className="text-lg font-black">课程成长进度</p>
-              </div>
-              <Link href="/dashboard/courses" className="text-xs font-black" style={{ color: "var(--app-accent-strong)" }}>
-                全部课程
-              </Link>
-            </div>
-
-            {courseProgressList.length > 0 ? (
-              <div className="divide-y app-divider">
-                {courseProgressList.slice(0, 4).map((item) => {
-                  const content = (
-                    <div className="app-flat-row rounded-xl p-3">
-                      <div className="flex items-center gap-3">
-                        <span
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                          style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
-                        >
-                          <BookOpen size={18} aria-hidden="true" />
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center justify-between gap-3">
-                            <p className="truncate text-sm font-black">{item.title}</p>
-                            <span className="shrink-0 text-xs font-black" style={{ color: "var(--app-success)" }}>
-                              {item.percent}%
-                            </span>
-                          </div>
-                          <p className="mt-0.5 truncate text-xs app-muted-text">
-                            {item.teacherName ? `${item.teacherName} 老师` : "课程学习"} · 已完成 {item.completedCount}/{item.totalCount} 课时
-                          </p>
-                          <div className="mt-3 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                            <div
-                              className="h-full rounded-full transition-[width]"
-                              style={{
-                                width: `${Math.min(100, Math.max(0, item.percent))}%`,
-                                backgroundColor: "var(--app-success)",
-                              }}
-                            />
-                          </div>
-                        </div>
-                        <ArrowRight size={16} className="shrink-0 app-muted-text" aria-hidden="true" />
-                      </div>
-                    </div>
-                  );
-
-                  return item.href ? (
-                    <Link key={item.courseId} href={item.href}>{content}</Link>
-                  ) : (
-                    <div key={item.courseId}>{content}</div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <BookOpen size={24} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">还没有进行中的课程</p>
-                <p className="mt-1 text-xs app-muted-text">从课程中心挑选适合你的学习内容</p>
-                <Link href="/dashboard/courses" className="mt-4 text-xs font-black" style={{ color: "var(--app-accent-strong)" }}>
-                  去看看课程
-                </Link>
-              </div>
-            )}
-          </section>
-
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
           <section className="app-glass-card rounded-[20px] p-5 text-center" aria-label="学习完成概览">
             <div className="relative mx-auto h-[180px] w-[180px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
               <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90">
-                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="14" />
+                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="color-mix(in srgb, var(--app-border) 70%, var(--app-text))" strokeWidth="14" />
                 <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="var(--app-success)" strokeWidth="14" strokeDasharray={ringCircumference} strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)} strokeLinecap="round" />
               </svg>
               <span className="absolute inset-0 flex flex-col items-center justify-center">
@@ -832,34 +825,27 @@ export default async function DashboardHomePage() {
           </section>
 
           <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
-            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-              <div>
-                <p className="text-lg font-black">成长工具箱</p>
-              </div>
-              <span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>
-                持续建设中
-              </span>
+            <div className="mb-5">
+              <p className="text-lg font-black">成长工具箱</p>
             </div>
             <div className="grid grid-cols-2 gap-3">
-              {growthTools.map((tool) => {
+              {practiceTools.map((tool) => {
                 const Icon = tool.icon;
                 return (
-                  <Link
-                    key={tool.href}
-                    href={tool.href}
-                    className="app-tile flex items-center gap-3 rounded-2xl border p-[14px] transition hover:-translate-y-0.5"
+                  <div
+                    key={tool.title}
+                    className="flex flex-col gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5"
+                    style={{ backgroundColor: tool.bgColor }}
                   >
-                    <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-                      style={{ color: tool.color, backgroundColor: tool.softColor }}
-                    >
-                      <Icon size={19} aria-hidden="true" />
+                    <div className="flex items-center justify-between">
+                      <Icon size={20} style={{ color: tool.iconColor }} aria-hidden="true" />
+                      <ArrowRight size={16} className="opacity-35" style={{ color: "var(--app-text)" }} aria-hidden="true" />
+                    </div>
+                    <span className="text-base font-black" style={{ color: "var(--app-text)" }}>
+                      {tool.title}
                     </span>
-                    <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-black">{tool.title}</span>
-                    </span>
-                    <ArrowRight size={15} className="shrink-0 app-muted-text" aria-hidden="true" />
-                  </Link>
+                    <span className="text-xs font-semibold app-muted-text">{tool.subtitle}</span>
+                  </div>
                 );
               })}
             </div>

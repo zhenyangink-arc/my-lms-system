@@ -4,12 +4,10 @@ import {
   CheckCircle2,
   ChevronDown,
   Clock3,
-  FileCheck2,
   GraduationCap,
-  Languages,
   LockKeyhole,
   PlayCircle,
-  Sparkles,
+  Route,
 } from "lucide-react";
 
 import { getCourseLevelLabel, getLessonTypeLabel } from "@/lib/course-labels";
@@ -223,11 +221,8 @@ export function KoreanLearningCenter({
     ? (isService ? null : getKoreanBeginnerLesson(recommendedLesson.lesson.slug)?.title) ?? recommendedLesson.lesson.title
     : null;
   const recommendedProgress = recommendedLesson?.progress?.progress_percent ?? 0;
-  const CenterIcon = isService ? FileCheck2 : Languages;
   const centerColor = isService ? "var(--app-accent)" : "var(--app-secondary)";
   const centerSoft = isService ? "var(--app-accent-soft)" : "var(--app-secondary-soft)";
-  const centerLabel = isService ? "留学服务学习中心" : "韩语学习中心";
-  const centerTitle = isService ? "按申请节奏，完成每一步准备" : "按自己的节奏，沿路线继续学习";
   const stageMetricLabel = isService ? "准备阶段" : "学习阶段";
   const curriculumTitle = isService ? "完整服务路线" : "完整学习路线";
   const nextActionLabel = isService ? "接下来完成" : "接下来学";
@@ -243,60 +238,34 @@ export function KoreanLearningCenter({
         返回我的课程
       </Link>
 
-      <section
-        className="app-card relative overflow-hidden rounded-[28px] border px-5 py-5 sm:px-6 lg:px-7"
-        style={{
-          background: isService
-            ? "linear-gradient(120deg, var(--app-hero-start), var(--app-card-bg) 56%, var(--app-accent-soft))"
-            : "linear-gradient(120deg, var(--app-hero-end), var(--app-card-bg) 56%, var(--app-secondary-soft))",
-        }}
-      >
-        <span
-          className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full opacity-50"
-          style={{ backgroundColor: centerSoft }}
-          aria-hidden="true"
-        />
-        <div className="relative flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-          <div className="flex items-start gap-4">
-            <span
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl sm:h-14 sm:w-14"
-              style={{ color: centerColor, backgroundColor: centerSoft }}
-            >
-              <CenterIcon size={26} aria-hidden="true" />
-            </span>
-            <div className="min-w-0">
-              <span className="inline-flex items-center gap-1.5 text-xs font-black" style={{ color: centerColor }}>
-                <Sparkles size={13} aria-hidden="true" />
-                {centerLabel}
-              </span>
-              <h2 className="mt-1 text-2xl font-black tracking-tight sm:text-3xl">{centerTitle}</h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-2 sm:gap-3 xl:w-[410px]">
-            <div className="app-card rounded-2xl border p-3 sm:px-4">
-              <p className="text-xl font-black sm:text-2xl">{progressPercent}%</p>
-              <p className="mt-0.5 text-[11px] font-bold app-muted-text">总进度</p>
-            </div>
-            <div className="app-card rounded-2xl border p-3 sm:px-4">
-              <p className="text-xl font-black sm:text-2xl">{subcategories.length}</p>
-              <p className="mt-0.5 text-[11px] font-bold app-muted-text">{stageMetricLabel}</p>
-            </div>
-            <div className="app-card rounded-2xl border p-3 sm:px-4">
-              <p className="text-xl font-black sm:text-2xl">{lessons.length}</p>
-              <p className="mt-0.5 text-[11px] font-bold app-muted-text">可见课时</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_340px]">
         <section className="app-card rounded-[28px] border p-4 sm:p-5" aria-labelledby="course-curriculum-title">
-          <div className="mb-4 flex items-end justify-between gap-4 px-1">
+          <div className="mb-4 flex items-center justify-between gap-4 px-1">
             <div>
-              <h3 id="course-curriculum-title" className="text-lg font-black sm:text-xl">{curriculumTitle}</h3>
+              <div className="flex items-center gap-2.5">
+                <span
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
+                  style={{ color: centerColor, backgroundColor: centerSoft }}
+                >
+                  <Route size={18} aria-hidden="true" />
+                </span>
+                <h3 id="course-curriculum-title" className="text-lg font-black sm:text-xl">{curriculumTitle}</h3>
+              </div>
             </div>
-            <span className="hidden text-xs font-bold app-muted-text sm:inline">{completedCount}/{lessonItems.length} 课时完成</span>
+            <div className="grid grid-cols-3 gap-2 sm:gap-3">
+              <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
+                <p className="text-xl font-black sm:text-2xl">{progressPercent}%</p>
+                <p className="mt-0.5 text-[11px] font-bold app-muted-text">总进度</p>
+              </div>
+              <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
+                <p className="text-xl font-black sm:text-2xl">{subcategories.length}</p>
+                <p className="mt-0.5 text-[11px] font-bold app-muted-text">{stageMetricLabel}</p>
+              </div>
+              <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
+                <p className="text-xl font-black sm:text-2xl">{lessons.length}</p>
+                <p className="mt-0.5 text-[11px] font-bold app-muted-text">可见课时</p>
+              </div>
+            </div>
           </div>
 
           <div className="space-y-3">
@@ -304,7 +273,6 @@ export function KoreanLearningCenter({
               const subcategoryCourses = courses.filter((course) => course.category_id === subcategory.id);
               const subcategoryItems = lessonItems.filter((item) => item.subcategory.id === subcategory.id);
               const status = getLearningStatus(subcategoryItems);
-              const isRecommendedStage = recommendedLesson?.subcategory.id === subcategory.id;
 
               return (
                 <details
@@ -312,7 +280,6 @@ export function KoreanLearningCenter({
                   id={`stage-${subcategory.slug}`}
                   className="group scroll-mt-24 overflow-hidden rounded-2xl border"
                   style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}
-                  open={isRecommendedStage || subcategoryIndex === 0}
                 >
                   <summary
                     className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-secondary)] sm:p-4 [&::-webkit-details-marker]:hidden"
@@ -347,7 +314,6 @@ export function KoreanLearningCenter({
                       const courseItems = lessonItems.filter((item) => item.course.id === course.id);
                       const courseUnlocked = courseUnlockedById.get(course.id) ?? false;
                       const courseStatus = getLearningStatus(courseItems);
-                      const isRecommendedCourse = recommendedLesson?.course.id === course.id;
                       const levelLabel = getCourseLevelLabel(course.level);
                       const courseCompletedCount = courseItems.filter((item) => item.progress?.status === "completed").length;
                       const courseProgressPercent = courseItems.length > 0
@@ -363,7 +329,6 @@ export function KoreanLearningCenter({
                           id={`course-${course.slug}`}
                           className="group/course scroll-mt-24 overflow-hidden rounded-2xl border"
                           style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}
-                          open={isRecommendedCourse}
                         >
                           <summary
                             className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-secondary)] [&::-webkit-details-marker]:hidden"
@@ -479,6 +444,21 @@ export function KoreanLearningCenter({
         </section>
 
         <aside className="order-first space-y-4 lg:order-last lg:sticky lg:top-24" aria-label="当前学习进度">
+          <section className="app-card rounded-[24px] border p-5">
+            <div className="flex items-end justify-between gap-3">
+              <div>
+                <p className="text-xs font-bold app-muted-text">{totalProgressLabel}</p>
+                <p className="mt-1 text-3xl font-black">{progressPercent}%</p>
+              </div>
+              <span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
+                {completedCount} 课时完成
+              </span>
+            </div>
+            <div className="mt-4 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+              <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
+            </div>
+          </section>
+
           <section
             className="app-card relative overflow-hidden rounded-[28px] border p-5 shadow-sm"
             style={{ borderColor: centerColor, background: `linear-gradient(145deg, ${centerSoft}, var(--app-card-bg) 72%)` }}
@@ -521,24 +501,6 @@ export function KoreanLearningCenter({
                 <p className="mt-4 rounded-2xl p-4 text-sm font-bold app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>暂无可进入的课时</p>
               )}
             </div>
-          </section>
-
-          <section className="app-card rounded-[24px] border p-5">
-            <div className="flex items-end justify-between gap-3">
-              <div>
-                <p className="text-xs font-bold app-muted-text">{totalProgressLabel}</p>
-                <p className="mt-1 text-3xl font-black">{progressPercent}%</p>
-              </div>
-              <span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
-                {completedCount} 课时完成
-              </span>
-            </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-              <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
-            </div>
-            <p className="mt-4 text-xs leading-5 app-muted-text">
-              按顺序完成课时，后续课程会依据当前解锁规则自动开放。
-            </p>
           </section>
         </aside>
       </div>

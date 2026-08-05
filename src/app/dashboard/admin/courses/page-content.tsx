@@ -1,6 +1,5 @@
 import Link from "next/link";
 import {
-  ArrowUpRight,
   BookOpen,
   CircleDot,
   FileText,
@@ -397,7 +396,6 @@ export default async function AdminCoursesPage({
           <div>
             <div className="app-muted-text mb-3 flex items-center gap-2 text-[11px] font-medium"><FolderTree size={13} strokeWidth={1.7} />内容系统 / 平台课程</div>
             <h1 className="text-3xl font-semibold tracking-[-0.04em]">课程工作台</h1>
-            <p className="app-muted-text mt-2 max-w-2xl text-[13px] leading-6">用一张层级表管理板块、分类、课程、课时和章节；选中一行后直接在该行下方维护内容。</p>
           </div>
           <div className="flex flex-wrap items-center gap-2">
             {canManage && (
@@ -410,9 +408,6 @@ export default async function AdminCoursesPage({
                 </form>
               </details>
             )}
-            <Link href="/dashboard/courses" className="flex items-center gap-2 rounded-[7px] border px-3 py-2 text-[12px] font-medium" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
-              学生端预览<ArrowUpRight size={13} />
-            </Link>
           </div>
         </header>
 

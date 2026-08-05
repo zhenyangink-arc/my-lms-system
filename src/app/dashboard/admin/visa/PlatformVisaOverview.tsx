@@ -140,9 +140,6 @@ export function PlatformVisaOverview({
               <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 签证管理
               </h1>
-              <p className="mt-1 text-[11px] text-zinc-500">
-                逐家查看签证档案、审核积压、补件协助、获签结果和临近入境情况；机构默认收缩。
-              </p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[

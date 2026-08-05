@@ -132,9 +132,7 @@ export function CourseCatalogTable({
       <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
         <div>
           <h2 className="text-[13px] font-semibold">完整课程目录</h2>
-          <p className="app-muted-text mt-0.5 text-[10px]">共 {rows.length} 条记录；点击行首箭头收起或展开下级内容</p>
         </div>
-        <span className="app-muted-text font-mono text-[10px]">TABLE VIEW</span>
       </div>
       <div className="flex flex-wrap items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
         <label className="relative min-w-[220px] flex-1 lg:max-w-md">

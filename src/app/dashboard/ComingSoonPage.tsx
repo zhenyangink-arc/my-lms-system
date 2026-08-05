@@ -21,7 +21,7 @@ const featureBlueprints: Record<string, FeatureBlueprint[]> = {
   ],
   会话练习: [
     { title: "情景主题", description: "覆盖校园、生活、面试等常用韩国场景。" },
-    { title: "发音反馈", description: "记录语音表现与需要强化的发音。" },
+    { title: "口语反馈", description: "记录语音表现与需要强化的口语。" },
     { title: "练习记录", description: "保存每次会话的主题、时长与成果。" },
   ],
   成绩管理: [

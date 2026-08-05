@@ -169,7 +169,7 @@ export function BackgroundBrightnessControl() {
 
       {open && (
         <div
-          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-64 rounded-2xl border p-4"
+          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-48 rounded-2xl border p-3"
           role="dialog"
           aria-label="背景亮度调节"
         >
@@ -297,7 +297,7 @@ export function CardOpacityControl() {
 
       {open && (
         <div
-          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-64 rounded-2xl border p-4"
+          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-48 rounded-2xl border p-3"
           role="dialog"
           aria-label="卡片透明度调节"
         >
@@ -428,7 +428,7 @@ export function CardGradientControl() {
 
       {open && (
         <div
-          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-64 rounded-2xl border p-4"
+          className="app-card student-appearance-control absolute right-0 top-11 z-40 w-48 rounded-2xl border p-3"
           role="dialog"
           aria-label="卡片渐变强度调节"
         >

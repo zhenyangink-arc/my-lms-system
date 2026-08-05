@@ -79,8 +79,8 @@ export async function LanguageQuestionBankWorkspace({
         <QuestionBankSectionNav active={bank} />
 
         <section className="border-y py-4">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div><h2 className="text-xl font-black">{title}</h2><p className="app-muted-text mt-1 text-xs">按课程和章节维护；进入章节后再查看或新增听、说、读、写题目。</p></div>
+          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+            <div><h2 className="text-xl font-black">{title}</h2></div>
             <dl className="flex flex-wrap items-center">
               {[["课程章节", chapters.length, Rows3], ["题库资源", materials.length, LibraryBig], ["已发布题目", publishedCount, ListChecks]].map(([label, value, Icon], index) => { const MetricIcon = Icon as typeof Rows3; return <div key={String(label)} className={`min-w-28 px-4 text-center ${index ? "border-l" : ""}`}><dd className="flex items-center justify-center gap-1.5 font-mono text-lg font-black"><MetricIcon size={14} className="app-muted-text" />{String(value)}</dd><dt className="app-muted-text text-[10px] font-bold">{String(label)}</dt></div>; })}
             </dl>
