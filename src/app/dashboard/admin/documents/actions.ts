@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { requireDocumentReviewManager } from "@/lib/document-reviews";
 import type { ModuleCardDeleteState } from "../StudentModuleCardDeleteDialog";
 
@@ -14,9 +15,9 @@ const VISA_APPLICATION_CHANNELS = ["china_consulate", "korea_immigration"];
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 function revalidateDocumentPages(studentId: string) {
-  revalidatePath("/dashboard/admin/documents");
-  revalidatePath(`/dashboard/admin/documents/${studentId}`);
-  revalidatePath("/dashboard/documents");
+  revalidateDashboard("/dashboard/admin/documents");
+  revalidateDashboard(`/dashboard/admin/documents/${studentId}`);
+  revalidateDashboard("/dashboard/documents");
 }
 
 export async function deleteStudentDocumentCardAction(
@@ -26,7 +27,7 @@ export async function deleteStudentDocumentCardAction(
 ): Promise<ModuleCardDeleteState> {
   void _previousState;
   void _formData;
-  const { supabase } = await requireDocumentReviewManager();
+  const { supabase, dashboardBasePath } = await requireDocumentReviewManager();
 
   const { error } = await supabase.rpc("delete_student_application_document_card", {
     requested_user_id: studentId,
@@ -37,7 +38,12 @@ export async function deleteStudentDocumentCardAction(
   }
 
   revalidateDocumentPages(studentId);
-  redirect("/dashboard/admin/documents?deleted=1");
+  redirect(
+    scopeDashboardPath(
+      "/dashboard/admin/documents?deleted=1",
+      dashboardBasePath,
+    ),
+  );
 }
 
 export async function createApplicationChecklistItemAction(
@@ -185,7 +191,7 @@ export async function toggleTargetDocumentsLockAction(
   targetId: string,
   locked: boolean
 ) {
-  const { supabase } = await requireDocumentReviewManager();
+  const { supabase, dashboardBasePath } = await requireDocumentReviewManager();
   const { data, error } = await supabase
     .from("student_university_targets")
     .update({ documents_locked_at: locked ? new Date().toISOString() : null })
@@ -198,7 +204,12 @@ export async function toggleTargetDocumentsLockAction(
     throw new Error(locked ? "锁定失败，请刷新后重试。" : "解锁失败，请刷新后重试。");
   }
   revalidateDocumentPages(studentId);
-  redirect(`/dashboard/admin/documents/${studentId}`);
+  redirect(
+    scopeDashboardPath(
+      `/dashboard/admin/documents/${studentId}`,
+      dashboardBasePath,
+    ),
+  );
 }
 
 export async function updateApplicationStageAction(
@@ -206,7 +217,7 @@ export async function updateApplicationStageAction(
   targetId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireDocumentReviewManager();
+  const { supabase, dashboardBasePath } = await requireDocumentReviewManager();
   const stage = Number(formData.get("stage"));
 
   if (!Number.isInteger(stage) || stage < 0 || stage > 9) {
@@ -247,10 +258,15 @@ export async function updateApplicationStageAction(
     throw new Error("阶段更新失败，请刷新后重试。");
   }
   revalidateDocumentPages(studentId);
-  revalidatePath("/dashboard/visa");
-  revalidatePath("/dashboard/admin/visa");
-  revalidatePath(`/dashboard/admin/visa/${studentId}`);
-  redirect(`/dashboard/admin/documents/${studentId}`);
+  revalidateDashboard("/dashboard/visa");
+  revalidateDashboard("/dashboard/admin/visa");
+  revalidateDashboard(`/dashboard/admin/visa/${studentId}`);
+  redirect(
+    scopeDashboardPath(
+      `/dashboard/admin/documents/${studentId}`,
+      dashboardBasePath,
+    ),
+  );
 }
 
 export async function updateCourierInfoAction(
@@ -296,7 +312,7 @@ export async function confirmVisaApplicationChannelAction(
   targetId: string,
   formData: FormData
 ) {
-  const { supabase } = await requireDocumentReviewManager();
+  const { supabase, dashboardBasePath } = await requireDocumentReviewManager();
   const applicationChannel = String(formData.get("applicationChannel") ?? "").trim();
 
   if (!VISA_APPLICATION_CHANNELS.includes(applicationChannel)) {
@@ -316,10 +332,15 @@ export async function confirmVisaApplicationChannelAction(
   }
 
   revalidateDocumentPages(studentId);
-  revalidatePath("/dashboard/visa");
-  revalidatePath("/dashboard/admin/visa");
-  revalidatePath(`/dashboard/admin/visa/${studentId}`);
-  redirect(`/dashboard/admin/documents/${studentId}`);
+  revalidateDashboard("/dashboard/visa");
+  revalidateDashboard("/dashboard/admin/visa");
+  revalidateDashboard(`/dashboard/admin/visa/${studentId}`);
+  redirect(
+    scopeDashboardPath(
+      `/dashboard/admin/documents/${studentId}`,
+      dashboardBasePath,
+    ),
+  );
 }
 
 export type DocumentReviewActionState = {
@@ -421,7 +442,7 @@ export async function reviewApplicationAction(
   }
 
   revalidateDocumentPages(target.user_id);
-  revalidatePath("/dashboard/admin/visa");
+  revalidateDashboard("/dashboard/admin/visa");
 
   return {
     status: "success",

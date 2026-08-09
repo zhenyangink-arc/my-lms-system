@@ -1,9 +1,11 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import Link from "next/link";
 
 import { APPLICATION_STAGE_LABELS } from "@/app/dashboard/documents/constants";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type { DocumentReviewApplication } from "../../api/types";
 import { DocumentReviewApplicationDialog } from "./document-review-application-dialog";
 
@@ -42,7 +44,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const documentReviewApplicationColumns: ColumnDef<DocumentReviewApplication>[] = [
+export function getDocumentReviewApplicationColumns(
+  dashboardBasePath: string,
+): ColumnDef<DocumentReviewApplication>[] {
+  return [
   {
     id: "student",
     accessorFn: (row) => row.studentName || row.studentEmail || row.studentId,
@@ -118,6 +123,20 @@ export const documentReviewApplicationColumns: ColumnDef<DocumentReviewApplicati
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="sr-only">申请单详情</span>,
-    cell: ({ row }) => <DocumentReviewApplicationDialog application={row.original} />,
+    cell: ({ row }) => (
+      <div className="flex items-center justify-end gap-2">
+        <DocumentReviewApplicationDialog application={row.original} />
+        <Link
+          href={scopeDashboardPath(
+            `/dashboard/admin/documents/${row.original.studentId}?target=${row.original.id}`,
+            dashboardBasePath,
+          )}
+          className="inline-flex h-8 items-center border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+        >
+          管理资料
+        </Link>
+      </div>
+    ),
   },
-];
+  ];
+}

@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { requireStudentFeature } from "@/lib/student-permissions-server";
 import type { DocumentActionState } from "./document-action-state";
 
@@ -13,9 +14,9 @@ function result(status: "success" | "error", message: string): DocumentActionSta
 }
 
 function revalidateDocumentPages(userId: string) {
-  revalidatePath("/dashboard/documents");
-  revalidatePath("/dashboard/admin/documents");
-  revalidatePath(`/dashboard/admin/documents/${userId}`);
+  revalidateDashboard("/dashboard/documents");
+  revalidateDashboard("/dashboard/admin/documents");
+  revalidateDashboard(`/dashboard/admin/documents/${userId}`);
 }
 
 export type DocumentDraftChange = {
@@ -43,7 +44,12 @@ export async function saveApplicationDocumentDraftAction(
       .eq("user_id", user.id);
 
     if (error) {
-      return result("error", "保存失败，请刷新页面后重试。");
+      return result(
+        "error",
+        error.message?.includes("已提交锁定") || error.message?.includes("已被管理员锁定")
+          ? `保存失败：${error.message}`
+          : "保存失败，请刷新页面后重试。"
+      );
     }
   }
 
@@ -58,7 +64,9 @@ export async function submitApplicationDocumentsAction(
 ): Promise<DocumentActionState> {
   void _previousState;
   void _formData;
-  const { supabase, user } = await requireStudentFeature("application_documents");
+  const { supabase, user, tenant } = await requireStudentFeature(
+    "application_documents",
+  );
 
   const { count: unresolvedCount, error: countError } = await supabase
     .from("student_application_documents")
@@ -95,7 +103,12 @@ export async function submitApplicationDocumentsAction(
   }
 
   revalidateDocumentPages(user.id);
-  redirect("/dashboard/documents");
+  redirect(
+    scopeDashboardPath(
+      "/dashboard/documents",
+      getDashboardBasePath(tenant?.slug),
+    ),
+  );
 }
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

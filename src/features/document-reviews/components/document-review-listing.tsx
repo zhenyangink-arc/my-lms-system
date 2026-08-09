@@ -62,7 +62,10 @@ export default async function DocumentReviewListing() {
         </div>
       </section>
 
-      <DocumentReviewApplicationsTable data={result.applications} />
+      <DocumentReviewApplicationsTable
+        data={result.applications}
+        dashboardBasePath={result.dashboardBasePath}
+      />
     </div>
   );
 }

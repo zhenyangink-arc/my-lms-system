@@ -145,6 +145,7 @@ export type InstitutionDocumentReviewManagementData = {
   scope: "institution";
   role: UserRole;
   tenantId: string;
+  dashboardBasePath: string;
   canReviewApplications: true;
   applications: DocumentReviewApplication[];
   overview: [];
@@ -179,6 +180,7 @@ export type DocumentReviewStudentChecklistItem = DocumentChecklistRow & {
 
 export type DocumentReviewStudentDetailData = {
   tenantId: string;
+  dashboardBasePath: string;
   student: DocumentReviewProfileRow;
   targets: DocumentReviewStudentTarget[];
   documents: DocumentReviewStudentChecklistItem[];

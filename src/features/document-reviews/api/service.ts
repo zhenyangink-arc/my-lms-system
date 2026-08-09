@@ -210,6 +210,7 @@ export async function getDocumentReviewManagementData(): Promise<DocumentReviewM
     scope: "institution",
     role: access.role,
     tenantId,
+    dashboardBasePath: access.dashboardBasePath,
     canReviewApplications: true,
     applications,
     overview: [],
@@ -220,7 +221,8 @@ export async function getDocumentReviewManagementData(): Promise<DocumentReviewM
 export async function getDocumentReviewStudentDetailData(
   studentId: string,
 ): Promise<DocumentReviewStudentDetailData | null> {
-  const { supabase, tenantId } = await requireDocumentReviewManager();
+  const { supabase, tenantId, dashboardBasePath } =
+    await requireDocumentReviewManager();
   const [profileResult, documentsResult, targetsResult] = await Promise.all([
     supabase
       .from("profiles")
@@ -260,6 +262,7 @@ export async function getDocumentReviewStudentDetailData(
 
   return {
     tenantId,
+    dashboardBasePath,
     student: (profileResult.data ?? {
       id: studentId,
       full_name: null,

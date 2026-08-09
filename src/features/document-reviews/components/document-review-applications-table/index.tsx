@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { DocumentReviewApplication } from "../../api/types";
-import { documentReviewApplicationColumns } from "./columns";
+import { getDocumentReviewApplicationColumns } from "./columns";
 import {
   DocumentReviewTableToolbar,
   type DocumentReviewTableFilters,
@@ -43,12 +43,18 @@ const INITIAL_FILTERS: DocumentReviewTableFilters = {
 
 export function DocumentReviewApplicationsTable({
   data,
+  dashboardBasePath,
 }: {
   data: DocumentReviewApplication[];
+  dashboardBasePath: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<DocumentReviewTableFilters>(INITIAL_FILTERS);
+  const columns = useMemo(
+    () => getDocumentReviewApplicationColumns(dashboardBasePath),
+    [dashboardBasePath],
+  );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((application) => {
@@ -73,7 +79,7 @@ export function DocumentReviewApplicationsTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: documentReviewApplicationColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

@@ -73,7 +73,11 @@ export function DocumentReviewApplicationDialog({
           <p className="text-xs text-[var(--app-muted)]">
             整单锁定会限制学生端继续修改资料。
           </p>
-          <DocumentReviewTargetLockAction application={application} />
+          <DocumentReviewTargetLockAction
+            studentId={application.studentId}
+            targetId={application.id}
+            lockedAt={application.documentsLockedAt}
+          />
         </div>
 
         <div className="overflow-x-auto border-b border-[var(--app-border)]">

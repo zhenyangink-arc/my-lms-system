@@ -147,22 +147,26 @@ function LockActionButton({
 }
 
 export function DocumentReviewTargetLockAction({
-  application,
+  studentId,
+  targetId,
+  lockedAt,
 }: {
-  application: DocumentReviewApplication;
+  studentId: string;
+  targetId: string;
+  lockedAt: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
-  const locked = Boolean(application.documentsLockedAt);
+  const locked = Boolean(lockedAt);
 
   function toggleLock() {
     setError("");
     startTransition(async () => {
       try {
         await toggleTargetDocumentsLockAction(
-          application.studentId,
-          application.id,
+          studentId,
+          targetId,
           !locked,
         );
         router.refresh();
