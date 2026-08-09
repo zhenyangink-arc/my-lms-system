@@ -28,6 +28,8 @@ type CourseCatalogNodeViewProps =
       node: CourseCatalogLesson;
       resources: CourseLessonResource[];
       resourceErrorMessage?: string | null;
+      canManage: boolean;
+      canPermanentlyDeleteResources: boolean;
     }
   | {
       kind: "chapter";
@@ -95,6 +97,8 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
         lesson={props.node}
         resources={props.resources}
         resourceErrorMessage={props.resourceErrorMessage}
+        canManage={props.canManage}
+        canPermanentlyDeleteResources={props.canPermanentlyDeleteResources}
       />
     );
   }

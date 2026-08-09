@@ -7,6 +7,7 @@ import type {
 } from "../api/types";
 import { CourseCatalogTreeTable } from "./course-catalog-tree";
 import type { CourseCatalogTreeRow } from "./course-catalog-tree/columns";
+import { CourseCatalogCreateDialog } from "./course-catalog-action-dialogs";
 
 const KIND_LABELS = {
   category: "分类",
@@ -92,6 +93,7 @@ function buildCatalogTree({
       isPublished: chapter.is_published,
       isLocked: chapter.is_manually_locked,
       sortOrder: chapter.sort_order,
+      node: chapter,
       children: [],
     };
   }
@@ -117,6 +119,7 @@ function buildCatalogTree({
       isPublished: lesson.is_published,
       isLocked: lesson.is_manually_locked,
       sortOrder: lesson.sort_order,
+      node: lesson,
       children,
     };
   }
@@ -142,6 +145,7 @@ function buildCatalogTree({
       isPublished: course.is_published,
       isLocked: course.is_manually_locked,
       sortOrder: course.sort_order,
+      node: course,
       children,
     };
   }
@@ -171,6 +175,7 @@ function buildCatalogTree({
       isPublished: category.is_published,
       isLocked: false,
       sortOrder: category.sort_order,
+      node: category,
       children,
     };
   }
@@ -209,15 +214,37 @@ export default async function CourseCatalogListing() {
         </p>
       )}
       <section className="space-y-3">
-        <div>
-          <h2 className="text-base font-semibold text-[var(--app-text)]">
-            课程目录结构
-          </h2>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">
-            按分类、课程、课时和章节查看平台课程层级；当前步骤仅展示结构。
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-[var(--app-text)]">
+              课程目录结构
+            </h2>
+            <p className="mt-1 text-xs text-[var(--app-muted)]">
+              按分类、课程、课时和章节查看并维护平台课程层级。
+            </p>
+          </div>
+          {result.canManage && (
+            <CourseCatalogCreateDialog
+              primary
+              target={{
+                kind: "category",
+                title: "新建顶级分类",
+                sortOrder:
+                  result.categories.filter((item) => !item.parent_id).length *
+                    10 +
+                  10,
+              }}
+            />
+          )}
         </div>
-        <CourseCatalogTreeTable data={rows} />
+        <CourseCatalogTreeTable
+          data={rows}
+          canManage={result.canManage}
+          categories={result.categories}
+          courses={result.courses}
+          lessons={result.lessons}
+          chapters={result.chapters}
+        />
       </section>
     </div>
   );

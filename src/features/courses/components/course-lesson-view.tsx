@@ -5,6 +5,7 @@ import type {
   CourseLessonResource,
 } from "../api/types";
 import { LessonResourcesTable } from "./lesson-resources-table";
+import { CreateLessonResourceDialog } from "./lesson-resource-action-dialogs";
 
 const CONTENT_FIELDS: Array<{
   key: keyof Pick<
@@ -80,10 +81,14 @@ export function CourseLessonView({
   lesson,
   resources,
   resourceErrorMessage,
+  canManage,
+  canPermanentlyDeleteResources,
 }: {
   lesson: CourseCatalogLesson;
   resources: CourseLessonResource[];
   resourceErrorMessage?: string | null;
+  canManage: boolean;
+  canPermanentlyDeleteResources: boolean;
 }) {
   return (
     <div className="space-y-6">
@@ -140,20 +145,32 @@ export function CourseLessonView({
       </section>
 
       <section className="space-y-3">
-        <div>
-          <h3 className="text-base font-semibold text-[var(--app-text)]">
-            课时资料
-          </h3>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">
-            展示文件、链接、模板、清单和参考资料及其当前状态。
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3 className="text-base font-semibold text-[var(--app-text)]">
+              课时资料
+            </h3>
+            <p className="mt-1 text-xs text-[var(--app-muted)]">
+              管理文件、链接、模板、清单和参考资料及其当前状态。
+            </p>
+          </div>
+          {canManage && (
+            <CreateLessonResourceDialog
+              lessonId={lesson.id}
+              defaultSortOrder={resources.length * 10 + 10}
+            />
+          )}
         </div>
         {resourceErrorMessage && (
           <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
             课时资料读取失败：{resourceErrorMessage}
           </p>
         )}
-        <LessonResourcesTable data={resources} />
+        <LessonResourcesTable
+          data={resources}
+          canManage={canManage}
+          canPermanentlyDelete={canPermanentlyDeleteResources}
+        />
       </section>
     </div>
   );

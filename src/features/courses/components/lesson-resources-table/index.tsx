@@ -19,7 +19,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { CourseLessonResource } from "../../api/types";
-import { lessonResourceColumns } from "./columns";
+import { getLessonResourceColumns } from "./columns";
 import {
   INITIAL_LESSON_RESOURCE_FILTERS,
   LessonResourceTableToolbar,
@@ -28,8 +28,12 @@ import {
 
 export function LessonResourcesTable({
   data,
+  canManage,
+  canPermanentlyDelete,
 }: {
   data: CourseLessonResource[];
+  canManage: boolean;
+  canPermanentlyDelete: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sort_order", desc: false },
@@ -55,12 +59,16 @@ export function LessonResourcesTable({
         .includes(query);
     });
   }, [data, filters]);
+  const columns = useMemo(
+    () => getLessonResourceColumns({ canManage, canPermanentlyDelete }),
+    [canManage, canPermanentlyDelete],
+  );
 
   // TanStack Table 在客户端表格边界中提供可变状态方法。
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: lessonResourceColumns,
+    columns,
     state: { sorting },
     onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),

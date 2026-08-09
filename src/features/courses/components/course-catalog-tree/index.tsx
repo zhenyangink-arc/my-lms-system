@@ -20,10 +20,13 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  courseCatalogTreeColumns,
-  type CourseCatalogTreeRow,
-} from "./columns";
+import type {
+  CourseCatalogChapter,
+  CourseCatalogCourse,
+  CourseCatalogLesson,
+  CourseCategory,
+} from "../../api/types";
+import { getCourseCatalogTreeColumns, type CourseCatalogTreeRow } from "./columns";
 import {
   CourseCatalogToolbar,
   INITIAL_COURSE_CATALOG_FILTERS,
@@ -63,8 +66,18 @@ function countRows(rows: CourseCatalogTreeRow[]): number {
 
 export function CourseCatalogTreeTable({
   data,
+  canManage,
+  categories,
+  courses,
+  lessons,
+  chapters,
 }: {
   data: CourseCatalogTreeRow[];
+  canManage: boolean;
+  categories: CourseCategory[];
+  courses: CourseCatalogCourse[];
+  lessons: CourseCatalogLesson[];
+  chapters: CourseCatalogChapter[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -76,12 +89,20 @@ export function CourseCatalogTreeTable({
     Boolean(filters.query.trim()) ||
     filters.kind !== "all" ||
     filters.status !== "all";
+  const columns = useMemo(
+    () =>
+      getCourseCatalogTreeColumns({
+        canManage,
+        options: { categories, courses, lessons, chapters },
+      }),
+    [canManage, categories, courses, lessons, chapters],
+  );
 
   // TanStack Table 在客户端表格边界中提供可变状态方法。
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: courseCatalogTreeColumns,
+    columns,
     state: { sorting, expanded: hasFilters ? true : expanded },
     onSortingChange: setSorting,
     onExpandedChange: setExpanded,

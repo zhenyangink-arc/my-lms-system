@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { CourseLessonResource } from "../../api/types";
+import { LessonResourceRowActions } from "../lesson-resource-action-dialogs";
 
 const RESOURCE_TYPE_LABELS: Record<string, string> = {
   file: "文件",
@@ -53,7 +54,14 @@ function ResourceStatus({ resource }: { resource: CourseLessonResource }) {
   );
 }
 
-export const lessonResourceColumns: ColumnDef<CourseLessonResource>[] = [
+export function getLessonResourceColumns({
+  canManage,
+  canPermanentlyDelete,
+}: {
+  canManage: boolean;
+  canPermanentlyDelete: boolean;
+}): ColumnDef<CourseLessonResource>[] {
+  const columns: ColumnDef<CourseLessonResource>[] = [
   {
     accessorKey: "title",
     header: sortableHeader("资料名称"),
@@ -117,6 +125,22 @@ export const lessonResourceColumns: ColumnDef<CourseLessonResource>[] = [
       </span>
     ),
   },
-];
+  ];
+  if (canManage) {
+    columns.push({
+      id: "actions",
+      enableSorting: false,
+      header: () => <span className="block text-right">操作</span>,
+      cell: ({ row }) => (
+        <LessonResourceRowActions
+          resource={row.original}
+          canManage={canManage}
+          canPermanentlyDelete={canPermanentlyDelete}
+        />
+      ),
+    });
+  }
+  return columns;
+}
 
 export { RESOURCE_TYPE_LABELS };

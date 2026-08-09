@@ -10,7 +10,13 @@ import {
 } from "lucide-react";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
-import type { CourseCatalogNodeKind } from "../../api/types";
+import type { CourseCatalogNode, CourseCatalogNodeKind } from "../../api/types";
+import {
+  CourseCatalogCreateDialog,
+  CourseCatalogEditDialog,
+  getCreateChildTarget,
+  type CourseCatalogActionOptions,
+} from "../course-catalog-action-dialogs";
 
 export type CourseCatalogTreeRow = {
   key: string;
@@ -25,6 +31,7 @@ export type CourseCatalogTreeRow = {
   isPublished: boolean;
   isLocked: boolean;
   sortOrder: number;
+  node: CourseCatalogNode;
   children: CourseCatalogTreeRow[];
 };
 
@@ -112,7 +119,14 @@ function StatusBadge({ row }: { row: CourseCatalogTreeRow }) {
   );
 }
 
-export const courseCatalogTreeColumns: ColumnDef<CourseCatalogTreeRow>[] = [
+export function getCourseCatalogTreeColumns({
+  canManage,
+  options,
+}: {
+  canManage: boolean;
+  options: CourseCatalogActionOptions;
+}): ColumnDef<CourseCatalogTreeRow>[] {
+  const columns: ColumnDef<CourseCatalogTreeRow>[] = [
   {
     id: "structure",
     accessorFn: (row) => `${row.title} ${row.slug}`,
@@ -167,4 +181,24 @@ export const courseCatalogTreeColumns: ColumnDef<CourseCatalogTreeRow>[] = [
       </span>
     ),
   },
-];
+  ];
+
+  if (canManage) {
+    columns.push({
+      id: "actions",
+      enableSorting: false,
+      header: () => <span className="block text-right">操作</span>,
+      cell: ({ row }) => {
+        const target = getCreateChildTarget(row.original.node, options);
+        return (
+          <div className="flex min-w-max justify-end gap-1.5">
+            <CourseCatalogEditDialog node={row.original.node} options={options} />
+            {target && <CourseCatalogCreateDialog target={target} />}
+          </div>
+        );
+      },
+    });
+  }
+
+  return columns;
+}
