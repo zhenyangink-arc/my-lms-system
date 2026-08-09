@@ -1,5 +1,8 @@
 "use client";
 
+import { useCallback, useState } from "react";
+import { Pencil, Plus } from "lucide-react";
+
 import { LocalDateTime } from "@/components/LocalDateTime";
 import {
   Dialog,
@@ -11,11 +14,16 @@ import {
 } from "@/components/ui/dialog";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
 import type {
+  LearningRecordNote,
   LearningRecordStatus,
   LearningRecordType,
   LearningRecordVisibility,
 } from "../../api/types";
 import type { StudentLearningRecordTableRow } from "./types";
+import {
+  LearningRecordNoteEditor,
+  LearningRecordNoteStatusAction,
+} from "./learning-record-note-actions";
 
 const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -57,6 +65,8 @@ export function StudentLearningRecordDetailDialog({
 }: {
   student: StudentLearningRecordTableRow;
 }) {
+  const [editor, setEditor] = useState<"new" | LearningRecordNote | null>(null);
+  const closeEditor = useCallback(() => setEditor(null), []);
   const name = student.full_name?.trim() || "未填写姓名";
   const account = student.email || `账号 …${student.student_id.slice(-8)}`;
   const membership = MEMBERSHIP_TIER_LABELS[
@@ -107,12 +117,44 @@ export function StudentLearningRecordDetailDialog({
         </div>
 
         <section>
-          <div className="border-b border-[var(--app-border)] px-5 py-3">
-            <h3 className="text-xs font-semibold">人工辅导备注</h3>
-            <p className="mt-1 text-[10px] text-[var(--app-muted)]">
-              这里仅展示人工填写的辅导、评价、里程碑、关注事项和学习计划；上方学习数据由系统自动汇总。
-            </p>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--app-border)] px-5 py-3">
+            <div>
+              <h3 className="text-xs font-semibold">人工辅导备注</h3>
+              <p className="mt-1 text-[10px] text-[var(--app-muted)]">
+                这里仅展示人工填写的辅导、评价、里程碑、关注事项和学习计划；上方学习数据由系统自动汇总。
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setEditor("new")}
+              className="inline-flex h-8 items-center gap-1.5 bg-[var(--app-secondary)] px-3 text-xs font-semibold text-white"
+            >
+              <Plus size={13} />
+              新增人工辅导备注
+            </button>
           </div>
+
+          {editor && (
+            <div className="border-b border-[var(--app-border)] bg-[var(--app-soft-bg)] p-5">
+              <div className="mb-4">
+                <h4 className="text-sm font-semibold">
+                  {editor === "new" ? "新增人工辅导备注" : "编辑人工辅导备注"}
+                </h4>
+                <p className="mt-1 text-[10px] text-[var(--app-muted)]">
+                  当前学生固定为{name}，不能在此处改挂到其他学生。
+                </p>
+              </div>
+              <LearningRecordNoteEditor
+                key={editor === "new" ? "new" : editor.id}
+                studentId={student.student_id}
+                studentName={name}
+                note={editor === "new" ? undefined : editor}
+                onDone={closeEditor}
+                onCancel={closeEditor}
+              />
+            </div>
+          )}
+
           <div className="divide-y divide-[var(--app-border)]">
             {student.notes.map((note) => (
               <article key={note.id} className="px-5 py-4">
@@ -138,6 +180,17 @@ export function StudentLearningRecordDetailDialog({
                     {note.next_action}
                   </p>
                 )}
+                <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setEditor(note)}
+                    className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+                  >
+                    <Pencil size={13} />
+                    编辑
+                  </button>
+                  <LearningRecordNoteStatusAction note={note} />
+                </div>
               </article>
             ))}
             {student.notes.length === 0 && (
