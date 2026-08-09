@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { AssignmentMember } from "../../api/types";
+import { AssignmentCellAction } from "./cell-action";
 
 export type TeacherAssignmentDisplayRow = {
   id: string;
@@ -46,5 +47,20 @@ export const teacherAssignmentColumns: ColumnDef<TeacherAssignmentDisplayRow>[] 
     accessorFn: (row) => row.student ? 1 : 0,
     header: sortableHeader("分配状态"),
     cell: ({ row }) => <span className={row.original.student ? "font-medium text-emerald-700" : "font-medium text-amber-700"}>{row.original.student ? "已分配" : "待分配"}</span>,
+  },
+  {
+    id: "actions",
+    enableSorting: false,
+    header: () => <span className="sr-only">操作</span>,
+    cell: ({ row }) => row.original.student ? (
+      <div className="flex justify-end">
+        <AssignmentCellAction
+          studentId={row.original.student.id}
+          teacherId={row.original.teacher.id}
+          studentName={memberName(row.original.student)}
+          teacherName={memberName(row.original.teacher)}
+        />
+      </div>
+    ) : null,
   },
 ];

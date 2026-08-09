@@ -1,4 +1,5 @@
 import { getStudentAssignmentData } from "../api/service";
+import { AssignStudentsDialog } from "./assignment-dialogs";
 import { PlatformCoverageTable } from "./platform-coverage-table";
 import { TeacherAssignmentTable } from "./teacher-assignment-table";
 import { UnassignedStudentsTable } from "./unassigned-students-table";
@@ -24,6 +25,9 @@ export default async function StudentAssignmentListing() {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <AssignStudentsDialog students={result.students} teachers={result.teachers} />
+      </div>
       <section className="management-table-panel overflow-hidden border">
         <div className="overflow-x-auto">
           <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
