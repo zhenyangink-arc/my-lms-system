@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { GrowthToolboxGrammarItem } from "../../api/types";
+import { GrammarCellAction } from "../growth-toolbox-action-dialogs";
 
 function sortableHeader(title: string) {
   return function SortableHeader({
@@ -124,5 +125,12 @@ export const growthToolboxGrammarColumns: ColumnDef<GrowthToolboxGrammarItem>[] 
     cell: ({ row }) => (
       <span className="font-mono tabular-nums">{row.original.sortOrder}</span>
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="block text-right">操作</span>,
+    cell: ({ row }) => <GrammarCellAction item={row.original} />,
   },
 ];

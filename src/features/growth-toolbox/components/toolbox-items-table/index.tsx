@@ -21,9 +21,10 @@ import {
 } from "@/components/ui/table";
 import { GrowthToolboxTableToolbar } from "../table-toolbar";
 import {
-  growthToolboxItemColumns,
+  getGrowthToolboxItemColumns,
   type GrowthToolboxItemDisplayRow,
 } from "./columns";
+import type { GrowthToolboxCourseOption } from "../growth-toolbox-action-dialogs";
 
 const COLUMN_LABELS: Record<string, string> = {
   title: "工具入口",
@@ -37,8 +38,10 @@ const COLUMN_LABELS: Record<string, string> = {
 
 export function GrowthToolboxItemsTable({
   data,
+  courses,
 }: {
   data: GrowthToolboxItemDisplayRow[];
+  courses: GrowthToolboxCourseOption[];
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sortOrder", desc: false },
@@ -46,6 +49,7 @@ export function GrowthToolboxItemsTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
+  const columns = useMemo(() => getGrowthToolboxItemColumns(courses), [courses]);
   const filteredData = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((item) => {
@@ -61,7 +65,7 @@ export function GrowthToolboxItemsTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: growthToolboxItemColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
@@ -114,7 +118,7 @@ export function GrowthToolboxItemsTable({
         </p>
       }
     >
-      <Table className="min-w-[1120px]">
+      <Table className="min-w-[1200px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

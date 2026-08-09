@@ -142,7 +142,7 @@ export function GrowthToolboxGrammarTable({
         </p>
       }
     >
-      <Table className="min-w-[1240px]">
+      <Table className="min-w-[1360px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

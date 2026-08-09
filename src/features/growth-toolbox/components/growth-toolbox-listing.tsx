@@ -3,12 +3,20 @@ import { GrowthToolboxGrammarTable } from "./grammar-table";
 import { GrowthToolboxItemsTable } from "./toolbox-items-table";
 import type { GrowthToolboxItemDisplayRow } from "./toolbox-items-table/columns";
 import { GrowthToolboxVocabularyTable } from "./vocabulary-table";
+import {
+  CreateGrammarDialog,
+  CreateVocabularyDialog,
+} from "./growth-toolbox-action-dialogs";
 
 export default async function GrowthToolboxListing() {
   const result = await getGrowthToolboxManagementData();
   const courseNames = new Map(
     result.courseTree.map((course) => [course.id, course.title]),
   );
+  const courseOptions = result.courseTree.map((course) => ({
+    id: course.id,
+    title: course.title,
+  }));
   const toolboxItems: GrowthToolboxItemDisplayRow[] = result.toolboxItems.map(
     (item) => ({
       ...item,
@@ -70,12 +78,13 @@ export default async function GrowthToolboxListing() {
         title="工具入口"
         description="查看学生端入口的启停状态、展示顺序和关联课程。"
       >
-        <GrowthToolboxItemsTable data={toolboxItems} />
+        <GrowthToolboxItemsTable data={toolboxItems} courses={courseOptions} />
       </ReadOnlySection>
 
       <ReadOnlySection
         title="词汇库"
         description="查看独立练习词库及互动教材导入来源。"
+        action={<CreateVocabularyDialog />}
       >
         <GrowthToolboxVocabularyTable data={result.vocabularyLibrary} />
       </ReadOnlySection>
@@ -83,6 +92,7 @@ export default async function GrowthToolboxListing() {
       <ReadOnlySection
         title="语法库"
         description="查看语法结构、例句、注意事项和已配置的音频字段。"
+        action={<CreateGrammarDialog />}
       >
         <GrowthToolboxGrammarTable data={result.grammarLibrary} />
       </ReadOnlySection>
@@ -94,16 +104,21 @@ function ReadOnlySection({
   title,
   description,
   children,
+  action,
 }: {
   title: string;
   description: string;
   children: React.ReactNode;
+  action?: React.ReactNode;
 }) {
   return (
     <section className="space-y-3">
-      <div>
-        <h2 className="text-base font-semibold text-[var(--app-text)]">{title}</h2>
-        <p className="mt-1 text-xs text-[var(--app-muted)]">{description}</p>
+      <div className="flex items-end justify-between gap-3">
+        <div>
+          <h2 className="text-base font-semibold text-[var(--app-text)]">{title}</h2>
+          <p className="mt-1 text-xs text-[var(--app-muted)]">{description}</p>
+        </div>
+        {action}
       </div>
       {children}
     </section>

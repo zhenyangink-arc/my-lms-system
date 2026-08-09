@@ -110,7 +110,7 @@ export function GrowthToolboxVocabularyTable({
         </p>
       }
     >
-      <Table className="min-w-[980px]">
+      <Table className="min-w-[1080px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

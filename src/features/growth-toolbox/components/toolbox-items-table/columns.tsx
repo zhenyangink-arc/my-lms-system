@@ -4,6 +4,10 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { GrowthToolboxItem } from "../../api/types";
+import {
+  EditToolboxItemDialog,
+  type GrowthToolboxCourseOption,
+} from "../growth-toolbox-action-dialogs";
 
 export type GrowthToolboxItemDisplayRow = GrowthToolboxItem & {
   relatedCourseTitle: string;
@@ -30,7 +34,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const growthToolboxItemColumns: ColumnDef<GrowthToolboxItemDisplayRow>[] = [
+export function getGrowthToolboxItemColumns(
+  courses: GrowthToolboxCourseOption[],
+): ColumnDef<GrowthToolboxItemDisplayRow>[] {
+  return [
   {
     accessorKey: "title",
     header: sortableHeader("工具入口"),
@@ -108,4 +115,16 @@ export const growthToolboxItemColumns: ColumnDef<GrowthToolboxItemDisplayRow>[] 
       <span className="font-mono tabular-nums">{row.original.sortOrder}</span>
     ),
   },
-];
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="block text-right">操作</span>,
+    cell: ({ row }) => (
+      <div className="text-right">
+        <EditToolboxItemDialog item={row.original} courses={courses} />
+      </div>
+    ),
+  },
+  ];
+}
