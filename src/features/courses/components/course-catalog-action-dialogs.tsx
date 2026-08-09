@@ -51,10 +51,9 @@ const UNLOCK_LABELS: Record<string, string> = {
 };
 
 const COMPLETION_LABELS: Record<string, string> = {
-  view: "浏览即完成",
-  video: "完成视频",
-  practice: "完成练习",
-  test: "通过测试",
+  content_viewed: "完成内容阅读",
+  test_submitted: "提交章节测试",
+  test_passed: "通过章节测试",
   manual: "管理员确认",
 };
 

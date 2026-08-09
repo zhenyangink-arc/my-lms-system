@@ -7,7 +7,7 @@ import type { CourseCatalogNodeKind } from "../../api/types";
 export type CourseCatalogFilters = {
   query: string;
   kind: "all" | CourseCatalogNodeKind;
-  status: "all" | "published" | "draft" | "locked";
+  status: "all" | "published" | "draft" | "locked" | "incomplete";
 };
 
 export const INITIAL_COURSE_CATALOG_FILTERS: CourseCatalogFilters = {
@@ -85,6 +85,7 @@ export function CourseCatalogToolbar({
         <option value="published">已发布</option>
         <option value="draft">草稿</option>
         <option value="locked">已锁定</option>
+        <option value="incomplete">内容待完善</option>
       </select>
 
       <div className="flex items-center border border-[var(--app-border)]">

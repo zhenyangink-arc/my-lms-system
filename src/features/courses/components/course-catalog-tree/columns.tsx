@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import type { ColumnDef, Row } from "@tanstack/react-table";
 import {
   BookOpen,
@@ -17,6 +18,7 @@ import {
   getCreateChildTarget,
   type CourseCatalogActionOptions,
 } from "../course-catalog-action-dialogs";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 
 export type CourseCatalogTreeRow = {
   key: string;
@@ -31,6 +33,8 @@ export type CourseCatalogTreeRow = {
   isPublished: boolean;
   isLocked: boolean;
   sortOrder: number;
+  completeness: number;
+  missingItems: string[];
   node: CourseCatalogNode;
   children: CourseCatalogTreeRow[];
 };
@@ -122,9 +126,11 @@ function StatusBadge({ row }: { row: CourseCatalogTreeRow }) {
 export function getCourseCatalogTreeColumns({
   canManage,
   options,
+  dashboardBasePath,
 }: {
   canManage: boolean;
   options: CourseCatalogActionOptions;
+  dashboardBasePath: string;
 }): ColumnDef<CourseCatalogTreeRow>[] {
   const columns: ColumnDef<CourseCatalogTreeRow>[] = [
   {
@@ -157,6 +163,39 @@ export function getCourseCatalogTreeColumns({
     ),
   },
   {
+    accessorKey: "completeness",
+    header: sortableHeader("完整度"),
+    cell: ({ row }) => (
+      <div className="min-w-28">
+        <div className="flex items-center gap-2">
+          <span className="h-1 w-16 overflow-hidden bg-[var(--app-soft-bg)]">
+            <span
+              className="block h-full"
+              style={{
+                width: `${row.original.completeness}%`,
+                backgroundColor:
+                  row.original.completeness === 100
+                    ? "var(--app-success)"
+                    : "var(--app-warm)",
+              }}
+            />
+          </span>
+          <span className="font-mono text-[10px] tabular-nums">
+            {row.original.completeness}%
+          </span>
+        </div>
+        {row.original.missingItems.length > 0 && (
+          <p
+            className="mt-1 max-w-32 truncate text-[9px] text-[var(--app-muted)]"
+            title={row.original.missingItems.join("、")}
+          >
+            缺少：{row.original.missingItems.join("、")}
+          </p>
+        )}
+      </div>
+    ),
+  },
+  {
     accessorKey: "unlockMode",
     header: sortableHeader("开放方式"),
     cell: ({ row }) => (
@@ -183,22 +222,33 @@ export function getCourseCatalogTreeColumns({
   },
   ];
 
-  if (canManage) {
-    columns.push({
-      id: "actions",
-      enableSorting: false,
-      header: () => <span className="block text-right">操作</span>,
-      cell: ({ row }) => {
-        const target = getCreateChildTarget(row.original.node, options);
-        return (
-          <div className="flex min-w-max justify-end gap-1.5">
+  columns.push({
+    id: "actions",
+    enableSorting: false,
+    header: () => <span className="block text-right">操作</span>,
+    cell: ({ row }) => {
+      const target = getCreateChildTarget(row.original.node, options);
+      return (
+        <div className="flex min-w-max justify-end gap-1.5">
+          <Link
+            href={scopeDashboardPath(
+              `/dashboard/admin/courses?node=${row.original.kind}&id=${row.original.id}#course-content`,
+              dashboardBasePath,
+            )}
+            className="inline-flex h-8 items-center border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"
+          >
+            查看内容
+          </Link>
+          {canManage && (
+            <>
             <CourseCatalogEditDialog node={row.original.node} options={options} />
             {target && <CourseCatalogCreateDialog target={target} />}
-          </div>
-        );
-      },
-    });
-  }
+            </>
+          )}
+        </div>
+      );
+    },
+  });
 
   return columns;
 }

@@ -51,7 +51,8 @@ function filterTree(
       filters.status === "all" ||
       (filters.status === "published" && row.isPublished && !row.isLocked) ||
       (filters.status === "draft" && !row.isPublished) ||
-      (filters.status === "locked" && row.isLocked);
+      (filters.status === "locked" && row.isLocked) ||
+      (filters.status === "incomplete" && row.completeness < 100);
 
     if ((matchesQuery && matchesKind && matchesStatus) || children.length > 0) {
       return [{ ...row, children }];
@@ -71,6 +72,7 @@ export function CourseCatalogTreeTable({
   courses,
   lessons,
   chapters,
+  dashboardBasePath,
 }: {
   data: CourseCatalogTreeRow[];
   canManage: boolean;
@@ -78,6 +80,7 @@ export function CourseCatalogTreeTable({
   courses: CourseCatalogCourse[];
   lessons: CourseCatalogLesson[];
   chapters: CourseCatalogChapter[];
+  dashboardBasePath: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -94,8 +97,9 @@ export function CourseCatalogTreeTable({
       getCourseCatalogTreeColumns({
         canManage,
         options: { categories, courses, lessons, chapters },
+        dashboardBasePath,
       }),
-    [canManage, categories, courses, lessons, chapters],
+    [canManage, categories, courses, lessons, chapters, dashboardBasePath],
   );
 
   // TanStack Table 在客户端表格边界中提供可变状态方法。

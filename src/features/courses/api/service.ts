@@ -1,6 +1,7 @@
 import "server-only";
 
 import { requireAdmin } from "@/lib/admin";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
 import type {
   CourseCatalogChapter,
   CourseCatalogCourse,
@@ -27,7 +28,7 @@ export async function getCourseManagementData(
 ): Promise<CourseManagementData> {
   // 原样保留旧读取边界：requireAdmin() 加当前用户 Supabase 客户端与 RLS。
   // 写权限仍由已有 Server Actions 校验，不在数据层另建一套权限判断。
-  const { supabase, globalRole } = await requireAdmin();
+  const { supabase, globalRole, tenant } = await requireAdmin();
   const canManage =
     globalRole === "platform_owner" || globalRole === "platform_admin";
 
@@ -84,6 +85,7 @@ export async function getCourseManagementData(
   }
 
   return {
+    dashboardBasePath: getDashboardBasePath(tenant?.slug),
     globalRole,
     canManage,
     canPermanentlyDeleteResources: globalRole === "platform_owner",

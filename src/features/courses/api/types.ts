@@ -129,6 +129,7 @@ export type CourseManagementSelection = {
 };
 
 export type CourseManagementData = {
+  dashboardBasePath: string;
   globalRole: string | null;
   canManage: boolean;
   canPermanentlyDeleteResources: boolean;
