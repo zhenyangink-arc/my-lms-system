@@ -42,12 +42,24 @@ export type DigitalTextbookGrammarNode = {
   items: DigitalTextbookGrammarItem[];
 };
 
+export type DigitalTextbookModule = {
+  id: string;
+  code: string;
+  nodeCount: number;
+  vocabularyCount: number;
+  grammarCount: number;
+};
+
 export type DigitalTextbookChapter = {
   id: string;
   number: number;
   slug: string;
   status: string;
+  versionId: string;
+  versionNumber: number;
+  versionStatus: string;
   textbookSlug: string;
+  modules: DigitalTextbookModule[];
   nodes: DigitalTextbookVocabularyNode[];
   grammarNodes: DigitalTextbookGrammarNode[];
 };

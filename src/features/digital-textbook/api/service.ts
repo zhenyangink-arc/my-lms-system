@@ -206,7 +206,7 @@ export async function getDigitalTextbookManagementData(): Promise<DigitalTextboo
   const courseIndex = new Map<string, DigitalTextbookCourse>();
   const lessonIndex = new Map<string, DigitalTextbookLesson>();
 
-  for (const { textbook, chapter } of chapterEntries) {
+  for (const { textbook, chapter, version } of chapterEntries) {
     const lesson = lessonById.get(textbook.lesson_id);
     if (!lesson) continue;
 
@@ -249,24 +249,43 @@ export async function getDigitalTextbookManagementData(): Promise<DigitalTextboo
     const grammarModule = chapterModules.find(
       (module) => module.module_code === "grammar",
     );
+    const vocabularyNodes = vocabularyModule
+      ? (nodesByModuleId.get(vocabularyModule.id) ?? [])
+      : [];
+    const grammarNodes = grammarModule
+      ? (nodesByModuleId.get(grammarModule.id) ?? [])
+      : [];
 
     textbookEntry.chapters.push({
       id: chapter.id,
       number: chapter.chapter_number,
       slug: chapter.slug,
       status: chapter.status,
+      versionId: version.id,
+      versionNumber: version.version_number,
+      versionStatus: version.status,
       textbookSlug: textbook.slug,
-      nodes: (
-        vocabularyModule
-          ? (nodesByModuleId.get(vocabularyModule.id) ?? [])
-          : []
-      ).map((node) => ({
+      modules: chapterModules.map((module) => {
+        const moduleNodes = nodesByModuleId.get(module.id) ?? [];
+        return {
+          id: module.id,
+          code: module.module_code,
+          nodeCount: moduleNodes.length,
+          vocabularyCount: moduleNodes.reduce(
+            (sum, node) => sum + vocabularyOf(node.content).length,
+            0,
+          ),
+          grammarCount: moduleNodes.reduce(
+            (sum, node) => sum + grammarOf(node.content).length,
+            0,
+          ),
+        };
+      }),
+      nodes: vocabularyNodes.map((node) => ({
         id: node.id,
         vocabulary: vocabularyOf(node.content),
       })),
-      grammarNodes: (
-        grammarModule ? (nodesByModuleId.get(grammarModule.id) ?? []) : []
-      ).map((node) => ({
+      grammarNodes: grammarNodes.map((node) => ({
         id: node.id,
         items: grammarOf(node.content),
       })),
