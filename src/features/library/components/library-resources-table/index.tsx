@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 
 import { DataTable } from "@/components/ui/table/data-table";
+import type { LibraryCourseOption } from "@/app/dashboard/admin/library/LibraryResourceForm";
 import {
   Table,
   TableBody,
@@ -25,7 +26,7 @@ import {
   type LibraryCourseFilterOption,
   type LibraryTableFilters,
 } from "./library-table-toolbar";
-import { libraryResourceColumns } from "./columns";
+import { getLibraryResourceColumns } from "./columns";
 
 const INITIAL_FILTERS: LibraryTableFilters = {
   query: "",
@@ -50,15 +51,23 @@ const COLUMN_LABELS: Record<string, string> = {
 export function LibraryResourcesTable({
   data,
   courseOptions,
+  courseTargets,
+  canCurate,
 }: {
   data: LibraryResourceDisplayRow[];
   courseOptions: LibraryCourseFilterOption[];
+  courseTargets: LibraryCourseOption[];
+  canCurate: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "updated_at", desc: true },
   ]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<LibraryTableFilters>(INITIAL_FILTERS);
+  const columns = useMemo(
+    () => getLibraryResourceColumns({ canCurate, courses: courseTargets }),
+    [canCurate, courseTargets],
+  );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((resource) => {
@@ -93,7 +102,7 @@ export function LibraryResourcesTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: libraryResourceColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

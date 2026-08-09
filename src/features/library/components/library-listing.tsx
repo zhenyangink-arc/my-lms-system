@@ -1,4 +1,5 @@
 import { getLibraryManagementData } from "../api/service";
+import { UploadLibraryResourceDialog } from "./library-action-dialogs";
 import { LibraryResourcesTable } from "./library-resources-table";
 import type { LibraryResourceDisplayRow } from "./library-resources-table/types";
 
@@ -55,6 +56,11 @@ export default async function LibraryListing() {
 
   return (
     <div className="space-y-4">
+      {result.canCurate && (
+        <div className="flex justify-end">
+          <UploadLibraryResourceDialog courses={result.courses} />
+        </div>
+      )}
       {result.hasError && (
         <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
           资料、课程或课节数据暂时无法完整读取，请稍后刷新重试。
@@ -93,7 +99,12 @@ export default async function LibraryListing() {
         </div>
       </section>
 
-      <LibraryResourcesTable data={rows} courseOptions={courseOptions} />
+      <LibraryResourcesTable
+        data={rows}
+        courseOptions={courseOptions}
+        courseTargets={result.courses}
+        canCurate={result.canCurate}
+      />
     </div>
   );
 }

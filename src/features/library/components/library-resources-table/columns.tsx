@@ -2,6 +2,7 @@
 
 import type { ColumnDef } from "@tanstack/react-table";
 
+import type { LibraryCourseOption } from "@/app/dashboard/admin/library/LibraryResourceForm";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import {
@@ -11,6 +12,7 @@ import {
   LIBRARY_STATUS_LABELS,
   type LibraryStatus,
 } from "@/app/dashboard/library/config";
+import { LibraryResourceCellAction } from "./cell-action";
 import { ResourceDetailDialog } from "./resource-detail-dialog";
 import type { LibraryResourceDisplayRow } from "./types";
 
@@ -50,7 +52,14 @@ function statusClass(status: LibraryStatus) {
   return "bg-zinc-100 text-zinc-700";
 }
 
-export const libraryResourceColumns: ColumnDef<LibraryResourceDisplayRow>[] = [
+export function getLibraryResourceColumns({
+  canCurate,
+  courses,
+}: {
+  canCurate: boolean;
+  courses: LibraryCourseOption[];
+}): ColumnDef<LibraryResourceDisplayRow>[] {
+  return [
   {
     accessorKey: "title",
     header: sortableHeader("资料名称"),
@@ -153,9 +162,20 @@ export const libraryResourceColumns: ColumnDef<LibraryResourceDisplayRow>[] = [
     enableSorting: false,
     header: () => <span className="sr-only">查看资料</span>,
     cell: ({ row }) => (
-      <div className="flex justify-end">
+      <div className="flex min-w-64 items-center justify-end gap-1">
         <ResourceDetailDialog resource={row.original} />
+        <LibraryResourceCellAction
+          resource={row.original}
+          course={courses.find(
+            (course) =>
+              (course.lesson_id ?? course.course_id) ===
+              (row.original.lesson_id ?? row.original.course_id),
+          )}
+          courses={courses}
+          canCurate={canCurate}
+        />
       </div>
     ),
   },
-];
+  ];
+}
