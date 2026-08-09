@@ -165,9 +165,9 @@ export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxMan
     string,
     { id: string; vocabulary: GrowthToolboxVocabularyWord[] }[]
   >();
-  for (const module of vocabularyModuleResult.data ?? []) {
+  for (const vocabularyModule of vocabularyModuleResult.data ?? []) {
     const nodesForModule = (vocabularyNodeResult.data ?? [])
-      .filter((node) => node.module_id === module.id)
+      .filter((node) => node.module_id === vocabularyModule.id)
       .map((node) => ({
         id: node.id,
         vocabulary: (Array.isArray(node.content?.vocabulary)
@@ -183,8 +183,9 @@ export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxMan
             ),
         ),
       }));
-    const existing = vocabularyNodesByChapter.get(module.chapter_id) ?? [];
-    vocabularyNodesByChapter.set(module.chapter_id, [
+    const existing =
+      vocabularyNodesByChapter.get(vocabularyModule.chapter_id) ?? [];
+    vocabularyNodesByChapter.set(vocabularyModule.chapter_id, [
       ...existing,
       ...nodesForModule,
     ]);
