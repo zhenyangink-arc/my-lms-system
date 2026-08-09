@@ -42,7 +42,7 @@ export default async function AccountViewPage({ profileId }: { profileId: string
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="../" className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]">← 返回账号管理</Link>
+        <Link href="./" className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]">← 返回账号管理</Link>
         <AccountManagementActions profile={profile} viewerRole={result.viewerRole} accountScope={result.scope} />
       </div>
 
