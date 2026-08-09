@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { useFormStatus } from "react-dom";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -18,7 +18,6 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
   Dialog,
@@ -193,12 +192,17 @@ function UniversityFormFields({ university }: { university?: ManagedUniversity }
   );
 }
 
-function PermanentUniversityDelete({ university }: { university: ManagedUniversity }) {
+function PermanentUniversityDelete({
+  university,
+  open,
+  onOpenChange,
+}: {
+  university: ManagedUniversity;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   return (
-    <AlertDialog>
-      <AlertDialogTrigger className="inline-flex h-9 items-center gap-2 border border-red-200 px-3 text-xs font-semibold text-red-700">
-        <Trash2 className="size-3.5" />永久删除大学
-      </AlertDialogTrigger>
+    <AlertDialog open={open} onOpenChange={onOpenChange}>
       <AlertDialogContent>
         <AlertDialogHeader>
           <AlertDialogTitle>永久删除“{university.name_zh}”</AlertDialogTitle>
@@ -244,29 +248,52 @@ export function EditUniversityDialog({
   university: ManagedUniversity;
   canPermanentlyDelete: boolean;
 }) {
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+
+  function openDeleteConfirmation() {
+    setEditOpen(false);
+    setDeleteOpen(true);
+  }
+
   return (
-    <Dialog>
-      <DialogTrigger className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)]">
-        <Pencil className="size-3" />编辑
-      </DialogTrigger>
-      <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[980px]">
-        <DialogHeader className="border-b border-[var(--app-border)] px-6 py-4">
-          <DialogTitle>编辑大学资料</DialogTitle>
-          <DialogDescription>{university.name_zh} · {university.name_ko}</DialogDescription>
-        </DialogHeader>
-        <form action={updateUniversityAction.bind(null, university.id)} className="flex min-h-0 flex-1 flex-col">
-          <div className="min-h-0 flex-1 overflow-y-auto p-6"><UniversityFormFields university={university} /></div>
-          <DialogFooter className="mx-0 mb-0 rounded-none px-6"><SubmitButton label="保存大学资料" /></DialogFooter>
-        </form>
-        {canPermanentlyDelete && (
-          <div className="border-t border-red-100 bg-red-50/60 px-6 py-4">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <p className="text-xs leading-5 text-red-700">危险操作仅限平台负责人，并需要再次确认。</p>
-              <PermanentUniversityDelete university={university} />
+    <>
+      <Dialog open={editOpen} onOpenChange={setEditOpen}>
+        <DialogTrigger className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)]">
+          <Pencil className="size-3" />编辑
+        </DialogTrigger>
+        <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[980px]">
+          <DialogHeader className="border-b border-[var(--app-border)] px-6 py-4">
+            <DialogTitle>编辑大学资料</DialogTitle>
+            <DialogDescription>{university.name_zh} · {university.name_ko}</DialogDescription>
+          </DialogHeader>
+          <form action={updateUniversityAction.bind(null, university.id)} className="flex min-h-0 flex-1 flex-col">
+            <div className="min-h-0 flex-1 overflow-y-auto p-6"><UniversityFormFields university={university} /></div>
+            <DialogFooter className="mx-0 mb-0 rounded-none px-6"><SubmitButton label="保存大学资料" /></DialogFooter>
+          </form>
+          {canPermanentlyDelete && (
+            <div className="border-t border-red-100 bg-red-50/60 px-6 py-4">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <p className="text-xs leading-5 text-red-700">危险操作仅限平台负责人，并需要再次确认。</p>
+                <button
+                  type="button"
+                  onClick={openDeleteConfirmation}
+                  className="inline-flex h-9 items-center gap-2 border border-red-200 px-3 text-xs font-semibold text-red-700"
+                >
+                  <Trash2 className="size-3.5" />永久删除大学
+                </button>
+              </div>
             </div>
-          </div>
-        )}
-      </DialogContent>
-    </Dialog>
+          )}
+        </DialogContent>
+      </Dialog>
+      {canPermanentlyDelete && (
+        <PermanentUniversityDelete
+          university={university}
+          open={deleteOpen}
+          onOpenChange={setDeleteOpen}
+        />
+      )}
+    </>
   );
 }
