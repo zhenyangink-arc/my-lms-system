@@ -38,6 +38,8 @@ export default async function DigitalTextbookListing() {
             (sum, node) => sum + node.items.length,
             0,
           ),
+          vocabularyNodes: chapter.nodes,
+          grammarNodes: chapter.grammarNodes,
         })),
       ),
     ),

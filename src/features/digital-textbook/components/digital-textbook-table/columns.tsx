@@ -3,6 +3,11 @@
 import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import type {
+  DigitalTextbookGrammarNode,
+  DigitalTextbookVocabularyNode,
+} from "../../api/types";
+import { DigitalTextbookCellAction } from "./cell-action";
 
 export type DigitalTextbookDisplayRow = {
   id: string;
@@ -26,6 +31,8 @@ export type DigitalTextbookDisplayRow = {
   nodeCount: number;
   vocabularyCount: number;
   grammarCount: number;
+  vocabularyNodes: DigitalTextbookVocabularyNode[];
+  grammarNodes: DigitalTextbookGrammarNode[];
 };
 
 function sortableHeader(title: string) {
@@ -177,5 +184,16 @@ export const digitalTextbookColumns: ColumnDef<DigitalTextbookDisplayRow>[] = [
     accessorKey: "chapterStatus",
     header: sortableHeader("章节状态"),
     cell: ({ row }) => <StatusBadge status={row.original.chapterStatus} />,
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="block text-right">操作</span>,
+    cell: ({ row }) => (
+      <div className="text-right">
+        <DigitalTextbookCellAction row={row.original} />
+      </div>
+    ),
   },
 ];
