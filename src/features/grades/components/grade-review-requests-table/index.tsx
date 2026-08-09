@@ -104,7 +104,7 @@ export function GradeReviewRequestsTable({
       emptyContent="没有符合条件的成绩复核请求"
       footer={
         <p className="text-xs text-[var(--app-muted)]">
-          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 条复核请求，本步骤仅展示，不提供处理操作
+          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 条复核请求，可用操作由当前账号权限决定
         </p>
       }
     >
