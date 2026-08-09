@@ -1,4 +1,10 @@
 import { getUniversityManagementData } from "../api/service";
+import type {
+  RequirementUniversityOption,
+  UniversityRequirementDisplayRow,
+  UniversityVisaRequirementDisplayRow,
+} from "./requirements-maintenance/types";
+import { UniversityRequirementsWorkspace } from "./requirements-maintenance/university-requirements-workspace";
 import { UniversitiesTable } from "./universities-table";
 
 export default async function UniversityListing() {
@@ -12,6 +18,32 @@ export default async function UniversityListing() {
   const regionCount = new Set(
     result.universities.map((university) => university.province),
   ).size;
+  const universityById = new Map(
+    result.universities.map((university) => [university.id, university]),
+  );
+  const universityOptions: RequirementUniversityOption[] = result.universities
+    .map((university) => ({ value: university.id, label: university.name_zh }))
+    .sort((left, right) => left.label.localeCompare(right.label, "zh-CN"));
+  const requirements: UniversityRequirementDisplayRow[] =
+    result.requirements.map((requirement) => {
+      const university = universityById.get(requirement.university_id);
+      return {
+        ...requirement,
+        universityName: university?.name_zh ?? "未匹配大学",
+        universityNameKo: university?.name_ko ?? "名称待确认",
+        universityProvince: university?.province ?? "地区待确认",
+      };
+    });
+  const visaRequirements: UniversityVisaRequirementDisplayRow[] =
+    result.visaRequirements.map((requirement) => {
+      const university = universityById.get(requirement.university_id);
+      return {
+        ...requirement,
+        universityName: university?.name_zh ?? "未匹配大学",
+        universityNameKo: university?.name_ko ?? "名称待确认",
+        universityProvince: university?.province ?? "地区待确认",
+      };
+    });
 
   return (
     <div className="space-y-4">
@@ -54,6 +86,12 @@ export default async function UniversityListing() {
       </section>
 
       <UniversitiesTable data={result.universities} />
+
+      <UniversityRequirementsWorkspace
+        requirements={requirements}
+        visaRequirements={visaRequirements}
+        universities={universityOptions}
+      />
     </div>
   );
 }
