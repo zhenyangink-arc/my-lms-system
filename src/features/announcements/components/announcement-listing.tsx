@@ -1,4 +1,5 @@
 import { getAnnouncementManagementData } from "../api/service";
+import { CreateAnnouncementDialog } from "./announcement-action-dialogs";
 import { AnnouncementsTable } from "./announcements-table";
 import { TenantAnnouncementInspection } from "./tenant-announcement-inspection";
 
@@ -25,6 +26,9 @@ export default async function AnnouncementListing() {
 
   return (
     <div className="space-y-4">
+      <div className="flex justify-end">
+        <CreateAnnouncementDialog scope={result.scope} />
+      </div>
       {result.hasError && (
         <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
           公告、机构或阅读统计暂时无法完整读取，请稍后刷新重试。

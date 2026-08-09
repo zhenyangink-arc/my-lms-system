@@ -13,6 +13,7 @@ import {
 } from "@/app/dashboard/announcements/config";
 import type { ManagedAnnouncement } from "../../api/types";
 import { AnnouncementDetailDialog } from "./announcement-detail-dialog";
+import { AnnouncementCellAction } from "./cell-action";
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -167,7 +168,10 @@ export const announcementColumns: ColumnDef<ManagedAnnouncement>[] = [
     enableSorting: false,
     header: () => <span className="sr-only">查看公告</span>,
     cell: ({ row }) => (
-      <AnnouncementDetailDialog announcement={row.original} />
+      <div className="flex items-center justify-end gap-1">
+        <AnnouncementDetailDialog announcement={row.original} />
+        <AnnouncementCellAction announcement={row.original} />
+      </div>
     ),
   },
 ];
