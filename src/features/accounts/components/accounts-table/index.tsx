@@ -21,11 +21,15 @@ export function AccountsTable({
   scope,
   viewerRole,
   filters,
+  hasFilters,
+  totalCount,
 }: {
   data: AccountListProfile[];
   scope: AccountScope;
   viewerRole: string;
   filters: AccountFilters;
+  hasFilters: boolean;
+  totalCount: number;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -47,10 +51,10 @@ export function AccountsTable({
 
   return (
     <DataTable
-      toolbar={<AccountTableToolbar table={table} scope={scope} filters={filters} />}
+      toolbar={<AccountTableToolbar table={table} scope={scope} filters={filters} hasFilters={hasFilters} />}
       isEmpty={data.length === 0}
       emptyContent="没有符合条件的账号"
-      footer={<p className="text-xs text-[var(--app-muted)]">当前显示 {data.length} 个账号</p>}
+      footer={<p className="text-xs text-[var(--app-muted)]">当前显示 {data.length} 个，共 {totalCount} 个账号</p>}
     >
       <Table className="min-w-[1080px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">

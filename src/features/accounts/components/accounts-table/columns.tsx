@@ -11,7 +11,7 @@ import {
   STATUS_LABELS,
 } from "../../constants/account-options";
 import type { AccountListProfile, AccountScope } from "../../api/types";
-import { AccountCellAction, type AccountCellActionProps } from "./cell-action";
+import { AccountCellAction } from "./cell-action";
 
 const ACCOUNT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -43,17 +43,10 @@ function sortableHeader(title: string) {
 export function getAccountColumns({
   scope,
   viewerRole,
-  actions,
 }: {
   scope: AccountScope;
   viewerRole: string;
-  actions?: Partial<Omit<AccountCellActionProps, "profile" | "scope" | "canManage">>;
 }): ColumnDef<AccountListProfile>[] {
-  const canManage =
-    viewerRole === "platform_super_admin" ||
-    viewerRole === "tenant_super_admin" ||
-    viewerRole === "ceo";
-
   return [
     {
       id: "account",
@@ -135,8 +128,7 @@ export function getAccountColumns({
           <AccountCellAction
             profile={row.original}
             scope={scope}
-            canManage={canManage}
-            {...actions}
+            viewerRole={viewerRole}
           />
         </div>
       ),

@@ -12,7 +12,7 @@ import {
   canManageTarget,
   getAssignableRoles,
   type AppRole,
-} from "./permissions";
+} from "@/features/accounts/constants/account-options";
 
 const VALID_STATUSES = ["active", "inactive", "suspended"];
 const VALID_MEMBERSHIP_TIERS = ["normal", "vip1", "vip2", "vip3"];
