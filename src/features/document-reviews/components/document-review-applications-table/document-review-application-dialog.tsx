@@ -10,6 +10,11 @@ import {
 } from "@/components/ui/dialog";
 import { APPLICATION_STAGE_LABELS } from "@/app/dashboard/documents/constants";
 import type { DocumentReviewApplication } from "../../api/types";
+import {
+  DocumentReviewDecisionActions,
+  DocumentReviewItemLockAction,
+  DocumentReviewTargetLockAction,
+} from "../document-review-application-actions";
 
 const REVIEW_LABELS: Record<DocumentReviewApplication["reviewStatus"], string> = {
   preparing: "准备中",
@@ -64,6 +69,13 @@ export function DocumentReviewApplicationDialog({
           </DialogDescription>
         </DialogHeader>
 
+        <div className="flex items-center justify-between gap-4 border-b border-[var(--app-border)] px-5 py-3">
+          <p className="text-xs text-[var(--app-muted)]">
+            整单锁定会限制学生端继续修改资料。
+          </p>
+          <DocumentReviewTargetLockAction application={application} />
+        </div>
+
         <div className="overflow-x-auto border-b border-[var(--app-border)]">
           <table className="w-full min-w-[760px] border-collapse text-left text-xs">
             <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]">
@@ -112,6 +124,7 @@ export function DocumentReviewApplicationDialog({
                   <th className="px-4 py-3 font-medium">资料名称</th>
                   <th className="px-4 py-3 font-medium">准备状态</th>
                   <th className="px-4 py-3 font-medium">锁定状态</th>
+                  <th className="px-4 py-3 font-medium">操作</th>
                   <th className="px-4 py-3 font-medium">截止日期</th>
                   <th className="px-4 py-3 font-medium">管理员备注</th>
                 </tr>
@@ -123,6 +136,12 @@ export function DocumentReviewApplicationDialog({
                     <td className="px-4 py-3 font-semibold">{document.title}</td>
                     <td className="px-4 py-3">{ITEM_STATUS_LABELS[document.status]}</td>
                     <td className="px-4 py-3">{document.lockedAt ? "已锁定" : "未锁定"}</td>
+                    <td className="px-4 py-3">
+                      <DocumentReviewItemLockAction
+                        studentId={application.studentId}
+                        item={document}
+                      />
+                    </td>
                     <td className="px-4 py-3 font-mono">{document.dueDate || "—"}</td>
                     <td className="max-w-72 whitespace-pre-wrap px-4 py-3 text-[var(--app-text-soft)]">
                       {document.adminNote || "—"}
@@ -131,7 +150,7 @@ export function DocumentReviewApplicationDialog({
                 ))}
                 {application.documents.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-4 py-10 text-center text-[var(--app-muted)]">
+                    <td colSpan={7} className="px-4 py-10 text-center text-[var(--app-muted)]">
                       这份申请单还没有资料项目
                     </td>
                   </tr>
@@ -140,6 +159,8 @@ export function DocumentReviewApplicationDialog({
             </table>
           </div>
         </section>
+
+        <DocumentReviewDecisionActions application={application} />
       </DialogContent>
     </Dialog>
   );
