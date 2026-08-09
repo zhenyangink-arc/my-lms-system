@@ -188,6 +188,7 @@ export async function getHelpTicketDetailData(
     student: studentResult.data as HelpProfileRow | null,
     teachers,
     canAssignTickets: access.canAssignTickets,
+    dashboardBasePath: access.dashboardBasePath,
     hasMessageError: Boolean(messagesResult.error),
   };
 }

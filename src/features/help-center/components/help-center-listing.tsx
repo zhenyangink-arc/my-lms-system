@@ -76,7 +76,10 @@ export default async function HelpCenterListing() {
 
       <section className="space-y-2">
         <h2 className="text-sm font-semibold text-[var(--app-text)]">学生工单</h2>
-        <HelpTicketsTable data={ticketResult.tickets} />
+        <HelpTicketsTable
+          data={ticketResult.tickets}
+          dashboardBasePath={access.dashboardBasePath}
+        />
       </section>
 
       {articleResult.canManageArticles && (

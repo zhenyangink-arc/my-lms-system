@@ -12,6 +12,7 @@ import {
 } from "@/app/dashboard/help/config";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type { ManagedHelpTicket } from "../../api/types";
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
@@ -58,7 +59,10 @@ function priorityClass(priority: HelpTicketPriority) {
     : "bg-zinc-100 text-zinc-700";
 }
 
-export const helpTicketColumns: ColumnDef<ManagedHelpTicket>[] = [
+export function getHelpTicketColumns(
+  dashboardBasePath: string,
+): ColumnDef<ManagedHelpTicket>[] {
+  return [
   {
     accessorKey: "subject",
     header: sortableHeader("问题"),
@@ -128,11 +132,15 @@ export const helpTicketColumns: ColumnDef<ManagedHelpTicket>[] = [
     header: () => <span className="sr-only">查看工单</span>,
     cell: ({ row }) => (
       <Link
-        href={`/dashboard/admin/help/tickets/${row.original.id}`}
+        href={scopeDashboardPath(
+          `/dashboard/admin/help/tickets/${row.original.id}`,
+          dashboardBasePath,
+        )}
         className="inline-flex h-8 items-center border border-[var(--app-border)] px-3 text-[11px] font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
       >
         查看详情
       </Link>
     ),
   },
-];
+  ];
+}

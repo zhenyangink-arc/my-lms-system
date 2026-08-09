@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
 
 export type HelpCenterAccess = {
   canManage: boolean;
@@ -13,6 +14,7 @@ export type HelpCenterAccess = {
   canViewPlatformOverview: boolean;
   scope: "platform" | "tenant" | null;
   tenantId: string | null;
+  dashboardBasePath: string;
   role: UserRole;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
@@ -32,6 +34,7 @@ export async function getHelpCenterAccess(): Promise<HelpCenterAccess> {
       canViewPlatformOverview: true,
       scope: "platform",
       tenantId,
+      dashboardBasePath: getDashboardBasePath(null),
       role,
       supabase,
       user,
@@ -48,6 +51,7 @@ export async function getHelpCenterAccess(): Promise<HelpCenterAccess> {
       canViewPlatformOverview: false,
       scope: "tenant",
       tenantId,
+      dashboardBasePath: getDashboardBasePath(tenant?.slug),
       role,
       supabase,
       user,
@@ -62,6 +66,7 @@ export async function getHelpCenterAccess(): Promise<HelpCenterAccess> {
     canViewPlatformOverview: false,
     scope: null,
     tenantId,
+    dashboardBasePath: getDashboardBasePath(tenant?.slug),
     role,
     supabase,
     user,

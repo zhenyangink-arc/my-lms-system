@@ -171,5 +171,6 @@ export type HelpTicketDetailResult = {
   student: HelpProfileRow | null;
   teachers: HelpTicketTeacher[];
   canAssignTickets: boolean;
+  dashboardBasePath: string;
   hasMessageError: boolean;
 };

@@ -10,6 +10,7 @@ import {
 import { HelpTicketReplyForm } from "@/app/dashboard/help/HelpTicketReplyForm";
 import { HelpTicketManager } from "@/app/dashboard/admin/help/HelpTicketManager";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { getHelpTicketDetailData } from "../api/tickets-service";
 
 export default async function HelpTicketViewPage({ ticketId }: { ticketId: string }) {
@@ -21,7 +22,10 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <Link
-          href="/dashboard/admin/help"
+          href={scopeDashboardPath(
+            "/dashboard/admin/help",
+            result.dashboardBasePath,
+          )}
           className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
         >
           ← 返回帮助中心管理

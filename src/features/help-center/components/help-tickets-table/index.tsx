@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ManagedHelpTicket } from "../../api/types";
-import { helpTicketColumns } from "./columns";
+import { getHelpTicketColumns } from "./columns";
 import {
   HelpTicketTableToolbar,
   type HelpTicketTableFilters,
@@ -42,7 +42,13 @@ const COLUMN_LABELS: Record<string, string> = {
   updatedAt: "最近更新",
 };
 
-export function HelpTicketsTable({ data }: { data: ManagedHelpTicket[] }) {
+export function HelpTicketsTable({
+  data,
+  dashboardBasePath,
+}: {
+  data: ManagedHelpTicket[];
+  dashboardBasePath: string;
+}) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<HelpTicketTableFilters>(INITIAL_FILTERS);
@@ -61,11 +67,15 @@ export function HelpTicketsTable({ data }: { data: ManagedHelpTicket[] }) {
         .includes(query);
     });
   }, [data, filters]);
+  const columns = useMemo(
+    () => getHelpTicketColumns(dashboardBasePath),
+    [dashboardBasePath],
+  );
   // TanStack Table intentionally exposes mutable methods inside a client boundary.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: helpTicketColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
