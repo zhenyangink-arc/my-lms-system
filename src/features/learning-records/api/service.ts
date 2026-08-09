@@ -144,6 +144,7 @@ export async function getLearningRecordManagementData(): Promise<LearningRecordM
     scope: "institution",
     role: access.role,
     tenantId,
+    dashboardBasePath: access.dashboardBasePath,
     canManageNotes: true,
     assignedStudentIds,
     students,

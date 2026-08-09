@@ -18,6 +18,7 @@ import {
   LEARNING_RECORD_VISIBILITY_LABELS,
 } from "@/app/dashboard/records/config";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { LearningRecordEditDialog } from "./LearningRecordEditDialog";
 import { LearningRecordForm, type LearningRecordFormValue } from "./LearningRecordForm";
 import { LearningRecordStatusButton } from "./LearningRecordStatusButton";
@@ -46,10 +47,12 @@ export function StudentLearningRecordDialog({
   student,
   summary,
   notes,
+  dashboardBasePath,
 }: {
   student: Student;
   summary: Summary;
   notes: Note[];
+  dashboardBasePath: string;
 }) {
   const [showComposer, setShowComposer] = useState(false);
   const formStudents = [{ id: student.id, name: student.name, email: student.email }];
@@ -122,7 +125,7 @@ export function StudentLearningRecordDialog({
         </section>
 
         <div className="flex justify-end border-t px-5 py-3" style={{ borderColor: "var(--app-border)" }}>
-          <Link href={`/dashboard/admin/accounts/${student.id}`} className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>查看账号档案</Link>
+          <Link href={scopeDashboardPath(`/dashboard/admin/accounts/${student.id}`, dashboardBasePath)} className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>查看账号档案</Link>
         </div>
       </DialogContent>
     </Dialog>

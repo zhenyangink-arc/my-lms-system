@@ -83,6 +83,7 @@ export default async function LearningRecordListing() {
       <StudentLearningRecordsTable
         data={rows}
         scopeLabel={ROLE_SCOPE_LABELS[result.role] ?? "当前机构学生"}
+        dashboardBasePath={result.dashboardBasePath}
       />
     </div>
   );

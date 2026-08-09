@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import { Pencil, Plus } from "lucide-react";
+import Link from "next/link";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import {
@@ -13,6 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type {
   LearningRecordNote,
   LearningRecordStatus,
@@ -62,8 +64,10 @@ function CountCell({ value }: { value: number }) {
 
 export function StudentLearningRecordDetailDialog({
   student,
+  dashboardBasePath,
 }: {
   student: StudentLearningRecordTableRow;
+  dashboardBasePath: string;
 }) {
   const [editor, setEditor] = useState<"new" | LearningRecordNote | null>(null);
   const closeEditor = useCallback(() => setEditor(null), []);
@@ -201,6 +205,18 @@ export function StudentLearningRecordDetailDialog({
             )}
           </div>
         </section>
+
+        <div className="flex justify-end border-t border-[var(--app-border)] px-5 py-3">
+          <Link
+            href={scopeDashboardPath(
+              `/dashboard/admin/accounts/${student.student_id}`,
+              dashboardBasePath,
+            )}
+            className="inline-flex h-8 items-center border border-[var(--app-border)] px-3 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+          >
+            查看账号档案
+          </Link>
+        </div>
       </DialogContent>
     </Dialog>
   );

@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { studentLearningRecordColumns } from "./columns";
+import { getStudentLearningRecordColumns } from "./columns";
 import { StudentRecordTableToolbar } from "./student-record-table-toolbar";
 import type {
   StudentLearningRecordFilters,
@@ -51,13 +51,19 @@ function activityOf(row: StudentLearningRecordTableRow) {
 export function StudentLearningRecordsTable({
   data,
   scopeLabel,
+  dashboardBasePath,
 }: {
   data: StudentLearningRecordTableRow[];
   scopeLabel: string;
+  dashboardBasePath: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<StudentLearningRecordFilters>(INITIAL_FILTERS);
+  const columns = useMemo(
+    () => getStudentLearningRecordColumns(dashboardBasePath),
+    [dashboardBasePath],
+  );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((row) => {
@@ -74,7 +80,7 @@ export function StudentLearningRecordsTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: studentLearningRecordColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

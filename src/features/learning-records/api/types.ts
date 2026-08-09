@@ -89,6 +89,7 @@ export type TenantLearningRecordManagementData = {
   scope: "institution";
   role: UserRole;
   tenantId: string;
+  dashboardBasePath: string;
   canManageNotes: true;
   assignedStudentIds: string[] | null;
   students: LearningRecordStudent[];

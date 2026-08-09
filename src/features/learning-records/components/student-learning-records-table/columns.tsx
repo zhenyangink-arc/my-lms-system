@@ -47,7 +47,10 @@ function Count({ value, detail }: { value: number; detail?: string }) {
   );
 }
 
-export const studentLearningRecordColumns: ColumnDef<StudentLearningRecordTableRow>[] = [
+export function getStudentLearningRecordColumns(
+  dashboardBasePath: string,
+): ColumnDef<StudentLearningRecordTableRow>[] {
+  return [
   {
     id: "student",
     accessorFn: (row) => row.full_name || row.email || row.student_id,
@@ -134,6 +137,12 @@ export const studentLearningRecordColumns: ColumnDef<StudentLearningRecordTableR
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="sr-only">学生详情</span>,
-    cell: ({ row }) => <StudentLearningRecordDetailDialog student={row.original} />,
+    cell: ({ row }) => (
+      <StudentLearningRecordDetailDialog
+        student={row.original}
+        dashboardBasePath={dashboardBasePath}
+      />
+    ),
   },
-];
+  ];
+}
