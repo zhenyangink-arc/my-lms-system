@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { getAnnouncementManagementData } from "../api/service";
 import { CreateAnnouncementDialog } from "./announcement-action-dialogs";
 import { AnnouncementsTable } from "./announcements-table";
@@ -26,7 +28,13 @@ export default async function AnnouncementListing() {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-end">
+      <div className="flex justify-end gap-2">
+        <Link
+          href="/dashboard/announcements"
+          className="inline-flex h-9 items-center rounded-md border border-[var(--app-border)] px-4 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        >
+          查看成员公告栏
+        </Link>
         <CreateAnnouncementDialog scope={result.scope} />
       </div>
       {result.hasError && (
