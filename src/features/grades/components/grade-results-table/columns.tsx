@@ -5,6 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { LiveGradeResult } from "../../api/types";
+import { GradeResultAction } from "./grade-result-action";
 
 const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -138,5 +139,12 @@ export const gradeResultColumns: ColumnDef<LiveGradeResult>[] = [
         />
       </span>
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="sr-only">成绩操作</span>,
+    cell: ({ row }) => <GradeResultAction result={row.original} />,
   },
 ];

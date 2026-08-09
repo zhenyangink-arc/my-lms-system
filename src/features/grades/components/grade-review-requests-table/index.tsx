@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { GradeReviewRequest } from "../../api/types";
-import { gradeReviewColumns } from "./columns";
+import { getGradeReviewColumns } from "./columns";
 import {
   GradeReviewTableToolbar,
   type GradeReviewFilters,
@@ -43,13 +43,19 @@ const INITIAL_FILTERS: GradeReviewFilters = {
 export function GradeReviewRequestsTable({
   data,
   scopeLabel,
+  canResolveReviews,
 }: {
   data: GradeReviewRequest[];
   scopeLabel: string;
+  canResolveReviews: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<GradeReviewFilters>(INITIAL_FILTERS);
+  const columns = useMemo(
+    () => getGradeReviewColumns(canResolveReviews),
+    [canResolveReviews],
+  );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((row) => {
@@ -67,7 +73,7 @@ export function GradeReviewRequestsTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: gradeReviewColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

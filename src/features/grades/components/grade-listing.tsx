@@ -62,7 +62,11 @@ export default async function GradeListing() {
       </section>
 
       <GradeResultsTable data={result.results} scopeLabel={scopeLabel} />
-      <GradeReviewRequestsTable data={result.reviews} scopeLabel={scopeLabel} />
+      <GradeReviewRequestsTable
+        data={result.reviews}
+        scopeLabel={scopeLabel}
+        canResolveReviews={result.role !== "teacher"}
+      />
     </div>
   );
 }

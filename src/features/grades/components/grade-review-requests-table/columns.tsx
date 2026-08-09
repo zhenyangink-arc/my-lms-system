@@ -9,6 +9,7 @@ import type {
   GradeReviewSourceType,
   GradeReviewStatus,
 } from "../../api/types";
+import { GradeReviewAction } from "./grade-review-action";
 
 const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -53,7 +54,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const gradeReviewColumns: ColumnDef<GradeReviewRequest>[] = [
+export function getGradeReviewColumns(
+  canResolveReviews: boolean,
+): ColumnDef<GradeReviewRequest>[] {
+  return [
   {
     id: "student",
     accessorKey: "student_name",
@@ -136,4 +140,20 @@ export const gradeReviewColumns: ColumnDef<GradeReviewRequest>[] = [
       </p>
     ),
   },
-];
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="sr-only">复核操作</span>,
+    cell: ({ row }) =>
+      canResolveReviews ? (
+        <GradeReviewAction
+          reviewId={row.original.id}
+          response={row.original.response}
+        />
+      ) : (
+        <span className="text-[10px] text-[var(--app-muted)]">仅查看</span>
+      ),
+  },
+  ];
+}
