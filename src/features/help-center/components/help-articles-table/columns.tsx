@@ -10,6 +10,7 @@ import {
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { ManagedHelpArticle } from "../../api/types";
+import { HelpArticleRowActions } from "../help-article-actions";
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -104,5 +105,12 @@ export const helpArticleColumns: ColumnDef<ManagedHelpArticle>[] = [
         />
       </span>
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="sr-only">文章操作</span>,
+    cell: ({ row }) => <HelpArticleRowActions article={row.original} />,
   },
 ];

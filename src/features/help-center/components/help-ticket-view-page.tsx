@@ -7,6 +7,8 @@ import {
   HELP_TICKET_PRIORITY_LABELS,
   HELP_TICKET_STATUS_LABELS,
 } from "@/app/dashboard/help/config";
+import { HelpTicketReplyForm } from "@/app/dashboard/help/HelpTicketReplyForm";
+import { HelpTicketManager } from "@/app/dashboard/admin/help/HelpTicketManager";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { getHelpTicketDetailData } from "../api/tickets-service";
 
@@ -48,6 +50,23 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
 
       <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">
         <div className="border-b border-[var(--app-border)] px-4 py-3 text-sm font-semibold text-[var(--app-text)]">
+          处理设置
+        </div>
+        <div className="p-4">
+          <HelpTicketManager
+            ticketId={ticket.id}
+            status={ticket.status}
+            priority={ticket.priority}
+            resolution={ticket.resolution}
+            canAssign={result.canAssignTickets}
+            assignedTo={ticket.assigned_to}
+            teachers={result.teachers}
+          />
+        </div>
+      </section>
+
+      <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">
+        <div className="border-b border-[var(--app-border)] px-4 py-3 text-sm font-semibold text-[var(--app-text)]">
           学生问题
         </div>
         <div className="grid gap-0 lg:grid-cols-[minmax(0,1fr)_320px]">
@@ -73,6 +92,13 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
             </p>
           </div>
         )}
+        <div className="border-t border-[var(--app-border)] p-4">
+          <HelpTicketReplyForm
+            ticketId={ticket.id}
+            staff
+            disabled={ticket.status === "closed"}
+          />
+        </div>
       </section>
 
       <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">

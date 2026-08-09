@@ -1,6 +1,7 @@
 import { requireHelpCenterManager } from "@/lib/help-center";
 import { getHelpArticleManagementData } from "../api/articles-service";
 import { getHelpTicketManagementData } from "../api/tickets-service";
+import { CreateHelpArticleDialog } from "./help-article-actions";
 import { HelpArticlesTable } from "./help-articles-table";
 import { HelpTicketsTable } from "./help-tickets-table";
 import { PlatformHelpOverview } from "./platform-help-overview";
@@ -80,7 +81,10 @@ export default async function HelpCenterListing() {
 
       {articleResult.canManageArticles && (
         <section className="space-y-2">
-          <h2 className="text-sm font-semibold text-[var(--app-text)]">帮助文章</h2>
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-[var(--app-text)]">帮助文章</h2>
+            <CreateHelpArticleDialog />
+          </div>
           <HelpArticlesTable data={articleResult.articles} />
         </section>
       )}
