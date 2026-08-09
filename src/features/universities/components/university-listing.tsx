@@ -1,4 +1,5 @@
 import { getUniversityManagementData } from "../api/service";
+import { CreateUniversityDialog } from "./university-action-dialogs";
 import type {
   RequirementUniversityOption,
   UniversityRequirementDisplayRow,
@@ -47,6 +48,11 @@ export default async function UniversityListing() {
 
   return (
     <div className="space-y-4">
+      {result.canManageContent && (
+        <div className="flex justify-end">
+          <CreateUniversityDialog />
+        </div>
+      )}
       {result.hasError && (
         <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
           大学资料暂时无法完整读取，请稍后刷新重试。
@@ -85,12 +91,17 @@ export default async function UniversityListing() {
         </div>
       </section>
 
-      <UniversitiesTable data={result.universities} />
+      <UniversitiesTable
+        data={result.universities}
+        canManageContent={result.canManageContent}
+        canPermanentlyDelete={result.canPermanentlyDelete}
+      />
 
       <UniversityRequirementsWorkspace
         requirements={requirements}
         visaRequirements={visaRequirements}
         universities={universityOptions}
+        canManageContent={result.canManageContent}
       />
     </div>
   );

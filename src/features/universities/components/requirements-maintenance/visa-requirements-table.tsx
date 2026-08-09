@@ -11,7 +11,7 @@ import {
   UNIVERSITY_VISA_STAGE_LABELS,
   UNIVERSITY_VISA_TYPE_LABELS,
 } from "../../constants/university-options";
-import { visaRequirementColumns } from "./columns";
+import { getVisaRequirementColumns } from "./columns";
 import { RequirementDataTable } from "./requirement-data-table";
 import { RequirementTableToolbar } from "./requirement-table-toolbar";
 import type {
@@ -31,15 +31,21 @@ const COLUMN_LABELS: Record<string, string> = {
 export function VisaRequirementsTable({
   data,
   universities,
+  canManageContent,
 }: {
   data: UniversityVisaRequirementDisplayRow[];
   universities: RequirementUniversityOption[];
+  canManageContent: boolean;
 }) {
   const [activeVisaType, setActiveVisaType] =
     useState<UniversityVisaType>("d4_language");
   const [query, setQuery] = useState("");
   const [universityId, setUniversityId] = useState("all");
   const [stage, setStage] = useState<"all" | UniversityVisaStage>("all");
+  const columns = useMemo(
+    () => getVisaRequirementColumns(canManageContent),
+    [canManageContent],
+  );
   const groups = useMemo(
     () =>
       UNIVERSITY_VISA_TYPES.map((visaType) => ({
@@ -69,7 +75,7 @@ export function VisaRequirementsTable({
     <RequirementDataTable
       key={activeVisaType}
       data={filteredData}
-      columns={visaRequirementColumns}
+      columns={columns}
       columnLabels={COLUMN_LABELS}
       initialSorting={[
         { id: "universityName", desc: false },

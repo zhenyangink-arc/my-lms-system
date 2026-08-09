@@ -14,10 +14,12 @@ export function UniversityRequirementsWorkspace({
   requirements,
   visaRequirements,
   universities,
+  canManageContent,
 }: {
   requirements: UniversityRequirementDisplayRow[];
   visaRequirements: UniversityVisaRequirementDisplayRow[];
   universities: RequirementUniversityOption[];
+  canManageContent: boolean;
 }) {
   const [view, setView] = useState<"application" | "visa">("application");
 
@@ -63,11 +65,13 @@ export function UniversityRequirementsWorkspace({
         <ApplicationRequirementsTable
           data={requirements}
           universities={universities}
+          canManageContent={canManageContent}
         />
       ) : (
         <VisaRequirementsTable
           data={visaRequirements}
           universities={universities}
+          canManageContent={canManageContent}
         />
       )}
     </section>

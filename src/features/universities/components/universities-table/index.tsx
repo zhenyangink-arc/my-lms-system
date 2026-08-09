@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ManagedUniversity } from "../../api/types";
-import { universityColumns } from "./columns";
+import { getUniversityColumns } from "./columns";
 import {
   INITIAL_UNIVERSITY_TABLE_FILTERS,
   UniversityTableToolbar,
@@ -76,13 +76,25 @@ function matchesTuitionFilter(
   return university.tuition_max_cny > 80_000;
 }
 
-export function UniversitiesTable({ data }: { data: ManagedUniversity[] }) {
+export function UniversitiesTable({
+  data,
+  canManageContent,
+  canPermanentlyDelete,
+}: {
+  data: ManagedUniversity[];
+  canManageContent: boolean;
+  canPermanentlyDelete: boolean;
+}) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sort_order", desc: false },
   ]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<UniversityTableFilters>(
     INITIAL_UNIVERSITY_TABLE_FILTERS,
+  );
+  const columns = useMemo(
+    () => getUniversityColumns({ canManageContent, canPermanentlyDelete }),
+    [canManageContent, canPermanentlyDelete],
   );
   const regions = useMemo(
     () =>
@@ -122,7 +134,7 @@ export function UniversitiesTable({ data }: { data: ManagedUniversity[] }) {
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: universityColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

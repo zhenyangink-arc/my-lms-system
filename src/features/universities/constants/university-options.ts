@@ -1,10 +1,31 @@
 import type {
   UniversityAdmissionStage,
+  UniversityDisciplineGroup,
   UniversityDocumentCategory,
   UniversityOwnership,
   UniversityVisaStage,
   UniversityVisaType,
 } from "../api/types";
+
+export const KOREAN_UNIVERSITY_REGIONS = [
+  "首尔特别市",
+  "釜山广域市",
+  "大邱广域市",
+  "仁川广域市",
+  "光州广域市",
+  "大田广域市",
+  "蔚山广域市",
+  "世宗特别自治市",
+  "京畿道",
+  "江原特别自治道",
+  "忠清北道",
+  "忠清南道",
+  "全北特别自治道",
+  "全罗南道",
+  "庆尚北道",
+  "庆尚南道",
+  "济州特别自治道",
+] as const;
 
 export const UNIVERSITY_OWNERSHIP_LABELS: Record<
   UniversityOwnership,
@@ -24,6 +45,16 @@ export const UNIVERSITY_ADMISSION_STAGE_LABELS: Record<
   bachelor_transfer: "本科插班",
   master: "硕士",
   doctor: "博士",
+};
+
+export const UNIVERSITY_DISCIPLINE_GROUP_LABELS: Record<
+  UniversityDisciplineGroup,
+  string
+> = {
+  humanities_social: "人文社会",
+  science: "理科",
+  natural_sciences: "自然科学",
+  medicine: "医学",
 };
 
 export const UNIVERSITY_DOCUMENT_CATEGORY_LABELS: Record<

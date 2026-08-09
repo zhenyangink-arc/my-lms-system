@@ -12,6 +12,10 @@ import type {
   UniversityRequirementDisplayRow,
   UniversityVisaRequirementDisplayRow,
 } from "./types";
+import {
+  EditApplicationRequirementDialog,
+  EditVisaRequirementDialog,
+} from "./requirement-action-dialogs";
 
 function sortableHeader(title: string) {
   return function SortableHeader({
@@ -34,7 +38,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const applicationRequirementColumns: ColumnDef<UniversityRequirementDisplayRow>[] = [
+export function getApplicationRequirementColumns(
+  canManageContent: boolean,
+): ColumnDef<UniversityRequirementDisplayRow>[] {
+  const columns: ColumnDef<UniversityRequirementDisplayRow>[] = [
   {
     accessorKey: "universityName",
     header: sortableHeader("大学"),
@@ -79,9 +86,27 @@ export const applicationRequirementColumns: ColumnDef<UniversityRequirementDispl
       <span className="font-mono tabular-nums">{row.original.sort_order}</span>
     ),
   },
-];
+  ];
+  if (canManageContent) {
+    columns.push({
+      id: "actions",
+      enableHiding: false,
+      enableSorting: false,
+      header: () => <span className="sr-only">操作</span>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          <EditApplicationRequirementDialog requirement={row.original} />
+        </div>
+      ),
+    });
+  }
+  return columns;
+}
 
-export const visaRequirementColumns: ColumnDef<UniversityVisaRequirementDisplayRow>[] = [
+export function getVisaRequirementColumns(
+  canManageContent: boolean,
+): ColumnDef<UniversityVisaRequirementDisplayRow>[] {
+  const columns: ColumnDef<UniversityVisaRequirementDisplayRow>[] = [
   {
     accessorKey: "universityName",
     header: sortableHeader("大学"),
@@ -143,4 +168,19 @@ export const visaRequirementColumns: ColumnDef<UniversityVisaRequirementDisplayR
       <span className="font-mono tabular-nums">{row.original.sort_order}</span>
     ),
   },
-];
+  ];
+  if (canManageContent) {
+    columns.push({
+      id: "actions",
+      enableHiding: false,
+      enableSorting: false,
+      header: () => <span className="sr-only">操作</span>,
+      cell: ({ row }) => (
+        <div className="text-right">
+          <EditVisaRequirementDialog requirement={row.original} />
+        </div>
+      ),
+    });
+  }
+  return columns;
+}

@@ -11,7 +11,7 @@ import {
   UNIVERSITY_ADMISSION_STAGE_LABELS,
   UNIVERSITY_DOCUMENT_CATEGORY_LABELS,
 } from "../../constants/university-options";
-import { applicationRequirementColumns } from "./columns";
+import { getApplicationRequirementColumns } from "./columns";
 import { RequirementDataTable } from "./requirement-data-table";
 import { RequirementTableToolbar } from "./requirement-table-toolbar";
 import type {
@@ -30,9 +30,11 @@ const COLUMN_LABELS: Record<string, string> = {
 export function ApplicationRequirementsTable({
   data,
   universities,
+  canManageContent,
 }: {
   data: UniversityRequirementDisplayRow[];
   universities: RequirementUniversityOption[];
+  canManageContent: boolean;
 }) {
   const [activeStage, setActiveStage] =
     useState<UniversityAdmissionStage>("language");
@@ -40,6 +42,10 @@ export function ApplicationRequirementsTable({
   const [universityId, setUniversityId] = useState("all");
   const [category, setCategory] = useState<"all" | UniversityDocumentCategory>(
     "all",
+  );
+  const columns = useMemo(
+    () => getApplicationRequirementColumns(canManageContent),
+    [canManageContent],
   );
   const groups = useMemo(
     () =>
@@ -70,7 +76,7 @@ export function ApplicationRequirementsTable({
     <RequirementDataTable
       key={activeStage}
       data={filteredData}
-      columns={applicationRequirementColumns}
+      columns={columns}
       columnLabels={COLUMN_LABELS}
       initialSorting={[
         { id: "universityName", desc: false },

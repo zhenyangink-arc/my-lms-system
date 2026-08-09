@@ -10,6 +10,7 @@ import {
   UNIVERSITY_ADMISSION_STAGE_LABELS,
   UNIVERSITY_OWNERSHIP_LABELS,
 } from "../../constants/university-options";
+import { UniversityCellAction } from "./cell-action";
 
 const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
@@ -57,7 +58,14 @@ function formatCurrency(value: number) {
   return new Intl.NumberFormat("zh-CN").format(value);
 }
 
-export const universityColumns: ColumnDef<ManagedUniversity>[] = [
+export function getUniversityColumns({
+  canManageContent,
+  canPermanentlyDelete,
+}: {
+  canManageContent: boolean;
+  canPermanentlyDelete: boolean;
+}): ColumnDef<ManagedUniversity>[] {
+  const columns: ColumnDef<ManagedUniversity>[] = [
   {
     accessorKey: "name_zh",
     header: sortableHeader("大学名称"),
@@ -189,4 +197,22 @@ export const universityColumns: ColumnDef<ManagedUniversity>[] = [
       </span>
     ),
   },
-];
+  ];
+
+  if (canManageContent) {
+    columns.push({
+      id: "actions",
+      enableHiding: false,
+      enableSorting: false,
+      header: () => <span className="block text-right">操作</span>,
+      cell: ({ row }) => (
+        <UniversityCellAction
+          university={row.original}
+          canPermanentlyDelete={canPermanentlyDelete}
+        />
+      ),
+    });
+  }
+
+  return columns;
+}
