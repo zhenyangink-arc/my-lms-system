@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getTenantManagementDetailData } from "../api/service";
+import { TenantLifecycleActions } from "./tenant-lifecycle-actions";
 import { TenantMembersTable } from "./tenant-members-table";
 
 const STATUS_LABELS = { active: "运行中", suspended: "已停用", archived: "历史归档" } as const;
@@ -30,6 +31,14 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
           </table>
         </div>
       </section>
+
+      <TenantLifecycleActions
+        tenantId={result.tenant.id}
+        tenantName={result.tenant.name}
+        slug={result.tenant.slug}
+        status={result.tenant.status}
+        canPermanentlyDelete={result.viewer.canPermanentlyDelete}
+      />
 
       <TenantMembersTable data={result.members} institutionName={result.tenant.name} />
     </div>

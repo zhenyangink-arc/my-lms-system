@@ -1,5 +1,8 @@
-import { getDashboardBasePath } from "@/lib/dashboard-path";
+import Link from "next/link";
+
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getTenantManagementData } from "../api/service";
+import { TenantCreateDialog } from "./tenant-create-dialog";
 import { TenantOverviewTable } from "./tenant-overview-table";
 
 const VIEWER_LABELS = {
@@ -9,9 +12,27 @@ const VIEWER_LABELS = {
 
 export default async function TenantManagementListing() {
   const result = await getTenantManagementData();
+  const dashboardBasePath = getDashboardBasePath();
 
   return (
     <div className="space-y-4">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-[var(--app-muted)]">
+          {VIEWER_LABELS[result.viewer.kind]}可查看并管理平台全部机构
+        </p>
+        <div className="flex items-center gap-2">
+          <Link
+            href={scopeDashboardPath(
+              "/dashboard/admin/tenants/history",
+              dashboardBasePath,
+            )}
+            className="inline-flex h-9 items-center border border-[var(--app-border)] px-3 text-xs font-semibold hover:bg-[var(--app-soft-bg)]"
+          >
+            查看历史记录
+          </Link>
+          {result.viewer.canCreateTenant && <TenantCreateDialog />}
+        </div>
+      </div>
       {result.schemaUnavailable && (
         <div className="border border-amber-200 bg-amber-50 px-4 py-3 text-xs font-medium text-amber-800">
           租户控制面尚未启用，请先确认多租户数据库迁移状态。
@@ -52,7 +73,7 @@ export default async function TenantManagementListing() {
 
       <TenantOverviewTable
         data={result.tenants}
-        dashboardBasePath={getDashboardBasePath()}
+        dashboardBasePath={dashboardBasePath}
         scopeLabel={`${VIEWER_LABELS[result.viewer.kind]} · 平台全部机构`}
       />
     </div>
