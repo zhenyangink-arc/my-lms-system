@@ -43,9 +43,9 @@ export type PermissionMembershipTier = "normal" | "vip1" | "vip2" | "vip3";
 
 export const PERMISSION_MEMBERSHIP_TIER_LABELS: Record<PermissionMembershipTier, string> = {
   normal: "普通学生",
-  vip1: "VIP1",
-  vip2: "VIP2",
-  vip3: "VIP3",
+  vip1: "一级会员",
+  vip2: "二级会员",
+  vip3: "三级会员",
 };
 
 export const ASSIGNABLE_PERMISSION_LABELS: Record<AssignablePermissionKey, string> = {
@@ -164,7 +164,7 @@ export const PERMISSION_MODULES: readonly PermissionModule[] = [
       { key: "conversation.content", label: "维护场景", description: "新建、编辑和发布平台会话场景。", platformRoles: p("platform_owner"), fixed: true },
       { key: "conversation.manage", label: "查看练习数据", description: "查看本机构学生练习与复盘。", tenantRoles: t("tenant_super_admin", "ceo"), explicitGrant: "conversation_practice.manage" },
       { key: "conversation.practice", label: "完整会话练习", description: "进入完整会话课程场景完成练习。", tenantRoles: t("student"), studentMinimumTier: "vip3", fixed: true },
-      { key: "conversation.ai", label: "AI 交流体验", description: "使用面向 VIP2 及以上学生的 AI 交流体验。", tenantRoles: t("student"), studentMinimumTier: "vip2", fixed: true },
+      { key: "conversation.ai", label: "智能交流体验", description: "使用面向二级会员及以上学生的智能交流体验。", tenantRoles: t("student"), studentMinimumTier: "vip2", fixed: true },
     ],
   },
   {

@@ -15,13 +15,17 @@ export const KOREAN_TEST_SEQUENCE = [
   ...KOREAN_LEVEL_ONE_TEST_SEQUENCE,
 ];
 
-export function getUnlockedKoreanTestSlugs(attemptedSlugs: Iterable<string>) {
-  const attempted = new Set(attemptedSlugs);
+/**
+ * 解锁按"通过"判断，不是"做过"：传入的必须是 passed=true 的章节测试 slug。
+ * 0 分交白卷也算"做过"，如果传全部尝试记录，掌握线就形同虚设。
+ */
+export function getUnlockedKoreanTestSlugs(passedSlugs: Iterable<string>) {
+  const passed = new Set(passedSlugs);
   let completedInOrder = 0;
 
   while (
     completedInOrder < KOREAN_TEST_SEQUENCE.length &&
-    attempted.has(KOREAN_TEST_SEQUENCE[completedInOrder])
+    passed.has(KOREAN_TEST_SEQUENCE[completedInOrder])
   ) {
     completedInOrder += 1;
   }
