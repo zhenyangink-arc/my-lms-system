@@ -2,7 +2,6 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ArrowRight,
-  BarChart3,
   BellRing,
   BookOpen,
   BookText,
@@ -806,67 +805,85 @@ export default async function DashboardHomePage() {
               </div>
             </div>
 
-            {hasWeeklyActivity ? (
-              <div className="mt-5 flex items-end justify-between gap-2 px-1">
-                {heatmapDays.map((day) => {
-                  const weekdayLabel = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "narrow" }).format(new Date(`${day.dateString}T12:00:00Z`));
-                  const barHeightPercent = Math.max(6, (day.count / maxHeatmapCount) * 100);
-                  return (
-                    <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
-                      <div className="flex h-36 w-full max-w-9 items-end overflow-hidden rounded-2xl" style={{ backgroundColor: "var(--app-soft-bg)" }} title={`${day.dateString} · 完成 ${day.count} 个课时`}>
-                        <div className="w-full rounded-2xl transition-[height]" style={{ height: `${day.count > 0 ? barHeightPercent : 0}%`, backgroundColor: "var(--app-accent)" }} />
-                      </div>
-                      <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">{weekdayLabel}</time>
+            <div className="mt-5 flex items-end justify-between gap-2 px-1">
+              {heatmapDays.map((day) => {
+                const weekdayLabel = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "narrow" }).format(new Date(`${day.dateString}T12:00:00Z`));
+                const barHeightPercent = hasWeeklyActivity
+                  ? Math.max(6, (day.count / maxHeatmapCount) * 100)
+                  : 7;
+                return (
+                  <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
+                    <div
+                      className="flex h-36 w-full max-w-9 items-end overflow-hidden rounded-2xl"
+                      style={{ backgroundColor: "var(--app-soft-bg)" }}
+                      title={hasWeeklyActivity ? `${day.dateString} · 完成 ${day.count} 个课时` : `${day.dateString} · 暂无活动`}
+                    >
+                      <div
+                        className="w-full rounded-2xl transition-[height]"
+                        style={{
+                          height: `${hasWeeklyActivity && day.count === 0 ? 0 : barHeightPercent}%`,
+                          backgroundColor: hasWeeklyActivity
+                            ? "var(--app-accent)"
+                            : "var(--app-border)",
+                        }}
+                      />
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="app-empty-state mt-5 flex min-h-36 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <BarChart3 size={22} style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">本周还没有学习记录</p>
-                <p className="mt-1 text-xs app-muted-text">完成一节课时，这里就会画出你的学习曲线</p>
-              </div>
-            )}
+                    <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">{weekdayLabel}</time>
+                  </div>
+                );
+              })}
+            </div>
 
             <div className="mt-5 space-y-2.5">
               {[
                 {
                   name: "单词",
                   icon: BookText,
-                  color: "#f97316",
                   status:
                     vocabularyThisWeekSeconds > 0
                       ? `本周累计 ${vocabularyThisWeekMinutes} 分钟`
                       : "本周尚未练习",
                   available: true,
                 },
-                { name: "语法", icon: BookOpen, color: "#8b5cf6", status: "即将上线", available: false },
-                { name: "口语", icon: Mic, color: "#eab308", status: "即将上线", available: false },
-                { name: "听力", icon: Ear, color: "#3b82f6", status: "即将上线", available: false },
+                { name: "语法", icon: BookOpen, status: "即将上线", available: false },
+                { name: "口语", icon: Mic, status: "即将上线", available: false },
+                { name: "听力", icon: Ear, status: "即将上线", available: false },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
                   <div
                     key={item.name}
-                    className="flex items-center gap-3 rounded-xl px-2 py-1.5"
-                    style={{ backgroundColor: item.available ? "transparent" : "var(--app-soft-bg)" }}
+                    className="flex items-center gap-3 rounded-xl border px-2.5 py-2"
+                    style={{
+                      borderColor: item.available
+                        ? "var(--app-border)"
+                        : "var(--app-border-soft)",
+                      backgroundColor: item.available
+                        ? "var(--app-accent-soft)"
+                        : "var(--app-soft-bg)",
+                      opacity: item.available ? 1 : 0.62,
+                    }}
                   >
                     <span
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
                       style={{
-                        color: item.available ? item.color : "var(--app-muted)",
-                        backgroundColor: item.available ? `${item.color}18` : "var(--app-card-bg)",
+                        color: item.available ? "var(--app-accent)" : "var(--app-muted)",
+                        backgroundColor: "var(--app-card-bg)",
                       }}
                     >
                       <Icon size={14} aria-hidden="true" />
                     </span>
-                    <span className="flex-1 text-xs font-bold app-muted-text">{item.name}</span>
+                    <span
+                      className="flex-1 text-xs font-bold"
+                      style={{ color: item.available ? "var(--app-text)" : "var(--app-muted)" }}
+                    >
+                      {item.name}
+                    </span>
                     <span
                       className="rounded-full px-2.5 py-1 text-xs font-black"
                       style={{
-                        color: item.available ? item.color : "var(--app-muted)",
-                        backgroundColor: item.available ? `${item.color}18` : "var(--app-card-bg)",
+                        color: item.available ? "var(--app-accent-strong)" : "var(--app-muted)",
+                        backgroundColor: "var(--app-card-bg)",
                       }}
                     >
                       {item.status}
