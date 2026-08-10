@@ -4,7 +4,6 @@ import type { LucideIcon } from "lucide-react";
 import { ArrowLeft, BookOpen, Ear, Mic } from "lucide-react";
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
 import { requireActiveUser } from "@/lib/auth";
 
 const skillMap: Record<
@@ -45,7 +44,6 @@ export default async function ToolboxSkillPage({
 
   return (
     <div className="mx-auto w-full max-w-3xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      <ToolboxStudyTimer skill={skill} />
       <Link
         href="/dashboard/toolbox"
         className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
