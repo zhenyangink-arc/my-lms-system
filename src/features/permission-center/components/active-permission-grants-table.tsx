@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { updateUnifiedPermissionGrantAction } from "@/app/dashboard/admin/permissions/actions";
 import {
   Table,
   TableBody,
@@ -138,6 +139,26 @@ export function ActivePermissionGrantsTable({
           <LocalDateTime value={row.original.grantedAt} options={DATE_OPTIONS} />
         ),
       },
+      {
+        id: "actions",
+        enableSorting: false,
+        header: () => <span className="sr-only">授权操作</span>,
+        cell: ({ row }) => (
+          <form action={updateUnifiedPermissionGrantAction} className="text-right">
+            <input type="hidden" name="targetUserId" value={row.original.subjectUserId} />
+            <input type="hidden" name="permissionKey" value={row.original.permissionKey} />
+            <input type="hidden" name="tenantId" value={row.original.tenantId ?? ""} />
+            <input type="hidden" name="enabled" value="false" />
+            <input type="hidden" name="view" value="grants" />
+            <button
+              type="submit"
+              className="h-8 border border-rose-200 px-2.5 text-[11px] font-semibold text-rose-700 hover:bg-rose-50"
+            >
+              撤销
+            </button>
+          </form>
+        ),
+      },
     ],
     [permissionLabels, tenantNames],
   );
@@ -159,11 +180,11 @@ export function ActivePermissionGrantsTable({
       emptyContent="当前没有生效中的账号例外授权"
       footer={
         <p className="text-xs text-[var(--app-muted)]">
-          当前共 {data.length} 条生效授权；本步骤仅展示，不提供授权或撤销操作。
+          当前共 {data.length} 条生效授权；撤销后从下一次服务端权限检查开始生效。
         </p>
       }
     >
-      <Table className="min-w-[980px]">
+      <Table className="min-w-[1080px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((group) => (
             <TableRow key={group.id}>

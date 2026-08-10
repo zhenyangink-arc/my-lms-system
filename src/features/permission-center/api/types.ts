@@ -52,6 +52,11 @@ export type PermissionCenterIdentity = {
   status: string | null;
 };
 
+export type TenantPermissionGrantCandidate = {
+  tenantId: string;
+  account: PermissionCenterIdentity;
+};
+
 export type ActivePermissionGrant = {
   id: number;
   scopeType: PermissionCenterScope;
@@ -84,6 +89,8 @@ export type PermissionCenterData = {
   };
   directory: PermissionCenterDirectory;
   tenants: PermissionCenterTenant[];
+  platformGrantCandidates: PermissionCenterIdentity[];
+  tenantGrantCandidates: TenantPermissionGrantCandidate[];
   activeGrants: ActivePermissionGrant[];
   auditLogs: PermissionGrantAuditEntry[];
 };

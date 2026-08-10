@@ -5,6 +5,7 @@ import {
   RolePermissionMatrix,
 } from "./permission-directory";
 import { PermissionAuditTable } from "./permission-audit-table";
+import { PermissionGrantControls } from "./permission-grant-controls";
 
 export default async function PermissionCenterListing() {
   const result = await getPermissionCenterData();
@@ -19,6 +20,13 @@ export default async function PermissionCenterListing() {
     <div className="space-y-4">
       <PermissionDirectory directory={result.directory} />
       <RolePermissionMatrix directory={result.directory} />
+      <PermissionGrantControls
+        tenants={result.tenants}
+        platformCandidates={result.platformGrantCandidates}
+        tenantCandidates={result.tenantGrantCandidates}
+        permissionKeys={result.directory.assignablePermissionKeys}
+        permissionLabels={result.directory.assignablePermissionLabels}
+      />
 
       <section className="space-y-2">
         <div>

@@ -20,6 +20,7 @@ import type {
   PermissionCenterIdentity,
   PermissionCenterTenant,
   PermissionGrantAuditEntry,
+  TenantPermissionGrantCandidate,
 } from "./types";
 
 const PERMISSION_AUDIT_LIMIT = 200;
@@ -54,6 +55,11 @@ type ProfileRow = {
   global_role: string | null;
   membership_tier: string | null;
   status: string | null;
+};
+
+type TenantAdminMembershipRow = {
+  tenant_id: string;
+  user_id: string;
 };
 
 const PERMISSION_ROLES = [
@@ -119,7 +125,13 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
   const viewer = await requirePlatformOwner();
   const admin = createAdminClient();
 
-  const [tenantResult, grantResult, auditResult] = await Promise.all([
+  const [
+    tenantResult,
+    grantResult,
+    auditResult,
+    platformCandidateResult,
+    tenantAdminResult,
+  ] = await Promise.all([
     admin.from("tenants").select("id,name,slug,status").order("name"),
     admin
       .from("permission_grants")
@@ -135,14 +147,35 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
       )
       .order("created_at", { ascending: false })
       .limit(PERMISSION_AUDIT_LIMIT),
+    admin
+      .from("profiles")
+      .select(
+        "id,full_name,email,login_id,role,global_role,membership_tier,status",
+      )
+      .in("global_role", ["platform_deputy", "platform_admin"])
+      .order("created_at"),
+    admin
+      .from("tenant_memberships")
+      .select("tenant_id,user_id")
+      .eq("role", "admin")
+      .eq("status", "active")
+      .order("created_at"),
   ]);
 
-  if (tenantResult.error || grantResult.error || auditResult.error) {
+  if (
+    tenantResult.error ||
+    grantResult.error ||
+    auditResult.error ||
+    platformCandidateResult.error ||
+    tenantAdminResult.error
+  ) {
     throw new Error("无法读取统一权限中心数据，请稍后重试。");
   }
 
   const grantRows = (grantResult.data ?? []) as PermissionGrantRow[];
   const auditRows = (auditResult.data ?? []) as PermissionAuditRow[];
+  const platformCandidateRows = (platformCandidateResult.data ?? []) as ProfileRow[];
+  const tenantAdminRows = (tenantAdminResult.data ?? []) as TenantAdminMembershipRow[];
   const profileIds = [
     ...new Set([
       ...grantRows.flatMap((grant) => [
@@ -154,6 +187,7 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
           (value): value is string => Boolean(value),
         ),
       ),
+      ...tenantAdminRows.map((membership) => membership.user_id),
     ]),
   ];
 
@@ -172,11 +206,25 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
   }
 
   const identities = new Map(
-    ((profileResult.data ?? []) as ProfileRow[]).map((profile) => {
+    [
+      ...platformCandidateRows,
+      ...((profileResult.data ?? []) as ProfileRow[]),
+    ].map((profile) => {
       const identity = toIdentity(profile);
       return [identity.id, identity] as const;
     }),
   );
+
+  const platformGrantCandidates = platformCandidateRows
+    .filter((profile) => (profile.status ?? "active") === "active")
+    .map(toIdentity);
+  const tenantGrantCandidates: TenantPermissionGrantCandidate[] =
+    tenantAdminRows.flatMap((membership) => {
+      const account = identities.get(membership.user_id);
+      return account && (account.status ?? "active") === "active"
+        ? [{ tenantId: membership.tenant_id, account }]
+        : [];
+    });
 
   const activeGrants: ActivePermissionGrant[] = grantRows.map((grant) => ({
     id: grant.id,
@@ -210,6 +258,8 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
     },
     directory: createPermissionDirectory(),
     tenants: (tenantResult.data ?? []) as PermissionCenterTenant[],
+    platformGrantCandidates,
+    tenantGrantCandidates,
     activeGrants,
     auditLogs,
   };
