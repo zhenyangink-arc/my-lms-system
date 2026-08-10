@@ -89,7 +89,7 @@ export function VisaTaskReviewControls({ taskId, status }: { taskId: string; sta
   if (status === "reviewing") {
     return (
       <form action={finishAction} className="space-y-2.5">
-        <select name="decision" value={decision} onChange={(event) => setDecision(event.target.value)} className="app-input w-full border px-3 py-2 text-[10px] font-medium"><option value="approved">审核通过，设为已确认</option><option value="revision_required">存在问题，退回补充</option></select>
+        <select key={decision} name="decision" defaultValue={decision} onChange={(event) => setDecision(event.target.value)} className="app-input w-full border px-3 py-2 text-[10px] font-medium"><option value="approved">审核通过，设为已确认</option><option value="revision_required">存在问题，退回补充</option></select>
         <textarea name="admin_note" required={decision === "revision_required"} maxLength={1000} rows={3} placeholder={decision === "revision_required" ? "请明确说明需要补充或修改的内容" : "可填写确认说明"} className="app-input w-full resize-none border px-3 py-2 text-[10px] leading-4" />
         <Message status={finishState.status} message={finishState.message} />
         <button type="submit" disabled={finishPending} className={`flex w-full items-center justify-center gap-2 border px-4 py-2 text-[10px] font-medium text-white disabled:opacity-60 ${decision === "approved" ? "border-emerald-700 bg-emerald-700" : "border-rose-700 bg-rose-700"}`}>{decision === "approved" ? <CheckCircle2 size={15} /> : <RotateCcw size={15} />}{finishPending ? "保存中…" : decision === "approved" ? "完成审核" : "退回学生补充"}</button>
