@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -51,7 +51,7 @@ export async function updateUnifiedPermissionGrantAction(formData: FormData) {
     }));
   }
 
-  revalidatePath("/dashboard/admin/permissions");
+  revalidateDashboard("/dashboard/admin/permissions");
   redirect(permissionPageUrl({
     view: view ?? "grants",
     ...(tenantId ? { tenant: tenantId } : {}),

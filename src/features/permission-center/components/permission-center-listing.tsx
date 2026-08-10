@@ -7,7 +7,13 @@ import {
 import { PermissionAuditTable } from "./permission-audit-table";
 import { PermissionGrantControls } from "./permission-grant-controls";
 
-export default async function PermissionCenterListing() {
+export default async function PermissionCenterListing({
+  updated = false,
+  error = null,
+}: {
+  updated?: boolean;
+  error?: string | null;
+}) {
   const result = await getPermissionCenterData();
   const platformGrants = result.activeGrants.filter(
     (grant) => grant.scopeType === "platform",
@@ -18,6 +24,16 @@ export default async function PermissionCenterListing() {
 
   return (
     <div className="space-y-4">
+      {updated && (
+        <div className="border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700">
+          权限已更新，页面展示的是数据库重新计算后的结果。
+        </div>
+      )}
+      {error && (
+        <div className="border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700">
+          {error}
+        </div>
+      )}
       <PermissionDirectory directory={result.directory} />
       <RolePermissionMatrix directory={result.directory} />
       <PermissionGrantControls
