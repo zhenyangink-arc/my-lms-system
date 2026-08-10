@@ -6,10 +6,8 @@ import {
   BellRing,
   BookOpen,
   BookText,
-  CalendarDays,
   CheckCircle2,
   Ear,
-  Flame,
   GraduationCap,
   Mic,
   PlayCircle,
@@ -59,6 +57,7 @@ type CategoryRow = {
 
 type ActivityItem = {
   lessonId: string;
+  courseId: string;
   lessonTitle: string;
   courseTitle: string;
   status: string;
@@ -205,7 +204,6 @@ export default async function DashboardHomePage() {
   let recentActivity: ActivityItem[] = [];
   let completedLessonsCount = 0;
   let inProgressLessonsCount = 0;
-  let overallProgressPercent = 0;
   let streakDays = 0;
   let thisWeekCompletedCount = 0;
   let vocabularyThisWeekSeconds = 0;
@@ -248,15 +246,6 @@ export default async function DashboardHomePage() {
     inProgressLessonsCount = progressRows.filter(
       (row) => row.status === "in_progress"
     ).length;
-
-    overallProgressPercent = progressRows.length > 0
-      ? Math.round(
-          progressRows.reduce(
-            (sum, row) => sum + (row.status === "completed" ? 100 : row.progress_percent ?? 0),
-            0
-          ) / progressRows.length
-        )
-      : 0;
 
     const weekStart = getWeekStartISOString();
     thisWeekCompletedCount = progressRows.filter(
@@ -499,6 +488,7 @@ export default async function DashboardHomePage() {
 
         return {
           lessonId: row.lesson_id,
+          courseId: row.course_id,
           lessonTitle: lesson.title,
           courseTitle: course.title,
           status: row.status,
@@ -642,8 +632,6 @@ export default async function DashboardHomePage() {
     reminders = [...teacherReplyReminders, ...requiredResourceReminders].slice(0, 5);
   }
 
-  const ringRadius = 74;
-  const ringCircumference = 2 * Math.PI * ringRadius;
   const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
   const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
   const vocabularyThisWeekMinutes =
@@ -656,43 +644,14 @@ export default async function DashboardHomePage() {
         Boolean(item.href)
     )
     .slice(0, 3);
-
-
-
-  const overviewStats = [
-    {
-      label: "综合完成度",
-      value: overallProgressPercent,
-      suffix: "%",
-      icon: BarChart3,
-      color: "var(--app-secondary)",
-      softColor: "var(--app-secondary-soft)",
-    },
-    {
-      label: "进行中课时",
-      value: inProgressLessonsCount,
-      suffix: "个",
-      icon: PlayCircle,
-      color: "var(--app-accent)",
-      softColor: "var(--app-accent-soft)",
-    },
-    {
-      label: "本周完成",
-      value: thisWeekCompletedCount,
-      suffix: "课时",
-      icon: CalendarDays,
-      color: "var(--app-success)",
-      softColor: "var(--app-success-soft)",
-    },
-    {
-      label: "连续学习",
-      value: streakDays,
-      suffix: "天",
-      icon: Flame,
-      color: "var(--app-warm)",
-      softColor: "var(--app-warm-soft)",
-    },
-  ];
+  const heroCourseProgress = hero
+    ? courseProgressList.find((course) => course.courseId === hero.courseId) ?? null
+    : null;
+  const heroLessonProgress = hero
+    ? hero.status === "completed"
+      ? 100
+      : Math.max(0, Math.min(100, hero.progressPercent ?? 0))
+    : 0;
 
   const practiceTools = [
     { title: "单词练习", subtitle: "第 2 章 · 日常词汇", href: "/dashboard/toolbox/vocabulary", icon: BookText, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
@@ -705,35 +664,29 @@ export default async function DashboardHomePage() {
     <div className="mx-auto w-full max-w-[1500px] px-8 pb-14 pt-9">
       <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1.15fr_0.85fr_1fr]">
         <div className="flex min-w-0 flex-col gap-5">
-      {/* 首屏只强调一个下一步，让用户打开控制台后马上知道该做什么。跟其他卡片一样走浅色玻璃质感，不用突兀的深色板块，也不加装饰色块。 */}
+      {/* 首屏明确区分当前课时进度与整门课程进度。 */}
       <section
-        className="app-glass-card relative overflow-hidden rounded-[20px] p-4"
+        className="app-glass-card relative overflow-hidden rounded-[20px] p-5 sm:p-6"
         style={{
           background:
             "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
         }}
       >
-          <div className="h-[380px] overflow-hidden rounded-[14px]">
-            {/* 头像占位图 */}
-            <div
-              className="mx-[10px] mt-[10px] flex items-center justify-center rounded-2xl"
-              style={{
-                width: "calc(100% - 20px)",
-                height: "190px",
-                backgroundColor: "color-mix(in srgb, var(--app-accent-soft) 35%, transparent)",
-              }}
+          <div className="flex items-start gap-3">
+            <span
+              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+              style={{ backgroundColor: "var(--app-accent-soft)" }}
             >
               <GraduationCap
-                size={52}
-                style={{ color: "var(--app-accent)", opacity: 0.55 }}
+                size={22}
+                style={{ color: "var(--app-accent)" }}
                 aria-hidden="true"
               />
-            </div>
-
+            </span>
             <DashboardTitleWithHint
-              className="mt-5 px-5"
+              className="min-w-0 flex-1"
               headingLevel={2}
-              titleClassName="max-w-2xl text-2xl font-black tracking-tight"
+              titleClassName="max-w-2xl text-xl font-black tracking-tight sm:text-2xl"
               title={`${studentName}，继续你的学习目标`}
               description={
                 <>
@@ -743,10 +696,57 @@ export default async function DashboardHomePage() {
                 </>
               }
             />
+          </div>
 
-            {hero ? (
-              <div className="mt-5">
-                <div className="flex flex-wrap gap-3">
+          {hero ? (
+            <div
+              className="mt-5 rounded-2xl border p-4"
+              style={{
+                borderColor: "var(--app-border-soft)",
+                backgroundColor: "var(--app-card-bg)",
+              }}
+            >
+              <p className="text-xs font-bold app-muted-text">{hero.courseTitle}</p>
+              <div className="mt-1 flex items-start justify-between gap-3">
+                <p className="min-w-0 text-base font-black leading-6">{hero.lessonTitle}</p>
+                <strong
+                  className="shrink-0 text-lg font-black"
+                  style={{ color: "var(--app-accent-strong)" }}
+                >
+                  {heroLessonProgress}%
+                </strong>
+              </div>
+              <div className="mt-3 flex items-center justify-between gap-3 text-xs">
+                <span className="font-bold app-muted-text">当前课时进度</span>
+                <span className="app-muted-text">{statusLabelMap[hero.status] ?? hero.status}</span>
+              </div>
+              <div
+                className="mt-2 h-2 overflow-hidden rounded-full"
+                style={{ backgroundColor: "var(--app-soft-bg)" }}
+                aria-label={`当前课时进度 ${heroLessonProgress}%`}
+              >
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: `${heroLessonProgress}%`,
+                    backgroundColor: "var(--app-accent)",
+                  }}
+                />
+              </div>
+
+              <div
+                className="mt-4 flex items-center justify-between gap-3 border-t pt-3 text-sm"
+                style={{ borderColor: "var(--app-border-soft)" }}
+              >
+                <span className="font-bold app-muted-text">这门课整体进度</span>
+                <strong>
+                  {heroCourseProgress
+                    ? `${heroCourseProgress.completedCount} / ${heroCourseProgress.totalCount} 课时`
+                    : "课程数据整理中"}
+                </strong>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-3">
                   {hero.href && (
                     <Link
                       href={hero.href}
@@ -765,21 +765,21 @@ export default async function DashboardHomePage() {
                   >
                     查看全部课程
                   </Link>
-                </div>
               </div>
-            ) : (
-              <div className="mt-5">
+            </div>
+          ) : (
+              <div className="mt-5 rounded-2xl border p-4" style={{ borderColor: "var(--app-border-soft)" }}>
+                <p className="text-sm font-bold app-muted-text">还没有课程学习进度，从第一节课开始建立你的学习记录。</p>
                 <Link
                   href="/dashboard/courses"
-                  className="mt-4 ml-5 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
                   style={{ backgroundColor: "var(--app-accent)" }}
                 >
                   挑选第一门课程
                   <ArrowRight size={15} aria-hidden="true" />
                 </Link>
               </div>
-            )}
-          </div>
+          )}
       </section>
 
           <section className="app-glass-card rounded-[20px] px-[22px] pb-6 pt-[22px]">
@@ -991,22 +991,35 @@ export default async function DashboardHomePage() {
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
-          <section className="app-glass-card rounded-[20px] p-5 text-center" aria-label="学习完成概览">
-            <div className="relative mx-auto h-[180px] w-[180px]" aria-label={`综合完成度 ${overallProgressPercent}%`}>
-              <svg width="180" height="180" viewBox="0 0 180 180" className="-rotate-90">
-                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="color-mix(in srgb, var(--app-border) 70%, var(--app-text))" strokeWidth="14" />
-                <circle cx="90" cy="90" r={ringRadius} fill="none" stroke="var(--app-success)" strokeWidth="14" strokeDasharray={ringCircumference} strokeDashoffset={ringCircumference * (1 - overallProgressPercent / 100)} strokeLinecap="round" />
-              </svg>
-              <span className="absolute inset-0 flex flex-col items-center justify-center">
-                <strong className="text-3xl font-black">{overallProgressPercent}%</strong>
-                <span className="mt-1 text-xs app-muted-text">综合完成度</span>
-              </span>
+          <section className="app-glass-card rounded-[20px] p-5" aria-label="学习数据概览">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-lg font-black">学习概览</p>
+              <span className="text-xs font-bold app-muted-text">真实学习记录</span>
             </div>
-            <div className="mt-5 grid grid-cols-2">
-              <div className="border-r px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">累计完成课时</p><p className="mt-1 text-xl font-black">{completedLessonsCount}</p></div>
-              <div className="px-2 py-3"><p className="text-xs font-bold app-muted-text">进行中课时</p><p className="mt-1 text-xl font-black" style={{ color: "var(--app-accent-strong)" }}>{inProgressLessonsCount}</p></div>
-              <div className="border-r border-t px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">本周已完成</p><p className="mt-1 text-lg font-black" style={{ color: "var(--app-success)" }}>{thisWeekCompletedCount} <span className="text-xs">个课时</span></p></div>
-              <div className="border-t px-2 py-3" style={{ borderColor: "var(--app-border)" }}><p className="text-xs font-bold app-muted-text">学习天数</p><p className="mt-1 text-lg font-black" style={{ color: "var(--app-warm)" }}>{streakDays} <span className="text-xs">天</span></p></div>
+            <div className="mt-4 grid grid-cols-2 gap-2.5">
+              {[
+                { label: "累计完成课时", value: completedLessonsCount, suffix: "课时", color: "var(--app-success)" },
+                { label: "进行中课时", value: inProgressLessonsCount, suffix: "课时", color: "var(--app-accent-strong)" },
+                { label: "本周已完成", value: thisWeekCompletedCount, suffix: "课时", color: "var(--app-success)" },
+                { label: "学习天数", value: streakDays, suffix: "天", color: "var(--app-warm)" },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border px-3 py-3.5"
+                  style={{
+                    borderColor: "var(--app-border-soft)",
+                    backgroundColor: "var(--app-soft-bg)",
+                  }}
+                >
+                  <p className="text-xs font-bold app-muted-text">{stat.label}</p>
+                  <p
+                    className="mt-1.5 text-xl font-black"
+                    style={{ color: stat.value > 0 ? stat.color : "var(--app-muted)" }}
+                  >
+                    {stat.value} <span className="text-xs font-bold">{stat.suffix}</span>
+                  </p>
+                </div>
+              ))}
             </div>
           </section>
 
