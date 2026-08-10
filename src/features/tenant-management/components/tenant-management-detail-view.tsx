@@ -38,6 +38,7 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
         slug={result.tenant.slug}
         status={result.tenant.status}
         canPermanentlyDelete={result.viewer.canPermanentlyDelete}
+        listHref={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
       />
 
       <TenantMembersTable data={result.members} institutionName={result.tenant.name} />

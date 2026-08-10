@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Archive, RotateCcw, Trash2 } from "lucide-react";
 
 import { initialTenantActionState } from "@/app/dashboard/admin/tenants/action-state";
@@ -55,10 +56,16 @@ function RestoreTenantButton({ tenantId }: { tenantId: string }) {
   );
 }
 
-function PermanentDeleteTenantDialog({ tenantId, tenantName, slug }: { tenantId: string; tenantName: string; slug: string }) {
+function PermanentDeleteTenantDialog({ tenantId, tenantName, slug, listHref }: { tenantId: string; tenantName: string; slug: string; listHref: string }) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const action = deleteTenantPermanentlyAction.bind(null, tenantId);
   const [state, formAction, pending] = useActionState(action, initialTenantActionState);
+
+  useEffect(() => {
+    if (state.status === "success") router.replace(listHref);
+  }, [listHref, router, state.status]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<button type="button" className="inline-flex h-9 items-center gap-2 bg-rose-600 px-3 text-xs font-semibold text-white" />}>
@@ -79,7 +86,7 @@ function PermanentDeleteTenantDialog({ tenantId, tenantName, slug }: { tenantId:
   );
 }
 
-export function TenantLifecycleActions({ tenantId, tenantName, slug, status, canPermanentlyDelete }: { tenantId: string; tenantName: string; slug: string; status: TenantLifecycleStatus; canPermanentlyDelete: boolean }) {
+export function TenantLifecycleActions({ tenantId, tenantName, slug, status, canPermanentlyDelete, listHref }: { tenantId: string; tenantName: string; slug: string; status: TenantLifecycleStatus; canPermanentlyDelete: boolean; listHref: string }) {
   const inactive = status === "suspended" || status === "archived";
   return (
     <section className="management-table-panel border p-4">
@@ -88,7 +95,7 @@ export function TenantLifecycleActions({ tenantId, tenantName, slug, status, can
         <div className="flex flex-wrap items-start gap-2">
           {status === "active" && <SuspendTenantDialog tenantId={tenantId} tenantName={tenantName} />}
           {inactive && <RestoreTenantButton tenantId={tenantId} />}
-          {inactive && canPermanentlyDelete && <PermanentDeleteTenantDialog tenantId={tenantId} tenantName={tenantName} slug={slug} />}
+          {inactive && canPermanentlyDelete && <PermanentDeleteTenantDialog tenantId={tenantId} tenantName={tenantName} slug={slug} listHref={listHref} />}
         </div>
       </div>
     </section>
