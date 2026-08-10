@@ -228,6 +228,7 @@ export async function getVisaManagementData(): Promise<VisaManagementData> {
     scope: "institution",
     role: access.role,
     tenantId,
+    dashboardBasePath: access.dashboardBasePath,
     canManageIndividualCases: true,
     cases,
     overview: [],
@@ -239,7 +240,8 @@ export async function getVisaManagementData(): Promise<VisaManagementData> {
 export async function getVisaManagementStudentDetailData(
   studentId: string,
 ): Promise<VisaManagementStudentDetailData | null> {
-  const { supabase, tenantId } = await requireVisaManager();
+  const access = await requireVisaManager();
+  const { supabase, tenantId } = access;
   const [profileResult, caseResult, tasksResult, targetsResult] =
     await Promise.all([
       supabase
@@ -286,6 +288,7 @@ export async function getVisaManagementStudentDetailData(
 
   return {
     tenantId,
+    dashboardBasePath: access.dashboardBasePath,
     student: (profileResult.data ?? {
       id: studentId,
       full_name: null,

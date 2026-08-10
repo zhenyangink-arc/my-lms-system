@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { VisaManagementCase } from "../../api/types";
-import { visaCaseColumns } from "./columns";
+import { getVisaCaseColumns } from "./columns";
 import {
   VisaCaseTableToolbar,
   type VisaCaseFilters,
@@ -37,22 +37,26 @@ const COLUMN_LABELS: Record<string, string> = {
   updated_at: "最近更新",
 };
 
-const INITIAL_FILTERS: VisaCaseFilters = {
-  query: "",
-  channel: "all",
-  status: "all",
-};
-
 export function VisaCasesTable({
   data,
   scopeLabel,
+  dashboardBasePath,
+  initialQuery = "",
+  initialStatus = "all",
 }: {
   data: VisaManagementCase[];
   scopeLabel: string;
+  dashboardBasePath: string;
+  initialQuery?: string;
+  initialStatus?: VisaCaseFilters["status"];
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [filters, setFilters] = useState<VisaCaseFilters>(INITIAL_FILTERS);
+  const [filters, setFilters] = useState<VisaCaseFilters>({
+    query: initialQuery,
+    channel: "all",
+    status: initialStatus,
+  });
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((item) => {
@@ -95,7 +99,7 @@ export function VisaCasesTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: visaCaseColumns,
+    columns: getVisaCaseColumns(dashboardBasePath),
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

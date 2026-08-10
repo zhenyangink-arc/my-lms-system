@@ -61,7 +61,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const visaCaseColumns: ColumnDef<VisaManagementCase>[] = [
+export function getVisaCaseColumns(
+  dashboardBasePath: string,
+): ColumnDef<VisaManagementCase>[] {
+  return [
   {
     id: "student",
     accessorKey: "studentName",
@@ -156,6 +159,12 @@ export const visaCaseColumns: ColumnDef<VisaManagementCase>[] = [
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="sr-only">档案操作</span>,
-    cell: ({ row }) => <VisaCaseCellAction item={row.original} />,
+    cell: ({ row }) => (
+      <VisaCaseCellAction
+        item={row.original}
+        dashboardBasePath={dashboardBasePath}
+      />
+    ),
   },
-];
+  ];
+}

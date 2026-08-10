@@ -1,6 +1,7 @@
 "use client";
 
 import { Pencil } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 import { StudentModuleCardDeleteDialog } from "@/app/dashboard/admin/StudentModuleCardDeleteDialog";
@@ -14,13 +15,29 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type { VisaManagementCase } from "../../api/types";
 
-export function VisaCaseCellAction({ item }: { item: VisaManagementCase }) {
+export function VisaCaseCellAction({
+  item,
+  dashboardBasePath,
+}: {
+  item: VisaManagementCase;
+  dashboardBasePath: string;
+}) {
   const [editOpen, setEditOpen] = useState(false);
 
   return (
     <div className="flex min-w-52 items-center justify-end gap-2">
+      <Link
+        href={scopeDashboardPath(
+          `/dashboard/admin/visa/${item.studentId}`,
+          dashboardBasePath,
+        )}
+        className="inline-flex h-8 items-center border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+      >
+        查看详情
+      </Link>
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogTrigger
           type="button"

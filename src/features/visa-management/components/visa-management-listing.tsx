@@ -9,7 +9,17 @@ const ROLE_SCOPE_LABELS: Record<string, string> = {
   admin: "当前机构全部学生",
 };
 
-export default async function VisaManagementListing() {
+type VisaManagementListingProps = {
+  initialQuery?: string;
+  initialStatus?: "all" | "action" | "preparing" | "submitted" | "issued";
+  deleted?: boolean;
+};
+
+export default async function VisaManagementListing({
+  initialQuery = "",
+  initialStatus = "all",
+  deleted = false,
+}: VisaManagementListingProps = {}) {
   const result = await getVisaManagementData();
 
   if (result.scope === "platform") {
@@ -32,6 +42,11 @@ export default async function VisaManagementListing() {
 
   return (
     <div className="space-y-4">
+      {deleted && (
+        <div className="border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-medium text-emerald-700">
+          签证档案、准备任务和审核记录已经删除；学生账号及其他业务数据保持不变。
+        </div>
+      )}
       <section className="management-table-panel overflow-hidden border">
         <div className="overflow-x-auto">
           <table className="management-summary-table w-full min-w-[720px] border-collapse text-left">
@@ -65,7 +80,13 @@ export default async function VisaManagementListing() {
         </div>
       </section>
 
-      <VisaCasesTable data={result.cases} scopeLabel={scopeLabel} />
+      <VisaCasesTable
+        data={result.cases}
+        scopeLabel={scopeLabel}
+        dashboardBasePath={result.dashboardBasePath}
+        initialQuery={initialQuery}
+        initialStatus={initialStatus}
+      />
       <VisaTasksTable cases={result.cases} scopeLabel={scopeLabel} />
     </div>
   );

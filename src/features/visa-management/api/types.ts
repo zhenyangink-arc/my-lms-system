@@ -196,6 +196,7 @@ export type InstitutionVisaManagementData = {
   scope: "institution";
   role: UserRole;
   tenantId: string;
+  dashboardBasePath: string;
   canManageIndividualCases: true;
   cases: VisaManagementCase[];
   overview: [];
@@ -228,6 +229,7 @@ export type VisaTaskDetailRow = VisaTaskRow & {
 
 export type VisaManagementStudentDetailData = {
   tenantId: string;
+  dashboardBasePath: string;
   student: VisaProfileRow;
   visaCase: VisaCaseDetailRow;
   target: Omit<VisaTargetRow, "user_id">;
