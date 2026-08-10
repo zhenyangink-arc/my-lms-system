@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
+import { MonthlyStudyDialog } from "@/app/dashboard/MonthlyStudyDialog";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { createClient } from "@/lib/supabase/server";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
@@ -27,6 +29,7 @@ type LessonProgressRow = {
   course_id: string;
   status: string;
   progress_percent: number;
+  started_at: string | null;
   last_viewed_at: string | null;
   completed_at: string | null;
 };
@@ -60,6 +63,7 @@ type ActivityItem = {
   courseTitle: string;
   status: string;
   progressPercent: number;
+  lastViewedAt: string;
   href: string | null;
 };
 
@@ -85,6 +89,23 @@ const statusLabelMap: Record<string, string> = {
   not_started: "未开始",
   in_progress: "进行中",
   completed: "已完成",
+};
+
+const MONTHLY_DAY_STUDY_MINUTES_CAP = 8 * 60;
+const YEARLY_MONTH_STUDY_MINUTES_CAP = 200 * 60;
+
+function formatStudyMinutes(minutes: number) {
+  if (minutes < 60) return `${Math.round(minutes)} 分钟`;
+  const hours = minutes / 60;
+  return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} 小时`;
+}
+
+const RECENT_ACTIVITY_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
 };
 
 function toSeoulDateString(date: Date) {
@@ -187,9 +208,18 @@ export default async function DashboardHomePage() {
   let overallProgressPercent = 0;
   let streakDays = 0;
   let thisWeekCompletedCount = 0;
+  let vocabularyThisWeekSeconds = 0;
   let hero: ActivityItem | null = null;
   let reminders: ReminderItem[] = [];
   const heatmapDays: { dateString: string; count: number }[] = [];
+  let monthDailyMinutes: number[] = [];
+  let monthDailyTips: string[] = [];
+  let monthLabel = "本月";
+  let monthTotalMinutes = 0;
+  let yearMonthlyMinutes: number[] = [];
+  let yearMonthlyTips: string[] = [];
+  let yearLabel = "今年";
+  let yearTotalMinutes = 0;
   let courseProgressList: CourseProgressItem[] = [];
 
   if (user) {
@@ -205,7 +235,7 @@ export default async function DashboardHomePage() {
     const { data: progressData } = await supabase
       .from("lesson_progress")
       .select(
-        "lesson_id, course_id, status, progress_percent, last_viewed_at, completed_at"
+        "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at"
       )
       .eq("user_id", user.id);
 
@@ -235,6 +265,121 @@ export default async function DashboardHomePage() {
         row.completed_at &&
         row.completed_at >= weekStart
     ).length;
+
+    const seoulTodayString = toSeoulDateString(new Date());
+    const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);
+    const learningLogFromISO = new Date(
+      Date.UTC(seoulYear, 0, 1) - 9 * 60 * 60 * 1000
+    ).toISOString();
+
+    const { data: learningTimeLogData } = await supabase
+      .from("learning_time_log")
+      .select("seconds, recorded_at, test_slug, source")
+      .eq("student_id", user.id)
+      .gte("recorded_at", learningLogFromISO);
+
+    const learningTimeLogs = (learningTimeLogData ?? []) as {
+      seconds: number;
+      recorded_at: string;
+      test_slug: string | null;
+      source: string | null;
+    }[];
+
+    vocabularyThisWeekSeconds = learningTimeLogs
+      .filter(
+        (row) =>
+          row.source === "toolbox" &&
+          row.test_slug === "toolbox-vocabulary" &&
+          row.recorded_at >= weekStart
+      )
+      .reduce((sum, row) => sum + Number(row.seconds), 0);
+
+    const buildMinutesByDate = (
+      logs: { seconds: number; recorded_at: string }[],
+      cap: number
+    ) => {
+      const map = new Map<string, number>();
+      for (const log of logs) {
+        const dateString = toSeoulDateString(new Date(log.recorded_at));
+        const accumulated =
+          (map.get(dateString) ?? 0) + Number(log.seconds) / 60;
+        map.set(dateString, Math.min(accumulated, cap));
+      }
+      return map;
+    };
+
+    const daysInMonth = new Date(
+      Date.UTC(seoulYear, seoulMonth, 0)
+    ).getUTCDate();
+    const monthPrefix = `${seoulYear}-${String(seoulMonth).padStart(2, "0")}`;
+    const monthMinutesByDay = new Map<number, number>();
+
+    if (learningTimeLogs.length > 0) {
+      for (const [dateString, minutes] of buildMinutesByDate(
+        learningTimeLogs,
+        MONTHLY_DAY_STUDY_MINUTES_CAP
+      )) {
+        if (!dateString.startsWith(monthPrefix)) continue;
+        monthMinutesByDay.set(Number(dateString.slice(8, 10)), minutes);
+      }
+    } else {
+      for (const row of progressRows) {
+        if (!row.started_at || !row.last_viewed_at) continue;
+        const startTime = new Date(row.started_at).getTime();
+        const endTime = new Date(row.last_viewed_at).getTime();
+        if (!(endTime > startTime)) continue;
+        const sessionMinutes = Math.min(
+          (endTime - startTime) / 60000,
+          MONTHLY_DAY_STUDY_MINUTES_CAP
+        );
+        const dateString = toSeoulDateString(new Date(endTime));
+        if (!dateString.startsWith(monthPrefix)) continue;
+        const day = Number(dateString.slice(8, 10));
+        const accumulated = (monthMinutesByDay.get(day) ?? 0) + sessionMinutes;
+        monthMinutesByDay.set(
+          day,
+          Math.min(accumulated, MONTHLY_DAY_STUDY_MINUTES_CAP)
+        );
+      }
+    }
+
+    monthDailyMinutes = Array.from(
+      { length: daysInMonth },
+      (_, index) => monthMinutesByDay.get(index + 1) ?? 0
+    );
+    monthTotalMinutes = monthDailyMinutes.reduce((sum, minutes) => sum + minutes, 0);
+    monthLabel = `${seoulMonth}月`;
+    monthDailyTips = monthDailyMinutes.map(
+      (minutes, index) =>
+        `${index + 1} 日 · 学习 ${formatStudyMinutes(minutes)}`
+    );
+
+    const yearMinutesByMonth = new Map<number, number>();
+    for (const [dateString, minutes] of buildMinutesByDate(
+      learningTimeLogs,
+      YEARLY_MONTH_STUDY_MINUTES_CAP
+    )) {
+      const [logYear, logMonth] = dateString.split("-").map(Number);
+      if (logYear !== seoulYear) continue;
+      const accumulated = (yearMinutesByMonth.get(logMonth) ?? 0) + minutes;
+      yearMinutesByMonth.set(
+        logMonth,
+        Math.min(accumulated, YEARLY_MONTH_STUDY_MINUTES_CAP)
+      );
+    }
+    yearMonthlyMinutes = Array.from(
+      { length: 12 },
+      (_, index) => yearMinutesByMonth.get(index + 1) ?? 0
+    );
+    yearTotalMinutes = yearMonthlyMinutes.reduce(
+      (sum, minutes) => sum + minutes,
+      0
+    );
+    yearLabel = `${seoulYear}年`;
+    yearMonthlyTips = yearMonthlyMinutes.map(
+      (minutes, index) =>
+        `${index + 1} 月 · 学习 ${formatStudyMinutes(minutes)}`
+    );
 
     const completedDateStrings = progressRows
       .filter((row) => row.status === "completed" && row.completed_at)
@@ -358,6 +503,7 @@ export default async function DashboardHomePage() {
           courseTitle: course.title,
           status: row.status,
           progressPercent: row.progress_percent,
+          lastViewedAt: row.last_viewed_at as string,
           href: buildLessonHref(row.course_id, lesson.slug),
         };
       })
@@ -500,6 +646,16 @@ export default async function DashboardHomePage() {
   const ringCircumference = 2 * Math.PI * ringRadius;
   const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
   const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
+  const vocabularyThisWeekMinutes =
+    vocabularyThisWeekSeconds > 0
+      ? Math.max(1, Math.round(vocabularyThisWeekSeconds / 60))
+      : 0;
+  const recentCourseProgressList = courseProgressList
+    .filter(
+      (item): item is CourseProgressItem & { href: string } =>
+        Boolean(item.href)
+    )
+    .slice(0, 3);
 
 
 
@@ -539,10 +695,10 @@ export default async function DashboardHomePage() {
   ];
 
   const practiceTools = [
-    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", icon: BookText, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
-    { title: "口语练习", subtitle: "第 1 章 · 元音发音", icon: Mic, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
-    { title: "语法练习", subtitle: "第 3 章 · 助词用法", icon: BookOpen, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
-    { title: "听力练习", subtitle: "第 4 章 · 对话理解", icon: Ear, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
+    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", href: "/dashboard/toolbox/vocabulary", icon: BookText, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
+    { title: "口语练习", subtitle: "第 1 章 · 元音发音", href: "/dashboard/toolbox/speaking", icon: Mic, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
+    { title: "语法练习", subtitle: "第 3 章 · 助词用法", href: "/dashboard/toolbox/grammar", icon: BookOpen, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
+    { title: "听力练习", subtitle: "第 4 章 · 对话理解", href: "/dashboard/toolbox/listening", icon: Ear, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
   ];
 
   return (
@@ -629,15 +785,25 @@ export default async function DashboardHomePage() {
           <section className="app-glass-card rounded-[20px] px-[22px] pb-6 pt-[22px]">
             <div className="flex items-center justify-between gap-3">
               <p className="text-lg font-black">本周学习活动</p>
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
-              >
-                8 月
-                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
-                  <path d="M2 3.5L5 6.5L8 3.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
+              <div className="flex items-center gap-2">
+                <MonthlyStudyDialog
+                  monthLabel={monthLabel}
+                  buttonLabel="按月查看"
+                  dailyMinutes={monthDailyMinutes}
+                  dayTips={monthDailyTips}
+                  totalMinutes={monthTotalMinutes}
+                  maxMinutes={MONTHLY_DAY_STUDY_MINUTES_CAP}
+                />
+                <MonthlyStudyDialog
+                  monthLabel={yearLabel}
+                  buttonLabel="按年查看"
+                  dailyMinutes={yearMonthlyMinutes}
+                  dayTips={yearMonthlyTips}
+                  totalMinutes={yearTotalMinutes}
+                  maxMinutes={YEARLY_MONTH_STUDY_MINUTES_CAP}
+                  xLabelUnit="月"
+                />
+              </div>
             </div>
 
             {hasWeeklyActivity ? (
@@ -665,29 +831,45 @@ export default async function DashboardHomePage() {
 
             <div className="mt-5 space-y-2.5">
               {[
-                { name: "单词", icon: BookText, pct: 70, color: "#f97316" },
-                { name: "语法", icon: BookOpen, pct: 58, color: "#8b5cf6" },
-                { name: "口语", icon: Mic, pct: 30, color: "#eab308" },
-                { name: "听力", icon: Ear, pct: 45, color: "#3b82f6" },
+                {
+                  name: "单词",
+                  icon: BookText,
+                  color: "#f97316",
+                  status:
+                    vocabularyThisWeekSeconds > 0
+                      ? `本周累计 ${vocabularyThisWeekMinutes} 分钟`
+                      : "本周尚未练习",
+                  available: true,
+                },
+                { name: "语法", icon: BookOpen, color: "#8b5cf6", status: "即将上线", available: false },
+                { name: "口语", icon: Mic, color: "#eab308", status: "即将上线", available: false },
+                { name: "听力", icon: Ear, color: "#3b82f6", status: "即将上线", available: false },
               ].map((item) => {
                 const Icon = item.icon;
                 return (
-                  <div key={item.name} className="flex items-center gap-3">
+                  <div
+                    key={item.name}
+                    className="flex items-center gap-3 rounded-xl px-2 py-1.5"
+                    style={{ backgroundColor: item.available ? "transparent" : "var(--app-soft-bg)" }}
+                  >
                     <span
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                      style={{ color: item.color, backgroundColor: `${item.color}18` }}
+                      style={{
+                        color: item.available ? item.color : "var(--app-muted)",
+                        backgroundColor: item.available ? `${item.color}18` : "var(--app-card-bg)",
+                      }}
                     >
                       <Icon size={14} aria-hidden="true" />
                     </span>
-                    <span className="w-10 text-xs font-bold app-muted-text">{item.name}</span>
-                    <div className="h-2 flex-1 overflow-hidden rounded-full" style={{ backgroundColor: "color-mix(in srgb, var(--app-border) 85%, var(--app-text))" }}>
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${item.pct}%`, backgroundColor: item.color }}
-                      />
-                    </div>
-                    <span className="w-9 text-right text-xs font-black" style={{ color: "var(--app-text)" }}>
-                      {item.pct}%
+                    <span className="flex-1 text-xs font-bold app-muted-text">{item.name}</span>
+                    <span
+                      className="rounded-full px-2.5 py-1 text-xs font-black"
+                      style={{
+                        color: item.available ? item.color : "var(--app-muted)",
+                        backgroundColor: item.available ? `${item.color}18` : "var(--app-card-bg)",
+                      }}
+                    >
+                      {item.status}
                     </span>
                   </div>
                 );
@@ -698,70 +880,74 @@ export default async function DashboardHomePage() {
 
         <div className="flex min-w-0 flex-col gap-5">
           <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-lg font-black">课程成长进度</p>
-              <p className="text-sm font-bold app-muted-text">今天 · 08.04（周二）</p>
-            </div>
+            <p className="text-lg font-black">最近学习课程</p>
 
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <span
-                className="rounded-full px-3 py-1 text-xs font-black"
-                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
-              >
-                Lv.3 初级
-              </span>
-              <span className="text-sm font-semibold app-muted-text">
-                正在学习在咖啡店点单
-              </span>
-            </div>
-
-            <div className="mt-5 space-y-2.5">
-              {[
-                { name: "单词练习", duration: 15, color: "#f97316" },
-                { name: "语法练习", duration: 20, color: "#8b5cf6" },
-                { name: "口语练习", duration: 25, color: "#eab308" },
-                { name: "听力练习", duration: 25, color: "#3b82f6" },
-              ].map((task) => (
-                <div
-                  key={task.name}
-                  className="flex items-center justify-between rounded-xl px-3 py-2.5"
-                  style={{ backgroundColor: "var(--app-soft-bg)" }}
+            {recentCourseProgressList.length > 0 ? (
+              <div className="mt-4 space-y-3">
+                {recentCourseProgressList.map((course) => (
+                  <Link
+                    key={course.courseId}
+                    href={course.href}
+                    className="block rounded-2xl p-3.5 transition hover:-translate-y-0.5"
+                    style={{ backgroundColor: "var(--app-soft-bg)" }}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-black">{course.title}</p>
+                        {course.teacherName && (
+                          <p className="mt-1 truncate text-xs font-semibold app-muted-text">
+                            支持教师：{course.teacherName}
+                          </p>
+                        )}
+                      </div>
+                      <span
+                        className="shrink-0 rounded-full px-2.5 py-1 text-xs font-black"
+                        style={{
+                          color: "var(--app-accent-strong)",
+                          backgroundColor: "var(--app-accent-soft)",
+                        }}
+                      >
+                        {course.percent}%
+                      </span>
+                    </div>
+                    <div className="mt-3 flex items-center justify-between gap-3 text-xs font-bold app-muted-text">
+                      <span>
+                        已完成 {course.completedCount} / {course.totalCount} 课时
+                      </span>
+                      <ArrowRight size={14} aria-hidden="true" />
+                    </div>
+                    <div
+                      className="mt-2.5 h-2 overflow-hidden rounded-full"
+                      style={{ backgroundColor: "var(--app-card-bg)" }}
+                    >
+                      <div
+                        className="h-full rounded-full"
+                        style={{
+                          width: `${Math.min(100, course.percent)}%`,
+                          backgroundColor: "var(--app-accent)",
+                        }}
+                      />
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="app-empty-state mt-4 flex min-h-48 flex-col items-center justify-center rounded-2xl p-5 text-center">
+                <BookOpen size={25} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
+                <p className="mt-3 text-sm font-black">还没有课程学习进度</p>
+                <p className="mt-1 max-w-xs text-xs leading-5 app-muted-text">
+                  开始学习一节课程后，这里会展示你的课程完成情况
+                </p>
+                <Link
+                  href="/dashboard/courses"
+                  className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black text-white"
+                  style={{ backgroundColor: "var(--app-accent)" }}
                 >
-                  <span className="flex items-center gap-2.5">
-                    <span
-                      className="h-3 w-3 shrink-0 rounded-full"
-                      style={{ backgroundColor: task.color }}
-                    />
-                    <span className="text-xs font-bold">
-                      今天任务 · {task.name}
-                    </span>
-                  </span>
-                  <span className="text-xs font-black app-muted-text">
-                    {task.duration} 分钟
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-5 flex items-center gap-3">
-              <span
-                className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}
-              >
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: "var(--app-success)" }}
-                />
-                出勤 18 天
-              </span>
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold app-muted-text">
-                <span
-                  className="h-2 w-2 rounded-full"
-                  style={{ backgroundColor: "var(--app-warm)" }}
-                />
-                目标 30 天
-              </span>
-            </div>
+                  浏览全部课程
+                  <ArrowRight size={14} aria-hidden="true" />
+                </Link>
+              </div>
+            )}
           </section>
 
           <section id="reminders" className="app-glass-card scroll-mt-24 rounded-[20px] p-4 sm:p-5">
@@ -832,8 +1018,9 @@ export default async function DashboardHomePage() {
               {practiceTools.map((tool) => {
                 const Icon = tool.icon;
                 return (
-                  <div
+                  <Link
                     key={tool.title}
+                    href={tool.href}
                     className="flex flex-col gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5"
                     style={{ backgroundColor: tool.bgColor }}
                   >
@@ -845,7 +1032,7 @@ export default async function DashboardHomePage() {
                       {tool.title}
                     </span>
                     <span className="text-xs font-semibold app-muted-text">{tool.subtitle}</span>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
@@ -870,10 +1057,30 @@ export default async function DashboardHomePage() {
                       )}
                       <span className="min-w-0 flex-1">
                         <span className="block truncate text-sm font-black">{item.lessonTitle}</span>
-                        <span className="mt-0.5 block truncate text-xs app-muted-text">{item.courseTitle}</span>
+                        <span className="mt-0.5 block truncate text-xs app-muted-text">
+                          {item.courseTitle}
+                        </span>
+                        <span className="mt-1 block text-[10px] font-semibold app-muted-text">
+                          最后学习：
+                          <LocalDateTime
+                            value={item.lastViewedAt}
+                            options={RECENT_ACTIVITY_DATE_TIME_OPTIONS}
+                          />
+                        </span>
                       </span>
-                      <span className="shrink-0 text-xs font-bold app-muted-text">
-                        {statusLabelMap[item.status] ?? item.status}
+                      <span className="flex shrink-0 flex-col items-end gap-1.5">
+                        <span
+                          className="rounded-full px-2.5 py-1 text-xs font-black"
+                          style={{
+                            color: "var(--app-accent-strong)",
+                            backgroundColor: "var(--app-accent-soft)",
+                          }}
+                        >
+                          {Math.min(100, Math.max(0, item.progressPercent))}%
+                        </span>
+                        <span className="text-[10px] font-bold app-muted-text">
+                          {statusLabelMap[item.status] ?? item.status}
+                        </span>
                       </span>
                     </div>
                   );
