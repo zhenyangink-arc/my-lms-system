@@ -5,6 +5,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { VisaManagementCase } from "../../api/types";
+import { VisaCaseCellAction } from "./cell-action";
 
 export const VISA_TYPE_LABELS: Record<string, string> = {
   d4_language: "语言研修签证",
@@ -149,5 +150,12 @@ export const visaCaseColumns: ColumnDef<VisaManagementCase>[] = [
         />
       </span>
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="sr-only">档案操作</span>,
+    cell: ({ row }) => <VisaCaseCellAction item={row.original} />,
   },
 ];

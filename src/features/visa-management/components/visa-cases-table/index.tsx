@@ -126,11 +126,11 @@ export function VisaCasesTable({
       emptyContent="没有符合条件的学生签证档案"
       footer={
         <p className="text-xs text-[var(--app-muted)]">
-          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 份签证档案，本表只展示，不提供状态变更或删除操作
+          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 份签证档案，可编辑跟进信息或进入二次确认删除流程
         </p>
       }
     >
-      <Table className="min-w-[1320px]">
+      <Table className="min-w-[1540px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

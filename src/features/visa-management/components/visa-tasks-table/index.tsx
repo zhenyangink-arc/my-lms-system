@@ -121,11 +121,11 @@ export function VisaTasksTable({
       emptyContent="没有符合条件的签证任务"
       footer={
         <p className="text-xs text-[var(--app-muted)]">
-          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 项签证任务，本表只展示学生说明与现有审核意见
+          {scopeLabel} · 当前显示 {filteredData.length} / {data.length} 项签证任务，待审核任务可按现有状态流转处理
         </p>
       }
     >
-      <Table className="min-w-[1480px]">
+      <Table className="min-w-[1640px]">
         <TableHeader className="bg-[var(--app-soft-bg)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

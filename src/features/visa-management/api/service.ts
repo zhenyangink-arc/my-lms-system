@@ -118,7 +118,7 @@ export async function getVisaManagementData(): Promise<VisaManagementData> {
     access.supabase
       .from("student_visa_cases")
       .select(
-        "id,user_id,source_target_id,visa_type,application_channel,case_status,target_entry_date,planned_entry_date,application_city,updated_at",
+        "id,user_id,source_target_id,visa_type,application_channel,case_status,target_entry_date,planned_entry_date,application_city,advisor_note,updated_at",
       )
       .eq("tenant_id", tenantId)
       .order("updated_at", { ascending: false }),
@@ -202,6 +202,7 @@ export async function getVisaManagementData(): Promise<VisaManagementData> {
         targetEntryDate: visaCase.target_entry_date,
         plannedEntryDate: visaCase.planned_entry_date,
         applicationCity: visaCase.application_city,
+        advisorNote: visaCase.advisor_note,
         updatedAt: visaCase.updated_at,
         tasks: (tasksByUserId.get(visaCase.user_id) ?? []).map((task) => ({
           id: task.id,

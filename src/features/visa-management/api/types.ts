@@ -50,6 +50,7 @@ export type VisaCaseRow = {
   target_entry_date: string | null;
   planned_entry_date: string | null;
   application_city: string | null;
+  advisor_note: string | null;
   updated_at: string;
 };
 
@@ -104,6 +105,7 @@ export type VisaManagementCase = {
   targetEntryDate: string | null;
   plannedEntryDate: string | null;
   applicationCity: string | null;
+  advisorNote: string | null;
   updatedAt: string;
   tasks: VisaTaskSummary[];
 };

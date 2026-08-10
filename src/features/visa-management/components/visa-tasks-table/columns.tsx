@@ -4,6 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
+import { VisaTaskCellAction } from "./cell-action";
 import type { VisaTaskDisplayRow } from "./types";
 
 export const TASK_STAGE_LABELS: Record<string, string> = {
@@ -140,5 +141,12 @@ export const visaTaskColumns: ColumnDef<VisaTaskDisplayRow>[] = [
         options={DATE_TIME_OPTIONS}
       />
     ),
+  },
+  {
+    id: "actions",
+    enableHiding: false,
+    enableSorting: false,
+    header: () => <span className="sr-only">审核操作</span>,
+    cell: ({ row }) => <VisaTaskCellAction task={row.original} />,
   },
 ];
