@@ -3,7 +3,6 @@ import "server-only";
 import { redirect } from "next/navigation";
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
-import { hasExplicitPermission } from "@/lib/permissions/access";
 
 export type StudentAssignmentScope = "tenant" | "platform" | null;
 
@@ -18,7 +17,7 @@ export type StudentAssignmentAccess = {
 
 /**
  * 学生分配管理入口权限：
- * - 机构侧：tenant_super_admin 固定可管理；被授予 student_assignments.manage 的指定管理员（admin 角色）可管理；
+ * - 机构侧：数据库正式注册 student_assignments.manage 前，仅 tenant_super_admin 固定可管理；
  * - 平台侧：platform_super_admin 可只读查看各机构的老师-学生覆盖情况（不能分配）；
  * - CEO、老师、学生不进入本模块。
  */
@@ -38,10 +37,7 @@ export async function getStudentAssignmentAccess(): Promise<StudentAssignmentAcc
     };
   }
   if (role === "tenant_super_admin") return { canManage: true, scope: "tenant", role, tenantId, supabase, user };
-  if (role !== "admin") return { canManage: false, scope: null, role, tenantId, supabase, user };
-
-  const canManage = await hasExplicitPermission(supabase, user.id, "student_assignments.manage", tenantId);
-  return { canManage, scope: canManage ? "tenant" : null, role, tenantId, supabase, user };
+  return { canManage: false, scope: null, role, tenantId, supabase, user };
 }
 
 /** 页面入口：机构侧可管理或平台侧只读，均允许进入页面。 */
