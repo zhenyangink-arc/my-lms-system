@@ -501,8 +501,7 @@ export async function ChapterTestWorkspace({
                                 }}
                               />
                               <span className="app-muted-text inline-flex items-center gap-2 pl-8 font-mono text-[11px]">
-                                CHAPTER{" "}
-                                {String(test.chapter_number).padStart(2, "0")}
+                                第 {String(test.chapter_number).padStart(2, "0")} 章
                               </span>
                             </td>
                             <td className="border-l px-4 py-3.5">
@@ -514,7 +513,7 @@ export async function ChapterTestWorkspace({
                                   {test.title}
                                 </span>
                                 <span className="app-muted-text shrink-0 font-mono text-[10px]">
-                                  v{test.version}
+                                  版本 {test.version}
                                 </span>
                               </div>
                             </td>

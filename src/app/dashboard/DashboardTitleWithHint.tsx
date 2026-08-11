@@ -31,7 +31,7 @@ export function DashboardTitleWithHint({
   title,
   description,
   className = "",
-  titleClassName = "text-2xl font-black tracking-tight",
+  titleClassName = "font-black tracking-tight",
   headingLevel = 1,
 }: DashboardTitleWithHintProps) {
   const Heading =

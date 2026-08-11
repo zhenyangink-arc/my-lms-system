@@ -31,31 +31,31 @@ export type KoreanEbookSectionDefinition = {
 };
 
 export const KOREAN_EBOOK_SECTION_TONES: Record<string, KoreanEbookSectionTone> = {
-  "STEP 01": { color: "#bd741e", soft: "#fff0df" },
-  "STEP 02": { color: "#3d6f9f", soft: "#eaf2fb" },
-  "STEP 03": { color: "#75559a", soft: "#f1eafb" },
-  "STEP 04": { color: "#b46624", soft: "#fff2df" },
-  "STEP 05": { color: "#a65b68", soft: "#fbeaec" },
-  "STEP 06": { color: "#3e7fa3", soft: "#eaf4fa" },
-  "STEP 07": { color: "#347b69", soft: "#e7f5f1" },
-  "STEP 08": { color: "#487a54", soft: "#e8f4eb" },
+  "第一步": { color: "#bd741e", soft: "#fff0df" },
+  "第二步": { color: "#3d6f9f", soft: "#eaf2fb" },
+  "第三步": { color: "#75559a", soft: "#f1eafb" },
+  "第四步": { color: "#b46624", soft: "#fff2df" },
+  "第五步": { color: "#a65b68", soft: "#fbeaec" },
+  "第六步": { color: "#3e7fa3", soft: "#eaf4fa" },
+  "第七步": { color: "#347b69", soft: "#e7f5f1" },
+  "第八步": { color: "#487a54", soft: "#e8f4eb" },
 };
 
 export function getKoreanEbookStepTone(step: string) {
   const normalizedStep =
     Object.keys(KOREAN_EBOOK_SECTION_TONES).find((key) => step.includes(key)) ??
-    "STEP 08";
+    "第八步";
   return KOREAN_EBOOK_SECTION_TONES[normalizedStep];
 }
 
 export function getKoreanEbookStepToneClass(step: string) {
-  if (step.includes("STEP 01")) return "bg-[#fff0df] text-[#bd741e]";
-  if (step.includes("STEP 02")) return "bg-[#eaf2fb] text-[#3d6f9f]";
-  if (step.includes("STEP 03")) return "bg-[#f1eafb] text-[#75559a]";
-  if (step.includes("STEP 04")) return "bg-[#fff2df] text-[#b46624]";
-  if (step.includes("STEP 05")) return "bg-[#fbeaec] text-[#a65b68]";
-  if (step.includes("STEP 06")) return "bg-[#eaf4fa] text-[#3e7fa3]";
-  if (step.includes("STEP 07")) return "bg-[#e7f5f1] text-[#347b69]";
+  if (step.includes("第一步")) return "bg-[#fff0df] text-[#bd741e]";
+  if (step.includes("第二步")) return "bg-[#eaf2fb] text-[#3d6f9f]";
+  if (step.includes("第三步")) return "bg-[#f1eafb] text-[#75559a]";
+  if (step.includes("第四步")) return "bg-[#fff2df] text-[#b46624]";
+  if (step.includes("第五步")) return "bg-[#fbeaec] text-[#a65b68]";
+  if (step.includes("第六步")) return "bg-[#eaf4fa] text-[#3e7fa3]";
+  if (step.includes("第七步")) return "bg-[#e7f5f1] text-[#347b69]";
   return "bg-[#e8f4eb] text-[#487a54]";
 }
 
@@ -528,8 +528,8 @@ export function KoreanEbookCover({
       <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#dcebe4]" />
       <div className="relative flex h-full flex-col px-14 py-12">
         <div className="flex items-center justify-between text-[11px] font-black tracking-[0.2em] text-[#6f746f]">
-          <span>KOREAN LANGUAGE</span>
-          <span>LEVEL 1</span>
+          <span>韩国语</span>
+          <span>一级</span>
         </div>
         <div className="my-auto">
           <p className="text-sm font-black tracking-[0.28em] text-[#b85f4d]">

@@ -13,6 +13,7 @@ export type ConversationPracticeAccess = {
    *  机构负责人和机构内其他角色即使能进页面，也只能浏览，不能新建或更改 */
   canManageContent: boolean;
   role: UserRole;
+  tenantId: string | null;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
 };
@@ -20,6 +21,7 @@ export type ConversationPracticeAccess = {
 export async function getConversationPracticeAccess(): Promise<ConversationPracticeAccess> {
   const { supabase, user, profile, tenant } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
+  const tenantId = tenant?.id ?? null;
 
   if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") {
     const canManageContent = role === "platform_super_admin" && !tenant;
@@ -27,13 +29,19 @@ export async function getConversationPracticeAccess(): Promise<ConversationPract
       canManage: true,
       canManageContent,
       role,
+      tenantId,
       supabase,
       user,
     };
   }
 
+  // 老师可浏览会话练习数据，但页面只显示自己负责的学生；不能新建/编辑场景。
+  if (role === "teacher") {
+    return { canManage: true, canManageContent: false, role, tenantId, supabase, user };
+  }
+
   if (role !== "admin" || !tenant) {
-    return { canManage: false, canManageContent: false, role, supabase, user };
+    return { canManage: false, canManageContent: false, role, tenantId, supabase, user };
   }
 
   const assigned = await hasExplicitPermission(
@@ -47,6 +55,7 @@ export async function getConversationPracticeAccess(): Promise<ConversationPract
     canManage: assigned,
     canManageContent: false,
     role,
+    tenantId,
     supabase,
     user,
   };

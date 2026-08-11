@@ -93,7 +93,7 @@ export function LessonInlineEditor({
             <div className="space-y-4">
               <div className="grid gap-4 md:grid-cols-2">
                 <label className={labelClass}>名称<input name="title" required maxLength={100} defaultValue={lesson.title} className={inputClass} /></label>
-                <label className={labelClass}>Slug<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" defaultValue={lesson.slug} className={inputClass} /></label>
+                <label className={labelClass}>路径标识<input name="slug" required pattern="[a-z0-9]+(?:-[a-z0-9]+)*" defaultValue={lesson.slug} className={inputClass} /></label>
               </div>
               <label className={labelClass}>简介<textarea name="description" rows={3} maxLength={500} defaultValue={lesson.description ?? ""} className={`${inputClass} resize-y leading-5`} /></label>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -111,12 +111,12 @@ export function LessonInlineEditor({
           </div>
           <div className="border-t pt-5" style={{ borderColor: "var(--app-border)" }}>
             <h3 className="mb-1 text-[12px] font-semibold">视频来源</h3>
-            <p className="app-muted-text mb-4 text-[10px]">R2 视频填写对象键；外部视频填写完整 URL。</p>
+            <p className="app-muted-text mb-4 text-[10px]">对象存储视频填写对象键；外部视频填写完整链接。</p>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className={labelClass}>视频提供方<select name="video_provider" defaultValue={lesson.video_provider ?? "r2"} className={inputClass}><option value="r2">Cloudflare R2</option><option value="external">外部地址</option></select></label>
+              <label className={labelClass}>视频存储方式<select name="video_provider" defaultValue={lesson.video_provider ?? "r2"} className={inputClass}><option value="r2">对象存储</option><option value="external">外部地址</option></select></label>
               <label className={labelClass}>MIME 类型<input name="video_mime_type" defaultValue={lesson.video_mime_type ?? "video/mp4"} className={inputClass} /></label>
               <label className={labelClass}>视频对象键<input name="video_object_key" defaultValue={lesson.video_object_key ?? ""} placeholder="course-videos/..." className={inputClass} /></label>
-              <label className={labelClass}>外部视频 URL<input name="video_url" type="url" defaultValue={lesson.video_url ?? ""} placeholder="https://..." className={inputClass} /></label>
+              <label className={labelClass}>外部视频链接<input name="video_url" type="url" defaultValue={lesson.video_url ?? ""} placeholder="请输入完整链接" className={inputClass} /></label>
             </div>
           </div>
           <SaveButton label="保存基本信息" />

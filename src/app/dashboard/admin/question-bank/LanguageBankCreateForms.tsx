@@ -6,6 +6,7 @@ import { useActionState, useState } from "react";
 import {
   defaultEbookSectionForSkill,
   KOREAN_EBOOK_SECTIONS,
+  koreanEbookSectionLabel,
 } from "@/lib/korean-ebook-sections";
 import {
   createLanguageBankMaterialAction,
@@ -75,10 +76,10 @@ const categories: Record<LanguageSkill, Array<[string, string]>> = {
 };
 
 const questionTypes: Record<LanguageSkill, Array<[string, string]>> = {
-  listening: [["single_choice", "单选 · A–D"]],
+  listening: [["single_choice", "单选 · 四个选项"]],
   speaking: [["audio_response", "录音作答"]],
   reading: [
-    ["single_choice", "单选 · A–D"], ["multiple_choice", "多选 · A–D"],
+    ["single_choice", "单选 · 四个选项"], ["multiple_choice", "多选 · 四个选项"],
     ["fill_blank", "填空"], ["ordering", "排序 · 四项"],
   ],
   writing: [["long_text", "写作"]],
@@ -124,7 +125,7 @@ function EbookSectionSelect({ skill }: { skill: LanguageSkill }) {
   return (
     <select name="ebook_section_step" required defaultValue={defaultEbookSectionForSkill(skill)} className={fieldClass}>
       {KOREAN_EBOOK_SECTIONS.map((section) => (
-        <option key={section.step} value={section.step}>{section.step} · {section.label}</option>
+        <option key={section.step} value={section.step}>{koreanEbookSectionLabel(section.step)}</option>
       ))}
     </select>
   );

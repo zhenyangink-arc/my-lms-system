@@ -1,8 +1,9 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireStudentFeature } from "@/lib/student-permissions-server";
+import { getConsulateForProvince } from "./consulate-jurisdictions";
 import type { VisaActionState } from "./visa-action-state";
 
 const APPLICATION_CHANNELS = ["china_consulate", "korea_immigration"];
@@ -15,9 +16,9 @@ function result(status: "success" | "error", message: string): VisaActionState {
 }
 
 function revalidateVisaPages(userId: string) {
-  revalidatePath("/dashboard/visa");
-  revalidatePath("/dashboard/admin/visa");
-  revalidatePath(`/dashboard/admin/visa/${userId}`);
+  revalidateDashboard("/dashboard/visa");
+  revalidateDashboard("/dashboard/admin/visa");
+  revalidateDashboard(`/dashboard/admin/visa/${userId}`);
 }
 
 export async function initializeVisaWorkspaceAction(
@@ -61,7 +62,6 @@ export async function updateVisaCaseAction(
     return result("error", "申请进度到达第九步后才能填写签证信息。");
   }
   const applicationChannel = String(formData.get("application_channel") ?? "").trim();
-  const applicationCity = String(formData.get("application_city") ?? "").trim();
   const residenceProvince = String(formData.get("residence_province") ?? "").trim();
   const residenceCity = String(formData.get("residence_city") ?? "").trim();
   const plannedEntryDate = String(formData.get("planned_entry_date") ?? "").trim();
@@ -78,7 +78,6 @@ export async function updateVisaCaseAction(
   if (applicationChannel !== eligibleTarget.visa_application_channel) {
     return result("error", "签证办理通道由管理员确认，学生端不能修改。");
   }
-  if (applicationCity.length > 80) return result("error", "递签城市不能超过 80 个字。");
   if (residenceProvince.length > 40) return result("error", "省份名称不能超过 40 个字。");
   if (residenceCity.length > 40) return result("error", "城市名称不能超过 40 个字。");
   if (plannedEntryDate && !DATE_PATTERN.test(plannedEntryDate)) return result("error", "预计入境时间格式不正确。");
@@ -92,10 +91,17 @@ export async function updateVisaCaseAction(
   if (arrivalRegion.length > 40) return result("error", "到达机场地区不能超过 40 个字。");
   if (arrivalAirport.length > 60) return result("error", "到达机场名称不能超过 60 个字。");
 
+  // 递签领区决定材料递交的实体领馆，绝不能信任客户端提交的隐藏字段：
+  // 始终由服务端按 residence_province 重新推算，防止篡改提交任意领区。
+  const resolvedApplicationCity =
+    applicationChannel === "china_consulate" && residenceProvince
+      ? getConsulateForProvince(residenceProvince)
+      : null;
+
   const { data, error } = await supabase
     .from("student_visa_cases")
     .update({
-      application_city: applicationCity || null,
+      application_city: resolvedApplicationCity,
       residence_province: applicationChannel === "china_consulate" ? (residenceProvince || null) : null,
       residence_city: applicationChannel === "china_consulate" ? (residenceCity || null) : null,
       planned_entry_date: plannedEntryDate || null,

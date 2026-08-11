@@ -3,6 +3,8 @@ export type KoreanEbookProgressEntry = {
   totalPages: number;
   progressPercent: number;
   readPages: number[];
+  readingSeconds?: number;
+  lastReadAt?: string | null;
 };
 
 export type KoreanEbookProgressMap = Record<

@@ -23,8 +23,8 @@ type LessonQuestionFormProps = {
 
 const targetLabelMap: Record<QuestionTarget, string> = {
   teacher: "提交给老师",
-  ai: "向 AI 助教提问",
-  both: "AI 先回答，必要时转老师",
+  ai: "向智能助教提问",
+  both: "智能助教先回答，必要时转老师",
 };
 
 export function LessonQuestionForm({
@@ -107,9 +107,9 @@ export function LessonQuestionForm({
     if (target === "teacher") {
       setResultMessage("问题已提交给老师。");
     } else if (target === "ai") {
-      setResultMessage("问题已提交到 AI 助教队列。AI 自动回答功能后续接入。");
+      setResultMessage("问题已提交到智能助教队列。自动回答功能后续接入。");
     } else {
-      setResultMessage("问题已提交。AI 助教优先处理，必要时可转老师。");
+      setResultMessage("问题已提交。智能助教优先处理，必要时可转老师。");
     }
 
     /**
@@ -167,7 +167,7 @@ export function LessonQuestionForm({
         <textarea
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          placeholder="请描述你不理解的地方，老师或 AI 助教会根据本课内容帮助你。"
+          placeholder="请描述你不理解的地方，老师或智能助教会根据本课内容帮助你。"
           rows={5}
           className="mt-2 w-full resize-none rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm leading-6 outline-none transition focus:border-gray-900"
         />

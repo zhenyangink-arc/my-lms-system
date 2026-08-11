@@ -108,7 +108,7 @@ const categoryOptions = [
     icon: Languages,
     color: "#8b5cf6",
     soft: "#f3efff",
-    suggestions: ["TOPIK成绩", "IELTS成绩", "TOEFL成绩", "韩语课程证明", "语言成绩证明"],
+    suggestions: ["韩国语能力考试成绩", "国际英语能力考试成绩", "英语能力考试成绩", "韩语课程证明", "语言成绩证明"],
   },
 ] as const;
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import {
   getHelpCenterAccess,
@@ -26,12 +26,12 @@ function result(status: "success" | "error", message: string): HelpCenterActionS
 function isUuid(value: string) { return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(value); }
 
 function refreshHelp(ticketId?: string) {
-  revalidatePath("/dashboard/help");
-  revalidatePath("/dashboard/admin/help");
-  revalidatePath("/dashboard/admin");
+  revalidateDashboard("/dashboard/help");
+  revalidateDashboard("/dashboard/admin/help");
+  revalidateDashboard("/dashboard/admin");
   if (ticketId) {
-    revalidatePath(`/dashboard/help/tickets/${ticketId}`);
-    revalidatePath(`/dashboard/admin/help/tickets/${ticketId}`);
+    revalidateDashboard(`/dashboard/help/tickets/${ticketId}`);
+    revalidateDashboard(`/dashboard/admin/help/tickets/${ticketId}`);
   }
 }
 

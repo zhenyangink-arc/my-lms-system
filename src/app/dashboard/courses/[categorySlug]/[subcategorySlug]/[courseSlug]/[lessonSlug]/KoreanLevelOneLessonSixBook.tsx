@@ -77,20 +77,20 @@ type VocabularyItem = {
 type Speak = (text: string) => void;
 
 const LESSON_SIX_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33] },
 ]);
 
-const SectionStepContext = createContext("STEP 08");
+const SectionStepContext = createContext("第八步");
 
 function getSectionStep(number: string) {
-  return LESSON_SIX_TEMPLATE.pageMeta[number]?.tag ?? "STEP 08";
+  return LESSON_SIX_TEMPLATE.pageMeta[number]?.tag ?? "第八步";
 }
 
 const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
@@ -378,7 +378,7 @@ export function KoreanLevelOneLessonSixBook({
     </Page>,
     <Page key="06-02" number="02">
       <KoreanEbookSectionDivider
-        step="STEP 01"
+        step="第一步"
         title="课前导航"
         goal="完成“看商品—问价格—说数量—描述特点—礼貌购买”的完整交易。"
         icon={<Compass size={24} />}
@@ -417,7 +417,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-04" number="04">
-      <KoreanEbookSectionDivider step="STEP 02" title="核心词汇表" goal="按照商品、状态、价格和数量分类建立购物词汇网络。" icon={<Package size={24} />} />
+      <KoreanEbookSectionDivider step="第二步" title="核心词汇表" goal="按照商品、状态、价格和数量分类建立购物词汇网络。" icon={<Package size={24} />} />
     </Page>,
     <Page key="06-05" number="05">
       <div className="flex h-full flex-col">
@@ -450,7 +450,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-09" number="09">
-      <KoreanEbookSectionDivider step="STEP 03" title="语法讲解" goal="四个语法各占一页：礼貌请求、数量表达、特征描述和“也”的包含关系。" icon={<NotebookPen size={24} />} />
+      <KoreanEbookSectionDivider step="第三步" title="语法讲解" goal="四个语法各占一页：礼貌请求、数量表达、特征描述和“也”的包含关系。" icon={<NotebookPen size={24} />} />
     </Page>,
     <Page key="06-10" number="10">
       <div className="flex h-full flex-col">
@@ -571,7 +571,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-14" number="14">
-      <KoreanEbookSectionDivider step="STEP 04" title="句型操练" goal="在数字系统、量词变形、助词选择和单价表达之间建立快速反应。" icon={<PencilLine size={24} />} />
+      <KoreanEbookSectionDivider step="第四步" title="句型操练" goal="在数字系统、量词变形、助词选择和单价表达之间建立快速反应。" icon={<PencilLine size={24} />} />
     </Page>,
     <Page key="06-15" number="15">
       <div className="flex h-full flex-col">
@@ -646,7 +646,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-18" number="18">
-      <KoreanEbookSectionDivider step="STEP 05" title="实战对话" goal="在水果店、咖啡店和服装店完成三组不少于八句的真实交易。" icon={<MessageCircle size={24} />} />
+      <KoreanEbookSectionDivider step="第五步" title="实战对话" goal="在水果店、咖啡店和服装店完成三组不少于八句的真实交易。" icon={<MessageCircle size={24} />} />
     </Page>,
     <Page key="06-19" number="19">
       <div className="flex h-full flex-col">
@@ -697,7 +697,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-22" number="22">
-      <KoreanEbookSectionDivider step="STEP 06" title="听说任务" goal="听辨金额、数量与量词，再在时间限制内完成一笔完整购买。" icon={<Headphones size={24} />} />
+      <KoreanEbookSectionDivider step="第六步" title="听说任务" goal="听辨金额、数量与量词，再在时间限制内完成一笔完整购买。" icon={<Headphones size={24} />} />
     </Page>,
     <Page key="06-23" number="23">
       <div className="flex h-full flex-col">
@@ -708,7 +708,7 @@ export function KoreanLevelOneLessonSixBook({
             ["만 원", "10,000원"], ["만 이천 원", "12,000원"], ["이만 오천 원", "25,000원"],
           ].map(([price, number], index) => (
             <button key={`${price}-${index}`} type="button" onClick={() => speak(price)} className="rounded-2xl border border-[#cfdfeb] bg-white p-4 text-left">
-              <p className="text-[10px] font-black text-[#3e7fa3]">PRICE AUDIO {index + 1}</p>
+              <p className="text-[10px] font-black text-[#3e7fa3]">价格语音 {index + 1}</p>
               <p className={`mt-3 text-sm font-black ${revealed.prices ? "opacity-100" : "opacity-0"}`}>{price}</p>
               <p className={`mt-1 text-[11px] font-bold text-[#71857b] ${revealed.prices ? "opacity-100" : "opacity-0"}`}>{number}</p>
             </button>
@@ -779,7 +779,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-26" number="26">
-      <KoreanEbookSectionDivider step="STEP 07" title="读写拓展" goal="读取促销广告中的数量、单价和商品特点，再独立制作一张韩语商品卡。" icon={<ShoppingBag size={24} />} />
+      <KoreanEbookSectionDivider step="第七步" title="读写拓展" goal="读取促销广告中的数量、单价和商品特点，再独立制作一张韩语商品卡。" icon={<ShoppingBag size={24} />} />
     </Page>,
     <Page key="06-27" number="27">
       <div className="flex h-full flex-col">
@@ -847,7 +847,7 @@ export function KoreanLevelOneLessonSixBook({
       </div>
     </Page>,
     <Page key="06-29" number="29">
-      <KoreanEbookSectionDivider step="STEP 08" title="自测与复盘" goal="先完成数字和量词测试，再完成语法检测、价格计算和八句口语验收。" icon={<CheckCircle2 size={24} />} />
+      <KoreanEbookSectionDivider step="第八步" title="自测与复盘" goal="先完成数字和量词测试，再完成语法检测、价格计算和八句口语验收。" icon={<CheckCircle2 size={24} />} />
     </Page>,
     <Page key="06-30" number="30">
       <div className="flex h-full flex-col">
@@ -1015,7 +1015,7 @@ export function KoreanLevelOneLessonSixBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 
 import { requireVisaManager } from "@/lib/visa-management";
@@ -16,9 +16,9 @@ function result(status: "success" | "error", message: string): VisaAdminActionSt
 }
 
 function revalidateVisa(studentId: string) {
-  revalidatePath("/dashboard/admin/visa");
-  revalidatePath(`/dashboard/admin/visa/${studentId}`);
-  revalidatePath("/dashboard/visa");
+  revalidateDashboard("/dashboard/admin/visa");
+  revalidateDashboard(`/dashboard/admin/visa/${studentId}`);
+  revalidateDashboard("/dashboard/visa");
 }
 
 export async function deleteStudentVisaCardAction(

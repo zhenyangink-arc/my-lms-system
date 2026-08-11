@@ -620,11 +620,10 @@ export async function HomeworkChapterWorkspace({
                                   }}
                                 />
                                 <span className="app-muted-text inline-flex pl-8 font-mono text-[11px]">
-                                  CHAPTER{" "}
-                                  {String(chapter.chapter_number).padStart(
+                                  第 {String(chapter.chapter_number).padStart(
                                     2,
                                     "0"
-                                  )}
+                                  )} 章
                                 </span>
                               </td>
                               <td className="border-l px-4 py-3">

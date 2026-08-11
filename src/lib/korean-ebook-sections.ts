@@ -12,9 +12,26 @@ export const KOREAN_EBOOK_SECTIONS = [
 export type KoreanEbookSectionStep =
   (typeof KOREAN_EBOOK_SECTIONS)[number]["step"];
 
+export function koreanEbookStepLabel(step: string) {
+  const stepNumber = Number(step.match(/\d+/)?.[0]);
+  const labels: Record<number, string> = {
+    1: "第一步",
+    2: "第二步",
+    3: "第三步",
+    4: "第四步",
+    5: "第五步",
+    6: "第六步",
+    7: "第七步",
+    8: "第八步",
+  };
+  return labels[stepNumber] ?? "学习步骤";
+}
+
 export function koreanEbookSectionLabel(step: string) {
   const section = KOREAN_EBOOK_SECTIONS.find((item) => item.step === step);
-  return section ? `${section.step} · ${section.label}` : step;
+  return section
+    ? `${koreanEbookStepLabel(section.step)} · ${section.label}`
+    : koreanEbookStepLabel(step);
 }
 
 export function defaultEbookSectionForSkill(skill: string): KoreanEbookSectionStep {

@@ -48,14 +48,14 @@ type FlipBookHandle = {
 };
 
 const TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
 ]);
 
 const Page = forwardRef<
@@ -91,7 +91,7 @@ function Heading({
 }) {
   return (
     <KoreanEbookHeading
-      step={TEMPLATE.pageMeta[page]?.tag ?? "STEP 08"}
+      step={TEMPLATE.pageMeta[page]?.tag ?? "第八步"}
       title={title}
       description={description}
       icon={icon}
@@ -338,49 +338,49 @@ const dividers: Record<
   { step: string; title: string; goal: string; icon: ReactNode }
 > = {
   "02": {
-    step: "STEP 01",
+    step: "第一步",
     title: "课前导航",
     goal: "建立“描述商品—选择尺码—建议试穿—评价搭配—决定购买／送礼”的购物交际链。",
     icon: <ShoppingBag size={24} />,
   },
   "04": {
-    step: "STEP 02",
+    step: "第二步",
     title: "核心词汇",
     goal: "掌握服饰、外观形容词、穿戴动词、购物与送礼表达。",
     icon: <Shirt size={24} />,
   },
   "09": {
-    step: "STEP 03",
+    step: "第三步",
     title: "语法讲解",
     goal: "四个语法各占一页：形容词定语、ㄹ脱落、尝试建议和动作对象。",
     icon: <NotebookPen size={24} />,
   },
   "14": {
-    step: "STEP 04",
+    step: "第四步",
     title: "句型操练",
     goal: "把商品特征、穿戴动作、试穿建议和送礼对象组合成完整表达。",
     icon: <Tags size={24} />,
   },
   "18": {
-    step: "STEP 05",
+    step: "第五步",
     title: "实战对话",
     goal: "完成试衣、试鞋和生日礼物三组八句购物对话。",
     icon: <MessageCircle size={24} />,
   },
   "22": {
-    step: "STEP 06",
+    step: "第六步",
     title: "听说任务",
     goal: "从购物对话中提取商品、颜色、尺码、评价、收礼人和最终决定。",
     icon: <Headphones size={24} />,
   },
   "26": {
-    step: "STEP 07",
+    step: "第七步",
     title: "读写拓展",
     goal: "读懂商品推荐，并写出包含特征、试穿建议和送礼对象的推荐文。",
     icon: <BookOpenCheck size={24} />,
   },
   "29": {
-    step: "STEP 08",
+    step: "第八步",
     title: "自测与复盘",
     goal: "检查服饰词汇、四项语法、穿戴搭配、双收音和购物交际能力。",
     icon: <CheckCircle2 size={24} />,
@@ -1287,7 +1287,7 @@ export function KoreanLevelOneLessonFourteenBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

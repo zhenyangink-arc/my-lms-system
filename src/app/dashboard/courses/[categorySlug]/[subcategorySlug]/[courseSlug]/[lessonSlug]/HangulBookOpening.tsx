@@ -914,7 +914,7 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
   if (index === 9) return (
     <div className="flex h-full flex-col text-center">
       {/* ===== 简洁结束页：完成提示 + 答题入口 ===== */}
-      <p className="mt-10 text-xs font-black tracking-[0.18em] text-[#c98520]">STEP_01 COMPLETE</p>
+      <p className="mt-10 text-xs font-black tracking-[0.18em] text-[#c98520]">第一步完成</p>
       <h2 className="mt-4 text-3xl font-black leading-tight text-[#294f43]">{page.title}</h2>
       <p className="mx-auto mt-4 max-w-[78%] text-sm leading-7 text-[#60736a]">声音、字母、音节方块——你已经完成第一步。</p>
 
@@ -985,17 +985,24 @@ export function HangulBookOpening({
   initialPage = 0,
   onPageChange,
   onStartTest,
+  live,
 }: {
   isFullscreen: boolean;
   speechRate?: number;
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
+  live?: {
+    page: number | null;
+    overlay: React.ReactNode | null;
+  };
 }) {
   const containerRef = useRef<HTMLElement>(null);
   const flipBookRef = useRef<FlipBookHandle>(null);
   const speechTimerRef = useRef<number | null>(null);
   const speechRequestRef = useRef(0);
+  const lastLivePageRef = useRef<number | null>(null);
   const [bookScale, setBookScale] = useState(1);
 
   useEffect(() => {
@@ -1006,7 +1013,16 @@ export function HangulBookOpening({
     const resizeObserver = new ResizeObserver(() => {
       cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
-        const nextScale = isFullscreen ? MAX_BOOK_SCALE : 1;
+        // 之前完全没用容器的实际尺寸，全屏/非全屏各按一个固定倍数缩放，
+        // 窄视口（如1366宽笔记本非全屏、<900高视口）会被裁掉一截。
+        // 按可用宽高与书本原始尺寸的比例来缩放，撑满但不越界；
+        // 非全屏最多按原始 100% 显示，全屏最多放大到 MAX_BOOK_SCALE。
+        const cap = isFullscreen ? MAX_BOOK_SCALE : 1;
+        const nextScale = Math.min(
+          container.clientWidth / BOOK_WIDTH,
+          container.clientHeight / BOOK_HEIGHT,
+          cap
+        );
 
         setBookScale(Math.max(0.1, nextScale));
         flipBookRef.current?.pageFlip()?.update();
@@ -1023,6 +1039,14 @@ export function HangulBookOpening({
   function goToNextPage() {
     flipBookRef.current?.pageFlip()?.flipNext();
   }
+
+  // 伴学课堂：跟随远端翻页指令（防循环由课堂层 lastRemotePage 保证）。
+  useEffect(() => {
+    if (live?.page == null) return;
+    if (live.page === lastLivePageRef.current) return;
+    lastLivePageRef.current = live.page;
+    flipBookRef.current?.pageFlip()?.flip(live.page);
+  }, [live?.page]);
 
   function goToPreviousPage() {
     flipBookRef.current?.pageFlip()?.flipPrev();
@@ -1082,24 +1106,24 @@ export function HangulBookOpening({
         className={`relative shrink-0 ${isFullscreen ? "" : "-translate-y-2.5"}`}
         style={{ width: BOOK_WIDTH * bookScale, height: BOOK_HEIGHT * bookScale }}
       >
-        <div className="group/previous absolute inset-y-0 -left-[180px] z-20 flex w-[180px] items-center justify-end pr-3">
+        <div className="absolute inset-y-0 -left-[180px] z-20 flex w-[180px] items-center justify-end pr-3">
           <button
             type="button"
             onClick={goToPreviousPage}
             aria-label="电子书上一页"
             title="上一页"
-            className="pointer-events-none flex h-11 w-11 translate-x-6 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] opacity-0 shadow-lg transition duration-200 group-hover/previous:pointer-events-auto group-hover/previous:opacity-100 group-focus-within/previous:pointer-events-auto group-focus-within/previous:opacity-100 hover:bg-[#e9f6f1]"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] shadow-lg transition duration-200 hover:bg-[#e9f6f1]"
           >
             ←
           </button>
         </div>
-        <div className="group/next absolute inset-y-0 -right-[180px] z-20 flex w-[180px] items-center justify-start pl-3">
+        <div className="absolute inset-y-0 -right-[180px] z-20 flex w-[180px] items-center justify-start pl-3">
           <button
             type="button"
             onClick={goToNextPage}
             aria-label="电子书下一页"
             title="下一页"
-            className="pointer-events-none flex h-11 w-11 -translate-x-6 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] opacity-0 shadow-lg transition duration-200 group-hover/next:pointer-events-auto group-hover/next:opacity-100 group-focus-within/next:pointer-events-auto group-focus-within/next:opacity-100 hover:bg-[#e9f6f1]"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] shadow-lg transition duration-200 hover:bg-[#e9f6f1]"
           >
             →
           </button>
@@ -1128,7 +1152,7 @@ export function HangulBookOpening({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}
@@ -1163,7 +1187,7 @@ export function HangulBookOpening({
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
 
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 01</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第一章</p>
                 <h2 className="mt-3 text-2xl font-black tracking-tight">目录</h2>
 
                 <ol className="mt-7 divide-y divide-[#dce8e1] rounded-2xl border border-[#dce8e1] bg-white px-5 text-left">
@@ -1192,7 +1216,7 @@ export function HangulBookOpening({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 01 · GOALS</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第一章 · GOALS</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
                 <p className="mt-4 text-sm leading-7 text-[#60736a]">
                   先建立对韩文整体结构的认识，再进入具体字母学习。带着目标阅读，会更容易抓住每一页的重点。
@@ -1233,7 +1257,7 @@ export function HangulBookOpening({
                   <span className="text-[#789087]">第一章 · 认识韩语字母</span>
                 </div>
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">CHAPTER 01 COMPLETE</p>
+                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第一章完成</p>
                   <h2 className="mt-5 text-4xl font-black text-[#173f4a]">你已经拿到读懂韩文的第一把钥匙</h2>
                   <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">
                     你已经了解韩文的来历、字母的设计原理和音节方块的基本结构。韩文不再只是一组陌生符号，接下来通过本章测试检查自己是否真正理解。
@@ -1269,6 +1293,7 @@ export function HangulBookOpening({
             </Page>
 
           </HTMLFlipBook>
+          {live?.overlay}
         </div>
       </div>
     </section>

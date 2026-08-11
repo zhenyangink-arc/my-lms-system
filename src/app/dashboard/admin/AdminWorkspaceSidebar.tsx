@@ -2,16 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, PanelsTopLeft, X } from "lucide-react";
-import { useState } from "react";
+import { ChevronRight, PanelsTopLeft, X } from "lucide-react";
 
+import { useManagementSidebar } from "@/app/dashboard/ManagementSidebarProvider";
 import type { UserRole } from "@/lib/admin";
 import { normalizeDashboardPathname, scopeDashboardPath } from "@/lib/dashboard-path";
-import {
-  ADMIN_GROUP_LABELS,
-  getAdminRoleLabel,
-  getVisibleAdminNavigation,
-} from "./admin-navigation";
+import { ADMIN_GROUP_LABELS, getAdminRoleLabel, getVisibleAdminNavigation } from "./admin-navigation";
 
 function isActivePath(pathname: string, href: string) {
   if (href === "/dashboard/admin") return pathname === href;
@@ -31,6 +27,7 @@ export function AdminWorkspaceSidebar({
   canManageTenants,
   canAccessQuestionBank,
   canManageVisas,
+  canManageStudentAssignments,
   dashboardBasePath,
 }: {
   role: UserRole;
@@ -45,10 +42,11 @@ export function AdminWorkspaceSidebar({
   canManageTenants: boolean;
   canAccessQuestionBank: boolean;
   canManageVisas: boolean;
+  canManageStudentAssignments: boolean;
   dashboardBasePath: string;
 }) {
   const pathname = normalizeDashboardPathname(usePathname());
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const { collapsed, mobileOpen, setMobileOpen, toggleSidebar } = useManagementSidebar();
   const items = getVisibleAdminNavigation(role, {
     canManageConversationPractice,
     canAccessAnnouncements,
@@ -60,67 +58,87 @@ export function AdminWorkspaceSidebar({
     canManageTenants,
     canAccessQuestionBank,
     canManageVisas,
+    canManageStudentAssignments,
   });
   const groups = ["overview", "teaching", "service", "organization"] as const;
 
-  const navigation = (
-    <nav className="management-navigation flex-1 overflow-y-auto px-2 py-3" aria-label="管理中心导航">
-      <div className="space-y-4">
-        {groups.map((group) => {
-          const groupItems = items.filter((item) => item.group === group);
-          if (groupItems.length === 0) return null;
-          return (
-            <section key={group}>
-              <p className="management-nav-group mb-1 px-2 text-[10px] font-medium uppercase">{ADMIN_GROUP_LABELS[group]}</p>
-              <div className="space-y-px">
-                {groupItems.map((item) => {
-                  const Icon = item.icon;
-                  const active = isActivePath(pathname, item.href);
-                  return (
-                    <Link
-                      key={item.href}
-                      href={scopeDashboardPath(item.href, dashboardBasePath)}
-                      onClick={() => setMobileOpen(false)}
-                      data-active={active ? "true" : "false"}
-                      className="management-nav-item flex min-h-8 items-center gap-2 px-2 text-[12px] font-medium"
-                    >
-                      <Icon size={14} strokeWidth={1.7} className="shrink-0" aria-hidden="true" />
-                      <span className="truncate">{item.label}</span>
-                    </Link>
-                  );
-                })}
-              </div>
-            </section>
-          );
-        })}
+  const sidebarContent = (
+    <>
+      <div className="management-sidebar-header flex h-14 shrink-0 items-center gap-2 border-b px-2">
+        <span className="management-sidebar-logo flex size-8 shrink-0 items-center justify-center rounded-md">
+          <PanelsTopLeft size={16} strokeWidth={1.8} aria-hidden="true" />
+        </span>
+        <div className="management-sidebar-copy min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold">{workspaceLabel}</p>
+          <p className="app-muted-text truncate text-[11px]">管理工作区</p>
+        </div>
+        <button type="button" onClick={() => setMobileOpen(false)} className="management-mobile-close flex size-8 items-center justify-center rounded-md md:hidden" aria-label="关闭管理导航">
+          <X size={16} aria-hidden="true" />
+        </button>
       </div>
-    </nav>
+
+      <nav className="management-navigation min-h-0 flex-1 overflow-y-auto overflow-x-hidden p-2" aria-label="管理中心导航">
+        <div className="space-y-3">
+          {groups.map((group) => {
+            const groupItems = items.filter((item) => item.group === group);
+            if (groupItems.length === 0) return null;
+            return (
+              <section key={group} className="management-nav-section">
+                <p className="management-nav-group flex h-8 items-center px-2 text-xs font-medium">{ADMIN_GROUP_LABELS[group]}</p>
+                <ul className="space-y-1">
+                  {groupItems.map((item) => {
+                    const Icon = item.icon;
+                    const active = isActivePath(pathname, item.href);
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={scopeDashboardPath(item.href, dashboardBasePath)}
+                          onClick={() => setMobileOpen(false)}
+                          data-active={active ? "true" : "false"}
+                          className="management-nav-item group/item flex h-9 items-center gap-2 overflow-hidden rounded-md px-2 text-sm"
+                          title={collapsed ? item.label : undefined}
+                          aria-label={item.label}
+                        >
+                          <Icon className="management-nav-icon size-4 shrink-0" strokeWidth={1.8} aria-hidden="true" />
+                          <span className="management-nav-label min-w-0 flex-1 truncate">{item.label}</span>
+                          <ChevronRight className="management-nav-chevron size-3.5 shrink-0 opacity-0 transition-opacity group-hover/item:opacity-50" aria-hidden="true" />
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </section>
+            );
+          })}
+        </div>
+      </nav>
+
+      <div className="management-sidebar-footer shrink-0 border-t p-2">
+        <Link href={scopeDashboardPath("/dashboard/admin/profile", dashboardBasePath)} className="management-sidebar-account flex h-12 items-center gap-2 overflow-hidden rounded-md p-2" title={collapsed ? getAdminRoleLabel(role) : undefined}>
+          <span className="management-account-avatar flex size-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold">{workspaceLabel.slice(0, 1)}</span>
+          <span className="management-sidebar-copy min-w-0 flex-1">
+            <span className="block truncate text-sm font-medium">{getAdminRoleLabel(role)}</span>
+            <span className="app-muted-text block truncate text-[11px]">{items.length} 个功能入口</span>
+          </span>
+        </Link>
+      </div>
+    </>
   );
 
   return (
     <>
-      <div className="management-mobile-nav app-card sticky top-14 z-20 flex h-[58px] items-center gap-3 border-b px-3 md:hidden">
-        <button type="button" onClick={() => setMobileOpen((open) => !open)} className="management-icon-button flex h-8 w-8 items-center justify-center border" aria-label={mobileOpen ? "收起管理导航" : "展开管理导航"} aria-expanded={mobileOpen}>
-          {mobileOpen ? <X size={16} /> : <Menu size={16} />}
-        </button>
-        <span className="management-sidebar-mark flex h-7 w-7 items-center justify-center border"><PanelsTopLeft size={14} strokeWidth={1.7} /></span>
-        <div><p className="text-[12px] font-semibold">{workspaceLabel}</p><p className="app-muted-text text-[10px]">{getAdminRoleLabel(role)} · {items.length} 个入口</p></div>
-      </div>
-
-      {mobileOpen && <div className="app-sidebar sticky top-[114px] z-20 max-h-[calc(100vh-114px)] overflow-y-auto border-b md:hidden">{navigation}</div>}
-
-      <div className="hidden w-[272px] shrink-0 md:block" aria-hidden="true" />
-      <aside
-        aria-label="管理中心导航"
-        className="management-sidebar app-sidebar fixed bottom-0 left-0 top-14 z-20 hidden h-[calc(100dvh-3.5rem)] w-[272px] flex-col overflow-hidden border-r md:flex"
-      >
-        <div className="management-sidebar-header flex h-[52px] items-center gap-2.5 border-b px-3 app-divider">
-          <span className="management-sidebar-mark flex h-7 w-7 shrink-0 items-center justify-center border"><PanelsTopLeft size={14} strokeWidth={1.7} /></span>
-          <div className="min-w-0 flex-1"><p className="truncate text-[12px] font-semibold">{workspaceLabel}</p><p className="app-muted-text truncate text-[10px]">{getAdminRoleLabel(role)}工作台</p></div>
-        </div>
-
-        {navigation}
+      <div className={`management-sidebar-gap hidden shrink-0 transition-[width] duration-200 md:block ${collapsed ? "w-12" : "w-64"}`} aria-hidden="true" />
+      <aside data-collapsed={collapsed ? "true" : "false"} className={`management-sidebar fixed inset-y-0 left-0 z-40 hidden flex-col border-r transition-[width] duration-200 md:flex ${collapsed ? "w-12" : "w-64"}`}>
+        {sidebarContent}
+        <button type="button" onClick={toggleSidebar} className="management-sidebar-rail absolute inset-y-0 -right-2 hidden w-4 md:block" aria-label={collapsed ? "展开管理导航" : "收起管理导航"} title={collapsed ? "展开管理导航" : "收起管理导航"} />
       </aside>
+
+      {mobileOpen && (
+        <div className="management-mobile-layer fixed inset-0 z-50 md:hidden">
+          <button type="button" className="absolute inset-0 bg-black/45" onClick={() => setMobileOpen(false)} aria-label="关闭管理导航" />
+          <aside className="management-sidebar relative flex h-svh w-[18rem] max-w-[86vw] flex-col border-r shadow-xl">{sidebarContent}</aside>
+        </div>
+      )}
     </>
   );
 }

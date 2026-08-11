@@ -41,9 +41,11 @@ const fieldCellClass = "border-b px-4 py-3";
 export function LearningRecordForm({
   students,
   note,
+  studentId,
 }: {
   students: Student[];
   note?: LearningRecordFormValue;
+  studentId?: string;
 }) {
   const action = note
     ? updateLearningRecordNoteAction.bind(null, note.id)
@@ -61,21 +63,30 @@ export function LearningRecordForm({
             <tr>
               <th className={labelCellClass}>学生</th>
               <td className={fieldCellClass}>
-                <select
-                  name="student_id"
-                  required
-                  defaultValue={note?.student_id ?? ""}
-                  className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
-                >
-                  <option value="" disabled>
-                    选择学生账号
-                  </option>
-                  {students.map((student) => (
-                    <option key={student.id} value={student.id}>
-                      {student.name} · {student.email}
+                {studentId && !note ? (
+                  <>
+                    <input type="hidden" name="student_id" value={studentId} />
+                    <p className="flex h-9 items-center text-xs font-semibold">
+                      {students.find((student) => student.id === studentId)?.name || "当前学生"}
+                    </p>
+                  </>
+                ) : (
+                  <select
+                    name="student_id"
+                    required
+                    defaultValue={note?.student_id ?? ""}
+                    className="app-input w-full rounded-lg border px-3 py-2.5 text-xs"
+                  >
+                    <option value="" disabled>
+                      选择学生账号
                     </option>
-                  ))}
-                </select>
+                    {students.map((student) => (
+                      <option key={student.id} value={student.id}>
+                        {student.name} · {student.email}
+                      </option>
+                    ))}
+                  </select>
+                )}
               </td>
               <th className={labelCellClass}>记录类型</th>
               <td className={fieldCellClass}>
@@ -184,7 +195,7 @@ export function LearningRecordForm({
           </p>
         ) : (
           <span className="app-muted-text text-[10px]">
-            学生可见记录会同步到学生端成长档案。
+            这是人工辅导备注；课程、作业、会话与成绩由系统自动汇总。
           </span>
         )}
         <button
@@ -194,7 +205,7 @@ export function LearningRecordForm({
           style={{ backgroundColor: "var(--app-secondary)" }}
         >
           <Save size={14} />
-          {pending ? "正在保存…" : note ? "保存修改" : "添加学习记录"}
+          {pending ? "正在保存…" : note ? "保存修改" : "添加辅导备注"}
         </button>
       </div>
     </form>

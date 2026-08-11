@@ -1,18 +1,19 @@
-import Link from "next/link";
 import { MessageCircleMore } from "lucide-react";
 
 import {
   CONVERSATION_CATEGORY_LABELS,
+  CONVERSATION_DATE_TIME_OPTIONS,
   CONVERSATION_DIFFICULTY_LABELS,
   CONVERSATION_STATUS_LABELS,
-  conversationDateFormatter,
   type ConversationCategory,
   type ConversationDifficulty,
   type ConversationStatus,
   type DialogueLine,
   type KeyExpression,
 } from "@/app/dashboard/conversation-practice/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireConversationPracticeManager } from "@/lib/conversation-practice";
+import { getTeacherAssignedStudentIds } from "@/lib/student-assignments";
 import { ConversationScenarioForm, type ConversationScenarioFormValue } from "./ConversationScenarioForm";
 import { ConversationScenarioStatusActions } from "./ConversationScenarioStatusActions";
 import { ConversationScenarioTable, type ConversationScenarioTableRow } from "./ConversationScenarioTable";
@@ -133,7 +134,7 @@ function PracticeDataTable({ progress, studentNames }: { progress: ProgressRow[]
                 </td>
                 <td className="app-muted-text px-3 py-3">{item.practice_count} 次</td>
                 <td className="app-muted-text px-3 py-3">{item.confidence ? `${item.confidence} / 5` : "未评价"}</td>
-                <td className="app-muted-text whitespace-nowrap px-3 py-3 text-[10px]">{conversationDateFormatter.format(new Date(item.last_practiced_at))}</td>
+                <td className="app-muted-text whitespace-nowrap px-3 py-3 text-[10px]"><LocalDateTime value={item.last_practiced_at} options={CONVERSATION_DATE_TIME_OPTIONS} /></td>
                 <td className="app-muted-text px-3 py-3 leading-5">{item.reflection || "—"}</td>
               </tr>
             ))}
@@ -152,19 +153,29 @@ export default async function ConversationPracticeManagementPage({
 }: {
   searchParams: Promise<{ scenario?: string; mode?: string }>;
 }) {
-  const [{ supabase, canManageContent }, params] = await Promise.all([
+  const [{ supabase, canManageContent, role, tenantId, user }, params] = await Promise.all([
     requireConversationPracticeManager(),
     searchParams,
   ]);
+
+  // 老师只能看到自己负责学生的练习进度（场景目录仍全部可见）。
+  const myStudentIds =
+    role === "teacher" && tenantId
+      ? new Set(await getTeacherAssignedStudentIds(supabase, tenantId, user.id))
+      : null;
+  let progressQuery = supabase
+    .from("conversation_practice_progress")
+    .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at")
+    .eq("tenant_id", tenantId);
+  if (myStudentIds) progressQuery = progressQuery.in("user_id", [...myStudentIds]);
+
   const [scenariosResult, progressResult] = await Promise.all([
     supabase
       .from("conversation_practice_scenarios")
       .select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes,status,is_featured,sort_order,updated_at")
       .order("sort_order", { ascending: true })
       .order("updated_at", { ascending: false }),
-    supabase
-      .from("conversation_practice_progress")
-      .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at"),
+    progressQuery,
   ]);
 
   const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
@@ -218,7 +229,7 @@ export default async function ConversationPracticeManagementPage({
       <div className="mx-auto w-full max-w-[1500px] space-y-4 px-4 pt-6 sm:px-6 lg:px-8">
         <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h1 className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]"><MessageCircleMore size={18} />会话练习管理</h1>
+            <h2 className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]"><MessageCircleMore size={18} />会话练习管理</h2>
           </div>
         </header>
 

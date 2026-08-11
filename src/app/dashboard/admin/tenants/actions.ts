@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { z } from "zod";
 
 import { requirePlatformOwner, requirePlatformTenantManager } from "@/lib/admin";
@@ -89,7 +89,7 @@ export async function createDeputyOwnerAction(_previousState: TenantActionState,
     await admin.auth.admin.deleteUser(created.user.id);
     return result("error", "副负责人权限配置失败，账号已回滚。");
   }
-  revalidatePath("/dashboard/admin/tenants");
+  revalidateDashboard("/dashboard/admin/tenants");
   return result("success", "副负责人已设立；其仅可开通和管理租户。");
 }
 
@@ -205,8 +205,8 @@ export async function createTenantAction(
     return result("error", "管理员账号配置失败；该租户已自动停用，请联系负责人处理。");
   }
 
-  revalidatePath("/dashboard/admin/tenants");
-  revalidatePath("/dashboard/admin");
+  revalidateDashboard("/dashboard/admin/tenants");
+  revalidateDashboard("/dashboard/admin");
   return result("success", "租户和管理员账号已创建。请将账号与初始密码安全交给管理员。");
 }
 
@@ -229,7 +229,7 @@ export async function setTenantStatusAction(
     requested_status: nextStatus,
   });
   if (error) return result("error", "租户状态更新失败，请确认当前负责人权限和租户状态。");
-  revalidatePath("/dashboard/admin/tenants");
+  revalidateDashboard("/dashboard/admin/tenants");
   return result("success", nextStatus === "active" ? "租户已恢复。" : "租户已停用。");
 }
 
@@ -303,7 +303,7 @@ export async function deleteTenantPermanentlyAction(
     }
   }
 
-  revalidatePath("/dashboard/admin/tenants");
-  revalidatePath("/dashboard/admin");
+  revalidateDashboard("/dashboard/admin/tenants");
+  revalidateDashboard("/dashboard/admin");
   return result("success", `租户及其成员关系已永久删除；已清理 ${removedAccounts} 个仅属于该租户的登录账号。`);
 }

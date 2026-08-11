@@ -7,6 +7,7 @@ import {
   BookOpenCheck,
   ClipboardCheck,
   Files,
+  FolderTree,
   GraduationCap,
   Headphones,
   History,
@@ -17,6 +18,9 @@ import {
   MessagesSquare,
   ShieldCheck,
   Users,
+  UsersRound,
+  UserRoundCheck,
+  Wrench,
 } from "lucide-react";
 
 import type { UserRole } from "@/lib/admin";
@@ -40,6 +44,7 @@ export type AdminNavigationItem = {
   requiresTenantManagementAccess?: boolean;
   requiresQuestionBankAccess?: boolean;
   requiresVisaManagementAccess?: boolean;
+  requiresStudentAssignmentAccess?: boolean;
 };
 
 const allStaffRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin", "platform_super_admin"];
@@ -47,6 +52,8 @@ const assessmentPaperRoles: UserRole[] = [...allStaffRoles, "tenant_operator"];
 const adminRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
 const helpCenterRoles: UserRole[] = ["teacher", "ceo", "tenant_super_admin", "platform_super_admin"];
 const gradeOverviewRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
+// 教学类模块：老师也能进入（数据按自己负责的学生过滤）。
+const teachingOverviewRoles: UserRole[] = ["teacher", ...gradeOverviewRoles];
 const executiveRoles: UserRole[] = ["ceo", "tenant_super_admin", "platform_super_admin"];
 const tenantManagerRoles: UserRole[] = ["platform_super_admin", "tenant_operator"];
 const questionBankRoles: UserRole[] = [
@@ -56,6 +63,16 @@ const questionBankRoles: UserRole[] = [
 const courseInspectorRoles: UserRole[] = ["platform_course_inspector"];
 
 export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
+  {
+    label: "课程树管理",
+    description: "配置成长首页课程树展示哪些分类与课程（分类与课程都开启才显示）。",
+    href: "/dashboard/admin/home-tree",
+    icon: FolderTree,
+    group: "overview",
+    roles: adminRoles,
+    color: "var(--app-secondary)",
+    softColor: "var(--app-secondary-soft)",
+  },
   {
     label: "课程前台巡检",
     description: "以只读巡检模式进入全部已发布课程，不受学生端课程限制。",
@@ -67,8 +84,8 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     softColor: "var(--app-accent-soft)",
   },
   {
-    label: "Token 用量",
-    description: "查看 AI 对话的输入、输出和总 Token 消耗。",
+    label: "模型用量",
+    description: "查看智能对话的输入、输出和总用量。",
     href: "/dashboard/admin/token-usage",
     icon: ChartNoAxesCombined,
     group: "overview",
@@ -113,7 +130,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     href: "/dashboard/admin/conversation-practice",
     icon: MessagesSquare,
     group: "teaching",
-    roles: adminRoles,
+    roles: teachingOverviewRoles,
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
     requiresConversationPracticeAccess: true,
@@ -141,12 +158,33 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     requiresHelpCenterAccess: true,
   },
   {
+    label: "学生管理",
+    description: "把学生划给负责老师，查看老师名下学生名单。",
+    href: "/dashboard/admin/student-assignments",
+    icon: UsersRound,
+    group: "organization",
+    roles: ["admin", "tenant_super_admin", "platform_super_admin"],
+    color: "var(--app-accent)",
+    softColor: "var(--app-accent-soft)",
+    requiresStudentAssignmentAccess: true,
+  },
+  {
+    label: "我的学生",
+    description: "查看机构负责人分配给你负责的学生名单。",
+    href: "/dashboard/admin/my-students",
+    icon: UserRoundCheck,
+    group: "teaching",
+    roles: ["teacher"],
+    color: "var(--app-accent)",
+    softColor: "var(--app-accent-soft)",
+  },
+  {
     label: "成绩管理",
     description: "平台查看机构汇总，机构端处理真实成绩与复核。",
     href: "/dashboard/admin/grades",
     icon: Award,
     group: "teaching",
-    roles: gradeOverviewRoles,
+    roles: teachingOverviewRoles,
     color: "var(--app-warm)",
     softColor: "var(--app-warm-soft)",
     requiresGradeCenterAccess: true,
@@ -157,7 +195,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     href: "/dashboard/admin/records",
     icon: History,
     group: "teaching",
-    roles: adminRoles,
+    roles: teachingOverviewRoles,
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
     requiresLearningRecordAccess: true,
@@ -182,6 +220,26 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: adminRoles,
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
+  },
+  {
+    label: "互动教材管理",
+    description: "维护互动教材章节、词汇与发布状态，内容同步到学生端。",
+    href: "/dashboard/admin/digital-textbook",
+    icon: BookOpenCheck,
+    group: "teaching",
+    roles: ["platform_super_admin", "tenant_operator"],
+    color: "var(--app-accent)",
+    softColor: "var(--app-accent-soft)",
+  },
+  {
+    label: "成长工具箱管理",
+    description: "配置学生端成长工具箱的练习入口：名称、图标、颜色、排序与启停。",
+    href: "/dashboard/admin/growth-toolbox",
+    icon: Wrench,
+    group: "teaching",
+    roles: ["platform_super_admin", "tenant_operator"],
+    color: "var(--app-warm)",
+    softColor: "var(--app-warm-soft)",
   },
   {
     label: "韩国大学管理",
@@ -268,6 +326,7 @@ export function getVisibleAdminNavigation(
     canManageTenants?: boolean;
     canAccessQuestionBank?: boolean;
     canManageVisas?: boolean;
+    canManageStudentAssignments?: boolean;
   } = {}
 ) {
   return ADMIN_NAVIGATION.filter(
@@ -282,7 +341,11 @@ export function getVisibleAdminNavigation(
       (!item.requiresDocumentReviewAccess || options.canManageDocumentReviews === true) &&
       (!item.requiresTenantManagementAccess || options.canManageTenants === true) &&
       (!item.requiresQuestionBankAccess || options.canAccessQuestionBank === true) &&
-      (!item.requiresVisaManagementAccess || options.canManageVisas === true)
+      (!item.requiresVisaManagementAccess || options.canManageVisas === true) &&
+      (!item.requiresStudentAssignmentAccess ||
+        options.canManageStudentAssignments === true ||
+        role === "tenant_super_admin" ||
+        role === "platform_super_admin")
   );
 }
 

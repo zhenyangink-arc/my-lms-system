@@ -13,6 +13,7 @@ import {
 import { Fragment, useMemo, useState } from "react";
 
 import { getVisaCaseStatusLabel } from "../../visa/visa-case-stages";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 export type VisaTaskSummary = {
   id: string;
@@ -92,18 +93,16 @@ const FILTERS = [
   ["issued", "已经获签"],
 ] as const;
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function FormattedDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={DATE_OPTIONS} />;
 }
 
 function taskTone(status: string) {
@@ -186,7 +185,7 @@ export function VisaManagementWorkspace({
               <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
                 机构签证工作台 / 学生案件
               </p>
-              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">签证管理</h1>
+              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">签证管理</h2>
               <p className="mt-1 text-[11px] text-zinc-500">按学生档案跟进签证任务、补件、递签结果与入境安排；所有案件默认收缩。</p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
@@ -274,7 +273,7 @@ export function VisaManagementWorkspace({
                         <td className="px-3 text-right font-mono tabular-nums text-zinc-600">{approved} / {item.tasks.length}</td>
                         <td className={`px-3 text-right font-mono tabular-nums ${pending + support > 0 ? "text-rose-700" : "text-zinc-400"}`}>{pending + support}</td>
                         <td className="px-3 font-mono text-[10px] text-zinc-500">{item.plannedEntryDate ?? item.targetEntryDate ?? "—"}</td>
-                        <td className="px-3 font-mono text-[10px] text-zinc-400">{formatDate(item.updatedAt)}</td>
+                        <td className="px-3 font-mono text-[10px] text-zinc-400"><FormattedDate value={item.updatedAt} /></td>
                         <td className="px-5 text-right"><Link href={`/dashboard/admin/visa/${item.studentId}`} className="font-medium text-zinc-700 underline decoration-zinc-300 underline-offset-4 hover:text-zinc-950">进入办理</Link></td>
                       </tr>
 
@@ -298,7 +297,7 @@ export function VisaManagementWorkspace({
                                       <td className="px-2 text-zinc-500">{TASK_STAGE_LABELS[task.stage] ?? task.stage}</td>
                                       <td className="px-2 font-medium text-zinc-800">{task.title}</td>
                                       <td className="px-2"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${taskTone(task.status)}`}>{TASK_STATUS_LABELS[task.status] ?? task.status}</span></td>
-                                      <td className="px-2 font-mono text-[9px] text-zinc-400">{formatDate(task.submittedAt)}</td>
+                                      <td className="px-2 font-mono text-[9px] text-zinc-400"><FormattedDate value={task.submittedAt} /></td>
                                       <td className="max-w-[220px] truncate px-2 text-zinc-500">{task.studentNote || "—"}</td>
                                     </tr>
                                   ))}
@@ -315,7 +314,7 @@ export function VisaManagementWorkspace({
                                   <div><dt className="text-[8px] text-zinc-400">递签领区</dt><dd className="mt-0.5">{item.applicationCity || "待确认"}</dd></div>
                                   <div><dt className="text-[8px] text-zinc-400">最晚入境</dt><dd className="mt-0.5 font-mono">{item.targetEntryDate || "待确认"}</dd></div>
                                   <div><dt className="text-[8px] text-zinc-400">已确认任务</dt><dd className="mt-0.5 font-mono">{approved} / {item.tasks.length}</dd></div>
-                                  <div><dt className="text-[8px] text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono">{formatDate(item.updatedAt)}</dd></div>
+                                  <div><dt className="text-[8px] text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono"><FormattedDate value={item.updatedAt} /></dd></div>
                                 </dl>
                                 <Link href={`/dashboard/admin/visa/${item.studentId}`} className="mt-4 inline-flex h-8 items-center gap-2 border border-zinc-900 bg-zinc-900 px-3 text-[10px] font-medium text-white">
                                   <ShieldCheck size={12} />进入完整办理

@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learning-assignments";
 import type { LearningAssignmentActionState } from "./action-state";
@@ -33,12 +33,12 @@ function parseKoreanDateTime(value: string) {
 }
 
 function refreshAssignmentPages(assignmentId?: string) {
-  revalidatePath("/dashboard/assignments");
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/grades");
+  revalidateDashboard("/dashboard/assignments");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/grades");
   if (assignmentId) {
-    revalidatePath(`/dashboard/assignments/${assignmentId}`);
-    revalidatePath(`/dashboard/admin/assignments/${assignmentId}`);
+    revalidateDashboard(`/dashboard/assignments/${assignmentId}`);
+    revalidateDashboard(`/dashboard/admin/assignments/${assignmentId}`);
   }
 }
 

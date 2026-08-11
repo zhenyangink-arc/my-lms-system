@@ -329,7 +329,7 @@ function ContentRenderer({
 
       {String(content.pattern ?? "") && (
         <div className="border-y border-slate-200 py-7">
-          <p className="text-xs font-bold tracking-[.16em] text-slate-400">PATTERN</p>
+          <p className="text-xs font-bold tracking-[.16em] text-slate-400">句型</p>
           <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{String(content.pattern)}</p>
           {substitutions.length > 0 && (
             <div className="mt-5 flex flex-wrap gap-2">
@@ -370,14 +370,14 @@ function ContentRenderer({
 
       {String(content.speakingFrame ?? "") && (
         <div className="border-y border-slate-200 py-6">
-          <p className="text-xs font-bold tracking-[.16em] text-slate-400">SPEAKING FRAME</p>
+          <p className="text-xs font-bold tracking-[.16em] text-slate-400">口语框架</p>
           <p className="mt-3 text-lg font-semibold leading-8 text-slate-900">{String(content.speakingFrame)}</p>
         </div>
       )}
 
       {String(content.writingFrame ?? "") && (
         <div className="border-y border-slate-200 py-6">
-          <p className="text-xs font-bold tracking-[.16em] text-slate-400">WRITING FRAME</p>
+          <p className="text-xs font-bold tracking-[.16em] text-slate-400">写作框架</p>
           <p className="mt-3 text-lg font-semibold leading-8 text-slate-900">{String(content.writingFrame)}</p>
         </div>
       )}
@@ -738,7 +738,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               {!compact && (
                 <span className="min-w-0">
                   <span className={`block text-[11px] font-black tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>
-                    STEP {String(index + 1).padStart(2, "0")}
+                    第 {String(index + 1).padStart(2, "0")} 步
                   </span>
                   <span className={`mt-0.5 block truncate text-sm font-bold ${active ? "text-slate-900" : "text-slate-600"}`}>
                     {localize(module.title)}
@@ -929,7 +929,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             )}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div>
-                <p className="text-xs font-black tracking-[.22em]" style={{ color: accent.solid }}>STEP {String(activeIndex + 1).padStart(2, "0")}</p>
+                <p className="text-xs font-black tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
                 <h2 className="mt-3 text-2xl font-black tracking-[-.04em] text-slate-950 sm:text-[34px]">{localize(activeModule.title)}</h2>
                 <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500 sm:text-[16px]">{localize(activeModule.description)}</p>
               </div>

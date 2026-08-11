@@ -3,7 +3,6 @@ import { ArrowLeft } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
-import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
 import {
   buildPublicKoreanChapterTest,
@@ -19,7 +18,7 @@ export default async function KoreanChapterTestPage({
   params: Promise<{ testSlug: string }>;
 }) {
   const { testSlug } = await params;
-  const { supabase, user, role, isManager } = await requireAssignmentViewer();
+  const { supabase, user, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const { data: testData } = await admin
     .from("chapter_tests")
@@ -33,15 +32,14 @@ export default async function KoreanChapterTestPage({
   const test = testData as CourseTestRow;
   const { data: attemptData } = await supabase
     .from("chapter_test_attempts")
-    .select("test_slug")
+    .select("test_slug,passed")
     .eq("student_id", user.id);
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
-    (attemptData ?? []).map((attempt) => String(attempt.test_slug))
+    (attemptData ?? [])
+      .filter((attempt) => attempt.passed)
+      .map((attempt) => String(attempt.test_slug))
   );
-  if (
-    !isPlatformTenantManagerRole(role) &&
-    !unlockedTestSlugs.has(test.slug)
-  ) {
+  if (!isManager && !unlockedTestSlugs.has(test.slug)) {
     redirect("/dashboard/assignments");
   }
   const { data: questionData } = await admin

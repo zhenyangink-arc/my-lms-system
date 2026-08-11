@@ -27,7 +27,10 @@ export default async function DashboardRouteLayout({
       <StudentDashboardLayout
         userName={userName}
         userRole={userRole}
-        membershipTier="vip3"
+        // 巡检员不是付费学生，没有真实档位；能看到所有功能是 canUseStudentFeature
+        // 对这个角色的显式放行（按角色判断），不是因为"档位够高"。这里给一个中性的
+        // normal 占位值即可，不应该借用 vip3 冒充最高档付费学生。
+        membershipTier="normal"
         canAccessAnnouncements
         dashboardBasePath={getDashboardBasePath(null)}
       >

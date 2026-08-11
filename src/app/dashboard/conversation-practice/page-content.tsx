@@ -93,7 +93,7 @@ export default async function ConversationPracticePage() {
         <section className="grid gap-4 md:grid-cols-2">
           <Link href="/dashboard/conversation-practice/ai-experience" className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><MessageCircleMore size={21} /></span>
-            <span className="min-w-0 flex-1"><b className="block text-base">与 AI 交流体验</b><span className="app-muted-text mt-1 block text-xs leading-5">进入口语 AI 陪练，开始即时对话与表达练习。</span></span>
+            <span className="min-w-0 flex-1"><b className="block text-base">智能交流体验</b><span className="app-muted-text mt-1 block text-xs leading-5">进入智能口语陪练，开始即时对话与表达练习。</span></span>
             <ArrowRight className="shrink-0 transition group-hover:translate-x-1" size={18} style={{ color: "var(--app-accent)" }} />
           </Link>
           <Link href="/dashboard/conversation-practice/course" className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg">

@@ -271,18 +271,33 @@ export function VowelsConsonantsBook({
   initialPage = 0,
   onPageChange,
   onStartTest,
+  live,
 }: {
   isFullscreen: boolean;
   speechRate?: number;
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
+  live?: {
+    page: number | null;
+    overlay: React.ReactNode | null;
+  };
 }) {
   const containerRef = useRef<HTMLElement>(null);
   const flipBookRef = useRef<FlipBookHandle>(null);
   const speechTimerRef = useRef<number | null>(null);
   const speechRequestRef = useRef(0);
+  const lastLivePageRef = useRef<number | null>(null);
   const [bookScale, setBookScale] = useState(1);
+
+  // 伴学课堂：跟随远端翻页指令（防循环由课堂层 lastRemotePage 保证）。
+  useEffect(() => {
+    if (live?.page == null) return;
+    if (live.page === lastLivePageRef.current) return;
+    lastLivePageRef.current = live.page;
+    flipBookRef.current?.pageFlip()?.flip(live.page);
+  }, [live?.page]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -291,7 +306,13 @@ export function VowelsConsonantsBook({
     const resizeObserver = new ResizeObserver(() => {
       cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
-        setBookScale(isFullscreen ? MAX_BOOK_SCALE : 1);
+        const cap = isFullscreen ? MAX_BOOK_SCALE : 1;
+        const nextScale = Math.min(
+          container.clientWidth / BOOK_WIDTH,
+          container.clientHeight / BOOK_HEIGHT,
+          cap
+        );
+        setBookScale(Math.max(0.1, nextScale));
         flipBookRef.current?.pageFlip()?.update();
       });
     });
@@ -376,7 +397,7 @@ export function VowelsConsonantsBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}
@@ -414,7 +435,7 @@ export function VowelsConsonantsBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 02</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第二章</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
                 <ol className="mt-8 divide-y divide-[#dce8e1] rounded-2xl border border-[#dce8e1] bg-white px-5 text-left">
                   {[
@@ -446,7 +467,7 @@ export function VowelsConsonantsBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 02 · GOALS</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第二章 · GOALS</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
                 <p className="mt-4 text-sm leading-7 text-[#60736a]">
                   从口型、舌位和气流出发认识元音与辅音，并把字形、声音和发音动作建立稳定联系。
@@ -483,7 +504,7 @@ export function VowelsConsonantsBook({
                 <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4f3ed]" />
                 <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">CHAPTER 02 COMPLETE</p>
+                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第二章完成</p>
                   <h2 className="mt-5 text-4xl font-black text-[#173f4a]">元音和辅音学习完成</h2>
                   <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">
                     你已经认识了基本元音、复合元音、基础辅音、送气音和紧音。接下来通过本章测试检查自己是否真正掌握。
@@ -515,6 +536,7 @@ export function VowelsConsonantsBook({
             </Page>
 
           </HTMLFlipBook>
+          {live?.overlay}
         </div>
       </div>
     </section>

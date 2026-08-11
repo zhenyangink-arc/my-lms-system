@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import {
   CalendarDays,
   CheckCircle2,
@@ -20,8 +21,8 @@ export type ProfileViewProps = {
   email: string;
   emailConfirmed: boolean;
   avatarUrl: string | null;
-  createdAtLabel: string;
-  lastSignInLabel: string;
+  createdAtLabel: ReactNode;
+  lastSignInLabel: ReactNode;
   checklist: ProfileChecklistItem[];
   initialValue: StudentProfileInitialValue;
 };

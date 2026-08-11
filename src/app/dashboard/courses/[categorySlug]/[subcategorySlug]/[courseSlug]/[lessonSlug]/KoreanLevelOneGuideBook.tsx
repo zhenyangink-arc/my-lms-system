@@ -192,7 +192,7 @@ export function KoreanLevelOneGuideBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}
@@ -205,8 +205,8 @@ export function KoreanLevelOneGuideBook({
                 <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#dcebe4]" />
                 <div className="relative flex h-full flex-col px-14 py-12">
                   <div className="flex items-center justify-between text-[11px] font-black tracking-[0.2em] text-[#6f746f]">
-                    <span>KOREAN LANGUAGE</span>
-                    <span>LEVEL 1 · 1A + 1B</span>
+                    <span>韩国语</span>
+                    <span>一级 · 上册和下册</span>
                   </div>
                   <div className="my-auto">
                     <div className="flex items-end gap-6">
@@ -228,7 +228,7 @@ export function KoreanLevelOneGuideBook({
                     <div className="mt-9 w-64 border-t border-[#232726]/25 pt-6">
                       <p className="text-4xl font-black tracking-tight">课程导读</p>
                       <p className="mt-3 text-xs font-bold tracking-[0.18em] text-[#737976]">
-                        COURSE GUIDE
+                        课程指南
                       </p>
                     </div>
                   </div>

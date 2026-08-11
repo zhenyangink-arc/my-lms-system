@@ -1,0 +1,157 @@
+"use client";
+
+import { useMemo, useState } from "react";
+import {
+  flexRender,
+  getCoreRowModel,
+  getSortedRowModel,
+  useReactTable,
+  type SortingState,
+  type VisibilityState,
+} from "@tanstack/react-table";
+
+import { DataTable } from "@/components/ui/table/data-table";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import {
+  digitalTextbookColumns,
+  type DigitalTextbookDisplayRow,
+} from "./columns";
+import {
+  DigitalTextbookTableToolbar,
+  INITIAL_DIGITAL_TEXTBOOK_FILTERS,
+  type DigitalTextbookTableFilters,
+} from "./digital-textbook-table-toolbar";
+
+const COLUMN_LABELS: Record<string, string> = {
+  hierarchy: "课程与教材",
+  versionNumber: "版本",
+  chapterNumber: "章节",
+  modules: "内容模块",
+  nodeCount: "节点",
+  vocabularyCount: "词汇",
+  grammarCount: "语法",
+  textbookStatus: "教材状态",
+  chapterStatus: "章节状态",
+};
+
+export function DigitalTextbookTable({
+  data,
+}: {
+  data: DigitalTextbookDisplayRow[];
+}) {
+  const [sorting, setSorting] = useState<SortingState>([
+    { id: "hierarchy", desc: false },
+    { id: "versionNumber", desc: false },
+    { id: "chapterNumber", desc: false },
+  ]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [filters, setFilters] = useState<DigitalTextbookTableFilters>(
+    INITIAL_DIGITAL_TEXTBOOK_FILTERS,
+  );
+
+  const filteredData = useMemo(() => {
+    const query = filters.query.trim().toLocaleLowerCase("zh-CN");
+    return data.filter((row) => {
+      if (
+        filters.textbookStatus !== "all" &&
+        row.textbookStatus !== filters.textbookStatus
+      ) {
+        return false;
+      }
+      if (
+        filters.chapterStatus !== "all" &&
+        row.chapterStatus !== filters.chapterStatus
+      ) {
+        return false;
+      }
+      if (
+        filters.moduleCode !== "all" &&
+        !row.moduleCodes.includes(filters.moduleCode)
+      ) {
+        return false;
+      }
+      if (!query) return true;
+      return `${row.courseTitle} ${row.lessonTitle} ${row.textbookTitle} ${row.textbookSlug} ${row.chapterSlug}`
+        .toLocaleLowerCase("zh-CN")
+        .includes(query);
+    });
+  }, [data, filters]);
+
+  // TanStack Table intentionally exposes mutable methods inside a client boundary.
+  // eslint-disable-next-line react-hooks/incompatible-library
+  const table = useReactTable({
+    data: filteredData,
+    columns: digitalTextbookColumns,
+    state: { sorting, columnVisibility },
+    onSortingChange: setSorting,
+    onColumnVisibilityChange: setColumnVisibility,
+    getCoreRowModel: getCoreRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+  const viewOptions = table
+    .getAllLeafColumns()
+    .filter((column) => column.getCanHide())
+    .map((column) => ({
+      id: column.id,
+      label: COLUMN_LABELS[column.id] ?? column.id,
+      visible: column.getIsVisible(),
+      canHide: column.getCanHide(),
+      onVisibleChange: (visible: boolean) => column.toggleVisibility(visible),
+    }));
+
+  return (
+    <DataTable
+      toolbar={
+        <DigitalTextbookTableToolbar
+          filters={filters}
+          onFiltersChange={setFilters}
+          viewOptions={viewOptions}
+        />
+      }
+      isEmpty={filteredData.length === 0}
+      emptyContent="没有符合筛选条件的互动教材章节"
+      footer={
+        <p className="text-xs text-[var(--app-muted)]">
+          当前显示 {filteredData.length} 个章节，共 {data.length} 个章节
+        </p>
+      }
+    >
+      <Table className="min-w-[1320px]">
+        <TableHeader className="bg-[var(--app-soft-bg)]">
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <TableHead key={header.id} className="px-4 text-xs">
+                  {header.isPlaceholder
+                    ? null
+                    : flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                </TableHead>
+              ))}
+            </TableRow>
+          ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows.map((row) => (
+            <TableRow key={row.original.id}>
+              {row.getVisibleCells().map((cell) => (
+                <TableCell key={cell.id} className="px-4 py-3 text-xs">
+                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </DataTable>
+  );
+}

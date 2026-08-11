@@ -33,6 +33,7 @@ import {
   type HelpTicketPriority,
   type HelpTicketStatus,
 } from "@/app/dashboard/help/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { HelpArticleForm, type HelpArticleFormValue } from "./HelpArticleForm";
 import { HelpArticleStatusActions } from "./HelpArticleStatusActions";
 
@@ -79,18 +80,16 @@ const ticketStatusFilters = [
   ["closed", "已关闭"],
 ] as const;
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function FormattedDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={DATE_OPTIONS} />;
 }
 
 function elapsedLabel(value: string | null) {
@@ -149,9 +148,8 @@ function PlatformOverview({ rows, hasError }: { rows: PlatformHelpOverviewRow[];
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-5 border-b border-black/[0.08] px-5 py-5 xl:flex-row xl:items-end xl:justify-between">
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">Platform oversight / 平台巡检</p>
-              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">帮助中心管理</h1>
-              <p className="mt-1 text-[11px] text-zinc-500">查看各机构工单处理情况；这里只提供机构级统计，不展示学生姓名、问题正文和聊天记录。</p>
+              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">平台巡检</p>
+              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">帮助中心管理</h2>
             </div>
             <dl className="flex flex-wrap text-[10px]">
               {[["机构", rows.length], ["待处理", pendingTickets], ["超时", overdueTickets], ["解决率", `${resolutionRate}%`]].map(([label, value], index) => (
@@ -170,7 +168,7 @@ function PlatformOverview({ rows, hasError }: { rows: PlatformHelpOverviewRow[];
                 {rows.map((row) => (
                   <tr key={row.tenantId} className="h-[50px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60">
                     <td className="border-r border-black/[0.06] px-4"><div className="flex items-center gap-2"><span className={`size-1.5 rounded-full ${row.tenantStatus === "active" ? "bg-emerald-500" : "bg-amber-500"}`} /><span className="font-medium text-zinc-950">{row.tenantName}</span><span className="ml-auto text-[8px] text-zinc-400">{row.tenantStatus === "active" ? "运行中" : "已停用"}</span></div></td>
-                    <td className="px-3 text-right font-mono text-zinc-600">{row.activeMembers}</td><td className="px-3 text-right font-mono text-zinc-600">{row.totalTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.openTickets}</td><td className="px-3 text-right font-mono text-sky-700">{row.inProgressTickets}</td><td className="px-3 text-right font-mono text-amber-700">{row.waitingStudentTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.urgentPendingTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.overdueTickets}</td><td className="px-3 text-right font-mono text-emerald-700">{row.resolutionRate}%</td><td className="px-3 text-zinc-500">{elapsedLabel(row.oldestWaitingAt)}</td><td className="px-4 font-mono text-[9px] text-zinc-400">{formatDate(row.lastUpdatedAt)}</td>
+                    <td className="px-3 text-right font-mono text-zinc-600">{row.activeMembers}</td><td className="px-3 text-right font-mono text-zinc-600">{row.totalTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.openTickets}</td><td className="px-3 text-right font-mono text-sky-700">{row.inProgressTickets}</td><td className="px-3 text-right font-mono text-amber-700">{row.waitingStudentTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.urgentPendingTickets}</td><td className="px-3 text-right font-mono text-rose-700">{row.overdueTickets}</td><td className="px-3 text-right font-mono text-emerald-700">{row.resolutionRate}%</td><td className="px-3 text-zinc-500">{elapsedLabel(row.oldestWaitingAt)}</td><td className="px-4 font-mono text-[9px] text-zinc-400"><FormattedDate value={row.lastUpdatedAt} /></td>
                   </tr>
                 ))}
                 {!hasError && rows.length === 0 && <tr><td colSpan={11} className="px-5 py-16 text-center text-[10px] text-zinc-400">当前没有可巡检机构</td></tr>}
@@ -216,7 +214,7 @@ function TenantWorkspace({
       <div className="mx-auto mt-5 w-full max-w-[1720px] space-y-5 px-4 sm:px-6 lg:px-8">
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-5 border-b border-black/[0.08] px-5 py-5 xl:flex-row xl:items-end xl:justify-between">
-            <div><p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">{tenantName} / {roleLabel}</p><h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">帮助中心管理</h1><p className="mt-1 text-[11px] text-zinc-500">学生提交问题后进入本机构工单；教师负责回复，负责人负责分配和监督。</p></div>
+            <div><p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">{tenantName} / {roleLabel}</p><h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">帮助中心管理</h2><p className="mt-1 text-[11px] text-zinc-500">学生提交问题后进入本机构工单；教师负责回复，负责人负责分配和监督。</p></div>
             <dl className="flex flex-wrap text-[10px]">{[["全部", tickets.length], ["待回复", waitingCount], ["处理中", activeCount], ["已解决", solvedCount]].map(([label, value], index) => <div key={String(label)} className={`min-w-[82px] px-4 ${index > 0 ? "border-l border-black/[0.08]" : ""}`}><dt className="text-zinc-400">{label}</dt><dd className="mt-0.5 font-mono text-base font-medium tabular-nums text-zinc-950">{value}</dd></div>)}</dl>
           </header>
           {hasError && <div className="border-b border-rose-200 bg-rose-50 px-5 py-3 text-[10px] text-rose-700">帮助中心数据暂时无法读取，请稍后刷新。</div>}
@@ -228,7 +226,7 @@ function TenantWorkspace({
             <table className="w-full min-w-[1300px] border-collapse text-left">
               <thead><tr className="h-10 border-b border-black/[0.08] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-500"><th className="w-[300px] border-r border-black/[0.06] px-4 font-medium">问题</th><th className="w-[130px] px-3 font-medium">学生</th><th className="w-[100px] px-3 font-medium">分类</th><th className="w-[90px] px-3 font-medium">优先级</th><th className="w-[130px] px-3 font-medium">负责老师</th><th className="w-[120px] px-3 font-medium">状态</th><th className="w-[95px] px-3 font-medium">等待时间</th><th className="w-[120px] px-3 font-medium">最近更新</th><th className="w-[130px] px-4 text-right font-medium">操作</th></tr></thead>
               <tbody>
-                {filteredTickets.map((ticket) => <tr key={ticket.id} className="h-[54px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="border-r border-black/[0.06] px-4"><div className="flex items-center gap-2">{ticket.priority === "urgent" ? <CircleAlert size={12} className="shrink-0 text-rose-600" /> : <Headphones size={12} className="shrink-0 text-zinc-400" />}<span className="truncate font-medium text-zinc-950">{ticket.subject}</span></div><p className="mt-0.5 font-mono text-[8px] text-zinc-400">{ticket.id.slice(0, 8).toUpperCase()}</p></td><td className="px-3 text-zinc-600">{ticket.studentName}</td><td className="px-3 text-zinc-500">{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${ticket.priority === "urgent" ? "bg-rose-50 text-rose-700" : "bg-zinc-100 text-zinc-600"}`}>{HELP_TICKET_PRIORITY_LABELS[ticket.priority]}</span></td><td className="px-3 text-zinc-600">{ticket.assignedTeacherName}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${statusTone(ticket.status)}`}>{HELP_TICKET_STATUS_LABELS[ticket.status]}</span></td><td className="px-3 text-zinc-500">{elapsedLabel(ticket.status === "open" ? ticket.createdAt : ticket.updatedAt)}</td><td className="px-3 font-mono text-[9px] text-zinc-400">{formatDate(ticket.updatedAt)}</td><td className="px-4"><Link href={`/dashboard/admin/help/tickets/${ticket.id}`} className="ml-auto flex h-7 w-fit items-center gap-1.5 border border-black/[0.08] bg-white px-2.5 text-[9px] font-medium text-zinc-700"><MessageSquareReply size={11} />查看并回复<ChevronRight size={10} /></Link></td></tr>)}
+                {filteredTickets.map((ticket) => <tr key={ticket.id} className="h-[54px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="border-r border-black/[0.06] px-4"><div className="flex items-center gap-2">{ticket.priority === "urgent" ? <CircleAlert size={12} className="shrink-0 text-rose-600" /> : <Headphones size={12} className="shrink-0 text-zinc-400" />}<span className="truncate font-medium text-zinc-950">{ticket.subject}</span></div><p className="mt-0.5 font-mono text-[8px] text-zinc-400">{ticket.id.slice(0, 8).toUpperCase()}</p></td><td className="px-3 text-zinc-600">{ticket.studentName}</td><td className="px-3 text-zinc-500">{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${ticket.priority === "urgent" ? "bg-rose-50 text-rose-700" : "bg-zinc-100 text-zinc-600"}`}>{HELP_TICKET_PRIORITY_LABELS[ticket.priority]}</span></td><td className="px-3 text-zinc-600">{ticket.assignedTeacherName}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${statusTone(ticket.status)}`}>{HELP_TICKET_STATUS_LABELS[ticket.status]}</span></td><td className="px-3 text-zinc-500">{elapsedLabel(ticket.status === "open" ? ticket.createdAt : ticket.updatedAt)}</td><td className="px-3 font-mono text-[9px] text-zinc-400"><FormattedDate value={ticket.updatedAt} /></td><td className="px-4"><Link href={`/dashboard/admin/help/tickets/${ticket.id}`} className="ml-auto flex h-7 w-fit items-center gap-1.5 border border-black/[0.08] bg-white px-2.5 text-[9px] font-medium text-zinc-700"><MessageSquareReply size={11} />查看并回复<ChevronRight size={10} /></Link></td></tr>)}
                 {!hasError && filteredTickets.length === 0 && <tr><td colSpan={9} className="px-5 py-16 text-center"><Clock3 className="mx-auto text-zinc-300" size={23} /><p className="mt-3 text-xs font-medium text-zinc-700">没有符合条件的学生问题</p></td></tr>}
               </tbody>
             </table>
@@ -238,7 +236,7 @@ function TenantWorkspace({
         {canManageArticles && (
           <section className="border-y border-black/[0.08] bg-white">
             <header className="flex items-center justify-between gap-4 border-b border-black/[0.08] px-5 py-4"><div><p className="text-[9px] uppercase tracking-[0.1em] text-zinc-400">Knowledge base / 常见问题</p><h2 className="mt-1 text-sm font-semibold text-zinc-950">帮助文章</h2><p className="mt-1 text-[10px] text-zinc-500">文章与学生工单分开管理；草稿不会出现在学生端。</p></div><ArticleDialog /></header>
-            <div className="overflow-x-auto"><table className="w-full min-w-[1050px] border-collapse text-left"><thead><tr className="h-10 border-b border-black/[0.08] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-500"><th className="w-[360px] border-r border-black/[0.06] px-4 font-medium">文章</th><th className="w-[120px] px-3 font-medium">分类</th><th className="w-[100px] px-3 font-medium">状态</th><th className="w-[90px] px-3 text-right font-medium">排序</th><th className="w-[130px] px-3 font-medium">最近更新</th><th className="w-[260px] px-4 text-right font-medium">操作</th></tr></thead><tbody>{articles.map((article) => <tr key={article.id} className="h-[54px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="border-r border-black/[0.06] px-4"><div className="flex items-center gap-2"><BookOpenText size={12} className="shrink-0 text-zinc-400" /><span className="truncate font-medium text-zinc-950">{article.title}</span>{article.is_featured && <span className="bg-violet-50 px-1.5 py-0.5 text-[8px] text-violet-700">推荐</span>}</div><p className="mt-0.5 truncate text-[9px] text-zinc-400">{article.summary || "暂无摘要"}</p></td><td className="px-3 text-zinc-500">{HELP_ARTICLE_CATEGORY_LABELS[article.category as HelpArticleCategory]}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${article.status === "published" ? "bg-emerald-50 text-emerald-700" : article.status === "archived" ? "bg-amber-50 text-amber-700" : "bg-zinc-100 text-zinc-600"}`}>{HELP_ARTICLE_STATUS_LABELS[article.status as HelpArticleStatus]}</span></td><td className="px-3 text-right font-mono text-zinc-500">{article.sort_order}</td><td className="px-3 font-mono text-[9px] text-zinc-400">{formatDate(article.updatedAt)}</td><td className="px-4"><div className="flex justify-end gap-1"><ArticleDialog article={article} /><HelpArticleStatusActions id={article.id} status={article.status} /></div></td></tr>)}{articles.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[10px] text-zinc-400">还没有帮助文章</td></tr>}</tbody></table></div>
+            <div className="overflow-x-auto"><table className="w-full min-w-[1050px] border-collapse text-left"><thead><tr className="h-10 border-b border-black/[0.08] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-500"><th className="w-[360px] border-r border-black/[0.06] px-4 font-medium">文章</th><th className="w-[120px] px-3 font-medium">分类</th><th className="w-[100px] px-3 font-medium">状态</th><th className="w-[90px] px-3 text-right font-medium">排序</th><th className="w-[130px] px-3 font-medium">最近更新</th><th className="w-[260px] px-4 text-right font-medium">操作</th></tr></thead><tbody>{articles.map((article) => <tr key={article.id} className="h-[54px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="border-r border-black/[0.06] px-4"><div className="flex items-center gap-2"><BookOpenText size={12} className="shrink-0 text-zinc-400" /><span className="truncate font-medium text-zinc-950">{article.title}</span>{article.is_featured && <span className="bg-violet-50 px-1.5 py-0.5 text-[8px] text-violet-700">推荐</span>}</div><p className="mt-0.5 truncate text-[9px] text-zinc-400">{article.summary || "暂无摘要"}</p></td><td className="px-3 text-zinc-500">{HELP_ARTICLE_CATEGORY_LABELS[article.category as HelpArticleCategory]}</td><td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${article.status === "published" ? "bg-emerald-50 text-emerald-700" : article.status === "archived" ? "bg-amber-50 text-amber-700" : "bg-zinc-100 text-zinc-600"}`}>{HELP_ARTICLE_STATUS_LABELS[article.status as HelpArticleStatus]}</span></td><td className="px-3 text-right font-mono text-zinc-500">{article.sort_order}</td><td className="px-3 font-mono text-[9px] text-zinc-400"><FormattedDate value={article.updatedAt} /></td><td className="px-4"><div className="flex justify-end gap-1"><ArticleDialog article={article} /><HelpArticleStatusActions id={article.id} status={article.status} /></div></td></tr>)}{articles.length === 0 && <tr><td colSpan={6} className="px-5 py-12 text-center text-[10px] text-zinc-400">还没有帮助文章</td></tr>}</tbody></table></div>
           </section>
         )}
       </div>

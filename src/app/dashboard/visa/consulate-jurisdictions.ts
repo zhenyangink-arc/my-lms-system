@@ -44,6 +44,9 @@ export const CONSULATE_BY_PROVINCE: Record<string, string> = {
 
   香港特别行政区: "驻香港总领事馆",
   澳门特别行政区: "驻香港总领事馆",
+
+  // 韩国与台湾无正式外交关系，不设总领事馆/大使馆，签证由驻台北代表部受理。
+  台湾省: "驻台北代表部",
 };
 
 export function getConsulateForProvince(province: string): string | null {

@@ -588,18 +588,33 @@ export function BatchimReadingBook({
   initialPage = 0,
   onPageChange,
   onStartTest,
+  live,
 }: {
   isFullscreen: boolean;
   speechRate?: number;
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
+  live?: {
+    page: number | null;
+    overlay: React.ReactNode | null;
+  };
 }) {
   const containerRef = useRef<HTMLElement>(null);
   const flipBookRef = useRef<FlipBookHandle>(null);
   const speechTimerRef = useRef<number | null>(null);
   const speechRequestRef = useRef(0);
+  const lastLivePageRef = useRef<number | null>(null);
   const [bookScale, setBookScale] = useState(1);
+
+  // 伴学课堂：跟随远端翻页指令（防循环由课堂层 lastRemotePage 保证）。
+  useEffect(() => {
+    if (live?.page == null) return;
+    if (live.page === lastLivePageRef.current) return;
+    lastLivePageRef.current = live.page;
+    flipBookRef.current?.pageFlip()?.flip(live.page);
+  }, [live?.page]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -608,7 +623,13 @@ export function BatchimReadingBook({
     const resizeObserver = new ResizeObserver(() => {
       cancelAnimationFrame(animationFrame);
       animationFrame = requestAnimationFrame(() => {
-        setBookScale(isFullscreen ? MAX_BOOK_SCALE : 1);
+        const cap = isFullscreen ? MAX_BOOK_SCALE : 1;
+        const nextScale = Math.min(
+          container.clientWidth / BOOK_WIDTH,
+          container.clientHeight / BOOK_HEIGHT,
+          cap
+        );
+        setBookScale(Math.max(0.1, nextScale));
         flipBookRef.current?.pageFlip()?.update();
       });
     });
@@ -655,7 +676,7 @@ export function BatchimReadingBook({
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">←</button>
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">→</button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${bookScale})` }}>
-          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={false} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
+          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
             <Page number={0} cover>
               <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d8f0e7_0,_transparent_32%),linear-gradient(145deg,_#fffef9_0%,_#e8f6f0_100%)] px-10 py-11 text-center">
                 <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[#173f4a]" />
@@ -675,7 +696,7 @@ export function BatchimReadingBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 03</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第三章</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
                 <ol className="mt-5 divide-y divide-[#e5ece7] rounded-2xl border border-[#dce8e1] bg-white px-5 py-2 text-left">
                   {[
@@ -697,7 +718,7 @@ export function BatchimReadingBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">CHAPTER 03 · GOALS</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第三章 · GOALS</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
                 <p className="mt-4 text-sm leading-7 text-[#60736a]">把音节底部的字母转化为清楚的发音动作，并建立从音节结构到词语拼读的完整路径。</p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
@@ -719,7 +740,7 @@ export function BatchimReadingBook({
               <div className="relative flex h-full flex-col items-center justify-center overflow-hidden text-center">
                 <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4f3ed]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">CHAPTER 03 COMPLETE</p>
+                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第三章完成</p>
                   <h2 className="mt-5 text-4xl font-black text-[#173f4a]">收音与拼读学习完成</h2>
                   <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">你已经认识收音位置、七个代表音和基础拼读顺序。接下来进入本章测试检查学习成果。</p>
                   <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한", "ㄴ 收音"], ["밥", "ㅂ 收音"], ["공", "ㅇ 收音"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm"><p className="text-3xl font-black text-[#238777]">{value}</p><p className="mt-2 text-xs font-bold text-[#789087]">{label}</p></div>)}</div>
@@ -730,6 +751,7 @@ export function BatchimReadingBook({
             </Page>
 
           </HTMLFlipBook>
+          {live?.overlay}
         </div>
       </div>
     </section>

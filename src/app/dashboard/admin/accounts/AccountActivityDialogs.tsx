@@ -11,6 +11,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 type AccountAuditLog = {
   id: number;
@@ -40,24 +41,41 @@ const AUDIT_LABELS: Record<string, string> = {
   profile_updated: "更新了账号资料",
 };
 
-function formatAuditTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "时间待确认";
-  return new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
+const AUDIT_TIME_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };
+
+function AuditTime({ value }: { value: string }) {
+  return <LocalDateTime value={value} options={AUDIT_TIME_OPTIONS} fallback="时间待确认" />;
 }
 
-export function AccountAuditLogDialog({ logs, accountNames }: { logs: AccountAuditLog[]; accountNames: Record<string, string> }) {
+export function AccountAuditLogDialog({
+  logs,
+  accountNames,
+  compact = false,
+}: {
+  logs: AccountAuditLog[];
+  accountNames: Record<string, string>;
+  compact?: boolean;
+}) {
   return (
     <Dialog>
       <DialogTrigger
         type="button"
-        className="app-card flex w-full items-center justify-between gap-3 rounded-[1.75rem] border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"
+        className={compact
+          ? "inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]"
+          : "app-card flex w-full items-center justify-between gap-3 rounded-[1.75rem] border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"}
+        style={compact ? { borderColor: "var(--app-border)" } : undefined}
       >
-        <div>
-          <p className="app-muted-text text-xs font-black">最近记录</p>
-          <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-black" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
-        </div>
-        <Activity size={22} style={{ color: "var(--app-secondary)" }} />
+        {compact ? (
+          <><Activity size={14} />变更记录</>
+        ) : (
+          <>
+            <div>
+              <p className="app-muted-text text-xs font-black">最近记录</p>
+              <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-black" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
+            </div>
+            <Activity size={22} style={{ color: "var(--app-secondary)" }} />
+          </>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
@@ -72,7 +90,7 @@ export function AccountAuditLogDialog({ logs, accountNames }: { logs: AccountAud
                 <p className="truncate text-xs font-black">{accountNames[log.actor_id ?? ""] ?? "系统管理员"} {AUDIT_LABELS[log.action] ?? "更新了账号"}</p>
                 <p className="app-muted-text mt-1 truncate text-xs">对象：{accountNames[log.target_user_id] ?? `账号 …${log.target_user_id.slice(-6)}`}</p>
               </div>
-              <span className="app-muted-text shrink-0 text-xs font-bold">{formatAuditTime(log.created_at)}</span>
+              <span className="app-muted-text shrink-0 text-xs font-bold"><AuditTime value={log.created_at} /></span>
             </div>
           ))}
           {logs.length === 0 && (
@@ -87,21 +105,29 @@ export function AccountAuditLogDialog({ logs, accountNames }: { logs: AccountAud
   );
 }
 
-export function AccountDeletionAuditDialog({ logs }: { logs: AccountDeletionAuditLog[] }) {
+export function AccountDeletionAuditDialog({ logs, compact = false }: { logs: AccountDeletionAuditLog[]; compact?: boolean }) {
   if (logs.length === 0) return null;
 
   return (
     <Dialog>
       <DialogTrigger
         type="button"
-        className="app-card flex w-full items-center justify-between gap-3 rounded-[1.75rem] border border-rose-100 p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"
+        className={compact
+          ? "inline-flex h-9 items-center justify-center gap-2 rounded-md border border-rose-200 px-3 text-xs font-semibold text-rose-700 transition hover:bg-rose-50"
+          : "app-card flex w-full items-center justify-between gap-3 rounded-[1.75rem] border border-rose-100 p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"}
       >
-        <div>
-          <p className="text-xs font-black text-rose-600">负责人审计</p>
-          <h2 className="mt-1 text-xl font-black">永久删除记录</h2>
-          <p className="mt-2 text-xs text-rose-700">点击查看最近 {logs.length} 条永久删除记录</p>
-        </div>
-        <UserRoundX size={22} className="text-rose-500" />
+        {compact ? (
+          <><UserRoundX size={14} />删除记录</>
+        ) : (
+          <>
+            <div>
+              <p className="text-xs font-black text-rose-600">负责人审计</p>
+              <h2 className="mt-1 text-xl font-black">永久删除记录</h2>
+              <p className="mt-2 text-xs text-rose-700">点击查看最近 {logs.length} 条永久删除记录</p>
+            </div>
+            <UserRoundX size={22} className="text-rose-500" />
+          </>
+        )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
@@ -118,7 +144,7 @@ export function AccountDeletionAuditDialog({ logs }: { logs: AccountDeletionAudi
                     <p className="truncate text-sm font-black">{log.target_full_name || log.target_email || `账号 …${log.target_user_id.slice(-6)}`}</p>
                     <p className="mt-1 break-all text-xs text-rose-700">{log.target_email || log.target_role || "历史账号"}</p>
                   </div>
-                  <span className="shrink-0 text-xs font-bold text-rose-600">{formatAuditTime(log.deleted_at)}</span>
+                  <span className="shrink-0 text-xs font-bold text-rose-600"><AuditTime value={log.deleted_at} /></span>
                 </div>
                 <p className="mt-3 text-xs leading-5 text-rose-900"><b>删除原因：</b>{log.deletion_reason}</p>
                 {counts.length > 0 && <p className="mt-2 text-xs text-rose-700">已清理：{counts.map(([label, value]) => `${label} ${value} 项`).join("、")}</p>}

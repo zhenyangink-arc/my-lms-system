@@ -3,6 +3,10 @@
 import { useEffect, useState } from "react";
 import { Activity, X } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
+
+const TIME_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };
+
 type PermissionAction = {
   label: string;
   action: "granted" | "revoked";
@@ -60,7 +64,7 @@ export function RecentPermissionActionsDialog({ actions }: { actions: Permission
                 <div key={`${row.time}-${index}`} className="grid grid-cols-[minmax(0,1fr)_72px_100px] items-center border-b px-4 py-3 text-[9px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
                   <span className="truncate font-semibold">{row.label}</span>
                   <span className={row.action === "granted" ? "font-semibold text-emerald-700" : "font-semibold text-rose-700"}>{row.action === "granted" ? "已授权" : "已收回"}</span>
-                  <span className="app-muted-text text-right tabular-nums">{row.time}</span>
+                  <span className="app-muted-text text-right tabular-nums"><LocalDateTime value={row.time} options={TIME_OPTIONS} /></span>
                 </div>
               ))}
               {actions.length === 0 && <p className="app-muted-text px-4 py-10 text-center text-[9px]">暂时没有权限变更记录</p>}

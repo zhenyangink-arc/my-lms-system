@@ -19,6 +19,8 @@ type LessonVideoPlayerProps = {
 };
 
 const COMPLETE_THRESHOLD = 90;
+// 播放满 2 分钟才落库记录"进行中"：只看一眼/试播几秒不产生学习进度。
+const START_RECORDING_SECONDS = 120;
 
 function dispatchProgressUpdate(
   lessonId: string,
@@ -132,8 +134,8 @@ export function LessonVideoPlayer({
 
     const nextProgress = Math.max(initialProgress, 1);
 
+    // 仅更新本地 UI 状态；进度记录由 handleVideoTimeUpdate 在播放满 2 分钟后落库。
     dispatchProgressUpdate(lessonId, "in_progress", nextProgress);
-    void saveProgress("in_progress", nextProgress);
   }
 
   function handleVideoTimeUpdate(event: SyntheticEvent<HTMLVideoElement>) {
@@ -164,6 +166,7 @@ export function LessonVideoPlayer({
     const now = Date.now();
 
     const shouldSave =
+      video.currentTime >= START_RECORDING_SECONDS &&
       currentProgress >= lastSavedPercentRef.current + 10 &&
       now - lastSavedAtRef.current > 10000;
 
@@ -247,8 +250,7 @@ export function LessonVideoPlayer({
             <p className="mt-4 font-semibold text-gray-900">视频暂未上传</p>
 
             <p className="mt-2 text-sm leading-6 text-gray-500">
-              当前课时已经预留视频区域。后续在 Supabase 的 lessons
-              表中填写 video_url 或 video_object_key 后，这里会自动显示视频。
+              当前课时已经预留视频区域。上传课程视频并保存后，这里会自动显示。
             </p>
           </div>
         </div>

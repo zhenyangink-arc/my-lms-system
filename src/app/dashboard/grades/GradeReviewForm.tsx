@@ -1,5 +1,5 @@
 "use client";
-import { useActionState } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { SearchCheck } from "lucide-react";
 import { initialGradeCenterActionState } from "./action-state";
 import {
@@ -23,6 +23,12 @@ export function GradeReviewForm({
     action,
     initialGradeCenterActionState,
   );
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // 提交成功后文本框之前一直留着刚才的内容，下次打开还是旧的申请原因。
+  useEffect(() => {
+    if (state.status === "success") formRef.current?.reset();
+  }, [state]);
 
   return (
     <details className="app-soft-card rounded-xl border p-3">
@@ -30,6 +36,7 @@ export function GradeReviewForm({
         申请成绩复核
       </summary>
       <form
+        ref={formRef}
         action={formAction}
         className="mt-3 space-y-3 border-t pt-3"
         style={{ borderColor: "var(--app-border-soft)" }}

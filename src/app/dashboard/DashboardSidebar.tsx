@@ -75,7 +75,7 @@ export function DashboardSidebar({ userName, userRole, membershipTier, canAccess
     .map(g => ({
       ...g,
       items: g.items
-        .filter(i => (!g.adminOnly || !isTeacher || isAdmin || i.teacherVisible) && (!i.announcementOnly || canAccessAnnouncements))
+        .filter(i => (!g.adminOnly || !isTeacher || isAdmin || i.teacherVisible) && (!i.announcementOnly || canAccessAnnouncements || userRole === "student"))
         .map(personalizeItem),
     }));
   const mobile = (isAdmin || isTeacher ? staffMobile : studentMobile).map(personalizeItem);

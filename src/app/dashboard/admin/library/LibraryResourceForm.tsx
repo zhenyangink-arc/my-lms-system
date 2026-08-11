@@ -216,7 +216,7 @@ export function LibraryResourceForm({
                           className={inputClass}
                         />
                         <p className="app-muted-text mt-1.5 text-[10px]">
-                          支持文档、图片、表格、演示文稿和压缩包，最大 15MB。
+                          支持文档、图片、表格、演示文稿和压缩包，最大 15 兆。
                         </p>
                       </>
                     ) : (

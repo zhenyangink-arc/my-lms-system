@@ -4,14 +4,11 @@ import {
   Building2,
   Eye,
   EyeOff,
-  FileClock,
-  ShieldCheck,
-  TriangleAlert,
-  UsersRound,
 } from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { learningRecordDateFormatter } from "@/app/dashboard/records/config";
+import { LEARNING_RECORD_DATE_TIME_OPTIONS } from "@/app/dashboard/records/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 
 export type PlatformLearningRecordOverviewRow = {
   tenant_id: string;
@@ -53,54 +50,15 @@ export function PlatformLearningRecordOverview({
   return (
     <div className="pb-12">
       <div className="mx-auto mt-5 w-full max-w-[1600px] space-y-5 px-4 sm:px-6 lg:px-8">
-        <section
-          className="app-card rounded-3xl border p-5 sm:p-6"
-          style={{ backgroundColor: "var(--app-card-bg)" }}
-        >
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_620px] xl:items-center">
-            <div>
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{
-                  color: "var(--app-secondary)",
-                  backgroundColor: "var(--app-secondary-soft)",
-                }}
-              >
-                <ShieldCheck size={14} />
-                平台负责人视图
-              </span>
-              <DashboardTitleWithHint
-                className="mt-3"
-                title="机构学习记录运行概览"
-                description="只查看机构级记录数量和运行状态，不展示学生姓名、记录标题、正文或下一步建议。"
-              />
-            </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[
-                ["机构", rows.length, Building2, "var(--app-secondary)"],
-                ["活跃学生", totals.students, UsersRound, "var(--app-accent)"],
-                ["有效记录", totals.records, FileClock, "var(--app-success)"],
-                ["关注事项", totals.attention, TriangleAlert, "var(--app-warm)"],
-              ].map(([label, value, Icon, color]) => {
-                const MetricIcon = Icon as typeof Building2;
-                return (
-                  <div
-                    key={String(label)}
-                    className="app-soft-card rounded-2xl border p-4 text-center"
-                  >
-                    <MetricIcon
-                      className="mx-auto"
-                      size={17}
-                      style={{ color: String(color) }}
-                    />
-                    <p className="mt-2 text-xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-[10px] font-black">
-                      {String(label)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+        <section className="management-table-panel overflow-hidden border">
+          <div className="management-table-toolbar border-b px-5 py-4">
+            <p className="app-muted-text text-xs">平台负责人视图仅展示机构级数量和运行状态，不展示学生个人记录。</p>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="management-summary-table w-full min-w-[680px] border-collapse text-left">
+              <thead><tr><th>统计项目</th><th>机构</th><th>活跃学生</th><th>有效记录</th><th>学生可见</th><th>关注事项</th></tr></thead>
+              <tbody><tr><th>当前数量</th><td>{rows.length}</td><td>{totals.students}</td><td>{totals.records}</td><td>{totals.visible}</td><td>{totals.attention}</td></tr></tbody>
+            </table>
           </div>
         </section>
 
@@ -127,16 +85,13 @@ export function PlatformLearningRecordOverview({
           </section>
         )}
 
-        <section className="app-card overflow-hidden rounded-3xl border">
+        <section className="management-table-panel overflow-hidden border">
           <div
             className="flex items-center justify-between gap-3 border-b px-4 py-4 sm:px-5"
             style={{ borderColor: "var(--app-border)" }}
           >
             <div>
               <h2 className="text-base font-black">机构学习记录运行表</h2>
-              <p className="app-muted-text mt-1 text-[10px]">
-                每行对应一个机构，仅展示汇总数据。
-              </p>
             </div>
             <span className="app-muted-text text-xs font-black">
               共 {rows.length} 个机构
@@ -212,12 +167,15 @@ export function PlatformLearningRecordOverview({
                     </td>
                     <td className="app-muted-text px-3 py-4 text-[10px]">
                       {row.last_record_at
-                        ? learningRecordDateFormatter.format(new Date(row.last_record_at))
+                        ? <LocalDateTime value={row.last_record_at} options={LEARNING_RECORD_DATE_TIME_OPTIONS} />
                         : "暂无记录"}
                     </td>
                     <td className="px-5 py-4">
                       <Link
-                        href={`/dashboard/admin/tenants/${row.tenant_id}`}
+                        href={scopeDashboardPath(
+                          `/dashboard/admin/tenants/${row.tenant_id}`,
+                          getDashboardBasePath(null),
+                        )}
                         className="inline-flex items-center gap-1 font-black"
                         style={{ color: "var(--app-secondary)" }}
                       >

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { ArrowRight, BellRing, CalendarDays, Megaphone, Pin, ShieldCheck } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { getAnnouncementAccess } from "@/lib/announcements";
 import {
   CATEGORY_LABELS,
@@ -26,15 +27,14 @@ type AnnouncementRow = {
 
 type TenantRow = { id: string; name: string };
 
-const dateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
+};
 
 const priorityTone: Record<AnnouncementPriority, { color: string; soft: string }> = {
   normal: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
@@ -63,7 +63,6 @@ export default async function AnnouncementsPage() {
   return (
     <div className="pb-12">
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
-        <AnnouncementReadTracker announcementIds={announcements.map((announcement) => announcement.id)} />
         {access.canAccess && (
           <div className="flex justify-end">
             <Link href="/dashboard/admin/announcements" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>进入公告后台<ArrowRight size={15} /></Link>
@@ -84,7 +83,7 @@ export default async function AnnouncementsPage() {
             const source = announcement.scope === "platform"
               ? "平台公告 · 全部机构可见"
               : `${tenantNames.get(announcement.tenant_id ?? "") ?? "本机构"}公告`;
-            return <article key={announcement.id} className="app-card rounded-3xl border p-4 sm:p-5"><div className="flex flex-wrap items-center gap-2">{announcement.is_pinned && <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Pin size={11} />置顶</span>}<span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: announcement.scope === "platform" ? "#6941c6" : "var(--app-accent)", backgroundColor: announcement.scope === "platform" ? "#f3efff" : "var(--app-accent-soft)" }}>{source}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{CATEGORY_LABELS[announcement.category]}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{PRIORITY_LABELS[announcement.priority]}</span></div><h2 className="mt-4 text-xl font-black leading-8">{announcement.title}</h2><p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{announcement.content}</p><div className="app-muted-text mt-5 flex items-center gap-2 border-t pt-4 text-xs font-bold" style={{ borderColor: "var(--app-border-soft)" }}><CalendarDays size={13} />{announcement.published_at ? `发布于 ${dateFormatter.format(new Date(announcement.published_at))}` : source}</div></article>;
+            return <article key={announcement.id} className="app-card rounded-3xl border p-4 sm:p-5"><AnnouncementReadTracker announcementId={announcement.id} /><div className="flex flex-wrap items-center gap-2">{announcement.is_pinned && <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><Pin size={11} />置顶</span>}<span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: announcement.scope === "platform" ? "#6941c6" : "var(--app-accent)", backgroundColor: announcement.scope === "platform" ? "#f3efff" : "var(--app-accent-soft)" }}>{source}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{CATEGORY_LABELS[announcement.category]}</span><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>{PRIORITY_LABELS[announcement.priority]}</span></div><h2 className="mt-4 text-xl font-black leading-8">{announcement.title}</h2><p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{announcement.content}</p><div className="app-muted-text mt-5 flex items-center gap-2 border-t pt-4 text-xs font-bold" style={{ borderColor: "var(--app-border-soft)" }}><CalendarDays size={13} />{announcement.published_at ? <>发布于 <LocalDateTime value={announcement.published_at} options={DATE_TIME_OPTIONS} /></> : source}</div></article>;
           })}
           {!error && announcements.length === 0 && <div className="app-card rounded-3xl border border-dashed p-8 text-center"><BellRing className="mx-auto opacity-30" size={34} /><h2 className="mt-4 font-black">当前没有新公告</h2><p className="app-muted-text mt-2 text-sm">后台发布通知后，会自动显示在这里。</p></div>}
         </section>

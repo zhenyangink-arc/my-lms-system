@@ -94,6 +94,65 @@ export function KoreanChapterTestRunner({
   const [reviewPending, startReviewTransition] = useTransition();
   const startedAtRef = useRef<number | null>(null);
   const examAreaRef = useRef<HTMLElement | null>(null);
+  // 绝对截止时间：倒计时按这个时间戳重算，而不是每秒盲目减一——
+  // 后台标签页被节流、或用户刷新页面，回来后都能算出真实剩余时间。
+  const deadlineRef = useRef<number | null>(null);
+  const autoSubmitTriggeredRef = useRef(false);
+  const deadlineStorageKey = `korean-chapter-test-deadline:${test.slug}`;
+  const answersStorageKey = `korean-chapter-test-answers:${test.slug}`;
+
+  function clearPersistedSession() {
+    try {
+      window.localStorage.removeItem(deadlineStorageKey);
+      window.localStorage.removeItem(answersStorageKey);
+    } catch {
+      // 本地存储不可用时静默忽略，不影响正常答题。
+    }
+  }
+
+  // 恢复：刷新页面不应该清空已选答案、也不应该让计时器重新满血复活。
+  useEffect(() => {
+    try {
+      const storedAnswers = window.localStorage.getItem(answersStorageKey);
+      if (storedAnswers) {
+        const parsed = JSON.parse(storedAnswers) as Record<string, number>;
+        if (parsed && typeof parsed === "object") {
+          // eslint-disable-next-line react-hooks/set-state-in-effect
+          setAnswers(parsed);
+        }
+      }
+    } catch {
+      // 本地缓存损坏时忽略，按未作答处理。
+    }
+
+    try {
+      const storedDeadline = window.localStorage.getItem(deadlineStorageKey);
+      const deadlineAt = storedDeadline ? Number(storedDeadline) : NaN;
+      if (Number.isFinite(deadlineAt) && deadlineAt > Date.now()) {
+        deadlineRef.current = deadlineAt;
+        setHasExamStarted(true);
+        setRemainingSeconds(
+          Math.max(0, Math.round((deadlineAt - Date.now()) / 1000))
+        );
+      } else if (storedDeadline) {
+        clearPersistedSession();
+      }
+    } catch {
+      // 本地缓存不可用时按未开考处理。
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [test.slug]);
+
+  // 作答持续写入本地缓存；提交成功或重新开始时清空。
+  useEffect(() => {
+    if (!hasExamStarted || Object.keys(answers).length === 0) return;
+    try {
+      window.localStorage.setItem(answersStorageKey, JSON.stringify(answers));
+    } catch {
+      // 本地存储不可用时静默忽略。
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [answers, hasExamStarted]);
 
   const shuffledQuestions = useMemo(
     () => seededShuffle(test.questions, `${shuffleSeed}-questions`),
@@ -101,6 +160,18 @@ export function KoreanChapterTestRunner({
   );
   const visibleQuestions = shuffledQuestions.slice(currentIndex, currentIndex + 1);
   const currentQuestion = visibleQuestions[0];
+  // 选项洗牌是确定性的（同一个种子结果一定一样），但之前直接写在渲染里的
+  // .map() 循环内，每次重渲染（比如倒计时每秒跳一下）都会白白重算一次。
+  const currentQuestionDisplayedOptions = useMemo(() => {
+    if (!currentQuestion) return [];
+    return seededShuffle(
+      currentQuestion.options.map((option, originalIndex) => ({
+        option,
+        originalIndex,
+      })),
+      `${shuffleSeed}-${currentQuestion.id}-options`
+    );
+  }, [currentQuestion, shuffleSeed]);
   const answeredCount = Object.keys(answers).length;
   const resultByQuestionId = useMemo(
     () => new Map(result?.questions?.map((item) => [item.id, item]) ?? []),
@@ -108,18 +179,45 @@ export function KoreanChapterTestRunner({
   );
 
   useEffect(() => {
-    if (!hasExamStarted || result || remainingSeconds <= 0) return;
-    const timer = window.setInterval(() => {
-      setRemainingSeconds((seconds) => Math.max(0, seconds - 1));
-    }, 1000);
+    if (!hasExamStarted || result || deadlineRef.current === null) return;
+    const tick = () => {
+      const deadlineAt = deadlineRef.current;
+      if (deadlineAt === null) return;
+      setRemainingSeconds(Math.max(0, Math.round((deadlineAt - Date.now()) / 1000)));
+    };
+    tick();
+    const timer = window.setInterval(tick, 1000);
     return () => window.clearInterval(timer);
-  }, [hasExamStarted, remainingSeconds, result]);
+  }, [hasExamStarted, result]);
+
+  // 到点自动交卷：即使切后台或不主动点交卷，时间到了也不能无限期继续答题。
+  useEffect(() => {
+    if (
+      remainingSeconds > 0 ||
+      !hasExamStarted ||
+      result ||
+      autoSubmitTriggeredRef.current
+    ) {
+      return;
+    }
+    autoSubmitTriggeredRef.current = true;
+    submitTest(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [remainingSeconds, hasExamStarted, result]);
 
   function startExam() {
     if (hasExamStarted || result) return;
+    const deadlineAt = Date.now() + test.durationMinutes * 60 * 1000;
+    deadlineRef.current = deadlineAt;
     startedAtRef.current = Date.now();
     setHasExamStarted(true);
+    setRemainingSeconds(test.durationMinutes * 60);
     setMessage("");
+    try {
+      window.localStorage.setItem(deadlineStorageKey, String(deadlineAt));
+    } catch {
+      // 本地存储不可用时不影响当前会话内的计时。
+    }
   }
 
   useEffect(() => {
@@ -149,7 +247,7 @@ export function KoreanChapterTestRunner({
   }
 
   function handleSelectOption(questionId: string, originalOptionIndex: number) {
-    if (!hasExamStarted || result) return;
+    if (!hasExamStarted || result || remainingSeconds <= 0) return;
     // eslint-disable-next-line react-hooks/purity -- This timestamp is captured only in the option-click event handler, never during render.
     if (startedAtRef.current === null) startedAtRef.current = Date.now();
     setAnswers((current) => ({
@@ -200,12 +298,12 @@ export function KoreanChapterTestRunner({
     });
   }
 
-  function submitTest() {
+  function submitTest(force = false) {
     if (!hasExamStarted) {
       setMessage("请先在答题工具中点击“开始答题”。");
       return;
     }
-    if (answeredCount !== test.questions.length) {
+    if (!force && answeredCount !== test.questions.length) {
       const firstUnansweredIndex = shuffledQuestions.findIndex(
         (question) => answers[question.id] === undefined
       );
@@ -214,15 +312,17 @@ export function KoreanChapterTestRunner({
       return;
     }
 
-    setMessage("");
+    setMessage(force ? "时间已到，正在自动交卷…" : "");
     startTransition(async () => {
       const nextResult = await submitKoreanChapterTestAction({
         testSlug: test.slug,
         answers,
       });
-      setResult(nextResult);
       setMessage(nextResult.message);
+      // 只有真正交卷成功才锁定界面；失败时保留已选答案，允许重新点击交卷重试，
+      // 不能让一次网络错误就把答案和作答状态全部冲掉。
       if (nextResult.status === "success") {
+        setResult(nextResult);
         const startedAt = startedAtRef.current;
         setElapsedSeconds(
           startedAt === null
@@ -230,6 +330,7 @@ export function KoreanChapterTestRunner({
             : Math.max(1, Math.round((Date.now() - startedAt) / 1000))
         );
         setCurrentIndex(0);
+        clearPersistedSession();
       }
     });
   }
@@ -243,6 +344,9 @@ export function KoreanChapterTestRunner({
     setHasExamStarted(false);
     setEliminatedOptions({});
     startedAtRef.current = null;
+    deadlineRef.current = null;
+    autoSubmitTriggeredRef.current = false;
+    clearPersistedSession();
     setShuffleSeed(crypto.randomUUID());
     setCurrentIndex(0);
   }
@@ -650,13 +754,7 @@ export function KoreanChapterTestRunner({
               const questionIndex = currentIndex + visibleIndex;
               const review = resultByQuestionId.get(question.id);
               const selectedOption = answers[question.id];
-              const displayedOptions = seededShuffle(
-                question.options.map((option, originalIndex) => ({
-                  option,
-                  originalIndex,
-                })),
-                `${shuffleSeed}-${question.id}-options`
-              );
+              const displayedOptions = currentQuestionDisplayedOptions;
 
               return (
                 <section
@@ -852,7 +950,7 @@ export function KoreanChapterTestRunner({
                 <button
                   type="button"
                   disabled={pending || !hasExamStarted}
-                  onClick={submitTest}
+                  onClick={() => submitTest()}
                   className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
                   style={{ backgroundColor: "var(--app-success)" }}
                 >
@@ -924,12 +1022,12 @@ export function KoreanChapterTestRunner({
                 计时进行中
               </p>
             )}
-            {remainingSeconds === 0 && (
+            {remainingSeconds === 0 && !result && (
               <p
                 className="mt-1 text-[9px] font-black"
                 style={{ color: countdownTone.color }}
               >
-                时间已到，请尽快交卷
+                时间已到，正在自动交卷…
               </p>
             )}
           </div>

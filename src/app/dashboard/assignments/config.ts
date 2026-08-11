@@ -42,20 +42,11 @@ export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {
   revision_required: "退回重做",
 };
 
-export const assignmentDateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+export const ASSIGNMENT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
-
-export function formatAssignmentDate(value: string | null) {
-  if (!value) return "时间待定";
-  const date = new Date(value);
-  return Number.isNaN(date.getTime())
-    ? "时间待确认"
-    : assignmentDateFormatter.format(date);
-}
+};

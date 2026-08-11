@@ -2,15 +2,10 @@ import Link from "next/link";
 import {
   ArrowRight,
   Building2,
-  ChartNoAxesCombined,
-  ClipboardCheck,
-  SearchCheck,
-  ShieldCheck,
-  UsersRound,
 } from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { gradeDateFormatter } from "@/app/dashboard/grades/config";
+import { GRADE_DATE_TIME_OPTIONS } from "@/app/dashboard/grades/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 export type PlatformGradeOverviewRow = {
   tenant_id: string;
@@ -70,54 +65,19 @@ export function PlatformGradeOverview({
   return (
     <div className="pb-12">
       <div className="mx-auto mt-5 w-full max-w-[1600px] space-y-5 px-4 sm:px-6 lg:px-8">
-        <section
-          className="app-card rounded-3xl border p-5 sm:p-6"
-          style={{ backgroundColor: "var(--app-card-bg)" }}
-        >
-          <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_620px] xl:items-center">
+        <section className="management-table-panel overflow-hidden border">
+          <div className="management-table-toolbar border-b px-5 py-4">
             <div>
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{
-                  color: "var(--app-secondary)",
-                  backgroundColor: "var(--app-secondary-soft)",
-                }}
-              >
-                <ShieldCheck size={14} />
-                平台负责人视图
-              </span>
-              <DashboardTitleWithHint
-                className="mt-3"
-                title="机构成绩运行概览"
-                description="只显示机构级汇总指标，不展示学生姓名、单人成绩、答题内容或批改详情。"
-              />
+              <h2>机构成绩运行概览</h2>
+              <p className="app-muted-text mt-1 text-xs">仅显示机构级汇总指标，不展示学生个人成绩和答题内容。</p>
             </div>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              {[
-                ["机构", institutionCount, Building2, "var(--app-secondary)"],
-                ["活跃学生", activeStudentCount, UsersRound, "var(--app-accent)"],
-                ["成绩记录", gradeRecordCount, ClipboardCheck, "var(--app-success)"],
-                ["待复核", pendingReviewCount, SearchCheck, "var(--app-warm)"],
-              ].map(([label, value, Icon, color]) => {
-                const MetricIcon = Icon as typeof Building2;
-                return (
-                  <div
-                    key={String(label)}
-                    className="app-soft-card rounded-2xl border p-4 text-center"
-                  >
-                    <MetricIcon
-                      className="mx-auto"
-                      size={17}
-                      style={{ color: String(color) }}
-                    />
-                    <p className="mt-2 text-xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-[10px] font-black">
-                      {String(label)}
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
+            <span className="app-muted-text text-xs font-medium">平台负责人视图</span>
+          </div>
+          <div className="overflow-x-auto">
+            <table className="management-summary-table w-full min-w-[720px] border-collapse text-left">
+              <thead><tr><th>统计项目</th><th>机构</th><th>活跃学生</th><th>成绩记录</th><th>待复核</th><th>平均得分率</th></tr></thead>
+              <tbody><tr><th>当前数量</th><td>{institutionCount}</td><td>{activeStudentCount}</td><td>{gradeRecordCount}</td><td>{pendingReviewCount}</td><td>{overallAverage == null ? "—" : `${overallAverage.toFixed(1)}%`}</td></tr></tbody>
+            </table>
           </div>
         </section>
 
@@ -129,9 +89,6 @@ export function PlatformGradeOverview({
             backgroundColor: "var(--app-secondary-soft)",
           }}
         >
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/70">
-            <ChartNoAxesCombined size={18} />
-          </span>
           <div className="min-w-0 flex-1">
             <p className="text-xs font-black">平台数据边界</p>
             <p className="mt-1 text-[11px] leading-5">
@@ -247,7 +204,7 @@ export function PlatformGradeOverview({
                       </td>
                       <td className="app-muted-text px-3 py-4 text-[10px]">
                         {row.last_grade_at
-                          ? gradeDateFormatter.format(new Date(row.last_grade_at))
+                          ? <LocalDateTime value={row.last_grade_at} options={GRADE_DATE_TIME_OPTIONS} />
                           : "暂无成绩"}
                       </td>
                       <td className="px-5 py-4">

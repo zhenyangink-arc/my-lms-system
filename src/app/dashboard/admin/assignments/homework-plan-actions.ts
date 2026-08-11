@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import type { LearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
 import { requireAssessmentPaperManager } from "@/lib/assessment-papers";
@@ -145,8 +145,8 @@ export async function saveChapterHomeworkPlanAction(
     return result("error", "听说读写配置保存失败，请稍后重试。");
   }
 
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/admin/assignments/homework");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/admin/assignments/homework");
   return result("success", "章节作业与听说读写配置已保存。");
 }
 
@@ -197,8 +197,8 @@ export async function setChapterHomeworkPublicationAction(
     );
   }
 
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/admin/assignments/homework");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/admin/assignments/homework");
   return result(
     "success",
     nextStatus === "published"

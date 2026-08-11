@@ -2,6 +2,11 @@
 
 import { requireActiveUser } from "@/lib/auth";
 import { parseQuestionOptions } from "@/lib/korean-chapter-tests";
+import { HANGUL_TEST_SEQUENCE } from "@/lib/korean-learning-unlocks";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type KoreanBookReviewAnswerResult = {
@@ -12,16 +17,21 @@ export type KoreanBookReviewAnswerResult = {
 
 export async function saveKoreanEbookProgressAction(input: {
   testSlug: string;
-  currentPage: number;
+  currentPage: number | null;
   totalPages: number;
   readPages?: number[];
+  readingSeconds?: number;
 }) {
   const { supabase, user, profile } = await requireActiveUser();
   if (profile?.role === "platform_course_inspector") {
     return { status: "success" as const };
   }
   const testSlug = String(input.testSlug ?? "").trim();
-  const currentPage = Math.max(0, Math.floor(Number(input.currentPage)));
+  // currentPage 为 null 表示「本地区没有该章的进度快照」，不覆盖数据库里已存的页码。
+  const currentPage =
+    input.currentPage == null
+      ? null
+      : Math.max(0, Math.floor(Number(input.currentPage)));
   const totalPages = Math.max(1, Math.floor(Number(input.totalPages)));
   const newlyReadPages = Array.from(
     new Set(
@@ -34,10 +44,15 @@ export async function saveKoreanEbookProgressAction(input: {
     )
   ).slice(0, 500);
 
+  const readingSeconds = Math.max(
+    0,
+    Math.floor(Number(input.readingSeconds) || 0)
+  );
+
   if (
     !testSlug ||
     testSlug.length > 160 ||
-    !Number.isFinite(currentPage) ||
+    (currentPage !== null && !Number.isFinite(currentPage)) ||
     !Number.isFinite(totalPages) ||
     totalPages > 500
   ) {
@@ -54,38 +69,74 @@ export async function saveKoreanEbookProgressAction(input: {
     .maybeSingle();
   if (!test) return { status: "error" as const };
 
-  const now = new Date().toISOString();
-  const { data: existing } = await supabase
-    .from("course_ebook_progress")
-    .select("read_pages")
-    .eq("student_id", user.id)
-    .eq("test_slug", testSlug)
-    .maybeSingle();
-  const readPages = Array.from(
-    new Set([
-      ...((existing?.read_pages as number[] | null) ?? []),
-      ...newlyReadPages,
-    ])
-  )
-    .filter((page) => page >= 0 && page < totalPages)
-    .sort((a, b) => a - b);
-  const progressPercent = Math.min(
-    100,
-    Math.round((readPages.length / totalPages) * 100)
-  );
-  const { error } = await supabase.from("course_ebook_progress").upsert(
-    {
-      student_id: user.id,
-      test_slug: testSlug,
-      current_page: Math.min(currentPage, totalPages - 1),
-      total_pages: totalPages,
-      progress_percent: progressPercent,
-      read_pages: readPages,
-      last_read_at: now,
-      updated_at: now,
-    },
-    { onConflict: "student_id,test_slug" }
-  );
+  // 合并交给数据库原子完成（advisory lock 串行化），不再自己查询-合并-覆盖写回：
+  // 快速翻页触发的连续保存不会再互相用旧集合覆盖对方刚合并进去的页码。
+  const { error } = await supabase.rpc("record_ebook_progress", {
+    p_test_slug: testSlug,
+    p_current_page:
+      currentPage === null ? null : Math.min(currentPage, totalPages - 1),
+    p_total_pages: totalPages,
+    p_new_read_pages: newlyReadPages,
+    p_reading_seconds: readingSeconds,
+  });
+
+  if (!error) {
+    // 学习满 2 分钟才算“开始学习”：累计阅读秒数 ≥120 时，同步把该课时的
+    // lesson_progress 标为 in_progress，老师端“我的学生”进度无需等学生再次
+    // 打开课时页即可看到；未满 2 分钟不产生课时进度记录。
+    try {
+      const { data: ebookRow } = await supabase
+        .from("course_ebook_progress")
+        .select("reading_seconds")
+        .eq("student_id", user.id)
+        .eq("test_slug", testSlug)
+        .maybeSingle();
+      const totalSeconds = Number(ebookRow?.reading_seconds) || 0;
+      if (totalSeconds >= 120) {
+        const { data: testInfo } = await admin
+          .from("chapter_tests")
+          .select("lesson_id")
+          .eq("slug", testSlug)
+          .eq("status", "published")
+          .maybeSingle();
+        const lessonId = testInfo?.lesson_id ? String(testInfo.lesson_id) : null;
+        if (lessonId) {
+          const { data: lessonInfo } = await admin
+            .from("lessons")
+            .select("course_id")
+            .eq("id", lessonId)
+            .maybeSingle();
+          const { data: existing } = await supabase
+            .from("lesson_progress")
+            .select("status, started_at")
+            .eq("user_id", user.id)
+            .eq("lesson_id", lessonId)
+            .maybeSingle();
+          if (existing?.status !== "completed") {
+            const now = new Date().toISOString();
+            await supabase.from("lesson_progress").upsert(
+              {
+                user_id: user.id,
+                course_id: lessonInfo?.course_id ?? null,
+                lesson_id: lessonId,
+                status: "in_progress",
+                progress_percent: Math.min(
+                  100,
+                  Math.round((totalSeconds / 600) * 100)
+                ),
+                started_at: existing?.started_at ?? now,
+                last_viewed_at: now,
+                updated_at: now,
+              },
+              { onConflict: "user_id,lesson_id" }
+            );
+          }
+        }
+      }
+    } catch {
+      // 课时进度联动失败不影响电子书进度保存本身。
+    }
+  }
 
   return { status: error ? ("error" as const) : ("success" as const) };
 }
@@ -95,7 +146,7 @@ export async function checkKoreanBookReviewAnswer(
   questionKey: string,
   selectedOption: number
 ): Promise<KoreanBookReviewAnswerResult> {
-  await requireActiveUser();
+  const auth = await requireActiveUser();
 
   if (
     !testSlug ||
@@ -118,7 +169,7 @@ export async function checkKoreanBookReviewAnswer(
   }
   const { data: lesson } = await admin
     .from("lessons")
-    .select("id,course_id")
+    .select("id,course_id,is_free_preview")
     .eq("id", test.lesson_id)
     .eq("slug", "hangul-introduction")
     .maybeSingle();
@@ -133,6 +184,37 @@ export async function checkKoreanBookReviewAnswer(
     .maybeSingle();
   if (!course) {
     return { status: "error", correct: false, message: "本章课程归属不正确。" };
+  }
+
+  // 这是未鉴权就能反复试答案的探测面：光靠"已登录"挡不住任何登录用户
+  // 枚举出正确选项，必须同时校验会员档位权限和课时解锁顺序。
+  const role = auth.profile?.role ?? "student";
+  const membershipTier = normalizeMembershipTier(auth.profile?.membership_tier);
+  const hasFullKoreanCourseAccess = canUseStudentFeature(role, membershipTier, "korean_course");
+  const hasPreviewAccess =
+    Boolean(lesson.is_free_preview) && canUseStudentFeature(role, membershipTier, "course_preview");
+  const hasLessonAccess = role !== "student" || hasFullKoreanCourseAccess || hasPreviewAccess;
+  if (!hasLessonAccess) {
+    return { status: "error", correct: false, message: "当前账号没有这门课程的学习权限。" };
+  }
+
+  if (role === "student") {
+    const chapterIndex = HANGUL_TEST_SEQUENCE.indexOf(
+      testSlug as (typeof HANGUL_TEST_SEQUENCE)[number]
+    );
+    if (chapterIndex > 0) {
+      const previousSlug = HANGUL_TEST_SEQUENCE[chapterIndex - 1];
+      const { data: previousPass } = await admin
+        .from("chapter_test_attempts")
+        .select("id")
+        .eq("student_id", auth.user.id)
+        .eq("test_slug", previousSlug)
+        .eq("passed", true)
+        .maybeSingle();
+      if (!previousPass) {
+        return { status: "error", correct: false, message: "请先完成前面章节的测试，再作答这一章。" };
+      }
+    }
   }
 
   const { data: question } = await admin

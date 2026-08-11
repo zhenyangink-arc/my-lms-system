@@ -16,4 +16,4 @@ export const HELP_TICKET_CATEGORY_LABELS: Record<HelpTicketCategory, string> = {
 export const HELP_TICKET_PRIORITY_LABELS: Record<HelpTicketPriority, string> = { normal: "普通", urgent: "紧急" };
 export const HELP_TICKET_STATUS_LABELS: Record<HelpTicketStatus, string> = { open: "待回复", in_progress: "处理中", waiting_student: "等待学生确认", resolved: "已解决", closed: "已关闭" };
 
-export const helpDateFormatter = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false });
+export const HELP_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };

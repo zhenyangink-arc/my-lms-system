@@ -55,9 +55,7 @@ type ChatMessage = {
   createdAt: Date;
 };
 
-const WEBSOCKET_URL =
-  process.env.NEXT_PUBLIC_CONVERSATION_AI_WS_URL ??
-  "ws://100.125.173.55:8000/ws";
+const WS_TICKET_ENDPOINT = "/api/conversation-practice/ai-experience/ws-ticket";
 
 type SocketPayload = {
   type?: unknown;
@@ -78,11 +76,19 @@ const MODE_GUIDANCE: Record<ChatMode, string> = {
   image: "你可以输入文字或选择图片，我会识别图片中的文字并用文字回复。",
 };
 
+// 文字版走 qwen-chat 接口（上限 1000 字），语音/图片版走 chat 接口（上限 800 字），
+// 两边后端各自独立限制，这里必须跟着一致，否则语音/图片版会出现"能打字却发不出去"。
+const MESSAGE_LENGTH_LIMITS: Record<ChatMode, number> = {
+  text: 1000,
+  voice: 800,
+  image: 800,
+};
+
 function getInitialMessages(assistantName: string, mode: ChatMode) {
   return [{
     id: "welcome",
     role: "assistant" as const,
-    content: `안녕하세요! 저는 AI 한국어 선생님이에요. 만나서 반가워요!\n你好，我是${assistantName}。${MODE_GUIDANCE[mode]}`,
+    content: `안녕하세요! 저는 한국어 선생님이에요. 만나서 반가워요!\n你好，我是${assistantName}。${MODE_GUIDANCE[mode]}`,
     createdAt: new Date(0),
   }];
 }
@@ -133,6 +139,44 @@ function createMessage(role: ChatRole, content: string): ChatMessage {
     content,
     createdAt: new Date(),
   };
+}
+
+const FORMAL_SESSION_STORAGE_PREFIX = "conversation-practice:formal-session:";
+
+type StoredFormalSession = {
+  startedAt: number;
+  messages: { id: string; role: ChatRole; content: string; createdAt: string }[];
+};
+
+// 正式练习中途刷新页面/切走标签页会丢光倒计时和对话记录，只能从头再来。
+// 用 sessionStorage 保存一份（标签页关闭即清空，不需要额外的后端存储），
+// 时长仍然按 startedAt 这个真实时间戳计算，不会因为刷新而"暂停"计时。
+function readStoredFormalSession(key: string): StoredFormalSession | null {
+  try {
+    const raw = sessionStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<StoredFormalSession>;
+    if (typeof parsed.startedAt !== "number" || !Array.isArray(parsed.messages)) return null;
+    return { startedAt: parsed.startedAt, messages: parsed.messages };
+  } catch {
+    return null;
+  }
+}
+
+function writeStoredFormalSession(key: string, session: StoredFormalSession) {
+  try {
+    sessionStorage.setItem(key, JSON.stringify(session));
+  } catch {
+    // 隐私模式或存储配额已满时静默跳过：只影响刷新后能否恢复，不影响当前会话继续进行。
+  }
+}
+
+function clearStoredFormalSession(key: string) {
+  try {
+    sessionStorage.removeItem(key);
+  } catch {
+    // 同上，静默跳过。
+  }
 }
 
 function formatTime(date: Date) {
@@ -208,14 +252,18 @@ function readBlobAsBase64(blob: Blob) {
 export function ConversationAiExperience({
   variant = "quick",
   formalConfig,
+  formalSessionKey,
   onFormalFinish,
 }: {
   variant?: "quick" | "formal";
   formalConfig?: FormalPracticeConfig;
+  formalSessionKey?: string;
   onFormalFinish?: (summary: FormalPracticeSummary) => void;
 }) {
   const isFormal = variant === "formal" && Boolean(formalConfig);
-  const assistantName = "口语 AI 陪练老师";
+  const assistantName = "智能口语陪练老师";
+  const formalStorageKey =
+    isFormal && formalSessionKey ? `${FORMAL_SESSION_STORAGE_PREFIX}${formalSessionKey}` : null;
   const [chatMode, setChatMode] = useState<ChatMode>(isFormal ? "voice" : "text");
   const [replyLanguageMode, setReplyLanguageMode] = useState<ReplyLanguageMode | null>(
     formalConfig?.replyLanguageMode ?? null
@@ -223,6 +271,9 @@ export function ConversationAiExperience({
   const [messages, setMessages] = useState<ChatMessage[]>(() =>
     getInitialMessages(assistantName, isFormal ? "voice" : "text")
   );
+  // sessionStorage 只能在挂载后的 effect 里读（服务端渲染阶段没有这个对象），
+  // 所以这里先用 null 占位，真正的起始时间由下面"恢复正式练习会话"的 effect 补上。
+  const startedAtRef = useRef<number | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [draft, setDraft] = useState("");
   const [status, setStatus] = useState<ChatStatus>("ready");
@@ -361,7 +412,11 @@ export function ConversationAiExperience({
   const requestCosyVoiceSpeech = useCallback(
     (rawText: string) => {
       const text = rawText.trim();
-      if (!text || speechPendingRef.current) return;
+      // 手动重播历史消息和"新一轮语音对话"共用同一条 WebSocket 连接和同一套
+      // audio_start/chunk/end 事件、同一个 requestPending 标志。如果在新一轮
+      // 对话还在等待 AI 回复时点了重播，重播先完成会把 requestPending 提前
+      // 清掉，导致还没收到真正回复就误显示"空闲"、麦克风被过早解锁。
+      if (!text || speechPendingRef.current || requestPendingRef.current) return;
 
       void initAudio().catch(() => undefined);
       pendingSpeechTextRef.current = text;
@@ -388,9 +443,34 @@ export function ConversationAiExperience({
     let disposed = false;
     let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 
-    const connect = () => {
+    const connect = async () => {
       if (disposed) return;
-      const ws = new WebSocket(WEBSOCKET_URL);
+
+      // WS 地址不再打包进前端 bundle：改成登录后向后端换一张短期地址+签名，
+      // 既避免隧道域名换了要重新构建发布，也避免未登录用户直接从 JS 里扒地址。
+      let wsUrl: string;
+      try {
+        const response = await fetch(WS_TICKET_ENDPOINT, { cache: "no-store" });
+        const result = (await response.json().catch(() => null)) as
+          | { url?: string; error?: string }
+          | null;
+        if (disposed) return;
+        if (!response.ok || !result?.url) {
+          setSocketReady(false);
+          setErrorMessage(result?.error || "语音陪练服务暂时不可用，请稍后再试。");
+          reconnectTimer = setTimeout(() => void connect(), 2_000);
+          return;
+        }
+        wsUrl = result.url;
+      } catch {
+        if (disposed) return;
+        setSocketReady(false);
+        reconnectTimer = setTimeout(() => void connect(), 2_000);
+        return;
+      }
+
+      if (disposed) return;
+      const ws = new WebSocket(wsUrl);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -412,7 +492,7 @@ export function ConversationAiExperience({
           setStatus("synthesizing");
           setErrorMessage("语音服务连接中断，正在自动重连并重新生成语音。");
         }
-        reconnectTimer = setTimeout(connect, 2_000);
+        reconnectTimer = setTimeout(() => void connect(), 2_000);
       };
       ws.onmessage = (event) => {
         if (disposed) return;
@@ -457,7 +537,7 @@ export function ConversationAiExperience({
       };
     };
 
-    connect();
+    void connect();
 
     return () => {
       disposed = true;
@@ -773,6 +853,7 @@ export function ConversationAiExperience({
     shouldSendRecordingRef.current = false;
     if (mediaRecorderRef.current?.state === "recording") mediaRecorderRef.current.stop();
     stopPlayback();
+    if (formalStorageKey) clearStoredFormalSession(formalStorageKey);
     onFormalFinish?.({
       config: formalConfig,
       elapsedSeconds,
@@ -781,13 +862,53 @@ export function ConversationAiExperience({
         (message) => message.role === "assistant" && message.id !== "welcome"
       ).length,
     });
-  }, [elapsedSeconds, formalConfig, isFormal, messages, onFormalFinish, stopPlayback]);
+  }, [elapsedSeconds, formalConfig, formalStorageKey, isFormal, messages, onFormalFinish, stopPlayback]);
+
+  // 恢复正式练习会话：中途刷新/切走再回来时，把上次存的对话记录和起始时间读回来，
+  // 而不是从欢迎语和 0 秒重新开始。必须放在 effect 里而不是 useState 初始值，
+  // 否则服务端渲染阶段访问 sessionStorage 会直接报错。
+  useEffect(() => {
+    if (!formalStorageKey) {
+      startedAtRef.current = Date.now();
+      return;
+    }
+    const restored = readStoredFormalSession(formalStorageKey);
+    if (restored && restored.messages.length > 0) {
+      startedAtRef.current = restored.startedAt;
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setMessages(
+        restored.messages.map((message) => ({
+          ...message,
+          createdAt: new Date(message.createdAt),
+        }))
+      );
+      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - restored.startedAt) / 1_000)));
+    } else {
+      startedAtRef.current = Date.now();
+    }
+  }, [formalStorageKey]);
 
   useEffect(() => {
     if (!isFormal) return;
-    const timer = window.setInterval(() => setElapsedSeconds((seconds) => seconds + 1), 1_000);
+    const timer = window.setInterval(() => {
+      const anchor = startedAtRef.current ?? Date.now();
+      setElapsedSeconds(Math.max(0, Math.floor((Date.now() - anchor) / 1_000)));
+    }, 1_000);
     return () => window.clearInterval(timer);
   }, [isFormal]);
+
+  useEffect(() => {
+    if (!formalStorageKey || startedAtRef.current === null) return;
+    writeStoredFormalSession(formalStorageKey, {
+      startedAt: startedAtRef.current,
+      messages: messages.map((message) => ({
+        id: message.id,
+        role: message.role,
+        content: message.content,
+        createdAt: message.createdAt.toISOString(),
+      })),
+    });
+  }, [formalStorageKey, messages]);
 
   useEffect(() => {
     if (
@@ -1002,7 +1123,7 @@ export function ConversationAiExperience({
                         <button
                           type="button"
                           onClick={() => requestCosyVoiceSpeech(message.content)}
-                          disabled={speechPending}
+                          disabled={speechPending || requestPending}
                           className="mt-3 flex items-center gap-1.5 rounded-full bg-[#edf5fc] px-3 py-1.5 text-xs font-black text-[#397fa5] transition hover:bg-[#dff1fa] disabled:cursor-not-allowed disabled:opacity-50"
                           title="播放这条回复"
                         >
@@ -1042,13 +1163,13 @@ export function ConversationAiExperience({
                 )}
               </div>
 
-              {chatMode === "image" && <label className="mb-3 flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[#b8c9d5] bg-[#f8fbfd] px-3 py-2.5 text-xs font-black text-[#52758a]"><ImageIcon size={16} /><span className="truncate">{imageFile ? imageFile.name : "选择图片（PNG、JPEG 或 WebP）"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImageFile(event.target.files?.[0] ?? null)} className="sr-only" /></label>}
+              {chatMode === "image" && <label className="mb-3 flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[#b8c9d5] bg-[#f8fbfd] px-3 py-2.5 text-xs font-black text-[#52758a]"><ImageIcon size={16} /><span className="truncate">{imageFile ? imageFile.name : "选择常见格式图片"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImageFile(event.target.files?.[0] ?? null)} className="sr-only" /></label>}
               <form onSubmit={handleSubmit} className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_84px_auto]">
                 <label className="flex min-h-14 items-end rounded-2xl border border-[#d5e5ed] bg-[#f9fbfd] px-4 py-3 transition focus-within:border-[#69b5d8] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#dff3fc]">
                   <span className="sr-only">输入要练习的韩语</span>
                   <textarea
                     value={draft}
-                    onChange={(event) => setDraft(event.target.value.slice(0, 1000))}
+                    onChange={(event) => setDraft(event.target.value.slice(0, MESSAGE_LENGTH_LIMITS[chatMode]))}
                     onKeyDown={(event) => {
                       if (event.key === "Enter" && !event.shiftKey) {
                         event.preventDefault();
@@ -1057,7 +1178,7 @@ export function ConversationAiExperience({
                     }}
                     disabled={isBusy || requiresReplyLanguageMode}
                     rows={1}
-                    maxLength={1000}
+                    maxLength={MESSAGE_LENGTH_LIMITS[chatMode]}
                     placeholder={isRecording ? "正在识别你说的韩语…" : "输入韩语或中文，例如：请陪我练习自我介绍"}
                     className="max-h-32 min-h-7 w-full resize-none bg-transparent text-sm leading-6 text-[#294f68] outline-none placeholder:text-[#9badb8] disabled:opacity-70"
                   />

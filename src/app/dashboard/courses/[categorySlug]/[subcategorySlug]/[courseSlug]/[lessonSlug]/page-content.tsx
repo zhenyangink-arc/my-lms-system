@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { requireActiveUser } from "@/lib/auth";
+import { LiveClassEntryBanner } from "@/app/dashboard/live/LiveClassEntryBanner";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import {
     getKoreanBeginnerLesson,
@@ -452,7 +453,7 @@ export default async function LessonDetailPage({
     if ((isHangulIntroduction || isKoreanLevelOne) && !bypassLearningSequence) {
         const { data: ebookProgressData } = await supabase
             .from("course_ebook_progress")
-            .select("test_slug,current_page,total_pages,progress_percent,read_pages")
+            .select("test_slug,current_page,total_pages,progress_percent,read_pages,reading_seconds,last_read_at")
             .eq("student_id", user.id);
         for (const item of ebookProgressData ?? []) {
             ebookProgress[String(item.test_slug)] = {
@@ -462,6 +463,8 @@ export default async function LessonDetailPage({
                 readPages: Array.isArray(item.read_pages)
                     ? item.read_pages.map(Number)
                     : [],
+                readingSeconds: Number(item.reading_seconds) || 0,
+                lastReadAt: item.last_read_at ? String(item.last_read_at) : null,
             };
         }
     }
@@ -613,7 +616,7 @@ export default async function LessonDetailPage({
     if (hasLessonAccess && !isPlatformAudit) {
         const { data: progressData } = await supabase
             .from("lesson_progress")
-            .select("status, progress_percent")
+            .select("status, progress_percent, updated_at")
             .eq("user_id", user.id)
             .eq("lesson_id", lesson.id)
             .maybeSingle();
@@ -623,6 +626,77 @@ export default async function LessonDetailPage({
                 status: resolveProgressStatus(progressData.status),
                 progress_percent: progressData.progress_percent ?? 0,
             };
+        }
+
+        // 记录“开始学习”：仅当存在真实学习行为（已读电子书 / 章节测试已通过 /
+        // 已有进行中或已完成进度）才标记 in_progress；只打开页面看一眼不产生进度，
+        // 避免老师端“我的学生”里出现大量未实际学习的“进行中”课时。
+        // 进度取该课时电子书（章节测试）真实阅读进度的平均值，未读则为 0；
+        // 完成时由“完成本课”按钮改为 completed。
+        const now = new Date().toISOString();
+        const { data: chapterTests } = await supabase
+            .from("chapter_tests")
+            .select("slug")
+            .eq("course_key", lesson.slug)
+            .eq("status", "published");
+        const testSlugs = (chapterTests ?? [])
+            .map((test) => String(test.slug))
+            .filter(Boolean);
+        let ebookPercent = 0;
+        let hasEbookReading = false;
+        if (testSlugs.length > 0) {
+            const { data: ebookRows } = await supabase
+                .from("course_ebook_progress")
+                .select("reading_seconds")
+                .eq("student_id", user.id)
+                .in("test_slug", testSlugs);
+            const percents = (ebookRows ?? []).map((row) => {
+                const seconds = Number(row.reading_seconds) || 0;
+                // 学习满 2 分钟（累计阅读秒数 ≥ 120）才算真正开始学习。
+                if (seconds >= 120) hasEbookReading = true;
+                return Math.min(100, Math.round((seconds / 600) * 100));
+            }).filter((value) => Number.isFinite(value));
+            if (percents.length > 0) {
+                ebookPercent = Math.round(
+                    percents.reduce((sum, value) => sum + value, 0) / percents.length
+                );
+            }
+        }
+        let hasPassedChapterTest = false;
+        if (testSlugs.length > 0) {
+            const { data: passedAttemptData } = await supabase
+                .from("chapter_test_attempts")
+                .select("test_slug")
+                .eq("student_id", user.id)
+                .eq("passed", true)
+                .in("test_slug", testSlugs)
+                .limit(1);
+            hasPassedChapterTest = (passedAttemptData?.length ?? 0) > 0;
+        }
+        const alreadyStarted =
+            progressData?.status === "in_progress" ||
+            progressData?.status === "completed";
+        // 有真实学习行为才写入/升级状态；否则本次打开不产生“进行中”记录。
+        if (alreadyStarted || hasEbookReading || hasPassedChapterTest) {
+            await supabase.from("lesson_progress").upsert(
+                {
+                    user_id: user.id,
+                    course_id: lesson.course_id,
+                    lesson_id: lesson.id,
+                    status:
+                        progressData?.status === "completed"
+                            ? "completed"
+                            : "in_progress",
+                    progress_percent:
+                        progressData?.status === "completed"
+                            ? 100
+                            : ebookPercent,
+                    started_at: progressData ? progressData.updated_at ?? now : now,
+                    last_viewed_at: now,
+                    updated_at: now,
+                },
+                { onConflict: "user_id,lesson_id" }
+            );
         }
     }
 
@@ -657,19 +731,25 @@ export default async function LessonDetailPage({
         lesson.teacher_note
     );
 
+    const liveClassBanner =
+        role === "student" ? <LiveClassEntryBanner lessonId={lesson.id} /> : null;
+
     if (isHangulIntroduction && hasLessonAccess) {
         return (
-            <HangulInteractiveBook
-                courseId={course.id}
-                lessonId={lesson.id}
-                initialProgress={progress.progress_percent}
-                initialStatus={progress.status}
-                trackingDisabled={isPlatformAudit}
-                backHref={courseDirectoryHref}
-                unlockedChapterCount={unlockedHangulChapterCount}
-                initialEbookProgress={ebookProgress}
-                initialChapterSlug={requestedChapter}
-            />
+            <>
+                {liveClassBanner}
+                <HangulInteractiveBook
+                    courseId={course.id}
+                    lessonId={lesson.id}
+                    initialProgress={progress.progress_percent}
+                    initialStatus={progress.status}
+                    trackingDisabled={isPlatformAudit}
+                    backHref={courseDirectoryHref}
+                    unlockedChapterCount={unlockedHangulChapterCount}
+                    initialEbookProgress={ebookProgress}
+                    initialChapterSlug={requestedChapter}
+                />
+            </>
         );
     }
 
@@ -682,8 +762,10 @@ export default async function LessonDetailPage({
 
         if (!smartTextbook) {
             return (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#F4F7F6] p-8">
-                    <div className="max-w-xl text-center">
+                <>
+                    {liveClassBanner}
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#F4F7F6] p-8">
+                      <div className="max-w-xl text-center">
                         <p className="text-xs font-black tracking-[.2em] text-[#6F72E6]">
                             SMART DIGITAL TEXTBOOK
                         </p>
@@ -700,22 +782,27 @@ export default async function LessonDetailPage({
                             <ArrowLeft size={16} />
                             返回课程
                         </Link>
+                      </div>
                     </div>
-                </div>
+                </>
             );
         }
 
         return (
-            <KoreanLevelOneSmartTextbook
-                backHref={courseDirectoryHref}
-                textbook={smartTextbook}
-                trackingDisabled={isPlatformAudit}
-            />
+            <>
+                {liveClassBanner}
+                <KoreanLevelOneSmartTextbook
+                    backHref={courseDirectoryHref}
+                    textbook={smartTextbook}
+                    trackingDisabled={isPlatformAudit}
+                />
+            </>
         );
     }
 
     return (
         <>
+            {liveClassBanner}
             <div
                 className={
                     isFocusCategory
@@ -933,7 +1020,7 @@ export default async function LessonDetailPage({
                             initialStatus={progress.status}
                             initialProgress={progress.progress_percent}
                             trackingDisabled={isPlatformAudit}
-                        /> : <div className="app-empty-state rounded-2xl p-6 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-5">VIP1 及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
+                        /> : <div className="app-empty-state rounded-2xl p-6 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-5">一级会员及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
                     </section>
 
                     {/* 右侧：02 学习引导 */}

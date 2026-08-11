@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
 import { requireStudentFeature } from "@/lib/student-permissions-server";
@@ -117,12 +117,12 @@ function readScenarioInput(formData: FormData) {
 }
 
 function refreshConversationPractice(scenarioId?: string) {
-  revalidatePath("/dashboard/conversation-practice");
-  revalidatePath("/dashboard/admin/conversation-practice");
-  revalidatePath("/dashboard/admin");
+  revalidateDashboard("/dashboard/conversation-practice");
+  revalidateDashboard("/dashboard/admin/conversation-practice");
+  revalidateDashboard("/dashboard/admin");
   if (scenarioId) {
-    revalidatePath(`/dashboard/conversation-practice/${scenarioId}`);
-    revalidatePath(`/dashboard/admin/conversation-practice/${scenarioId}`);
+    revalidateDashboard(`/dashboard/conversation-practice/${scenarioId}`);
+    revalidateDashboard(`/dashboard/admin/conversation-practice/${scenarioId}`);
   }
 }
 

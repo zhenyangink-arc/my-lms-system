@@ -1,7 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requirePlatformCourseManager } from "@/lib/admin";
 import { assertR2ObjectUpload, createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
@@ -116,8 +116,8 @@ function baseFields(formData: FormData) {
 }
 
 function revalidateCatalog() {
-  revalidatePath("/dashboard/admin/courses");
-  revalidatePath("/dashboard/courses");
+  revalidateDashboard("/dashboard/admin/courses");
+  revalidateDashboard("/dashboard/courses");
 }
 
 function lessonMediaFields(formData: FormData) {

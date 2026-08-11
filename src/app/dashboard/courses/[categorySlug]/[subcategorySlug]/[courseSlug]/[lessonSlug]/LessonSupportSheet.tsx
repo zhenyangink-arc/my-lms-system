@@ -71,33 +71,33 @@ const teacherStatusMap = {
     dot: "bg-yellow-500",
     text: "text-yellow-600",
     bg: "bg-yellow-50",
-    message: "老师当前忙碌，建议先向 AI 助教提问，也可以留言给老师。",
+    message: "老师当前忙碌，建议先向智能助教提问，也可以留言给老师。",
   },
   away: {
     label: "暂离",
     dot: "bg-orange-500",
     text: "text-orange-600",
     bg: "bg-orange-50",
-    message: "老师当前暂离，建议先向 AI 助教提问。",
+    message: "老师当前暂离，建议先向智能助教提问。",
   },
   offline: {
     label: "离线",
     dot: "bg-gray-400",
     text: "text-gray-600",
     bg: "bg-gray-50",
-    message: "老师当前不在线，你可以先向 AI 助教提问，也可以留言给老师。",
+    message: "老师当前不在线，你可以先向智能助教提问，也可以留言给老师。",
   },
 };
 
 const questionTargetLabelMap: Record<string, string> = {
   teacher: "老师",
-  ai: "AI 助教",
-  both: "AI + 老师",
+  ai: "智能助教",
+  both: "智能助教与老师",
 };
 
 const questionStatusLabelMap: Record<string, string> = {
   pending: "等待回复",
-  ai_answered: "AI 已回复",
+  ai_answered: "智能助教已回复",
   teacher_answered: "老师已回复",
   closed: "已关闭",
 };
@@ -130,7 +130,7 @@ export function LessonSupportSheet({
         <SheetHeader>
           <SheetTitle>学习支持</SheetTitle>
           <SheetDescription>
-            遇到不懂的问题，可以向老师或 AI 助教提问。
+            遇到不懂的问题，可以向老师或智能助教提问。
           </SheetDescription>
         </SheetHeader>
 
@@ -170,7 +170,7 @@ export function LessonSupportSheet({
                 <div className="mt-4 flex items-start gap-3 rounded-xl bg-indigo-50 px-4 py-3">
                   <Bot size={18} className="mt-0.5 shrink-0 text-indigo-600" />
                   <p className="text-sm leading-6 text-indigo-700">
-                    AI 助教第一版先保存问题记录，后续会接入自动回答功能。
+                    智能助教第一版先保存问题记录，后续会接入自动回答功能。
                   </p>
                 </div>
               )}
@@ -232,7 +232,7 @@ export function LessonSupportSheet({
 
                     {question.ai_answer && (
                       <p className="mt-3 rounded-xl bg-indigo-50 p-3 text-sm leading-6 text-indigo-700">
-                        AI：{question.ai_answer}
+                        智能助教：{question.ai_answer}
                       </p>
                     )}
 

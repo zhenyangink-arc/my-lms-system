@@ -22,6 +22,7 @@ import { getLearningRecordAccess } from "@/lib/learning-records";
 import { ASSIGNABLE_PERMISSION_LABELS, isAssignablePermissionKey } from "@/lib/permissions/catalog";
 import { getStandardQuestionBankAccess } from "@/lib/question-bank";
 import { getLibraryAccess } from "@/lib/resource-library";
+import { getStudentAssignmentAccess } from "@/lib/student-assignments";
 import { getVisaManagementAccess } from "@/lib/visa-management";
 import {
   ADMIN_GROUP_LABELS,
@@ -56,38 +57,29 @@ type InstitutionSummary = {
   helpTickets: number;
 };
 
-const dateTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-  hour12: false,
-});
-
 const workToneStyles = {
-  blue: { solid: "#2563eb", soft: "#eff6ff" },
-  orange: { solid: "#d97706", soft: "#fffbeb" },
-  violet: { solid: "#7c3aed", soft: "#f5f3ff" },
-  teal: { solid: "#0f766e", soft: "#f0fdfa" },
-  rose: { solid: "#e11d48", soft: "#fff1f2" },
-  sky: { solid: "#0284c7", soft: "#f0f9ff" },
-  indigo: { solid: "#4f46e5", soft: "#eef2ff" },
+  blue: { solid: "var(--app-accent)", soft: "var(--app-accent-soft)" },
+  orange: { solid: "var(--app-warm)", soft: "var(--app-warm-soft)" },
+  violet: { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
+  teal: { solid: "var(--app-success)", soft: "var(--app-success-soft)" },
+  rose: { solid: "#dc2626", soft: "#fef2f2" },
+  sky: { solid: "var(--app-accent)", soft: "var(--app-accent-soft)" },
+  indigo: { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
 } as const;
 
 const institutionSeries = [
-  { key: "gradeReviews", label: "成绩", color: "#2563eb", soft: "#eff6ff" },
-  { key: "attentionRecords", label: "记录", color: "#e11d48", soft: "#fff1f2" },
-  { key: "documentReviews", label: "资料", color: "#d97706", soft: "#fffbeb" },
-  { key: "visaTasks", label: "签证", color: "#7c3aed", soft: "#f5f3ff" },
-  { key: "helpTickets", label: "工单", color: "#0f766e", soft: "#f0fdfa" },
+  { key: "gradeReviews", label: "成绩", color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
+  { key: "attentionRecords", label: "记录", color: "#dc2626", soft: "#fef2f2" },
+  { key: "documentReviews", label: "资料", color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
+  { key: "visaTasks", label: "签证", color: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
+  { key: "helpTickets", label: "工单", color: "var(--app-success)", soft: "var(--app-success-soft)" },
 ] as const;
 
 const metricToneStyles = [
-  { solid: "#2563eb", soft: "#eff6ff" },
-  { solid: "#7c3aed", soft: "#f5f3ff" },
-  { solid: "#0f766e", soft: "#f0fdfa" },
-  { solid: "#d97706", soft: "#fffbeb" },
+  { solid: "var(--app-accent)", soft: "var(--app-soft-bg)" },
+  { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
+  { solid: "var(--app-success)", soft: "var(--app-soft-bg)" },
+  { solid: "var(--app-warm)", soft: "var(--app-soft-bg)" },
 ] as const;
 
 function VisualCount({ value, color, soft }: { value: number; color: string; soft: string }) {
@@ -162,6 +154,7 @@ export default async function AdminCenterPage() {
     documentReviewAccess,
     questionBankAccess,
     visaAccess,
+    studentAssignmentAccess,
   ] = await Promise.all([
     getConversationPracticeAccess(),
     getAnnouncementAccess(),
@@ -172,6 +165,7 @@ export default async function AdminCenterPage() {
     getDocumentReviewAccess(),
     getStandardQuestionBankAccess(),
     getVisaManagementAccess(),
+    getStudentAssignmentAccess(),
   ]);
 
   const tenantId = auth.tenant?.id ?? null;
@@ -192,6 +186,7 @@ export default async function AdminCenterPage() {
     canManageTenants,
     canAccessQuestionBank: questionBankAccess.canManage,
     canManageVisas: visaAccess.canManage,
+    canManageStudentAssignments: studentAssignmentAccess.canManage,
   }).filter((item) => item.group !== "overview");
 
   const announcementCount = async (status: "draft" | "published"): Promise<CountResult> => {
@@ -410,7 +405,7 @@ export default async function AdminCenterPage() {
   const recentPermissionActions = auditRows.map((row) => ({
     label: isAssignablePermissionKey(row.permission_key) ? ASSIGNABLE_PERMISSION_LABELS[row.permission_key] : row.permission_key,
     action: row.action,
-    time: dateTimeFormatter.format(new Date(row.created_at)),
+    time: row.created_at,
   }));
 
   return (
@@ -418,7 +413,7 @@ export default async function AdminCenterPage() {
       <header className="flex flex-col gap-3 border-b pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <p className="app-muted-text flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.14em]"><PanelsTopLeft size={12} />管理驾驶舱</p>
-          <h1 className="mt-2 text-xl font-semibold tracking-tight">管理首页</h1>
+          <h2 className="mt-2 text-xl font-semibold tracking-tight">管理首页</h2>
         </div>
         <div className="flex flex-wrap items-center gap-2 text-[10px]">{isPlatformOwner && <RecentPermissionActionsDialog actions={recentPermissionActions} />}<span className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5"><ShieldCheck size={12} />{getAdminRoleLabel(role)}</span><span className="app-muted-text inline-flex items-center rounded-md border px-2.5 py-1.5">{scopeDescription(globalRole, auth.tenant?.name ?? null)}</span><DataSyncStatusDialog checkedCount={queryChecks.length} issues={syncIssues} /></div>
       </header>
@@ -431,7 +426,7 @@ export default async function AdminCenterPage() {
 
       <div className={`grid items-start gap-3 ${isPlatformOwner ? "xl:grid-cols-2" : ""}`}>
       <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex flex-col gap-1 border-b px-4 py-3 sm:flex-row sm:items-end sm:justify-between" style={{ borderColor: "var(--app-border)", backgroundColor: "#f0f9ff" }}>
+        <div className="flex flex-col gap-1 border-b px-4 py-3 sm:flex-row sm:items-end sm:justify-between" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-accent-soft)" }}>
           <div><h2 className="text-xs font-semibold">工作负载概览</h2></div>
           <div className="flex items-center gap-3 text-[9px]"><span className="font-semibold text-amber-700">{pendingCategoryCount} 类待处理</span><span className="font-semibold text-emerald-700">{clearedCategoryCount} 类已清空</span></div>
         </div>
@@ -450,7 +445,7 @@ export default async function AdminCenterPage() {
       {isPlatformOwner && (
         <section className="app-card overflow-hidden rounded-xl border">
           <details open className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 hover:bg-black/[0.015] [&::-webkit-details-marker]:hidden" style={{ backgroundColor: "#f5f3ff" }}><span><span className="text-[10px] font-semibold text-violet-800">机构运行概览</span></span><span className="app-muted-text flex items-center gap-2 text-[9px]">{institutionRows.length} 个机构<ChevronDown size={13} className="transition-transform group-open:rotate-180" /></span></summary>
+            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 hover:bg-black/[0.015] [&::-webkit-details-marker]:hidden" style={{ backgroundColor: "var(--app-soft-bg)" }}><span><span className="text-[10px] font-semibold" style={{ color: "var(--app-accent-strong)" }}>机构运行概览</span></span><span className="app-muted-text flex items-center gap-2 text-[9px]">{institutionRows.length} 个机构<ChevronDown size={13} className="transition-transform group-open:rotate-180" /></span></summary>
             <div className="border-t px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
               <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><p className="text-[9px] font-semibold">机构待办构成</p><div className="flex flex-wrap gap-3">{institutionSeries.map((series) => <span key={series.key} className="app-muted-text inline-flex items-center gap-1 text-[8px]"><span className="size-1.5 rounded-full" style={{ backgroundColor: series.color }} />{series.label}</span>)}</div></div>
               <div className="space-y-2.5">{institutionChartRows.map((row) => { const total = institutionPendingTotal(row); const outerWidth = total > 0 ? Math.max(5, (total / maxInstitutionPending) * 100) : 0; return <div key={row.id} className="grid grid-cols-[110px_minmax(0,1fr)_48px] items-center gap-3 text-[9px]"><span className="truncate font-semibold" title={row.name}>{row.name}</span><div className="h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}><div className="flex h-full overflow-hidden rounded-full" style={{ width: `${outerWidth}%` }}>{institutionSeries.map((series) => { const value = row[series.key]; return value > 0 ? <span key={series.key} style={{ width: `${(value / total) * 100}%`, backgroundColor: series.color }} /> : null; })}</div></div><span className={`text-right font-semibold tabular-nums ${total > 0 ? "text-amber-700" : "text-emerald-700"}`}>{total > 0 ? `${total} 项` : "正常"}</span></div>; })}{institutionChartRows.length === 0 && <p className="app-muted-text py-5 text-center text-[9px]">暂无机构负载数据</p>}</div>
@@ -466,13 +461,13 @@ export default async function AdminCenterPage() {
 
       <div className="grid items-start gap-3 xl:grid-cols-2 [&_table]:min-w-[560px]">
       <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "#fffbeb" }}><div><h2 className="text-xs font-semibold text-amber-800">待处理事项</h2></div><span className="text-[10px] font-semibold tabular-nums text-amber-800">{workItems.reduce((sum, item) => sum + item.count, 0)} 项</span></div>
+        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}><div><h2 className="text-xs font-semibold">待处理事项</h2></div><span className="text-[10px] font-semibold tabular-nums" style={{ color: "var(--app-warm)" }}>{workItems.reduce((sum, item) => sum + item.count, 0)} 项</span></div>
         <div className="overflow-x-auto"><table className="w-full min-w-[720px] table-fixed text-left"><thead><tr className="border-b text-[9px]" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}><th className="w-[22%] px-4 py-2 font-medium">事项</th><th className="w-[42%] px-3 py-2 font-medium">说明</th><th className="w-[16%] px-3 py-2 font-medium">状态</th><th className="px-4 py-2 text-right font-medium">操作</th></tr></thead><tbody>{workItems.map((item) => { const tone = workToneStyles[item.tone]; return <tr key={item.label} className="border-b text-[10px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}><td className="px-4 py-2.5 font-semibold"><span className="mr-2 inline-block size-1.5 rounded-full" style={{ backgroundColor: tone.solid }} />{item.label}</td><td className="app-muted-text px-3 py-2.5">{item.description}</td><td className="px-3 py-2.5">{item.count > 0 ? <span className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-[9px] font-semibold" style={{ color: tone.solid, backgroundColor: tone.soft }}><Clock3 size={10} />待处理 {item.count}</span> : <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-1 text-[9px] font-semibold text-emerald-700"><CheckCircle2 size={10} />已清空</span>}</td><td className="px-4 py-2.5 text-right"><Link href={scopeDashboardPath(item.href, dashboardBasePath)} className="inline-flex items-center gap-1 font-semibold hover:underline">进入处理<ArrowRight size={11} /></Link></td></tr>; })}</tbody></table></div>
         {workItems.length === 0 && <div className="px-4 py-8 text-center text-[10px]"><CheckCircle2 className="mx-auto text-emerald-600" size={18} /><p className="mt-2 font-semibold">当前没有需要处理的事项</p></div>}
       </section>
 
       <section className="app-card overflow-hidden rounded-xl border">
-        <div className="border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "#f0fdfa" }}><h2 className="text-xs font-semibold text-teal-800">业务运行情况</h2></div>
+        <div className="border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}><h2 className="text-xs font-semibold">业务运行情况</h2></div>
         <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
           {groups.map((group) => {
             const items = visibleItems.filter((item) => item.group === group);

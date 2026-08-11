@@ -169,6 +169,24 @@ export async function loadKoreanLevelOneChapterOne(options: {
     : { data: [], error: null };
   if (activityError) throw new Error(`无法读取互动活动：${activityError.message}`);
 
+  // 听力活动是否"就绪"改查真实是否已经上传音频，不再相信 public_config 里
+  // 人工维护的 audioStatus 字段——内容编辑忘记把它改成 ready，音频就会
+  // 一直显示成不可用，即使音频文件早就传好了。
+  const listeningActivityIds = (activities ?? [])
+    .filter((activity) => activity.activity_type === "listening")
+    .map((activity) => String(activity.id));
+  const { data: audioSecrets } = listeningActivityIds.length
+    ? await admin
+        .from("digital_textbook_activity_secrets")
+        .select("activity_id,audio_object_key")
+        .in("activity_id", listeningActivityIds)
+    : { data: [] as { activity_id: string; audio_object_key: string | null }[] };
+  const activityIdsWithAudio = new Set(
+    (audioSecrets ?? [])
+      .filter((row) => row.audio_object_key)
+      .map((row) => String(row.activity_id))
+  );
+
   let preference: SmartTextbookData["preference"] = {
     locale: "zh-CN",
     supportMode: "bilingual",
@@ -244,7 +262,15 @@ export async function loadKoreanLevelOneChapterOne(options: {
             prompt: localized(activity.prompt),
             instruction: localized(activity.instruction),
             options: asStringArray(activity.options),
-            config: asObject(activity.public_config),
+            config:
+              activity.activity_type === "listening"
+                ? {
+                    ...asObject(activity.public_config),
+                    audioStatus: activityIdsWithAudio.has(String(activity.id))
+                      ? "ready"
+                      : "pending",
+                  }
+                : asObject(activity.public_config),
           })),
       })),
   }));

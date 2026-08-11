@@ -145,14 +145,14 @@ export const KOREAN_LEVEL_ONE_LESSONS: KoreanLevelOneLesson[] = [
 ];
 
 const LESSON_ONE_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
-  { step: "STEP 03", label: "语法解说", dividerPage: 8, contentPages: [9, 10, 11] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 12, contentPages: [13, 14, 15] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 16, contentPages: [17, 18, 19, 20] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 21, contentPages: [22, 23, 24] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 25, contentPages: [26, 27] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 28, contentPages: [29, 30] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
+  { step: "第三步", label: "语法解说", dividerPage: 8, contentPages: [9, 10, 11] },
+  { step: "第四步", label: "句型操练", dividerPage: 12, contentPages: [13, 14, 15] },
+  { step: "第五步", label: "实战对话", dividerPage: 16, contentPages: [17, 18, 19, 20] },
+  { step: "第六步", label: "听说任务", dividerPage: 21, contentPages: [22, 23, 24] },
+  { step: "第七步", label: "读写拓展", dividerPage: 25, contentPages: [26, 27] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 28, contentPages: [29, 30] },
 ]);
 
 type PageProps = {
@@ -398,7 +398,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-02-divider" lesson={lesson} number="02">
             <SectionDivider
-              step="STEP 01"
+              step="第一步"
               title="课前导航"
               goal="先知道本课学什么、会在哪些场景使用，以及完成学习后能够做什么。"
               icon={<Compass size={24} />}
@@ -407,7 +407,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-03" lesson={lesson} number="03">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 01 · 课前导航"
+                step="第一步 · 课前导航"
                 title="1. 这一课，我们先学会打招呼"
                 description="从一句“你好”开始，在第一次见面时完成问候、介绍自己和简单回应。"
                 icon={<Compass size={22} />}
@@ -481,7 +481,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-04-divider" lesson={lesson} number="04">
             <SectionDivider
-              step="STEP 02"
+              step="第二步"
               title="核心词汇表"
               goal="认识完成问候、自我介绍与礼貌回应所需的基础词和完整表达。"
               icon={<ListChecks size={24} />}
@@ -490,7 +490,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-05" lesson={lesson} number="05">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 02 · 核心词汇表"
+                step="第二步 · 核心词汇表"
                 title="1. 先认识本课最基础的词"
                 description="从人物、场所和简单动作入手，为后面的自我介绍与对话做准备。"
                 icon={<Sparkles size={22} />}
@@ -532,7 +532,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-06" lesson={lesson} number="06">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 02 · 核心词汇表"
+                step="第二步 · 核心词汇表"
                 title="2. 问候、回应与礼貌表达"
                 description="先积累初次见面时常用的完整表达；知道使用时机即可，不急着逐字分析。"
                 icon={<MessageCircle size={22} />}
@@ -586,7 +586,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-07" lesson={lesson} number="07">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 02 · 核心词汇表"
+                step="第二步 · 核心词汇表"
                 title="3. 先听单词，再猜短句"
                 description="单词先辨音，短句先猜意；需要时再显示中文核对答案。"
                 icon={<Lightbulb size={22} />}
@@ -685,7 +685,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-08-divider" lesson={lesson} number="08">
             <SectionDivider
-              step="STEP 03"
+              step="第三步"
               title="语法解说"
               goal="理解“是……”和主题助词的基本用法，并学会用语调完成确认提问。"
               icon={<Lightbulb size={24} />}
@@ -694,7 +694,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-09" lesson={lesson} number="09">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 03 · 语法解说"
+                step="第三步 · 语法解说"
                 title="1. N이에요／예요：“是..”"
                 description="名词后加이에요／예요，相当于中文里的“是……”。它直接接在名词后面，用于解释、说明或确认人或事物的身份、属性。"
                 icon={<ListChecks size={22} />}
@@ -775,7 +775,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-10" lesson={lesson} number="10">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 03 · 语法解说"
+                step="第三步 · 语法解说"
                 title="2. N은／는：主题助词"
                 description="은／는接在名词后，把谈话主题提到前面。作用：确立整个句子要论述的中心对象。听者一听到“은/는”，就知道接下来的内容都是围绕这个词展开的。"
                 icon={<ListChecks size={22} />}
@@ -854,7 +854,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-11" lesson={lesson} number="11">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 03 · 语法解说"
+                step="第三步 · 语法解说"
                 title="3. 确认疑问句：语调上扬"
                 description="想确认对方的姓名或身份时，不需要更换句尾。形式不变，保留이에요／예요，让声音在句末自然上扬即可。"
                 icon={<MessageCircle size={22} />}
@@ -951,7 +951,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-12-divider" lesson={lesson} number="12">
             <SectionDivider
-              step="STEP 04"
+              step="第四步"
               title="句型操练"
               goal="把刚学的助词、句尾和确认语调，练成可以快速说出口的句子。"
               icon={<NotebookPen size={24} />}
@@ -960,7 +960,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-13" lesson={lesson} number="13">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 04 · 句型操练"
+                step="第四步 · 句型操练"
                 title="1. 判断收音，选择은／는"
                 description="先看主题名词最后一个音节：有收音接은，无收音接는。选好助词后，再把整句话连起来说。"
                 icon={<NotebookPen size={22} />}
@@ -1035,7 +1035,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-14" lesson={lesson} number="14">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 04 · 句型操练"
+                step="第四步 · 句型操练"
                 title="2. 选对句尾，完成组句"
                 description="把姓名或身份放进句型，先观察最后一个音节有没有收音，再选择이에요或예요。"
                 icon={<NotebookPen size={22} />}
@@ -1107,7 +1107,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-15" lesson={lesson} number="15">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 04 · 句型操练"
+                step="第四步 · 句型操练"
                 title="3. 陈述、确认，再回应"
                 description="先读陈述句，再用句末上扬把它变成提问，最后根据资料卡作出肯定或否定回答。"
                 icon={<NotebookPen size={22} />}
@@ -1170,7 +1170,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-16-divider" lesson={lesson} number="16">
             <SectionDivider
-              step="STEP 05"
+              step="第五步"
               title="实战对话"
               goal="在原创的初次见面情境中，完成问候、介绍、确认与礼貌收尾。"
               icon={<MessageCircle size={24} />}
@@ -1179,7 +1179,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-17" lesson={lesson} number="17">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 05 · 实战对话"
+                step="第五步 · 实战对话"
                 title="1. 完整场景：体验课开始前"
                 description="敏书和俊浩第一次坐在一起。他们从问候开始，交换姓名，再确认彼此的身份。"
                 icon={<MessageCircle size={22} />}
@@ -1231,7 +1231,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-18" lesson={lesson} number="18">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 05 · 实战对话"
+                step="第五步 · 实战对话"
                 title="2. 看懂对话的五步交流路线"
                 description="完整对话不需要逐字背诵。记住每一步的交际作用，就能替换人物和身份，说出自己的版本。"
                 icon={<MessageCircle size={22} />}
@@ -1281,7 +1281,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-19" lesson={lesson} number="19">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 05 · 实战对话"
+                step="第五步 · 实战对话"
                 title="3. 场景 A、B：完成一段完整对话"
                 description="场景A先主动介绍自己；场景B先询问姓名。比较两种不同的开场方式。"
                 icon={<MessageCircle size={22} />}
@@ -1356,7 +1356,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-20" lesson={lesson} number="20">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 05 · 实战对话"
+                step="第五步 · 实战对话"
                 title="4. 场景 C、D：听出不同的身份回应"
                 description="场景C先确认姓名并纠正；场景D先确认身份，再交换姓名。比较不同的信息顺序。"
                 icon={<MessageCircle size={22} />}
@@ -1429,7 +1429,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-21-divider" lesson={lesson} number="21">
             <SectionDivider
-              step="STEP 06"
+              step="第六步"
               title="听说任务"
               goal="从听辨姓名和身份开始，逐步练到确认、纠正、跟读和角色扮演。"
               icon={<Headphones size={24} />}
@@ -1438,7 +1438,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-22" lesson={lesson} number="22">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 06 · 听说任务"
+                step="第六步 · 听说任务"
                 title="1. 抓住姓名和身份"
                 description="每段听两遍：第一遍只找姓名，第二遍再判断学生、老师或公司职员。不要逐字翻译。"
                 icon={<Headphones size={22} />}
@@ -1502,7 +1502,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-23" lesson={lesson} number="23">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 06 · 听说任务"
+                step="第六步 · 听说任务"
                 title="2. 听确认与纠正"
                 description="重点听네和아니요。判断第一个信息是否正确，并记录说话人最后给出的真实信息。"
                 icon={<Headphones size={22} />}
@@ -1570,7 +1570,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-24" lesson={lesson} number="24">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 06 · 听说任务"
+                step="第六步 · 听说任务"
                 title="3. 跟读、接话，再完成角色扮演"
                 description="先模仿语音和停顿，再离开文字完成一轮交流。不会的地方可以停一下，但尽量不要切换成中文。"
                 icon={<Mic2 size={22} />}
@@ -1642,7 +1642,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-25-divider" lesson={lesson} number="25">
             <SectionDivider
-              step="STEP 07"
+              step="第七步"
               title="读写拓展"
               goal="读懂简短自我介绍，再用已学结构写出属于自己的介绍卡。"
               icon={<BookOpenCheck size={24} />}
@@ -1651,7 +1651,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-26" lesson={lesson} number="26">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 07 · 读写拓展"
+                step="第七步 · 读写拓展"
                 title="1. 阅读：体验课的自我介绍卡"
                 description="先找姓名和身份，再完整读一遍。"
                 icon={<BookOpenCheck size={22} />}
@@ -1685,7 +1685,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-27" lesson={lesson} number="27">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 07 · 读写拓展"
+                step="第七步 · 读写拓展"
                 title="2. 写作：制作你的自我介绍卡"
                 description="不要翻译长句，只用本课学过的结构写3—4句。"
                 icon={<NotebookPen size={22} />}
@@ -1722,7 +1722,7 @@ export function KoreanLevelOneLessonBook({
                     </>
                   ) : (
                     <>
-                      <p className="text-xs font-black text-[#238777]">MY CARD</p>
+                      <p className="text-xs font-black text-[#238777]">我的卡片</p>
                       <div className="mt-5 space-y-4 text-sm text-[#60736a]">
                         <p className="border-b border-dashed border-[#cfe2d9] pb-2">안녕하세요?</p>
                         <p className="border-b border-dashed border-[#cfe2d9] pb-2">저는 ____________________.</p>
@@ -1743,7 +1743,7 @@ export function KoreanLevelOneLessonBook({
           </Page>,
           <Page key="lesson-1-28-divider" lesson={lesson} number="28">
             <SectionDivider
-              step="STEP 08"
+              step="第八步"
               title="自测与复盘"
               goal="离开范文独立完成小测，并确认自己是否能完成一次基础的初见交流。"
               icon={<CheckCircle2 size={24} />}
@@ -1752,7 +1752,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-29" lesson={lesson} number="29">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 08 · 自测与复盘"
+                step="第八步 · 自测与复盘"
                 title="1. 综合自测：从形式到交流"
                 description="共8题，每题1分。先独立写出完整答案，全部完成后再统一核对。"
                 icon={<CheckCircle2 size={22} />}
@@ -1796,7 +1796,7 @@ export function KoreanLevelOneLessonBook({
                 <div className="grid grid-cols-3 gap-3 text-[10px] leading-4 text-[#46624e]">
                   <p><strong>7—8分：</strong>进入第30页完成口头复盘。</p>
                   <p><strong>5—6分：</strong>先记录错因，再重做错题。</p>
-                  <p><strong>0—4分：</strong>按第30页路线回到对应STEP。</p>
+                  <p><strong>0—4分：</strong>按第30页路线回到对应步骤。</p>
                 </div>
               </div>
               <p className="mt-auto text-center text-[11px] text-[#83948b]">核对时只给正确答案计分；漏写助词或句尾也要标记为需要复习。</p>
@@ -1805,7 +1805,7 @@ export function KoreanLevelOneLessonBook({
           <Page key="lesson-1-30" lesson={lesson} number="30">
             <div className="flex h-full flex-col">
               <LessonHeading
-                step="STEP 08 · 自测与复盘"
+                step="第八步 · 自测与复盘"
                 title="2. 找到错因，完成第二次输出"
                 description="复盘不是把答案再抄一遍，而是判断自己卡在哪一步，并马上做一次针对性练习。"
                 icon={<CheckCircle2 size={22} />}
@@ -1815,11 +1815,11 @@ export function KoreanLevelOneLessonBook({
                   <h3 className="text-xs font-black text-[#294f43]">① 错因诊断：勾选最符合的一项</h3>
                   <div className="mt-3 space-y-2">
                     {[
-                      ["A", "词语想不起来", "回到 STEP 02 · 第5—7页"],
-                      ["B", "收音判断错误", "回到 STEP 03 · 第9—10页"],
-                      ["C", "不会确认或纠正", "回到 STEP 03、06 · 第11、23页"],
-                      ["D", "知道规则但说不出来", "回到 STEP 04 · 第13—15页"],
-                      ["E", "对话顺序容易中断", "回到 STEP 05 · 第17—20页"],
+                      ["A", "词语想不起来", "回到 第二步 · 第5—7页"],
+                      ["B", "收音判断错误", "回到 第三步 · 第9—10页"],
+                      ["C", "不会确认或纠正", "回到 第三步、06 · 第11、23页"],
+                      ["D", "知道规则但说不出来", "回到 第四步 · 第13—15页"],
+                      ["E", "对话顺序容易中断", "回到 第五步 · 第17—20页"],
                     ].map(([code, reason, route]) => (
                       <div key={code} className="rounded-lg bg-[#f7faf8] px-3 py-2">
                         <p className="text-[11px] font-black text-[#4b6257]">□ {code}　{reason}</p>
@@ -1859,7 +1859,7 @@ export function KoreanLevelOneLessonBook({
               <section className="mt-3 rounded-xl bg-[#fff4e5] px-4 py-3">
                 <h3 className="text-[11px] font-black text-[#806344]">④ 写下你的复习决定</h3>
                 <div className="mt-2 grid grid-cols-3 gap-3 text-[10px] leading-4 text-[#806d56]">
-                  <p>我要重做：STEP ____</p>
+                  <p>我要重做：第____步</p>
                   <p>我要再练：____________</p>
                   <p>完成日期：____／____</p>
                 </div>
@@ -1981,7 +1981,7 @@ export function KoreanLevelOneLessonBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

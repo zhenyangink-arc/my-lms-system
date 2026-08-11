@@ -13,6 +13,7 @@ import {
 import { getCourseLevelLabel, getLessonTypeLabel } from "@/lib/course-labels";
 import { isCourseUnlocked, isLessonUnlocked } from "@/lib/course-unlocks";
 import { getKoreanBeginnerLesson } from "@/lib/korean-curriculum";
+import { AnchorDetailsOpener } from "./AnchorDetailsOpener";
 import { HangulLessonLaunchLink } from "./[subcategorySlug]/[courseSlug]/HangulLessonLaunchLink";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -230,6 +231,7 @@ export function KoreanLearningCenter({
 
   return (
     <div className="mx-auto w-full max-w-[1440px] space-y-5 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <AnchorDetailsOpener />
       <Link
         href="/dashboard/courses"
         className="inline-flex items-center gap-2 text-sm font-bold app-muted-text transition hover:opacity-75"

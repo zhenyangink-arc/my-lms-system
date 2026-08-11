@@ -41,10 +41,16 @@ export async function POST(request: Request) {
   if (auth.status === "unauthenticated") {
     return NextResponse.json({ error: "请先登录后再使用 AI 口语陪练。" }, { status: 401 });
   }
+  const role = auth.profile?.role ?? "student";
+  // canUseStudentFeature 对巡检员一律放行，但这是按次调用 DashScope 的付费服务，
+  // 巡检员应该是"只读"，不该无限次消耗真实成本。
+  if (role === "platform_course_inspector") {
+    return NextResponse.json({ error: "课程巡检员为只读模式，不能使用 AI 口语陪练。" }, { status: 403 });
+  }
   if (
     auth.status !== "active" ||
     !canUseStudentFeature(
-      auth.profile?.role ?? "student",
+      role,
       normalizeMembershipTier(auth.profile?.membership_tier),
       "ai_conversation_experience"
     )

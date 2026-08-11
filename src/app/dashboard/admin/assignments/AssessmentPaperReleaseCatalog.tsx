@@ -207,7 +207,7 @@ export function AssessmentPaperReleaseCatalog({
                     {paper.passingScore ?? "—"}
                   </td>
                   <td className="border-l px-3 py-3.5 text-center font-mono text-xs">
-                    v{paper.version}
+                    版本 {paper.version}
                   </td>
                   <td className="border-l px-3 py-3.5 text-right">
                     <button
@@ -254,7 +254,7 @@ export function AssessmentPaperReleaseCatalog({
             <div className="flex items-center justify-between gap-4 border-b px-5 py-4 sm:px-6">
               <div>
                 <p className="app-muted-text font-mono text-[11px] font-bold">
-                  {selectedPaper.paperCode} · v{selectedPaper.version}
+                  {selectedPaper.paperCode} · 版本 {selectedPaper.version}
                 </p>
                 <h2
                   id={`release-paper-${selectedPaper.id}`}
@@ -326,7 +326,7 @@ export function AssessmentPaperReleaseCatalog({
                             <td className="border-l px-4 py-3 text-xs font-bold leading-5">{question.prompt}</td>
                             <td className="app-muted-text border-l px-4 py-3 text-[11px] leading-5">
                               {question.options.length > 0 ? question.options.map((option, optionIndex) => (
-                                <p key={`${question.id}-${optionIndex}`}>{String.fromCharCode(65 + optionIndex)}. {option}</p>
+                                <p key={`${question.id}-${optionIndex}`}>第 {optionIndex + 1} 项：{option}</p>
                               )) : "—"}
                             </td>
                             <td className="border-l px-3 py-3 text-center font-mono text-xs">{question.points}</td>

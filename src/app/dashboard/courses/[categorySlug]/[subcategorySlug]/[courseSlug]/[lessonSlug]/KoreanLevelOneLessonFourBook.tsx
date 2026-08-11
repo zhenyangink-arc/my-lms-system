@@ -76,20 +76,20 @@ type VocabularyItem = {
 type Speak = (text: string) => void;
 
 const LESSON_FOUR_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 8, contentPages: [9, 10, 11, 12] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 21, contentPages: [22, 23, 24] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 25, contentPages: [26, 27] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 28, contentPages: [29, 30] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
+  { step: "第三步", label: "语法讲解", dividerPage: 8, contentPages: [9, 10, 11, 12] },
+  { step: "第四步", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
+  { step: "第五步", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20] },
+  { step: "第六步", label: "听说任务", dividerPage: 21, contentPages: [22, 23, 24] },
+  { step: "第七步", label: "读写拓展", dividerPage: 25, contentPages: [26, 27] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 28, contentPages: [29, 30] },
 ]);
 
-const SectionStepContext = createContext("STEP 08");
+const SectionStepContext = createContext("第八步");
 
 function getSectionStep(number: string) {
-  return LESSON_FOUR_TEMPLATE.pageMeta[number]?.tag ?? "STEP 08";
+  return LESSON_FOUR_TEMPLATE.pageMeta[number]?.tag ?? "第八步";
 }
 
 const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
@@ -365,7 +365,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-02" number="02">
       <KoreanEbookSectionDivider
-        step="STEP 01"
+        step="第一步"
         title="课前导航"
         goal="建立“介绍地点—确认存在—表达移动—描述相对位置”的完整空间表达链。"
         icon={<Compass size={24} />}
@@ -416,7 +416,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-04" number="04">
       <KoreanEbookSectionDivider
-        step="STEP 02"
+        step="第二步"
         title="核心词汇表"
         goal="用场所、参照物和方位词组成空间词块，点击卡片听读音。"
         icon={<Building2 size={24} />}
@@ -453,7 +453,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-08" number="08">
       <KoreanEbookSectionDivider
-        step="STEP 03"
+        step="第三步"
         title="语法讲解"
         goal="每页解决一种空间关系，并用第三课的 에서 做对照，形成不会混淆的判断路径。"
         icon={<NotebookPen size={24} />}
@@ -606,7 +606,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-13" number="13">
       <KoreanEbookSectionDivider
-        step="STEP 04"
+        step="第四步"
         title="句型操练"
         goal="从判断句尾开始，选择 에／에서，再把方位关系组装成完整位置句。"
         icon={<PencilLine size={24} />}
@@ -699,7 +699,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-17" number="17">
       <KoreanEbookSectionDivider
-        step="STEP 05"
+        step="第五步"
         title="实战对话"
         goal="在校园、街区和室内寻物三个场景中完成问路、定位与确认。"
         icon={<MessageCircle size={24} />}
@@ -782,7 +782,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-21" number="21">
       <KoreanEbookSectionDivider
-        step="STEP 06"
+        step="第六步"
         title="听说任务"
         goal="从句尾识别空间功能，再根据听到的方位关系还原简易地图。"
         icon={<Headphones size={24} />}
@@ -824,7 +824,7 @@ export function KoreanLevelOneLessonFourBook({
             ["화장실이 계단 오른쪽에 있어요.", "洗手间｜楼梯", "左右排列"],
           ].map(([sentence, cards, relation], index) => (
             <button key={sentence} type="button" onClick={() => speak(sentence)} className="rounded-2xl border border-[#cfdfeb] bg-white p-4 text-left">
-              <p className="text-[10px] font-black text-[#3e7fa3]">MAP AUDIO {index + 1}</p>
+              <p className="text-[10px] font-black text-[#3e7fa3]">地图语音 {index + 1}</p>
               <p className="mt-2 text-xs font-black">{cards}</p>
               <p className={`mt-2 text-[10px] text-[#81938a] ${revealed.mapAnswer ? "opacity-100" : "opacity-0"}`}>摆放类型：{relation}</p>
             </button>
@@ -872,7 +872,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-25" number="25">
       <KoreanEbookSectionDivider
-        step="STEP 07"
+        step="第七步"
         title="读写拓展"
         goal="阅读楼层说明提取空间关系，再制作一张可供别人使用的中文—韩语位置卡。"
         icon={<BookOpenCheck size={24} />}
@@ -944,7 +944,7 @@ export function KoreanLevelOneLessonFourBook({
     </Page>,
     <Page key="04-28" number="28">
       <KoreanEbookSectionDivider
-        step="STEP 08"
+        step="第八步"
         title="自测与复盘"
         goal="用十题检测空间助词和句型，再完成一次不看稿的位置说明。"
         icon={<CheckCircle2 size={24} />}
@@ -1093,7 +1093,7 @@ export function KoreanLevelOneLessonFourBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

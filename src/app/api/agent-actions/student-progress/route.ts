@@ -74,7 +74,32 @@ function logQueryError(
   });
 }
 
+function isAuthorized(request: Request) {
+  const expectedKey = process.env.AGENT_ACTIONS_API_KEY?.trim();
+  // 没配置密钥就一律拒绝，不能因为运维还没配置就悄悄放开成"裸奔"状态。
+  if (!expectedKey) return false;
+
+  const header = request.headers.get("authorization") ?? "";
+  const presentedKey = header.startsWith("Bearer ") ? header.slice(7).trim() : "";
+  if (presentedKey.length !== expectedKey.length) return false;
+
+  // 定长比较，避免逐字符提前退出的比较方式给时序攻击留可乘之机。
+  let mismatch = 0;
+  for (let index = 0; index < expectedKey.length; index += 1) {
+    mismatch |= presentedKey.charCodeAt(index) ^ expectedKey.charCodeAt(index);
+  }
+  return mismatch === 0;
+}
+
 export async function GET(request: Request) {
+  // 这个接口专供 Dify 智能助手回调查询学生本人的学习进度，不面向浏览器直接访问，
+  // 之前完全没有校验调用方身份——任何人只要拿到/猜到学生 UUID 就能查到该学生的
+  // 学习进度、正确率、待办任务。Dify 的工具配置必须同步加上
+  // `Authorization: Bearer <AGENT_ACTIONS_API_KEY>` 请求头，否则这个接口会全部拒绝。
+  if (!isAuthorized(request)) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const studentId = new URL(request.url).searchParams.get("student_id")?.trim();
 
   if (!studentId) {

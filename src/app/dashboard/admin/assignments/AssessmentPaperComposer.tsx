@@ -351,7 +351,7 @@ export function AssessmentPaperComposer({
                           <td className="border-l px-4 py-3 text-xs font-bold leading-5">{question.prompt}</td>
                           <td className="app-muted-text border-l px-4 py-3 text-[11px] leading-5">
                             {question.options.length > 0 ? question.options.map((option, index) => (
-                              <p key={`${question.id}-${index}`}>{String.fromCharCode(65 + index)}. {option}</p>
+                              <p key={`${question.id}-${index}`}>第 {index + 1} 项：{option}</p>
                             )) : "—"}
                           </td>
                           <td className="border-l px-3 py-3 text-right">
