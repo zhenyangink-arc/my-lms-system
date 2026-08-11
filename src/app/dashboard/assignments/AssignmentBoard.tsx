@@ -18,10 +18,23 @@ import {
 } from "lucide-react";
 
 import {
-  formatAssignmentDate,
+  ASSIGNMENT_DATE_OPTIONS,
   type AssignmentType,
   type SubmissionStatus,
 } from "./config";
+
+const assignmentDateFormatter = new Intl.DateTimeFormat(
+  "zh-CN",
+  ASSIGNMENT_DATE_OPTIONS,
+);
+
+function formatAssignmentDate(value: string | null) {
+  if (!value) return "时间待定";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "时间待确认"
+    : assignmentDateFormatter.format(date);
+}
 
 type AssignmentItem = {
   id: string;

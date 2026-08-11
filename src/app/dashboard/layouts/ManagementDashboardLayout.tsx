@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { cookies } from "next/headers";
 
 import { getAnnouncementAccess } from "@/lib/announcements";
 import { isPlatformTenantManagerRole, isValidRole } from "@/lib/admin";
@@ -11,10 +12,12 @@ import { getHelpCenterAccess } from "@/lib/help-center";
 import { getLearningRecordAccess } from "@/lib/learning-records";
 import { getStandardQuestionBankAccess } from "@/lib/question-bank";
 import { getLibraryAccess } from "@/lib/resource-library";
+import { getStudentAssignmentAccess } from "@/lib/student-assignments";
 import { getVisaManagementAccess } from "@/lib/visa-management";
 import { AdminWorkspaceSidebar } from "../admin/AdminWorkspaceSidebar";
 import { getAdminRoleLabel } from "../admin/admin-navigation";
 import { ManagementTopbar } from "../ManagementTopbar";
+import { ManagementSidebarProvider } from "../ManagementSidebarProvider";
 
 export type ManagementWorkspace = "platform" | "tenant";
 
@@ -35,7 +38,9 @@ export async function ManagementDashboardLayout({
     documentReviewAccess,
     questionBankAccess,
     visaAccess,
+    studentAssignmentAccess,
     auth,
+    cookieStore,
   ] = await Promise.all([
     getConversationPracticeAccess(),
     getAnnouncementAccess(),
@@ -46,7 +51,9 @@ export async function ManagementDashboardLayout({
     getDocumentReviewAccess(),
     getStandardQuestionBankAccess(),
     getVisaManagementAccess(),
+    getStudentAssignmentAccess(),
     requireActiveUser(),
+    cookies(),
   ]);
 
   const navigationRole =
@@ -76,21 +83,12 @@ export async function ManagementDashboardLayout({
       : "/dashboard/admin";
 
   return (
-    <div
-      className="app-shell flex min-h-screen flex-col"
-      data-dashboard-layout={`${workspace}-management`}
-      data-dashboard-ui="management"
-    >
-      <ManagementTopbar
-        workspace={workspace}
-        workspaceName={workspaceName}
-        roleLabel={getAdminRoleLabel(navigationRole)}
-        userName={userName}
-        dashboardBasePath={dashboardBasePath}
-        homePath={managementHomePath}
-      />
-
-      <div className="flex min-h-0 flex-1">
+    <ManagementSidebarProvider defaultCollapsed={cookieStore.get("management_sidebar_collapsed")?.value === "true"}>
+      <div
+        className="app-shell management-shell flex min-h-svh w-full"
+        data-dashboard-layout={`${workspace}-management`}
+        data-dashboard-ui="management"
+      >
         <AdminWorkspaceSidebar
           role={navigationRole}
           workspaceLabel={workspaceName}
@@ -106,11 +104,26 @@ export async function ManagementDashboardLayout({
           )}
           canAccessQuestionBank={questionBankAccess.canManage}
           canManageVisas={visaAccess.canManage}
+          canManageStudentAssignments={studentAssignmentAccess.canManage}
           dashboardBasePath={dashboardBasePath}
         />
 
-        <main className="min-h-0 min-w-0 flex-1">{children}</main>
+        <div className="management-inset flex min-h-svh min-w-0 flex-1 flex-col">
+          <ManagementTopbar
+            workspace={workspace}
+            workspaceName={workspaceName}
+            roleLabel={getAdminRoleLabel(navigationRole)}
+            userName={userName}
+            dashboardBasePath={dashboardBasePath}
+            homePath={managementHomePath}
+          />
+          <main id="management-main-content" tabIndex={-1} className="management-content min-h-0 min-w-0 flex-1 scroll-mt-16">
+            <div className="management-content-frame" data-dashboard-canvas="management">
+              {children}
+            </div>
+          </main>
+        </div>
       </div>
-    </div>
+    </ManagementSidebarProvider>
   );
 }

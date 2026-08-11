@@ -23,14 +23,14 @@ type Line = { speaker: string; korean: string; chinese: string };
 type FlipBookHandle = { pageFlip: () => { flip: (page: number) => void; flipNext: () => void; flipPrev: () => void } | undefined };
 
 const TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
 ]);
 
 const Page = forwardRef<HTMLDivElement, { children: ReactNode; number: string; cover?: boolean }>(
@@ -131,21 +131,21 @@ export function KoreanLevelOneLessonSixteenBook({ lesson, isFullscreen, initialP
   const toggle = (key: string) => setRevealed((current) => ({ ...current, [key]: !current[key] }));
   const speak = (text: string) => { if (!("speechSynthesis" in window)) return; window.speechSynthesis.cancel(); const utterance = new SpeechSynthesisUtterance(text); utterance.lang = "ko-KR"; utterance.rate = speechRate; window.speechSynthesis.speak(utterance); };
   useEffect(() => { const resize = () => { const rect = containerRef.current?.getBoundingClientRect(); if (!rect) return; setScale(Math.min((rect.width - 34) / BOOK_WIDTH, (rect.height - 28) / BOOK_HEIGHT, isFullscreen ? 1 : 0.86)); }; resize(); const observer = new ResizeObserver(resize); if (containerRef.current) observer.observe(containerRef.current); return () => observer.disconnect(); }, [isFullscreen]);
-  const heading = (page: string, title: string, description: string, icon: ReactNode, action?: ReactNode) => <KoreanEbookHeading step={TEMPLATE.pageMeta[page]?.tag ?? "STEP 08"} title={title} description={description} icon={icon} action={action} />;
+  const heading = (page: string, title: string, description: string, icon: ReactNode, action?: ReactNode) => <KoreanEbookHeading step={TEMPLATE.pageMeta[page]?.tag ?? "第八步"} title={title} description={description} icon={icon} action={action} />;
   const reveal = (key: string, answer = false) => <KoreanEbookRevealButton shown={Boolean(revealed[key])} onClick={() => toggle(key)} answer={answer} />;
   const speakLine = (text: string) => <div className="flex items-center justify-between gap-2"><b>{text}</b><KoreanEbookSpeakButton text={text} onSpeak={speak} compact /></div>;
   const section = (page: string, title: string, description: string, icon: ReactNode, body: ReactNode, action?: ReactNode) => <div className="flex h-full flex-col">{heading(page, title, description, icon, action)}{body}</div>;
   const grammar = (page: string, title: string, purpose: string, rules: string[], examples: Array<[string, string]>, caution: string) => section(page, title, purpose, <NotebookPen size={22} />, <><div className="mt-4 grid grid-cols-2 gap-3"><Note title="构成规则">{rules.map((rule) => <p key={rule}>{rule}</p>)}</Note><Note title="注意点" tone="amber">{caution}</Note></div><div className="mt-4 grid grid-cols-2 gap-2">{examples.map(([ko, zh]) => <article key={ko} className="rounded-xl border border-[#dce8e1] bg-white p-3 text-xs">{speakLine(ko)}<p className={`mt-1 text-[10px] text-[#71857b] ${revealed[`c${page}`] ? "opacity-100" : "opacity-0"}`}>{zh}</p></article>)}</div><div className="mt-3 rounded-xl bg-[#f5f1fa] px-4 py-3 text-xs font-bold text-[#75559a]">口头替换：改变人物、时间、地点或物品，把本页例句再说两遍。</div></>, reveal(`c${page}`));
 
   const dividers: Record<string, [string, string, string, ReactNode]> = {
-    "02": ["STEP 01", "课前导航", "建立“发出邀请—确认能否参加—分配任务—回复邀请”的聚会交际链。", <House key="a" />],
-    "04": ["STEP 02", "核心词汇", "掌握聚会、邀请、准备动作、高频副词和四项核心表达。", <PartyPopper key="b" />],
-    "09": ["STEP 03", "语法讲解", "四个语法各占一页：能力、承诺、移动目的和同时动作。", <NotebookPen key="c" />],
-    "14": ["STEP 04", "句型操练", "把能否参加、主动分工、行动目的和同时动作组合起来。", <Mail key="d" />],
-    "18": ["STEP 05", "实战对话", "完成邀请温居、聚会分工和婉拒再约三组八句对话。", <MessageCircle key="e" />],
-    "22": ["STEP 06", "听说任务", "听懂聚会时间、参加能力、分工承诺和礼物选择。", <Headphones key="f" />],
-    "26": ["STEP 07", "读写拓展", "读懂邀请函与回复，并独立写出完整邀请信息。", <BookOpenCheck key="g" />],
-    "29": ["STEP 08", "自测与复盘", "综合检查词汇、四项语法、邀请回复与聚会交际能力。", <CheckCircle2 key="h" />],
+    "02": ["第一步", "课前导航", "建立“发出邀请—确认能否参加—分配任务—回复邀请”的聚会交际链。", <House key="a" />],
+    "04": ["第二步", "核心词汇", "掌握聚会、邀请、准备动作、高频副词和四项核心表达。", <PartyPopper key="b" />],
+    "09": ["第三步", "语法讲解", "四个语法各占一页：能力、承诺、移动目的和同时动作。", <NotebookPen key="c" />],
+    "14": ["第四步", "句型操练", "把能否参加、主动分工、行动目的和同时动作组合起来。", <Mail key="d" />],
+    "18": ["第五步", "实战对话", "完成邀请温居、聚会分工和婉拒再约三组八句对话。", <MessageCircle key="e" />],
+    "22": ["第六步", "听说任务", "听懂聚会时间、参加能力、分工承诺和礼物选择。", <Headphones key="f" />],
+    "26": ["第七步", "读写拓展", "读懂邀请函与回复，并独立写出完整邀请信息。", <BookOpenCheck key="g" />],
+    "29": ["第八步", "自测与复盘", "综合检查词汇、四项语法、邀请回复与聚会交际能力。", <CheckCircle2 key="h" />],
   };
 
   function renderPage(number: string): ReactNode {
@@ -192,5 +192,5 @@ export function KoreanLevelOneLessonSixteenBook({ lesson, isFullscreen, initialP
   }
 
   const pages = Array.from({ length: 35 }, (_, index) => { const number = String(index + 1).padStart(2, "0"); return <Page key={`16-${number}`} number={number}>{renderPage(number)}</Page>; });
-  return <section ref={containerRef} className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"><div className="relative shrink-0" style={{ width: BOOK_WIDTH * scale, height: BOOK_HEIGHT * scale }}><button type="button" onClick={()=>flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="上一页" className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"><ArrowLeft size={18}/></button><button type="button" onClick={()=>flipBookRef.current?.pageFlip()?.flipNext()} aria-label="下一页" className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"><ArrowRight size={18}/></button><div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${scale})` }}><HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={false} showPageCorners={false} disableFlipByClick onFlip={(event)=>onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}><Page number="封面" cover><KoreanEbookCover lesson={lesson}/></Page>{pages}</HTMLFlipBook></div></div></section>;
+  return <section ref={containerRef} className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"><div className="relative shrink-0" style={{ width: BOOK_WIDTH * scale, height: BOOK_HEIGHT * scale }}><button type="button" onClick={()=>flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="上一页" className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"><ArrowLeft size={18}/></button><button type="button" onClick={()=>flipBookRef.current?.pageFlip()?.flipNext()} aria-label="下一页" className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"><ArrowRight size={18}/></button><div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${scale})` }}><HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event)=>onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}><Page number="封面" cover><KoreanEbookCover lesson={lesson}/></Page>{pages}</HTMLFlipBook></div></div></section>;
 }

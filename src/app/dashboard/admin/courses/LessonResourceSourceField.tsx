@@ -44,7 +44,7 @@ export function LessonResourceSourceField({
     setFileName("");
     if (!file) return;
     if (file.size > MAX_FILE_SIZE_BYTES) {
-      setUploadError("文件超过 10MB，请选择更小的文件。");
+      setUploadError("文件超过 10 兆，请选择更小的文件。");
       event.target.value = "";
       return;
     }
@@ -100,7 +100,7 @@ export function LessonResourceSourceField({
 
       {resourceType === "link" ? (
         <label className="course-editor-field block text-[11px] font-medium sm:col-span-2">
-          资料 URL
+          资料链接
           <input
             name="resource_url"
             type="url"
@@ -115,7 +115,7 @@ export function LessonResourceSourceField({
           <p className="text-[11px] font-medium">
             {resource?.original_file_name
               ? `当前文件：${resource.original_file_name}（选择新文件后替换）`
-              : "上传文件（不超过 10MB）"}
+              : "上传文件（不超过 10 兆）"}
           </p>
           <input
             type="file"

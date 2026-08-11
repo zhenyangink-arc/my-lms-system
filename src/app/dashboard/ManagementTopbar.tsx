@@ -1,13 +1,11 @@
+"use client";
+
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  Building2,
-  Home,
-  PanelsTopLeft,
-  UserCircle,
-} from "lucide-react";
+import { ArrowUpRight, Home, PanelLeft, UserCircle } from "lucide-react";
 
 import { scopeDashboardPath } from "@/lib/dashboard-path";
+import { ManagementBreadcrumbs } from "./ManagementBreadcrumbs";
+import { useManagementSidebar } from "./ManagementSidebarProvider";
 import type { ManagementWorkspace } from "./layouts/ManagementDashboardLayout";
 
 export function ManagementTopbar({
@@ -16,7 +14,6 @@ export function ManagementTopbar({
   roleLabel,
   userName,
   dashboardBasePath,
-  homePath,
 }: {
   workspace: ManagementWorkspace;
   workspaceName: string;
@@ -25,55 +22,41 @@ export function ManagementTopbar({
   dashboardBasePath: string;
   homePath: string;
 }) {
-  const WorkspaceIcon = workspace === "platform" ? PanelsTopLeft : Building2;
+  const { toggleSidebar } = useManagementSidebar();
 
   return (
-    <header className="management-topbar app-topbar sticky top-0 z-30 flex h-14 items-center justify-between gap-4 border-b px-3 sm:px-4">
-      <Link
-        href={scopeDashboardPath(homePath, dashboardBasePath)}
-        className="management-brand flex min-w-0 items-center gap-2.5"
-      >
-        <span className="management-mark flex h-7 w-7 shrink-0 items-center justify-center">
-          <WorkspaceIcon size={14} strokeWidth={1.7} aria-hidden="true" />
-        </span>
-        <span className="truncate text-[13px] font-semibold tracking-[-0.01em]">
-          {workspaceName}
-        </span>
-        <span className="management-topbar-divider hidden h-4 w-px sm:block" />
-        <span className="app-muted-text hidden text-[11px] sm:block">
-          {workspace === "platform" ? "Platform" : "Organization"}
-        </span>
-      </Link>
-
-      <div className="flex shrink-0 items-center gap-1.5">
-        <span className="app-muted-text hidden items-center gap-2 px-2 text-[11px] lg:flex">
-          <span className="management-status-dot" aria-hidden="true" />
-          {roleLabel}
-        </span>
-
-        <Link
-          href="/"
-          className="management-icon-button hidden h-8 items-center gap-1.5 border px-2.5 text-[11px] sm:flex"
-          title="打开网站首页"
+    <header className="management-topbar sticky top-0 z-30 flex h-14 shrink-0 items-center justify-between gap-3 border-b px-4 backdrop-blur-md">
+      <div className="flex min-w-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={toggleSidebar}
+          className="management-sidebar-trigger -ml-1 flex size-8 shrink-0 items-center justify-center rounded-md"
+          aria-label="切换管理导航"
+          title="切换管理导航（Ctrl+B）"
         >
-          <Home size={13} strokeWidth={1.7} aria-hidden="true" />
-          <span className="hidden xl:inline">网站</span>
-          <ArrowUpRight size={11} strokeWidth={1.7} aria-hidden="true" />
-        </Link>
+          <PanelLeft size={16} strokeWidth={1.8} aria-hidden="true" />
+        </button>
+        <span className="management-topbar-separator h-4 w-px" aria-hidden="true" />
+        <ManagementBreadcrumbs dashboardBasePath={dashboardBasePath} />
+      </div>
 
+      <div className="flex shrink-0 items-center gap-2">
+        <span className="app-muted-text hidden text-xs lg:inline">{roleLabel}</span>
+        <Link href="/" className="management-header-button hidden h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs sm:flex" title="打开网站首页">
+          <Home size={14} aria-hidden="true" />
+          <span className="hidden xl:inline">网站首页</span>
+          <ArrowUpRight size={12} aria-hidden="true" />
+        </Link>
         <Link
-          href={scopeDashboardPath("/dashboard/profile", dashboardBasePath)}
-          className="management-profile flex h-8 items-center gap-2 border p-1 pr-2.5"
+          href={scopeDashboardPath("/dashboard/admin/profile", dashboardBasePath)}
+          className="management-user-button flex h-9 items-center gap-2 rounded-md border p-1 pr-2.5"
           title={`${userName} · ${roleLabel}`}
         >
-          <span className="management-avatar flex h-6 w-6 items-center justify-center text-[10px] font-semibold">
-            {userName.trim().slice(0, 1) || (
-              <UserCircle size={13} aria-hidden="true" />
-            )}
+          <span className="management-avatar flex size-7 items-center justify-center rounded-md text-xs font-semibold">
+            {userName.trim().slice(0, 1) || <UserCircle size={14} aria-hidden="true" />}
           </span>
-          <span className="hidden max-w-28 truncate text-[11px] font-medium sm:block">
-            {userName}
-          </span>
+          <span className="hidden max-w-28 truncate text-xs font-medium sm:block">{userName}</span>
+          <span className="sr-only">{workspace === "platform" ? "平台" : "机构"}：{workspaceName}</span>
         </Link>
       </div>
     </header>

@@ -653,10 +653,10 @@ export default async function DashboardHomePage() {
     : 0;
 
   const practiceTools = [
-    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", href: "/dashboard/toolbox/vocabulary", icon: BookText, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
-    { title: "口语练习", subtitle: "第 1 章 · 元音发音", href: "/dashboard/toolbox/speaking", icon: Mic, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
-    { title: "语法练习", subtitle: "第 3 章 · 助词用法", href: "/dashboard/toolbox/grammar", icon: BookOpen, bgColor: "var(--app-warm-soft)", iconColor: "var(--app-warm)" },
-    { title: "听力练习", subtitle: "第 4 章 · 对话理解", href: "/dashboard/toolbox/listening", icon: Ear, bgColor: "var(--app-accent-soft)", iconColor: "var(--app-accent)" },
+    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", href: "/dashboard/toolbox/vocabulary", icon: BookText, available: true },
+    { title: "口语练习", subtitle: "即将上线", href: "/dashboard/toolbox/speaking", icon: Mic, available: false },
+    { title: "语法练习", subtitle: "即将上线", href: "/dashboard/toolbox/grammar", icon: BookOpen, available: false },
+    { title: "听力练习", subtitle: "即将上线", href: "/dashboard/toolbox/listening", icon: Ear, available: false },
   ];
 
   return (
@@ -1052,16 +1052,35 @@ export default async function DashboardHomePage() {
                     key={tool.title}
                     href={tool.href}
                     className="flex flex-col gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5"
-                    style={{ backgroundColor: tool.bgColor }}
+                    style={{
+                      backgroundColor: tool.available
+                        ? "var(--app-accent-soft)"
+                        : "var(--app-soft-bg)",
+                      opacity: tool.available ? 1 : 0.62,
+                    }}
                   >
                     <div className="flex items-center justify-between">
-                      <Icon size={20} style={{ color: tool.iconColor }} aria-hidden="true" />
-                      <ArrowRight size={16} className="opacity-35" style={{ color: "var(--app-text)" }} aria-hidden="true" />
+                      <Icon
+                        size={20}
+                        style={{ color: tool.available ? "var(--app-accent)" : "var(--app-muted)" }}
+                        aria-hidden="true"
+                      />
+                      <ArrowRight
+                        size={16}
+                        className="opacity-35"
+                        style={{ color: tool.available ? "var(--app-text)" : "var(--app-muted)" }}
+                        aria-hidden="true"
+                      />
                     </div>
-                    <span className="text-base font-black" style={{ color: "var(--app-text)" }}>
+                    <span
+                      className="text-base font-black"
+                      style={{ color: tool.available ? "var(--app-text)" : "var(--app-muted)" }}
+                    >
                       {tool.title}
                     </span>
-                    <span className="text-xs font-semibold app-muted-text">{tool.subtitle}</span>
+                    <span className="text-xs font-semibold app-muted-text">
+                      {tool.subtitle}
+                    </span>
                   </Link>
                 );
               })}

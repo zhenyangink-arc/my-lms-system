@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 
 import { requireAccountOwner, requireExecutive, requirePlatformOwner } from "@/lib/admin";
@@ -8,6 +8,7 @@ import { requireActiveUser } from "@/lib/auth";
 import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AccountActionState } from "./action-state";
+import type { AccountListProfile } from "./AccountCard";
 import {
   canManageTarget,
   getAssignableRoles,
@@ -115,8 +116,9 @@ export async function createManagedAccountAction(
     return actionError("账号已回滚：机构归属或角色配置失败，请稍后重试。");
   }
 
-  revalidatePath("/dashboard/admin/accounts");
-  revalidatePath(`/dashboard/admin/tenants/${tenantId}`);
+  revalidateDashboard("/dashboard/admin/accounts");
+  revalidateDashboard("/dashboard/admin/records");
+  revalidateDashboard(`/dashboard/admin/tenants/${tenantId}`);
   return actionSuccess(`${role === "teacher" ? "员工" : "学生"}账号已创建，请安全交付登录账号和初始密码。`);
 }
 
@@ -170,7 +172,7 @@ export async function createPlatformAccountAction(
     return actionError("平台角色配置失败，账号已回滚。");
   }
 
-  revalidatePath("/dashboard/admin/accounts");
+  revalidateDashboard("/dashboard/admin/accounts");
   const roleLabel = role === "platform_deputy"
     ? "平台副负责人"
     : role === "platform_course_inspector"
@@ -272,8 +274,8 @@ export async function updateProfileRoleAction(
       return actionError("角色更新失败，请稍后重试。");
     }
 
-    revalidatePath("/dashboard/admin/accounts");
-    revalidatePath(`/dashboard/admin/accounts/${profileId}`);
+    revalidateDashboard("/dashboard/admin/accounts");
+    revalidateDashboard(`/dashboard/admin/accounts/${profileId}`);
     return actionSuccess("账号角色已更新。");
   } catch (error) {
     return actionError(error instanceof Error ? error.message : "角色更新失败，请稍后重试。");
@@ -329,8 +331,8 @@ export async function updateProfileStatusAction(
       return actionError("账号状态更新失败，请稍后重试。");
     }
 
-    revalidatePath("/dashboard/admin/accounts");
-    revalidatePath(`/dashboard/admin/accounts/${profileId}`);
+    revalidateDashboard("/dashboard/admin/accounts");
+    revalidateDashboard(`/dashboard/admin/accounts/${profileId}`);
     return actionSuccess(newStatus === "active" ? "账号已恢复正常使用。" : "账号状态已更新。");
   } catch (error) {
     return actionError(error instanceof Error ? error.message : "账号状态更新失败，请稍后重试。");
@@ -377,8 +379,8 @@ export async function updateMembershipTierAction(
       return actionError("会员档位更新失败，请稍后重试。");
     }
 
-    revalidatePath("/dashboard/admin/accounts");
-    revalidatePath(`/dashboard/admin/accounts/${profileId}`);
+    revalidateDashboard("/dashboard/admin/accounts");
+    revalidateDashboard(`/dashboard/admin/accounts/${profileId}`);
     return actionSuccess("学生会员档位已更新。");
   } catch (error) {
     return actionError(error instanceof Error ? error.message : "会员档位更新失败，请稍后重试。");
@@ -438,7 +440,194 @@ export async function deleteAccountAction(
     storageCleanupFailed = storageCleanupFailed || Boolean(error);
   }
 
-  revalidatePath("/dashboard/admin/accounts");
-  revalidatePath(`/dashboard/admin/accounts/${profileId}`);
+  revalidateDashboard("/dashboard/admin/accounts");
+  revalidateDashboard(`/dashboard/admin/accounts/${profileId}`);
   redirect(storageCleanupFailed ? "/dashboard/admin/accounts?deleted=cleanup" : "/dashboard/admin/accounts?deleted=1");
+}
+
+export type AccountDetailProfile = AccountListProfile & {
+  avatar_path: string | null;
+  gender: string | null;
+  birth_date: string | null;
+  address_province: string | null;
+  address_city: string | null;
+  education_level: string | null;
+  education_status: string | null;
+  education_completion_month: string | null;
+  academic_average: number | null;
+  gaokao_has_score: boolean | null;
+  gaokao_score: number | null;
+  english_level: string | null;
+  math_level: string | null;
+  has_korean: boolean | null;
+  topik_level: number | null;
+  has_work_experience: boolean | null;
+};
+
+export type AccountDetailAuditLog = {
+  id: number;
+  actor_id: string | null;
+  action: string;
+  changed_fields: string[] | null;
+  before_data: Record<string, unknown> | null;
+  after_data: Record<string, unknown> | null;
+  created_at: string;
+};
+
+export type AccountStaffProfile = {
+  gender: string | null;
+  birth_date: string | null;
+  hired_at: string | null;
+};
+
+export type AccountDetailResult =
+  | {
+      ok: true;
+      profile: AccountDetailProfile;
+      auditLogs: AccountDetailAuditLog[];
+      actorNames: Record<string, string>;
+      avatarUrl: string | null;
+      staffProfile: AccountStaffProfile | null;
+    }
+  | { ok: false; error: string };
+
+const ACCOUNT_DETAIL_PROFILE_FIELDS =
+  "id, full_name, email, login_id, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience" as const;
+
+/**
+ * 列表页"详情"弹窗按需加载完整档案数据（与详情页同一套查询逻辑）。
+ * 只做展示，不含写操作；写操作仍走行内"管理"弹窗。
+ */
+export async function getAccountDetailAction(
+  profileId: string
+): Promise<AccountDetailResult> {
+  if (!profileId) return { ok: false, error: "缺少账号编号，请刷新页面后重试。" };
+
+  try {
+    const { supabase, tenant } = await requireExecutive();
+    const admin = createAdminClient();
+
+    const { data: targetMemberships, error: membershipError } = await admin
+      .from("tenant_memberships")
+      .select("tenant_id, role, status, membership_tier")
+      .eq("user_id", profileId);
+    if (membershipError) {
+      return { ok: false, error: "无法确认账号范围，请稍后重试。" };
+    }
+
+    const isInViewerScope = tenant
+      ? (targetMemberships ?? []).some(
+          (membership) => membership.tenant_id === tenant.id
+        )
+      : (targetMemberships ?? []).length === 0;
+    if (!isInViewerScope) {
+      return { ok: false, error: "该账号不在你的管理范围内。" };
+    }
+
+    const [profileResult, auditResult, staffResult] = await Promise.all([
+      admin
+        .from("profiles")
+        .select(ACCOUNT_DETAIL_PROFILE_FIELDS)
+        .eq("id", profileId)
+        .neq("role", "tenant_super_admin")
+        .maybeSingle(),
+      tenant
+        ? admin
+            .from("account_management_audit_logs")
+            .select("id, actor_id, action, changed_fields, before_data, after_data, created_at")
+            .eq("tenant_id", tenant.id)
+            .eq("target_user_id", profileId)
+            .order("created_at", { ascending: false })
+            .limit(20)
+        : Promise.resolve({ data: [], error: null }),
+      admin
+        .from("staff_profiles")
+        .select("gender, birth_date, hired_at")
+        .eq("user_id", profileId)
+        .maybeSingle(),
+    ]);
+
+    if (profileResult.error || !profileResult.data) {
+      return { ok: false, error: "找不到该账号的档案。" };
+    }
+
+    const storedProfile = profileResult.data as AccountDetailProfile;
+    if (
+      !tenant &&
+      storedProfile.global_role !== "platform_deputy" &&
+      storedProfile.global_role !== "platform_admin" &&
+      storedProfile.global_role !== "platform_course_inspector"
+    ) {
+      return { ok: false, error: "该账号不是平台后台成员。" };
+    }
+
+    const currentMembership = tenant
+      ? (targetMemberships ?? []).find(
+          (membership) => membership.tenant_id === tenant.id
+        )
+      : null;
+    const profile: AccountDetailProfile = currentMembership
+      ? {
+          ...storedProfile,
+          role: currentMembership.role,
+          status: currentMembership.status,
+          membership_tier: currentMembership.membership_tier,
+        }
+      : {
+          ...storedProfile,
+          role:
+            storedProfile.global_role === "platform_deputy" ||
+            storedProfile.global_role === "platform_admin" ||
+            storedProfile.global_role === "platform_course_inspector"
+              ? storedProfile.global_role
+              : storedProfile.role,
+        };
+
+    const auditLogs = auditResult.error
+      ? []
+      : ((auditResult.data as AccountDetailAuditLog[] | null) ?? []);
+
+    const actorIds = [
+      ...new Set(
+        auditLogs
+          .map((log) => log.actor_id)
+          .filter((value): value is string => Boolean(value))
+      ),
+    ];
+    const actorResult =
+      actorIds.length > 0
+        ? await admin
+            .from("profiles")
+            .select("id, full_name, email")
+            .in("id", actorIds)
+        : { data: [], error: null };
+    const actorNames = Object.fromEntries(
+      (actorResult.data ?? []).map((actor) => [
+        actor.id,
+        actor.full_name || actor.email || `管理员 …${actor.id.slice(-6)}`,
+      ])
+    );
+
+    let avatarUrl: string | null = null;
+    if (profile.avatar_path) {
+      const { data: signedAvatar } = await supabase.storage
+        .from("profile-photos")
+        .createSignedUrl(profile.avatar_path, 60 * 30);
+      avatarUrl = signedAvatar?.signedUrl ?? null;
+    }
+
+    return {
+      ok: true,
+      profile,
+      auditLogs,
+      actorNames,
+      avatarUrl,
+      staffProfile: staffResult.error
+        ? null
+        : ((staffResult.data as AccountStaffProfile | null) ?? null),
+    };
+  } catch (error) {
+    console.error("账号详情加载失败", error);
+    return { ok: false, error: "详情加载失败，请稍后重试。" };
+  }
 }

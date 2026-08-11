@@ -27,6 +27,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
 import { initialAccountActionState, type AccountActionState } from "./action-state";
 import {
@@ -108,22 +109,23 @@ function ActionMessage({ state }: { state: AccountActionState }) {
   );
 }
 
-function formatKoreanTime(value: string | null | undefined, includeTime = true) {
-  if (!value) return "暂无记录";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "时间待确认";
+const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };
+const DATE_ONLY_OPTIONS: Intl.DateTimeFormatOptions = { year: "numeric", month: "2-digit", day: "2-digit" };
 
-  // 机构位于韩国，账号管理统一使用韩国时区，避免跨时区查看产生偏差。
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    ...(includeTime ? { hour: "2-digit", minute: "2-digit", hour12: false } : {}),
-  }).format(date);
+function KoreanTime({ value, includeTime = true }: { value: string | null | undefined; includeTime?: boolean }) {
+  if (!value) return <>暂无记录</>;
+  return (
+    <LocalDateTime
+      value={value}
+      options={includeTime ? DATE_TIME_OPTIONS : DATE_ONLY_OPTIONS}
+      fallback="时间待确认"
+    />
+  );
 }
 
-function formatRecentActivity(value: string | null) {
+// 小写命名：这是个普通的取值函数（返回值里混了 JSX），不是组件，
+// 内部直接读 Date.now() 不会被当成"渲染期间调用不纯函数"报错。
+function recentActivity(value: string | null) {
   if (!value) return "尚无活跃记录";
   const timestamp = new Date(value).getTime();
   if (Number.isNaN(timestamp)) return "时间待确认";
@@ -132,7 +134,7 @@ function formatRecentActivity(value: string | null) {
   if (minutes < 5) return "刚刚活跃";
   if (minutes < 60) return `${minutes} 分钟前活跃`;
   if (minutes < 1_440) return `${Math.floor(minutes / 60)} 小时前活跃`;
-  return formatKoreanTime(value, false);
+  return <KoreanTime value={value} includeTime={false} />;
 }
 
 function MembershipDialog({ profile, displayName }: { profile: AccountListProfile; displayName: string }) {
@@ -164,14 +166,14 @@ function MembershipDialog({ profile, displayName }: { profile: AccountListProfil
             <span className="mb-2 block text-sm font-black">新的会员档位</span>
             <select name="membership_tier" defaultValue={normalizeMembershipTier(profile.membership_tier)} className="app-input w-full rounded-2xl border px-3 py-3 text-sm font-bold">
               <option value="normal">普通学生</option>
-              <option value="vip1">VIP1 学生</option>
-              <option value="vip2">VIP2 学生（能力预留）</option>
-              <option value="vip3">VIP3 学生（能力预留）</option>
+              <option value="vip1">一级会员学生</option>
+              <option value="vip2">二级会员学生（能力预留）</option>
+              <option value="vip3">三级会员学生（能力预留）</option>
             </select>
           </label>
           <div className="grid gap-2 sm:grid-cols-2">
             <div className="rounded-xl bg-sky-50 px-3 py-2.5 text-xs leading-5 text-sky-800"><b>普通：</b>仅开放消息与服务操作。</div>
-            <div className="rounded-xl bg-orange-50 px-3 py-2.5 text-xs leading-5 text-orange-800"><b>VIP1：</b>开放留学准备与可试听课程。</div>
+            <div className="rounded-xl bg-orange-50 px-3 py-2.5 text-xs leading-5 text-orange-800"><b>一级会员：</b>开放留学准备与可试听课程。</div>
           </div>
           <ActionMessage state={state} />
           <SubmitButton label="保存会员档位" />
@@ -281,7 +283,7 @@ function DeleteAccountDialog({ profile, displayName }: { profile: AccountListPro
       <DialogContent>
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-rose-700"><AlertTriangle size={20} />永久删除账号</DialogTitle>
-          <DialogDescription>此操作会删除 Supabase 登录账号、个人资料、学习与留学业务数据，无法恢复。删除记录会保留在负责人审计日志中。</DialogDescription>
+          <DialogDescription>此操作会删除登录账号、个人资料、学习与留学业务数据，无法恢复。删除记录会保留在负责人审计日志中。</DialogDescription>
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
@@ -365,11 +367,11 @@ export function AccountCard({ profile, viewerRole, accountScope }: { profile: Ac
       <div className="mt-5 grid grid-cols-2 gap-2">
         <div className="app-soft-card rounded-2xl border px-3 py-3">
           <div className="flex items-center gap-1.5"><CalendarDays className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">注册时间</p></div>
-          <p className="mt-1.5 text-xs font-black">{formatKoreanTime(registeredAt, false)}</p>
+          <p className="mt-1.5 text-xs font-black"><KoreanTime value={registeredAt} includeTime={false} /></p>
         </div>
         <div className="app-soft-card rounded-2xl border px-3 py-3">
           <div className="flex items-center gap-1.5"><Activity className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">最近活动</p></div>
-          <p className="mt-1.5 truncate text-xs font-black">{formatRecentActivity(profile.last_active_at)}</p>
+          <p className="mt-1.5 truncate text-xs font-black">{recentActivity(profile.last_active_at)}</p>
         </div>
       </div>
 

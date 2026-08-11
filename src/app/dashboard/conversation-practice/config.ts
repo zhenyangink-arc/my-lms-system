@@ -29,12 +29,11 @@ export const CONVERSATION_STATUS_LABELS: Record<ConversationStatus, string> = {
 export type DialogueLine = { speaker: string; korean: string; chinese: string };
 export type KeyExpression = { korean: string; chinese: string };
 
-export const conversationDateFormatter = new Intl.DateTimeFormat("zh-CN", {
-  timeZone: "Asia/Seoul",
+export const CONVERSATION_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   year: "numeric",
   month: "2-digit",
   day: "2-digit",
   hour: "2-digit",
   minute: "2-digit",
   hour12: false,
-});
+};

@@ -3,6 +3,8 @@
 import { Building2, ChevronDown, ChevronRight, Plane, ShieldCheck } from "lucide-react";
 import { Fragment, useMemo, useState } from "react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
+
 export type PlatformVisaOverviewRow = {
   tenant_id: string;
   tenant_slug: string;
@@ -68,18 +70,16 @@ function numberValue(value: number | string | null | undefined) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function FormattedDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={DATE_OPTIONS} />;
 }
 
 function waitingTime(value: string | null) {
@@ -137,9 +137,9 @@ export function PlatformVisaOverview({
               <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
                 平台负责人 / 机构运行巡检
               </p>
-              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
+              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 签证管理
-              </h1>
+              </h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[
@@ -237,7 +237,7 @@ export function PlatformVisaOverview({
                         <td className="px-3 text-right font-mono tabular-nums text-emerald-700">{numberValue(row.issued_count)}</td>
                         <td className="px-3 text-right font-mono tabular-nums text-violet-700">{numberValue(row.upcoming_entry_count)}</td>
                         <td className="px-3 font-mono text-[10px] text-zinc-500">{waitingTime(row.oldest_pending_at)}</td>
-                        <td className="px-5 font-mono text-[10px] text-zinc-400">{formatDate(row.last_activity_at)}</td>
+                        <td className="px-5 font-mono text-[10px] text-zinc-400"><FormattedDate value={row.last_activity_at} /></td>
                       </tr>
 
                       {expanded && (
@@ -310,7 +310,7 @@ export function PlatformVisaOverview({
                                       const itemSupport = numberValue(item.support_task_count);
                                       return (
                                         <tr key={`${item.tenant_id}-${item.case_reference}`} className="h-9 border-b border-black/[0.05] last:border-b-0">
-                                          <td className="px-2 font-mono text-zinc-600">VS-{item.case_reference}</td>
+                                          <td className="px-2 font-mono text-zinc-600">签证-{item.case_reference}</td>
                                           <td className="px-2 text-zinc-600">{VISA_TYPE_LABELS[item.visa_type] ?? item.visa_type}</td>
                                           <td className="px-2 text-zinc-500">{CHANNEL_LABELS[item.application_channel] ?? item.application_channel}</td>
                                           <td className="px-2 font-medium text-zinc-700">{CASE_STATUS_LABELS[item.case_status] ?? item.case_status}</td>
@@ -318,7 +318,7 @@ export function PlatformVisaOverview({
                                           <td className={`px-2 text-right font-mono tabular-nums ${itemPending + itemSupport > 0 ? "text-rose-700" : "text-zinc-400"}`}>{itemPending + itemSupport}</td>
                                           <td className="px-2 font-mono text-zinc-400">{waitingTime(item.oldest_pending_at)}</td>
                                           <td className="px-2 font-mono text-zinc-500">{item.planned_entry_date ?? item.target_entry_date ?? "—"}</td>
-                                          <td className="px-2 font-mono text-zinc-400">{formatDate(item.updated_at)}</td>
+                                          <td className="px-2 font-mono text-zinc-400"><FormattedDate value={item.updated_at} /></td>
                                         </tr>
                                       );
                                     })}

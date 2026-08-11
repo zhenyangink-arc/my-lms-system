@@ -36,6 +36,7 @@ import {
 } from "@/app/dashboard/announcements/actions";
 import { initialAnnouncementActionState } from "@/app/dashboard/announcements/action-state";
 import { AnnouncementStatusActions } from "@/app/dashboard/announcements/AnnouncementStatusActions";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 export type ManagedAnnouncement = {
   id: string;
@@ -67,18 +68,16 @@ const FILTERS = [
   ["archived", "已归档"],
 ] as const;
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return value;
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function FormattedDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={DATE_OPTIONS} />;
 }
 
 function statusTone(status: AnnouncementStatus) {
@@ -201,8 +200,8 @@ function AnnouncementRows({
           <td className="px-3"><span className={`inline-flex px-2 py-1 text-[9px] font-medium ${statusTone(announcement.status)}`}>{STATUS_LABELS[announcement.status]}</span></td>
           <td className="px-3 text-right font-mono tabular-nums text-zinc-600">{announcement.readCount} / {announcement.audienceCount}</td>
           <td className="px-3 text-right font-mono tabular-nums text-zinc-500">{announcement.status === "published" ? `${readRate}%` : "—"}</td>
-          <td className="px-3 font-mono text-[9px] text-zinc-400">{formatDate(announcement.publishedAt)}</td>
-          <td className="px-3 font-mono text-[9px] text-zinc-400">{formatDate(announcement.updatedAt)}</td>
+          <td className="px-3 font-mono text-[9px] text-zinc-400"><FormattedDate value={announcement.publishedAt} /></td>
+          <td className="px-3 font-mono text-[9px] text-zinc-400"><FormattedDate value={announcement.updatedAt} /></td>
           <td className="px-5"><div className="flex justify-end gap-1">{editable ? <><EditAnnouncementDialog announcement={announcement} /><AnnouncementStatusActions id={announcement.id} status={announcement.status} /></> : <span className="text-[9px] text-zinc-400">只读巡检</span>}</div></td>
         </tr>
         {expanded && (
@@ -210,7 +209,7 @@ function AnnouncementRows({
             <td colSpan={11} className="px-12 py-4">
               <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_300px]">
                 <div><p className="text-[8px] uppercase tracking-[0.07em] text-zinc-400">公告正文</p><p className="mt-2 whitespace-pre-wrap text-[11px] leading-6 text-zinc-700">{announcement.content}</p></div>
-                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-l border-black/[0.07] pl-5 text-[9px] text-zinc-500"><div><dt className="text-zinc-400">可见范围</dt><dd className="mt-0.5 font-medium text-zinc-700">{announcement.scope === "platform" ? "全部机构及成员" : `仅 ${announcement.tenantName}`}</dd></div><div><dt className="text-zinc-400">阅读率</dt><dd className="mt-0.5 font-mono text-zinc-700">{announcement.status === "published" ? `${readRate}%` : "尚未发布"}</dd></div><div><dt className="text-zinc-400">发布人</dt><dd className="mt-0.5 text-zinc-700">{announcement.authorName}</dd></div><div><dt className="text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono text-zinc-700">{formatDate(announcement.updatedAt)}</dd></div></dl>
+                <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-l border-black/[0.07] pl-5 text-[9px] text-zinc-500"><div><dt className="text-zinc-400">可见范围</dt><dd className="mt-0.5 font-medium text-zinc-700">{announcement.scope === "platform" ? "全部机构及成员" : `仅 ${announcement.tenantName}`}</dd></div><div><dt className="text-zinc-400">阅读率</dt><dd className="mt-0.5 font-mono text-zinc-700">{announcement.status === "published" ? `${readRate}%` : "尚未发布"}</dd></div><div><dt className="text-zinc-400">发布人</dt><dd className="mt-0.5 text-zinc-700">{announcement.authorName}</dd></div><div><dt className="text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono text-zinc-700"><FormattedDate value={announcement.updatedAt} /></dd></div></dl>
               </div>
             </td>
           </tr>
@@ -278,7 +277,7 @@ export function AnnouncementManagementWorkspace({
       <div className="mx-auto mt-5 w-full max-w-[1720px] px-4 sm:px-6 lg:px-8">
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-5 py-5 xl:flex-row xl:items-end xl:justify-between">
-            <div><p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">{scope === "platform" ? "平台负责人 / 全平台发布" : "机构负责人 / 本机构发布"}</p><h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">通知公告管理</h1><p className="mt-1 text-[11px] text-zinc-500">{scope === "platform" ? "平台公告对全部机构及成员可见；机构公告只读巡检。" : "本页发布的公告只对本机构成员可见；平台公告在成员公告栏统一展示。"}</p></div>
+            <div><p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">{scope === "platform" ? "平台负责人 / 全平台发布" : "机构负责人 / 本机构发布"}</p><h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">通知公告管理</h2>{scope !== "platform" && <p className="mt-1 text-[11px] text-zinc-500">本页发布的公告只对本机构成员可见；平台公告在成员公告栏统一展示。</p>}</div>
             <div className="flex items-end gap-4"><dl className="flex text-[10px]">{[["公告", ownAnnouncements.length], ["已发布", publishedCount], ["草稿", draftCount]].map(([label, value], index) => <div key={String(label)} className={`min-w-[82px] px-4 ${index > 0 ? "border-l border-black/[0.08]" : ""}`}><dt className="text-zinc-400">{label}</dt><dd className="mt-0.5 font-mono text-base font-medium tabular-nums text-zinc-950">{value}</dd></div>)}</dl><CreateAnnouncementDialog scope={scope} /></div>
           </header>
           {hasError && <div className="border-b border-rose-200 bg-rose-50 px-5 py-3 text-[10px] text-rose-700">公告数据暂时无法读取，请确认数据库迁移已经完成。</div>}
@@ -297,9 +296,9 @@ export function AnnouncementManagementWorkspace({
 
         {scope === "platform" && (
           <section className="mt-5 border-y border-black/[0.08] bg-white">
-            <header className="border-b border-black/[0.08] px-5 py-4"><p className="text-[9px] uppercase tracking-[0.1em] text-zinc-400">机构公告巡检</p><h2 className="mt-1 text-sm font-semibold text-zinc-950">各机构发布情况</h2><p className="mt-1 text-[10px] text-zinc-500">默认收缩；平台只读查看机构公告，不能修改或代替机构发布。</p></header>
+            <header className="border-b border-black/[0.08] px-5 py-4"><p className="text-[9px] uppercase tracking-[0.1em] text-zinc-400">机构公告巡检</p><h2 className="mt-1 text-sm font-semibold text-zinc-950">各机构发布情况</h2></header>
             <div className="overflow-x-auto"><table className="w-full min-w-[1050px] border-collapse text-left"><thead><tr className="h-10 border-b border-black/[0.08] bg-zinc-50/40 text-[8px] uppercase tracking-[0.07em] text-zinc-500"><th className="w-10 px-3 font-medium"><span className="sr-only">展开</span></th><th className="px-3 font-medium">机构</th><th className="w-[110px] px-3 text-right font-medium">公告</th><th className="w-[110px] px-3 text-right font-medium">已发布</th><th className="w-[110px] px-3 text-right font-medium">草稿</th><th className="w-[110px] px-3 text-right font-medium">紧急</th><th className="w-[140px] px-5 font-medium">最近发布</th></tr></thead><tbody>
-              {institutionGroups.map((group) => { const expanded = expandedTenants.has(group.tenantId); const published = group.announcements.filter((item) => item.status === "published"); return <Fragment key={group.tenantId}><tr className="h-[48px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="px-3"><button type="button" onClick={() => toggle(setExpandedTenants, group.tenantId)} className="flex size-6 items-center justify-center text-zinc-400">{expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}</button></td><td className="px-3 font-medium text-zinc-900">{group.tenantName}</td><td className="px-3 text-right font-mono text-zinc-600">{group.announcements.length}</td><td className="px-3 text-right font-mono text-emerald-700">{published.length}</td><td className="px-3 text-right font-mono text-zinc-500">{group.announcements.filter((item) => item.status === "draft").length}</td><td className="px-3 text-right font-mono text-rose-700">{group.announcements.filter((item) => item.priority === "urgent" && item.status === "published").length}</td><td className="px-5 font-mono text-[9px] text-zinc-400">{formatDate(published[0]?.publishedAt ?? null)}</td></tr>{expanded && <tr className="border-b border-black/[0.08] bg-zinc-50/45"><td colSpan={7} className="px-10 py-3"><div className="overflow-x-auto"><table className="w-full min-w-[1200px] border-collapse text-left"><tbody><AnnouncementRows announcements={group.announcements} editable={false} expandedIds={expandedIds} onToggle={(id) => toggle(setExpandedIds, id)} /></tbody></table></div></td></tr>}</Fragment>; })}
+              {institutionGroups.map((group) => { const expanded = expandedTenants.has(group.tenantId); const published = group.announcements.filter((item) => item.status === "published"); return <Fragment key={group.tenantId}><tr className="h-[48px] border-b border-black/[0.07] text-[10px] hover:bg-zinc-50/60"><td className="px-3"><button type="button" onClick={() => toggle(setExpandedTenants, group.tenantId)} className="flex size-6 items-center justify-center text-zinc-400">{expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}</button></td><td className="px-3 font-medium text-zinc-900">{group.tenantName}</td><td className="px-3 text-right font-mono text-zinc-600">{group.announcements.length}</td><td className="px-3 text-right font-mono text-emerald-700">{published.length}</td><td className="px-3 text-right font-mono text-zinc-500">{group.announcements.filter((item) => item.status === "draft").length}</td><td className="px-3 text-right font-mono text-rose-700">{group.announcements.filter((item) => item.priority === "urgent" && item.status === "published").length}</td><td className="px-5 font-mono text-[9px] text-zinc-400"><FormattedDate value={published[0]?.publishedAt ?? null} /></td></tr>{expanded && <tr className="border-b border-black/[0.08] bg-zinc-50/45"><td colSpan={7} className="px-10 py-3"><div className="overflow-x-auto"><table className="w-full min-w-[1200px] border-collapse text-left"><tbody><AnnouncementRows announcements={group.announcements} editable={false} expandedIds={expandedIds} onToggle={(id) => toggle(setExpandedIds, id)} /></tbody></table></div></td></tr>}</Fragment>; })}
               {institutionGroups.length === 0 && <tr><td colSpan={7} className="px-5 py-12 text-center text-[10px] text-zinc-400">暂无机构</td></tr>}
             </tbody></table></div>
           </section>

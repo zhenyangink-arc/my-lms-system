@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import {
   requireStandardQuestionBankManager,
@@ -32,9 +32,9 @@ function databaseMessage(message: string | undefined, fallback: string) {
 }
 
 function refreshQuestionBank() {
-  revalidatePath("/dashboard/admin/question-bank");
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/assignments/korean");
+  revalidateDashboard("/dashboard/admin/question-bank");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/assignments/korean");
 }
 
 export async function saveStandardQuestionAction(

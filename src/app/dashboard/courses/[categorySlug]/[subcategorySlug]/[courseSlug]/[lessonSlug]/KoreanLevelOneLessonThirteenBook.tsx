@@ -49,14 +49,14 @@ type FlipBookHandle = {
 };
 
 const TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34, 35] },
 ]);
 
 const Page = forwardRef<
@@ -92,7 +92,7 @@ function Heading({
 }) {
   return (
     <KoreanEbookHeading
-      step={TEMPLATE.pageMeta[page]?.tag ?? "STEP 08"}
+      step={TEMPLATE.pageMeta[page]?.tag ?? "第八步"}
       title={title}
       description={description}
       icon={icon}
@@ -328,49 +328,49 @@ const dividers: Record<
   { step: string; title: string; goal: string; icon: ReactNode }
 > = {
   "02": {
-    step: "STEP 01",
+    step: "第一步",
     title: "课前导航",
     goal: "建立“说明计划—选择交通工具—确认路线—提出请求—到达目的地”的交际链。",
     icon: <MapPinned size={24} />,
   },
   "04": {
-    step: "STEP 02",
+    step: "第二步",
     title: "核心词汇",
     goal: "掌握交通工具、移动动词、交通设施、方向词和车站发音。",
     icon: <Bus size={24} />,
   },
   "09": {
-    step: "STEP 03",
+    step: "第三步",
     title: "语法讲解",
     goal: "四个语法各占一页：计划、地点起终点、请求与方向／交通手段。",
     icon: <NotebookPen size={24} />,
   },
   "14": {
-    step: "STEP 04",
+    step: "第四步",
     title: "句型操练",
     goal: "把旅行计划、路线、交通工具和司机请求组合成完整表达。",
     icon: <Route size={24} />,
   },
   "18": {
-    step: "STEP 05",
+    step: "第五步",
     title: "实战对话",
     goal: "完成出租车、地铁问路和假期计划三组八句交通对话。",
     icon: <MessageCircle size={24} />,
   },
   "22": {
-    step: "STEP 06",
+    step: "第六步",
     title: "听说任务",
     goal: "从路线说明中抓住出发地、换乘站、出口、时间与交通方式。",
     icon: <Headphones size={24} />,
   },
   "26": {
-    step: "STEP 07",
+    step: "第七步",
     title: "读写拓展",
     goal: "读懂交通路线说明，并写出从出发地到目的地的完整路线。",
     icon: <BookOpenCheck size={24} />,
   },
   "29": {
-    step: "STEP 08",
+    step: "第八步",
     title: "自测与复盘",
     goal: "检查交通词汇、四项语法、发音和完整出行交际能力。",
     icon: <CheckCircle2 size={24} />,
@@ -1287,7 +1287,7 @@ export function KoreanLevelOneLessonThirteenBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

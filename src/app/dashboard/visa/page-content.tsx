@@ -14,6 +14,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireActiveUser } from "@/lib/auth";
 import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
 import { VisaCaseForm, VisaTaskForm } from "./VisaWorkspaceForms";
@@ -139,11 +140,7 @@ const NOTIFICATION_LABELS: Record<string, string> = {
   revision_requested: "顾问要求补充",
 };
 
-function formatEventTime(value: string) {
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "时间待确认";
-  return new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false }).format(date);
-}
+const EVENT_TIME_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };
 
 function TaskIcon({ status }: { status: string }) {
   if (status === "approved") return <CheckCircle2 size={19} />;
@@ -266,7 +263,7 @@ export default async function VisaPage({
                     <div className="min-w-0">
                       <p className="text-sm font-bold leading-5">{NOTIFICATION_LABELS[event.event_type] ?? "顾问更新了"}：{taskTitleById.get(event.task_id) ?? "签证任务"}</p>
                       {event.event_type === "revision_requested" && event.note && <p className="mt-0.5 text-xs leading-5" style={{ color: "var(--app-warm)" }}>{event.note}</p>}
-                      <p className="app-muted-text mt-0.5 text-xs">{formatEventTime(event.created_at)}</p>
+                      <p className="app-muted-text mt-0.5 text-xs"><LocalDateTime value={event.created_at} options={EVENT_TIME_OPTIONS} fallback="时间待确认" /></p>
                     </div>
                   </div>
                 ))}

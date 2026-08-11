@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import {
@@ -114,7 +114,7 @@ export async function addKoreanQuestionToReviewAction(input: {
     };
   }
 
-  revalidatePath("/dashboard/progress");
+  revalidateDashboard("/dashboard/progress");
   return {
     status: "success",
     message: "已加入深化学习，可在待复习题中查看。",
@@ -179,7 +179,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
     };
   }
 
-  revalidatePath("/dashboard/progress");
+  revalidateDashboard("/dashboard/progress");
   return {
     status: "success",
     message: "已取消加入复习。",
@@ -330,12 +330,17 @@ export async function submitKoreanChapterTestAction(input: {
   testSlug: string;
   answers: Record<string, number>;
 }): Promise<KoreanChapterTestResult> {
-  const { supabase } = await requireAssignmentViewer();
+  const { supabase, isManager } = await requireAssignmentViewer();
   const testSlug = String(input.testSlug ?? "").trim();
   const answers = input.answers ?? {};
 
   if (!testSlug) {
     return { status: "error", message: "缺少测试信息，请返回后重试。" };
+  }
+
+  // manager 巡查/预览章节测试时只能本地判分，绝不能写进学生成绩表。
+  if (isManager) {
+    return scoreManagerPreview(testSlug, answers);
   }
 
   const { data, error } = await supabase.rpc("submit_course_test", {
@@ -357,6 +362,11 @@ export async function submitKoreanChapterTestAction(input: {
       message: "数据库返回的成绩格式不正确，请联系管理员。",
     };
   }
+
+  revalidateDashboard("/dashboard/assignments");
+  revalidateDashboard("/dashboard/assignments/korean");
+  revalidateDashboard("/dashboard/grades");
+  revalidateDashboard("/dashboard/progress");
 
   return successResult(payload, true);
 }

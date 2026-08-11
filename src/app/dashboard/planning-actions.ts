@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireStudentFeature } from "@/lib/student-permissions-server";
 
@@ -24,8 +24,8 @@ export async function addUniversityTargetAction(formData: FormData) {
   });
 
   if (error) throw new Error("目标大学保存失败，请确认数据库迁移已经执行。");
-  revalidatePath("/dashboard/universities");
-  revalidatePath("/dashboard/universities/targets");
+  revalidateDashboard("/dashboard/universities");
+  revalidateDashboard("/dashboard/universities/targets");
 }
 
 export async function updateUniversityStatusAction(id: string, formData: FormData) {
@@ -54,7 +54,7 @@ export async function updateUniversityStatusAction(id: string, formData: FormDat
     .eq("id", id)
     .eq("user_id", user.id);
   if (error) throw new Error("申请阶段更新失败。");
-  revalidatePath("/dashboard/universities");
-  revalidatePath("/dashboard/universities/targets");
-  revalidatePath("/dashboard/documents");
+  revalidateDashboard("/dashboard/universities");
+  revalidateDashboard("/dashboard/universities/targets");
+  revalidateDashboard("/dashboard/documents");
 }

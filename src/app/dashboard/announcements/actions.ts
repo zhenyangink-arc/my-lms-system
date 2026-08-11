@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
@@ -54,9 +54,9 @@ function readAnnouncementInput(formData: FormData) {
 }
 
 function refreshAnnouncements() {
-  revalidatePath("/dashboard/announcements");
-  revalidatePath("/dashboard/admin/announcements");
-  revalidatePath("/dashboard");
+  revalidateDashboard("/dashboard/announcements");
+  revalidateDashboard("/dashboard/admin/announcements");
+  revalidateDashboard("/dashboard");
 }
 
 export async function createAnnouncementAction(

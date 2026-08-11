@@ -58,6 +58,17 @@ const STATUS_LABELS: Record<StandardQuestion["status"], string> = {
   archived: "已归档",
 };
 
+const SKILL_LABELS: Record<string, string> = {
+  vocabulary: "词汇",
+  grammar: "语法",
+  listening: "听力",
+  speaking: "口语",
+  reading: "阅读",
+  writing: "写作",
+  communication: "交际",
+  mixed: "综合",
+};
+
 type PageMode = "browse" | "create";
 
 type PageSearchParams = {
@@ -689,7 +700,7 @@ export default async function StandardQuestionBankPage({
                         <th className="border-l px-3 py-2.5 text-[11px]">电子书目录</th>
                         <th className="border-l px-3 py-2.5 text-center text-[11px]">难度</th>
                         <th className="border-l px-3 py-2.5 text-[11px]">题目</th>
-                        <th className="border-l px-3 py-2.5 text-[11px]">A–D 选项</th>
+                        <th className="border-l px-3 py-2.5 text-[11px]">四个选项</th>
                         <th className="border-l px-3 py-2.5 text-[11px]">答案与解析</th>
                         <th className="border-l px-3 py-2.5 text-[11px]">知识点／状态</th>
                         <th className="border-l px-3 py-2.5 text-right text-[11px]">操作</th>
@@ -714,7 +725,7 @@ export default async function StandardQuestionBankPage({
                         <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-black leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {group ? `第 ${group.chapter_number} 章` : "课程题目"}</p></td>
                         <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-black text-[var(--app-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
                         <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-black text-[var(--app-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
-                        <td className="border-l px-3 py-3 text-xs"><p className="font-black">{question.skill}</p><p className="app-muted-text mt-1">{STATUS_LABELS[question.status]} · v{question.version} · {question.default_points} 分</p></td>
+                        <td className="border-l px-3 py-3 text-xs"><p className="font-black">{SKILL_LABELS[question.skill] ?? "综合"}</p><p className="app-muted-text mt-1">{STATUS_LABELS[question.status]} · 版本 {question.version} · {question.default_points} 分</p></td>
                         <td className="border-l px-3 py-3 text-right"><EditStandardQuestionForm groups={labeledGroups} question={question} compact /></td>
                       </tr>
                     );

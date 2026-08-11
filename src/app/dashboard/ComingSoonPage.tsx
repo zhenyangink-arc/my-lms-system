@@ -67,7 +67,7 @@ export function ComingSoonPage({
   return (
     <>
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="app-card rounded-3xl border p-5">
+        <section className="app-card rounded-2xl border p-5">
               <div className="flex items-center gap-3">
                 <span
                   className="flex h-10 w-10 items-center justify-center rounded-2xl"
@@ -97,7 +97,7 @@ export function ComingSoonPage({
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {blueprints.map((feature, index) => (
-              <article key={feature.title} className="app-card rounded-3xl border p-5">
+              <article key={feature.title} className="app-card rounded-2xl border p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span
                     className="flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black"
@@ -117,7 +117,7 @@ export function ComingSoonPage({
 
         <Link
           href="/dashboard"
-          className="app-card flex items-center justify-between gap-4 rounded-2xl border p-4 transition hover:-translate-y-0.5"
+          className="app-card flex items-center justify-between gap-4 rounded-2xl border p-4 transition"
         >
           <span>
             <span className="block text-sm font-black">先回到成长首页继续今天的计划</span>

@@ -42,7 +42,7 @@ const difficultyLabels = { beginner: "低级", intermediate: "中级", advanced:
 const lengthLabels = { short: "短篇", medium: "中篇", long: "长篇" } as const;
 const statusLabels = { draft: "草稿", review: "待审核", published: "已发布", retired: "已停用" } as const;
 const typeLabels = {
-  single_choice: "单选 · A–D", multiple_choice: "多选 · A–D", fill_blank: "填空",
+  single_choice: "单选 · 四个选项", multiple_choice: "多选 · 四个选项", fill_blank: "填空",
   ordering: "排序 · 四项", audio_response: "录音作答", long_text: "写作",
 } as const;
 

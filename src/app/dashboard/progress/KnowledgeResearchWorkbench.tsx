@@ -27,9 +27,9 @@ import { KnowledgeWorkbenchGuide } from "./KnowledgeWorkbenchGuide";
 
 type WorkbenchMode = "explain" | "deconstruct" | "compare";
 
-const EXPLAIN_TONE = { color: "#376f8a", soft: "#eaf4f7" };
-const DECONSTRUCT_TONE = { color: "#70558f", soft: "#f2edf8" };
-const COMPARE_TONE = { color: "#b06f3c", soft: "#fbf0e5" };
+const EXPLAIN_TONE = { color: "var(--app-accent)", soft: "var(--app-accent-soft)" };
+const DECONSTRUCT_TONE = { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" };
+const COMPARE_TONE = { color: "var(--app-warm)", soft: "var(--app-warm-soft)" };
 
 const modes = [
   {
@@ -116,7 +116,7 @@ const explainCases = [
     initial: initials[3],
     vowel: vowels[5],
     finalLetter: finals[3],
-    tone: { color: "#8a6a2f", soft: "#f8f1df" },
+    tone: { color: "var(--app-text-soft)", soft: "var(--app-soft-bg)" },
   },
 ];
 
@@ -206,8 +206,8 @@ const summaryContent: Record<
       eyebrow: "布局口诀",
       title: "右、下、底",
       description: "竖向元音放右边，横向元音放下边，终声固定放在底边。",
-      color: "#8a6a2f",
-      soft: "#f8f1df",
+      color: "var(--app-warm)",
+      soft: "var(--app-warm-soft)",
     },
     {
       eyebrow: "特别提醒",
@@ -233,8 +233,8 @@ const summaryContent: Record<
       eyebrow: "符号说明",
       title: "无终声与复合收音",
       description: "“—”表示没有终声；两个辅音并排时，整体仍属于终声位置。",
-      color: "#8a6a2f",
-      soft: "#f8f1df",
+      color: "var(--app-warm)",
+      soft: "var(--app-warm-soft)",
     },
   ],
   compare: [
@@ -358,10 +358,79 @@ export function KnowledgeResearchWorkbench({
   const [isFullscreen, setIsFullscreen] = useState(true);
   const [hasInteractionStarted, setHasInteractionStarted] = useState(false);
   const [isInteractionOpen, setIsInteractionOpen] = useState(false);
-  const [isGuideOpen, setIsGuideOpen] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return window.localStorage.getItem("knowledge-workbench-guide-v1") !== "seen";
-  });
+  // 服务端渲染时永远拿不到 localStorage，初始值必须和客户端首次渲染一致，
+  // 否则会触发 hydration mismatch；实际的"是否已读过引导"改在挂载后用 effect 恢复。
+  const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const progressStorageKey = `knowledge-workbench-progress:${chapterSlug}`;
+
+  useEffect(() => {
+    try {
+      if (
+        window.localStorage.getItem("knowledge-workbench-guide-v1") !== "seen"
+      ) {
+        // 本地存储是外部数据源；挂载后才知道是否要展示引导，这里的 setState
+        // 属于"用外部快照同步组件状态"，不是可以用惰性初始值替代的场景。
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsGuideOpen(true);
+      }
+    } catch {
+      // 本地存储不可用时按"未看过引导"处理，直接展示引导。
+      setIsGuideOpen(true);
+    }
+  }, []);
+
+  // 掌握进度过去只存在组件的 useState 里，刷新页面就清零；按章节 key 落到
+  // localStorage，至少能在同一台设备上跨刷新保留已探索/已掌握的案例。
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(progressStorageKey);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as {
+        exploredExplainCases?: number[];
+        exploredDeconstructCases?: number[];
+        exploredCompareCases?: number[];
+        masteredInteractions?: KnowledgeInteractionType[];
+      };
+      // 下面几处都是把本地缓存的历史进度同步进组件状态，同理需要关闭该规则。
+      if (Array.isArray(parsed.exploredExplainCases)) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setExploredExplainCases(new Set([0, ...parsed.exploredExplainCases]));
+      }
+      if (Array.isArray(parsed.exploredDeconstructCases)) {
+        setExploredDeconstructCases(new Set(parsed.exploredDeconstructCases));
+      }
+      if (Array.isArray(parsed.exploredCompareCases)) {
+        setExploredCompareCases(new Set(parsed.exploredCompareCases));
+      }
+      if (Array.isArray(parsed.masteredInteractions)) {
+        setMasteredInteractions(new Set(parsed.masteredInteractions));
+      }
+    } catch {
+      // 本地缓存损坏时忽略，按未探索处理。
+    }
+  }, [progressStorageKey]);
+
+  useEffect(() => {
+    try {
+      window.localStorage.setItem(
+        progressStorageKey,
+        JSON.stringify({
+          exploredExplainCases: [...exploredExplainCases],
+          exploredDeconstructCases: [...exploredDeconstructCases],
+          exploredCompareCases: [...exploredCompareCases],
+          masteredInteractions: [...masteredInteractions],
+        })
+      );
+    } catch {
+      // 本地存储不可用时静默忽略，不影响当前会话内的练习。
+    }
+  }, [
+    exploredExplainCases,
+    exploredDeconstructCases,
+    exploredCompareCases,
+    masteredInteractions,
+    progressStorageKey,
+  ]);
 
   const syllable = composeHangul(initial.index, vowel.index, finalLetter.index);
   const sample = syllableSamples[sampleIndex];
@@ -451,6 +520,16 @@ export function KnowledgeResearchWorkbench({
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isGuideOpen, isInteractionOpen]);
 
+  // 全屏工作台展开时，背景页面之前还能滚动，容易造成背景和弹层同时滚动的错乱体验。
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [isFullscreen]);
+
   function toggleFullscreen() {
     setIsFullscreen((current) => !current);
   }
@@ -473,7 +552,7 @@ export function KnowledgeResearchWorkbench({
           : ""
       }`}
       style={{
-        backgroundColor: isFullscreen ? "#f7f4ed" : undefined,
+        backgroundColor: isFullscreen ? "var(--app-bg)" : undefined,
       }}
     >
       <section className="app-card overflow-hidden rounded-3xl border">
@@ -482,7 +561,7 @@ export function KnowledgeResearchWorkbench({
           className="flex flex-wrap items-center gap-2 border-b p-2.5"
           style={{
             borderColor: "var(--app-border-soft)",
-            backgroundColor: "#f6f3ed",
+            backgroundColor: "var(--app-soft-bg)",
           }}
         >
           {modes.map((item) => {
@@ -596,7 +675,7 @@ export function KnowledgeResearchWorkbench({
                 className="flex min-h-[330px] flex-col items-center justify-center rounded-3xl border p-5 text-center"
                 style={{
                   borderColor: "var(--app-border-soft)",
-                  backgroundColor: "#f8f1df",
+                  backgroundColor: "var(--app-warm-soft)",
                 }}
               >
                 <p className="app-muted-text text-[10px] font-black tracking-[0.12em]">
@@ -661,8 +740,8 @@ export function KnowledgeResearchWorkbench({
                 <div
                   className="rounded-2xl border p-4"
                   style={{
-                    borderColor: "#f6e8d6",
-                    backgroundColor: "#f9f1e6",
+                    borderColor: "var(--app-border)",
+                    backgroundColor: "var(--app-warm-soft)",
                   }}
                 >
                   <div className="flex items-center justify-between gap-3">
@@ -877,7 +956,7 @@ export function KnowledgeResearchWorkbench({
                             backgroundColor: "var(--app-card-bg)",
                           }}
                         >
-                          VS
+                          对比
                         </span>
                       )}
                     </div>
@@ -922,9 +1001,9 @@ export function KnowledgeResearchWorkbench({
           }}
           className="flex w-full items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-xs font-black transition hover:-translate-y-0.5"
           style={{
-            color: "#8a6a2f",
-            borderColor: "#d8bd7f",
-            backgroundColor: "#f8f1df",
+            color: "var(--app-warm)",
+            borderColor: "var(--app-warm)",
+            backgroundColor: "var(--app-warm-soft)",
           }}
         >
           <CircleHelp size={15} />
@@ -992,7 +1071,7 @@ export function KnowledgeResearchWorkbench({
               : "var(--app-border-soft)",
             backgroundColor: isInteractionReady
               ? COMPARE_TONE.soft
-              : "#f6f3ed",
+              : "var(--app-soft-bg)",
           }}
         >
           <div className="mb-3 flex items-center gap-1.5">
@@ -1050,7 +1129,7 @@ export function KnowledgeResearchWorkbench({
               ["assemble", "拼装", EXPLAIN_TONE],
               ["deconstruct", "拆解", DECONSTRUCT_TONE],
               ["repair", "纠错", COMPARE_TONE],
-              ["classify", "分类", { color: "#8a6a2f", soft: "#f8f1df" }],
+              ["classify", "分类", { color: "var(--app-warm)", soft: "var(--app-warm-soft)" }],
             ].map(([interactionType, label, tone]) => {
               const completed = masteredInteractions.has(
                 interactionType as KnowledgeInteractionType
@@ -1136,7 +1215,7 @@ export function KnowledgeResearchWorkbench({
               className="flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-5"
               style={{
                 borderColor: "var(--app-border-soft)",
-                backgroundColor: "#f6f3ed",
+                backgroundColor: "var(--app-soft-bg)",
               }}
             >
               <div>

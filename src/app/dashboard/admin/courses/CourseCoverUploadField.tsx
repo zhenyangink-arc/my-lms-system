@@ -119,7 +119,7 @@ export function CourseCoverUploadField({
         className="text-[11px] leading-5"
         style={{ color: status === "error" ? "var(--app-warm)" : "var(--app-muted)" }}
       >
-        {message || "支持 JPG、PNG、WebP，最大 5MB；建议使用 16:9 横图。"}
+        {message || "支持常见图片格式，最大 5 兆；建议使用 16:9 横图。"}
       </p>
     </div>
   );

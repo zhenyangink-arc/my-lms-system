@@ -32,6 +32,7 @@ import {
   APPLICATION_STAGE_LABELS,
   CATEGORY_LABELS,
 } from "@/app/dashboard/documents/constants";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import {
   reviewApplicationAction,
 } from "./actions";
@@ -133,18 +134,11 @@ const FILTERS: Array<{ value: "all" | DocumentReviewStatus; label: string }> = [
   { value: "approved", label: "已确认" },
 ];
 
-function formatDate(value: string | null, includeTime = false) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    ...(includeTime
-      ? { hour: "2-digit", minute: "2-digit", hour12: false }
-      : {}),
-  }).format(date);
+const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", hour12: false };
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit" };
+
+function FormattedDate({ value, includeTime = false }: { value: string | null; includeTime?: boolean }) {
+  return <LocalDateTime value={value} options={includeTime ? DATE_TIME_OPTIONS : DATE_OPTIONS} />;
 }
 
 function ReviewStatus({ status }: { status: DocumentReviewStatus }) {
@@ -358,7 +352,7 @@ function ReviewDialog({
                 <tbody>
                   {application.events.slice(0, 5).map((event) => (
                     <tr key={event.id} className="border-t border-black/[0.06] first:border-t-0">
-                      <td className="w-[110px] py-2 font-mono text-zinc-400">{formatDate(event.createdAt, true)}</td>
+                      <td className="w-[110px] py-2 font-mono text-zinc-400"><FormattedDate value={event.createdAt} includeTime /></td>
                       <td className="w-[170px] py-2 text-zinc-600">
                         {REVIEW_STATUS_META[event.previousStatus].label} → {REVIEW_STATUS_META[event.newStatus].label}
                       </td>
@@ -437,7 +431,7 @@ export function DocumentReviewWorkspace({
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-5 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
               <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">留学业务 / 资料审核</p>
-              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">申请资料审核</h1>
+              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">申请资料审核</h2>
               <p className="mt-1 text-[11px] text-zinc-500">以“学生 × 目标大学申请单”为单位核对资料，单项准备状态与整单审核结果分开记录。</p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
@@ -581,7 +575,7 @@ function FragmentRow({
         </td>
         <td className="px-3 text-zinc-600">{APPLICATION_STAGE_LABELS[application.applicationStage] ?? "阶段待确认"}</td>
         <td className="px-3"><ReviewStatus status={application.reviewStatus} /></td>
-        <td className="px-3 font-mono text-[10px] text-zinc-400">{formatDate(application.updatedAt, true)}</td>
+        <td className="px-3 font-mono text-[10px] text-zinc-400"><FormattedDate value={application.updatedAt} includeTime /></td>
         <td className="px-4">
           <div className="flex justify-end gap-3">
             <button type="button" onClick={onReview} className={`text-[10px] font-medium ${application.reviewStatus === "pending_review" ? "text-amber-700 hover:text-amber-900" : "text-zinc-600 hover:text-zinc-950"}`}>

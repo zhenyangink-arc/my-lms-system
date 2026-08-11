@@ -19,7 +19,7 @@ import {
 } from "./actions";
 import type { QuestionBankActionState } from "./actions";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { KOREAN_EBOOK_SECTIONS } from "@/lib/korean-ebook-sections";
+import { KOREAN_EBOOK_SECTIONS, koreanEbookSectionLabel } from "@/lib/korean-ebook-sections";
 
 const initialQuestionBankActionState: QuestionBankActionState = {
   status: "idle",
@@ -91,13 +91,13 @@ function QuestionFields({
                 )}
               </td>
               <th className="w-32 border-l bg-[var(--app-soft-bg)] px-3 py-3 font-black">题型</th>
-              <td className="px-3 py-3 font-bold">单选题 · A–D</td>
+              <td className="px-3 py-3 font-bold">单选题 · 四个选项</td>
             </tr>
             <tr>
               <th className="bg-[var(--app-soft-bg)] px-3 py-3 font-black">电子书目录</th>
               <td className="px-3 py-3">
                 <select name="ebook_section_step" required defaultValue={question?.ebook_section_step ?? "STEP 08"} className={fieldClass}>
-                  {KOREAN_EBOOK_SECTIONS.map((section) => <option key={section.step} value={section.step}>{section.step} · {section.label}</option>)}
+                  {KOREAN_EBOOK_SECTIONS.map((section) => <option key={section.step} value={section.step}>{koreanEbookSectionLabel(section.step)}</option>)}
                 </select>
               </td>
               <th className="border-l bg-[var(--app-soft-bg)] px-3 py-3 font-black">电子书页码</th>
@@ -114,10 +114,10 @@ function QuestionFields({
               <td colSpan={3} className="px-3 py-3"><textarea name="prompt" required maxLength={3000} rows={3} defaultValue={question?.prompt ?? ""} placeholder="输入标准题目或作答要求" className={`${fieldClass} resize-y leading-6`} /></td>
             </tr>
             <tr>
-              <th className="bg-[var(--app-soft-bg)] px-3 py-3 font-black">A–D 四个选项</th>
-              <td className="px-3 py-3"><textarea name="options_text" required rows={5} defaultValue={options.join("\n")} placeholder={"选项 A\n选项 B\n选项 C\n选项 D"} className={`${fieldClass} leading-6`} /></td>
+              <th className="bg-[var(--app-soft-bg)] px-3 py-3 font-black">四个选项</th>
+              <td className="px-3 py-3"><textarea name="options_text" required rows={5} defaultValue={options.join("\n")} placeholder={"选项一\n选项二\n选项三\n选项四"} className={`${fieldClass} leading-6`} /></td>
               <th className="border-l bg-[var(--app-soft-bg)] px-3 py-3 font-black">正确选项序号</th>
-              <td className="px-3 py-3"><input name="correct_option_number" required type="number" min={1} max={4} defaultValue={question?.correct_option == null ? 1 : question.correct_option + 1} className={fieldClass} /><span className="app-muted-text mt-1.5 block text-[10px]">A=1，B=2，C=3，D=4</span></td>
+              <td className="px-3 py-3"><input name="correct_option_number" required type="number" min={1} max={4} defaultValue={question?.correct_option == null ? 1 : question.correct_option + 1} className={fieldClass} /><span className="app-muted-text mt-1.5 block text-[10px]">按选项顺序填写 1 至 4</span></td>
             </tr>
             <tr>
               <th className="bg-[var(--app-soft-bg)] px-3 py-3 font-black">知识点</th>

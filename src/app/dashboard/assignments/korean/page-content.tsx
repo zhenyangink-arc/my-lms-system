@@ -101,7 +101,9 @@ export default async function KoreanAssignmentTestsPage() {
     ])
   );
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
-    attemptByTestSlug.keys()
+    [...attemptByTestSlug.values()]
+      .filter((attempt) => attempt.passed)
+      .map((attempt) => attempt.test_slug)
   );
   if (isPlatformTenantManagerRole(role)) {
     for (const test of allChapterTests) unlockedTestSlugs.add(test.slug);
@@ -188,7 +190,7 @@ export default async function KoreanAssignmentTestsPage() {
                         backgroundColor: "var(--app-accent-soft)",
                       }}
                     >
-                      CHAPTER {String(test.chapter_number).padStart(2, "0")}
+                      第 {String(test.chapter_number).padStart(2, "0")} 章
                     </span>
                     <h3 className="mt-1.5 text-[10px] font-black leading-[14px]">
                       {test.title}

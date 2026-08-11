@@ -477,7 +477,7 @@ export function UniversityAdminManager({
         <div>
           <p className="mb-1.5 text-[9px] font-medium uppercase tracking-[0.1em] text-zinc-400">留学资源 / 韩国大学</p>
           <div className="flex flex-wrap items-baseline gap-3">
-            <h1 className="text-lg font-semibold tracking-[-0.03em] text-zinc-950">韩国大学管理</h1>
+            <h2 className="text-lg font-semibold tracking-[-0.03em] text-zinc-950">韩国大学管理</h2>
             <span className="font-mono text-[10px] tabular-nums text-zinc-400">{universities.length} 所大学 · {universities.filter((university) => university.is_published).length} 所已发布</span>
             {isInstitutionViewer && <span className="text-[10px] text-zinc-400">只读模式</span>}
           </div>

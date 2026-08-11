@@ -476,7 +476,7 @@ export function CardGradientControl() {
   );
 }
 
-export function DashboardAppearanceSync() {
+export function DashboardAppearanceSync({ enabled = true }: { enabled?: boolean }) {
   const offset = useSyncExternalStore(
     subscribe,
     getOffsetSnapshot,
@@ -499,16 +499,33 @@ export function DashboardAppearanceSync() {
   );
 
   useEffect(() => {
-    applyBrightness(theme, offset);
-  }, [theme, offset]);
+    if (enabled) {
+      applyBrightness(theme, offset);
+      return;
+    }
+
+    const style = document.documentElement.style;
+    Object.values(AMBIENT_VARS).forEach((cssVar) => style.removeProperty(cssVar));
+    document.documentElement.removeAttribute("data-app-theme");
+  }, [enabled, theme, offset]);
 
   useEffect(() => {
-    applyCardOpacity(opacity);
-  }, [opacity]);
+    if (enabled) {
+      applyCardOpacity(opacity);
+      return;
+    }
+
+    document.documentElement.style.removeProperty("--app-card-opacity");
+  }, [enabled, opacity]);
 
   useEffect(() => {
-    applyCardGradient(gradient);
-  }, [gradient]);
+    if (enabled) {
+      applyCardGradient(gradient);
+      return;
+    }
+
+    document.documentElement.style.removeProperty("--app-card-gradient-strength");
+  }, [enabled, gradient]);
 
   return null;
 }

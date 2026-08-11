@@ -1,8 +1,10 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { unstable_rethrow } from "next/navigation";
 
-import { createClient } from "@/lib/supabase/server";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
+
+import { requireActiveUser } from "@/lib/auth";
 import { CHINA_REGION_CITIES } from "./china-cities";
 import type { UpdateProfileState } from "./profile-state";
 
@@ -89,19 +91,18 @@ export async function updateProfileAction(
   try {
     return await saveProfile(formData);
   } catch (caughtError) {
+    // requireActiveUser() 对未登录/已停用账号会调用 redirect()，
+    // 这个"错误"必须原样重新抛出交给 Next.js 处理，不能被这里吞掉。
+    unstable_rethrow(caughtError);
     console.error("保存个人资料时发生未捕获异常：", caughtError);
     return error("保存时连接出现异常，请刷新页面后重试。");
   }
 }
 
 async function saveProfile(formData: FormData): Promise<UpdateProfileState> {
-  // Server Action 独立验证登录状态，不复用会抛出页面错误的读取逻辑。
-  const supabase = await createClient();
-  const { data: authData, error: authError } = await supabase.auth.getUser();
-  const user = authData.user;
-  if (authError || !user) {
-    return error("登录状态已失效，请重新登录后保存。");
-  }
+  // 其余写操作都走 requireActiveUser()，这里之前只查登录态、不查账号状态，
+  // 被管理员暂停的账号仍能改资料。改用同一套校验，保持全站一致。
+  const { supabase, user } = await requireActiveUser();
   const fullName = getText(formData, "fullName");
   const gender = getText(formData, "gender");
   const birthDate = buildBirthDate(
@@ -243,8 +244,8 @@ async function saveProfile(formData: FormData): Promise<UpdateProfileState> {
   }
 
   // 姓名以 profiles 为唯一展示来源，避免保存后再次更新 Auth 触发额外数据库写入。
-  revalidatePath("/dashboard");
-  revalidatePath("/dashboard/profile");
+  revalidateDashboard("/dashboard");
+  revalidateDashboard("/dashboard/profile");
 
   return { status: "success", message: "个人资料与头像已保存。" };
 }

@@ -303,12 +303,12 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
             <ProfileTableSection icon={Gauge} title="能力评估" />
             <ProfileTableRow number={abilityRowStart} label="英语能力">
               <select name="englishLevel" required defaultValue={initialValue.englishLevel} className={fieldClass}>
-                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description]) => <option key={level} value={level}>{level} · {description}</option>)}
+                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
               </select>
             </ProfileTableRow>
             <ProfileTableRow number={abilityRowStart + 1} label="数学能力">
               <select name="mathLevel" required defaultValue={initialValue.mathLevel} className={fieldClass}>
-                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description]) => <option key={level} value={level}>{level} · {description}</option>)}
+                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
               </select>
             </ProfileTableRow>
             <ProfileTableRow number={abilityRowStart + 2} label="韩语能力">
@@ -316,8 +316,8 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                 <select name="hasKorean" required value={hasKorean} onChange={(event) => setHasKorean(event.target.value)} className={fieldClass}>
                   <option value="">请选择有或无</option><option value="yes">有韩语成绩</option><option value="no">无韩语成绩</option>
                 </select>
-                {hasKorean === "yes" && <select name="topikLevel" required aria-label="TOPIK 等级" defaultValue={initialValue.topikLevel} className={fieldClass}>
-                  <option value="">请选择 TOPIK 等级</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>TOPIK {level} 级</option>)}
+                {hasKorean === "yes" && <select name="topikLevel" required aria-label="韩国语能力考试等级" defaultValue={initialValue.topikLevel} className={fieldClass}>
+                  <option value="">请选择韩国语能力考试等级</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>韩国语能力考试 {level} 级</option>)}
                 </select>}
               </div>
             </ProfileTableRow>

@@ -130,7 +130,7 @@ function HomeworkQuestionRow({
         </p>
         {question.sourceBankVersion && (
           <p className="font-black" style={{ color: "var(--app-success)" }}>
-            平台题库 v{question.sourceBankVersion}
+            平台题库 版本 {question.sourceBankVersion}
           </p>
         )}
       </td>
@@ -176,7 +176,7 @@ function HomeworkQuestionRow({
             : "教师按写作评分")}
       </td>
       <td className="app-muted-text border-l px-3 py-3 text-[10px] leading-5">
-        {question.sourceSkill && <p>能力：{question.sourceSkill}</p>}
+        {question.sourceSkill && <p>能力：{({ vocabulary: "词汇", grammar: "语法", listening: "听力", speaking: "口语", reading: "阅读", writing: "写作", communication: "交际" } as Record<string, string>)[question.sourceSkill] ?? "综合"}</p>}
         <p>{question.explanation || "—"}</p>
       </td>
       <td className="border-l px-3 py-3 text-center font-mono text-xs font-black tabular-nums">

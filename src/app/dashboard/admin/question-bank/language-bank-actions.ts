@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireStandardQuestionBankManager } from "@/lib/question-bank";
 
@@ -58,9 +58,9 @@ function databaseMessage(message: string | undefined, fallback: string) {
 }
 
 function refreshLanguageBank(bank: LanguageBank) {
-  revalidatePath("/dashboard/admin/question-bank");
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath(`/dashboard/admin/assignments/${bank}`);
+  revalidateDashboard("/dashboard/admin/question-bank");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard(`/dashboard/admin/assignments/${bank}`);
 }
 
 export async function createLanguageBankMaterialAction(

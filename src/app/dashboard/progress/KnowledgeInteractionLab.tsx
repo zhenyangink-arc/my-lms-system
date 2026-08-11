@@ -15,10 +15,10 @@ type Tone = {
 };
 
 const tones: Record<KnowledgeInteractionType, Tone> = {
-  assemble: { color: "#376f8a", soft: "#eaf4f7" },
-  deconstruct: { color: "#70558f", soft: "#f2edf8" },
-  repair: { color: "#b06f3c", soft: "#fbf0e5" },
-  classify: { color: "#8a6a2f", soft: "#f8f1df" },
+  assemble: { color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
+  deconstruct: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
+  repair: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
+  classify: { color: "var(--app-text-soft)", soft: "var(--app-soft-bg)" },
 };
 
 const fireworkColors = [
@@ -306,8 +306,11 @@ export function KnowledgeInteractionLab({
   }
 
   function recordResult(correct: boolean) {
+    // 这道题已经答对拿到学分后，后续的调整/误触不应该再改写已经展示的正确反馈、
+    // 也不能让"下一题"按钮因此被重新隐藏。
+    if (awarded) return;
     setResult(correct ? "correct" : "wrong");
-    if (!correct || awarded) return;
+    if (!correct) return;
 
     setAwarded(true);
     const currentCount = correctCounts[type];
@@ -432,7 +435,7 @@ export function KnowledgeInteractionLab({
   return (
     <div
       className="border-t p-4 sm:p-6"
-      style={{ borderColor: "var(--app-border-soft)", backgroundColor: "#faf8f3" }}
+      style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
@@ -853,7 +856,7 @@ export function KnowledgeInteractionLab({
               </div>
             </div>
             <div className="grid gap-2 rounded-3xl border bg-white p-3 text-center" style={{ borderColor: `${tone.color}66` }}>
-              <div className="rounded-2xl px-2 py-3" style={{ backgroundColor: "#fff0e5" }}>
+              <div className="rounded-2xl px-2 py-3" style={{ backgroundColor: "var(--app-accent-soft)" }}>
                 <p className="text-[9px] font-black" style={{ color: tone.color }}>
                   修改前
                 </p>

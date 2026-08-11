@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertCircle } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireActiveUser } from "@/lib/auth";
 import { type StudentProfileInitialValue } from "./ProfileForm";
 import { ProfileView, type ProfileChecklistItem } from "./ProfileView";
@@ -40,14 +41,15 @@ const roleLabelMap: Record<string, string> = {
   tenant_operator: "平台副负责人",
 };
 
-function formatAccountDate(dateString: string | null | undefined) {
-  if (!dateString) return "暂无记录";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  }).format(new Date(dateString));
+const ACCOUNT_DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "long",
+  day: "numeric",
+};
+
+function AccountDate({ value }: { value: string | null | undefined }) {
+  if (!value) return <>暂无记录</>;
+  return <LocalDateTime value={value} options={ACCOUNT_DATE_OPTIONS} fallback="暂无记录" />;
 }
 
 export default async function ProfilePage() {
@@ -128,8 +130,8 @@ export default async function ProfilePage() {
       email={user.email ?? ""}
       emailConfirmed={emailConfirmed}
       avatarUrl={avatarUrl}
-      createdAtLabel={formatAccountDate(user.created_at)}
-      lastSignInLabel={formatAccountDate(user.last_sign_in_at)}
+      createdAtLabel={<AccountDate value={user.created_at} />}
+      lastSignInLabel={<AccountDate value={user.last_sign_in_at} />}
       checklist={checklist}
       initialValue={initialValue}
     />

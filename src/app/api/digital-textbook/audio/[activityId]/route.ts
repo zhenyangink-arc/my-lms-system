@@ -1,13 +1,25 @@
 import { NextResponse } from "next/server";
 
 import { requireActiveUser } from "@/lib/auth";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(
   _request: Request,
   { params }: { params: Promise<{ activityId: string }> }
 ) {
-  await requireActiveUser();
+  const { profile } = await requireActiveUser();
+  const role = profile?.role ?? "student";
+  // 之前只校验内容本身是否 published，没校验请求者是否真的有权限看这门课；
+  // 任何登录用户直接访问这个路由都能拿到私有音频的签名地址。
+  if (
+    !canUseStudentFeature(role, normalizeMembershipTier(profile?.membership_tier), "korean_course")
+  ) {
+    return NextResponse.json({ message: "Forbidden." }, { status: 403 });
+  }
   const { activityId } = await params;
 
   if (!/^[0-9a-f-]{36}$/i.test(activityId)) {

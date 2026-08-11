@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { Fragment, useState } from "react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
+
 export type PlatformDocumentReviewOverviewRow = {
   tenant_id: string;
   tenant_slug: string;
@@ -29,18 +31,16 @@ function numberValue(value: number | string | null | undefined) {
   return Number.isFinite(parsed) ? parsed : 0;
 }
 
-function formatDate(value: string | null) {
-  if (!value) return "—";
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) return "—";
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: false,
-  }).format(date);
+const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function FormattedDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={DATE_OPTIONS} />;
 }
 
 function waitingTime(value: string | null) {
@@ -94,9 +94,9 @@ export function PlatformDocumentReviewOverview({
               <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
                 平台负责人 / 机构运行概览
               </p>
-              <h1 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
+              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 资料审核管理
-              </h1>
+              </h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[
@@ -171,7 +171,7 @@ export function PlatformDocumentReviewOverview({
                     <td className="px-3 text-right font-mono tabular-nums text-rose-700">{numberValue(row.revision_required_count)}</td>
                     <td className="px-3 text-right font-mono tabular-nums text-emerald-700">{numberValue(row.approved_count)}</td>
                     <td className="px-3 font-mono text-[10px] text-zinc-500">{waitingTime(row.oldest_pending_at)}</td>
-                    <td className="px-5 font-mono text-[10px] text-zinc-400">{formatDate(row.last_activity_at)}</td>
+                    <td className="px-5 font-mono text-[10px] text-zinc-400"><FormattedDate value={row.last_activity_at} /></td>
                   </tr>
                   {expanded && (
                     <tr className="border-b border-black/[0.08] bg-zinc-50/45">
@@ -184,7 +184,7 @@ export function PlatformDocumentReviewOverview({
                           <div className="border-l border-black/[0.07] pl-5 text-[10px]">
                             <p className="text-[8px] font-medium uppercase tracking-[0.07em] text-zinc-400">平台巡检判断</p>
                             <p className={`mt-2 text-xs font-medium ${numberValue(row.pending_review_count) > 0 ? "text-amber-700" : numberValue(row.revision_required_count) > 0 ? "text-rose-700" : "text-emerald-700"}`}>{numberValue(row.pending_review_count) > 0 ? `有 ${numberValue(row.pending_review_count)} 份申请单等待机构确认` : numberValue(row.revision_required_count) > 0 ? `有 ${numberValue(row.revision_required_count)} 份申请单等待学生补充` : applicationTotal > 0 ? "当前没有待确认积压" : "该机构尚未产生申请单"}</p>
-                            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-zinc-500"><div><dt className="text-[8px] text-zinc-400">最久等待</dt><dd className="mt-0.5 font-mono">{waitingTime(row.oldest_pending_at)}</dd></div><div><dt className="text-[8px] text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono">{formatDate(row.last_activity_at)}</dd></div></dl>
+                            <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-zinc-500"><div><dt className="text-[8px] text-zinc-400">最久等待</dt><dd className="mt-0.5 font-mono">{waitingTime(row.oldest_pending_at)}</dd></div><div><dt className="text-[8px] text-zinc-400">最近更新</dt><dd className="mt-0.5 font-mono"><FormattedDate value={row.last_activity_at} /></dd></div></dl>
                           </div>
                         </div>
                       </td>

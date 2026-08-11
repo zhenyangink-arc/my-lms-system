@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireActiveUser } from "@/lib/auth";
 
@@ -29,5 +29,5 @@ export async function removeCourseQuestionReviewAction(questionId: string) {
     throw new Error(error.message || "移出复习失败，请稍后重试。");
   }
 
-  revalidatePath("/dashboard/progress");
+  revalidateDashboard("/dashboard/progress");
 }

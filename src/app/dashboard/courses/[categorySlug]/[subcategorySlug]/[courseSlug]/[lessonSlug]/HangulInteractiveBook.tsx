@@ -1,11 +1,13 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import {
   ArrowLeft,
   Bookmark,
   BookmarkCheck,
+  GraduationCap,
   LibraryBig,
   Lock,
   Maximize2,
@@ -37,6 +39,19 @@ type HangulInteractiveBookProps = {
   unlockedChapterCount: number;
   initialEbookProgress: KoreanEbookProgressMap;
   initialChapterSlug?: string;
+  /** 伴学课堂模式：翻页实时同步 + 画笔/批注覆盖层。 */
+  liveMode?: {
+    role: "teacher" | "student";
+    /** 课堂右侧抽屉是否展开；收起时阅读器恢复全宽。 */
+    sidePanelOpen?: boolean;
+    /** 课堂顶栏参与者列表。 */
+    participantBar?: ReactNode;
+    remotePage: number | null;
+    onLocalPageChange: (page: number) => void;
+    overlay: ReactNode;
+    /** 章目录点击：切换章节（仅老师发起，课堂层负责服务端更新+广播）。 */
+    onRequestChapter?: (chapterSlug: string) => void;
+  };
 };
 
 type LocalStudyState = {
@@ -69,7 +84,18 @@ const hangulChapterPageCounts: Record<string, number> = {
   "pronunciation-rules-and-reading": 34,
 };
 
-const EFFECTIVE_READING_DELAY_MS = 8_000;
+
+/** 阅读计时（时间制）：累计阅读秒数 → "MM:SS" 格式。 */
+function formatReadingTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+/** 时间制进度：10 分钟 = 100%（与学生端口径一致）。 */
+function readingTimePercent(totalSeconds: number) {
+  return Math.min(100, Math.round((totalSeconds / 600) * 100));
+}
 
 export function HangulInteractiveBook({
   courseId,
@@ -81,21 +107,39 @@ export function HangulInteractiveBook({
   unlockedChapterCount,
   initialEbookProgress,
   initialChapterSlug,
+  liveMode,
 }: HangulInteractiveBookProps) {
   const router = useRouter();
   const requestedChapterIndex = hangulIntroductionChapters.findIndex(
     (item) => item.slug === initialChapterSlug
   );
+  // 没有 ?chapter= 时，优先恢复「最近有学习记录」的章，否则按课时总进度推算。
+  const lastLearnedChapterIndex = (() => {
+    let latestIndex = -1;
+    let latestAt = 0;
+    hangulIntroductionChapters.forEach((item, index) => {
+      const record = initialEbookProgress[item.slug];
+      if (!record || !((record.readingSeconds ?? 0) > 0)) return;
+      const readAt = record.lastReadAt ? Date.parse(record.lastReadAt) : 0;
+      if (latestIndex === -1 || readAt > latestAt) {
+        latestIndex = index;
+        latestAt = readAt;
+      }
+    });
+    return latestIndex;
+  })();
   const initialChapter =
     requestedChapterIndex >= 0
       ? requestedChapterIndex
-      : initialProgress >= 76
-        ? 3
-        : initialProgress >= 51
-          ? 2
-          : initialProgress >= 26
-            ? 1
-            : 0;
+      : lastLearnedChapterIndex >= 0
+        ? lastLearnedChapterIndex
+        : initialProgress >= 76
+          ? 3
+          : initialProgress >= 51
+            ? 2
+            : initialProgress >= 26
+              ? 1
+              : 0;
   const [chapterIndex, setChapterIndex] = useState(
     Math.min(
       initialChapter,
@@ -103,6 +147,19 @@ export function HangulInteractiveBook({
       hangulIntroductionChapters.length - 1
     )
   );
+
+  // 伴学课堂：老师切换章节时（initialChapterSlug 变化）跟随换书。
+  useEffect(() => {
+    if (!liveMode) return;
+    const requested = hangulIntroductionChapters.findIndex(
+      (item) => item.slug === initialChapterSlug
+    );
+    if (requested >= 0) {
+      setChapterIndex(
+        Math.min(requested, hangulIntroductionChapters.length - 1)
+      );
+    }
+  }, [initialChapterSlug, liveMode]);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isBookFullscreen, setIsBookFullscreen] = useState(false);
   const [isExitDialogOpen, setIsExitDialogOpen] = useState(false);
@@ -114,6 +171,7 @@ export function HangulInteractiveBook({
   const [hasLoadedLocalState, setHasLoadedLocalState] = useState(false);
   const [ebookProgress, setEbookProgress] =
     useState<KoreanEbookProgressMap>(initialEbookProgress);
+  const [accumulatedSeconds, setAccumulatedSeconds] = useState<Record<string, number>>({});
   const bookRef = useRef<HTMLDivElement>(null);
   const ebookRef = useRef<HTMLElement>(null);
   const storageKey = `hangul-book:${lessonId}`;
@@ -123,13 +181,6 @@ export function HangulInteractiveBook({
   const currentPage = Math.min(
     ebookProgress[chapter.slug]?.currentPage ?? 0,
     currentPageCount - 1
-  );
-  const progress = Math.round(
-    ((ebookProgress[chapter.slug]?.readPages ?? []).filter(
-      (page) => page >= 0 && page < currentPageCount
-    ).length /
-      currentPageCount) *
-      100
   );
 
   // These values remain part of the server/client contract for progress tracking.
@@ -176,6 +227,12 @@ export function HangulInteractiveBook({
   }
 
   function openChapter(index: number) {
+    if (liveMode) {
+      // 伴学课堂：点击章目录请求切换章节（由课堂层服务端更新 + 广播同步双方）。
+      const chapter = hangulIntroductionChapters[index];
+      if (chapter) liveMode.onRequestChapter?.(chapter.slug);
+      return;
+    }
     if (index >= unlockedChapterCount) return;
     setChapterIndex(index);
     setIsMenuOpen(false);
@@ -193,6 +250,10 @@ export function HangulInteractiveBook({
         readPages: current[chapter.slug]?.readPages ?? [],
       },
     }));
+    // 伴学课堂：本地翻页上报给课堂层做实时同步（远端翻页带防循环）。
+    if (liveMode) {
+      liveMode.onLocalPageChange(boundedPage);
+    }
     if (!trackingDisabled) {
       void saveKoreanEbookProgressAction({
         testSlug: chapter.slug,
@@ -202,45 +263,63 @@ export function HangulInteractiveBook({
     }
   }
 
+  // —— 阅读计时：进度按累计阅读时长计算（单章节 10 分钟 = 100%）——
+  const chapterStartRef = useRef<number>(0);
+  const chapterSlugRef = useRef(chapter.slug);
+  const currentPageRef = useRef(currentPage);
+  const currentPageCountRef = useRef(currentPageCount);
+  const ebookProgressRef = useRef(ebookProgress);
   useEffect(() => {
-    if (trackingDisabled) return;
-    const chapterSlug = chapter.slug;
-    const visiblePages = [currentPage, currentPage + 1].filter(
-      (page) => page >= 0 && page < currentPageCount
-    );
-    const timeoutId = window.setTimeout(() => {
-      setEbookProgress((current) => {
-        const previous = current[chapterSlug];
-        const readPages = Array.from(
-          new Set([
-            ...(previous?.readPages ?? []).filter(
-              (page) => page >= 0 && page < currentPageCount
-            ),
-            ...visiblePages,
-          ])
-        ).sort((a, b) => a - b);
-        return {
-          ...current,
-          [chapterSlug]: {
-            currentPage,
-            totalPages: currentPageCount,
-            readPages,
-            progressPercent: Math.round(
-              (readPages.length / currentPageCount) * 100
-            ),
-          },
-        };
-      });
-      void saveKoreanEbookProgressAction({
-        testSlug: chapterSlug,
-        currentPage,
-        totalPages: currentPageCount,
-        readPages: visiblePages,
-      });
-    }, EFFECTIVE_READING_DELAY_MS);
+    if (chapterStartRef.current === 0) {
+      chapterStartRef.current = Date.now();
+    }
+    chapterSlugRef.current = chapter.slug;
+    currentPageRef.current = currentPage;
+    currentPageCountRef.current = currentPageCount;
+    ebookProgressRef.current = ebookProgress;
+  }, [chapter.slug, currentPage, currentPageCount, ebookProgress]);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [chapter.slug, currentPage, currentPageCount, trackingDisabled]);
+  function flushReadingTime() {
+    const elapsed = Math.floor((Date.now() - chapterStartRef.current) / 1000);
+    if (elapsed <= 0) return;
+    chapterStartRef.current = Date.now();
+    const slug = chapterSlugRef.current;
+    setAccumulatedSeconds((prev) => ({
+      ...prev,
+      [slug]: (prev[slug] ?? 0) + elapsed,
+    }));
+    void saveKoreanEbookProgressAction({
+      testSlug: slug,
+      // 本地没有该章的进度快照时（如首次进入查询异常），不传页码，
+      // 避免用 0 覆盖数据库里已保存的阅读位置。
+      currentPage: ebookProgressRef.current[slug]
+        ? currentPageRef.current
+        : null,
+      totalPages: currentPageCountRef.current,
+      readPages: [],
+      readingSeconds: elapsed,
+    });
+  }
+
+  // 进入章节重置计时起点；每 30 秒把这段时间的心跳时长写入数据库；
+  // 切章节 / 组件卸载时先把剩余时长落库，避免丢失。
+  useEffect(() => {
+    chapterStartRef.current = Date.now();
+    const timer = window.setInterval(flushReadingTime, 30_000);
+    return () => {
+      flushReadingTime();
+      window.clearInterval(timer);
+    };
+  }, [chapter.slug, trackingDisabled]);
+
+  // 本会话已流逝秒数：每秒刷新，让右上角计时实时走动。
+  const [liveElapsed, setLiveElapsed] = useState(0);
+  useEffect(() => {
+    const tick = window.setInterval(() => {
+      setLiveElapsed(Math.floor((Date.now() - chapterStartRef.current) / 1000));
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [chapter.slug, trackingDisabled]);
 
   function toggleBookmark() {
     setBookmarkedChapters((current) =>
@@ -263,7 +342,9 @@ export function HangulInteractiveBook({
     <div
       id="guide-target-beginner-course"
       ref={bookRef}
-      className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col overflow-hidden bg-[#f7faf8] text-[#173f4a]"
+      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col overflow-hidden bg-[#f7faf8] text-[#173f4a] transition-[right] duration-300 ${
+        liveMode?.sidePanelOpen ? "right-72" : "right-0 w-full"
+      }`}
     >
       <header className="flex shrink-0 items-center justify-between gap-4 border-b border-[#dce8e1] bg-white/95 px-4 py-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
@@ -290,6 +371,15 @@ export function HangulInteractiveBook({
         </div>
 
         <div className="flex shrink-0 items-center gap-2">
+          {liveMode && (
+            <span
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-3 py-1.5 text-[11px] font-black text-white shadow-sm"
+              title="实时伴学课堂"
+            >
+              <GraduationCap size={13} />
+              伴学课堂
+            </span>
+          )}
           <label className="hidden items-center gap-2 rounded-xl border border-[#dce4df] bg-white px-3 py-2 text-xs font-bold text-[#657a70] sm:inline-flex">
             <Volume2 size={14} />
             <span className="hidden lg:inline">发音速度</span>
@@ -353,12 +443,24 @@ export function HangulInteractiveBook({
           </button>
           <div className="hidden text-right sm:block">
             <p className="text-[11px] font-bold text-[#83948b]">阅读进度</p>
-            <p className="text-sm font-black text-[#238777]">{progress}%</p>
+            <p className="text-sm font-black text-[#238777]">
+              {formatReadingTime(
+                (ebookProgress[chapter.slug]?.readingSeconds ?? 0) +
+                  (accumulatedSeconds[chapter.slug] ?? 0) +
+                  liveElapsed
+              )}
+            </p>
           </div>
           <div className="hidden h-2 w-20 overflow-hidden rounded-full bg-[#e5ece8] lg:block lg:w-28">
             <div
               className="h-full rounded-full bg-[#2c9a87] transition-all duration-500"
-              style={{ width: `${progress}%` }}
+              style={{
+                width: `${readingTimePercent(
+                  (ebookProgress[chapter.slug]?.readingSeconds ?? 0) +
+                    (accumulatedSeconds[chapter.slug] ?? 0) +
+                    liveElapsed
+                )}%`,
+              }}
             />
           </div>
           <button
@@ -371,6 +473,12 @@ export function HangulInteractiveBook({
           </button>
         </div>
       </header>
+
+      {liveMode?.participantBar && (
+        <div className="shrink-0 border-b border-[#dce8e1] bg-[#f8fbf9]/95 px-4 py-1.5 sm:px-5">
+          {liveMode.participantBar}
+        </div>
+      )}
 
       <div className="relative flex min-h-0 flex-1">
         <aside
@@ -386,16 +494,13 @@ export function HangulInteractiveBook({
             {hangulIntroductionChapters.map((item, index) => {
               const active = index === chapterIndex;
               const unlocked = index < unlockedChapterCount;
-              const chapterProgress =
-                Math.round(
-                  ((ebookProgress[item.slug]?.readPages ?? []).filter(
-                    (page) =>
-                      page >= 0 &&
-                      page < (hangulChapterPageCounts[item.slug] ?? 1)
-                  ).length /
-                    (hangulChapterPageCounts[item.slug] ?? 1)) *
-                    100
-                );
+              const readingSeconds =
+                (ebookProgress[item.slug]?.readingSeconds ?? 0) +
+                (accumulatedSeconds[item.slug] ?? 0);
+              const chapterProgress = Math.min(
+                100,
+                Math.round((readingSeconds / 600) * 100)
+              );
               return (
                 <button
                   key={item.slug}
@@ -458,22 +563,30 @@ export function HangulInteractiveBook({
         <main className="relative min-w-0 flex-1 overflow-hidden px-[5px] py-4 lg:py-5">
           <section
             ref={ebookRef}
-            className={`mx-auto flex h-full min-h-0 w-full max-w-[1500px] items-stretch justify-center overflow-hidden ${
-            isBookFullscreen ? "fixed inset-0 z-40 h-[100dvh] w-screen max-w-none bg-[#101613]" : ""
+            className={`mx-auto flex h-full min-h-0 w-full max-w-[1500px] items-stretch justify-center overflow-hidden transition-[right] duration-300 ${
+            isBookFullscreen
+              ? `fixed inset-y-0 left-0 z-40 h-[100dvh] max-w-none bg-[#101613] ${
+                  liveMode?.sidePanelOpen ? "right-72" : "right-0 w-screen"
+                }`
+              : ""
           }`}>
             {chapterIndex === 0 ? (
-              <HangulBookOpening key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} />
+              <HangulBookOpening key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} live={liveMode ? { page: liveMode.remotePage, overlay: liveMode.overlay } : undefined} />
             ) : chapterIndex === 1 ? (
-              <VowelsConsonantsBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} />
+              <VowelsConsonantsBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} live={liveMode ? { page: liveMode.remotePage, overlay: liveMode.overlay } : undefined} />
             ) : chapterIndex === 2 ? (
-              <BatchimReadingBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} />
+              <BatchimReadingBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} live={liveMode ? { page: liveMode.remotePage, overlay: liveMode.overlay } : undefined} />
             ) : (
-              <PronunciationRulesBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} />
+              <PronunciationRulesBook key={chapter.slug} isFullscreen={isBookFullscreen} speechRate={speechRate} initialPage={currentPage} onPageChange={handlePageChange} onStartTest={() => router.push(`/dashboard/assignments/korean/${chapter.slug}`)} live={liveMode ? { page: liveMode.remotePage, overlay: liveMode.overlay } : undefined} />
             )}
           </section>
         </main>
         {isBookFullscreen && (
-          <div className="fixed right-5 top-5 z-50 flex overflow-hidden rounded-xl border border-white/20 bg-[#173f4a]/85 text-white shadow-lg backdrop-blur">
+          <div
+            className={`fixed top-5 z-50 flex overflow-hidden rounded-xl border border-white/20 bg-[#173f4a]/85 text-white shadow-lg backdrop-blur transition-[right] duration-300 ${
+              liveMode?.sidePanelOpen ? "right-[19.25rem]" : "right-5"
+            }`}
+          >
             <button
               type="button"
               onClick={toggleBookFullscreen}

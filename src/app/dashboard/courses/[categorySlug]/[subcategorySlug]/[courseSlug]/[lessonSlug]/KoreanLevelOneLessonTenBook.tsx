@@ -49,14 +49,14 @@ type FlipBookHandle = {
 };
 
 const TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32, 33, 34] },
 ]);
 
 const Page = forwardRef<
@@ -92,7 +92,7 @@ function Heading({
 }) {
   return (
     <KoreanEbookHeading
-      step={TEMPLATE.pageMeta[page]?.tag ?? "STEP 08"}
+      step={TEMPLATE.pageMeta[page]?.tag ?? "第八步"}
       title={title}
       description={description}
       icon={icon}
@@ -267,14 +267,14 @@ const formWords: Word[] = [
 ];
 
 const dividers: Record<string, { step: string; title: string; goal: string; icon: ReactNode }> = {
-  "02": { step: "STEP 01", title: "课前导航", goal: "从读准一个时刻，走向安排完整日程：说明起止范围、动作链和未来计划。", icon: <CalendarClock size={24} /> },
-  "04": { step: "STEP 02", title: "核心词汇", goal: "把时间段、作息动词和日程词块绑定记忆，让词汇直接进入时间轴。", icon: <AlarmClock size={24} /> },
-  "09": { step: "STEP 03", title: "语法讲解", goal: "四项语法各占一页：精确时间、起止范围、紧密动作链和未来计划。", icon: <NotebookPen size={24} /> },
-  "14": { step: "STEP 04", title: "句型操练", goal: "同时训练固有词小时、汉字词分钟、부터/까지和两种“然后”。", icon: <TimerReset size={24} /> },
-  "18": { step: "STEP 05", title: "实战对话", goal: "在上学日、周末计划和旅行行程中完成三组不少于八句的交流。", icon: <MessageCircle size={24} /> },
-  "22": { step: "STEP 06", title: "听说任务", goal: "从语音中抓住时间点、动作顺序和计划，再口头重建日程。", icon: <Headphones size={24} /> },
-  "26": { step: "STEP 07", title: "读写拓展", goal: "读懂一日安排，并写出有起止、有动作链、有未来计划的原创日程。", icon: <BookOpenCheck size={24} /> },
-  "29": { step: "STEP 08", title: "自测与复盘", goal: "检查时间表达、范围助词、动作连接与未来时，并完成口语验收。", icon: <CheckCircle2 size={24} /> },
+  "02": { step: "第一步", title: "课前导航", goal: "从读准一个时刻，走向安排完整日程：说明起止范围、动作链和未来计划。", icon: <CalendarClock size={24} /> },
+  "04": { step: "第二步", title: "核心词汇", goal: "把时间段、作息动词和日程词块绑定记忆，让词汇直接进入时间轴。", icon: <AlarmClock size={24} /> },
+  "09": { step: "第三步", title: "语法讲解", goal: "四项语法各占一页：精确时间、起止范围、紧密动作链和未来计划。", icon: <NotebookPen size={24} /> },
+  "14": { step: "第四步", title: "句型操练", goal: "同时训练固有词小时、汉字词分钟、부터/까지和两种“然后”。", icon: <TimerReset size={24} /> },
+  "18": { step: "第五步", title: "实战对话", goal: "在上学日、周末计划和旅行行程中完成三组不少于八句的交流。", icon: <MessageCircle size={24} /> },
+  "22": { step: "第六步", title: "听说任务", goal: "从语音中抓住时间点、动作顺序和计划，再口头重建日程。", icon: <Headphones size={24} /> },
+  "26": { step: "第七步", title: "读写拓展", goal: "读懂一日安排，并写出有起止、有动作链、有未来计划的原创日程。", icon: <BookOpenCheck size={24} /> },
+  "29": { step: "第八步", title: "自测与复盘", goal: "检查时间表达、范围助词、动作连接与未来时，并完成口语验收。", icon: <CheckCircle2 size={24} /> },
 };
 
 export function KoreanLevelOneLessonTenBook({
@@ -609,7 +609,7 @@ export function KoreanLevelOneLessonTenBook({
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="上一页" className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg"><ArrowLeft size={18} /></button>
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="下一页" className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg"><ArrowRight size={18} /></button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${scale})` }}>
-          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={false} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
+          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
             <Page number="封面" cover><KoreanEbookCover lesson={lesson} /></Page>
             {pages}
           </HTMLFlipBook>

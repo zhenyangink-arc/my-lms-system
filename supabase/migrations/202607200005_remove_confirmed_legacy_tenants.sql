@@ -13,7 +13,10 @@ begin
   where (id = '9d7912d2-26a0-4867-863f-ce458b2c4faa'::uuid and slug = 'yuanzhi')
      or (id = 'bcf51345-0e4e-4ef2-8b84-d1c4213a7ef1'::uuid and slug = 'yanzhi001');
 
-  if expected_count <> 2 then
+  if expected_count = 0 then
+    raise notice '目标历史租户不存在，清理已完成或本环境无需清理';
+    return;
+  elsif expected_count <> 2 then
     raise exception '待删除的已确认遗留租户状态已变化，已取消执行';
   end if;
 

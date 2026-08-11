@@ -72,20 +72,20 @@ type VocabularyItem = {
 };
 
 const LESSON_THREE_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 8, contentPages: [9, 10, 11, 12] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
+  { step: "第三步", label: "语法讲解", dividerPage: 8, contentPages: [9, 10, 11, 12] },
+  { step: "第四步", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
+  { step: "第五步", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31] },
 ]);
 
-const SectionStepContext = createContext("STEP 08");
+const SectionStepContext = createContext("第八步");
 
 function getSectionStep(number: string) {
-  return LESSON_THREE_TEMPLATE.pageMeta[number]?.tag ?? "STEP 08";
+  return LESSON_THREE_TEMPLATE.pageMeta[number]?.tag ?? "第八步";
 }
 
 const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
@@ -365,7 +365,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-02" number="02">
       <KoreanEbookSectionDivider
-        step="STEP 01"
+        step="第一步"
         title="课前导航"
         goal="先建立“谁—在哪里—做什么”的句子骨架，再把词汇和语法逐层装进去。"
         icon={<Compass size={24} />}
@@ -423,7 +423,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-04" number="04">
       <KoreanEbookSectionDivider
-        step="STEP 02"
+        step="第二步"
         title="核心词汇表"
         goal="按“动作—场所—对象”建立词汇网络，点击卡片即可听韩语读音。"
         icon={<Library size={24} />}
@@ -502,7 +502,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-08" number="08">
       <KoreanEbookSectionDivider
-        step="STEP 03"
+        step="第三步"
         title="语法讲解"
         goal="四个语法各占一页：理解意义、掌握形式、辨认易错点，并立即完成一句输出。"
         icon={<NotebookPen size={24} />}
@@ -664,7 +664,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-13" number="13">
       <KoreanEbookSectionDivider
-        step="STEP 04"
+        step="第四步"
         title="句型操练"
         goal="先练词尾变形，再选择助词，最后把动作、对象与场所组合成完整句。"
         icon={<PencilLine size={24} />}
@@ -778,7 +778,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-17" number="17">
       <KoreanEbookSectionDivider
-        step="STEP 05"
+        step="第五步"
         title="实战对话"
         goal="进入四个生活场景：课间、图书馆、午休和周末计划，把语法变成即时交流。"
         icon={<MessageCircle size={24} />}
@@ -902,9 +902,9 @@ export function KoreanLevelOneLessonThreeBook({
         <section className="mt-5 rounded-2xl bg-[#fbeaec] p-5">
           <p className="text-xs font-black text-[#a65b68]">双人规则</p>
           <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-6">
-            <li>A 问：주말에 어디에서 뭐 해요?</li>
-            <li>B 随机选一张卡回答。</li>
-            <li>A 再问一个是非问题，B 必须用 안 回答一次。</li>
+            <li>学生甲问：주말에 어디에서 뭐 해요?</li>
+            <li>学生乙随机选一张卡回答。</li>
+            <li>学生甲再问一个是非问题，学生乙必须用 안 回答一次。</li>
           </ol>
         </section>
         <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">同一张卡说出两个版本，才算真正掌握。</p>
@@ -912,7 +912,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-22" number="22">
       <KoreanEbookSectionDivider
-        step="STEP 06"
+        step="第六步"
         title="听说任务"
         goal="训练助词、词尾和否定位置的听辨，再完成带节奏的独立表达。"
         icon={<Headphones size={24} />}
@@ -1008,7 +1008,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-26" number="26">
       <KoreanEbookSectionDivider
-        step="STEP 07"
+        step="第七步"
         title="读写拓展"
         goal="从短文中提取人物行动路线，再写出属于自己的三地点学习日记。"
         icon={<BookOpenCheck size={24} />}
@@ -1088,7 +1088,7 @@ export function KoreanLevelOneLessonThreeBook({
     </Page>,
     <Page key="03-29" number="29">
       <KoreanEbookSectionDivider
-        step="STEP 08"
+        step="第八步"
         title="自测与复盘"
         goal="通过八题知识检测和一次口语验收，确认自己能够描述真实日常行动。"
         icon={<CheckCircle2 size={24} />}
@@ -1239,7 +1239,7 @@ export function KoreanLevelOneLessonThreeBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

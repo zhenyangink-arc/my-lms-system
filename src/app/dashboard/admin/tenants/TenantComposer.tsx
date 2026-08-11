@@ -50,9 +50,9 @@ export function TenantComposer() {
             <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>服务套餐</span>
             <span className="px-5 py-3">
               <select name="plan_key" defaultValue="starter" className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
-                <option value="starter">Starter · 起步版</option>
-                <option value="growth">Growth · 成长版</option>
-                <option value="enterprise">Enterprise · 企业版</option>
+                <option value="starter">入门套餐</option>
+                <option value="growth">成长套餐</option>
+                <option value="enterprise">企业套餐</option>
               </select>
             </span>
           </label>

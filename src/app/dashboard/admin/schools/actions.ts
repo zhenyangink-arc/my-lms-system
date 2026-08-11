@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAdmin } from "@/lib/admin";
 import { schoolCategories } from "./school-config";
@@ -18,11 +18,11 @@ function textValue(formData: FormData, key: string, maxLength: number) {
 }
 
 function revalidateSchoolRoutes(categorySlug?: string, schoolId?: string) {
-  revalidatePath("/dashboard/admin/schools");
-  if (categorySlug) revalidatePath(`/dashboard/admin/schools/${categorySlug}`);
-  if (categorySlug && schoolId) revalidatePath(`/dashboard/admin/schools/${categorySlug}/${schoolId}`);
-  revalidatePath("/dashboard/admin/universities");
-  revalidatePath("/dashboard/universities/library");
+  revalidateDashboard("/dashboard/admin/schools");
+  if (categorySlug) revalidateDashboard(`/dashboard/admin/schools/${categorySlug}`);
+  if (categorySlug && schoolId) revalidateDashboard(`/dashboard/admin/schools/${categorySlug}/${schoolId}`);
+  revalidateDashboard("/dashboard/admin/universities");
+  revalidateDashboard("/dashboard/universities/library");
 }
 
 function parseSchoolForm(formData: FormData) {

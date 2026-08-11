@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import type { LearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
 import {
@@ -44,14 +44,14 @@ function parseKoreanDateTime(value: string) {
 }
 
 function refreshPaperPages(type?: string, assignmentId?: string) {
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/admin/assignments/homework");
-  revalidatePath("/dashboard/admin/assignments/exam");
-  revalidatePath("/dashboard/assignments");
-  if (type) revalidatePath(`/dashboard/admin/assignments/${type}`);
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/admin/assignments/homework");
+  revalidateDashboard("/dashboard/admin/assignments/exam");
+  revalidateDashboard("/dashboard/assignments");
+  if (type) revalidateDashboard(`/dashboard/admin/assignments/${type}`);
   if (assignmentId) {
-    revalidatePath(`/dashboard/admin/assignments/${assignmentId}`);
-    revalidatePath(`/dashboard/assignments/${assignmentId}`);
+    revalidateDashboard(`/dashboard/admin/assignments/${assignmentId}`);
+    revalidateDashboard(`/dashboard/assignments/${assignmentId}`);
   }
 }
 
@@ -346,11 +346,11 @@ export async function replaceChapterTestQuestionsAction(
     );
   }
 
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/admin/assignments/chapter-tests");
-  revalidatePath("/dashboard/admin/question-bank");
-  revalidatePath("/dashboard/assignments/korean");
-  revalidatePath("/dashboard/assignments/korean/[testSlug]", "page");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/admin/assignments/chapter-tests");
+  revalidateDashboard("/dashboard/admin/question-bank");
+  revalidateDashboard("/dashboard/assignments/korean");
+  revalidateDashboard("/dashboard/assignments/korean/[testSlug]", "page");
   return result(
     "success",
     `已更新当前章节测试，共 ${Number(data)} 道题；学生新进入测试时立即使用。`
@@ -393,9 +393,9 @@ export async function updateChapterTestDurationAction(
     );
   }
 
-  revalidatePath("/dashboard/admin/assignments");
-  revalidatePath("/dashboard/admin/assignments/chapter-tests");
-  revalidatePath("/dashboard/assignments/korean");
-  revalidatePath("/dashboard/assignments/korean/[testSlug]", "page");
+  revalidateDashboard("/dashboard/admin/assignments");
+  revalidateDashboard("/dashboard/admin/assignments/chapter-tests");
+  revalidateDashboard("/dashboard/assignments/korean");
+  revalidateDashboard("/dashboard/assignments/korean/[testSlug]", "page");
   return result("success", `测试时长已更新为 ${durationMinutes} 分钟。`);
 }

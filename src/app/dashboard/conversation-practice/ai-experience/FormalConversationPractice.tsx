@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowRight,
   CheckCircle2,
@@ -18,6 +18,35 @@ import {
   type FormalPracticeConfig,
   type FormalPracticeSummary,
 } from "./ConversationAiExperience";
+
+const FORMAL_SETUP_STORAGE_KEY = "conversation-practice:formal-setup";
+
+type StoredFormalSetup = {
+  config: FormalPracticeConfig;
+  sessionKey: string;
+};
+
+// 只在中途刷新/切走再回来时用来跳过设置页、直接恢复到练习中——实际的对话记录和
+// 计时由 ConversationAiExperience 按 sessionKey 存取，这里只保存"用哪份配置"。
+function readStoredFormalSetup(): StoredFormalSetup | null {
+  try {
+    const raw = sessionStorage.getItem(FORMAL_SETUP_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<StoredFormalSetup>;
+    if (!parsed.sessionKey || !parsed.config || typeof parsed.config !== "object") return null;
+    return { config: parsed.config as FormalPracticeConfig, sessionKey: parsed.sessionKey };
+  } catch {
+    return null;
+  }
+}
+
+function clearStoredFormalSetup() {
+  try {
+    sessionStorage.removeItem(FORMAL_SETUP_STORAGE_KEY);
+  } catch {
+    // 隐私模式或存储不可用时静默跳过。
+  }
+}
 
 const scenarios = ["自由交流", "自我介绍", "校园生活", "大学面试"] as const;
 const difficulties = [
@@ -45,9 +74,23 @@ export function FormalConversationPractice() {
   const [durationMinutes, setDurationMinutes] = useState<FormalPracticeConfig["durationMinutes"]>(10);
   const [replyLanguageMode, setReplyLanguageMode] = useState<FormalPracticeConfig["replyLanguageMode"]>("beginner");
   const [config, setConfig] = useState<FormalPracticeConfig | null>(null);
+  const [sessionKey, setSessionKey] = useState<string | null>(null);
   const [summary, setSummary] = useState<FormalPracticeSummary | null>(null);
   const [micStatus, setMicStatus] = useState<"idle" | "checking" | "ready" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  // sessionStorage 只能在挂载后读取（服务端渲染阶段没有这个对象，放进 useState
+  // 初始值会导致 SSR 报错/水合不一致），所以恢复逻辑放在 effect 里，刷新后会有一瞬
+  // "设置页"闪一下再跳回练习中，这是预期的，不是 bug。
+  useEffect(() => {
+    const stored = readStoredFormalSetup();
+    if (!stored) return;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setConfig(stored.config);
+    setSessionKey(stored.sessionKey);
+    setMicStatus("ready");
+    setPhase("session");
+  }, []);
 
   async function startPractice() {
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -67,9 +110,19 @@ export function FormalConversationPractice() {
         durationMinutes,
         replyLanguageMode,
       };
+      const nextSessionKey = crypto.randomUUID();
       setConfig(nextConfig);
+      setSessionKey(nextSessionKey);
       setMicStatus("ready");
       setPhase("session");
+      try {
+        sessionStorage.setItem(
+          FORMAL_SETUP_STORAGE_KEY,
+          JSON.stringify({ config: nextConfig, sessionKey: nextSessionKey })
+        );
+      } catch {
+        // 存储不可用时静默跳过，只影响刷新后能否恢复，不影响本次练习正常开始。
+      }
     } catch {
       setMicStatus("error");
       setErrorMessage("没有获得麦克风权限，请允许访问麦克风后再开始正式练习。");
@@ -81,7 +134,9 @@ export function FormalConversationPractice() {
       <ConversationAiExperience
         variant="formal"
         formalConfig={config}
+        formalSessionKey={sessionKey ?? undefined}
         onFormalFinish={(result) => {
+          clearStoredFormalSetup();
           setSummary(result);
           setPhase("summary");
         }}
@@ -135,8 +190,10 @@ export function FormalConversationPractice() {
             <button
               type="button"
               onClick={() => {
+                clearStoredFormalSetup();
                 setSummary(null);
                 setConfig(null);
+                setSessionKey(null);
                 setMicStatus("ready");
                 setPhase("setup");
               }}
@@ -149,7 +206,7 @@ export function FormalConversationPractice() {
               href="/dashboard/conversation-practice/ai-experience"
               className="app-card inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-black"
             >
-              返回 AI 交流 <ArrowRight size={15} />
+              返回智能交流 <ArrowRight size={15} />
             </Link>
           </div>
         </section>

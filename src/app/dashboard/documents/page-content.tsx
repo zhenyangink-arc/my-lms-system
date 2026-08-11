@@ -15,6 +15,7 @@ import {
   Sparkles,
 } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireActiveUser } from "@/lib/auth";
 import { ApplicationDocumentChecklist } from "./ApplicationDocumentChecklist";
 import { ApplicationStageTimeline } from "./ApplicationStageTimeline";
@@ -65,20 +66,21 @@ const ADMISSION_TRACK_LABELS: Record<string, string> = {
   doctor: "博士",
 };
 
+const DUE_DATE_OPTIONS: Intl.DateTimeFormatOptions = { month: "2-digit", day: "2-digit" };
+
 function getDueMeta(dueDate: string | null, status: string) {
   if (!dueDate || status === "completed" || status === "not_needed") return null;
   const due = new Date(`${dueDate}T00:00:00+09:00`);
   if (Number.isNaN(due.getTime())) return null;
   const diffDays = Math.ceil((due.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  const shortDate = new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "2-digit",
-    day: "2-digit",
-  }).format(due);
   if (diffDays < 0) return { label: `已逾期 ${Math.abs(diffDays)} 天`, color: "#dc5f54", soft: "#fff0ed" };
   if (diffDays === 0) return { label: "今天截止", color: "var(--app-warm)", soft: "var(--app-warm-soft)" };
   if (diffDays <= 3) return { label: `剩余 ${diffDays} 天`, color: "var(--app-warm)", soft: "var(--app-warm-soft)" };
-  return { label: `截止 ${shortDate}`, color: "var(--app-muted)", soft: "var(--app-soft-bg)" };
+  return {
+    label: <>截止 <LocalDateTime value={due} options={DUE_DATE_OPTIONS} /></>,
+    color: "var(--app-muted)",
+    soft: "var(--app-soft-bg)",
+  };
 }
 
 export default async function DocumentsPage({

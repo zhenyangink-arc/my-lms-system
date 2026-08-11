@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireStudentFeature } from "@/lib/student-permissions-server";
 
@@ -47,6 +47,25 @@ function clamp(value: number) {
   return Math.max(0, Math.min(100, Math.round(value)));
 }
 
+/**
+ * QS 世界排名和中央日报（韩国本土）排名不是同一把尺子，分别换算：
+ * 有 QS 名次时按 QS 分段（对全球竞争力校准）；只有中央日报名次时，
+ * 说明这所学校没有进入 QS 全球榜单，即使本土名次靠前也按更保守的
+ * 分段换算，最高不超过 QS 第二档，避免把它和真正的 QS 名校混为一谈。
+ */
+function resolveAcademicBaseline(
+  qsRank: number | null,
+  joongangRank: number | null
+) {
+  if (qsRank != null) {
+    return qsRank <= 50 ? 92 : qsRank <= 150 ? 86 : qsRank <= 500 ? 80 : 74;
+  }
+  if (joongangRank != null) {
+    return joongangRank <= 5 ? 82 : joongangRank <= 15 ? 78 : 74;
+  }
+  return 74;
+}
+
 function degreeLevelFromTrack(track: AdmissionStage) {
   if (track === "language") return "language";
   if (track === "master") return "master";
@@ -64,10 +83,10 @@ function applicationDeadlineForStage(value: unknown, stage: AdmissionStage) {
 
 /** 大学模块拆分为多个页面后，写操作需要同步刷新全部相关入口。 */
 function revalidateUniversityRoutes() {
-  revalidatePath("/dashboard/universities");
-  revalidatePath("/dashboard/universities/targets");
-  revalidatePath("/dashboard/universities/library");
-  revalidatePath("/dashboard/universities/comparison");
+  revalidateDashboard("/dashboard/universities");
+  revalidateDashboard("/dashboard/universities/targets");
+  revalidateDashboard("/dashboard/universities/library");
+  revalidateDashboard("/dashboard/universities/comparison");
 }
 
 /** 在学校卡片上切换“四校对比”状态。 */
@@ -351,8 +370,15 @@ export async function saveUniversityAssessmentAction(
     return { status: "error", message: "这所大学当前未收录所选申请阶段。" };
   }
 
-  const rank = university.qs_rank_sort ?? university.joongang_rank_sort ?? 700;
-  const academicBaseline = rank <= 50 ? 92 : rank <= 150 ? 86 : rank <= 500 ? 80 : 74;
+  // QS 是全球排名（约1500所高校参与），中央日报只对韩国本土大学排名；
+  // 两者刻度完全不同，不能把中央日报名次直接套用 QS 的分段阈值 —
+  // 库内数据显示中央日报前10名的学校，QS 世界排名普遍在400~1000名区间
+  // （如中央大学中央日报第8、QS第432；首尔市立大学中央日报第16、QS第851），
+  // 直接套用会让"无 QS 排名"的学校学术基线虚高到和顶尖 QS 名校同档。
+  const academicBaseline = resolveAcademicBaseline(
+    university.qs_rank_sort,
+    university.joongang_rank_sort
+  );
   const academicMatch = clamp(62 + (academicScore - academicBaseline) * 3.2);
 
   const requiredTopik =
@@ -399,18 +425,23 @@ export async function saveUniversityAssessmentAction(
     discipline: disciplineMatch,
   };
 
-  const { error } = await supabase.from("student_university_assessments").insert({
-    user_id: user.id,
-    university_id: universityId,
-    admission_stage: admissionStage,
-    discipline_group: disciplineGroup,
-    academic_score: academicScore,
-    topik_level: topikLevel,
-    annual_budget_cny: Math.round(annualBudgetCny),
-    match_score: matchScore,
-    result_label: resultLabel,
-    score_breakdown: breakdown,
-  });
+  // 之前是纯 insert，同一所大学重新评估一次就多一行，没有任何去重；
+  // 改成按 (tenant, user, university) upsert，只保留最近一次评估结果。
+  const { error } = await supabase.from("student_university_assessments").upsert(
+    {
+      user_id: user.id,
+      university_id: universityId,
+      admission_stage: admissionStage,
+      discipline_group: disciplineGroup,
+      academic_score: academicScore,
+      topik_level: topikLevel,
+      annual_budget_cny: Math.round(annualBudgetCny),
+      match_score: matchScore,
+      result_label: resultLabel,
+      score_breakdown: breakdown,
+    },
+    { onConflict: "tenant_id,user_id,university_id" }
+  );
 
   if (error) {
     return { status: "error", message: "评估结果保存失败，请稍后重试。" };

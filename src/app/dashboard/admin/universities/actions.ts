@@ -1,6 +1,6 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import {
   requireUniversityContentManager,
@@ -55,15 +55,15 @@ function optionalDate(formData: FormData, key: string) {
 }
 
 function revalidateUniversityManagement() {
-  revalidatePath("/dashboard/admin/universities");
-  revalidatePath("/dashboard/admin/documents");
-  revalidatePath("/dashboard/admin/visa");
-  revalidatePath("/dashboard/visa");
-  revalidatePath("/dashboard/documents");
-  revalidatePath("/dashboard/universities");
-  revalidatePath("/dashboard/universities/targets");
-  revalidatePath("/dashboard/universities/library");
-  revalidatePath("/dashboard/universities/comparison");
+  revalidateDashboard("/dashboard/admin/universities");
+  revalidateDashboard("/dashboard/admin/documents");
+  revalidateDashboard("/dashboard/admin/visa");
+  revalidateDashboard("/dashboard/visa");
+  revalidateDashboard("/dashboard/documents");
+  revalidateDashboard("/dashboard/universities");
+  revalidateDashboard("/dashboard/universities/targets");
+  revalidateDashboard("/dashboard/universities/library");
+  revalidateDashboard("/dashboard/universities/comparison");
 }
 
 /** 把管理表单转换成数据库字段，并在服务端进行完整校验。 */

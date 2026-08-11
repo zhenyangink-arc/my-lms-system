@@ -2,14 +2,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, CheckCircle2, Clock3, MessageCircleQuestion } from "lucide-react";
 
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { getHelpCenterAccess } from "@/lib/help-center";
 import { confirmHelpTicketResolvedAction } from "../../actions";
 import { HelpTicketReplyForm } from "../../HelpTicketReplyForm";
 import {
+  HELP_DATE_TIME_OPTIONS,
   HELP_TICKET_CATEGORY_LABELS,
   HELP_TICKET_PRIORITY_LABELS,
   HELP_TICKET_STATUS_LABELS,
-  helpDateFormatter,
   type HelpTicketCategory,
   type HelpTicketPriority,
   type HelpTicketStatus,
@@ -46,13 +47,13 @@ export default async function StudentHelpTicketPage({ params }: { params: Promis
         <div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</span><span className={`rounded-full px-2.5 py-1 text-xs font-black ${statusTone(ticket.status)}`}>{HELP_TICKET_STATUS_LABELS[ticket.status]}</span><span className={`rounded-full px-2.5 py-1 text-xs font-black ${ticket.priority === "urgent" ? "bg-rose-50 text-rose-700" : "bg-zinc-100 text-zinc-600"}`}>{HELP_TICKET_PRIORITY_LABELS[ticket.priority]}</span></div>
         <h1 className="mt-3 text-2xl font-black">{ticket.subject}</h1>
         <p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{ticket.description}</p>
-        <p className="app-muted-text mt-4 inline-flex items-center gap-1 text-xs"><Clock3 size={11} />提交于 {helpDateFormatter.format(new Date(ticket.created_at))}</p>
+        <p className="app-muted-text mt-4 inline-flex items-center gap-1 text-xs"><Clock3 size={11} />提交于 <LocalDateTime value={ticket.created_at} options={HELP_DATE_TIME_OPTIONS} /></p>
         {ticket.resolution && <div className="mt-5 rounded-2xl border p-4" style={{ borderColor: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><h2 className="flex items-center gap-2 text-sm font-black" style={{ color: "var(--app-success)" }}><CheckCircle2 size={16} />处理结果</h2><p className="mt-2 whitespace-pre-wrap text-sm leading-6">{ticket.resolution}</p></div>}
         {canConfirm && <form action={confirmHelpTicketResolvedAction.bind(null, ticket.id)} className="mt-4"><button type="submit" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-success)" }}><CheckCircle2 size={14} />确认问题已解决</button></form>}
       </section>
       <section className="app-card rounded-3xl border p-4 sm:p-5">
         <h2 className="flex items-center gap-2 text-lg font-black"><MessageCircleQuestion size={19} style={{ color: "var(--app-accent)" }} />沟通记录</h2>
-        <div className="mt-5 space-y-3">{messages.map((message) => <div key={message.id} className={`flex ${message.sender_kind === "student" ? "justify-end" : "justify-start"}`}><div className="max-w-[85%] rounded-2xl border px-4 py-3" style={{ backgroundColor: message.sender_kind === "student" ? "var(--app-accent-soft)" : "var(--app-success-soft)", borderColor: "var(--app-border-soft)" }}><p className="text-xs font-black" style={{ color: message.sender_kind === "student" ? "var(--app-accent)" : "var(--app-success)" }}>{message.sender_kind === "student" ? "我" : "老师"}</p><p className="mt-1 whitespace-pre-wrap text-sm leading-6">{message.body}</p><p className="app-muted-text mt-2 text-[10px]">{helpDateFormatter.format(new Date(message.created_at))}</p></div></div>)}{messages.length === 0 && <p className="app-muted-text rounded-xl border border-dashed p-5 text-center text-xs">老师暂未回复，可以继续补充问题信息。</p>}</div>
+        <div className="mt-5 space-y-3">{messages.map((message) => <div key={message.id} className={`flex ${message.sender_kind === "student" ? "justify-end" : "justify-start"}`}><div className="max-w-[85%] rounded-2xl border px-4 py-3" style={{ backgroundColor: message.sender_kind === "student" ? "var(--app-accent-soft)" : "var(--app-success-soft)", borderColor: "var(--app-border-soft)" }}><p className="text-xs font-black" style={{ color: message.sender_kind === "student" ? "var(--app-accent)" : "var(--app-success)" }}>{message.sender_kind === "student" ? "我" : "老师"}</p><p className="mt-1 whitespace-pre-wrap text-sm leading-6">{message.body}</p><p className="app-muted-text mt-2 text-[10px]"><LocalDateTime value={message.created_at} options={HELP_DATE_TIME_OPTIONS} /></p></div></div>)}{messages.length === 0 && <p className="app-muted-text rounded-xl border border-dashed p-5 text-center text-xs">老师暂未回复，可以继续补充问题信息。</p>}</div>
         <div className="mt-6 border-t pt-5" style={{ borderColor: "var(--app-border-soft)" }}><HelpTicketReplyForm ticketId={ticket.id} disabled={ticket.status === "closed"} /></div>
       </section>
     </div>

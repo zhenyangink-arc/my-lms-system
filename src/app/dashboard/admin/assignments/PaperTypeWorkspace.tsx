@@ -3,10 +3,11 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { DashboardPageHeader } from "@/app/dashboard/DashboardPageHeader";
 import {
+  ASSIGNMENT_DATE_OPTIONS,
   ASSIGNMENT_STATUS_LABELS,
-  formatAssignmentDate,
   type AssignmentStatus,
 } from "@/app/dashboard/assignments/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireAssessmentPaperWorkspace } from "@/lib/assessment-papers";
 import {
   questionOptions,
@@ -118,6 +119,10 @@ const paperStatusTones = {
   retired: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
   archived: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
 } as const;
+
+function AssignmentDate({ value }: { value: string | null }) {
+  return <LocalDateTime value={value} options={ASSIGNMENT_DATE_OPTIONS} fallback="时间待定" />;
+}
 
 export async function PaperTypeWorkspace({
   paperType,
@@ -501,10 +506,10 @@ export async function PaperTypeWorkspace({
                           </span>
                         </td>
                         <td className="border-l px-3 py-3.5 text-center font-mono text-xs">
-                          v{paper.version}
+                          版本 {paper.version}
                         </td>
                         <td className="border-l px-3 py-3.5 text-center text-[11px]">
-                          {formatAssignmentDate(paper.updated_at)}
+                          <AssignmentDate value={paper.updated_at} />
                         </td>
                         <td className="border-l px-3 py-3.5">
                           <div className="flex items-center justify-end gap-2">
@@ -619,7 +624,7 @@ export async function PaperTypeWorkspace({
                             <p className="app-muted-text mt-0.5 text-[10px]">{assignment.total_points} 分</p>
                           </td>
                           <td className="border-l px-3 py-3.5 font-mono text-[11px]">
-                            {assignment.source_paper_code ?? "历史任务"} · v{assignment.source_paper_version ?? 1}
+                            {assignment.source_paper_code ?? "历史任务"} · 版本 {assignment.source_paper_version ?? 1}
                           </td>
                           <td className="border-l px-3 py-3.5 text-xs">
                             {assignment.course_id ? courseNameById.get(assignment.course_id) ?? "关联课程" : "未关联课程"}
@@ -628,8 +633,8 @@ export async function PaperTypeWorkspace({
                             <span title={targetLabel}>{targetLabel}</span>
                           </td>
                           <td className="border-l px-3 py-3.5 text-center text-[11px] leading-5">
-                            <p>{formatAssignmentDate(assignment.starts_at)}</p>
-                            <p className="app-muted-text">{formatAssignmentDate(assignment.due_at)}</p>
+                            <p><AssignmentDate value={assignment.starts_at} /></p>
+                            <p className="app-muted-text"><AssignmentDate value={assignment.due_at} /></p>
                           </td>
                           <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
                             {submittedStudents} / {waiting}

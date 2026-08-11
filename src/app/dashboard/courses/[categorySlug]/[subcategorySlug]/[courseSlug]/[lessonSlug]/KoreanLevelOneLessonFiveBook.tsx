@@ -75,20 +75,20 @@ type VocabularyItem = {
 type Speak = (text: string) => void;
 
 const LESSON_FIVE_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7, 8] },
-  { step: "STEP 03", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7, 8] },
+  { step: "第三步", label: "语法讲解", dividerPage: 9, contentPages: [10, 11, 12, 13] },
+  { step: "第四步", label: "句型操练", dividerPage: 14, contentPages: [15, 16, 17] },
+  { step: "第五步", label: "实战对话", dividerPage: 18, contentPages: [19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31, 32] },
 ]);
 
-const SectionStepContext = createContext("STEP 08");
+const SectionStepContext = createContext("第八步");
 
 function getSectionStep(number: string) {
-  return LESSON_FIVE_TEMPLATE.pageMeta[number]?.tag ?? "STEP 08";
+  return LESSON_FIVE_TEMPLATE.pageMeta[number]?.tag ?? "第八步";
 }
 
 const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
@@ -376,7 +376,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-02" number="02">
       <KoreanEbookSectionDivider
-        step="STEP 01"
+        step="第一步"
         title="课前导航"
         goal="把日期、星期和过去动作放到同一条时间轴上，并用 -고 讲清事件顺序。"
         icon={<Compass size={24} />}
@@ -418,7 +418,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-04" number="04">
       <KoreanEbookSectionDivider
-        step="STEP 02"
+        step="第二步"
         title="核心词汇表"
         goal="先建立数字与日历系统，再补充能讲述周末经历的动作表达。"
         icon={<CalendarDays size={24} />}
@@ -464,7 +464,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-09" number="09">
       <KoreanEbookSectionDivider
-        step="STEP 03"
+        step="第三步"
         title="语法讲解"
         goal="依次掌握日期与星期、时间助词、过去时和动作连接，让句子从“一个点”变成“时间线”。"
         icon={<NotebookPen size={24} />}
@@ -602,7 +602,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-14" number="14">
       <KoreanEbookSectionDivider
-        step="STEP 04"
+        step="第四步"
         title="句型操练"
         goal="完成日期星期问答、时间助词选择、现在时—过去时转换和 -고 叙事组装。"
         icon={<PencilLine size={24} />}
@@ -679,7 +679,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-18" number="18">
       <KoreanEbookSectionDivider
-        step="STEP 05"
+        step="第五步"
         title="实战对话"
         goal="在周末回顾、生日邀约和迟到说明三个场景中讲清时间、顺序与原因。"
         icon={<MessageCircle size={24} />}
@@ -742,7 +742,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-22" number="22">
       <KoreanEbookSectionDivider
-        step="STEP 06"
+        step="第六步"
         title="听说任务"
         goal="听辨日期、过去时标记与事件顺序，再完成一段有时间线的个人经历表达。"
         icon={<Headphones size={24} />}
@@ -758,7 +758,7 @@ export function KoreanLevelOneLessonFiveBook({
             ["오월 팔일", "5月8日"], ["칠월 삼일", "7月3日"],
           ].map(([date, chinese], index) => (
             <button key={date} type="button" onClick={() => speak(date)} className="rounded-2xl border border-[#cfdfeb] bg-white p-4 text-left">
-              <p className="text-[10px] font-black text-[#3e7fa3]">DATE AUDIO {index + 1}</p>
+              <p className="text-[10px] font-black text-[#3e7fa3]">日期语音 {index + 1}</p>
               <p className={`mt-3 text-sm font-black ${revealed.dates ? "opacity-100" : "opacity-0"}`}>{date}</p>
               <p className={`mt-1 text-[11px] font-bold text-[#71857b] ${revealed.dates ? "opacity-100" : "opacity-0"}`}>{chinese}</p>
             </button>
@@ -832,7 +832,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-26" number="26">
       <KoreanEbookSectionDivider
-        step="STEP 07"
+        step="第七步"
         title="读写拓展"
         goal="阅读一篇周末记录识别日期、星期与动作顺序，再写出有清晰时间线的迷你日记。"
         icon={<BookOpenCheck size={24} />}
@@ -895,7 +895,7 @@ export function KoreanLevelOneLessonFiveBook({
     </Page>,
     <Page key="05-29" number="29">
       <KoreanEbookSectionDivider
-        step="STEP 08"
+        step="第八步"
         title="自测与复盘"
         goal="先做动词转换，再完成十题检测和一段口语叙事，确认时间系统已经连通。"
         icon={<CheckCircle2 size={24} />}
@@ -1049,7 +1049,7 @@ export function KoreanLevelOneLessonFiveBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

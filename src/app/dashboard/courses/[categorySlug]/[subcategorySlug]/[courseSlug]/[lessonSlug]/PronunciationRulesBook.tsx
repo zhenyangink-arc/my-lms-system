@@ -504,18 +504,33 @@ export function PronunciationRulesBook({
   initialPage = 0,
   onPageChange,
   onStartTest,
+  live,
 }: {
   isFullscreen: boolean;
   speechRate?: number;
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
+  live?: {
+    page: number | null;
+    overlay: React.ReactNode | null;
+  };
 }) {
   const containerRef = useRef<HTMLElement>(null);
   const flipBookRef = useRef<FlipBookHandle>(null);
   const speechTimerRef = useRef<number | null>(null);
   const speechRequestRef = useRef(0);
+  const lastLivePageRef = useRef<number | null>(null);
   const [bookScale, setBookScale] = useState(1);
+
+  // 伴学课堂：跟随远端翻页指令（防循环由课堂层 lastRemotePage 保证）。
+  useEffect(() => {
+    if (live?.page == null) return;
+    if (live.page === lastLivePageRef.current) return;
+    lastLivePageRef.current = live.page;
+    flipBookRef.current?.pageFlip()?.flip(live.page);
+  }, [live?.page]);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -524,7 +539,13 @@ export function PronunciationRulesBook({
     const observer = new ResizeObserver(() => {
       cancelAnimationFrame(frame);
       frame = requestAnimationFrame(() => {
-        setBookScale(isFullscreen ? MAX_BOOK_SCALE : 1);
+        const cap = isFullscreen ? MAX_BOOK_SCALE : 1;
+        const nextScale = Math.min(
+          container.clientWidth / BOOK_WIDTH,
+          container.clientHeight / BOOK_HEIGHT,
+          cap
+        );
+        setBookScale(Math.max(0.1, nextScale));
         flipBookRef.current?.pageFlip()?.update();
       });
     });
@@ -568,7 +589,7 @@ export function PronunciationRulesBook({
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">←</button>
         <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">→</button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${bookScale})` }}>
-          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={false} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
+          <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
             <Page number={0} cover>
               <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d7eaf1_0,_transparent_34%),linear-gradient(145deg,_#fffef9_0%,_#e7f2f5_100%)] px-10 py-11 text-center">
                 <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[#173f4a]" />
@@ -586,7 +607,7 @@ export function PronunciationRulesBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">CHAPTER 04</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">第四章</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
                 <ol className="mt-5 divide-y divide-[#e5ece7] rounded-2xl border border-[#dce8e1] bg-white px-5 py-2 text-left">
                   {[
@@ -602,7 +623,7 @@ export function PronunciationRulesBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">CHAPTER 04 · GOALS</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">第四章 · GOALS</p>
                 <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
                 <p className="mt-4 text-sm leading-7 text-[#60736a]">不靠死记中文谐音，根据音节边界和相邻声音推导韩语词句的实际读音。</p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
@@ -624,7 +645,7 @@ export function PronunciationRulesBook({
               <div className="relative flex h-full flex-col items-center justify-center overflow-hidden text-center">
                 <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4eff4]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">CHAPTER 04 COMPLETE</p>
+                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第四章完成</p>
                   <h2 className="mt-5 text-4xl font-black text-[#173f4a]">从看懂规则，到读出真实韩语</h2>
                   <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">你已经完成连音、紧音化、激音化、鼻音化、流音化及其他高频规则的系统学习。接下来进入本章测试检查判断能力。</p>
                   <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한국어", "[한구거]"], ["학교", "[학꾜]"], ["국물", "[궁물]"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm"><p className="text-xl font-black text-[#267a8b]">{value}</p><p className="mt-2 text-xs font-bold text-[#789087]">{label}</p></div>)}</div>
@@ -635,6 +656,7 @@ export function PronunciationRulesBook({
             </Page>
 
           </HTMLFlipBook>
+          {live?.overlay}
         </div>
       </div>
     </section>

@@ -1,5 +1,6 @@
 "use client";
 
+import type { ReactNode } from "react";
 import { useMemo, useState, useTransition } from "react";
 import { useFormStatus } from "react-dom";
 import {
@@ -35,7 +36,7 @@ import { initialDocumentActionState } from "./document-action-state";
 import { CATEGORY_ICONS, CATEGORY_LABELS, STATUS_LABELS, STATUS_TONES } from "./constants";
 
 type Status = "preparing" | "completed" | "not_needed";
-type DueMeta = { label: string; color: string; soft: string } | null;
+type DueMeta = { label: ReactNode; color: string; soft: string } | null;
 
 type ChecklistDocument = {
   id: string;

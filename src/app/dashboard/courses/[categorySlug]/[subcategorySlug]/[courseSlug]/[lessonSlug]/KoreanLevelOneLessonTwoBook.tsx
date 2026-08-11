@@ -65,21 +65,21 @@ type FlipBookHandle = {
 
 type Speak = (text: string) => void;
 
-const SectionStepContext = createContext("STEP 08");
+const SectionStepContext = createContext("第八步");
 
 function getSectionStep(number: string) {
-  return LESSON_TWO_TEMPLATE.pageMeta[number]?.tag ?? "STEP 08";
+  return LESSON_TWO_TEMPLATE.pageMeta[number]?.tag ?? "第八步";
 }
 
 const LESSON_TWO_TEMPLATE = buildKoreanEbookSectionMap([
-  { step: "STEP 01", label: "课前导航", dividerPage: 2, contentPages: [3] },
-  { step: "STEP 02", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
-  { step: "STEP 03", label: "语法解说", dividerPage: 8, contentPages: [9, 10, 11, 12] },
-  { step: "STEP 04", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
-  { step: "STEP 05", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20, 21] },
-  { step: "STEP 06", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
-  { step: "STEP 07", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
-  { step: "STEP 08", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31] },
+  { step: "第一步", label: "课前导航", dividerPage: 2, contentPages: [3] },
+  { step: "第二步", label: "核心词汇表", dividerPage: 4, contentPages: [5, 6, 7] },
+  { step: "第三步", label: "语法解说", dividerPage: 8, contentPages: [9, 10, 11, 12] },
+  { step: "第四步", label: "句型操练", dividerPage: 13, contentPages: [14, 15, 16] },
+  { step: "第五步", label: "实战对话", dividerPage: 17, contentPages: [18, 19, 20, 21] },
+  { step: "第六步", label: "听说任务", dividerPage: 22, contentPages: [23, 24, 25] },
+  { step: "第七步", label: "读写拓展", dividerPage: 26, contentPages: [27, 28] },
+  { step: "第八步", label: "自测与复盘", dividerPage: 29, contentPages: [30, 31] },
 ]);
 
 const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
@@ -364,7 +364,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-02" number="02">
       <Divider
-        step="STEP 01"
+        step="第一步"
         title="课前导航"
         goal="从真实距离和使用场景出发，学会询问物品名称、说明手边有什么，并完成一次简单购买。"
         icon={<Compass size={24} />}
@@ -438,7 +438,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-04" number="04">
       <Divider
-        step="STEP 02"
+        step="第二步"
         title="核心词汇表"
         goal="先掌握教室物品、随身物品和商店表达，再把它们放进完整句子中。"
         icon={<ListChecks size={24} />}
@@ -587,7 +587,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-08" number="08">
       <Divider
-        step="STEP 03"
+        step="第三步"
         title="语法解说"
         goal="掌握有无表达、指物说明、礼貌请求和名词连接四项核心语法，并把它们组合成完整交流。"
         icon={<BookOpenCheck size={24} />}
@@ -823,7 +823,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-13" number="13">
       <Divider
-        step="STEP 04"
+        step="第四步"
         title="句型操练"
         goal="通过距离判断、助词选择和信息转换，把规则变成不假思索的口头反应。"
         icon={<NotebookPen size={24} />}
@@ -976,7 +976,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-17" number="17">
       <Divider
-        step="STEP 05"
+        step="第五步"
         title="实战对话"
         goal="把本课语言工具放进服务台、教室、文具店和便利店四个原创场景。"
         icon={<MessageCircle size={24} />}
@@ -1135,7 +1135,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-22" number="22">
       <Divider
-        step="STEP 06"
+        step="第六步"
         title="听说任务"
         goal="训练对距离词、物品名称和有无回答的即时辨认，并完成信息差交流。"
         icon={<Headphones size={24} />}
@@ -1309,7 +1309,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-26" number="26">
       <Divider
-        step="STEP 07"
+        step="第七步"
         title="读写拓展"
         goal="读懂一则简短失物信息，并用本课句型描述自己的学习用品。"
         icon={<PencilLine size={24} />}
@@ -1377,9 +1377,9 @@ export function KoreanLevelOneLessonTwoBook({
         />
         <div className="mt-5 grid grid-cols-3 gap-3">
           {[
-            ["STEP 1", "介绍物品", "이거는 제 가방이에요."],
-            ["STEP 2", "说明有什么", "가방에 책이 있어요."],
-            ["STEP 3", "说明没有什么", "우산은 없어요."],
+            ["第一步", "介绍物品", "이거는 제 가방이에요."],
+            ["第二步", "说明有什么", "가방에 책이 있어요."],
+            ["第三步", "说明没有什么", "우산은 없어요."],
           ].map(([step, title, example]) => (
             <article
               key={step}
@@ -1419,7 +1419,7 @@ export function KoreanLevelOneLessonTwoBook({
     </Page>,
     <Page key="02-29" number="29">
       <Divider
-        step="STEP 08"
+        step="第八步"
         title="自测与复盘"
         goal="用词汇、语法、阅读和口语四类任务确认自己是否真正具备本课能力。"
         icon={<CheckCircle2 size={24} />}
@@ -1681,7 +1681,7 @@ export function KoreanLevelOneLessonTwoBook({
             mobileScrollSupport
             swipeDistance={24}
             clickEventForward
-            useMouseEvents={false}
+            useMouseEvents={true}
             showPageCorners={false}
             disableFlipByClick
             onFlip={(event) => onPageChange?.(event.data)}

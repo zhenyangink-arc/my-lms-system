@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useActionState, useState } from "react";
 import { MoreHorizontal } from "lucide-react";
@@ -56,10 +56,9 @@ export function PlatformAccountTableActions({
     <Dialog>
       <DialogTrigger
         type="button"
-        className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]"
+        className="inline-flex h-8 items-center rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]"
         style={{ borderColor: "var(--app-border)" }}
       >
-        <MoreHorizontal size={14} />
         管理
       </DialogTrigger>
       <DialogContent className="max-w-[720px] gap-0 overflow-hidden p-0">

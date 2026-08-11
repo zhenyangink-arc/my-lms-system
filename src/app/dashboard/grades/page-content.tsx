@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import {
   ArrowRight,
   Award,
@@ -16,12 +17,14 @@ import {
   ASSIGNMENT_TYPE_LABELS,
   type AssignmentType,
 } from "@/app/dashboard/assignments/config";
+import { LocalDateTime } from "@/components/LocalDateTime";
 import { getGradeCenterAccess } from "@/lib/grade-center";
+import { canUseStudentFeature } from "@/lib/student-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { GradeReviewForm } from "./GradeReviewForm";
 import {
+  GRADE_DATE_TIME_OPTIONS,
   GRADE_REVIEW_STATUS_LABELS,
-  gradeDateFormatter,
   gradeLevel,
   type GradeReviewStatus,
 } from "./config";
@@ -124,9 +127,18 @@ function reviewTone(status: GradeReviewStatus) {
 }
 
 export default async function GradesPage() {
-  const { supabase, user, role, canManage } = await getGradeCenterAccess();
-  const admin = createAdminClient();
+  const { supabase, user, role, canManage, membershipTier } =
+    await getGradeCenterAccess();
   const isStudent = role === "student";
+
+  // 服务端必须自己校验会员档位：之前只靠前端隐藏入口，chapter_test_attempts 等表的
+  // RLS 又没有统一按 student_feature_allowed 收紧，普通档位学生直连这个路由仍能看到
+  // 部分成绩数据（各表 RLS 尺度不一致，出现"服务端放行、RLS 拒绝"的不一致体验）。
+  if (isStudent && !canUseStudentFeature(role, membershipTier, "learning_assignments")) {
+    redirect("/dashboard");
+  }
+
+  const admin = createAdminClient();
 
   const [
     assignmentsResult,
@@ -526,7 +538,7 @@ export default async function GradesPage() {
                         )}
                       </td>
                       <td className="app-muted-text px-3 py-4 text-[10px]">
-                        {gradeDateFormatter.format(new Date(result.recordedAt))}
+                        <LocalDateTime value={result.recordedAt} options={GRADE_DATE_TIME_OPTIONS} />
                       </td>
                       <td className="px-5 py-4">
                         <Link
@@ -549,7 +561,7 @@ export default async function GradesPage() {
                     </tr>
                   );
                 })}
-                {results.length === 0 && (
+                {results.length === 0 && !dataError && (
                   <tr>
                     <td
                       colSpan={6}

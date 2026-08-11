@@ -1,7 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowLeft,
   Bookmark,
@@ -61,7 +61,18 @@ const books = [
   ...KOREAN_LEVEL_ONE_LESSONS,
 ];
 
-const EFFECTIVE_READING_DELAY_MS = 8_000;
+
+/** 阅读计时（时间制）：累计阅读秒数 → "MM:SS" 格式。 */
+function formatReadingTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
+/** 时间制进度：10 分钟 = 100%（与学生端口径一致）。 */
+function readingTimePercent(totalSeconds: number) {
+  return Math.min(100, Math.round((totalSeconds / 600) * 100));
+}
 
 export function KoreanLevelOneReader({
   backHref,
@@ -99,6 +110,7 @@ export function KoreanLevelOneReader({
   );
   const [ebookProgress, setEbookProgress] =
     useState<KoreanEbookProgressMap>(initialEbookProgress);
+  const [accumulatedSeconds, setAccumulatedSeconds] = useState<Record<string, number>>({});
   const [selectedBookIndex, setSelectedBookIndex] = useState(
     initialSelectedBookIndex
   );
@@ -121,7 +133,15 @@ export function KoreanLevelOneReader({
           100,
           Math.round(((currentPage + 2) / selectedPageCount) * 100)
         )
-      : ebookProgress[selectedTestSlug]?.progressPercent ?? 0;
+      : Math.min(
+          100,
+          Math.round(
+            (((ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
+              (accumulatedSeconds[selectedTestSlug] ?? 0)) /
+              600) *
+              100
+          )
+        );
   const initialSelectedPage =
     selectedTestSlug === null
       ? 0
@@ -161,49 +181,62 @@ export function KoreanLevelOneReader({
     }
   }
 
+  // —— 阅读计时：进度按累计阅读时长计算（单本教材 10 分钟 = 100%）——
+  const bookStartRef = useRef<number>(0);
+  const testSlugRef = useRef(selectedTestSlug);
+  const currentPageRef2 = useRef(currentPage);
+  const pageCountRef = useRef(selectedPageCount);
+  const ebookProgressRef2 = useRef(ebookProgress);
   useEffect(() => {
-    if (!selectedTestSlug || trackingDisabled) return;
-    const testSlug = selectedTestSlug;
-    const boundedPage = Math.min(
-      Math.max(0, currentPage),
-      selectedPageCount - 1
-    );
-    const visiblePages = [boundedPage, boundedPage + 1].filter(
-      (page) => page < selectedPageCount
-    );
-    const timeoutId = window.setTimeout(() => {
-      setEbookProgress((current) => {
-        const previous = current[testSlug];
-        const readPages = Array.from(
-          new Set([...(previous?.readPages ?? []), ...visiblePages])
-        ).sort((a, b) => a - b);
-        return {
-          ...current,
-          [testSlug]: {
-            currentPage: boundedPage,
-            totalPages: selectedPageCount,
-            readPages,
-            progressPercent: Math.round(
-              (readPages.length / selectedPageCount) * 100
-            ),
-          },
-        };
-      });
-      void saveKoreanEbookProgressAction({
-        testSlug,
-        currentPage: boundedPage,
-        totalPages: selectedPageCount,
-        readPages: visiblePages,
-      });
-    }, EFFECTIVE_READING_DELAY_MS);
+    if (bookStartRef.current === 0) {
+      bookStartRef.current = Date.now();
+    }
+    testSlugRef.current = selectedTestSlug;
+    currentPageRef2.current = currentPage;
+    pageCountRef.current = selectedPageCount;
+    ebookProgressRef2.current = ebookProgress;
+  }, [selectedTestSlug, currentPage, selectedPageCount, ebookProgress]);
 
-    return () => window.clearTimeout(timeoutId);
-  }, [
-    currentPage,
-    selectedPageCount,
-    selectedTestSlug,
-    trackingDisabled,
-  ]);
+  // 本会话已流逝秒数：每秒刷新，让右上角计时实时走动。
+  const [liveElapsed, setLiveElapsed] = useState(0);
+  useEffect(() => {
+    const tick = window.setInterval(() => {
+      setLiveElapsed(Math.floor((Date.now() - bookStartRef.current) / 1000));
+    }, 1000);
+    return () => window.clearInterval(tick);
+  }, [selectedTestSlug, trackingDisabled]);
+
+  function flushReadingTime() {
+    const slug = testSlugRef.current;
+    if (!slug) return;
+    const elapsed = Math.floor((Date.now() - bookStartRef.current) / 1000);
+    if (elapsed <= 0) return;
+    bookStartRef.current = Date.now();
+    setAccumulatedSeconds((prev) => ({
+      ...prev,
+      [slug]: (prev[slug] ?? 0) + elapsed,
+    }));
+    void saveKoreanEbookProgressAction({
+      testSlug: slug,
+      // 本地没有该本书的进度快照时，不传页码，避免用 0 覆盖已保存的阅读位置。
+      currentPage: ebookProgressRef2.current[slug]
+        ? currentPageRef2.current
+        : null,
+      totalPages: pageCountRef.current,
+      readPages: [],
+      readingSeconds: elapsed,
+    });
+  }
+
+  // 进入教材重置计时起点；每 30 秒把心跳时长写入数据库；切书/卸载时先落库。
+  useEffect(() => {
+    bookStartRef.current = Date.now();
+    const timer = window.setInterval(flushReadingTime, 30_000);
+    return () => {
+      flushReadingTime();
+      window.clearInterval(timer);
+    };
+  }, [selectedTestSlug, trackingDisabled]);
 
   useEffect(() => {
     const timeoutId = window.setTimeout(() => {
@@ -331,10 +364,31 @@ export function KoreanLevelOneReader({
           </button>
           <div className="hidden text-right sm:block">
             <p className="text-[11px] font-bold text-[#83948b]">阅读进度</p>
-            <p className="text-sm font-black text-[#238777]">{progress}%</p>
+            <p className="text-sm font-black text-[#238777]">
+              {selectedTestSlug === null
+                ? `${progress}%`
+                : formatReadingTime(
+                    (ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
+                      (accumulatedSeconds[selectedTestSlug] ?? 0) +
+                      liveElapsed
+                  )}
+            </p>
           </div>
           <div className="hidden h-2 w-20 overflow-hidden rounded-full bg-[#e5ece8] 2xl:block">
-            <div className="h-full rounded-full bg-[#2c9a87] transition-all" style={{ width: `${progress}%` }} />
+            <div
+              className="h-full rounded-full bg-[#2c9a87] transition-all"
+              style={{
+                width: `${
+                  selectedTestSlug === null
+                    ? progress
+                    : readingTimePercent(
+                        (ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
+                          (accumulatedSeconds[selectedTestSlug] ?? 0) +
+                          liveElapsed
+                      )
+                }%`,
+              }}
+            />
           </div>
           <button
             type="button"
@@ -659,7 +713,7 @@ export function KoreanLevelOneReader({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">QUICK REFERENCE</p>
+                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">快速参考</p>
                 <h2 id="level-one-reference-title" className="mt-2 text-2xl font-black text-[#173f4a]">韩国语 1 级常用表达</h2>
                 <p className="mt-2 text-sm text-[#71857b]">点击韩语表达即可按当前速度播放发音。</p>
               </div>
