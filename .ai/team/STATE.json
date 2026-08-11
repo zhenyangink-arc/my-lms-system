@@ -1,0 +1,11 @@
+{
+  "status": "IDLE",
+  "iteration": 0,
+  "max_iterations": 3,
+  "current_task": null,
+  "completed_tasks": [],
+  "last_review": null,
+  "review_attempt": 0,
+  "max_review_attempts": 3,
+  "next_action": "WAIT_FOR_GOAL"
+}
