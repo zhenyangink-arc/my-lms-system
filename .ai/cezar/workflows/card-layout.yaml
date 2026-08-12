@@ -1,0 +1,8 @@
+name: card-layout
+description: "Direct Codex worker for card add/remove/move layout tasks"
+
+steps:
+  - id: card-layout-worker
+    name: Card Layout Worker
+    command: |
+      .ai/scripts/run-card-layout.sh "{{task}}"
