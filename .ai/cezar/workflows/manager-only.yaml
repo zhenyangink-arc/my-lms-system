@@ -1,8 +1,11 @@
 name: manager-only
-description: Claude Manager only - for external Codex Worker testing
+description: "Claude Manager for Codex Worker + Claude Reviewer workflow"
+
 steps:
   - id: manager
     name: Claude Manager
+    runner: claude
+    model: claude-sonnet-5
     prompt: |
       你是项目 Manager。
 
@@ -32,5 +35,3 @@ steps:
 
       如果整体目标已经完成，则输出：
       OVERALL_STATUS: DONE
-    model: sonnet
-    runner: claude

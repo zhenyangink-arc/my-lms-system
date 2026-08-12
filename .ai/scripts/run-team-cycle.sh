@@ -25,10 +25,13 @@ echo "Worktree: $WORKTREE_PATH"
 echo "Branch: $(git branch --show-current)"
 echo
 
-MAX_REVIEW_ATTEMPTS="$(python - <<'PY'
+MAX_REVIEW_ATTEMPTS="$(
+python - <<'PY'
 import json
+
 with open(".ai/team/STATE.json", encoding="utf-8") as f:
     state = json.load(f)
+
 print(state.get("max_review_attempts", 3))
 PY
 )"
@@ -77,6 +80,8 @@ while true; do
 3. 不允许使用 PASS。或 REJECT。代替机器状态行
 4. 除 REVIEW.md 和 PROGRESS.md 外不得修改其他文件
 5. 使用中文。" \
+    --model claude-sonnet-5 \
+    --effort low \
     --allowedTools "Read" "Write" "Edit" \
     "Bash(git status:*)" \
     "Bash(git diff:*)" \
@@ -157,6 +162,8 @@ Reviewer 已正式给出 RESULT: PASS。
 
 不得修改任何业务文件。
 使用中文。" \
+      --model claude-sonnet-5 \
+      --effort low \
       --allowedTools "Read" "Write" "Edit"
 
     echo
@@ -169,7 +176,6 @@ Reviewer 已正式给出 RESULT: PASS。
 
     exit 0
   fi
-
 
   #
   # Reviewer REJECT
@@ -231,20 +237,28 @@ Reviewer 已正式给出 RESULT: REJECT。
 
 不得修改任何业务文件。
 使用中文。" \
+    --model claude-sonnet-5 \
+    --effort low \
     --allowedTools "Read" "Write" "Edit"
 
-  REVIEW_ATTEMPT="$(python - <<'PY'
+  REVIEW_ATTEMPT="$(
+  python - <<'PY'
 import json
+
 with open(".ai/team/STATE.json", encoding="utf-8") as f:
     state = json.load(f)
+
 print(state.get("review_attempt", 0))
 PY
 )"
 
-  STATUS="$(python - <<'PY'
+  STATUS="$(
+  python - <<'PY'
 import json
+
 with open(".ai/team/STATE.json", encoding="utf-8") as f:
     state = json.load(f)
+
 print(state.get("status", "UNKNOWN"))
 PY
 )"
