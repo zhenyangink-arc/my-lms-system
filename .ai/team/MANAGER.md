@@ -305,3 +305,44 @@ Manager 必须尽量减少无意义的上下文读取。
 如果需要人工批准：
 
 `HUMAN_APPROVAL_REQUIRED`
+
+
+## 进度日志
+
+Manager 每次开始工作、生成任务、等待下一角色、完成判断时，都必须向：
+
+`.ai/team/PROGRESS.log`
+
+追加一行状态日志。
+
+日志格式必须是：
+
+`YYYY-MM-DD HH:MM:SS | MANAGER | STATUS | MESSAGE`
+
+STATUS 只使用：
+
+- START
+- RUNNING
+- WAITING
+- DONE
+- BLOCKED
+
+示例：
+
+`2026-08-12 12:30:00 | MANAGER | START | 开始读取 GOAL、STATE 和 REVIEW`
+
+`2026-08-12 12:30:15 | MANAGER | RUNNING | 正在分析当前项目状态并决定下一子任务`
+
+`2026-08-12 12:30:40 | MANAGER | WAITING | NEXT_TASK 已生成，等待 Worker`
+
+`2026-08-12 12:35:00 | MANAGER | DONE | 整体目标已完成`
+
+要求：
+
+- 每次开始执行时必须写 START
+- 每个重要阶段至少写一次 RUNNING
+- 等待 Worker 或 Reviewer 时必须写 WAITING
+- 整体目标完成时必须写 DONE
+- 遇到需要人工确认或阻塞时写 BLOCKED
+- 日志只能追加，不得删除或覆盖已有内容
+- 不要把大量分析内容写入日志，只写一句简短状态

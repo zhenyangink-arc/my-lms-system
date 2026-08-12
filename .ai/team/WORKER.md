@@ -409,3 +409,50 @@ Worker 必须尽量节省上下文和 Token。
 - 修改了什么
 - 验证结果
 - 是否存在阻塞
+
+
+## 进度日志
+
+Worker 每次开始执行、处理中、完成修改、验证结束、遇到阻塞时，都必须向：
+
+`.ai/team/PROGRESS.log`
+
+追加一行状态日志。
+
+日志格式必须是：
+
+`YYYY-MM-DD HH:MM:SS | WORKER | STATUS | MESSAGE`
+
+STATUS 只使用：
+
+- START
+- RUNNING
+- WAITING
+- DONE
+- BLOCKED
+
+示例：
+
+`2026-08-12 12:31:00 | WORKER | START | 开始读取 NEXT_TASK 并确认允许修改范围`
+
+`2026-08-12 12:31:20 | WORKER | RUNNING | 正在修改 README.md`
+
+`2026-08-12 12:32:00 | WORKER | RUNNING | 修改完成，正在执行最小必要验证`
+
+`2026-08-12 12:32:30 | WORKER | DONE | 已完成任务并写入 WORKER_REPORT`
+
+如果遇到高风险操作、权限问题或任务无法继续：
+
+`2026-08-12 12:32:30 | WORKER | BLOCKED | 需要人工确认`
+
+要求：
+
+- 开始执行时必须写 START
+- 每个重要阶段至少写一次 RUNNING
+- 完成修改并验证通过后写 DONE
+- 需要等待外部条件时写 WAITING
+- 遇到阻塞或需要人工确认时写 BLOCKED
+- 日志只能追加，不得删除或覆盖已有内容
+- 不要把详细分析、代码内容或完整命令输出写进日志
+- 每条日志只写一句简短状态
+

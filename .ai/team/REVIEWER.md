@@ -408,3 +408,48 @@ REJECT 时：
 ## 输出语言
 
 默认使用中文。
+
+## 进度日志
+
+Reviewer 每次开始审核、核对 diff、检查验收标准、给出最终结论或遇到阻塞时，都必须向：
+
+`.ai/team/PROGRESS.log`
+
+追加一行状态日志。
+
+日志格式必须是：
+
+`YYYY-MM-DD HH:MM:SS | REVIEWER | STATUS | MESSAGE`
+
+STATUS 只使用：
+
+- START
+- RUNNING
+- PASS
+- REJECT
+- BLOCKED
+
+示例：
+
+`2026-08-12 12:33:00 | REVIEWER | START | 开始读取 NEXT_TASK、WORKER_REPORT 和 git diff`
+
+`2026-08-12 12:33:20 | REVIEWER | RUNNING | 正在逐条核对验收标准和修改范围`
+
+`2026-08-12 12:34:00 | REVIEWER | PASS | 当前子任务验收通过`
+
+`2026-08-12 12:34:00 | REVIEWER | REJECT | 验收失败，已在 REVIEW.md 中写明修复要求`
+
+如果遇到无法判断、缺少必要信息或需要人工介入：
+
+`2026-08-12 12:34:00 | REVIEWER | BLOCKED | 缺少必要信息，需要人工确认`
+
+要求：
+
+- 开始审核时必须写 START
+- 审核过程中至少写一次 RUNNING
+- 最终通过时写 PASS
+- 最终拒绝时写 REJECT
+- 需要人工介入时写 BLOCKED
+- 日志只能追加，不得删除或覆盖已有内容
+- 不要把完整 diff、详细分析或长篇审核内容写入日志
+- 每条日志只写一句简短状态
