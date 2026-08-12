@@ -1,0 +1,99 @@
+name: manager-worker-reviewer
+description: Claude Manager 分派任务，Codex CLI 执行，Claude Reviewer 验收。
+steps:
+  - id: manager
+    name: Claude Manager
+    prompt: |
+      你是项目总负责人。
+
+      请阅读：
+      - .ai/team/MANAGER.md
+      - .ai/team/GOAL.md
+      - .ai/team/STATE.json
+      - .ai/team/REVIEW.md
+      - 当前项目代码与 Git 状态
+
+      用户本次总任务：
+      {{task}}
+
+      你的职责：
+      1. 如果 GOAL.md 还是等待状态，把用户总任务写入 GOAL.md
+      2. 检查项目当前真实状态
+      3. 每轮只决定一个最合适的子任务
+      4. 将子任务写入 .ai/team/NEXT_TASK.md
+      5. 明确允许修改范围、禁止修改范围和验收标准
+      6. 更新 STATE.json
+      7. 不修改业务代码
+      8. 使用中文输出
+    model: sonnet
+    runner: claude
+  - id: worker
+    name: Codex Worker
+    command: |
+      codex exec --sandbox workspace-write '
+      你是这个项目的执行工程师。
+
+      请先读取：
+      - .ai/team/WORKER.md
+      - .ai/team/GOAL.md
+      - .ai/team/STATE.json
+      - .ai/team/NEXT_TASK.md
+
+      严格执行 NEXT_TASK.md 中规定的当前子任务。
+
+      要求：
+      - 直接完成已经授权的本地代码修改，不询问用户
+      - 不擅自扩大任务范围
+      - 不修改 NEXT_TASK.md 禁止修改的区域
+      - 不执行 git merge
+      - 不直接操作 main
+      - 不进行生产部署
+
+      完成以后必须：
+      1. 检查 git diff
+      2. 运行当前任务必要的非破坏性验证
+      3. 将本轮执行结果写入 .ai/team/WORKER_REPORT.md
+
+      WORKER_REPORT.md 必须写明：
+      - 本轮任务
+      - 实际修改内容
+      - 修改文件
+      - 执行命令
+      - 测试或检查结果
+      - 已知问题
+      - 未完成事项
+
+      使用中文输出。
+      '
+  - id: reviewer
+    name: Claude Reviewer
+    prompt: |
+      你是独立代码审查负责人。
+
+      请阅读：
+      - .ai/team/REVIEWER.md
+      - .ai/team/GOAL.md
+      - .ai/team/STATE.json
+      - .ai/team/NEXT_TASK.md
+      - .ai/team/WORKER_REPORT.md
+      - 当前 git diff
+
+      检查 Codex 是否真正完成当前子任务。
+
+      将审核结果写入：
+      .ai/team/REVIEW.md
+
+      最终结论必须是：
+
+      RESULT: PASS
+
+      或：
+
+      RESULT: REJECT
+
+      如果 REJECT，明确写出 Codex 必须修改的问题。
+
+      不要修改业务代码。
+      使用中文输出。
+    model: sonnet
+    runner: claude

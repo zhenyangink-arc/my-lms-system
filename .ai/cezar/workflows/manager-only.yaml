@@ -1,0 +1,36 @@
+name: manager-only
+description: Claude Manager only - for external Codex Worker testing
+steps:
+  - id: manager
+    name: Claude Manager
+    prompt: |
+      你是项目 Manager。
+
+      请先严格读取：
+      - .ai/team/MANAGER.md
+      - .ai/team/GOAL.md
+      - .ai/team/STATE.json
+      - .ai/team/REVIEW.md
+
+      用户本次整体目标：
+      {{task}}
+
+      按 MANAGER.md 的规则执行。
+
+      如果 GOAL.md 仍处于等待状态，将用户整体目标写入 GOAL.md。
+
+      检查当前项目状态后，每轮只生成一个明确子任务。
+
+      必须更新：
+      - .ai/team/NEXT_TASK.md
+      - .ai/team/STATE.json
+
+      不修改业务代码。
+
+      最后明确输出：
+      OVERALL_STATUS: NOT_DONE
+
+      如果整体目标已经完成，则输出：
+      OVERALL_STATUS: DONE
+    model: sonnet
+    runner: claude
