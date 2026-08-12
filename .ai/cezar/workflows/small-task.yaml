@@ -1,0 +1,7 @@
+name: small-task
+description: Direct Codex low-effort worker for small UI/text/routing tasks
+steps:
+  - id: small-worker
+    name: Small Codex Worker
+    command: |
+      .ai/scripts/run-small.sh "{{task}}"
