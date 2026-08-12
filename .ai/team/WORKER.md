@@ -415,7 +415,7 @@ Worker 必须尽量节省上下文和 Token。
 
 Worker 每次开始执行、处理中、完成修改、验证结束、遇到阻塞时，都必须向：
 
-`.ai/team/PROGRESS.log`
+`.ai/team/PROGRESS.md`
 
 追加一行状态日志。
 

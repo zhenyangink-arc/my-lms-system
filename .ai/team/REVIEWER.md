@@ -413,7 +413,7 @@ REJECT 时：
 
 Reviewer 每次开始审核、核对 diff、检查验收标准、给出最终结论或遇到阻塞时，都必须向：
 
-`.ai/team/PROGRESS.log`
+`.ai/team/PROGRESS.md`
 
 追加一行状态日志。
 

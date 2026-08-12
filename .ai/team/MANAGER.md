@@ -311,7 +311,7 @@ Manager 必须尽量减少无意义的上下文读取。
 
 Manager 每次开始工作、生成任务、等待下一角色、完成判断时，都必须向：
 
-`.ai/team/PROGRESS.log`
+`.ai/team/PROGRESS.md`
 
 追加一行状态日志。
 
