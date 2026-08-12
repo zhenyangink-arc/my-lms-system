@@ -1086,10 +1086,8 @@ export default async function DashboardHomePage() {
               })}
             </div>
           </section>
-        </div>
-      </div>
 
-      {recentActivity.length > 0 && (
+          {recentActivity.length > 0 && (
             <section className="app-glass-card mt-5 rounded-[20px] p-4 sm:p-5">
               <div className="mb-4 flex items-center gap-2">
                 <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
@@ -1142,6 +1140,8 @@ export default async function DashboardHomePage() {
               </div>
             </section>
           )}
+        </div>
+      </div>
     </div>
   );
 }
