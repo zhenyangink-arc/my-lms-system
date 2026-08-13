@@ -1,7 +1,8 @@
-﻿"use client";
+"use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import type { GrowthToolboxVocabularyWord } from "@/features/growth-toolbox/api/types";
 import {
   BookOpen,
   BookOpenCheck,
@@ -12,6 +13,7 @@ import {
   Plus,
   Search,
   Trash2,
+  Volume2,
   X,
 } from "lucide-react";
 
@@ -72,7 +74,7 @@ export type CourseTree = {
         number: number;
         slug: string;
         vocabularyCount: number;
-        vocabularyNodes: { id: string; vocabulary: VocabularyWord[] }[];
+        vocabularyNodes: { id: string; vocabulary: GrowthToolboxVocabularyWord[] }[];
       }[];
     }[];
   }[];
@@ -121,6 +123,7 @@ export function GrowthToolboxManager({
   vocabularyLibrary: VocabularyLibraryItem[];
   grammarLibrary: GrammarLibraryItem[];
 }) {
+  const router = useRouter();
   const [collapsed, setCollapsed] = useState<Set<string>>(() => {
     try {
       const raw = window.localStorage.getItem("gtb-course-tree-collapsed");

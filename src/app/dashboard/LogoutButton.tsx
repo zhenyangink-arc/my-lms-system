@@ -23,7 +23,13 @@ import {
   2. 文字隐藏，只显示退出图标
   3. 用原生 title 属性做 hover 文字提示，跟侧边栏其他收缩项的提示方式一致
 */
-export function LogoutButton({ collapsed = false }: { collapsed?: boolean }) {
+export function LogoutButton({
+  collapsed = false,
+  appearance = "default",
+}: {
+  collapsed?: boolean;
+  appearance?: "default" | "menu";
+}) {
   async function handleLogout() {
     const supabase = createClient();
 
@@ -37,11 +43,25 @@ export function LogoutButton({ collapsed = false }: { collapsed?: boolean }) {
     <AlertDialog>
       <AlertDialogTrigger
         title={collapsed ? "退出登录" : undefined}
-        className={`inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium shadow-sm transition hover:bg-gray-50 ${
-          collapsed ? "w-9" : "w-full px-3"
-        }`}
+        role={appearance === "menu" ? "menuitem" : undefined}
+        className={
+          appearance === "menu"
+            ? "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            : `inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium shadow-sm transition hover:bg-gray-50 ${
+                collapsed ? "w-9" : "w-full px-3"
+              }`
+        }
       >
-        {collapsed ? <LogOut size={16} /> : "退出登录"}
+        {appearance === "menu" ? (
+          <>
+            <LogOut aria-hidden="true" size={16} />
+            退出登录
+          </>
+        ) : collapsed ? (
+          <LogOut size={16} />
+        ) : (
+          "退出登录"
+        )}
       </AlertDialogTrigger>
 
       <AlertDialogContent>

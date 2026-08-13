@@ -33,6 +33,7 @@ type AgentChatResponse = {
 type GuideAgentChatProps = {
   studentId: string;
   dashboardBasePath: string;
+  triggerVariant?: "dashboard" | "portal";
 };
 
 type GuideAgentAction = {
@@ -64,6 +65,7 @@ function isGuideAgentAction(value: unknown): value is GuideAgentAction {
 export function GuideAgentChat({
   studentId,
   dashboardBasePath,
+  triggerVariant = "dashboard",
 }: GuideAgentChatProps) {
   const router = useRouter();
   const {
@@ -253,30 +255,44 @@ export function GuideAgentChat({
 
   return (
     <>
-      <button
-        type="button"
-        aria-label={isOpen ? "收起智能辅助" : "打开智能辅助"}
-        aria-expanded={isOpen}
-        aria-controls="guide-agent-chat-panel"
-        onClick={() => setIsOpen((current) => !current)}
-        className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight transition hover:-translate-y-0.5 sm:px-4 sm:text-lg"
-        style={{
-          color: isOpen ? "var(--app-accent-strong)" : "var(--app-text)",
-          borderColor: isOpen ? "var(--app-accent)" : undefined,
-        }}
-      >
-        <span className="relative">
+      {triggerVariant === "portal" ? (
+        <button
+          type="button"
+          aria-label={isOpen ? "收起学习助手" : "打开学习助手"}
+          title="学习助手"
+          aria-expanded={isOpen}
+          aria-controls="guide-agent-chat-panel"
+          onClick={() => setIsOpen((current) => !current)}
+          className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+        >
           <Bot size={18} aria-hidden="true" />
-          <span
-            className="absolute -right-1 -top-1 h-2 w-2 rounded-full ring-2"
-            style={{
-              backgroundColor: "var(--app-success)",
-              boxShadow: "0 0 0 2px var(--app-card-bg)",
-            }}
-          />
-        </span>
-        <span>智能辅助</span>
-      </button>
+        </button>
+      ) : (
+        <button
+          type="button"
+          aria-label={isOpen ? "收起智能辅助" : "打开智能辅助"}
+          aria-expanded={isOpen}
+          aria-controls="guide-agent-chat-panel"
+          onClick={() => setIsOpen((current) => !current)}
+          className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight transition hover:-translate-y-0.5 sm:px-4 sm:text-lg"
+          style={{
+            color: isOpen ? "var(--app-accent-strong)" : "var(--app-text)",
+            borderColor: isOpen ? "var(--app-accent)" : undefined,
+          }}
+        >
+          <span className="relative">
+            <Bot size={18} aria-hidden="true" />
+            <span
+              className="absolute -right-1 -top-1 h-2 w-2 rounded-full ring-2"
+              style={{
+                backgroundColor: "var(--app-success)",
+                boxShadow: "0 0 0 2px var(--app-card-bg)",
+              }}
+            />
+          </span>
+          <span>智能辅助</span>
+        </button>
+      )}
 
       {isOpen && (
         <section
@@ -494,28 +510,30 @@ export function GuideAgentChat({
         </section>
       )}
 
-      <button
-        type="button"
-        aria-label={isOpen ? "收起学习助手" : "打开学习助手"}
-        aria-expanded={isOpen}
-        aria-controls="guide-agent-chat-panel"
-        onClick={() => setIsOpen((current) => !current)}
-        className="fixed bottom-20 right-4 z-[91] flex h-14 items-center justify-center gap-2 rounded-full px-4 text-sm font-black text-white shadow-[0_12px_34px_rgba(15,23,42,0.24)] transition hover:-translate-y-1 md:bottom-6 md:right-6"
-        style={{
-          background: isOpen
-            ? "linear-gradient(135deg, var(--app-secondary), var(--app-warm))"
-            : "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
-        }}
-      >
-        {isOpen ? (
-          <X size={20} aria-hidden="true" />
-        ) : (
-          <MessageCircleMore size={20} aria-hidden="true" />
-        )}
-        <span className="hidden sm:inline">
-          {isOpen ? "收起助手" : "问问学习助手"}
-        </span>
-      </button>
+      {triggerVariant === "dashboard" && (
+        <button
+          type="button"
+          aria-label={isOpen ? "收起学习助手" : "打开学习助手"}
+          aria-expanded={isOpen}
+          aria-controls="guide-agent-chat-panel"
+          onClick={() => setIsOpen((current) => !current)}
+          className="fixed bottom-20 right-4 z-[91] flex h-14 items-center justify-center gap-2 rounded-full px-4 text-sm font-black text-white shadow-[0_12px_34px_rgba(15,23,42,0.24)] transition hover:-translate-y-1 md:bottom-6 md:right-6"
+          style={{
+            background: isOpen
+              ? "linear-gradient(135deg, var(--app-secondary), var(--app-warm))"
+              : "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+          }}
+        >
+          {isOpen ? (
+            <X size={20} aria-hidden="true" />
+          ) : (
+            <MessageCircleMore size={20} aria-hidden="true" />
+          )}
+          <span className="hidden sm:inline">
+            {isOpen ? "收起助手" : "问问学习助手"}
+          </span>
+        </button>
+      )}
     </>
   );
 }

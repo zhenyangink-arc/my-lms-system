@@ -1005,6 +1005,60 @@ export default async function DashboardHomePage() {
             )}
           </section>
 
+          {recentActivity.length > 0 && (
+            <section className="app-glass-card mt-5 rounded-[20px] p-4 sm:p-5">
+              <div className="mb-4 flex items-center gap-2">
+                <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
+                <p className="text-lg font-black">最近学习记录</p>
+              </div>
+              <div className="divide-y app-divider">
+                {recentActivity.slice(0, 4).map((item) => {
+                  const content = (
+                    <div className="flex items-center gap-3 py-3 transition hover:opacity-75">
+                      {item.status === "completed" ? (
+                        <CheckCircle2 size={18} className="shrink-0" style={{ color: "var(--app-success)" }} aria-hidden="true" />
+                      ) : (
+                        <PlayCircle size={18} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />
+                      )}
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-black">{item.lessonTitle}</span>
+                        <span className="mt-0.5 block truncate text-xs app-muted-text">
+                          {item.courseTitle}
+                        </span>
+                        <span className="mt-1 block text-[10px] font-semibold app-muted-text">
+                          最后学习：
+                          <LocalDateTime
+                            value={item.lastViewedAt}
+                            options={RECENT_ACTIVITY_DATE_TIME_OPTIONS}
+                          />
+                        </span>
+                      </span>
+                      <span className="flex shrink-0 flex-col items-end gap-1.5">
+                        <span
+                          className="rounded-full px-2.5 py-1 text-xs font-black"
+                          style={{
+                            color: "var(--app-accent-strong)",
+                            backgroundColor: "var(--app-accent-soft)",
+                          }}
+                        >
+                          {Math.min(100, Math.max(0, item.progressPercent))}%
+                        </span>
+                        <span className="text-[10px] font-bold app-muted-text">
+                          {statusLabelMap[item.status] ?? item.status}
+                        </span>
+                      </span>
+                    </div>
+                  );
+                  return item.href ? (
+                    <Link key={item.lessonId} href={item.href}>{content}</Link>
+                  ) : (
+                    <div key={item.lessonId}>{content}</div>
+                  );
+                })}
+              </div>
+            </section>
+          )}
+
         </div>
 
         <div className="flex min-w-0 flex-col gap-5">
@@ -1086,62 +1140,9 @@ export default async function DashboardHomePage() {
               })}
             </div>
           </section>
+
         </div>
       </div>
-
-      {recentActivity.length > 0 && (
-            <section className="app-glass-card mt-5 rounded-[20px] p-4 sm:p-5">
-              <div className="mb-4 flex items-center gap-2">
-                <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                <p className="text-lg font-black">最近学习记录</p>
-              </div>
-              <div className="divide-y app-divider">
-                {recentActivity.slice(0, 4).map((item) => {
-                  const content = (
-                    <div className="flex items-center gap-3 py-3 transition hover:opacity-75">
-                      {item.status === "completed" ? (
-                        <CheckCircle2 size={18} className="shrink-0" style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                      ) : (
-                        <PlayCircle size={18} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-                      )}
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black">{item.lessonTitle}</span>
-                        <span className="mt-0.5 block truncate text-xs app-muted-text">
-                          {item.courseTitle}
-                        </span>
-                        <span className="mt-1 block text-[10px] font-semibold app-muted-text">
-                          最后学习：
-                          <LocalDateTime
-                            value={item.lastViewedAt}
-                            options={RECENT_ACTIVITY_DATE_TIME_OPTIONS}
-                          />
-                        </span>
-                      </span>
-                      <span className="flex shrink-0 flex-col items-end gap-1.5">
-                        <span
-                          className="rounded-full px-2.5 py-1 text-xs font-black"
-                          style={{
-                            color: "var(--app-accent-strong)",
-                            backgroundColor: "var(--app-accent-soft)",
-                          }}
-                        >
-                          {Math.min(100, Math.max(0, item.progressPercent))}%
-                        </span>
-                        <span className="text-[10px] font-bold app-muted-text">
-                          {statusLabelMap[item.status] ?? item.status}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                  return item.href ? (
-                    <Link key={item.lessonId} href={item.href}>{content}</Link>
-                  ) : (
-                    <div key={item.lessonId}>{content}</div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
     </div>
   );
 }

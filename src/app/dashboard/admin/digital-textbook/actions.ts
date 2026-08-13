@@ -63,8 +63,8 @@ function normalizeCases(raw: Partial<GrammarItem>): GrammarCaseRow[] {
       .filter((row) => row.batchim || row.conjugation);
   }
   // 旧格式兑底：batchim 按“／”拆、conjugation 按“；”拆，按位置对齐成行
-  const batchims = String(raw.batchim ?? "").split("／").map((line) => line.trim()).filter(Boolean);
-  const conjugations = String(raw.conjugation ?? "").split("；").map((line) => line.trim()).filter(Boolean);
+  const batchims = String((raw as Partial<GrammarItem> & { batchim?: string }).batchim ?? "").split("／").map((line) => line.trim()).filter(Boolean);
+  const conjugations = String((raw as Partial<GrammarItem> & { conjugation?: string }).conjugation ?? "").split("；").map((line) => line.trim()).filter(Boolean);
   const count = Math.max(batchims.length, conjugations.length);
   return Array.from({ length: count }, (_, index) => ({
     batchim: batchims[index] ?? "",
@@ -83,9 +83,9 @@ function normalizeRows(raw: Partial<GrammarItem>): GrammarFormRow[] {
       .filter((row) => row.form || row.combination);
   }
   // 旧格式兜底：form/combination/audio 各自用“；”分隔，按位置对齐成行
-  const forms = String(raw.form ?? "").split("；").map((line) => line.trim()).filter(Boolean);
-  const combos = String(raw.combination ?? "").split("；").map((line) => line.trim()).filter(Boolean);
-  const audios = String(raw.audio ?? "").split("；").map((line) => line.trim()).filter(Boolean);
+  const forms = String((raw as Partial<GrammarItem> & { form?: string }).form ?? "").split("；").map((line) => line.trim()).filter(Boolean);
+  const combos = String((raw as Partial<GrammarItem> & { combination?: string }).combination ?? "").split("；").map((line) => line.trim()).filter(Boolean);
+  const audios = String((raw as Partial<GrammarItem> & { audio?: string }).audio ?? "").split("；").map((line) => line.trim()).filter(Boolean);
   const count = Math.max(forms.length, combos.length);
   return Array.from({ length: count }, (_, index) => ({
     form: forms[index] ?? "",
@@ -113,7 +113,7 @@ function cleanGrammar(raw: Partial<GrammarItem>): GrammarItem {
   };
 }
 
-function grammarOf(content: Record<string, unknown> | null): GrammarItem[] {
+function grammarOf(content: Record<string, unknown> | null | undefined): GrammarItem[] {
   if (!content) return [];
   const raw = Array.isArray(content.grammar) ? content.grammar : [];
   return raw.filter(

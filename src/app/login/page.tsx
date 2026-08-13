@@ -68,7 +68,7 @@ export default function LoginPage() {
     // 不使用客户端软导航：不同角色连续登录时，复用旧 Dashboard 布局会让
     // 服务端导航与客户端缓存不一致，从而触发 hydration mismatch。
     markStudentFullscreenPromptPending();
-    window.location.replace("/dashboard");
+    window.location.replace("/login/redirect");
   }
 
   return (

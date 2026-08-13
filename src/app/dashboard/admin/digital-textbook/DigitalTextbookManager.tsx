@@ -38,6 +38,8 @@ import {
   type GrammarExample,
   type GrammarItem,
   type VocabularyWord,
+  type GrammarCaseRow,
+  type GrammarFormRow,
 } from "./actions";
 
 export type AdminNode = { id: string; vocabulary: VocabularyWord[] };
