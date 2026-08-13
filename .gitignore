@@ -44,3 +44,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Cezar runtime state
+.ai/cezar/runs.json
+.ai/cezar/runs/
+.ai/cezar/ui-state.json
+.ai/cezar/worktrees/
