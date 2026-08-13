@@ -5,7 +5,7 @@ WORKTREE_PATH="${1:-}"
 MODE="${2:-normal}"
 
 if [ -z "$WORKTREE_PATH" ]; then
-  echo "Usage: $0 <cezar-worktree-path>"
+  echo "Usage: $0 <cezar-worktree-path> [--resume-review]"
   exit 1
 fi
 
@@ -15,6 +15,8 @@ if [ ! -d "$WORKTREE_PATH" ]; then
   exit 1
 fi
 
+WORKTREE_PATH="$(cd "$WORKTREE_PATH" && pwd)"
+
 cd "$WORKTREE_PATH"
 
 BRANCH="$(git branch --show-current)"
@@ -23,6 +25,16 @@ if [ "$BRANCH" = "main" ]; then
   echo "ERROR: refusing to run AI team cycle directly on main."
   exit 1
 fi
+
+case "$BRANCH" in
+  cez/*)
+    ;;
+  *)
+    echo "ERROR: 当前不是 Cezar worktree 分支："
+    echo "$BRANCH"
+    exit 1
+    ;;
+esac
 
 # ============================================================
 # Absolute workflow paths
@@ -40,8 +52,10 @@ NEXT_TASK_FILE="$TEAM_DIR/NEXT_TASK.md"
 WORKER_REPORT_FILE="$TEAM_DIR/WORKER_REPORT.md"
 REVIEW_FILE="$TEAM_DIR/REVIEW.md"
 PROGRESS_FILE="$TEAM_DIR/PROGRESS.md"
+CONTEXT_FILE="$TEAM_DIR/CONTEXT.md"
 
 CODEX_WORKER="$WORKTREE_PATH/.ai/scripts/run-codex-worker.sh"
+DELIVERY_SCRIPT="$WORKTREE_PATH/.ai/scripts/merge-done-task-to-main.sh"
 
 for f in \
   "$MANAGER_FILE" \
@@ -52,7 +66,8 @@ for f in \
   "$NEXT_TASK_FILE" \
   "$WORKER_REPORT_FILE" \
   "$REVIEW_FILE" \
-  "$PROGRESS_FILE"
+  "$PROGRESS_FILE" \
+  "$CONTEXT_FILE"
 do
   if [ ! -f "$f" ]; then
     echo "ERROR: missing workflow file:"
@@ -64,6 +79,12 @@ done
 if [ ! -x "$CODEX_WORKER" ]; then
   echo "ERROR: Codex Worker script missing or not executable:"
   echo "$CODEX_WORKER"
+  exit 1
+fi
+
+if [ ! -x "$DELIVERY_SCRIPT" ]; then
+  echo "ERROR: Delivery script missing or not executable:"
+  echo "$DELIVERY_SCRIPT"
   exit 1
 fi
 
@@ -127,7 +148,6 @@ while true; do
   echo "=== Step 2: Claude Lightweight Reviewer ==="
   echo
 
-  # 清空上一轮机器审核结果，防止 Claude 写失败时误读旧 PASS
   cat > "$REVIEW_FILE" <<'EOF'
 # REVIEW
 
@@ -160,70 +180,62 @@ $STATE_FILE
 PROGRESS:
 $PROGRESS_FILE
 
-REVIEW 输出文件:
+CONTEXT:
+$CONTEXT_FILE
+
+REVIEW:
 $REVIEW_FILE
 
-请严格按照 REVIEWER.md 执行。
+先读取：
 
-你的主要任务是比较：
+1. REVIEWER.md
+2. NEXT_TASK.md
+3. WORKER_REPORT.md
+4. STATE.json
+5. PROGRESS.md
 
-NEXT_TASK
-↔
-WORKER_REPORT
+必要时才读取 CONTEXT.md。
 
-不要重新执行 Codex Worker 的工作。
+默认不要：
 
-禁止：
+- 读取业务代码
+- git diff
+- git status
+- test
+- lint
+- typecheck
+- build
+- 扫描项目
+- 重新实现 Worker 的任务
 
-- 扫描整个仓库
-- 默认读取业务代码
-- 执行 git status
-- 执行 git diff
-- 重新运行 test
-- 重新运行 lint
-- 重新运行 typecheck
-- 重新运行 build
-- 修改业务代码
+Codex Worker 负责实际代码修改与验证。
 
-你需要判断以下三种结果之一：
+你的主要职责是：
 
-RESULT: PASS
+比较 NEXT_TASK 与 WORKER_REPORT。
 
-RESULT: REPAIR
+判断：
 
-RESULT: OPTIMIZE
-
-判断优先级：
-
-1. 当前任务是否完整完成
-2. 是否存在 bug
-3. 是否存在验证失败
-4. 是否存在影响当前任务的已知问题
+1. Worker 报告的完成内容是否覆盖 NEXT_TASK
+2. 报告中的修改范围是否符合 NEXT_TASK
+3. 报告是否内部自洽
+4. 验证结果是否足以支持当前任务完成
 5. 是否存在未完成事项
 6. 是否存在 HUMAN_APPROVAL_REQUIRED
-7. 当前任务完成后，是否存在 Reviewer 认可的、与当前任务直接相关的小范围低风险优化
-8. 以上均无阻塞时 PASS
+7. 是否存在当前任务范围内值得立即处理的小优化
 
-如果 WORKER_REPORT 信息不足以支持判断：
+如果 WORKER_REPORT 信息不足，不要自行全面调查项目。
+优先返回 REPAIR，要求 Worker 补充必要实现或验证证据。
 
-不要自行扫描仓库补证据。
-
-应返回：
-
-RESULT: REPAIR
-
-并要求 Worker 补充必要信息或验证。
-
-你被授权且只能修改：
-
-$REVIEW_FILE
-$PROGRESS_FILE
-
-必须把完整审核结果写入：
+只能修改：
 
 $REVIEW_FILE
 
-REVIEW 文件最后一行必须严格是以下三者之一：
+禁止修改业务代码。
+禁止修改 NEXT_TASK。
+禁止修改 STATE。
+
+最终必须把 REVIEW.md 写成机器可读结果之一：
 
 RESULT: PASS
 
@@ -235,8 +247,7 @@ RESULT: REPAIR
 
 RESULT: OPTIMIZE
 
-如果存在真正需要人工确认的高风险操作，
-请在正文中明确写：
+或
 
 HUMAN_APPROVAL_REQUIRED
 
@@ -246,34 +257,35 @@ HUMAN_APPROVAL_REQUIRED
     --allowedTools "Read" "Write" "Edit"
 
   echo
-  echo "=== Review Result ==="
+  echo "=== Review Result File ==="
   cat "$REVIEW_FILE"
   echo
+
+  # ==========================================================
+  # STEP 3 — PARSE REVIEW RESULT
+  # ==========================================================
 
   REVIEW_RESULT="UNKNOWN"
 
   if grep -Eq '^[[:space:]]*RESULT:[[:space:]]*PASS[[:space:]]*$' "$REVIEW_FILE"; then
     REVIEW_RESULT="PASS"
-
   elif grep -Eq '^[[:space:]]*RESULT:[[:space:]]*REPAIR[[:space:]]*$' "$REVIEW_FILE"; then
     REVIEW_RESULT="REPAIR"
-
   elif grep -Eq '^[[:space:]]*RESULT:[[:space:]]*OPTIMIZE[[:space:]]*$' "$REVIEW_FILE"; then
     REVIEW_RESULT="OPTIMIZE"
+  elif grep -Eq '^[[:space:]]*HUMAN_APPROVAL_REQUIRED[[:space:]]*$' "$REVIEW_FILE"; then
+    REVIEW_RESULT="HUMAN"
+  fi
 
-  else
-    echo "ERROR: REVIEW.md does not contain a valid machine-readable result."
+  if [ "$REVIEW_RESULT" = "UNKNOWN" ]; then
+    echo "ERROR: Reviewer 没有输出可识别的机器结果。"
     echo
-    echo "Expected one of:"
+    echo "必须包含以下之一："
     echo "RESULT: PASS"
     echo "RESULT: REPAIR"
     echo "RESULT: OPTIMIZE"
-    echo
-    echo "Actual REVIEW file:"
-    echo "$REVIEW_FILE"
-    echo
-    echo "Stopping safely."
-    exit 2
+    echo "HUMAN_APPROVAL_REQUIRED"
+    exit 6
   fi
 
   echo "Detected review result: $REVIEW_RESULT"
@@ -296,8 +308,8 @@ HUMAN_APPROVAL_REQUIRED
 
 $WORKTREE_PATH
 
-禁止切换到其他 worktree。
-禁止读取或修改其他目录中的同名 .ai/team 文件。
+禁止切换其他 worktree。
+禁止修改业务代码。
 
 必须使用以下绝对路径：
 
@@ -310,53 +322,56 @@ $GOAL_FILE
 STATE:
 $STATE_FILE
 
+CONTEXT:
+$CONTEXT_FILE
+
+REVIEW:
+$REVIEW_FILE
+
 NEXT_TASK:
 $NEXT_TASK_FILE
 
 WORKER_REPORT:
 $WORKER_REPORT_FILE
 
-REVIEW:
-$REVIEW_FILE
-
 PROGRESS:
 $PROGRESS_FILE
 
-Reviewer 已正式给出：
+优先读取：
+
+1. MANAGER.md
+2. GOAL.md
+3. STATE.json
+4. CONTEXT.md
+5. REVIEW.md
+6. NEXT_TASK.md
+
+只有确有必要时才读取完整 WORKER_REPORT.md。
+正常不要重复扫描业务代码，不要重新跑 Worker 已做过的验证。
+
+当前 Reviewer 结果为：
 
 RESULT: PASS
 
-请严格按照 MANAGER.md 执行。
+你的职责是：
 
-不要重新扫描业务代码。
-不要执行 git diff。
-不要重新运行测试或验证。
-
-你的职责只是判断：
-
-当前已经 PASS 的正式业务子任务是否已经完成整体 GOAL。
-
-你被授权且只能修改：
-
-$STATE_FILE
-$NEXT_TASK_FILE
-$PROGRESS_FILE
+判断当前正式业务任务 PASS 后，整体 GOAL 是否已经完成。
 
 如果整体 GOAL 已完成：
 
 - status = DONE
 - last_review = PASS
-- next_action = WAIT_FOR_HUMAN
 - 将当前正式业务任务加入 completed_tasks
 - 避免重复加入
 - current_task = null
+- next_action = WAIT_FOR_HUMAN
 - 不生成新业务任务
 
 输出：
 
 OVERALL_STATUS: DONE
 
-如果当前子任务 PASS，但整体 GOAL 尚未完成：
+如果当前任务 PASS，但整体 GOAL 尚未完成：
 
 - 将当前正式业务任务加入 completed_tasks
 - 避免重复加入
@@ -366,10 +381,24 @@ OVERALL_STATUS: DONE
 - 新任务必须直接服务于原始 GOAL / 已确认 PLAN
 - status = IN_PROGRESS
 - next_action = WAIT_FOR_WORKER
+- current_task = 新 NEXT_TASK 对应任务
 
 输出：
 
 OVERALL_STATUS: NOT_DONE
+
+如果达到 max_iterations 且 GOAL 仍未完成：
+
+- status = BLOCKED
+- next_action = WAIT_FOR_HUMAN
+- 输出 HUMAN_APPROVAL_REQUIRED
+
+你被授权且只能修改：
+
+$STATE_FILE
+$NEXT_TASK_FILE
+$PROGRESS_FILE
+$CONTEXT_FILE
 
 不得修改任何业务文件。
 
@@ -384,7 +413,7 @@ OVERALL_STATUS: NOT_DONE
     echo
 
     STATUS="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -396,7 +425,7 @@ PY
 )"
 
     NEXT_ACTION="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -413,9 +442,45 @@ PY
 
     if [ "$STATUS" = "DONE" ]; then
       echo "========================================"
-      echo "AI TEAM CYCLE DONE"
+      echo "GOAL DONE — STARTING DELIVERY TO MAIN"
       echo "========================================"
-      exit 0
+      echo
+
+      set +e
+      DELIVERY_OUTPUT="$("$DELIVERY_SCRIPT" "$WORKTREE_PATH" 2>&1)"
+      DELIVERY_EXIT=$?
+      set -e
+
+      printf '%s\n' "$DELIVERY_OUTPUT"
+      echo
+
+      if [ "$DELIVERY_EXIT" -ne 0 ]; then
+        echo "========================================"
+        echo "GOAL DONE, DELIVERY BLOCKED"
+        echo "========================================"
+        echo "业务目标已经完成，但自动合入本地 main 失败或被安全规则阻止。"
+        echo "请根据上面的 MERGE_STATUS 人工处理。"
+        exit "$DELIVERY_EXIT"
+      fi
+
+      if printf '%s\n' "$DELIVERY_OUTPUT" | grep -q '^MERGE_STATUS: MERGED$'; then
+        echo "========================================"
+        echo "AI TEAM CYCLE DONE"
+        echo "DELIVERY TO LOCAL MAIN: SUCCESS"
+        echo "========================================"
+        exit 0
+      fi
+
+      if printf '%s\n' "$DELIVERY_OUTPUT" | grep -q '^MERGE_STATUS: NO_BUSINESS_CHANGES$'; then
+        echo "========================================"
+        echo "AI TEAM CYCLE DONE"
+        echo "DELIVERY: NO BUSINESS CHANGES"
+        echo "========================================"
+        exit 0
+      fi
+
+      echo "ERROR: Delivery script returned success but no recognized MERGE_STATUS."
+      exit 6
     fi
 
     if [ "$STATUS" = "BLOCKED" ]; then
@@ -427,13 +492,14 @@ PY
 
     if [ "$NEXT_ACTION" != "WAIT_FOR_WORKER" ]; then
       echo "ERROR: PASS 后 Manager 没有进入 DONE 或 WAIT_FOR_WORKER。"
-      exit 4
+      echo "status=$STATUS"
+      echo "next_action=$NEXT_ACTION"
+      exit 1
     fi
 
-    echo "Overall GOAL still has remaining work."
     echo "Starting next Worker task..."
-
     CYCLE=$((CYCLE + 1))
+    MODE="normal"
     continue
   fi
 
@@ -444,20 +510,17 @@ PY
   if [ "$REVIEW_RESULT" = "REPAIR" ]; then
 
     echo "========================================"
-    echo "Reviewer requested REPAIR"
+    echo "Step 3: Claude Manager Repair Planning"
     echo "========================================"
     echo
 
     claude -p "你是项目 Manager。
 
-你当前唯一允许使用的项目工作区是：
+当前唯一允许使用的项目工作区：
 
 $WORKTREE_PATH
 
-禁止切换到其他 worktree。
-禁止读取或修改其他目录中的同名 .ai/team 文件。
-
-必须使用以下绝对路径：
+必须使用：
 
 MANAGER:
 $MANAGER_FILE
@@ -468,62 +531,36 @@ $GOAL_FILE
 STATE:
 $STATE_FILE
 
+CONTEXT:
+$CONTEXT_FILE
+
+REVIEW:
+$REVIEW_FILE
+
 NEXT_TASK:
 $NEXT_TASK_FILE
 
 WORKER_REPORT:
 $WORKER_REPORT_FILE
 
-REVIEW:
-$REVIEW_FILE
-
 PROGRESS:
 $PROGRESS_FILE
 
-Reviewer 已正式给出：
+当前 Reviewer 结果：
 
 RESULT: REPAIR
 
-请严格按照 MANAGER.md 的 REPAIR 规则执行。
+你的职责：
 
-只根据 REVIEW 中明确指出的问题，
-生成一个最小修复任务。
-
-要求：
-
-- 不扩大整体 GOAL
-- 不重新设计已经正确的部分
-- 不重做已经正确的部分
-- Bug、验证失败、未完成事项优先
-- 只修当前任务的问题
-
-NEXT_TASK 必须明确：
-
-- 当前失败原因
-- 哪个问题需要修
-- 已经正确的部分
-- 禁止重做的部分
-- 允许修改范围
-- 禁止修改范围
-- 修复后的验收标准
-
-同时：
-
+- 根据 REVIEW.md 生成一个最小 REPAIR NEXT_TASK
+- 只修复导致当前任务不正确、不完整或验证失败的问题
+- 不扩大原始 GOAL
+- 不创建新的正式业务任务
+- REPAIR 不增加 iteration
 - review_attempt + 1
 - last_review = REPAIR
 
-如果 REVIEW 正文包含：
-
-HUMAN_APPROVAL_REQUIRED
-
-则：
-
-- status = BLOCKED
-- next_action = WAIT_FOR_HUMAN
-- 不生成可继续自动执行的高风险任务
-- 输出 HUMAN_APPROVAL_REQUIRED
-
-如果 review_attempt 达到或超过 max_review_attempts：
+如果 review_attempt 达到 max_review_attempts：
 
 - status = BLOCKED
 - next_action = WAIT_FOR_HUMAN
@@ -533,6 +570,7 @@ HUMAN_APPROVAL_REQUIRED
 
 - status = IN_PROGRESS
 - next_action = WAIT_FOR_WORKER
+- current_task 保持当前正式业务任务语义
 - 输出 OVERALL_STATUS: NOT_DONE
 
 你被授权且只能修改：
@@ -540,45 +578,17 @@ HUMAN_APPROVAL_REQUIRED
 $NEXT_TASK_FILE
 $STATE_FILE
 $PROGRESS_FILE
+$CONTEXT_FILE
 
-不得修改任何业务文件。
+不得修改业务代码。
 
 使用中文。" \
       --model claude-sonnet-5 \
       --effort low \
       --allowedTools "Read" "Write" "Edit"
 
-    echo
-    echo "=== Repair State ==="
-    cat "$STATE_FILE"
-    echo
-
-    REVIEW_ATTEMPT="$(
-    python - "$STATE_FILE" <<'PY'
-import json
-import sys
-
-with open(sys.argv[1], encoding="utf-8") as f:
-    state = json.load(f)
-
-print(state.get("review_attempt", 0))
-PY
-)"
-
-    MAX_REVIEW_ATTEMPTS="$(
-    python - "$STATE_FILE" <<'PY'
-import json
-import sys
-
-with open(sys.argv[1], encoding="utf-8") as f:
-    state = json.load(f)
-
-print(state.get("max_review_attempts", 3))
-PY
-)"
-
     STATUS="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -590,7 +600,7 @@ PY
 )"
 
     NEXT_ACTION="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -601,26 +611,24 @@ print(state.get("next_action", "UNKNOWN"))
 PY
 )"
 
-    echo "Repair attempt: $REVIEW_ATTEMPT / $MAX_REVIEW_ATTEMPTS"
     echo "Status: $STATUS"
     echo "Next action: $NEXT_ACTION"
     echo
 
     if [ "$STATUS" = "BLOCKED" ]; then
-      echo "=== HUMAN APPROVAL REQUIRED ==="
+      echo "========================================"
+      echo "HUMAN APPROVAL REQUIRED"
+      echo "========================================"
       exit 3
     fi
 
     if [ "$NEXT_ACTION" != "WAIT_FOR_WORKER" ]; then
       echo "ERROR: REPAIR 后没有进入 WAIT_FOR_WORKER。"
-      exit 4
+      exit 1
     fi
 
-    echo "=== Repair Task ==="
-    cat "$NEXT_TASK_FILE"
-    echo
-
     CYCLE=$((CYCLE + 1))
+    MODE="normal"
     continue
   fi
 
@@ -631,20 +639,17 @@ PY
   if [ "$REVIEW_RESULT" = "OPTIMIZE" ]; then
 
     echo "========================================"
-    echo "Reviewer requested OPTIMIZE"
+    echo "Step 3: Claude Manager Optimization Planning"
     echo "========================================"
     echo
 
     claude -p "你是项目 Manager。
 
-你当前唯一允许使用的项目工作区是：
+当前唯一允许使用的项目工作区：
 
 $WORKTREE_PATH
 
-禁止切换到其他 worktree。
-禁止读取或修改其他目录中的同名 .ai/team 文件。
-
-必须使用以下绝对路径：
+必须使用：
 
 MANAGER:
 $MANAGER_FILE
@@ -655,70 +660,43 @@ $GOAL_FILE
 STATE:
 $STATE_FILE
 
+CONTEXT:
+$CONTEXT_FILE
+
+REVIEW:
+$REVIEW_FILE
+
 NEXT_TASK:
 $NEXT_TASK_FILE
 
 WORKER_REPORT:
 $WORKER_REPORT_FILE
 
-REVIEW:
-$REVIEW_FILE
-
 PROGRESS:
 $PROGRESS_FILE
 
-Reviewer 已正式给出：
+当前 Reviewer 结果：
 
 RESULT: OPTIMIZE
 
-说明：
+你的职责：
 
-当前正式业务任务本身已经完成，
-Reviewer 认可了 Codex 自然发现的一个与当前任务直接相关的小范围低风险优化。
-
-请严格按照 MANAGER.md 的 OPTIMIZE 规则执行。
-
-只使用 REVIEW 中已经明确认可的优化建议。
-
-禁止：
-
-- 主动寻找其他优化
-- 扩大原始 GOAL
-- 新增用户未确认的大功能
-- 大规模重构
-- 数据库结构修改
-- migration
-- RLS
-- 认证安全模型修改
-- 权限模型修改
-- 环境变量或密钥修改
-- 生产部署
-- 大规模删除
-- 重大依赖升级
-
-优化 NEXT_TASK 必须明确：
-
-- 原正式业务任务已经完成
-- Reviewer 认可的具体优化
-- 优化目标
-- 允许修改范围
-- 禁止修改范围
-- 验收标准
-- 明确禁止扩大任务范围
-
-OPTIMIZE 不增加 review_attempt。
-OPTIMIZE 不增加 iteration。
+- 判断 Reviewer 认可的优化是否属于当前正式业务任务和原始 GOAL
+- 如果属于当前范围，只生成一个最小 OPTIMIZE NEXT_TASK
+- 不扩大需求
+- 不把普通代码美化升级成正式新需求
+- OPTIMIZE 不增加 iteration
+- OPTIMIZE 默认不增加 review_attempt
+- last_review = OPTIMIZE
 
 正常情况下：
 
 - status = IN_PROGRESS
 - next_action = WAIT_FOR_WORKER
+- current_task 保持当前正式业务任务语义
+- 输出 OVERALL_STATUS: NOT_DONE
 
-输出：
-
-OVERALL_STATUS: NOT_DONE
-
-如果 REVIEW 中认可的所谓优化实际上涉及高风险操作：
+如果所谓优化实际涉及高风险操作：
 
 - status = BLOCKED
 - next_action = WAIT_FOR_HUMAN
@@ -729,21 +707,17 @@ OVERALL_STATUS: NOT_DONE
 $NEXT_TASK_FILE
 $STATE_FILE
 $PROGRESS_FILE
+$CONTEXT_FILE
 
-不得修改任何业务文件。
+不得修改业务代码。
 
 使用中文。" \
       --model claude-sonnet-5 \
       --effort low \
       --allowedTools "Read" "Write" "Edit"
 
-    echo
-    echo "=== Optimization State ==="
-    cat "$STATE_FILE"
-    echo
-
     STATUS="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -755,7 +729,7 @@ PY
 )"
 
     NEXT_ACTION="$(
-    python - "$STATE_FILE" <<'PY'
+python - "$STATE_FILE" <<'PY'
 import json
 import sys
 
@@ -766,22 +740,54 @@ print(state.get("next_action", "UNKNOWN"))
 PY
 )"
 
+    echo "Status: $STATUS"
+    echo "Next action: $NEXT_ACTION"
+    echo
+
     if [ "$STATUS" = "BLOCKED" ]; then
-      echo "=== HUMAN APPROVAL REQUIRED ==="
+      echo "========================================"
+      echo "HUMAN APPROVAL REQUIRED"
+      echo "========================================"
       exit 3
     fi
 
     if [ "$NEXT_ACTION" != "WAIT_FOR_WORKER" ]; then
       echo "ERROR: OPTIMIZE 后没有进入 WAIT_FOR_WORKER。"
-      exit 4
+      exit 1
     fi
 
-    echo "=== Optimization Task ==="
-    cat "$NEXT_TASK_FILE"
-    echo
-
     CYCLE=$((CYCLE + 1))
+    MODE="normal"
     continue
+  fi
+
+  # ==========================================================
+  # HUMAN APPROVAL
+  # ==========================================================
+
+  if [ "$REVIEW_RESULT" = "HUMAN" ]; then
+
+    python - "$STATE_FILE" <<'PY'
+import json
+import sys
+from pathlib import Path
+
+p = Path(sys.argv[1])
+
+state = json.loads(p.read_text(encoding="utf-8"))
+state["status"] = "BLOCKED"
+state["next_action"] = "WAIT_FOR_HUMAN"
+
+p.write_text(
+    json.dumps(state, ensure_ascii=False, indent=2) + "\n",
+    encoding="utf-8",
+)
+PY
+
+    echo "========================================"
+    echo "HUMAN APPROVAL REQUIRED"
+    echo "========================================"
+    exit 3
   fi
 
 done
