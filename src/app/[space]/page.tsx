@@ -39,7 +39,7 @@ export default async function StudentPortalPage({
       />
       <main className="min-h-screen bg-slate-50 px-8 pb-10 pt-[6.5rem] text-slate-950">
         <div className="mx-auto max-w-7xl">
-          <h1 className="text-3xl font-bold">课程</h1>
+          <h1 className="text-3xl font-bold">课程门户</h1>
         </div>
       </main>
     </>
