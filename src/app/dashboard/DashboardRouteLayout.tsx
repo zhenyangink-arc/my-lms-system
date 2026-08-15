@@ -4,13 +4,19 @@ import { getAnnouncementAccess } from "@/lib/announcements";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
 import { normalizeMembershipTier } from "@/lib/student-permissions";
+import {
+  getStudentAppBasePath,
+  type StudentAppSlug,
+} from "@/lib/student-apps";
 import { ManagementDashboardLayout } from "./layouts/ManagementDashboardLayout";
 import { StudentDashboardLayout } from "./layouts/StudentDashboardLayout";
 
 export default async function DashboardRouteLayout({
   children,
+  studentAppSlug,
 }: {
   children: ReactNode;
+  studentAppSlug?: StudentAppSlug;
 }) {
   const { user, profile, tenant } = await requireActiveUser();
 
@@ -57,6 +63,9 @@ export default async function DashboardRouteLayout({
 
   const membershipTier = normalizeMembershipTier(profile?.membership_tier);
   const { canAccess: canAccessAnnouncements } = await getAnnouncementAccess();
+  const studentWorkspaceBasePath = studentAppSlug
+    ? getStudentAppBasePath(tenant.slug, studentAppSlug)
+    : getDashboardBasePath(tenant.slug);
 
   return (
     <StudentDashboardLayout
@@ -64,7 +73,8 @@ export default async function DashboardRouteLayout({
       userName={userName}
       membershipTier={membershipTier}
       canAccessAnnouncements={canAccessAnnouncements}
-      dashboardBasePath={getDashboardBasePath(tenant.slug)}
+      dashboardBasePath={studentWorkspaceBasePath}
+      studentAppSlug={studentAppSlug}
     >
       {children}
     </StudentDashboardLayout>

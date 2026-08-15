@@ -9,6 +9,11 @@ import {
   type CourseTestRow,
   type KoreanTestSkill,
 } from "@/lib/korean-chapter-tests";
+import {
+  getUnlockedKoreanTestSlugs,
+  isKoreanEbookCompleted,
+} from "@/lib/korean-learning-unlocks";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type QuestionResult = {
@@ -77,6 +82,7 @@ export async function addKoreanQuestionToReviewAction(input: {
     .from("chapter_tests")
     .select("id")
     .eq("slug", testSlug)
+    .eq("student_app_id", STUDENT_APP_IDS.korean)
     .eq("status", "published")
     .maybeSingle();
 
@@ -146,6 +152,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
     .from("chapter_tests")
     .select("id")
     .eq("slug", testSlug)
+    .eq("student_app_id", STUDENT_APP_IDS.korean)
     .eq("status", "published")
     .maybeSingle();
 
@@ -230,6 +237,7 @@ async function scoreManagerPreview(
       "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
     )
     .eq("slug", testSlug)
+    .eq("student_app_id", STUDENT_APP_IDS.korean)
     .eq("status", "published")
     .maybeSingle();
 
@@ -330,7 +338,7 @@ export async function submitKoreanChapterTestAction(input: {
   testSlug: string;
   answers: Record<string, number>;
 }): Promise<KoreanChapterTestResult> {
-  const { supabase, isManager } = await requireAssignmentViewer();
+  const { supabase, user, isManager } = await requireAssignmentViewer();
   const testSlug = String(input.testSlug ?? "").trim();
   const answers = input.answers ?? {};
 
@@ -341,6 +349,48 @@ export async function submitKoreanChapterTestAction(input: {
   // manager 巡查/预览章节测试时只能本地判分，绝不能写进学生成绩表。
   if (isManager) {
     return scoreManagerPreview(testSlug, answers);
+  }
+
+  const [{ data: attemptData }, { data: ebookProgressData }] =
+    await Promise.all([
+      supabase
+        .from("chapter_test_attempts")
+        .select("test_slug,passed")
+        .eq("student_id", user.id),
+      supabase
+        .from("course_ebook_progress")
+        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+        .eq("student_id", user.id),
+    ]);
+  const passedSlugs = (attemptData ?? [])
+    .filter((attempt) => attempt.passed)
+    .map((attempt) => String(attempt.test_slug));
+  const completedEbookSlugs = (ebookProgressData ?? [])
+    .filter((progress) =>
+      isKoreanEbookCompleted({
+        progressPercent: Number(progress.progress_percent),
+        readingSeconds: Number(progress.reading_seconds),
+        readPages: Array.isArray(progress.read_pages)
+          ? progress.read_pages.map(Number)
+          : [],
+        totalPages: Number(progress.total_pages),
+      })
+    )
+    .map((progress) => String(progress.test_slug));
+  const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
+    passedSlugs,
+    completedEbookSlugs,
+  );
+
+  if (!unlockedTestSlugs.has(testSlug)) {
+    const currentEbookIsComplete = completedEbookSlugs.includes(testSlug);
+    return {
+      status: "error",
+      message:
+        !currentEbookIsComplete
+          ? "请先学完本章电子书，再开始章节测试。"
+          : "请先通过前面章节的测试，再开始本章测试。",
+    };
   }
 
   const { data, error } = await supabase.rpc("submit_course_test", {

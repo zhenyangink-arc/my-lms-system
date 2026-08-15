@@ -107,11 +107,16 @@ export async function POST(request: Request) {
   }
 
   const userId = auth.user.id;
+  const tenantId = auth.tenant?.id;
+  if (!tenantId) {
+    return NextResponse.json({ error: "当前账号没有可用的学习空间。" }, { status: 403 });
+  }
   const admin = createAdminClient();
   const windowStartIso = new Date(Date.now() - ROLLING_WINDOW_MS).toISOString();
   const { count: usedInWindow, error: usageCheckError } = await admin
     .from("ai_token_usage")
     .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId)
     .eq("user_id", userId)
     .eq("model", USAGE_MODEL_LABEL)
     .gte("created_at", windowStartIso);
@@ -215,6 +220,7 @@ export async function POST(request: Request) {
     // 这条记录同时是每日配额计数的依据——之前写失败会被完全吞掉，用户实际上
     // 能借着"用量记录一直写不进去"无限绕过每日上限，所以这里至少要把失败记下来。
     const { error: usageInsertError } = await admin.from("ai_token_usage").insert({
+      tenant_id: tenantId,
       user_id: userId,
       model: USAGE_MODEL_LABEL,
       input_tokens: message.length,

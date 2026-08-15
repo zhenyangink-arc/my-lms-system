@@ -4,6 +4,15 @@ import { useEffect, useRef, useState } from "react";
 import { Maximize2, X } from "lucide-react";
 
 const FULLSCREEN_PROMPT_KEY = "student-fullscreen-prompt";
+const STUDENT_FULLSCREEN_ATTRIBUTE = "data-student-fullscreen";
+
+function isBrowserFullscreen() {
+  const widthMatches = Math.abs(window.innerWidth - window.screen.width) <= 2;
+  const heightMatches = Math.abs(window.innerHeight - window.screen.height) <= 2;
+  const displayModeFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
+
+  return widthMatches && heightMatches || displayModeFullscreen;
+}
 
 export function markStudentFullscreenPromptPending() {
   window.sessionStorage.setItem(FULLSCREEN_PROMPT_KEY, "pending");
@@ -20,6 +29,27 @@ export function StudentFullscreenPrompt() {
     window.sessionStorage.removeItem(FULLSCREEN_PROMPT_KEY);
     const frameId = window.requestAnimationFrame(() => setIsVisible(true));
     return () => window.cancelAnimationFrame(frameId);
+  }, []);
+
+  useEffect(() => {
+    function syncStudentFullscreenState() {
+      const isFullscreen = Boolean(document.fullscreenElement) || isBrowserFullscreen();
+
+      document.documentElement.setAttribute(
+        STUDENT_FULLSCREEN_ATTRIBUTE,
+        isFullscreen ? "true" : "false"
+      );
+    }
+
+    syncStudentFullscreenState();
+    window.addEventListener("resize", syncStudentFullscreenState);
+    document.addEventListener("fullscreenchange", syncStudentFullscreenState);
+
+    return () => {
+      window.removeEventListener("resize", syncStudentFullscreenState);
+      document.removeEventListener("fullscreenchange", syncStudentFullscreenState);
+      document.documentElement.removeAttribute(STUDENT_FULLSCREEN_ATTRIBUTE);
+    };
   }, []);
 
   useEffect(() => {

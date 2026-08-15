@@ -132,7 +132,7 @@
 }
 
 /*
-  元智教育 Dashboard 视觉系统 —— 三套主题
+  元智教育 Dashboard 视觉系统 —— 四套主题
 
   1. 默认「阳光青提」：柔和有机极简风 —— 极致通透的暖阳象牙白画布、纯白卡片、锐利深碳黑文字、
      明亮轻盈的春日青提绿点缀、极细干净浅暖灰边框、带青提绿调的弥散空气感光影（:root 下面这组值）
@@ -140,6 +140,9 @@
      Linear 风紫罗兰主色，紫→蓝渐变点缀，带紫罗兰调的弥散空气感光影
   3. 「蜜桃珊瑚 coral」：暖调胭脂白画布、纯白卡片、深赭红文字、
      珊瑚橘主色，珊瑚→蜜桃粉渐变点缀，带珊瑚调的弥散空气感光影
+  4. 「曜石黑 clarity」：UI UX Pro Max + Apple HIG 思路的新主题。OLED 曜石黑画布、
+     深色透明玻璃、明亮金色主操作与高对比文字，少量紫色丰富信息层级。
+  5. 「云瓷白 porcelain」：纯白画布、半透明浅色玻璃、石墨色系统控制与多彩语义内容。
 
   切换方式：html[data-app-theme="..."]（ThemeSwitcher 写入，localStorage 持久化）
   规则：页面背景、侧边栏、卡片、边框、输入框、文字颜色统一引用这组变量；
@@ -251,6 +254,76 @@ html[data-app-theme="coral"] {
   --app-card-highlight: transparent;
 }
 
+/* 主题 4：曜石黑 —— Apple 式深色层级 + OLED 低亮度画布。
+   深色玻璃承载内容，明亮金色用于主操作和焦点，紫色只作次级点缀。 */
+html[data-app-theme="clarity"] {
+  --app-bg: #030303;
+  --app-sidebar-bg: #0a0a0a;
+  --app-card-bg: #121212;
+  --app-soft-bg: #1a1a1a;
+  --app-border: #343434;
+  --app-border-soft: #262626;
+
+  --app-text: #f5f5f7;
+  --app-text-soft: #e5e5ea;
+  --app-muted: #b8b8bf;
+  --app-muted-light: #8e8e93;
+
+  --app-input-bg: #161616;
+  --app-accent: #ffd60a;
+  --app-accent-strong: #ffe14a;
+  --app-accent-soft: #3a3108;
+  --app-accent-contrast: #171300;
+  --app-secondary: #bf5af2;
+  --app-secondary-soft: #2b1535;
+  --app-success: #63da8a;
+  --app-success-soft: #153522;
+  --app-warm: #ff9f0a;
+  --app-warm-soft: #3b2710;
+  --app-hero-start: #120f05;
+  --app-hero-end: #2a2205;
+  --app-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
+
+  --app-card-fill: var(--app-card-bg);
+  --app-card-border: var(--app-border);
+  --app-card-highlight: transparent;
+}
+
+/* 主题 5：云瓷白 —— Apple 式浅色玻璃。
+   大画布保持纯白，石墨色负责系统控制，绿色、橙色和香槟金只承担内容语义。 */
+html[data-app-theme="porcelain"] {
+  --app-bg: #ffffff;
+  --app-sidebar-bg: #ffffff;
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #f7f7f8;
+  --app-border: #dadade;
+  --app-border-soft: #e8e8eb;
+
+  --app-text: #1d1d1f;
+  --app-text-soft: #3a3a3c;
+  --app-muted: #6e6e73;
+  --app-muted-light: #8e8e93;
+
+  --app-input-bg: #f7f7f8;
+  --app-accent: #1d1d1f;
+  --app-accent-strong: #000000;
+  --app-accent-soft: #eeeeef;
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #9a6700;
+  --app-secondary-soft: #fff4ce;
+  --app-success: #248a3d;
+  --app-success-soft: #e7f6eb;
+  --app-warm: #c66a00;
+  --app-warm-soft: #fff1de;
+  --app-hero-start: #ffffff;
+  --app-hero-end: #fff9ea;
+  --app-shadow: 0 18px 48px rgba(154, 103, 0, 0.1);
+
+  --app-card-fill: var(--app-card-bg);
+  --app-card-border: var(--app-border);
+  --app-card-highlight: rgba(255, 255, 255, 0.92);
+}
+
 /* 基础主题类 */
 .app-shell {
   background-color: var(--app-bg);
@@ -260,19 +333,15 @@ html[data-app-theme="coral"] {
     color 160ms ease;
 }
 
-/* 学生端无界光感画布：径向渐变让画布本身也带一点空间感，不再是纯色平涂。
-   只用当前主题自己的三个既有色阶（卡片色→画布色→浅底色），不引入新颜色。 */
+/* 学生端无界光感画布：以暖米白为主，只在左上保留一层很淡的主题色。
+   背景需要衬托学习内容，避免大面积色块与卡片争夺视觉注意力。 */
 .app-shell[data-dashboard-ui="student"] {
-  /* 学生端卡片不使用纯白：从当前主题画布与主题光色中自动调出一层
-     低饱和雾面底色。管理端有自己的变量作用域，不会受到影响。 */
-  --app-card-bg: color-mix(
-    in srgb,
-    var(--app-bg) 78%,
-    var(--app-hero-end) 22%
-  );
+  /* 学生端卡片使用接近白色的暖白底，与有色画布保持明确的明度差。
+     只混入极少主题色，避免生硬的冷白；管理端有自己的变量作用域。 */
+  --app-card-bg: color-mix(in srgb, white 96%, var(--app-hero-end) 4%);
   --app-card-fill: color-mix(
     in srgb,
-    var(--app-card-bg) var(--app-card-opacity, 96%),
+    var(--app-card-bg) var(--app-card-opacity, 98%),
     transparent
   );
   --app-input-bg: color-mix(
@@ -280,16 +349,94 @@ html[data-app-theme="coral"] {
     var(--app-soft-bg) 72%,
     var(--app-card-bg) 28%
   );
-  background-image: radial-gradient(
-    circle at 0% 0%,
-    var(--app-card-bg) 0%,
-    var(--app-bg) 60%,
-    var(--app-soft-bg) 100%
-  );
+  background-image:
+    radial-gradient(
+      circle at 8% 0%,
+      color-mix(in srgb, var(--app-hero-end) 62%, var(--app-bg)) 0%,
+      transparent 46%
+    ),
+    linear-gradient(
+      145deg,
+      var(--app-bg) 0%,
+      color-mix(in srgb, var(--app-bg) 68%, var(--app-soft-bg) 32%) 56%,
+      var(--app-soft-bg) 100%
+    );
   background-attachment: fixed;
   /* 建立独立的层叠上下文：没有这行，.app-shell 自己的（不透明）背景会
      按普通文档流内容的层叠顺序盖在 z-index:-1 的极光光斑上面，光斑等于白做。 */
   isolation: isolate;
+}
+
+/* 曜石黑不使用学生端通用的暖白卡片派生值。 */
+html[data-app-theme="clarity"] .app-shell[data-dashboard-ui="student"] {
+  --app-card-bg: color-mix(in srgb, #121212 96%, var(--app-hero-end) 4%);
+  --app-card-fill: color-mix(
+    in srgb,
+    var(--app-card-bg) var(--app-card-opacity, 98%),
+    transparent
+  );
+  --app-input-bg: color-mix(
+    in srgb,
+    var(--app-soft-bg) 78%,
+    var(--app-card-bg) 22%
+  );
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+  --card: var(--app-card-bg);
+  --card-foreground: var(--app-text);
+  --popover: var(--app-card-bg);
+  --popover-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: var(--app-accent-contrast);
+  --secondary: var(--app-secondary-soft);
+  --secondary-foreground: var(--app-text);
+  --muted: var(--app-soft-bg);
+  --muted-foreground: var(--app-muted);
+  --accent: var(--app-accent-soft);
+  --accent-foreground: var(--app-text);
+  --border: var(--app-border);
+  --input: var(--app-border);
+  --ring: var(--app-accent);
+  color-scheme: dark;
+}
+
+html[data-app-theme="clarity"]
+  .app-shell[data-dashboard-ui="student"]
+  :is(.app-soft-card, .app-theme-soft) {
+  border-color: var(--app-border-soft);
+  background-color: color-mix(
+    in srgb,
+    var(--app-soft-bg) 86%,
+    transparent
+  );
+}
+
+html[data-app-theme="porcelain"] .app-shell[data-dashboard-ui="student"] {
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+  --card: var(--app-card-bg);
+  --card-foreground: var(--app-text);
+  --popover: rgba(255, 255, 255, 0.9);
+  --popover-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: var(--app-accent-contrast);
+  --secondary: var(--app-secondary-soft);
+  --secondary-foreground: var(--app-text-soft);
+  --muted: var(--app-soft-bg);
+  --muted-foreground: var(--app-muted);
+  --accent: var(--app-accent-soft);
+  --accent-foreground: var(--app-text);
+  --border: var(--app-border);
+  --input: var(--app-border);
+  --ring: var(--app-accent);
+  background-color: var(--app-bg);
+  background-image: none;
+}
+
+html[data-app-theme="porcelain"]
+  .app-shell[data-dashboard-ui="student"]
+  .app-aurora-orb {
+  opacity: 0;
 }
 
 .app-sidebar {
@@ -310,15 +457,17 @@ html[data-app-theme="coral"] {
   box-shadow: var(--app-shadow);
 }
 
-/* 学生端主卡片：雾面半透明，能接住后方的极光，但仍保留足够的文字对比度。
+/* 学生端主卡片：明亮暖白底，与有色画布形成清晰层级。
    显式的成功、提醒、AI 等语义色仍由页面自身控制，不被这里覆盖。 */
 .app-shell[data-dashboard-ui="student"] .app-card,
 .app-shell[data-dashboard-ui="student"] .app-theme-card {
-  backdrop-filter: blur(24px) saturate(125%);
-  -webkit-backdrop-filter: blur(24px) saturate(125%);
+  border-color: color-mix(in srgb, var(--app-border) 88%, white 12%);
+  backdrop-filter: blur(20px) saturate(110%);
+  -webkit-backdrop-filter: blur(20px) saturate(110%);
   box-shadow:
-    0 18px 44px -32px color-mix(in srgb, var(--app-accent) 34%, transparent),
-    inset 0 1px 0 color-mix(in srgb, white 64%, transparent);
+    0 18px 42px -28px color-mix(in srgb, var(--app-text) 16%, transparent),
+    0 2px 8px -5px color-mix(in srgb, var(--app-text) 12%, transparent),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
 
 /* 学生端卡片统一使用可调的低饱和渐变：普通卡片同时保留透明度设置，
@@ -335,7 +484,7 @@ html[data-app-theme="coral"] {
             var(--app-card-bg),
             white var(--app-card-gradient-strength, 16%)
           )
-          var(--app-card-opacity, 96%),
+          var(--app-card-opacity, 98%),
         transparent
       )
       0%,
@@ -346,7 +495,7 @@ html[data-app-theme="coral"] {
             var(--app-card-bg),
             var(--app-hero-end) var(--app-card-gradient-strength, 16%)
           )
-          var(--app-card-opacity, 96%),
+          var(--app-card-opacity, 98%),
         transparent
       )
       100%
@@ -381,10 +530,10 @@ html[data-app-theme="coral"] {
 
 .app-shell[data-dashboard-ui="student"] .app-soft-card,
 .app-shell[data-dashboard-ui="student"] .app-theme-soft {
-  background-color: color-mix(in srgb, var(--app-soft-bg) 78%, transparent);
-  border-color: color-mix(in srgb, var(--app-border) 82%, transparent);
-  backdrop-filter: blur(16px) saturate(115%);
-  -webkit-backdrop-filter: blur(16px) saturate(115%);
+  background-color: color-mix(in srgb, white 82%, var(--app-soft-bg) 18%);
+  border-color: color-mix(in srgb, var(--app-border) 92%, white 8%);
+  backdrop-filter: blur(12px) saturate(105%);
+  -webkit-backdrop-filter: blur(12px) saturate(105%);
 }
 
 .app-topbar {
@@ -430,6 +579,174 @@ html[data-app-theme="coral"] {
   color: var(--app-text);
 }
 
+/*
+  作业与考试专属工作台
+
+  进入 assignments 路由后，隐藏学生端通用的左右窄栏和页面标题，改用一条
+  专注型顶部导航。冷灰蓝画布负责降低干扰，白色答题卡负责建立清晰层级，
+  暖金只保留给截止时间与考试提醒。
+*/
+.app-shell:has(.assessment-workspace) .app-student-sidebar,
+.app-shell:has(.assessment-workspace) .app-student-utility-sidebar,
+.app-shell:has(.assessment-workspace) .app-student-mobile-nav,
+.app-shell:has(.assessment-workspace) .app-student-page-header {
+  display: none;
+}
+
+.app-shell:has(.assessment-workspace) .app-student-main {
+  margin-inline: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.assessment-workspace {
+  --app-bg: #f4f5f9;
+  --app-soft-bg: #eceff5;
+  --app-card-bg: #ffffff;
+  --app-card-fill: #ffffff;
+  --app-border: #dde2ec;
+  --app-border-soft: #e8ebf2;
+  --app-text: #202535;
+  --app-text-soft: #3e465b;
+  --app-muted: #687086;
+  --app-muted-light: #959caf;
+  --app-input-bg: #ffffff;
+  --app-accent: #6072ad;
+  --app-accent-strong: #46598f;
+  --app-accent-soft: #edf0fa;
+  --app-secondary: #966d49;
+  --app-secondary-soft: #f5eee7;
+  --app-success: #4f8665;
+  --app-success-soft: #eaf3ed;
+  --app-warm: #ad7638;
+  --app-warm-soft: #faf0e1;
+  --app-hero-start: #eef1fa;
+  --app-hero-end: #f5eee7;
+  --app-shadow: 0 18px 48px -34px rgba(37, 45, 70, 0.3);
+  --card: #ffffff;
+  --card-foreground: #202535;
+
+  position: relative;
+  isolation: isolate;
+  color: var(--app-text);
+  background:
+    radial-gradient(circle at 8% 4%, rgba(113, 132, 190, 0.16), transparent 32rem),
+    radial-gradient(circle at 96% 18%, rgba(190, 151, 106, 0.12), transparent 28rem),
+    linear-gradient(145deg, #f7f8fb 0%, #f1f3f8 52%, #f6f2ed 100%);
+  background-attachment: fixed;
+}
+
+.assessment-workspace::before {
+  position: fixed;
+  inset: 72px 0 auto;
+  z-index: -1;
+  height: 1px;
+  content: "";
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(96, 114, 173, 0.2),
+    rgba(150, 109, 73, 0.16),
+    transparent
+  );
+}
+
+.assessment-workspace-nav {
+  border-color: rgba(214, 219, 230, 0.92);
+  color: var(--app-text);
+  background: rgba(250, 251, 253, 0.9);
+  box-shadow: 0 12px 34px -28px rgba(34, 42, 68, 0.45);
+  backdrop-filter: blur(22px) saturate(125%);
+  -webkit-backdrop-filter: blur(22px) saturate(125%);
+}
+
+.assessment-brand-mark {
+  background: linear-gradient(145deg, #6679b5, #4a5b91);
+  box-shadow: 0 8px 18px -10px rgba(53, 66, 111, 0.75);
+}
+
+.assessment-nav-muted {
+  color: var(--app-muted);
+}
+
+.assessment-workspace-nav nav {
+  background-color: rgba(235, 238, 245, 0.82);
+  box-shadow: inset 0 1px 1px rgba(35, 43, 67, 0.05);
+}
+
+.assessment-nav-icon-button,
+.assessment-home-link {
+  border-color: var(--app-border);
+  color: var(--app-text-soft);
+  background-color: rgba(255, 255, 255, 0.72);
+}
+
+.assessment-nav-icon-button:hover,
+.assessment-home-link:hover {
+  border-color: #bbc4dc;
+  color: var(--app-accent-strong);
+  background-color: var(--app-bg);
+}
+
+.assessment-nav-tab {
+  color: var(--app-muted);
+}
+
+.assessment-nav-tab:hover {
+  color: var(--app-text-soft);
+  background-color: rgba(255, 255, 255, 0.64);
+}
+
+.assessment-nav-tab-icon {
+  color: var(--app-muted);
+  background-color: rgba(255, 255, 255, 0.7);
+}
+
+.assessment-nav-tab.is-active {
+  color: var(--app-accent-strong);
+  background-color: #ffffff;
+  box-shadow:
+    0 7px 18px -13px rgba(44, 55, 91, 0.65),
+    inset 0 0 0 1px rgba(96, 114, 173, 0.18);
+}
+
+.assessment-nav-tab.is-active .assessment-nav-tab-icon {
+  color: #ffffff;
+  background: linear-gradient(145deg, #6d80ba, #52649b);
+}
+
+.assessment-workspace-content {
+  min-height: calc(100svh - 72px);
+}
+
+.assessment-workspace .app-card,
+.assessment-workspace .app-theme-card {
+  border-color: var(--app-border);
+  background-color: rgba(255, 255, 255, 0.97) !important;
+  box-shadow:
+    0 18px 44px -34px rgba(38, 47, 73, 0.34),
+    0 1px 2px rgba(38, 47, 73, 0.05);
+}
+
+.assessment-workspace .app-soft-card,
+.assessment-workspace .app-theme-soft {
+  border-color: var(--app-border-soft);
+  background-color: #f7f8fb;
+}
+
+.assessment-workspace [data-slot="card"] {
+  color: var(--app-text);
+  background-color: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 16px 38px -32px rgba(38, 47, 73, 0.38),
+    0 1px 2px rgba(38, 47, 73, 0.05);
+}
+
+@media (max-width: 1023px) {
+  .assessment-workspace-content {
+    min-height: calc(100svh - 116px);
+  }
+}
+
 .app-input::placeholder {
   color: var(--app-muted-light);
   opacity: 1;
@@ -452,7 +769,7 @@ html[data-app-theme="coral"] {
   仅限学生端组件使用这些类名，管理端（[data-dashboard-ui="management"]）不引用。
 */
 .app-glass-panel {
-  background-color: color-mix(in srgb, var(--app-card-bg) 55%, transparent);
+  background-color: color-mix(in srgb, var(--app-card-bg) 84%, transparent);
   backdrop-filter: blur(40px) saturate(150%);
   -webkit-backdrop-filter: blur(40px) saturate(150%);
   color: var(--app-text);
@@ -465,7 +782,7 @@ html[data-app-theme="coral"] {
 /* 玻璃卡片：内容区卡片同款质感（高透高模糊折射玻璃+柔和阴影+顶部高光+hover 上浮），
    圆角仍按项目规范用 rounded-3xl 封顶，这里不内置圆角。 */
 .app-glass-card {
-  background-color: color-mix(in srgb, var(--app-card-bg) 55%, transparent);
+  background-color: color-mix(in srgb, var(--app-card-bg) 88%, transparent);
   backdrop-filter: blur(40px) saturate(150%);
   -webkit-backdrop-filter: blur(40px) saturate(150%);
   color: var(--app-text);
@@ -481,52 +798,51 @@ html[data-app-theme="coral"] {
 
 .app-glass-card:hover {
   transform: translateY(-4px);
-  background-color: color-mix(in srgb, var(--app-card-bg) 68%, transparent);
+  background-color: color-mix(in srgb, var(--app-card-bg) 94%, transparent);
   box-shadow:
     0 30px 60px -20px color-mix(in srgb, var(--app-text) 12%, transparent),
     inset 0 1px 2px color-mix(in srgb, white 70%, transparent);
 }
 
 /*
-  极光弥散背景光斑：三个高斯模糊光斑固定在视口后方（z-index: -1），
-  颜色取当前主题的 accent/secondary/warm，切主题时光斑颜色自动跟着变，不写死颜色。
-  只用于学生端（[data-dashboard-ui="student"]），不影响管理端。
+  极光弥散背景光斑：低透明度、低饱和度的环境光，负责增加纵深而不是形成色块。
+  颜色仍跟随主题切换；组件只挂载在学生端，不影响管理端。
 */
 .app-aurora-orb {
   position: fixed;
   z-index: -1;
   border-radius: 50%;
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.21;
 }
 
 .app-aurora-orb-1 {
-  top: -10%;
-  left: 10%;
-  width: 600px;
-  height: 600px;
-  background: var(--app-accent);
-  filter: blur(120px);
+  top: -14%;
+  left: 6%;
+  width: 520px;
+  height: 520px;
+  background: color-mix(in srgb, var(--app-accent) 68%, var(--app-bg));
+  filter: blur(150px);
 }
 
 .app-aurora-orb-2 {
-  bottom: -10%;
-  right: -5%;
-  width: 700px;
-  height: 700px;
-  background: var(--app-secondary);
-  filter: blur(150px);
-  opacity: 0.4;
+  bottom: -18%;
+  right: -9%;
+  width: 580px;
+  height: 580px;
+  background: color-mix(in srgb, var(--app-secondary) 58%, var(--app-bg));
+  filter: blur(180px);
+  opacity: 0.15;
 }
 
 .app-aurora-orb-3 {
-  top: 30%;
-  left: 45%;
-  width: 500px;
-  height: 500px;
-  background: var(--app-warm);
-  filter: blur(120px);
-  opacity: 0.3;
+  top: 42%;
+  left: 48%;
+  width: 380px;
+  height: 380px;
+  background: color-mix(in srgb, var(--app-warm) 48%, var(--app-bg));
+  filter: blur(170px);
+  opacity: 0.09;
 }
 
 .app-edge-handle {
@@ -724,7 +1040,8 @@ html[data-app-theme="coral"] {
   box-shadow: -2px 0 20px -10px color-mix(in srgb, var(--app-text) 6%, transparent);
 }
 
-.app-student-utility-sidebar:hover {
+.app-student-utility-sidebar:hover,
+.app-student-utility-sidebar:focus-within {
   width: var(--utility-expanded-w);
   box-shadow: -6px 0 32px -12px color-mix(in srgb, var(--app-text) 12%, transparent);
 }
@@ -736,7 +1053,8 @@ html[data-app-theme="coral"] {
   align-items: center;
 }
 
-.app-student-utility-sidebar:hover .app-student-utility-section {
+.app-student-utility-sidebar:hover .app-student-utility-section,
+.app-student-utility-sidebar:focus-within .app-student-utility-section {
   align-items: stretch;
 }
 
@@ -746,7 +1064,8 @@ html[data-app-theme="coral"] {
   opacity: 0;
   transition: opacity 150ms ease 60ms;
 }
-.app-student-utility-sidebar:hover .app-student-utility-expanded {
+.app-student-utility-sidebar:hover .app-student-utility-expanded,
+.app-student-utility-sidebar:focus-within .app-student-utility-expanded {
   display: block;
   opacity: 1;
 }
@@ -1297,6 +1616,99 @@ html[data-app-theme="coral"] {
   background: color-mix(in srgb, var(--app-accent-soft) 55%, var(--app-card-bg));
 }
 
+/* 管理端应用域：颜色只用于识别应用，运行状态始终同时显示文字。 */
+[data-dashboard-ui="management"] .management-app-tone-emerald {
+  --management-app-tone: #17845b;
+  --management-app-tone-soft: #e9f7f0;
+}
+
+[data-dashboard-ui="management"] .management-app-tone-sky {
+  --management-app-tone: #2774c7;
+  --management-app-tone-soft: #eaf3fc;
+}
+
+[data-dashboard-ui="management"] .management-app-tone-amber {
+  --management-app-tone: #a86408;
+  --management-app-tone-soft: #fff4df;
+}
+
+[data-dashboard-ui="management"] .management-app-tone-violet {
+  --management-app-tone: #6c5bc0;
+  --management-app-tone-soft: #f0edff;
+}
+
+[data-dashboard-ui="management"] .management-app-tone-rose {
+  --management-app-tone: #b84d63;
+  --management-app-tone-soft: #fceef1;
+}
+
+.dark [data-dashboard-ui="management"] .management-app-tone-emerald {
+  --management-app-tone: #65c99a;
+  --management-app-tone-soft: #142b22;
+}
+
+.dark [data-dashboard-ui="management"] .management-app-tone-sky {
+  --management-app-tone: #77b4f2;
+  --management-app-tone-soft: #14263a;
+}
+
+.dark [data-dashboard-ui="management"] .management-app-tone-amber {
+  --management-app-tone: #e7b25b;
+  --management-app-tone-soft: #30250f;
+}
+
+.dark [data-dashboard-ui="management"] .management-app-tone-violet {
+  --management-app-tone: #ada1f2;
+  --management-app-tone-soft: #24203d;
+}
+
+.dark [data-dashboard-ui="management"] .management-app-tone-rose {
+  --management-app-tone: #e58ba0;
+  --management-app-tone-soft: #351b22;
+}
+
+[data-dashboard-ui="management"] .management-app-card {
+  border-color: var(--app-border);
+  background: var(--app-card-bg);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+[data-dashboard-ui="management"] .management-app-card:hover {
+  border-color: color-mix(
+    in srgb,
+    var(--management-app-tone, var(--app-accent)) 35%,
+    var(--app-border)
+  );
+  background: color-mix(
+    in srgb,
+    var(--management-app-tone-soft, var(--app-accent-soft)) 28%,
+    var(--app-card-bg)
+  );
+}
+
+[data-dashboard-ui="management"] .management-app-icon {
+  border-color: color-mix(
+    in srgb,
+    var(--management-app-tone, var(--app-accent)) 24%,
+    var(--app-border)
+  );
+  background: var(--management-app-tone-soft, var(--app-accent-soft));
+  color: var(--management-app-tone, var(--app-accent-strong));
+}
+
+[data-dashboard-ui="management"] .management-app-status {
+  background: var(--management-app-tone-soft, var(--app-success-soft));
+  color: var(--management-app-tone, var(--app-success));
+}
+
+[data-dashboard-ui="management"] .management-app-summary-icon {
+  border: 1px solid color-mix(in srgb, var(--app-accent) 18%, var(--app-border));
+  background: var(--app-accent-soft);
+  color: var(--app-accent-strong);
+}
+
 .management-module-icon {
   border-color: color-mix(in srgb, var(--app-accent) 18%, var(--app-border));
   border-radius: 5px;
@@ -1605,5 +2017,2629 @@ html[data-app-theme="coral"] {
 @media (prefers-reduced-motion: reduce) {
   .guide-agent-highlight {
     animation: none;
+  }
+}
+
+/* 成长首页页面级材质系统
+   ui-ux-pro-max 检索到的 Glassmorphism + Apple Liquid Glass 组合：
+   大面积的主题背景提供色彩和景深，内容表面使用 15%–40% 的自适应磨砂玻璃。
+   文字仍然使用高对比语义色，不依赖背景色表达状态。 */
+.app-shell[data-dashboard-ui="student"]:has(.growth-home) {
+  --growth-surface-primary: color-mix(in srgb, white 30%, transparent);
+  --growth-surface-hero-start: color-mix(in srgb, white 40%, transparent);
+  --growth-surface-hero-end: color-mix(
+    in srgb,
+    var(--app-accent-soft) 18%,
+    transparent
+  );
+  --growth-surface-quiet: color-mix(in srgb, white 22%, transparent);
+  --growth-surface-accent: color-mix(in srgb, white 24%, transparent);
+  --growth-surface-raised: color-mix(in srgb, white 42%, transparent);
+  --growth-panel-quiet: color-mix(in srgb, white 24%, transparent);
+  --growth-panel-accent: color-mix(
+    in srgb,
+    var(--app-accent-soft) 34%,
+    transparent
+  );
+  --growth-panel-warm: color-mix(
+    in srgb,
+    var(--app-secondary-soft) 32%,
+    transparent
+  );
+  --growth-border: color-mix(in srgb, white 58%, transparent);
+  --growth-border-strong: color-mix(
+    in srgb,
+    white 42%,
+    var(--app-accent) 58%
+  );
+  --growth-shadow: 0 24px 64px -42px
+      color-mix(in srgb, var(--app-accent-strong) 38%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 74%, transparent);
+  --growth-shadow-raised: 0 14px 38px -30px
+      color-mix(in srgb, var(--app-text) 24%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 62%, transparent);
+
+  background-color: color-mix(
+    in srgb,
+    var(--app-accent-soft) 62%,
+    var(--app-bg) 38%
+  );
+  background-image:
+    radial-gradient(
+      ellipse 58rem 42rem at 2% -5%,
+      color-mix(in srgb, var(--app-accent) 40%, white 60%) 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 52rem 38rem at 102% 4%,
+      color-mix(in srgb, var(--app-secondary) 30%, white 70%) 0%,
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 60rem 44rem at 42% 96%,
+      color-mix(in srgb, var(--app-accent-soft) 56%, white 44%) 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--app-hero-start) 66%, white 34%) 0%,
+      color-mix(in srgb, var(--app-hero-end) 58%, white 42%) 52%,
+      color-mix(in srgb, var(--app-accent-soft) 62%, white 38%) 100%
+    );
+  background-attachment: fixed;
+}
+
+.growth-surface {
+  border-color: var(--growth-border);
+  background-clip: padding-box;
+  color: var(--app-text);
+  box-shadow: var(--growth-shadow);
+  backdrop-filter: blur(24px) saturate(150%);
+  -webkit-backdrop-filter: blur(24px) saturate(150%);
+}
+
+.growth-surface--primary {
+  background: var(--growth-surface-primary);
+}
+
+.growth-surface--hero {
+  border-color: color-mix(in srgb, white 68%, transparent);
+  background: linear-gradient(
+    138deg,
+    var(--growth-surface-hero-start),
+    var(--growth-surface-hero-end)
+  );
+}
+
+.growth-surface--quiet {
+  background: var(--growth-surface-quiet);
+}
+
+.growth-surface--accent {
+  border-color: color-mix(in srgb, white 52%, transparent);
+  background: var(--growth-surface-accent);
+}
+
+.growth-hero-orb {
+  opacity: 0.46;
+  background: color-mix(in srgb, var(--app-accent) 52%, transparent);
+}
+
+.growth-panel {
+  border: 1px solid var(--growth-border);
+  background: var(--growth-surface-raised);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 56%, transparent);
+  backdrop-filter: blur(16px) saturate(135%);
+  -webkit-backdrop-filter: blur(16px) saturate(135%);
+}
+
+.growth-panel--quiet {
+  background: var(--growth-panel-quiet);
+}
+
+.growth-panel--raised {
+  background: var(--growth-surface-raised);
+  box-shadow: var(--growth-shadow-raised);
+}
+
+.growth-panel--chart {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 28%, transparent),
+    color-mix(in srgb, var(--app-accent-soft) 24%, transparent)
+  );
+}
+
+.growth-panel--accent {
+  background: var(--growth-panel-accent);
+}
+
+.growth-panel--warm {
+  background: var(--growth-panel-warm);
+}
+
+.growth-panel--accent-strong {
+  border-color: var(--growth-border-strong);
+  background: linear-gradient(
+    145deg,
+    var(--growth-panel-accent),
+    color-mix(in srgb, white 30%, transparent)
+  );
+}
+
+.growth-course-card,
+.growth-record-row {
+  border-color: var(--growth-border);
+  background: color-mix(in srgb, white 30%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 52%, transparent);
+  backdrop-filter: blur(14px) saturate(130%);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+}
+
+.growth-course-card:hover,
+.growth-record-row:hover {
+  border-color: var(--growth-border-strong);
+  background: color-mix(in srgb, white 46%, transparent);
+}
+
+/* Liquid Glass 用在页头导航层：更轻、更清澈，与内容玻璃形成前后景。 */
+.app-shell[data-dashboard-ui="student"]:has(.growth-home)
+  .app-student-page-header
+  .app-glass-card {
+  border: 1px solid color-mix(in srgb, white 52%, transparent);
+  background: color-mix(in srgb, white 22%, transparent);
+  box-shadow:
+    0 18px 46px -34px color-mix(in srgb, var(--app-text) 28%, transparent),
+    inset 0 1px 0 color-mix(in srgb, white 78%, transparent);
+  backdrop-filter: blur(28px) saturate(165%);
+  -webkit-backdrop-filter: blur(28px) saturate(165%);
+}
+
+.app-shell[data-dashboard-ui="student"]:has(.growth-home) .app-aurora-orb {
+  opacity: 0.28;
+}
+
+html[data-app-theme="clarity"]
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home) {
+  --growth-surface-primary: color-mix(in srgb, white 8%, transparent);
+  --growth-surface-hero-start: color-mix(in srgb, white 13%, transparent);
+  --growth-surface-hero-end: color-mix(
+    in srgb,
+    var(--app-accent) 11%,
+    transparent
+  );
+  --growth-surface-quiet: color-mix(in srgb, white 6%, transparent);
+  --growth-surface-accent: color-mix(
+    in srgb,
+    var(--app-accent) 9%,
+    transparent
+  );
+  --growth-surface-raised: color-mix(in srgb, white 10%, transparent);
+  --growth-panel-quiet: color-mix(in srgb, white 7%, transparent);
+  --growth-panel-accent: color-mix(
+    in srgb,
+    var(--app-secondary) 11%,
+    transparent
+  );
+  --growth-panel-warm: color-mix(
+    in srgb,
+    var(--app-warm) 10%,
+    transparent
+  );
+  --growth-border: color-mix(in srgb, white 16%, transparent);
+  --growth-border-strong: color-mix(
+    in srgb,
+    var(--app-accent) 58%,
+    transparent
+  );
+  --growth-shadow: 0 28px 72px -42px rgba(0, 0, 0, 0.88),
+    inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --growth-shadow-raised: 0 18px 44px -32px rgba(0, 0, 0, 0.78),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  background-color: #030303;
+  background-image:
+    radial-gradient(
+      ellipse 66rem 46rem at -8% -10%,
+      #3a3108 0%,
+      transparent 68%
+    ),
+    radial-gradient(
+      ellipse 58rem 42rem at 108% 0%,
+      #24142c 0%,
+      transparent 66%
+    ),
+    radial-gradient(
+      ellipse 62rem 42rem at 38% 98%,
+      #282109 0%,
+      transparent 72%
+    ),
+    linear-gradient(
+      145deg,
+      #030303 0%,
+      #0d0d0d 50%,
+      #020202 100%
+    );
+}
+
+html[data-app-theme="clarity"]
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+  .app-student-page-header
+  .app-glass-card {
+  border-color: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow:
+    0 22px 56px -38px rgba(0, 0, 0, 0.9),
+    inset 0 1px 0 rgba(255, 255, 255, 0.17);
+}
+
+html[data-app-theme="clarity"] .growth-surface--hero,
+html[data-app-theme="clarity"] .growth-surface--accent {
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+html[data-app-theme="clarity"] .growth-panel--chart {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, white 8%, transparent),
+    color-mix(in srgb, var(--app-accent) 9%, transparent)
+  );
+}
+
+html[data-app-theme="clarity"] .growth-panel--accent-strong {
+  background: linear-gradient(
+    145deg,
+    color-mix(in srgb, var(--app-accent) 12%, transparent),
+    color-mix(in srgb, white 8%, transparent)
+  );
+}
+
+html[data-app-theme="clarity"] .growth-course-card,
+html[data-app-theme="clarity"] .growth-record-row {
+  background: color-mix(in srgb, white 7%, transparent);
+}
+
+html[data-app-theme="clarity"] .growth-course-card:hover,
+html[data-app-theme="clarity"] .growth-record-row:hover {
+  background: color-mix(in srgb, white 12%, transparent);
+}
+
+html[data-app-theme="porcelain"]
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home) {
+  --growth-surface-primary: color-mix(in srgb, white 58%, transparent);
+  --growth-surface-hero-start: color-mix(in srgb, white 74%, transparent);
+  --growth-surface-hero-end: color-mix(
+    in srgb,
+    var(--app-accent-soft) 72%,
+    transparent
+  );
+  --growth-surface-quiet: color-mix(in srgb, white 50%, transparent);
+  --growth-surface-accent: color-mix(
+    in srgb,
+    var(--app-success-soft) 56%,
+    transparent
+  );
+  --growth-surface-raised: color-mix(in srgb, white 72%, transparent);
+  --growth-panel-quiet: color-mix(in srgb, white 52%, transparent);
+  --growth-panel-accent: color-mix(
+    in srgb,
+    var(--app-secondary-soft) 62%,
+    transparent
+  );
+  --growth-panel-warm: color-mix(
+    in srgb,
+    var(--app-warm-soft) 58%,
+    transparent
+  );
+  --growth-border: color-mix(in srgb, var(--app-text) 14%, transparent);
+  --growth-border-strong: color-mix(
+    in srgb,
+    var(--app-accent) 42%,
+    transparent
+  );
+  --growth-shadow: 0 24px 64px -42px rgba(154, 103, 0, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+  --growth-shadow-raised: 0 14px 38px -30px rgba(36, 138, 61, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+  background-color: #ffffff;
+  background-image: none;
+}
+
+html[data-app-theme="porcelain"]
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+  .app-student-page-header
+  .app-glass-card {
+  border-color: rgba(29, 29, 31, 0.14);
+  background: rgba(255, 255, 255, 0.58);
+  box-shadow:
+    0 20px 50px -38px rgba(154, 103, 0, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.98);
+}
+
+html[data-app-theme="porcelain"] .growth-surface--hero,
+html[data-app-theme="porcelain"] .growth-surface--accent {
+  border-color: rgba(29, 29, 31, 0.14);
+}
+
+html[data-app-theme="porcelain"] .growth-panel--chart {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.56),
+    rgba(232, 247, 236, 0.7)
+  );
+}
+
+html[data-app-theme="porcelain"] .growth-panel--accent-strong {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 244, 206, 0.72),
+    rgba(255, 255, 255, 0.58)
+  );
+}
+
+html[data-app-theme="porcelain"] .growth-course-card,
+html[data-app-theme="porcelain"] .growth-record-row {
+  background: rgba(255, 255, 255, 0.56);
+}
+
+html[data-app-theme="porcelain"] .growth-course-card:hover,
+html[data-app-theme="porcelain"] .growth-record-row:hover {
+  background: rgba(255, 255, 255, 0.76);
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .growth-surface,
+  .growth-panel,
+  .growth-course-card,
+  .growth-record-row,
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+    .app-student-page-header
+    .app-glass-card {
+    background-color: color-mix(in srgb, var(--app-card-bg) 88%, transparent);
+    background-image: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .growth-surface,
+  .growth-panel,
+  .growth-course-card,
+  .growth-record-row {
+    background-color: var(--app-card-bg);
+    background-image: none;
+  }
+
+  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+    .app-student-page-header
+    .app-glass-card {
+    background-color: var(--app-card-bg);
+    background-image: none;
+  }
+}
+
+/*
+  Student OS · Apple system-inspired shell
+
+  The previous five student themes and their layout rules remain above as the
+  recoverable legacy system. The new shell is deliberately scoped to
+  data-student-shell="system", so none of those definitions are deleted or
+  rewritten. Translucent material is reserved for navigation and lightweight
+  dashboard surfaces; dense learning content continues to use an opaque base.
+*/
+:root {
+  --student-button-fill-opacity: 70%;
+  --student-button-hover-fill-opacity: 84%;
+  --student-primary-button-foreground: #ffffff;
+  --student-menu-fill-opacity: 80%;
+}
+
+html .app-shell[data-dashboard-ui="student"][data-student-shell="system"] {
+  --app-bg: #e8edf4;
+  --app-sidebar-bg: rgba(246, 249, 252, 0.78);
+  /* 窗口与卡片使用两套独立玻璃浓度，可在顶部工具栏分别调整。 */
+  --student-window-glass-opacity: 28%;
+  --student-card-level-1-opacity: 28%;
+  --student-card-level-1-hover-opacity: 42%;
+  --student-card-level-2-opacity: 38%;
+  --student-card-level-2-hover-opacity: 52%;
+  --student-card-level-3-opacity: 48%;
+  --student-card-level-3-hover-opacity: 62%;
+  --student-button-neutral-surface: color-mix(
+    in srgb,
+    white var(--student-button-fill-opacity),
+    transparent
+  );
+  --student-button-neutral-surface-hover: color-mix(
+    in srgb,
+    white var(--student-button-hover-fill-opacity),
+    transparent
+  );
+  --student-button-accent-surface: color-mix(
+    in srgb,
+    var(--app-accent-strong) var(--student-button-fill-opacity),
+    transparent
+  );
+  --student-button-accent-surface-hover: color-mix(
+    in srgb,
+    var(--app-accent-strong) var(--student-button-hover-fill-opacity),
+    transparent
+  );
+  --student-button-danger-surface: color-mix(
+    in srgb,
+    var(--app-danger) var(--student-button-fill-opacity),
+    transparent
+  );
+  --student-menu-surface: color-mix(
+    in srgb,
+    white var(--student-menu-fill-opacity),
+    transparent
+  );
+  /* 设置弹窗保持实底，避免受下拉菜单透明度控制影响。 */
+  --student-settings-popover-surface: #ffffff;
+  --student-window-glass-surface: color-mix(
+    in srgb,
+    white var(--student-window-glass-opacity),
+    transparent
+  );
+  --student-card-level-1-surface: color-mix(
+    in srgb,
+    white var(--student-card-level-1-opacity),
+    transparent
+  );
+  --student-card-level-1-surface-hover: color-mix(
+    in srgb,
+    white var(--student-card-level-1-hover-opacity),
+    transparent
+  );
+  --student-card-level-2-surface: color-mix(
+    in srgb,
+    white var(--student-card-level-2-opacity),
+    transparent
+  );
+  --student-card-level-2-surface-hover: color-mix(
+    in srgb,
+    white var(--student-card-level-2-hover-opacity),
+    transparent
+  );
+  --student-card-level-3-surface: color-mix(
+    in srgb,
+    white var(--student-card-level-3-opacity),
+    transparent
+  );
+  --student-card-level-3-surface-hover: color-mix(
+    in srgb,
+    white var(--student-card-level-3-hover-opacity),
+    transparent
+  );
+  /* 兼容现有一级卡片选择器。 */
+  --student-glass-surface: var(--student-card-level-1-surface);
+  --student-glass-surface-hover: var(--student-card-level-1-surface-hover);
+  --app-soft-bg: var(--student-card-level-1-surface);
+  --app-card-bg: var(--student-card-level-1-surface);
+  --app-card-fill: var(--student-card-level-1-surface);
+  --app-border: #d9e0e8;
+  --app-border-soft: #e8edf2;
+  --app-text: #17191d;
+  --app-text-soft: #34383f;
+  --app-muted: #626a76;
+  --app-muted-light: #89919c;
+  --app-input-bg: rgba(255, 255, 255, 0.9);
+  --app-accent: #0a84ff;
+  --app-accent-strong: #0067ce;
+  --app-accent-soft: rgba(231, 242, 255, 0.62);
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #5e5ce6;
+  --app-secondary-soft: rgba(238, 237, 255, 0.62);
+  --app-success: #248a3d;
+  --app-success-soft: rgba(232, 245, 235, 0.62);
+  --app-warm: #b55d00;
+  --app-warm-soft: rgba(255, 240, 223, 0.64);
+  --app-danger: #d92d20;
+  --app-hero-start: rgba(237, 245, 253, 0.48);
+  --app-hero-end: rgba(220, 235, 248, 0.48);
+  --app-shadow: 0 24px 70px -42px rgba(34, 48, 68, 0.38);
+  --app-card-border: var(--app-border);
+  --app-card-highlight: rgba(255, 255, 255, 0.84);
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+  --card: var(--student-card-level-1-surface);
+  --card-foreground: #17191d;
+  --popover: #ffffff;
+  --popover-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: #ffffff;
+  --secondary: var(--app-soft-bg);
+  --secondary-foreground: var(--app-text-soft);
+  --muted: var(--app-soft-bg);
+  --muted-foreground: var(--app-muted);
+  --accent: var(--app-accent-soft);
+  --accent-foreground: var(--app-text);
+  --border: var(--app-border);
+  --input: var(--app-border);
+  --ring: var(--app-accent);
+
+  min-height: 100dvh;
+  height: 100dvh;
+  overflow: hidden;
+  padding: 16px;
+  color: var(--app-text);
+  color-scheme: light;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "SF Pro Text",
+    "PingFang SC",
+    "Microsoft YaHei",
+    sans-serif;
+  background:
+    radial-gradient(circle at 12% 2%, rgba(255, 255, 255, 0.95), transparent 27rem),
+    radial-gradient(circle at 92% 88%, rgba(188, 216, 241, 0.5), transparent 32rem),
+    linear-gradient(145deg, #dce4ed 0%, #edf2f7 44%, #dfe8f1 100%);
+}
+
+/* 分时主题同时驱动网页背景、语义色和玻璃材质。 */
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background] {
+  transition: background-color 240ms ease;
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="morning"] {
+  --app-bg: #e5edf6;
+  --app-border: rgba(83, 117, 151, 0.26);
+  --app-border-soft: rgba(83, 117, 151, 0.14);
+  --app-text: #172331;
+  --app-text-soft: #34475c;
+  --app-muted: #627184;
+  --app-muted-light: #8996a6;
+  --app-accent: #0a84ff;
+  --app-accent-strong: #0067ce;
+  --app-accent-soft: rgba(231, 242, 255, 0.66);
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #5e5ce6;
+  --app-secondary-soft: rgba(238, 237, 255, 0.64);
+  --app-success: #248a3d;
+  --app-success-soft: rgba(232, 245, 235, 0.66);
+  --app-warm: #b55d00;
+  --app-warm-soft: rgba(255, 240, 223, 0.68);
+  --app-hero-start: rgba(237, 245, 253, 0.48);
+  --app-hero-end: rgba(220, 235, 248, 0.48);
+  --student-primary-button-foreground: #ffffff;
+  --foreground: var(--app-text);
+  --card-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: var(--app-accent-contrast);
+  --ring: var(--app-accent);
+  background:
+    radial-gradient(circle at 12% 2%, rgba(255, 255, 255, 0.95), transparent 27rem),
+    radial-gradient(circle at 92% 88%, rgba(188, 216, 241, 0.5), transparent 32rem),
+    linear-gradient(145deg, #dce4ed 0%, #edf2f7 44%, #dfe8f1 100%);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="afternoon"] {
+  --app-bg: #eee8df;
+  --app-border: rgba(137, 111, 79, 0.27);
+  --app-border-soft: rgba(137, 111, 79, 0.15);
+  --app-text: #2c251e;
+  --app-text-soft: #504438;
+  --app-muted: #74695d;
+  --app-muted-light: #968b7f;
+  --app-accent: #d37816;
+  --app-accent-strong: #a95708;
+  --app-accent-soft: rgba(255, 232, 201, 0.7);
+  --app-accent-contrast: #ffffff;
+  --app-secondary: #617f8d;
+  --app-secondary-soft: rgba(221, 235, 238, 0.68);
+  --app-success: #377c50;
+  --app-success-soft: rgba(220, 240, 225, 0.68);
+  --app-warm: #b7600a;
+  --app-warm-soft: rgba(255, 231, 201, 0.72);
+  --student-primary-button-foreground: #ffffff;
+  --foreground: var(--app-text);
+  --card-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: var(--app-accent-contrast);
+  --ring: var(--app-accent);
+  background:
+    radial-gradient(circle at 9% 0%, rgba(255, 249, 232, 0.88), transparent 30rem),
+    radial-gradient(circle at 94% 90%, rgba(191, 215, 229, 0.38), transparent 34rem),
+    linear-gradient(145deg, #e7dfd3 0%, #f4efe7 47%, #dfe8eb 100%);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="night"] {
+  --app-bg: #000000;
+  --app-sidebar-bg: rgba(18, 18, 20, 0.72);
+  --app-border: rgba(255, 255, 255, 0.18);
+  --app-border-soft: rgba(255, 255, 255, 0.1);
+  --app-text: #f5f5f7;
+  --app-text-soft: #dedee3;
+  --app-muted: #aaaab3;
+  --app-muted-light: #7d7d86;
+  --app-input-bg: rgba(28, 28, 30, 0.88);
+  --app-accent: #ffd60a;
+  --app-accent-strong: #e9b900;
+  --app-accent-soft: rgba(255, 214, 10, 0.16);
+  --app-accent-contrast: #171300;
+  --app-secondary: #ff9f0a;
+  --app-secondary-soft: rgba(255, 159, 10, 0.15);
+  --app-success: #30d158;
+  --app-success-soft: rgba(48, 209, 88, 0.15);
+  --app-warm: #ff9f0a;
+  --app-warm-soft: rgba(255, 159, 10, 0.15);
+  --app-danger: #ff6961;
+  --app-hero-start: rgba(255, 255, 255, 0.06);
+  --app-hero-end: rgba(255, 214, 10, 0.055);
+  --app-shadow: 0 28px 80px -42px rgba(0, 0, 0, 0.95);
+  --app-card-highlight: rgba(255, 255, 255, 0.2);
+  --student-window-glass-surface: color-mix(
+    in srgb,
+    #1c1c1e var(--student-window-glass-opacity),
+    transparent
+  );
+  --student-card-level-1-surface: color-mix(
+    in srgb,
+    #343438 var(--student-card-level-1-opacity),
+    transparent
+  );
+  --student-card-level-1-surface-hover: color-mix(
+    in srgb,
+    #3f3f43 var(--student-card-level-1-hover-opacity),
+    transparent
+  );
+  --student-card-level-2-surface: color-mix(
+    in srgb,
+    #48484a var(--student-card-level-2-opacity),
+    transparent
+  );
+  --student-card-level-2-surface-hover: color-mix(
+    in srgb,
+    #545458 var(--student-card-level-2-hover-opacity),
+    transparent
+  );
+  --student-card-level-3-surface: color-mix(
+    in srgb,
+    #636366 var(--student-card-level-3-opacity),
+    transparent
+  );
+  --student-card-level-3-surface-hover: color-mix(
+    in srgb,
+    #707074 var(--student-card-level-3-hover-opacity),
+    transparent
+  );
+  --student-button-neutral-surface: color-mix(
+    in srgb,
+    #3a3a3c var(--student-button-fill-opacity),
+    transparent
+  );
+  --student-button-neutral-surface-hover: color-mix(
+    in srgb,
+    #48484a var(--student-button-hover-fill-opacity),
+    transparent
+  );
+  --student-menu-surface: color-mix(
+    in srgb,
+    #1c1c1e var(--student-menu-fill-opacity),
+    transparent
+  );
+  --student-settings-popover-surface: #1c1c1e;
+  --student-primary-button-foreground: #171300;
+  --background: var(--app-bg);
+  --foreground: var(--app-text);
+  --card: var(--student-card-level-1-surface);
+  --card-foreground: var(--app-text);
+  --popover: #1c1c1e;
+  --popover-foreground: var(--app-text);
+  --primary: var(--app-accent);
+  --primary-foreground: var(--app-accent-contrast);
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: var(--app-text-soft);
+  --muted: rgba(255, 255, 255, 0.08);
+  --muted-foreground: var(--app-muted);
+  --accent: var(--app-accent-soft);
+  --accent-foreground: var(--app-text);
+  --border: var(--app-border);
+  --input: var(--app-border);
+  --ring: var(--app-accent);
+  color-scheme: dark;
+  background:
+    radial-gradient(circle at 50% -12%, rgba(255, 255, 255, 0.07), transparent 34rem),
+    linear-gradient(145deg, #000000 0%, #050505 50%, #0b0a08 100%);
+}
+
+html[data-student-background="night"] .student-system-floating-layer {
+  --app-card-bg: rgba(36, 36, 38, 0.92);
+  --app-soft-bg: rgba(255, 255, 255, 0.08);
+  --app-border: rgba(255, 255, 255, 0.18);
+  --app-border-soft: rgba(255, 255, 255, 0.1);
+  --app-text: #f5f5f7;
+  --app-text-soft: #dedee3;
+  --app-muted: #aaaab3;
+  --app-muted-light: #7d7d86;
+  --app-input-bg: rgba(28, 28, 30, 0.94);
+  --app-accent: #ffd60a;
+  --app-accent-strong: #e9b900;
+  --app-accent-soft: rgba(255, 214, 10, 0.16);
+  --app-secondary: #ff9f0a;
+  --app-secondary-soft: rgba(255, 159, 10, 0.15);
+  --app-success: #30d158;
+  --app-success-soft: rgba(48, 209, 88, 0.15);
+  --app-warm: #ff9f0a;
+  --app-warm-soft: rgba(255, 159, 10, 0.15);
+  --student-menu-surface: color-mix(
+    in srgb,
+    #1c1c1e var(--student-menu-fill-opacity),
+    transparent
+  );
+  color-scheme: dark;
+}
+
+html[data-student-background="morning"] .student-system-floating-layer {
+  --app-border: rgba(83, 117, 151, 0.26);
+  --app-border-soft: rgba(83, 117, 151, 0.14);
+  --app-text: #172331;
+  --app-text-soft: #34475c;
+  --app-muted: #627184;
+  --app-muted-light: #8996a6;
+  --app-accent: #0a84ff;
+  --app-accent-strong: #0067ce;
+  --app-accent-soft: rgba(231, 242, 255, 0.9);
+  --app-secondary: #5e5ce6;
+  --app-success: #248a3d;
+  --app-success-soft: rgba(232, 245, 235, 0.9);
+}
+
+html[data-student-background="afternoon"] .student-system-floating-layer {
+  --app-border: rgba(137, 111, 79, 0.27);
+  --app-border-soft: rgba(137, 111, 79, 0.15);
+  --app-text: #2c251e;
+  --app-text-soft: #504438;
+  --app-muted: #74695d;
+  --app-muted-light: #968b7f;
+  --app-accent: #d37816;
+  --app-accent-strong: #a95708;
+  --app-accent-soft: rgba(255, 232, 201, 0.92);
+  --app-secondary: #617f8d;
+  --app-success: #377c50;
+  --app-success-soft: rgba(220, 240, 225, 0.9);
+}
+
+.student-system-floating-layer {
+  --app-card-bg: #ffffff;
+  --app-soft-bg: #f2f5f8;
+  --app-border: #d9e0e8;
+  --app-border-soft: #e8edf2;
+  --app-text: #17191d;
+  --app-text-soft: #34383f;
+  --app-muted: #626a76;
+  --app-muted-light: #89919c;
+  --app-input-bg: rgba(255, 255, 255, 0.94);
+  --app-accent: #0a84ff;
+  --app-accent-strong: #0067ce;
+  --app-accent-soft: #e7f2ff;
+  --app-secondary: #5e5ce6;
+  --app-secondary-soft: #eeedff;
+  --app-success: #248a3d;
+  --app-success-soft: #e8f5eb;
+  --app-warm: #b55d00;
+  --app-warm-soft: #fff0df;
+  --app-hero-end: #dcebf8;
+  --student-menu-surface: color-mix(
+    in srgb,
+    white var(--student-menu-fill-opacity),
+    transparent
+  );
+}
+
+.app-shell[data-student-shell="system"] .app-aurora-orb {
+  display: none;
+}
+
+.student-system-window {
+  position: relative;
+  isolation: isolate;
+  max-width: 1760px;
+  height: calc(100dvh - 32px);
+  min-height: 0 !important;
+  border: 1px solid var(--app-border);
+  border-radius: 30px;
+  background: var(--student-window-glass-surface);
+  box-shadow:
+    0 36px 90px -48px rgba(28, 43, 62, 0.54),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset,
+    1px 0 0 rgba(255, 255, 255, 0.48) inset,
+    0 -1px 0 rgba(112, 139, 165, 0.12) inset;
+  backdrop-filter: blur(34px) saturate(150%);
+  -webkit-backdrop-filter: blur(34px) saturate(150%);
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"],
+html:fullscreen
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"] {
+  width: 100dvw;
+  height: 100dvh;
+  padding: 0;
+}
+
+html[data-student-fullscreen="true"] .student-system-window,
+html:fullscreen .student-system-window {
+  width: 100dvw;
+  max-width: none;
+  height: 100dvh;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-shell="system"]
+  .student-system-main
+  .max-w-\[1500px\],
+html:fullscreen
+  .app-shell[data-student-shell="system"]
+  .student-system-main
+  .max-w-\[1500px\],
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-shell="system"]
+  :is(.app-student-page-header, .software-growth-home),
+html:fullscreen
+  .app-shell[data-student-shell="system"]
+  :is(.app-student-page-header, .software-growth-home) {
+  width: 100%;
+  max-width: none;
+}
+
+.student-system-workspace {
+  position: relative;
+  display: flex;
+  min-height: 0;
+  flex-direction: column;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255, 255, 255, 0.09), transparent 32rem),
+    rgba(244, 249, 253, 0.025);
+}
+
+.student-system-main {
+  min-height: 0;
+  flex: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  scrollbar-color: rgba(83, 93, 107, 0.28) transparent;
+  scrollbar-width: thin;
+}
+
+.student-system-main::-webkit-scrollbar,
+.student-system-nav::-webkit-scrollbar {
+  width: 7px;
+}
+
+.student-system-main::-webkit-scrollbar-thumb,
+.student-system-nav::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(83, 93, 107, 0.24);
+}
+
+/* Left navigation material */
+.student-system-sidebar {
+  position: relative;
+  z-index: 30;
+  width: 238px;
+  min-height: 0;
+  border-right: 1px solid var(--app-border);
+  background: var(--student-window-glass-surface);
+  box-shadow: 1px 0 0 var(--app-card-highlight) inset;
+  backdrop-filter: blur(38px) saturate(145%);
+  -webkit-backdrop-filter: blur(38px) saturate(145%);
+}
+
+.student-system-brand {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  gap: 11px;
+  margin: 0 13px;
+  border-bottom: 1px solid var(--app-border-soft);
+  padding: 0 8px;
+  color: var(--app-text);
+}
+
+.student-system-brand-mark {
+  display: inline-flex;
+  width: 39px;
+  height: 39px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 13px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #16191f, #363b44);
+  box-shadow: 0 9px 20px -12px rgba(12, 16, 22, 0.76);
+}
+
+.student-system-brand strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 760;
+  letter-spacing: -0.01em;
+}
+
+.student-system-brand small {
+  display: block;
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 8px;
+  font-weight: 720;
+  letter-spacing: 0.17em;
+}
+
+.student-system-nav {
+  padding-top: 10px;
+  scrollbar-color: rgba(83, 93, 107, 0.22) transparent;
+  scrollbar-width: thin;
+}
+
+.student-system-nav-group {
+  padding-top: 11px;
+}
+
+.student-system-nav-group h2 {
+  margin: 0 10px 6px;
+  color: var(--app-muted);
+  font-size: 10px;
+  font-weight: 720;
+  letter-spacing: 0.08em;
+}
+
+.student-system-nav-group > div {
+  display: grid;
+  gap: 3px;
+}
+
+.student-system-nav-link {
+  position: relative;
+  display: flex;
+  min-height: 39px;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  padding: 0 11px;
+  color: var(--app-text-soft);
+  font-size: 12px;
+  font-weight: 620;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.student-system-nav-link:hover {
+  color: var(--app-text);
+  background: var(--student-button-neutral-surface);
+}
+
+.student-system-nav-link:focus-visible,
+.student-system-tool-button:focus-visible,
+.student-system-primary-button:focus-visible,
+.student-system-secondary-button:focus-visible,
+.student-system-text-action:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 30%, transparent);
+  outline-offset: 2px;
+}
+
+.student-system-nav-link[aria-current="page"] {
+  color: var(--app-accent-contrast);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--app-accent) 92%, white) 0%,
+    var(--app-accent-strong) 100%
+  );
+  box-shadow: 0 10px 22px -14px color-mix(in srgb, var(--app-accent) 78%, transparent);
+}
+
+.student-system-sidebar-foot {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 15px;
+  border-top: 1px solid var(--app-border-soft);
+  padding: 13px 8px 16px;
+  color: var(--app-muted);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.student-system-sidebar-status {
+  width: 7px;
+  height: 7px;
+  border: 2px solid rgba(36, 138, 61, 0.18);
+  border-radius: 999px;
+  background: var(--app-success);
+  box-sizing: content-box;
+}
+
+/* System toolbar */
+.student-system-topbar {
+  position: relative;
+  z-index: 28;
+  display: flex;
+  min-height: 78px;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid var(--app-border);
+  padding: 0 24px;
+  background: var(--student-window-glass-surface);
+  box-shadow: 0 1px 0 var(--app-card-highlight) inset;
+  backdrop-filter: blur(34px) saturate(142%);
+  -webkit-backdrop-filter: blur(34px) saturate(142%);
+}
+
+.student-system-greeting {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.student-system-avatar {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.86);
+  border-radius: 50%;
+  color: #ffffff;
+  background: linear-gradient(145deg, #596472, #252b33);
+  box-shadow: 0 8px 20px -14px rgba(20, 27, 35, 0.7);
+  font-size: 14px;
+  font-weight: 760;
+}
+
+.student-system-greeting p:first-child {
+  color: var(--app-text);
+  font-size: 14px;
+  font-weight: 730;
+}
+
+.student-system-greeting p:last-child {
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 10px;
+  font-weight: 560;
+}
+
+.student-system-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.student-system-glass-control {
+  position: relative;
+}
+
+.student-system-glass-popover {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 90;
+  width: min(310px, calc(100vw - 24px));
+  max-height: calc(100dvh - 98px);
+  overflow-y: auto;
+  border: 1px solid var(--app-border);
+  border-radius: 18px;
+  padding: 16px;
+  color: var(--app-text);
+  background: var(--student-settings-popover-surface, #ffffff);
+  box-shadow:
+    0 24px 60px -28px rgba(25, 39, 56, 0.55),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+  backdrop-filter: blur(30px) saturate(145%);
+  -webkit-backdrop-filter: blur(30px) saturate(145%);
+}
+
+.student-system-glass-popover[data-subpanel-open="true"] {
+  min-height: min(590px, calc(100dvh - 98px));
+  overflow: hidden;
+}
+
+.student-system-glass-popover::before {
+  position: absolute;
+  top: -6px;
+  right: 14px;
+  width: 12px;
+  height: 12px;
+  border-top: 1px solid var(--app-border);
+  border-left: 1px solid var(--app-border);
+  content: "";
+  background: var(--student-settings-popover-surface, #ffffff);
+  transform: rotate(45deg);
+}
+
+.student-system-glass-popover-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-system-glass-setting {
+  margin-top: 14px;
+}
+
+.student-system-background-setting {
+  margin-top: 14px;
+  border-bottom: 1px solid var(--app-border-soft);
+  padding-bottom: 14px;
+}
+
+.student-system-background-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.student-system-background-options {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.student-system-background-option {
+  display: flex;
+  min-width: 0;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+  border: 1px solid var(--app-border);
+  border-radius: 11px;
+  color: var(--app-muted);
+  background: var(--student-button-neutral-surface);
+  font-size: 9px;
+  font-weight: 680;
+  transition:
+    border-color 140ms ease,
+    color 140ms ease,
+    background-color 140ms ease;
+}
+
+.student-system-background-option > span {
+  display: block;
+  width: 28px;
+  height: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 999px;
+  box-shadow: 0 2px 7px -5px rgba(27, 39, 53, 0.7);
+}
+
+.student-system-background-option[data-background-theme="auto"] > span {
+  background: linear-gradient(90deg, #cdeee9, #f3d6ad 52%, #050505);
+}
+
+.student-system-background-option[data-background-theme="morning"] > span {
+  background: linear-gradient(90deg, #dce4ed, #0a84ff);
+}
+
+.student-system-background-option[data-background-theme="afternoon"] > span {
+  background: linear-gradient(90deg, #eadfce, #dfe8eb);
+}
+
+.student-system-background-option[data-background-theme="night"] > span {
+  background: linear-gradient(90deg, #000000, #1c1c1e 72%, #ffd60a);
+}
+
+.student-system-background-option:hover {
+  border-color: var(--app-accent);
+  color: var(--app-text);
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-background-option[aria-pressed="true"] {
+  border-color: color-mix(in srgb, var(--app-accent) 60%, transparent);
+  color: var(--app-accent-strong);
+  background: var(--student-button-neutral-surface-hover);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--app-accent) 12%, transparent) inset;
+}
+
+.student-system-background-option:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 28%, transparent);
+  outline-offset: 2px;
+}
+
+.student-system-glass-setting + .student-system-glass-setting {
+  border-top: 1px solid var(--app-border-soft);
+  padding-top: 14px;
+}
+
+.student-system-glass-setting-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-system-glass-setting-header label {
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.student-system-card-transparency-trigger {
+  display: grid;
+  width: 100%;
+  min-height: 52px;
+  grid-template-columns: 32px minmax(0, 1fr) auto 16px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid var(--app-border);
+  border-radius: 13px;
+  padding: 9px 10px;
+  color: var(--app-text);
+  background: var(--student-button-neutral-surface);
+  text-align: left;
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.student-system-card-transparency-trigger:hover {
+  border-color: color-mix(in srgb, var(--app-accent) 45%, var(--app-border));
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-card-transparency-trigger:focus-visible,
+.student-system-card-transparency-close:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 28%, transparent);
+  outline-offset: 2px;
+}
+
+.student-system-card-transparency-trigger-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
+}
+
+.student-system-card-transparency-trigger strong,
+.student-system-card-transparency-trigger small {
+  display: block;
+}
+
+.student-system-card-transparency-trigger strong {
+  font-size: 11px;
+  font-weight: 740;
+}
+
+.student-system-card-transparency-trigger small {
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 9px;
+  line-height: 1.35;
+}
+
+.student-system-card-transparency-summary {
+  color: var(--app-muted);
+  font-size: 9px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.student-system-card-transparency-popover {
+  position: absolute;
+  inset: 52px 12px 12px;
+  z-index: 2;
+  overflow-y: auto;
+  border: 1px solid var(--app-border);
+  border-radius: 15px;
+  padding: 14px;
+  color: var(--app-text);
+  background: var(--student-settings-popover-surface, #ffffff);
+  box-shadow: 0 20px 52px -26px rgba(16, 28, 43, 0.62);
+  backdrop-filter: blur(34px) saturate(150%);
+  -webkit-backdrop-filter: blur(34px) saturate(150%);
+}
+
+.student-system-card-transparency-popover-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.student-system-card-transparency-popover-header strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.student-system-card-transparency-popover-header p {
+  margin-top: 3px;
+  color: var(--app-muted);
+  font-size: 10px;
+}
+
+.student-system-card-transparency-close {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  place-items: center;
+  border: 1px solid var(--app-border);
+  border-radius: 10px;
+  color: var(--app-text-soft);
+  background: var(--student-button-neutral-surface);
+}
+
+.student-system-card-transparency-close:hover {
+  color: var(--app-text);
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-glass-popover-header strong {
+  display: block;
+  font-size: 13px;
+  font-weight: 760;
+}
+
+.student-system-glass-popover-header p {
+  margin-top: 3px;
+  color: var(--app-muted);
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.student-system-glass-value {
+  flex: none;
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
+  font-size: 11px;
+  font-weight: 760;
+  font-variant-numeric: tabular-nums;
+}
+
+.student-system-glass-range {
+  width: 100%;
+  height: 28px;
+  margin-top: 7px;
+  cursor: pointer;
+  accent-color: var(--app-accent);
+}
+
+.student-system-glass-range:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 28%, transparent);
+  outline-offset: 3px;
+  border-radius: 999px;
+}
+
+.student-system-glass-scale,
+.student-system-glass-popover-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.student-system-glass-scale {
+  color: var(--app-muted);
+  font-size: 9px;
+  font-weight: 620;
+}
+
+.student-system-glass-popover-footer {
+  margin-top: 13px;
+  border-top: 1px solid var(--app-border);
+  padding-top: 12px;
+}
+
+.student-system-glass-reset {
+  min-height: 34px;
+  border-radius: 10px;
+  padding: 0 10px;
+  color: var(--app-accent-strong);
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.student-system-glass-reset:hover {
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-tool-button {
+  display: inline-flex;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--app-border);
+  border-radius: 13px;
+  color: var(--app-text-soft);
+  background: var(--student-button-neutral-surface);
+  box-shadow: 0 5px 16px -14px rgba(23, 35, 50, 0.65);
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.student-system-tool-button:hover {
+  border-color: var(--app-accent);
+  color: var(--app-accent-strong);
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-toolbar > .app-glass-card {
+  min-height: 40px;
+  border: 1px solid var(--app-border);
+  border-radius: 13px;
+  padding: 0 12px;
+  color: var(--app-text-soft);
+  background: var(--student-button-neutral-surface);
+  box-shadow: 0 5px 16px -14px rgba(23, 35, 50, 0.65);
+  font-size: 12px;
+  font-weight: 680;
+  letter-spacing: 0;
+}
+
+.student-system-toolbar > .app-glass-card:hover {
+  transform: none;
+  border-color: var(--app-accent);
+  color: var(--app-accent-strong);
+  background: var(--student-button-neutral-surface-hover);
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  [data-slot="button"][data-variant="default"] {
+  color: var(--student-primary-button-foreground);
+  background-color: var(--student-button-accent-surface) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  [data-slot="button"][data-variant="default"]:hover {
+  background-color: var(--student-button-accent-surface-hover) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="secondary"]
+  ) {
+  background-color: var(--student-button-neutral-surface) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  [data-slot="button"]:is(
+    [data-variant="outline"],
+    [data-variant="secondary"],
+    [data-variant="ghost"]
+  ):hover {
+  background-color: var(--student-button-neutral-surface-hover) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  [data-slot="button"][data-variant="destructive"] {
+  background-color: var(--student-button-danger-surface) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  :is(
+    [role="menu"],
+    [role="listbox"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"],
+    [data-slot="dropdown-menu-content"]
+  ),
+.student-system-floating-layer
+  :is(
+    [role="menu"],
+    [role="listbox"],
+    [data-slot="popover-content"],
+    [data-slot="select-content"],
+    [data-slot="dropdown-menu-content"]
+  ) {
+  background-color: var(--student-menu-surface) !important;
+  backdrop-filter: blur(30px) saturate(140%);
+  -webkit-backdrop-filter: blur(30px) saturate(140%);
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  select.app-input {
+  background-color: var(--student-menu-surface);
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  select.app-input option {
+  background-color: var(--student-menu-surface);
+}
+
+.student-system-notice-count {
+  position: absolute;
+  right: -3px;
+  top: -4px;
+  display: inline-flex;
+  min-width: 17px;
+  height: 17px;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #f8fafc;
+  border-radius: 999px;
+  padding: 0 3px;
+  color: #ffffff;
+  background: #ff3b30;
+  font-size: 8px;
+  font-weight: 800;
+}
+
+.student-system-account {
+  min-height: 40px;
+  align-items: center;
+  border-left: 1px solid var(--app-border);
+  margin-left: 3px;
+  padding-left: 11px;
+}
+
+.student-system-account strong,
+.student-system-account small {
+  display: block;
+  max-width: 108px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-system-account strong {
+  font-size: 11px;
+  font-weight: 720;
+}
+
+.student-system-account small {
+  margin-top: 1px;
+  color: var(--app-muted);
+  font-size: 9px;
+  font-weight: 560;
+}
+
+.student-system-logout button {
+  width: 40px !important;
+  height: 40px !important;
+  border-color: var(--app-border) !important;
+  border-radius: 13px !important;
+  color: var(--app-muted);
+  background: var(--student-button-neutral-surface) !important;
+  box-shadow: none !important;
+}
+
+.student-system-logout button:hover {
+  color: var(--app-danger);
+  background: color-mix(in srgb, var(--app-danger) 12%, transparent) !important;
+}
+
+.student-system-audit-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #f0c48c;
+  border-radius: 999px;
+  padding: 7px 11px;
+  color: #7a4400;
+  background: rgba(255, 244, 226, 0.92);
+  box-shadow: 0 10px 28px -20px rgba(80, 45, 5, 0.55);
+  font-size: 10px;
+  font-weight: 760;
+  backdrop-filter: blur(16px);
+}
+
+/* Page heading: content title, not another floating pill. */
+.app-shell[data-student-shell="system"] .app-student-page-header {
+  max-width: 1472px;
+  padding-top: 18px;
+}
+
+.app-shell[data-student-shell="system"] .app-student-page-header .app-glass-card {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell[data-student-shell="system"]:has(.software-growth-home) .app-student-page-header {
+  display: none;
+}
+
+/* Growth dashboard */
+.software-growth-home {
+  width: 100%;
+  max-width: 1472px;
+  margin-inline: auto;
+}
+
+.student-system-muted {
+  color: var(--app-muted);
+}
+
+html .app-shell[data-student-shell="system"] :is(.app-card, .app-theme-card) {
+  background-color: var(--student-glass-surface);
+  backdrop-filter: blur(30px) saturate(128%);
+  -webkit-backdrop-filter: blur(30px) saturate(128%);
+}
+
+/* 通用卡片按 DOM 嵌套深度自动进入二级与三级玻璃材质。 */
+html
+  .app-shell[data-student-shell="system"]
+  :is(.app-card, .app-theme-card, .student-system-card)
+  :is(.app-card, .app-theme-card, .app-soft-card, .app-theme-soft) {
+  --app-card-bg: var(--student-card-level-2-surface);
+  --app-card-fill: var(--student-card-level-2-surface);
+  background-color: var(--student-card-level-2-surface) !important;
+}
+
+html
+  .app-shell[data-student-shell="system"]
+  :is(.app-card, .app-theme-card, .student-system-card)
+  :is(.app-card, .app-theme-card, .app-soft-card, .app-theme-soft)
+  :is(.app-card, .app-theme-card, .app-soft-card, .app-theme-soft) {
+  --app-card-bg: var(--student-card-level-3-surface);
+  --app-card-fill: var(--student-card-level-3-surface);
+  background-color: var(--student-card-level-3-surface) !important;
+}
+
+.student-system-alert,
+.student-system-metric,
+.student-system-card {
+  border: 1px solid var(--app-border);
+  background: var(--student-glass-surface);
+  box-shadow:
+    0 18px 42px -34px rgba(30, 45, 64, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.86) inset;
+  backdrop-filter: blur(30px) saturate(130%);
+  -webkit-backdrop-filter: blur(30px) saturate(130%);
+}
+
+.student-system-alert {
+  min-height: 70px;
+  overflow: hidden;
+  border-radius: 17px;
+  color: var(--app-text);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+a.student-system-alert:hover,
+.student-system-alert button:hover {
+  background: var(--student-glass-surface-hover);
+}
+
+.student-system-alert:focus-within {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 28%, transparent);
+  outline-offset: 2px;
+}
+
+.student-system-alert-content {
+  display: flex;
+  min-height: 70px;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.student-system-alert-icon {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #ffffff;
+  background: #20242b;
+}
+
+.student-system-alert-content strong {
+  font-size: 12px;
+  font-weight: 740;
+}
+
+.student-system-alert-action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 5px;
+  border-radius: 10px;
+  padding: 9px 12px;
+  color: var(--student-primary-button-foreground);
+  background: var(--student-button-accent-surface);
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.student-system-alert--clear .student-system-alert-icon {
+  color: var(--app-success);
+  background: var(--app-success-soft);
+}
+
+.student-system-welcome {
+  position: relative;
+  display: flex;
+  min-height: 112px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  overflow: hidden;
+  border: 1px solid var(--app-border);
+  border-radius: 20px;
+  padding: 20px 22px;
+  color: var(--app-text);
+  background: var(--student-glass-surface);
+  box-shadow:
+    0 22px 48px -38px rgba(30, 45, 64, 0.48),
+    0 1px 0 rgba(255, 255, 255, 0.88) inset;
+  backdrop-filter: blur(30px) saturate(130%);
+  -webkit-backdrop-filter: blur(30px) saturate(130%);
+}
+
+.student-system-welcome::after {
+  position: absolute;
+  right: -38px;
+  bottom: -72px;
+  width: 210px;
+  height: 160px;
+  border: 1px solid color-mix(in srgb, var(--app-accent) 10%, transparent);
+  border-radius: 50%;
+  content: "";
+  background: color-mix(in srgb, var(--app-accent) 5%, transparent);
+  pointer-events: none;
+}
+
+.student-system-welcome-main,
+.student-system-welcome-summary,
+.student-system-welcome-status {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+}
+
+.student-system-welcome-main {
+  min-width: 0;
+  gap: 14px;
+}
+
+.student-system-welcome-icon {
+  display: inline-flex;
+  width: 48px;
+  height: 48px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 16px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #3a424d, #171b20);
+  box-shadow: 0 12px 24px -16px rgba(20, 27, 35, 0.8);
+}
+
+.student-system-welcome-eyebrow {
+  display: block;
+  color: var(--app-accent-strong);
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: 0.12em;
+}
+
+.student-system-welcome h2 {
+  margin-top: 3px;
+  font-size: clamp(17px, 1.5vw, 21px);
+  font-weight: 780;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+}
+
+.student-system-welcome-main p {
+  margin-top: 5px;
+  color: var(--app-muted);
+  font-size: 11px;
+  font-weight: 540;
+  line-height: 1.5;
+}
+
+.student-system-welcome-summary {
+  flex: none;
+  gap: 12px;
+}
+
+.student-system-welcome-status {
+  gap: 9px;
+  border: 1px solid rgba(36, 138, 61, 0.14);
+  border-radius: 14px;
+  padding: 10px 12px;
+  color: var(--app-success);
+  background: var(--student-card-level-2-surface);
+}
+
+.student-system-welcome-status small,
+.student-system-welcome-status strong {
+  display: block;
+}
+
+.student-system-welcome-status small {
+  color: var(--app-muted);
+  font-size: 8px;
+  font-weight: 600;
+}
+
+.student-system-welcome-status strong {
+  margin-top: 2px;
+  color: var(--app-text);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.student-system-welcome-streak {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  gap: 6px;
+  border-left: 1px solid var(--app-border);
+  padding-left: 14px;
+  color: var(--app-warm);
+  font-size: 10px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .student-system-welcome {
+    min-height: 0;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 15px;
+    padding: 17px;
+  }
+
+  .student-system-welcome-summary {
+    justify-content: space-between;
+    border-top: 1px solid var(--app-border-soft);
+    padding-top: 13px;
+  }
+
+  .student-system-welcome-streak {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 419px) {
+  .student-system-welcome-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .student-system-welcome-summary {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+.student-system-metric {
+  min-width: 0;
+  border-radius: 17px;
+  padding: 16px;
+}
+
+.student-system-metric-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--app-border-soft);
+  border-radius: 11px;
+  color: var(--app-accent-strong);
+  background: var(--student-card-level-2-surface);
+}
+
+.student-system-card {
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 19px;
+  padding: 18px;
+}
+
+.student-system-card-header {
+  display: flex;
+  min-height: 42px;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 15px;
+}
+
+.student-system-card-header h2 {
+  color: var(--app-text);
+  font-size: 14px;
+  font-weight: 760;
+  letter-spacing: -0.015em;
+}
+
+.student-system-card-header p {
+  margin-top: 3px;
+  color: var(--app-muted);
+  font-size: 10px;
+  font-weight: 540;
+}
+
+.student-system-text-action {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 5px;
+  border-radius: 9px;
+  padding: 0 8px;
+  color: var(--app-accent-strong);
+  font-size: 10px;
+  font-weight: 720;
+}
+
+.student-system-text-action:hover {
+  background: var(--app-accent-soft);
+}
+
+.student-system-current-course {
+  border: 1px solid #d9e6f2;
+  border-radius: 16px;
+  padding: 17px;
+  background: var(--student-card-level-2-surface);
+  backdrop-filter: blur(22px) saturate(124%);
+  -webkit-backdrop-filter: blur(22px) saturate(124%);
+}
+
+.student-system-current-course h3 {
+  margin-top: 13px;
+  color: var(--app-text);
+  font-size: 18px;
+  font-weight: 770;
+  line-height: 1.35;
+  letter-spacing: -0.02em;
+}
+
+.student-system-course-badge {
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--app-accent-strong);
+  background: var(--student-card-level-3-surface);
+  box-shadow: 0 0 0 1px rgba(10, 132, 255, 0.13) inset;
+}
+
+.student-system-progress {
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dbe4ed;
+}
+
+.student-system-progress > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #0a84ff, #4aa2ff);
+}
+
+.student-system-primary-button,
+.student-system-secondary-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border-radius: 11px;
+  padding: 0 13px;
+  font-size: 11px;
+  font-weight: 730;
+  transition:
+    transform 140ms ease,
+    background-color 140ms ease,
+    border-color 140ms ease;
+}
+
+.student-system-primary-button {
+  color: var(--student-primary-button-foreground);
+  background: var(--student-button-accent-surface);
+  box-shadow: 0 10px 22px -15px rgba(0, 103, 206, 0.8);
+}
+
+.student-system-primary-button:hover {
+  background: var(--student-button-accent-surface-hover);
+  transform: translateY(-1px);
+}
+
+.student-system-secondary-button {
+  border: 1px solid var(--app-border);
+  color: var(--app-text-soft);
+  background: var(--student-button-neutral-surface);
+}
+
+.student-system-secondary-button:hover {
+  border-color: var(--app-accent);
+  background: var(--student-button-neutral-surface-hover);
+}
+
+.student-system-recent-list {
+  display: grid;
+  gap: 2px;
+  margin-top: 13px;
+}
+
+.student-system-recent-row {
+  display: flex;
+  min-height: 51px;
+  align-items: center;
+  gap: 10px;
+  border-radius: 11px;
+  padding: 7px 8px;
+  transition: background-color 140ms ease;
+}
+
+a:hover > .student-system-recent-row {
+  background: var(--app-soft-bg);
+}
+
+.student-system-recent-row strong {
+  font-size: 11px;
+  font-weight: 690;
+}
+
+.student-system-recent-state {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border: 2px solid rgba(10, 132, 255, 0.17);
+  border-radius: 999px;
+  background: var(--app-accent);
+  box-sizing: content-box;
+}
+
+.student-system-recent-state[data-status="completed"] {
+  border-color: rgba(36, 138, 61, 0.17);
+  background: var(--app-success);
+}
+
+.student-system-week-chart {
+  display: grid;
+  height: 190px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: clamp(7px, 2vw, 16px);
+  border-bottom: 1px solid var(--app-border-soft);
+  padding: 8px 8px 12px;
+}
+
+.student-system-chart-column {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: 18px minmax(0, 1fr) 18px;
+  gap: 5px;
+  text-align: center;
+}
+
+.student-system-chart-column > span,
+.student-system-chart-column time {
+  color: var(--app-muted);
+  font-size: 9px;
+  font-weight: 620;
+}
+
+.student-system-chart-column > div {
+  display: flex;
+  min-height: 0;
+  align-items: flex-end;
+  overflow: hidden;
+  border-radius: 9px 9px 4px 4px;
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent calc(25% - 1px),
+      rgba(213, 220, 229, 0.52) 25%
+    );
+}
+
+.student-system-chart-column > div > span {
+  width: 100%;
+  min-height: 5px;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, #4ea5ff, #087cf0);
+  box-shadow: 0 8px 18px -12px rgba(0, 103, 206, 0.9);
+}
+
+.student-system-chart-column > div > span[data-empty="true"] {
+  background: #dfe5ec;
+  box-shadow: none;
+}
+
+.student-system-insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid var(--app-border-soft);
+  border-radius: 12px;
+  background: var(--app-border-soft);
+}
+
+.student-system-insight-grid > div {
+  min-width: 0;
+  padding: 11px 12px;
+  background: var(--student-card-level-2-surface);
+}
+
+.student-system-insight-grid span,
+.student-system-insight-grid strong {
+  display: block;
+}
+
+.student-system-insight-grid span {
+  color: var(--app-muted);
+  font-size: 9px;
+  font-weight: 600;
+}
+
+.student-system-insight-grid strong {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.student-system-analysis-note {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 12px;
+  border-radius: 13px;
+  padding: 11px 12px;
+  color: var(--app-text-soft);
+  background: var(--student-card-level-2-surface);
+}
+
+.student-system-analysis-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  color: var(--app-accent-strong);
+  background: var(--student-card-level-3-surface);
+}
+
+.student-system-analysis-note > div {
+  min-width: 0;
+  flex: 1;
+}
+
+.student-system-analysis-note strong {
+  display: block;
+  font-size: 10px;
+  font-weight: 740;
+}
+
+.student-system-analysis-note p {
+  margin-top: 2px;
+  color: var(--app-muted);
+  font-size: 9px;
+  line-height: 1.55;
+}
+
+.student-system-course-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.student-system-course-card {
+  min-width: 0;
+  border: 1px solid var(--app-border-soft);
+  border-radius: 15px;
+  padding: 14px;
+  background: var(--student-card-level-2-surface);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    transform 140ms ease;
+}
+
+.student-system-course-card:hover {
+  border-color: #c8d8e7;
+  background: var(--student-card-level-2-surface-hover);
+  transform: translateY(-1px);
+}
+
+.student-system-course-icon {
+  display: inline-flex;
+  width: 34px;
+  height: 34px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 11px;
+  color: var(--app-accent-strong);
+  background: var(--app-accent-soft);
+}
+
+.student-system-course-card h3 {
+  min-height: 35px;
+  margin-top: 10px;
+  overflow: hidden;
+  color: var(--app-text);
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1.45;
+}
+
+.student-system-course-card p {
+  margin: 2px 0 13px;
+  overflow: hidden;
+  color: var(--app-muted);
+  font-size: 9px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.student-system-practice-card {
+  display: flex;
+  min-height: 78px;
+  align-items: center;
+  gap: 11px;
+  border: 1px solid #d9e6f2;
+  border-radius: 15px;
+  padding: 12px;
+  color: var(--app-text);
+  background: var(--student-card-level-2-surface);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease;
+}
+
+.student-system-practice-card:hover {
+  border-color: #bdd6eb;
+  background: var(--student-card-level-2-surface-hover);
+}
+
+.student-system-practice-card > span {
+  display: inline-flex;
+  width: 38px;
+  height: 38px;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  color: #ffffff;
+  background: linear-gradient(145deg, #1790ff, #0068d0);
+}
+
+.student-system-practice-card strong {
+  display: block;
+  font-size: 11px;
+  font-weight: 730;
+}
+
+.student-system-practice-card p {
+  margin-top: 3px;
+  color: var(--app-muted);
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.student-system-empty {
+  display: flex;
+  min-height: 170px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border: 1px dashed #cad3dd;
+  border-radius: 15px;
+  padding: 24px;
+  text-align: center;
+  color: var(--app-muted);
+  background: var(--student-card-level-2-surface);
+}
+
+.student-system-empty h3 {
+  margin-top: 9px;
+  color: var(--app-text);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.student-system-empty p {
+  max-width: 280px;
+  margin-top: 4px;
+  font-size: 10px;
+  line-height: 1.55;
+}
+
+/* Focus-mode pages keep their own dedicated workspace. */
+.app-shell[data-student-shell="system"]:has(.assessment-workspace) {
+  height: auto;
+  min-height: 100dvh;
+  overflow: visible;
+  padding: 0;
+  background: var(--app-bg);
+}
+
+.app-shell[data-student-shell="system"]:has(.assessment-workspace) .student-system-window {
+  max-width: none;
+  height: auto;
+  min-height: 100dvh !important;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell[data-student-shell="system"]:has(.assessment-workspace) :is(
+  .student-system-sidebar,
+  .student-system-topbar,
+  .app-student-page-header
+) {
+  display: none !important;
+}
+
+.app-shell[data-student-shell="system"]:has(.assessment-workspace) .student-system-workspace,
+.app-shell[data-student-shell="system"]:has(.assessment-workspace) .student-system-main {
+  display: block;
+  overflow: visible;
+  background: transparent;
+}
+
+@media (max-width: 1279px) {
+  .student-system-sidebar {
+    width: 218px;
+  }
+
+  .student-system-card {
+    padding: 16px;
+  }
+
+  .student-system-week-chart {
+    height: 210px;
+  }
+}
+
+@media (max-width: 1023px) {
+  .student-system-topbar {
+    padding-inline: 18px;
+  }
+
+  .student-system-toolbar > .app-glass-card span:last-child,
+  .student-system-account {
+    display: none;
+  }
+
+  .student-system-toolbar > .app-glass-card {
+    width: 40px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .student-system-course-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-system-course-card h3 {
+    min-height: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  html .app-shell[data-dashboard-ui="student"][data-student-shell="system"] {
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+    padding: 0;
+    background: #f3f5f8;
+  }
+
+  .student-system-window {
+    height: auto;
+    min-height: 100dvh !important;
+    border: 0;
+    border-radius: 0;
+    background: rgba(247, 250, 253, 0.18);
+    box-shadow: none;
+    backdrop-filter: blur(18px) saturate(128%);
+    -webkit-backdrop-filter: blur(18px) saturate(128%);
+  }
+
+  .student-system-workspace {
+    min-height: 100dvh;
+    overflow: visible;
+  }
+
+  .student-system-main {
+    overflow: visible;
+  }
+
+  .student-system-topbar {
+    position: sticky;
+    top: 0;
+    min-height: 66px;
+    padding: 0 12px;
+  }
+
+  .student-system-avatar {
+    width: 36px;
+    height: 36px;
+  }
+
+  .student-system-greeting p:first-child {
+    max-width: 120px;
+    font-size: 12px;
+  }
+
+  .student-system-greeting p:last-child {
+    max-width: 150px;
+    font-size: 8px;
+  }
+
+  .student-system-toolbar {
+    gap: 5px;
+  }
+
+  .student-system-toolbar > :is(a:first-child, .app-glass-card),
+  .student-system-logout {
+    display: none;
+  }
+
+  .student-system-tool-button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .app-shell[data-student-shell="system"] .app-student-page-header {
+    padding-top: 15px;
+  }
+
+  .software-growth-home {
+    padding-inline: 12px;
+    padding-top: 12px;
+  }
+
+  .student-system-alert-content {
+    min-height: 66px;
+    padding: 10px 12px;
+  }
+
+  .student-system-alert-action {
+    width: 34px;
+    height: 34px;
+    justify-content: center;
+    padding: 0;
+    font-size: 0;
+  }
+
+  .student-system-metric {
+    padding: 13px;
+  }
+
+  .student-system-metric-icon {
+    width: 31px;
+    height: 31px;
+  }
+
+  .student-system-card-header {
+    align-items: center;
+  }
+
+  .student-system-week-chart {
+    height: 184px;
+    gap: 5px;
+    padding-inline: 0;
+  }
+
+  .student-system-chart-column > span {
+    font-size: 8px;
+  }
+
+  .student-system-insight-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .student-system-analysis-note {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .student-system-analysis-note .student-system-text-action {
+    margin-left: 44px;
+  }
+}
+
+@media (max-width: 459px) {
+  .student-system-greeting p:last-child,
+  .student-system-toolbar > a[title="设置"] {
+    display: none;
+  }
+
+  .student-system-alert-content > .min-w-0 .student-system-muted {
+    white-space: normal;
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .student-system-window {
+    background: rgba(247, 250, 253, 0.9);
+  }
+
+  .student-system-sidebar,
+  .student-system-topbar,
+  .student-system-alert,
+  .student-system-metric,
+  .student-system-card {
+    background-color: #f9fafc;
+    background-image: none;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .student-system-window {
+    background: #f4f7fa;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .student-system-sidebar,
+  .student-system-topbar,
+  .student-system-alert,
+  .student-system-metric,
+  .student-system-card {
+    background-color: #ffffff;
+    background-image: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .student-system-nav-link,
+  .student-system-tool-button,
+  .student-system-primary-button,
+  .student-system-secondary-button,
+  .student-system-course-card,
+  .student-system-alert {
+    transition: none;
+  }
+
+  .student-system-primary-button:hover,
+  .student-system-course-card:hover {
+    transform: none;
   }
 }

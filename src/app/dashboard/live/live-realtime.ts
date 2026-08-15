@@ -101,7 +101,7 @@ export type LiveEvent =
   | LiveRtcHangupEvent;
 
 /** 构造事件时省略 senderId，由发送端统一注入（分布式 Omit 保持联合类型）。 */
-export type DistributiveOmit<T, K extends keyof any> = T extends any ? Omit<T, K> : never;
+export type DistributiveOmit<T, K extends PropertyKey> = T extends unknown ? Omit<T, K> : never;
 export type LiveEventInput = DistributiveOmit<LiveEvent, "senderId">;
 
 /** live_class_events 表的行（Postgres Changes 分发，sender_id 由 RLS 强制不可伪造）。 */

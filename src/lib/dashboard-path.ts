@@ -1,5 +1,6 @@
 const PLATFORM_DASHBOARD_BASE = "/platform/dashboard";
 const TENANT_DASHBOARD_PATTERN = /^\/[^/]+(\/dashboard(?:\/.*)?$)/;
+const TENANT_STUDENT_APP_PATTERN = /^\/[^/]+\/apps\/[^/]+(\/.*)?$/;
 
 export function getDashboardBasePath(tenantSlug?: string | null) {
   return tenantSlug
@@ -14,7 +15,16 @@ export function normalizeDashboardPathname(pathname: string) {
   }
 
   const tenantMatch = pathname.match(TENANT_DASHBOARD_PATTERN);
-  return tenantMatch?.[1] ?? pathname;
+  if (tenantMatch?.[1]) return tenantMatch[1];
+
+  const studentAppMatch = pathname.match(TENANT_STUDENT_APP_PATTERN);
+  if (studentAppMatch) {
+    return studentAppMatch[1]
+      ? `/dashboard${studentAppMatch[1]}`
+      : "/dashboard";
+  }
+
+  return pathname;
 }
 
 export function isDashboardPathname(pathname: string) {

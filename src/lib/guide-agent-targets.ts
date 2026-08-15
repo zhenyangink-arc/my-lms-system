@@ -20,6 +20,8 @@ const navigationAliases: Record<string, string> = {
   基础入门课程: BEGINNER_COURSE_PATH,
   韩文字母入门: BEGINNER_COURSE_PATH,
   韩语字母入门: BEGINNER_COURSE_PATH,
+  beginnerintro: BEGINNER_COURSE_PATH,
+  beginnercourse: BEGINNER_COURSE_PATH,
   hangulintroduction: BEGINNER_COURSE_PATH,
   课程中心: "/dashboard/courses",
   我的课程: "/dashboard/courses",
@@ -31,6 +33,14 @@ const navigationAliases: Record<string, string> = {
   chaptertests: "/dashboard/assignments/korean",
   作业与考试: "/dashboard/assignments",
   assignments: "/dashboard/assignments",
+  大学中心: "/dashboard/universities",
+  universities: "/dashboard/universities",
+  目标大学: "/dashboard/universities/targets",
+  targetuniversity: "/dashboard/universities/targets",
+  targetuniversities: "/dashboard/universities/targets",
+  universitytargets: "/dashboard/universities/targets",
+  大学库: "/dashboard/universities/library",
+  universitylibrary: "/dashboard/universities/library",
   通知提醒: "/dashboard#reminders",
   reminders: "/dashboard#reminders",
 };
@@ -65,6 +75,14 @@ const highlightAliases: Record<string, GuideAgentHighlightTarget> = {
     path: `${BEGINNER_COURSE_PATH}#guide-target-beginner-course`,
   },
   基础入门课程: {
+    elementId: "guide-target-beginner-course",
+    path: `${BEGINNER_COURSE_PATH}#guide-target-beginner-course`,
+  },
+  beginnerintro: {
+    elementId: "guide-target-beginner-course",
+    path: `${BEGINNER_COURSE_PATH}#guide-target-beginner-course`,
+  },
+  beginnercourse: {
     elementId: "guide-target-beginner-course",
     path: `${BEGINNER_COURSE_PATH}#guide-target-beginner-course`,
   },

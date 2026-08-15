@@ -13,6 +13,7 @@ import {
   History,
   KeyRound,
   LayoutGrid,
+  PanelsTopLeft,
   Library,
   LibraryBig,
   MessagesSquare,
@@ -45,10 +46,13 @@ export type AdminNavigationItem = {
   requiresQuestionBankAccess?: boolean;
   requiresVisaManagementAccess?: boolean;
   requiresStudentAssignmentAccess?: boolean;
+  /** 旧版平铺入口保留路由兼容，但主导航改由应用中心承载。 */
+  legacyApplicationEntry?: boolean;
 };
 
 const allStaffRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin", "platform_super_admin"];
 const assessmentPaperRoles: UserRole[] = [...allStaffRoles, "tenant_operator"];
+const applicationCenterRoles: UserRole[] = [...allStaffRoles, "tenant_operator"];
 const adminRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
 const helpCenterRoles: UserRole[] = ["teacher", "ceo", "tenant_super_admin", "platform_super_admin"];
 const gradeOverviewRoles: UserRole[] = ["admin", "ceo", "tenant_super_admin", "platform_super_admin"];
@@ -63,6 +67,16 @@ const questionBankRoles: UserRole[] = [
 const courseInspectorRoles: UserRole[] = ["platform_course_inspector"];
 
 export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
+  {
+    label: "应用中心",
+    description: "按韩语、英语、数学、大学课程和留学服务进入独立运营空间。",
+    href: "/dashboard/admin/apps",
+    icon: PanelsTopLeft,
+    group: "overview",
+    roles: applicationCenterRoles,
+    color: "var(--app-accent)",
+    softColor: "var(--app-accent-soft)",
+  },
   {
     label: "课程树管理",
     description: "配置成长首页课程树展示哪些分类与课程（分类与课程都开启才显示）。",
@@ -112,6 +126,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: assessmentPaperRoles,
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "平台标准题库",
@@ -134,6 +149,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
     requiresConversationPracticeAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "通知公告管理",
@@ -167,6 +183,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
     requiresStudentAssignmentAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "我的学生",
@@ -177,6 +194,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: ["teacher"],
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "成绩管理",
@@ -188,6 +206,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-warm)",
     softColor: "var(--app-warm-soft)",
     requiresGradeCenterAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "学习记录管理",
@@ -199,6 +218,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
     requiresLearningRecordAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "资料库管理",
@@ -220,6 +240,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: adminRoles,
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "互动教材管理",
@@ -230,6 +251,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: ["platform_super_admin", "tenant_operator"],
     color: "var(--app-accent)",
     softColor: "var(--app-accent-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "成长工具箱管理",
@@ -240,6 +262,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: ["platform_super_admin", "tenant_operator"],
     color: "var(--app-warm)",
     softColor: "var(--app-warm-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "韩国大学管理",
@@ -250,6 +273,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     roles: adminRoles,
     color: "var(--app-secondary)",
     softColor: "var(--app-secondary-soft)",
+    legacyApplicationEntry: true,
   },
   {
     label: "资料审核",
@@ -261,6 +285,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-warm)",
     softColor: "var(--app-warm-soft)",
     requiresDocumentReviewAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "签证管理",
@@ -272,6 +297,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--app-success)",
     softColor: "var(--app-success-soft)",
     requiresVisaManagementAccess: true,
+    legacyApplicationEntry: true,
   },
   {
     label: "账号管理",
@@ -331,6 +357,7 @@ export function getVisibleAdminNavigation(
 ) {
   return ADMIN_NAVIGATION.filter(
     (item) =>
+      !item.legacyApplicationEntry &&
       item.roles.includes(role) &&
       (!item.requiresConversationPracticeAccess || options.canManageConversationPractice === true) &&
       (!item.requiresAnnouncementAccess || options.canAccessAnnouncements === true) &&

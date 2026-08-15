@@ -9,7 +9,6 @@ const BOOK_WIDTH = 1180;
 const BOOK_HEIGHT = 822;
 
 type LiveCanvasProps = {
-  page: number;
   editable: boolean;
   tool: "pen" | "note";
   color: string;
@@ -22,7 +21,6 @@ type LiveCanvasProps = {
 
 /** 画笔/批注覆盖层：渲染在电子书 1180×822 坐标空间内，与翻页书天然对齐。 */
 export function LiveCanvas({
-  page,
   editable,
   tool,
   color,

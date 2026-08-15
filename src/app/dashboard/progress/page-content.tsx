@@ -1,7 +1,6 @@
 import Link from "next/link";
 import {
   ArrowRight,
-  BarChart3,
   BookmarkCheck,
   BookOpenCheck,
   CheckCircle2,
@@ -19,6 +18,8 @@ import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
 import { parseQuestionOptions } from "@/lib/korean-chapter-tests";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { removeCourseQuestionReviewAction } from "./actions";
 import { KnowledgeResearchWorkbench } from "./KnowledgeResearchWorkbench";
@@ -298,25 +299,51 @@ export default async function DeepLearningPage({
           .in("id", questionIds)
       : Promise.resolve({ data: [] }),
     testIds.length
-      ? admin
-          .from("chapter_tests")
-          .select("id,slug,course_key,chapter_number,title,korean_title")
-          .in("id", testIds)
+      ? withStudentAppSchemaFallback(
+          admin
+            .from("chapter_tests")
+            .select("id,slug,course_key,chapter_number,title,korean_title")
+            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .in("id", testIds),
+          () =>
+            admin
+              .from("chapter_tests")
+              .select("id,slug,course_key,chapter_number,title,korean_title")
+              .in("id", testIds),
+        )
       : Promise.resolve({ data: [] }),
-    admin
-      .from("chapter_tests")
-      .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
-      .in("course_key", ["hangul-introduction", "korean-level-one"])
-      .eq("status", "published")
-      .order("chapter_number", { ascending: true }),
+    withStudentAppSchemaFallback(
+      admin
+        .from("chapter_tests")
+        .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
+        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .in("course_key", ["hangul-introduction", "korean-level-one"])
+        .eq("status", "published")
+        .order("chapter_number", { ascending: true }),
+      () =>
+        admin
+          .from("chapter_tests")
+          .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
+          .in("course_key", ["hangul-introduction", "korean-level-one"])
+          .eq("status", "published")
+          .order("chapter_number", { ascending: true }),
+    ),
     supabase
       .from("chapter_test_attempts")
       .select("test_slug,score,passed")
       .eq("student_id", user.id),
-    supabase
-      .from("course_ebook_progress")
-      .select("test_slug,progress_percent")
-      .eq("student_id", user.id),
+    withStudentAppSchemaFallback(
+      supabase
+        .from("course_ebook_progress")
+        .select("test_slug,progress_percent")
+        .eq("student_id", user.id)
+        .eq("student_app_id", STUDENT_APP_IDS.korean),
+      () =>
+        supabase
+          .from("course_ebook_progress")
+          .select("test_slug,progress_percent")
+          .eq("student_id", user.id),
+    ),
   ]);
   const questionById = new Map(
     ((questionData ?? []) as ReviewQuestionRow[]).map((question) => [

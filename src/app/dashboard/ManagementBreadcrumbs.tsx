@@ -10,6 +10,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   admin: "管理中心",
   accounts: "账号管理",
   assignments: "作业与考试",
+  apps: "应用中心",
   announcements: "通知公告",
   courses: "课程管理",
   "digital-textbook": "互动教材",

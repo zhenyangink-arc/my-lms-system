@@ -3,6 +3,7 @@
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireStudentAssignmentManager } from "@/lib/student-assignments";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import type { StudentAssignmentActionState } from "./state";
 
 function actionError(message: string): StudentAssignmentActionState {
@@ -65,13 +66,17 @@ export async function assignStudentsToTeachersAction(
       tenant_id: tenantId,
       student_id: studentId,
       teacher_id: teacherId,
+      student_app_id: STUDENT_APP_IDS.korean,
       assigned_by: access.user.id,
     }))
   );
 
   const { error: insertError } = await admin
     .from("tenant_student_assignments")
-    .upsert(rows, { onConflict: "tenant_id,student_id,teacher_id", ignoreDuplicates: true });
+    .upsert(rows, {
+      onConflict: "tenant_id,student_id,teacher_id,student_app_id",
+      ignoreDuplicates: true,
+    });
 
   if (insertError) return actionError("分配失败，请稍后重试。");
 
@@ -99,7 +104,8 @@ export async function removeStudentTeacherAssignmentAction(
     .delete()
     .eq("tenant_id", tenantId)
     .eq("student_id", studentId)
-    .eq("teacher_id", teacherId);
+    .eq("teacher_id", teacherId)
+    .eq("student_app_id", STUDENT_APP_IDS.korean);
 
   if (error) throw new Error("解除分配失败，请稍后重试。");
 

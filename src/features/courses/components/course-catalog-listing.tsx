@@ -282,11 +282,19 @@ function buildCatalogTree({
 
 export default async function CourseCatalogListing({
   searchParams,
+  studentAppId,
+  routeBasePath,
 }: {
   searchParams: Promise<{ node?: string; id?: string }>;
+  studentAppId?: string;
+  routeBasePath?: string;
 }) {
   const selection = await searchParams;
-  const result = await getCourseManagementData(selection);
+  const result = await getCourseManagementData(selection, studentAppId);
+  const catalogRoute = routeBasePath ?? scopeDashboardPath(
+    "/dashboard/admin/courses",
+    result.dashboardBasePath,
+  );
   const rows = buildCatalogTree(result);
   const selectedKind = ["category", "course", "lesson", "chapter"].includes(
     selection.node ?? "",
@@ -375,6 +383,7 @@ export default async function CourseCatalogListing({
           lessons={result.lessons}
           chapters={result.chapters}
           dashboardBasePath={result.dashboardBasePath}
+          routeBasePath={catalogRoute}
         />
       </section>
 
@@ -390,10 +399,7 @@ export default async function CourseCatalogListing({
               </p>
             </div>
             <Link
-              href={scopeDashboardPath(
-                "/dashboard/admin/courses",
-                result.dashboardBasePath,
-              )}
+              href={catalogRoute}
               className="inline-flex h-9 items-center border border-[var(--app-border)] px-4 text-xs font-semibold hover:bg-[var(--app-soft-bg)]"
             >
               收起详情

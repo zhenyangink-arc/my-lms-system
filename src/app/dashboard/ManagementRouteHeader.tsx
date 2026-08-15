@@ -8,6 +8,7 @@ type HeaderCopy = { title: string; description: string };
 
 const ROUTE_HEADERS: Record<string, HeaderCopy> = {
   admin: { title: "管理首页", description: "查看关键数据、待办事项和当前账号可以使用的管理功能。" },
+  apps: { title: "应用中心", description: "进入独立的教学与服务应用，管理各自的数据、内容和运营任务。" },
   accounts: { title: "账号管理", description: "管理平台与机构账号、角色、状态和服务档位。" },
   assignments: { title: "作业与考试", description: "创建、发布并批改作业、考试和章节测试。" },
   announcements: { title: "通知公告", description: "发布和管理面向平台或机构成员的通知。" },
@@ -39,6 +40,8 @@ function resolveHeader(pathname: string): HeaderCopy {
   const route = adminIndex >= 0 ? segments.slice(adminIndex + 1) : [];
   const section = route[0] ?? "admin";
   const base = ROUTE_HEADERS[section] ?? ROUTE_HEADERS.admin;
+
+  if (section === "apps" && route[1]) return { title: "应用工作台", description: "在当前应用边界内处理学生、内容、考核和运营数据。" };
 
   if (section === "accounts" && route[1]) return { title: "账号档案", description: "查看成员资料、学习背景、服务档位和变更记录。" };
   if (section === "assignments" && route[1] === "homework") return { title: "作业管理", description: "创建、发布并批改标准作业。" };

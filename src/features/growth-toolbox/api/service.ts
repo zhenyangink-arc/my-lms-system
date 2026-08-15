@@ -49,7 +49,9 @@ function localizedTitle(value: unknown): string {
   return String(record["zh-CN"] ?? record["ko-KR"] ?? "");
 }
 
-export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxManagementResult> {
+export async function getGrowthToolboxManagementData(
+  studentAppId?: string,
+): Promise<GrowthToolboxManagementResult> {
   const { supabase: userSupabase } = await requireActiveUser();
   const { data: canManage } = await userSupabase.rpc(
     "current_user_can_manage_standard_question_bank",
@@ -58,18 +60,20 @@ export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxMan
 
   const supabase = createAdminClient();
 
-  const [toolboxItemsResult, courseResult, lessonResult] = await Promise.all([
-    supabase
-      .from("growth_toolbox_items")
-      .select(
-        "id,slug,title,description,href,icon_name,accent,soft,sort_order,is_enabled,related_course_id",
-      )
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("courses")
-      .select("id,slug,title")
-      .order("sort_order", { ascending: true }),
-    supabase.from("lessons").select("id,course_id,title"),
+  let toolboxItemsQuery = supabase
+    .from("growth_toolbox_items")
+    .select(
+      "id,slug,title,description,href,icon_name,accent,soft,sort_order,is_enabled,related_course_id",
+    );
+  let courseQuery = supabase.from("courses").select("id,slug,title");
+  if (studentAppId) {
+    toolboxItemsQuery = toolboxItemsQuery.eq("student_app_id", studentAppId);
+    courseQuery = courseQuery.eq("student_app_id", studentAppId);
+  }
+
+  const [toolboxItemsResult, courseResult] = await Promise.all([
+    toolboxItemsQuery.order("sort_order", { ascending: true }),
+    courseQuery.order("sort_order", { ascending: true }),
   ]);
 
   const toolboxItems: GrowthToolboxItem[] = (
@@ -88,6 +92,15 @@ export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxMan
     relatedCourseId: row.related_course_id,
   }));
   const courses = (courseResult.data ?? []) as CourseRow[];
+  const courseIds = courses.map((course) => course.id);
+  const lessonResult = studentAppId
+    ? courseIds.length
+      ? await supabase
+          .from("lessons")
+          .select("id,course_id,title")
+          .in("course_id", courseIds)
+      : { data: [] as LessonRow[], error: null }
+    : await supabase.from("lessons").select("id,course_id,title");
   const lessons = (lessonResult.data ?? []) as LessonRow[];
 
   const lessonIds = lessons.map((lesson) => lesson.id);
@@ -243,15 +256,19 @@ export async function getGrowthToolboxManagementData(): Promise<GrowthToolboxMan
     }
   }
 
+  let vocabularyQuery = supabase
+    .from("growth_toolbox_vocabulary")
+    .select("id,ko,zh,pos,collocation,transcription,source,sort_order");
+  let grammarQuery = supabase
+    .from("growth_toolbox_grammar")
+    .select("id,title,meaning,cases,rows,examples,caution,source,sort_order");
+  if (studentAppId) {
+    vocabularyQuery = vocabularyQuery.eq("student_app_id", studentAppId);
+    grammarQuery = grammarQuery.eq("student_app_id", studentAppId);
+  }
   const [vocabularyResult, grammarResult] = await Promise.all([
-    supabase
-      .from("growth_toolbox_vocabulary")
-      .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("growth_toolbox_grammar")
-      .select("id,title,meaning,cases,rows,examples,caution,source,sort_order")
-      .order("sort_order", { ascending: true }),
+    vocabularyQuery.order("sort_order", { ascending: true }),
+    grammarQuery.order("sort_order", { ascending: true }),
   ]);
   const vocabularyLibrary: GrowthToolboxVocabularyItem[] = (
     vocabularyResult.data ?? []

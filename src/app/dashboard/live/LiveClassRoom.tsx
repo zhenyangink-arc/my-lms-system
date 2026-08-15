@@ -522,7 +522,6 @@ export function LiveClassRoom({
             onRequestChapter: handleRequestChapter,
             overlay: (
               <LiveCanvas
-                page={currentPage}
                 editable={isTeacher}
                 tool={tool}
                 color={color}

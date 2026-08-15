@@ -3,12 +3,17 @@ import { ArrowLeft } from "lucide-react";
 import { notFound, redirect } from "next/navigation";
 
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
-import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
+import {
+  getUnlockedKoreanTestSlugs,
+  isKoreanEbookCompleted,
+} from "@/lib/korean-learning-unlocks";
 import {
   buildPublicKoreanChapterTest,
   type CourseTestQuestionRow,
   type CourseTestRow,
 } from "@/lib/korean-chapter-tests";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { KoreanChapterTestRunner } from "./KoreanChapterTestRunner";
 
@@ -20,24 +25,62 @@ export default async function KoreanChapterTestPage({
   const { testSlug } = await params;
   const { supabase, user, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
-  const { data: testData } = await admin
-    .from("chapter_tests")
-    .select(
-      "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
-    )
-    .eq("slug", testSlug)
-    .eq("status", "published")
-    .maybeSingle();
+  const { data: testData } = await withStudentAppSchemaFallback(
+    admin
+      .from("chapter_tests")
+      .select(
+        "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+      )
+      .eq("slug", testSlug)
+      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("status", "published")
+      .maybeSingle(),
+    () =>
+      admin
+        .from("chapter_tests")
+        .select(
+          "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+        )
+        .eq("slug", testSlug)
+        .eq("status", "published")
+        .maybeSingle(),
+  );
   if (!testData) notFound();
   const test = testData as CourseTestRow;
-  const { data: attemptData } = await supabase
-    .from("chapter_test_attempts")
-    .select("test_slug,passed")
-    .eq("student_id", user.id);
+  const [{ data: attemptData }, { data: ebookProgressData }] = await Promise.all([
+    supabase
+      .from("chapter_test_attempts")
+      .select("test_slug,passed")
+      .eq("student_id", user.id),
+    withStudentAppSchemaFallback(
+      supabase
+        .from("course_ebook_progress")
+        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+        .eq("student_id", user.id)
+        .eq("student_app_id", STUDENT_APP_IDS.korean),
+      () =>
+        supabase
+          .from("course_ebook_progress")
+          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+          .eq("student_id", user.id),
+    ),
+  ]);
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
     (attemptData ?? [])
       .filter((attempt) => attempt.passed)
-      .map((attempt) => String(attempt.test_slug))
+      .map((attempt) => String(attempt.test_slug)),
+    (ebookProgressData ?? [])
+      .filter((progress) =>
+        isKoreanEbookCompleted({
+          progressPercent: Number(progress.progress_percent),
+          readingSeconds: Number(progress.reading_seconds),
+          readPages: Array.isArray(progress.read_pages)
+            ? progress.read_pages.map(Number)
+            : [],
+          totalPages: Number(progress.total_pages),
+        })
+      )
+      .map((progress) => String(progress.test_slug)),
   );
   if (!isManager && !unlockedTestSlugs.has(test.slug)) {
     redirect("/dashboard/assignments");
@@ -80,7 +123,7 @@ export default async function KoreanChapterTestPage({
     <div className="pb-12">
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-4 px-4 sm:px-6 lg:px-8">
         <Link
-          href="/dashboard/assignments"
+          href="/dashboard/assignments?type=chapter_test"
           className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
         >
           <ArrowLeft size={14} />

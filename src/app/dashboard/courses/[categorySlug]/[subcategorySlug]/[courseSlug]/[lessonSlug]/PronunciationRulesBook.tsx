@@ -4,7 +4,7 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 
 const HTMLFlipBook = dynamic(() => import("react-pageflip"), { ssr: false });
-import { Headphones, Lightbulb, Volume2 } from "lucide-react";
+import { Headphones, Lightbulb, Lock, Volume2 } from "lucide-react";
 
 type PageProps = {
   children: React.ReactNode;
@@ -500,10 +500,11 @@ function RuleContent({ page, onSpeak }: { page: RulePage; onSpeak: (text: string
 
 export function PronunciationRulesBook({
   isFullscreen,
-  speechRate = 0.78,
+  speechRate = 1,
   initialPage = 0,
   onPageChange,
   onStartTest,
+  testLocked,
   live,
 }: {
   isFullscreen: boolean;
@@ -511,6 +512,7 @@ export function PronunciationRulesBook({
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  testLocked: boolean;
   /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
   live?: {
     page: number | null;
@@ -649,8 +651,8 @@ export function PronunciationRulesBook({
                   <h2 className="mt-5 text-4xl font-black text-[#173f4a]">从看懂规则，到读出真实韩语</h2>
                   <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">你已经完成连音、紧音化、激音化、鼻音化、流音化及其他高频规则的系统学习。接下来进入本章测试检查判断能力。</p>
                   <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한국어", "[한구거]"], ["학교", "[학꾜]"], ["국물", "[궁물]"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm"><p className="text-xl font-black text-[#267a8b]">{value}</p><p className="mt-2 text-xs font-bold text-[#789087]">{label}</p></div>)}</div>
-                  <button type="button" onClick={onStartTest} className="mt-10 rounded-2xl bg-[#267a8b] px-8 py-4 text-base font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#206a78]">进入本章测试</button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">完成本章测试，巩固发音规则</p>
+                  <button type="button" onClick={onStartTest} disabled={testLocked} title={testLocked ? "完成本章学习目标后解锁测试" : undefined} className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#267a8b] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#206a78] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none">{testLocked && <Lock size={17} />}进入本章测试</button>
+                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">{testLocked ? "完成本章学习目标后解锁测试" : "完成本章测试，巩固发音规则"}</p>
                 </div>
               </div>
             </Page>

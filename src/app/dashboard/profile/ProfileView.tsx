@@ -25,6 +25,7 @@ export type ProfileViewProps = {
   lastSignInLabel: ReactNode;
   checklist: ProfileChecklistItem[];
   initialValue: StudentProfileInitialValue;
+  embedded?: boolean;
 };
 
 export function ProfileView({
@@ -37,7 +38,12 @@ export function ProfileView({
   lastSignInLabel,
   checklist,
   initialValue,
+  embedded = false,
 }: ProfileViewProps) {
+  if (embedded) {
+    return <ProfileForm initialValue={initialValue} variant="dialog" />;
+  }
+
   const doneCount = checklist.filter((item) => item.done).length;
   const completionPercent = Math.round((doneCount / checklist.length) * 100);
   const pendingItems = checklist.filter((item) => !item.done);

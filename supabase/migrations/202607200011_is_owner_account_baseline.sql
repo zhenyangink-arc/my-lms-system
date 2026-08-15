@@ -1,5 +1,6 @@
 begin;
 
+-- This local-reset baseline sits immediately before the tenant-scope migrations.
 -- The production definition depends on helper functions introduced by later
 -- historical migrations. Defer body validation without changing the function
 -- definition itself so earlier policies can resolve this function by name.

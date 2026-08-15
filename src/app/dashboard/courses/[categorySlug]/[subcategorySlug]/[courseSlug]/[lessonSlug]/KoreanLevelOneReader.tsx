@@ -21,7 +21,12 @@ import {
   Volume2,
   X,
 } from "lucide-react";
-import type { KoreanEbookProgressMap } from "@/lib/korean-ebook-progress";
+import {
+  getEbookCompletionPercent,
+  getVisibleEbookPages,
+  MIN_EBOOK_PAGE_READING_SECONDS,
+  type KoreanEbookProgressMap,
+} from "@/lib/korean-ebook-progress";
 import { saveKoreanEbookProgressAction } from "./actions";
 import {
   KOREAN_LEVEL_ONE_GUIDE_PAGE_COUNT,
@@ -64,14 +69,10 @@ const books = [
 
 /** 阅读计时（时间制）：累计阅读秒数 → "MM:SS" 格式。 */
 function formatReadingTime(totalSeconds: number) {
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
+  const safeSeconds = Math.max(0, totalSeconds);
+  const minutes = Math.floor(safeSeconds / 60);
+  const seconds = safeSeconds % 60;
   return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
-}
-
-/** 时间制进度：10 分钟 = 100%（与学生端口径一致）。 */
-function readingTimePercent(totalSeconds: number) {
-  return Math.min(100, Math.round((totalSeconds / 600) * 100));
 }
 
 export function KoreanLevelOneReader({
@@ -111,6 +112,7 @@ export function KoreanLevelOneReader({
   const [ebookProgress, setEbookProgress] =
     useState<KoreanEbookProgressMap>(initialEbookProgress);
   const [accumulatedSeconds, setAccumulatedSeconds] = useState<Record<string, number>>({});
+  const [liveElapsed, setLiveElapsed] = useState(0);
   const [selectedBookIndex, setSelectedBookIndex] = useState(
     initialSelectedBookIndex
   );
@@ -135,12 +137,14 @@ export function KoreanLevelOneReader({
         )
       : Math.min(
           100,
-          Math.round(
-            (((ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
-              (accumulatedSeconds[selectedTestSlug] ?? 0)) /
-              600) *
-              100
-          )
+          getEbookCompletionPercent({
+            readingSeconds:
+              (ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
+              (accumulatedSeconds[selectedTestSlug] ?? 0) +
+              liveElapsed,
+            readPages: ebookProgress[selectedTestSlug]?.readPages ?? [],
+            totalPages: selectedPageCount,
+          })
         );
   const initialSelectedPage =
     selectedTestSlug === null
@@ -154,18 +158,24 @@ export function KoreanLevelOneReader({
       index === 0
         ? null
         : `korean-level-one-${String(book.number).padStart(2, "0")}`;
+    setLiveElapsed(0);
     setSelectedBookIndex(index);
     setCurrentPage(testSlug ? ebookProgress[testSlug]?.currentPage ?? 0 : 0);
     setIsMenuOpen(false);
   }
 
   function handlePageChange(page: number) {
+    if (selectedTestSlug) {
+      // 先结算离开的书页；停留不足阈值的快速翻页不会记为已读。
+      void flushReadingTime(selectedTestSlug, selectedPageCount);
+    }
     setCurrentPage(page);
     if (!selectedTestSlug) return;
     const boundedPage = Math.min(Math.max(0, page), selectedPageCount - 1);
     setEbookProgress((current) => ({
       ...current,
       [selectedTestSlug]: {
+        ...current[selectedTestSlug],
         currentPage: boundedPage,
         totalPages: selectedPageCount,
         progressPercent: current[selectedTestSlug]?.progressPercent ?? 0,
@@ -181,60 +191,101 @@ export function KoreanLevelOneReader({
     }
   }
 
-  // —— 阅读计时：进度按累计阅读时长计算（单本教材 10 分钟 = 100%）——
+  // 阅读目标、进度和测试解锁共用同一条章节时长规则。
   const bookStartRef = useRef<number>(0);
-  const testSlugRef = useRef(selectedTestSlug);
-  const currentPageRef2 = useRef(currentPage);
-  const pageCountRef = useRef(selectedPageCount);
   const ebookProgressRef2 = useRef(ebookProgress);
   useEffect(() => {
     if (bookStartRef.current === 0) {
       bookStartRef.current = Date.now();
     }
-    testSlugRef.current = selectedTestSlug;
-    currentPageRef2.current = currentPage;
-    pageCountRef.current = selectedPageCount;
     ebookProgressRef2.current = ebookProgress;
-  }, [selectedTestSlug, currentPage, selectedPageCount, ebookProgress]);
+  }, [ebookProgress]);
 
-  // 本会话已流逝秒数：每秒刷新，让右上角计时实时走动。
-  const [liveElapsed, setLiveElapsed] = useState(0);
-  useEffect(() => {
-    const tick = window.setInterval(() => {
-      setLiveElapsed(Math.floor((Date.now() - bookStartRef.current) / 1000));
-    }, 1000);
-    return () => window.clearInterval(tick);
-  }, [selectedTestSlug, trackingDisabled]);
-
-  function flushReadingTime() {
-    const slug = testSlugRef.current;
+  async function flushReadingTime(slug: string, totalPages: number) {
     if (!slug) return;
-    const elapsed = Math.floor((Date.now() - bookStartRef.current) / 1000);
+    if (trackingDisabled || document.visibilityState !== "visible") {
+      bookStartRef.current = Date.now();
+      return;
+    }
+    const elapsed = Math.min(
+      35,
+      Math.floor((Date.now() - bookStartRef.current) / 1000)
+    );
     if (elapsed <= 0) return;
     bookStartRef.current = Date.now();
+    setLiveElapsed(0);
     setAccumulatedSeconds((prev) => ({
       ...prev,
       [slug]: (prev[slug] ?? 0) + elapsed,
     }));
-    void saveKoreanEbookProgressAction({
+    const trackedPage = ebookProgressRef2.current[slug]?.currentPage ?? 0;
+    const visiblePages = getVisibleEbookPages(trackedPage, totalPages);
+    const qualifiedPages =
+      elapsed >= MIN_EBOOK_PAGE_READING_SECONDS ? visiblePages : [];
+    if (qualifiedPages.length > 0) {
+      setEbookProgress((current) => ({
+        ...current,
+        [slug]: {
+          ...current[slug],
+          currentPage: trackedPage,
+          totalPages,
+          progressPercent: current[slug]?.progressPercent ?? 0,
+          readPages: Array.from(
+            new Set([...(current[slug]?.readPages ?? []), ...qualifiedPages])
+          ),
+        },
+      }));
+    }
+    await saveKoreanEbookProgressAction({
       testSlug: slug,
-      // 本地没有该本书的进度快照时，不传页码，避免用 0 覆盖已保存的阅读位置。
-      currentPage: ebookProgressRef2.current[slug]
-        ? currentPageRef2.current
-        : null,
-      totalPages: pageCountRef.current,
-      readPages: [],
+      currentPage: trackedPage,
+      totalPages,
+      readPages: qualifiedPages,
       readingSeconds: elapsed,
     });
   }
 
   // 进入教材重置计时起点；每 30 秒把心跳时长写入数据库；切书/卸载时先落库。
   useEffect(() => {
+    if (trackingDisabled) return;
+    const trackedSlug = selectedTestSlug;
+    const trackedPageCount = selectedPageCount;
+    const flushTrackedBook = () => {
+      if (trackedSlug) void flushReadingTime(trackedSlug, trackedPageCount);
+    };
     bookStartRef.current = Date.now();
-    const timer = window.setInterval(flushReadingTime, 30_000);
+    const timer = window.setInterval(flushTrackedBook, 30_000);
     return () => {
-      flushReadingTime();
+      flushTrackedBook();
       window.clearInterval(timer);
+    };
+    // flushReadingTime deliberately captures the current tracking setting.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTestSlug, selectedPageCount, trackingDisabled]);
+
+  useEffect(() => {
+    if (trackingDisabled) return;
+    const updateElapsed = () => {
+      if (document.visibilityState !== "visible") {
+        setLiveElapsed(0);
+        return;
+      }
+      setLiveElapsed(
+        Math.min(
+          35,
+          Math.floor((Date.now() - bookStartRef.current) / 1000)
+        )
+      );
+    };
+    const handleVisibilityChange = () => {
+      bookStartRef.current = Date.now();
+      setLiveElapsed(0);
+    };
+    const tick = window.setInterval(updateElapsed, 1000);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      window.clearInterval(tick);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
     };
   }, [selectedTestSlug, trackingDisabled]);
 
@@ -280,6 +331,9 @@ export function KoreanLevelOneReader({
       } catch {
         // The route change below still lets the learner leave the reader.
       }
+    }
+    if (selectedTestSlug) {
+      await flushReadingTime(selectedTestSlug, selectedPageCount);
     }
     router.push(backHref);
   }
@@ -381,11 +435,7 @@ export function KoreanLevelOneReader({
                 width: `${
                   selectedTestSlug === null
                     ? progress
-                    : readingTimePercent(
-                        (ebookProgress[selectedTestSlug]?.readingSeconds ?? 0) +
-                          (accumulatedSeconds[selectedTestSlug] ?? 0) +
-                          liveElapsed
-                      )
+                    : progress
                 }%`,
               }}
             />
@@ -418,7 +468,14 @@ export function KoreanLevelOneReader({
                   ? null
                   : `korean-level-one-${String(book.number).padStart(2, "0")}`;
               const bookProgress = testSlug
-                ? ebookProgress[testSlug]?.progressPercent ?? 0
+                ? getEbookCompletionPercent({
+                    readingSeconds:
+                      (ebookProgress[testSlug]?.readingSeconds ?? 0) +
+                      (accumulatedSeconds[testSlug] ?? 0) +
+                      (active ? liveElapsed : 0),
+                    readPages: ebookProgress[testSlug]?.readPages ?? [],
+                    totalPages: getKoreanLevelOneLessonPageCount(book.number),
+                  })
                 : 0;
               return (
                 <button

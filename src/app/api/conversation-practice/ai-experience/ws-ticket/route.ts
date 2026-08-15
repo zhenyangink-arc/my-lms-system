@@ -39,11 +39,16 @@ export async function GET() {
   }
 
   const userId = auth.user.id;
+  const tenantId = auth.tenant?.id;
+  if (!tenantId) {
+    return NextResponse.json({ error: "当前账号没有可用的学习空间。" }, { status: 403 });
+  }
   const admin = createAdminClient();
   const windowStartIso = new Date(Date.now() - ROLLING_WINDOW_MS).toISOString();
   const { count: usedInWindow, error: usageCheckError } = await admin
     .from("ai_token_usage")
     .select("id", { count: "exact", head: true })
+    .eq("tenant_id", tenantId)
     .eq("user_id", userId)
     .eq("model", USAGE_MODEL_LABEL)
     .gte("created_at", windowStartIso);

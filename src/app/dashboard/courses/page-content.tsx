@@ -17,6 +17,11 @@ import {
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import {
+  STUDENT_APP_IDS,
+  type StudentAppSlug,
+} from "@/lib/student-apps";
 import {
   addCourseCategoryToFavoritesAction,
   removeCourseCategoryFromFavoritesAction,
@@ -146,21 +151,54 @@ function resolveLearningStatus({
   return "not_started";
 }
 
-export default async function CoursesPage() {
+export async function CourseCatalog({
+  studentAppSlug,
+}: {
+  studentAppSlug?: StudentAppSlug;
+}) {
   const { supabase, user, platformProfile } = await requireActiveUser();
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
   /**
    * 1. 一级课程板块
    */
-  const { data: categoryData } = await supabase
-    .from("course_categories")
-    .select(
-      "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
-    )
-    .is("parent_id", null)
-    .eq("is_published", true)
-    .order("sort_order", { ascending: true });
+  let categoryData: unknown[] | null = null;
+  if (studentAppSlug) {
+    const categorySlug =
+      studentAppSlug === "study-abroad" ? "service" : studentAppSlug;
+    const result = await withStudentAppSchemaFallback(
+      supabase
+        .from("course_categories")
+        .select(
+          "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+        )
+        .is("parent_id", null)
+        .eq("student_app_id", STUDENT_APP_IDS[studentAppSlug])
+        .eq("is_published", true)
+        .order("sort_order", { ascending: true }),
+      () =>
+        supabase
+          .from("course_categories")
+          .select(
+            "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+          )
+          .is("parent_id", null)
+          .eq("slug", categorySlug)
+          .eq("is_published", true)
+          .order("sort_order", { ascending: true }),
+    );
+    categoryData = result.data;
+  } else {
+    const result = await supabase
+      .from("course_categories")
+      .select(
+        "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+      )
+      .is("parent_id", null)
+      .eq("is_published", true)
+      .order("sort_order", { ascending: true });
+    categoryData = result.data;
+  }
 
   const categories = (categoryData ?? []) as CourseCategory[];
 
@@ -671,4 +709,8 @@ export default async function CoursesPage() {
         </section>
       </div>
   );
+}
+
+export default function CoursesPage() {
+  return <CourseCatalog />;
 }

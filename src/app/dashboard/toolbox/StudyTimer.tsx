@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { recordToolboxStudyTime } from "./actions";
 
 /**
- * 成长工具箱练习计时：页面可见时每秒累计，每 30 秒上报一次增量，
+ * 成长工具箱六类专项练习计时：页面可见时每秒累计，每 30 秒上报一次增量，
  * 离开页面/切换标签页/组件卸载时把剩余秒数上报，按天写入 learning_time_log。
  * 无任何可见 UI。
  */

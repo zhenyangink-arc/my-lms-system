@@ -11,16 +11,16 @@ const MIN_OFFSET = -30;
 const MAX_OFFSET = 30;
 export const CARD_OPACITY_STORAGE_KEY = "app-dashboard-card-opacity";
 const CARD_OPACITY_CHANGE_EVENT = "app-dashboard-card-opacity-change";
-const MIN_CARD_OPACITY = 20;
+const MIN_CARD_OPACITY = 82;
 const MAX_CARD_OPACITY = 100;
-const DEFAULT_CARD_OPACITY = 96;
+const DEFAULT_CARD_OPACITY = 98;
 export const CARD_GRADIENT_STORAGE_KEY = "app-dashboard-card-gradient";
 const CARD_GRADIENT_CHANGE_EVENT = "app-dashboard-card-gradient-change";
 const MIN_CARD_GRADIENT = 0;
 const MAX_CARD_GRADIENT = 60;
 const DEFAULT_CARD_GRADIENT = 16;
 
-type ThemeValue = "classic" | "aurora" | "coral";
+type ThemeValue = "classic" | "aurora" | "coral" | "clarity" | "porcelain";
 
 const AMBIENT_VARS = {
   bg: "--app-bg",
@@ -33,7 +33,7 @@ const AMBIENT_VARS = {
 
 type AmbientKey = keyof typeof AMBIENT_VARS;
 
-// 与 globals.css 中三套主题的画布色保持一致；亮度调节只平移这几个"环境色"，
+// 与 globals.css 中各套主题的画布色保持一致；亮度调节只平移这几个"环境色"，
 // 不动纯白的卡片/侧边栏和固定的文字/主色，避免破坏对比度和"卡片纯白"设计规范。
 // dark 是调暗时的混合目标色，取自各主题自己的正文文字色，让变暗的画布仍带该主题的色调。
 const THEME_PALETTES: Record<ThemeValue, Record<AmbientKey, string> & { dark: string }> = {
@@ -63,6 +63,24 @@ const THEME_PALETTES: Record<ThemeValue, Record<AmbientKey, string> & { dark: st
     heroStart: "#fde9ea",
     heroEnd: "#fdeef6",
     dark: "#2c1c1a",
+  },
+  clarity: {
+    bg: "#030303",
+    soft: "#1a1a1a",
+    border: "#343434",
+    borderSoft: "#262626",
+    heroStart: "#120f05",
+    heroEnd: "#2a2205",
+    dark: "#000000",
+  },
+  porcelain: {
+    bg: "#ffffff",
+    soft: "#f7f7f8",
+    border: "#dadade",
+    borderSoft: "#e8e8eb",
+    heroStart: "#ffffff",
+    heroEnd: "#fff9ea",
+    dark: "#1d1d1f",
   },
 };
 
@@ -114,11 +132,17 @@ function getOffsetServerSnapshot() {
 
 function getThemeSnapshot(): ThemeValue {
   const saved = window.localStorage.getItem(THEME_STORAGE_KEY);
-  return saved === "aurora" || saved === "coral" ? saved : "classic";
+  return saved === "classic" ||
+    saved === "aurora" ||
+    saved === "coral" ||
+    saved === "clarity" ||
+    saved === "porcelain"
+    ? saved
+    : "clarity";
 }
 
 function getThemeServerSnapshot(): ThemeValue {
-  return "classic";
+  return "clarity";
 }
 
 export function BackgroundBrightnessControl() {

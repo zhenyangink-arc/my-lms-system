@@ -52,7 +52,7 @@ function AccountDate({ value }: { value: string | null | undefined }) {
   return <LocalDateTime value={value} options={ACCOUNT_DATE_OPTIONS} fallback="暂无记录" />;
 }
 
-export default async function ProfilePage() {
+export async function ProfileContent({ embedded = false }: { embedded?: boolean } = {}) {
   const { supabase, user } = await requireActiveUser();
   const { data, error } = await supabase
     .from("profiles")
@@ -134,6 +134,11 @@ export default async function ProfilePage() {
       lastSignInLabel={<AccountDate value={user.last_sign_in_at} />}
       checklist={checklist}
       initialValue={initialValue}
+      embedded={embedded}
     />
   );
+}
+
+export default function ProfilePage() {
+  return <ProfileContent />;
 }

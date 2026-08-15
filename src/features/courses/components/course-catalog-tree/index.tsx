@@ -73,6 +73,7 @@ export function CourseCatalogTreeTable({
   lessons,
   chapters,
   dashboardBasePath,
+  routeBasePath,
 }: {
   data: CourseCatalogTreeRow[];
   canManage: boolean;
@@ -81,6 +82,7 @@ export function CourseCatalogTreeTable({
   lessons: CourseCatalogLesson[];
   chapters: CourseCatalogChapter[];
   dashboardBasePath: string;
+  routeBasePath?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [expanded, setExpanded] = useState<ExpandedState>({});
@@ -98,8 +100,9 @@ export function CourseCatalogTreeTable({
         canManage,
         options: { categories, courses, lessons, chapters },
         dashboardBasePath,
+        routeBasePath,
       }),
-    [canManage, categories, courses, lessons, chapters, dashboardBasePath],
+    [canManage, categories, courses, lessons, chapters, dashboardBasePath, routeBasePath],
   );
 
   // TanStack Table 在客户端表格边界中提供可变状态方法。

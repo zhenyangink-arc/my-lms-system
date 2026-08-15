@@ -71,7 +71,7 @@ export function MonthlyStudyDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex cursor-pointer items-center gap-1 rounded-full px-3 py-1.5 text-xs font-black transition hover:opacity-80"
+        className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-full px-3 py-2 text-xs font-black transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2"
         style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
       >
         {buttonLabel}
@@ -211,7 +211,7 @@ export function MonthlyStudyDialog({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)]"
+              className="min-h-11 w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
               style={{ color: "var(--app-muted)" }}
             >
               关闭

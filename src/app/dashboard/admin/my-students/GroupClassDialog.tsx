@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   GraduationCap,
@@ -81,9 +81,10 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
     }
   }, [courseId]);
 
-  useEffect(() => {
-    if (open) void load();
-  }, [open, load]);
+  const handleOpenChange = (nextOpen: boolean) => {
+    setOpen(nextOpen);
+    if (nextOpen) void load();
+  };
 
   const goToClass = (sessionId: string) => {
     const space = window.location.pathname.split("/")[1];
@@ -190,7 +191,8 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
     );
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>      <DialogTrigger
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger
         type="button"
         className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-4 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60]"
       >

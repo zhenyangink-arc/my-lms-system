@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, BookOpenText, Check, Clock3, Eye, Lightbulb, MessageCircleMore, Sparkles } from "lucide-react";
 
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { requireStudentPageFeature } from "@/lib/student-permissions-server";
 import { PracticeReflectionForm } from "../PracticeReflectionForm";
 import { CONVERSATION_CATEGORY_LABELS, CONVERSATION_DIFFICULTY_LABELS, type ConversationCategory, type ConversationDifficulty, type DialogueLine, type KeyExpression } from "../config";
@@ -21,7 +23,10 @@ export default async function ConversationScenarioPage({ params }: { params: Pro
   const { scenarioId } = await params;
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenarioResult, progressResult] = await Promise.all([
-    supabase.from("conversation_practice_scenarios").select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes").eq("id", scenarioId).eq("status", "published").maybeSingle(),
+    withStudentAppSchemaFallback(
+      supabase.from("conversation_practice_scenarios").select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes").eq("id", scenarioId).eq("student_app_id", STUDENT_APP_IDS.korean).eq("status", "published").maybeSingle(),
+      () => supabase.from("conversation_practice_scenarios").select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes").eq("id", scenarioId).eq("status", "published").maybeSingle(),
+    ),
     role === "student" ? supabase.from("conversation_practice_progress").select("status,practice_count,confidence,reflection").eq("scenario_id", scenarioId).eq("user_id", user.id).maybeSingle() : Promise.resolve({ data: null as ProgressRow | null, error: null }),
   ]);
   if (scenarioResult.error || !scenarioResult.data) notFound();

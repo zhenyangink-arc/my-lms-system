@@ -1,3 +1,5 @@
+import { EBOOK_CHAPTER_TARGET_SECONDS } from "@/lib/korean-ebook-progress";
+
 export const HANGUL_TEST_SEQUENCE = [
   "meet-hangul",
   "vowels-and-consonants",
@@ -15,27 +17,46 @@ export const KOREAN_TEST_SEQUENCE = [
   ...KOREAN_LEVEL_ONE_TEST_SEQUENCE,
 ];
 
+export function isKoreanEbookCompleted(progress: {
+  progressPercent: number;
+  readingSeconds?: number | null;
+  readPages?: readonly number[] | null;
+  totalPages?: number | null;
+}) {
+  return (
+    progress.progressPercent >= 100 &&
+    (progress.readingSeconds ?? 0) >= EBOOK_CHAPTER_TARGET_SECONDS
+  );
+}
+
 /**
  * 解锁按"通过"判断，不是"做过"：传入的必须是 passed=true 的章节测试 slug。
- * 0 分交白卷也算"做过"，如果传全部尝试记录，掌握线就形同虚设。
+ * 当传入 completedEbookSlugs 时，新测试必须完成本章电子书；已经通过的测试
+ * 继续显示既有成绩，但不能因此提前开放下一章测试。
  */
-export function getUnlockedKoreanTestSlugs(passedSlugs: Iterable<string>) {
+export function getUnlockedKoreanTestSlugs(
+  passedSlugs: Iterable<string>,
+  completedEbookSlugs?: Iterable<string>,
+) {
   const passed = new Set(passedSlugs);
-  let completedInOrder = 0;
+  const completedEbooks = completedEbookSlugs
+    ? new Set(completedEbookSlugs)
+    : null;
+  const unlocked = new Set<string>();
 
-  while (
-    completedInOrder < KOREAN_TEST_SEQUENCE.length &&
-    passed.has(KOREAN_TEST_SEQUENCE[completedInOrder])
-  ) {
-    completedInOrder += 1;
+  for (let index = 0; index < KOREAN_TEST_SEQUENCE.length; index += 1) {
+    const slug = KOREAN_TEST_SEQUENCE[index];
+    const previousSlug = KOREAN_TEST_SEQUENCE[index - 1];
+
+    if (previousSlug && !passed.has(previousSlug)) break;
+    if (completedEbooks && !completedEbooks.has(slug) && !passed.has(slug)) {
+      break;
+    }
+
+    unlocked.add(slug);
   }
 
-  return new Set(
-    KOREAN_TEST_SEQUENCE.slice(
-      0,
-      Math.min(KOREAN_TEST_SEQUENCE.length, completedInOrder + 1)
-    )
-  );
+  return unlocked;
 }
 
 export function countUnlockedTests(

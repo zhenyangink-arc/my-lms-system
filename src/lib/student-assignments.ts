@@ -61,13 +61,16 @@ export async function requireStudentAssignmentManager() {
 export async function getTeacherAssignedStudentIds(
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"],
   tenantId: string,
-  userId: string
+  userId: string,
+  studentAppId?: string,
 ): Promise<string[]> {
-  const { data, error } = await supabase
+  let query = supabase
     .from("tenant_student_assignments")
     .select("student_id")
     .eq("tenant_id", tenantId)
     .eq("teacher_id", userId);
+  if (studentAppId) query = query.eq("student_app_id", studentAppId);
+  const { data, error } = await query;
   if (error) return [];
   return (data ?? []).map((row) => String(row.student_id));
 }

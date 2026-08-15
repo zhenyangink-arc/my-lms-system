@@ -148,10 +148,14 @@ function PracticeDataTable({ progress, studentNames }: { progress: ProgressRow[]
   );
 }
 
-export default async function ConversationPracticeManagementPage({
+export async function ConversationPracticeManagementContent({
   searchParams,
+  studentAppId,
+  routeBasePath = "/dashboard/admin/conversation-practice",
 }: {
   searchParams: Promise<{ scenario?: string; mode?: string }>;
+  studentAppId?: string;
+  routeBasePath?: string;
 }) {
   const [{ supabase, canManageContent, role, tenantId, user }, params] = await Promise.all([
     requireConversationPracticeManager(),
@@ -161,24 +165,38 @@ export default async function ConversationPracticeManagementPage({
   // 老师只能看到自己负责学生的练习进度（场景目录仍全部可见）。
   const myStudentIds =
     role === "teacher" && tenantId
-      ? new Set(await getTeacherAssignedStudentIds(supabase, tenantId, user.id))
+      ? new Set(
+          await getTeacherAssignedStudentIds(
+            supabase,
+            tenantId,
+            user.id,
+            studentAppId,
+          ),
+        )
       : null;
-  let progressQuery = supabase
-    .from("conversation_practice_progress")
-    .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at")
-    .eq("tenant_id", tenantId);
-  if (myStudentIds) progressQuery = progressQuery.in("user_id", [...myStudentIds]);
-
-  const [scenariosResult, progressResult] = await Promise.all([
-    supabase
-      .from("conversation_practice_scenarios")
-      .select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes,status,is_featured,sort_order,updated_at")
-      .order("sort_order", { ascending: true })
-      .order("updated_at", { ascending: false }),
-    progressQuery,
-  ]);
+  let scenariosQuery = supabase
+    .from("conversation_practice_scenarios")
+    .select("id,title,description,category,difficulty,situation,learning_objectives,sample_dialogue,key_expressions,starter_prompt,practice_tips,duration_minutes,status,is_featured,sort_order,updated_at")
+    .order("sort_order", { ascending: true })
+    .order("updated_at", { ascending: false });
+  if (studentAppId) {
+    scenariosQuery = scenariosQuery.eq("student_app_id", studentAppId);
+  }
+  const scenariosResult = await scenariosQuery;
 
   const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
+  const scenarioIds = scenarios.map((scenario) => scenario.id);
+  let progressQuery = supabase
+    .from("conversation_practice_progress")
+    .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at");
+  if (tenantId) progressQuery = progressQuery.eq("tenant_id", tenantId);
+  if (scenarioIds.length) {
+    progressQuery = progressQuery.in("scenario_id", scenarioIds);
+  }
+  if (myStudentIds) progressQuery = progressQuery.in("user_id", [...myStudentIds]);
+  const progressResult = scenarioIds.length
+    ? await progressQuery
+    : { data: [] as ProgressRow[], error: null };
   const progress = (progressResult.data ?? []) as ProgressRow[];
   const progressByScenario = new Map<string, ProgressRow[]>();
   progress.forEach((item) => {
@@ -217,7 +235,7 @@ export default async function ConversationPracticeManagementPage({
       practiceCount: scenarioProgress.reduce((sum, item) => sum + item.practice_count, 0),
       completeness: quality.completeness,
       missingItems: quality.missingItems,
-      editHref: `/dashboard/admin/conversation-practice?scenario=${scenario.id}`,
+      editHref: `${routeBasePath}?scenario=${scenario.id}`,
       active: scenario.id === selectedRaw?.id,
     };
   });
@@ -239,7 +257,13 @@ export default async function ConversationPracticeManagementPage({
           </section>
         )}
 
-        <ConversationScenarioTable rows={rows} canManage={canManageContent} createOpen={createOpen}>
+        <ConversationScenarioTable
+          rows={rows}
+          canManage={canManageContent}
+          createOpen={createOpen}
+          createHref={`${routeBasePath}?mode=create`}
+          closeHref={routeBasePath}
+        >
           {createOpen ? (
             <ConversationScenarioForm workspace />
           ) : selectedScenario ? (
@@ -260,5 +284,15 @@ export default async function ConversationPracticeManagementPage({
         </ConversationScenarioTable>
       </div>
     </div>
+  );
+}
+
+export default function ConversationPracticeManagementPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ scenario?: string; mode?: string }>;
+}) {
+  return (
+    <ConversationPracticeManagementContent searchParams={searchParams} />
   );
 }

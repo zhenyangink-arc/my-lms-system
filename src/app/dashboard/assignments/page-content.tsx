@@ -2,14 +2,26 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
-import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
+import {
+  getUnlockedKoreanTestSlugs,
+  isKoreanEbookCompleted,
+  KOREAN_TEST_SEQUENCE,
+} from "@/lib/korean-learning-unlocks";
 import type { CourseTestRow } from "@/lib/korean-chapter-tests";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  getStudentAppCourseScope,
+  withStudentAppSchemaFallback,
+} from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   type AssignmentType,
   type SubmissionStatus,
 } from "./config";
-import { AssignmentBoard } from "./AssignmentBoard";
+import {
+  AssignmentBoard,
+  type TaskTypeFilter,
+} from "./AssignmentBoard";
 
 type AssignmentRow = {
   id: string;
@@ -55,6 +67,14 @@ type ChapterTestAttemptRow = {
   attempted_at: string;
 };
 
+type EbookProgressRow = {
+  test_slug: string;
+  progress_percent: number;
+  reading_seconds: number;
+  read_pages: number[];
+  total_pages: number;
+};
+
 function getLatestSubmissions(submissions: SubmissionRow[]) {
   const latest = new Map<string, SubmissionRow>();
 
@@ -68,9 +88,25 @@ function getLatestSubmissions(submissions: SubmissionRow[]) {
   return latest;
 }
 
-export default async function AssignmentsPage() {
+function normalizeTaskTypeFilter(value: string | string[] | undefined): TaskTypeFilter {
+  const candidate = Array.isArray(value) ? value[0] : value;
+  return candidate === "chapter_test" ||
+    candidate === "homework" ||
+    candidate === "exam"
+    ? candidate
+    : "all";
+}
+
+export default async function AssignmentsPage({
+  searchParams,
+}: {
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const query = searchParams ? await searchParams : {};
+  const initialTaskTypeFilter = normalizeTaskTypeFilter(query.type);
   const { supabase, user, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
+  const koreanScope = await getStudentAppCourseScope(supabase, "korean");
   // Request-time snapshot keeps all deadline labels consistent for this render.
   // eslint-disable-next-line react-hooks/purity
   const currentTime = Date.now();
@@ -82,15 +118,27 @@ export default async function AssignmentsPage() {
     categoriesResult,
     chapterTestsResult,
     chapterQuestionsResult,
+    ebookProgressResult,
   ] =
     await Promise.all([
-      supabase
-        .from("learning_assignments")
-        .select(
-          "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission"
-        )
-        .eq("status", "published")
-        .order("due_at", { ascending: true }),
+      withStudentAppSchemaFallback(
+        supabase
+          .from("learning_assignments")
+          .select(
+            "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission"
+          )
+          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .eq("status", "published")
+          .order("due_at", { ascending: true }),
+        () =>
+          supabase
+            .from("learning_assignments")
+            .select(
+              "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission"
+            )
+            .eq("status", "published")
+            .order("due_at", { ascending: true }),
+      ),
       isManager
         ? Promise.resolve({ data: [] as SubmissionRow[], error: null })
         : supabase
@@ -104,20 +152,44 @@ export default async function AssignmentsPage() {
       supabase
         .from("course_categories")
         .select("id,parent_id,slug,title"),
-      admin
-        .from("chapter_tests")
-        .select(
-          "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
-        )
-        .in("course_key", ["hangul-introduction", "korean-level-one"])
-        .eq("status", "published")
-        .order("chapter_number", { ascending: true }),
+      withStudentAppSchemaFallback(
+        admin
+          .from("chapter_tests")
+          .select(
+            "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+          )
+          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .in("course_key", ["hangul-introduction", "korean-level-one"])
+          .eq("status", "published")
+          .order("chapter_number", { ascending: true }),
+        () =>
+          admin
+            .from("chapter_tests")
+            .select(
+              "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+            )
+            .in("course_key", ["hangul-introduction", "korean-level-one"])
+            .eq("status", "published")
+            .order("chapter_number", { ascending: true }),
+      ),
       admin
         .from("chapter_test_questions")
         .select("test_id")
         .eq("status", "published")
         .eq("question_type", "single_choice")
         .eq("is_chapter_test_item", true),
+      withStudentAppSchemaFallback(
+        supabase
+          .from("course_ebook_progress")
+          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+          .eq("student_id", user.id)
+          .eq("student_app_id", STUDENT_APP_IDS.korean),
+        () =>
+          supabase
+            .from("course_ebook_progress")
+            .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+            .eq("student_id", user.id),
+      ),
     ]);
 
   const allAssignments = (assignmentsResult.data ?? []) as AssignmentRow[];
@@ -125,6 +197,22 @@ export default async function AssignmentsPage() {
   const courses = (coursesResult.data ?? []) as CourseRow[];
   const categories = (categoriesResult.data ?? []) as CategoryRow[];
   const allChapterTests = (chapterTestsResult.data ?? []) as CourseTestRow[];
+  const ebookProgressBySlug = new Map(
+    ((ebookProgressResult.data ?? []) as EbookProgressRow[]).map((progress) => [
+      progress.test_slug,
+      progress,
+    ]),
+  );
+  const completedEbookSlugs = [...ebookProgressBySlug.entries()]
+    .filter(([, progress]) =>
+      isKoreanEbookCompleted({
+        progressPercent: progress.progress_percent,
+        readingSeconds: progress.reading_seconds,
+        readPages: progress.read_pages,
+        totalPages: progress.total_pages,
+      })
+    )
+    .map(([slug]) => slug);
 
   const { data: chapterAttemptData } = allChapterTests.length
     ? await supabase
@@ -144,24 +232,54 @@ export default async function AssignmentsPage() {
       latestAttemptBySlug.set(attempt.test_slug, attempt);
     }
   }
-  const unlockedTestSlugs = isManager
-    ? new Set(allChapterTests.map((test) => test.slug))
-    : getUnlockedKoreanTestSlugs(latestAttemptBySlug.keys());
+  const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
+    [...latestAttemptBySlug.values()]
+      .filter((attempt) => attempt.passed)
+      .map((attempt) => attempt.test_slug),
+    completedEbookSlugs,
+  );
   const questionCountByTestId = new Map<string, number>();
   for (const question of chapterQuestionsResult.data ?? []) {
     const testId = String(question.test_id);
     questionCountByTestId.set(testId, (questionCountByTestId.get(testId) ?? 0) + 1);
   }
 
+  const visibleTestSlugs = new Set(unlockedTestSlugs);
+  const lastUnlockedIndex = KOREAN_TEST_SEQUENCE.reduce(
+    (latestIndex, slug, index) =>
+      unlockedTestSlugs.has(slug) ? index : latestIndex,
+    -1
+  );
+  const nextLockedSlug = KOREAN_TEST_SEQUENCE[lastUnlockedIndex + 1];
+  if (nextLockedSlug) visibleTestSlugs.add(nextLockedSlug);
+  const testBySlug = new Map(allChapterTests.map((test) => [test.slug, test]));
+
   const chapterTests = allChapterTests
-    .filter((test) => unlockedTestSlugs.has(test.slug))
-    // 去掉「认识韩文」章节测试卡片（韩语字母入门 · 第 1 章）
-    .filter(
-      (test) =>
-        !(test.course_key === "hangul-introduction" && test.chapter_number === 1)
-    )
+    .filter((test) => visibleTestSlugs.has(test.slug))
     .map((test) => {
+      const unlocked = unlockedTestSlugs.has(test.slug);
       const attempt = latestAttemptBySlug.get(test.slug);
+      const sequenceIndex = KOREAN_TEST_SEQUENCE.indexOf(
+        test.slug as (typeof KOREAN_TEST_SEQUENCE)[number]
+      );
+      const prerequisite =
+        sequenceIndex > 0
+          ? testBySlug.get(KOREAN_TEST_SEQUENCE[sequenceIndex - 1])
+          : null;
+      const prerequisitePassed =
+        sequenceIndex <= 0 ||
+        latestAttemptBySlug.get(KOREAN_TEST_SEQUENCE[sequenceIndex - 1])
+          ?.passed === true;
+      const ebookCompleted = completedEbookSlugs.includes(test.slug);
+      const unlockRequirement = !unlocked
+        ? !ebookCompleted && !prerequisitePassed && prerequisite
+          ? `先通过上一章「${prerequisite.title}」的测试，并学完本章电子书后解锁`
+          : !ebookCompleted
+            ? "学完本章电子书后解锁"
+            : prerequisite
+              ? `通过上一章「${prerequisite.title}」的章节测试后解锁`
+              : "完成本章学习后解锁"
+        : null;
       return {
         id: test.id,
         slug: test.slug,
@@ -175,7 +293,15 @@ export default async function AssignmentsPage() {
         durationMinutes: test.duration_minutes,
         passingScore: test.passing_score,
         questionCount: questionCountByTestId.get(test.id) ?? 0,
-        attempt: attempt
+        unlocked,
+        unlockRequirement,
+        studyHref:
+          `/dashboard/courses/korean/korean-basic/korean-beginner/${
+            test.course_key === "hangul-introduction"
+              ? "hangul-introduction"
+              : "basic-pronunciation"
+          }?chapter=${encodeURIComponent(test.slug)}`,
+        attempt: unlocked && attempt
           ? { score: attempt.score, passed: attempt.passed }
           : null,
       };
@@ -204,12 +330,14 @@ export default async function AssignmentsPage() {
       .filter(isStudyAbroadServiceCourse)
       .map((course) => course.id)
   );
+  const koreanCourseIds = new Set(koreanScope.courseIds);
 
   // 学生任务区只接收老师发布的作业和考试。
   // 历史 quiz 数据由课程测试中心承接，不再混入老师任务清单。
   const assignments = allAssignments.filter(
     (assignment) =>
       assignment.assignment_type !== "quiz" &&
+      (!assignment.course_id || koreanCourseIds.has(assignment.course_id)) &&
       (!assignment.course_id || !serviceCourseIds.has(assignment.course_id))
   );
 
@@ -248,11 +376,12 @@ export default async function AssignmentsPage() {
     Boolean(coursesResult.error) ||
     Boolean(categoriesResult.error) ||
     Boolean(chapterTestsResult.error) ||
-    Boolean(chapterQuestionsResult.error);
+    Boolean(chapterQuestionsResult.error) ||
+    Boolean(ebookProgressResult.error);
 
   return (
     <div className="pb-12">
-      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto mt-5 w-full max-w-[1280px] space-y-4 px-4 sm:px-6 lg:px-8">
         {isManager && (
           <div className="flex justify-end">
             <Link
@@ -280,10 +409,12 @@ export default async function AssignmentsPage() {
         )}
 
         <AssignmentBoard
+          key={initialTaskTypeFilter}
           items={boardItems}
           chapterTests={chapterTests}
           isManager={isManager}
           currentTime={currentTime}
+          initialTaskTypeFilter={initialTaskTypeFilter}
         />
       </div>
     </div>

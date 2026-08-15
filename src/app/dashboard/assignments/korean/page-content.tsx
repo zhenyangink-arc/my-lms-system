@@ -13,8 +13,13 @@ import {
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
-import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
+import {
+  getUnlockedKoreanTestSlugs,
+  isKoreanEbookCompleted,
+} from "@/lib/korean-learning-unlocks";
 import type { CourseTestRow } from "@/lib/korean-chapter-tests";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ChapterTestSectionCard } from "./ChapterTestSectionCard";
 
@@ -22,6 +27,14 @@ type TestAttemptRow = {
   test_slug: string;
   score: number;
   passed: boolean;
+};
+
+type EbookProgressRow = {
+  test_slug: string;
+  progress_percent: number;
+  reading_seconds: number;
+  read_pages: number[];
+  total_pages: number;
 };
 
 const levelOneUnits = [
@@ -47,14 +60,26 @@ export default async function KoreanAssignmentTestsPage() {
   const { supabase, user, role, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const [{ data: testData }, { data: testQuestionData }] = await Promise.all([
-    admin
-      .from("chapter_tests")
-      .select(
-        "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
-      )
-      .in("course_key", ["hangul-introduction", "korean-level-one"])
-      .eq("status", "published")
-      .order("chapter_number", { ascending: true }),
+    withStudentAppSchemaFallback(
+      admin
+        .from("chapter_tests")
+        .select(
+          "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+        )
+        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .in("course_key", ["hangul-introduction", "korean-level-one"])
+        .eq("status", "published")
+        .order("chapter_number", { ascending: true }),
+      () =>
+        admin
+          .from("chapter_tests")
+          .select(
+            "id,lesson_id,slug,course_key,chapter_number,title,korean_title,description,duration_minutes,passing_score,skills,version,status"
+          )
+          .in("course_key", ["hangul-introduction", "korean-level-one"])
+          .eq("status", "published")
+          .order("chapter_number", { ascending: true }),
+    ),
     admin
       .from("chapter_test_questions")
       .select("test_id")
@@ -83,17 +108,42 @@ export default async function KoreanAssignmentTestsPage() {
   const levelOneTestByChapter = new Map(
     levelOneTests.map((test) => [test.chapter_number, test])
   );
-  const { data: testAttemptData } =
+  const [{ data: testAttemptData }, { data: ebookProgressData }] =
     allChapterTests.length
-      ? await supabase
-          .from("chapter_test_attempts")
-          .select("test_slug,score,passed")
-          .eq("student_id", user.id)
-          .in(
-            "test_slug",
-            allChapterTests.map((test) => test.slug)
-          )
-      : { data: [] as TestAttemptRow[] };
+      ? await Promise.all([
+          supabase
+            .from("chapter_test_attempts")
+            .select("test_slug,score,passed")
+            .eq("student_id", user.id)
+            .in(
+              "test_slug",
+              allChapterTests.map((test) => test.slug),
+            ),
+          withStudentAppSchemaFallback(
+            supabase
+              .from("course_ebook_progress")
+              .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+              .eq("student_id", user.id)
+              .eq("student_app_id", STUDENT_APP_IDS.korean)
+              .in(
+                "test_slug",
+                allChapterTests.map((test) => test.slug),
+              ),
+            () =>
+              supabase
+                .from("course_ebook_progress")
+                .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+                .eq("student_id", user.id)
+                .in(
+                  "test_slug",
+                  allChapterTests.map((test) => test.slug),
+                ),
+          ),
+        ])
+      : [
+          { data: [] as TestAttemptRow[] },
+          { data: [] as EbookProgressRow[] },
+        ];
   const attemptByTestSlug = new Map(
     ((testAttemptData ?? []) as TestAttemptRow[]).map((attempt) => [
       attempt.test_slug,
@@ -103,7 +153,17 @@ export default async function KoreanAssignmentTestsPage() {
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
     [...attemptByTestSlug.values()]
       .filter((attempt) => attempt.passed)
-      .map((attempt) => attempt.test_slug)
+      .map((attempt) => attempt.test_slug),
+    ((ebookProgressData ?? []) as EbookProgressRow[])
+      .filter((progress) =>
+        isKoreanEbookCompleted({
+          progressPercent: progress.progress_percent,
+          readingSeconds: progress.reading_seconds,
+          readPages: progress.read_pages,
+          totalPages: progress.total_pages,
+        })
+      )
+      .map((progress) => progress.test_slug),
   );
   if (isPlatformTenantManagerRole(role)) {
     for (const test of allChapterTests) unlockedTestSlugs.add(test.slug);

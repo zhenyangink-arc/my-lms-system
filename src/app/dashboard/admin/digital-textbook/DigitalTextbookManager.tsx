@@ -843,7 +843,7 @@ function GrammarWorkspace({
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
           {nodes.length === 0 ? (
             <p className="app-muted-text py-6 text-center text-[12px]">
-              本章还没有语法数据，点击下方的"添加语法点"创建第一条（会自动创建语法模块）。
+              本章还没有语法数据，点击下方的“添加语法点”创建第一条（会自动创建语法模块）。
             </p>
           ) : (
             <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--app-border)" }}>
@@ -1307,7 +1307,7 @@ function GrammarItemForm({
                 {cases.length === 0 && (
                   <tr>
                     <td colSpan={4} className="app-muted-text px-3 py-3 text-center text-[10px]">
-                      还没有收音情况行，点击下方"添加一行"。
+                      还没有收音情况行，点击下方“添加一行”。
                     </td>
                   </tr>
                 )}
@@ -1373,7 +1373,7 @@ function GrammarItemForm({
                 {rows.length === 0 && (
                   <tr>
                     <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">
-                      还没有形态组合行，点击下方"添加一行"。
+                      还没有形态组合行，点击下方“添加一行”。
                     </td>
                   </tr>
                 )}
@@ -1448,7 +1448,7 @@ function GrammarItemForm({
                 {examples.length === 0 && (
                   <tr>
                     <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">
-                      还没有例句，点击下方"添加一行"。
+                      还没有例句，点击下方“添加一行”。
                     </td>
                   </tr>
                 )}

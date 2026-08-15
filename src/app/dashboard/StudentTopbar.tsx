@@ -1,11 +1,19 @@
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
+import type { StudentAppSlug } from "@/lib/student-apps";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
-import { StudentUtilityDrawer } from "./StudentUtilityDrawer";
+import { StudentSystemTopbar } from "./StudentSystemTopbar";
 import type { TeacherReplyReminder } from "./ReminderDialog";
 
 // 只保留数据获取：租户名、用户名、未读回复数、教师回复提醒列表。
-export async function StudentTopbar() {
+export async function StudentTopbar({
+  dashboardBasePath: requestedWorkspaceBasePath,
+  studentAppSlug,
+}: {
+  dashboardBasePath?: string;
+  studentAppSlug?: StudentAppSlug;
+}) {
   const { supabase, user, profile, tenant } = await requireActiveUser();
   const userName =
     profile?.full_name || user.user_metadata?.name || user.email || "用户";
@@ -16,7 +24,15 @@ export async function StudentTopbar() {
 
   let unreadCount = 0;
   let teacherReminders: TeacherReplyReminder[] = [];
-  const dashboardBasePath = getDashboardBasePath(tenant?.slug);
+  const dashboardBasePath =
+    requestedWorkspaceBasePath ?? getDashboardBasePath(tenant?.slug);
+  const dateLabel = new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+    weekday: "long",
+  }).format(new Date());
 
   if (profile?.role === "student") {
     // 教师回复（无条件取前 20 条，由前端按 unread 过滤计数）
@@ -78,7 +94,10 @@ export async function StudentTopbar() {
         if (!sub?.parent_id) return null;
         const parentSlug = parentMap.get(sub.parent_id);
         if (!parentSlug) return null;
-        return `/dashboard/courses/${parentSlug}/${sub.slug}/${course.slug}/${lessonSlug}`;
+        return scopeDashboardPath(
+          `/dashboard/courses/${parentSlug}/${sub.slug}/${course.slug}/${lessonSlug}`,
+          dashboardBasePath,
+        );
       }
 
       teacherReminders = unread.map((row) => {
@@ -99,13 +118,16 @@ export async function StudentTopbar() {
   }
 
   return (
-    <StudentUtilityDrawer
+    <StudentSystemTopbar
       tenantName={tenant?.name ?? "韩语教育"}
       userName={userName}
       accountLabel={accountLabel}
+      dateLabel={dateLabel}
       unreadCount={unreadCount}
       teacherReminders={teacherReminders}
       dashboardBasePath={dashboardBasePath}
+      studentAppSlug={studentAppSlug}
+      studentId={user.id}
     />
   );
 }

@@ -59,6 +59,10 @@ type SupabaseError = {
   hint?: string;
 };
 
+type TenantMembershipRow = {
+  tenant_id: string;
+};
+
 function logQueryError(
   studentId: string,
   queryName: string,
@@ -118,25 +122,30 @@ export async function GET(request: Request) {
 
   try {
     const supabase = createAdminClient();
-    const membershipsResult = await supabase
+    // 该接口没有浏览器会话可提供当前租户，因此和站内认证上下文保持一致：
+    // 只使用学生的默认（或最早创建的）有效成员关系，绝不跨租户聚合。
+    const membershipResult = await supabase
       .from("tenant_memberships")
-      .select("tenant_id")
+      .select("tenant_id,is_default,created_at")
       .eq("user_id", studentId)
-      .eq("status", "active");
+      .eq("status", "active")
+      .order("is_default", { ascending: false })
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .maybeSingle();
 
-    if (membershipsResult.error) {
-      logQueryError(studentId, "tenant_memberships", membershipsResult.error);
+    if (membershipResult.error) {
+      logQueryError(studentId, "tenant_memberships", membershipResult.error);
       return NextResponse.json(
         { error: "Failed to query student progress" },
         { status: 500 },
       );
     }
 
-    const tenantIds = (membershipsResult.data ?? []).map(
-      (membership) => membership.tenant_id as string,
-    );
+    const membership = membershipResult.data as TenantMembershipRow | null;
+    const tenantId = membership?.tenant_id;
 
-    if (tenantIds.length === 0) {
+    if (!tenantId) {
       return NextResponse.json({
         student_id: studentId,
         recent_completed_chapters: [],
@@ -157,7 +166,7 @@ export async function GET(request: Request) {
           .select("lesson_id,course_id,progress_percent,completed_at")
           .eq("user_id", studentId)
           .eq("status", "completed")
-          .in("tenant_id", tenantIds)
+          .eq("tenant_id", tenantId)
           .not("completed_at", "is", null)
           .order("completed_at", { ascending: false })
           .limit(RECENT_COMPLETION_LIMIT),
@@ -165,25 +174,25 @@ export async function GET(request: Request) {
           .from("chapter_test_attempts")
           .select("correct_count,total_questions")
           .eq("student_id", studentId)
-          .in("tenant_id", tenantIds),
+          .eq("tenant_id", tenantId),
         supabase
           .from("learning_assignments")
           .select(
             "id,title,description,assignment_type,course_id,starts_at,due_at,target_scope",
           )
           .eq("status", "published")
-          .in("tenant_id", tenantIds)
+          .eq("tenant_id", tenantId)
           .order("due_at", { ascending: true }),
         supabase
           .from("learning_assignment_targets")
           .select("assignment_id")
           .eq("student_id", studentId)
-          .in("tenant_id", tenantIds),
+          .eq("tenant_id", tenantId),
         supabase
           .from("learning_submissions")
           .select("assignment_id,attempt_number,status")
           .eq("student_id", studentId)
-          .in("tenant_id", tenantIds)
+          .eq("tenant_id", tenantId)
           .order("attempt_number", { ascending: false }),
       ]);
 

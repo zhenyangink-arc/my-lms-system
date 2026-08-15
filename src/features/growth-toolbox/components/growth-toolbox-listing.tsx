@@ -8,8 +8,12 @@ import {
   CreateVocabularyDialog,
 } from "./growth-toolbox-action-dialogs";
 
-export default async function GrowthToolboxListing() {
-  const result = await getGrowthToolboxManagementData();
+export default async function GrowthToolboxListing({
+  studentAppId,
+}: {
+  studentAppId?: string;
+} = {}) {
+  const result = await getGrowthToolboxManagementData(studentAppId);
   const courseNames = new Map(
     result.courseTree.map((course) => [course.id, course.title]),
   );

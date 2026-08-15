@@ -1,31 +1,535 @@
 import Link from "next/link";
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { ArrowRight, Award, BookOpenCheck, CheckCircle2, Eye, History, MessageCircleMore, NotebookPen, Send, Sparkles } from "lucide-react";
-import { LocalDateTime } from "@/components/LocalDateTime";
+import { ArrowRight } from "lucide-react";
+
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { getLearningRecordAccess } from "@/lib/learning-records";
-import { LEARNING_RECORD_DATE_TIME_OPTIONS, LEARNING_RECORD_TYPE_LABELS, type LearningRecordType } from "./config";
+import {
+  getStudentAppCourseScope,
+  withStudentAppSchemaFallback,
+} from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { hangulIntroductionChapters } from "@/lib/korean-curriculum";
+import {
+  LearningRecordBoard,
+  type LearningDay,
+  type LearningRecordEvent,
+} from "./LearningRecordBoard";
+import {
+  LEARNING_RECORD_TYPE_LABELS,
+  type LearningRecordType,
+} from "./config";
 
-type Progress = { lesson_id:string; course_id:string; status:string; progress_percent:number|null; completed_at:string|null; last_viewed_at:string|null };
-type Submission = { assignment_id:string; status:string; submitted_at:string; graded_at:string|null; score:number|null };
-type Conversation = { scenario_id:string; status:string; practice_count:number; last_practiced_at:string };
-type Grade = { item_id:string; record_status:string; score:number|null; graded_at:string };
-type Note = { id:string; record_type:LearningRecordType; title:string; content:string; next_action:string; occurred_at:string };
-type Named = { id:string; title:string; total_points?:number };
-type Event = { id:string; type:"lesson"|"assignment"|"conversation"|"grade"|"note"; title:string; description:string; date:string; meta?:string; noteType?:LearningRecordType; nextAction?:string };
-const eventStyle = { lesson:{icon:BookOpenCheck,color:"var(--app-accent)",soft:"var(--app-accent-soft)",label:"课程学习"}, assignment:{icon:Send,color:"var(--app-secondary)",soft:"var(--app-secondary-soft)",label:"作业考试"}, conversation:{icon:MessageCircleMore,color:"var(--app-success)",soft:"var(--app-success-soft)",label:"会话练习"}, grade:{icon:Award,color:"var(--app-warm)",soft:"var(--app-warm-soft)",label:"成绩记录"}, note:{icon:NotebookPen,color:"var(--app-secondary)",soft:"var(--app-secondary-soft)",label:"成长记录"} } as const;
-export default async function LearningRecordsPage(){ const {supabase,user,role,canManage,dashboardBasePath}=await getLearningRecordAccess(); const student=role==="student"; const [progressResult,submissionResult,conversationResult,gradeResult,noteResult]=await Promise.all([student?supabase.from("lesson_progress").select("lesson_id,course_id,status,progress_percent,completed_at,last_viewed_at").eq("user_id",user.id):Promise.resolve({data:[] as Progress[],error:null}),student?supabase.from("learning_submissions").select("assignment_id,status,submitted_at,graded_at,score").eq("student_id",user.id):Promise.resolve({data:[] as Submission[],error:null}),student?supabase.from("conversation_practice_progress").select("scenario_id,status,practice_count,last_practiced_at").eq("user_id",user.id):Promise.resolve({data:[] as Conversation[],error:null}),student?supabase.from("grade_records").select("item_id,record_status,score,graded_at").eq("student_id",user.id):Promise.resolve({data:[] as Grade[],error:null}),student?supabase.from("learning_record_notes").select("id,record_type,title,content,next_action,occurred_at").eq("student_id",user.id).eq("status","active").eq("visibility","student_visible"):Promise.resolve({data:[] as Note[],error:null})]);
-  const progress=(progressResult.data??[]) as Progress[], submissions=(submissionResult.data??[]) as Submission[], conversations=(conversationResult.data??[]) as Conversation[], grades=(gradeResult.data??[]) as Grade[], notes=(noteResult.data??[]) as Note[];
-  const lessonIds=[...new Set(progress.map(x=>x.lesson_id))], assignmentIds=[...new Set(submissions.map(x=>x.assignment_id))], scenarioIds=[...new Set(conversations.map(x=>x.scenario_id))], itemIds=[...new Set(grades.map(x=>x.item_id))];
-  const [lessonNames,assignmentNames,scenarioNames,itemNames]=await Promise.all([lessonIds.length?supabase.from("lessons").select("id,title").in("id",lessonIds):Promise.resolve({data:[] as Named[]}),assignmentIds.length?supabase.from("learning_assignments").select("id,title").in("id",assignmentIds):Promise.resolve({data:[] as Named[]}),scenarioIds.length?supabase.from("conversation_practice_scenarios").select("id,title").in("id",scenarioIds):Promise.resolve({data:[] as Named[]}),itemIds.length?supabase.from("grade_items").select("id,title,total_points").in("id",itemIds):Promise.resolve({data:[] as Named[]})]);
-  const map=(rows:unknown)=>new Map(((rows??[]) as Named[]).map(x=>[x.id,x])); const lm=map(lessonNames.data),am=map(assignmentNames.data),sm=map(scenarioNames.data),gm=map(itemNames.data); const events:Event[]=[];
-  progress.forEach(x=>{const date=x.completed_at||x.last_viewed_at;if(date)events.push({id:`lesson-${x.lesson_id}-${date}`,type:"lesson",title:lm.get(x.lesson_id)?.title||"课程课时",description:x.status==="completed"?"完成了一个课程课时":`学习进度更新到 ${x.progress_percent??0}%`,date,meta:x.status==="completed"?"已完成":"学习中"});});
-  submissions.forEach((x,i)=>events.push({id:`submission-${x.assignment_id}-${i}`,type:"assignment",title:am.get(x.assignment_id)?.title||"作业考试",description:x.status==="graded"?`成绩已发布：${x.score??0} 分`:x.status==="revision_required"?"老师要求修改后重新提交":"已提交，等待批改",date:x.graded_at||x.submitted_at,meta:x.status==="graded"?"已批改":"已提交"}));
-  conversations.forEach(x=>events.push({id:`conversation-${x.scenario_id}`,type:"conversation",title:sm.get(x.scenario_id)?.title||"会话练习",description:`累计练习 ${x.practice_count} 次${x.status==="completed"?"，已经标记为掌握":""}`,date:x.last_practiced_at,meta:x.status==="completed"?"已掌握":"练习中"}));
-  grades.forEach((x,i)=>{const item=gm.get(x.item_id);events.push({id:`grade-${x.item_id}-${i}`,type:"grade",title:item?.title||"成绩项目",description:x.record_status==="graded"?`获得 ${x.score??0} / ${item?.total_points??"—"} 分`:x.record_status==="absent"?"记录为缺考":"记录为免考",date:x.graded_at,meta:"成绩更新"});});
-  notes.forEach(x=>events.push({id:`note-${x.id}`,type:"note",title:x.title,description:x.content,date:x.occurred_at,meta:LEARNING_RECORD_TYPE_LABELS[x.record_type],noteType:x.record_type,nextAction:x.next_action})); events.sort((a,b)=>new Date(b.date).getTime()-new Date(a.date).getTime());
-  const completed=progress.filter(x=>x.status==="completed").length, submitted=submissions.length, practice=conversations.reduce((sum,x)=>sum+x.practice_count,0);
-  return <div className="pb-12"><div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">{canManage&&<div className="flex justify-end"><Link href={scopeDashboardPath("/dashboard/admin/records",dashboardBasePath)} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white" style={{backgroundColor:"var(--app-secondary)"}}>进入记录后台<ArrowRight size={15}/></Link></div>}{canManage&&<section className="app-card rounded-3xl border p-5 sm:p-6" style={{background:"linear-gradient(125deg,var(--app-hero-end),var(--app-card-bg),var(--app-accent-soft))"}}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center"><div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black" style={{color:"var(--app-accent)",backgroundColor:"var(--app-accent-soft)"}}><Eye size={14}/> 学生端只读预览</span><DashboardTitleWithHint className="mt-3" title="每一次学习，都留下清晰记录" description="系统自动记录真实学习行为，后台补充的阶段评价与下一步建议也会出现在同一条时间线上。" /></div><div className="dashboard-title-metrics">{[["完成课时",completed,CheckCircle2,"var(--app-success)","var(--app-success-soft)"],["任务提交",submitted,Send,"var(--app-secondary)","var(--app-secondary-soft)"],["会话练习",practice,MessageCircleMore,"var(--app-accent)","var(--app-accent-soft)"]].map(([label,value,Icon,color,soft])=>{const I=Icon as typeof History;return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{color:String(color),backgroundColor:String(soft)}}><I size={17}/></span><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>})}</div></div></section>}
-  {(progressResult.error||submissionResult.error||conversationResult.error||gradeResult.error||noteResult.error)&&<section className="rounded-2xl border p-4 text-sm font-bold" style={{color:"var(--app-warm)",backgroundColor:"var(--app-warm-soft)"}}>部分学习记录暂时无法读取，请稍后刷新。</section>}
-  <section className="app-card rounded-3xl border p-4 sm:p-5"><div className="flex flex-wrap items-center gap-3"><h2 className="flex items-center gap-2 text-xl font-black"><Sparkles size={19} style={{color:"var(--app-warm)"}}/>学习时间线</h2><div className="ml-auto flex flex-wrap items-center justify-end gap-2">{completed>0&&<span className="rounded-full px-3 py-1.5 text-[11px] font-black" style={{color:"var(--app-success)",backgroundColor:"var(--app-success-soft)"}}>完成课时 {completed}</span>}{submitted>0&&<span className="rounded-full px-3 py-1.5 text-[11px] font-black" style={{color:"var(--app-secondary)",backgroundColor:"var(--app-secondary-soft)"}}>任务提交 {submitted}</span>}{practice>0&&<span className="rounded-full px-3 py-1.5 text-[11px] font-black" style={{color:"var(--app-accent)",backgroundColor:"var(--app-accent-soft)"}}>会话练习 {practice}</span>}</div></div><div className="mt-6 space-y-4">{events.map(event=>{const style=eventStyle[event.type],Icon=style.icon;return <article key={event.id} className="flex gap-4"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{color:style.color,backgroundColor:style.soft}}><Icon size={18}/></span><div className="app-flat-row min-w-0 flex-1 rounded-2xl p-4"><div className="flex flex-wrap items-center gap-2"><span className="text-xs font-black" style={{color:style.color}}>{event.type==="note"&&event.noteType?LEARNING_RECORD_TYPE_LABELS[event.noteType]:style.label}</span>{event.meta&&<span className="app-muted-text text-xs">{event.meta}</span>}<time className="app-muted-text ml-auto text-[10px]"><LocalDateTime value={event.date} options={LEARNING_RECORD_DATE_TIME_OPTIONS} /></time></div><h3 className="mt-2 text-sm font-black">{event.title}</h3><p className="app-muted-text mt-2 whitespace-pre-wrap text-xs leading-5">{event.description}</p>{event.nextAction&&<p className="mt-3 rounded-xl px-3 py-2 text-xs leading-5" style={{backgroundColor:"var(--app-success-soft)"}}>下一步：{event.nextAction}</p>}</div></article>})}{events.length===0&&<div className="app-empty-state rounded-2xl p-8 text-center"><History className="mx-auto opacity-30" size={32}/><p className="mt-4 font-black">还没有学习记录</p><p className="app-muted-text mt-2 text-xs">开始课程、提交作业或完成会话练习后会自动生成。</p></div>}</div></section></div></div>;
+type ProgressRow = {
+  lesson_id: string;
+  status: string;
+  progress_percent: number | null;
+  completed_at: string | null;
+  last_viewed_at: string | null;
+};
+
+type SubmissionRow = {
+  assignment_id: string;
+  status: string;
+  submitted_at: string;
+  graded_at: string | null;
+};
+
+type ConversationRow = {
+  scenario_id: string;
+  status: string;
+  practice_count: number;
+  last_practiced_at: string;
+};
+
+type NoteRow = {
+  id: string;
+  record_type: LearningRecordType;
+  title: string;
+  content: string;
+  next_action: string;
+  occurred_at: string;
+};
+
+type TimeLogRow = {
+  test_slug: string | null;
+  source: "ebook" | "lesson" | "toolbox" | "other";
+  seconds: number;
+  recorded_at: string;
+};
+
+type NamedRow = { id: string; title: string };
+type ChapterTestRow = {
+  slug: string;
+  course_key: string;
+  chapter_number: number;
+  title: string;
+};
+
+const COURSE_KEY_LABELS: Record<string, string> = {
+  "hangul-introduction": "韩语字母入门",
+  "korean-level-one": "韩国语1级",
+  "korean-level-two": "韩国语2级",
+};
+
+const TOOLBOX_LABELS: Record<string, string> = {
+  "toolbox-vocabulary": "单词练习",
+  "toolbox-speaking": "口语练习",
+  "toolbox-grammar": "语法练习",
+  "toolbox-listening": "听力练习",
+};
+
+const dateKeyFormatter = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+function dateKey(value: string | Date) {
+  const parts = dateKeyFormatter.formatToParts(
+    typeof value === "string" ? new Date(value) : value,
+  );
+  const read = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  return `${read("year")}-${read("month")}-${read("day")}`;
+}
+
+function nameMap(rows: unknown) {
+  return new Map(
+    ((rows ?? []) as NamedRow[]).map((row) => [row.id, row.title]),
+  );
+}
+
+function assignmentStatus(status: string) {
+  if (status === "graded") return "老师已批改";
+  if (status === "revision_required") return "需要修改";
+  return "已提交待批改";
+}
+
+export default async function LearningRecordsPage() {
+  const { supabase, user, role, canManage, dashboardBasePath } =
+    await getLearningRecordAccess();
+  const isStudent = role === "student";
+  const recordOldestDate = new Date();
+  recordOldestDate.setDate(recordOldestDate.getDate() - 89);
+  recordOldestDate.setHours(0, 0, 0, 0);
+  const recordOldestIso = recordOldestDate.toISOString();
+  const activityOldestDate = new Date();
+  activityOldestDate.setDate(activityOldestDate.getDate() - 364);
+  activityOldestDate.setHours(0, 0, 0, 0);
+  const activityOldestIso = activityOldestDate.toISOString();
+
+  const [koreanScope, assignmentScopeResult, scenarioScopeResult] = isStudent
+    ? await Promise.all([
+        getStudentAppCourseScope(supabase, "korean"),
+        withStudentAppSchemaFallback(
+          supabase
+            .from("learning_assignments")
+            .select("id,course_id")
+            .eq("student_app_id", STUDENT_APP_IDS.korean),
+          () =>
+            supabase
+              .from("learning_assignments")
+              .select("id,course_id"),
+        ),
+        withStudentAppSchemaFallback(
+          supabase
+            .from("conversation_practice_scenarios")
+            .select("id")
+            .eq("student_app_id", STUDENT_APP_IDS.korean),
+          () =>
+            supabase
+              .from("conversation_practice_scenarios")
+              .select("id"),
+        ),
+      ])
+    : [
+        { appId: STUDENT_APP_IDS.korean, categoryIds: [], courseIds: [], lessonIds: [] },
+        { data: [] as { id: string; course_id: string | null }[], error: null },
+        { data: [] as { id: string }[], error: null },
+      ];
+  const koreanCourseIds = new Set(koreanScope.courseIds);
+  const scopedAssignmentIds = (assignmentScopeResult.data ?? [])
+    .filter((row) => !row.course_id || koreanCourseIds.has(row.course_id))
+    .map((row) => row.id);
+  const scopedScenarioIds = (scenarioScopeResult.data ?? []).map((row) => row.id);
+
+  const [
+    progressResult,
+    submissionResult,
+    conversationResult,
+    noteResult,
+    timeLogResult,
+  ] = await Promise.all([
+    isStudent && koreanScope.lessonIds.length > 0
+      ? supabase
+          .from("lesson_progress")
+          .select(
+            "lesson_id,status,progress_percent,completed_at,last_viewed_at",
+          )
+          .eq("user_id", user.id)
+          .in("lesson_id", koreanScope.lessonIds)
+      : Promise.resolve({ data: [] as ProgressRow[], error: null }),
+    isStudent && scopedAssignmentIds.length > 0
+      ? supabase
+          .from("learning_submissions")
+          .select("assignment_id,status,submitted_at,graded_at")
+          .eq("student_id", user.id)
+          .in("assignment_id", scopedAssignmentIds)
+          .gte("submitted_at", recordOldestIso)
+      : Promise.resolve({ data: [] as SubmissionRow[], error: null }),
+    isStudent && scopedScenarioIds.length > 0
+      ? supabase
+          .from("conversation_practice_progress")
+          .select("scenario_id,status,practice_count,last_practiced_at")
+          .eq("user_id", user.id)
+          .in("scenario_id", scopedScenarioIds)
+      : Promise.resolve({ data: [] as ConversationRow[], error: null }),
+    isStudent
+      ? withStudentAppSchemaFallback(
+          supabase
+            .from("learning_record_notes")
+            .select(
+              "id,record_type,title,content,next_action,occurred_at",
+            )
+            .eq("student_id", user.id)
+            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .eq("status", "active")
+            .eq("visibility", "student_visible"),
+          () =>
+            supabase
+              .from("learning_record_notes")
+              .select(
+                "id,record_type,title,content,next_action,occurred_at",
+              )
+              .eq("student_id", user.id)
+              .eq("status", "active")
+              .eq("visibility", "student_visible"),
+        )
+      : Promise.resolve({ data: [] as NoteRow[], error: null }),
+    isStudent
+      ? withStudentAppSchemaFallback(
+          supabase
+            .from("learning_time_log")
+            .select("test_slug,source,seconds,recorded_at")
+            .eq("student_id", user.id)
+            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .gte("recorded_at", activityOldestIso)
+            .order("recorded_at", { ascending: false }),
+          () =>
+            supabase
+              .from("learning_time_log")
+              .select("test_slug,source,seconds,recorded_at")
+              .eq("student_id", user.id)
+              .gte("recorded_at", activityOldestIso)
+              .order("recorded_at", { ascending: false }),
+        )
+      : Promise.resolve({ data: [] as TimeLogRow[], error: null }),
+  ]);
+
+  const progress = (progressResult.data ?? []) as ProgressRow[];
+  const submissions = (submissionResult.data ?? []) as SubmissionRow[];
+  const conversations = (conversationResult.data ?? []) as ConversationRow[];
+  const notes = (noteResult.data ?? []) as NoteRow[];
+  const timeLogs = (timeLogResult.data ?? []) as TimeLogRow[];
+
+  const lessonIds = [...new Set(progress.map((row) => row.lesson_id))];
+  const assignmentIds = [
+    ...new Set(submissions.map((row) => row.assignment_id)),
+  ];
+  const scenarioIds = [
+    ...new Set(conversations.map((row) => row.scenario_id)),
+  ];
+  const testSlugs = [
+    ...new Set(
+      timeLogs
+        .map((row) => row.test_slug)
+        .filter((slug): slug is string => Boolean(slug)),
+    ),
+  ];
+
+  const [lessonNames, assignmentNames, scenarioNames, chapterTestsResult] =
+    await Promise.all([
+      lessonIds.length
+        ? supabase.from("lessons").select("id,title").in("id", lessonIds)
+        : Promise.resolve({ data: [] as NamedRow[], error: null }),
+      assignmentIds.length
+        ? supabase
+            .from("learning_assignments")
+            .select("id,title")
+            .in("id", assignmentIds)
+        : Promise.resolve({ data: [] as NamedRow[], error: null }),
+      scenarioIds.length
+        ? supabase
+            .from("conversation_practice_scenarios")
+            .select("id,title")
+            .in("id", scenarioIds)
+        : Promise.resolve({ data: [] as NamedRow[], error: null }),
+      testSlugs.length
+        ? withStudentAppSchemaFallback(
+            supabase
+              .from("chapter_tests")
+              .select("slug,course_key,chapter_number,title")
+              .eq("student_app_id", STUDENT_APP_IDS.korean)
+              .in("slug", testSlugs),
+            () =>
+              supabase
+                .from("chapter_tests")
+                .select("slug,course_key,chapter_number,title")
+                .in("slug", testSlugs),
+          )
+        : Promise.resolve({ data: [] as ChapterTestRow[], error: null }),
+    ]);
+
+  const lessonNameById = nameMap(lessonNames.data);
+  const assignmentNameById = nameMap(assignmentNames.data);
+  const scenarioNameById = nameMap(scenarioNames.data);
+  const chapterTestBySlug = new Map(
+    ((chapterTestsResult.data ?? []) as ChapterTestRow[]).map((test) => [
+      test.slug,
+      test,
+    ]),
+  );
+  const events: LearningRecordEvent[] = [];
+
+  type TimeGroup = {
+    source: TimeLogRow["source"];
+    testSlug: string | null;
+    seconds: number;
+    latestAt: string;
+  };
+  const timeGroups = new Map<string, TimeGroup>();
+  for (const row of timeLogs) {
+    const key = `${dateKey(row.recorded_at)}:${row.source}:${row.test_slug ?? "general"}`;
+    const existing = timeGroups.get(key);
+    if (existing) {
+      existing.seconds += Math.max(0, Number(row.seconds) || 0);
+      if (new Date(row.recorded_at) > new Date(existing.latestAt)) {
+        existing.latestAt = row.recorded_at;
+      }
+    } else {
+      timeGroups.set(key, {
+        source: row.source,
+        testSlug: row.test_slug,
+        seconds: Math.max(0, Number(row.seconds) || 0),
+        latestAt: row.recorded_at,
+      });
+    }
+  }
+
+  for (const [key, group] of timeGroups) {
+    const isToolbox = group.source === "toolbox";
+    const test = group.testSlug
+      ? chapterTestBySlug.get(group.testSlug)
+      : undefined;
+    const staticChapterIndex = hangulIntroductionChapters.findIndex(
+      (chapter) => chapter.slug === group.testSlug,
+    );
+    const staticChapter = hangulIntroductionChapters[staticChapterIndex];
+    const title = isToolbox
+      ? TOOLBOX_LABELS[group.testSlug ?? ""] ?? "学习工具练习"
+      : test
+        ? test.title
+        : staticChapter
+          ? staticChapter.title
+          : "电子书阅读";
+    const subtitle = isToolbox
+      ? undefined
+      : test
+        ? `${COURSE_KEY_LABELS[test.course_key] ?? test.course_key} · 第 ${test.chapter_number} 章`
+        : staticChapter
+          ? `韩语字母入门 · 第 ${staticChapterIndex + 1} 章`
+          : undefined;
+    events.push({
+      id: `time:${key}`,
+      category: isToolbox ? "practice" : "course",
+      title,
+      subtitle,
+      description: isToolbox
+        ? "当天完成的专项练习时间已经计入学习档案。"
+        : staticChapter
+          ? `阅读了「${staticChapter.title}」章节电子书。`
+          : test
+            ? `阅读了「${test.title}」章节电子书。`
+            : "完成了一次电子书阅读学习。",
+      date: group.latestAt,
+      status: isToolbox ? "专项练习" : "有效阅读",
+      durationSeconds: group.seconds,
+      href: isToolbox ? "/dashboard/toolbox" : undefined,
+    });
+  }
+
+  for (const row of progress) {
+    const occurredAt = row.completed_at ?? row.last_viewed_at;
+    if (
+      row.status !== "completed" ||
+      !occurredAt ||
+      new Date(occurredAt).getTime() < recordOldestDate.getTime()
+    ) {
+      continue;
+    }
+    events.push({
+      id: `lesson:${row.lesson_id}:${occurredAt}`,
+      category: "course",
+      title: lessonNameById.get(row.lesson_id) ?? "课程课时",
+      description: "已完成该课程课时。",
+      date: occurredAt,
+      status: "课时完成",
+    });
+  }
+
+  for (const row of submissions) {
+    const occurredAt = row.graded_at ?? row.submitted_at;
+    events.push({
+      id: `submission:${row.assignment_id}:${row.submitted_at}`,
+      category: "task",
+      title: assignmentNameById.get(row.assignment_id) ?? "老师作业或考试",
+      description:
+        row.status === "revision_required"
+          ? "老师已给出修改要求，请查看反馈后重新提交。"
+          : row.status === "graded"
+            ? "老师已经完成批改，具体分数请到成绩页面查看。"
+            : "提交成功，正在等待老师批改。",
+      date: occurredAt,
+      status: assignmentStatus(row.status),
+      href: `/dashboard/assignments/${row.assignment_id}`,
+    });
+  }
+
+  for (const row of conversations) {
+    if (
+      new Date(row.last_practiced_at).getTime() < recordOldestDate.getTime()
+    ) {
+      continue;
+    }
+    events.push({
+      id: `conversation:${row.scenario_id}`,
+      category: "practice",
+      title: scenarioNameById.get(row.scenario_id) ?? "会话练习",
+      description: `累计完成 ${row.practice_count} 次会话练习${row.status === "completed" ? "，当前场景已掌握。" : "。"}`,
+      date: row.last_practiced_at,
+      status: row.status === "completed" ? "已掌握" : "练习中",
+      href: "/dashboard/conversation-practice",
+    });
+  }
+
+  for (const row of notes) {
+    if (new Date(row.occurred_at).getTime() < recordOldestDate.getTime()) {
+      continue;
+    }
+    events.push({
+      id: `note:${row.id}`,
+      category: "teacher",
+      title: row.title,
+      description: row.content,
+      date: row.occurred_at,
+      status: LEARNING_RECORD_TYPE_LABELS[row.record_type],
+      nextAction: row.next_action,
+    });
+  }
+
+  events.sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+  );
+
+  const today = new Date();
+  const todayKey = dateKey(today);
+  const dailySeconds = new Map<string, number>();
+  for (const row of timeLogs) {
+    const key = dateKey(row.recorded_at);
+    dailySeconds.set(
+      key,
+      (dailySeconds.get(key) ?? 0) + Math.max(0, Number(row.seconds) || 0),
+    );
+  }
+  const learningDays: LearningDay[] = Array.from({ length: 365 }, (_, index) => {
+    const day = new Date(today);
+    day.setDate(today.getDate() - (364 - index));
+    const key = dateKey(day);
+    const weekday = new Intl.DateTimeFormat("zh-CN", {
+      timeZone: "Asia/Seoul",
+      weekday: "short",
+    }).format(day);
+    return {
+      key,
+      label: key === todayKey ? "今天" : weekday.replace("星期", "周"),
+      seconds: dailySeconds.get(key) ?? 0,
+      isToday: key === todayKey,
+    };
+  });
+  const startOfWeek = new Date(today);
+  const daysSinceMonday = (startOfWeek.getDay() + 6) % 7;
+  startOfWeek.setDate(startOfWeek.getDate() - daysSinceMonday);
+  startOfWeek.setHours(0, 0, 0, 0);
+  const weekSeconds = timeLogs.reduce(
+    (sum, row) =>
+      new Date(row.recorded_at).getTime() >= startOfWeek.getTime()
+        ? sum + Math.max(0, Number(row.seconds) || 0)
+        : sum,
+    0,
+  );
+  let streakDays = 0;
+  const activityDays = new Set(
+    [...dailySeconds.entries()]
+      .filter(([, seconds]) => seconds > 0)
+      .map(([key]) => key),
+  );
+  const streakCursor = new Date(today);
+  if (!activityDays.has(todayKey)) {
+    streakCursor.setDate(streakCursor.getDate() - 1);
+  }
+  while (activityDays.has(dateKey(streakCursor)) && streakDays < 365) {
+    streakDays += 1;
+    streakCursor.setDate(streakCursor.getDate() - 1);
+  }
+
+  const latestTeacherNote =
+    events.find((event) => event.category === "teacher") ?? null;
+  const dataError = Boolean(
+    progressResult.error ||
+      submissionResult.error ||
+      conversationResult.error ||
+      noteResult.error ||
+      timeLogResult.error ||
+      lessonNames.error ||
+      assignmentNames.error ||
+      scenarioNames.error ||
+      chapterTestsResult.error,
+  );
+
+  return (
+    <div className="pb-12">
+      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
+        {canManage && (
+          <div className="flex justify-end">
+            <Link
+              href={scopeDashboardPath(
+                "/dashboard/admin/records",
+                dashboardBasePath,
+              )}
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
+              style={{ backgroundColor: "var(--app-secondary)" }}
+            >
+              进入记录后台
+              <ArrowRight size={15} />
+            </Link>
+          </div>
+        )}
+        <LearningRecordBoard
+          events={events}
+          learningDays={learningDays}
+          summary={{
+            todaySeconds: dailySeconds.get(todayKey) ?? 0,
+            weekSeconds,
+            streakDays,
+            completedCount: progress.filter(
+              (row) => row.status === "completed",
+            ).length,
+          }}
+          latestTeacherNote={latestTeacherNote}
+          dataError={dataError}
+        />
+      </div>
+    </div>
+  );
 }

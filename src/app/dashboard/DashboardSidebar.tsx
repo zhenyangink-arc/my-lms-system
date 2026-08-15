@@ -33,7 +33,7 @@ const groups: Group[] = [
   ]},
   { label: "后台管理", adminOnly: true, items: [{ label: "管理中心", href: "/dashboard/admin", icon: PanelsTopLeft, teacherVisible: true }] },
 ];
-const studentMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true }, { label: "深化", href: "/dashboard/progress", icon: BarChart3, requiresStudentSectionAccess: true }, { label: "大学", href: "/dashboard/universities", icon: Building2, requiresStudentSectionAccess: true }, { label: "我的", href: "/dashboard/profile", icon: UserCircle }];
+const studentMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true }, { label: "深化", href: "/dashboard/progress", icon: BarChart3, requiresStudentSectionAccess: true }, { label: "大学", href: "/dashboard/universities", icon: Building2, requiresStudentSectionAccess: true }];
 const staffMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen }, { label: "作业", href: "/dashboard/assignments", icon: ClipboardList }, { label: "管理", href: "/dashboard/admin", icon: PanelsTopLeft }, { label: "我的", href: "/dashboard/profile", icon: UserCircle }];
 const adminRole = (role: string) => ["admin", "ceo", "platform_super_admin", "tenant_super_admin", "tenant_operator"].includes(role);
 const active = (path: string, href: string) => href === "/dashboard" ? path === href : path === href || path.startsWith(`${href}/`);
@@ -59,7 +59,7 @@ function PermissionLink({ item, mobile = false, pathname, dashboardBasePath }: {
   );
 }
 
-export function DashboardSidebar({ userName, userRole, membershipTier, canAccessAnnouncements, dashboardBasePath }: Props) {
+export function DashboardSidebar({ userRole, membershipTier, canAccessAnnouncements, dashboardBasePath }: Props) {
   const pathname = normalizeDashboardPathname(usePathname());
   const isAdmin = adminRole(userRole);
   const isTeacher = userRole === "teacher";
@@ -75,7 +75,11 @@ export function DashboardSidebar({ userName, userRole, membershipTier, canAccess
     .map(g => ({
       ...g,
       items: g.items
-        .filter(i => (!g.adminOnly || !isTeacher || isAdmin || i.teacherVisible) && (!i.announcementOnly || canAccessAnnouncements || userRole === "student"))
+        .filter(i =>
+          (!g.adminOnly || !isTeacher || isAdmin || i.teacherVisible)
+          && (!i.announcementOnly || canAccessAnnouncements || userRole === "student")
+          && (userRole !== "student" || (i.href !== "/dashboard/profile" && i.href !== "/dashboard/settings"))
+        )
         .map(personalizeItem),
     }));
   const mobile = (isAdmin || isTeacher ? staffMobile : studentMobile).map(personalizeItem);
@@ -120,8 +124,10 @@ export function DashboardSidebar({ userName, userRole, membershipTier, canAccess
         </nav>
       </aside>
 
-      {/* 移动端底部 tab 栏保持不变 */}
-      <nav className="app-topbar fixed inset-x-3 bottom-3 z-40 grid grid-cols-5 rounded-2xl border p-1.5 shadow-lg md:hidden">
+      <nav
+        className="app-student-mobile-nav app-topbar fixed inset-x-3 bottom-3 z-40 grid rounded-2xl border p-1.5 shadow-lg md:hidden"
+        style={{ gridTemplateColumns: `repeat(${mobile.length}, minmax(0, 1fr))` }}
+      >
         {mobile.map(i => <PermissionLink key={i.href} item={i} mobile pathname={pathname} dashboardBasePath={dashboardBasePath} />)}
       </nav>
     </>

@@ -21,7 +21,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="zh-CN" suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: 'try{var t=localStorage.getItem("app-dashboard-theme");if(t==="aurora"||t==="coral"){document.documentElement.setAttribute("data-app-theme",t)}}catch(e){}' }} />
+        <script dangerouslySetInnerHTML={{ __html: 'try{var t=localStorage.getItem("app-dashboard-theme");var v=t==="classic"||t==="aurora"||t==="coral"||t==="clarity"||t==="porcelain"?t:"clarity";document.documentElement.setAttribute("data-app-theme",v)}catch(e){}' }} />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-background antialiased`}>
         <PwaServiceWorkerRegistration />

@@ -10,8 +10,12 @@ const ROLE_SCOPE_LABELS: Record<string, string> = {
   admin: "当前机构全部学生",
 };
 
-export default async function GradeListing() {
-  const result = await getGradeManagementData();
+export async function GradeListingContent({
+  studentAppId,
+}: {
+  studentAppId?: string;
+}) {
+  const result = await getGradeManagementData(studentAppId);
 
   if (result.scope === "platform") {
     return (
@@ -69,4 +73,8 @@ export default async function GradeListing() {
       />
     </div>
   );
+}
+
+export default function GradeListing() {
+  return <GradeListingContent />;
 }

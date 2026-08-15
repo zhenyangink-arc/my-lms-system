@@ -450,7 +450,7 @@ export default async function LessonDetailPage({
     if (isHangulIntroduction || isKoreanLevelOne) {
         unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
     }
-    if ((isHangulIntroduction || isKoreanLevelOne) && !bypassLearningSequence) {
+    if ((isHangulIntroduction || isKoreanLevelOne) && !isPlatformAudit) {
         const { data: ebookProgressData } = await supabase
             .from("course_ebook_progress")
             .select("test_slug,current_page,total_pages,progress_percent,read_pages,reading_seconds,last_read_at")
@@ -463,7 +463,10 @@ export default async function LessonDetailPage({
                 readPages: Array.isArray(item.read_pages)
                     ? item.read_pages.map(Number)
                     : [],
-                readingSeconds: Number(item.reading_seconds) || 0,
+                readingSeconds:
+                    Number(item.reading_seconds) > 86_400
+                        ? 0
+                        : Math.max(0, Number(item.reading_seconds) || 0),
                 lastReadAt: item.last_read_at ? String(item.last_read_at) : null,
             };
         }
@@ -650,12 +653,14 @@ export default async function LessonDetailPage({
                 .select("reading_seconds")
                 .eq("student_id", user.id)
                 .in("test_slug", testSlugs);
-            const percents = (ebookRows ?? []).map((row) => {
-                const seconds = Number(row.reading_seconds) || 0;
-                // 学习满 2 分钟（累计阅读秒数 ≥ 120）才算真正开始学习。
-                if (seconds >= 120) hasEbookReading = true;
-                return Math.min(100, Math.round((seconds / 600) * 100));
-            }).filter((value) => Number.isFinite(value));
+            const readingSeconds = (ebookRows ?? []).map(
+                (row) => Number(row.reading_seconds) || 0
+            );
+            // 学习满 2 分钟（累计阅读秒数 ≥ 120）才算真正开始学习。
+            hasEbookReading = readingSeconds.some((seconds) => seconds >= 120);
+            const percents = readingSeconds
+                .map((seconds) => Math.min(100, Math.round((seconds / 600) * 100)))
+                .filter((value) => Number.isFinite(value));
             if (percents.length > 0) {
                 ebookPercent = Math.round(
                     percents.reduce((sum, value) => sum + value, 0) / percents.length

@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
 import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   canUseStudentFeature,
   normalizeMembershipTier,
@@ -52,13 +54,24 @@ export default async function ConversationPracticePage() {
 
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenariosResult, progressResult] = await Promise.all([
-    supabase
-      .from("conversation_practice_scenarios")
-      .select("id,title,description,category,difficulty,duration_minutes,is_featured")
-      .eq("status", "published")
-      .order("is_featured", { ascending: false })
-      .order("sort_order", { ascending: true })
-      .order("created_at", { ascending: false }),
+    withStudentAppSchemaFallback(
+      supabase
+        .from("conversation_practice_scenarios")
+        .select("id,title,description,category,difficulty,duration_minutes,is_featured")
+        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("status", "published")
+        .order("is_featured", { ascending: false })
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false }),
+      () =>
+        supabase
+          .from("conversation_practice_scenarios")
+          .select("id,title,description,category,difficulty,duration_minutes,is_featured")
+          .eq("status", "published")
+          .order("is_featured", { ascending: false })
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false }),
+    ),
     role === "student"
       ? supabase
           .from("conversation_practice_progress")
@@ -67,7 +80,10 @@ export default async function ConversationPracticePage() {
       : Promise.resolve({ data: [] as ProgressRow[], error: null }),
   ]);
   const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
-  const progress = (progressResult.data ?? []) as ProgressRow[];
+  const scenarioIds = new Set(scenarios.map((scenario) => scenario.id));
+  const progress = ((progressResult.data ?? []) as ProgressRow[]).filter(
+    (item) => scenarioIds.has(item.scenario_id),
+  );
   const progressByScenario = new Map(progress.map((item) => [item.scenario_id, item]));
   const completedCount = progress.filter((item) => item.status === "completed").length;
   const practiceCount = progress.reduce((sum, item) => sum + item.practice_count, 0);

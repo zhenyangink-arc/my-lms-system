@@ -62,7 +62,9 @@ function resultLookupKey(
   return sourceResultId ? `${sourceType}:${sourceResultId}` : null;
 }
 
-export async function getGradeManagementData(): Promise<GradeManagementData> {
+export async function getGradeManagementData(
+  studentAppId?: string,
+): Promise<GradeManagementData> {
   const access = await requireGradeCenterOverviewAccess();
 
   if (access.scope === "platform") {
@@ -88,8 +90,31 @@ export async function getGradeManagementData(): Promise<GradeManagementData> {
           supabase,
           institutionTenantId,
           user.id,
+          studentAppId,
         )
       : null;
+
+  let assignmentsQuery = supabase
+    .from("learning_assignments")
+    .select("id,title,assignment_type,total_points,course_id,status")
+    .eq("tenant_id", institutionTenantId)
+    .in("status", ["published", "closed"]);
+  let testsQuery = admin
+    .from("chapter_tests")
+    .select(
+      "id,slug,course_key,chapter_number,title,korean_title,passing_score",
+    )
+    .eq("status", "published");
+  let coursesQuery = supabase
+    .from("courses")
+    .select("id,title");
+  if (studentAppId) {
+    assignmentsQuery = assignmentsQuery.eq("student_app_id", studentAppId);
+    testsQuery = testsQuery.eq("student_app_id", studentAppId);
+    coursesQuery = coursesQuery.eq("student_app_id", studentAppId);
+  } else {
+    coursesQuery = coursesQuery.eq("tenant_id", institutionTenantId);
+  }
 
   let submissionsQuery = supabase
     .from("learning_submissions")
@@ -129,34 +154,20 @@ export async function getGradeManagementData(): Promise<GradeManagementData> {
     testsResult,
     coursesResult,
   ] = await Promise.all([
-    supabase
-      .from("learning_assignments")
-      .select("id,title,assignment_type,total_points,course_id,status")
-      .eq("tenant_id", institutionTenantId)
-      .in("status", ["published", "closed"])
-      .order("created_at", { ascending: false }),
+    assignmentsQuery.order("created_at", { ascending: false }),
     submissionsQuery,
     attemptsQuery,
     reviewsQuery,
-    admin
-      .from("chapter_tests")
-      .select(
-        "id,slug,course_key,chapter_number,title,korean_title,passing_score",
-      )
-      .eq("status", "published")
+    testsQuery
       .order("course_key")
       .order("chapter_number"),
-    supabase
-      .from("courses")
-      .select("id,title")
-      .eq("tenant_id", institutionTenantId)
-      .order("title", { ascending: true }),
+    coursesQuery.order("title", { ascending: true }),
   ]);
 
   const assignments = (assignmentsResult.data ?? []) as AssignmentGradeSource[];
   const submissions = (submissionsResult.data ?? []) as LearningSubmissionGrade[];
   const attempts = (attemptsResult.data ?? []) as ChapterTestGradeAttempt[];
-  const reviewRows = (reviewsResult.data ?? []) as GradeReviewDatabaseRow[];
+  const reviewRowsRaw = (reviewsResult.data ?? []) as GradeReviewDatabaseRow[];
   const tests = (testsResult.data ?? []) as ChapterTestGradeSource[];
   const courses = (coursesResult.data ?? []) as CourseRow[];
   const assignmentById = new Map(
@@ -230,6 +241,20 @@ export async function getGradeManagementData(): Promise<GradeManagementData> {
       new Date(right.recorded_at).getTime() -
       new Date(left.recorded_at).getTime(),
   );
+  const resultSourceKeys = new Set(
+    resultRows.map(
+      (result) => `${result.source_type}:${result.source_result_id}`,
+    ),
+  );
+  const reviewRows = studentAppId
+    ? reviewRowsRaw.filter((review) => {
+        const key = resultLookupKey(
+          review.source_type,
+          review.source_result_id,
+        );
+        return key !== null && resultSourceKeys.has(key);
+      })
+    : reviewRowsRaw;
 
   const studentIds = [
     ...new Set([

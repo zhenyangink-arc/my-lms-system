@@ -25,6 +25,7 @@ const RESOURCE_COLUMNS =
 
 export async function getCourseManagementData(
   selection: CourseManagementSelection = {},
+  studentAppId?: string,
 ): Promise<CourseManagementData> {
   // 原样保留旧读取边界：requireAdmin() 加当前用户 Supabase 客户端与 RLS。
   // 写权限仍由已有 Server Actions 校验，不在数据层另建一套权限判断。
@@ -32,33 +33,59 @@ export async function getCourseManagementData(
   const canManage =
     globalRole === "platform_owner" || globalRole === "platform_admin";
 
-  const [categoryResult, courseResult, lessonResult, chapterResult] =
-    await Promise.all([
-      supabase
-        .from("course_categories")
-        .select(CATEGORY_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order"),
-      supabase
-        .from("courses")
-        .select(COURSE_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order"),
-      supabase
-        .from("lessons")
-        .select(LESSON_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order"),
-      supabase
-        .from("course_chapters")
-        .select(CHAPTER_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order"),
-    ]);
+  let categoryQuery = supabase
+    .from("course_categories")
+    .select(CATEGORY_COLUMNS)
+    .eq("content_scope", "platform");
+  let courseQuery = supabase
+    .from("courses")
+    .select(COURSE_COLUMNS)
+    .eq("content_scope", "platform");
+
+  if (studentAppId) {
+    categoryQuery = categoryQuery.eq("student_app_id", studentAppId);
+    courseQuery = courseQuery.eq("student_app_id", studentAppId);
+  }
+
+  const [categoryResult, courseResult] = await Promise.all([
+    categoryQuery.order("sort_order"),
+    courseQuery.order("sort_order"),
+  ]);
 
   const categories = (categoryResult.data ?? []) as CourseCategory[];
   const courses = (courseResult.data ?? []) as CourseCatalogCourse[];
+  const courseIds = courses.map((course) => course.id);
+  const lessonResult = studentAppId
+    ? courseIds.length
+      ? await supabase
+          .from("lessons")
+          .select(LESSON_COLUMNS)
+          .eq("content_scope", "platform")
+          .in("course_id", courseIds)
+          .order("sort_order")
+      : { data: [] as CourseCatalogLesson[], error: null }
+    : await supabase
+        .from("lessons")
+        .select(LESSON_COLUMNS)
+        .eq("content_scope", "platform")
+        .order("sort_order");
   const lessons = (lessonResult.data ?? []) as CourseCatalogLesson[];
+  const lessonIds = lessons.map((lesson) => lesson.id);
+  const chapterResult = studentAppId
+    ? lessonIds.length
+      ? await supabase
+          .from("course_chapters")
+          .select(CHAPTER_COLUMNS)
+          .eq("content_scope", "platform")
+          .in("lesson_id", lessonIds)
+          .order("sort_order")
+      : { data: [] as CourseCatalogChapter[], error: null }
+    : await supabase
+        .from("course_chapters")
+        .select(CHAPTER_COLUMNS)
+        .eq("content_scope", "platform")
+        .order("sort_order");
+
   const chapters = (chapterResult.data ?? []) as CourseCatalogChapter[];
   const catalogError =
     categoryResult.error ||

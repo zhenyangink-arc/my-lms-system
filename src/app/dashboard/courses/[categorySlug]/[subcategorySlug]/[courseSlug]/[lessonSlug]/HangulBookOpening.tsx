@@ -2,6 +2,8 @@
 
 import { forwardRef, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
+import { Lock } from "lucide-react";
 
 const HTMLFlipBook = dynamic(() => import("react-pageflip"), { ssr: false });
 
@@ -487,9 +489,11 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
           {/* 正常侧脸发音插图：保留发音动作，不展示口腔剖面。 */}
           <div className="relative mt-3 overflow-hidden rounded-2xl bg-[#f7ddca]">
-            <img
+            <Image
               src="/images/hangul/pronunciation-side-profile.png"
               alt="人物侧脸发音示意"
+              width={1024}
+              height={1536}
               className="h-[132px] w-full object-cover object-[62%_44%]"
             />
 
@@ -981,10 +985,11 @@ function BookMainContent({ index, page, onSpeak }: BookMainContentProps) {
 
 export function HangulBookOpening({
   isFullscreen,
-  speechRate = 0.78,
+  speechRate = 1,
   initialPage = 0,
   onPageChange,
   onStartTest,
+  testLocked,
   live,
 }: {
   isFullscreen: boolean;
@@ -992,6 +997,7 @@ export function HangulBookOpening({
   initialPage?: number;
   onPageChange?: (page: number) => void;
   onStartTest: () => void;
+  testLocked: boolean;
   /** 伴学课堂：远端翻页指令 + 画笔/批注覆盖层。 */
   live?: {
     page: number | null;
@@ -1279,11 +1285,16 @@ export function HangulBookOpening({
                   <button
                     type="button"
                     onClick={onStartTest}
-                    className="mt-10 inline-flex items-center justify-center rounded-2xl bg-[#238777] px-8 py-4 text-base font-black text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-[#1d7468]"
+                    disabled={testLocked}
+                    title={testLocked ? "完成本章学习目标后解锁测试" : undefined}
+                    className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#238777] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#1d7468] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none"
                   >
+                    {testLocked && <Lock size={17} />}
                     进入本章测试
                   </button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">完成测试后将解锁下一章</p>
+                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">
+                    {testLocked ? "完成本章学习目标后解锁测试" : "完成测试后将解锁下一章"}
+                  </p>
                 </div>
                 <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between border-t border-[#dce8e1] pt-3 text-xs font-bold text-[#71857b]">
                   <span>互动电子书</span>

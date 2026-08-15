@@ -20,18 +20,32 @@ import {
   Settings,
   ShieldCheck,
   UserCircle,
+  Wrench,
 } from "lucide-react";
 
 import { GuideAgentChat } from "@/components/guide-agent/GuideAgentChat";
 import { normalizeDashboardPathname } from "@/lib/dashboard-path";
+import {
+  getStudentAppDefinition,
+  type StudentAppSlug,
+} from "@/lib/student-apps";
 
 type HeaderConfig = {
   title: string;
   icon: LucideIcon;
 };
 
-function resolveHeaderConfig(pathname: string): HeaderConfig {
+function resolveHeaderConfig(
+  pathname: string,
+  studentAppSlug?: StudentAppSlug,
+): HeaderConfig {
   if (pathname === "/dashboard") {
+    if (studentAppSlug) {
+      return {
+        title: getStudentAppDefinition(studentAppSlug).title,
+        icon: studentAppSlug === "study-abroad" ? GraduationCap : LayoutDashboard,
+      };
+    }
     return { title: "成长首页", icon: LayoutDashboard };
   }
 
@@ -49,10 +63,13 @@ function resolveHeaderConfig(pathname: string): HeaderConfig {
   }
 
   if (pathname.startsWith("/dashboard/courses")) {
-    return { title: "我的课程", icon: BookOpen };
+    return { title: studentAppSlug === "korean" ? "韩语课程" : "我的课程", icon: BookOpen };
   }
   if (pathname.startsWith("/dashboard/progress")) {
     return { title: "深化学习", icon: BarChart3 };
+  }
+  if (pathname.startsWith("/dashboard/toolbox")) {
+    return { title: "成长工具箱", icon: Wrench };
   }
   if (pathname.startsWith("/dashboard/assignments")) {
     return { title: "作业与考试", icon: ClipboardList };
@@ -108,15 +125,19 @@ function resolveHeaderConfig(pathname: string): HeaderConfig {
 export function StudentPageHeader({
   studentId,
   dashboardBasePath,
+  studentAppSlug,
+  showAssistant = true,
 }: {
   studentId?: string;
   dashboardBasePath: string;
+  studentAppSlug?: StudentAppSlug;
+  showAssistant?: boolean;
 }) {
   const pathname = normalizeDashboardPathname(usePathname());
-  const { title, icon: PageIcon } = resolveHeaderConfig(pathname);
+  const { title, icon: PageIcon } = resolveHeaderConfig(pathname, studentAppSlug);
 
   return (
-    <div className="mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
+    <div className="app-student-page-header mx-auto w-full max-w-[1500px] px-4 pt-6 sm:px-6 lg:px-8 lg:pt-8">
       <header className="flex items-center justify-between gap-3">
         <div className="app-glass-card flex min-w-0 items-center gap-2 rounded-2xl px-4 py-2.5 sm:px-5">
           <PageIcon
@@ -129,23 +150,24 @@ export function StudentPageHeader({
           </h1>
         </div>
 
-        {studentId ? (
-          <GuideAgentChat
-            studentId={studentId}
-            dashboardBasePath={dashboardBasePath}
-          />
-        ) : (
-          <button
-            type="button"
-            disabled
-            aria-label="智能辅助仅对学生开放"
-            title="智能辅助仅对学生开放"
-            className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight opacity-60 sm:px-4 sm:text-lg"
-          >
-            <Bot size={18} aria-hidden="true" />
-            <span>智能辅助</span>
-          </button>
-        )}
+        {showAssistant &&
+          (studentId ? (
+            <GuideAgentChat
+              studentId={studentId}
+              dashboardBasePath={dashboardBasePath}
+            />
+          ) : (
+            <button
+              type="button"
+              disabled
+              aria-label="智能辅助仅对学生开放"
+              title="智能辅助仅对学生开放"
+              className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight opacity-60 sm:px-4 sm:text-lg"
+            >
+              <Bot size={18} aria-hidden="true" />
+              <span>智能辅助</span>
+            </button>
+          ))}
       </header>
     </div>
   );

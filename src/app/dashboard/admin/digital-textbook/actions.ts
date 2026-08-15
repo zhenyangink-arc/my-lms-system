@@ -44,15 +44,6 @@ export type GrammarItem = {
   caution: string;
 };
 
-const EMPTY_GRAMMAR: GrammarItem = {
-  title: "",
-  meaning: "",
-  cases: [],
-  rows: [],
-  examples: [],
-  caution: "",
-};
-
 function normalizeCases(raw: Partial<GrammarItem>): GrammarCaseRow[] {
   if (Array.isArray(raw.cases)) {
     return raw.cases

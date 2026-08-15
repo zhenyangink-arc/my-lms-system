@@ -127,10 +127,12 @@ export function getCourseCatalogTreeColumns({
   canManage,
   options,
   dashboardBasePath,
+  routeBasePath,
 }: {
   canManage: boolean;
   options: CourseCatalogActionOptions;
   dashboardBasePath: string;
+  routeBasePath?: string;
 }): ColumnDef<CourseCatalogTreeRow>[] {
   const columns: ColumnDef<CourseCatalogTreeRow>[] = [
   {
@@ -231,10 +233,14 @@ export function getCourseCatalogTreeColumns({
       return (
         <div className="flex min-w-max justify-end gap-1.5">
           <Link
-            href={scopeDashboardPath(
-              `/dashboard/admin/courses?node=${row.original.kind}&id=${row.original.id}#course-content`,
-              dashboardBasePath,
-            )}
+            href={
+              routeBasePath
+                ? `${routeBasePath}?node=${row.original.kind}&id=${row.original.id}#course-content`
+                : scopeDashboardPath(
+                    `/dashboard/admin/courses?node=${row.original.kind}&id=${row.original.id}#course-content`,
+                    dashboardBasePath,
+                  )
+            }
             className="inline-flex h-8 items-center border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"
           >
             查看内容

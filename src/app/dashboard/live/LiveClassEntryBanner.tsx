@@ -1,15 +1,33 @@
 "use client";
 
+// @refresh reset
+
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, Loader2, X } from "lucide-react";
+import { GraduationCap, X } from "lucide-react";
 
+import { createClient } from "@/lib/supabase/client";
 import { getActiveLiveClassAction } from "./actions";
+import { liveChannelName } from "./live-realtime";
 
-/** 学生端课时页横幅：老师正在对该课时上伴学课时，点击进入课堂。 */
+type LiveClassCandidate = {
+  id: string;
+  teacherId: string;
+};
+
+type PresenceEntry = {
+  role?: string;
+};
+
+/**
+ * 学生端课时页横幅。
+ * 数据库 active 只代表课堂未正式结束；只有 Realtime Presence 中确实存在
+ * 发起老师时才展示入口，避免老师关闭页面后残留会话造成“仍在上课”的误报。
+ */
 export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
   const router = useRouter();
-  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [candidate, setCandidate] = useState<LiveClassCandidate | null>(null);
+  const [onlineSessionId, setOnlineSessionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [dismissed, setDismissed] = useState(false);
 
@@ -22,7 +40,16 @@ export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
       const result = await getActiveLiveClassAction(lessonId);
       checking = false;
       if (cancelled) return;
-      setSessionId(result.ok && result.session ? result.session.id : null);
+      const next = result.ok && result.session
+        ? { id: result.session.id, teacherId: result.session.teacher_id }
+        : null;
+      setCandidate((current) => {
+        if (current?.id === next?.id && current?.teacherId === next?.teacherId) {
+          return current;
+        }
+        return next;
+      });
+      if (!next) setOnlineSessionId(null);
       setLoading(false);
     };
     void checkActiveClass();
@@ -34,10 +61,55 @@ export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
     };
   }, [lessonId]);
 
-  if (loading || dismissed || !sessionId) return null;
+  useEffect(() => {
+    if (!candidate) return;
+
+    const supabase = createClient();
+    let disposed = false;
+
+    const channel = supabase.channel(liveChannelName(candidate.id), {
+      config: { private: true },
+    });
+
+    const syncTeacherPresence = () => {
+      if (disposed) return;
+      const state = channel.presenceState() as unknown as Record<string, PresenceEntry[]>;
+      const teacherEntries = state[candidate.teacherId] ?? [];
+      setOnlineSessionId(
+        teacherEntries.some((entry) => entry.role === "teacher") ? candidate.id : null
+      );
+    };
+
+    channel.on("presence", { event: "sync" }, syncTeacherPresence);
+
+    void (async () => {
+      const { data } = await supabase.auth.getSession();
+      const accessToken = data.session?.access_token;
+      if (accessToken) await supabase.realtime.setAuth(accessToken);
+      if (disposed) return;
+      channel.subscribe((status) => {
+        if (status === "SUBSCRIBED") {
+          syncTeacherPresence();
+        } else if (
+          status === "CHANNEL_ERROR" ||
+          status === "TIMED_OUT" ||
+          status === "CLOSED"
+        ) {
+          setOnlineSessionId(null);
+        }
+      });
+    })();
+
+    return () => {
+      disposed = true;
+      void supabase.removeChannel(channel);
+    };
+  }, [candidate]);
+
+  if (loading || dismissed || !candidate || onlineSessionId !== candidate.id) return null;
 
   const space = window.location.pathname.split("/")[1];
-  const href = `/${space}/dashboard/live/${sessionId}`;
+  const href = `/${space}/dashboard/live/${candidate.id}`;
 
   return (
     <div className="fixed inset-x-0 top-0 z-[60] border-b border-[#b7ddd2] bg-[#e6f6f1]/95 backdrop-blur">
@@ -46,7 +118,7 @@ export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
           <GraduationCap size={16} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-black text-[#173f4a]">老师正在给你上课</p>
+          <p className="text-sm font-black text-[#173f4a]">老师已进入实时课堂</p>
           <p className="app-muted-text truncate text-[11px] font-medium">
             进入课堂，实时跟随老师的讲解与圈点。
           </p>

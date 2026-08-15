@@ -79,10 +79,22 @@ function isValidDottedDate(value: string) {
 function ProfileTableSection({
   icon: Icon,
   title,
+  simple = false,
 }: {
   icon: typeof UserRound;
   title: string;
+  simple?: boolean;
 }) {
+  if (simple) {
+    return (
+      <tr className="border-y border-slate-200 bg-slate-50">
+        <th colSpan={3} className="px-4 py-3 text-left text-sm font-bold text-slate-900 sm:px-5">
+          {title}
+        </th>
+      </tr>
+    );
+  }
+
   return (
     <tr
       className="border-y"
@@ -107,19 +119,25 @@ function ProfileTableRow({
   number,
   label,
   children,
+  simple = false,
 }: {
   number: number;
   label: string;
   children: React.ReactNode;
+  simple?: boolean;
 }) {
   return (
-    <tr className="border-t align-top app-divider">
+    <tr className={simple ? "border-t border-slate-200 align-top" : "border-t align-top app-divider"}>
       <td className="w-14 px-3 py-4 text-center sm:w-16 sm:px-4 sm:py-5">
-        <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
-          {number}
-        </span>
+        {simple ? (
+          <span className="text-xs font-semibold tabular-nums text-slate-400">{String(number).padStart(2, "0")}</span>
+        ) : (
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
+            {number}
+          </span>
+        )}
       </td>
-      <th scope="row" className="w-32 px-3 py-5 text-left text-sm font-black sm:w-44 sm:px-5">
+      <th scope="row" className={simple ? "w-32 px-3 py-5 text-left text-sm font-semibold text-slate-700 sm:w-40 sm:px-5" : "w-32 px-3 py-5 text-left text-sm font-black sm:w-44 sm:px-5"}>
         {label}
       </th>
       <td className="min-w-[260px] px-3 py-4 sm:px-5 sm:py-5">{children}</td>
@@ -127,9 +145,20 @@ function ProfileTableRow({
   );
 }
 
-const fieldClass = "profile-table-input w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
-
-export function ProfileForm({ initialValue }: { initialValue: StudentProfileInitialValue }) {
+export function ProfileForm({
+  initialValue,
+  variant = "default",
+}: {
+  initialValue: StudentProfileInitialValue;
+  variant?: "default" | "dialog";
+}) {
+  const simple = variant === "dialog";
+  const fieldClass = simple
+    ? "w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-sm font-medium text-slate-900 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+    : "profile-table-input w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
+  const inputSurfaceClass = simple
+    ? "border-slate-300 bg-white focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100"
+    : "profile-table-input";
   const [state, formAction, pending] = useActionState(updateProfileAction, initialUpdateProfileState);
   const birthParts = initialValue.birthDate ? initialValue.birthDate.split("-") : ["", "", ""];
   const [birthYear, setBirthYear] = useState(birthParts[0] ?? "");
@@ -179,56 +208,56 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
   const abilityRowStart = needsGaokao ? 11 : 10;
 
   return (
-    <form action={formAction} className="app-card overflow-hidden rounded-3xl border">
+    <form action={formAction} className={simple ? "overflow-hidden rounded-xl border border-slate-200 bg-white" : "app-card overflow-hidden rounded-3xl border"}>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[680px] border-collapse">
+        <table className={simple ? "w-full min-w-[640px] border-collapse" : "w-full min-w-[680px] border-collapse"}>
           <colgroup>
             <col className="w-16" />
             <col className="w-44" />
             <col />
           </colgroup>
           <thead>
-            <tr style={{ backgroundColor: "color-mix(in srgb, var(--app-secondary) 68%, var(--app-text-soft) 32%)" }}>
-              <th className="px-3 py-4 text-center text-sm font-black text-white">序号</th>
-              <th className="px-5 py-4 text-left text-sm font-black text-white">填写项目</th>
-              <th className="px-5 py-4 text-left text-sm font-black text-white">填写内容</th>
+            <tr className={simple ? "border-b border-slate-200 bg-slate-100" : undefined} style={simple ? undefined : { backgroundColor: "color-mix(in srgb, var(--app-secondary) 68%, var(--app-text-soft) 32%)" }}>
+              <th className={simple ? "px-3 py-3 text-center text-xs font-semibold text-slate-500" : "px-3 py-4 text-center text-sm font-black text-white"}>序号</th>
+              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-black text-white"}>资料项目</th>
+              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-black text-white"}>资料内容</th>
             </tr>
           </thead>
           <tbody>
-            <ProfileTableSection icon={UserRound} title="基本信息" />
-            <ProfileTableRow number={1} label="个人照片">
+            <ProfileTableSection icon={UserRound} title="基本信息" simple={simple} />
+            <ProfileTableRow number={1} label="个人照片" simple={simple}>
               <div className="flex items-center gap-4">
                 <span
-                  className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-black"
+                  className={simple ? "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-100 bg-cover bg-center text-base font-bold text-slate-500" : "flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-black"}
                   style={{
-                    color: "var(--app-secondary)",
-                    backgroundColor: "var(--app-soft-bg)",
+                    color: simple ? undefined : "var(--app-secondary)",
+                    backgroundColor: simple ? undefined : "var(--app-soft-bg)",
                     backgroundImage: photoPreview ? `url("${photoPreview}")` : undefined,
                   }}
                 >
                   {!photoPreview && (initialValue.fullName.slice(0, 1) || "学")}
                 </span>
-                <label className="profile-table-input inline-flex cursor-pointer items-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-black">
+                <label className={`${inputSurfaceClass} inline-flex cursor-pointer items-center gap-2 border px-4 py-2.5 text-sm ${simple ? "rounded-lg font-semibold text-slate-700" : "rounded-xl font-black"}`}>
                   <Camera size={15} aria-hidden="true" />上传照片
                   <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handlePhotoChange} />
                 </label>
               </div>
             </ProfileTableRow>
-            <ProfileTableRow number={2} label="真实姓名">
+            <ProfileTableRow number={2} label="真实姓名" simple={simple}>
               <input name="fullName" required minLength={2} maxLength={50} autoComplete="name" defaultValue={initialValue.fullName} className={fieldClass} />
               {state.fieldErrors?.fullName && <span className="mt-1.5 block text-xs text-red-600">{state.fieldErrors.fullName}</span>}
             </ProfileTableRow>
-            <ProfileTableRow number={3} label="性别">
+            <ProfileTableRow number={3} label="性别" simple={simple}>
               <div className="grid max-w-sm grid-cols-2 gap-2">
                 {[["male", "男"], ["female", "女"]].map(([value, label]) => (
-                  <label key={value} className="profile-table-input flex cursor-pointer items-center justify-center gap-2 rounded-2xl border px-3 py-3 text-sm font-bold">
+                  <label key={value} className={`${inputSurfaceClass} flex cursor-pointer items-center justify-center gap-2 border px-3 text-sm ${simple ? "rounded-lg py-2.5 font-semibold text-slate-700" : "rounded-2xl py-3 font-bold"}`}>
                     <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--app-accent)]" />{label}
                   </label>
                 ))}
               </div>
             </ProfileTableRow>
-            <ProfileTableRow number={4} label="出生日期">
-              <div className="profile-table-input grid max-w-xl grid-cols-[1.3fr_1fr_1fr] overflow-hidden rounded-2xl border">
+            <ProfileTableRow number={4} label="出生日期" simple={simple}>
+              <div className={`${inputSurfaceClass} grid max-w-xl grid-cols-[1.3fr_1fr_1fr] overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`}>
                 <select name="birthYear" required value={birthYear} onChange={(event) => setBirthYear(event.target.value)} className="bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生年份">
                   <option value="">年</option>{BIRTH_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
                 </select>
@@ -240,8 +269,8 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                 </select>
               </div>
             </ProfileTableRow>
-            <ProfileTableRow number={5} label="居住地址">
-              <div className="profile-table-input grid max-w-xl grid-cols-2 overflow-hidden rounded-2xl border">
+            <ProfileTableRow number={5} label="居住地址" simple={simple}>
+              <div className={`${inputSurfaceClass} grid max-w-xl grid-cols-2 overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`}>
                 <select name="province" required value={province} onChange={handleProvinceChange} className="bg-transparent px-3.5 py-3 text-sm font-semibold outline-none">
                   <option value="">省级地区</option>{CHINA_PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
                 </select>
@@ -251,18 +280,18 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
               </div>
             </ProfileTableRow>
 
-            <ProfileTableSection icon={GraduationCap} title="教育经历与在校成绩" />
-            <ProfileTableRow number={6} label="教育阶段">
+            <ProfileTableSection icon={GraduationCap} title="教育经历与在校成绩" simple={simple} />
+            <ProfileTableRow number={6} label="教育阶段" simple={simple}>
               <select name="educationLevel" required value={educationLevel} onChange={(event) => setEducationLevel(event.target.value)} className={fieldClass}>
                 <option value="">请选择</option><option value="bachelor">本科</option><option value="associate">大专</option><option value="high_school">高中</option><option value="secondary_vocational">中专</option><option value="technical_school">技工学校</option>
               </select>
             </ProfileTableRow>
-            <ProfileTableRow number={7} label="就读状态">
+            <ProfileTableRow number={7} label="就读状态" simple={simple}>
               <select name="educationStatus" required value={educationStatus} onChange={(event) => setEducationStatus(event.target.value)} className={fieldClass}>
                 <option value="">请选择</option><option value="graduated">毕业</option><option value="studying">在读</option>
               </select>
             </ProfileTableRow>
-            <ProfileTableRow number={8} label={educationStatus === "studying" ? "预计毕业日期" : "毕业日期"}>
+            <ProfileTableRow number={8} label={educationStatus === "studying" ? "预计毕业日期" : "毕业日期"} simple={simple}>
               <input
                 name="completionDate" type="text" required inputMode="numeric" maxLength={10}
                 pattern="[0-9]{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])"
@@ -275,8 +304,8 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                 <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.completionDate ?? "日期格式不正确。"}</span>
               )}
             </ProfileTableRow>
-            <ProfileTableRow number={9} label="平均成绩（百分制）">
-              <span className="profile-table-input flex items-center overflow-hidden rounded-2xl border" style={academicAverageWarning ? { borderColor: "#dc2626" } : undefined}>
+            <ProfileTableRow number={9} label="平均成绩（百分制）" simple={simple}>
+              <span className={`${inputSurfaceClass} flex items-center overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`} style={academicAverageWarning ? { borderColor: "#dc2626" } : undefined}>
                 <input
                   name="academicAverage" type="number" required min="0" max="100" step="0.01" inputMode="decimal"
                   value={academicAverage} onChange={(event) => setAcademicAverage(event.target.value)} placeholder="例如：86.50"
@@ -290,7 +319,7 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
               )}
             </ProfileTableRow>
             {needsGaokao && (
-              <ProfileTableRow number={10} label="高考成绩">
+              <ProfileTableRow number={10} label="高考成绩" simple={simple}>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <select name="gaokaoHasScore" required value={gaokaoHasScore} onChange={(event) => setGaokaoHasScore(event.target.value)} className={fieldClass}>
                     <option value="">请选择有或无</option><option value="yes">有</option><option value="no">无</option>
@@ -300,18 +329,18 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
               </ProfileTableRow>
             )}
 
-            <ProfileTableSection icon={Gauge} title="能力评估" />
-            <ProfileTableRow number={abilityRowStart} label="英语能力">
+            <ProfileTableSection icon={Gauge} title="能力评估" simple={simple} />
+            <ProfileTableRow number={abilityRowStart} label="英语能力" simple={simple}>
               <select name="englishLevel" required defaultValue={initialValue.englishLevel} className={fieldClass}>
                 <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
               </select>
             </ProfileTableRow>
-            <ProfileTableRow number={abilityRowStart + 1} label="数学能力">
+            <ProfileTableRow number={abilityRowStart + 1} label="数学能力" simple={simple}>
               <select name="mathLevel" required defaultValue={initialValue.mathLevel} className={fieldClass}>
                 <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
               </select>
             </ProfileTableRow>
-            <ProfileTableRow number={abilityRowStart + 2} label="韩语能力">
+            <ProfileTableRow number={abilityRowStart + 2} label="韩语能力" simple={simple}>
               <div className="grid gap-3 sm:grid-cols-2">
                 <select name="hasKorean" required value={hasKorean} onChange={(event) => setHasKorean(event.target.value)} className={fieldClass}>
                   <option value="">请选择有或无</option><option value="yes">有韩语成绩</option><option value="no">无韩语成绩</option>
@@ -321,7 +350,7 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
                 </select>}
               </div>
             </ProfileTableRow>
-            <ProfileTableRow number={abilityRowStart + 3} label="工作经历">
+            <ProfileTableRow number={abilityRowStart + 3} label="工作经历" simple={simple}>
               <select name="hasWorkExperience" required defaultValue={booleanValue(initialValue.hasWorkExperience)} className={fieldClass}>
                 <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
               </select>
@@ -332,9 +361,9 @@ export function ProfileForm({ initialValue }: { initialValue: StudentProfileInit
 
       {state.message && <p aria-live="polite" className="mx-4 mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold sm:mx-6" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
 
-      <div className="flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-        <p className="text-sm font-bold app-muted-text">请确认全部项目后统一保存。</p>
-        <button type="submit" disabled={pending} className="inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" style={{ backgroundColor: "var(--app-accent)" }}>
+      <div className={simple ? "sticky bottom-0 flex flex-col gap-3 border-t border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5" : "flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6"} style={simple ? undefined : { backgroundColor: "var(--app-soft-bg)" }}>
+        <p className={simple ? "text-sm text-slate-500" : "text-sm font-bold app-muted-text"}>请确认全部项目后统一保存。</p>
+        <button type="submit" disabled={pending} className={simple ? "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" : "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"} style={simple ? undefined : { backgroundColor: "var(--app-accent)" }}>
           {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}
           {pending ? "正在保存资料" : "保存全部资料"}
         </button>

@@ -2,18 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Bell, GraduationCap, Home, Palette, SlidersHorizontal } from "lucide-react";
+import { Bell, GraduationCap, Home } from "lucide-react";
 
-import { ThemeSwitcher } from "./ThemeSwitcher";
-import {
-  BackgroundBrightnessControl,
-  CardGradientControl,
-  CardOpacityControl,
-  DashboardAppearanceSync,
-} from "./BackgroundBrightnessControl";
+import { DashboardAppearanceSync } from "./BackgroundBrightnessControl";
 import { LogoutButton } from "./LogoutButton";
 import { ReminderDialog, type TeacherReplyReminder } from "./ReminderDialog";
-import { scopeDashboardPath } from "@/lib/dashboard-path";
+import { SidebarThemeControl } from "./ThemeSwitcher";
 
 type Props = {
   tenantName: string;
@@ -26,13 +20,9 @@ type Props = {
 
 export function StudentUtilityDrawer({
   tenantName,
-  userName,
-  accountLabel,
   unreadCount,
   teacherReminders,
-  dashboardBasePath,
 }: Props) {
-  const userInitial = userName.trim().slice(0, 1) || "学";
   const [reminderOpen, setReminderOpen] = useState(false);
 
   return (
@@ -118,66 +108,11 @@ export function StudentUtilityDrawer({
 
           <hr className="app-divider mx-2 my-2" />
 
-          {/* 个人资料 */}
           <div className="app-student-utility-section px-1.5">
-            <Link
-              href={scopeDashboardPath("/dashboard/profile", dashboardBasePath)}
-              title={userName}
-              className="flex items-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
-            >
-              <span
-                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-xs font-black text-white"
-                style={{ backgroundColor: "var(--app-success)" }}
-              >
-                {userInitial}
-              </span>
-              <span className="app-student-utility-expanded min-w-0">
-                <span className="block truncate text-xs font-bold">{userName}</span>
-                <span className="block truncate text-[10px] font-bold app-muted-text">
-                  {accountLabel}
-                </span>
-              </span>
-            </Link>
+            <SidebarThemeControl />
           </div>
 
           <hr className="app-divider mx-2 my-2" />
-
-          {/* 界面主题 */}
-          <div className="app-student-utility-section px-1.5">
-            <div className="flex items-center justify-center py-1 group-hover:hidden">
-              <Palette size={18} style={{ color: "var(--app-muted)" }} />
-            </div>
-            <div className="app-student-utility-expanded min-w-0 space-y-1.5">
-              <p className="text-[9px] font-bold tracking-[0.18em] app-muted-text">
-                界面主题
-              </p>
-              <ThemeSwitcher />
-            </div>
-          </div>
-
-          {/* 外观调节 */}
-          <div className="app-student-utility-section px-1.5">
-            <div className="flex items-center justify-center py-1 group-hover:hidden">
-              <SlidersHorizontal size={18} style={{ color: "var(--app-muted)" }} />
-            </div>
-            <div className="app-student-utility-expanded min-w-0 space-y-2.5">
-              <p className="text-[9px] font-bold tracking-[0.18em] app-muted-text">
-                外观调节
-              </p>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-semibold app-muted-text">背景亮度</span>
-                <BackgroundBrightnessControl />
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-semibold app-muted-text">卡片透明度</span>
-                <CardOpacityControl />
-              </div>
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[10px] font-semibold app-muted-text">卡片渐变</span>
-                <CardGradientControl />
-              </div>
-            </div>
-          </div>
 
           {/* 底部退出按钮 */}
           <div className="mt-auto border-t pt-2 app-divider">

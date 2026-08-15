@@ -35,11 +35,15 @@ export function ConversationScenarioTable({
   rows,
   canManage,
   createOpen,
+  createHref = "/dashboard/admin/conversation-practice?mode=create",
+  closeHref = "/dashboard/admin/conversation-practice",
   children,
 }: {
   rows: ConversationScenarioTableRow[];
   canManage: boolean;
   createOpen: boolean;
+  createHref?: string;
+  closeHref?: string;
   children?: ReactNode;
 }) {
   const router = useRouter();
@@ -90,7 +94,7 @@ export function ConversationScenarioTable({
             <option value="incomplete">待完善</option>
           </select>
           <span className="app-muted-text ml-auto text-[10px]">共 {filteredRows.length} 项</span>
-          {canManage && <Link href="/dashboard/admin/conversation-practice?mode=create" className="flex items-center gap-1.5 rounded-[6px] px-3 py-2 text-[11px] font-medium text-white" style={{ backgroundColor: "var(--app-accent)" }}><Plus size={13} />新建场景</Link>}
+          {canManage && <Link href={createHref} className="flex items-center gap-1.5 rounded-[6px] px-3 py-2 text-[11px] font-medium text-white" style={{ backgroundColor: "var(--app-accent)" }}><Plus size={13} />新建场景</Link>}
         </div>
 
         <div className="overflow-x-auto">
@@ -140,7 +144,7 @@ export function ConversationScenarioTable({
           <div className="course-editor-window app-card relative flex h-[min(920px,calc(100vh-24px))] w-full max-w-[1400px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]" style={{ borderColor: "var(--app-border)" }}>
             <div className="flex h-12 shrink-0 items-center justify-between border-b px-4" style={{ borderColor: "var(--app-border)" }}>
               <div className="flex min-w-0 items-center gap-2 text-[11px]"><MessageCircleMore size={14} className="app-muted-text" /><span className="truncate font-semibold">{activeRow?.title ?? "新建会话场景"}</span></div>
-              <button type="button" onClick={() => router.replace("/dashboard/admin/conversation-practice", { scroll: false })} aria-label="关闭编辑工作窗" className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border hover:bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border)" }}><X size={14} /></button>
+              <button type="button" onClick={() => router.replace(closeHref, { scroll: false })} aria-label="关闭编辑工作窗" className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border hover:bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border)" }}><X size={14} /></button>
             </div>
             <div className="min-h-0 flex-1 overflow-y-auto p-5 lg:p-6">{children}</div>
           </div>

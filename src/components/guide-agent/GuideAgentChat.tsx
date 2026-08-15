@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { createPortal } from "react-dom";
 import {
   Bot,
   LoaderCircle,
@@ -12,9 +13,11 @@ import {
 import {
   type FormEvent,
   type KeyboardEvent,
+  type PointerEvent as ReactPointerEvent,
   useEffect,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 import { scopeDashboardPath } from "@/lib/dashboard-path";
@@ -22,13 +25,6 @@ import {
   type GuideAgentMessageRole,
   useGuideAgent,
 } from "./GuideAgentProvider";
-
-type AgentChatResponse = {
-  answer?: unknown;
-  conversation_id?: unknown;
-  actions?: unknown;
-  error?: unknown;
-};
 
 type GuideAgentChatProps = {
   studentId: string;
@@ -42,12 +38,39 @@ type GuideAgentAction = {
   path?: string;
 };
 
-function createMessageId(role: GuideAgentMessageRole) {
-  return `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+type AgentChatStreamFrame =
+  | { type: "answer"; answer: string }
+  | {
+      type: "done";
+      answer: string;
+      conversation_id: string;
+      actions: GuideAgentAction[];
+    }
+  | { type: "error"; error: string };
+
+type FloatingPosition = {
+  x: number;
+  y: number;
+};
+
+type FloatingDragState = FloatingPosition & {
+  pointerId: number;
+  pointerX: number;
+  pointerY: number;
+  width: number;
+  height: number;
+  moved: boolean;
+};
+
+const GUIDE_AGENT_POSITION_KEY = "guide-agent-floating-position";
+const FLOATING_EDGE_GAP = 12;
+
+function subscribeToClientReady() {
+  return () => undefined;
 }
 
-function isAgentChatResponse(value: unknown): value is AgentChatResponse {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+function createMessageId(role: GuideAgentMessageRole) {
+  return `${role}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function isGuideAgentAction(value: unknown): value is GuideAgentAction {
@@ -60,6 +83,47 @@ function isGuideAgentAction(value: unknown): value is GuideAgentAction {
     Boolean(action.target.trim()) &&
     (action.path === undefined || typeof action.path === "string")
   );
+}
+
+function parseAgentChatStreamFrame(value: string): AgentChatStreamFrame | null {
+  let parsed: unknown;
+
+  try {
+    parsed = JSON.parse(value);
+  } catch {
+    return null;
+  }
+
+  if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+    return null;
+  }
+
+  const frame = parsed as Record<string, unknown>;
+
+  if (frame.type === "answer" && typeof frame.answer === "string") {
+    return { type: "answer", answer: frame.answer };
+  }
+
+  if (
+    frame.type === "done" &&
+    typeof frame.answer === "string" &&
+    typeof frame.conversation_id === "string"
+  ) {
+    return {
+      type: "done",
+      answer: frame.answer,
+      conversation_id: frame.conversation_id,
+      actions: Array.isArray(frame.actions)
+        ? frame.actions.filter(isGuideAgentAction)
+        : [],
+    };
+  }
+
+  if (frame.type === "error" && typeof frame.error === "string") {
+    return { type: "error", error: frame.error };
+  }
+
+  return null;
 }
 
 export function GuideAgentChat({
@@ -78,9 +142,86 @@ export function GuideAgentChat({
   } = useGuideAgent();
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [receivingResponse, setReceivingResponse] = useState(false);
+  const portalReady = useSyncExternalStore(
+    subscribeToClientReady,
+    () => true,
+    () => false,
+  );
+  const [floatingPosition, setFloatingPosition] = useState<FloatingPosition | null>(null);
+  const [isDraggingTrigger, setIsDraggingTrigger] = useState(false);
+  const [isFloatingVisible, setIsFloatingVisible] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const floatingTriggerRef = useRef<HTMLButtonElement>(null);
+  const floatingDragRef = useRef<FloatingDragState | null>(null);
+  const suppressFloatingClickRef = useRef(false);
   const highlightTimersRef = useRef<number[]>([]);
+
+  function clampFloatingPosition(
+    position: FloatingPosition,
+    width: number,
+    height: number,
+  ): FloatingPosition {
+    return {
+      x: Math.min(
+        Math.max(FLOATING_EDGE_GAP, position.x),
+        Math.max(FLOATING_EDGE_GAP, window.innerWidth - width - FLOATING_EDGE_GAP),
+      ),
+      y: Math.min(
+        Math.max(FLOATING_EDGE_GAP, position.y),
+        Math.max(FLOATING_EDGE_GAP, window.innerHeight - height - FLOATING_EDGE_GAP),
+      ),
+    };
+  }
+
+  function persistFloatingPosition(position: FloatingPosition) {
+    window.localStorage.setItem(GUIDE_AGENT_POSITION_KEY, JSON.stringify(position));
+  }
+
+  useEffect(() => {
+    if (!portalReady) return;
+
+    const storedPosition = window.localStorage.getItem(GUIDE_AGENT_POSITION_KEY);
+
+    if (!storedPosition) return;
+
+    try {
+      const parsed = JSON.parse(storedPosition) as Partial<FloatingPosition>;
+      if (typeof parsed.x === "number" && typeof parsed.y === "number") {
+        const frameId = window.requestAnimationFrame(() => {
+          const rect = floatingTriggerRef.current?.getBoundingClientRect();
+          if (!rect) return;
+          setFloatingPosition(
+            clampFloatingPosition(
+              { x: parsed.x as number, y: parsed.y as number },
+              rect.width,
+              rect.height,
+            ),
+          );
+        });
+        return () => window.cancelAnimationFrame(frameId);
+      }
+    } catch {
+      window.localStorage.removeItem(GUIDE_AGENT_POSITION_KEY);
+    }
+  }, [portalReady]);
+
+  useEffect(() => {
+    function keepTriggerInsideViewport() {
+      const rect = floatingTriggerRef.current?.getBoundingClientRect();
+      if (!rect) return;
+
+      setFloatingPosition((current) =>
+        current
+          ? clampFloatingPosition(current, rect.width, rect.height)
+          : current,
+      );
+    }
+
+    window.addEventListener("resize", keepTriggerInsideViewport);
+    return () => window.removeEventListener("resize", keepTriggerInsideViewport);
+  }, []);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -178,6 +319,38 @@ export function GuideAgentChat({
     ]);
     setInput("");
     setLoading(true);
+    setReceivingResponse(false);
+
+    const assistantMessageId = createMessageId("assistant");
+    let streamedAnswer = "";
+    let assistantMessageAdded = false;
+
+    const renderStreamedAnswer = (answer: string) => {
+      if (!answer) return;
+
+      streamedAnswer = answer;
+      setReceivingResponse(true);
+      if (!assistantMessageAdded) {
+        assistantMessageAdded = true;
+        setMessages((current) => [
+          ...current,
+          {
+            id: assistantMessageId,
+            role: "assistant",
+            content: answer,
+          },
+        ]);
+        return;
+      }
+
+      setMessages((current) =>
+        current.map((item) =>
+          item.id === assistantMessageId
+            ? { ...item, content: answer }
+            : item,
+        ),
+      );
+    };
 
     try {
       const response = await fetch("/api/agent-chat", {
@@ -190,49 +363,105 @@ export function GuideAgentChat({
         }),
       });
 
-      const payload: unknown = await response.json().catch(() => null);
-
-      if (!response.ok || !isAgentChatResponse(payload)) {
-        throw new Error("Guide Agent request failed");
+      if (!response.ok) {
+        const payload: unknown = await response.json().catch(() => null);
+        const errorMessage =
+          payload && typeof payload === "object" && !Array.isArray(payload)
+            ? (payload as Record<string, unknown>).error
+            : undefined;
+        throw new Error(
+          typeof errorMessage === "string"
+            ? errorMessage
+            : "Guide Agent request failed",
+        );
       }
 
-      const answer =
-        typeof payload.answer === "string" ? payload.answer.trim() : "";
-      const nextConversationId =
-        typeof payload.conversation_id === "string"
-          ? payload.conversation_id
-          : "";
-      const actions = Array.isArray(payload.actions)
-        ? payload.actions.filter(isGuideAgentAction)
-        : [];
-
-      if (!answer) {
-        throw new Error("Guide Agent returned an empty answer");
+      if (!response.body) {
+        throw new Error("Guide Agent returned an empty response stream");
       }
 
-      setConversationId(nextConversationId);
-      setMessages((current) => [
-        ...current,
-        {
-          id: createMessageId("assistant"),
-          role: "assistant",
-          content: answer,
-        },
-      ]);
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let streamCompleted = false;
 
-      for (const action of actions) executeAgentAction(action);
+      const processFrame = (line: string) => {
+        if (!line.trim()) return;
+
+        const frame = parseAgentChatStreamFrame(line);
+        if (!frame) {
+          throw new Error("Guide Agent returned an invalid stream frame");
+        }
+
+        if (frame.type === "error") {
+          throw new Error(frame.error);
+        }
+
+        renderStreamedAnswer(frame.answer);
+
+        if (frame.type === "done") {
+          if (!frame.answer.trim() || !frame.conversation_id.trim()) {
+            throw new Error("Guide Agent returned an incomplete response");
+          }
+
+          setConversationId(frame.conversation_id);
+          for (const action of frame.actions) executeAgentAction(action);
+          streamCompleted = true;
+        }
+      };
+
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split("\n");
+          buffer = lines.pop() ?? "";
+          for (const line of lines) processFrame(line);
+        }
+
+        buffer += decoder.decode();
+        if (buffer.trim()) processFrame(buffer);
+      } catch (error) {
+        await reader.cancel().catch(() => undefined);
+        throw error;
+      } finally {
+        reader.releaseLock();
+      }
+
+      if (!streamCompleted) {
+        throw new Error("Guide Agent response stream ended unexpectedly");
+      }
     } catch (error) {
       console.error("[GuideAgentChat] Unable to send message", error);
-      setMessages((current) => [
-        ...current,
-        {
-          id: createMessageId("assistant"),
-          role: "assistant",
-          content: "抱歉，我暂时没能连接到学习助手。请稍后再试一次。",
-          isError: true,
-        },
-      ]);
+      setMessages((current) => {
+        if (assistantMessageAdded) {
+          return current.map((item) =>
+            item.id === assistantMessageId
+              ? {
+                  ...item,
+                  content: streamedAnswer
+                    ? `${streamedAnswer}\n\n（回答中断，请再试一次。）`
+                    : "抱歉，我暂时没能连接到学习助手。请稍后再试一次。",
+                  isError: true,
+                }
+              : item,
+          );
+        }
+
+        return [
+          ...current,
+          {
+            id: assistantMessageId,
+            role: "assistant",
+            content: "抱歉，我暂时没能连接到学习助手。请稍后再试一次。",
+            isError: true,
+          },
+        ];
+      });
     } finally {
+      setReceivingResponse(false);
       setLoading(false);
     }
   }
@@ -253,6 +482,90 @@ export function GuideAgentChat({
     }
   }
 
+  function handleFloatingPointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (event.button !== 0) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    floatingDragRef.current = {
+      pointerId: event.pointerId,
+      pointerX: event.clientX,
+      pointerY: event.clientY,
+      x: rect.left,
+      y: rect.top,
+      width: rect.width,
+      height: rect.height,
+      moved: false,
+    };
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function handleFloatingPointerMove(event: ReactPointerEvent<HTMLButtonElement>) {
+    const drag = floatingDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    const deltaX = event.clientX - drag.pointerX;
+    const deltaY = event.clientY - drag.pointerY;
+    if (!drag.moved && Math.hypot(deltaX, deltaY) < 5) return;
+
+    drag.moved = true;
+    suppressFloatingClickRef.current = true;
+    setIsDraggingTrigger(true);
+    setFloatingPosition(
+      clampFloatingPosition(
+        { x: drag.x + deltaX, y: drag.y + deltaY },
+        drag.width,
+        drag.height,
+      ),
+    );
+  }
+
+  function finishFloatingDrag(event: ReactPointerEvent<HTMLButtonElement>) {
+    const drag = floatingDragRef.current;
+    if (!drag || drag.pointerId !== event.pointerId) return;
+
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
+    if (drag.moved) {
+      const finalPosition = clampFloatingPosition(
+        {
+          x: drag.x + event.clientX - drag.pointerX,
+          y: drag.y + event.clientY - drag.pointerY,
+        },
+        drag.width,
+        drag.height,
+      );
+      setFloatingPosition(finalPosition);
+      persistFloatingPosition(finalPosition);
+      window.setTimeout(() => {
+        suppressFloatingClickRef.current = false;
+      }, 0);
+    }
+
+    floatingDragRef.current = null;
+    setIsDraggingTrigger(false);
+  }
+
+  function moveFloatingTriggerWithKeyboard(event: KeyboardEvent<HTMLButtonElement>) {
+    if (!event.altKey || !event.key.startsWith("Arrow")) return;
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const offset = event.shiftKey ? 32 : 12;
+    const next = clampFloatingPosition(
+      {
+        x: rect.left + (event.key === "ArrowRight" ? offset : event.key === "ArrowLeft" ? -offset : 0),
+        y: rect.top + (event.key === "ArrowDown" ? offset : event.key === "ArrowUp" ? -offset : 0),
+      },
+      rect.width,
+      rect.height,
+    );
+
+    event.preventDefault();
+    setFloatingPosition(next);
+    persistFloatingPosition(next);
+  }
+
   return (
     <>
       {triggerVariant === "portal" ? (
@@ -262,7 +575,10 @@ export function GuideAgentChat({
           title="学习助手"
           aria-expanded={isOpen}
           aria-controls="guide-agent-chat-panel"
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={() => {
+            setIsFloatingVisible(true);
+            setIsOpen((current) => !current);
+          }}
           className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-600 transition hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
         >
           <Bot size={18} aria-hidden="true" />
@@ -273,7 +589,10 @@ export function GuideAgentChat({
           aria-label={isOpen ? "收起智能辅助" : "打开智能辅助"}
           aria-expanded={isOpen}
           aria-controls="guide-agent-chat-panel"
-          onClick={() => setIsOpen((current) => !current)}
+          onClick={() => {
+            setIsFloatingVisible(true);
+            setIsOpen((current) => !current);
+          }}
           className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight transition hover:-translate-y-0.5 sm:px-4 sm:text-lg"
           style={{
             color: isOpen ? "var(--app-accent-strong)" : "var(--app-text)",
@@ -294,12 +613,12 @@ export function GuideAgentChat({
         </button>
       )}
 
-      {isOpen && (
+      {isOpen && portalReady && createPortal(
         <section
           id="guide-agent-chat-panel"
           role="dialog"
           aria-label="智能学习助手对话"
-          className="fixed inset-x-3 bottom-36 z-[90] flex h-[min(620px,calc(100dvh-10rem))] flex-col overflow-hidden rounded-[20px] border shadow-[0_24px_70px_rgba(15,23,42,0.22)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-3 sm:inset-x-auto sm:right-6 sm:w-[390px] md:bottom-24"
+          className={`${triggerVariant === "dashboard" ? "student-system-floating-layer " : ""}fixed inset-x-3 bottom-36 z-[90] flex h-[min(620px,calc(100dvh-10rem))] flex-col overflow-hidden rounded-[20px] border shadow-[0_24px_70px_rgba(15,23,42,0.22)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-3 sm:inset-x-auto sm:right-6 sm:w-[390px] md:bottom-24`}
           style={{
             color: "var(--app-text)",
             borderColor: "var(--app-border)",
@@ -420,7 +739,7 @@ export function GuideAgentChat({
                 );
               })}
 
-              {loading && (
+              {loading && !receivingResponse && (
                 <div className="flex items-end gap-2">
                   <span
                     className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl"
@@ -507,32 +826,78 @@ export function GuideAgentChat({
               Enter 发送 · Shift + Enter 换行
             </p>
           </form>
-        </section>
+        </section>,
+        document.body,
       )}
 
-      {triggerVariant === "dashboard" && (
-        <button
-          type="button"
-          aria-label={isOpen ? "收起学习助手" : "打开学习助手"}
-          aria-expanded={isOpen}
-          aria-controls="guide-agent-chat-panel"
-          onClick={() => setIsOpen((current) => !current)}
-          className="fixed bottom-20 right-4 z-[91] flex h-14 items-center justify-center gap-2 rounded-full px-4 text-sm font-black text-white shadow-[0_12px_34px_rgba(15,23,42,0.24)] transition hover:-translate-y-1 md:bottom-6 md:right-6"
-          style={{
-            background: isOpen
-              ? "linear-gradient(135deg, var(--app-secondary), var(--app-warm))"
-              : "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
-          }}
-        >
-          {isOpen ? (
-            <X size={20} aria-hidden="true" />
-          ) : (
-            <MessageCircleMore size={20} aria-hidden="true" />
-          )}
-          <span className="hidden sm:inline">
-            {isOpen ? "收起助手" : "问问学习助手"}
+      {triggerVariant === "dashboard" && portalReady && isFloatingVisible && createPortal(
+        <>
+          <span id="guide-agent-drag-help" className="sr-only">
+            可拖动调整位置；按 Alt 加方向键也可以移动。
           </span>
-        </button>
+          <div
+            className="student-system-floating-layer fixed bottom-20 right-4 z-[91] md:bottom-6 md:right-6"
+            style={{
+            ...(floatingPosition
+              ? {
+                  left: `${floatingPosition.x}px`,
+                  top: `${floatingPosition.y}px`,
+                  right: "auto",
+                  bottom: "auto",
+                }
+                : null),
+            }}
+          >
+            <button
+              ref={floatingTriggerRef}
+              type="button"
+              aria-label={isOpen ? "收起学习助手" : "打开学习助手"}
+              aria-describedby="guide-agent-drag-help"
+              aria-expanded={isOpen}
+              aria-controls="guide-agent-chat-panel"
+              title="拖动可调整位置；Alt + 方向键可微调"
+              onClick={() => {
+                if (suppressFloatingClickRef.current) return;
+                setIsOpen((current) => !current);
+              }}
+              onKeyDown={moveFloatingTriggerWithKeyboard}
+              onPointerDown={handleFloatingPointerDown}
+              onPointerMove={handleFloatingPointerMove}
+              onPointerUp={finishFloatingDrag}
+              onPointerCancel={finishFloatingDrag}
+              className={`flex h-14 touch-none select-none items-center justify-center gap-2 rounded-full px-4 text-sm font-black text-white shadow-[0_12px_34px_rgba(15,23,42,0.24)] transition ${
+                isDraggingTrigger ? "cursor-grabbing scale-[1.03]" : "cursor-grab hover:-translate-y-1"
+              }`}
+              style={{
+                background: isOpen
+                  ? "linear-gradient(135deg, var(--app-secondary), var(--app-warm))"
+                  : "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+              }}
+            >
+              {isOpen ? (
+                <X size={20} aria-hidden="true" />
+              ) : (
+                <MessageCircleMore size={20} aria-hidden="true" />
+              )}
+              <span className="hidden sm:inline">
+                {isOpen ? "收起助手" : "问问学习助手"}
+              </span>
+            </button>
+            <button
+              type="button"
+              aria-label="关闭并隐藏学习助手"
+              title="关闭学习助手"
+              onClick={() => {
+                setIsOpen(false);
+                setIsFloatingVisible(false);
+              }}
+              className="absolute -right-1.5 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/80 bg-white text-slate-500 shadow-md transition hover:scale-105 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2"
+            >
+              <X size={13} aria-hidden="true" />
+            </button>
+          </div>
+        </>,
+        document.body,
       )}
     </>
   );

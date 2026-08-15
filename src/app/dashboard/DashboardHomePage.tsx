@@ -1,24 +1,19 @@
-import Link from "next/link";
 import { redirect } from "next/navigation";
-import {
-  ArrowRight,
-  BellRing,
-  BookOpen,
-  BookText,
-  CheckCircle2,
-  Ear,
-  GraduationCap,
-  Mic,
-  PlayCircle,
-  TriangleAlert,
-} from "lucide-react";
 
-import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { MonthlyStudyDialog } from "@/app/dashboard/MonthlyStudyDialog";
-import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  type GrowthActivityItem as ActivityItem,
+  type GrowthCourseProgressItem as CourseProgressItem,
+  type GrowthReminderItem as ReminderItem,
+  type GrowthWeekActivityDay as WeekActivityDay,
+} from "@/app/dashboard/GrowthHomeView";
+import { SystemGrowthHomeView } from "@/app/dashboard/SystemGrowthHomeView";
 import { createClient } from "@/lib/supabase/server";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
+import { getStudentAppBasePath } from "@/lib/student-apps";
+import { getStudentAppCourseScope } from "@/lib/student-app-data";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 
 type LessonProgressRow = {
@@ -54,41 +49,6 @@ type CategoryRow = {
   slug: string;
 };
 
-type ActivityItem = {
-  lessonId: string;
-  courseId: string;
-  lessonTitle: string;
-  courseTitle: string;
-  status: string;
-  progressPercent: number;
-  lastViewedAt: string;
-  href: string | null;
-};
-
-type ReminderItem = {
-  id: string;
-  kind: "teacher_reply" | "required_resource";
-  title: string;
-  subtitle: string;
-  href: string | null;
-};
-
-type CourseProgressItem = {
-  courseId: string;
-  title: string;
-  teacherName: string | null;
-  completedCount: number;
-  totalCount: number;
-  percent: number;
-  href: string | null;
-};
-
-const statusLabelMap: Record<string, string> = {
-  not_started: "未开始",
-  in_progress: "进行中",
-  completed: "已完成",
-};
-
 const MONTHLY_DAY_STUDY_MINUTES_CAP = 8 * 60;
 const YEARLY_MONTH_STUDY_MINUTES_CAP = 200 * 60;
 
@@ -97,15 +57,6 @@ function formatStudyMinutes(minutes: number) {
   const hours = minutes / 60;
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} 小时`;
 }
-
-const RECENT_ACTIVITY_DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
-  year: "numeric",
-  month: "2-digit",
-  day: "2-digit",
-  hour: "2-digit",
-  minute: "2-digit",
-};
-
 function toSeoulDateString(date: Date) {
   const formatter = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Seoul",
@@ -183,13 +134,16 @@ function calculateStreak(completedDateStrings: string[]) {
 export default async function DashboardHomePage() {
   const auth = await requireActiveUser();
   const userRole = auth.profile?.role ?? "student";
-
+  const dashboardBasePath =
+    userRole === "student" && auth.tenant?.slug
+      ? getStudentAppBasePath(auth.tenant.slug, "korean")
+      : getDashboardBasePath(auth.tenant?.slug);
 
   if (userRole !== "student" && userRole !== "platform_course_inspector") {
     redirect(
       scopeDashboardPath(
         "/dashboard/admin",
-        getDashboardBasePath(auth.tenant?.slug)
+        dashboardBasePath
       )
     );
   }
@@ -208,7 +162,10 @@ export default async function DashboardHomePage() {
   let vocabularyThisWeekSeconds = 0;
   let hero: ActivityItem | null = null;
   let reminders: ReminderItem[] = [];
-  const heatmapDays: { dateString: string; count: number }[] = [];
+  const weekActivityDays: WeekActivityDay[] = [];
+  let todayStudyMinutes = 0;
+  let recentSevenDayStudyMinutes = 0;
+  let recentSevenDayActiveDays = 0;
   let monthDailyMinutes: number[] = [];
   let monthDailyTips: string[] = [];
   let monthLabel = "本月";
@@ -229,12 +186,16 @@ export default async function DashboardHomePage() {
     studentName =
       profileData?.full_name || user.user_metadata?.name || user.email || "同学";
 
-    const { data: progressData } = await supabase
-      .from("lesson_progress")
-      .select(
-        "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at"
-      )
-      .eq("user_id", user.id);
+    const koreanScope = await getStudentAppCourseScope(supabase, "korean");
+    const { data: progressData } = koreanScope.courseIds.length
+      ? await supabase
+          .from("lesson_progress")
+          .select(
+            "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at"
+          )
+          .eq("user_id", user.id)
+          .in("course_id", koreanScope.courseIds)
+      : { data: [] as LessonProgressRow[] };
 
     const progressRows = (progressData ?? []) as LessonProgressRow[];
 
@@ -260,11 +221,20 @@ export default async function DashboardHomePage() {
       Date.UTC(seoulYear, 0, 1) - 9 * 60 * 60 * 1000
     ).toISOString();
 
-    const { data: learningTimeLogData } = await supabase
-      .from("learning_time_log")
-      .select("seconds, recorded_at, test_slug, source")
-      .eq("student_id", user.id)
-      .gte("recorded_at", learningLogFromISO);
+    const { data: learningTimeLogData } = await withStudentAppSchemaFallback(
+      supabase
+        .from("learning_time_log")
+        .select("seconds, recorded_at, test_slug, source")
+        .eq("student_id", user.id)
+        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .gte("recorded_at", learningLogFromISO),
+      () =>
+        supabase
+          .from("learning_time_log")
+          .select("seconds, recorded_at, test_slug, source")
+          .eq("student_id", user.id)
+          .gte("recorded_at", learningLogFromISO),
+    );
 
     const learningTimeLogs = (learningTimeLogData ?? []) as {
       seconds: number;
@@ -380,26 +350,37 @@ export default async function DashboardHomePage() {
       countByDate.set(dateString, (countByDate.get(dateString) ?? 0) + 1);
     }
 
-    const todayUTC = parseDateStringToUTC(toSeoulDateString(new Date()));
+    const learningMinutesByDate = buildMinutesByDate(
+      learningTimeLogs,
+      MONTHLY_DAY_STUDY_MINUTES_CAP
+    );
+    const todayString = toSeoulDateString(new Date());
+    const todayUTC = parseDateStringToUTC(todayString);
     for (let i = 6; i >= 0; i--) {
       const dateString = new Date(todayUTC - i * 86400000)
         .toISOString()
         .slice(0, 10);
-      heatmapDays.push({
+      weekActivityDays.push({
         dateString,
-        count: countByDate.get(dateString) ?? 0,
+        minutes: Math.round(learningMinutesByDate.get(dateString) ?? 0),
+        completedCount: countByDate.get(dateString) ?? 0,
       });
     }
+
+    todayStudyMinutes = Math.round(learningMinutesByDate.get(todayString) ?? 0);
+    recentSevenDayStudyMinutes = weekActivityDays.reduce(
+      (sum, day) => sum + day.minutes,
+      0
+    );
+    recentSevenDayActiveDays = weekActivityDays.filter(
+      (day) => day.minutes > 0
+    ).length;
 
     const sortedByRecent = [...progressRows]
       .filter((row) => row.last_viewed_at)
       .sort((a, b) =>
         (b.last_viewed_at as string).localeCompare(a.last_viewed_at as string)
       );
-
-    const inProgressLessonIds = progressRows
-      .filter((row) => row.status === "in_progress")
-      .map((row) => row.lesson_id);
 
     const recentRows = sortedByRecent.slice(0, 5);
 
@@ -408,10 +389,7 @@ export default async function DashboardHomePage() {
     ];
 
     const lessonIdsNeeded = [
-      ...new Set([
-        ...recentRows.map((row) => row.lesson_id),
-        ...inProgressLessonIds,
-      ]),
+      ...new Set(recentRows.map((row) => row.lesson_id)),
     ];
 
     const { data: lessonsData } =
@@ -428,17 +406,20 @@ export default async function DashboardHomePage() {
     const { data: allCoursesData } = await supabase
       .from("courses")
       .select("id, slug, title, category_id, level, support_teacher_name")
+      .in("id", koreanScope.courseIds)
       .eq("is_published", true);
 
     const { data: allSubcategoriesData } = await supabase
       .from("course_categories")
       .select("id, parent_id, slug")
+      .in("id", koreanScope.categoryIds)
       .not("parent_id", "is", null)
       .eq("is_published", true);
 
     const { data: allParentCategoriesData } = await supabase
       .from("course_categories")
       .select("id, parent_id, slug")
+      .in("id", koreanScope.categoryIds)
       .is("parent_id", null)
       .eq("is_published", true);
 
@@ -516,12 +497,23 @@ export default async function DashboardHomePage() {
       }
 
       const completedCountByCourse = new Map<string, number>();
+      const progressPercentByCourse = new Map<string, number>();
       for (const row of progressRows) {
-        if (row.status !== "completed") continue;
-        completedCountByCourse.set(
+        const lessonProgress =
+          row.status === "completed"
+            ? 100
+            : Math.max(0, Math.min(100, row.progress_percent ?? 0));
+        progressPercentByCourse.set(
           row.course_id,
-          (completedCountByCourse.get(row.course_id) ?? 0) + 1
+          (progressPercentByCourse.get(row.course_id) ?? 0) + lessonProgress
         );
+
+        if (row.status === "completed") {
+          completedCountByCourse.set(
+            row.course_id,
+            (completedCountByCourse.get(row.course_id) ?? 0) + 1
+          );
+        }
       }
 
       courseProgressList = touchedCourseIdsInOrder
@@ -532,7 +524,11 @@ export default async function DashboardHomePage() {
           const totalCount = totalCountByCourse.get(courseId) ?? 0;
           const completedCount = completedCountByCourse.get(courseId) ?? 0;
           const percent =
-            totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+            totalCount > 0
+              ? Math.round(
+                  (progressPercentByCourse.get(courseId) ?? 0) / totalCount
+                )
+              : 0;
 
           return {
             courseId,
@@ -547,43 +543,18 @@ export default async function DashboardHomePage() {
         .filter((item): item is CourseProgressItem => item !== null);
     }
 
-    let requiredResourceReminders: ReminderItem[] = [];
-
-    if (inProgressLessonIds.length > 0) {
-      const { data: requiredResourcesData } = await supabase
-        .from("lesson_resources")
-        .select("id, lesson_id, title")
-        .in("lesson_id", inProgressLessonIds)
-        .eq("is_required", true)
-        .eq("is_published", true)
-        .eq("is_deleted", false)
-        .limit(5);
-
-      requiredResourceReminders = (requiredResourcesData ?? []).map((resource) => {
-        const lesson = lessonMap.get(resource.lesson_id);
-        const href = lesson
-          ? buildLessonHref(lesson.course_id, lesson.slug)
-          : null;
-
-        return {
-          id: `resource-${resource.id}`,
-          kind: "required_resource" as const,
-          title: resource.title,
-          subtitle: `来自：${lesson?.title ?? ""}`,
-          href,
-        };
-      });
-    }
-
-    const { data: answeredQuestionsData } = await supabase
-      .from("lesson_questions")
-      .select(
-        "id, title, course_id, lesson_id, teacher_name, answered_at, student_read_at, teacher_answer"
-      )
-      .eq("student_id", user.id)
-      .not("teacher_answer", "is", null)
-      .order("answered_at", { ascending: false, nullsFirst: false })
-      .limit(10);
+    const { data: answeredQuestionsData } = koreanScope.courseIds.length
+      ? await supabase
+          .from("lesson_questions")
+          .select(
+            "id, title, course_id, lesson_id, teacher_name, answered_at, student_read_at, teacher_answer"
+          )
+          .eq("student_id", user.id)
+          .in("course_id", koreanScope.courseIds)
+          .not("teacher_answer", "is", null)
+          .order("answered_at", { ascending: false, nullsFirst: false })
+          .limit(10)
+      : { data: [] as { id: string; title: string; course_id: string; lesson_id: string; teacher_name: string | null; answered_at: string | null; student_read_at: string | null; teacher_answer: string | null }[] };
 
     const unreadQuestions = (answeredQuestionsData ?? []).filter(
       (row) =>
@@ -628,21 +599,12 @@ export default async function DashboardHomePage() {
         };
       });
 
-    reminders = [...teacherReplyReminders, ...requiredResourceReminders].slice(0, 5);
+    reminders = teacherReplyReminders;
   }
-
-  const hasWeeklyActivity = heatmapDays.some((day) => day.count > 0);
-  const maxHeatmapCount = Math.max(1, ...heatmapDays.map((day) => day.count));
   const vocabularyThisWeekMinutes =
     vocabularyThisWeekSeconds > 0
       ? Math.max(1, Math.round(vocabularyThisWeekSeconds / 60))
       : 0;
-  const recentCourseProgressList = courseProgressList
-    .filter(
-      (item): item is CourseProgressItem & { href: string } =>
-        Boolean(item.href)
-    )
-    .slice(0, 3);
   const heroCourseProgress = hero
     ? courseProgressList.find((course) => course.courseId === hero.courseId) ?? null
     : null;
@@ -651,498 +613,66 @@ export default async function DashboardHomePage() {
       ? 100
       : Math.max(0, Math.min(100, hero.progressPercent ?? 0))
     : 0;
-
-  const practiceTools = [
-    { title: "单词练习", subtitle: "第 2 章 · 日常词汇", href: "/dashboard/toolbox/vocabulary", icon: BookText, available: true },
-    { title: "口语练习", subtitle: "即将上线", href: "/dashboard/toolbox/speaking", icon: Mic, available: false },
-    { title: "语法练习", subtitle: "即将上线", href: "/dashboard/toolbox/grammar", icon: BookOpen, available: false },
-    { title: "听力练习", subtitle: "即将上线", href: "/dashboard/toolbox/listening", icon: Ear, available: false },
-  ];
+  const coursesHref = scopeDashboardPath(
+    "/dashboard/courses",
+    dashboardBasePath
+  );
+  const toolboxHref = scopeDashboardPath(
+    "/dashboard/toolbox",
+    dashboardBasePath
+  );
+  const vocabularyHref = scopeDashboardPath(
+    "/dashboard/toolbox/vocabulary",
+    dashboardBasePath
+  );
+  const recordsHref = scopeDashboardPath(
+    "/dashboard/records",
+    dashboardBasePath
+  );
+  const heroHref = hero?.href
+    ? scopeDashboardPath(hero.href, dashboardBasePath)
+    : null;
 
   return (
-    <div className="mx-auto w-full max-w-[1500px] px-8 pb-14 pt-9">
-      <div className="grid grid-cols-1 items-start gap-5 lg:grid-cols-[1.15fr_0.85fr_1fr]">
-        <div className="flex min-w-0 flex-col gap-5">
-      {/* 首屏明确区分当前课时进度与整门课程进度。 */}
-      <section
-        className="app-glass-card relative overflow-hidden rounded-[20px] p-5 sm:p-6"
-        style={{
-          background:
-            "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end), var(--app-accent-soft))",
-        }}
-      >
-          <div className="flex items-start gap-3">
-            <span
-              className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-              style={{ backgroundColor: "var(--app-accent-soft)" }}
-            >
-              <GraduationCap
-                size={22}
-                style={{ color: "var(--app-accent)" }}
-                aria-hidden="true"
-              />
-            </span>
-            <DashboardTitleWithHint
-              className="min-w-0 flex-1"
-              headingLevel={2}
-              titleClassName="max-w-2xl text-xl font-black tracking-tight sm:text-2xl"
-              title={`${studentName}，继续你的学习目标`}
-              description={
-                <>
-                  {`${getGreeting()}，${studentName}`}
-                  {!hero &&
-                    "。你的学习档案已经准备好。选择第一门课程，我们会从第一节课开始记录成长。"}
-                </>
-              }
-            />
-          </div>
-
-          {hero ? (
-            <div
-              className="mt-5 rounded-2xl border p-4"
-              style={{
-                borderColor: "var(--app-border-soft)",
-                backgroundColor: "var(--app-card-bg)",
-              }}
-            >
-              <p className="text-xs font-bold app-muted-text">{hero.courseTitle}</p>
-              <div className="mt-1 flex items-start justify-between gap-3">
-                <p className="min-w-0 text-base font-black leading-6">{hero.lessonTitle}</p>
-                <strong
-                  className="shrink-0 text-lg font-black"
-                  style={{ color: "var(--app-accent-strong)" }}
-                >
-                  {heroLessonProgress}%
-                </strong>
-              </div>
-              <div className="mt-3 flex items-center justify-between gap-3 text-xs">
-                <span className="font-bold app-muted-text">当前课时进度</span>
-                <span className="app-muted-text">{statusLabelMap[hero.status] ?? hero.status}</span>
-              </div>
-              <div
-                className="mt-2 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-soft-bg)" }}
-                aria-label={`当前课时进度 ${heroLessonProgress}%`}
-              >
-                <div
-                  className="h-full rounded-full"
-                  style={{
-                    width: `${heroLessonProgress}%`,
-                    backgroundColor: "var(--app-accent)",
-                  }}
-                />
-              </div>
-
-              <div
-                className="mt-4 flex items-center justify-between gap-3 border-t pt-3 text-sm"
-                style={{ borderColor: "var(--app-border-soft)" }}
-              >
-                <span className="font-bold app-muted-text">这门课整体进度</span>
-                <strong>
-                  {heroCourseProgress
-                    ? `${heroCourseProgress.completedCount} / ${heroCourseProgress.totalCount} 课时`
-                    : "课程数据整理中"}
-                </strong>
-              </div>
-
-              <div className="mt-4 flex flex-wrap gap-3">
-                  {hero.href && (
-                    <Link
-                      href={hero.href}
-                      className="inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                      style={{ backgroundColor: "var(--app-accent)" }}
-                    >
-                      <PlayCircle size={17} aria-hidden="true" />
-                      继续上次学习
-                      <ArrowRight size={15} aria-hidden="true" />
-                    </Link>
-                  )}
-                  <Link
-                    href="/dashboard/courses"
-                    className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition hover:-translate-y-0.5"
-                    style={{ borderColor: "var(--app-border)" }}
-                  >
-                    查看全部课程
-                  </Link>
-              </div>
-            </div>
-          ) : (
-              <div className="mt-5 rounded-2xl border p-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                <p className="text-sm font-bold app-muted-text">还没有课程学习进度，从第一节课开始建立你的学习记录。</p>
-                <Link
-                  href="/dashboard/courses"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                  style={{ backgroundColor: "var(--app-accent)" }}
-                >
-                  挑选第一门课程
-                  <ArrowRight size={15} aria-hidden="true" />
-                </Link>
-              </div>
-          )}
-      </section>
-
-          <section className="app-glass-card rounded-[20px] px-[22px] pb-6 pt-[22px]">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-lg font-black">本周学习活动</p>
-              <div className="flex items-center gap-2">
-                <MonthlyStudyDialog
-                  monthLabel={monthLabel}
-                  buttonLabel="按月查看"
-                  dailyMinutes={monthDailyMinutes}
-                  dayTips={monthDailyTips}
-                  totalMinutes={monthTotalMinutes}
-                  maxMinutes={MONTHLY_DAY_STUDY_MINUTES_CAP}
-                />
-                <MonthlyStudyDialog
-                  monthLabel={yearLabel}
-                  buttonLabel="按年查看"
-                  dailyMinutes={yearMonthlyMinutes}
-                  dayTips={yearMonthlyTips}
-                  totalMinutes={yearTotalMinutes}
-                  maxMinutes={YEARLY_MONTH_STUDY_MINUTES_CAP}
-                  xLabelUnit="月"
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-end justify-between gap-2 px-1">
-              {heatmapDays.map((day) => {
-                const weekdayLabel = new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "narrow" }).format(new Date(`${day.dateString}T12:00:00Z`));
-                const barHeightPercent = hasWeeklyActivity
-                  ? Math.max(6, (day.count / maxHeatmapCount) * 100)
-                  : 7;
-                return (
-                  <div key={day.dateString} className="flex flex-1 flex-col items-center gap-2">
-                    <div
-                      className="flex h-36 w-full max-w-9 items-end overflow-hidden rounded-2xl"
-                      style={{ backgroundColor: "var(--app-soft-bg)" }}
-                      title={hasWeeklyActivity ? `${day.dateString} · 完成 ${day.count} 个课时` : `${day.dateString} · 暂无活动`}
-                    >
-                      <div
-                        className="w-full rounded-2xl transition-[height]"
-                        style={{
-                          height: `${hasWeeklyActivity && day.count === 0 ? 0 : barHeightPercent}%`,
-                          backgroundColor: hasWeeklyActivity
-                            ? "var(--app-accent)"
-                            : "var(--app-border)",
-                        }}
-                      />
-                    </div>
-                    <time dateTime={day.dateString} className="text-xs font-bold app-muted-text">{weekdayLabel}</time>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-5 space-y-2.5">
-              {[
-                {
-                  name: "单词",
-                  icon: BookText,
-                  status:
-                    vocabularyThisWeekSeconds > 0
-                      ? `本周累计 ${vocabularyThisWeekMinutes} 分钟`
-                      : "本周尚未练习",
-                  available: true,
-                },
-                { name: "语法", icon: BookOpen, status: "即将上线", available: false },
-                { name: "口语", icon: Mic, status: "即将上线", available: false },
-                { name: "听力", icon: Ear, status: "即将上线", available: false },
-              ].map((item) => {
-                const Icon = item.icon;
-                return (
-                  <div
-                    key={item.name}
-                    className="flex items-center gap-3 rounded-xl border px-2.5 py-2"
-                    style={{
-                      borderColor: item.available
-                        ? "var(--app-border)"
-                        : "var(--app-border-soft)",
-                      backgroundColor: item.available
-                        ? "var(--app-accent-soft)"
-                        : "var(--app-soft-bg)",
-                      opacity: item.available ? 1 : 0.62,
-                    }}
-                  >
-                    <span
-                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
-                      style={{
-                        color: item.available ? "var(--app-accent)" : "var(--app-muted)",
-                        backgroundColor: "var(--app-card-bg)",
-                      }}
-                    >
-                      <Icon size={14} aria-hidden="true" />
-                    </span>
-                    <span
-                      className="flex-1 text-xs font-bold"
-                      style={{ color: item.available ? "var(--app-text)" : "var(--app-muted)" }}
-                    >
-                      {item.name}
-                    </span>
-                    <span
-                      className="rounded-full px-2.5 py-1 text-xs font-black"
-                      style={{
-                        color: item.available ? "var(--app-accent-strong)" : "var(--app-muted)",
-                        backgroundColor: "var(--app-card-bg)",
-                      }}
-                    >
-                      {item.status}
-                    </span>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-5">
-          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
-            <p className="text-lg font-black">最近学习课程</p>
-
-            {recentCourseProgressList.length > 0 ? (
-              <div className="mt-4 space-y-3">
-                {recentCourseProgressList.map((course) => (
-                  <Link
-                    key={course.courseId}
-                    href={course.href}
-                    className="block rounded-2xl p-3.5 transition hover:-translate-y-0.5"
-                    style={{ backgroundColor: "var(--app-soft-bg)" }}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-black">{course.title}</p>
-                        {course.teacherName && (
-                          <p className="mt-1 truncate text-xs font-semibold app-muted-text">
-                            支持教师：{course.teacherName}
-                          </p>
-                        )}
-                      </div>
-                      <span
-                        className="shrink-0 rounded-full px-2.5 py-1 text-xs font-black"
-                        style={{
-                          color: "var(--app-accent-strong)",
-                          backgroundColor: "var(--app-accent-soft)",
-                        }}
-                      >
-                        {course.percent}%
-                      </span>
-                    </div>
-                    <div className="mt-3 flex items-center justify-between gap-3 text-xs font-bold app-muted-text">
-                      <span>
-                        已完成 {course.completedCount} / {course.totalCount} 课时
-                      </span>
-                      <ArrowRight size={14} aria-hidden="true" />
-                    </div>
-                    <div
-                      className="mt-2.5 h-2 overflow-hidden rounded-full"
-                      style={{ backgroundColor: "var(--app-card-bg)" }}
-                    >
-                      <div
-                        className="h-full rounded-full"
-                        style={{
-                          width: `${Math.min(100, course.percent)}%`,
-                          backgroundColor: "var(--app-accent)",
-                        }}
-                      />
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="app-empty-state mt-4 flex min-h-48 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <BookOpen size={25} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">还没有课程学习进度</p>
-                <p className="mt-1 max-w-xs text-xs leading-5 app-muted-text">
-                  开始学习一节课程后，这里会展示你的课程完成情况
-                </p>
-                <Link
-                  href="/dashboard/courses"
-                  className="mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black text-white"
-                  style={{ backgroundColor: "var(--app-accent)" }}
-                >
-                  浏览全部课程
-                  <ArrowRight size={14} aria-hidden="true" />
-                </Link>
-              </div>
-            )}
-          </section>
-
-          <section id="reminders" className="app-glass-card scroll-mt-24 rounded-[20px] p-4 sm:p-5">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <p className="text-lg font-black">需要你关注</p>
-              <span className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>{reminders.length} 项</span>
-            </div>
-            {reminders.length > 0 ? (
-              <div className="divide-y app-divider">
-                {reminders.map((item) => {
-                  const Icon = item.kind === "teacher_reply" ? BellRing : TriangleAlert;
-                  const content = (
-                    <div className="app-flat-row flex items-start gap-3 rounded-xl p-2.5 text-left">
-                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ color: item.kind === "teacher_reply" ? "var(--app-accent)" : "var(--app-warm)", backgroundColor: item.kind === "teacher_reply" ? "var(--app-accent-soft)" : "var(--app-warm-soft)" }}>
-                        <Icon size={16} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black">{item.title}</span>
-                        <span className="mt-0.5 block truncate text-xs app-muted-text">{item.subtitle}</span>
-                      </span>
-                      <ArrowRight size={15} className="mt-2 shrink-0 app-muted-text" aria-hidden="true" />
-                    </div>
-                  );
-                  if (!item.href) return <div key={item.id}>{content}</div>;
-                  return item.kind === "teacher_reply" ? (
-                    <form key={item.id} action={item.href} method="post"><button type="submit" className="block w-full">{content}</button></form>
-                  ) : (
-                    <Link key={item.id} href={item.href}>{content}</Link>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="app-empty-state flex min-h-44 flex-col items-center justify-center rounded-2xl p-5 text-center">
-                <CheckCircle2 size={25} style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">目前没有待处理事项</p>
-                <p className="mt-1 text-xs app-muted-text">可以安心继续今天的学习计划</p>
-              </div>
-            )}
-          </section>
-
-          {recentActivity.length > 0 && (
-            <section className="app-glass-card mt-5 rounded-[20px] p-4 sm:p-5">
-              <div className="mb-4 flex items-center gap-2">
-                <GraduationCap size={18} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                <p className="text-lg font-black">最近学习记录</p>
-              </div>
-              <div className="divide-y app-divider">
-                {recentActivity.slice(0, 4).map((item) => {
-                  const content = (
-                    <div className="flex items-center gap-3 py-3 transition hover:opacity-75">
-                      {item.status === "completed" ? (
-                        <CheckCircle2 size={18} className="shrink-0" style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                      ) : (
-                        <PlayCircle size={18} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-                      )}
-                      <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black">{item.lessonTitle}</span>
-                        <span className="mt-0.5 block truncate text-xs app-muted-text">
-                          {item.courseTitle}
-                        </span>
-                        <span className="mt-1 block text-[10px] font-semibold app-muted-text">
-                          最后学习：
-                          <LocalDateTime
-                            value={item.lastViewedAt}
-                            options={RECENT_ACTIVITY_DATE_TIME_OPTIONS}
-                          />
-                        </span>
-                      </span>
-                      <span className="flex shrink-0 flex-col items-end gap-1.5">
-                        <span
-                          className="rounded-full px-2.5 py-1 text-xs font-black"
-                          style={{
-                            color: "var(--app-accent-strong)",
-                            backgroundColor: "var(--app-accent-soft)",
-                          }}
-                        >
-                          {Math.min(100, Math.max(0, item.progressPercent))}%
-                        </span>
-                        <span className="text-[10px] font-bold app-muted-text">
-                          {statusLabelMap[item.status] ?? item.status}
-                        </span>
-                      </span>
-                    </div>
-                  );
-                  return item.href ? (
-                    <Link key={item.lessonId} href={item.href}>{content}</Link>
-                  ) : (
-                    <div key={item.lessonId}>{content}</div>
-                  );
-                })}
-              </div>
-            </section>
-          )}
-
-        </div>
-
-        <div className="flex min-w-0 flex-col gap-5">
-          <section className="app-glass-card rounded-[20px] p-5" aria-label="学习数据概览">
-            <div className="flex items-center justify-between gap-3">
-              <p className="text-lg font-black">学习概览</p>
-              <span className="text-xs font-bold app-muted-text">真实学习记录</span>
-            </div>
-            <div className="mt-4 grid grid-cols-2 gap-2.5">
-              {[
-                { label: "累计完成课时", value: completedLessonsCount, suffix: "课时", color: "var(--app-success)" },
-                { label: "进行中课时", value: inProgressLessonsCount, suffix: "课时", color: "var(--app-accent-strong)" },
-                { label: "本周已完成", value: thisWeekCompletedCount, suffix: "课时", color: "var(--app-success)" },
-                { label: "学习天数", value: streakDays, suffix: "天", color: "var(--app-warm)" },
-              ].map((stat) => (
-                <div
-                  key={stat.label}
-                  className="rounded-2xl border px-3 py-3.5"
-                  style={{
-                    borderColor: "var(--app-border-soft)",
-                    backgroundColor: "var(--app-soft-bg)",
-                  }}
-                >
-                  <p className="text-xs font-bold app-muted-text">{stat.label}</p>
-                  <p
-                    className="mt-1.5 text-xl font-black"
-                    style={{ color: stat.value > 0 ? stat.color : "var(--app-muted)" }}
-                  >
-                    {stat.value} <span className="text-xs font-bold">{stat.suffix}</span>
-                  </p>
-                </div>
-              ))}
-            </div>
-          </section>
-
-          <section className="app-glass-card rounded-[20px] p-4 sm:p-5">
-            <div className="mb-5">
-              <p className="text-lg font-black">成长工具箱</p>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {practiceTools.map((tool) => {
-                const Icon = tool.icon;
-                return (
-                  <Link
-                    key={tool.title}
-                    href={tool.href}
-                    className="flex flex-col gap-3 rounded-2xl p-4 transition hover:-translate-y-0.5"
-                    style={{
-                      backgroundColor: tool.available
-                        ? "var(--app-accent-soft)"
-                        : "var(--app-soft-bg)",
-                      opacity: tool.available ? 1 : 0.62,
-                    }}
-                  >
-                    <div className="flex items-center justify-between">
-                      <Icon
-                        size={20}
-                        style={{ color: tool.available ? "var(--app-accent)" : "var(--app-muted)" }}
-                        aria-hidden="true"
-                      />
-                      <ArrowRight
-                        size={16}
-                        className="opacity-35"
-                        style={{ color: tool.available ? "var(--app-text)" : "var(--app-muted)" }}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <span
-                      className="text-base font-black"
-                      style={{ color: tool.available ? "var(--app-text)" : "var(--app-muted)" }}
-                    >
-                      {tool.title}
-                    </span>
-                    <span className="text-xs font-semibold app-muted-text">
-                      {tool.subtitle}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </section>
-
-        </div>
-      </div>
-    </div>
+    <SystemGrowthHomeView
+      dashboardBasePath={dashboardBasePath}
+      studentName={studentName}
+      greeting={getGreeting()}
+      hero={hero}
+      heroHref={heroHref}
+      heroLessonProgress={heroLessonProgress}
+      heroCourseProgress={heroCourseProgress}
+      reminders={reminders}
+      recentActivity={recentActivity}
+      courseProgressList={courseProgressList}
+      weekActivityDays={weekActivityDays}
+      completedLessonsCount={completedLessonsCount}
+      inProgressLessonsCount={inProgressLessonsCount}
+      thisWeekCompletedCount={thisWeekCompletedCount}
+      streakDays={streakDays}
+      todayStudyMinutes={todayStudyMinutes}
+      recentSevenDayStudyMinutes={recentSevenDayStudyMinutes}
+      recentSevenDayActiveDays={recentSevenDayActiveDays}
+      vocabularyThisWeekMinutes={vocabularyThisWeekMinutes}
+      coursesHref={coursesHref}
+      toolboxHref={toolboxHref}
+      vocabularyHref={vocabularyHref}
+      recordsHref={recordsHref}
+      monthStudy={{
+        label: monthLabel,
+        values: monthDailyMinutes,
+        tips: monthDailyTips,
+        totalMinutes: monthTotalMinutes,
+        maxMinutes: MONTHLY_DAY_STUDY_MINUTES_CAP,
+      }}
+      yearStudy={{
+        label: yearLabel,
+        values: yearMonthlyMinutes,
+        tips: yearMonthlyTips,
+        totalMinutes: yearTotalMinutes,
+        maxMinutes: YEARLY_MONTH_STUDY_MINUTES_CAP,
+        xLabelUnit: "月",
+      }}
+    />
   );
 }

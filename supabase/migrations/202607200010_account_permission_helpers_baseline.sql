@@ -1,5 +1,6 @@
 begin;
 
+-- This local-reset baseline sits immediately before the tenant-scope migrations.
 -- These production definitions depend on helpers completed by later historical
 -- migrations. Defer body validation without changing the functions themselves.
 set local check_function_bodies = off;

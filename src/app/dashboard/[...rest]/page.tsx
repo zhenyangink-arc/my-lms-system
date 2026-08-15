@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import {
   buildLegacyDashboardTarget,
+  buildLegacyStudentAppTarget,
   type LegacyDashboardSearchParams,
 } from "../legacy-redirect";
 
@@ -20,10 +21,16 @@ export default async function LegacyDashboardCatchAllPage({
   ]);
 
   redirect(
-    buildLegacyDashboardTarget(
-      access.dashboardBasePath,
-      rest,
-      resolvedSearchParams
-    )
+    access.auth.profile?.role === "student"
+      ? buildLegacyStudentAppTarget(
+          access.dashboardBasePath,
+          rest,
+          resolvedSearchParams,
+        )
+      : buildLegacyDashboardTarget(
+          access.dashboardBasePath,
+          rest,
+          resolvedSearchParams,
+        )
   );
 }

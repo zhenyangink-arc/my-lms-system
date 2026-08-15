@@ -11,7 +11,7 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ activityId: string }> }
 ) {
-  const { profile } = await requireActiveUser();
+  const { supabase, profile } = await requireActiveUser();
   const role = profile?.role ?? "student";
   // 之前只校验内容本身是否 published，没校验请求者是否真的有权限看这门课；
   // 任何登录用户直接访问这个路由都能拿到私有音频的签名地址。
@@ -26,8 +26,9 @@ export async function GET(
     return NextResponse.json({ message: "Invalid activity." }, { status: 400 });
   }
 
-  const admin = createAdminClient();
-  const { data: activity } = await admin
+  // 教材目录链使用当前用户客户端读取，让已发布状态与 RLS 先完成内容授权；
+  // 只有最终的私密对象键和签名 URL 使用 service_role。
+  const { data: activity } = await supabase
     .from("digital_textbook_activities")
     .select("id,node_id")
     .eq("id", activityId)
@@ -37,7 +38,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
   }
 
-  const { data: node } = await admin
+  const { data: node } = await supabase
     .from("digital_textbook_nodes")
     .select("module_id")
     .eq("id", activity.node_id)
@@ -47,7 +48,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
   }
 
-  const { data: module_ } = await admin
+  const { data: module_ } = await supabase
     .from("digital_textbook_modules")
     .select("chapter_id")
     .eq("id", node.module_id)
@@ -57,7 +58,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio was not found." }, { status: 404 });
   }
 
-  const { data: chapter } = await admin
+  const { data: chapter } = await supabase
     .from("digital_textbook_chapters")
     .select("status,version_id")
     .eq("id", module_.chapter_id)
@@ -67,7 +68,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
   }
 
-  const { data: version } = await admin
+  const { data: version } = await supabase
     .from("digital_textbook_versions")
     .select("status,textbook_id")
     .eq("id", chapter.version_id)
@@ -77,7 +78,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
   }
 
-  const { data: textbook } = await admin
+  const { data: textbook } = await supabase
     .from("digital_textbooks")
     .select("status")
     .eq("id", version.textbook_id)
@@ -87,6 +88,7 @@ export async function GET(
     return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
   }
 
+  const admin = createAdminClient();
   const { data: secret } = await admin
     .from("digital_textbook_activity_secrets")
     .select("audio_object_key")

@@ -2,6 +2,7 @@ import "server-only";
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireStudentAssignmentPageAccess } from "@/lib/student-assignments";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import type {
   AssignmentMember,
   PlatformTenantAssignmentRow,
@@ -39,7 +40,10 @@ export async function getStudentAssignmentData(): Promise<StudentAssignmentResul
   if (access.scope === "platform") {
     const [tenantsResult, assignmentsResult, membershipsResult] = await Promise.all([
       admin.from("tenants").select("id, name, status").order("name", { ascending: true }),
-      admin.from("tenant_student_assignments").select("tenant_id, student_id, teacher_id"),
+      admin
+        .from("tenant_student_assignments")
+        .select("tenant_id, student_id, teacher_id")
+        .eq("student_app_id", STUDENT_APP_IDS.korean),
       admin.from("tenant_memberships").select("tenant_id, user_id, role").eq("status", "active"),
     ]);
 
@@ -99,7 +103,8 @@ export async function getStudentAssignmentData(): Promise<StudentAssignmentResul
     admin
       .from("tenant_student_assignments")
       .select("student_id, teacher_id")
-      .eq("tenant_id", tenantId),
+      .eq("tenant_id", tenantId)
+      .eq("student_app_id", STUDENT_APP_IDS.korean),
   ]);
 
   const students = ((studentsResult.data ?? []) as MembershipRow[]).map(mapAssignmentMember);

@@ -214,7 +214,7 @@ export default async function HomeTreePage({
           <div className="py-16 text-center">
             <p className="text-[13px] font-medium">还没有平台课程分类</p>
             <p className="app-muted-text mt-1 text-xs">
-              先在"内容系统 / 平台课程"里创建分类和课程
+              先在“内容系统 / 平台课程”里创建分类和课程
             </p>
           </div>
         ) : (

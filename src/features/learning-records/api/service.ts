@@ -75,7 +75,9 @@ function buildFallbackRows(
   });
 }
 
-export async function getLearningRecordManagementData(): Promise<LearningRecordManagementData> {
+export async function getLearningRecordManagementData(
+  studentAppId?: string,
+): Promise<LearningRecordManagementData> {
   const access = await requireLearningRecordOverviewAccess();
 
   if (access.scope === "platform") {
@@ -99,6 +101,7 @@ export async function getLearningRecordManagementData(): Promise<LearningRecordM
           access.supabase,
           tenantId,
           access.user.id,
+          studentAppId,
         )
       : null;
   const assignedStudentIdSet = assignedStudentIds
@@ -115,10 +118,22 @@ export async function getLearningRecordManagementData(): Promise<LearningRecordM
   if (assignedStudentIds) {
     notesQuery = notesQuery.in("student_id", assignedStudentIds);
   }
+  if (studentAppId) {
+    notesQuery = notesQuery.eq("student_app_id", studentAppId);
+  }
 
   const [overviewResult, studentsResult, notesResult] = await Promise.all([
-    access.supabase.rpc("get_tenant_student_learning_record_overview"),
-    access.supabase.rpc("list_learning_record_students"),
+    studentAppId
+      ? access.supabase.rpc(
+          "get_tenant_student_learning_record_overview_by_app",
+          { p_student_app_id: studentAppId },
+        )
+      : access.supabase.rpc("get_tenant_student_learning_record_overview"),
+    studentAppId
+      ? access.supabase.rpc("list_learning_record_students_by_app", {
+          p_student_app_id: studentAppId,
+        })
+      : access.supabase.rpc("list_learning_record_students"),
     notesQuery,
   ]);
 

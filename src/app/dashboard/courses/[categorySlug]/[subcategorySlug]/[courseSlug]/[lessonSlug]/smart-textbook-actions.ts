@@ -4,6 +4,10 @@ import { z } from "zod";
 
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const preferenceSchema = z.object({
@@ -73,11 +77,29 @@ export async function saveSmartTextbookPreferenceAction(input: unknown) {
   const parsed = preferenceSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "设置内容无效。" };
 
-  const { user, tenant, platformProfile } = await requireActiveUser();
+  const { supabase, user, tenant, profile, platformProfile } =
+    await requireActiveUser();
   if (isPlatformCourseAuditorRole(platformProfile?.role)) {
     return { ok: true, message: "平台预览模式仅在当前浏览器中切换。" };
   }
   if (!tenant) return { ok: false, message: "当前账号没有可用的学习空间。" };
+  if (
+    !canUseStudentFeature(
+      profile?.role ?? "student",
+      normalizeMembershipTier(profile?.membership_tier),
+      "korean_course",
+    )
+  ) {
+    return { ok: false, message: "当前账号没有智能教材学习权限。" };
+  }
+
+  const { data: textbook } = await supabase
+    .from("digital_textbooks")
+    .select("id")
+    .eq("id", parsed.data.textbookId)
+    .eq("status", "published")
+    .maybeSingle();
+  if (!textbook) return { ok: false, message: "教材不存在或尚未发布。" };
 
   const admin = createAdminClient();
   const { error } = await admin.from("digital_textbook_preferences").upsert(
@@ -112,11 +134,28 @@ export async function submitSmartTextbookActivityAction(
     };
   }
 
-  const { user, tenant, platformProfile } = await requireActiveUser();
+  const { supabase, user, tenant, profile, platformProfile } =
+    await requireActiveUser();
   const admin = createAdminClient();
   const isPreview = isPlatformCourseAuditorRole(platformProfile?.role);
+  if (
+    !canUseStudentFeature(
+      profile?.role ?? "student",
+      normalizeMembershipTier(profile?.membership_tier),
+      "korean_course",
+    )
+  ) {
+    return {
+      ok: false,
+      correct: null,
+      score: null,
+      explanation: "当前账号没有智能教材学习权限。",
+      attemptNumber: 0,
+      preview: isPreview,
+    };
+  }
 
-  const { data: activity, error: activityError } = await admin
+  const { data: activity, error: activityError } = await supabase
     .from("digital_textbook_activities")
     .select("id,node_id,activity_type")
     .eq("id", parsed.data.activityId)
@@ -138,7 +177,7 @@ export async function submitSmartTextbookActivityAction(
       .select("answer_key,explanation")
       .eq("activity_id", activity.id)
       .maybeSingle(),
-    admin
+    supabase
       .from("digital_textbook_nodes")
       .select("id,module_id,digital_textbook_modules!inner(chapter_id,digital_textbook_chapters!inner(version_id))")
       .eq("id", activity.node_id)

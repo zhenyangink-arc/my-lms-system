@@ -593,7 +593,7 @@ export function VocabularyLibraryWorkspace({
 
           {items.length === 0 && !addOpen && (
             <p className="app-muted-text py-8 text-center text-[12px]">
-              词库还没有单词，点击"添加单词"开始录入。
+              词库还没有单词，点击“添加单词”开始录入。
             </p>
           )}
 
@@ -913,7 +913,7 @@ export function GrammarLibraryWorkspace({
 
           {items.length === 0 && !addOpen && (
             <p className="app-muted-text py-8 text-center text-[12px]">
-              语法库还没有内容，点击"添加语法点"开始录入。
+              语法库还没有内容，点击“添加语法点”开始录入。
             </p>
           )}
 
@@ -1231,7 +1231,7 @@ function LibraryGrammarItemForm({
               <tbody>
                 {draft.cases.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有收音情况行，点击下方"添加一行"。</td>
+                    <td colSpan={4} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有收音情况行，点击下方“添加一行”。</td>
                   </tr>
                 )}
                 {draft.cases.map((caseRow, caseIndex) => (
@@ -1283,7 +1283,7 @@ function LibraryGrammarItemForm({
               <tbody>
                 {draft.rows.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有形态组合行，点击下方"添加一行"。</td>
+                    <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有形态组合行，点击下方“添加一行”。</td>
                   </tr>
                 )}
                 {draft.rows.map((row, rowIndex) => (
@@ -1338,7 +1338,7 @@ function LibraryGrammarItemForm({
               <tbody>
                 {draft.examples.length === 0 && (
                   <tr>
-                    <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有例句，点击下方"添加一行"。</td>
+                    <td colSpan={5} className="app-muted-text px-3 py-3 text-center text-[10px]">还没有例句，点击下方“添加一行”。</td>
                   </tr>
                 )}
                 {draft.examples.map((example, exampleIndex) => (
