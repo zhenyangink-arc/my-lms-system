@@ -48,7 +48,11 @@ export function ManagementApplicationSettingsPage({
             defaultValue={access.availability.status}
             className="app-input h-10 w-full border px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
           >
-            <option value="active">运行中</option>
+            <option value="active" disabled={access.app.status !== "active"}>
+              {access.app.status === "active"
+                ? "运行中"
+                : "运行中（等待平台开放）"}
+            </option>
             <option value="coming_soon">建设中</option>
             <option value="hidden">隐藏</option>
           </select>

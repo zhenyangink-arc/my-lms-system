@@ -2,6 +2,7 @@
 
 import { requireActiveUser } from "@/lib/auth";
 import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   VocabularyPractice,
   type Word,
@@ -24,6 +25,7 @@ export default async function VocabularyPage() {
   const { data: rows } = await supabase
     .from("growth_toolbox_vocabulary")
     .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
+    .eq("student_app_id", STUDENT_APP_IDS.korean)
     .order("sort_order", { ascending: true });
 
   const library = (rows ?? []) as LibraryRow[];
@@ -82,7 +84,7 @@ function Hero({
             style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
           >
             <Sparkles size={12} aria-hidden="true" />
-            成长工具箱 · 词汇巩固
+            巩固中心 · 词汇专项
           </span>
           <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">单词练习</h1>
           <p className="app-muted-text mt-2 max-w-xl text-sm font-bold leading-6">

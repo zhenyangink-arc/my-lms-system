@@ -1,4 +1,5 @@
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { ManagementNotice } from "@/components/layout/management-page";
 import { DataTable } from "@/components/ui/table/data-table";
 import {
   Table,
@@ -29,9 +30,9 @@ export function PlatformHelpOverview({
   return (
     <div className="space-y-3">
       {hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           机构帮助中心汇总暂时无法完整读取，请稍后刷新。
-        </p>
+        </ManagementNotice>
       )}
       <DataTable
         isEmpty={!hasError && rows.length === 0}

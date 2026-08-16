@@ -3,6 +3,10 @@ import "server-only";
 import { requireGradeCenterOverviewAccess } from "@/lib/grade-center";
 import { getTeacherAssignedStudentIds } from "@/lib/student-assignments";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  getTenantAppCapabilityContext,
+  requireTenantAppCapability,
+} from "@/lib/tenant-app-capabilities";
 import type {
   AssignmentGradeSource,
   ChapterTestGradeAttempt,
@@ -64,10 +68,13 @@ function resultLookupKey(
 
 export async function getGradeManagementData(
   studentAppId?: string,
+  assignmentDetailBasePath?: string,
 ): Promise<GradeManagementData> {
-  const access = await requireGradeCenterOverviewAccess();
+  const access = studentAppId
+    ? await requireTenantAppCapability(studentAppId, "viewAnalytics")
+    : await requireGradeCenterOverviewAccess();
 
-  if (access.scope === "platform") {
+  if ("scope" in access && access.scope === "platform") {
     const { data, error } = await access.supabase.rpc(
       "get_platform_grade_overview",
     );
@@ -81,8 +88,16 @@ export async function getGradeManagementData(
     };
   }
 
-  const { supabase, role, tenantId, user } = access;
-  const institutionTenantId = tenantId!;
+  const { supabase, role, user } = access;
+  const institutionTenantId = access.tenantId!;
+  const canManageIndividualGrades = studentAppId
+    ? Boolean(
+        await getTenantAppCapabilityContext(
+          studentAppId,
+          "manageAssessments",
+        ),
+      )
+    : true;
   const admin = createAdminClient();
   const assignedStudentIds =
     role === "teacher"
@@ -210,7 +225,7 @@ export async function getGradeManagementData(
       result_label: gradeLevel(percent),
       passed: percent >= 60,
       recorded_at: submission.graded_at ?? submission.submitted_at,
-      detail_path: `/dashboard/admin/assignments/${assignment.id}`,
+      detail_path: `${assignmentDetailBasePath ?? "/dashboard/admin/assignments"}/${assignment.id}`,
     });
   }
 
@@ -360,7 +375,7 @@ export async function getGradeManagementData(
     scope: "institution",
     role,
     tenantId: institutionTenantId,
-    canManageIndividualGrades: true,
+    canManageIndividualGrades,
     assignedStudentIds,
     results,
     reviews,

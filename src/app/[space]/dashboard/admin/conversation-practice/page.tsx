@@ -1,1 +1,6 @@
-export { default } from "@/app/dashboard/admin/conversation-practice/page-content";
+import { redirectLegacyManagementRoute } from "@/app/dashboard/admin/legacy-app-route";
+
+export default async function LegacyConversationPage({ params }: { params: Promise<{ space: string }> }) {
+  const { space } = await params;
+  redirectLegacyManagementRoute(space, "korean", "conversation");
+}

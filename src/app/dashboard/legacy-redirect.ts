@@ -53,7 +53,8 @@ export function buildLegacyStudentAppTarget(
     return appendSearchParams(portalPath || "/", searchParams);
   }
 
-  const appSlug = STUDY_ABROAD_SECTIONS.has(section)
+  const appSlug = STUDY_ABROAD_SECTIONS.has(section) ||
+    (section === "courses" && rest[1] === "service")
     ? "study-abroad"
     : "korean";
   const encodedRest = rest.map((segment) => encodeURIComponent(segment)).join("/");
@@ -82,13 +83,15 @@ export function buildLegacyStudentAppTargetFromRequestPath(
   }
 
   const suffix = requestUrl.pathname.slice(legacyPrefix.length);
-  const firstSegment = suffix.split("/").filter(Boolean)[0] ?? "";
+  const suffixSegments = suffix.split("/").filter(Boolean);
+  const firstSegment = suffixSegments[0] ?? "";
   let pathname: string;
 
   if (firstSegment === "profile" || firstSegment === "settings") {
     pathname = portalPath || "/";
   } else {
-    const appSlug = STUDY_ABROAD_SECTIONS.has(firstSegment)
+    const appSlug = STUDY_ABROAD_SECTIONS.has(firstSegment) ||
+      (firstSegment === "courses" && suffixSegments[1] === "service")
       ? "study-abroad"
       : "korean";
     pathname = `${portalPath}/apps/${appSlug}${suffix}`;

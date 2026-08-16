@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import {
   ArrowRight,
   BookmarkCheck,
@@ -19,7 +20,7 @@ import { requireActiveUser } from "@/lib/auth";
 import { getUnlockedKoreanTestSlugs } from "@/lib/korean-learning-unlocks";
 import { parseQuestionOptions } from "@/lib/korean-chapter-tests";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { getStudentAppPath, STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { removeCourseQuestionReviewAction } from "./actions";
 import { KnowledgeResearchWorkbench } from "./KnowledgeResearchWorkbench";
@@ -65,6 +66,7 @@ type EbookProgressRow = {
 };
 
 type TestAttemptRow = {
+  test_id: string | null;
   test_slug: string;
   score: number;
   passed: boolean;
@@ -88,7 +90,7 @@ function courseLabel(courseKey: string) {
   return courseKey === "korean-level-one" ? "韩国语1级" : "韩语字母入门";
 }
 
-type LearningArea = "knowledge" | "listening" | "review";
+export type LearningArea = "knowledge" | "listening" | "review";
 
 function ChapterDirectory({
   area,
@@ -98,6 +100,7 @@ function ChapterDirectory({
   attemptByTestSlug,
   selectedChapterSlug,
   reviewCountByTestSlug,
+  chapterBaseHref,
   defaultOpen = false,
 }: {
   area: "knowledge" | "listening";
@@ -107,6 +110,7 @@ function ChapterDirectory({
   attemptByTestSlug: Map<string, TestAttemptRow>;
   selectedChapterSlug?: string;
   reviewCountByTestSlug?: Map<string, number>;
+  chapterBaseHref?: string;
   defaultOpen?: boolean;
 }) {
   const color =
@@ -229,7 +233,11 @@ function ChapterDirectory({
           return isUnlocked ? (
             <Link
               key={chapter.id}
-              href={`?area=${area}&course=${encodeURIComponent(course.key)}&chapter=${encodeURIComponent(chapter.slug)}`}
+              href={
+                chapterBaseHref
+                  ? `${chapterBaseHref}/${encodeURIComponent(course.key)}/${encodeURIComponent(chapter.slug)}`
+                  : `?area=${area}&course=${encodeURIComponent(course.key)}&chapter=${encodeURIComponent(chapter.slug)}`
+              }
               className="grid grid-cols-[40px_minmax(0,1fr)] items-center gap-x-3 gap-y-2 rounded-2xl border p-3 transition hover:-translate-y-0.5 hover:shadow-sm sm:grid-cols-[40px_minmax(0,1fr)_auto]"
               style={{
                 borderColor: isSelected ? color : statusBorder,
@@ -263,19 +271,33 @@ function ChapterDirectory({
   );
 }
 
-export default async function DeepLearningPage({
+export async function DeepLearningPage({
   searchParams,
+  forcedArea,
+  knowledgeChapterBaseHref,
+  knowledgeLessonOnly = false,
 }: {
   searchParams: Promise<{ area?: string; course?: string; chapter?: string }>;
+  forcedArea?: LearningArea;
+  knowledgeChapterBaseHref?: string;
+  knowledgeLessonOnly?: boolean;
 }) {
   const params = await searchParams;
-  const activeArea: LearningArea =
+  const activeArea: LearningArea = forcedArea ?? (
     params.area === "knowledge" ||
     params.area === "listening" ||
     params.area === "review"
       ? params.area
-      : "knowledge";
-  const { supabase, user, profile, platformProfile } = await requireActiveUser();
+      : "knowledge"
+  );
+  const { supabase, user, tenant, profile, platformProfile } = await requireActiveUser();
+  const reviewAreaHref = tenant?.slug
+    ? getStudentAppPath(tenant.slug, "korean", "practice/review")
+    : "?area=review";
+  const assignmentsBaseHref = tenant?.slug
+    ? getStudentAppPath(tenant.slug, "korean", "assignments/korean")
+    : "/dashboard/assignments/korean";
+  const needsCourseData = activeArea !== "review";
   const { data: reviewData, error: reviewError } = await supabase
     .from("chapter_test_question_reviews")
     .select("question_id,test_id,created_at")
@@ -312,38 +334,44 @@ export default async function DeepLearningPage({
               .in("id", testIds),
         )
       : Promise.resolve({ data: [] }),
-    withStudentAppSchemaFallback(
-      admin
-        .from("chapter_tests")
-        .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
-        .in("course_key", ["hangul-introduction", "korean-level-one"])
-        .eq("status", "published")
-        .order("chapter_number", { ascending: true }),
-      () =>
-        admin
-          .from("chapter_tests")
-          .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
-          .in("course_key", ["hangul-introduction", "korean-level-one"])
-          .eq("status", "published")
-          .order("chapter_number", { ascending: true }),
-    ),
-    supabase
-      .from("chapter_test_attempts")
-      .select("test_slug,score,passed")
-      .eq("student_id", user.id),
-    withStudentAppSchemaFallback(
-      supabase
-        .from("course_ebook_progress")
-        .select("test_slug,progress_percent")
-        .eq("student_id", user.id)
-        .eq("student_app_id", STUDENT_APP_IDS.korean),
-      () =>
-        supabase
-          .from("course_ebook_progress")
-          .select("test_slug,progress_percent")
-          .eq("student_id", user.id),
-    ),
+    needsCourseData
+      ? withStudentAppSchemaFallback(
+          admin
+            .from("chapter_tests")
+            .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
+            .eq("student_app_id", STUDENT_APP_IDS.korean)
+            .in("course_key", ["hangul-introduction", "korean-level-one"])
+            .eq("status", "published")
+            .order("chapter_number", { ascending: true }),
+          () =>
+            admin
+              .from("chapter_tests")
+              .select("id,lesson_id,slug,course_key,chapter_number,title,korean_title,description")
+              .in("course_key", ["hangul-introduction", "korean-level-one"])
+              .eq("status", "published")
+              .order("chapter_number", { ascending: true }),
+        )
+      : Promise.resolve({ data: [] }),
+    needsCourseData
+      ? supabase
+          .from("chapter_test_attempts")
+          .select("test_id,test_slug,score,passed")
+          .eq("student_id", user.id)
+      : Promise.resolve({ data: [] }),
+    needsCourseData
+      ? withStudentAppSchemaFallback(
+          supabase
+            .from("course_ebook_progress")
+            .select("test_slug,progress_percent")
+            .eq("student_id", user.id)
+            .eq("student_app_id", STUDENT_APP_IDS.korean),
+          () =>
+            supabase
+              .from("course_ebook_progress")
+              .select("test_slug,progress_percent")
+              .eq("student_id", user.id),
+        )
+      : Promise.resolve({ data: [] }),
   ]);
   const questionById = new Map(
     ((questionData ?? []) as ReviewQuestionRow[]).map((question) => [
@@ -376,6 +404,18 @@ export default async function DeepLearningPage({
   }
   const knowledgeChapters =
     (knowledgeChapterData ?? []) as KnowledgeChapterRow[];
+  const knowledgeTestIds = new Set(
+    knowledgeChapters.map((chapter) => chapter.id),
+  );
+  const knowledgeTestSlugs = new Set(
+    knowledgeChapters.map((chapter) => chapter.slug),
+  );
+  const koreanAttempts = ((attemptData ?? []) as TestAttemptRow[]).filter(
+    (attempt) =>
+      attempt.test_id
+        ? knowledgeTestIds.has(attempt.test_id)
+        : knowledgeTestSlugs.has(attempt.test_slug),
+  );
   const knowledgeCourses: LearningCourse[] = [
     {
       key: "hangul-introduction",
@@ -395,10 +435,10 @@ export default async function DeepLearningPage({
     },
   ];
   const unlockedChapterSlugs = getUnlockedKoreanTestSlugs(
-    (attemptData ?? []).map((attempt) => String(attempt.test_slug))
+    koreanAttempts.map((attempt) => attempt.test_slug),
   );
   const attemptByTestSlug = new Map(
-    ((attemptData ?? []) as TestAttemptRow[]).map((attempt) => [
+    koreanAttempts.map((attempt) => [
       attempt.test_slug,
       attempt,
     ])
@@ -467,12 +507,45 @@ export default async function DeepLearningPage({
     ? attemptByTestSlug.get(recommendedChapter.slug)
     : undefined;
   const recommendedHref = recommendedChapter && recommendedCourse
-    ? `?area=knowledge&course=${encodeURIComponent(recommendedCourse.key)}&chapter=${encodeURIComponent(recommendedChapter.slug)}`
+    ? knowledgeChapterBaseHref
+      ? `${knowledgeChapterBaseHref}/${encodeURIComponent(recommendedCourse.key)}/${encodeURIComponent(recommendedChapter.slug)}`
+      : `?area=knowledge&course=${encodeURIComponent(recommendedCourse.key)}&chapter=${encodeURIComponent(recommendedChapter.slug)}`
     : "?area=knowledge";
+
+  if (knowledgeLessonOnly) {
+    if (!selectedKnowledgeChapter || !selectedCourse || !knowledgeChapterBaseHref) {
+      notFound();
+    }
+
+    return (
+      <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+        <KnowledgeResearchWorkbench
+          chapterSlug={selectedKnowledgeChapter.slug}
+          courseTitle={selectedCourse.title}
+          courseEyebrow={selectedCourse.eyebrow}
+          chapterNumber={selectedKnowledgeChapter.chapter_number}
+          chapterTitle={selectedKnowledgeChapter.title}
+          chapterKoreanTitle={selectedKnowledgeChapter.korean_title}
+          chapterDescription={selectedKnowledgeChapter.description}
+          backHref={`${knowledgeChapterBaseHref}?course=${encodeURIComponent(selectedCourse.key)}`}
+          ebookHref={`${
+            tenant?.slug
+              ? getStudentAppPath(
+                  tenant.slug,
+                  "korean",
+                  "courses/korean/korean-basic/korean-beginner/hangul-introduction"
+                )
+              : "/dashboard/courses/korean/korean-basic/korean-beginner/hangul-introduction"
+          }?chapter=${encodeURIComponent(selectedKnowledgeChapter.slug)}`}
+          chapterTestHref={`${assignmentsBaseHref}/${encodeURIComponent(selectedKnowledgeChapter.slug)}`}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-      <nav className="app-card mt-4 grid grid-cols-3 gap-1 rounded-2xl border p-1.5" aria-label="深化学习功能">
+      {!forcedArea && <nav className="app-card mt-4 grid grid-cols-3 gap-1 rounded-2xl border p-1.5" aria-label="深化学习功能">
         <Link
           href="?area=knowledge"
           className="flex min-w-0 items-center justify-center gap-1.5 rounded-xl px-2 py-2.5 text-[10px] font-black transition sm:text-xs"
@@ -499,7 +572,7 @@ export default async function DeepLearningPage({
           <span className="truncate">待复习题</span>
           <span className="rounded-full px-1.5 py-0.5 text-[8px]" style={{ backgroundColor: "var(--app-card-bg)" }}>{reviewItems.length}</span>
         </Link>
-      </nav>
+      </nav>}
 
       {activeArea === "knowledge" && !selectedKnowledgeChapter && (
         <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start xl:grid-cols-[minmax(0,1fr)_340px]">
@@ -545,6 +618,7 @@ export default async function DeepLearningPage({
                   attemptByTestSlug={attemptByTestSlug}
                   selectedChapterSlug={params.chapter}
                   reviewCountByTestSlug={reviewCountByTestSlug}
+                  chapterBaseHref={knowledgeChapterBaseHref}
                   defaultOpen={false}
                 />
               ))}
@@ -602,7 +676,7 @@ export default async function DeepLearningPage({
               ) : (
                 <p className="mt-3 text-xs leading-5 app-muted-text">章节测试中加入复习的题目会集中显示在这里。</p>
               )}
-              <Link href="?area=review" className="mt-4 inline-flex items-center gap-1.5 text-xs font-black" style={{ color: "var(--app-success)" }}>
+              <Link href={reviewAreaHref} className="mt-4 inline-flex items-center gap-1.5 text-xs font-black" style={{ color: "var(--app-success)" }}>
                 {reviewItems.length > 0 ? "查看全部复习题" : "进入复习区"}<ArrowRight size={12} />
               </Link>
             </section>
@@ -613,79 +687,96 @@ export default async function DeepLearningPage({
       {activeArea === "knowledge" && (
         <div className="mt-5 space-y-5">
           {selectedKnowledgeChapter && selectedCourse && (
-            <>
-            <div className="flex items-center justify-between gap-3">
-              <Link
-                href={`?area=knowledge&course=${encodeURIComponent(selectedCourse.key)}`}
-                className="app-muted-text inline-flex items-center gap-1.5 text-[10px] font-black"
-              >
-                ← 返回章节列表
-              </Link>
-              <span className="app-muted-text text-[10px] font-black">
-                {selectedCourse.title}
-              </span>
-            </div>
-            {selectedKnowledgeChapter.slug === "meet-hangul" ? (
+            selectedKnowledgeChapter.slug === "meet-hangul" ? (
               <KnowledgeResearchWorkbench
                 chapterSlug={selectedKnowledgeChapter.slug}
+                courseTitle={selectedCourse.title}
+                courseEyebrow={selectedCourse.eyebrow}
+                chapterNumber={selectedKnowledgeChapter.chapter_number}
+                chapterTitle={selectedKnowledgeChapter.title}
+                chapterKoreanTitle={selectedKnowledgeChapter.korean_title}
+                chapterDescription={selectedKnowledgeChapter.description}
+                backHref={`?area=knowledge&course=${encodeURIComponent(selectedCourse.key)}`}
+                ebookHref={`${
+                  tenant?.slug
+                    ? getStudentAppPath(
+                        tenant.slug,
+                        "korean",
+                        "courses/korean/korean-basic/korean-beginner/hangul-introduction"
+                      )
+                    : "/dashboard/courses/korean/korean-basic/korean-beginner/hangul-introduction"
+                }?chapter=${encodeURIComponent(selectedKnowledgeChapter.slug)}`}
+                chapterTestHref={`${assignmentsBaseHref}/${encodeURIComponent(selectedKnowledgeChapter.slug)}`}
               />
             ) : (
-            <section className="app-card rounded-3xl border p-5 sm:p-6">
-              <div className="flex flex-wrap items-start justify-between gap-4">
-                <div>
-                  <p className="app-muted-text text-[10px] font-black">
-                    {courseLabel(selectedKnowledgeChapter.course_key)} · 第{" "}
-                    {selectedKnowledgeChapter.chapter_number} 章
-                  </p>
-                  <h2 className="mt-1 text-xl font-black">
-                    {selectedKnowledgeChapter.title}
-                  </h2>
-                  {selectedKnowledgeChapter.korean_title && (
-                    <p className="app-muted-text mt-1 text-xs">
-                      {selectedKnowledgeChapter.korean_title}
-                    </p>
-                  )}
+              <>
+                <div className="flex items-center justify-between gap-3">
+                  <Link
+                    href={`?area=knowledge&course=${encodeURIComponent(selectedCourse.key)}`}
+                    className="app-muted-text inline-flex min-h-11 items-center gap-1.5 text-[11px] font-black"
+                  >
+                    ← 返回章节列表
+                  </Link>
+                  <span className="app-muted-text text-[11px] font-black">
+                    {selectedCourse.title}
+                  </span>
                 </div>
-                <span
-                  className="rounded-full px-3 py-1.5 text-[10px] font-black"
-                  style={{
-                    color: "var(--app-accent)",
-                    backgroundColor: "var(--app-accent-soft)",
-                  }}
-                >
-                  知识精研工作区
-                </span>
-              </div>
-
-              <div className="mt-5 grid gap-3 md:grid-cols-3">
-                {[
-                  ["精讲", BookOpenCheck, "讲清本章核心知识与使用场景"],
-                  ["拆解", ListTree, "逐层展开结构、组合与推导过程"],
-                  ["对比", GitCompareArrows, "集中辨别相近知识与易混项"],
-                ].map(([label, Icon, description]) => {
-                  const WorkspaceIcon = Icon as typeof BookOpenCheck;
-                  return (
-                    <article
-                      key={String(label)}
-                      className="app-soft-card rounded-2xl border p-4"
-                    >
-                      <WorkspaceIcon
-                        size={18}
-                        style={{ color: "var(--app-accent)" }}
-                      />
-                      <h3 className="mt-3 text-sm font-black">
-                        {String(label)}
-                      </h3>
-                      <p className="app-muted-text mt-1 text-[10px] leading-5">
-                        {String(description)}
+                <section className="app-card rounded-3xl border p-5 sm:p-6">
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <p className="app-muted-text text-[10px] font-black">
+                        {courseLabel(selectedKnowledgeChapter.course_key)} · 第{" "}
+                        {selectedKnowledgeChapter.chapter_number} 章
                       </p>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-            )}
-            </>
+                      <h2 className="mt-1 text-xl font-black">
+                        {selectedKnowledgeChapter.title}
+                      </h2>
+                      {selectedKnowledgeChapter.korean_title && (
+                        <p className="app-muted-text mt-1 text-xs">
+                          {selectedKnowledgeChapter.korean_title}
+                        </p>
+                      )}
+                    </div>
+                    <span
+                      className="rounded-full px-3 py-1.5 text-[10px] font-black"
+                      style={{
+                        color: "var(--app-accent)",
+                        backgroundColor: "var(--app-accent-soft)",
+                      }}
+                    >
+                      知识精研工作区
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid gap-3 md:grid-cols-3">
+                    {[
+                      ["精讲", BookOpenCheck, "讲清本章核心知识与使用场景"],
+                      ["拆解", ListTree, "逐层展开结构、组合与推导过程"],
+                      ["对比", GitCompareArrows, "集中辨别相近知识与易混项"],
+                    ].map(([label, Icon, description]) => {
+                      const WorkspaceIcon = Icon as typeof BookOpenCheck;
+                      return (
+                        <article
+                          key={String(label)}
+                          className="app-soft-card rounded-2xl border p-4"
+                        >
+                          <WorkspaceIcon
+                            size={18}
+                            style={{ color: "var(--app-accent)" }}
+                          />
+                          <h3 className="mt-3 text-sm font-black">
+                            {String(label)}
+                          </h3>
+                          <p className="app-muted-text mt-1 text-[10px] leading-5">
+                            {String(description)}
+                          </p>
+                        </article>
+                      );
+                    })}
+                  </div>
+                </section>
+              </>
+            )
           )}
         </div>
       )}
@@ -790,7 +881,7 @@ export default async function DeepLearningPage({
             </p>
           </div>
           <Link
-            href="/dashboard/assignments/korean"
+            href={assignmentsBaseHref}
             className="inline-flex items-center gap-1.5 rounded-xl border px-4 py-2.5 text-xs font-black"
             style={{
               color: "var(--app-secondary)",
@@ -887,7 +978,7 @@ export default async function DeepLearningPage({
                   style={{ borderColor: "var(--app-border-soft)" }}
                 >
                   <Link
-                    href={`/dashboard/assignments/korean/${item.test.slug}`}
+                    href={`${assignmentsBaseHref}/${encodeURIComponent(item.test.slug)}`}
                     className="inline-flex items-center gap-1.5 text-xs font-black"
                     style={{ color: "var(--app-secondary)" }}
                   >
@@ -930,4 +1021,12 @@ export default async function DeepLearningPage({
       </section>}
     </div>
   );
+}
+
+export default function LegacyDeepLearningPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ area?: string; course?: string; chapter?: string }>;
+}) {
+  return <DeepLearningPage searchParams={searchParams} />;
 }

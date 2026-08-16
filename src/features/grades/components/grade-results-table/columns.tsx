@@ -37,7 +37,10 @@ function sortableHeader(title: string) {
   };
 }
 
-export const gradeResultColumns: ColumnDef<LiveGradeResult>[] = [
+export function getGradeResultColumns(
+  canManageGrades: boolean,
+): ColumnDef<LiveGradeResult>[] {
+  return [
   {
     id: "student",
     accessorKey: "student_name",
@@ -145,6 +148,12 @@ export const gradeResultColumns: ColumnDef<LiveGradeResult>[] = [
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="sr-only">成绩操作</span>,
-    cell: ({ row }) => <GradeResultAction result={row.original} />,
+    cell: ({ row }) =>
+      canManageGrades ? (
+        <GradeResultAction result={row.original} />
+      ) : (
+        <span className="text-[10px] text-[var(--app-muted)]">仅查看</span>
+      ),
   },
-];
+  ];
+}

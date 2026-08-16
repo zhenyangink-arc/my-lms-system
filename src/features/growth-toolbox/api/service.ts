@@ -3,6 +3,8 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
+import { requireTenantAppCapability } from "@/lib/tenant-app-capabilities";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   GrowthToolboxCourseTree,
@@ -50,13 +52,24 @@ function localizedTitle(value: unknown): string {
 }
 
 export async function getGrowthToolboxManagementData(
-  studentAppId?: string,
+  studentAppId: string,
 ): Promise<GrowthToolboxManagementResult> {
-  const { supabase: userSupabase } = await requireActiveUser();
+  const auth = await requireActiveUser();
+  const { supabase: userSupabase } = auth;
   const { data: canManage } = await userSupabase.rpc(
     "current_user_can_manage_standard_question_bank",
   );
-  if (!canManage) redirect("/dashboard/admin");
+  if (!new Set(Object.values(STUDENT_APP_IDS)).has(studentAppId)) {
+    redirect("/dashboard/admin/apps");
+  }
+  if (auth.tenant) {
+    await requireTenantAppCapability(studentAppId, "manageContent");
+  } else if (
+    auth.platformProfile?.global_role !== "platform_owner" &&
+    auth.platformProfile?.global_role !== "platform_admin"
+  ) {
+    redirect("/dashboard/admin/apps");
+  }
 
   const supabase = createAdminClient();
 
@@ -66,10 +79,8 @@ export async function getGrowthToolboxManagementData(
       "id,slug,title,description,href,icon_name,accent,soft,sort_order,is_enabled,related_course_id",
     );
   let courseQuery = supabase.from("courses").select("id,slug,title");
-  if (studentAppId) {
-    toolboxItemsQuery = toolboxItemsQuery.eq("student_app_id", studentAppId);
-    courseQuery = courseQuery.eq("student_app_id", studentAppId);
-  }
+  toolboxItemsQuery = toolboxItemsQuery.eq("student_app_id", studentAppId);
+  courseQuery = courseQuery.eq("student_app_id", studentAppId);
 
   const [toolboxItemsResult, courseResult] = await Promise.all([
     toolboxItemsQuery.order("sort_order", { ascending: true }),
@@ -93,14 +104,12 @@ export async function getGrowthToolboxManagementData(
   }));
   const courses = (courseResult.data ?? []) as CourseRow[];
   const courseIds = courses.map((course) => course.id);
-  const lessonResult = studentAppId
-    ? courseIds.length
-      ? await supabase
-          .from("lessons")
-          .select("id,course_id,title")
-          .in("course_id", courseIds)
-      : { data: [] as LessonRow[], error: null }
-    : await supabase.from("lessons").select("id,course_id,title");
+  const lessonResult = courseIds.length
+    ? await supabase
+        .from("lessons")
+        .select("id,course_id,title")
+        .in("course_id", courseIds)
+    : { data: [] as LessonRow[], error: null };
   const lessons = (lessonResult.data ?? []) as LessonRow[];
 
   const lessonIds = lessons.map((lesson) => lesson.id);
@@ -262,10 +271,8 @@ export async function getGrowthToolboxManagementData(
   let grammarQuery = supabase
     .from("growth_toolbox_grammar")
     .select("id,title,meaning,cases,rows,examples,caution,source,sort_order");
-  if (studentAppId) {
-    vocabularyQuery = vocabularyQuery.eq("student_app_id", studentAppId);
-    grammarQuery = grammarQuery.eq("student_app_id", studentAppId);
-  }
+  vocabularyQuery = vocabularyQuery.eq("student_app_id", studentAppId);
+  grammarQuery = grammarQuery.eq("student_app_id", studentAppId);
   const [vocabularyResult, grammarResult] = await Promise.all([
     vocabularyQuery.order("sort_order", { ascending: true }),
     grammarQuery.order("sort_order", { ascending: true }),
@@ -314,6 +321,7 @@ export async function getGrowthToolboxManagementData(
   }));
 
   return {
+    canManage: canManage === true,
     toolboxItems,
     courseTree,
     vocabularyLibrary,

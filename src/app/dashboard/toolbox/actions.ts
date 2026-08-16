@@ -1,6 +1,7 @@
 "use server";
 
 import { requireActiveUser } from "@/lib/auth";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 const TOOLBOX_SKILLS = [
   "vocabulary",
@@ -51,6 +52,7 @@ export async function recordToolboxStudyTime(
   await supabase.from("learning_time_log").insert({
     tenant_id: tenant.id,
     student_id: user.id,
+    student_app_id: STUDENT_APP_IDS.korean,
     test_slug: `toolbox-${skill}`,
     source: "toolbox",
     seconds: s,

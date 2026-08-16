@@ -34,6 +34,7 @@ export type CourseCatalogActionOptions = {
   courses: CourseCatalogCourse[];
   lessons: CourseCatalogLesson[];
   chapters: CourseCatalogChapter[];
+  studentAppId?: string;
 };
 
 const INPUT_CLASS =
@@ -230,19 +231,19 @@ export function CourseCatalogEditDialog({ node, options }: { node: CourseCatalog
 
 type CreateTarget = { kind: "category"; parentId?: string; title: string; sortOrder: number } | { kind: "course"; categoryId: string; title: string; sortOrder: number } | { kind: "lesson"; courseId: string; title: string; sortOrder: number } | { kind: "chapter"; lessonId: string; title: string; sortOrder: number };
 
-function CreateForm({ target }: { target: CreateTarget }) {
-  if (target.kind === "category") return <form action={createCourseCategoryAction} className="space-y-4">{target.parentId && <input type="hidden" name="parent_id" value={target.parentId} />}<CreateFields sortOrder={target.sortOrder} /><SaveButton label="创建分类" /></form>;
+function CreateForm({ target, studentAppId }: { target: CreateTarget; studentAppId?: string }) {
+  if (target.kind === "category") return <form action={createCourseCategoryAction} className="space-y-4">{target.parentId && <input type="hidden" name="parent_id" value={target.parentId} />}{!target.parentId && studentAppId && <input type="hidden" name="student_app_id" value={studentAppId} />}<CreateFields sortOrder={target.sortOrder} /><SaveButton label="创建分类" /></form>;
   if (target.kind === "course") return <form action={createCatalogCourseAction} className="space-y-4"><input type="hidden" name="category_id" value={target.categoryId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>课程等级<input name="level" defaultValue="beginner" className={INPUT_CLASS} /></label><SaveButton label="创建课程" /></form>;
   if (target.kind === "lesson") return <form action={createCatalogLessonAction} className="space-y-4"><input type="hidden" name="course_id" value={target.courseId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={30} className={INPUT_CLASS} /></label><SaveButton label="创建课时" /></form>;
   return <form action={createCourseChapterAction} className="space-y-4"><input type="hidden" name="lesson_id" value={target.lessonId} /><CreateFields sortOrder={target.sortOrder} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={20} className={INPUT_CLASS} /></label><SaveButton label="创建章节" /></form>;
 }
 
-export function CourseCatalogCreateDialog({ target, primary = false }: { target: CreateTarget; primary?: boolean }) {
+export function CourseCatalogCreateDialog({ target, primary = false, studentAppId }: { target: CreateTarget; primary?: boolean; studentAppId?: string }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <button type="button" onClick={() => setOpen(true)} className={primary ? "inline-flex h-9 items-center gap-1.5 bg-[var(--app-primary)] px-4 text-xs font-semibold text-white hover:opacity-90" : "inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"}><Plus size={13} />{target.title}</button>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>使用现有课程管理 Action 创建平台内容。</DialogDescription></DialogHeader><div className="p-5"><CreateForm target={target} /></div></DialogContent>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>使用现有课程管理 Action 创建平台内容。</DialogDescription></DialogHeader><div className="p-5"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
     </Dialog>
   );
 }

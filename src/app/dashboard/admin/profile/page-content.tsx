@@ -1,6 +1,11 @@
 import { redirect } from "next/navigation";
-import { AlertCircle } from "lucide-react";
+import { UserRound } from "lucide-react";
 
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { requireActiveUser } from "@/lib/auth";
 import { AdminProfileForm } from "./AdminProfileForm";
 
@@ -39,22 +44,20 @@ export default async function AdminProfilePage() {
   if (error || !data) {
     console.error("后台个人信息读取失败：", error?.message ?? "资料行不存在");
     return (
-      <div className="mx-auto w-full max-w-[1200px] space-y-4 p-4 sm:p-5">
-        <section className="app-card overflow-hidden rounded-xl border">
-          <div className="flex flex-col items-start gap-3 px-5 py-8">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-50 text-red-600">
-              <AlertCircle size={18} aria-hidden="true" />
-            </span>
-            <div>
-              <h2 className="text-base font-semibold tracking-tight">个人信息暂时读取失败</h2>
-              <p className="app-muted-text mt-1 text-xs leading-5">
-                你的账号资料未能读取（{error?.message ?? "资料行不存在"}）。其他功能不受影响；若刚更新过数据库结构，请确认
-                profiles 表包含 hired_at 字段后重新加载本页。
-              </p>
-            </div>
-          </div>
-        </section>
-      </div>
+      <ManagementPage
+        eyebrow="账号设置"
+        title="个人信息"
+        description="维护你的姓名、头像与登录密码；账号角色和状态仍由对应负责人管理。"
+        icon={UserRound}
+      >
+        <ManagementNotice tone="danger">
+          <strong className="block text-sm">个人信息暂时读取失败</strong>
+          <span className="mt-1 block font-normal">
+            你的账号资料未能读取（{error?.message ?? "资料行不存在"}）。其他功能不受影响；若刚更新过数据库结构，请确认
+            profiles 表包含 hired_at 字段后重新加载本页。
+          </span>
+        </ManagementNotice>
+      </ManagementPage>
     );
   }
 
@@ -75,33 +78,28 @@ export default async function AdminProfilePage() {
       : ROLE_LABELS[role] ?? (tenant ? "机构成员" : "平台成员");
 
   return (
-    <div className="mx-auto w-full max-w-[1200px] space-y-4 p-4 sm:p-5">
-      <section className="app-card overflow-hidden rounded-xl border">
-        <div className="px-5 py-5">
-          <p className="app-muted-text text-[11px] font-semibold tracking-[0.16em]">个人设置</p>
-          <h2 className="mt-1 text-xl font-semibold tracking-tight">个人信息</h2>
-          <p className="app-muted-text mt-1 text-xs">
-            维护你的姓名、头像与登录密码；账号角色、状态等由机构或平台负责人管理。
-          </p>
-        </div>
-        <div className="grid border-t sm:grid-cols-2 lg:grid-cols-4" style={{ borderColor: "var(--app-border)" }}>
-          {[
-            ["当前角色", roleLabel],
-            ["登录账号", data.login_id || "—"],
-            ["登录邮箱", user.email || "—"],
-            ["注册时间", user.created_at ? new Date(user.created_at).toLocaleDateString("zh-CN") : "—"],
-          ].map(([label, value], index) => (
-            <div
-              key={String(label)}
-              className={`min-w-0 px-5 py-3 ${index > 0 ? "sm:border-l" : ""} ${index > 1 ? "border-t sm:border-t-0" : ""}`}
-              style={{ borderColor: "var(--app-border)" }}
-            >
-              <p className="app-muted-text text-[11px] font-medium">{label}</p>
-              <p className="mt-0.5 truncate text-sm font-semibold" title={value}>{value}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+    <ManagementPage
+      eyebrow="账号设置"
+      title="个人信息"
+      description="维护你的姓名、头像与登录密码；账号角色和状态仍由对应负责人管理。"
+      icon={UserRound}
+      meta={<span>{roleLabel}</span>}
+      className="management-page-narrow"
+    >
+      <ManagementMetricStrip
+        label="当前账号信息"
+        items={[
+          { label: "当前角色", value: roleLabel },
+          { label: "登录账号", value: data.login_id || "—" },
+          { label: "登录邮箱", value: user.email || "—" },
+          {
+            label: "注册时间",
+            value: user.created_at
+              ? new Date(user.created_at).toLocaleDateString("zh-CN")
+              : "—",
+          },
+        ]}
+      />
 
       <AdminProfileForm
         displayName={displayName}
@@ -110,6 +108,6 @@ export default async function AdminProfilePage() {
         birthDate={staff?.birth_date ?? null}
         hiredAt={staff?.hired_at ?? null}
       />
-    </div>
+    </ManagementPage>
   );
 }

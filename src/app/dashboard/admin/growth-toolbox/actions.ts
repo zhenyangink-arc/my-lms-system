@@ -3,6 +3,7 @@
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireActiveUser } from "@/lib/auth";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ActionResult = { ok: boolean; message?: string };
@@ -46,6 +47,10 @@ async function canManageTextbooks(): Promise<boolean> {
   return !error && data === true;
 }
 
+function validStudentAppId(studentAppId: string) {
+  return new Set(Object.values(STUDENT_APP_IDS)).has(studentAppId);
+}
+
 function cleanInput(raw: Partial<ToolboxItemInput>): ToolboxItemInput {
   const href = String(raw.href ?? "").trim();
   const relatedCourseId = raw.relatedCourseId ? String(raw.relatedCourseId).trim() : null;
@@ -77,9 +82,13 @@ function validateInput(input: ToolboxItemInput): string | null {
 
 /** 更新一个成长工具箱入口的配置 */
 export async function updateToolboxItemAction(
+  studentAppId: string,
   itemId: string,
   raw: Partial<ToolboxItemInput>
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改成长工具箱" };
   }
@@ -102,11 +111,13 @@ export async function updateToolboxItemAction(
       related_course_id: input.relatedCourseId,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", itemId);
+    .eq("id", itemId)
+    .eq("student_app_id", studentAppId);
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");
   revalidateDashboard("/dashboard/toolbox");
+  revalidateDashboard("/[space]/apps/korean/practice/skills", "layout");
   return { ok: true };
 }
 
@@ -130,8 +141,12 @@ function cleanWord(raw: Partial<VocabularyWordInput>): VocabularyWordInput {
 
 /** 向练习词库添加单词（仅写 growth_toolbox_vocabulary，绝不触碰互动教材数据） */
 export async function addToolboxVocabularyAction(
+  studentAppId: string,
   raw: Partial<VocabularyWordInput>
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改练习词库" };
   }
@@ -143,6 +158,7 @@ export async function addToolboxVocabularyAction(
   const { data: maxRow } = await admin
     .from("growth_toolbox_vocabulary")
     .select("sort_order")
+    .eq("student_app_id", studentAppId)
     .order("sort_order", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -155,20 +171,26 @@ export async function addToolboxVocabularyAction(
     collocation: word.collocation,
     transcription: word.transcription,
     source: "custom",
+    student_app_id: studentAppId,
     sort_order: nextSortOrder,
   });
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
 /** 编辑词库中指定单词 */
 export async function updateToolboxVocabularyAction(
+  studentAppId: string,
   itemId: string,
   raw: Partial<VocabularyWordInput>
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改练习词库" };
   }
@@ -186,18 +208,24 @@ export async function updateToolboxVocabularyAction(
       transcription: word.transcription,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", itemId);
+    .eq("id", itemId)
+    .eq("student_app_id", studentAppId);
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
 /** 从词库删除单词 */
 export async function removeToolboxVocabularyAction(
+  studentAppId: string,
   itemId: string
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改练习词库" };
   }
@@ -206,11 +234,13 @@ export async function removeToolboxVocabularyAction(
   const { error } = await admin
     .from("growth_toolbox_vocabulary")
     .delete()
-    .eq("id", itemId);
+    .eq("id", itemId)
+    .eq("student_app_id", studentAppId);
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
@@ -273,8 +303,12 @@ function cleanGrammar(raw: Partial<GrammarLibraryItemInput>): GrammarLibraryItem
 
 /** 向语法库添加条目（仅写 growth_toolbox_grammar，绝不触碰互动教材） */
 export async function addGrammarLibraryAction(
+  studentAppId: string,
   raw: Partial<GrammarLibraryItemInput>
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改语法库" };
   }
@@ -285,6 +319,7 @@ export async function addGrammarLibraryAction(
   const { data: maxRow } = await admin
     .from("growth_toolbox_grammar")
     .select("sort_order")
+    .eq("student_app_id", studentAppId)
     .order("sort_order", { ascending: false })
     .limit(1)
     .maybeSingle();
@@ -298,6 +333,7 @@ export async function addGrammarLibraryAction(
     examples: item.examples,
     caution: item.caution,
     source: "custom",
+    student_app_id: studentAppId,
     sort_order: nextSortOrder,
   });
   if (error) return { ok: false, message: error.message };
@@ -308,9 +344,13 @@ export async function addGrammarLibraryAction(
 
 /** 编辑语法库中指定条目 */
 export async function updateGrammarLibraryAction(
+  studentAppId: string,
   itemId: string,
   raw: Partial<GrammarLibraryItemInput>
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改语法库" };
   }
@@ -329,7 +369,8 @@ export async function updateGrammarLibraryAction(
       caution: item.caution,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", itemId);
+    .eq("id", itemId)
+    .eq("student_app_id", studentAppId);
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");
@@ -338,8 +379,12 @@ export async function updateGrammarLibraryAction(
 
 /** 从语法库删除条目 */
 export async function removeGrammarLibraryAction(
+  studentAppId: string,
   itemId: string
 ): Promise<ActionResult> {
+  if (!validStudentAppId(studentAppId)) {
+    return { ok: false, message: "无效的学生应用" };
+  }
   if (!(await canManageTextbooks())) {
     return { ok: false, message: "没有权限修改语法库" };
   }
@@ -348,7 +393,8 @@ export async function removeGrammarLibraryAction(
   const { error } = await admin
     .from("growth_toolbox_grammar")
     .delete()
-    .eq("id", itemId);
+    .eq("id", itemId)
+    .eq("student_app_id", studentAppId);
   if (error) return { ok: false, message: error.message };
 
   revalidateDashboard("/dashboard/admin/growth-toolbox");

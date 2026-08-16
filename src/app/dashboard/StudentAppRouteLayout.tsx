@@ -2,9 +2,7 @@ import type { ReactNode } from "react";
 import { notFound, redirect } from "next/navigation";
 
 import { requireDashboardAccess } from "@/lib/dashboard-access";
-import { isStudentAppSchemaMissing } from "@/lib/student-app-data";
 import {
-  getStudentAppDefinition,
   STUDENT_APP_IDS,
   type StudentAppSlug,
 } from "@/lib/student-apps";
@@ -28,7 +26,6 @@ export async function StudentAppRouteLayout({
   const tenant = access.auth.tenant;
   if (!tenant) redirect(access.dashboardBasePath);
 
-  const appDefinition = getStudentAppDefinition(appSlug);
   const appId = STUDENT_APP_IDS[appSlug];
   const [tenantAppResult, enrollmentResult] = await Promise.all([
     access.auth.supabase
@@ -45,16 +42,8 @@ export async function StudentAppRouteLayout({
       .eq("app_id", appId)
       .maybeSingle(),
   ]);
-  const usesLegacySchema = isStudentAppSchemaMissing(tenantAppResult.error);
-  const tenantApp = usesLegacySchema
-    ? { is_enabled: true, status: appDefinition.status }
-    : tenantAppResult.data;
-  const tenantAppError = usesLegacySchema ? null : tenantAppResult.error;
-  const usesLegacyEnrollment = isStudentAppSchemaMissing(
-    enrollmentResult.error,
-  );
-  const enrollment = usesLegacyEnrollment ? { status: "active", starts_at: null, ends_at: null } : enrollmentResult.data;
-  const enrollmentError = usesLegacyEnrollment ? null : enrollmentResult.error;
+  const tenantApp = tenantAppResult.data;
+  const enrollment = enrollmentResult.data;
   // 服务端授权检查必须以本次请求时间判断有效期，不参与客户端渲染状态。
   // eslint-disable-next-line react-hooks/purity
   const now = Date.now();
@@ -65,11 +54,11 @@ export async function StudentAppRouteLayout({
 
   // 迁移部署后以租户应用开关为准；隐藏或停用的应用不能靠手输地址进入。
   if (
-    tenantAppError ||
+    tenantAppResult.error ||
     !tenantApp ||
     !tenantApp.is_enabled ||
-    tenantApp.status === "hidden" ||
-    enrollmentError ||
+    tenantApp.status !== "active" ||
+    enrollmentResult.error ||
     !enrollment ||
     enrollment.status !== "active" ||
     (startsAt !== null && Number.isFinite(startsAt) && startsAt > now) ||

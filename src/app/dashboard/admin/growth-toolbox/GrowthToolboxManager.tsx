@@ -118,10 +118,12 @@ export function GrowthToolboxManager({
   courseTree,
   vocabularyLibrary,
   grammarLibrary,
+  studentAppId,
 }: {
   courseTree: CourseTree[];
   vocabularyLibrary: VocabularyLibraryItem[];
   grammarLibrary: GrammarLibraryItem[];
+  studentAppId: string;
 }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState<Set<string>>(() => {
@@ -402,6 +404,7 @@ export function GrowthToolboxManager({
       {libraryOpen && (
         <VocabularyLibraryWorkspace
           items={vocabularyLibrary}
+          studentAppId={studentAppId}
           onClose={() => setLibraryOpen(false)}
         />
       )}
@@ -409,6 +412,7 @@ export function GrowthToolboxManager({
       {grammarOpen && (
         <GrammarLibraryWorkspace
           items={grammarLibrary}
+          studentAppId={studentAppId}
           onClose={() => setGrammarOpen(false)}
         />
       )}
@@ -504,9 +508,11 @@ const EMPTY_LIBRARY_WORD = {
 
 export function VocabularyLibraryWorkspace({
   items,
+  studentAppId,
   onClose,
 }: {
   items: VocabularyLibraryItem[];
+  studentAppId: string;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -522,7 +528,7 @@ export function VocabularyLibraryWorkspace({
   async function submitAdd() {
     setPending(true);
     setMessage(null);
-    const result = await addToolboxVocabularyAction(draft);
+    const result = await addToolboxVocabularyAction(studentAppId, draft);
     if (result.ok) {
       setDraft(EMPTY_LIBRARY_WORD);
       setAddOpen(false);
@@ -536,7 +542,7 @@ export function VocabularyLibraryWorkspace({
   async function submitUpdate(itemId: string) {
     setPending(true);
     setMessage(null);
-    const result = await updateToolboxVocabularyAction(itemId, draft);
+    const result = await updateToolboxVocabularyAction(studentAppId, itemId, draft);
     if (result.ok) {
       setEditId(null);
       setDraft(EMPTY_LIBRARY_WORD);
@@ -550,7 +556,7 @@ export function VocabularyLibraryWorkspace({
   async function remove(itemId: string) {
     setPending(true);
     setMessage(null);
-    const result = await removeToolboxVocabularyAction(itemId);
+    const result = await removeToolboxVocabularyAction(studentAppId, itemId);
     if (result.ok) router.refresh();
     else setMessage(result.message ?? "删除失败");
     setPending(false);
@@ -806,9 +812,11 @@ const EMPTY_LIBRARY_GRAMMAR: LibraryGrammarDraft = {
 
 export function GrammarLibraryWorkspace({
   items,
+  studentAppId,
   onClose,
 }: {
   items: GrammarLibraryItem[];
+  studentAppId: string;
   onClose: () => void;
 }) {
   const router = useRouter();
@@ -844,7 +852,7 @@ export function GrammarLibraryWorkspace({
   async function submitAdd() {
     setPending(true);
     setMessage(null);
-    const result = await addGrammarLibraryAction(draft);
+    const result = await addGrammarLibraryAction(studentAppId, draft);
     if (result.ok) {
       setDraft(EMPTY_LIBRARY_GRAMMAR);
       setAddOpen(false);
@@ -858,7 +866,7 @@ export function GrammarLibraryWorkspace({
   async function submitUpdate(itemId: string) {
     setPending(true);
     setMessage(null);
-    const result = await updateGrammarLibraryAction(itemId, draft);
+    const result = await updateGrammarLibraryAction(studentAppId, itemId, draft);
     if (result.ok) {
       setEditId(null);
       setDraft(EMPTY_LIBRARY_GRAMMAR);
@@ -872,7 +880,7 @@ export function GrammarLibraryWorkspace({
   async function remove(itemId: string) {
     setPending(true);
     setMessage(null);
-    const result = await removeGrammarLibraryAction(itemId);
+    const result = await removeGrammarLibraryAction(studentAppId, itemId);
     if (result.ok) router.refresh();
     else setMessage(result.message ?? "删除失败");
     setPending(false);

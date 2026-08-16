@@ -31,6 +31,11 @@ export function ManagementSidebarProvider({ children, defaultCollapsed = false }
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && mobileOpen) {
+        event.preventDefault();
+        setMobileOpen(false);
+        return;
+      }
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "b") {
         event.preventDefault();
         toggleSidebar();
@@ -38,7 +43,16 @@ export function ManagementSidebarProvider({ children, defaultCollapsed = false }
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [toggleSidebar]);
+  }, [mobileOpen, toggleSidebar]);
+
+  useEffect(() => {
+    if (!mobileOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileOpen]);
 
   const value = useMemo(
     () => ({ collapsed, mobileOpen, setMobileOpen, toggleSidebar }),

@@ -1,3 +1,7 @@
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { getUniversityManagementData } from "../api/service";
 import { CreateUniversityDialog } from "./university-action-dialogs";
 import type {
@@ -54,42 +58,30 @@ export default async function UniversityListing() {
         </div>
       )}
       {result.hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           大学资料暂时无法完整读取，请稍后刷新重试。
-        </p>
+        </ManagementNotice>
       )}
       {result.isInstitutionViewer && (
-        <p className="border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-800">
+        <ManagementNotice>
           当前账号为只读查看范围，不能修改大学资料或发布状态。
-        </p>
+        </ManagementNotice>
       )}
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[680px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>资料范围</th>
-                <th>大学总数</th>
-                <th>已发布</th>
-                <th>未发布</th>
-                <th>重点推荐</th>
-                <th>覆盖地区</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>{result.canManageContent ? "平台大学资料" : "可查看大学资料"}</th>
-                <td>{result.universities.length}</td>
-                <td>{publishedCount}</td>
-                <td>{result.universities.length - publishedCount}</td>
-                <td>{featuredCount}</td>
-                <td>{regionCount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="大学资料概况"
+        items={[
+          {
+            label: "资料范围",
+            value: result.canManageContent ? "平台资料" : "可查看资料",
+          },
+          { label: "大学总数", value: result.universities.length },
+          { label: "已发布", value: publishedCount },
+          { label: "未发布", value: result.universities.length - publishedCount },
+          { label: "重点推荐", value: featuredCount },
+          { label: "覆盖地区", value: regionCount },
+        ]}
+      />
 
       <UniversitiesTable
         data={result.universities}

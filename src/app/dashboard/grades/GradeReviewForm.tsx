@@ -31,8 +31,8 @@ export function GradeReviewForm({
   }, [state]);
 
   return (
-    <details className="app-soft-card rounded-xl border p-3">
-      <summary className="cursor-pointer list-none text-xs font-black">
+    <details className="app-soft-card w-full rounded-lg border px-3 sm:w-auto sm:min-w-72">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
         申请成绩复核
       </summary>
       <form
@@ -48,15 +48,15 @@ export function GradeReviewForm({
           maxLength={2000}
           rows={3}
           placeholder="说明需要核对的题目、分数或评语"
-          className="app-input w-full resize-y rounded-xl border px-3 py-2 text-xs leading-5"
+          className="app-input min-h-24 w-full resize-y rounded-lg border px-3 py-2 text-sm leading-6"
         />
         {state.message && (
           <p
-            className="text-xs font-bold"
+            className="text-xs font-semibold"
             style={{
               color:
                 state.status === "error"
-                  ? "#c94f45"
+                  ? "var(--app-danger)"
                   : "var(--app-success)",
             }}
           >
@@ -66,10 +66,10 @@ export function GradeReviewForm({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-xs font-black text-white disabled:opacity-50"
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
           style={{ backgroundColor: "var(--app-accent)" }}
         >
-          <SearchCheck size={12} />
+          <SearchCheck size={13} aria-hidden="true" />
           {pending ? "正在提交…" : "提交复核"}
         </button>
       </form>

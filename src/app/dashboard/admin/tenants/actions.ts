@@ -6,6 +6,7 @@ import { z } from "zod";
 import { requirePlatformOwner, requirePlatformTenantManager } from "@/lib/admin";
 import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { isReservedTenantSlug } from "@/lib/tenant-routing";
 import type { TenantActionState } from "./action-state";
 
 const tenantSchema = z.object({
@@ -17,7 +18,10 @@ const tenantSchema = z.object({
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "租户标识只能使用小写字母、数字和短横线。")
     .min(2, "租户标识至少需要 2 个字符。")
     .max(48, "租户标识不能超过 48 个字符。")
-    .refine((slug) => slug !== "platform", "platform 是系统保留标识，请使用其他租户标识。"),
+    .refine(
+      (slug) => !isReservedTenantSlug(slug),
+      "该标识是系统路由保留字，请使用其他租户标识。",
+    ),
   planKey: z.enum(["starter", "growth", "enterprise"]),
   managerName: z.string().trim().min(2, "管理员姓名至少需要 2 个字。").max(50, "管理员姓名不能超过 50 个字。"),
   managerLoginId: z.string().trim().transform(normalizeLoginId),
@@ -127,8 +131,8 @@ export async function createTenantAction(
   if (error?.code === "23505") {
     return result("error", "该租户标识已被使用，请换一个。");
   }
-  if (error?.message?.includes('Tenant slug "platform" is reserved')) {
-    return result("error", "platform 是系统保留标识，请使用其他租户标识。");
+  if (error?.message?.includes("is reserved") || error?.code === "23514") {
+    return result("error", "该标识是系统路由保留字，请使用其他租户标识。");
   }
   if (error) {
     console.error("Tenant creation RPC failed", {

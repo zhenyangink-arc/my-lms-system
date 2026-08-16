@@ -19,6 +19,7 @@ import {
   Mic2,
   Settings,
   ShieldCheck,
+  Target,
   UserCircle,
   Wrench,
 } from "lucide-react";
@@ -65,14 +66,17 @@ function resolveHeaderConfig(
   if (pathname.startsWith("/dashboard/courses")) {
     return { title: studentAppSlug === "korean" ? "韩语课程" : "我的课程", icon: BookOpen };
   }
+  if (pathname.startsWith("/dashboard/practice")) {
+    return { title: "巩固中心", icon: Target };
+  }
   if (pathname.startsWith("/dashboard/progress")) {
     return { title: "深化学习", icon: BarChart3 };
   }
   if (pathname.startsWith("/dashboard/toolbox")) {
-    return { title: "成长工具箱", icon: Wrench };
+    return { title: "专项练习", icon: Wrench };
   }
   if (pathname.startsWith("/dashboard/assignments")) {
-    return { title: "作业与考试", icon: ClipboardList };
+    return { title: "学习任务", icon: ClipboardList };
   }
   if (pathname.startsWith("/dashboard/grades")) {
     return { title: "我的成绩", icon: Award };

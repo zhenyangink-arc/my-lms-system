@@ -1,4 +1,8 @@
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { DataTable } from "@/components/ui/table/data-table";
 import {
   Table,
@@ -34,13 +38,33 @@ export function PlatformDocumentReviewOverview({
   rows: PlatformDocumentReviewOverviewRow[];
   hasError: boolean;
 }) {
+  const totals = rows.reduce(
+    (summary, row) => ({
+      applications: summary.applications + row.applicationCount,
+      pending: summary.pending + row.pendingReviewCount,
+      revisions: summary.revisions + row.revisionRequiredCount,
+      approved: summary.approved + row.approvedCount,
+    }),
+    { applications: 0, pending: 0, revisions: 0, approved: 0 },
+  );
+
   return (
     <div className="space-y-3">
       {hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           机构资料审核汇总暂时无法完整读取，请稍后刷新。
-        </p>
+        </ManagementNotice>
       )}
+      <ManagementMetricStrip
+        label="平台申请材料巡检概况"
+        items={[
+          { label: "覆盖机构", value: rows.length },
+          { label: "申请单", value: totals.applications },
+          { label: "待确认", value: totals.pending },
+          { label: "需补充", value: totals.revisions },
+          { label: "已确认", value: totals.approved },
+        ]}
+      />
       <DataTable
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"

@@ -229,7 +229,7 @@ export async function getVisaManagementData(): Promise<VisaManagementData> {
     role: access.role,
     tenantId,
     dashboardBasePath: access.dashboardBasePath,
-    canManageIndividualCases: true,
+    canManageIndividualCases: access.canManage,
     cases,
     overview: [],
     caseAudit: [],

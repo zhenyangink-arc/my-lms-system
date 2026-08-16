@@ -1,5 +1,9 @@
 import Link from "next/link";
 
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { getCourseManagementData } from "../api/service";
 import type {
@@ -314,43 +318,27 @@ export default async function CourseCatalogListing({
   return (
     <div className="space-y-4">
       {result.catalogErrorMessage && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           课程目录数据读取失败：{result.catalogErrorMessage}
-        </p>
+        </ManagementNotice>
       )}
       {!result.canManage && (
-        <p className="border border-[var(--app-border)] bg-[var(--app-soft-bg)] px-4 py-3 text-sm text-[var(--app-muted)]">
+        <ManagementNotice>
           当前账号可以查看平台课程，但只有平台负责人和平台管理员可以修改。
-        </p>
+        </ManagementNotice>
       )}
-      <section className="overflow-x-auto border border-[var(--app-border)] bg-[var(--app-card-bg)]">
-        <table className="w-full min-w-[560px] border-collapse text-left text-xs">
-          <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]">
-            <tr>
-              <th className="px-4 py-2.5 font-semibold">顶级分类</th>
-              <th className="px-4 py-2.5 font-semibold">课程</th>
-              <th className="px-4 py-2.5 font-semibold">课时</th>
-              <th className="px-4 py-2.5 font-semibold">章节</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className="border-t border-[var(--app-border)]">
-              <td className="px-4 py-3 font-mono text-base font-semibold">
-                {result.categories.filter((item) => !item.parent_id).length}
-              </td>
-              <td className="px-4 py-3 font-mono text-base font-semibold">
-                {result.courses.length}
-              </td>
-              <td className="px-4 py-3 font-mono text-base font-semibold">
-                {result.lessons.length}
-              </td>
-              <td className="px-4 py-3 font-mono text-base font-semibold">
-                {result.chapters.length}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </section>
+      <ManagementMetricStrip
+        label="课程目录概况"
+        items={[
+          {
+            label: "顶级分类",
+            value: result.categories.filter((item) => !item.parent_id).length,
+          },
+          { label: "课程", value: result.courses.length },
+          { label: "课时", value: result.lessons.length },
+          { label: "章节", value: result.chapters.length },
+        ]}
+      />
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
@@ -364,6 +352,7 @@ export default async function CourseCatalogListing({
           {result.canManage && (
             <CourseCatalogCreateDialog
               primary
+              studentAppId={studentAppId}
               target={{
                 kind: "category",
                 title: "新建顶级分类",
@@ -382,6 +371,7 @@ export default async function CourseCatalogListing({
           courses={result.courses}
           lessons={result.lessons}
           chapters={result.chapters}
+          studentAppId={studentAppId}
           dashboardBasePath={result.dashboardBasePath}
           routeBasePath={catalogRoute}
         />

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { requireManagementAppAccess } from "@/lib/management-apps";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 function requiredValue(formData: FormData, key: string) {
   const value = String(formData.get(key) ?? "").trim();
@@ -34,33 +34,12 @@ export async function setStudentApplicationEnrollmentAction(
     throw new Error("无效的学生应用状态。");
   }
 
-  const admin = createAdminClient();
-  const { data: membership, error: membershipError } = await admin
-    .from("tenant_memberships")
-    .select("role,status,membership_tier")
-    .eq("tenant_id", access.tenantId)
-    .eq("user_id", studentId)
-    .maybeSingle();
-  if (
-    membershipError ||
-    membership?.role !== "student" ||
-    membership.status !== "active"
-  ) {
-    throw new Error("目标账号不是当前机构的有效学生。");
-  }
-
-  const { error } = await admin.from("student_app_enrollments").upsert(
-    {
-      tenant_id: access.tenantId,
-      student_id: studentId,
-      app_id: access.appId,
-      status,
-      access_tier: membership.membership_tier ?? "normal",
-      enrolled_by: access.userId,
-      updated_at: new Date().toISOString(),
-    },
-    { onConflict: "tenant_id,student_id,app_id" },
-  );
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_student_application_enrollment", {
+    p_student_id: studentId,
+    p_app_id: access.appId,
+    p_status: status,
+  });
   if (error) throw new Error(`学生应用授权保存失败：${error.message}`);
   revalidatePath(`${access.appPath}/students`);
   revalidatePath(access.appPath);
@@ -81,66 +60,13 @@ export async function setStaffApplicationAccessAction(formData: FormData) {
     throw new Error("无效的员工应用角色。");
   }
 
-  const admin = createAdminClient();
-  const { data: membership, error: membershipError } = await admin
-    .from("tenant_memberships")
-    .select("role,status")
-    .eq("tenant_id", access.tenantId)
-    .eq("user_id", staffId)
-    .maybeSingle();
-  if (
-    membershipError ||
-    !membership ||
-    membership.status !== "active" ||
-    !new Set(["teacher", "admin", "ceo", "tenant_super_admin"]).has(
-      membership.role,
-    )
-  ) {
-    throw new Error("目标账号不是当前机构的有效员工。");
-  }
-
-  const permissions =
-    accessRole === "administrator"
-      ? {
-          can_manage_students: true,
-          can_manage_content: true,
-          can_manage_assessments: true,
-          can_view_analytics: true,
-        }
-      : accessRole === "operator"
-        ? {
-            can_manage_students: true,
-            can_manage_content: false,
-            can_manage_assessments: true,
-            can_view_analytics: true,
-          }
-        : accessRole === "teacher"
-          ? {
-              can_manage_students: false,
-              can_manage_content: false,
-              can_manage_assessments: true,
-              can_view_analytics: true,
-            }
-          : {
-              can_manage_students: false,
-              can_manage_content: false,
-              can_manage_assessments: false,
-              can_view_analytics: true,
-            };
-
-  const { error } = await admin.from("staff_app_assignments").upsert(
-    {
-      tenant_id: access.tenantId,
-      staff_id: staffId,
-      app_id: access.appId,
-      access_role: accessRole,
-      status,
-      assigned_by: access.userId,
-      updated_at: new Date().toISOString(),
-      ...permissions,
-    },
-    { onConflict: "tenant_id,staff_id,app_id" },
-  );
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_staff_application_access", {
+    p_staff_id: staffId,
+    p_app_id: access.appId,
+    p_status: status,
+    p_access_role: accessRole,
+  });
   if (error) throw new Error(`员工应用权限保存失败：${error.message}`);
   revalidatePath(`${access.appPath}/students`);
   revalidatePath(access.appPath);
@@ -153,35 +79,17 @@ export async function setApplicationTeacherAssignmentAction(
   const studentId = requiredValue(formData, "student_id");
   const teacherId = requiredValue(formData, "teacher_id");
   const operation = requiredValue(formData, "operation");
-  const admin = createAdminClient();
-
-  if (operation === "remove") {
-    const { error } = await admin
-      .from("tenant_student_assignments")
-      .delete()
-      .eq("tenant_id", access.tenantId)
-      .eq("student_id", studentId)
-      .eq("teacher_id", teacherId)
-      .eq("student_app_id", access.appId);
-    if (error) throw new Error(`解除负责关系失败：${error.message}`);
-  } else if (operation === "assign") {
-    const { error } = await admin.from("tenant_student_assignments").upsert(
-      {
-        tenant_id: access.tenantId,
-        student_id: studentId,
-        teacher_id: teacherId,
-        student_app_id: access.appId,
-        assigned_by: access.userId,
-      },
-      {
-        onConflict: "tenant_id,student_id,teacher_id,student_app_id",
-        ignoreDuplicates: true,
-      },
-    );
-    if (error) throw new Error(`分配负责老师失败：${error.message}`);
-  } else {
+  if (!new Set(["remove", "assign"]).has(operation)) {
     throw new Error("无效的师生分配操作。");
   }
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_application_teacher_assignment", {
+    p_student_id: studentId,
+    p_teacher_id: teacherId,
+    p_app_id: access.appId,
+    p_operation: operation,
+  });
+  if (error) throw new Error(`师生负责关系保存失败：${error.message}`);
 
   revalidatePath(`${access.appPath}/students`);
 }
@@ -197,19 +105,18 @@ export async function setTenantApplicationSettingsAction(formData: FormData) {
   if (!new Set(["active", "coming_soon", "hidden"]).has(status)) {
     throw new Error("无效的机构应用状态。");
   }
+  if (status === "active" && access.app.status !== "active") {
+    throw new Error("平台标准应用仍在建设中，暂时不能切换为运行中。");
+  }
   if (customTitle.length > 80) throw new Error("应用显示名称不能超过 80 个字。");
 
-  const admin = createAdminClient();
-  const { error } = await admin
-    .from("tenant_student_apps")
-    .update({
-      is_enabled: isEnabled,
-      status,
-      custom_title: customTitle || null,
-      updated_at: new Date().toISOString(),
-    })
-    .eq("tenant_id", access.tenantId)
-    .eq("app_id", access.appId);
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("set_tenant_application_settings", {
+    p_app_id: access.appId,
+    p_is_enabled: isEnabled,
+    p_status: status,
+    p_custom_title: customTitle,
+  });
   if (error) throw new Error(`应用设置保存失败：${error.message}`);
   revalidatePath(`${access.appPath}/settings`);
   revalidatePath(access.appPath);

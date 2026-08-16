@@ -121,9 +121,10 @@ export async function addKoreanQuestionToReviewAction(input: {
   }
 
   revalidateDashboard("/dashboard/progress");
+  revalidateDashboard("/[space]/apps/korean/practice/review", "page");
   return {
     status: "success",
-    message: "已加入深化学习，可在待复习题中查看。",
+    message: "已加入错题复习，可在巩固中心查看。",
   };
 }
 
@@ -187,6 +188,7 @@ export async function removeKoreanQuestionFromReviewAction(input: {
   }
 
   revalidateDashboard("/dashboard/progress");
+  revalidateDashboard("/[space]/apps/korean/practice/review", "page");
   return {
     status: "success",
     message: "已取消加入复习。",
@@ -417,6 +419,7 @@ export async function submitKoreanChapterTestAction(input: {
   revalidateDashboard("/dashboard/assignments/korean");
   revalidateDashboard("/dashboard/grades");
   revalidateDashboard("/dashboard/progress");
+  revalidateDashboard("/[space]/apps/korean/practice", "layout");
 
   return successResult(payload, true);
 }

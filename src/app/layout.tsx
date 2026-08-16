@@ -20,9 +20,6 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN" suppressHydrationWarning>
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: 'try{var t=localStorage.getItem("app-dashboard-theme");var v=t==="classic"||t==="aurora"||t==="coral"||t==="clarity"||t==="porcelain"?t:"clarity";document.documentElement.setAttribute("data-app-theme",v)}catch(e){}' }} />
-      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} flex min-h-screen flex-col bg-background antialiased`}>
         <PwaServiceWorkerRegistration />
         <main className="flex-1">{children}</main>

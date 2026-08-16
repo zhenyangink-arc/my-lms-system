@@ -52,17 +52,26 @@ export function StudentLearningRecordsTable({
   data,
   scopeLabel,
   dashboardBasePath,
+  studentAppId,
+  canManageNotes,
 }: {
   data: StudentLearningRecordTableRow[];
   scopeLabel: string;
   dashboardBasePath: string;
+  studentAppId?: string;
+  canManageNotes: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<StudentLearningRecordFilters>(INITIAL_FILTERS);
   const columns = useMemo(
-    () => getStudentLearningRecordColumns(dashboardBasePath),
-    [dashboardBasePath],
+    () =>
+      getStudentLearningRecordColumns(
+        dashboardBasePath,
+        studentAppId,
+        canManageNotes,
+      ),
+    [canManageNotes, dashboardBasePath, studentAppId],
   );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");

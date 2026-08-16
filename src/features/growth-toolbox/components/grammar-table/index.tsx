@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import type { GrowthToolboxGrammarItem } from "../../api/types";
 import { GrowthToolboxTableToolbar } from "../table-toolbar";
-import { growthToolboxGrammarColumns } from "./columns";
+import { getGrowthToolboxGrammarColumns } from "./columns";
 
 const COLUMN_LABELS: Record<string, string> = {
   title: "语法名称",
@@ -43,8 +43,12 @@ function grammarAudioKeys(item: GrowthToolboxGrammarItem) {
 
 export function GrowthToolboxGrammarTable({
   data,
+  studentAppId,
+  canManage,
 }: {
   data: GrowthToolboxGrammarItem[];
+  studentAppId: string;
+  canManage: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sortOrder", desc: false },
@@ -53,6 +57,10 @@ export function GrowthToolboxGrammarTable({
   const [query, setQuery] = useState("");
   const [source, setSource] = useState("all");
   const [audio, setAudio] = useState("all");
+  const columns = useMemo(
+    () => getGrowthToolboxGrammarColumns(studentAppId, canManage),
+    [canManage, studentAppId],
+  );
   const filteredData = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((item) => {
@@ -76,7 +84,7 @@ export function GrowthToolboxGrammarTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: growthToolboxGrammarColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

@@ -12,6 +12,7 @@ import {
   type KeyExpression,
 } from "@/app/dashboard/conversation-practice/config";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { ManagementNotice } from "@/components/layout/management-page";
 import { requireConversationPracticeManager } from "@/lib/conversation-practice";
 import { getTeacherAssignedStudentIds } from "@/lib/student-assignments";
 import { ConversationScenarioForm, type ConversationScenarioFormValue } from "./ConversationScenarioForm";
@@ -152,13 +153,15 @@ export async function ConversationPracticeManagementContent({
   searchParams,
   studentAppId,
   routeBasePath = "/dashboard/admin/conversation-practice",
+  embedded = false,
 }: {
   searchParams: Promise<{ scenario?: string; mode?: string }>;
   studentAppId?: string;
   routeBasePath?: string;
+  embedded?: boolean;
 }) {
   const [{ supabase, canManageContent, role, tenantId, user }, params] = await Promise.all([
-    requireConversationPracticeManager(),
+    requireConversationPracticeManager(studentAppId),
     searchParams,
   ]);
 
@@ -243,18 +246,24 @@ export async function ConversationPracticeManagementContent({
   const createOpen = canManageContent && params.mode === "create";
 
   return (
-    <div className="pb-12">
-      <div className="mx-auto w-full max-w-[1500px] space-y-4 px-4 pt-6 sm:px-6 lg:px-8">
-        <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div className={embedded ? "" : "pb-12"}>
+      <div
+        className={
+          embedded
+            ? "space-y-4"
+            : "mx-auto w-full max-w-[1500px] space-y-4 px-4 pt-6 sm:px-6 lg:px-8"
+        }
+      >
+        {!embedded && <header className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h2 className="flex items-center gap-2 text-xl font-semibold tracking-[-0.02em]"><MessageCircleMore size={18} />会话练习管理</h2>
           </div>
-        </header>
+        </header>}
 
         {(scenariosResult.error || progressResult.error) && (
-          <section className="border-y px-4 py-3 text-[11px] font-medium" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)", borderColor: "var(--app-warm)" }}>
+          <ManagementNotice tone="warning">
             会话练习后台数据暂时无法完整读取，请确认最新数据库迁移已经执行。
-          </section>
+          </ManagementNotice>
         )}
 
         <ConversationScenarioTable

@@ -83,6 +83,7 @@ export type GrowthToolboxCourseTree = {
 };
 
 export type GrowthToolboxManagementResult = {
+  canManage: boolean;
   toolboxItems: GrowthToolboxItem[];
   courseTree: GrowthToolboxCourseTree[];
   vocabularyLibrary: GrowthToolboxVocabularyItem[];

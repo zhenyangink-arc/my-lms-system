@@ -65,9 +65,13 @@ function CountCell({ value }: { value: number }) {
 export function StudentLearningRecordDetailDialog({
   student,
   dashboardBasePath,
+  studentAppId,
+  canManageNotes,
 }: {
   student: StudentLearningRecordTableRow;
   dashboardBasePath: string;
+  studentAppId?: string;
+  canManageNotes: boolean;
 }) {
   const [editor, setEditor] = useState<"new" | LearningRecordNote | null>(null);
   const closeEditor = useCallback(() => setEditor(null), []);
@@ -128,14 +132,16 @@ export function StudentLearningRecordDetailDialog({
                 这里仅展示人工填写的辅导、评价、里程碑、关注事项和学习计划；上方学习数据由系统自动汇总。
               </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setEditor("new")}
-              className="inline-flex h-8 items-center gap-1.5 bg-[var(--app-secondary)] px-3 text-xs font-semibold text-white"
-            >
-              <Plus size={13} />
-              新增人工辅导备注
-            </button>
+            {canManageNotes && (
+              <button
+                type="button"
+                onClick={() => setEditor("new")}
+                className="inline-flex h-8 items-center gap-1.5 bg-[var(--app-secondary)] px-3 text-xs font-semibold text-white"
+              >
+                <Plus size={13} />
+                新增人工辅导备注
+              </button>
+            )}
           </div>
 
           {editor && (
@@ -153,6 +159,7 @@ export function StudentLearningRecordDetailDialog({
                 studentId={student.student_id}
                 studentName={name}
                 note={editor === "new" ? undefined : editor}
+                studentAppId={studentAppId}
                 onDone={closeEditor}
                 onCancel={closeEditor}
               />
@@ -184,7 +191,7 @@ export function StudentLearningRecordDetailDialog({
                     {note.next_action}
                   </p>
                 )}
-                <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
+                {canManageNotes && <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
                   <button
                     type="button"
                     onClick={() => setEditor(note)}
@@ -193,8 +200,8 @@ export function StudentLearningRecordDetailDialog({
                     <Pencil size={13} />
                     编辑
                   </button>
-                  <LearningRecordNoteStatusAction note={note} />
-                </div>
+                  <LearningRecordNoteStatusAction note={note} studentAppId={studentAppId} />
+                </div>}
               </article>
             ))}
             {student.notes.length === 0 && (

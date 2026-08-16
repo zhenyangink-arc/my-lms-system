@@ -4,14 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev --webpack",
+    "prebuild": "npm run test:navigation",
     "build": "next build --webpack",
+    "prebuild:cloudflare": "npm run test:navigation",
     "build:cloudflare": "opennextjs-cloudflare build",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy": "opennextjs-cloudflare build && opennextjs-cloudflare deploy",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "start": "next start",
     "lint": "eslint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test:navigation": "node --experimental-strip-types --test tests/*.test.mjs",
+    "check": "npm run test:navigation && npm run typecheck && npm run lint"
   },
   "dependencies": {
     "@base-ui/react": "^1.6.0",

@@ -18,6 +18,7 @@ import { AdminWorkspaceSidebar } from "../admin/AdminWorkspaceSidebar";
 import { getAdminRoleLabel } from "../admin/admin-navigation";
 import { ManagementTopbar } from "../ManagementTopbar";
 import { ManagementSidebarProvider } from "../ManagementSidebarProvider";
+import { ManagementWorkspaceMarker } from "../ManagementWorkspaceMarker";
 
 export type ManagementWorkspace = "platform" | "tenant";
 
@@ -77,18 +78,21 @@ export async function ManagementDashboardLayout({
         ? "平台课程巡检"
         : "平台管理"
       : `${auth.tenant?.name ?? "机构"}管理`;
-  const managementHomePath =
-    navigationRole === "platform_course_inspector"
-      ? "/dashboard/courses"
-      : "/dashboard/admin";
-
   return (
     <ManagementSidebarProvider defaultCollapsed={cookieStore.get("management_sidebar_collapsed")?.value === "true"}>
       <div
         className="app-shell management-shell flex min-h-svh w-full"
         data-dashboard-layout={`${workspace}-management`}
         data-dashboard-ui="management"
+        data-management-workspace={workspace}
       >
+        <a
+          href="#management-main-content"
+          className="management-skip-link sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[70] focus:rounded-md focus:bg-[var(--app-surface)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--app-text)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--app-accent)]"
+        >
+          跳到主要内容
+        </a>
+        <ManagementWorkspaceMarker workspace={workspace} />
         <AdminWorkspaceSidebar
           role={navigationRole}
           workspaceLabel={workspaceName}
@@ -115,7 +119,6 @@ export async function ManagementDashboardLayout({
             roleLabel={getAdminRoleLabel(navigationRole)}
             userName={userName}
             dashboardBasePath={dashboardBasePath}
-            homePath={managementHomePath}
           />
           <main id="management-main-content" tabIndex={-1} className="management-content min-h-0 min-w-0 flex-1 scroll-mt-16">
             <div className="management-content-frame" data-dashboard-canvas="management">

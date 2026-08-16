@@ -54,16 +54,16 @@ export default function PageContainer({
   const hasHeader = Boolean(pageTitle || pageHeaderAction);
 
   return (
-    <div className={cn("flex w-full flex-1 flex-col px-4 pb-5 md:px-6", className)}>
+    <div className={cn("page-container flex w-full flex-1 flex-col px-4 pb-5 md:px-6", className)}>
       {hasHeader && (
-        <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="page-container-header mb-4 flex items-start justify-between gap-4">
           {pageTitle ? (
             <div className="min-w-0">
-              <h1 className="text-xl font-semibold tracking-tight text-[var(--app-text)]">
+              <h1 className="page-container-title text-xl font-semibold tracking-tight text-[var(--app-text)]">
                 {pageTitle}
               </h1>
               {pageDescription && (
-                <p className="mt-1 text-xs leading-5 text-[var(--app-muted)]">
+                <p className="page-container-description mt-1 text-xs leading-5 text-[var(--app-muted)]">
                   {pageDescription}
                 </p>
               )}
@@ -74,7 +74,7 @@ export default function PageContainer({
           {pageHeaderAction && <div className="shrink-0">{pageHeaderAction}</div>}
         </div>
       )}
-      <div className={cn("min-w-0 flex-1", contentClassName)}>
+      <div className={cn("page-container-content min-w-0 flex-1", contentClassName)}>
         {isLoading ? (loadingFallback ?? <PageSkeleton />) : children}
       </div>
     </div>

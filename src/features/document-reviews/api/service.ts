@@ -211,7 +211,7 @@ export async function getDocumentReviewManagementData(): Promise<DocumentReviewM
     role: access.role,
     tenantId,
     dashboardBasePath: access.dashboardBasePath,
-    canReviewApplications: true,
+    canReviewApplications: access.canManage,
     applications,
     overview: [],
     hasError: false,

@@ -1,8 +1,14 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { UserRound } from "lucide-react";
 
 import { AccountManagementActions } from "@/app/dashboard/admin/accounts/AccountCard";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementPage,
+} from "@/components/layout/management-page";
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { MEMBERSHIP_TIER_LABELS, normalizeMembershipTier } from "@/lib/student-permissions";
 import { getAccountDetail } from "../api/service";
 import { ROLE_LABELS, STATUS_LABELS } from "../constants/account-options";
@@ -38,26 +44,77 @@ export default async function AccountViewPage({ profileId }: { profileId: string
   const { profile } = result;
   const actorNames = Object.fromEntries(result.actorNames);
   const lowerEducation = ["high_school", "secondary_vocational", "technical_school"].includes(profile.education_level ?? "");
+  const dashboardBasePath = getDashboardBasePath();
+  const roleLabel = ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role;
+  const statusLabel = STATUS_LABELS[profile.status] ?? profile.status;
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href="./" className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]">← 返回账号管理</Link>
+    <ManagementPage
+      eyebrow="账号详情"
+      title={result.displayName}
+      description="查看账号基础资料、教育与能力信息、状态时间线，以及当前管理范围内的操作记录。"
+      icon={UserRound}
+      meta={
+        <>
+          <span>{roleLabel}</span>
+          <span>{statusLabel}</span>
+        </>
+      }
+      action={
+        <>
+          <Link
+            href={scopeDashboardPath("/dashboard/admin/accounts", dashboardBasePath)}
+            className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
+          >
+            返回账号管理
+          </Link>
         <AccountManagementActions profile={profile} viewerRole={result.viewerRole} accountScope={result.scope} />
-      </div>
+        </>
+      }
+    >
 
-      <TableSection minWidth="980px">
-        <thead><tr><HeaderCell>头像</HeaderCell><HeaderCell>姓名</HeaderCell><HeaderCell>登录账号</HeaderCell><HeaderCell>角色</HeaderCell><HeaderCell>状态</HeaderCell><HeaderCell>会员档位</HeaderCell><HeaderCell>资料完成度</HeaderCell></tr></thead>
-        <tbody><tr>
-          <DataCell><span className="flex size-11 items-center justify-center rounded-full bg-[var(--app-accent-soft)] bg-cover bg-center font-semibold text-[var(--app-accent)]" style={result.avatarUrl ? { backgroundImage: `url(${result.avatarUrl})`, color: "transparent" } : undefined}>{result.displayName.slice(0, 1)}</span></DataCell>
-          <DataCell strong>{result.displayName}</DataCell>
-          <DataCell>{profile.login_id || profile.email || `账号 …${profile.id.slice(-8)}`}</DataCell>
-          <DataCell>{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</DataCell>
-          <DataCell>{STATUS_LABELS[profile.status] ?? profile.status}</DataCell>
-          <DataCell>{profile.role === "student" ? MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)] : "—"}</DataCell>
-          <DataCell strong>{result.completionPercent}%</DataCell>
-        </tr></tbody>
-      </TableSection>
+      <ManagementMetricStrip
+        label="账号概况"
+        items={[
+          {
+            label: "登录账号",
+            value: (
+              <span className="flex min-w-0 items-center gap-2.5">
+                <span
+                  className="size-8 shrink-0 rounded-full bg-[var(--app-accent-soft)] bg-cover bg-center text-center text-xs leading-8 text-[var(--app-accent)]"
+                  style={
+                    result.avatarUrl
+                      ? {
+                          backgroundImage: `url(${result.avatarUrl})`,
+                          color: "transparent",
+                        }
+                      : undefined
+                  }
+                >
+                  {result.displayName.slice(0, 1)}
+                </span>
+                <span className="truncate text-sm">
+                  {profile.login_id ||
+                    profile.email ||
+                    `账号 …${profile.id.slice(-8)}`}
+                </span>
+              </span>
+            ),
+          },
+          { label: "角色", value: roleLabel },
+          { label: "状态", value: statusLabel },
+          {
+            label: "会员档位",
+            value:
+              profile.role === "student"
+                ? MEMBERSHIP_TIER_LABELS[
+                    normalizeMembershipTier(profile.membership_tier)
+                  ]
+                : "—",
+          },
+          { label: "资料完成度", value: `${result.completionPercent}%` },
+        ]}
+      />
 
       <TableSection title="基本信息" minWidth="900px">
         <thead><tr><HeaderCell>电子邮箱</HeaderCell><HeaderCell>性别</HeaderCell><HeaderCell>出生日期</HeaderCell><HeaderCell>所在地区</HeaderCell><HeaderCell>工作经历</HeaderCell></tr></thead>
@@ -104,7 +161,7 @@ export default async function AccountViewPage({ profileId }: { profileId: string
       <div className="flex justify-end">
         <AccountDetailActivityDialog logs={result.auditLogs} actorNames={actorNames} />
       </div>
-    </div>
+    </ManagementPage>
   );
 }
 

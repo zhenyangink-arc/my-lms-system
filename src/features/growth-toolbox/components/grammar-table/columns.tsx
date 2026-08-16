@@ -34,7 +34,11 @@ function audioKeys(item: GrowthToolboxGrammarItem) {
   ].filter(Boolean);
 }
 
-export const growthToolboxGrammarColumns: ColumnDef<GrowthToolboxGrammarItem>[] = [
+export function getGrowthToolboxGrammarColumns(
+  studentAppId: string,
+  canManage: boolean,
+): ColumnDef<GrowthToolboxGrammarItem>[] {
+  return [
   {
     accessorKey: "title",
     header: sortableHeader("语法名称"),
@@ -131,6 +135,11 @@ export const growthToolboxGrammarColumns: ColumnDef<GrowthToolboxGrammarItem>[] 
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="block text-right">操作</span>,
-    cell: ({ row }) => <GrammarCellAction item={row.original} />,
+    cell: ({ row }) => canManage ? (
+      <GrammarCellAction studentAppId={studentAppId} item={row.original} />
+    ) : (
+      <span className="block text-right text-[11px] text-[var(--app-muted)]">只读</span>
+    ),
   },
-];
+  ];
+}

@@ -1,11 +1,16 @@
 "use client";
 
-import type { ComponentType } from "react";
+import {
+  useCallback,
+  useEffect,
+  useState,
+  useSyncExternalStore,
+  type ComponentType,
+} from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   Award,
-  BarChart3,
   BookOpen,
   Building2,
   ClipboardList,
@@ -16,11 +21,21 @@ import {
   LayoutDashboard,
   Library,
   Megaphone,
+  Menu,
   MessageSquare,
   PanelsTopLeft,
+  UserRound,
   ShieldCheck,
-  Wrench,
+  Target,
 } from "lucide-react";
+
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+} from "@/components/ui/sheet";
 
 import {
   type MembershipTier,
@@ -32,10 +47,20 @@ import {
 } from "@/lib/dashboard-path";
 import {
   getStudentAppDefinition,
+  getStudentPortalPathFromWorkspace,
   type StudentAppSlug,
 } from "@/lib/student-apps";
+import {
+  DEFAULT_PRACTICE_SECTION,
+  getPracticeDashboardPath,
+  getPracticeMemoryKey,
+  getPracticeSectionFromDashboardPath,
+  isPracticeSection,
+} from "@/lib/practice-navigation-memory";
+import { LogoutButton } from "./LogoutButton";
 
 type Props = {
+  studentId?: string;
   userRole: string;
   membershipTier: MembershipTier;
   canAccessAnnouncements: boolean;
@@ -61,14 +86,18 @@ type NavGroup = {
 
 const learningGroups: NavGroup[] = [
   {
-    label: "学习成长",
+    label: "学习",
     items: [
       { label: "成长首页", href: "/dashboard", icon: LayoutDashboard },
       { label: "韩语课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true },
-      { label: "深化学习", href: "/dashboard/progress", icon: BarChart3, requiresStudentSectionAccess: true },
-      { label: "成长工具箱", href: "/dashboard/toolbox", icon: Wrench, requiresStudentSectionAccess: true },
-      { label: "作业与考试", href: "/dashboard/assignments", icon: ClipboardList, requiresStudentSectionAccess: true, studentFeature: "learning_assignments" },
+      { label: "巩固中心", href: "/dashboard/practice", icon: Target, requiresStudentSectionAccess: true },
+      { label: "学习任务", href: "/dashboard/assignments", icon: ClipboardList, requiresStudentSectionAccess: true, studentFeature: "learning_assignments" },
       { label: "会话练习", href: "/dashboard/conversation-practice", icon: MessageSquare, requiresStudentSectionAccess: true, studentFeature: "conversation_course" },
+    ],
+  },
+  {
+    label: "成长记录",
+    items: [
       { label: "我的成绩", href: "/dashboard/grades", icon: Award, requiresStudentSectionAccess: true },
       { label: "学习记录", href: "/dashboard/records", icon: History, requiresStudentSectionAccess: true },
       { label: "资料库", href: "/dashboard/library", icon: Library, requiresStudentSectionAccess: true },
@@ -95,6 +124,7 @@ const studyAbroadGroups: NavGroup[] = [
     label: "留学服务",
     items: [
       { label: "服务首页", href: "/dashboard", icon: LayoutDashboard },
+      { label: "留学课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true },
       { label: "目标大学", href: "/dashboard/universities", icon: Building2, requiresStudentSectionAccess: true },
       { label: "申请材料", href: "/dashboard/documents", icon: FileText, requiresStudentSectionAccess: true },
       { label: "签证准备", href: "/dashboard/visa", icon: ShieldCheck, requiresStudentSectionAccess: true },
@@ -108,6 +138,13 @@ const studyAbroadGroups: NavGroup[] = [
     ],
   },
 ];
+
+const accountGroup: NavGroup = {
+  label: "账户",
+  items: [
+    { label: "个人资料", href: "/dashboard/profile", icon: UserRound },
+  ],
+};
 
 function getStudentAppGroups(studentAppSlug?: StudentAppSlug): NavGroup[] {
   if (studentAppSlug === "study-abroad") return studyAbroadGroups;
@@ -137,6 +174,8 @@ const adminRoles = new Set([
   "tenant_operator",
 ]);
 
+const PRACTICE_MEMORY_EVENT = "student-practice-memory-change";
+
 function isActive(pathname: string, href: string) {
   return href === "/dashboard"
     ? pathname === href
@@ -144,16 +183,87 @@ function isActive(pathname: string, href: string) {
 }
 
 export function StudentSystemSidebar({
+  studentId,
   userRole,
   membershipTier,
   canAccessAnnouncements,
   dashboardBasePath,
   studentAppSlug,
 }: Props) {
+  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = normalizeDashboardPathname(usePathname());
+  const currentPracticeSection = getPracticeSectionFromDashboardPath(pathname);
+  const studentPortalHref = getStudentPortalPathFromWorkspace(dashboardBasePath);
   const isAdmin = adminRoles.has(userRole);
   const isTeacher = userRole === "teacher";
   const isAudit = userRole === "platform_super_admin" || userRole === "platform_course_inspector";
+  const practiceMemoryKey =
+    studentId && studentAppSlug === "korean"
+      ? getPracticeMemoryKey(studentId, dashboardBasePath)
+      : null;
+
+  const subscribeToPracticeMemory = useCallback(
+    (onStoreChange: () => void) => {
+      if (!practiceMemoryKey) return () => {};
+
+      const handleStorage = (event: StorageEvent) => {
+        if (!event.key || event.key === practiceMemoryKey) onStoreChange();
+      };
+      window.addEventListener("storage", handleStorage);
+      window.addEventListener(PRACTICE_MEMORY_EVENT, onStoreChange);
+
+      return () => {
+        window.removeEventListener("storage", handleStorage);
+        window.removeEventListener(PRACTICE_MEMORY_EVENT, onStoreChange);
+      };
+    },
+    [practiceMemoryKey],
+  );
+
+  const getPracticeMemorySnapshot = useCallback(() => {
+    if (!practiceMemoryKey) return DEFAULT_PRACTICE_SECTION;
+
+    try {
+      const remembered = window.localStorage.getItem(practiceMemoryKey);
+      return isPracticeSection(remembered)
+        ? remembered
+        : DEFAULT_PRACTICE_SECTION;
+    } catch {
+      return DEFAULT_PRACTICE_SECTION;
+    }
+  }, [practiceMemoryKey]);
+
+  const rememberedPracticeSection = useSyncExternalStore(
+    subscribeToPracticeMemory,
+    getPracticeMemorySnapshot,
+    () => DEFAULT_PRACTICE_SECTION,
+  );
+
+  useEffect(() => {
+    if (!practiceMemoryKey || !currentPracticeSection) return;
+
+    try {
+      if (
+        window.localStorage.getItem(practiceMemoryKey) !==
+        currentPracticeSection
+      ) {
+        window.localStorage.setItem(
+          practiceMemoryKey,
+          currentPracticeSection,
+        );
+        window.dispatchEvent(new Event(PRACTICE_MEMORY_EVENT));
+      }
+    } catch {
+      // 本地存储不可用时保持课程巩固作为稳定默认入口。
+    }
+  }, [currentPracticeSection, practiceMemoryKey]);
+
+  const practiceEntryHref = getPracticeDashboardPath(
+    currentPracticeSection ?? rememberedPracticeSection,
+  );
+
+  const resolveItemHref = (item: NavItem) =>
+    item.href === "/dashboard/practice" ? practiceEntryHref : item.href;
 
   const personalize = (item: NavItem): NavItem => {
     if (isAudit && item.href === "/dashboard/courses") {
@@ -176,7 +286,7 @@ export function StudentSystemSidebar({
     return item;
   };
 
-  const groups = getStudentAppGroups(studentAppSlug);
+  const groups = [...getStudentAppGroups(studentAppSlug), accountGroup];
   const visibleGroups = groups
     .filter((group) => !group.adminOnly || isAdmin || (isTeacher && group.items.some((item) => item.teacherVisible)))
     .map((group) => ({
@@ -189,6 +299,22 @@ export function StudentSystemSidebar({
         )
         .map(personalize),
     }));
+  const visibleItems = visibleGroups.flatMap((group) => group.items);
+  const mobilePriorityHrefs =
+    studentAppSlug === "study-abroad"
+      ? ["/dashboard", "/dashboard/courses", "/dashboard/universities"]
+      : studentAppSlug === "korean" || !studentAppSlug
+        ? ["/dashboard", "/dashboard/courses", "/dashboard/practice"]
+        : ["/dashboard"];
+  const mobilePrimaryItems = mobilePriorityHrefs
+    .map((href) => visibleItems.find((item) => item.href === href))
+    .filter((item): item is NavItem => Boolean(item));
+  const mobileMoreItems = visibleItems.filter(
+    (item) => !mobilePrimaryItems.some((primaryItem) => primaryItem.href === item.href),
+  );
+  const mobileMoreHasCurrent = mobileMoreItems.some((item) =>
+    isActive(pathname, item.href),
+  );
 
   const renderLink = (item: NavItem) => {
     const Icon = item.icon;
@@ -197,7 +323,7 @@ export function StudentSystemSidebar({
     return (
       <Link
         key={item.href}
-        href={scopeDashboardPath(item.href, dashboardBasePath)}
+        href={scopeDashboardPath(resolveItemHref(item), dashboardBasePath)}
         aria-current={selected ? "page" : undefined}
         data-student-operation={item.requiresStudentSectionAccess ? "true" : undefined}
         data-permission={item.requiresStudentSectionAccess ? (item.studentFeature ?? "dashboard_section") : undefined}
@@ -240,6 +366,104 @@ export function StudentSystemSidebar({
           学习服务正常
         </div>
       </aside>
+
+      <nav className="student-mobile-navigation md:hidden" aria-label="学生端快捷导航">
+        <Link
+          href={studentPortalHref}
+          className="student-mobile-navigation-item"
+          aria-label="返回应用中心"
+        >
+          <PanelsTopLeft size={20} aria-hidden={true} />
+          <span>应用</span>
+        </Link>
+
+        {mobilePrimaryItems.map((item) => {
+          const Icon = item.icon;
+          const selected = isActive(pathname, item.href);
+
+          return (
+            <Link
+              key={item.href}
+              href={scopeDashboardPath(resolveItemHref(item), dashboardBasePath)}
+              aria-current={selected ? "page" : undefined}
+              data-student-operation={item.requiresStudentSectionAccess ? "true" : undefined}
+              data-permission={item.requiresStudentSectionAccess ? (item.studentFeature ?? "dashboard_section") : undefined}
+              className="student-mobile-navigation-item"
+            >
+              <Icon size={20} aria-hidden={true} />
+              <span>{item.label.replace("韩语", "")}</span>
+            </Link>
+          );
+        })}
+
+        {mobileMoreItems.length > 0 && (
+          <button
+            type="button"
+            className="student-mobile-navigation-item"
+            onClick={() => setMobileOpen(true)}
+            aria-label="打开全部学习功能"
+            aria-haspopup="dialog"
+            aria-expanded={mobileOpen}
+            aria-controls="student-mobile-navigation-sheet"
+            data-active={mobileMoreHasCurrent ? "true" : undefined}
+          >
+            <Menu size={20} aria-hidden={true} />
+            <span>更多</span>
+          </button>
+        )}
+      </nav>
+
+      <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+        <SheetContent
+          id="student-mobile-navigation-sheet"
+          side="bottom"
+          className="student-mobile-navigation-sheet max-h-[min(78dvh,680px)] overflow-hidden rounded-t-[24px] border-[var(--app-border)] bg-[var(--app-card-bg)] text-[var(--app-text)] md:hidden"
+        >
+          <SheetHeader className="border-b border-[var(--app-border)] px-5 pb-4 pt-5 text-left">
+            <SheetTitle className="text-lg font-bold text-[var(--app-text)]">
+              全部功能
+            </SheetTitle>
+            <SheetDescription className="text-sm text-[var(--app-muted)]">
+              选择要进入的学习与服务页面
+            </SheetDescription>
+          </SheetHeader>
+
+          <nav className="min-h-0 overflow-y-auto px-4 pb-[calc(16px+env(safe-area-inset-bottom))]" aria-label="全部学生功能">
+            {visibleGroups.map((group) => (
+              <section key={group.label} className="py-3" aria-labelledby={`mobile-nav-${group.label}`}>
+                <h2 id={`mobile-nav-${group.label}`} className="px-2 pb-2 text-xs font-semibold tracking-wide text-[var(--app-muted)]">
+                  {group.label}
+                </h2>
+                <div className="grid grid-cols-2 gap-2">
+                  {group.items.map((item) => {
+                    const Icon = item.icon;
+                    const selected = isActive(pathname, item.href);
+
+                    return (
+                      <Link
+                        key={item.href}
+                        href={scopeDashboardPath(resolveItemHref(item), dashboardBasePath)}
+                        onClick={() => setMobileOpen(false)}
+                        aria-current={selected ? "page" : undefined}
+                        data-student-operation={item.requiresStudentSectionAccess ? "true" : undefined}
+                        data-permission={item.requiresStudentSectionAccess ? (item.studentFeature ?? "dashboard_section") : undefined}
+                        className="student-mobile-navigation-sheet-item"
+                      >
+                        <Icon size={20} aria-hidden={true} />
+                        <span>{item.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </section>
+            ))}
+
+            <div className="border-t border-[var(--app-border)] pt-3">
+              <LogoutButton appearance="sheet" />
+            </div>
+          </nav>
+        </SheetContent>
+      </Sheet>
     </>
   );
 }

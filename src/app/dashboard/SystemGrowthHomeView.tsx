@@ -6,12 +6,14 @@ import {
   BookText,
   CalendarDays,
   CheckCircle2,
-  Clock3,
   Flame,
+  Headphones,
+  Mic,
   Play,
+  Shapes,
   Sparkles,
   Target,
-  TriangleAlert,
+  Trophy,
 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
@@ -22,9 +24,9 @@ import type {
   GrowthReminderItem,
   GrowthWeekActivityDay,
 } from "./GrowthHomeView";
-import { MonthlyStudyDialog } from "./MonthlyStudyDialog";
+import { StudentStudyTrendPanel } from "./StudentStudyTrendPanel";
 
-type StudyDialogData = {
+type StudyRangeData = {
   label: string;
   values: number[];
   tips: string[];
@@ -57,8 +59,8 @@ type Props = {
   toolboxHref: string;
   vocabularyHref: string;
   recordsHref: string;
-  monthStudy: StudyDialogData;
-  yearStudy: StudyDialogData;
+  monthStudy: StudyRangeData;
+  yearStudy: StudyRangeData;
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -101,18 +103,21 @@ function SystemProgress({ value, label }: { value: number; label: string }) {
   return (
     <div>
       <div className="flex items-center justify-between gap-3 text-xs font-semibold">
-        <span className="student-system-muted">{label}</span>
+        <span className="app-muted-text">{label}</span>
         <span className="tabular-nums">{safeValue}%</span>
       </div>
       <div
-        className="student-system-progress mt-2"
+        className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--app-border-soft)]"
         role="progressbar"
         aria-label={`${label} ${safeValue}%`}
         aria-valuemin={0}
         aria-valuemax={100}
         aria-valuenow={safeValue}
       >
-        <span style={{ width: `${safeValue}%` }} />
+        <span
+          className="block h-full rounded-full bg-[linear-gradient(90deg,#0a84ff,#4aa2ff)]"
+          style={{ width: `${safeValue}%` }}
+        />
       </div>
     </div>
   );
@@ -145,214 +150,262 @@ export function SystemGrowthHomeView({
   monthStudy,
   yearStudy,
 }: Props) {
-  const maxWeeklyMinutes = Math.max(1, ...weekActivityDays.map((day) => day.minutes));
-  const visibleCourses = courseProgressList
-    .filter(
-      (course): course is GrowthCourseProgressItem & { href: string } =>
-        Boolean(course.href)
-    )
-    .slice(0, 3);
+  const visibleCourses = courseProgressList.slice(0, 3);
+  const secondaryRecentActivity = hero
+    ? recentActivity.slice(1, 4)
+    : recentActivity.slice(0, 3);
   const primaryReminder = reminders[0] ?? null;
-  const bestStudyDay = [...weekActivityDays].sort((a, b) => b.minutes - a.minutes)[0];
-  const weeklyGoalPercent = Math.min(100, Math.round((recentSevenDayActiveDays / 5) * 100));
+  const weeklyGoalPercent = Math.min(
+    100,
+    Math.round((recentSevenDayActiveDays / 5) * 100),
+  );
 
   const metrics = [
     {
-      label: "今日有效学习",
-      value: formatMinutes(todayStudyMinutes),
-      note: todayStudyMinutes > 0 ? "已计入学习档案" : "完成一次学习后开始记录",
-      icon: Clock3,
-    },
-    {
-      label: "连续学习",
-      value: `${streakDays} 天`,
-      note: streakDays > 0 ? "保持稳定节奏" : "今天可以开始连续记录",
-      icon: Flame,
-    },
-    {
       label: "正在学习",
       value: `${inProgressLessonsCount} 个课时`,
-      note: `累计完成 ${completedLessonsCount} 个课时`,
+      note: inProgressLessonsCount > 0 ? "从上次位置继续即可" : "选择一节新课开始学习",
       icon: BookOpen,
+      color: "var(--app-accent)",
+      soft: "var(--app-accent-soft)",
+    },
+    {
+      label: "累计完成",
+      value: `${completedLessonsCount} 个课时`,
+      note: "来自课程学习进度",
+      icon: Trophy,
+      color: "var(--app-success)",
+      soft: "var(--app-success-soft)",
+    },
+    {
+      label: "本周完成",
+      value: `${thisWeekCompletedCount} 个课时`,
+      note: "按首尔时间周一重新统计",
+      icon: CheckCircle2,
+      color: "var(--app-secondary)",
+      soft: "var(--app-secondary-soft)",
     },
     {
       label: "本周目标",
       value: `${weeklyGoalPercent}%`,
-      note: `本周完成 ${thisWeekCompletedCount} 个课时`,
+      note: `目标每周学习 5 天，已完成 ${recentSevenDayActiveDays} 天`,
       icon: Target,
+      color: "var(--app-warm)",
+      soft: "var(--app-warm-soft)",
     },
   ];
 
   const reminderContent = primaryReminder ? (
-    <span className="student-system-alert-content">
-      <span className="student-system-alert-icon">
-        {primaryReminder.kind === "teacher_reply" ? (
-          <BellRing size={18} aria-hidden="true" />
-        ) : (
-          <TriangleAlert size={18} aria-hidden="true" />
-        )}
+    <span className="flex min-h-16 items-center gap-3 px-4 py-3">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent)]">
+        <BellRing size={18} aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
-        <strong className="block truncate">{primaryReminder.title}</strong>
-        <span className="student-system-muted mt-0.5 block truncate text-sm">
+        <strong className="block truncate text-sm font-bold">{primaryReminder.title}</strong>
+        <span className="app-muted-text mt-1 block truncate text-xs font-medium">
           {primaryReminder.subtitle}
-          {reminders.length > 1 ? `，另有 ${reminders.length - 1} 项需要关注` : ""}
+          {reminders.length > 1 ? `，另有 ${reminders.length - 1} 条老师回复` : ""}
         </span>
       </span>
-      <span className="student-system-alert-action">
-        查看详情
+      <span className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl bg-[var(--app-accent)] px-3 text-xs font-semibold text-white">
+        查看回复
         <ArrowRight size={14} aria-hidden="true" />
       </span>
     </span>
   ) : null;
 
+  const studyRanges = [
+    {
+      id: "week" as const,
+      label: "近 7 天",
+      periodLabel: "最近 7 天",
+      values: weekActivityDays.map((day) => day.minutes),
+      axisLabels: weekActivityDays.map((day) => formatWeekday(day.dateString)),
+      tips: weekActivityDays.map(
+        (day) => `${formatShortDate(day.dateString)} · ${formatMinutes(day.minutes)} · 完成 ${day.completedCount} 个课时`,
+      ),
+    },
+    {
+      id: "month" as const,
+      label: "本月",
+      periodLabel: monthStudy.label,
+      values: monthStudy.values,
+      axisLabels: monthStudy.values.map((_, index) => `${index + 1}日`),
+      tips: monthStudy.tips,
+    },
+    {
+      id: "year" as const,
+      label: "今年",
+      periodLabel: yearStudy.label,
+      values: yearStudy.values,
+      axisLabels: yearStudy.values.map((_, index) => `${index + 1}月`),
+      tips: yearStudy.tips,
+    },
+  ];
+
+  const practiceEntries = [
+    {
+      label: "单词练习",
+      description: vocabularyThisWeekMinutes > 0
+        ? `本周已练习 ${vocabularyThisWeekMinutes} 分钟`
+        : "核心词语与语境搭配",
+      href: vocabularyHref,
+      icon: BookText,
+      color: "var(--app-accent)",
+      soft: "var(--app-accent-soft)",
+    },
+    {
+      label: "口语练习",
+      description: "情境表达与朗读模仿",
+      href: `${toolboxHref}/speaking`,
+      icon: Mic,
+      color: "var(--app-warm)",
+      soft: "var(--app-warm-soft)",
+    },
+    {
+      label: "语法练习",
+      description: "句型结构与语言运用",
+      href: `${toolboxHref}/grammar`,
+      icon: Shapes,
+      color: "var(--app-secondary)",
+      soft: "var(--app-secondary-soft)",
+    },
+    {
+      label: "听力练习",
+      description: "听音辨义与关键信息",
+      href: `${toolboxHref}/listening`,
+      icon: Headphones,
+      color: "var(--app-success)",
+      soft: "var(--app-success-soft)",
+    },
+  ];
+
   return (
     <div className="software-growth-home px-4 pb-10 pt-4 sm:px-6 sm:pt-5 xl:px-7">
       <h1 className="sr-only">成长首页</h1>
 
-      {primaryReminder && reminderContent ? (
+      <section className="student-system-welcome" aria-labelledby="growth-welcome-title">
+        <div className="student-system-welcome-main">
+          <span className="student-system-welcome-icon" aria-hidden="true">
+            <Sparkles size={20} />
+          </span>
+          <div className="min-w-0">
+            <span className="student-system-welcome-eyebrow">今日学习</span>
+            <h2 id="growth-welcome-title">{greeting}，{studentName}</h2>
+            <p>
+              {todayStudyMinutes > 0
+                ? `今天已留下 ${formatMinutes(todayStudyMinutes)} 的有效学习记录。`
+                : "从当前课程继续，今天的学习记录会自动汇总。"}
+            </p>
+          </div>
+        </div>
+
+        <div className="student-system-welcome-summary">
+          <span className="student-system-welcome-status">
+            <CheckCircle2 size={17} aria-hidden="true" />
+            <span>
+              <small>学习节奏</small>
+              <strong>{recentSevenDayStudyMinutes > 0 ? "持续积累中" : "等待开始"}</strong>
+            </span>
+          </span>
+          <span className="student-system-welcome-streak">
+            <Flame size={14} aria-hidden="true" />
+            {streakDays > 0 ? `连续学习 ${streakDays} 天` : "今天开始积累"}
+          </span>
+        </div>
+      </section>
+
+      {primaryReminder && reminderContent && (
         primaryReminder.href ? (
           primaryReminder.kind === "teacher_reply" ? (
             <form
               action={scopeDashboardPath(primaryReminder.href, dashboardBasePath)}
               method="post"
-              className="student-system-alert"
+              className="app-card mt-3 overflow-hidden rounded-2xl border"
             >
-              <button type="submit" className="block w-full text-left">
+              <button type="submit" className="block w-full cursor-pointer text-left">
                 {reminderContent}
               </button>
             </form>
           ) : (
             <Link
               href={scopeDashboardPath(primaryReminder.href, dashboardBasePath)}
-              className="student-system-alert block"
+              className="app-card mt-3 block overflow-hidden rounded-2xl border"
             >
               {reminderContent}
             </Link>
           )
         ) : (
-          <div className="student-system-alert">{reminderContent}</div>
+          <div className="app-card mt-3 overflow-hidden rounded-2xl border">{reminderContent}</div>
         )
-      ) : (
-        <section className="student-system-welcome" aria-labelledby="growth-welcome-title">
-          <div className="student-system-welcome-main">
-            <span className="student-system-welcome-icon" aria-hidden="true">
-              <Sparkles size={20} />
-            </span>
-            <div className="min-w-0">
-              <span className="student-system-welcome-eyebrow">今日学习</span>
-              <h2 id="growth-welcome-title">{greeting}，{studentName}</h2>
-              <p>今天没有待处理事项，可以专心完成当前课程。</p>
-            </div>
-          </div>
-
-          <div className="student-system-welcome-summary">
-            <span className="student-system-welcome-status">
-              <CheckCircle2 size={17} aria-hidden="true" />
-              <span>
-                <small>待处理事项</small>
-                <strong>全部完成</strong>
-              </span>
-            </span>
-            <span className="student-system-welcome-streak">
-              <Flame size={14} aria-hidden="true" />
-              {streakDays > 0 ? `连续学习 ${streakDays} 天` : "今天开始积累"}
-            </span>
-          </div>
-        </section>
       )}
 
-      <section className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-labelledby="growth-metrics-title">
-        <h2 id="growth-metrics-title" className="sr-only">学习数据概览</h2>
-        {metrics.map((metric) => {
-          const Icon = metric.icon;
-          return (
-            <article key={metric.label} className="student-system-metric">
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className="student-system-muted text-xs font-semibold">{metric.label}</p>
-                  <p className="mt-2 text-xl font-bold tracking-tight tabular-nums sm:text-2xl">{metric.value}</p>
-                </div>
-                <span className="student-system-metric-icon">
-                  <Icon size={17} aria-hidden="true" />
-                </span>
-              </div>
-              <p className="student-system-muted mt-3 truncate text-[11px]">{metric.note}</p>
-            </article>
-          );
-        })}
-      </section>
-
       <div className="mt-4 grid items-stretch gap-4 xl:grid-cols-12">
-        <section className="student-system-card flex flex-col xl:col-span-5" aria-labelledby="continue-learning-title">
-          <header className="student-system-card-header">
+        <section className="app-card flex min-w-0 flex-col rounded-2xl border p-5 xl:col-span-5" aria-labelledby="continue-learning-title">
+          <header className="flex items-start justify-between gap-3">
             <div>
-              <h2 id="continue-learning-title">继续学习</h2>
-              <p>从上次停下的位置继续</p>
+              <h2 id="continue-learning-title" className="text-base font-bold tracking-tight">继续学习</h2>
+              <p className="app-muted-text mt-1 text-xs font-medium">从上次停下的位置继续</p>
             </div>
-            <Link href={coursesHref} className="student-system-text-action">
+            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
               全部课程 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </header>
 
           {hero ? (
-            <div className="student-system-current-course">
+            <div className="app-soft-card mt-4 rounded-xl border p-5">
               <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                <span className="student-system-course-badge">{hero.courseTitle}</span>
-                <span className="student-system-muted">{STATUS_LABELS[hero.status] ?? hero.status}</span>
+                <span className="rounded-full bg-[var(--app-accent-soft)] px-2.5 py-1 text-[var(--app-accent-strong)]">{hero.courseTitle}</span>
+                <span className="app-muted-text">{STATUS_LABELS[hero.status] ?? hero.status}</span>
               </div>
-              <h3>{hero.lessonTitle}</h3>
+              <h3 className="mt-4 text-lg font-bold leading-7 tracking-tight">{hero.lessonTitle}</h3>
               <div className="mt-5">
                 <SystemProgress value={heroLessonProgress} label="当前课时" />
               </div>
               {heroCourseProgress && (
-                <p className="student-system-muted mt-3 text-xs">
+                <p className="app-muted-text mt-3 text-xs font-medium">
                   整门课程 {heroCourseProgress.percent}% · 已完成 {heroCourseProgress.completedCount}/{heroCourseProgress.totalCount} 个课时
                 </p>
               )}
               <div className="mt-5 flex flex-wrap gap-2">
                 {heroHref && (
-                  <Link href={heroHref} className="student-system-primary-button">
+                  <Link href={heroHref} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--app-accent)] px-4 text-xs font-semibold text-white">
                     <Play size={14} fill="currentColor" aria-hidden="true" />
                     {hero.status === "completed" ? "重新学习" : "继续学习"}
                   </Link>
                 )}
-                <Link href={coursesHref} className="student-system-secondary-button">
+                <Link href={coursesHref} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--app-border)] px-4 text-xs font-semibold">
                   课程目录
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="student-system-empty flex-1">
-              <BookOpen size={22} aria-hidden="true" />
-              <h3>从第一门课程开始</h3>
-              <p>选择课程后，这里会显示下一步最适合学习的内容。</p>
-              <Link href={coursesHref} className="student-system-primary-button mt-4">
-                选择课程
-              </Link>
+            <div className="mt-4 flex min-h-52 flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--app-border)] p-6 text-center">
+              <BookOpen size={24} className="text-[var(--app-muted)]" aria-hidden="true" />
+              <h3 className="mt-3 text-sm font-bold">从第一门课程开始</h3>
+              <p className="app-muted-text mt-1 max-w-72 text-xs font-medium leading-5">选择课程后，这里会显示下一步最适合学习的内容。</p>
+              <Link href={coursesHref} className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[var(--app-accent)] px-4 text-xs font-semibold text-white">选择课程</Link>
             </div>
           )}
 
-          {recentActivity.length > 0 && (
-            <div className="student-system-recent-list">
-              {recentActivity.slice(0, 3).map((item) => {
+          {secondaryRecentActivity.length > 0 && (
+            <div className="mt-3 divide-y divide-[var(--app-border-soft)]" aria-label="其他最近学习">
+              {secondaryRecentActivity.map((item) => {
                 const row = (
-                  <span className="student-system-recent-row">
-                    <span className="student-system-recent-state" data-status={item.status} aria-hidden="true" />
+                  <span className="flex min-h-14 items-center gap-3 rounded-xl px-2 py-2 hover:bg-[var(--app-soft-bg)]">
+                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "completed" ? "bg-[var(--app-success)]" : "bg-[var(--app-accent)]"}`} aria-hidden="true" />
                     <span className="min-w-0 flex-1">
-                      <strong className="block truncate">{item.lessonTitle}</strong>
-                      <span className="student-system-muted mt-0.5 block truncate text-xs">{item.courseTitle}</span>
+                      <strong className="block truncate text-xs font-semibold">{item.lessonTitle}</strong>
+                      <span className="app-muted-text mt-1 block truncate text-xs font-medium">{item.courseTitle}</span>
                     </span>
-                    <span className="student-system-muted shrink-0 text-[10px]">
+                    <span className="app-muted-text shrink-0 text-xs font-medium">
                       <LocalDateTime value={item.lastViewedAt} options={DATE_OPTIONS} />
                     </span>
                   </span>
                 );
 
                 return item.href ? (
-                  <Link key={item.lessonId} href={scopeDashboardPath(item.href, dashboardBasePath)}>
-                    {row}
-                  </Link>
+                  <Link key={item.lessonId} href={scopeDashboardPath(item.href, dashboardBasePath)}>{row}</Link>
                 ) : (
                   <div key={item.lessonId}>{row}</div>
                 );
@@ -361,145 +414,129 @@ export function SystemGrowthHomeView({
           )}
         </section>
 
-        <section className="student-system-card xl:col-span-7" aria-labelledby="study-trend-title">
-          <header className="student-system-card-header">
-            <div>
-              <h2 id="study-trend-title">学习趋势与分析</h2>
-              <p>最近 7 天有效学习时间</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <MonthlyStudyDialog
-                monthLabel={monthStudy.label}
-                buttonLabel="月度"
-                dailyMinutes={monthStudy.values}
-                dayTips={monthStudy.tips}
-                totalMinutes={monthStudy.totalMinutes}
-                maxMinutes={monthStudy.maxMinutes}
-              />
-              <MonthlyStudyDialog
-                monthLabel={yearStudy.label}
-                buttonLabel="年度"
-                dailyMinutes={yearStudy.values}
-                dayTips={yearStudy.tips}
-                totalMinutes={yearStudy.totalMinutes}
-                maxMinutes={yearStudy.maxMinutes}
-                xLabelUnit={yearStudy.xLabelUnit}
-              />
-            </div>
-          </header>
-
-          <div
-            className="student-system-week-chart"
-            role="img"
-            aria-label={`最近 7 天有效学习 ${formatMinutes(recentSevenDayStudyMinutes)}，活跃 ${recentSevenDayActiveDays} 天`}
-          >
-            {weekActivityDays.map((day) => {
-              const height = day.minutes > 0
-                ? Math.max(14, (day.minutes / maxWeeklyMinutes) * 100)
-                : 5;
-              return (
-                <div key={day.dateString} className="student-system-chart-column">
-                  <span className="tabular-nums">{day.minutes || "–"}</span>
-                  <div title={`${formatShortDate(day.dateString)} · ${formatMinutes(day.minutes)} · 完成 ${day.completedCount} 个课时`}>
-                    <span style={{ height: `${height}%` }} data-empty={day.minutes === 0 ? "true" : "false"} />
-                  </div>
-                  <time dateTime={day.dateString}>{formatWeekday(day.dateString)}</time>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="student-system-insight-grid">
-            <div>
-              <span>有效学习</span>
-              <strong>{formatMinutes(recentSevenDayStudyMinutes)}</strong>
-            </div>
-            <div>
-              <span>活跃天数</span>
-              <strong>{recentSevenDayActiveDays} 天</strong>
-            </div>
-            <div>
-              <span>最投入日期</span>
-              <strong>{bestStudyDay?.minutes ? formatShortDate(bestStudyDay.dateString) : "等待记录"}</strong>
-            </div>
-          </div>
-
-          <div className="student-system-analysis-note">
-            <span className="student-system-analysis-icon"><CalendarDays size={17} aria-hidden="true" /></span>
-            <div>
-              <strong>本周学习分析</strong>
-              <p>
+        <section className="app-card min-w-0 rounded-2xl border p-5 xl:col-span-7" aria-labelledby="study-trend-title">
+          <StudentStudyTrendPanel ranges={studyRanges} />
+          <div className="mt-4 flex flex-wrap items-start gap-3 rounded-xl bg-[var(--app-soft-bg)] p-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent-strong)]">
+              <CalendarDays size={17} aria-hidden="true" />
+            </span>
+            <div className="min-w-0 flex-1">
+              <strong className="block text-xs font-semibold">最近 7 天学习建议</strong>
+              <p className="app-muted-text mt-1 text-xs font-medium leading-5">
                 {recentSevenDayStudyMinutes === 0
                   ? "还没有有效学习记录。完成一次短学习后，系统会从真实数据开始分析。"
                   : recentSevenDayActiveDays >= 5
                     ? "学习节奏稳定。建议优先完成正在进行的章节，保持当前连续性。"
-                    : `最近已有 ${recentSevenDayActiveDays} 天有效学习。把学习分散到更多天，比单日集中更容易保持。`}
+                    : `已有 ${recentSevenDayActiveDays} 天有效学习。把学习分散到更多天，比单日集中更容易保持。`}
               </p>
             </div>
-            <Link href={recordsHref} className="student-system-text-action shrink-0">
-              完整分析 <ArrowRight size={14} aria-hidden="true" />
+            <Link href={recordsHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
+              学习记录 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
         </section>
       </div>
 
+      <section className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4" aria-labelledby="growth-metrics-title">
+        <h2 id="growth-metrics-title" className="sr-only">学习数据概览</h2>
+        {metrics.map((metric) => {
+          const Icon = metric.icon;
+          return (
+            <article key={metric.label} className="app-card rounded-2xl border p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="app-muted-text text-xs font-semibold">{metric.label}</p>
+                  <p className="mt-2 text-xl font-black tracking-tight tabular-nums sm:text-2xl">{metric.value}</p>
+                </div>
+                <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ color: metric.color, backgroundColor: metric.soft }}>
+                  <Icon size={17} aria-hidden="true" />
+                </span>
+              </div>
+              <p className="app-muted-text mt-3 text-xs font-medium leading-5">{metric.note}</p>
+            </article>
+          );
+        })}
+      </section>
+
       <div className="mt-4 grid items-stretch gap-4 xl:grid-cols-12">
-        <section className="student-system-card xl:col-span-8" aria-labelledby="course-progress-title">
-          <header className="student-system-card-header">
+        <section className="app-card min-w-0 rounded-2xl border p-5 xl:col-span-8" aria-labelledby="course-progress-title">
+          <header className="flex items-start justify-between gap-3">
             <div>
-              <h2 id="course-progress-title">课程进度</h2>
-              <p>最近学习的课程</p>
+              <h2 id="course-progress-title" className="text-base font-bold tracking-tight">课程进度</h2>
+              <p className="app-muted-text mt-1 text-xs font-medium">最近学习的课程与完成进度</p>
             </div>
-            <Link href={coursesHref} className="student-system-text-action">
+            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
               查看全部 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </header>
 
           {visibleCourses.length > 0 ? (
-            <div className="student-system-course-grid">
-              {visibleCourses.map((course) => (
-                <Link
-                  key={course.courseId}
-                  href={scopeDashboardPath(course.href, dashboardBasePath)}
-                  className="student-system-course-card"
-                >
-                  <span className="student-system-course-icon"><BookOpen size={17} aria-hidden="true" /></span>
-                  <h3>{course.title}</h3>
-                  <p>{course.teacherName ? `${course.teacherName} 老师` : "自主学习课程"}</p>
-                  <SystemProgress value={course.percent} label={`${course.completedCount}/${course.totalCount} 课时`} />
-                </Link>
-              ))}
+            <div className="mt-4 grid gap-3 md:grid-cols-3">
+              {visibleCourses.map((course) => {
+                const content = (
+                  <>
+                    <div className="flex items-start justify-between gap-2">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent-strong)]"><BookOpen size={17} aria-hidden="true" /></span>
+                      {!course.href && (
+                        <span className="rounded-full bg-[var(--app-warm-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--app-warm)]">入口待完善</span>
+                      )}
+                    </div>
+                    <h3 className="mt-3 min-h-10 text-sm font-bold leading-5">{course.title}</h3>
+                    <p className="app-muted-text mb-4 mt-1 truncate text-xs font-medium">
+                      {course.href
+                        ? course.teacherName ? `${course.teacherName} 老师` : "自主学习课程"
+                        : "课程仍保留显示，可从课程目录继续查找"}
+                    </p>
+                    <SystemProgress value={course.percent} label={`${course.completedCount}/${course.totalCount} 课时`} />
+                  </>
+                );
+
+                return (
+                  <Link
+                    key={course.courseId}
+                    href={course.href ? scopeDashboardPath(course.href, dashboardBasePath) : coursesHref}
+                    className="rounded-xl border border-[var(--app-border-soft)] p-4 transition hover:border-[var(--app-accent)] hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                    aria-label={!course.href ? `${course.title}入口待完善，前往课程目录` : undefined}
+                  >
+                    {content}
+                  </Link>
+                );
+              })}
             </div>
           ) : (
-            <div className="student-system-empty">
-              <BookOpen size={22} aria-hidden="true" />
-              <h3>还没有课程进度</h3>
-              <p>进入课程学习后，这里会形成你的课程地图。</p>
+            <div className="mt-4 flex min-h-44 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--app-border)] p-6 text-center">
+              <BookOpen size={24} className="text-[var(--app-muted)]" aria-hidden="true" />
+              <h3 className="mt-3 text-sm font-bold">还没有课程进度</h3>
+              <p className="app-muted-text mt-1 text-xs font-medium">进入课程学习后，这里会形成你的课程地图。</p>
             </div>
           )}
         </section>
 
-        <section className="student-system-card xl:col-span-4" aria-labelledby="growth-tools-title">
-          <header className="student-system-card-header">
-            <div>
-              <h2 id="growth-tools-title">今日练习</h2>
-              <p>用短练习巩固学习成果</p>
-            </div>
+        <section className="app-card min-w-0 rounded-2xl border p-5 xl:col-span-4" aria-labelledby="growth-tools-title">
+          <header>
+            <h2 id="growth-tools-title" className="text-base font-bold tracking-tight">今日练习</h2>
+            <p className="app-muted-text mt-1 text-xs font-medium">四项核心能力都可以直接进入</p>
           </header>
-          <Link href={vocabularyHref} className="student-system-practice-card">
-            <span><BookText size={18} aria-hidden="true" /></span>
-            <div className="min-w-0 flex-1">
-              <strong>单词练习</strong>
-              <p>
-                {vocabularyThisWeekMinutes > 0
-                  ? `本周已练习 ${vocabularyThisWeekMinutes} 分钟`
-                  : "开始一次短练习，巩固本周词汇"}
-              </p>
-            </div>
-            <ArrowRight size={15} aria-hidden="true" />
-          </Link>
-          <Link href={toolboxHref} className="student-system-secondary-button mt-3 w-full">
-            查看全部学习工具
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            {practiceEntries.map((entry) => {
+              const Icon = entry.icon;
+              return (
+                <Link
+                  key={entry.label}
+                  href={entry.href}
+                  className="group min-h-32 rounded-xl border border-[var(--app-border-soft)] p-3 transition hover:border-[var(--app-accent)] hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                >
+                  <span className="flex h-9 w-9 items-center justify-center rounded-full" style={{ color: entry.color, backgroundColor: entry.soft }}>
+                    <Icon size={17} aria-hidden="true" />
+                  </span>
+                  <strong className="mt-3 block text-xs font-bold">{entry.label}</strong>
+                  <p className="app-muted-text mt-1 text-xs font-medium leading-5">{entry.description}</p>
+                </Link>
+              );
+            })}
+          </div>
+          <Link href={toolboxHref} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-xl border border-[var(--app-border)] text-xs font-semibold hover:bg-[var(--app-soft-bg)]">
+            查看全部专项训练 <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </section>
       </div>

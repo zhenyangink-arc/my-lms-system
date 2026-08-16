@@ -15,11 +15,17 @@ const REVIEW_STATUS_OPTIONS = [
 export function GradeReviewAction({
   reviewId,
   response,
+  studentAppId,
 }: {
   reviewId: string;
   response: string;
+  studentAppId?: string;
 }) {
-  const action = resolveGradeReviewAction.bind(null, reviewId);
+  const action = resolveGradeReviewAction.bind(
+    null,
+    reviewId,
+    studentAppId ?? null,
+  );
   const [state, formAction, pending] = useActionState(
     action,
     initialGradeCenterActionState,

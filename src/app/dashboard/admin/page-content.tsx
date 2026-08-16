@@ -1,12 +1,14 @@
+import type { CSSProperties } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
   ArrowRight,
   CheckCircle2,
-  ChevronDown,
+  CircleAlert,
   Clock3,
   PanelsTopLeft,
   ShieldCheck,
+  Sparkles,
 } from "lucide-react";
 
 import { getAnnouncementAccess } from "@/lib/announcements";
@@ -25,7 +27,6 @@ import { getLibraryAccess } from "@/lib/resource-library";
 import { getStudentAssignmentAccess } from "@/lib/student-assignments";
 import { getVisaManagementAccess } from "@/lib/visa-management";
 import {
-  ADMIN_GROUP_LABELS,
   getAdminRoleLabel,
   getVisibleAdminNavigation,
 } from "./admin-navigation";
@@ -81,17 +82,6 @@ const metricToneStyles = [
   { solid: "var(--app-success)", soft: "var(--app-soft-bg)" },
   { solid: "var(--app-warm)", soft: "var(--app-soft-bg)" },
 ] as const;
-
-function VisualCount({ value, color, soft }: { value: number; color: string; soft: string }) {
-  return (
-    <span
-      className="inline-flex min-w-7 justify-center rounded px-1.5 py-0.5 font-semibold tabular-nums"
-      style={value > 0 ? { color, backgroundColor: soft } : { color: "var(--app-muted-text)" }}
-    >
-      {value}
-    </span>
-  );
-}
 
 function emptyCount(): Promise<CountResult> {
   return Promise.resolve({ count: 0, error: null });
@@ -330,14 +320,14 @@ export default async function AdminCenterPage() {
   });
 
   const workItems: WorkItem[] = [
-    ...(gradeAccess.canManage ? [{ label: "成绩复核", description: isPlatformOwner ? "各机构等待处理的成绩复核" : "本机构等待处理的成绩复核", href: "/dashboard/admin/grades", count: isPlatformOwner ? platformPendingGrade : countValue(pendingGradeResult), tone: "blue" as const }] : []),
-    ...(documentReviewAccess.canManage ? [{ label: "资料待审核", description: isPlatformOwner ? "各机构等待审核的申请资料" : "本机构等待审核的申请资料", href: "/dashboard/admin/documents", count: isPlatformOwner ? platformPendingDocuments : countValue(pendingDocumentResult), tone: "orange" as const }] : []),
-    ...(visaAccess.canManage ? [{ label: "签证待跟进", description: isPlatformOwner ? "各机构待处理的签证任务" : "本机构待处理的签证任务", href: "/dashboard/admin/visa", count: isPlatformOwner ? platformPendingVisas : countValue(pendingVisaResult), tone: "violet" as const }] : []),
+    ...(gradeAccess.canManage ? [{ label: "成绩复核", description: isPlatformOwner ? "各机构等待处理的成绩复核" : "本机构等待处理的成绩复核", href: "/dashboard/admin/apps", count: isPlatformOwner ? platformPendingGrade : countValue(pendingGradeResult), tone: "blue" as const }] : []),
+    ...(documentReviewAccess.canManage ? [{ label: "资料待审核", description: isPlatformOwner ? "各机构等待审核的申请资料" : "本机构等待审核的申请资料", href: "/dashboard/admin/apps/study-abroad/documents", count: isPlatformOwner ? platformPendingDocuments : countValue(pendingDocumentResult), tone: "orange" as const }] : []),
+    ...(visaAccess.canManage ? [{ label: "签证待跟进", description: isPlatformOwner ? "各机构待处理的签证任务" : "本机构待处理的签证任务", href: "/dashboard/admin/apps/study-abroad/visa", count: isPlatformOwner ? platformPendingVisas : countValue(pendingVisaResult), tone: "violet" as const }] : []),
     ...(helpAccess.canManage ? [{ label: "帮助工单", description: isPlatformOwner ? "各机构尚未解决的帮助工单" : "本机构待回复或处理中的工单", href: "/dashboard/admin/help", count: isPlatformOwner ? platformOpenHelp : countValue(openHelpResult), tone: "teal" as const }] : []),
-    ...(recordAccess.canManage ? [{ label: "关注记录", description: isPlatformOwner ? "各机构需要关注的学习记录" : "本机构标记为需要关注的记录", href: "/dashboard/admin/records", count: isPlatformOwner ? platformAttentionRecords : countValue(attentionRecordResult), tone: "rose" as const }] : []),
+    ...(recordAccess.canManage ? [{ label: "关注记录", description: isPlatformOwner ? "各机构需要关注的学习记录" : "本机构标记为需要关注的记录", href: "/dashboard/admin/apps", count: isPlatformOwner ? platformAttentionRecords : countValue(attentionRecordResult), tone: "rose" as const }] : []),
     ...(announcementAccess.canAccess ? [{ label: "公告草稿", description: "尚未发布的通知公告", href: "/dashboard/admin/announcements", count: countValue(draftAnnouncementsResult), tone: "sky" as const }] : []),
-    ...(tenantId && isAssignmentManagerRole(role) ? [{ label: "待发布任务", description: "仍处于草稿状态的作业与考试", href: "/dashboard/admin/assignments", count: countValue(draftAssignmentsResult), tone: "indigo" as const }] : []),
-    ...(!tenantId && canManagePlatformContent ? [{ label: "待发布试卷", description: "平台尚未发布的标准试卷", href: "/dashboard/admin/assignments", count: countValue(draftPapersResult), tone: "indigo" as const }] : []),
+    ...(tenantId && isAssignmentManagerRole(role) ? [{ label: "待发布任务", description: "仍处于草稿状态的作业与考试", href: "/dashboard/admin/apps", count: countValue(draftAssignmentsResult), tone: "indigo" as const }] : []),
+    ...(!tenantId && canManagePlatformContent ? [{ label: "待发布试卷", description: "平台尚未发布的标准试卷", href: "/dashboard/admin/apps", count: countValue(draftPapersResult), tone: "indigo" as const }] : []),
   ];
 
   const coreMetrics = isPlatformOwner
@@ -389,18 +379,27 @@ export default async function AdminCenterPage() {
     .filter(([, result]) => Boolean(result.error))
     .map(([label, result]) => ({ label, message: safeErrorMessage(result.error) }));
   const pendingByHref = new Map<string, number>();
-  const toneByHref = new Map<string, WorkItem["tone"]>();
   for (const item of workItems) pendingByHref.set(item.href, (pendingByHref.get(item.href) ?? 0) + item.count);
-  for (const item of workItems) toneByHref.set(item.href, item.tone);
   const workloadTotal = workItems.reduce((sum, item) => sum + item.count, 0);
   const pendingCategoryCount = workItems.filter((item) => item.count > 0).length;
   const clearedCategoryCount = workItems.length - pendingCategoryCount;
   const maxWorkItemCount = Math.max(1, ...workItems.map((item) => item.count));
   const visualWorkItems = [...workItems].sort((left, right) => right.count - left.count);
+  const quickItems = visibleItems
+    .filter((item) => item.href !== "/dashboard/admin" && item.group !== "overview")
+    .sort(
+      (left, right) =>
+        (pendingByHref.get(right.href) ?? 0) -
+        (pendingByHref.get(left.href) ?? 0),
+    )
+    .slice(0, 6);
   const institutionChartRows = institutionRows.slice(0, 6);
   const institutionPendingTotal = (row: InstitutionSummary) => institutionSeries.reduce((sum, series) => sum + row[series.key], 0);
   const maxInstitutionPending = Math.max(1, ...institutionChartRows.map(institutionPendingTotal));
-  const groups = ["teaching", "service", "organization"] as const;
+  const attentionInstitutionCount = institutionRows.filter(
+    (row) => institutionPendingTotal(row) > 0,
+  ).length;
+  const healthyInstitutionCount = institutionRows.length - attentionInstitutionCount;
   const auditRows = (auditResult.data ?? []) as unknown as AuditRow[];
   const recentPermissionActions = auditRows.map((row) => ({
     label: isAssignablePermissionKey(row.permission_key) ? ASSIGNABLE_PERMISSION_LABELS[row.permission_key] : row.permission_key,
@@ -409,110 +408,234 @@ export default async function AdminCenterPage() {
   }));
 
   return (
-    <div data-admin-overview className="mx-auto w-full max-w-[1500px] space-y-3 p-3 sm:p-4">
-      <header className="flex flex-col gap-3 border-b pb-4 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="app-muted-text flex items-center gap-1.5 text-[9px] font-semibold uppercase tracking-[0.14em]"><PanelsTopLeft size={12} />管理驾驶舱</p>
-          <h2 className="mt-2 text-xl font-semibold tracking-tight">管理首页</h2>
+    <div
+      data-admin-overview
+      className="management-home mx-auto w-full max-w-[1500px] space-y-6 px-4 pb-10 pt-7 sm:px-6 lg:px-8"
+    >
+      <header className="management-home-hero">
+        <div className="min-w-0">
+          <p className="management-home-kicker">
+            <PanelsTopLeft size={15} aria-hidden="true" />
+            Platform Control
+          </p>
+          <h1>{isPlatformOwner ? "平台总览" : "管理工作台"}</h1>
+          <p className="management-home-intro">
+            {isPlatformOwner
+              ? "先处理跨机构异常，再进入具体业务。所有数字均按当前权限实时汇总。"
+              : "聚合当前身份需要处理的工作与最常使用的管理入口。"}
+          </p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-[10px]">{isPlatformOwner && <RecentPermissionActionsDialog actions={recentPermissionActions} />}<span className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5"><ShieldCheck size={12} />{getAdminRoleLabel(role)}</span><span className="app-muted-text inline-flex items-center rounded-md border px-2.5 py-1.5">{scopeDescription(globalRole, auth.tenant?.name ?? null)}</span><DataSyncStatusDialog checkedCount={queryChecks.length} issues={syncIssues} /></div>
+
+        <div className="management-home-actions">
+          {isPlatformOwner && (
+            <RecentPermissionActionsDialog actions={recentPermissionActions} />
+          )}
+          <span className="management-home-chip">
+            <ShieldCheck size={15} aria-hidden="true" />
+            {getAdminRoleLabel(role)}
+          </span>
+          <span className="management-home-chip management-home-chip-muted">
+            {scopeDescription(globalRole, auth.tenant?.name ?? null)}
+          </span>
+          <DataSyncStatusDialog
+            checkedCount={queryChecks.length}
+            issues={syncIssues}
+          />
+        </div>
       </header>
 
-      <section className="app-card overflow-hidden rounded-xl border">
-        <div className="grid sm:grid-cols-2 xl:grid-cols-4">
-          {coreMetrics.map(([label, value, description], index) => { const tone = metricToneStyles[index % metricToneStyles.length]; return <div key={String(label)} className={`relative px-4 py-3 ${index > 0 ? "sm:border-l" : ""} ${index > 1 ? "border-t xl:border-t-0" : ""}`} style={{ borderColor: "var(--app-border)", backgroundColor: tone.soft }}><span className="absolute left-4 top-3 size-1.5 rounded-full" style={{ backgroundColor: tone.solid }} /><p className="app-muted-text pl-3 text-[9px]">{label}</p><div className="mt-1 flex items-end justify-between gap-3"><p className="text-xl font-semibold tabular-nums" style={{ color: tone.solid }}>{value}</p><p className="app-muted-text pb-0.5 text-right text-[9px]">{description}</p></div></div>; })}
-        </div>
+      <section className="management-home-metrics" aria-label="平台核心指标">
+        {coreMetrics.map(([label, value, description], index) => {
+          const tone = metricToneStyles[index % metricToneStyles.length];
+          return (
+            <article
+              key={String(label)}
+              className="app-card management-home-metric border"
+              style={{ "--metric-color": tone.solid } as CSSProperties}
+            >
+              <span className="management-home-metric-dot" aria-hidden="true" />
+              <p>{label}</p>
+              <strong>{value}</strong>
+              <small>{description}</small>
+            </article>
+          );
+        })}
       </section>
 
-      <div className={`grid items-start gap-3 ${isPlatformOwner ? "xl:grid-cols-2" : ""}`}>
-      <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex flex-col gap-1 border-b px-4 py-3 sm:flex-row sm:items-end sm:justify-between" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-accent-soft)" }}>
-          <div><h2 className="text-xs font-semibold">工作负载概览</h2></div>
-          <div className="flex items-center gap-3 text-[9px]"><span className="font-semibold text-amber-700">{pendingCategoryCount} 类待处理</span><span className="font-semibold text-emerald-700">{clearedCategoryCount} 类已清空</span></div>
-        </div>
-        <div className="grid xl:grid-cols-[220px_minmax(0,1fr)]">
-          <div className="flex flex-col justify-between border-b p-4 xl:border-b-0 xl:border-r" style={{ borderColor: "var(--app-border)" }}>
-            <div><p className="app-muted-text text-[9px]">待处理总量</p><div className="mt-2 flex items-baseline gap-1"><span className="text-4xl font-semibold tracking-tight tabular-nums">{workloadTotal}</span><span className="app-muted-text text-[10px]">项</span></div></div>
-            <p className={`mt-4 inline-flex w-fit items-center gap-1.5 rounded px-2 py-1 text-[9px] font-semibold ${workloadTotal > 0 ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"}`}>{workloadTotal > 0 ? <Clock3 size={11} /> : <CheckCircle2 size={11} />}{workloadTotal > 0 ? "存在待办，建议优先处理" : "当前工作队列已清空"}</p>
-          </div>
-          <div className="grid gap-x-7 gap-y-3 p-4 lg:grid-cols-2">
-            {visualWorkItems.map((item) => { const tone = workToneStyles[item.tone]; const width = item.count > 0 ? Math.max(7, (item.count / maxWorkItemCount) * 100) : 0; return <Link key={item.label} href={scopeDashboardPath(item.href, dashboardBasePath)} className="group grid grid-cols-[88px_minmax(0,1fr)_32px] items-center gap-2 text-[9px]"><span className="truncate font-semibold group-hover:underline">{item.label}</span><span className="h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}><span className="block h-full rounded-full transition-[width]" style={{ width: `${width}%`, backgroundColor: tone.solid }} /></span><span className="text-right font-semibold tabular-nums" style={{ color: item.count > 0 ? tone.solid : "var(--app-muted-text)" }}>{item.count}</span></Link>; })}
-            {workItems.length === 0 && <p className="app-muted-text col-span-full py-5 text-center text-[9px]">当前身份没有需要处理的工作队列</p>}
-          </div>
-        </div>
-      </section>
-
-      {isPlatformOwner && (
-        <section className="app-card overflow-hidden rounded-xl border">
-          <details open className="group">
-            <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 hover:bg-black/[0.015] [&::-webkit-details-marker]:hidden" style={{ backgroundColor: "var(--app-soft-bg)" }}><span><span className="text-[10px] font-semibold" style={{ color: "var(--app-accent-strong)" }}>机构运行概览</span></span><span className="app-muted-text flex items-center gap-2 text-[9px]">{institutionRows.length} 个机构<ChevronDown size={13} className="transition-transform group-open:rotate-180" /></span></summary>
-            <div className="border-t px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
-              <div className="mb-3 flex flex-wrap items-center justify-between gap-2"><p className="text-[9px] font-semibold">机构待办构成</p><div className="flex flex-wrap gap-3">{institutionSeries.map((series) => <span key={series.key} className="app-muted-text inline-flex items-center gap-1 text-[8px]"><span className="size-1.5 rounded-full" style={{ backgroundColor: series.color }} />{series.label}</span>)}</div></div>
-              <div className="space-y-2.5">{institutionChartRows.map((row) => { const total = institutionPendingTotal(row); const outerWidth = total > 0 ? Math.max(5, (total / maxInstitutionPending) * 100) : 0; return <div key={row.id} className="grid grid-cols-[110px_minmax(0,1fr)_48px] items-center gap-3 text-[9px]"><span className="truncate font-semibold" title={row.name}>{row.name}</span><div className="h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}><div className="flex h-full overflow-hidden rounded-full" style={{ width: `${outerWidth}%` }}>{institutionSeries.map((series) => { const value = row[series.key]; return value > 0 ? <span key={series.key} style={{ width: `${(value / total) * 100}%`, backgroundColor: series.color }} /> : null; })}</div></div><span className={`text-right font-semibold tabular-nums ${total > 0 ? "text-amber-700" : "text-emerald-700"}`}>{total > 0 ? `${total} 项` : "正常"}</span></div>; })}{institutionChartRows.length === 0 && <p className="app-muted-text py-5 text-center text-[9px]">暂无机构负载数据</p>}</div>
+      <div className={`management-home-bento ${isPlatformOwner ? "management-home-bento-owner" : ""}`}>
+        <section className="app-card management-focus-card border">
+          <div className="management-card-heading">
+            <div>
+              <p className="management-section-kicker">Focus</p>
+              <h2>需要你处理</h2>
             </div>
-            <details className="group/detail border-t" style={{ borderColor: "var(--app-border)" }}>
-              <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 text-[9px] font-semibold hover:bg-black/[0.015] [&::-webkit-details-marker]:hidden"><span>查看全部机构明细</span><span className="app-muted-text flex items-center gap-1 font-normal">{institutionRows.length} 个机构<ChevronDown size={12} className="transition-transform group-open/detail:rotate-180" /></span></summary>
-              <div className="overflow-x-auto border-t" style={{ borderColor: "var(--app-border)" }}><table className="w-full min-w-[940px] table-fixed text-left"><thead><tr className="border-b text-[9px]" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}><th className="w-[22%] px-4 py-2 font-medium">机构</th><th className="px-2 py-2 text-center font-medium">学生</th><th className="px-2 py-2 text-center font-medium">成绩复核</th><th className="px-2 py-2 text-center font-medium">关注记录</th><th className="px-2 py-2 text-center font-medium">资料审核</th><th className="px-2 py-2 text-center font-medium">签证任务</th><th className="px-2 py-2 text-center font-medium">帮助工单</th><th className="w-[12%] px-2 py-2 font-medium">状态</th><th className="w-[9%] px-4 py-2 text-right font-medium">操作</th></tr></thead><tbody>{institutionRows.map((row) => { const pending = institutionPendingTotal(row); return <tr key={row.id} className="border-b text-[10px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}><td className="truncate px-4 py-2.5 font-semibold">{row.name}</td><td className="px-2 py-2.5 text-center tabular-nums">{row.students}</td><td className="px-2 py-2.5 text-center"><VisualCount value={row.gradeReviews} color={institutionSeries[0].color} soft={institutionSeries[0].soft} /></td><td className="px-2 py-2.5 text-center"><VisualCount value={row.attentionRecords} color={institutionSeries[1].color} soft={institutionSeries[1].soft} /></td><td className="px-2 py-2.5 text-center"><VisualCount value={row.documentReviews} color={institutionSeries[2].color} soft={institutionSeries[2].soft} /></td><td className="px-2 py-2.5 text-center"><VisualCount value={row.visaTasks} color={institutionSeries[3].color} soft={institutionSeries[3].soft} /></td><td className="px-2 py-2.5 text-center"><VisualCount value={row.helpTickets} color={institutionSeries[4].color} soft={institutionSeries[4].soft} /></td><td className="px-2 py-2.5">{pending > 0 ? <span className="font-semibold text-amber-700">需关注 {pending}</span> : <span className="font-semibold text-emerald-700">正常</span>}</td><td className="px-4 py-2.5 text-right"><Link href={`/dashboard/admin/tenants/${row.id}`} className="font-semibold hover:underline">机构详情</Link></td></tr>; })}</tbody></table>{institutionRows.length === 0 && <p className="app-muted-text px-4 py-7 text-center text-[9px]">暂无机构汇总数据</p>}</div>
-            </details>
-          </details>
+            <span className={workloadTotal > 0 ? "is-warning" : "is-success"}>
+              {workloadTotal > 0 ? (
+                <Clock3 size={15} aria-hidden="true" />
+              ) : (
+                <CheckCircle2 size={15} aria-hidden="true" />
+              )}
+              {workloadTotal > 0 ? `${pendingCategoryCount} 类待处理` : "队列已清空"}
+            </span>
+          </div>
+
+          <div className="management-focus-summary">
+            <strong>{workloadTotal}</strong>
+            <span>
+              <b>项待处理</b>
+              <small>{clearedCategoryCount} 类工作当前无积压</small>
+            </span>
+          </div>
+
+          <div className="management-focus-list">
+            {visualWorkItems.map((item) => {
+              const tone = workToneStyles[item.tone];
+              const width = item.count > 0
+                ? Math.max(7, (item.count / maxWorkItemCount) * 100)
+                : 0;
+              return (
+                <Link
+                  key={item.label}
+                  href={scopeDashboardPath(item.href, dashboardBasePath)}
+                  className="management-focus-row"
+                >
+                  <span className="management-focus-copy">
+                    <strong>{item.label}</strong>
+                    <small>{item.description}</small>
+                  </span>
+                  <span className="management-focus-track" aria-hidden="true">
+                    <span
+                      style={{ width: `${width}%`, backgroundColor: tone.solid }}
+                    />
+                  </span>
+                  <b style={{ color: item.count > 0 ? tone.solid : "var(--app-muted)" }}>
+                    {item.count}
+                  </b>
+                  <ArrowRight size={16} aria-hidden="true" />
+                </Link>
+              );
+            })}
+            {workItems.length === 0 && (
+              <div className="management-empty-state">
+                <Sparkles size={20} aria-hidden="true" />
+                当前身份没有需要处理的工作队列
+              </div>
+            )}
+          </div>
         </section>
-      )}
+
+        {isPlatformOwner && (
+          <section className="app-card management-institution-card border">
+            <div className="management-card-heading">
+              <div>
+                <p className="management-section-kicker">Institutions</p>
+                <h2>需关注机构</h2>
+              </div>
+              <span className={attentionInstitutionCount > 0 ? "is-warning" : "is-success"}>
+                {attentionInstitutionCount > 0 ? (
+                  <CircleAlert size={15} aria-hidden="true" />
+                ) : (
+                  <CheckCircle2 size={15} aria-hidden="true" />
+                )}
+                {attentionInstitutionCount > 0
+                  ? `${attentionInstitutionCount} 个需关注`
+                  : "全部正常"}
+              </span>
+            </div>
+
+            <div className="management-institution-summary">
+              <span><strong>{institutionRows.length}</strong><small>机构总数</small></span>
+              <span><strong>{healthyInstitutionCount}</strong><small>运行正常</small></span>
+              <span><strong>{attentionInstitutionCount}</strong><small>需要关注</small></span>
+            </div>
+
+            <div className="management-institution-list">
+              {institutionChartRows.map((row) => {
+                const total = institutionPendingTotal(row);
+                const width = total > 0
+                  ? Math.max(6, (total / maxInstitutionPending) * 100)
+                  : 0;
+                const details = institutionSeries
+                  .filter((series) => row[series.key] > 0)
+                  .slice(0, 3)
+                  .map((series) => `${series.label} ${row[series.key]}`)
+                  .join(" · ");
+                return (
+                  <Link
+                    key={row.id}
+                    href={scopeDashboardPath(`/dashboard/admin/tenants/${row.id}`, dashboardBasePath)}
+                    className="management-institution-row"
+                  >
+                    <span className="management-institution-copy">
+                      <strong title={row.name}>{row.name}</strong>
+                      <small>{details || `${row.students} 名活跃学生`}</small>
+                    </span>
+                    <span className="management-institution-track" aria-hidden="true">
+                      <span style={{ width: `${width}%` }} />
+                    </span>
+                    <b className={total > 0 ? "is-warning" : "is-success"}>
+                      {total > 0 ? `${total} 项` : "正常"}
+                    </b>
+                  </Link>
+                );
+              })}
+              {institutionChartRows.length === 0 && (
+                <div className="management-empty-state">暂无机构汇总数据</div>
+              )}
+            </div>
+
+            <Link
+              href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
+              className="management-card-link"
+            >
+              查看全部机构
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
+          </section>
+        )}
       </div>
 
-      <div className="grid items-start gap-3 xl:grid-cols-2 [&_table]:min-w-[560px]">
-      <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}><div><h2 className="text-xs font-semibold">待处理事项</h2></div><span className="text-[10px] font-semibold tabular-nums" style={{ color: "var(--app-warm)" }}>{workItems.reduce((sum, item) => sum + item.count, 0)} 项</span></div>
-        <div className="overflow-x-auto"><table className="w-full min-w-[720px] table-fixed text-left"><thead><tr className="border-b text-[9px]" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}><th className="w-[22%] px-4 py-2 font-medium">事项</th><th className="w-[42%] px-3 py-2 font-medium">说明</th><th className="w-[16%] px-3 py-2 font-medium">状态</th><th className="px-4 py-2 text-right font-medium">操作</th></tr></thead><tbody>{workItems.map((item) => { const tone = workToneStyles[item.tone]; return <tr key={item.label} className="border-b text-[10px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}><td className="px-4 py-2.5 font-semibold"><span className="mr-2 inline-block size-1.5 rounded-full" style={{ backgroundColor: tone.solid }} />{item.label}</td><td className="app-muted-text px-3 py-2.5">{item.description}</td><td className="px-3 py-2.5">{item.count > 0 ? <span className="inline-flex items-center gap-1 rounded px-1.5 py-1 text-[9px] font-semibold" style={{ color: tone.solid, backgroundColor: tone.soft }}><Clock3 size={10} />待处理 {item.count}</span> : <span className="inline-flex items-center gap-1 rounded bg-emerald-50 px-1.5 py-1 text-[9px] font-semibold text-emerald-700"><CheckCircle2 size={10} />已清空</span>}</td><td className="px-4 py-2.5 text-right"><Link href={scopeDashboardPath(item.href, dashboardBasePath)} className="inline-flex items-center gap-1 font-semibold hover:underline">进入处理<ArrowRight size={11} /></Link></td></tr>; })}</tbody></table></div>
-        {workItems.length === 0 && <div className="px-4 py-8 text-center text-[10px]"><CheckCircle2 className="mx-auto text-emerald-600" size={18} /><p className="mt-2 font-semibold">当前没有需要处理的事项</p></div>}
-      </section>
+      <section className="management-quick-section">
+        <div className="management-section-heading">
+          <div>
+            <p className="management-section-kicker">Workspace</p>
+            <h2>常用工作区</h2>
+            <p>有待办的模块自动排在前面，减少在导航中来回查找。</p>
+          </div>
+          <span>{visibleItems.length} 个可用模块</span>
+        </div>
 
-      <section className="app-card overflow-hidden rounded-xl border">
-        <div className="border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}><h2 className="text-xs font-semibold">业务运行情况</h2></div>
-        <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
-          {groups.map((group) => {
-            const items = visibleItems.filter((item) => item.group === group);
-            if (items.length === 0) return null;
+        <div className="management-quick-grid">
+          {quickItems.map((item) => {
+            const Icon = item.icon;
+            const pending = pendingByHref.get(item.href) ?? 0;
             return (
-              <details key={group} className="group">
-                <summary className="flex cursor-pointer list-none items-center justify-between px-4 py-2.5 hover:bg-black/[0.015] [&::-webkit-details-marker]:hidden">
-                  <span className="text-[10px] font-semibold">{ADMIN_GROUP_LABELS[group]} <span className="app-muted-text ml-1 font-normal">{items.length} 个模块</span></span>
-                  <ChevronDown size={13} className="app-muted-text transition-transform group-open:rotate-180" />
-                </summary>
-                <div className="overflow-x-auto border-t" style={{ borderColor: "var(--app-border)" }}>
-                  <table className="w-full min-w-[760px] table-fixed text-left">
-                    <thead>
-                      <tr className="border-b text-[9px]" style={{ borderColor: "var(--app-border)" }}>
-                        <th className="w-[28%] px-4 py-2 font-medium">业务模块</th>
-                        <th className="w-[46%] px-3 py-2 font-medium">用途说明</th>
-                        <th className="w-[14%] px-3 py-2 font-medium">运行状态</th>
-                        <th className="px-4 py-2 text-right font-medium">操作</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {items.map((item) => {
-                        const Icon = item.icon;
-                        const pending = pendingByHref.get(item.href) ?? 0;
-                        const tone = workToneStyles[toneByHref.get(item.href) ?? "blue"];
-                        return (
-                          <tr key={item.href} className="border-b text-[10px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
-                            <td className="px-4 py-2.5"><span className="flex items-center gap-2 font-semibold"><span className="flex size-6 items-center justify-center rounded border" style={{ color: tone.solid, borderColor: tone.soft, backgroundColor: tone.soft }}><Icon size={12} /></span>{item.label}</span></td>
-                            <td className="app-muted-text px-3 py-2.5">{item.description}</td>
-                            <td className="px-3 py-2.5">{pending > 0 ? <span className="font-semibold" style={{ color: tone.solid }}>待处理 {pending}</span> : <span className="font-semibold text-emerald-700">运行正常</span>}</td>
-                            <td className="px-4 py-2.5 text-right"><Link href={scopeDashboardPath(item.href, dashboardBasePath)} className="inline-flex items-center gap-1 font-semibold hover:underline">打开<ArrowRight size={11} /></Link></td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              </details>
+              <Link
+                key={item.href}
+                href={scopeDashboardPath(item.href, dashboardBasePath)}
+                className="app-card management-quick-card border"
+              >
+                <span className="management-quick-icon">
+                  <Icon size={20} aria-hidden="true" />
+                </span>
+                <span className="management-quick-copy">
+                  <strong>{item.label}</strong>
+                  <small>{item.description}</small>
+                </span>
+                {pending > 0 && <b>{pending} 项</b>}
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
             );
           })}
         </div>
       </section>
-      </div>
 
-      <footer className="flex items-start gap-2 border-t px-1 pt-3 text-[9px]"><ShieldCheck className="app-muted-text mt-0.5 shrink-0" size={11} /><p className="app-muted-text">首页只汇总当前身份有权看到的数据。平台负责人看到机构级统计，不在这里展示机构学生明细；所有入口仍由服务端权限再次校验。</p></footer>
+      <footer className="management-home-footer">
+        <ShieldCheck size={15} aria-hidden="true" />
+        <p>
+          首页仅汇总当前身份有权查看的数据；所有二级入口和具体操作仍由服务端权限再次校验。
+        </p>
+      </footer>
     </div>
   );
 }

@@ -129,7 +129,7 @@ export type InstitutionGradeManagementData = {
   scope: "institution";
   role: UserRole;
   tenantId: string;
-  canManageIndividualGrades: true;
+  canManageIndividualGrades: boolean;
   assignedStudentIds: string[] | null;
   results: LiveGradeResult[];
   reviews: GradeReviewRequest[];

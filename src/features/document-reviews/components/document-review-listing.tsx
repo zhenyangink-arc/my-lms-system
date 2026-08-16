@@ -1,12 +1,7 @@
+import { ManagementMetricStrip } from "@/components/layout/management-page";
 import { getDocumentReviewManagementData } from "../api/service";
 import { DocumentReviewApplicationsTable } from "./document-review-applications-table";
 import { PlatformDocumentReviewOverview } from "./platform-document-review-overview";
-
-const ROLE_LABELS: Record<string, string> = {
-  tenant_super_admin: "机构负责人",
-  ceo: "机构运营负责人",
-  admin: "授权管理员",
-};
 
 export default async function DocumentReviewListing() {
   const result = await getDocumentReviewManagementData();
@@ -35,32 +30,16 @@ export default async function DocumentReviewListing() {
 
   return (
     <div className="space-y-4">
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>管理范围</th>
-                <th>申请单</th>
-                <th>待确认</th>
-                <th>需补充</th>
-                <th>已确认</th>
-                <th>已锁定</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>{ROLE_LABELS[result.role] ?? "本机构资料审核"}</th>
-                <td>{result.applications.length}</td>
-                <td>{pendingCount}</td>
-                <td>{revisionCount}</td>
-                <td>{approvedCount}</td>
-                <td>{lockedCount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="申请材料审核概况"
+        items={[
+          { label: "申请单", value: result.applications.length },
+          { label: "待确认", value: pendingCount },
+          { label: "需补充", value: revisionCount },
+          { label: "已确认", value: approvedCount },
+          { label: "已锁定", value: lockedCount },
+        ]}
+      />
 
       <DocumentReviewApplicationsTable
         data={result.applications}

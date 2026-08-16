@@ -1,9 +1,13 @@
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { getDigitalTextbookManagementData } from "../api/service";
 import { DigitalTextbookTable } from "./digital-textbook-table";
 import type { DigitalTextbookDisplayRow } from "./digital-textbook-table/columns";
 
-export default async function DigitalTextbookListing() {
-  const result = await getDigitalTextbookManagementData();
+export default async function DigitalTextbookListing({ studentAppId }: { studentAppId: string }) {
+  const result = await getDigitalTextbookManagementData(studentAppId);
   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) =>
       lesson.textbooks.flatMap((textbook) =>
@@ -52,39 +56,22 @@ export default async function DigitalTextbookListing() {
   return (
     <div className="space-y-6">
       {result.hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           部分教材层级或内容数据暂时无法完整读取，请稍后刷新重试。
-        </p>
+        </ManagementNotice>
       )}
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>管理范围</th>
-                <th>教材</th>
-                <th>版本</th>
-                <th>章节</th>
-                <th>内容模块</th>
-                <th>词汇</th>
-                <th>语法</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>互动教材</th>
-                <td>{textbookCount}</td>
-                <td>{versionCount}</td>
-                <td>{rows.length}</td>
-                <td>{moduleCount}</td>
-                <td>{result.totalVocabulary}</td>
-                <td>{grammarCount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="互动教材概况"
+        items={[
+          { label: "教材", value: textbookCount },
+          { label: "版本", value: versionCount },
+          { label: "章节", value: rows.length },
+          { label: "内容模块", value: moduleCount },
+          { label: "词汇", value: result.totalVocabulary },
+          { label: "语法", value: grammarCount },
+        ]}
+      />
 
       <section className="space-y-3">
         <div>
@@ -92,10 +79,11 @@ export default async function DigitalTextbookListing() {
             教材内容层级
           </h2>
           <p className="mt-1 text-xs text-[var(--app-muted)]">
-            按课程、课时、教材、版本和章节查看词汇与语法模块；本页面当前仅展示数据。
+            按课程、课时、教材、版本和章节查看词汇与语法模块；
+            {result.canManage ? "当前账号可以维护内容。" : "当前账号为只读查看。"}
           </p>
         </div>
-        <DigitalTextbookTable data={rows} />
+        <DigitalTextbookTable data={rows} canManage={result.canManage} />
       </section>
     </div>
   );

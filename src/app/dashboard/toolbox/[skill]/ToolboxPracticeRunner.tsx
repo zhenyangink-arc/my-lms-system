@@ -8,8 +8,10 @@ import {
   CheckCircle2,
   CircleAlert,
   Clock3,
+  Mic,
   RotateCcw,
   Send,
+  Volume2,
 } from "lucide-react";
 
 import {
@@ -25,12 +27,20 @@ export type ToolboxQuestion = {
   prompt: string;
   options: ChoiceOption[];
   hint: string;
+  stimulus: string;
+  speakBeforeAnswer: boolean;
   maxScore: number;
 };
 
 export type ToolboxExercise = {
   id: string;
-  skill: "reading" | "writing";
+  skill:
+    | "listening"
+    | "speaking"
+    | "reading"
+    | "writing"
+    | "grammar"
+    | "vocabulary";
   title: string;
   description: string;
   instructions: string;
@@ -107,6 +117,15 @@ export function ToolboxPracticeRunner({
   function updateAnswer(value: string) {
     setAnswers((current) => ({ ...current, [currentQuestion.id]: value }));
     setError("");
+  }
+
+  function playStimulus() {
+    if (!currentQuestion.stimulus || !("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(currentQuestion.stimulus);
+    utterance.lang = "ko-KR";
+    utterance.rate = 0.85;
+    window.speechSynthesis.speak(utterance);
   }
 
   function submit() {
@@ -250,6 +269,35 @@ export function ToolboxPracticeRunner({
         {currentQuestion.hint && (
           <p className="mt-4 rounded-2xl px-4 py-3 text-xs font-bold leading-5" style={{ backgroundColor: soft }}>
             提示：{currentQuestion.hint}
+          </p>
+        )}
+
+        {currentQuestion.stimulus && (
+          <section
+            className="mt-4 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between"
+            style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+            aria-label="听力材料"
+          >
+            <div>
+              <p className="text-sm font-black">播放本题韩语材料</p>
+              <p className="app-muted-text mt-1 text-xs font-bold">可以重复播放，材料文字不会提前显示。</p>
+            </div>
+            <button
+              type="button"
+              onClick={playStimulus}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+              style={{ backgroundColor: accent, outlineColor: accent }}
+            >
+              <Volume2 size={16} aria-hidden="true" />
+              播放韩语
+            </button>
+          </section>
+        )}
+
+        {currentQuestion.speakBeforeAnswer && (
+          <p className="mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-black" style={{ color: accent, backgroundColor: soft }}>
+            <Mic size={16} aria-hidden="true" />
+            先把你认为正确的表达大声说出来，再选择答案。
           </p>
         )}
 

@@ -1,0 +1,133 @@
+/* Dashboard-only responsive and density rules kept outside the global theme file. */
+[data-dashboard-ui="management"] :is(
+  [class~="text-[8px]"],
+  [class~="text-[9px]"],
+  [class~="text-[10px]"],
+  [class~="text-[11px]"]
+),
+.app-shell[data-student-shell="system"] :is(
+  [class~="text-[8px]"],
+  [class~="text-[9px]"],
+  [class~="text-[10px]"],
+  [class~="text-[11px]"]
+) {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+[data-admin-overview] :is(th, td) {
+  vertical-align: middle;
+}
+
+[data-admin-overview] [class~="overflow-x-auto"] {
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+  -webkit-overflow-scrolling: touch;
+}
+
+@media (max-width: 767px) {
+  .student-mobile-navigation-sheet {
+    background: var(--student-settings-popover-surface, var(--app-card-bg));
+    color: var(--app-text);
+  }
+
+  [data-admin-overview] {
+    padding: 16px;
+  }
+
+  [data-admin-overview] :is(h2, summary, a, button) {
+    text-wrap: pretty;
+  }
+
+  [data-admin-overview] table a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+  }
+
+  .management-mobile-layer .management-nav-item {
+    height: auto;
+    min-height: 44px;
+  }
+
+  .management-sidebar-trigger,
+  .management-mobile-close,
+  .management-user-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .student-mobile-navigation-sheet [data-slot="sheet-close"] {
+    width: 44px;
+    height: 44px;
+  }
+
+  .student-mobile-navigation {
+    position: fixed;
+    inset-inline: 10px;
+    bottom: max(8px, env(safe-area-inset-bottom));
+    z-index: 45;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(0, 1fr);
+    min-height: 64px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--app-border) 88%, white);
+    border-radius: 20px;
+    padding: 6px;
+    background: color-mix(in srgb, var(--app-card-bg) 92%, transparent);
+    box-shadow:
+      0 18px 44px -22px rgba(27, 36, 49, 0.52),
+      0 1px 0 rgba(255, 255, 255, 0.78) inset;
+    backdrop-filter: blur(22px) saturate(145%);
+    -webkit-backdrop-filter: blur(22px) saturate(145%);
+  }
+
+  .student-mobile-navigation-item {
+    display: flex;
+    min-width: 0;
+    min-height: 52px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 3px;
+    border: 0;
+    border-radius: 14px;
+    padding: 4px 6px;
+    color: var(--app-muted);
+    background: transparent;
+    font-size: 12px;
+    font-weight: 680;
+  }
+
+  .student-mobile-navigation-item:is([aria-current="page"], [data-active="true"]) {
+    color: var(--app-accent-strong);
+    background: var(--app-accent-soft);
+  }
+
+  .student-mobile-navigation-item:focus-visible,
+  .student-mobile-navigation-sheet-item:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--app-accent) 38%, transparent);
+    outline-offset: 1px;
+  }
+
+  .student-mobile-navigation-sheet-item {
+    display: flex;
+    min-height: 52px;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid var(--app-border-soft);
+    border-radius: 14px;
+    padding: 10px 12px;
+    color: var(--app-text-soft);
+    background: var(--app-soft-bg);
+    font-size: 14px;
+    font-weight: 650;
+  }
+
+  .student-mobile-navigation-sheet-item[aria-current="page"] {
+    border-color: color-mix(in srgb, var(--app-accent) 35%, var(--app-border));
+    color: var(--app-accent-strong);
+    background: var(--app-accent-soft);
+  }
+}

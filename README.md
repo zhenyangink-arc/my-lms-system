@@ -39,6 +39,8 @@ npm run dev
 
 ```bash
 npm run dev
+npm run check
+npm run test:navigation
 npm run lint
 npm run typecheck
 npm run build

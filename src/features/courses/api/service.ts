@@ -1,7 +1,9 @@
 import "server-only";
 
 import { requireAdmin } from "@/lib/admin";
+import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath } from "@/lib/dashboard-path";
+import { requireTenantAppCapability } from "@/lib/tenant-app-capabilities";
 import type {
   CourseCatalogChapter,
   CourseCatalogCourse,
@@ -27,9 +29,19 @@ export async function getCourseManagementData(
   selection: CourseManagementSelection = {},
   studentAppId?: string,
 ): Promise<CourseManagementData> {
-  // 原样保留旧读取边界：requireAdmin() 加当前用户 Supabase 客户端与 RLS。
-  // 写权限仍由已有 Server Actions 校验，不在数据层另建一套权限判断。
-  const { supabase, globalRole, tenant } = await requireAdmin();
+  const activeUser = studentAppId ? await requireActiveUser() : null;
+  const applicationAccess =
+    studentAppId && activeUser?.tenant
+      ? await requireTenantAppCapability(studentAppId, "manageContent")
+      : null;
+  // 应用工作区允许获授权的机构员工查看当前应用内容；平台内容写入仍只由
+  // 现有 Server Actions 和平台角色控制，机构权限不会升级为平台编辑权限。
+  const legacyAccess = applicationAccess ? null : await requireAdmin();
+  const supabase = applicationAccess
+    ? applicationAccess.supabase
+    : legacyAccess!.supabase;
+  const globalRole = legacyAccess?.globalRole ?? null;
+  const tenantSlug = applicationAccess?.tenantSlug ?? legacyAccess?.tenant?.slug;
   const canManage =
     globalRole === "platform_owner" || globalRole === "platform_admin";
 
@@ -112,7 +124,7 @@ export async function getCourseManagementData(
   }
 
   return {
-    dashboardBasePath: getDashboardBasePath(tenant?.slug),
+    dashboardBasePath: getDashboardBasePath(tenantSlug),
     globalRole,
     canManage,
     canPermanentlyDeleteResources: globalRole === "platform_owner",

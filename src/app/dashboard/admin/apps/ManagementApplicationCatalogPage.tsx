@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 
 import { getAdminRoleLabel } from "@/app/dashboard/admin/admin-navigation";
+import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
+import { ManagementPage } from "@/components/layout/management-page";
 import {
   requireManagementAppCatalogAccess,
   type ManagementAppCatalogItem,
@@ -24,7 +26,7 @@ type CountResult = { count: number | null; error: unknown };
 type AppMetrics = {
   courses: number;
   students: number;
-  assignments: number;
+  workItems: number;
   staff: number;
 };
 
@@ -66,10 +68,14 @@ async function getAppMetrics(
     .select("student_id", { count: "exact", head: true })
     .eq("app_id", item.appId)
     .eq("status", "active");
-  let assignmentQuery = client
-    .from("learning_assignments")
-    .select("id", { count: "exact", head: true })
-    .eq("student_app_id", item.appId);
+  let workItemQuery = item.app.kind === "service"
+    ? client
+        .from("student_university_targets")
+        .select("id", { count: "exact", head: true })
+    : client
+        .from("learning_assignments")
+        .select("id", { count: "exact", head: true })
+        .eq("student_app_id", item.appId);
   let staffQuery = client
     .from("staff_app_assignments")
     .select("staff_id", { count: "exact", head: true })
@@ -78,25 +84,26 @@ async function getAppMetrics(
 
   if (access.tenantId) {
     studentQuery = studentQuery.eq("tenant_id", access.tenantId);
-    assignmentQuery = assignmentQuery.eq("tenant_id", access.tenantId);
+    workItemQuery = workItemQuery.eq("tenant_id", access.tenantId);
     staffQuery = staffQuery.eq("tenant_id", access.tenantId);
   }
 
-  const [courseResult, studentResult, assignmentResult, staffResult] =
+  const [courseResult, studentResult, workItemResult, staffResult] =
     (await Promise.all([
       client
         .from("courses")
         .select("id", { count: "exact", head: true })
-        .eq("student_app_id", item.appId),
+        .eq("student_app_id", item.appId)
+        .eq("content_scope", "platform"),
       studentQuery,
-      assignmentQuery,
+      workItemQuery,
       staffQuery,
     ])) as CountResult[];
 
   return {
     courses: countValue(courseResult),
     students: countValue(studentResult),
-    assignments: countValue(assignmentResult),
+    workItems: countValue(workItemResult),
     staff: countValue(staffResult),
   };
 }
@@ -113,7 +120,7 @@ export async function ManagementApplicationCatalogPage({
   );
   const totalStudents = metrics.reduce((sum, item) => sum + item.students, 0);
   const totalAssignments = metrics.reduce(
-    (sum, item) => sum + item.assignments,
+    (sum, item) => sum + item.workItems,
     0,
   );
   const runningApps = access.items.filter(
@@ -121,38 +128,28 @@ export async function ManagementApplicationCatalogPage({
   ).length;
 
   return (
-    <div className="management-page space-y-5">
-      <header className="app-card border px-5 py-5 sm:px-6">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div className="min-w-0">
-            <p className="management-kicker text-[11px] font-semibold uppercase">
-              {access.scope === "platform" ? "Platform applications" : "Tenant applications"}
-            </p>
-            <h1 className="mt-1.5 text-2xl font-semibold tracking-[-0.035em]">
-              应用中心
-            </h1>
-            <p className="app-muted-text mt-2 max-w-3xl text-sm leading-6">
-              {access.scope === "platform"
-                ? "维护标准应用和平台内容，查看各应用在机构中的运行范围。"
-                : `在${access.tenantName ?? "当前机构"}内按应用处理学生、教学、考核和服务数据。`}
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs">
-            <span className="rounded-md border px-2.5 py-1.5 app-muted-text">
-              {getAdminRoleLabel(access.role)}
-            </span>
-            <span className="rounded-md border px-2.5 py-1.5 app-muted-text">
-              {access.items.length} 个可访问应用
-            </span>
-          </div>
-        </div>
-      </header>
+    <ManagementPage
+      eyebrow={access.scope === "platform" ? "平台应用" : "机构应用"}
+      title="应用中心"
+      description={
+        access.scope === "platform"
+          ? "维护标准应用和平台内容，查看各应用在机构中的运行范围。"
+          : `在${access.tenantName ?? "当前机构"}内按应用处理学生、教学、考核和服务数据。`
+      }
+      icon={LayoutGrid}
+      meta={
+        <>
+          <span>{getAdminRoleLabel(access.role)}</span>
+          <span>{access.items.length} 个可访问应用</span>
+        </>
+      }
+    >
 
       <section className="grid overflow-hidden rounded-lg border bg-[var(--app-card-bg)] sm:grid-cols-3" aria-label="应用运营概况">
         {[
           { label: "运行中的应用", value: runningApps, suffix: "个", icon: ShieldCheck },
           { label: "已授权学生", value: totalStudents, suffix: "人次", icon: UsersRound },
-          { label: "应用内任务", value: totalAssignments, suffix: "项", icon: LayoutGrid },
+          { label: "应用内业务", value: totalAssignments, suffix: "项", icon: LayoutGrid },
         ].map((metric, index) => {
           const Icon = metric.icon;
           return (
@@ -211,7 +208,7 @@ export async function ManagementApplicationCatalogPage({
                     {[
                       ["课程", itemMetrics.courses],
                       ["学生", itemMetrics.students],
-                      ["任务", itemMetrics.assignments],
+                      [item.app.kind === "service" ? "申请" : "任务", itemMetrics.workItems],
                       ["员工", itemMetrics.staff],
                     ].map(([label, value]) => (
                       <div key={String(label)}>
@@ -224,6 +221,7 @@ export async function ManagementApplicationCatalogPage({
                     <span>{item.app.kind === "service" ? "服务运营空间" : "教学运营空间"}</span>
                     <span className="inline-flex items-center gap-1 text-[var(--app-accent-strong)]">
                       打开工作台
+                      <RouteLinkStatus />
                       <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" />
                     </span>
                   </span>
@@ -233,6 +231,6 @@ export async function ManagementApplicationCatalogPage({
           </div>
         )}
       </section>
-    </div>
+    </ManagementPage>
   );
 }

@@ -1,8 +1,96 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "./dashboard/dashboard-responsive.css";
+@import "./dashboard/management-apple.css";
 
 @custom-variant dark (&:is(.dark *));
+
+/* Route transitions stay visually quiet for fast responses, then reveal a
+ * stable skeleton if the server or network needs more than a brief moment. */
+.route-loading-shell {
+  opacity: 0;
+  animation: route-loading-reveal 160ms ease 100ms forwards;
+}
+
+.route-loading-block {
+  background: color-mix(in srgb, var(--app-muted, #646467) 12%, var(--app-card-bg, #ffffff));
+  background-image: linear-gradient(
+    100deg,
+    transparent 28%,
+    color-mix(in srgb, white 52%, transparent) 45%,
+    transparent 62%
+  );
+  background-position: 180% 0;
+  background-size: 220% 100%;
+  animation: route-loading-shimmer 1.25s ease-in-out infinite;
+}
+
+.route-link-status {
+  position: relative;
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  flex: 0 0 14px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.route-link-status::after {
+  position: absolute;
+  inset: 1px;
+  border: 1.5px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 999px;
+  content: "";
+  animation: route-link-spin 650ms linear infinite;
+}
+
+.route-link-status[data-pending="true"] {
+  visibility: visible;
+  animation: route-link-reveal 140ms ease 100ms forwards;
+}
+
+@keyframes route-loading-reveal {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes route-loading-shimmer {
+  to {
+    background-position: -120% 0;
+  }
+}
+
+@keyframes route-link-reveal {
+  to {
+    opacity: 0.62;
+  }
+}
+
+@keyframes route-link-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .route-loading-shell {
+    opacity: 1;
+    animation: none;
+  }
+
+  .route-loading-block,
+  .route-link-status::after,
+  .route-link-status[data-pending="true"] {
+    animation: none;
+  }
+
+  .route-link-status[data-pending="true"] {
+    opacity: 0.62;
+  }
+}
 
 @theme inline {
   --color-background: var(--background);
@@ -132,166 +220,13 @@
 }
 
 /*
-  元智教育 Dashboard 视觉系统 —— 四套主题
+  PUFFY 全局中性基线。
 
-  1. 默认「阳光青提」：柔和有机极简风 —— 极致通透的暖阳象牙白画布、纯白卡片、锐利深碳黑文字、
-     明亮轻盈的春日青提绿点缀、极细干净浅暖灰边框、带青提绿调的弥散空气感光影（:root 下面这组值）
-  2. 「极光紫 aurora」：冷调薰衣草画布、纯白卡片、深靛蓝文字、
-     Linear 风紫罗兰主色，紫→蓝渐变点缀，带紫罗兰调的弥散空气感光影
-  3. 「蜜桃珊瑚 coral」：暖调胭脂白画布、纯白卡片、深赭红文字、
-     珊瑚橘主色，珊瑚→蜜桃粉渐变点缀，带珊瑚调的弥散空气感光影
-  4. 「曜石黑 clarity」：UI UX Pro Max + Apple HIG 思路的新主题。OLED 曜石黑画布、
-     深色透明玻璃、明亮金色主操作与高对比文字，少量紫色丰富信息层级。
-  5. 「云瓷白 porcelain」：纯白画布、半透明浅色玻璃、石墨色系统控制与多彩语义内容。
-
-  切换方式：html[data-app-theme="..."]（ThemeSwitcher 写入，localStorage 持久化）
-  规则：页面背景、侧边栏、卡片、边框、输入框、文字颜色统一引用这组变量；
-  只影响 .app-shell 内部；状态标签色统一走 --app-status-* 变量。
+  租户门户和非工作区页面固定使用这组语义变量，不再通过运行时属性
+  或 localStorage 切换配色。学生应用在 data-student-shell="system" 内覆盖
+  为 Student OS；管理端在 data-management-workspace 内覆盖为 Management Apple。
 */
 :root {
-  /* 阳光青提主题：极致通透明亮 —— 画布是充满光感的暖阳象牙白，卡片纯白悬浮，文字锐利深碳黑，点缀轻盈生机的春日青提绿 */
-  --app-bg: #fcfbf7;
-  --app-sidebar-bg: #ffffff;
-  --app-card-bg: #ffffff;
-  --app-soft-bg: #f6f4ee;
-  --app-border: #ebe9e1;
-  --app-border-soft: #f1efe8;
-
-  --app-text: #141413;
-  --app-text-soft: #33322e;
-  --app-muted: #625f58;
-  --app-muted-light: #9c9890;
-
-  --app-input-bg: #ffffff;
-  --app-accent: #63a867;
-  --app-accent-strong: #4c8250;
-  --app-accent-soft: #eef5ee;
-  --app-accent-contrast: #ffffff;
-  --app-secondary: #b3936a;
-  --app-secondary-soft: #f4ede1;
-  --app-success: #4f9457;
-  --app-success-soft: #e7f4e8;
-  --app-warm: #b08f52;
-  --app-warm-soft: #f4ecdb;
-  --app-hero-start: #f8f6ef;
-  --app-hero-end: #eef6ee;
-  /* 带极弱青提绿调的大面积弥散空气感光影，营造阳光打在树叶上的轻盈感 */
-  --app-shadow: 0 8px 30px rgba(99, 168, 103, 0.06);
-
-  /* 卡片质感（各主题可覆盖）：纯白实底 + 极细浅边框，靠留白和空气感阴影撑层次 */
-  --app-card-fill: var(--app-card-bg);
-  --app-card-border: var(--app-border);
-  --app-card-highlight: transparent;
-}
-
-/* 主题 2：极光紫 —— 冷调薰衣草画布、纯白卡片、深靛蓝文字、Linear 风紫罗兰主色，紫→蓝渐变点缀 */
-html[data-app-theme="aurora"] {
-  --app-bg: #f7f6fb;
-  --app-sidebar-bg: #ffffff;
-  --app-card-bg: #ffffff;
-  --app-soft-bg: #eeecf9;
-  --app-border: #e3e0f2;
-  --app-border-soft: #ecebf5;
-
-  --app-text: #1c1b2e;
-  --app-text-soft: #3c3a56;
-  --app-muted: #6f6c8c;
-  --app-muted-light: #a19dbd;
-
-  --app-input-bg: #ffffff;
-  --app-accent: #7c6ff0;
-  --app-accent-strong: #6152d9;
-  --app-accent-soft: #ece9fd;
-  --app-accent-contrast: #ffffff;
-  --app-secondary: #5aa9e6;
-  --app-secondary-soft: #e7f2fc;
-  --app-success: #3fae7a;
-  --app-success-soft: #e5f6ee;
-  --app-warm: #d98a3d;
-  --app-warm-soft: #faf0e2;
-  --app-hero-start: #efe9fd;
-  --app-hero-end: #e7f1fd;
-  /* 带紫罗兰调的大面积弥散空气感光影 */
-  --app-shadow: 0 8px 30px rgba(124, 111, 240, 0.08);
-
-  --app-card-fill: var(--app-card-bg);
-  --app-card-border: var(--app-border);
-  --app-card-highlight: transparent;
-}
-
-/* 主题 3：蜜桃珊瑚 —— 暖调胭脂白画布、纯白卡片、深赭红文字、珊瑚橘主色，珊瑚→蜜桃粉渐变点缀 */
-html[data-app-theme="coral"] {
-  --app-bg: #fdf6f5;
-  --app-sidebar-bg: #ffffff;
-  --app-card-bg: #ffffff;
-  --app-soft-bg: #fbebe9;
-  --app-border: #f3e0dd;
-  --app-border-soft: #f8ece9;
-
-  --app-text: #2c1c1a;
-  --app-text-soft: #4a332f;
-  --app-muted: #8a6b64;
-  --app-muted-light: #c2a29b;
-
-  --app-input-bg: #ffffff;
-  --app-accent: #fb7d72;
-  --app-accent-strong: #e6584c;
-  --app-accent-soft: #fde6e3;
-  --app-accent-contrast: #ffffff;
-  --app-secondary: #f4a6c1;
-  --app-secondary-soft: #fdedf3;
-  --app-success: #6b9d5a;
-  --app-success-soft: #ecf5e8;
-  --app-warm: #d98a3d;
-  --app-warm-soft: #faf0e2;
-  --app-hero-start: #fde9ea;
-  --app-hero-end: #fdeef6;
-  /* 带珊瑚调的大面积弥散空气感光影 */
-  --app-shadow: 0 8px 30px rgba(251, 125, 114, 0.07);
-
-  --app-card-fill: var(--app-card-bg);
-  --app-card-border: var(--app-border);
-  --app-card-highlight: transparent;
-}
-
-/* 主题 4：曜石黑 —— Apple 式深色层级 + OLED 低亮度画布。
-   深色玻璃承载内容，明亮金色用于主操作和焦点，紫色只作次级点缀。 */
-html[data-app-theme="clarity"] {
-  --app-bg: #030303;
-  --app-sidebar-bg: #0a0a0a;
-  --app-card-bg: #121212;
-  --app-soft-bg: #1a1a1a;
-  --app-border: #343434;
-  --app-border-soft: #262626;
-
-  --app-text: #f5f5f7;
-  --app-text-soft: #e5e5ea;
-  --app-muted: #b8b8bf;
-  --app-muted-light: #8e8e93;
-
-  --app-input-bg: #161616;
-  --app-accent: #ffd60a;
-  --app-accent-strong: #ffe14a;
-  --app-accent-soft: #3a3108;
-  --app-accent-contrast: #171300;
-  --app-secondary: #bf5af2;
-  --app-secondary-soft: #2b1535;
-  --app-success: #63da8a;
-  --app-success-soft: #153522;
-  --app-warm: #ff9f0a;
-  --app-warm-soft: #3b2710;
-  --app-hero-start: #120f05;
-  --app-hero-end: #2a2205;
-  --app-shadow: 0 22px 54px rgba(0, 0, 0, 0.34);
-
-  --app-card-fill: var(--app-card-bg);
-  --app-card-border: var(--app-border);
-  --app-card-highlight: transparent;
-}
-
-/* 主题 5：云瓷白 —— Apple 式浅色玻璃。
-   大画布保持纯白，石墨色负责系统控制，绿色、橙色和香槟金只承担内容语义。 */
-html[data-app-theme="porcelain"] {
   --app-bg: #ffffff;
   --app-sidebar-bg: #ffffff;
   --app-card-bg: #ffffff;
@@ -300,12 +235,15 @@ html[data-app-theme="porcelain"] {
   --app-border-soft: #e8e8eb;
 
   --app-text: #1d1d1f;
+  --app-foreground: var(--app-text);
   --app-text-soft: #3a3a3c;
   --app-muted: #6e6e73;
+  --app-muted-text: var(--app-muted);
   --app-muted-light: #8e8e93;
 
   --app-input-bg: #f7f7f8;
   --app-accent: #1d1d1f;
+  --app-primary: var(--app-accent);
   --app-accent-strong: #000000;
   --app-accent-soft: #eeeeef;
   --app-accent-contrast: #ffffff;
@@ -315,6 +253,8 @@ html[data-app-theme="porcelain"] {
   --app-success-soft: #e7f6eb;
   --app-warm: #c66a00;
   --app-warm-soft: #fff1de;
+  --app-danger: #dc2626;
+  --app-danger-soft: #fff0f1;
   --app-hero-start: #ffffff;
   --app-hero-end: #fff9ea;
   --app-shadow: 0 18px 48px rgba(154, 103, 0, 0.1);
@@ -341,7 +281,7 @@ html[data-app-theme="porcelain"] {
   --app-card-bg: color-mix(in srgb, white 96%, var(--app-hero-end) 4%);
   --app-card-fill: color-mix(
     in srgb,
-    var(--app-card-bg) var(--app-card-opacity, 98%),
+    var(--app-card-bg) 98%,
     transparent
   );
   --app-input-bg: color-mix(
@@ -365,78 +305,6 @@ html[data-app-theme="porcelain"] {
   /* 建立独立的层叠上下文：没有这行，.app-shell 自己的（不透明）背景会
      按普通文档流内容的层叠顺序盖在 z-index:-1 的极光光斑上面，光斑等于白做。 */
   isolation: isolate;
-}
-
-/* 曜石黑不使用学生端通用的暖白卡片派生值。 */
-html[data-app-theme="clarity"] .app-shell[data-dashboard-ui="student"] {
-  --app-card-bg: color-mix(in srgb, #121212 96%, var(--app-hero-end) 4%);
-  --app-card-fill: color-mix(
-    in srgb,
-    var(--app-card-bg) var(--app-card-opacity, 98%),
-    transparent
-  );
-  --app-input-bg: color-mix(
-    in srgb,
-    var(--app-soft-bg) 78%,
-    var(--app-card-bg) 22%
-  );
-  --background: var(--app-bg);
-  --foreground: var(--app-text);
-  --card: var(--app-card-bg);
-  --card-foreground: var(--app-text);
-  --popover: var(--app-card-bg);
-  --popover-foreground: var(--app-text);
-  --primary: var(--app-accent);
-  --primary-foreground: var(--app-accent-contrast);
-  --secondary: var(--app-secondary-soft);
-  --secondary-foreground: var(--app-text);
-  --muted: var(--app-soft-bg);
-  --muted-foreground: var(--app-muted);
-  --accent: var(--app-accent-soft);
-  --accent-foreground: var(--app-text);
-  --border: var(--app-border);
-  --input: var(--app-border);
-  --ring: var(--app-accent);
-  color-scheme: dark;
-}
-
-html[data-app-theme="clarity"]
-  .app-shell[data-dashboard-ui="student"]
-  :is(.app-soft-card, .app-theme-soft) {
-  border-color: var(--app-border-soft);
-  background-color: color-mix(
-    in srgb,
-    var(--app-soft-bg) 86%,
-    transparent
-  );
-}
-
-html[data-app-theme="porcelain"] .app-shell[data-dashboard-ui="student"] {
-  --background: var(--app-bg);
-  --foreground: var(--app-text);
-  --card: var(--app-card-bg);
-  --card-foreground: var(--app-text);
-  --popover: rgba(255, 255, 255, 0.9);
-  --popover-foreground: var(--app-text);
-  --primary: var(--app-accent);
-  --primary-foreground: var(--app-accent-contrast);
-  --secondary: var(--app-secondary-soft);
-  --secondary-foreground: var(--app-text-soft);
-  --muted: var(--app-soft-bg);
-  --muted-foreground: var(--app-muted);
-  --accent: var(--app-accent-soft);
-  --accent-foreground: var(--app-text);
-  --border: var(--app-border);
-  --input: var(--app-border);
-  --ring: var(--app-accent);
-  background-color: var(--app-bg);
-  background-image: none;
-}
-
-html[data-app-theme="porcelain"]
-  .app-shell[data-dashboard-ui="student"]
-  .app-aurora-orb {
-  opacity: 0;
 }
 
 .app-sidebar {
@@ -470,10 +338,10 @@ html[data-app-theme="porcelain"]
     inset 0 1px 0 rgba(255, 255, 255, 0.88);
 }
 
-/* 学生端卡片统一使用可调的低饱和渐变：普通卡片同时保留透明度设置，
-   强调卡使用同一强度参数；强度为 0% 时视觉上恢复为纯色。 */
+/* 通用学生卡片使用固定的低饱和渐变；Student OS 在自己的作用域内
+   使用独立的窗口、卡片、按钮与菜单透明度令牌。 */
 .app-shell[data-dashboard-ui="student"]
-  .app-card:not(.student-emphasis-card):not(.student-appearance-control) {
+  .app-card:not(.student-emphasis-card) {
   background-color: var(--app-card-fill) !important;
   background-image: linear-gradient(
     145deg,
@@ -482,9 +350,9 @@ html[data-app-theme="porcelain"]
         color-mix(
             in srgb,
             var(--app-card-bg),
-            white var(--app-card-gradient-strength, 16%)
+            white 16%
           )
-          var(--app-card-opacity, 98%),
+          98%,
         transparent
       )
       0%,
@@ -493,22 +361,13 @@ html[data-app-theme="porcelain"]
         color-mix(
             in srgb,
             var(--app-card-bg),
-            var(--app-hero-end) var(--app-card-gradient-strength, 16%)
+            var(--app-hero-end) 16%
           )
-          var(--app-card-opacity, 98%),
+          98%,
         transparent
       )
       100%
   ) !important;
-}
-
-.app-shell[data-dashboard-ui="student"] .student-appearance-control {
-  background-color: color-mix(
-    in srgb,
-    var(--app-card-bg) 96%,
-    transparent
-  ) !important;
-  background-image: none !important;
 }
 
 .app-shell[data-dashboard-ui="student"] .student-emphasis-card {
@@ -518,12 +377,12 @@ html[data-app-theme="porcelain"]
     color-mix(
       in srgb,
       #647abd,
-      #8aa0e4 var(--app-card-gradient-strength, 16%)
+      #8aa0e4 16%
     ),
     color-mix(
       in srgb,
       #647abd,
-      #8b84ca var(--app-card-gradient-strength, 16%)
+      #8b84ca 16%
     )
   ) !important;
 }
@@ -802,47 +661,6 @@ html[data-app-theme="porcelain"]
   box-shadow:
     0 30px 60px -20px color-mix(in srgb, var(--app-text) 12%, transparent),
     inset 0 1px 2px color-mix(in srgb, white 70%, transparent);
-}
-
-/*
-  极光弥散背景光斑：低透明度、低饱和度的环境光，负责增加纵深而不是形成色块。
-  颜色仍跟随主题切换；组件只挂载在学生端，不影响管理端。
-*/
-.app-aurora-orb {
-  position: fixed;
-  z-index: -1;
-  border-radius: 50%;
-  pointer-events: none;
-  opacity: 0.21;
-}
-
-.app-aurora-orb-1 {
-  top: -14%;
-  left: 6%;
-  width: 520px;
-  height: 520px;
-  background: color-mix(in srgb, var(--app-accent) 68%, var(--app-bg));
-  filter: blur(150px);
-}
-
-.app-aurora-orb-2 {
-  bottom: -18%;
-  right: -9%;
-  width: 580px;
-  height: 580px;
-  background: color-mix(in srgb, var(--app-secondary) 58%, var(--app-bg));
-  filter: blur(180px);
-  opacity: 0.15;
-}
-
-.app-aurora-orb-3 {
-  top: 42%;
-  left: 48%;
-  width: 380px;
-  height: 380px;
-  background: color-mix(in srgb, var(--app-warm) 48%, var(--app-bg));
-  filter: blur(170px);
-  opacity: 0.09;
 }
 
 .app-edge-handle {
@@ -2195,12 +2013,9 @@ html[data-app-theme="porcelain"]
   -webkit-backdrop-filter: blur(28px) saturate(165%);
 }
 
-.app-shell[data-dashboard-ui="student"]:has(.growth-home) .app-aurora-orb {
-  opacity: 0.28;
-}
-
-html[data-app-theme="clarity"]
-  .app-shell[data-dashboard-ui="student"]:has(.growth-home) {
+.app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="night"]:has(
+    .growth-home
+  ) {
   --growth-surface-primary: color-mix(in srgb, white 8%, transparent);
   --growth-surface-hero-start: color-mix(in srgb, white 13%, transparent);
   --growth-surface-hero-end: color-mix(
@@ -2261,8 +2076,9 @@ html[data-app-theme="clarity"]
     );
 }
 
-html[data-app-theme="clarity"]
-  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+.app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="night"]:has(
+    .growth-home
+  )
   .app-student-page-header
   .app-glass-card {
   border-color: rgba(255, 255, 255, 0.14);
@@ -2272,12 +2088,15 @@ html[data-app-theme="clarity"]
     inset 0 1px 0 rgba(255, 255, 255, 0.17);
 }
 
-html[data-app-theme="clarity"] .growth-surface--hero,
-html[data-app-theme="clarity"] .growth-surface--accent {
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-surface--hero,
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-surface--accent {
   border-color: rgba(255, 255, 255, 0.16);
 }
 
-html[data-app-theme="clarity"] .growth-panel--chart {
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-panel--chart {
   background: linear-gradient(
     180deg,
     color-mix(in srgb, white 8%, transparent),
@@ -2285,7 +2104,8 @@ html[data-app-theme="clarity"] .growth-panel--chart {
   );
 }
 
-html[data-app-theme="clarity"] .growth-panel--accent-strong {
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-panel--accent-strong {
   background: linear-gradient(
     145deg,
     color-mix(in srgb, var(--app-accent) 12%, transparent),
@@ -2293,18 +2113,24 @@ html[data-app-theme="clarity"] .growth-panel--accent-strong {
   );
 }
 
-html[data-app-theme="clarity"] .growth-course-card,
-html[data-app-theme="clarity"] .growth-record-row {
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-course-card,
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-record-row {
   background: color-mix(in srgb, white 7%, transparent);
 }
 
-html[data-app-theme="clarity"] .growth-course-card:hover,
-html[data-app-theme="clarity"] .growth-record-row:hover {
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-course-card:hover,
+.app-shell[data-student-shell="system"][data-student-background="night"]
+  .growth-record-row:hover {
   background: color-mix(in srgb, white 12%, transparent);
 }
 
-html[data-app-theme="porcelain"]
-  .app-shell[data-dashboard-ui="student"]:has(.growth-home) {
+.app-shell[data-dashboard-ui="student"][data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  ):has(.growth-home) {
   --growth-surface-primary: color-mix(in srgb, white 58%, transparent);
   --growth-surface-hero-start: color-mix(in srgb, white 74%, transparent);
   --growth-surface-hero-end: color-mix(
@@ -2344,8 +2170,10 @@ html[data-app-theme="porcelain"]
   background-image: none;
 }
 
-html[data-app-theme="porcelain"]
-  .app-shell[data-dashboard-ui="student"]:has(.growth-home)
+.app-shell[data-dashboard-ui="student"][data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  ):has(.growth-home)
   .app-student-page-header
   .app-glass-card {
   border-color: rgba(29, 29, 31, 0.14);
@@ -2355,12 +2183,24 @@ html[data-app-theme="porcelain"]
     inset 0 1px 0 rgba(255, 255, 255, 0.98);
 }
 
-html[data-app-theme="porcelain"] .growth-surface--hero,
-html[data-app-theme="porcelain"] .growth-surface--accent {
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-surface--hero,
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-surface--accent {
   border-color: rgba(29, 29, 31, 0.14);
 }
 
-html[data-app-theme="porcelain"] .growth-panel--chart {
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-panel--chart {
   background: linear-gradient(
     180deg,
     rgba(255, 255, 255, 0.56),
@@ -2368,7 +2208,11 @@ html[data-app-theme="porcelain"] .growth-panel--chart {
   );
 }
 
-html[data-app-theme="porcelain"] .growth-panel--accent-strong {
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-panel--accent-strong {
   background: linear-gradient(
     145deg,
     rgba(255, 244, 206, 0.72),
@@ -2376,13 +2220,29 @@ html[data-app-theme="porcelain"] .growth-panel--accent-strong {
   );
 }
 
-html[data-app-theme="porcelain"] .growth-course-card,
-html[data-app-theme="porcelain"] .growth-record-row {
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-course-card,
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-record-row {
   background: rgba(255, 255, 255, 0.56);
 }
 
-html[data-app-theme="porcelain"] .growth-course-card:hover,
-html[data-app-theme="porcelain"] .growth-record-row:hover {
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-course-card:hover,
+.app-shell[data-student-shell="system"]:is(
+    [data-student-background="morning"],
+    [data-student-background="afternoon"]
+  )
+  .growth-record-row:hover {
   background: rgba(255, 255, 255, 0.76);
 }
 
@@ -2419,10 +2279,9 @@ html[data-app-theme="porcelain"] .growth-record-row:hover {
 /*
   Student OS · Apple system-inspired shell
 
-  The previous five student themes and their layout rules remain above as the
-  recoverable legacy system. The new shell is deliberately scoped to
-  data-student-shell="system", so none of those definitions are deleted or
-  rewritten. Translucent material is reserved for navigation and lightweight
+  This is the only active student application theme. Morning, afternoon and
+  night are background modes inside this system rather than independent global
+  themes. Translucent material is reserved for navigation and lightweight
   dashboard surfaces; dense learning content continues to use an opaque base.
 */
 :root {
@@ -2832,10 +2691,6 @@ html[data-student-background="afternoon"] .student-system-floating-layer {
   );
 }
 
-.app-shell[data-student-shell="system"] .app-aurora-orb {
-  display: none;
-}
-
 .student-system-window {
   position: relative;
   isolation: isolate;
@@ -2970,7 +2825,7 @@ html:fullscreen
   display: block;
   margin-top: 2px;
   color: var(--app-muted);
-  font-size: 8px;
+  font-size: 10px;
   font-weight: 720;
   letter-spacing: 0.17em;
 }
@@ -2988,7 +2843,7 @@ html:fullscreen
 .student-system-nav-group h2 {
   margin: 0 10px 6px;
   color: var(--app-muted);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 720;
   letter-spacing: 0.08em;
 }
@@ -3001,14 +2856,14 @@ html:fullscreen
 .student-system-nav-link {
   position: relative;
   display: flex;
-  min-height: 39px;
+  min-height: 42px;
   align-items: center;
   gap: 10px;
   border: 1px solid transparent;
   border-radius: 12px;
   padding: 0 11px;
   color: var(--app-text-soft);
-  font-size: 12px;
+  font-size: 14px;
   font-weight: 620;
   transition:
     color 140ms ease,
@@ -3023,6 +2878,7 @@ html:fullscreen
 
 .student-system-nav-link:focus-visible,
 .student-system-tool-button:focus-visible,
+.student-system-toolbar > button[aria-controls="guide-agent-chat-panel"]:focus-visible,
 .student-system-primary-button:focus-visible,
 .student-system-secondary-button:focus-visible,
 .student-system-text-action:focus-visible {
@@ -3048,7 +2904,7 @@ html:fullscreen
   border-top: 1px solid var(--app-border-soft);
   padding: 13px 8px 16px;
   color: var(--app-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 650;
 }
 
@@ -3110,7 +2966,7 @@ html:fullscreen
 .student-system-greeting p:last-child {
   margin-top: 2px;
   color: var(--app-muted);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 560;
 }
 
@@ -3456,7 +3312,8 @@ html:fullscreen
   background: var(--student-button-neutral-surface-hover);
 }
 
-.student-system-tool-button {
+.student-system-tool-button,
+.student-system-toolbar > button[aria-controls="guide-agent-chat-panel"] {
   display: inline-flex;
   width: 40px;
   height: 40px;
@@ -3466,7 +3323,7 @@ html:fullscreen
   border: 1px solid var(--app-border);
   border-radius: 13px;
   color: var(--app-text-soft);
-  background: var(--student-button-neutral-surface);
+  background: var(--student-button-neutral-surface) !important;
   box-shadow: 0 5px 16px -14px rgba(23, 35, 50, 0.65);
   transition:
     color 140ms ease,
@@ -3474,30 +3331,12 @@ html:fullscreen
     background-color 140ms ease;
 }
 
-.student-system-tool-button:hover {
-  border-color: var(--app-accent);
-  color: var(--app-accent-strong);
-  background: var(--student-button-neutral-surface-hover);
-}
-
-.student-system-toolbar > .app-glass-card {
-  min-height: 40px;
-  border: 1px solid var(--app-border);
-  border-radius: 13px;
-  padding: 0 12px;
-  color: var(--app-text-soft);
-  background: var(--student-button-neutral-surface);
-  box-shadow: 0 5px 16px -14px rgba(23, 35, 50, 0.65);
-  font-size: 12px;
-  font-weight: 680;
-  letter-spacing: 0;
-}
-
-.student-system-toolbar > .app-glass-card:hover {
+.student-system-tool-button:hover,
+.student-system-toolbar > button[aria-controls="guide-agent-chat-panel"]:hover {
   transform: none;
   border-color: var(--app-accent);
   color: var(--app-accent-strong);
-  background: var(--student-button-neutral-surface-hover);
+  background: var(--student-button-neutral-surface-hover) !important;
 }
 
 html
@@ -3594,8 +3433,21 @@ html
   min-height: 40px;
   align-items: center;
   border-left: 1px solid var(--app-border);
+  border-radius: 10px;
   margin-left: 3px;
-  padding-left: 11px;
+  padding: 0 8px 0 11px;
+  color: var(--app-text);
+  text-decoration: none;
+  transition: background-color 160ms ease;
+}
+
+.student-system-account:hover {
+  background: var(--app-soft-bg);
+}
+
+.student-system-account:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--app-accent) 36%, transparent);
+  outline-offset: 2px;
 }
 
 .student-system-account strong,
@@ -3790,15 +3642,15 @@ a.student-system-alert:hover,
   gap: 24px;
   overflow: hidden;
   border: 1px solid var(--app-border);
-  border-radius: 20px;
+  border-radius: 16px;
   padding: 20px 22px;
   color: var(--app-text);
   background: var(--student-glass-surface);
   box-shadow:
-    0 22px 48px -38px rgba(30, 45, 64, 0.48),
-    0 1px 0 rgba(255, 255, 255, 0.88) inset;
-  backdrop-filter: blur(30px) saturate(130%);
-  -webkit-backdrop-filter: blur(30px) saturate(130%);
+    0 16px 36px -32px rgba(30, 45, 64, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  backdrop-filter: blur(18px) saturate(118%);
+  -webkit-backdrop-filter: blur(18px) saturate(118%);
 }
 
 .student-system-welcome::after {
@@ -3845,7 +3697,7 @@ a.student-system-alert:hover,
 .student-system-welcome-eyebrow {
   display: block;
   color: var(--app-accent-strong);
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 760;
   letter-spacing: 0.12em;
 }
@@ -3861,7 +3713,7 @@ a.student-system-alert:hover,
 .student-system-welcome-main p {
   margin-top: 5px;
   color: var(--app-muted);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 540;
   line-height: 1.5;
 }
@@ -3887,14 +3739,14 @@ a.student-system-alert:hover,
 
 .student-system-welcome-status small {
   color: var(--app-muted);
-  font-size: 8px;
+  font-size: 11px;
   font-weight: 600;
 }
 
 .student-system-welcome-status strong {
   margin-top: 2px;
   color: var(--app-text);
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 750;
 }
 
@@ -3906,7 +3758,7 @@ a.student-system-alert:hover,
   border-left: 1px solid var(--app-border);
   padding-left: 14px;
   color: var(--app-warm);
-  font-size: 10px;
+  font-size: 12px;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -4439,15 +4291,8 @@ a:hover > .student-system-recent-row {
     padding-inline: 18px;
   }
 
-  .student-system-toolbar > .app-glass-card span:last-child,
   .student-system-account {
     display: none;
-  }
-
-  .student-system-toolbar > .app-glass-card {
-    width: 40px;
-    padding: 0;
-    justify-content: center;
   }
 
   .student-system-course-grid {
@@ -4486,6 +4331,7 @@ a:hover > .student-system-recent-row {
 
   .student-system-main {
     overflow: visible;
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
   }
 
   .student-system-topbar {
@@ -4502,12 +4348,12 @@ a:hover > .student-system-recent-row {
 
   .student-system-greeting p:first-child {
     max-width: 120px;
-    font-size: 12px;
+    font-size: 14px;
   }
 
   .student-system-greeting p:last-child {
     max-width: 150px;
-    font-size: 8px;
+    font-size: 12px;
   }
 
   .student-system-toolbar {
@@ -4519,9 +4365,10 @@ a:hover > .student-system-recent-row {
     display: none;
   }
 
-  .student-system-tool-button {
-    width: 38px;
-    height: 38px;
+  .student-system-tool-button,
+  .student-system-toolbar > button[aria-controls="guide-agent-chat-panel"] {
+    width: 44px;
+    height: 44px;
   }
 
   .app-shell[data-student-shell="system"] .app-student-page-header {
@@ -4566,7 +4413,7 @@ a:hover > .student-system-recent-row {
   }
 
   .student-system-chart-column > span {
-    font-size: 8px;
+    font-size: 11px;
   }
 
   .student-system-insight-grid {

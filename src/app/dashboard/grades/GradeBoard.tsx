@@ -1,15 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowRight,
   Award,
-  BarChart3,
   CheckCircle2,
   ClipboardCheck,
   FilePenLine,
-  GraduationCap,
   SearchCheck,
   Trophy,
   XCircle,
@@ -83,8 +81,8 @@ const categoryPresentation = {
     label: "正式考试",
     shortLabel: "阶段性正式成绩",
     icon: ClipboardCheck,
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--app-secondary)",
+    soft: "var(--app-secondary-soft)",
   },
 } satisfies Record<
   GradeCategory,
@@ -124,7 +122,10 @@ function percentage(result: GradeResult) {
 
 function averageOf(results: GradeResult[]) {
   if (results.length === 0) return null;
-  return results.reduce((sum, result) => sum + percentage(result), 0) / results.length;
+  return (
+    results.reduce((sum, result) => sum + percentage(result), 0) /
+    results.length
+  );
 }
 
 function scoreLabel(value: number | null) {
@@ -133,6 +134,45 @@ function scoreLabel(value: number | null) {
   if (value >= 80) return "掌握良好";
   if (value >= 60) return "达到基础要求";
   return "需要重点巩固";
+}
+
+function isGradeCategory(value: string | null): value is GradeCategory {
+  return value === "homework" || value === "exam";
+}
+
+function readStoredCategory(memoryKey: string) {
+  try {
+    const storedCategory = window.localStorage.getItem(memoryKey);
+    return isGradeCategory(storedCategory) ? storedCategory : null;
+  } catch {
+    return null;
+  }
+}
+
+function rememberCategory(memoryKey: string, category: GradeCategory) {
+  try {
+    window.localStorage.setItem(memoryKey, category);
+  } catch {
+    // 隐私模式或禁用本地存储时，URL 状态仍然可用。
+  }
+}
+
+function readCategoryFromUrl() {
+  const queryCategory = new URLSearchParams(window.location.search).get("type");
+  return isGradeCategory(queryCategory) ? queryCategory : null;
+}
+
+function writeCategoryToUrl(
+  category: GradeCategory,
+  method: "pushState" | "replaceState",
+) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("type", category);
+  window.history[method](
+    null,
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
 }
 
 function SkillRadar({
@@ -164,6 +204,8 @@ function SkillRadar({
       }
       emptyMessage={`目前的已批改${categoryStyle.label}还没有六维能力标记。完成带能力维度的${categoryStyle.label}后，这里会自动形成六边形。`}
       insightLabel="本次能力解读"
+      evidenceOnly
+      deemphasizeSparseInsight
     />
   );
 }
@@ -174,18 +216,47 @@ export function GradeBoard({
   skillProfiles,
   isStudent,
   dataError,
+  memoryKey,
 }: {
   results: GradeResult[];
   reviews: GradeReview[];
   skillProfiles: Record<GradeCategory, GradeSkillProfileItem[]>;
   isStudent: boolean;
   dataError: boolean;
+  memoryKey: string;
 }) {
-  const [category, setCategory] = useState<GradeCategory>(() =>
-    results.some((result) => result.category === "homework")
-      ? "homework"
-      : "exam",
-  );
+  const [category, setCategory] = useState<GradeCategory>("homework");
+
+  useEffect(() => {
+    const urlCategory = readCategoryFromUrl();
+    const initialCategory =
+      urlCategory ?? readStoredCategory(memoryKey) ?? "homework";
+
+    rememberCategory(memoryKey, initialCategory);
+    if (!urlCategory) writeCategoryToUrl(initialCategory, "replaceState");
+    const initialSyncFrame = window.requestAnimationFrame(() => {
+      setCategory(initialCategory);
+    });
+
+    const syncCategoryFromHistory = () => {
+      const historyCategory = readCategoryFromUrl() ?? "homework";
+      setCategory(historyCategory);
+      rememberCategory(memoryKey, historyCategory);
+    };
+
+    window.addEventListener("popstate", syncCategoryFromHistory);
+    return () => {
+      window.cancelAnimationFrame(initialSyncFrame);
+      window.removeEventListener("popstate", syncCategoryFromHistory);
+    };
+  }, [memoryKey]);
+
+  function selectCategory(nextCategory: GradeCategory) {
+    if (nextCategory === category) return;
+    setCategory(nextCategory);
+    rememberCategory(memoryKey, nextCategory);
+    writeCategoryToUrl(nextCategory, "pushState");
+  }
   const reviewBySource = useMemo(
     () =>
       new Map(
@@ -198,303 +269,242 @@ export function GradeBoard({
       ),
     [reviews],
   );
-  const filteredResults = results.filter(
-    (result) => result.category === category,
+  const resultsByCategory = useMemo(
+    () => ({
+      homework: results.filter((result) => result.category === "homework"),
+      exam: results.filter((result) => result.category === "exam"),
+    }),
+    [results],
   );
-  const overallAverage = averageOf(results);
-  const bestResult = [...results].sort(
+  const filteredResults = resultsByCategory[category];
+  const activeAverage = averageOf(filteredResults);
+  const bestResult = [...filteredResults].sort(
     (a, b) => percentage(b) - percentage(a),
   )[0];
-  const passedCount = results.filter((result) => result.passed).length;
+  const passedCount = filteredResults.filter((result) => result.passed).length;
+  const activeSourceKeys = new Set(
+    filteredResults.map(
+      (result) => `${result.sourceType}:${result.sourceResultId}`,
+    ),
+  );
   const pendingReviews = reviews.filter(
-    (review) => review.status === "pending" || review.status === "reviewing",
+    (review) =>
+      review.source_result_id &&
+      activeSourceKeys.has(`${review.source_type}:${review.source_result_id}`) &&
+      (review.status === "pending" || review.status === "reviewing"),
   ).length;
-  const passRate = results.length ? (passedCount / results.length) * 100 : null;
+  const passRate = filteredResults.length
+    ? (passedCount / filteredResults.length) * 100
+    : null;
   const activePresentation = categoryPresentation[category];
   const ActiveIcon = activePresentation.icon;
 
   return (
     <div className="space-y-5">
       <section
-        className="app-card relative overflow-hidden rounded-[2rem] border p-5 sm:p-6"
-        style={{
-          background:
-            "linear-gradient(135deg, var(--app-hero-end), var(--app-card-bg) 52%, var(--app-secondary-soft))",
-        }}
+        id="grade-overview"
+        aria-labelledby="grade-center-title"
+        data-grade-category-selector
+        className="scroll-mt-24 space-y-4"
       >
-        <span
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-24 -top-28 h-80 w-80 rounded-full opacity-40 blur-3xl"
-          style={{ backgroundColor: "var(--app-secondary-soft)" }}
-        />
-        <div className="relative grid gap-6 xl:grid-cols-[minmax(0,0.8fr)_minmax(620px,1.2fr)] xl:items-stretch">
-          <div className="flex max-w-xl flex-col justify-center">
-            <span
-              className="w-fit inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black tracking-[0.08em]"
-              style={{
-                color: "var(--app-secondary)",
-                backgroundColor: "var(--app-secondary-soft)",
-              }}
+        <header className="flex flex-col gap-4 px-1 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <h1
+              id="grade-center-title"
+              className="text-2xl font-black tracking-[-0.03em] sm:text-3xl"
             >
-              <GraduationCap size={14} aria-hidden="true" />
-              学习成果总览
-            </span>
-            <h1 className="mt-4 text-3xl font-black tracking-[-0.04em] sm:text-4xl">
-              {scoreLabel(overallAverage)}
+              我的成绩
             </h1>
-            <p className="app-muted-text mt-3 max-w-lg text-sm font-bold leading-7">
-              集中查看老师批改后的作业与正式考试，先了解整体表现，再定位能力强项和需要巩固的方向。
+            <p className="app-muted-text mt-2 text-sm font-medium leading-6">
+              选择老师作业或正式考试，概览、能力画像和成绩明细会一起切换。章节测试仍在对应章节内查看。
             </p>
-            <div className="mt-5 flex flex-wrap gap-2 text-[9px] font-black">
-              <span className="rounded-full bg-[var(--app-card-bg)] px-3 py-2">
-                老师作业 {results.filter((item) => item.category === "homework").length} 项
-              </span>
-              <span className="rounded-full bg-[var(--app-card-bg)] px-3 py-2">
-                正式考试 {results.filter((item) => item.category === "exam").length} 项
-              </span>
-              <span className="rounded-full bg-[var(--app-card-bg)] px-3 py-2 text-[var(--app-muted)]">
-                章节测试在章节内查看
-              </span>
-            </div>
           </div>
-
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-[1.1fr_1fr_1fr]">
-            <article className="app-soft-card col-span-2 flex min-h-40 items-center gap-5 rounded-3xl border p-5 sm:col-span-1 sm:row-span-2 sm:flex-col sm:items-start sm:justify-between">
-              <div>
-                <p className="app-muted-text text-[10px] font-black tracking-[0.08em]">
-                  综合平均得分率
-                </p>
-                <p className="mt-2 text-3xl font-black tabular-nums sm:text-4xl">
-                  {overallAverage == null ? "—" : overallAverage.toFixed(1)}
-                  {overallAverage != null && (
-                    <span className="ml-1 text-sm text-[var(--app-muted)]">%</span>
-                  )}
-                </p>
-                <p className="mt-1 text-[10px] font-black text-[var(--app-accent)]">
-                  {scoreLabel(overallAverage)}
-                </p>
-              </div>
-              <div
-                role="img"
-                aria-label={
-                  overallAverage == null
-                    ? "暂无综合平均成绩"
-                    : `综合平均得分率 ${overallAverage.toFixed(1)}%`
-                }
-                className="relative ml-auto flex h-20 w-20 shrink-0 items-center justify-center rounded-full sm:ml-0"
-                style={{
-                  background: `conic-gradient(var(--app-accent) ${overallAverage ?? 0}%, var(--app-soft-bg) 0)`,
-                }}
-              >
-                <span className="absolute inset-[7px] rounded-full bg-[var(--app-card-bg)]" />
-                <BarChart3
-                  size={20}
-                  aria-hidden="true"
-                  className="relative text-[var(--app-accent)]"
-                />
-              </div>
-            </article>
-
+          <nav
+            className="flex flex-wrap gap-2"
+            aria-label="成绩页快捷跳转"
+          >
             {[
-              {
-                label: "最高得分率",
-                value: bestResult ? `${percentage(bestResult).toFixed(1)}%` : "—",
-                icon: Trophy,
-                color: "var(--app-warm)",
-                soft: "var(--app-warm-soft)",
-              },
-              {
-                label: "达标率",
-                value: passRate == null ? "—" : `${passRate.toFixed(0)}%`,
-                icon: CheckCircle2,
-                color: "var(--app-success)",
-                soft: "var(--app-success-soft)",
-              },
-              {
-                label: "复核处理中",
-                value: `${pendingReviews}`,
-                icon: SearchCheck,
-                color: "var(--app-secondary)",
-                soft: "var(--app-secondary-soft)",
-              },
-            ].map((item) => {
-              const Icon = item.icon;
-              return (
-                <article
-                  key={item.label}
-                  className="app-soft-card flex min-w-0 items-center gap-3 rounded-2xl border p-3.5"
-                >
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                    style={{ color: item.color, backgroundColor: item.soft }}
-                  >
-                    <Icon size={16} aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="truncate text-base font-black tabular-nums">
-                      {item.value}
-                    </p>
-                    <p className="app-muted-text mt-1 text-[9px] font-black leading-4">
-                      {item.label}
-                    </p>
-                  </div>
-                </article>
-              );
-            })}
-          </div>
-        </div>
-      </section>
+              ["概览", "#grade-overview"],
+              ["能力", "#grade-skills"],
+              ["明细", "#grade-details"],
+            ].map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-[var(--app-border-soft)] bg-[var(--app-card-bg)] px-4 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+        </header>
 
-      <section aria-labelledby="category-skill-profile-title">
-        <div className="mb-3 px-1">
-          <p className="text-[10px] font-black tracking-[0.12em] text-[var(--app-accent)]">
-            分类能力画像
-          </p>
-          <h2 id="category-skill-profile-title" className="mt-1 text-lg font-black tracking-tight">
-            老师作业与正式考试分别分析
-          </h2>
-          <p className="app-muted-text mt-1 text-xs font-bold">
-            两类成绩互不混算，分别生成六边形学习能力
-          </p>
-        </div>
-        <div className="grid gap-5 2xl:grid-cols-2">
-          <SkillRadar category="homework" profile={skillProfiles.homework} />
-          <SkillRadar category="exam" profile={skillProfiles.exam} />
-        </div>
-      </section>
-
-      <section className="app-card rounded-[2rem] border p-5 sm:p-6">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="text-[10px] font-black tracking-[0.12em] text-[var(--app-accent)]">
-              成绩分类
-            </p>
-            <h2 className="mt-1 text-lg font-black tracking-tight">
-              选择要查看的成绩类型
-            </h2>
-            <p className="app-muted-text mt-1 text-xs font-bold">
-              作业用于观察日常掌握，考试用于确认阶段成果
-            </p>
-          </div>
-          <p className="app-muted-text text-xs font-black">
-            共 {results.length} 条成绩
-          </p>
-        </div>
-
-        <div className="mt-5 grid gap-3 md:grid-cols-2">
+        <div
+          className="app-card grid grid-cols-2 gap-2 rounded-2xl border bg-[var(--app-soft-bg)] p-2"
+          role="group"
+          aria-label="选择成绩类型"
+        >
           {(Object.keys(categoryPresentation) as GradeCategory[]).map((key) => {
             const item = categoryPresentation[key];
             const Icon = item.icon;
             const active = category === key;
-            const categoryResults = results.filter(
-              (result) => result.category === key,
-            );
-            const categoryAverage = averageOf(categoryResults);
-            const categoryPassed = categoryResults.filter(
-              (result) => result.passed,
-            ).length;
             return (
               <button
                 key={key}
                 type="button"
-                onClick={() => setCategory(key)}
+                onClick={() => selectCategory(key)}
                 aria-pressed={active}
-                className="app-soft-card group relative min-h-36 overflow-hidden rounded-3xl border p-4 text-left transition hover:border-[var(--app-accent)] sm:p-5"
+                className="flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] sm:px-4"
                 style={{
-                  backgroundColor: active ? item.soft : "var(--app-card-bg)",
+                  color: active ? item.color : "var(--app-text)",
+                  backgroundColor: active
+                    ? "var(--app-card-bg)"
+                    : "transparent",
                   borderColor: active ? item.color : "var(--app-border-soft)",
-                  boxShadow: active ? `0 0 0 1px ${item.color}` : undefined,
                 }}
               >
-                <span
-                  aria-hidden="true"
-                  className="absolute -bottom-14 -right-12 h-40 w-40 rounded-full opacity-40"
-                  style={{ backgroundColor: item.soft }}
-                />
-                <span className="relative flex items-start gap-4">
-                  <span
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
-                    style={{ color: item.color, backgroundColor: item.soft }}
-                  >
-                    <Icon size={19} />
+                <Icon size={18} className="shrink-0" aria-hidden="true" />
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">
+                    {item.label}
                   </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="flex items-start justify-between gap-3">
-                      <span>
-                        <span className="block text-base font-black">
-                          {item.label}
-                        </span>
-                        <span className="app-muted-text mt-1 block text-[10px] font-bold">
-                          {item.shortLabel}
-                        </span>
-                      </span>
-                      <span className="text-right" style={{ color: item.color }}>
-                        <span className="block text-2xl font-black tabular-nums">
-                          {categoryResults.length}
-                        </span>
-                        <span className="mt-0.5 block text-[8px] font-black">
-                          条记录
-                        </span>
-                      </span>
-                    </span>
-                    <span className="mt-4 grid grid-cols-2 gap-2">
-                      <span className="rounded-xl bg-[var(--app-card-bg)]/80 px-3 py-2">
-                        <span className="app-muted-text block text-[8px] font-black">平均得分率</span>
-                        <span className="mt-1 block text-xs font-black">
-                          {categoryAverage == null ? "—" : `${categoryAverage.toFixed(1)}%`}
-                        </span>
-                      </span>
-                      <span className="rounded-xl bg-[var(--app-card-bg)]/80 px-3 py-2">
-                        <span className="app-muted-text block text-[8px] font-black">达标记录</span>
-                        <span className="mt-1 block text-xs font-black">
-                          {categoryPassed} / {categoryResults.length}
-                        </span>
-                      </span>
-                    </span>
+                  <span className="app-muted-text mt-0.5 hidden text-xs font-medium sm:block">
+                    {item.shortLabel}
                   </span>
                 </span>
+                {active && (
+                  <span className="ml-auto inline-flex shrink-0 items-center gap-1 text-xs font-semibold">
+                    <CheckCircle2 size={13} aria-hidden="true" />
+                    当前
+                  </span>
+                )}
               </button>
+            );
+          })}
+        </div>
+        <div className="flex flex-wrap items-end justify-between gap-3 px-1">
+          <div>
+            <p
+              className="text-xs font-semibold tracking-[0.12em]"
+              style={{ color: activePresentation.color }}
+            >
+              当前查看
+            </p>
+            <h2
+              id="active-grade-overview-title"
+              className="mt-1 text-lg font-bold tracking-tight"
+            >
+              {activePresentation.label}概览
+            </h2>
+            <p className="app-muted-text mt-1 text-xs font-medium">
+              {scoreLabel(activeAverage)} · 数据只来自{activePresentation.label}
+            </p>
+          </div>
+          <span
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className="sr-only"
+          >
+            当前查看{activePresentation.label}，共 {filteredResults.length}
+            条成绩记录
+          </span>
+        </div>
+
+        <div className="app-card grid grid-cols-2 overflow-hidden rounded-2xl border xl:grid-cols-4">
+          {[
+            {
+              label: "平均得分率",
+              value: activeAverage == null ? "—" : `${activeAverage.toFixed(1)}%`,
+              icon: Award,
+              color: activePresentation.color,
+              soft: activePresentation.soft,
+            },
+            {
+              label: "最高得分率",
+              value: bestResult ? `${percentage(bestResult).toFixed(1)}%` : "—",
+              icon: Trophy,
+              color: "var(--app-secondary)",
+              soft: "var(--app-secondary-soft)",
+            },
+            {
+              label: "达标率",
+              value: passRate == null ? "—" : `${passRate.toFixed(0)}%`,
+              icon: CheckCircle2,
+              color: "var(--app-success)",
+              soft: "var(--app-success-soft)",
+            },
+            {
+              label: "复核处理中",
+              value: String(pendingReviews),
+              icon: SearchCheck,
+              color: "var(--app-warm)",
+              soft: "var(--app-warm-soft)",
+            },
+          ].map((item, index) => {
+            const Icon = item.icon;
+            return (
+              <article
+                key={item.label}
+                className={`${index < 2 ? "border-b" : ""} ${index % 2 === 1 ? "border-l" : ""} flex min-h-24 items-center gap-3 border-[var(--app-border-soft)] p-4 xl:border-b-0 ${index > 0 ? "xl:border-l" : "xl:border-l-0"}`}
+              >
+                <span
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
+                  style={{ color: item.color, backgroundColor: item.soft }}
+                >
+                  <Icon size={17} aria-hidden="true" />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-lg font-black tabular-nums sm:text-xl">
+                    {item.value}
+                  </p>
+                  <p className="app-muted-text mt-1 text-xs font-medium">
+                    {item.label}
+                  </p>
+                </div>
+              </article>
             );
           })}
         </div>
       </section>
 
-      <section className="app-card rounded-[2rem] border p-4 sm:p-5">
-        <div className="mb-4 flex flex-wrap items-end justify-between gap-3 px-1">
-          <div className="flex items-center gap-2">
+      <div id="grade-skills" className="scroll-mt-24">
+        <SkillRadar category={category} profile={skillProfiles[category]} />
+      </div>
+
+      <section
+        id="grade-details"
+        aria-labelledby="grade-detail-title"
+        className="scroll-mt-24"
+      >
+        <div className="mb-3 flex flex-wrap items-end justify-between gap-3 px-1">
+          <div className="flex items-center gap-3">
             <span
-              className="flex h-8 w-8 items-center justify-center rounded-lg"
+              className="flex h-9 w-9 items-center justify-center rounded-lg"
               style={{
                 color: activePresentation.color,
                 backgroundColor: activePresentation.soft,
               }}
             >
-              <ActiveIcon size={15} />
+              <ActiveIcon size={16} aria-hidden="true" />
             </span>
             <div>
-              <h3 className="text-sm font-black">
+              <h2 id="grade-detail-title" className="text-base font-bold">
                 {activePresentation.label}成绩明细
-              </h3>
-              <p className="app-muted-text text-[10px] font-bold">
+              </h2>
+              <p className="app-muted-text mt-0.5 text-xs font-medium">
                 按最近批改时间排列
               </p>
             </div>
           </div>
-          {averageOf(filteredResults) != null && (
-            <span
-              className="rounded-full px-3 py-1.5 text-[10px] font-black"
-              style={{
-                color: activePresentation.color,
-                backgroundColor: activePresentation.soft,
-              }}
-            >
-              当前分类平均 {averageOf(filteredResults)?.toFixed(1)}%
-            </span>
-          )}
+          <span className="app-muted-text text-xs font-medium">
+            共 {filteredResults.length} 条
+          </span>
         </div>
 
-        <div className="grid gap-3 xl:grid-cols-2">
-          {filteredResults.map((result) => {
+        {filteredResults.length > 0 && (
+          <div className="app-card divide-y divide-[var(--app-border-soft)] overflow-hidden rounded-2xl border">
+            {filteredResults.map((result) => {
             const review = reviewBySource.get(
               `${result.sourceType}:${result.sourceResultId}`,
             );
@@ -507,146 +517,174 @@ export function GradeBoard({
             return (
               <article
                 key={result.key}
-                className="app-card flex h-full flex-col overflow-hidden rounded-3xl border"
+                className="p-4 sm:p-5"
               >
-                <div className="flex items-start gap-3 border-b border-[var(--app-border-soft)] px-5 py-4">
+                <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
                   <span
-                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                     style={{
                       color: activePresentation.color,
                       backgroundColor: activePresentation.soft,
                     }}
                   >
-                    <ActiveIcon size={17} />
+                    <ActiveIcon size={17} aria-hidden="true" />
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] font-black" style={{ color: activePresentation.color }}>
+                    <p
+                      className="text-xs font-semibold"
+                      style={{ color: activePresentation.color }}
+                    >
                       {result.courseName} · {result.typeLabel}
                     </p>
-                    <h4 className="mt-1 text-sm font-black leading-5">
+                    <h3 className="mt-1 text-sm font-black leading-5">
                       {result.title}
-                    </h4>
-                    <p className="app-muted-text mt-1 text-[9px] font-bold">
-                      {result.subtitle} · <LocalDateTime value={result.recordedAt} options={GRADE_DATE_TIME_OPTIONS} />
+                    </h3>
+                    <p className="app-muted-text mt-1 text-xs font-medium leading-5">
+                      {result.subtitle} ·{" "}
+                      <LocalDateTime
+                        value={result.recordedAt}
+                        options={GRADE_DATE_TIME_OPTIONS}
+                      />
                     </p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-2xl font-black tabular-nums">
-                      {result.score}
-                      <span className="app-muted-text text-[10px]">
-                        /{result.totalPoints}
-                      </span>
-                    </p>
-                    <p className="app-muted-text mt-0.5 text-[9px] font-black">
+                    <p className="text-xl font-black tabular-nums sm:text-2xl">
                       {percent.toFixed(1)}%
+                    </p>
+                    <p className="app-muted-text mt-0.5 text-xs font-medium tabular-nums">
+                      {result.score} / {result.totalPoints} 分
                     </p>
                   </div>
                 </div>
 
-                <div className="flex flex-1 flex-col px-5 py-4">
-                  <div className="h-2 overflow-hidden rounded-full bg-[var(--app-soft-bg)]">
-                    <div
-                      className="h-full rounded-full"
-                      style={{
-                        width: `${percent}%`,
-                        backgroundColor: result.passed
-                          ? "var(--app-success)"
-                          : "var(--app-warm)",
-                      }}
-                    />
-                  </div>
+                <div
+                  className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
+                  role="progressbar"
+                  aria-label={`${result.title}得分率`}
+                  aria-valuemin={0}
+                  aria-valuemax={100}
+                  aria-valuenow={Number(percent.toFixed(1))}
+                >
+                  <div
+                    className="h-full rounded-full"
+                    style={{
+                      width: `${percent}%`,
+                      backgroundColor: result.passed
+                        ? "var(--app-success)"
+                        : "var(--app-warm)",
+                    }}
+                  />
+                </div>
 
-                  <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  <span
+                    className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-semibold"
+                    style={{
+                      color: result.passed
+                        ? "var(--app-success)"
+                        : "var(--app-warm)",
+                      backgroundColor: result.passed
+                        ? "var(--app-success-soft)"
+                        : "var(--app-warm-soft)",
+                    }}
+                  >
+                    {result.passed ? (
+                      <CheckCircle2 size={12} aria-hidden="true" />
+                    ) : (
+                      <XCircle size={12} aria-hidden="true" />
+                    )}
+                    {result.resultLabel}
+                  </span>
+                  {result.skills.map((skill) => (
                     <span
-                      className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-[9px] font-black"
+                      key={skill}
+                      className="rounded-full px-2.5 py-1.5 text-xs font-semibold"
                       style={{
-                        color: result.passed
-                          ? "var(--app-success)"
-                          : "var(--app-warm)",
-                        backgroundColor: result.passed
-                          ? "var(--app-success-soft)"
-                          : "var(--app-warm-soft)",
+                        color: languageSkillPresentation[skill].color,
+                        backgroundColor: languageSkillPresentation[skill].soft,
                       }}
                     >
-                      {result.passed ? (
-                        <CheckCircle2 size={10} />
-                      ) : (
-                        <XCircle size={10} />
-                      )}
-                      {result.resultLabel}
+                      {languageSkillPresentation[skill].label} ·{" "}
+                      {languageSkillPresentation[skill].fullLabel}
                     </span>
-                    {result.skills.map((skill) => (
-                      <span
-                        key={skill}
-                        className="rounded-full px-2.5 py-1.5 text-[9px] font-black"
-                        style={{
-                          color: languageSkillPresentation[skill].color,
-                          backgroundColor: languageSkillPresentation[skill].soft,
-                        }}
-                      >
-                        {languageSkillPresentation[skill].label} · {languageSkillPresentation[skill].fullLabel}
-                      </span>
-                    ))}
-                    {review && tone && (
-                      <span
-                        className="rounded-full px-2.5 py-1.5 text-[9px] font-black"
-                        style={{ color: tone.color, backgroundColor: tone.background }}
-                      >
-                        复核：{GRADE_REVIEW_STATUS_LABELS[review.status]}
-                      </span>
-                    )}
-                  </div>
-
-                  {result.feedback && (
-                    <div className="mt-4 rounded-2xl bg-[var(--app-soft-bg)] px-4 py-3">
-                      <p className="app-muted-text text-[9px] font-black">
-                        老师评语
-                      </p>
-                      <p className="mt-1.5 line-clamp-3 text-xs font-bold leading-5">
-                        {result.feedback}
-                      </p>
-                    </div>
-                  )}
-                  {review?.response && (
-                    <div className="mt-3 rounded-2xl bg-[var(--app-success-soft)] px-4 py-3">
-                      <p className="text-[9px] font-black text-[var(--app-success)]">
-                        复核回复
-                      </p>
-                      <p className="mt-1.5 text-xs font-bold leading-5">
-                        {review.response}
-                      </p>
-                    </div>
-                  )}
-
-                  <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-[var(--app-border-soft)] pt-4">
-                    <Link
-                      href={result.href}
-                      className="inline-flex items-center gap-1 text-[10px] font-black"
-                      style={{ color: "var(--app-secondary)" }}
+                  ))}
+                  {review && tone && (
+                    <span
+                      className="rounded-full px-2.5 py-1.5 text-xs font-semibold"
+                      style={{
+                        color: tone.color,
+                        backgroundColor: tone.background,
+                      }}
                     >
-                      查看原记录
-                      <ArrowRight size={10} />
-                    </Link>
-                    {isStudent && canRequestAgain && (
-                      <GradeReviewForm
-                        sourceType={result.sourceType}
-                        sourceResultId={result.sourceResultId}
-                      />
+                      复核：{GRADE_REVIEW_STATUS_LABELS[review.status]}
+                    </span>
+                  )}
+                </div>
+
+                {(result.feedback || review?.response) && (
+                  <div className="mt-4 grid gap-3 lg:grid-cols-2">
+                    {result.feedback && (
+                      <div className="border-l-2 border-[var(--app-border)] bg-[var(--app-soft-bg)] px-3 py-2.5">
+                        <p className="app-muted-text text-xs font-semibold">
+                          老师评语
+                        </p>
+                        <p
+                          className="mt-1.5 line-clamp-3 text-sm font-medium leading-6"
+                          title={result.feedback}
+                        >
+                          {result.feedback}
+                        </p>
+                      </div>
+                    )}
+                    {review?.response && (
+                      <div className="border-l-2 border-[var(--app-success)] bg-[var(--app-success-soft)] px-3 py-2.5">
+                        <p className="text-xs font-semibold text-[var(--app-success)]">
+                          复核回复
+                        </p>
+                        <p
+                          className="mt-1.5 line-clamp-3 text-sm font-medium leading-6"
+                          title={review.response}
+                        >
+                          {review.response}
+                        </p>
+                      </div>
                     )}
                   </div>
+                )}
+
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--app-border-soft)] pt-4">
+                  <Link
+                    href={result.href}
+                    className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold"
+                    style={{ color: "var(--app-secondary)" }}
+                  >
+                    查看原记录
+                    <ArrowRight size={12} aria-hidden="true" />
+                  </Link>
+                  {isStudent && canRequestAgain && (
+                    <GradeReviewForm
+                      sourceType={result.sourceType}
+                      sourceResultId={result.sourceResultId}
+                    />
+                  )}
                 </div>
               </article>
             );
-          })}
-        </div>
+            })}
+          </div>
+        )}
 
         {filteredResults.length === 0 && !dataError && (
-          <div className="app-card rounded-3xl border border-dashed p-10 text-center">
-            <ActiveIcon className="mx-auto opacity-30" size={34} />
-            <h3 className="mt-3 font-black">
+          <div className="app-card rounded-2xl border border-dashed p-10 text-center">
+            <ActiveIcon
+              className="mx-auto opacity-30"
+              size={34}
+              aria-hidden="true"
+            />
+            <h3 className="mt-3 font-bold">
               暂无{activePresentation.label}成绩
             </h3>
-            <p className="app-muted-text mt-2 text-xs">
+            <p className="app-muted-text mt-2 text-sm font-medium">
               完成并产生成绩后，会自动显示在这里。
             </p>
           </div>
@@ -654,8 +692,12 @@ export function GradeBoard({
       </section>
 
       <section className="app-soft-card flex items-center gap-3 rounded-2xl border p-4">
-        <Award size={18} className="shrink-0 text-[var(--app-secondary)]" />
-        <p className="app-muted-text text-[10px] font-bold leading-5">
+        <Award
+          size={18}
+          className="shrink-0 text-[var(--app-secondary)]"
+          aria-hidden="true"
+        />
+        <p className="app-muted-text text-xs font-medium leading-5">
           六维能力画像只使用有明确能力标记的逐题成绩；没有标记的成绩仍会出现在成绩明细中，但不会被强行计入听、说、读、写、词汇或语法分析。
         </p>
       </section>

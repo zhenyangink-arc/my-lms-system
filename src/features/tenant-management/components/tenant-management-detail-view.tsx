@@ -1,7 +1,12 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Building2 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getTenantManagementDetailData } from "../api/service";
 import { TenantLifecycleActions } from "./tenant-lifecycle-actions";
@@ -17,20 +22,40 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
   const dashboardBasePath = getDashboardBasePath();
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)} className="text-xs font-semibold text-[var(--app-text-soft)] hover:text-[var(--app-text)]">返回租户管理</Link>
-        <p className="text-xs text-[var(--app-muted)]">最近更新：<LocalDateTime value={result.tenant.updatedAt} options={DATE_OPTIONS} /></p>
-      </div>
+    <ManagementPage
+      eyebrow="机构详情"
+      title={result.tenant.name}
+      description="查看机构标识、服务状态、负责人和成员关系，并在当前权限范围内执行生命周期操作。"
+      icon={Building2}
+      meta={
+        <>
+          <span>{STATUS_LABELS[result.tenant.status]}</span>
+          <span>更新于 <LocalDateTime value={result.tenant.updatedAt} options={DATE_OPTIONS} /></span>
+        </>
+      }
+      action={
+        <Link
+          href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
+        >
+          返回机构管理
+        </Link>
+      }
+    >
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead><tr><th>机构</th><th>机构标识</th><th>状态</th><th>套餐</th><th>成员</th><th>有效负责人</th></tr></thead>
-            <tbody><tr><th>{result.tenant.name}</th><td className="font-mono">{result.tenant.slug}</td><td>{STATUS_LABELS[result.tenant.status]}</td><td>{PLAN_LABELS[result.tenant.planKey] ?? result.tenant.planKey}</td><td>{result.members.length}</td><td>{result.managers.length}</td></tr></tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="机构详情概况"
+        items={[
+          { label: "机构标识", value: result.tenant.slug },
+          { label: "状态", value: STATUS_LABELS[result.tenant.status] },
+          {
+            label: "套餐",
+            value: PLAN_LABELS[result.tenant.planKey] ?? result.tenant.planKey,
+          },
+          { label: "成员", value: result.members.length },
+          { label: "有效负责人", value: result.managers.length },
+        ]}
+      />
 
       <TenantLifecycleActions
         tenantId={result.tenant.id}
@@ -42,6 +67,6 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
       />
 
       <TenantMembersTable data={result.members} institutionName={result.tenant.name} />
-    </div>
+    </ManagementPage>
   );
 }

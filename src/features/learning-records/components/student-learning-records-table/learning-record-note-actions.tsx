@@ -28,12 +28,14 @@ export function LearningRecordNoteEditor({
   studentId,
   studentName,
   note,
+  studentAppId,
   onDone,
   onCancel,
 }: {
   studentId: string;
   studentName: string;
   note?: LearningRecordNote;
+  studentAppId?: string;
   onDone: () => void;
   onCancel: () => void;
 }) {
@@ -52,6 +54,7 @@ export function LearningRecordNoteEditor({
   return (
     <form action={formAction} className="space-y-4">
       <input type="hidden" name="student_id" value={studentId} />
+      {studentAppId && <input type="hidden" name="student_app_id" value={studentAppId} />}
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-xs font-medium">
@@ -180,13 +183,16 @@ export function LearningRecordNoteEditor({
 
 export function LearningRecordNoteStatusAction({
   note,
+  studentAppId,
 }: {
   note: LearningRecordNote;
+  studentAppId?: string;
 }) {
   const nextStatus = note.status === "active" ? "archived" : "active";
   const action = changeLearningRecordNoteStatusAction.bind(
     null,
     note.id,
+    studentAppId ?? null,
     nextStatus,
   );
   const [state, formAction, pending] = useActionState(

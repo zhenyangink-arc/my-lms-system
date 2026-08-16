@@ -197,7 +197,7 @@ export type InstitutionVisaManagementData = {
   role: UserRole;
   tenantId: string;
   dashboardBasePath: string;
-  canManageIndividualCases: true;
+  canManageIndividualCases: boolean;
   cases: VisaManagementCase[];
   overview: [];
   caseAudit: [];

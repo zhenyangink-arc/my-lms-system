@@ -5,6 +5,7 @@ import { ArrowLeft, Award, CheckCircle2, ClipboardCheck, Clock3, KeyRound, Users
 import { ASSIGNMENT_DATE_OPTIONS, ASSIGNMENT_STATUS_LABELS, ASSIGNMENT_TYPE_LABELS, QUESTION_TYPE_LABELS, SUBMISSION_STATUS_LABELS, type AssignmentStatus, type AssignmentType, type QuestionType, type SubmissionStatus } from "@/app/dashboard/assignments/config";
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireAssignmentManager } from "@/lib/learning-assignments";
+import { requireTenantAppCapability } from "@/lib/tenant-app-capabilities";
 import { AssignmentStatusActions } from "../AssignmentStatusActions";
 import { AssignmentDeadlineForm } from "../AssignmentDeadlineForm";
 import { SubmissionGradingForm } from "../SubmissionGradingForm";
@@ -14,23 +15,31 @@ function AssignmentDate({ value }: { value: string | null }) {
 }
 
 
-type AssignmentRow = { id: string; title: string; description: string; assignment_type: AssignmentType; target_scope: string; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean; status: AssignmentStatus };
+type AssignmentRow = { id: string; student_app_id: string; title: string; description: string; assignment_type: AssignmentType; target_scope: string; total_points: number; due_at: string; duration_minutes: number | null; allow_resubmission: boolean; status: AssignmentStatus };
 type QuestionRow = { id: string; question_type: QuestionType; prompt: string; options: unknown; points: number; sort_order: number; source_bank_question_id: string | null; source_bank_version: number | null };
 type KeyRow = { question_id: string; correct_answer: string | null; explanation: string | null };
 type SubmissionRow = { id: string; student_id: string; attempt_number: number; status: SubmissionStatus; score: number | null; overall_feedback: string | null; submitted_at: string; graded_at: string | null };
 type AnswerRow = { id: string; submission_id: string; question_id: string; answer_text: string; awarded_points: number | null; grader_feedback: string | null };
 type StudentRow = { id: string; full_name: string | null; email: string | null };
 
-export default async function AssignmentReviewPage({ params }: { params: Promise<{ assignmentId: string }> }) {
+export default async function AssignmentReviewPage({ params, expectedStudentAppId, backHref = "/dashboard/admin/assignments" }: { params: Promise<{ assignmentId: string }>; expectedStudentAppId?: string; backHref?: string }) {
   const { assignmentId } = await params;
-  const { supabase } = await requireAssignmentManager();
+  const { supabase } = expectedStudentAppId
+    ? await requireTenantAppCapability(expectedStudentAppId, "manageAssessments")
+    : await requireAssignmentManager();
+  let assignmentQuery = supabase.from("learning_assignments").select("id,student_app_id,title,description,assignment_type,target_scope,total_points,due_at,duration_minutes,allow_resubmission,status").eq("id", assignmentId);
+  if (expectedStudentAppId) assignmentQuery = assignmentQuery.eq("student_app_id", expectedStudentAppId);
   const [assignmentResult, questionsResult, keysResult, submissionsResult, targetsResult, studentsResult] = await Promise.all([
-    supabase.from("learning_assignments").select("id,title,description,assignment_type,target_scope,total_points,due_at,duration_minutes,allow_resubmission,status").eq("id", assignmentId).maybeSingle(),
+    assignmentQuery.maybeSingle(),
     supabase.from("learning_assignment_questions").select("id,question_type,prompt,options,points,sort_order,source_bank_question_id,source_bank_version").eq("assignment_id", assignmentId).order("sort_order", { ascending: true }),
     supabase.from("learning_assignment_question_keys").select("question_id,correct_answer,explanation"),
     supabase.from("learning_submissions").select("id,student_id,attempt_number,status,score,overall_feedback,submitted_at,graded_at").eq("assignment_id", assignmentId).order("submitted_at", { ascending: false }),
     supabase.from("learning_assignment_targets").select("student_id").eq("assignment_id", assignmentId),
-    supabase.rpc("list_learning_assignment_students"),
+    expectedStudentAppId
+      ? supabase.rpc("list_learning_assignment_students_by_app", {
+          p_student_app_id: expectedStudentAppId,
+        })
+      : supabase.rpc("list_learning_assignment_students"),
   ]);
   if (!assignmentResult.data || assignmentResult.error) notFound();
   const assignment = assignmentResult.data as AssignmentRow;
@@ -54,7 +63,7 @@ export default async function AssignmentReviewPage({ params }: { params: Promise
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-      <Link href="/dashboard/admin/assignments" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回任务管理</Link>
+      <Link href={backHref} className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} />返回作业与考试</Link>
       <section className="management-detail-summary app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start), var(--app-accent-soft))" }}><div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_480px] xl:items-end"><div><div className="flex flex-wrap gap-2"><span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>{ASSIGNMENT_TYPE_LABELS[assignment.assignment_type]}</span><span className="rounded-full px-3 py-1.5 text-xs font-black" style={{ color: assignment.status === "published" ? "var(--app-success)" : assignment.status === "closed" ? "var(--app-warm)" : "var(--app-muted)", backgroundColor: assignment.status === "published" ? "var(--app-success-soft)" : assignment.status === "closed" ? "var(--app-warm-soft)" : "var(--app-soft-bg)" }}>{ASSIGNMENT_STATUS_LABELS[assignment.status]}</span></div><h2 className="mt-3 text-2xl font-black tracking-tight">{assignment.title}</h2><p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{assignment.description || "暂未填写任务说明"}</p><div className="app-muted-text mt-4 flex flex-wrap gap-3 text-xs"><span>截止 <AssignmentDate value={assignment.due_at} /></span><span>{questions.length} 题 · {assignment.total_points} 分</span>{assignment.duration_minutes && <span>建议 {assignment.duration_minutes} 分钟</span>}<span>{assignment.allow_resubmission ? "允许再次提交" : "仅限一次提交"}</span></div><div className="mt-4"><AssignmentStatusActions id={assignment.id} status={assignment.status} /></div></div><div className="grid grid-cols-3 gap-3">{[["提交学生", uniqueSubmitters, UsersRound, "var(--app-secondary)"], ["待批改", waitingCount, Clock3, "var(--app-accent)"], ["已批改", gradedCount, CheckCircle2, "var(--app-success)"]].map(([label, value, Icon, color]) => { const MetricIcon = Icon as typeof Award; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><MetricIcon className="mx-auto" size={18} style={{ color: String(color) }} /><p className="mt-2 text-2xl font-black">{String(value)}</p><p className="app-muted-text text-xs font-black">{String(label)}</p></div>; })}</div></div></section>
 
       <section className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_340px]"><div className="app-card rounded-2xl border p-5"><div className="flex items-start gap-3"><UsersRound className="mt-0.5 shrink-0" size={18} style={{ color: "var(--app-secondary)" }} /><div><h2 className="font-black">分配范围：{assignment.target_scope === "all_students" ? "全部在籍学生" : `指定 ${targetStudents.length} 名学生`}</h2>{assignment.target_scope === "selected_students" && <div className="mt-3 flex flex-wrap gap-2">{targetStudents.map((student) => <span key={student.id} className="rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>{student.full_name || student.email || "未填写姓名"}</span>)}</div>}<p className="app-muted-text mt-2 text-xs">{assignment.target_scope === "all_students" ? `当前共有 ${students.length} 名正常学生账号可查看。` : "只有以上学生可以查看和提交本任务。"}</p></div></div></div><AssignmentDeadlineForm assignmentId={assignment.id} /></section>

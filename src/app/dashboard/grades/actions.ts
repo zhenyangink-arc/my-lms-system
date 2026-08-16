@@ -2,6 +2,7 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { getGradeCenterAccess, requireGradeCenterManager } from "@/lib/grade-center";
+import { requireTenantAppCapability } from "@/lib/tenant-app-capabilities";
 import type { GradeCenterActionState } from "./action-state";
 import { GRADE_REVIEW_STATUSES, type GradeReviewStatus } from "./config";
 
@@ -29,4 +30,4 @@ export async function requestSourceGradeReviewAction(sourceType: LiveGradeSource
   refreshGrades();
   return result("success", "成绩复核申请已经提交。");
 }
-export async function resolveGradeReviewAction(reviewId: string, _state: GradeCenterActionState, formData: FormData): Promise<GradeCenterActionState> { void _state; if (!isUuid(reviewId)) return result("error", "复核申请编号不正确。"); const { supabase } = await requireGradeCenterManager(); const status = String(formData.get("status") ?? "reviewing"); const response = String(formData.get("response") ?? "").trim(); if (!(GRADE_REVIEW_STATUSES as readonly string[]).includes(status) || status === "pending") return result("error", "请选择有效的复核处理状态。"); if (response.length > 3000) return result("error", "复核回复不能超过 3000 个字。"); const { error } = await supabase.rpc("resolve_grade_review", { p_review_id: reviewId, p_status: status as GradeReviewStatus, p_response: response }); if (error) return result("error", "复核处理结果保存失败。"); refreshGrades(); return result("success", "复核处理结果已经同步给学生。"); }
+export async function resolveGradeReviewAction(reviewId: string, studentAppId: string | null, _state: GradeCenterActionState, formData: FormData): Promise<GradeCenterActionState> { void _state; if (!isUuid(reviewId)) return result("error", "复核申请编号不正确。"); const { supabase } = studentAppId ? await requireTenantAppCapability(studentAppId, "manageAssessments") : await requireGradeCenterManager(); const status = String(formData.get("status") ?? "reviewing"); const response = String(formData.get("response") ?? "").trim(); if (!(GRADE_REVIEW_STATUSES as readonly string[]).includes(status) || status === "pending") return result("error", "请选择有效的复核处理状态。"); if (response.length > 3000) return result("error", "复核回复不能超过 3000 个字。"); const { error } = await supabase.rpc("resolve_grade_review", { p_review_id: reviewId, p_status: status as GradeReviewStatus, p_response: response }); if (error) return result("error", "复核处理结果保存失败。"); refreshGrades(); return result("success", "复核处理结果已经同步给学生。"); }

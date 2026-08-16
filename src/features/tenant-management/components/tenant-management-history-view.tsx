@@ -1,6 +1,11 @@
 import Link from "next/link";
+import { History } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getTenantManagementHistoryData } from "../api/service";
 import { TenantLifecycleAuditTable } from "./tenant-lifecycle-audit-table";
@@ -14,13 +19,27 @@ export default async function TenantManagementHistoryView() {
   const dashboardBasePath = getDashboardBasePath();
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)} className="text-xs font-semibold text-[var(--app-text-soft)] hover:text-[var(--app-text)]">返回租户管理</Link>
-        <p className="text-xs text-[var(--app-muted)]">仅展示审计记录，本步骤不提供恢复或删除操作</p>
-      </div>
+    <ManagementPage
+      eyebrow="平台治理"
+      title="机构历史记录"
+      description="查看停用或归档机构，以及机构生命周期和成员关系的历史审计记录。"
+      icon={History}
+      meta={<span>只读审计视图</span>}
+      action={
+        <Link
+          href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
+        >
+          返回机构管理
+        </Link>
+      }
+    >
 
-      {result.hasQueryError && <div className="border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-medium text-rose-700">部分历史记录暂时无法读取，请稍后刷新重试。</div>}
+      {result.hasQueryError && (
+        <ManagementNotice tone="danger">
+          部分历史记录暂时无法读取，请稍后刷新重试。
+        </ManagementNotice>
+      )}
 
       <section className="management-table-panel overflow-hidden border">
         <div className="border-b border-[var(--app-border)] px-4 py-3"><h2 className="text-sm font-semibold">可恢复的停用机构</h2><p className="mt-1 text-xs text-[var(--app-muted)]">停用和历史归档状态都保留成员及业务数据。</p></div>
@@ -35,6 +54,6 @@ export default async function TenantManagementHistoryView() {
 
       <TenantLifecycleAuditTable data={result.lifecycleLogs} />
       <TenantMembershipAuditTable data={result.membershipLogs} />
-    </div>
+    </ManagementPage>
   );
 }

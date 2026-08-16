@@ -21,7 +21,7 @@ import {
 } from "@/components/ui/table";
 import type { GrowthToolboxVocabularyItem } from "../../api/types";
 import { GrowthToolboxTableToolbar } from "../table-toolbar";
-import { growthToolboxVocabularyColumns } from "./columns";
+import { getGrowthToolboxVocabularyColumns } from "./columns";
 
 const COLUMN_LABELS: Record<string, string> = {
   ko: "韩语词汇",
@@ -34,8 +34,12 @@ const COLUMN_LABELS: Record<string, string> = {
 
 export function GrowthToolboxVocabularyTable({
   data,
+  studentAppId,
+  canManage,
 }: {
   data: GrowthToolboxVocabularyItem[];
+  studentAppId: string;
+  canManage: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sortOrder", desc: false },
@@ -43,6 +47,10 @@ export function GrowthToolboxVocabularyTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [query, setQuery] = useState("");
   const [source, setSource] = useState("all");
+  const columns = useMemo(
+    () => getGrowthToolboxVocabularyColumns(studentAppId, canManage),
+    [canManage, studentAppId],
+  );
   const filteredData = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((word) => {
@@ -57,7 +65,7 @@ export function GrowthToolboxVocabularyTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: growthToolboxVocabularyColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

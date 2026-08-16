@@ -45,8 +45,8 @@ export const languageSkillPresentation = {
     label: "说",
     fullLabel: "口语表达",
     icon: Mic2,
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--app-accent)",
+    soft: "var(--app-accent-soft)",
   },
   reading: {
     label: "读",
@@ -138,6 +138,8 @@ export function SixDimensionRadar({
   emptyMessage,
   insightLabel = "能力解读",
   insight,
+  evidenceOnly = false,
+  deemphasizeSparseInsight = false,
 }: {
   eyebrow: string;
   title: string;
@@ -150,6 +152,8 @@ export function SixDimensionRadar({
   emptyMessage: string;
   insightLabel?: string;
   insight?: string;
+  evidenceOnly?: boolean;
+  deemphasizeSparseInsight?: boolean;
 }) {
   const datumBySkill = new Map(data.map((item) => [item.skill, item]));
   const orderedData = languageSkillOrder.map(
@@ -180,36 +184,37 @@ export function SixDimensionRadar({
       : available.length === 1
         ? `当前只有${languageSkillPresentation[available[0].skill].fullLabel}形成有效数据，继续完成其他维度练习后才能比较强弱项。`
         : `目前${languageSkillPresentation[strongest.skill].fullLabel}表现相对突出；建议下一阶段优先巩固${languageSkillPresentation[weakest.skill].fullLabel}，逐步缩小六维差距。`);
+  const sparseInsight = deemphasizeSparseInsight && available.length <= 2;
 
   return (
-    <section className="app-card overflow-hidden rounded-[2rem] border">
+    <section className="app-card overflow-hidden rounded-2xl border">
       <header className="flex flex-col gap-4 border-b border-[var(--app-border-soft)] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-3">
           <span
-            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl"
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg"
             style={{ color, backgroundColor: soft }}
           >
             <HeaderIcon size={19} aria-hidden="true" />
           </span>
           <div className="min-w-0">
             <p
-              className="text-[10px] font-black tracking-[0.12em]"
+              className="text-xs font-semibold tracking-[0.12em]"
               style={{ color }}
             >
               {eyebrow}
             </p>
-            <h2 className="mt-1 text-lg font-black tracking-tight">{title}</h2>
-            <p className="app-muted-text mt-1 text-[10px] font-bold">
+            <h2 className="mt-1 text-lg font-bold tracking-tight">{title}</h2>
+            <p className="app-muted-text mt-1 text-xs font-medium leading-5">
               {description}
             </p>
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-[var(--app-soft-bg)] px-3 py-2 text-[10px] font-black tabular-nums">
+          <span className="rounded-full bg-[var(--app-soft-bg)] px-3 py-2 text-xs font-semibold tabular-nums">
             综合 {average == null ? "—" : `${average.toFixed(1)}%`}
           </span>
           <span
-            className="rounded-full px-3 py-2 text-[10px] font-black tabular-nums"
+            className="rounded-full px-3 py-2 text-xs font-semibold tabular-nums"
             style={{ color, backgroundColor: soft }}
           >
             覆盖 {available.length} / 6
@@ -219,19 +224,19 @@ export function SixDimensionRadar({
 
       <div className="grid gap-5 p-5 sm:p-6 xl:grid-cols-[minmax(360px,0.88fr)_minmax(0,1.12fr)] xl:items-stretch">
         <div
-          className="rounded-3xl border border-[var(--app-border-soft)] p-3 sm:p-5"
+          className="rounded-lg border border-[var(--app-border-soft)] p-3 sm:p-5"
           style={{
             background: `linear-gradient(145deg, var(--app-soft-bg), color-mix(in srgb, ${soft} 55%, var(--app-card-bg)))`,
           }}
         >
           <div className="flex items-center justify-between px-1">
             <div>
-              <p className="text-xs font-black">六边形能力轮廓</p>
-              <p className="app-muted-text mt-1 text-[9px] font-bold">
+              <p className="text-sm font-semibold">六边形能力轮廓</p>
+              <p className="app-muted-text mt-1 text-xs font-medium">
                 越接近外圈，当前掌握越稳定
               </p>
             </div>
-            <span className="rounded-full bg-[var(--app-card-bg)] px-2.5 py-1.5 text-[9px] font-black">
+            <span className="rounded-full bg-[var(--app-card-bg)] px-2.5 py-1.5 text-[11px] font-semibold">
               每圈 25 分
             </span>
           </div>
@@ -317,7 +322,7 @@ export function SixDimensionRadar({
                   y={y}
                   textAnchor={textAnchor}
                   dominantBaseline="middle"
-                  className="fill-[var(--app-text)] text-[12px] font-black"
+                  className="fill-[var(--app-text)] text-[12px] font-semibold"
                 >
                   <tspan x={x} dy="-0.35em">
                     {languageSkillPresentation[skill].label}
@@ -325,7 +330,7 @@ export function SixDimensionRadar({
                   <tspan
                     x={x}
                     dy="1.3em"
-                    className="fill-[var(--app-muted)] text-[9px]"
+                    className="fill-[var(--app-muted)] text-[10px] font-medium"
                   >
                     {values[index] == null
                       ? "待积累"
@@ -339,7 +344,7 @@ export function SixDimensionRadar({
                 x="160"
                 y="164"
                 textAnchor="middle"
-                className="fill-[var(--app-muted)] text-[11px] font-bold"
+                className="fill-[var(--app-muted)] text-[12px] font-medium"
               >
                 暂无有效能力数据
               </text>
@@ -348,58 +353,74 @@ export function SixDimensionRadar({
         </div>
 
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="grid gap-2 sm:grid-cols-2">
+          <div
+            className={
+              evidenceOnly
+                ? "divide-y divide-[var(--app-border-soft)] border-y border-[var(--app-border-soft)]"
+                : "grid gap-2 sm:grid-cols-2"
+            }
+          >
             {orderedData.map((item) => {
               const presentation = languageSkillPresentation[item.skill];
               const Icon = presentation.icon;
               return (
                 <article
                   key={item.skill}
-                  className="rounded-2xl border border-[var(--app-border-soft)] bg-[var(--app-card-bg)] p-3.5"
+                  className={
+                    evidenceOnly
+                      ? "flex items-center gap-3 py-3"
+                      : "rounded-lg border border-[var(--app-border-soft)] bg-[var(--app-card-bg)] p-3.5"
+                  }
                 >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
-                      style={{
-                        color: presentation.color,
-                        backgroundColor: presentation.soft,
-                      }}
-                    >
-                      <Icon size={16} aria-hidden="true" />
-                    </span>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex items-baseline justify-between gap-3">
-                        <p className="text-xs font-black">
-                          {presentation.fullLabel}
-                        </p>
-                        <p className="text-base font-black tabular-nums">
-                          {item.value == null ? "—" : `${item.value.toFixed(1)}%`}
-                        </p>
-                      </div>
-                      <p className="app-muted-text mt-1 text-[9px] font-bold">
-                        {evidenceText?.(item) ??
-                          (item.value == null ? "暂无有效数据" : "已有有效能力数据")}
-                      </p>
-                    </div>
-                  </div>
-                  <div
-                    className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
-                    role="progressbar"
-                    aria-label={`${presentation.fullLabel}能力`}
-                    aria-valuemin={0}
-                    aria-valuemax={100}
-                    aria-valuenow={item.value ?? undefined}
-                    aria-valuetext={
-                      item.value == null ? "暂无数据" : `${item.value.toFixed(1)}%`
-                    }
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg"
+                    style={{
+                      color: presentation.color,
+                      backgroundColor: presentation.soft,
+                    }}
                   >
-                    <span
-                      className="block h-full rounded-full"
-                      style={{
-                        width: `${item.value ?? 0}%`,
-                        backgroundColor: presentation.color,
-                      }}
-                    />
+                    <Icon size={16} aria-hidden="true" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-baseline justify-between gap-3">
+                      <p className="text-sm font-semibold">
+                        {presentation.fullLabel}
+                      </p>
+                      {!evidenceOnly && (
+                        <p className="text-base font-black tabular-nums">
+                          {item.value == null
+                            ? "—"
+                            : `${item.value.toFixed(1)}%`}
+                        </p>
+                      )}
+                    </div>
+                    <p className="app-muted-text mt-1 text-xs font-medium leading-5">
+                      {evidenceText?.(item) ??
+                        (item.value == null ? "暂无有效数据" : "已有有效能力数据")}
+                    </p>
+                    {!evidenceOnly && (
+                      <div
+                        className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
+                        role="progressbar"
+                        aria-label={`${presentation.fullLabel}能力`}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
+                        aria-valuenow={item.value ?? undefined}
+                        aria-valuetext={
+                          item.value == null
+                            ? "暂无数据"
+                            : `${item.value.toFixed(1)}%`
+                        }
+                      >
+                        <span
+                          className="block h-full rounded-full"
+                          style={{
+                            width: `${item.value ?? 0}%`,
+                            backgroundColor: presentation.color,
+                          }}
+                        />
+                      </div>
+                    )}
                   </div>
                 </article>
               );
@@ -407,17 +428,25 @@ export function SixDimensionRadar({
           </div>
 
           <div
-            className="mt-auto rounded-2xl border px-4 py-4"
-            style={{ borderColor: color, backgroundColor: soft }}
+            className={
+              sparseInsight
+                ? "mt-auto border-t border-[var(--app-border-soft)] px-1 py-3"
+                : "mt-auto rounded-lg border px-4 py-4"
+            }
+            style={
+              sparseInsight
+                ? undefined
+                : { borderColor: color, backgroundColor: soft }
+            }
           >
             <p
-              className="flex items-center gap-2 text-[10px] font-black"
-              style={{ color }}
+              className="flex items-center gap-2 text-xs font-semibold"
+              style={{ color: sparseInsight ? "var(--app-muted)" : color }}
             >
               <Sparkles size={13} aria-hidden="true" />
               {insightLabel}
             </p>
-            <p className="mt-2 text-xs font-bold leading-6">
+            <p className="mt-2 text-sm font-medium leading-6">
               {resolvedInsight}
             </p>
           </div>

@@ -28,6 +28,12 @@ const appIconMap = {
 
 const studyAbroadEntrances = [
   {
+    title: "留学课程",
+    description: "学习选校、申请材料、签证与面试准备课程。",
+    suffix: "/courses",
+    icon: BookOpen,
+  },
+  {
     title: "目标大学",
     description: "管理意向学校、专业方向与申请阶段。",
     suffix: "/universities",
@@ -91,7 +97,7 @@ export function StudentApplicationHome({
       </section>
 
       {isStudyAbroad ? (
-        <section className="grid gap-4 lg:grid-cols-3" aria-label="留学服务功能">
+        <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-4" aria-label="留学服务功能">
           {studyAbroadEntrances.map((item) => {
             const Icon = item.icon;
             return (
@@ -149,4 +155,3 @@ export function StudentApplicationHome({
     </div>
   );
 }
-

@@ -31,10 +31,12 @@ export async function withStudentAppSchemaFallback<
   T extends { error: QueryError },
 >(
   scopedQuery: PromiseLike<T>,
-  legacyQuery: () => PromiseLike<T>,
+  _legacyQuery: () => PromiseLike<T>,
 ): Promise<T> {
-  const result = await scopedQuery;
-  return isStudentAppSchemaMissing(result.error) ? await legacyQuery() : result;
+  void _legacyQuery;
+  // 应用域迁移已作为生产前置条件。查询失败时必须原样失败关闭，
+  // 不能再执行未带 student_app_id 的旧查询，否则会把其他应用数据混入当前页面。
+  return await scopedQuery;
 }
 
 export async function getStudentAppCourseScope(
@@ -48,31 +50,10 @@ export async function getStudentAppCourseScope(
     .eq("student_app_id", appId)
     .eq("is_published", true);
 
-  let categoryIds = (categoryData ?? []).map((category) => String(category.id));
-
-  // 迁移部署前的开发数据库仍可通过现有一级分类读取，部署后以 student_app_id 为准。
   if (categoryError) {
-    const categorySlug = appSlug === "study-abroad" ? "service" : appSlug;
-    const { data: rootData } = await supabase
-      .from("course_categories")
-      .select("id")
-      .is("parent_id", null)
-      .eq("slug", categorySlug)
-      .eq("is_published", true)
-      .maybeSingle();
-
-    if (rootData?.id) {
-      const { data: childData } = await supabase
-        .from("course_categories")
-        .select("id")
-        .eq("parent_id", rootData.id)
-        .eq("is_published", true);
-      categoryIds = [
-        String(rootData.id),
-        ...(childData ?? []).map((category) => String(category.id)),
-      ];
-    }
+    return { appId, categoryIds: [], courseIds: [], lessonIds: [] };
   }
+  const categoryIds = (categoryData ?? []).map((category) => String(category.id));
 
   if (categoryIds.length === 0) {
     return { appId, categoryIds: [], courseIds: [], lessonIds: [] };

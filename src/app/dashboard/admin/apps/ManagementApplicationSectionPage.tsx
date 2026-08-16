@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import {
@@ -9,30 +10,23 @@ import {
   GraduationCap,
   MessageSquareText,
   NotebookTabs,
+  PanelsTopLeft,
   Settings2,
   ShieldCheck,
   UsersRound,
   Wrench,
 } from "lucide-react";
 
-import { ConversationPracticeManagementContent } from "@/app/dashboard/admin/conversation-practice/page-content";
-import { ManagementApplicationPeoplePage } from "@/app/dashboard/admin/apps/ManagementApplicationPeoplePage";
-import { ManagementApplicationAssessmentPage } from "@/app/dashboard/admin/apps/ManagementApplicationAssessmentPage";
-import { ManagementApplicationSettingsPage } from "@/app/dashboard/admin/apps/ManagementApplicationSettingsPage";
-import { ManagementStudyAbroadInsightPage } from "@/app/dashboard/admin/apps/ManagementStudyAbroadInsightPage";
-import CourseCatalogListing from "@/features/courses/components/course-catalog-listing";
-import DocumentReviewListing from "@/features/document-reviews/components/document-review-listing";
-import { GradeListingContent } from "@/features/grades/components/grade-listing";
-import GrowthToolboxListing from "@/features/growth-toolbox/components/growth-toolbox-listing";
-import { LearningRecordListingContent } from "@/features/learning-records/components/learning-record-listing";
-import UniversityListing from "@/features/universities/components/university-listing";
-import VisaManagementListing from "@/features/visa-management/components/visa-management-listing";
+import { ManagementPage } from "@/components/layout/management-page";
 import {
   requireManagementAppAccess,
   type ManagementAppAccess,
 } from "@/lib/management-apps";
 
-type SectionSearchParams = Record<string, string | string[] | undefined>;
+export type SectionSearchParams = Record<
+  string,
+  string | string[] | undefined
+>;
 
 type SectionDefinition = {
   title: string;
@@ -59,6 +53,12 @@ const learningSections: Record<string, SectionDefinition> = {
     description: "按应用管理章节测试、老师作业和正式考试。",
     icon: ClipboardCheck,
     capability: "manageAssessments",
+  },
+  textbooks: {
+    title: "互动教材",
+    description: "教材、版本、章节、词汇和语法内容均限定在当前应用。",
+    icon: PanelsTopLeft,
+    capability: "manageContent",
   },
   grades: {
     title: "成绩分析",
@@ -99,6 +99,12 @@ const serviceSections: Record<string, SectionDefinition> = {
     icon: UsersRound,
     capability: "manageStudents",
   },
+  content: {
+    title: "留学课程",
+    description: "当前页面只读取留学服务所属的课程、课时和发布状态。",
+    icon: BookOpenCheck,
+    capability: "manageContent",
+  },
   universities: {
     title: "目标大学",
     description: "维护大学资料、申请条件和学生目标。",
@@ -137,153 +143,60 @@ const serviceSections: Record<string, SectionDefinition> = {
   },
 };
 
-function firstParam(value: string | string[] | undefined) {
+export function firstSectionParam(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-function PendingSection({
-  appTitle,
-  title,
-}: {
-  appTitle: string;
-  title: string;
-}) {
-  return (
-    <section className="app-card border px-5 py-10 text-center sm:px-8">
-      <p className="text-sm font-semibold">{title}正在接入应用数据边界</p>
-      <p className="app-muted-text mx-auto mt-2 max-w-xl text-xs leading-5">
-        当前不会回退展示其他应用或旧版全局数据。完成数据库聚合和权限校验后，
-        这里将只呈现“{appTitle}”范围内的数据。
-      </p>
-    </section>
-  );
-}
-
-export async function ManagementApplicationSectionPage({
-  space,
-  appSlug,
-  section,
-  searchParams,
-}: {
-  space: string;
-  appSlug: string;
-  section: string;
-  searchParams: Promise<SectionSearchParams>;
-}) {
+export async function requireManagementApplicationSection(
+  space: string,
+  appSlug: string,
+  section: string,
+) {
   const access = await requireManagementAppAccess(space, appSlug);
   const definitions =
     access.app.kind === "service" ? serviceSections : learningSections;
   const definition = definitions[section];
+
   if (!definition) notFound();
   if (!access.capabilities[definition.capability]) redirect(access.appPath);
 
-  const params = await searchParams;
-  const routeBasePath = `${access.appPath}/${section}`;
-  const Icon = definition.icon;
-  let content: React.ReactNode;
+  return { access, definition, section };
+}
 
-  if (section === "settings") {
-    content = <ManagementApplicationSettingsPage access={access} />;
-  } else if (section === "students") {
-    content = <ManagementApplicationPeoplePage access={access} />;
-  } else if (
-    access.app.kind === "learning" &&
-    section === "assessments"
-  ) {
-    content = <ManagementApplicationAssessmentPage access={access} />;
-  } else if (access.app.kind === "learning" && section === "content") {
-    content = (
-      <CourseCatalogListing
-        searchParams={Promise.resolve({
-          node: firstParam(params.node),
-          id: firstParam(params.id),
-        })}
-        studentAppId={access.appId}
-        routeBasePath={routeBasePath}
-      />
-    );
-  } else if (access.app.kind === "learning" && section === "toolbox") {
-    content = <GrowthToolboxListing studentAppId={access.appId} />;
-  } else if (access.app.kind === "learning" && section === "conversation") {
-    content = (
-      <ConversationPracticeManagementContent
-        searchParams={Promise.resolve({
-          scenario: firstParam(params.scenario),
-          mode: firstParam(params.mode),
-        })}
-        studentAppId={access.appId}
-        routeBasePath={routeBasePath}
-      />
-    );
-  } else if (
-    access.scope === "tenant" &&
-    access.app.kind === "learning" &&
-    section === "grades"
-  ) {
-    content = <GradeListingContent studentAppId={access.appId} />;
-  } else if (
-    access.scope === "tenant" &&
-    access.app.kind === "learning" &&
-    section === "records"
-  ) {
-    content = <LearningRecordListingContent studentAppId={access.appId} />;
-  } else if (access.app.slug === "study-abroad" && section === "universities") {
-    content = <UniversityListing />;
-  } else if (access.app.slug === "study-abroad" && section === "documents") {
-    content = <DocumentReviewListing />;
-  } else if (access.app.slug === "study-abroad" && section === "visa") {
-    const requestedStatus = firstParam(params.status) ?? "all";
-    const validStatus = new Set(["all", "action", "preparing", "submitted", "issued"]);
-    content = (
-      <VisaManagementListing
-        initialQuery={(firstParam(params.q) ?? "").trim().slice(0, 80)}
-        initialStatus={
-          (validStatus.has(requestedStatus) ? requestedStatus : "all") as
-            | "all"
-            | "action"
-            | "preparing"
-            | "submitted"
-            | "issued"
-        }
-        deleted={firstParam(params.deleted) === "1"}
-      />
-    );
-  } else if (access.app.slug === "study-abroad" && section === "records") {
-    content = <ManagementStudyAbroadInsightPage mode="records" />;
-  } else if (access.app.slug === "study-abroad" && section === "analytics") {
-    content = <ManagementStudyAbroadInsightPage mode="analytics" />;
-  } else {
-    content = <PendingSection appTitle={access.appTitle} title={definition.title} />;
-  }
+export function ManagementApplicationSectionFrame({
+  access,
+  definition,
+  children,
+}: {
+  access: ManagementAppAccess;
+  definition: SectionDefinition;
+  children: ReactNode;
+}) {
+  const Icon = definition.icon;
 
   return (
-    <div className={`management-page management-app-tone-${access.app.accent} space-y-5`}>
-      <header className="app-card border px-5 py-4 sm:px-6">
+    <ManagementPage
+      eyebrow={access.appTitle}
+      title={definition.title}
+      description={definition.description}
+      icon={Icon}
+      className={`management-app-tone-${access.app.accent}`}
+      meta={
+        <span>
+          {access.scope === "platform" ? "平台标准空间" : access.tenantName}
+        </span>
+      }
+      action={
         <Link
           href={access.appPath}
-          className="app-muted-text inline-flex min-h-8 items-center gap-1.5 text-xs font-medium hover:text-[var(--app-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           返回{access.appTitle}
         </Link>
-        <div className="mt-3 flex items-start gap-3">
-          <span className="management-app-icon flex size-10 shrink-0 items-center justify-center rounded-md border">
-            <Icon size={19} strokeWidth={1.8} aria-hidden="true" />
-          </span>
-          <div>
-            <p className="management-kicker text-[10px] font-semibold uppercase">
-              {access.appTitle}
-            </p>
-            <h1 className="mt-1 text-xl font-semibold tracking-[-0.025em]">
-              {definition.title}
-            </h1>
-            <p className="app-muted-text mt-1 text-xs leading-5">
-              {definition.description}
-            </p>
-          </div>
-        </div>
-      </header>
-      {content}
-    </div>
+      }
+    >
+      {children}
+    </ManagementPage>
   );
 }

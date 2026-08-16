@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 
 import { getLibraryAccess } from "@/lib/resource-library";
+import { getStudentAppCourseScope } from "@/lib/student-app-data";
+import type { StudentAppSlug } from "@/lib/student-apps";
 import { LibraryBrowser } from "./LibraryBrowser";
 import type { LibraryCategory, LibraryResourceType } from "./config";
 
@@ -26,15 +28,26 @@ type Resource = {
   download_count: number;
 };
 
-export default async function LibraryPage() {
+export async function LibraryPageContent({
+  studentAppSlug,
+}: {
+  studentAppSlug?: StudentAppSlug;
+} = {}) {
   const { supabase, user, canManage, canCurate } = await getLibraryAccess();
+  const appScope = studentAppSlug
+    ? await getStudentAppCourseScope(supabase, studentAppSlug)
+    : null;
+  let resourcesQuery = supabase
+    .from("library_resources")
+    .select(
+      "id,title,description,category,resource_type,original_file_name,file_size,is_featured,download_count"
+    )
+    .eq("status", "published");
+  if (appScope) {
+    resourcesQuery = resourcesQuery.in("course_id", appScope.courseIds);
+  }
   const [resourcesResult, favoritesResult] = await Promise.all([
-    supabase
-      .from("library_resources")
-      .select(
-        "id,title,description,category,resource_type,original_file_name,file_size,is_featured,download_count"
-      )
-      .eq("status", "published")
+    resourcesQuery
       .order("is_featured", { ascending: false })
       .order("sort_order", { ascending: true })
       .order("published_at", { ascending: false }),
@@ -45,9 +58,10 @@ export default async function LibraryPage() {
   ]);
 
   const resources = (resourcesResult.data ?? []) as Resource[];
-  const favorites = (favoritesResult.data ?? []).map(
-    (item) => item.resource_id as string
-  );
+  const resourceIds = new Set(resources.map((resource) => resource.id));
+  const favorites = (favoritesResult.data ?? [])
+    .map((item) => item.resource_id as string)
+    .filter((resourceId) => resourceIds.has(resourceId));
   const featuredCount = resources.filter((item) => item.is_featured).length;
   const downloadCount = resources.reduce(
     (total, item) => total + item.download_count,
@@ -144,4 +158,8 @@ export default async function LibraryPage() {
       </div>
     </div>
   );
+}
+
+export default function LibraryPage() {
+  return <LibraryPageContent />;
 }

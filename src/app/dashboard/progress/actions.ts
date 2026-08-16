@@ -30,4 +30,5 @@ export async function removeCourseQuestionReviewAction(questionId: string) {
   }
 
   revalidateDashboard("/dashboard/progress");
+  revalidateDashboard("/[space]/apps/korean/practice/review", "page");
 }

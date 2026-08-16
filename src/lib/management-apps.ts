@@ -16,11 +16,6 @@ import {
   type StudentAppSlug,
 } from "@/lib/student-apps";
 
-type AppAccessError = {
-  code?: string;
-  message?: string;
-} | null;
-
 type TenantAppRow = {
   is_enabled: boolean;
   status: "active" | "coming_soon" | "hidden";
@@ -83,16 +78,10 @@ export type ManagementAppCatalogAccess = {
   items: ManagementAppCatalogItem[];
 };
 
-function isApplicationAccessSchemaMissing(error: AppAccessError) {
-  return (
-    error?.code === "PGRST205" ||
-    error?.code === "42P01" ||
-    error?.message?.includes("staff_app_assignments") === true ||
-    error?.message?.includes("student_app_enrollments") === true
-  );
-}
-
-function getPlatformCapabilities(globalRole: string | null) {
+function getPlatformCapabilities(
+  globalRole: string | null,
+  appKind: StudentAppDefinition["kind"],
+) {
   const isOwner = globalRole === "platform_owner";
   const isContentManager =
     isOwner || globalRole === "platform_admin";
@@ -103,32 +92,21 @@ function getPlatformCapabilities(globalRole: string | null) {
     manageTenantAvailability: isTenantManager,
     manageStudents: isTenantManager,
     manageContent: isContentManager,
-    manageAssessments: isContentManager,
+    // 留学材料、签证与学生个案的跨机构入口继续只向平台负责人
+    // 提供匿名汇总；平台内容管理员仍可维护大学资料和留学课程。
+    manageAssessments: isContentManager && (appKind === "learning" || isOwner),
+    viewAnalytics: appKind === "learning" || isOwner,
+  } satisfies ManagementAppCapabilities;
+}
+
+function getExecutiveTenantCapabilities() {
+  return {
+    manageTenantAvailability: true,
+    manageStudents: true,
+    manageContent: true,
+    manageAssessments: true,
     viewAnalytics: true,
   } satisfies ManagementAppCapabilities;
-}
-
-function getLegacyTenantCapabilities(role: UserRole) {
-  const isExecutive = role === "tenant_super_admin" || role === "ceo";
-  const isAdmin = role === "admin";
-  const isTeacher = role === "teacher";
-
-  return {
-    manageTenantAvailability: isExecutive,
-    manageStudents: isExecutive || isAdmin,
-    manageContent: isExecutive,
-    manageAssessments: isExecutive || isAdmin || isTeacher,
-    viewAnalytics: isExecutive || isAdmin || isTeacher,
-  } satisfies ManagementAppCapabilities;
-}
-
-function getLegacyAccessRole(role: UserRole) {
-  if (role === "tenant_super_admin" || role === "ceo") {
-    return "administrator" as const;
-  }
-  if (role === "admin") return "operator" as const;
-  if (role === "teacher") return "teacher" as const;
-  return "viewer" as const;
 }
 
 export const requireManagementAppCatalogAccess = cache(
@@ -149,9 +127,6 @@ export const requireManagementAppCatalogAccess = cache(
     }
 
     if (access.space === "platform") {
-      const capabilities = getPlatformCapabilities(
-        auth.platformProfile?.global_role ?? null,
-      );
       return {
         scope: "platform",
         tenantId: null,
@@ -165,7 +140,10 @@ export const requireManagementAppCatalogAccess = cache(
           appPath: getManagementAppPath(dashboardBasePath, app.slug),
           accessRole: "platform" as const,
           availability: { enabled: true, status: app.status },
-          capabilities,
+          capabilities: getPlatformCapabilities(
+            auth.platformProfile?.global_role ?? null,
+            app.kind,
+          ),
         })),
       };
     }
@@ -192,10 +170,7 @@ export const requireManagementAppCatalogAccess = cache(
       throw new Error("无法读取当前机构的应用目录，请稍后重试。");
     }
 
-    const usesLegacyAccess = isApplicationAccessSchemaMissing(
-      staffAccessResult.error,
-    );
-    if (staffAccessResult.error && !usesLegacyAccess) {
+    if (staffAccessResult.error) {
       throw new Error("无法读取当前账号的应用权限，请稍后重试。");
     }
 
@@ -227,7 +202,6 @@ export const requireManagementAppCatalogAccess = cache(
 
       if (
         !isExecutive &&
-        !usesLegacyAccess &&
         (!staffAccess || staffAccess.status !== "active")
       ) {
         return null;
@@ -244,24 +218,22 @@ export const requireManagementAppCatalogAccess = cache(
         appId,
         appTitle: tenantApp.custom_title?.trim() || app.title,
         appPath: getManagementAppPath(dashboardBasePath, app.slug),
-        accessRole:
-          usesLegacyAccess || !staffAccess
-            ? getLegacyAccessRole(role)
-            : staffAccess.access_role,
+        accessRole: isExecutive
+          ? "administrator" as const
+          : staffAccess!.access_role,
         availability: {
           enabled: tenantApp.is_enabled,
           status: tenantApp.status,
         },
-        capabilities:
-          usesLegacyAccess || !staffAccess
-            ? getLegacyTenantCapabilities(role)
-            : {
-                manageTenantAvailability: isExecutive,
-                manageStudents: staffAccess.can_manage_students,
-                manageContent: staffAccess.can_manage_content,
-                manageAssessments: staffAccess.can_manage_assessments,
-                viewAnalytics: staffAccess.can_view_analytics,
-              },
+        capabilities: isExecutive
+          ? getExecutiveTenantCapabilities()
+          : {
+              manageTenantAvailability: false,
+              manageStudents: staffAccess!.can_manage_students,
+              manageContent: staffAccess!.can_manage_content,
+              manageAssessments: staffAccess!.can_manage_assessments,
+              viewAnalytics: staffAccess!.can_view_analytics,
+            },
         sortOrder: tenantApp.sort_order,
       };
     })
@@ -327,6 +299,7 @@ export const requireManagementAppAccess = cache(
         availability: { enabled: true, status: app.status },
         capabilities: getPlatformCapabilities(
           auth.platformProfile?.global_role ?? null,
+          app.kind,
         ),
       };
     }
@@ -359,15 +332,13 @@ export const requireManagementAppAccess = cache(
       .eq("app_id", appId)
       .maybeSingle();
 
-    const usesLegacyAccess = isApplicationAccessSchemaMissing(staffAccessError);
-    if (staffAccessError && !usesLegacyAccess) {
+    if (staffAccessError) {
       throw new Error("无法读取当前账号的应用权限，请稍后重试。");
     }
 
     const staffAccess = staffAccessData as StaffAppAssignmentRow | null;
     if (
       !isExecutive &&
-      !usesLegacyAccess &&
       (!staffAccess || staffAccess.status !== "active")
     ) {
       notFound();
@@ -377,16 +348,15 @@ export const requireManagementAppAccess = cache(
       notFound();
     }
 
-    const capabilities =
-      usesLegacyAccess || !staffAccess
-        ? getLegacyTenantCapabilities(role)
-        : {
-            manageTenantAvailability: isExecutive,
-            manageStudents: staffAccess.can_manage_students,
-            manageContent: staffAccess.can_manage_content,
-            manageAssessments: staffAccess.can_manage_assessments,
-            viewAnalytics: staffAccess.can_view_analytics,
-          };
+    const capabilities = isExecutive
+      ? getExecutiveTenantCapabilities()
+      : {
+          manageTenantAvailability: false,
+          manageStudents: staffAccess!.can_manage_students,
+          manageContent: staffAccess!.can_manage_content,
+          manageAssessments: staffAccess!.can_manage_assessments,
+          viewAnalytics: staffAccess!.can_view_analytics,
+        };
 
     return {
       app,
@@ -400,10 +370,9 @@ export const requireManagementAppAccess = cache(
       tenantName: tenant.name,
       userId: auth.user.id,
       role,
-      accessRole:
-        usesLegacyAccess || !staffAccess
-          ? getLegacyAccessRole(role)
-          : staffAccess.access_role,
+      accessRole: isExecutive
+        ? "administrator"
+        : staffAccess!.access_role,
       availability: {
         enabled: tenantApp.is_enabled,
         status: tenantApp.status,

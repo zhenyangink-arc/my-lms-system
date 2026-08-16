@@ -3,11 +3,12 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { hasTenantAppCapability } from "@/lib/tenant-app-capabilities";
 
-const institutionViewerRoles = new Set([
+const institutionExecutiveRoles = new Set([
   "tenant_super_admin",
   "ceo",
-  "admin",
 ]);
 
 export async function getUniversityManagementAccess() {
@@ -16,8 +17,19 @@ export async function getUniversityManagementAccess() {
   const canManageContent =
     globalRole === "platform_owner" || globalRole === "platform_admin";
   const canPermanentlyDelete = globalRole === "platform_owner";
+  const isInstitutionExecutive =
+    Boolean(auth.tenant) && institutionExecutiveRoles.has(auth.profile?.role ?? "");
+  const hasApplicationContentAccess = auth.tenant && !isInstitutionExecutive
+    ? await hasTenantAppCapability({
+        supabase: auth.supabase,
+        tenantId: auth.tenant.id,
+        userId: auth.user.id,
+        appId: STUDENT_APP_IDS["study-abroad"],
+        capability: "manageContent",
+      })
+    : false;
   const isInstitutionViewer =
-    Boolean(auth.tenant) && institutionViewerRoles.has(auth.profile?.role ?? "");
+    isInstitutionExecutive || hasApplicationContentAccess;
   const canViewManagement =
     canManageContent ||
     globalRole === "platform_deputy" ||

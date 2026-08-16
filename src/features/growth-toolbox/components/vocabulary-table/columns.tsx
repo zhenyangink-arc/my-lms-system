@@ -27,7 +27,11 @@ function sortableHeader(title: string) {
   };
 }
 
-export const growthToolboxVocabularyColumns: ColumnDef<GrowthToolboxVocabularyItem>[] = [
+export function getGrowthToolboxVocabularyColumns(
+  studentAppId: string,
+  canManage: boolean,
+): ColumnDef<GrowthToolboxVocabularyItem>[] {
+  return [
   {
     accessorKey: "ko",
     header: sortableHeader("韩语词汇"),
@@ -90,6 +94,11 @@ export const growthToolboxVocabularyColumns: ColumnDef<GrowthToolboxVocabularyIt
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="block text-right">操作</span>,
-    cell: ({ row }) => <VocabularyCellAction item={row.original} />,
+    cell: ({ row }) => canManage ? (
+      <VocabularyCellAction studentAppId={studentAppId} item={row.original} />
+    ) : (
+      <span className="block text-right text-[11px] text-[var(--app-muted)]">只读</span>
+    ),
   },
-];
+  ];
+}

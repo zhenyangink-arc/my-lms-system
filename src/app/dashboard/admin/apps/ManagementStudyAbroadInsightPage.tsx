@@ -1,3 +1,4 @@
+import { ManagementMetricStrip } from "@/components/layout/management-page";
 import { getDocumentReviewManagementData } from "@/features/document-reviews/api/service";
 import { getVisaManagementData } from "@/features/visa-management/api/service";
 
@@ -101,14 +102,15 @@ export async function ManagementStudyAbroadInsightPage({
       : 0;
     return (
       <div className="space-y-5">
-        <section className="grid overflow-hidden border bg-[var(--app-card-bg)] sm:grid-cols-2 xl:grid-cols-4">
-          {[
-            ["申请项目", applications.length, "个"],
-            ["材料确认率", reviewRate, "%"],
-            ["签证档案", cases.length, "个"],
-            ["获签完成率", issuedRate, "%"],
-          ].map(([label, value, suffix], index) => <div key={String(label)} className={`min-h-24 px-5 py-4 ${index > 0 ? "border-t sm:border-l sm:border-t-0" : ""}`}><p className="app-muted-text text-xs">{label}</p><p className="mt-2 text-2xl font-semibold tabular-nums">{value}<span className="app-muted-text ml-1 text-xs font-normal">{suffix}</span></p></div>)}
-        </section>
+        <ManagementMetricStrip
+          label="留学服务分析概况"
+          items={[
+            { label: "申请项目", value: applications.length },
+            { label: "材料确认率", value: `${reviewRate}%` },
+            { label: "签证档案", value: cases.length },
+            { label: "获签完成率", value: `${issuedRate}%` },
+          ]}
+        />
         <section className="grid gap-3 lg:grid-cols-3">
           <div className="app-card border p-5"><p className="app-muted-text text-xs">材料需要处理</p><p className="mt-2 text-2xl font-semibold tabular-nums">{pendingDocuments}</p><p className="app-muted-text mt-2 text-xs">待确认与需补充申请</p></div>
           <div className="app-card border p-5"><p className="app-muted-text text-xs">签证任务待处理</p><p className="mt-2 text-2xl font-semibold tabular-nums">{pendingTasks.length}</p><p className="app-muted-text mt-2 text-xs">准备、审核、补充与阻塞任务</p></div>
@@ -146,7 +148,16 @@ export async function ManagementStudyAbroadInsightPage({
 
   return (
     <div className="space-y-4">
-      <section className="management-table-panel overflow-hidden border"><div className="overflow-x-auto"><table className="management-summary-table w-full min-w-[680px] border-collapse text-left"><thead><tr><th>申请项目</th><th>材料待处理</th><th>签证档案</th><th>签证任务</th><th>需要跟进</th></tr></thead><tbody><tr><td>{applications.length}</td><td>{pendingDocuments}</td><td>{cases.length}</td><td>{tasks.length}</td><td>{pendingTasks.length}</td></tr></tbody></table></div></section>
+      <ManagementMetricStrip
+        label="留学服务记录概况"
+        items={[
+          { label: "申请项目", value: applications.length },
+          { label: "材料待处理", value: pendingDocuments },
+          { label: "签证档案", value: cases.length },
+          { label: "签证任务", value: tasks.length },
+          { label: "需要跟进", value: pendingTasks.length },
+        ]}
+      />
       <div className="overflow-x-auto border bg-[var(--app-card-bg)]"><table className="w-full min-w-[760px] border-collapse text-left text-xs"><thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]"><tr><th className="px-4 py-3">学生</th><th className="px-4 py-3">服务事项</th><th className="px-4 py-3">状态</th><th className="px-4 py-3">更新时间</th></tr></thead><tbody>{activityRows.map((row) => <tr key={row.key} className="border-t border-[var(--app-border-soft)]"><td className="px-4 py-3 font-medium">{row.studentName}</td><td className="px-4 py-3">{row.title}</td><td className="app-muted-text px-4 py-3">{row.status}</td><td className="app-muted-text px-4 py-3">{formatDate(row.occurredAt)}</td></tr>)}{activityRows.length === 0 && <tr><td colSpan={4} className="app-muted-text px-4 py-10 text-center">还没有留学服务活动记录。</td></tr>}</tbody></table></div>
     </div>
   );

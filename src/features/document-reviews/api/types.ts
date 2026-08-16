@@ -146,7 +146,7 @@ export type InstitutionDocumentReviewManagementData = {
   role: UserRole;
   tenantId: string;
   dashboardBasePath: string;
-  canReviewApplications: true;
+  canReviewApplications: boolean;
   applications: DocumentReviewApplication[];
   overview: [];
   hasError: false;

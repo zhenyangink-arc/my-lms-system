@@ -12,10 +12,15 @@ const ROLE_SCOPE_LABELS: Record<string, string> = {
 
 export async function GradeListingContent({
   studentAppId,
+  assignmentDetailBasePath,
 }: {
   studentAppId?: string;
+  assignmentDetailBasePath?: string;
 }) {
-  const result = await getGradeManagementData(studentAppId);
+  const result = await getGradeManagementData(
+    studentAppId,
+    assignmentDetailBasePath,
+  );
 
   if (result.scope === "platform") {
     return (
@@ -65,11 +70,16 @@ export async function GradeListingContent({
         </div>
       </section>
 
-      <GradeResultsTable data={result.results} scopeLabel={scopeLabel} />
+      <GradeResultsTable
+        data={result.results}
+        scopeLabel={scopeLabel}
+        canManageGrades={result.canManageIndividualGrades}
+      />
       <GradeReviewRequestsTable
         data={result.reviews}
         scopeLabel={scopeLabel}
-        canResolveReviews={result.role !== "teacher"}
+        canResolveReviews={result.canManageIndividualGrades}
+        studentAppId={studentAppId}
       />
     </div>
   );

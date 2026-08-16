@@ -34,13 +34,6 @@ type SubmissionRow = {
   graded_at: string | null;
 };
 
-type ConversationRow = {
-  scenario_id: string;
-  status: string;
-  practice_count: number;
-  last_practiced_at: string;
-};
-
 type NoteRow = {
   id: string;
   record_type: LearningRecordType;
@@ -55,6 +48,14 @@ type TimeLogRow = {
   source: "ebook" | "lesson" | "toolbox" | "other";
   seconds: number;
   recorded_at: string;
+};
+
+type ActivityEventRow = {
+  id: string;
+  event_type: "conversation_practiced" | "chapter_test_completed";
+  source_id: string;
+  occurred_at: string;
+  metadata: Record<string, unknown> | null;
 };
 
 type NamedRow = { id: string; title: string };
@@ -106,12 +107,31 @@ function assignmentStatus(status: string) {
   return "已提交待批改";
 }
 
+function metadataString(
+  metadata: Record<string, unknown> | null,
+  key: string,
+) {
+  const value = metadata?.[key];
+  return typeof value === "string" ? value : null;
+}
+
+function metadataNumber(
+  metadata: Record<string, unknown> | null,
+  key: string,
+) {
+  const value = metadata?.[key];
+  return typeof value === "number" && Number.isFinite(value) ? value : null;
+}
+
 export default async function LearningRecordsPage() {
   const { supabase, user, role, canManage, dashboardBasePath } =
     await getLearningRecordAccess();
   const isStudent = role === "student";
+  const studentAppBasePath = isStudent
+    ? dashboardBasePath.replace(/\/dashboard$/, "/apps/korean")
+    : dashboardBasePath;
   const recordOldestDate = new Date();
-  recordOldestDate.setDate(recordOldestDate.getDate() - 89);
+  recordOldestDate.setDate(recordOldestDate.getDate() - 364);
   recordOldestDate.setHours(0, 0, 0, 0);
   const recordOldestIso = recordOldestDate.toISOString();
   const activityOldestDate = new Date();
@@ -119,7 +139,7 @@ export default async function LearningRecordsPage() {
   activityOldestDate.setHours(0, 0, 0, 0);
   const activityOldestIso = activityOldestDate.toISOString();
 
-  const [koreanScope, assignmentScopeResult, scenarioScopeResult] = isStudent
+  const [koreanScope, assignmentScopeResult] = isStudent
     ? await Promise.all([
         getStudentAppCourseScope(supabase, "korean"),
         withStudentAppSchemaFallback(
@@ -132,34 +152,21 @@ export default async function LearningRecordsPage() {
               .from("learning_assignments")
               .select("id,course_id"),
         ),
-        withStudentAppSchemaFallback(
-          supabase
-            .from("conversation_practice_scenarios")
-            .select("id")
-            .eq("student_app_id", STUDENT_APP_IDS.korean),
-          () =>
-            supabase
-              .from("conversation_practice_scenarios")
-              .select("id"),
-        ),
       ])
     : [
         { appId: STUDENT_APP_IDS.korean, categoryIds: [], courseIds: [], lessonIds: [] },
         { data: [] as { id: string; course_id: string | null }[], error: null },
-        { data: [] as { id: string }[], error: null },
       ];
   const koreanCourseIds = new Set(koreanScope.courseIds);
   const scopedAssignmentIds = (assignmentScopeResult.data ?? [])
     .filter((row) => !row.course_id || koreanCourseIds.has(row.course_id))
     .map((row) => row.id);
-  const scopedScenarioIds = (scenarioScopeResult.data ?? []).map((row) => row.id);
-
   const [
     progressResult,
     submissionResult,
-    conversationResult,
     noteResult,
     timeLogResult,
+    activityEventResult,
   ] = await Promise.all([
     isStudent && koreanScope.lessonIds.length > 0
       ? supabase
@@ -178,13 +185,6 @@ export default async function LearningRecordsPage() {
           .in("assignment_id", scopedAssignmentIds)
           .gte("submitted_at", recordOldestIso)
       : Promise.resolve({ data: [] as SubmissionRow[], error: null }),
-    isStudent && scopedScenarioIds.length > 0
-      ? supabase
-          .from("conversation_practice_progress")
-          .select("scenario_id,status,practice_count,last_practiced_at")
-          .eq("user_id", user.id)
-          .in("scenario_id", scopedScenarioIds)
-      : Promise.resolve({ data: [] as ConversationRow[], error: null }),
     isStudent
       ? withStudentAppSchemaFallback(
           supabase
@@ -225,20 +225,30 @@ export default async function LearningRecordsPage() {
               .order("recorded_at", { ascending: false }),
         )
       : Promise.resolve({ data: [] as TimeLogRow[], error: null }),
+    isStudent
+      ? supabase
+          .from("student_learning_activity_events")
+          .select("id,event_type,source_id,occurred_at,metadata")
+          .eq("student_id", user.id)
+          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .in("event_type", [
+            "conversation_practiced",
+            "chapter_test_completed",
+          ])
+          .gte("occurred_at", activityOldestIso)
+          .order("occurred_at", { ascending: false })
+      : Promise.resolve({ data: [] as ActivityEventRow[], error: null }),
   ]);
 
   const progress = (progressResult.data ?? []) as ProgressRow[];
   const submissions = (submissionResult.data ?? []) as SubmissionRow[];
-  const conversations = (conversationResult.data ?? []) as ConversationRow[];
   const notes = (noteResult.data ?? []) as NoteRow[];
   const timeLogs = (timeLogResult.data ?? []) as TimeLogRow[];
+  const activityEvents = (activityEventResult.data ?? []) as ActivityEventRow[];
 
   const lessonIds = [...new Set(progress.map((row) => row.lesson_id))];
   const assignmentIds = [
     ...new Set(submissions.map((row) => row.assignment_id)),
-  ];
-  const scenarioIds = [
-    ...new Set(conversations.map((row) => row.scenario_id)),
   ];
   const testSlugs = [
     ...new Set(
@@ -248,7 +258,7 @@ export default async function LearningRecordsPage() {
     ),
   ];
 
-  const [lessonNames, assignmentNames, scenarioNames, chapterTestsResult] =
+  const [lessonNames, assignmentNames, chapterTestsResult] =
     await Promise.all([
       lessonIds.length
         ? supabase.from("lessons").select("id,title").in("id", lessonIds)
@@ -258,12 +268,6 @@ export default async function LearningRecordsPage() {
             .from("learning_assignments")
             .select("id,title")
             .in("id", assignmentIds)
-        : Promise.resolve({ data: [] as NamedRow[], error: null }),
-      scenarioIds.length
-        ? supabase
-            .from("conversation_practice_scenarios")
-            .select("id,title")
-            .in("id", scenarioIds)
         : Promise.resolve({ data: [] as NamedRow[], error: null }),
       testSlugs.length
         ? withStudentAppSchemaFallback(
@@ -283,7 +287,6 @@ export default async function LearningRecordsPage() {
 
   const lessonNameById = nameMap(lessonNames.data);
   const assignmentNameById = nameMap(assignmentNames.data);
-  const scenarioNameById = nameMap(scenarioNames.data);
   const chapterTestBySlug = new Map(
     ((chapterTestsResult.data ?? []) as ChapterTestRow[]).map((test) => [
       test.slug,
@@ -355,7 +358,9 @@ export default async function LearningRecordsPage() {
       date: group.latestAt,
       status: isToolbox ? "专项练习" : "有效阅读",
       durationSeconds: group.seconds,
-      href: isToolbox ? "/dashboard/toolbox" : undefined,
+      href: isToolbox
+        ? scopeDashboardPath("/dashboard/practice/skills", studentAppBasePath)
+        : undefined,
     });
   }
 
@@ -392,24 +397,55 @@ export default async function LearningRecordsPage() {
             : "提交成功，正在等待老师批改。",
       date: occurredAt,
       status: assignmentStatus(row.status),
-      href: `/dashboard/assignments/${row.assignment_id}`,
+      href: scopeDashboardPath(
+        `/dashboard/assignments/${row.assignment_id}`,
+        studentAppBasePath,
+      ),
     });
   }
 
-  for (const row of conversations) {
-    if (
-      new Date(row.last_practiced_at).getTime() < recordOldestDate.getTime()
-    ) {
+  for (const row of activityEvents) {
+    const metadata = row.metadata;
+    if (row.event_type === "conversation_practiced") {
+      const practiceCount = metadataNumber(metadata, "practice_count") ?? 1;
+      const completed = metadataString(metadata, "status") === "completed";
+      const historicalSnapshot = metadata?.historical_snapshot === true;
+      events.push({
+        id: `activity:${row.id}`,
+        category: "practice",
+        title: metadataString(metadata, "title") ?? "会话练习",
+        description: historicalSnapshot
+          ? `迁移前累计完成 ${practiceCount} 次练习；旧数据只保留了最后一次时间，之后的每次练习都会独立记录。`
+          : `完成第 ${practiceCount} 次会话练习${completed ? "，当前场景已掌握。" : "。"}`,
+        date: row.occurred_at,
+        status: completed ? "已掌握" : "会话练习",
+        href: scopeDashboardPath(
+          `/dashboard/conversation-practice/${row.source_id}`,
+          studentAppBasePath,
+        ),
+      });
       continue;
     }
+
+    const score = metadataNumber(metadata, "score");
+    const passed = metadata?.passed === true;
+    const testSlug = metadataString(metadata, "test_slug");
     events.push({
-      id: `conversation:${row.scenario_id}`,
-      category: "practice",
-      title: scenarioNameById.get(row.scenario_id) ?? "会话练习",
-      description: `累计完成 ${row.practice_count} 次会话练习${row.status === "completed" ? "，当前场景已掌握。" : "。"}`,
-      date: row.last_practiced_at,
-      status: row.status === "completed" ? "已掌握" : "练习中",
-      href: "/dashboard/conversation-practice",
+      id: `activity:${row.id}`,
+      category: "task",
+      title: metadataString(metadata, "title") ?? "章节测试",
+      description:
+        score == null
+          ? "完成了一次章节测试。"
+          : `本次得分 ${score} 分，${passed ? "已经通过。" : "建议复习后再次挑战。"}`,
+      date: row.occurred_at,
+      status: passed ? "测试通过" : "测试完成",
+      href: testSlug
+        ? scopeDashboardPath(
+            `/dashboard/assignments/korean/${testSlug}`,
+            studentAppBasePath,
+          )
+        : undefined,
     });
   }
 
@@ -442,6 +478,12 @@ export default async function LearningRecordsPage() {
       (dailySeconds.get(key) ?? 0) + Math.max(0, Number(row.seconds) || 0),
     );
   }
+  const dailyActivityCounts = new Map<string, number>();
+  for (const event of events) {
+    if (event.category === "teacher") continue;
+    const key = dateKey(event.date);
+    dailyActivityCounts.set(key, (dailyActivityCounts.get(key) ?? 0) + 1);
+  }
   const learningDays: LearningDay[] = Array.from({ length: 365 }, (_, index) => {
     const day = new Date(today);
     day.setDate(today.getDate() - (364 - index));
@@ -454,6 +496,7 @@ export default async function LearningRecordsPage() {
       key,
       label: key === todayKey ? "今天" : weekday.replace("星期", "周"),
       seconds: dailySeconds.get(key) ?? 0,
+      activityCount: dailyActivityCounts.get(key) ?? 0,
       isToday: key === todayKey,
     };
   });
@@ -470,9 +513,9 @@ export default async function LearningRecordsPage() {
   );
   let streakDays = 0;
   const activityDays = new Set(
-    [...dailySeconds.entries()]
-      .filter(([, seconds]) => seconds > 0)
-      .map(([key]) => key),
+    learningDays
+      .filter((day) => day.seconds > 0 || day.activityCount > 0)
+      .map((day) => day.key),
   );
   const streakCursor = new Date(today);
   if (!activityDays.has(todayKey)) {
@@ -488,12 +531,11 @@ export default async function LearningRecordsPage() {
   const dataError = Boolean(
     progressResult.error ||
       submissionResult.error ||
-      conversationResult.error ||
       noteResult.error ||
       timeLogResult.error ||
+      activityEventResult.error ||
       lessonNames.error ||
       assignmentNames.error ||
-      scenarioNames.error ||
       chapterTestsResult.error,
   );
 

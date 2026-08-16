@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { BookOpen, FolderTree } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
   Background,
   Controls,
@@ -192,6 +193,7 @@ export function TreeLabelNode({ data }: NodeProps) {
  * 完整课程树（分类 → 子分类 → 课程 → 课时 → 章节），课程节点可点击进入。
  */
 export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const { nodes, edges } = useMemo(() => layoutTree(tree), [tree]);
   const nodeTypes = useMemo(() => ({ treeLabel: TreeLabelNode }), []);
@@ -242,7 +244,10 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
                   maxZoom={1.6}
                   onNodeClick={(_, node) => {
                     const href = node.data?.href as string | undefined;
-                    if (href) window.location.assign(href);
+                    if (href) {
+                      setOpen(false);
+                      router.push(href);
+                    }
                   }}
                   proOptions={{ hideAttribution: true }}
                 >

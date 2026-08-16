@@ -2,7 +2,7 @@
 import type { ComponentType } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Award, BarChart3, BookOpen, Building2, ClipboardList, Cog, FileText, HelpCircle, History, LayoutDashboard, Library, Megaphone, MessageSquare, PanelsTopLeft, ShieldCheck, UserCircle } from "lucide-react";
+import { Award, BookOpen, Building2, ClipboardList, Cog, FileText, HelpCircle, History, LayoutDashboard, Library, Megaphone, MessageSquare, PanelsTopLeft, ShieldCheck, Target, UserCircle } from "lucide-react";
 import { type MembershipTier, type StudentFeature } from "@/lib/student-permissions";
 import { normalizeDashboardPathname, scopeDashboardPath } from "@/lib/dashboard-path";
 
@@ -13,7 +13,7 @@ const groups: Group[] = [
   { label: "学习成长", items: [
     { label: "成长首页", href: "/dashboard", icon: LayoutDashboard },
     { label: "我的课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true },
-    { label: "深化学习", href: "/dashboard/progress", icon: BarChart3, requiresStudentSectionAccess: true },
+    { label: "巩固中心", href: "/dashboard/practice", icon: Target, requiresStudentSectionAccess: true },
     { label: "作业与考试", href: "/dashboard/assignments", icon: ClipboardList, requiresStudentSectionAccess: true, studentFeature: "learning_assignments" },
     { label: "会话练习", href: "/dashboard/conversation-practice", icon: MessageSquare, requiresStudentSectionAccess: true, studentFeature: "conversation_course" },
     { label: "我的成绩", href: "/dashboard/grades", icon: Award, requiresStudentSectionAccess: true },
@@ -33,7 +33,7 @@ const groups: Group[] = [
   ]},
   { label: "后台管理", adminOnly: true, items: [{ label: "管理中心", href: "/dashboard/admin", icon: PanelsTopLeft, teacherVisible: true }] },
 ];
-const studentMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true }, { label: "深化", href: "/dashboard/progress", icon: BarChart3, requiresStudentSectionAccess: true }, { label: "大学", href: "/dashboard/universities", icon: Building2, requiresStudentSectionAccess: true }];
+const studentMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen, requiresStudentSectionAccess: true }, { label: "巩固", href: "/dashboard/practice", icon: Target, requiresStudentSectionAccess: true }, { label: "大学", href: "/dashboard/universities", icon: Building2, requiresStudentSectionAccess: true }];
 const staffMobile: Item[] = [{ label: "总览", href: "/dashboard", icon: LayoutDashboard }, { label: "课程", href: "/dashboard/courses", icon: BookOpen }, { label: "作业", href: "/dashboard/assignments", icon: ClipboardList }, { label: "管理", href: "/dashboard/admin", icon: PanelsTopLeft }, { label: "我的", href: "/dashboard/profile", icon: UserCircle }];
 const adminRole = (role: string) => ["admin", "ceo", "platform_super_admin", "tenant_super_admin", "tenant_operator"].includes(role);
 const active = (path: string, href: string) => href === "/dashboard" ? path === href : path === href || path.startsWith(`${href}/`);

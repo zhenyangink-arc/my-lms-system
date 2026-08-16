@@ -56,6 +56,7 @@ function sortableHeader(title: string) {
 
 export function getGradeReviewColumns(
   canResolveReviews: boolean,
+  studentAppId?: string,
 ): ColumnDef<GradeReviewRequest>[] {
   return [
   {
@@ -150,6 +151,7 @@ export function getGradeReviewColumns(
         <GradeReviewAction
           reviewId={row.original.id}
           response={row.original.response}
+          studentAppId={studentAppId}
         />
       ) : (
         <span className="text-[10px] text-[var(--app-muted)]">仅查看</span>

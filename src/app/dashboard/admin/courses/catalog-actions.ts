@@ -5,6 +5,7 @@ import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requirePlatformCourseManager } from "@/lib/admin";
 import { assertR2ObjectUpload, createR2SignedUploadUrl, deleteR2Object } from "@/lib/r2";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 const UUID_PATTERN = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
@@ -188,6 +189,15 @@ export async function createCourseCategoryAction(formData: FormData) {
   const { supabase } = await requirePlatformCourseManager();
   const parentId = optionalId(formData, "parent_id");
   if (parentId) await assertPlatformRecord(supabase, "course_categories", parentId);
+  const studentAppId = parentId
+    ? null
+    : requiredId(formData, "student_app_id", "所属应用");
+  if (
+    studentAppId &&
+    !new Set(Object.values(STUDENT_APP_IDS)).has(studentAppId)
+  ) {
+    throw new Error("所属应用不在平台应用注册表中。");
+  }
 
   const { error } = await supabase.from("course_categories").insert({
     ...baseFields(formData),
@@ -196,6 +206,7 @@ export async function createCourseCategoryAction(formData: FormData) {
     accent_color: textValue(formData, "accent_color") || "blue",
     tenant_id: null,
     content_scope: "platform",
+    ...(studentAppId ? { student_app_id: studentAppId } : {}),
   });
   if (error) throw new Error(`创建分类失败：${error.message}`);
   revalidateCatalog();

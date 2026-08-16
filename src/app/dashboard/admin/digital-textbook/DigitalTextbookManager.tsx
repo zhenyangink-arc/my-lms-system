@@ -112,10 +112,12 @@ export function DigitalTextbookManager({
   courses,
   vocabularyLibrary,
   grammarLibrary,
+  studentAppId,
 }: {
   courses: AdminCourse[];
   vocabularyLibrary: VocabularyLibraryItem[];
   grammarLibrary: GrammarLibraryItem[];
+  studentAppId: string;
 }) {
   const router = useRouter();
   const [collapsed, setCollapsed] = useState<Set<string>>(() => {
@@ -396,10 +398,10 @@ export function DigitalTextbookManager({
         <GrammarWorkspace chapter={activeGrammarChapter} onClose={() => setActiveGrammarChapter(null)} />
       )}
       {libraryOpen && (
-        <VocabularyLibraryWorkspace items={vocabularyLibrary} onClose={() => setLibraryOpen(false)} />
+        <VocabularyLibraryWorkspace items={vocabularyLibrary} studentAppId={studentAppId} onClose={() => setLibraryOpen(false)} />
       )}
       {grammarOpen && (
-        <GrammarLibraryWorkspace items={grammarLibrary} onClose={() => setGrammarOpen(false)} />
+        <GrammarLibraryWorkspace items={grammarLibrary} studentAppId={studentAppId} onClose={() => setGrammarOpen(false)} />
       )}
     </section>
   );

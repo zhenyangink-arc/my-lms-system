@@ -181,6 +181,7 @@ export async function setTextbookStatusAction(
 
   revalidateDashboard("/dashboard/admin/digital-textbook");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
@@ -212,6 +213,7 @@ export async function addVocabularyWordAction(
 
   revalidateDashboard("/dashboard/admin/digital-textbook");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
@@ -251,6 +253,7 @@ export async function updateVocabularyWordAction(
 
   revalidateDashboard("/dashboard/admin/digital-textbook");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 
@@ -285,6 +288,7 @@ export async function removeVocabularyWordAction(
 
   revalidateDashboard("/dashboard/admin/digital-textbook");
   revalidateDashboard("/dashboard/toolbox/vocabulary");
+  revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
 }
 

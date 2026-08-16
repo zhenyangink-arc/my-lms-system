@@ -28,7 +28,7 @@ export function LogoutButton({
   appearance = "default",
 }: {
   collapsed?: boolean;
-  appearance?: "default" | "menu";
+  appearance?: "default" | "menu" | "sheet";
 }) {
   async function handleLogout() {
     const supabase = createClient();
@@ -47,12 +47,14 @@ export function LogoutButton({
         className={
           appearance === "menu"
             ? "flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-medium text-red-600 transition hover:bg-red-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+            : appearance === "sheet"
+              ? "flex min-h-[52px] w-full items-center justify-center gap-2 rounded-[14px] border border-red-200 bg-red-50 px-3 py-2 text-sm font-semibold text-red-700 transition hover:bg-red-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             : `inline-flex h-9 items-center justify-center rounded-md border border-gray-200 bg-white text-sm font-medium shadow-sm transition hover:bg-gray-50 ${
                 collapsed ? "w-9" : "w-full px-3"
               }`
         }
       >
-        {appearance === "menu" ? (
+        {appearance === "menu" || appearance === "sheet" ? (
           <>
             <LogOut aria-hidden="true" size={16} />
             退出登录

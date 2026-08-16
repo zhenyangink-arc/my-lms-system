@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { LiveGradeResult } from "../../api/types";
-import { gradeResultColumns } from "./columns";
+import { getGradeResultColumns } from "./columns";
 import {
   GradeResultsTableToolbar,
   type GradeResultFilters,
@@ -45,13 +45,19 @@ const INITIAL_FILTERS: GradeResultFilters = {
 export function GradeResultsTable({
   data,
   scopeLabel,
+  canManageGrades,
 }: {
   data: LiveGradeResult[];
   scopeLabel: string;
+  canManageGrades: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<GradeResultFilters>(INITIAL_FILTERS);
+  const columns = useMemo(
+    () => getGradeResultColumns(canManageGrades),
+    [canManageGrades],
+  );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((row) => {
@@ -71,7 +77,7 @@ export function GradeResultsTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: gradeResultColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

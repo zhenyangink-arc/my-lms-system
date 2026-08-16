@@ -49,6 +49,8 @@ function Count({ value, detail }: { value: number; detail?: string }) {
 
 export function getStudentLearningRecordColumns(
   dashboardBasePath: string,
+  studentAppId: string | undefined,
+  canManageNotes: boolean,
 ): ColumnDef<StudentLearningRecordTableRow>[] {
   return [
   {
@@ -141,6 +143,8 @@ export function getStudentLearningRecordColumns(
       <StudentLearningRecordDetailDialog
         student={row.original}
         dashboardBasePath={dashboardBasePath}
+        studentAppId={studentAppId}
+        canManageNotes={canManageNotes}
       />
     ),
   },

@@ -36,6 +36,8 @@ function sortableHeader(title: string) {
 
 export function getGrowthToolboxItemColumns(
   courses: GrowthToolboxCourseOption[],
+  studentAppId: string,
+  canManage: boolean,
 ): ColumnDef<GrowthToolboxItemDisplayRow>[] {
   return [
   {
@@ -122,7 +124,15 @@ export function getGrowthToolboxItemColumns(
     header: () => <span className="block text-right">操作</span>,
     cell: ({ row }) => (
       <div className="text-right">
-        <EditToolboxItemDialog item={row.original} courses={courses} />
+        {canManage ? (
+          <EditToolboxItemDialog
+            studentAppId={studentAppId}
+            item={row.original}
+            courses={courses}
+          />
+        ) : (
+          <span className="text-[11px] text-[var(--app-muted)]">只读</span>
+        )}
       </div>
     ),
   },

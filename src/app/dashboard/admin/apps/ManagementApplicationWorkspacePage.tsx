@@ -12,12 +12,15 @@ import {
   Languages,
   MessageSquareText,
   NotebookTabs,
+  PanelsTopLeft,
   Settings2,
   ShieldCheck,
   UsersRound,
   Wrench,
 } from "lucide-react";
 
+import { ManagementPage } from "@/components/layout/management-page";
+import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
 import { getManagementAppsPath } from "@/lib/management-app-path";
 import {
   requireManagementAppAccess,
@@ -67,6 +70,13 @@ const learningModules: WorkspaceModule[] = [
     capability: "manageAssessments",
   },
   {
+    key: "textbooks",
+    title: "互动教材",
+    description: "按应用查看教材、版本、章节、词汇和语法内容。",
+    icon: PanelsTopLeft,
+    capability: "manageContent",
+  },
+  {
     key: "grades",
     title: "成绩分析",
     description: "查看应用内作业、考试和六维能力表现。",
@@ -110,6 +120,13 @@ const serviceModules: WorkspaceModule[] = [
     description: "管理已开通留学服务的学生和负责员工。",
     icon: UsersRound,
     capability: "manageStudents",
+  },
+  {
+    key: "content",
+    title: "留学课程",
+    description: "维护选校、申请、签证与面试准备课程。",
+    icon: BookOpenCheck,
+    capability: "manageContent",
   },
   {
     key: "universities",
@@ -181,15 +198,23 @@ export async function ManagementApplicationWorkspacePage({
     .select("student_id", { count: "exact", head: true })
     .eq("app_id", access.appId)
     .eq("status", "active");
-  let assignmentsQuery = client
-    .from("learning_assignments")
-    .select("id", { count: "exact", head: true })
-    .eq("student_app_id", access.appId);
-  let recordsQuery = client
-    .from("learning_record_notes")
-    .select("id", { count: "exact", head: true })
-    .eq("student_app_id", access.appId)
-    .eq("status", "active");
+  let assignmentsQuery = access.app.kind === "service"
+    ? client
+        .from("student_university_targets")
+        .select("id", { count: "exact", head: true })
+    : client
+        .from("learning_assignments")
+        .select("id", { count: "exact", head: true })
+        .eq("student_app_id", access.appId);
+  let recordsQuery = access.app.kind === "service"
+    ? client
+        .from("student_application_documents")
+        .select("id", { count: "exact", head: true })
+    : client
+        .from("learning_record_notes")
+        .select("id", { count: "exact", head: true })
+        .eq("student_app_id", access.appId)
+        .eq("status", "active");
 
   if (access.tenantId) {
     studentsQuery = studentsQuery.eq("tenant_id", access.tenantId);
@@ -202,7 +227,8 @@ export async function ManagementApplicationWorkspacePage({
       client
         .from("courses")
         .select("id", { count: "exact", head: true })
-        .eq("student_app_id", access.appId),
+        .eq("student_app_id", access.appId)
+        .eq("content_scope", "platform"),
       studentsQuery,
       assignmentsQuery,
       recordsQuery,
@@ -212,46 +238,34 @@ export async function ManagementApplicationWorkspacePage({
   const metrics = [
     { label: access.app.kind === "service" ? "服务项目" : "课程内容", value: countValue(courseResult) },
     { label: "已授权学生", value: countValue(studentResult) },
-    { label: access.app.kind === "service" ? "跟进任务" : "教学任务", value: countValue(assignmentResult) },
-    { label: "有效记录", value: countValue(recordResult) },
+    { label: access.app.kind === "service" ? "申请项目" : "教学任务", value: countValue(assignmentResult) },
+    { label: access.app.kind === "service" ? "材料清单" : "有效记录", value: countValue(recordResult) },
   ];
 
   return (
-    <div className={`management-page management-app-workspace management-app-tone-${access.app.accent} space-y-5`}>
-      <header className="app-card border p-5 sm:p-6">
+    <ManagementPage
+      eyebrow={access.app.kind === "service" ? "服务运营空间" : "教学运营空间"}
+      title={access.appTitle}
+      description={access.app.description}
+      icon={AppIcon}
+      className={`management-app-workspace management-app-tone-${access.app.accent}`}
+      meta={
+        <>
+          <span>{statusLabel(access)}</span>
+          <span>{access.scope === "platform" ? "平台标准空间" : access.tenantName}</span>
+          <span>{access.accessRole === "platform" ? "平台权限" : access.accessRole}</span>
+        </>
+      }
+      action={
         <Link
           href={getManagementAppsPath(access.dashboardBasePath)}
-          className="app-muted-text inline-flex min-h-8 items-center gap-1.5 text-xs font-medium hover:text-[var(--app-text)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           返回应用中心
         </Link>
-        <div className="mt-4 flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="flex min-w-0 items-start gap-4">
-            <span className="management-app-icon flex size-12 shrink-0 items-center justify-center rounded-md border">
-              <AppIcon size={23} strokeWidth={1.8} aria-hidden="true" />
-            </span>
-            <div className="min-w-0">
-              <div className="flex flex-wrap items-center gap-2">
-                <h1 className="text-2xl font-semibold tracking-[-0.035em]">{access.appTitle}</h1>
-                <span className="management-app-status inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium">
-                  <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
-                  {statusLabel(access)}
-                </span>
-              </div>
-              <p className="app-muted-text mt-2 max-w-2xl text-sm leading-6">{access.app.description}</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2 text-xs">
-            <span className="rounded-md border px-2.5 py-1.5 app-muted-text">
-              {access.scope === "platform" ? "平台标准空间" : access.tenantName}
-            </span>
-            <span className="rounded-md border px-2.5 py-1.5 app-muted-text">
-              {access.accessRole === "platform" ? "平台权限" : access.accessRole}
-            </span>
-          </div>
-        </div>
-      </header>
+      }
+    >
 
       <section className="grid overflow-hidden rounded-lg border bg-[var(--app-card-bg)] sm:grid-cols-2 xl:grid-cols-4" aria-label="当前应用概况">
         {metrics.map((metric, index) => (
@@ -282,7 +296,12 @@ export async function ManagementApplicationWorkspacePage({
                   <span className={enabled ? "text-[var(--app-accent-strong)]" : "app-muted-text"}>
                     {enabled ? "进入模块" : "当前账号无权限"}
                   </span>
-                  {enabled && <ArrowRight size={14} aria-hidden="true" />}
+                  {enabled && (
+                    <span className="inline-flex items-center gap-1.5">
+                      <RouteLinkStatus />
+                      <ArrowRight size={14} aria-hidden="true" />
+                    </span>
+                  )}
                 </span>
               </>
             );
@@ -303,6 +322,6 @@ export async function ManagementApplicationWorkspacePage({
           })}
         </div>
       </section>
-    </div>
+    </ManagementPage>
   );
 }

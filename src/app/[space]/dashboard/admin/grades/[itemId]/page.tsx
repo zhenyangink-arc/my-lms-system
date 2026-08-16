@@ -1,1 +1,6 @@
-export { default } from "@/app/dashboard/admin/grades/[itemId]/page-content";
+import { redirectLegacyManagementRoute } from "@/app/dashboard/admin/legacy-app-route";
+
+export default async function LegacyGradeDetailPage({ params }: { params: Promise<{ space: string }> }) {
+  const { space } = await params;
+  redirectLegacyManagementRoute(space);
+}

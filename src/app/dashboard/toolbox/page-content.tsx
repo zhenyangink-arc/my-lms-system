@@ -4,6 +4,7 @@ import {
   Activity,
   ArrowRight,
   BookOpen,
+  CheckCircle2,
   Ear,
   Headphones,
   MessageSquare,
@@ -37,6 +38,9 @@ type ToolEntry = {
   soft: string;
   ability: number | null;
   practiceCount: number;
+  courseCount: number;
+  chapterCount: number;
+  focus: string[];
 };
 
 type ToolboxProfileRow = {
@@ -44,6 +48,21 @@ type ToolboxProfileRow = {
   ability_score: number | string | null;
   valid_sessions: number | string;
   valid_attempts: number | string;
+};
+
+type ExerciseCoverageRow = {
+  skill: string;
+  course_id: string | null;
+  course_chapter_id: string | null;
+};
+
+const skillFocusMap: Record<string, string[]> = {
+  listening: ["听音辨义", "关键信息", "语音反应"],
+  speaking: ["情境表达", "朗读模仿", "口头反应"],
+  reading: ["信息定位", "语境理解", "规则判断"],
+  writing: ["句子书写", "结构运用", "准确表达"],
+  grammar: ["句型结构", "助词规则", "语言运用"],
+  vocabulary: ["核心词语", "字词辨认", "语境搭配"],
 };
 
 const iconMap: Record<string, LucideIcon> = {
@@ -58,16 +77,27 @@ const iconMap: Record<string, LucideIcon> = {
   sparkles: Sparkles,
 };
 
-export default async function ToolboxPage() {
+export async function ToolboxPage({
+  skillsBasePath,
+  showHero = true,
+}: {
+  skillsBasePath?: string;
+  showHero?: boolean;
+} = {}) {
   const { supabase, tenant, user } = await requireActiveUser();
   const dashboardBasePath = tenant?.slug
     ? getStudentAppBasePath(tenant.slug, "korean")
     : getDashboardBasePath(null);
 
-  const [{ data: rows }, { data: profileRows }] = await Promise.all([
+  const [
+    { data: rows },
+    { data: profileRows },
+    { data: exerciseCoverageRows },
+  ] = await Promise.all([
     supabase
       .from("growth_toolbox_items")
       .select("id,slug,title,description,href,icon_name,accent,soft,sort_order,is_enabled")
+      .eq("student_app_id", STUDENT_APP_IDS.korean)
       .order("sort_order", { ascending: true }),
     withStudentAppSchemaFallback(
       supabase
@@ -81,10 +111,31 @@ export default async function ToolboxPage() {
           .select("skill,ability_score,valid_sessions,valid_attempts")
           .eq("student_id", user.id),
     ),
+    supabase
+      .from("growth_toolbox_exercises")
+      .select("skill,course_id,course_chapter_id")
+      .eq("student_app_id", STUDENT_APP_IDS.korean)
+      .eq("status", "published")
+      .not("course_chapter_id", "is", null),
   ]);
 
   const profiles = (profileRows ?? []) as ToolboxProfileRow[];
   const profileBySkill = new Map(profiles.map((profile) => [profile.skill, profile]));
+  const coverageBySkill = new Map<
+    string,
+    { chapterIds: Set<string>; courseIds: Set<string> }
+  >();
+
+  for (const coverage of (exerciseCoverageRows ?? []) as ExerciseCoverageRow[]) {
+    if (!coverage.course_id || !coverage.course_chapter_id) continue;
+    const current = coverageBySkill.get(coverage.skill) ?? {
+      chapterIds: new Set<string>(),
+      courseIds: new Set<string>(),
+    };
+    current.chapterIds.add(coverage.course_chapter_id);
+    current.courseIds.add(coverage.course_id);
+    coverageBySkill.set(coverage.skill, current);
+  }
 
   const tools: ToolEntry[] = (rows ?? [])
     .filter((row) => row.is_enabled)
@@ -93,7 +144,10 @@ export default async function ToolboxPage() {
       skill: row.slug,
       title: row.title,
       description: row.description,
-      href: scopeDashboardPath(row.href, dashboardBasePath),
+      href: scopeDashboardPath(
+        skillsBasePath ? `${skillsBasePath}/${encodeURIComponent(row.slug)}` : row.href,
+        dashboardBasePath,
+      ),
       icon: iconMap[row.icon_name] ?? Wrench,
       accent: row.accent,
       soft: row.soft,
@@ -106,12 +160,22 @@ export default async function ToolboxPage() {
       practiceCount: Number(
         profileBySkill.get(row.slug as LanguageSkill)?.valid_sessions ?? 0,
       ),
+      courseCount: coverageBySkill.get(row.slug)?.courseIds.size ?? 0,
+      chapterCount: coverageBySkill.get(row.slug)?.chapterIds.size ?? 0,
+      focus: skillFocusMap[row.slug] ?? ["章节训练", "独立记录", "能力成长"],
     }));
+
+  const coveredChapterIds = new Set(
+    [...coverageBySkill.values()].flatMap((coverage) => [...coverage.chapterIds]),
+  );
+  const coveredCourseIds = new Set(
+    [...coverageBySkill.values()].flatMap((coverage) => [...coverage.courseIds]),
+  );
 
   return (
     <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
-      {/* Hero 区 */}
-      <section
+      {/* 旧入口继续自带说明；巩固中心由统一介绍卡承担这一层信息。 */}
+      {showHero && <section
         className="relative overflow-hidden rounded-3xl border p-6 sm:p-8"
         style={{
           background:
@@ -139,9 +203,9 @@ export default async function ToolboxPage() {
               <Wrench size={26} aria-hidden="true" />
             </span>
             <div>
-              <h1 className="text-2xl font-black tracking-tight">成长工具箱</h1>
+              <h1 className="text-2xl font-black tracking-tight">专项训练</h1>
               <p className="app-muted-text mt-1 text-sm font-bold">
-                专项练习，巩固每一课的知识点。
+                按能力维度训练，巩固每一课的知识点。
               </p>
             </div>
           </div>
@@ -158,11 +222,11 @@ export default async function ToolboxPage() {
             </span>
           </div>
         </div>
-      </section>
+      </section>}
 
       <SixDimensionRadar
         eyebrow="日常练习能力画像"
-        title="成长工具箱 · 六维练习能力"
+        title="专项训练 · 六维练习能力"
         description="只统计最近 30 天的日常专项练习，与老师作业和正式考试完全分开"
         icon={Activity}
         color="var(--app-accent)"
@@ -184,6 +248,30 @@ export default async function ToolboxPage() {
         emptyMessage="还没有达到统计门槛的日常练习。完成阅读、写作等专项练习后，这里会形成独立的六边形能力画像。"
         insightLabel="练习建议"
       />
+
+      <section
+        className="app-card grid overflow-hidden rounded-2xl border sm:grid-cols-3"
+        aria-label="专项训练课程覆盖"
+      >
+        {[
+          [coveredCourseIds.size, "已对应课程"],
+          [coveredChapterIds.size, "已对应章节"],
+          [tools.length, "能力板块"],
+        ].map(([value, label], index) => (
+          <div
+            key={String(label)}
+            className="border-t p-4 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0"
+            style={{
+              borderColor: "var(--app-border-soft)",
+              backgroundColor:
+                index === 0 ? "var(--app-soft-bg)" : "var(--app-card-bg)",
+            }}
+          >
+            <p className="text-xl font-black tabular-nums">{value}</p>
+            <p className="app-muted-text mt-1 text-xs font-bold">{label}</p>
+          </div>
+        ))}
+      </section>
 
       {/* 练习入口卡片 */}
       {tools.length === 0 ? (
@@ -217,17 +305,13 @@ export default async function ToolboxPage() {
               <Link
                 key={tool.id}
                 href={tool.href}
-                className="app-card group relative overflow-hidden rounded-3xl border p-5 transition duration-300 hover:-translate-y-1 hover:shadow-xl"
+                className="app-card group flex min-h-72 flex-col rounded-3xl border p-5 transition-[border-color,box-shadow] hover:shadow-md focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
                 style={{ borderColor: "var(--app-border)" }}
               >
-                <div
-                  className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full opacity-60 blur-2xl transition duration-300 group-hover:opacity-90"
-                  style={{ backgroundColor: tool.soft }}
-                />
-                <div className="relative flex h-full flex-col gap-4">
+                <div className="flex h-full flex-col gap-4">
                   <div className="flex items-start justify-between gap-3">
                     <span
-                      className="flex h-12 w-12 items-center justify-center rounded-2xl transition duration-300 group-hover:scale-110"
+                      className="flex h-12 w-12 items-center justify-center rounded-2xl"
                       style={{ color: tool.accent, backgroundColor: tool.soft }}
                     >
                       <Icon size={22} aria-hidden="true" />
@@ -245,20 +329,34 @@ export default async function ToolboxPage() {
                   </div>
                   <div className="mt-1">
                     <h2 className="text-lg font-black">{tool.title}</h2>
-                    <p className="app-muted-text mt-1.5 text-xs leading-5">
+                    <p className="app-muted-text mt-1.5 text-sm leading-6">
                       {tool.description}
                     </p>
                   </div>
-                  <div
-                    className="mt-auto flex items-center gap-1.5 text-xs font-black"
-                    style={{ color: tool.accent }}
-                  >
-                    开始
-                    <ArrowRight
-                      size={14}
-                      className="transition duration-300 group-hover:translate-x-1"
-                      aria-hidden="true"
-                    />
+
+                  <ul className="flex flex-wrap gap-2" aria-label={`${tool.title}训练重点`}>
+                    {tool.focus.map((focus) => (
+                      <li
+                        key={focus}
+                        className="rounded-full px-2.5 py-1 text-[11px] font-black"
+                        style={{ color: tool.accent, backgroundColor: tool.soft }}
+                      >
+                        {focus}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="mt-auto border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
+                    <div className="flex items-center justify-between gap-3 text-xs font-black">
+                      <span className="inline-flex items-center gap-1.5 app-muted-text">
+                        <CheckCircle2 size={14} style={{ color: tool.accent }} aria-hidden="true" />
+                        {tool.courseCount} 门课程 · {tool.chapterCount} 个章节
+                      </span>
+                      <span className="inline-flex min-h-11 items-center gap-1.5" style={{ color: tool.accent }}>
+                        选择章节
+                        <ArrowRight size={14} aria-hidden="true" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>
@@ -269,4 +367,8 @@ export default async function ToolboxPage() {
       )}
     </div>
   );
+}
+
+export default function LegacyToolboxPage() {
+  return <ToolboxPage />;
 }

@@ -89,9 +89,11 @@ const ICON_OPTIONS = [
 ] as const;
 
 export function EditToolboxItemDialog({
+  studentAppId,
   item,
   courses,
 }: {
+  studentAppId: string;
   item: GrowthToolboxItem;
   courses: GrowthToolboxCourseOption[];
 }) {
@@ -104,7 +106,7 @@ export function EditToolboxItemDialog({
   async function submit() {
     setPending(true);
     setMessage("");
-    const result = await updateToolboxItemAction(item.id, draft);
+    const result = await updateToolboxItemAction(studentAppId, item.id, draft);
     setPending(false);
     if (!result.ok) {
       setMessage(result.message ?? "保存失败");
@@ -266,11 +268,12 @@ const EMPTY_WORD: VocabularyWordInput = {
   transcription: "",
 };
 
-export function CreateVocabularyDialog() {
+export function CreateVocabularyDialog({ studentAppId }: { studentAppId: string }) {
   const [open, setOpen] = useState(false);
   return (
     <VocabularyDialog
       title="新增词汇"
+      studentAppId={studentAppId}
       trigger={
         <button
           type="button"
@@ -286,7 +289,13 @@ export function CreateVocabularyDialog() {
   );
 }
 
-export function VocabularyCellAction({ item }: { item: GrowthToolboxVocabularyItem }) {
+export function VocabularyCellAction({
+  studentAppId,
+  item,
+}: {
+  studentAppId: string;
+  item: GrowthToolboxVocabularyItem;
+}) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -296,7 +305,7 @@ export function VocabularyCellAction({ item }: { item: GrowthToolboxVocabularyIt
   async function remove() {
     setPending(true);
     setMessage("");
-    const result = await removeToolboxVocabularyAction(item.id);
+    const result = await removeToolboxVocabularyAction(studentAppId, item.id);
     setPending(false);
     if (!result.ok) {
       setMessage(result.message ?? "删除失败");
@@ -324,6 +333,7 @@ export function VocabularyCellAction({ item }: { item: GrowthToolboxVocabularyIt
       </button>
       <VocabularyDialog
         title="编辑词汇"
+        studentAppId={studentAppId}
         item={item}
         open={editOpen}
         onOpenChange={setEditOpen}
@@ -359,12 +369,14 @@ export function VocabularyCellAction({ item }: { item: GrowthToolboxVocabularyIt
 
 function VocabularyDialog({
   title,
+  studentAppId,
   item,
   trigger,
   open,
   onOpenChange,
 }: {
   title: string;
+  studentAppId: string;
   item?: GrowthToolboxVocabularyItem;
   trigger?: React.ReactNode;
   open: boolean;
@@ -381,8 +393,8 @@ function VocabularyDialog({
     setPending(true);
     setMessage("");
     const result = item
-      ? await updateToolboxVocabularyAction(item.id, draft)
-      : await addToolboxVocabularyAction(draft);
+      ? await updateToolboxVocabularyAction(studentAppId, item.id, draft)
+      : await addToolboxVocabularyAction(studentAppId, draft);
     setPending(false);
     if (!result.ok) {
       setMessage(result.message ?? "保存失败");
@@ -475,11 +487,12 @@ const EMPTY_GRAMMAR: GrammarLibraryItemInput = {
   caution: "",
 };
 
-export function CreateGrammarDialog() {
+export function CreateGrammarDialog({ studentAppId }: { studentAppId: string }) {
   const [open, setOpen] = useState(false);
   return (
     <GrammarDialog
       title="新增语法"
+      studentAppId={studentAppId}
       trigger={
         <button
           type="button"
@@ -495,7 +508,13 @@ export function CreateGrammarDialog() {
   );
 }
 
-export function GrammarCellAction({ item }: { item: GrowthToolboxGrammarItem }) {
+export function GrammarCellAction({
+  studentAppId,
+  item,
+}: {
+  studentAppId: string;
+  item: GrowthToolboxGrammarItem;
+}) {
   const router = useRouter();
   const [editOpen, setEditOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
@@ -505,7 +524,7 @@ export function GrammarCellAction({ item }: { item: GrowthToolboxGrammarItem }) 
   async function remove() {
     setPending(true);
     setMessage("");
-    const result = await removeGrammarLibraryAction(item.id);
+    const result = await removeGrammarLibraryAction(studentAppId, item.id);
     setPending(false);
     if (!result.ok) {
       setMessage(result.message ?? "删除失败");
@@ -533,6 +552,7 @@ export function GrammarCellAction({ item }: { item: GrowthToolboxGrammarItem }) 
       </button>
       <GrammarDialog
         title="编辑语法"
+        studentAppId={studentAppId}
         item={item}
         open={editOpen}
         onOpenChange={setEditOpen}
@@ -568,12 +588,14 @@ export function GrammarCellAction({ item }: { item: GrowthToolboxGrammarItem }) 
 
 function GrammarDialog({
   title,
+  studentAppId,
   item,
   trigger,
   open,
   onOpenChange,
 }: {
   title: string;
+  studentAppId: string;
   item?: GrowthToolboxGrammarItem;
   trigger?: React.ReactNode;
   open: boolean;
@@ -590,8 +612,8 @@ function GrammarDialog({
     setPending(true);
     setMessage("");
     const result = item
-      ? await updateGrammarLibraryAction(item.id, draft)
-      : await addGrammarLibraryAction(draft);
+      ? await updateGrammarLibraryAction(studentAppId, item.id, draft)
+      : await addGrammarLibraryAction(studentAppId, draft);
     setPending(false);
     if (!result.ok) {
       setMessage(result.message ?? "保存失败");

@@ -366,11 +366,20 @@ export function StudentSystemTopbar({
         </div>
 
         <nav className="student-system-toolbar" aria-label="学生工具栏">
-          <Link href={siteHomeHref} className="student-system-tool-button" title="网站首页" aria-label="网站首页">
-            <Home size={17} aria-hidden="true" />
+          <Link
+            href={siteHomeHref}
+            className="student-system-tool-button"
+            title="返回应用中心"
+            aria-label="返回应用中心"
+          >
+            <Home size={18} aria-hidden="true" />
           </Link>
 
-          <GuideAgentChat studentId={studentId} dashboardBasePath={dashboardBasePath} />
+          <GuideAgentChat
+            studentId={studentId}
+            dashboardBasePath={dashboardBasePath}
+            triggerVariant="portal"
+          />
 
           <button
             type="button"
@@ -379,7 +388,7 @@ export function StudentSystemTopbar({
             title="通知提醒"
             aria-label={unreadCount > 0 ? `${unreadCount} 条未读提醒` : "通知提醒"}
           >
-            <Bell size={17} aria-hidden="true" />
+            <Bell size={18} aria-hidden="true" />
             {unreadCount > 0 && (
               <span className="student-system-notice-count" aria-hidden="true">
                 {unreadCount > 9 ? "9+" : unreadCount}
@@ -396,12 +405,12 @@ export function StudentSystemTopbar({
                 setAppearanceOpen((open) => !open);
               }}
               className="student-system-tool-button"
-              title="调整玻璃透明度"
-              aria-label="调整学习应用窗口和卡片透明度"
+              title="外观设置"
+              aria-label="打开外观设置"
               aria-expanded={appearanceOpen}
               aria-controls="student-system-glass-popover"
             >
-              <Settings size={17} aria-hidden="true" />
+              <Settings size={18} aria-hidden="true" />
             </button>
 
             {appearanceOpen && (

@@ -39,9 +39,13 @@ const COLUMN_LABELS: Record<string, string> = {
 export function GrowthToolboxItemsTable({
   data,
   courses,
+  studentAppId,
+  canManage,
 }: {
   data: GrowthToolboxItemDisplayRow[];
   courses: GrowthToolboxCourseOption[];
+  studentAppId: string;
+  canManage: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sortOrder", desc: false },
@@ -49,7 +53,10 @@ export function GrowthToolboxItemsTable({
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
-  const columns = useMemo(() => getGrowthToolboxItemColumns(courses), [courses]);
+  const columns = useMemo(
+    () => getGrowthToolboxItemColumns(courses, studentAppId, canManage),
+    [canManage, courses, studentAppId],
+  );
   const filteredData = useMemo(() => {
     const normalized = query.trim().toLocaleLowerCase("zh-CN");
     return data.filter((item) => {

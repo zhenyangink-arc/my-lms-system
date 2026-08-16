@@ -1,4 +1,8 @@
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { DataTable } from "@/components/ui/table/data-table";
 import {
   Table,
@@ -34,13 +38,37 @@ export function PlatformVisaOverview({
   rows: PlatformVisaOverviewRow[];
   hasError: boolean;
 }) {
+  const totals = rows.reduce(
+    (summary, row) => ({
+      cases: summary.cases + row.caseCount,
+      submitted: summary.submitted + row.submittedCount,
+      issued: summary.issued + row.issuedCount,
+      pendingTasks: summary.pendingTasks + row.pendingTaskCount,
+      supportTasks: summary.supportTasks + row.supportTaskCount,
+    }),
+    { cases: 0, submitted: 0, issued: 0, pendingTasks: 0, supportTasks: 0 },
+  );
+
   return (
     <div className="space-y-3">
       {hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           机构签证汇总暂时无法完整读取，请稍后刷新。
-        </p>
+        </ManagementNotice>
       )}
+      <ManagementMetricStrip
+        label="平台签证巡检概况"
+        items={[
+          { label: "覆盖机构", value: rows.length },
+          { label: "签证档案", value: totals.cases },
+          { label: "已经递签", value: totals.submitted },
+          { label: "已经获签", value: totals.issued },
+          {
+            label: "待处理任务",
+            value: totals.pendingTasks + totals.supportTasks,
+          },
+        ]}
+      />
       <DataTable
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"

@@ -90,7 +90,7 @@ export type TenantLearningRecordManagementData = {
   role: UserRole;
   tenantId: string;
   dashboardBasePath: string;
-  canManageNotes: true;
+  canManageNotes: boolean;
   assignedStudentIds: string[] | null;
   students: LearningRecordStudent[];
   notes: LearningRecordNote[];

@@ -44,17 +44,19 @@ export function GradeReviewRequestsTable({
   data,
   scopeLabel,
   canResolveReviews,
+  studentAppId,
 }: {
   data: GradeReviewRequest[];
   scopeLabel: string;
   canResolveReviews: boolean;
+  studentAppId?: string;
 }) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [filters, setFilters] = useState<GradeReviewFilters>(INITIAL_FILTERS);
   const columns = useMemo(
-    () => getGradeReviewColumns(canResolveReviews),
-    [canResolveReviews],
+    () => getGradeReviewColumns(canResolveReviews, studentAppId),
+    [canResolveReviews, studentAppId],
   );
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");

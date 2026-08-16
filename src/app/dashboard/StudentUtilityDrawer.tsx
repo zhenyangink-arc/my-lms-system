@@ -4,10 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { Bell, GraduationCap, Home } from "lucide-react";
 
-import { DashboardAppearanceSync } from "./BackgroundBrightnessControl";
 import { LogoutButton } from "./LogoutButton";
 import { ReminderDialog, type TeacherReplyReminder } from "./ReminderDialog";
-import { SidebarThemeControl } from "./ThemeSwitcher";
 
 type Props = {
   tenantName: string;
@@ -27,8 +25,6 @@ export function StudentUtilityDrawer({
 
   return (
     <>
-      <DashboardAppearanceSync />
-
       {/* 通知提醒 Dialog */}
       <ReminderDialog
         open={reminderOpen}
@@ -104,12 +100,6 @@ export function StudentUtilityDrawer({
                 </span>
               )}
             </button>
-          </div>
-
-          <hr className="app-divider mx-2 my-2" />
-
-          <div className="app-student-utility-section px-1.5">
-            <SidebarThemeControl />
           </div>
 
           <hr className="app-divider mx-2 my-2" />

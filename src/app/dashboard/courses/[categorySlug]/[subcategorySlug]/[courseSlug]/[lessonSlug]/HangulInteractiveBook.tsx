@@ -316,7 +316,7 @@ export function HangulInteractiveBook({
     }
 
     await flushReadingTime(chapter.slug, currentPageCount);
-    window.location.assign(backHref);
+    router.push(backHref);
   }
 
   async function openAssignmentBoard() {
@@ -326,7 +326,11 @@ export function HangulInteractiveBook({
       liveElapsed;
     if (savedSeconds < EBOOK_CHAPTER_TARGET_SECONDS) return;
     await flushReadingTime(chapter.slug, currentPageCount);
-    router.push("/dashboard/assignments");
+    const coursesMarker = "/courses";
+    const coursesIndex = backHref.indexOf(coursesMarker);
+    const workspaceBasePath =
+      coursesIndex >= 0 ? backHref.slice(0, coursesIndex) : "/dashboard";
+    router.push(`${workspaceBasePath}/assignments`);
   }
 
   function openChapter(index: number) {

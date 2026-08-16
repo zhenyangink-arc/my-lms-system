@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { MessageSquareText } from "lucide-react";
 
 import {
   HELP_DATE_TIME_OPTIONS,
@@ -10,6 +11,10 @@ import {
 import { HelpTicketReplyForm } from "@/app/dashboard/help/HelpTicketReplyForm";
 import { HelpTicketManager } from "@/app/dashboard/admin/help/HelpTicketManager";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { getHelpTicketDetailData } from "../api/tickets-service";
 
@@ -19,38 +24,44 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
   const { ticket } = result;
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
+    <ManagementPage
+      eyebrow="帮助中心工单"
+      title={ticket.subject}
+      description="查看学生问题、调整处理状态、回复消息并保留完整服务记录。"
+      icon={MessageSquareText}
+      meta={<span>工单 {ticket.id.slice(0, 8).toUpperCase()}</span>}
+      action={
         <Link
           href={scopeDashboardPath(
             "/dashboard/admin/help",
             result.dashboardBasePath,
           )}
-          className="text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
         >
-          ← 返回帮助中心管理
+          返回帮助中心
         </Link>
-        <span className="font-mono text-[10px] text-[var(--app-muted)]">
-          工单 {ticket.id.slice(0, 8).toUpperCase()}
-        </span>
-      </div>
+      }
+    >
 
-      <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">
-        <div className="grid min-w-[920px] grid-cols-[160px_minmax(220px,1.2fr)_140px_140px_160px] border-b border-[var(--app-border)] bg-[var(--app-soft-bg)] text-xs font-semibold text-[var(--app-text-soft)]">
-          <HeaderCell>学生</HeaderCell>
-          <HeaderCell>问题</HeaderCell>
-          <HeaderCell>分类</HeaderCell>
-          <HeaderCell>优先级</HeaderCell>
-          <HeaderCell>状态</HeaderCell>
-        </div>
-        <div className="grid min-w-[920px] grid-cols-[160px_minmax(220px,1.2fr)_140px_140px_160px] text-xs text-[var(--app-text-soft)]">
-          <DataCell>{displayName(result.student)}</DataCell>
-          <DataCell strong>{ticket.subject}</DataCell>
-          <DataCell>{HELP_TICKET_CATEGORY_LABELS[ticket.category]}</DataCell>
-          <DataCell>{HELP_TICKET_PRIORITY_LABELS[ticket.priority]}</DataCell>
-          <DataCell>{HELP_TICKET_STATUS_LABELS[ticket.status]}</DataCell>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="工单概况"
+        items={[
+          { label: "学生", value: displayName(result.student) },
+          {
+            label: "问题",
+            value: <span title={ticket.subject}>{ticket.subject}</span>,
+          },
+          {
+            label: "分类",
+            value: HELP_TICKET_CATEGORY_LABELS[ticket.category],
+          },
+          {
+            label: "优先级",
+            value: HELP_TICKET_PRIORITY_LABELS[ticket.priority],
+          },
+          { label: "状态", value: HELP_TICKET_STATUS_LABELS[ticket.status] },
+        ]}
+      />
 
       <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">
         <div className="border-b border-[var(--app-border)] px-4 py-3 text-sm font-semibold text-[var(--app-text)]">
@@ -138,24 +149,12 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
           </div>
         )}
       </section>
-    </div>
+    </ManagementPage>
   );
 }
 
 function displayName(profile: { full_name: string | null; email: string | null } | null) {
   return profile?.full_name?.trim() || profile?.email?.trim() || "学生";
-}
-
-function HeaderCell({ children }: { children: React.ReactNode }) {
-  return <div className="px-4 py-3">{children}</div>;
-}
-
-function DataCell({ children, strong = false }: { children: React.ReactNode; strong?: boolean }) {
-  return (
-    <div className={`px-4 py-4 ${strong ? "font-semibold text-[var(--app-text)]" : ""}`}>
-      {children}
-    </div>
-  );
 }
 
 function MetaRow({ label, children }: { label: string; children: React.ReactNode }) {

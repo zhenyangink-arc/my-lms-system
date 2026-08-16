@@ -1,1 +1,6 @@
-export { default } from "@/app/dashboard/admin/student-assignments/page-content";
+import { redirectLegacyManagementRoute } from "@/app/dashboard/admin/legacy-app-route";
+
+export default async function LegacyStudentAssignmentsPage({ params }: { params: Promise<{ space: string }> }) {
+  const { space } = await params;
+  redirectLegacyManagementRoute(space);
+}

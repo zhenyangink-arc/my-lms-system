@@ -11,6 +11,7 @@ import {
 } from "@tanstack/react-table";
 
 import { DataTable } from "@/components/ui/table/data-table";
+import { ManagementMetricStrip } from "@/components/layout/management-page";
 import {
   Table,
   TableBody,
@@ -161,32 +162,16 @@ export function ModelUsageTable({
 
   return (
     <div className="space-y-4">
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>统计范围</th>
-                <th>累计用量</th>
-                <th>输入用量</th>
-                <th>输出用量</th>
-                <th>24 小时用量</th>
-                <th>调用次数</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>当前筛选</th>
-                <td>{totals.totalTokens.toLocaleString("zh-CN")}</td>
-                <td>{totals.inputTokens.toLocaleString("zh-CN")}</td>
-                <td>{totals.outputTokens.toLocaleString("zh-CN")}</td>
-                <td>{totals.dayTokens.toLocaleString("zh-CN")}</td>
-                <td>{totals.logCount.toLocaleString("zh-CN")}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="当前筛选模型用量概况"
+        items={[
+          { label: "累计用量", value: totals.totalTokens.toLocaleString("zh-CN") },
+          { label: "输入用量", value: totals.inputTokens.toLocaleString("zh-CN") },
+          { label: "输出用量", value: totals.outputTokens.toLocaleString("zh-CN") },
+          { label: "24 小时用量", value: totals.dayTokens.toLocaleString("zh-CN") },
+          { label: "调用次数", value: totals.logCount.toLocaleString("zh-CN") },
+        ]}
+      />
       <DataTable
         toolbar={
           <ModelUsageTableToolbar

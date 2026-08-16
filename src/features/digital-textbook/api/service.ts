@@ -3,6 +3,7 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
+import { requireTenantAppCapability } from "@/lib/tenant-app-capabilities";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   DigitalTextbookCourse,
@@ -103,26 +104,43 @@ function grammarOf(
   );
 }
 
-export async function getDigitalTextbookManagementData(): Promise<DigitalTextbookManagementResult> {
-  const { supabase: userSupabase } = await requireActiveUser();
+export async function getDigitalTextbookManagementData(
+  studentAppId: string,
+): Promise<DigitalTextbookManagementResult> {
+  const auth = await requireActiveUser();
+  const { supabase: userSupabase } = auth;
   const { data: canManage } = await userSupabase.rpc(
     "current_user_can_manage_standard_question_bank",
   );
-  if (!canManage) redirect("/dashboard/admin");
+  if (!studentAppId) redirect("/dashboard/admin/apps");
+  if (auth.tenant) {
+    await requireTenantAppCapability(studentAppId, "manageContent");
+  } else if (
+    auth.platformProfile?.global_role !== "platform_owner" &&
+    auth.platformProfile?.global_role !== "platform_admin"
+  ) {
+    redirect("/dashboard/admin/apps");
+  }
 
   const supabase = createAdminClient();
 
-  const [textbookResult, versionResult] = await Promise.all([
-    supabase
+  const textbookResult = await (() => {
+    let query = supabase
       .from("digital_textbooks")
       .select("id,lesson_id,slug,level_code,title,status")
-      .order("created_at", { ascending: true }),
-    supabase
-      .from("digital_textbook_versions")
-      .select("id,textbook_id,version_number,status")
-      .order("version_number", { ascending: true }),
-  ]);
+      .eq("student_app_id", studentAppId);
+    if (!canManage) query = query.eq("status", "published");
+    return query.order("created_at", { ascending: true });
+  })();
   const textbooks = (textbookResult.data ?? []) as TextbookRow[];
+  const textbookIds = textbooks.map((textbook) => textbook.id);
+  const versionResult = textbookIds.length
+    ? await supabase
+        .from("digital_textbook_versions")
+        .select("id,textbook_id,version_number,status")
+        .in("textbook_id", textbookIds)
+        .order("version_number", { ascending: true })
+    : { data: [] as VersionRow[], error: null };
   const versions = (versionResult.data ?? []) as VersionRow[];
   const versionIds = versions.map((version) => version.id);
 
@@ -143,7 +161,10 @@ export async function getDigitalTextbookManagementData(): Promise<DigitalTextboo
             textbooks.map((textbook) => textbook.lesson_id),
           )
       : { data: [] as LessonRow[], error: null },
-    supabase.from("courses").select("id,title"),
+    supabase
+      .from("courses")
+      .select("id,title")
+      .eq("student_app_id", studentAppId),
   ]);
   const chapters = (chapterResult.data ?? []) as ChapterRow[];
   const lessons = (lessonResult.data ?? []) as LessonRow[];
@@ -321,10 +342,12 @@ export async function getDigitalTextbookManagementData(): Promise<DigitalTextboo
     supabase
       .from("growth_toolbox_vocabulary")
       .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
+      .eq("student_app_id", studentAppId)
       .order("sort_order", { ascending: true }),
     supabase
       .from("growth_toolbox_grammar")
       .select("id,title,meaning,cases,rows,examples,caution,source,sort_order")
+      .eq("student_app_id", studentAppId)
       .order("sort_order", { ascending: true }),
   ]);
 
@@ -373,6 +396,7 @@ export async function getDigitalTextbookManagementData(): Promise<DigitalTextboo
   }));
 
   return {
+    canManage: canManage === true,
     courses: courseTree,
     vocabularyLibrary,
     grammarLibrary,

@@ -20,12 +20,18 @@ import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import {
   STUDENT_APP_IDS,
+  getStudentAppPath,
   type StudentAppSlug,
 } from "@/lib/student-apps";
 import {
   addCourseCategoryToFavoritesAction,
   removeCourseCategoryFromFavoritesAction,
 } from "./actions";
+import {
+  KoreanCourseCatalogBrowser,
+  type KoreanCourseCatalogSection,
+  type KoreanCourseLearningStatus,
+} from "./KoreanCourseCatalogBrowser";
 
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
@@ -49,6 +55,7 @@ type Course = {
   slug: string;
   title: string;
   description: string | null;
+  sort_order: number;
 };
 
 type Lesson = {
@@ -151,10 +158,190 @@ function resolveLearningStatus({
   return "not_started";
 }
 
+function KoreanDirectCourseCatalog({
+  space,
+  subcategories,
+  courses,
+  lessons,
+  progressMap,
+  isPlatformAudit,
+}: {
+  space: string;
+  subcategories: CourseCategory[];
+  courses: Course[];
+  lessons: Lesson[];
+  progressMap: Map<string, LessonProgress>;
+  isPlatformAudit: boolean;
+}) {
+  const subcategoryMap = new Map(
+    subcategories.map((subcategory) => [subcategory.id, subcategory]),
+  );
+  const visibleCourses = courses.filter(
+    (course) => course.category_id && subcategoryMap.has(course.category_id),
+  );
+  const lessonsByCourseId = new Map<string, Lesson[]>();
+
+  lessons.forEach((lesson) => {
+    const courseLessons = lessonsByCourseId.get(lesson.course_id) ?? [];
+    courseLessons.push(lesson);
+    lessonsByCourseId.set(lesson.course_id, courseLessons);
+  });
+
+  const courseSections: KoreanCourseCatalogSection[] = subcategories.map(
+    (subcategory) => {
+      const categoryCourses = visibleCourses.filter(
+        (course) => course.category_id === subcategory.id,
+      );
+      const catalogCourses = categoryCourses.map((course, index) => {
+        const courseLessons = lessonsByCourseId.get(course.id) ?? [];
+        const totalLessons = courseLessons.length;
+        const completedLessons = courseLessons.filter(
+          (lesson) => progressMap.get(lesson.id)?.status === "completed",
+        ).length;
+        const inProgressLessons = courseLessons.filter(
+          (lesson) => progressMap.get(lesson.id)?.status === "in_progress",
+        ).length;
+        const progressTotal = courseLessons.reduce((total, lesson) => {
+          const progress = progressMap.get(lesson.id);
+          if (progress?.status === "completed") return total + 100;
+          if (progress?.status === "in_progress") {
+            return (
+              total +
+              Math.min(100, Math.max(0, progress.progress_percent))
+            );
+          }
+          return total;
+        }, 0);
+        const progressPercent =
+          totalLessons > 0 ? Math.round(progressTotal / totalLessons) : 0;
+        const learningStatus: KoreanCourseLearningStatus =
+          totalLessons === 0
+            ? "preparing"
+            : resolveLearningStatus({
+                totalLessons,
+                completedLessons,
+                inProgressLessons,
+              });
+
+        return {
+          id: course.id,
+          sequence: index + 1,
+          title: course.title,
+          description: course.description,
+          totalLessons,
+          completedLessons,
+          progressPercent,
+          learningStatus,
+          href: getStudentAppPath(
+            space,
+            "korean",
+            [
+              "courses",
+              "korean",
+              encodeURIComponent(subcategory.slug),
+              encodeURIComponent(course.slug),
+            ].join("/"),
+          ),
+        };
+      });
+
+      return {
+        id: subcategory.id,
+        slug: subcategory.slug,
+        title: subcategory.title,
+        description: subcategory.description,
+        lessonCount: catalogCourses.reduce(
+          (total, course) => total + course.totalLessons,
+          0,
+        ),
+        courses: catalogCourses,
+      };
+    },
+  );
+  const totalCompletedLessons = courseSections.reduce(
+    (sectionTotal, section) =>
+      sectionTotal +
+      section.courses.reduce(
+        (courseTotal, course) => courseTotal + course.completedLessons,
+        0,
+      ),
+    0,
+  );
+
+  return (
+    <div className="mx-auto w-full max-w-[1500px] space-y-6 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <header
+        className="app-card relative overflow-hidden rounded-3xl border p-6 sm:p-8"
+        style={{
+          background:
+            "linear-gradient(135deg, var(--app-card-bg) 0%, var(--app-accent-soft) 100%)",
+        }}
+      >
+        <span
+          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--app-secondary-soft)] opacity-60 blur-2xl"
+          aria-hidden="true"
+        />
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-3xl">
+            <p className="app-muted-text text-xs font-semibold uppercase tracking-[0.16em]">
+              韩语学习目录
+            </p>
+            <h1
+              id="korean-course-catalog-title"
+              className="mt-2 text-3xl font-black tracking-tight sm:text-4xl"
+            >
+              所有韩语课程，一页看清
+            </h1>
+            <p className="app-muted-text mt-3 max-w-2xl text-sm font-medium leading-7 sm:text-base">
+              从基础能力到真实生活，再到 TOPIK 备考。课程已按教学顺序编号，也可以按自己的节奏选择。
+            </p>
+          </div>
+
+          <dl className="grid grid-cols-3 gap-2 sm:gap-3">
+            <div className="app-card min-w-0 rounded-2xl border px-3 py-3 text-center sm:min-w-24 sm:px-4">
+              <dt className="app-muted-text text-xs font-semibold">学习方向</dt>
+              <dd className="mt-1 text-xl font-black tabular-nums">
+                {courseSections.length}
+              </dd>
+            </div>
+            <div className="app-card min-w-0 rounded-2xl border px-3 py-3 text-center sm:min-w-24 sm:px-4">
+              <dt className="app-muted-text text-xs font-semibold">课程</dt>
+              <dd className="mt-1 text-xl font-black tabular-nums">
+                {visibleCourses.length}
+              </dd>
+            </div>
+            <div className="app-card min-w-0 rounded-2xl border px-3 py-3 text-center sm:min-w-28 sm:px-4">
+              <dt className="app-muted-text text-xs font-semibold">
+                {isPlatformAudit ? "已发布课时" : "我的进度"}
+              </dt>
+              <dd className="mt-1 text-xl font-black tabular-nums">
+                {isPlatformAudit ? (
+                  lessons.length
+                ) : (
+                  <>
+                    {totalCompletedLessons}
+                    <span className="app-muted-text text-sm font-semibold">
+                      {" "}/ {lessons.length}
+                    </span>
+                  </>
+                )}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      </header>
+
+      <KoreanCourseCatalogBrowser sections={courseSections} />
+    </div>
+  );
+}
+
 export async function CourseCatalog({
   studentAppSlug,
+  space,
 }: {
   studentAppSlug?: StudentAppSlug;
+  space?: string;
 }) {
   const { supabase, user, platformProfile } = await requireActiveUser();
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
@@ -210,13 +397,22 @@ export async function CourseCatalog({
   let subcategories: CourseCategory[] = [];
 
   if (categoryIds.length > 0) {
-    const { data: subcategoryData } = await supabase
+    let subcategoryQuery = supabase
       .from("course_categories")
       .select(
         "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
       )
       .in("parent_id", categoryIds)
-      .eq("is_published", true)
+      .eq("is_published", true);
+
+    if (studentAppSlug) {
+      subcategoryQuery = subcategoryQuery.eq(
+        "student_app_id",
+        STUDENT_APP_IDS[studentAppSlug],
+      );
+    }
+
+    const { data: subcategoryData } = await subcategoryQuery
       .order("sort_order", { ascending: true });
 
     subcategories = (subcategoryData ?? []) as CourseCategory[];
@@ -230,11 +426,22 @@ export async function CourseCatalog({
   let courses: Course[] = [];
 
   if (subcategoryIds.length > 0) {
-    const { data: courseData } = await supabase
+    let courseQuery = supabase
       .from("courses")
-      .select("id, category_id, slug, title, description")
+      .select("id, category_id, slug, title, description, sort_order")
       .in("category_id", subcategoryIds)
       .eq("is_published", true);
+
+    if (studentAppSlug) {
+      courseQuery = courseQuery.eq(
+        "student_app_id",
+        STUDENT_APP_IDS[studentAppSlug],
+      );
+    }
+
+    const { data: courseData } = await courseQuery
+      .order("sort_order", { ascending: true })
+      .order("title", { ascending: true });
 
     courses = (courseData ?? []) as Course[];
   }
@@ -299,6 +506,19 @@ export async function CourseCatalog({
   progressList.forEach((progress) => {
     progressMap.set(progress.lesson_id, progress);
   });
+
+  if (studentAppSlug === "korean" && space) {
+    return (
+      <KoreanDirectCourseCatalog
+        space={space}
+        subcategories={subcategories}
+        courses={courses}
+        lessons={lessons}
+        progressMap={progressMap}
+        isPlatformAudit={isPlatformAudit}
+      />
+    );
+  }
 
   const { data: favoriteCategoryRows } = !isPlatformAudit
     ? await supabase

@@ -41,6 +41,7 @@ function featureFromPath(pathname: string): StudentFeature {
 function isRestrictedDashboardSection(pathname: string) {
   return [
     "/dashboard/courses",
+    "/dashboard/practice",
     "/dashboard/progress",
     "/dashboard/assignments",
     "/dashboard/conversation-practice",

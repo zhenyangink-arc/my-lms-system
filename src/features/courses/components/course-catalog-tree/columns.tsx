@@ -248,7 +248,7 @@ export function getCourseCatalogTreeColumns({
           {canManage && (
             <>
             <CourseCatalogEditDialog node={row.original.node} options={options} />
-            {target && <CourseCatalogCreateDialog target={target} />}
+            {target && <CourseCatalogCreateDialog target={target} studentAppId={options.studentAppId} />}
             </>
           )}
         </div>

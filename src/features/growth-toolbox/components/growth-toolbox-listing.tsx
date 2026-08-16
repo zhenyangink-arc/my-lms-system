@@ -1,3 +1,7 @@
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import { getGrowthToolboxManagementData } from "../api/service";
 import { GrowthToolboxGrammarTable } from "./grammar-table";
 import { GrowthToolboxItemsTable } from "./toolbox-items-table";
@@ -11,8 +15,8 @@ import {
 export default async function GrowthToolboxListing({
   studentAppId,
 }: {
-  studentAppId?: string;
-} = {}) {
+  studentAppId: string;
+}) {
   const result = await getGrowthToolboxManagementData(studentAppId);
   const courseNames = new Map(
     result.courseTree.map((course) => [course.id, course.title]),
@@ -44,61 +48,57 @@ export default async function GrowthToolboxListing({
   return (
     <div className="space-y-6">
       {result.hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           工具入口、课程结构、词汇库或语法库数据暂时无法完整读取，请稍后刷新重试。
-        </p>
+        </ManagementNotice>
       )}
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>管理范围</th>
-                <th>工具入口</th>
-                <th>已启用</th>
-                <th>词汇总数</th>
-                <th>教材词汇</th>
-                <th>语法总数</th>
-                <th>语法音频</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>成长工具箱</th>
-                <td>{toolboxItems.length}</td>
-                <td>{enabledCount}</td>
-                <td>{result.vocabularyLibrary.length}</td>
-                <td>{textbookVocabularyCount}</td>
-                <td>{result.grammarLibrary.length}</td>
-                <td>{grammarAudioCount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="练习工具概况"
+        items={[
+          { label: "工具入口", value: toolboxItems.length },
+          { label: "已启用", value: enabledCount },
+          { label: "词汇总数", value: result.vocabularyLibrary.length },
+          { label: "教材词汇", value: textbookVocabularyCount },
+          { label: "语法总数", value: result.grammarLibrary.length },
+          { label: "语法音频", value: grammarAudioCount },
+        ]}
+      />
 
       <ReadOnlySection
         title="工具入口"
         description="查看学生端入口的启停状态、展示顺序和关联课程。"
       >
-        <GrowthToolboxItemsTable data={toolboxItems} courses={courseOptions} />
+        <GrowthToolboxItemsTable
+          data={toolboxItems}
+          courses={courseOptions}
+          studentAppId={studentAppId}
+          canManage={result.canManage}
+        />
       </ReadOnlySection>
 
       <ReadOnlySection
         title="词汇库"
         description="查看独立练习词库及互动教材导入来源。"
-        action={<CreateVocabularyDialog />}
+        action={result.canManage ? <CreateVocabularyDialog studentAppId={studentAppId} /> : null}
       >
-        <GrowthToolboxVocabularyTable data={result.vocabularyLibrary} />
+        <GrowthToolboxVocabularyTable
+          data={result.vocabularyLibrary}
+          studentAppId={studentAppId}
+          canManage={result.canManage}
+        />
       </ReadOnlySection>
 
       <ReadOnlySection
         title="语法库"
         description="查看语法结构、例句、注意事项和已配置的音频字段。"
-        action={<CreateGrammarDialog />}
+        action={result.canManage ? <CreateGrammarDialog studentAppId={studentAppId} /> : null}
       >
-        <GrowthToolboxGrammarTable data={result.grammarLibrary} />
+        <GrowthToolboxGrammarTable
+          data={result.grammarLibrary}
+          studentAppId={studentAppId}
+          canManage={result.canManage}
+        />
       </ReadOnlySection>
     </div>
   );

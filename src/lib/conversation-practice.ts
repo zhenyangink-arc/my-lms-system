@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { hasExplicitPermission } from "@/lib/permissions/access";
+import { getTenantAppCapabilityContext } from "@/lib/tenant-app-capabilities";
 
 export type ConversationPracticeAccess = {
   /** 能否进入这个管理页面（浏览场景列表和数据） */
@@ -18,10 +19,27 @@ export type ConversationPracticeAccess = {
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
 };
 
-export async function getConversationPracticeAccess(): Promise<ConversationPracticeAccess> {
+export async function getConversationPracticeAccess(
+  studentAppId?: string,
+): Promise<ConversationPracticeAccess> {
   const { supabase, user, profile, tenant } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
   const tenantId = tenant?.id ?? null;
+
+  if (studentAppId && tenant) {
+    const appAccess = await getTenantAppCapabilityContext(
+      studentAppId,
+      "manageAssessments",
+    );
+    return {
+      canManage: Boolean(appAccess),
+      canManageContent: false,
+      role,
+      tenantId,
+      supabase,
+      user,
+    };
+  }
 
   if (role === "tenant_super_admin" || role === "platform_super_admin" || role === "ceo") {
     const canManageContent = role === "platform_super_admin" && !tenant;
@@ -61,8 +79,8 @@ export async function getConversationPracticeAccess(): Promise<ConversationPract
   };
 }
 
-export async function requireConversationPracticeManager() {
-  const access = await getConversationPracticeAccess();
+export async function requireConversationPracticeManager(studentAppId?: string) {
+  const access = await getConversationPracticeAccess(studentAppId);
   if (!access.canManage) redirect("/dashboard");
   return access;
 }

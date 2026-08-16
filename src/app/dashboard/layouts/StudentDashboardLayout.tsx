@@ -4,7 +4,6 @@ import { ShieldCheck } from "lucide-react";
 import { GuideAgentProvider } from "@/components/guide-agent/GuideAgentProvider";
 import type { MembershipTier } from "@/lib/student-permissions";
 import type { StudentAppSlug } from "@/lib/student-apps";
-import { AuroraOrbs } from "../AuroraOrbs";
 import { DashboardPermissionGate } from "../DashboardPermissionGate";
 import { StudentSystemSidebar } from "../StudentSystemSidebar";
 import { StudentFullscreenPrompt } from "../StudentFullscreenPrompt";
@@ -40,7 +39,6 @@ export function StudentDashboardLayout({
         data-dashboard-ui="student"
         data-student-shell="system"
       >
-        <AuroraOrbs />
         {!isPlatformAudit && <StudentFullscreenPrompt />}
         {!isPlatformAudit && <StudentPwaInstallPrompt />}
 
@@ -50,6 +48,7 @@ export function StudentDashboardLayout({
         >
           <div className="student-system-window mx-auto flex min-h-[calc(100dvh-32px)] w-full overflow-hidden">
             <StudentSystemSidebar
+              studentId={studentId}
               userRole={userRole}
               membershipTier={membershipTier}
               canAccessAnnouncements={canAccessAnnouncements}

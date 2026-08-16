@@ -19,7 +19,6 @@ import {
   normalizeMembershipTier,
 } from "@/lib/student-permissions";
 import {
-  isStudentAppSchemaMissing,
   withStudentAppSchemaFallback,
 } from "@/lib/student-app-data";
 import {
@@ -138,13 +137,6 @@ async function getPortalApps({
   tenantId: string;
   userId: string;
 }): Promise<PortalApp[]> {
-  const fallbackApps = STUDENT_APPS.map((app, index) => ({
-    ...app,
-    portalTitle: app.title,
-    portalStatus: app.status,
-    portalSortOrder: (index + 1) * 10,
-  }));
-
   const { data, error } = await supabase
     .from("tenant_student_apps")
     .select(
@@ -155,7 +147,6 @@ async function getPortalApps({
     .neq("status", "hidden")
     .order("sort_order", { ascending: true });
 
-  if (isStudentAppSchemaMissing(error)) return fallbackApps;
   if (error) return [];
 
   const configuredApps = (data as unknown as TenantAppRow[])
@@ -188,7 +179,6 @@ async function getPortalApps({
     .eq("tenant_id", tenantId)
     .eq("student_id", userId)
     .eq("status", "active");
-  if (isStudentAppSchemaMissing(enrollmentResult.error)) return configuredApps;
   if (enrollmentResult.error) return [];
 
   // 服务端目录过滤必须以本次请求时间判断授权有效期。
@@ -459,13 +449,9 @@ export default async function StudentPortalPage({
                 const accent = appAccentClasses[app.accent];
                 const active = app.portalStatus === "active";
                 const isKorean = app.slug === "korean";
-
-                return (
-                  <Link
-                    key={app.slug}
-                    href={getStudentAppBasePath(space, app.slug)}
-                    className={`group relative isolate flex min-h-64 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/78 p-6 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.55)] backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2 ${isKorean ? "md:col-span-2 xl:col-span-1" : ""}`}
-                  >
+                const cardClassName = `group relative isolate flex min-h-64 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/78 p-6 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.55)] backdrop-blur-xl transition duration-300 ${active ? "hover:-translate-y-1 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2" : "cursor-not-allowed opacity-75"} ${isKorean ? "md:col-span-2 xl:col-span-1" : ""}`;
+                const cardContent = (
+                  <>
                     <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accent.line}`} />
                     <div className="flex items-start justify-between gap-4">
                       <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${accent.icon}`}>
@@ -482,11 +468,27 @@ export default async function StudentPortalPage({
                         {app.kind === "service" ? "独立服务空间" : "独立学习空间"}
                       </span>
                       <span className="inline-flex items-center gap-1.5 text-sm font-black text-slate-900">
-                        {active ? "打开应用" : "查看进度"}
-                        <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
+                        {active ? "打开应用" : "等待开放"}
+                        {active ? (
+                          <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
+                        ) : null}
                       </span>
                     </div>
+                  </>
+                );
+
+                return active ? (
+                  <Link
+                    key={app.slug}
+                    href={getStudentAppBasePath(space, app.slug)}
+                    className={cardClassName}
+                  >
+                    {cardContent}
                   </Link>
+                ) : (
+                  <article key={app.slug} className={cardClassName}>
+                    {cardContent}
+                  </article>
                 );
               })}
             </div>

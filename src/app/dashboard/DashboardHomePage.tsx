@@ -608,6 +608,15 @@ export default async function DashboardHomePage() {
   const heroCourseProgress = hero
     ? courseProgressList.find((course) => course.courseId === hero.courseId) ?? null
     : null;
+  const coursesMissingNavigation = courseProgressList.filter(
+    (course) => !course.href,
+  );
+  if (coursesMissingNavigation.length > 0) {
+    console.warn("[student-home] Published courses are missing a complete category route", {
+      courseIds: coursesMissingNavigation.map((course) => course.courseId),
+      dashboardBasePath,
+    });
+  }
   const heroLessonProgress = hero
     ? hero.status === "completed"
       ? 100
@@ -618,11 +627,11 @@ export default async function DashboardHomePage() {
     dashboardBasePath
   );
   const toolboxHref = scopeDashboardPath(
-    "/dashboard/toolbox",
+    "/dashboard/practice/skills",
     dashboardBasePath
   );
   const vocabularyHref = scopeDashboardPath(
-    "/dashboard/toolbox/vocabulary",
+    "/dashboard/practice/skills/vocabulary",
     dashboardBasePath
   );
   const recordsHref = scopeDashboardPath(

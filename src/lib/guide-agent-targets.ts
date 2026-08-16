@@ -6,7 +6,7 @@ export type GuideAgentHighlightTarget = {
 const BEGINNER_COURSE_PATH =
   "/dashboard/courses/korean/korean-basic/korean-beginner/hangul-introduction";
 const REVIEW_QUESTIONS_PATH =
-  "/dashboard/progress?area=review#guide-target-review-questions";
+  "/dashboard/practice/review#guide-target-review-questions";
 
 const navigationAliases: Record<string, string> = {
   成长首页: "/dashboard",
@@ -26,9 +26,14 @@ const navigationAliases: Record<string, string> = {
   课程中心: "/dashboard/courses",
   我的课程: "/dashboard/courses",
   courses: "/dashboard/courses",
-  深化学习: "/dashboard/progress",
-  学习进度: "/dashboard/progress",
-  progress: "/dashboard/progress",
+  巩固中心: "/dashboard/practice/course",
+  深化学习: "/dashboard/practice/course",
+  课程巩固: "/dashboard/practice/course",
+  学习进度: "/dashboard/practice/course",
+  progress: "/dashboard/practice/course",
+  专项练习: "/dashboard/practice/skills",
+  专项训练: "/dashboard/practice/skills",
+  toolbox: "/dashboard/practice/skills",
   章节测试: "/dashboard/assignments/korean",
   chaptertests: "/dashboard/assignments/korean",
   作业与考试: "/dashboard/assignments",

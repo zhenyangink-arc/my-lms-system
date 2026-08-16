@@ -1,3 +1,10 @@
+import { ShieldCheck } from "lucide-react";
+
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { getPermissionCenterData } from "../api/service";
 import { ActivePermissionGrantsTable } from "./active-permission-grants-table";
 import {
@@ -23,17 +30,40 @@ export default async function PermissionCenterListing({
   );
 
   return (
-    <div className="space-y-4">
+    <ManagementPage
+      eyebrow="安全与治理"
+      title="权限中心"
+      description="查看角色固定能力和正式权限键，管理账号例外授权，并审计平台与机构范围的每次变更。"
+      icon={ShieldCheck}
+      meta={
+        <>
+          <span>平台与机构分域</span>
+          <span>数据库二次校验</span>
+        </>
+      }
+    >
       {updated && (
-        <div className="border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold text-emerald-700">
+        <ManagementNotice tone="success">
           权限已更新，页面展示的是数据库重新计算后的结果。
-        </div>
+        </ManagementNotice>
       )}
       {error && (
-        <div className="border border-rose-200 bg-rose-50 px-4 py-3 text-xs font-semibold text-rose-700">
+        <ManagementNotice tone="danger">
           {error}
-        </div>
+        </ManagementNotice>
       )}
+      <ManagementMetricStrip
+        label="权限中心概况"
+        items={[
+          {
+            label: "正式权限键",
+            value: result.directory.assignablePermissionKeys.length,
+          },
+          { label: "平台生效授权", value: platformGrants.length },
+          { label: "机构生效授权", value: tenantGrants.length },
+          { label: "最近审计记录", value: result.auditLogs.length },
+        ]}
+      />
       <PermissionDirectory directory={result.directory} />
       <RolePermissionMatrix directory={result.directory} />
       <PermissionGrantControls
@@ -44,11 +74,11 @@ export default async function PermissionCenterListing({
         permissionLabels={result.directory.assignablePermissionLabels}
       />
 
-      <section className="space-y-2">
+      <section className="management-content-section space-y-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--app-text)]">
+          <h2 className="text-base font-semibold text-[var(--app-text)]">
             当前生效授权
-          </h3>
+          </h2>
           <p className="mt-1 text-xs text-[var(--app-muted)]">
             平台范围和机构范围分开记录；撤销记录不会出现在本表。
           </p>
@@ -75,11 +105,11 @@ export default async function PermissionCenterListing({
         </div>
       </section>
 
-      <section className="space-y-2">
+      <section className="management-content-section space-y-3">
         <div>
-          <h3 className="text-sm font-semibold text-[var(--app-text)]">
+          <h2 className="text-base font-semibold text-[var(--app-text)]">
             权限操作记录
-          </h3>
+          </h2>
           <p className="mt-1 text-xs text-[var(--app-muted)]">
             仅展示成功写入的授权和撤销记录，最多读取最近 200 条。
           </p>
@@ -90,6 +120,6 @@ export default async function PermissionCenterListing({
           permissionLabels={result.directory.assignablePermissionLabels}
         />
       </section>
-    </div>
+    </ManagementPage>
   );
 }

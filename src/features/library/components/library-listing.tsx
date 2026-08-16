@@ -1,3 +1,10 @@
+import { LibraryBig } from "lucide-react";
+
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { getLibraryManagementData } from "../api/service";
 import { UploadLibraryResourceDialog } from "./library-action-dialogs";
 import { LibraryResourcesTable } from "./library-resources-table";
@@ -55,49 +62,47 @@ export default async function LibraryListing() {
   );
 
   return (
-    <div className="space-y-4">
-      {result.canCurate && (
-        <div className="flex justify-end">
+    <ManagementPage
+      eyebrow="内容运营"
+      title="资料库管理"
+      description={
+        result.scope === "platform"
+          ? "维护平台标准资料，按课程和课节归档，并跟踪发布状态与下载情况。"
+          : "查看机构可用资料，并按当前权限维护课程与课节资源。"
+      }
+      icon={LibraryBig}
+      meta={<span>{result.scope === "platform" ? "平台资料库" : "机构资料库"}</span>}
+      action={
+        result.canCurate ? (
           <UploadLibraryResourceDialog courses={result.courses} />
-        </div>
-      )}
+        ) : undefined
+      }
+    >
       {result.hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <ManagementNotice tone="warning">
           资料、课程或课节数据暂时无法完整读取，请稍后刷新重试。
-        </p>
+        </ManagementNotice>
       )}
       {!result.canCurate && (
-        <p className="border border-sky-200 bg-sky-50 px-4 py-3 text-sm font-medium text-sky-800">
+        <ManagementNotice>
           当前账号为只读查看范围，仅展示已发布资料。
-        </p>
+        </ManagementNotice>
       )}
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[760px] border-collapse text-left">
-            <thead>
-              <tr>
-                <th>资料范围</th>
-                <th>资料总数</th>
-                <th>已发布</th>
-                <th>草稿</th>
-                <th>已归档</th>
-                <th>累计下载</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <th>{result.scope === "platform" ? "平台资料库" : "机构可见资料"}</th>
-                <td>{rows.length}</td>
-                <td>{publishedCount}</td>
-                <td>{draftCount}</td>
-                <td>{archivedCount}</td>
-                <td>{downloadCount}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="资料库概况"
+        items={[
+          {
+            label: "资料范围",
+            value: result.scope === "platform" ? "平台标准" : "机构可见",
+          },
+          { label: "资料总数", value: rows.length },
+          { label: "已发布", value: publishedCount },
+          { label: "草稿", value: draftCount },
+          { label: "已归档", value: archivedCount },
+          { label: "累计下载", value: downloadCount.toLocaleString("zh-CN") },
+        ]}
+      />
 
       <LibraryResourcesTable
         data={rows}
@@ -105,6 +110,6 @@ export default async function LibraryListing() {
         courseTargets={result.courses}
         canCurate={result.canCurate}
       />
-    </div>
+    </ManagementPage>
   );
 }

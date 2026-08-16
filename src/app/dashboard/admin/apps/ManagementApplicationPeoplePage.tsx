@@ -3,6 +3,11 @@ import {
   setStaffApplicationAccessAction,
   setStudentApplicationEnrollmentAction,
 } from "@/app/dashboard/admin/apps/actions";
+import { ManagementPlatformApplicationOverviewPage } from "@/app/dashboard/admin/apps/ManagementPlatformApplicationOverviewPage";
+import {
+  ManagementMetricStrip,
+  ManagementNotice,
+} from "@/components/layout/management-page";
 import type { ManagementAppAccess } from "@/lib/management-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -53,14 +58,7 @@ export async function ManagementApplicationPeoplePage({
   access: ManagementAppAccess;
 }) {
   if (!access.tenantId) {
-    return (
-      <section className="app-card border px-5 py-10 text-center">
-        <p className="text-sm font-semibold">请先进入具体机构管理学生授权</p>
-        <p className="app-muted-text mt-2 text-xs">
-          平台空间只做跨机构概览，不在没有机构上下文时修改学生和员工关系。
-        </p>
-      </section>
-    );
+    return <ManagementPlatformApplicationOverviewPage access={access} mode="students" />;
   }
 
   const admin = createAdminClient();
@@ -125,27 +123,36 @@ export async function ManagementApplicationPeoplePage({
         enrollmentsResult.error ||
         staffAccessResult.error ||
         assignmentsResult.error) && (
-        <p className="border border-amber-300 bg-amber-50 px-4 py-3 text-xs font-medium text-amber-900">
+        <ManagementNotice tone="warning">
           应用授权数据暂时无法完整读取，请确认最新数据库迁移已经部署。
-        </p>
+        </ManagementNotice>
       )}
 
-      <section className="management-table-panel overflow-hidden border">
-        <div className="overflow-x-auto">
-          <table className="management-summary-table w-full min-w-[680px] border-collapse text-left">
-            <thead><tr><th>机构学生</th><th>已开通</th><th>暂停／结束</th><th>应用员工</th><th>负责关系</th></tr></thead>
-            <tbody>
-              <tr>
-                <td>{students.length}</td>
-                <td>{[...enrollmentByStudent.values()].filter((item) => item.status === "active").length}</td>
-                <td>{[...enrollmentByStudent.values()].filter((item) => item.status !== "active").length}</td>
-                <td>{[...staffAccessById.values()].filter((item) => item.status === "active").length}</td>
-                <td>{assignments.length}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <ManagementMetricStrip
+        label="应用成员概况"
+        items={[
+          { label: "机构学生", value: students.length },
+          {
+            label: "已开通",
+            value: [...enrollmentByStudent.values()].filter(
+              (item) => item.status === "active",
+            ).length,
+          },
+          {
+            label: "暂停／结束",
+            value: [...enrollmentByStudent.values()].filter(
+              (item) => item.status !== "active",
+            ).length,
+          },
+          {
+            label: "应用员工",
+            value: [...staffAccessById.values()].filter(
+              (item) => item.status === "active",
+            ).length,
+          },
+          { label: "负责关系", value: assignments.length },
+        ]}
+      />
 
       {access.capabilities.manageTenantAvailability && (
         <section className="space-y-3">

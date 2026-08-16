@@ -20,7 +20,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  digitalTextbookColumns,
+  getDigitalTextbookColumns,
   type DigitalTextbookDisplayRow,
 } from "./columns";
 import {
@@ -43,8 +43,10 @@ const COLUMN_LABELS: Record<string, string> = {
 
 export function DigitalTextbookTable({
   data,
+  canManage,
 }: {
   data: DigitalTextbookDisplayRow[];
+  canManage: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "hierarchy", desc: false },
@@ -55,6 +57,7 @@ export function DigitalTextbookTable({
   const [filters, setFilters] = useState<DigitalTextbookTableFilters>(
     INITIAL_DIGITAL_TEXTBOOK_FILTERS,
   );
+  const columns = useMemo(() => getDigitalTextbookColumns(canManage), [canManage]);
 
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");
@@ -88,7 +91,7 @@ export function DigitalTextbookTable({
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: digitalTextbookColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,

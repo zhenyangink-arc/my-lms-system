@@ -83,7 +83,10 @@ function moduleLabel(code: string) {
   return "其他模块";
 }
 
-export const digitalTextbookColumns: ColumnDef<DigitalTextbookDisplayRow>[] = [
+export function getDigitalTextbookColumns(
+  canManage: boolean,
+): ColumnDef<DigitalTextbookDisplayRow>[] {
+  return [
   {
     id: "hierarchy",
     accessorFn: (row) =>
@@ -192,8 +195,13 @@ export const digitalTextbookColumns: ColumnDef<DigitalTextbookDisplayRow>[] = [
     header: () => <span className="block text-right">操作</span>,
     cell: ({ row }) => (
       <div className="text-right">
-        <DigitalTextbookCellAction row={row.original} />
+        {canManage ? (
+          <DigitalTextbookCellAction row={row.original} />
+        ) : (
+          <span className="text-[11px] text-[var(--app-muted)]">只读</span>
+        )}
       </div>
     ),
   },
-];
+  ];
+}

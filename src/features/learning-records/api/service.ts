@@ -2,6 +2,10 @@ import "server-only";
 
 import { requireLearningRecordOverviewAccess } from "@/lib/learning-records";
 import { getTeacherAssignedStudentIds } from "@/lib/student-assignments";
+import {
+  getTenantAppCapabilityContext,
+  requireTenantAppCapability,
+} from "@/lib/tenant-app-capabilities";
 import type {
   LearningRecordManagementData,
   LearningRecordNote,
@@ -78,7 +82,16 @@ function buildFallbackRows(
 export async function getLearningRecordManagementData(
   studentAppId?: string,
 ): Promise<LearningRecordManagementData> {
-  const access = await requireLearningRecordOverviewAccess();
+  const appAccess = studentAppId
+    ? await requireTenantAppCapability(studentAppId, "viewAnalytics")
+    : null;
+  const access = appAccess
+    ? {
+        ...appAccess,
+        scope: "institution" as const,
+        dashboardBasePath: `/${appAccess.tenantSlug}/dashboard`,
+      }
+    : await requireLearningRecordOverviewAccess();
 
   if (access.scope === "platform") {
     const { data, error } = await access.supabase.rpc(
@@ -95,6 +108,14 @@ export async function getLearningRecordManagementData(
   }
 
   const tenantId = access.tenantId!;
+  const canManageNotes = studentAppId
+    ? Boolean(
+        await getTenantAppCapabilityContext(
+          studentAppId,
+          "manageAssessments",
+        ),
+      )
+    : true;
   const assignedStudentIds =
     access.role === "teacher"
       ? await getTeacherAssignedStudentIds(
@@ -160,7 +181,7 @@ export async function getLearningRecordManagementData(
     role: access.role,
     tenantId,
     dashboardBasePath: access.dashboardBasePath,
-    canManageNotes: true,
+    canManageNotes,
     assignedStudentIds,
     students,
     notes,

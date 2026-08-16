@@ -14,7 +14,7 @@ export function GradeReviewManager({
   reviewId: string;
   response: string;
 }) {
-  const action = resolveGradeReviewAction.bind(null, reviewId);
+  const action = resolveGradeReviewAction.bind(null, reviewId, null);
   const [state, formAction, pending] = useActionState(
     action,
     initialGradeCenterActionState,
