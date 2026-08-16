@@ -1,7 +1,7 @@
 {
   "status": "IDLE",
   "iteration": 0,
-  "max_iterations": 3,
+  "max_iterations": 100,
   "current_task": null,
   "completed_tasks": [],
   "last_review": null,
