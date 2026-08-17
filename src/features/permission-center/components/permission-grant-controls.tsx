@@ -53,16 +53,16 @@ export function PermissionGrantControls({
   );
 
   return (
-    <section className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-card-bg)]">
-      <div className="border-b border-[var(--app-border)] px-4 py-3">
-        <h3 className="text-sm font-semibold text-[var(--app-text)]">
+    <section className="overflow-hidden border border-[var(--border)] bg-[var(--card)]">
+      <div className="border-b border-[var(--border)] px-4 py-3">
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">
           单条账号授权
         </h3>
-        <p className="mt-1 text-xs text-[var(--app-muted)]">
+        <p className="mt-1 text-xs text-[var(--foreground-muted)]">
           这里只提供现有的单条授权入口；账号资格和权限范围仍由数据库再次校验。
         </p>
       </div>
-      <div className="grid divide-y divide-[var(--app-border)] lg:grid-cols-2 lg:divide-x lg:divide-y-0">
+      <div className="grid divide-y divide-[var(--border)] lg:grid-cols-2 lg:divide-x lg:divide-y-0">
         <form
           action={updateUnifiedPermissionGrantAction}
           className="space-y-3 p-4"
@@ -72,10 +72,10 @@ export function PermissionGrantControls({
           <input type="hidden" name="enabled" value="true" />
           <input type="hidden" name="view" value="grants" />
           <div>
-            <p className="text-xs font-semibold text-[var(--app-text)]">
+            <p className="text-xs font-semibold text-[var(--foreground)]">
               平台标准题库管理
             </p>
-            <p className="mt-1 text-[11px] text-[var(--app-muted)]">
+            <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">
               仅可授予正常的平台副负责人或平台管理员。
             </p>
           </div>
@@ -98,7 +98,7 @@ export function PermissionGrantControls({
           <button
             type="submit"
             disabled={platformCandidates.length === 0}
-            className="h-9 bg-[var(--app-accent)] px-4 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="h-9 bg-[var(--primary)] px-4 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             授予平台题库权限
           </button>
@@ -111,10 +111,10 @@ export function PermissionGrantControls({
           <input type="hidden" name="enabled" value="true" />
           <input type="hidden" name="view" value="grants" />
           <div>
-            <p className="text-xs font-semibold text-[var(--app-text)]">
+            <p className="text-xs font-semibold text-[var(--foreground)]">
               机构模块管理权限
             </p>
-            <p className="mt-1 text-[11px] text-[var(--app-muted)]">
+            <p className="mt-1 text-[11px] text-[var(--foreground-muted)]">
               仅可授予对应机构内状态正常的普通管理员。
             </p>
           </div>
@@ -177,7 +177,7 @@ export function PermissionGrantControls({
           <button
             type="submit"
             disabled={!tenantId || !targetUserId || tenantKeys.length === 0}
-            className="h-9 bg-[var(--app-accent)] px-4 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
+            className="h-9 bg-[var(--primary)] px-4 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"
           >
             授予机构模块权限
           </button>

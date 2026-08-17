@@ -81,11 +81,11 @@ const progressStatusLabelMap: Record<LessonProgressStatus, string> = {
 };
 
 const accentColorMap: Record<string, string> = {
-  indigo: "#6366f1",
-  blue: "#2563eb",
-  emerald: "#16a34a",
-  purple: "#9333ea",
-  orange: "#f97316",
+  indigo: "var(--primary)",
+  blue: "var(--primary)",
+  emerald: "var(--status-success)",
+  purple: "var(--support)",
+  orange: "var(--status-warning)",
 };
 
 function resolveProgressStatus(
@@ -104,14 +104,14 @@ function resolveProgressStatus(
 
 function getStatusAccent(status: LessonProgressStatus) {
   if (status === "completed") {
-    return "#16a34a";
+    return "var(--status-success)";
   }
 
   if (status === "in_progress") {
-    return "#2563eb";
+    return "var(--primary)";
   }
 
-  return "var(--app-muted)";
+  return "var(--foreground-muted)";
 }
 
 function getLessonLockLabel(unlockMode: string | null) {
@@ -140,13 +140,17 @@ export default async function CourseDetailPage({
   /**
    * 1. 查询一级课程板块
    */
-  const { data: parentCategoryData } = await supabase
+  const { data: parentCategoryData, error: parentCategoryError } = await supabase
     .from("course_categories")
     .select("id, parent_id, slug, title, description, accent_color")
     .eq("slug", categorySlug)
     .is("parent_id", null)
     .eq("is_published", true)
     .maybeSingle();
+
+  if (parentCategoryError) {
+    throw new Error("课程分类加载失败", { cause: parentCategoryError });
+  }
 
   if (!parentCategoryData) {
     notFound();
@@ -157,13 +161,17 @@ export default async function CourseDetailPage({
   /**
    * 2. 查询二级分类
    */
-  const { data: subcategoryData } = await supabase
+  const { data: subcategoryData, error: subcategoryError } = await supabase
     .from("course_categories")
     .select("id, parent_id, slug, title, description, accent_color")
     .eq("slug", subcategorySlug)
     .eq("parent_id", parentCategory.id)
     .eq("is_published", true)
     .maybeSingle();
+
+  if (subcategoryError) {
+    throw new Error("课程阶段加载失败", { cause: subcategoryError });
+  }
 
   if (!subcategoryData) {
     notFound();
@@ -174,7 +182,7 @@ export default async function CourseDetailPage({
   /**
    * 3. 查询具体课程
    */
-  const { data: courseData } = await supabase
+  const { data: courseData, error: courseError } = await supabase
     .from("courses")
     .select(
       "id, category_id, slug, title, description, level, icon_name, cover_url, unlock_mode, prerequisite_course_id, available_from, is_manually_locked"
@@ -183,6 +191,10 @@ export default async function CourseDetailPage({
     .eq("category_id", subcategory.id)
     .eq("is_published", true)
     .maybeSingle();
+
+  if (courseError) {
+    throw new Error("课程加载失败", { cause: courseError });
+  }
 
   if (!courseData) {
     notFound();
@@ -254,7 +266,7 @@ export default async function CourseDetailPage({
   /**
    * 4. 查询课程下的课时
    */
-  const { data: lessonData } = await supabase
+  const { data: lessonData, error: lessonError } = await supabase
     .from("lessons")
     .select(
       "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked"
@@ -262,6 +274,10 @@ export default async function CourseDetailPage({
     .eq("course_id", course.id)
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
+
+  if (lessonError) {
+    throw new Error("课时目录加载失败", { cause: lessonError });
+  }
 
   const lessons = (lessonData ?? []) as Lesson[];
 
@@ -273,11 +289,15 @@ export default async function CourseDetailPage({
   if (!isPlatformAudit && user && lessons.length > 0) {
     const lessonIds = lessons.map((lesson) => lesson.id);
 
-    const { data: progressData } = await supabase
+    const { data: progressData, error: progressError } = await supabase
       .from("lesson_progress")
       .select("lesson_id, status, progress_percent")
       .eq("user_id", user.id)
       .in("lesson_id", lessonIds);
+
+    if (progressError) {
+      throw new Error("课程进度加载失败", { cause: progressError });
+    }
 
     progressList = (progressData ?? []).map((item) => ({
       lesson_id: item.lesson_id,
@@ -344,8 +364,8 @@ export default async function CourseDetailPage({
   }
   const accentColor = isFocusCategory
     ? parentCategory.slug === "service"
-      ? "var(--app-accent)"
-      : "var(--app-secondary)"
+      ? "var(--primary)"
+      : "var(--support)"
     : accentColorMap[subcategory.accent_color ?? "indigo"] ??
       accentColorMap.indigo;
 
@@ -360,10 +380,10 @@ export default async function CourseDetailPage({
         }
       >
         {/* 返回路径 */}
-        <div className="flex flex-wrap items-center gap-3">
+        <nav className="flex flex-wrap items-center gap-3" aria-label="课程上下文导航">
           <Link
             href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
-            className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+            className="inline-flex items-center gap-2 rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             <ArrowLeft size={16} />
             返回{subcategory.title}
@@ -373,7 +393,7 @@ export default async function CourseDetailPage({
 
           <Link
             href={`/dashboard/courses/${parentCategory.slug}`}
-            className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
+            className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             {parentCategory.title}
           </Link>
@@ -382,11 +402,11 @@ export default async function CourseDetailPage({
 
           <Link
             href="/dashboard/courses"
-            className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
+            className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             我的课程
           </Link>
-        </div>
+        </nav>
 
         {/* 课程信息 + 课程进度 */}
         <section
@@ -396,8 +416,8 @@ export default async function CourseDetailPage({
               ? {
                   background:
                     parentCategory.slug === "service"
-                      ? "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start))"
-                      : "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end))",
+                      ? "linear-gradient(125deg, var(--card), var(--card))"
+                      : "linear-gradient(125deg, var(--card), var(--accent))",
                 }
               : undefined
           }
@@ -407,8 +427,8 @@ export default async function CourseDetailPage({
               <div
                 className="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl border"
                 style={{
-                  backgroundColor: "var(--app-soft-bg)",
-                  borderColor: "var(--app-border)",
+                  backgroundColor: "var(--surface-soft)",
+                  borderColor: "var(--border)",
                   color: accentColor,
                 }}
               >
@@ -420,8 +440,8 @@ export default async function CourseDetailPage({
                   <span
                     className="rounded-full border px-3 py-1 text-xs font-semibold"
                     style={{
-                      backgroundColor: "var(--app-soft-bg)",
-                      borderColor: "var(--app-border)",
+                      backgroundColor: "var(--surface-soft)",
+                      borderColor: "var(--border)",
                       color: accentColor,
                     }}
                   >
@@ -432,9 +452,9 @@ export default async function CourseDetailPage({
                     <span
                       className="rounded-full border px-3 py-1 text-xs font-medium"
                       style={{
-                        backgroundColor: "var(--app-soft-bg)",
-                        borderColor: "var(--app-border)",
-                        color: "var(--app-text-soft)",
+                        backgroundColor: "var(--surface-soft)",
+                        borderColor: "var(--border)",
+                        color: "var(--foreground-secondary)",
                       }}
                     >
                       {getCourseLevelLabel(course.level)}
@@ -444,16 +464,16 @@ export default async function CourseDetailPage({
                   <span
                     className="rounded-full border px-3 py-1 text-xs font-medium"
                     style={{
-                      backgroundColor: "var(--app-soft-bg)",
-                      borderColor: "var(--app-border)",
-                      color: "var(--app-text-soft)",
+                      backgroundColor: "var(--surface-soft)",
+                      borderColor: "var(--border)",
+                      color: "var(--foreground-secondary)",
                     }}
                   >
                     共 {totalLessons} 个课时
                   </span>
                 </div>
 
-                <h2 className="text-2xl font-black tracking-tight text-gray-900">
+                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
                   {course.title}
                 </h2>
 
@@ -463,30 +483,30 @@ export default async function CourseDetailPage({
               </div>
             </div>
 
-            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--app-border)" }}>
+            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-gray-900">课程进度</p>
+                  <p className="text-sm font-bold text-gray-900">课程进度</p>
 
                   <p className="mt-1 text-xs text-gray-500">
                     已完成 {completedCount} / {totalLessons} 个课时
                   </p>
                 </div>
 
-                <p className="text-2xl font-black tracking-tight text-gray-900">
+                <p className="text-2xl font-bold tracking-tight text-gray-900">
                   {courseProgressPercent}%
                 </p>
               </div>
 
               <div
                 className="mt-4 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-soft-bg)" }}
+                style={{ backgroundColor: "var(--surface-soft)" }}
               >
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
                     width: `${courseProgressPercent}%`,
-                    backgroundColor: "var(--app-success)",
+                    backgroundColor: "var(--status-success)",
                   }}
                 />
               </div>
@@ -496,24 +516,24 @@ export default async function CourseDetailPage({
 
         {/* 课时列表 */}
         {isKoreanBeginner && (
-          <section className="overflow-hidden rounded-3xl border border-[#dce9e7] bg-[linear-gradient(135deg,#f7fffd_0%,#f8fbff_55%,#fffaf2_100%)] p-5 shadow-sm sm:p-6">
+          <section className="app-card overflow-hidden rounded-3xl border p-5 shadow-sm sm:p-6">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="max-w-2xl">
-                <div className="inline-flex items-center gap-2 rounded-full bg-white/80 px-3 py-1.5 text-xs font-black text-[#21867a] shadow-sm ring-1 ring-[#d8ebe7]">
+                <div className="inline-flex items-center gap-2 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)] shadow-sm ring-1 ring-[var(--border-subtle)]">
                   <Sparkles size={14} />
                   零基础三段式学习路径
                 </div>
-                <h3 className="mt-4 text-2xl font-black tracking-tight text-[#173f4a]">
+                <h3 className="mt-4 text-2xl font-bold tracking-tight text-[var(--foreground)]">
                   从认识韩文，到完成韩国语 2 级
                 </h3>
-                <p className="mt-2 text-sm leading-6 text-[#617982]">
+                <p className="mt-2 max-w-[75ch] text-sm leading-6 text-[var(--foreground-muted)]">
                   先建立字母与拼读能力，再进入词汇、句型和生活场景表达。三课依次推进，形成完整的韩语初级学习闭环。
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-2 text-center text-xs font-black text-[#53727a]">
-                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><Languages className="mx-auto mb-1.5 text-[#2a9485]" size={18} />字母</div>
-                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><MessageCircleMore className="mx-auto mb-1.5 text-[#5f8ee8]" size={18} />表达</div>
-                <div className="rounded-2xl bg-white/75 px-3 py-3 ring-1 ring-[#dfebe9]"><GraduationCap className="mx-auto mb-1.5 text-[#d29345]" size={18} />进阶</div>
+              <div className="grid grid-cols-3 gap-2 text-center text-xs font-bold text-[var(--foreground-secondary)]">
+                <div className="rounded-2xl bg-[var(--surface-soft)] px-3 py-3 ring-1 ring-[var(--border-subtle)]"><Languages className="mx-auto mb-1.5 text-[var(--status-success)]" size={18} />字母</div>
+                <div className="rounded-2xl bg-[var(--surface-soft)] px-3 py-3 ring-1 ring-[var(--border-subtle)]"><MessageCircleMore className="mx-auto mb-1.5 text-[var(--primary)]" size={18} />表达</div>
+                <div className="rounded-2xl bg-[var(--surface-soft)] px-3 py-3 ring-1 ring-[var(--border-subtle)]"><GraduationCap className="mx-auto mb-1.5 text-[var(--status-warning)]" size={18} />进阶</div>
               </div>
             </div>
           </section>
@@ -521,7 +541,7 @@ export default async function CourseDetailPage({
 
         <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
-            <h3 className="text-lg font-black tracking-tight text-gray-900">
+            <h3 className="text-lg font-bold tracking-tight text-gray-900">
               课时列表
             </h3>
 
@@ -564,10 +584,10 @@ export default async function CourseDetailPage({
                     <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                       <div className="flex gap-4">
                         <div
-                          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-black"
+                          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-bold"
                           style={{
-                            backgroundColor: "var(--app-soft-bg)",
-                            borderColor: "var(--app-border)",
+                            backgroundColor: "var(--surface-soft)",
+                            borderColor: "var(--border)",
                             color: statusAccent,
                           }}
                         >
@@ -581,16 +601,16 @@ export default async function CourseDetailPage({
                         <div>
                           <div className="mb-2 flex flex-wrap gap-2">
                             {curatedLesson && (
-                              <span className="rounded-full bg-[#e8f6f2] px-3 py-1 text-xs font-black text-[#238777]">
+                              <span className="rounded-full bg-[var(--status-success-surface)] px-3 py-1 text-xs font-bold text-[var(--status-success)]">
                                 {curatedLesson.stage}
                               </span>
                             )}
                             <span
                               className="rounded-full border px-3 py-1 text-xs font-medium"
                               style={{
-                                backgroundColor: "var(--app-soft-bg)",
-                                borderColor: "var(--app-border)",
-                                color: "var(--app-text-soft)",
+                                backgroundColor: "var(--surface-soft)",
+                                borderColor: "var(--border)",
+                                color: "var(--foreground-secondary)",
                               }}
                             >
                               {lessonTypeLabel}
@@ -599,9 +619,9 @@ export default async function CourseDetailPage({
                             <span
                               className="inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-medium"
                               style={{
-                                backgroundColor: "var(--app-soft-bg)",
-                                borderColor: "var(--app-border)",
-                                color: "var(--app-text-soft)",
+                                backgroundColor: "var(--surface-soft)",
+                                borderColor: "var(--border)",
+                                color: "var(--foreground-secondary)",
                               }}
                             >
                               <Clock size={13} />
@@ -612,9 +632,9 @@ export default async function CourseDetailPage({
                               <span
                                 className="rounded-full border px-3 py-1 text-xs font-semibold"
                                 style={{
-                                  backgroundColor: "var(--app-soft-bg)",
-                                  borderColor: "var(--app-border)",
-                                  color: "#16a34a",
+                                  backgroundColor: "var(--surface-soft)",
+                                  borderColor: "var(--border)",
+                                  color: "var(--status-success)",
                                 }}
                               >
                                 可试看
@@ -624,8 +644,8 @@ export default async function CourseDetailPage({
                             <span
                               className="rounded-full border px-3 py-1 text-xs font-semibold"
                               style={{
-                                backgroundColor: "var(--app-soft-bg)",
-                                borderColor: "var(--app-border)",
+                                backgroundColor: "var(--surface-soft)",
+                                borderColor: "var(--border)",
                                 color: statusAccent,
                               }}
                             >
@@ -641,7 +661,7 @@ export default async function CourseDetailPage({
                             {(curatedLesson?.description ?? lesson.description) || "暂无课时简介"}
                           </p>
                           {curatedLesson && (
-                            <p className="mt-2 text-xs font-bold tracking-wide text-[#789097]">
+                            <p className="mt-2 text-xs font-bold tracking-wide text-[var(--foreground-muted)]">
                               学习重点：{curatedLesson.focus}
                             </p>
                           )}
@@ -656,15 +676,15 @@ export default async function CourseDetailPage({
 
                         <div
                           className="h-2 overflow-hidden rounded-full"
-                          style={{ backgroundColor: "var(--app-soft-bg)" }}
+                          style={{ backgroundColor: "var(--surface-soft)" }}
                         >
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
                               width: `${progressPercent}%`,
                               backgroundColor: isCompleted
-                                ? "#16a34a"
-                                : "var(--app-accent)",
+                                ? "var(--status-success)"
+                                : "var(--primary)",
                             }}
                           />
                         </div>

@@ -5,135 +5,20 @@
  */
 
 [data-dashboard-ui="management"][data-management-workspace] {
-  --app-bg: #f5f5f7;
-  --app-sidebar-bg: rgba(250, 250, 252, 0.82);
-  --app-card-bg: #ffffff;
-  --app-soft-bg: #f5f5f7;
-  --app-border: rgba(29, 29, 31, 0.11);
-  --app-border-soft: rgba(29, 29, 31, 0.075);
-
-  --app-text: #1d1d1f;
-  --app-text-soft: #3a3a3c;
-  --app-muted: #646467;
-  --app-muted-light: #8e8e93;
-  --app-muted-text: var(--app-muted);
-
-  --app-input-bg: rgba(255, 255, 255, 0.94);
-  --app-accent: #0071e3;
-  --app-accent-strong: #0066cc;
-  --app-accent-soft: #eaf4ff;
-  --app-accent-contrast: #ffffff;
-  --app-secondary: #0071e3;
-  --app-secondary-soft: #eef6ff;
-  --app-success: #248a3d;
-  --app-success-soft: #edf8ef;
-  --app-warm: #b25000;
-  --app-warm-soft: #fff4e8;
-  --app-danger: #d70015;
-  --app-danger-soft: #fff0f1;
-
-  --management-glass: rgba(250, 250, 252, 0.76);
-  --management-glass-strong: rgba(255, 255, 255, 0.88);
-  --management-card-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.025),
-    0 10px 32px rgba(0, 0, 0, 0.045);
-  --management-floating-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.78) inset,
-    0 18px 55px rgba(0, 0, 0, 0.1);
-
   min-height: 100dvh;
   background:
     radial-gradient(circle at 78% -16%, rgba(0, 113, 227, 0.09), transparent 34rem),
-    #f5f5f7;
-  color: var(--app-text);
+    var(--background);
+  color: var(--foreground);
   font-family: var(--font-geist-sans), -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
   font-feature-settings: "ss01", "cv02", "cv03", "cv04";
   letter-spacing: -0.012em;
 }
 
 .dark [data-dashboard-ui="management"][data-management-workspace] {
-  --app-bg: #111113;
-  --app-sidebar-bg: rgba(29, 29, 31, 0.8);
-  --app-card-bg: #1c1c1e;
-  --app-soft-bg: #252527;
-  --app-border: rgba(255, 255, 255, 0.13);
-  --app-border-soft: rgba(255, 255, 255, 0.085);
-  --app-text: #f5f5f7;
-  --app-text-soft: #e5e5e7;
-  --app-muted: #a1a1a6;
-  --app-muted-light: #77777c;
-  --app-input-bg: rgba(35, 35, 38, 0.96);
-  --app-accent: #2997ff;
-  --app-accent-strong: #64b5ff;
-  --app-accent-soft: #102a43;
-  --app-secondary: #2997ff;
-  --app-secondary-soft: #102a43;
-  --app-success: #59c96f;
-  --app-success-soft: #16351f;
-  --app-warm: #ffb340;
-  --app-warm-soft: #3c2a10;
-  --app-danger: #ff6961;
-  --app-danger-soft: #411a1e;
-  --management-glass: rgba(29, 29, 31, 0.76);
-  --management-glass-strong: rgba(35, 35, 38, 0.9);
-  --management-card-shadow: 0 14px 38px rgba(0, 0, 0, 0.2);
-  --management-floating-shadow:
-    0 1px 0 rgba(255, 255, 255, 0.07) inset,
-    0 20px 60px rgba(0, 0, 0, 0.34);
   background:
     radial-gradient(circle at 78% -16%, rgba(41, 151, 255, 0.12), transparent 34rem),
-    #111113;
-}
-
-/* Keep custom portals and client-side overlays on the same semantic palette. */
-html[data-management-workspace] {
-  --app-bg: #f5f5f7;
-  --app-card-bg: #ffffff;
-  --app-soft-bg: #f5f5f7;
-  --app-border: rgba(29, 29, 31, 0.11);
-  --app-border-soft: rgba(29, 29, 31, 0.075);
-  --app-text: #1d1d1f;
-  --app-text-soft: #3a3a3c;
-  --app-muted: #646467;
-  --app-muted-light: #8e8e93;
-  --app-muted-text: var(--app-muted);
-  --app-input-bg: rgba(255, 255, 255, 0.96);
-  --app-accent: #0071e3;
-  --app-accent-strong: #0066cc;
-  --app-accent-soft: #eaf4ff;
-  --app-secondary: #0071e3;
-  --app-secondary-soft: #eef6ff;
-  --app-success: #248a3d;
-  --app-success-soft: #edf8ef;
-  --app-warm: #b25000;
-  --app-warm-soft: #fff4e8;
-  --app-danger: #d70015;
-  --app-danger-soft: #fff0f1;
-}
-
-html.dark[data-management-workspace] {
-  --app-bg: #111113;
-  --app-card-bg: #1c1c1e;
-  --app-soft-bg: #252527;
-  --app-border: rgba(255, 255, 255, 0.13);
-  --app-border-soft: rgba(255, 255, 255, 0.085);
-  --app-text: #f5f5f7;
-  --app-text-soft: #e5e5e7;
-  --app-muted: #a1a1a6;
-  --app-muted-light: #77777c;
-  --app-muted-text: var(--app-muted);
-  --app-input-bg: rgba(35, 35, 38, 0.96);
-  --app-accent: #2997ff;
-  --app-accent-strong: #64b5ff;
-  --app-accent-soft: #102a43;
-  --app-secondary: #2997ff;
-  --app-secondary-soft: #102a43;
-  --app-success: #59c96f;
-  --app-success-soft: #16351f;
-  --app-warm: #ffb340;
-  --app-warm-soft: #3c2a10;
-  --app-danger: #ff6961;
-  --app-danger-soft: #411a1e;
+    var(--background);
 }
 
 /* Floating functional layer: sidebar and top bar. */
@@ -155,7 +40,7 @@ html.dark[data-management-workspace] {
   width: 244px;
   height: auto;
   overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--app-border) 88%, white);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, white);
   border-radius: 24px;
   background: var(--management-glass);
   box-shadow: var(--management-floating-shadow);
@@ -171,7 +56,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-sidebar-header {
   height: 72px;
-  border-color: var(--app-border-soft);
+  border-color: var(--border-subtle);
   padding-inline: 10px;
   background: transparent;
 }
@@ -193,7 +78,7 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-sidebar-copy > p:first-child {
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: 14px;
   font-weight: 680;
 }
@@ -222,7 +107,7 @@ html.dark[data-management-workspace] {
   .management-nav-group {
   height: 26px;
   padding-inline: 10px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 10px;
   font-weight: 650;
   letter-spacing: 0.08em;
@@ -236,7 +121,7 @@ html.dark[data-management-workspace] {
   border: 0;
   border-radius: 12px;
   padding: 8px 10px;
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   font-size: 13px;
   font-weight: 570;
   transition:
@@ -248,13 +133,13 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-nav-item:hover {
   background: rgba(118, 118, 128, 0.1);
-  color: var(--app-text);
+  color: var(--foreground);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-nav-item[data-active="true"] {
   border: 0;
-  background: var(--app-accent);
+  background: var(--primary);
   box-shadow:
     0 6px 15px rgba(0, 113, 227, 0.18),
     0 1px 0 rgba(255, 255, 255, 0.24) inset;
@@ -273,7 +158,7 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-sidebar-footer {
-  border-color: var(--app-border-soft);
+  border-color: var(--border-subtle);
   padding: 8px;
 }
 
@@ -310,7 +195,7 @@ html.dark[data-management-workspace] {
   top: 12px;
   height: 58px;
   margin: 0 16px 12px;
-  border: 1px solid color-mix(in srgb, var(--app-border) 88%, white);
+  border: 1px solid color-mix(in srgb, var(--border) 88%, white);
   border-radius: 18px;
   padding-inline: 12px;
   background: var(--management-glass-strong);
@@ -330,10 +215,10 @@ html.dark[data-management-workspace] {
   min-width: 40px;
   min-height: 40px;
   height: 40px;
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.68);
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.55) inset;
   transition:
     background-color 160ms ease,
@@ -348,14 +233,14 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   :is(.management-sidebar-trigger, .management-header-button, .management-user-button):hover {
-  border-color: color-mix(in srgb, var(--app-accent) 20%, var(--app-border));
-  background: var(--app-accent-soft);
-  color: var(--app-accent-strong);
+  border-color: color-mix(in srgb, var(--primary) 20%, var(--border));
+  background: var(--accent);
+  color: var(--primary-hover);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-topbar-separator {
-  background: var(--app-border);
+  background: var(--border);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -367,7 +252,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-content {
   overflow-x: clip;
-  color: var(--app-text);
+  color: var(--foreground);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -378,87 +263,18 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   :is(.app-card, .app-theme-card) {
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 20px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: var(--management-card-shadow);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   :is(.app-soft-card, .app-theme-soft) {
-  border-color: var(--app-border-soft);
+  border-color: var(--border-subtle);
   border-radius: 16px;
-  background: var(--app-soft-bg);
+  background: var(--surface-soft);
   box-shadow: none;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  :is(.rounded-3xl, .rounded-2xl, [class~="rounded-[1.5rem]"], [class~="rounded-[1.75rem]"]) {
-  border-radius: 20px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  :is(.rounded-xl, .rounded-lg) {
-  border-radius: 12px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .dashboard-page-header {
-  padding: 30px 24px 0;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .dashboard-page-header-inner {
-  max-width: 1500px;
-  min-height: 88px;
-  border: 0;
-  padding-bottom: 20px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .dashboard-page-title {
-  font-size: clamp(1.8rem, 2.4vw, 2.35rem);
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.045em;
-  text-wrap: balance;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .dashboard-page-description {
-  max-width: 68ch;
-  margin-top: 10px;
-  font-size: 14px;
-  line-height: 1.55;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .page-container {
-  padding: 28px 24px 36px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .page-container-header {
-  min-height: 76px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .page-container-title {
-  font-size: clamp(1.75rem, 2.2vw, 2.25rem);
-  line-height: 1.12;
-  font-weight: 700;
-  letter-spacing: -0.042em;
-  text-wrap: balance;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .page-container-description {
-  max-width: 68ch;
-  margin-top: 9px;
-  font-size: 14px;
-  line-height: 1.55;
 }
 
 /* Shared first-level page composition. Every navigation destination uses the
@@ -477,6 +293,11 @@ html.dark[data-management-workspace] {
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
+  .management-page-shell.management-page-header-only {
+  padding-bottom: 0;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
   .management-page-hero {
   display: flex;
   width: 100%;
@@ -486,7 +307,7 @@ html.dark[data-management-workspace] {
   justify-content: space-between;
   gap: 28px;
   padding: 8px 4px 24px;
-  border-bottom: 1px solid var(--app-border-soft);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -506,10 +327,10 @@ html.dark[data-management-workspace] {
   align-items: center;
   justify-content: center;
   margin-top: 3px;
-  border: 1px solid color-mix(in srgb, var(--app-accent) 16%, var(--app-border));
+  border: 1px solid color-mix(in srgb, var(--primary) 16%, var(--border));
   border-radius: 14px;
-  background: var(--app-accent-soft);
-  color: var(--app-accent-strong);
+  background: var(--accent);
+  color: var(--primary-hover);
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.5) inset;
 }
 
@@ -517,16 +338,16 @@ html.dark[data-management-workspace] {
   [class*="management-app-tone-"] .management-page-icon {
   border-color: color-mix(
     in srgb,
-    var(--management-app-tone, var(--app-accent)) 22%,
-    var(--app-border)
+    var(--management-app-tone, var(--primary)) 22%,
+    var(--border)
   );
-  background: var(--management-app-tone-soft, var(--app-accent-soft));
-  color: var(--management-app-tone, var(--app-accent-strong));
+  background: var(--management-app-tone-soft, var(--accent));
+  color: var(--management-app-tone, var(--primary-hover));
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-page-eyebrow {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 11px;
   font-weight: 680;
   letter-spacing: 0.12em;
@@ -537,7 +358,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-page-hero h1 {
   margin-top: 5px;
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: clamp(1.9rem, 2.5vw, 2.4rem);
   font-weight: 720;
   letter-spacing: -0.048em;
@@ -549,7 +370,7 @@ html.dark[data-management-workspace] {
   .management-page-lead {
   max-width: 72ch;
   margin-top: 9px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -580,11 +401,11 @@ html.dark[data-management-workspace] {
   min-height: 30px;
   display: inline-flex;
   align-items: center;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding-inline: 11px;
-  background: color-mix(in srgb, var(--app-card-bg) 76%, transparent);
-  color: var(--app-muted);
+  background: color-mix(in srgb, var(--card) 76%, transparent);
+  color: var(--foreground-muted);
   font-size: 11px;
   font-weight: 620;
 }
@@ -596,10 +417,10 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-secondary-button {
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 12px;
-  background: color-mix(in srgb, var(--app-card-bg) 86%, transparent);
-  color: var(--app-text-soft);
+  background: color-mix(in srgb, var(--card) 86%, transparent);
+  color: var(--foreground-secondary);
   transition:
     border-color 160ms ease,
     background-color 160ms ease,
@@ -608,9 +429,9 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-secondary-button:hover {
-  border-color: color-mix(in srgb, var(--app-accent) 22%, var(--app-border));
-  background: var(--app-accent-soft);
-  color: var(--app-accent-strong);
+  border-color: color-mix(in srgb, var(--primary) 22%, var(--border));
+  background: var(--accent);
+  color: var(--primary-hover);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -641,9 +462,9 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-metric-strip {
   overflow: hidden;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: 18px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: var(--management-card-shadow);
 }
 
@@ -652,7 +473,7 @@ html.dark[data-management-workspace] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(136px, 1fr));
   gap: 1px;
-  background: var(--app-border-soft);
+  background: var(--border-subtle);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -660,12 +481,12 @@ html.dark[data-management-workspace] {
   min-width: 0;
   min-height: 104px;
   padding: 20px;
-  background: var(--app-card-bg);
+  background: var(--card);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-metric-strip dt {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 11px;
   font-weight: 620;
   line-height: 1.4;
@@ -675,7 +496,7 @@ html.dark[data-management-workspace] {
   .management-metric-strip dd {
   overflow: hidden;
   margin-top: 8px;
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: 21px;
   font-weight: 700;
   letter-spacing: -0.035em;
@@ -688,7 +509,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-metric-strip dd + p {
   margin-top: 5px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 11px;
   line-height: 1.4;
 }
@@ -700,11 +521,11 @@ html.dark[data-management-workspace] {
   min-height: 48px;
   align-items: flex-start;
   gap: 10px;
-  border: 1px solid color-mix(in srgb, var(--notice-color) 22%, var(--app-border));
+  border: 1px solid color-mix(in srgb, var(--notice-color) 22%, var(--border));
   border-radius: 14px;
   padding: 13px 15px;
-  background: color-mix(in srgb, var(--notice-color) 8%, var(--app-card-bg));
-  color: color-mix(in srgb, var(--notice-color) 82%, var(--app-text));
+  background: color-mix(in srgb, var(--notice-color) 8%, var(--card));
+  color: color-mix(in srgb, var(--notice-color) 82%, var(--foreground));
   font-size: 12px;
   font-weight: 590;
   line-height: 1.55;
@@ -724,36 +545,36 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-notice[data-tone="info"] {
-  --notice-color: var(--app-accent);
+  --notice-color: var(--primary);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-notice[data-tone="warning"] {
-  --notice-color: var(--app-warm);
+  --notice-color: var(--status-warning);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-notice[data-tone="danger"] {
-  --notice-color: var(--app-danger);
+  --notice-color: var(--status-danger);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-notice[data-tone="success"] {
-  --notice-color: var(--app-success);
+  --notice-color: var(--status-success);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   :is([data-slot="data-table"], .management-table-panel, .management-page-body > section[class~="border"]) {
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 18px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: var(--management-card-shadow);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   [data-slot="data-table-toolbar"] {
   padding: 14px;
-  background: color-mix(in srgb, var(--app-soft-bg) 58%, var(--app-card-bg));
+  background: color-mix(in srgb, var(--surface-soft) 58%, var(--card));
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -761,7 +582,7 @@ html.dark[data-management-workspace] {
   min-height: 44px;
   display: flex;
   align-items: center;
-  background: color-mix(in srgb, var(--app-soft-bg) 42%, var(--app-card-bg));
+  background: color-mix(in srgb, var(--surface-soft) 42%, var(--card));
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -792,9 +613,9 @@ html.dark[data-management-workspace] {
   .dashboard-title-hint {
   width: 28px;
   height: 28px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: 999px;
-  background: var(--app-soft-bg);
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -803,14 +624,15 @@ html.dark[data-management-workspace] {
   height: 13px;
 }
 
-/* Forms and controls across all secondary workspaces. */
-[data-dashboard-ui="management"][data-management-workspace]
+/* Low-specificity fallback for legacy native controls. Shared components and
+   local semantic utilities must remain able to override this bridge. */
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]) {
   min-height: 44px;
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 12px;
-  background: var(--app-input-bg);
-  color: var(--app-text);
+  background: var(--card);
+  color: var(--foreground);
   font-size: 14px;
   line-height: 1.45;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.42) inset;
@@ -820,108 +642,108 @@ html.dark[data-management-workspace] {
     background-color 160ms ease;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   textarea {
   min-height: 104px;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(input, textarea, select):not([type="checkbox"]):not([type="radio"]):focus {
-  border-color: color-mix(in srgb, var(--app-accent) 58%, var(--app-border));
+  border-color: color-mix(in srgb, var(--primary) 58%, var(--border));
   outline: none;
-  box-shadow: 0 0 0 4px color-mix(in srgb, var(--app-accent) 14%, transparent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--primary) 14%, transparent);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(input, textarea)::placeholder {
-  color: var(--app-muted-light);
+  color: var(--foreground-subtle);
   opacity: 1;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(button, [role="button"], a[class*="inline-flex"]):focus-visible {
-  outline: 3px solid color-mix(in srgb, var(--app-accent) 42%, transparent);
+  outline: 3px solid color-mix(in srgb, var(--primary) 42%, transparent);
   outline-offset: 2px;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(button, [role="button"]) {
   border-radius: 12px;
   touch-action: manipulation;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is(button, a, summary) {
   -webkit-tap-highlight-color: transparent;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   button:disabled {
   cursor: not-allowed;
   opacity: 0.48;
 }
 
-/* Neutralize legacy hard-coded neutral colors without touching semantic status colors. */
-[data-dashboard-ui="management"][data-management-workspace]
+/* Low-specificity color bridge for legacy utilities. */
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="text-zinc-950"], [class~="text-zinc-900"], [class~="text-gray-950"], [class~="text-gray-900"]) {
-  color: var(--app-text);
+  color: var(--foreground);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="text-zinc-800"], [class~="text-zinc-700"], [class~="text-zinc-600"], [class~="text-gray-800"], [class~="text-gray-700"], [class~="text-gray-600"]) {
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="text-zinc-500"], [class~="text-zinc-400"], [class~="text-gray-500"], [class~="text-gray-400"]) {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="bg-white"], [class~="bg-zinc-50"], [class~="bg-gray-50"]) {
-  background-color: var(--app-card-bg);
+  background-color: var(--card);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="bg-zinc-100"], [class~="bg-gray-100"]) {
-  background-color: var(--app-soft-bg);
+  background-color: var(--surface-soft);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class*="bg-zinc-50/"], [class*="bg-gray-50/"]) {
-  background-color: var(--app-soft-bg);
+  background-color: var(--surface-soft);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="text-[8px]"], [class~="text-[9px]"]) {
   font-size: 0.6875rem;
   line-height: 1.4;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   :is([class~="text-[10px]"], [class~="text-[11px]"]) {
   font-size: 0.75rem;
   line-height: 1.45;
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   [class*="border-black"] {
-  border-color: var(--app-border);
+  border-color: var(--border);
 }
 
-[data-dashboard-ui="management"][data-management-workspace]
+:where([data-dashboard-ui="management"][data-management-workspace])
   section[class~="border-y"][class~="bg-white"] {
   overflow: hidden;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: 20px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: var(--management-card-shadow);
 }
 
 .dark [data-dashboard-ui="management"][data-management-workspace]
   :is([class~="bg-zinc-950"], [class~="bg-zinc-900"]) {
-  border-color: var(--app-accent);
-  background-color: var(--app-accent);
+  border-color: var(--primary);
+  background-color: var(--primary);
 }
 
 /* Data tables keep density but gain comfortable rhythm and clearer grouping. */
@@ -930,20 +752,20 @@ html.dark[data-management-workspace] {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: var(--app-card-bg);
+  background: var(--card);
   font-variant-numeric: tabular-nums;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   thead {
-  background: color-mix(in srgb, var(--app-soft-bg) 82%, var(--app-card-bg));
+  background: color-mix(in srgb, var(--surface-soft) 82%, var(--card));
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   th {
   min-height: 44px;
   padding-block: 12px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
   font-weight: 620;
   line-height: 1.35;
@@ -954,7 +776,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   td {
   min-height: 48px;
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   font-size: 13px;
   line-height: 1.48;
 }
@@ -966,7 +788,7 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   tbody tr:hover {
-  background: color-mix(in srgb, var(--app-accent-soft) 30%, var(--app-card-bg));
+  background: color-mix(in srgb, var(--accent) 30%, var(--card));
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -985,7 +807,7 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .management-app-card {
   border-radius: 20px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: var(--management-card-shadow);
   transition:
     border-color 180ms ease,
@@ -995,8 +817,8 @@ html.dark[data-management-workspace] {
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-app-card:hover {
-  border-color: color-mix(in srgb, var(--app-accent) 24%, var(--app-border));
-  background: var(--app-card-bg);
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+  background: var(--card);
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.025),
     0 16px 38px rgba(0, 0, 0, 0.075);
@@ -1005,13 +827,13 @@ html.dark[data-management-workspace] {
 [data-dashboard-ui="management"][data-management-workspace]
   .course-editor-window {
   border-radius: 24px;
-  background: var(--app-card-bg);
+  background: var(--card);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.2);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   details {
-  border-color: var(--app-border);
+  border-color: var(--border);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1047,17 +869,17 @@ html.dark[data-management-workspace]
 
 html[data-management-workspace]
   :is(.course-editor-window, [role="tooltip"].app-card) {
-  border-color: var(--app-border);
+  border-color: var(--border);
   border-radius: 24px;
-  background: var(--app-card-bg);
-  color: var(--app-text);
+  background: var(--card);
+  color: var(--foreground);
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.22);
 }
 
 /* Shared management home: editorial hierarchy with operational density below. */
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home {
-  color: var(--app-text);
+  color: var(--foreground);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1077,7 +899,7 @@ html[data-management-workspace]
   display: flex;
   align-items: center;
   gap: 7px;
-  color: var(--app-accent-strong);
+  color: var(--primary-hover);
   font-size: 11px;
   font-weight: 680;
   letter-spacing: 0.1em;
@@ -1098,7 +920,7 @@ html[data-management-workspace]
   .management-home-intro {
   max-width: 660px;
   margin-top: 16px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 15px;
   line-height: 1.6;
 }
@@ -1118,11 +940,11 @@ html[data-management-workspace]
   min-height: 40px;
   align-items: center;
   gap: 7px;
-  border: 1px solid var(--app-border);
+  border: 1px solid var(--border);
   border-radius: 999px;
   padding: 8px 13px;
   background: rgba(255, 255, 255, 0.72);
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   font-size: 12px;
   font-weight: 620;
   box-shadow: 0 1px 0 rgba(255, 255, 255, 0.62) inset;
@@ -1137,14 +959,14 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-actions > button:hover {
-  border-color: color-mix(in srgb, var(--app-accent) 26%, var(--app-border));
-  background: var(--app-accent-soft);
-  color: var(--app-accent-strong);
+  border-color: color-mix(in srgb, var(--primary) 26%, var(--border));
+  background: var(--accent);
+  color: var(--primary-hover);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-actions > .management-home-chip-muted {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1186,7 +1008,7 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-metric p {
   margin-top: 19px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 13px;
   font-weight: 580;
 }
@@ -1195,7 +1017,7 @@ html[data-management-workspace]
   .management-home-metric strong {
   display: block;
   margin-top: 6px;
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: 2.15rem;
   line-height: 1;
   font-weight: 700;
@@ -1207,7 +1029,7 @@ html[data-management-workspace]
   .management-home-metric small {
   display: block;
   margin-top: 10px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
   line-height: 1.4;
 }
@@ -1262,14 +1084,14 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .is-warning {
-  color: var(--app-warm);
-  background: var(--app-warm-soft);
+  color: var(--status-warning);
+  background: var(--status-warning-surface);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .is-success {
-  color: var(--app-success);
-  background: var(--app-success-soft);
+  color: var(--status-success);
+  background: var(--status-success-surface);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1279,7 +1101,7 @@ html[data-management-workspace]
   gap: 16px;
   margin-top: 26px;
   padding-bottom: 22px;
-  border-bottom: 1px solid var(--app-border-soft);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1305,7 +1127,7 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-summary small {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
 }
 
@@ -1326,7 +1148,7 @@ html[data-management-workspace]
   gap: 14px;
   border-radius: 13px;
   padding: 8px 10px;
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   transition:
     background-color 160ms ease,
     color 160ms ease;
@@ -1334,8 +1156,8 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-row:hover {
-  background: var(--app-soft-bg);
-  color: var(--app-text);
+  background: var(--surface-soft);
+  color: var(--foreground);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1351,7 +1173,7 @@ html[data-management-workspace]
   :is(.management-focus-copy, .management-institution-copy) strong {
   display: block;
   overflow: hidden;
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: 13px;
   font-weight: 630;
   text-overflow: ellipsis;
@@ -1363,7 +1185,7 @@ html[data-management-workspace]
   display: block;
   overflow: hidden;
   margin-top: 3px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 11px;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1376,7 +1198,7 @@ html[data-management-workspace]
   height: 6px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--app-soft-bg);
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1396,7 +1218,7 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-row > svg {
-  color: var(--app-muted-light);
+  color: var(--foreground-subtle);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1414,7 +1236,7 @@ html[data-management-workspace]
   gap: 4px;
   border-radius: 15px;
   padding: 13px;
-  background: var(--app-soft-bg);
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1428,7 +1250,7 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-institution-summary small {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 11px;
 }
 
@@ -1446,12 +1268,12 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-institution-row:hover {
-  background: var(--app-soft-bg);
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-institution-track > span {
-  background: var(--app-warm);
+  background: var(--status-warning);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1472,9 +1294,9 @@ html[data-management-workspace]
   justify-content: center;
   gap: 7px;
   margin-top: 12px;
-  border-top: 1px solid var(--app-border-soft);
+  border-top: 1px solid var(--border-subtle);
   padding-top: 14px;
-  color: var(--app-accent-strong);
+  color: var(--primary-hover);
   font-size: 13px;
   font-weight: 630;
 }
@@ -1486,7 +1308,7 @@ html[data-management-workspace]
   align-items: center;
   justify-content: center;
   gap: 9px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 13px;
   text-align: center;
 }
@@ -1509,14 +1331,14 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-section-heading p:not(.management-section-kicker) {
   margin-top: 7px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 13px;
   line-height: 1.5;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-section-heading > span {
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
 }
 
@@ -1535,7 +1357,7 @@ html[data-management-workspace]
   align-items: start;
   gap: 13px;
   padding: 19px;
-  color: var(--app-text-soft);
+  color: var(--foreground-secondary);
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
@@ -1544,8 +1366,8 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card:hover {
-  border-color: color-mix(in srgb, var(--app-accent) 24%, var(--app-border));
-  background: color-mix(in srgb, var(--app-accent-soft) 18%, var(--app-card-bg));
+  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
+  background: color-mix(in srgb, var(--accent) 18%, var(--card));
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.025),
     0 17px 38px rgba(0, 0, 0, 0.075);
@@ -1559,14 +1381,14 @@ html[data-management-workspace]
   align-items: center;
   justify-content: center;
   border-radius: 13px;
-  background: var(--app-accent-soft);
-  color: var(--app-accent-strong);
+  background: var(--accent);
+  color: var(--primary-hover);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-copy strong {
   display: block;
-  color: var(--app-text);
+  color: var(--foreground);
   font-size: 14px;
   font-weight: 650;
 }
@@ -1576,7 +1398,7 @@ html[data-management-workspace]
   display: -webkit-box;
   overflow: hidden;
   margin-top: 7px;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
   line-height: 1.55;
   -webkit-box-orient: vertical;
@@ -1587,8 +1409,8 @@ html[data-management-workspace]
   .management-quick-card > b {
   border-radius: 999px;
   padding: 5px 8px;
-  background: var(--app-warm-soft);
-  color: var(--app-warm);
+  background: var(--status-warning-surface);
+  color: var(--status-warning);
   font-size: 11px;
   font-weight: 660;
   white-space: nowrap;
@@ -1597,7 +1419,7 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card > svg {
   margin-top: 4px;
-  color: var(--app-muted-light);
+  color: var(--foreground-subtle);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1605,9 +1427,9 @@ html[data-management-workspace]
   display: flex;
   align-items: flex-start;
   gap: 9px;
-  border-top: 1px solid var(--app-border-soft);
+  border-top: 1px solid var(--border-subtle);
   padding: 18px 4px 0;
-  color: var(--app-muted);
+  color: var(--foreground-muted);
   font-size: 12px;
   line-height: 1.55;
 }
@@ -1652,10 +1474,6 @@ html[data-management-workspace]
 
 @media (max-width: 1023px) {
   [data-dashboard-ui="management"][data-management-workspace]
-    .dashboard-page-header,
-  [data-dashboard-ui="management"][data-management-workspace]
-    .page-container,
-  [data-dashboard-ui="management"][data-management-workspace]
     .management-page-shell {
     padding-inline: 20px;
   }
@@ -1681,7 +1499,7 @@ html[data-management-workspace]
 
 @media (max-width: 767px) {
   [data-dashboard-ui="management"][data-management-workspace] {
-    background: var(--app-bg);
+    background: var(--background);
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
@@ -1706,29 +1524,6 @@ html[data-management-workspace]
     .management-content-frame {
     min-height: calc(100dvh - 76px);
     padding-bottom: max(28px, env(safe-area-inset-bottom));
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .dashboard-page-header {
-    padding: 22px 16px 0;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .dashboard-page-header-inner {
-    min-height: auto;
-    padding-bottom: 16px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .dashboard-page-title,
-  [data-dashboard-ui="management"][data-management-workspace]
-    .page-container-title {
-    font-size: 1.75rem;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .page-container {
-    padding: 22px 16px 28px;
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
@@ -1799,12 +1594,6 @@ html[data-management-workspace]
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .page-container-header {
-    min-height: auto;
-    margin-bottom: 16px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
     :is(.app-card, .app-theme-card, .management-app-card) {
     border-radius: 18px;
   }
@@ -1818,7 +1607,7 @@ html[data-management-workspace]
     .management-mobile-layer .management-sidebar {
     width: min(86vw, 310px);
     border: 0;
-    border-right: 1px solid var(--app-border);
+    border-right: 1px solid var(--border);
     border-radius: 0 24px 24px 0;
     background: var(--management-glass-strong);
     box-shadow: var(--management-floating-shadow);
@@ -1994,7 +1783,7 @@ html[data-management-workspace]
     .management-topbar,
   html[data-management-workspace]
     :is([data-slot="dialog-content"], [data-slot="alert-dialog-content"], [data-slot="sheet-content"]) {
-    background: var(--app-card-bg, #ffffff);
+    background: var(--card);
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
   }

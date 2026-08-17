@@ -281,12 +281,12 @@ export function KnowledgeWorkbenchGuide({
           top: panelTop,
           left: panelLeft,
           borderColor: step.color,
-          backgroundColor: "var(--app-card-bg)",
+          backgroundColor: "var(--card)",
         }}
       >
         <div className="flex items-start justify-between gap-3">
           <span
-            className="rounded-full px-2.5 py-1 text-[9px] font-black"
+            className="rounded-full px-2.5 py-1 text-[9px] font-bold"
             style={{ color: step.color, backgroundColor: step.soft }}
           >
             {stepIndex + 1} / {guideSteps.length}
@@ -324,7 +324,7 @@ export function KnowledgeWorkbenchGuide({
           </div>
         </div>
 
-        <h2 className="mt-3 text-base font-black">{step.title}</h2>
+        <h2 className="mt-3 text-base font-bold">{step.title}</h2>
         <p className="app-muted-text mt-2 text-xs leading-6">
           {step.description}
         </p>
@@ -340,7 +340,7 @@ export function KnowledgeWorkbenchGuide({
             type="button"
             disabled={stepIndex === 0}
             onClick={() => setStepIndex((current) => Math.max(0, current - 1))}
-            className="inline-flex items-center gap-1 text-[10px] font-black disabled:opacity-30"
+            className="inline-flex items-center gap-1 text-[10px] font-bold disabled:opacity-30"
           >
             <ChevronLeft size={13} />
             上一步
@@ -353,7 +353,7 @@ export function KnowledgeWorkbenchGuide({
                 style={{
                   width: index === stepIndex ? 18 : 6,
                   backgroundColor:
-                    index <= stepIndex ? step.color : "var(--app-border-soft)",
+                    index <= stepIndex ? step.color : "var(--border-subtle)",
                 }}
               />
             ))}
@@ -367,7 +367,7 @@ export function KnowledgeWorkbenchGuide({
                 setStepIndex((current) => current + 1);
               }
             }}
-            className="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-[10px] font-black text-white"
+            className="inline-flex items-center gap-1 rounded-xl px-3 py-2 text-[10px] font-bold text-white"
             style={{ backgroundColor: step.color }}
           >
             {stepIndex === guideSteps.length - 1 ? "开始学习" : "下一步"}

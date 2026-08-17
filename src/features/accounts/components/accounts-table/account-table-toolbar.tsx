@@ -43,8 +43,8 @@ export function AccountTableToolbar({
   return (
     <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
       <form method="get" className="grid min-w-0 flex-1 gap-2 md:grid-cols-2 xl:grid-cols-[minmax(220px,1fr)_140px_125px_140px_125px_130px_auto]">
-        <label className="flex h-9 items-center gap-2 rounded-md border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5">
-          <Icons.search className="size-3.5 shrink-0 text-[var(--app-muted)]" aria-hidden="true" />
+        <label className="flex h-9 items-center gap-2 rounded-md border border-[var(--border)] bg-[var(--card)] px-2.5">
+          <Icons.search className="size-3.5 shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
           <span className="sr-only">搜索账号</span>
           <input name="q" defaultValue={filters.query} maxLength={80} placeholder="搜索姓名、邮箱或账号" className="min-w-0 flex-1 bg-transparent text-xs outline-none" />
         </label>
@@ -57,11 +57,11 @@ export function AccountTableToolbar({
         )}
         <FilterSelect name="profile" label="资料状态" value={filters.profile} options={PROFILE_FILTERS} />
         <FilterSelect name="sort" label="排序方式" value={filters.sort} options={SORT_OPTIONS} />
-        <button type="submit" className="h-9 rounded-md bg-[var(--app-accent)] px-4 text-xs font-semibold text-white transition-opacity hover:opacity-90">筛选</button>
+        <button type="submit" className="h-9 rounded-md bg-[var(--primary)] px-4 text-xs font-semibold text-white transition-opacity hover:opacity-90">筛选</button>
       </form>
       <div className="flex shrink-0 items-center gap-2">
         {hasFilters && (
-          <button type="button" onClick={() => router.replace(pathname)} className="h-9 rounded-md border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)]">
+          <button type="button" onClick={() => router.replace(pathname)} className="h-9 rounded-md border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]">
             清空筛选
           </button>
         )}
@@ -75,7 +75,7 @@ function FilterSelect({ name, label, value, options }: { name: string; label: st
   return (
     <label>
       <span className="sr-only">{label}</span>
-      <select name={name} defaultValue={value} className="h-9 w-full rounded-md border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs font-medium">
+      <select name={name} defaultValue={value} className="h-9 w-full rounded-md border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium">
         {options.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
       </select>
     </label>

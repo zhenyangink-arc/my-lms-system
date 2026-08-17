@@ -116,20 +116,20 @@ function HomeworkQuestionRow({
   return (
     <tr
       className="border-b align-top last:border-b-0"
-      style={{ borderColor: "var(--app-border-soft)" }}
+      style={{ borderColor: "var(--border-subtle)" }}
     >
-      <td className="px-3 py-3 text-center font-mono text-[10px] font-black tabular-nums">
+      <td className="px-3 py-3 text-center font-mono text-[10px] font-semibold tabular-nums">
         {String(index + 1).padStart(2, "0")}
       </td>
       <td className="border-l px-3 py-3 text-[10px] leading-5">
-        <p className="font-black">
+        <p className="font-semibold">
           {questionTypeLabels[question.questionType] ?? question.questionType}
         </p>
         <p className="app-muted-text">
           {difficultyLabels[question.difficulty] ?? question.difficulty}
         </p>
         {question.sourceBankVersion && (
-          <p className="font-black" style={{ color: "var(--app-success)" }}>
+          <p className="font-semibold" style={{ color: "var(--status-success)" }}>
             平台题库 版本 {question.sourceBankVersion}
           </p>
         )}
@@ -139,10 +139,10 @@ function HomeworkQuestionRow({
           <div
             className="mb-2 border-l-2 pl-3"
             style={{
-              borderColor: "var(--app-accent)",
+              borderColor: "var(--primary)",
             }}
           >
-            <p className="text-[9px] font-black text-[var(--app-accent)]">
+            <p className="text-[9px] font-semibold text-[var(--primary)]">
               听力材料 · 仅管理端预览
             </p>
             <p className="mt-1 whitespace-pre-wrap text-xs font-bold leading-5">
@@ -158,7 +158,7 @@ function HomeworkQuestionRow({
         {question.options.length > 0
           ? question.options.map((option, optionIndex) => (
               <p key={`${question.id}-${optionIndex}`}>
-                <span className="mr-1 font-mono font-black">
+                <span className="mr-1 font-mono font-semibold">
                   {String.fromCharCode(65 + optionIndex)}.
                 </span>
                 {option}
@@ -168,7 +168,7 @@ function HomeworkQuestionRow({
       </td>
       <td
         className="border-l px-3 py-3 text-[11px] font-bold leading-5"
-        style={{ color: "var(--app-success)" }}
+        style={{ color: "var(--status-success)" }}
       >
         {question.correctAnswer ||
           (question.questionType === "audio_recording"
@@ -179,7 +179,7 @@ function HomeworkQuestionRow({
         {question.sourceSkill && <p>能力：{({ vocabulary: "词汇", grammar: "语法", listening: "听力", speaking: "口语", reading: "阅读", writing: "写作", communication: "交际" } as Record<string, string>)[question.sourceSkill] ?? "综合"}</p>}
         <p>{question.explanation || "—"}</p>
       </td>
-      <td className="border-l px-3 py-3 text-center font-mono text-xs font-black tabular-nums">
+      <td className="border-l px-3 py-3 text-center font-mono text-xs font-semibold tabular-nums">
         {question.points}
       </td>
     </tr>
@@ -207,16 +207,16 @@ function HomeworkSkillSection({
     <details
       open
       className="group overflow-hidden border"
-      style={{ borderColor: "var(--app-border)" }}
+      style={{ borderColor: "var(--border)" }}
     >
       <summary
         className="flex cursor-pointer list-none items-center gap-3 px-4 py-3"
-        style={{ backgroundColor: "var(--app-soft-bg)" }}
+        style={{ backgroundColor: "var(--surface-soft)" }}
       >
-        <span className="text-[var(--app-accent)]">
+        <span className="text-[var(--primary)]">
           <SkillIcon skill={skill} />
         </span>
-        <span className="text-sm font-black">{skillLabels[skill]}</span>
+        <span className="text-sm font-semibold">{skillLabels[skill]}</span>
         <span className="app-muted-text text-[10px]">
           已配置 {questions.length} 题 · 目标{" "}
           {setting?.targetQuestionCount ?? 1} 题
@@ -243,8 +243,8 @@ function HomeworkSkillSection({
               <tr
                 className="border-b app-muted-text"
                 style={{
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--surface-soft)",
                 }}
               >
                 <th className="px-3 py-2 text-[10px] font-bold">作答方式</th>
@@ -265,7 +265,7 @@ function HomeworkSkillSection({
             <tbody>
               <tr
                 className="border-b"
-                style={{ borderColor: "var(--app-border)" }}
+                style={{ borderColor: "var(--border)" }}
               >
                 <td className="px-3 py-2.5">
                   <select
@@ -349,8 +349,8 @@ function HomeworkSkillSection({
               <tr
                 className="border-b app-muted-text"
                 style={{
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--surface-soft)",
                 }}
               >
                 <th className="px-3 py-2.5 text-center text-[10px] font-bold">
@@ -446,7 +446,7 @@ export function ChapterHomeworkPlanEditor({
         onClick={() => setIsOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-bold text-[var(--app-secondary)] hover:underline"
+        className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-bold text-[var(--support)] hover:underline"
       >
         <Settings2 size={12} />
         配置作业
@@ -474,7 +474,7 @@ export function ChapterHomeworkPlanEditor({
                 </p>
                 <h2
                   id={`homework-plan-${plan.id}`}
-                  className="mt-1 text-xl font-black"
+                  className="mt-1 text-xl font-semibold"
                 >
                   章节作业配置与题目预览
                 </h2>
@@ -494,7 +494,7 @@ export function ChapterHomeworkPlanEditor({
               <div className="min-h-0 flex-1 space-y-3 overflow-auto p-3 sm:p-4">
                 <div
                   className="overflow-x-auto border"
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   <table className="w-full min-w-[900px] table-fixed border-collapse text-left">
                     <colgroup>
@@ -508,8 +508,8 @@ export function ChapterHomeworkPlanEditor({
                       <tr
                         className="border-b app-muted-text"
                         style={{
-                          borderColor: "var(--app-border-soft)",
-                          backgroundColor: "var(--app-soft-bg)",
+                          borderColor: "var(--border-subtle)",
+                          backgroundColor: "var(--surface-soft)",
                         }}
                       >
                         <th className="px-3 py-2 text-[10px] font-bold">
@@ -610,7 +610,7 @@ export function ChapterHomeworkPlanEditor({
                       color:
                         state.status === "error"
                           ? "#c94f45"
-                          : "var(--app-success)",
+                          : "var(--status-success)",
                     }}
                   >
                     {state.message}
@@ -628,8 +628,8 @@ export function ChapterHomeworkPlanEditor({
                   <button
                     type="submit"
                     disabled={pending}
-                    className="rounded-lg px-5 py-2.5 text-xs font-black text-white disabled:opacity-50"
-                    style={{ backgroundColor: "var(--app-secondary)" }}
+                    className="rounded-lg px-5 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+                    style={{ backgroundColor: "var(--support)" }}
                   >
                     {pending ? "正在保存…" : "保存章节作业"}
                   </button>

@@ -22,16 +22,18 @@ export function VisaCaseTableToolbar({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <label className="app-input flex h-9 min-w-64 flex-1 items-center gap-2 border px-2.5 sm:max-w-sm">
-        <Search className="shrink-0 text-[var(--app-muted)]" size={14} />
-        <span className="sr-only">搜索签证档案</span>
+      <label className="app-input flex h-9 min-w-64 flex-1 items-center gap-2 border px-2.5 transition focus-within:border-[var(--ring)] focus-within:ring-2 focus-within:ring-[var(--ring)] focus-within:ring-offset-2 sm:max-w-sm">
+        <Search className="shrink-0 text-[var(--foreground-muted)]" size={14} />
+        <span className="shrink-0 text-[10px] font-semibold text-[var(--foreground-secondary)]">
+          搜索档案
+        </span>
         <input
           value={filters.query}
           onChange={(event) =>
             onFiltersChange({ ...filters, query: event.target.value })
           }
           placeholder="搜索学生、院校、专业"
-          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--app-muted)]"
+          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--foreground-muted)]"
         />
       </label>
       <label>

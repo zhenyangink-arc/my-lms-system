@@ -40,19 +40,23 @@ function ArticleFormDialog({ article }: { article?: ManagedHelpArticle }) {
         onClick={() => setOpen(true)}
         className={
           article
-            ? "inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
-            : "inline-flex h-8 items-center gap-1.5 bg-[var(--app-primary)] px-3 text-[11px] font-semibold text-white hover:opacity-90"
+            ? "inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+            : "inline-flex h-8 items-center gap-1.5 bg-[var(--primary)] px-3 text-[11px] font-semibold text-white hover:opacity-90"
         }
       >
-        {article ? <PencilLine size={12} /> : <Plus size={13} />}
+        {article ? (
+          <PencilLine size={12} aria-hidden="true" />
+        ) : (
+          <Plus size={13} aria-hidden="true" />
+        )}
         {article ? "编辑" : "新建文章"}
       </button>
-      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-none border-[var(--app-border)] p-0">
-        <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
-          <DialogTitle className="text-base font-semibold text-[var(--app-text)]">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto rounded-none border-[var(--border)] p-0">
+        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
+          <DialogTitle className="text-base font-semibold text-[var(--foreground)]">
             {article ? "编辑帮助文章" : "新建帮助文章"}
           </DialogTitle>
-          <DialogDescription className="text-xs text-[var(--app-muted)]">
+          <DialogDescription className="text-xs text-[var(--foreground-muted)]">
             发布后的文章会按照现有权限规则显示在学生端帮助中心。
           </DialogDescription>
         </DialogHeader>

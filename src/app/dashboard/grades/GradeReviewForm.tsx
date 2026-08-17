@@ -32,14 +32,14 @@ export function GradeReviewForm({
 
   return (
     <details className="app-soft-card w-full rounded-lg border px-3 sm:w-auto sm:min-w-72">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] [&::-webkit-details-marker]:hidden">
         申请成绩复核
       </summary>
       <form
         ref={formRef}
         action={formAction}
         className="mt-3 space-y-3 border-t pt-3"
-        style={{ borderColor: "var(--app-border-soft)" }}
+        style={{ borderColor: "var(--border-subtle)" }}
       >
         <textarea
           name="reason"
@@ -56,8 +56,8 @@ export function GradeReviewForm({
             style={{
               color:
                 state.status === "error"
-                  ? "var(--app-danger)"
-                  : "var(--app-success)",
+                  ? "var(--status-danger)"
+                  : "var(--status-success)",
             }}
           >
             {state.message}
@@ -67,7 +67,7 @@ export function GradeReviewForm({
           type="submit"
           disabled={pending}
           className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          style={{ backgroundColor: "var(--primary)" }}
         >
           <SearchCheck size={13} aria-hidden="true" />
           {pending ? "正在提交…" : "提交复核"}

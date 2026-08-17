@@ -525,20 +525,20 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
   ref
 ) {
   return (
-    <div ref={ref} className={`h-full overflow-hidden shadow-[inset_0_0_28px_rgba(57,78,67,0.08)] ${
-      goals ? "bg-[linear-gradient(145deg,#edf8f3_0%,#e4f3ed_100%)]" : "bg-[#fffef9]"
+    <div ref={ref} className={`h-full overflow-hidden shadow-sm ${
+      goals ? "bg-[linear-gradient(145deg,var(--card)_0%,var(--status-success-surface)_100%)]" : "bg-[var(--card)]"
     }`}>
       {cover ? children : (
         <div className="flex h-full flex-col px-9 py-8">
-          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-black tracking-[0.12em] ${
-            goals ? "border-[#bedbce]" : "border-[#dce8e1]"
+          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-bold tracking-[0.12em] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--status-success-surface)]"
           }`}>
-            <span className="text-[#238777]">{header}</span>
-            <span className="text-[#789087]">第三章 · 收音与拼读</span>
+            <span className="text-[var(--status-success)]">{header}</span>
+            <span className="text-[var(--foreground-muted)]">第三章 · 收音与拼读</span>
           </div>
           <div className="min-h-0 flex-1 pt-5">{children}</div>
-          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[#92a099] ${
-            goals ? "border-[#bedbce]" : "border-[#e4ebe7]"
+          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[var(--foreground-muted)] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--surface-soft)]"
           }`}>
             <span>互动电子书</span>
             <span>{number}</span>
@@ -553,8 +553,8 @@ function LessonContent({ page, onSpeak }: { page: LessonPage; onSpeak: (text: st
   const green = page.accent === "green";
   return (
     <div className="flex h-full flex-col">
-      <h2 className="text-3xl font-black leading-tight text-[#173f4a]">{page.title}</h2>
-      <p className="mt-4 text-sm leading-7 text-[#60736a]">{page.lead}</p>
+      <h3 className="text-3xl font-bold leading-tight text-[var(--primary)]">{page.title}</h3>
+      <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
       <div className={`mt-5 grid flex-1 content-center gap-3 ${page.items.length >= 6 ? "grid-cols-3" : "grid-cols-2"}`}>
         {page.items.map((item) => (
           <button
@@ -562,19 +562,19 @@ function LessonContent({ page, onSpeak }: { page: LessonPage; onSpeak: (text: st
             type="button"
             onClick={() => onSpeak(item.sound)}
             className={`rounded-[22px] border bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${
-              green ? "border-[#d5e7df] hover:border-[#72b7a7]" : "border-[#eadfce] hover:border-[#d6975f]"
+              green ? "border-[var(--status-success-surface)] hover:border-[var(--status-success)]" : "border-[var(--border-subtle)] hover:border-[var(--destructive)]"
             }`}
           >
             <span className="flex items-start justify-between gap-2">
-              <span className={`text-4xl font-black ${green ? "text-[#238777]" : "text-[#9b5e2e]"}`}>{item.value}</span>
-              <Volume2 size={16} className={green ? "text-[#72b7a7]" : "text-[#d6975f]"} />
+              <span className={`text-4xl font-bold ${green ? "text-[var(--status-success)]" : "text-[var(--destructive)]"}`}>{item.value}</span>
+              <Volume2 size={16} className={green ? "text-[var(--status-success)]" : "text-[var(--destructive)]"} />
             </span>
-            <span className="mt-3 block text-sm font-black text-[#294f43]">{item.structure}</span>
-            <span className="mt-1 block text-xs leading-5 text-[#7a8d84]">{item.hint}</span>
+            <span className="mt-3 block text-sm font-bold text-[var(--foreground-secondary)]">{item.structure}</span>
+            <span className="mt-1 block text-xs leading-5 text-[var(--foreground-muted)]">{item.hint}</span>
           </button>
         ))}
       </div>
-      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[#e9f6f1] text-[#42675b]" : "bg-[#fff2e2] text-[#765c49]"}`}>
+      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[var(--status-success-surface)] text-[var(--foreground-secondary)]" : "bg-[var(--status-warning-surface)] text-[var(--foreground-secondary)]"}`}>
         <Lightbulb size={18} className="mt-0.5 shrink-0" />
         <p className="text-sm font-bold leading-6">{page.tip}</p>
       </div>
@@ -673,23 +673,23 @@ export function BatchimReadingBook({
   }
 
   return (
-    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2">
       <div className={`relative shrink-0 ${isFullscreen ? "" : "-translate-y-2.5"}`} style={{ width: BOOK_WIDTH * bookScale, height: BOOK_HEIGHT * bookScale }}>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">←</button>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">→</button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-2xl font-bold text-[var(--status-success)] shadow-lg">←</button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-2xl font-bold text-[var(--status-success)] shadow-lg">→</button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${bookScale})` }}>
           <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
             <Page number={0} cover>
-              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d8f0e7_0,_transparent_32%),linear-gradient(145deg,_#fffef9_0%,_#e8f6f0_100%)] px-10 py-11 text-center">
-                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[#173f4a]" />
-                <div className="relative"><p className="text-2xl font-black tracking-[0.22em] text-[#b87131]">韩语字母入门</p><div className="mx-auto mt-2 h-px w-48 bg-[#cfe2d9]" /></div>
+              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--status-success-surface)_0,_transparent_32%),linear-gradient(145deg,_var(--card)_0%,_var(--status-success-surface)_100%)] px-10 py-11 text-center">
+                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[var(--primary)]" />
+                <div className="relative"><p className="text-2xl font-bold tracking-[0.22em] text-[var(--destructive)]">韩语字母入门</p><div className="mx-auto mt-2 h-px w-48 bg-[var(--border-subtle)]" /></div>
                 <div className="relative">
-                  <p className="text-base font-black tracking-[0.16em] text-[#238777]">第三章</p>
-                  <h1 className="mt-5 text-5xl font-black tracking-tight text-[#173f4a]">收音与拼读</h1>
-                  <p className="mt-4 text-lg font-bold text-[#60736a]">看清底部，完整读出音节</p>
-                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[#60736a]">认识收音位置与代表音，从单个音节稳步读到简单词语。</p>
+                  <p className="text-base font-bold tracking-[0.16em] text-[var(--status-success)]">第三章</p>
+                  <h3 className="mt-5 text-5xl font-bold tracking-tight text-[var(--primary)]">收音与拼读</h3>
+                  <p className="mt-4 text-lg font-bold text-[var(--foreground-secondary)]">看清底部，完整读出音节</p>
+                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[var(--foreground-secondary)]">认识收音位置与代表音，从单个音节稳步读到简单词语。</p>
                   <div className="mt-16 flex justify-center gap-4">
-                    {["가", "ㄱ", "각"].map((letter, index) => <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-black ${index === 2 ? "bg-[#238777] text-white" : "bg-white text-[#238777] shadow-sm ring-1 ring-[#d7e8e1]"}`}>{letter}</span>)}
+                    {["가", "ㄱ", "각"].map((letter, index) => <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-bold ${index === 2 ? "bg-[var(--status-success)] text-white" : "bg-white text-[var(--status-success)] shadow-sm ring-1 ring-[var(--status-success-surface)]"}`}>{letter}</span>)}
                   </div>
                 </div>
                 <div className="relative flex items-center justify-between text-sm font-bold text-white/80"><span className="inline-flex items-center gap-2"><Headphones size={16} />互动电子书</span><span>28 个学习主题</span></div>
@@ -698,9 +698,9 @@ export function BatchimReadingBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第三章</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
-                <ol className="mt-5 divide-y divide-[#e5ece7] rounded-2xl border border-[#dce8e1] bg-white px-5 py-2 text-left">
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第三章</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">目录</h3>
+                <ol className="mt-5 divide-y divide-[var(--surface-soft)] rounded-2xl border border-[var(--status-success-surface)] bg-white px-5 py-2 text-left">
                   {[
                     [1, "本章学习目标"],
                     [2, "3.1 收音与拼读导读"],
@@ -712,7 +712,7 @@ export function BatchimReadingBook({
                     [17, "3.7 自然拼读与基础音变"],
                     [28, "3.8 本章小结与应用"],
                   ].map(([pageNumber, title]) => (
-                    <li key={pageNumber}><button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(Number(pageNumber) + 1)} className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[#526c60] transition hover:text-[#238777]"><span>{title}</span><span className="font-black text-[#238777]">{String(pageNumber).padStart(2, "0")}</span></button></li>
+                    <li key={pageNumber}><button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(Number(pageNumber) + 1)} className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[var(--foreground-secondary)] transition hover:text-[var(--status-success)]"><span>{title}</span><span className="font-bold text-[var(--status-success)]">{String(pageNumber).padStart(2, "0")}</span></button></li>
                   ))}
                 </ol>
               </div>
@@ -720,19 +720,19 @@ export function BatchimReadingBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第三章 · GOALS</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
-                <p className="mt-4 text-sm leading-7 text-[#60736a]">把音节底部的字母转化为清楚的发音动作，并建立从音节结构到词语拼读的完整路径。</p>
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第三章 · GOALS</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">学完这一章，你将能够</h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">把音节底部的字母转化为清楚的发音动作，并建立从音节结构到词语拼读的完整路径。</p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
                   {[
                     ["01", "识别收音位置", "能快速判断音节是否带收音，并按正确顺序拆分结构。"],
                     ["02", "掌握七个代表音", "能用发音部位和动作区分常见收音类别。"],
                     ["03", "完成词语拼读", "能逐个读清音节方块，再自然连接成简单词语。"],
                   ].map(([number, title, description]) => (
-                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[#dce8e1] bg-white p-5"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e7f4ef] text-sm font-black text-[#238777]">{number}</span><div><h3 className="text-base font-black text-[#294f43]">{title}</h3><p className="mt-1 text-xs leading-6 text-[#71857b]">{description}</p></div></section>
+                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[var(--status-success-surface)] bg-white p-5"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-sm font-bold text-[var(--status-success)]">{number}</span><div><h4 className="text-base font-bold text-[var(--foreground-secondary)]">{title}</h4><p className="mt-1 text-xs leading-6 text-[var(--foreground-muted)]">{description}</p></div></section>
                   ))}
                 </div>
-                <div className="mt-6 rounded-2xl bg-[#fff3e3] p-4 text-sm font-bold leading-6 text-[#765c49]">阅读建议：每个词先拆成音节方块慢读，再点击卡片听示范音。</div>
+                <div className="mt-6 rounded-2xl bg-[var(--surface-soft)] p-4 text-sm font-bold leading-6 text-[var(--foreground-secondary)]">阅读建议：每个词先拆成音节方块慢读，再点击卡片听示范音。</div>
               </div>
             </Page>
 
@@ -740,14 +740,14 @@ export function BatchimReadingBook({
 
             <Page number="30" header="本章结束">
               <div className="relative flex h-full flex-col items-center justify-center overflow-hidden text-center">
-                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4f3ed]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
+                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[var(--status-success-surface)]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第三章完成</p>
-                  <h2 className="mt-5 text-4xl font-black text-[#173f4a]">收音与拼读学习完成</h2>
-                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">你已经认识收音位置、七个代表音和基础拼读顺序。接下来进入本章测试检查学习成果。</p>
-                  <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한", "ㄴ 收音"], ["밥", "ㅂ 收音"], ["공", "ㅇ 收音"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm"><p className="text-3xl font-black text-[#238777]">{value}</p><p className="mt-2 text-xs font-bold text-[#789087]">{label}</p></div>)}</div>
-                  <button type="button" onClick={onStartTest} disabled={testLocked} title={testLocked ? "完成本章学习目标后解锁测试" : undefined} className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#238777] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#1d7468] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none">{testLocked && <Lock size={17} />}进入本章测试</button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">{testLocked ? "完成本章学习目标后解锁测试" : "完成测试后将解锁下一章"}</p>
+                  <p className="text-sm font-bold tracking-[0.2em] text-[var(--destructive)]">第三章完成</p>
+                  <h3 className="mt-5 text-4xl font-bold text-[var(--primary)]">收音与拼读学习完成</h3>
+                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[var(--foreground-secondary)]">你已经认识收音位置、七个代表音和基础拼读顺序。接下来进入本章测试检查学习成果。</p>
+                  <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한", "ㄴ 收音"], ["밥", "ㅂ 收音"], ["공", "ㅇ 收音"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[var(--status-success-surface)] bg-white p-4 shadow-sm"><p className="text-3xl font-bold text-[var(--status-success)]">{value}</p><p className="mt-2 text-xs font-bold text-[var(--foreground-muted)]">{label}</p></div>)}</div>
+                  <button type="button" onClick={onStartTest} disabled={testLocked} title={testLocked ? "完成本章学习目标后解锁测试" : undefined} className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] px-8 py-4 text-base font-bold text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[var(--status-success)] disabled:cursor-not-allowed disabled:bg-[var(--border)] disabled:shadow-none">{testLocked && <Lock size={17} />}进入本章测试</button>
+                  <p className="mt-4 text-xs font-bold text-[var(--foreground-muted)]">{testLocked ? "完成本章学习目标后解锁测试" : "完成测试后将解锁下一章"}</p>
                 </div>
               </div>
             </Page>

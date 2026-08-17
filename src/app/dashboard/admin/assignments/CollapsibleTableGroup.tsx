@@ -27,8 +27,8 @@ export function CollapsibleTableGroup({
       <tr
         className="border-b"
         style={{
-          borderColor: "var(--app-border-soft)",
-          backgroundColor: "color-mix(in srgb, var(--app-soft-bg) 54%, white)",
+          borderColor: "var(--border-subtle)",
+          backgroundColor: "color-mix(in srgb, var(--surface-soft) 54%, white)",
         }}
       >
         <td colSpan={columnCount} className="p-0">
@@ -36,7 +36,7 @@ export function CollapsibleTableGroup({
             type="button"
             onClick={() => setIsOpen((current) => !current)}
             aria-expanded={isOpen}
-            className="relative flex w-full items-center gap-2 px-4 py-2.5 text-left transition-colors hover:bg-[var(--app-soft-bg)]"
+            className="relative flex w-full items-center gap-2 px-4 py-2.5 text-left transition-colors hover:bg-[var(--surface-soft)]"
           >
             {isOpen && (
               <span
@@ -44,7 +44,7 @@ export function CollapsibleTableGroup({
                 className="absolute bottom-0 left-[22px] top-1/2 border-l"
                 style={{
                   borderColor:
-                    "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                    "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                 }}
               />
             )}

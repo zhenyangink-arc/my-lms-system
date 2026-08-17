@@ -179,31 +179,31 @@ export async function ToolboxPage({
         className="relative overflow-hidden rounded-3xl border p-6 sm:p-8"
         style={{
           background:
-            "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-accent-soft))",
-          borderColor: "var(--app-border)",
+            "linear-gradient(125deg, var(--card), var(--card), var(--accent))",
+          borderColor: "var(--border)",
         }}
       >
         <div
           className="pointer-events-none absolute -right-12 -top-16 h-48 w-48 rounded-full opacity-50 blur-3xl"
-          style={{ backgroundColor: "var(--app-accent-soft)" }}
+          style={{ backgroundColor: "var(--accent)" }}
         />
         <div
           className="pointer-events-none absolute -bottom-16 left-1/3 h-40 w-40 rounded-full opacity-40 blur-3xl"
-          style={{ backgroundColor: "var(--app-warm-soft)" }}
+          style={{ backgroundColor: "var(--status-warning-surface)" }}
         />
         <div className="relative flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <span
               className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl"
               style={{
-                color: "var(--app-accent)",
-                backgroundColor: "var(--app-accent-soft)",
+                color: "var(--primary)",
+                backgroundColor: "var(--accent)",
               }}
             >
               <Wrench size={26} aria-hidden="true" />
             </span>
             <div>
-              <h1 className="text-2xl font-black tracking-tight">专项训练</h1>
+              <h2 className="text-2xl font-bold tracking-tight">专项训练</h2>
               <p className="app-muted-text mt-1 text-sm font-bold">
                 按能力维度训练，巩固每一课的知识点。
               </p>
@@ -211,10 +211,10 @@ export async function ToolboxPage({
           </div>
           <div className="flex flex-wrap gap-2">
             <span
-              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black"
+              className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold"
               style={{
-                color: "var(--app-accent)",
-                backgroundColor: "var(--app-accent-soft)",
+                color: "var(--primary)",
+                backgroundColor: "var(--accent)",
               }}
             >
               <Sparkles size={13} aria-hidden="true" />
@@ -229,8 +229,8 @@ export async function ToolboxPage({
         title="专项训练 · 六维练习能力"
         description="只统计最近 30 天的日常专项练习，与老师作业和正式考试完全分开"
         icon={Activity}
-        color="var(--app-accent)"
-        soft="var(--app-accent-soft)"
+        color="var(--primary)"
+        soft="var(--accent)"
         data={profiles.map((profile) => ({
           skill: profile.skill,
           value:
@@ -262,12 +262,12 @@ export async function ToolboxPage({
             key={String(label)}
             className="border-t p-4 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0"
             style={{
-              borderColor: "var(--app-border-soft)",
+              borderColor: "var(--border-subtle)",
               backgroundColor:
-                index === 0 ? "var(--app-soft-bg)" : "var(--app-card-bg)",
+                index === 0 ? "var(--surface-soft)" : "var(--card)",
             }}
           >
-            <p className="text-xl font-black tabular-nums">{value}</p>
+            <p className="text-xl font-bold tabular-nums">{value}</p>
             <p className="app-muted-text mt-1 text-xs font-bold">{label}</p>
           </div>
         ))}
@@ -277,10 +277,10 @@ export async function ToolboxPage({
       {tools.length === 0 ? (
         <section
           className="app-soft-card flex min-h-52 flex-col items-center justify-center rounded-3xl border p-8 text-center"
-          style={{ borderColor: "var(--app-border)" }}
+          style={{ borderColor: "var(--border)" }}
         >
           <Wrench size={28} className="opacity-40" aria-hidden="true" />
-          <p className="mt-3 text-sm font-black">暂时没有可用的练习</p>
+          <p className="mt-3 text-sm font-bold">暂时没有可用的练习</p>
           <p className="app-muted-text mt-1 text-xs">
             练习入口正在准备中，上线后会出现在这里。
           </p>
@@ -288,10 +288,10 @@ export async function ToolboxPage({
       ) : (
         <section aria-labelledby="practice-modules-title">
           <div className="mb-3 px-1">
-            <p className="text-[10px] font-black tracking-[0.12em] text-[var(--app-accent)]">
+            <p className="text-[10px] font-bold tracking-[0.12em] text-[var(--primary)]">
               六维专项练习
             </p>
-            <h2 id="practice-modules-title" className="mt-1 text-lg font-black tracking-tight">
+            <h2 id="practice-modules-title" className="mt-1 text-lg font-bold tracking-tight">
               选择今天要巩固的能力
             </h2>
             <p className="app-muted-text mt-1 text-xs font-bold">
@@ -306,7 +306,7 @@ export async function ToolboxPage({
                 key={tool.id}
                 href={tool.href}
                 className="app-card group flex min-h-72 flex-col rounded-3xl border p-5 transition-[border-color,box-shadow] hover:shadow-md focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
-                style={{ borderColor: "var(--app-border)" }}
+                style={{ borderColor: "var(--border)" }}
               >
                 <div className="flex h-full flex-col gap-4">
                   <div className="flex items-start justify-between gap-3">
@@ -317,7 +317,7 @@ export async function ToolboxPage({
                       <Icon size={22} aria-hidden="true" />
                     </span>
                     <span
-                      className="rounded-full px-2.5 py-1 text-[10px] font-black tabular-nums"
+                      className="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums"
                       style={{ color: tool.accent, backgroundColor: tool.soft }}
                     >
                       {tool.ability == null
@@ -328,7 +328,7 @@ export async function ToolboxPage({
                     </span>
                   </div>
                   <div className="mt-1">
-                    <h2 className="text-lg font-black">{tool.title}</h2>
+                    <h2 className="text-lg font-bold">{tool.title}</h2>
                     <p className="app-muted-text mt-1.5 text-sm leading-6">
                       {tool.description}
                     </p>
@@ -338,7 +338,7 @@ export async function ToolboxPage({
                     {tool.focus.map((focus) => (
                       <li
                         key={focus}
-                        className="rounded-full px-2.5 py-1 text-[11px] font-black"
+                        className="rounded-full px-2.5 py-1 text-[11px] font-bold"
                         style={{ color: tool.accent, backgroundColor: tool.soft }}
                       >
                         {focus}
@@ -346,8 +346,8 @@ export async function ToolboxPage({
                     ))}
                   </ul>
 
-                  <div className="mt-auto border-t pt-4" style={{ borderColor: "var(--app-border-soft)" }}>
-                    <div className="flex items-center justify-between gap-3 text-xs font-black">
+                  <div className="mt-auto border-t pt-4" style={{ borderColor: "var(--border-subtle)" }}>
+                    <div className="flex items-center justify-between gap-3 text-xs font-bold">
                       <span className="inline-flex items-center gap-1.5 app-muted-text">
                         <CheckCircle2 size={14} style={{ color: tool.accent }} aria-hidden="true" />
                         {tool.courseCount} 门课程 · {tool.chapterCount} 个章节

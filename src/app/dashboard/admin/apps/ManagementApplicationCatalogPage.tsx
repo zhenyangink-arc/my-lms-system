@@ -13,7 +13,10 @@ import {
 
 import { getAdminRoleLabel } from "@/app/dashboard/admin/admin-navigation";
 import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
-import { ManagementPage } from "@/components/layout/management-page";
+import {
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import {
   requireManagementAppCatalogAccess,
   type ManagementAppCatalogItem,
@@ -28,6 +31,7 @@ type AppMetrics = {
   students: number;
   workItems: number;
   staff: number;
+  hasError: boolean;
 };
 
 const appIconMap = {
@@ -105,6 +109,9 @@ async function getAppMetrics(
     students: countValue(studentResult),
     workItems: countValue(workItemResult),
     staff: countValue(staffResult),
+    hasError: [courseResult, studentResult, workItemResult, staffResult].some(
+      (result) => Boolean(result.error),
+    ),
   };
 }
 
@@ -144,8 +151,12 @@ export async function ManagementApplicationCatalogPage({
         </>
       }
     >
-
-      <section className="grid overflow-hidden rounded-lg border bg-[var(--app-card-bg)] sm:grid-cols-3" aria-label="应用运营概况">
+      {metrics.some((item) => item.hasError) && (
+        <ManagementNotice tone="warning">
+          部分应用概况数据读取失败；应用入口仍可使用，请稍后刷新重试。
+        </ManagementNotice>
+      )}
+      <section className="grid overflow-hidden rounded-lg border bg-[var(--card)] sm:grid-cols-3" aria-label="应用运营概况">
         {[
           { label: "运行中的应用", value: runningApps, suffix: "个", icon: ShieldCheck },
           { label: "已授权学生", value: totalStudents, suffix: "人次", icon: UsersRound },
@@ -191,7 +202,8 @@ export async function ManagementApplicationCatalogPage({
                 <Link
                   key={item.app.slug}
                   href={item.appPath}
-                  className={`management-app-card app-card group flex min-h-64 flex-col border p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2 ${appToneMap[item.app.slug]}`}
+                  aria-label={`打开${item.appTitle}工作台`}
+                  className={`management-app-card app-card group flex min-h-64 flex-col border p-5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 ${appToneMap[item.app.slug]}`}
                 >
                   <div className="flex items-start justify-between gap-4">
                     <span className="management-app-icon flex size-10 items-center justify-center rounded-md border">
@@ -219,7 +231,7 @@ export async function ManagementApplicationCatalogPage({
                   </dl>
                   <span className="mt-auto flex items-center justify-between pt-4 text-xs font-semibold">
                     <span>{item.app.kind === "service" ? "服务运营空间" : "教学运营空间"}</span>
-                    <span className="inline-flex items-center gap-1 text-[var(--app-accent-strong)]">
+                    <span className="inline-flex items-center gap-1 text-[var(--primary-hover)]">
                       打开工作台
                       <RouteLinkStatus />
                       <ArrowRight size={14} className="transition-transform duration-150 group-hover:translate-x-0.5 motion-reduce:transition-none" aria-hidden="true" />

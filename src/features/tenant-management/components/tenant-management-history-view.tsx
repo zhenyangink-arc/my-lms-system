@@ -28,7 +28,7 @@ export default async function TenantManagementHistoryView() {
       action={
         <Link
           href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
-          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
         >
           返回机构管理
         </Link>
@@ -42,14 +42,14 @@ export default async function TenantManagementHistoryView() {
       )}
 
       <section className="management-table-panel overflow-hidden border">
-        <div className="border-b border-[var(--app-border)] px-4 py-3"><h2 className="text-sm font-semibold">可恢复的停用机构</h2><p className="mt-1 text-xs text-[var(--app-muted)]">停用和历史归档状态都保留成员及业务数据。</p></div>
+        <div className="border-b border-[var(--border)] px-4 py-3"><h2 className="text-sm font-semibold">可恢复的停用机构</h2><p className="mt-1 text-xs text-[var(--foreground-muted)]">停用和历史归档状态都保留成员及业务数据。</p></div>
         <div className="overflow-x-auto">
           <table className="management-summary-table w-full min-w-[720px] border-collapse text-left">
             <thead><tr><th>机构</th><th>机构标识</th><th>状态</th><th>最近变更</th><th>查看</th></tr></thead>
-            <tbody>{result.recoverableTenants.map((tenant) => <tr key={tenant.id}><th>{tenant.name}</th><td className="font-mono">{tenant.slug}</td><td>{STATUS_LABELS[tenant.status as keyof typeof STATUS_LABELS] ?? tenant.status}</td><td><LocalDateTime value={tenant.updatedAt} options={DATE_OPTIONS} /></td><td><Link href={scopeDashboardPath(`/dashboard/admin/tenants/${tenant.id}`, dashboardBasePath)} className="font-semibold hover:underline">查看详情</Link></td></tr>)}</tbody>
+            <tbody>{result.recoverableTenants.map((tenant) => <tr key={tenant.id}><th>{tenant.name}</th><td className="font-mono">{tenant.slug}</td><td>{STATUS_LABELS[tenant.status as keyof typeof STATUS_LABELS] ?? tenant.status}</td><td><LocalDateTime value={tenant.updatedAt} options={DATE_OPTIONS} /></td><td><Link href={scopeDashboardPath(`/dashboard/admin/tenants/${tenant.id}`, dashboardBasePath)} className="font-semibold hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]">查看详情</Link></td></tr>)}</tbody>
           </table>
         </div>
-        {result.recoverableTenants.length === 0 && <div className="px-5 py-8 text-center text-sm text-[var(--app-muted)]">当前没有停用或历史归档机构</div>}
+        {result.recoverableTenants.length === 0 && <div className="px-5 py-8 text-center text-sm text-[var(--foreground-muted)]">当前没有停用或历史归档机构</div>}
       </section>
 
       <TenantLifecycleAuditTable data={result.lifecycleLogs} />

@@ -73,13 +73,13 @@ export function PlatformVisaOverview({
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"
         footer={
-          <p className="text-xs text-[var(--app-muted)]">
+          <p className="text-xs text-[var(--foreground-muted)]">
             平台负责人视图仅展示机构级匿名统计，不包含学生姓名、学生账号、学生 ID、签证任务正文或案件详情。
           </p>
         }
       >
         <Table className="min-w-[1380px]">
-          <TableHeader className="bg-[var(--app-soft-bg)]">
+          <TableHeader className="bg-[var(--surface-soft)]">
             <TableRow>
               <TableHead>机构</TableHead>
               <TableHead>活跃学生</TableHead>
@@ -101,10 +101,10 @@ export function PlatformVisaOverview({
             {rows.map((row) => (
               <TableRow key={row.tenantId}>
                 <TableCell>
-                  <p className="font-semibold text-[var(--app-text)]">
+                  <p className="font-semibold text-[var(--foreground)]">
                     {row.tenantName}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+                  <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
                     {row.tenantStatus === "active" ? "运行中" : "已停用"}
                   </p>
                 </TableCell>
@@ -119,14 +119,14 @@ export function PlatformVisaOverview({
                 <NumberCell value={row.pendingTaskCount} />
                 <NumberCell value={row.supportTaskCount} />
                 <NumberCell value={row.upcomingEntryCount} />
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime
                     value={row.oldestPendingAt}
                     options={DATE_TIME_OPTIONS}
                     fallback="暂无等待"
                   />
                 </TableCell>
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime
                     value={row.lastActivityAt}
                     options={DATE_TIME_OPTIONS}

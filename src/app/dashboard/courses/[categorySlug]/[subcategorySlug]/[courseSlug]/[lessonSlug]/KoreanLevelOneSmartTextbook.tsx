@@ -59,10 +59,10 @@ type Feedback = {
 };
 
 const accentMap = {
-  jade: { solid: "#2F8F7D", pale: "#E8F3F0", glow: "rgba(47,143,125,.16)" },
-  iris: { solid: "#6F72E6", pale: "#EEEFFD", glow: "rgba(111,114,230,.16)" },
-  coral: { solid: "#E58B68", pale: "#FBEEE9", glow: "rgba(229,139,104,.16)" },
-  sky: { solid: "#5C9ECF", pale: "#EAF3F9", glow: "rgba(92,158,207,.16)" },
+  jade: { solid: "var(--status-success)", pale: "var(--status-success-surface)", glow: "color-mix(in srgb, var(--status-success) 16%, transparent)" },
+  iris: { solid: "var(--primary)", pale: "var(--accent)", glow: "color-mix(in srgb, var(--primary) 16%, transparent)" },
+  coral: { solid: "var(--status-warning)", pale: "var(--status-warning-surface)", glow: "color-mix(in srgb, var(--status-warning) 16%, transparent)" },
+  sky: { solid: "var(--support)", pale: "var(--accent)", glow: "color-mix(in srgb, var(--support) 16%, transparent)" },
 } as const;
 
 const ui = {
@@ -200,7 +200,7 @@ function speakKorean(text: string) {
 }
 
 function StepStatus({ done, active }: { done: boolean; active: boolean }) {
-  if (done) return <CheckCircle2 size={17} className="text-[#2F8F7D]" />;
+  if (done) return <CheckCircle2 size={17} className="text-[var(--status-success)]" />;
   if (active) return <Circle size={17} className="fill-current text-current" />;
   return <Circle size={17} className="text-slate-300" />;
 }
@@ -284,7 +284,7 @@ function ContentRenderer({
                 onClick={() => speakKorean(String(word.ko))}
                 className="group flex items-center gap-3 text-left text-[17px] font-semibold text-slate-900"
               >
-                <Volume2 size={15} className="text-[#2F8F7D] transition group-hover:scale-110" />
+                <Volume2 size={15} className="text-[var(--status-success)] transition group-hover:scale-110" />
                 {String(word.ko)}
               </button>
               <span className={showChinese ? "text-slate-600" : "text-slate-300"}>
@@ -308,7 +308,7 @@ function ContentRenderer({
           </div>
           {rules.map((rule, index) => (
             <div key={index} className="grid grid-cols-[1fr_1.3fr_1.3fr] gap-4 border-t border-slate-100 px-4 py-5">
-              <span className="font-bold text-[#6F72E6]">{String(rule.form)}</span>
+              <span className="font-bold text-[var(--primary)]">{String(rule.form)}</span>
               <span className="font-semibold text-slate-900">{String(rule.example)}</span>
               <span className="text-sm leading-6 text-slate-500">{showChinese ? String(rule.zh) : "받침 유무를 확인하세요."}</span>
             </div>
@@ -320,7 +320,7 @@ function ContentRenderer({
       {contrast.length > 0 && (
         <div className="flex flex-wrap gap-x-8 gap-y-3 border-y border-slate-200 py-5">
           {contrast.map((item) => (
-            <button key={item} type="button" onClick={() => speakKorean(item)} className="inline-flex items-center gap-2 font-semibold text-slate-800 hover:text-[#6F72E6]">
+            <button key={item} type="button" onClick={() => speakKorean(item)} className="inline-flex items-center gap-2 font-semibold text-slate-800 hover:text-[var(--primary)]">
               <Volume2 size={14} /> {item}
             </button>
           ))}
@@ -334,7 +334,7 @@ function ContentRenderer({
           {substitutions.length > 0 && (
             <div className="mt-5 flex flex-wrap gap-2">
               {substitutions.map((item) => (
-                <span key={item} className="rounded-full bg-[#FBEEE9] px-3 py-1.5 text-sm font-semibold text-[#B45E3E]">{item}</span>
+                <span key={item} className="rounded-full bg-[var(--status-warning-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--destructive)]">{item}</span>
               ))}
             </div>
           )}
@@ -347,7 +347,7 @@ function ContentRenderer({
           <div className="border-y border-slate-200">
             {dialogue.map((line, index) => (
               <button key={index} type="button" onClick={() => speakKorean(String(line.line))} className="grid w-full grid-cols-[56px_minmax(0,1fr)_20px] items-center gap-2 border-b border-slate-100 px-2 py-4 text-left last:border-b-0 hover:bg-slate-50 sm:grid-cols-[80px_1fr_24px]">
-                <span className="text-xs font-bold text-[#5C9ECF]">{String(line.speaker)}</span>
+                <span className="text-xs font-bold text-[var(--support)]">{String(line.speaker)}</span>
                 <span className="text-[16px] font-medium text-slate-800">{String(line.line)}</span>
                 <Volume2 size={14} className="text-slate-300" />
               </button>
@@ -388,7 +388,7 @@ function ContentRenderer({
           <div className="border-y border-slate-200">
             {checklist.map((item, index) => (
               <div key={index} className="grid grid-cols-[28px_minmax(0,1fr)] items-center gap-y-1 border-b border-slate-100 py-4 last:border-b-0 sm:grid-cols-[28px_1fr_1fr]">
-                <Check size={16} className="text-[#2F8F7D]" />
+                <Check size={16} className="text-[var(--status-success)]" />
                 <span className="font-semibold text-slate-800">{String(item.ko)}</span>
                 {showChinese && <span className="col-start-2 text-sm text-slate-500 sm:col-start-auto">{String(item.zh)}</span>}
               </div>
@@ -398,8 +398,8 @@ function ContentRenderer({
       )}
 
       {String(coach[locale] ?? "") && (
-        <div className="flex gap-3 bg-[#F4F7F6] px-5 py-4 text-sm leading-6 text-slate-600">
-          <Lightbulb size={18} className="mt-0.5 shrink-0 text-[#E58B68]" />
+        <div className="flex gap-3 bg-[var(--background)] px-5 py-4 text-sm leading-6 text-slate-600">
+          <Lightbulb size={18} className="mt-0.5 shrink-0 text-[var(--status-warning)]" />
           <span>{String(coach[locale])}</span>
         </div>
       )}
@@ -457,13 +457,13 @@ function RecordingControl({
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-4 border-y border-slate-200 py-5">
-      <button type="button" onClick={toggleRecording} className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white ${recording ? "bg-[#E58B68]" : "bg-[#2F8F7D]"}`}>
+      <button type="button" onClick={toggleRecording} className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white ${recording ? "bg-[var(--status-warning)]" : "bg-[var(--status-success)]"}`}>
         {recording ? <Square size={14} /> : <Mic size={15} />}
         {recording ? t.stopRecording : t.startRecording}
       </button>
       {audioUrl && <audio src={audioUrl} controls className="h-9 max-w-full" />}
-      {audioUrl && <span className="text-xs font-semibold text-[#2F8F7D]">{t.recorded}</span>}
-      {recordingError && <p className="w-full text-xs font-semibold text-[#B45E3E]">{recordingError}</p>}
+      {audioUrl && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
+      {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
     </div>
   );
 }
@@ -522,11 +522,11 @@ function Activity({
     <section className="mt-12 border-t-2 border-slate-900 pt-7">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
-          <p className="text-xs font-black tracking-[.18em] text-slate-400">INTERACTION · {activity.type.replace("_", " ").toUpperCase()}</p>
-          <h3 className="mt-3 text-xl font-bold leading-8 text-slate-900">{activity.prompt[locale]}</h3>
+          <p className="text-xs font-bold tracking-[.18em] text-slate-400">INTERACTION · {activity.type.replace("_", " ").toUpperCase()}</p>
+          <h5 className="mt-3 text-xl font-bold leading-8 text-slate-900">{activity.prompt[locale]}</h5>
           <p className="mt-1 text-sm text-slate-500">{activity.instruction[locale]}</p>
         </div>
-        {feedback?.ok && <span className="shrink-0 text-xs font-bold text-[#2F8F7D]">{t.submitted}</span>}
+        {feedback?.ok && <span className="shrink-0 text-xs font-bold text-[var(--status-success)]">{t.submitted}</span>}
       </div>
 
       {(activity.type === "single_choice" || activity.type === "listening") && (
@@ -535,15 +535,15 @@ function Activity({
             <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-slate-100 px-2 py-4 text-left last:border-b-0 ${answer === index ? "bg-slate-50" : "hover:bg-slate-50/70"} disabled:cursor-not-allowed disabled:opacity-45`}>
               <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span>
               <span className="font-medium text-slate-800">{option}</span>
-              {answer === index ? <CheckCircle2 size={17} className="text-[#5C9ECF]" /> : <Circle size={17} className="text-slate-200" />}
+              {answer === index ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>
           ))}
         </div>
       )}
 
       {activity.type === "listening" && !hasPendingAudio && (
-        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[#EAF3F9]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#5C9ECF] shadow-sm">
+        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--support)] shadow-sm">
             <Headphones size={19} />
           </span>
           <audio
@@ -552,7 +552,7 @@ function Activity({
             src={`/api/digital-textbook/audio/${activity.id}`}
             className="h-10 w-full"
           />
-          <span className="shrink-0 text-xs font-bold text-[#356F9C]">
+          <span className="shrink-0 text-xs font-bold text-[var(--support)]">
             {t.listenPrivate}
           </span>
         </div>
@@ -563,14 +563,14 @@ function Activity({
           {activity.options.map((option, index) => {
             const selected = Array.isArray(answer) && answer.includes(index);
             return <button key={option} type="button" onClick={() => { const current = Array.isArray(answer) ? answer : []; setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-slate-100 px-2 py-4 text-left last:border-b-0 ${selected ? "bg-slate-50" : "hover:bg-slate-50/70"}`}>
-              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[#6F72E6]" /> : <Circle size={17} className="text-slate-200" />}
+              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>;
           })}
         </div>
       )}
 
       {activity.type === "fill_blank" && (
-        <input value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" autoComplete="off" className="mt-6 w-full border-x-0 border-b-2 border-t-0 border-slate-300 bg-transparent px-1 py-4 text-xl font-semibold text-slate-900 outline-none transition focus:border-[#6F72E6]" placeholder="한국어로 쓰세요" />
+        <input value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" autoComplete="off" aria-label={activity.prompt[locale]} className="mt-6 w-full border-x-0 border-b-2 border-t-0 border-slate-300 bg-transparent px-1 py-4 text-xl font-semibold text-slate-900 outline-none transition focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 쓰세요" />
       )}
 
       {activity.type === "ordering" && (
@@ -580,8 +580,8 @@ function Activity({
               <span className="font-mono text-xs text-slate-400">0{index + 1}</span>
               <span className="text-lg font-semibold text-slate-800">{activity.options[optionIndex]}</span>
               <div className="flex justify-end gap-1">
-                <button type="button" title={t.moveUp} disabled={index === 0} onClick={() => moveOrder(index, -1)} className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-20"><ChevronUp size={16} /></button>
-                <button type="button" title={t.moveDown} disabled={index === ordered.length - 1} onClick={() => moveOrder(index, 1)} className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-20"><ChevronDown size={16} /></button>
+                <button type="button" title={t.moveUp} aria-label={`${t.moveUp}：${activity.options[optionIndex]}`} disabled={index === 0} onClick={() => moveOrder(index, -1)} className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-20"><ChevronUp size={16} /></button>
+                <button type="button" title={t.moveDown} aria-label={`${t.moveDown}：${activity.options[optionIndex]}`} disabled={index === ordered.length - 1} onClick={() => moveOrder(index, 1)} className="p-2 text-slate-400 hover:text-slate-900 disabled:opacity-20"><ChevronDown size={16} /></button>
               </div>
             </div>
           ))}
@@ -590,7 +590,7 @@ function Activity({
 
       {activity.type === "writing" && (
         <div className="mt-6">
-          <textarea value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" rows={5} className="w-full resize-none border-x-0 border-b-2 border-t border-slate-200 bg-slate-50/50 px-4 py-4 text-[16px] leading-8 text-slate-900 outline-none focus:border-[#6F72E6]" placeholder="한국어로 3~5문장을 쓰세요." />
+          <textarea value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" rows={5} aria-label={activity.prompt[locale]} className="w-full resize-none border-x-0 border-b-2 border-t border-slate-200 bg-slate-50/50 px-4 py-4 text-[16px] leading-8 text-slate-900 outline-none focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 3~5문장을 쓰세요." />
           <p className="mt-2 text-right text-xs text-slate-400">{t.writingCount} · {typeof answer === "string" ? answer.length : 0}</p>
         </div>
       )}
@@ -598,7 +598,7 @@ function Activity({
       {activity.type === "speaking" && <RecordingControl locale={locale} onReady={() => setAnswer(true)} />}
 
       {hasPendingAudio && (
-        <div className="mt-6 flex items-start gap-3 bg-[#EAF3F9] px-5 py-4 text-sm leading-6 text-[#356F9C]">
+        <div className="mt-6 flex items-start gap-3 bg-[var(--accent)] px-5 py-4 text-sm leading-6 text-[var(--support)]">
           <Headphones size={19} className="mt-0.5 shrink-0" />
           <span><strong>{t.listenPrivate}</strong><br />{t.audioPending}</span>
         </div>
@@ -606,9 +606,9 @@ function Activity({
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
-          {message && <p className="text-sm text-[#B45E3E]">{message}</p>}
+          {message && <p className="text-sm text-[var(--destructive)]">{message}</p>}
           {feedback && (
-            <div className={`flex items-start gap-2 text-sm leading-6 ${feedback.correct === false ? "text-[#B45E3E]" : "text-[#247565]"}`}>
+            <div className={`flex items-start gap-2 text-sm leading-6 ${feedback.correct === false ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
               {feedback.correct === false ? <RotateCcw size={16} className="mt-1 shrink-0" /> : <CheckCircle2 size={16} className="mt-1 shrink-0" />}
               <span>
                 <strong>{activity.type === "speaking" ? t.submitted : feedback.correct === false ? t.retry : t.correct}</strong>
@@ -724,20 +724,20 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               aria-current={active ? "step" : undefined}
               aria-label={`${t.learnerPath} ${index + 1}: ${localize(module.title)}`}
               title={compact ? localize(module.title) : undefined}
-              className={`relative flex w-full items-start transition ${compact ? "justify-center rounded-xl px-2 py-3" : "gap-3 rounded-2xl px-3 py-3.5 text-left"} ${active ? "bg-white/85 shadow-[0_10px_28px_rgba(31,46,42,.07)]" : "hover:bg-white/50"}`}
+              className={`relative flex w-full items-start transition ${compact ? "justify-center rounded-xl px-2 py-3" : "gap-3 rounded-2xl px-3 py-3.5 text-left"} ${active ? "bg-white/85 shadow-sm" : "hover:bg-white/50"}`}
             >
               {!compact && index < textbook.modules.length - 1 && (
                 <span className="absolute left-[19px] top-9 h-[35px] w-px bg-slate-200" />
               )}
               <span
-                className="relative z-10 mt-0.5 bg-[#F4F7F6]"
+                className="relative z-10 mt-0.5 bg-[var(--background)]"
                 style={{ color: active ? moduleAccent.solid : undefined }}
               >
                 <StepStatus done={done} active={active} />
               </span>
               {!compact && (
                 <span className="min-w-0">
-                  <span className={`block text-[11px] font-black tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>
+                  <span className={`block text-[11px] font-bold tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>
                     第 {String(index + 1).padStart(2, "0")} 步
                   </span>
                   <span className={`mt-0.5 block truncate text-sm font-bold ${active ? "text-slate-900" : "text-slate-600"}`}>
@@ -754,14 +754,14 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
 
   function renderTutorPanel(showHeader = true) {
     return (
-      <div className="flex h-full flex-col overflow-hidden rounded-[26px] bg-white/78 shadow-[0_24px_80px_rgba(31,46,42,.08)] ring-1 ring-white">
+      <div className="flex h-full flex-col overflow-hidden rounded-[26px] bg-white/78 shadow-sm ring-1 ring-white">
         {showHeader && <div className="border-b border-white px-5 py-5">
           <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#EEEFFD] text-[#6F72E6]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]">
               <MessageCircle size={18} />
             </span>
             <div>
-              <p className="font-black text-slate-900">{t.tutor}</p>
+              <p className="font-bold text-slate-900">{t.tutor}</p>
               <p className="mt-0.5 text-[10px] leading-4 text-slate-400">{t.grounded}</p>
             </div>
           </div>
@@ -775,15 +775,15 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                 key={intent}
                 type="button"
                 onClick={() => tutorReply(intent)}
-                className="min-h-14 rounded-xl bg-white/85 px-3 py-2 text-left text-xs font-semibold leading-5 text-slate-600 shadow-[0_6px_24px_rgba(31,46,42,.05)] hover:text-[#6F72E6]"
+                className="min-h-14 rounded-xl bg-white/85 px-3 py-2 text-left text-xs font-semibold leading-5 text-slate-600 shadow-sm hover:text-[var(--primary)]"
               >
                 {label}
               </button>
             ))}
           </div>
           {tutorText && (
-            <div className="mt-5 whitespace-pre-line rounded-xl bg-[#F4F7F6] px-4 py-4 text-sm leading-6 text-slate-600">
-              <Sparkles size={15} className="mb-2 text-[#6F72E6]" />
+            <div className="mt-5 whitespace-pre-line rounded-xl bg-[var(--background)] px-4 py-4 text-sm leading-6 text-slate-600">
+              <Sparkles size={15} className="mb-2 text-[var(--primary)]" />
               {tutorText}
             </div>
           )}
@@ -793,13 +793,14 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             value={tutorInput}
             onChange={(event) => setTutorInput(event.target.value)}
             rows={2}
+            aria-label={t.ask}
             placeholder={t.ask}
-            className="w-full resize-none rounded-xl bg-white/85 px-3 py-2 text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-300"
+            className="w-full resize-none rounded-xl bg-white/85 px-3 py-2 text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           />
           <button
             type="button"
             onClick={() => tutorReply('ask')}
-            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#6F72E6] px-4 py-2.5 text-sm font-bold text-white"
+            className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white"
           >
             <Send size={14} /> {t.send}
           </button>
@@ -808,12 +809,25 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
     );
   }
 
-  if (!activeModule) return null;
+  if (!activeModule) {
+    return (
+      <div className="fixed inset-0 z-50 flex min-h-[100dvh] items-center justify-center bg-[var(--background)] p-6 text-[var(--foreground)]">
+        <div className="app-empty-state w-full max-w-xl rounded-2xl p-8 text-center">
+          <BookOpen className="mx-auto text-[var(--foreground-muted)]" size={28} />
+          <h3 className="mt-4 text-xl font-bold">本章暂无可学习内容</h3>
+          <p className="app-muted-text mt-2 text-sm leading-6">教材模块尚未发布，请返回课程目录选择其他课时。</p>
+          <Link href={backHref} className="mt-6 inline-flex items-center gap-2 rounded-full bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+            <ArrowLeft size={16} />{t.back}
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div
-      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col overflow-hidden bg-[#F4F7F6] text-slate-900"
-      style={{ backgroundImage: `radial-gradient(circle at 18% 8%, ${accent.glow}, transparent 28%), radial-gradient(circle at 90% 86%, rgba(111,114,230,.10), transparent 24%)` }}
+      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col overflow-hidden bg-[var(--background)] text-slate-900 [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-[var(--ring)] [&_a:focus-visible]:ring-offset-2 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2"
+      style={{ backgroundImage: `radial-gradient(circle at 18% 8%, ${accent.glow}, transparent 28%), radial-gradient(circle at 90% 86%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 24%)` }}
     >
       <header className="relative z-30 h-[66px] shrink-0 border-b border-white/70 bg-white/72 px-3 backdrop-blur-2xl sm:px-5 lg:h-[74px] lg:px-7">
         <div className="flex h-full items-center justify-between gap-3">
@@ -823,6 +837,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               onClick={() => setMobilePanel("path")}
               className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm lg:hidden"
               aria-label={t.learnerPath}
+              aria-expanded={mobilePanel === "path"}
             >
               <Menu size={18} />
             </button>
@@ -833,13 +848,13 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             <span className="hidden h-5 w-px bg-slate-200 sm:block" />
             <div className="min-w-0">
               <div className="hidden items-center gap-2 sm:flex">
-                <span className="text-xs font-black tracking-[.18em] text-[#6F72E6]">{textbook.levelCode}</span>
+                <span className="text-xs font-bold tracking-[.18em] text-[var(--primary)]">{textbook.levelCode}</span>
                 <span className="text-xs text-slate-300">/</span>
                 <span className="text-xs font-semibold text-slate-500">{t.chapter}</span>
               </div>
-              <h1 className="truncate text-sm font-black tracking-tight text-slate-900 sm:mt-0.5 sm:text-lg">
+              <h3 className="truncate text-sm font-bold tracking-tight text-slate-900 sm:mt-0.5 sm:text-lg">
                 {localize(textbook.chapter.title)}
-              </h1>
+              </h3>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
@@ -848,14 +863,15 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                 <span>{t.progress}</span><span>{progressPercent}%</span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
-                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "#2F8F7D" }} />
+                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "var(--status-success)" }} />
               </div>
             </div>
             <button
               type="button"
               onClick={() => setMobilePanel("assistant")}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[#6F72E6] shadow-sm lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[var(--primary)] shadow-sm lg:hidden"
               aria-label={t.tutor}
+              aria-expanded={mobilePanel === "assistant"}
             >
               <MessageCircle size={17} />
             </button>
@@ -863,17 +879,17 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               <button
                 type="button"
                 onClick={() => setSettingsOpen((value) => !value)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/85 px-3 text-sm font-bold text-slate-700 shadow-[0_8px_30px_rgba(31,46,42,.08)] ring-1 ring-white sm:px-4"
+                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/85 px-3 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-white sm:px-4"
                 aria-expanded={settingsOpen}
               >
-                <Languages size={16} className="text-[#6F72E6]" />
+                <Languages size={16} className="text-[var(--primary)]" />
                 <span className="hidden sm:inline">中 / 한</span>
                 <ChevronDown size={14} />
               </button>
               {settingsOpen && (
-                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[22px] bg-white/95 p-5 shadow-[0_24px_80px_rgba(31,46,42,.18)] ring-1 ring-white backdrop-blur-2xl">
+                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[22px] bg-white/95 p-5 shadow-sm ring-1 ring-white backdrop-blur-2xl">
                   <div className="mb-5 flex items-center justify-between">
-                    <span className="font-black text-slate-900">{t.language}</span>
+                    <span className="font-bold text-slate-900">{t.language}</span>
                     <button type="button" onClick={() => setSettingsOpen(false)} className="p-1 text-slate-400" aria-label="关闭">
                       <X size={16} />
                     </button>
@@ -889,7 +905,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                   <p className="mb-2 mt-5 text-xs font-bold text-slate-400">{t.supportMode}</p>
                   <div className="space-y-1">
                     {(["chinese", "bilingual", "immersion"] as SmartSupportMode[]).map((item) => (
-                      <button key={item} type="button" onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold ${supportMode === item ? "bg-[#EEEFFD] text-[#5053BD]" : "text-slate-600 hover:bg-slate-50"}`}>
+                      <button key={item} type="button" onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold ${supportMode === item ? "bg-[var(--accent)] text-[var(--primary)]" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span>{t[item]}</span>{supportMode === item && <Check size={15} />}
                       </button>
                     ))}
@@ -905,7 +921,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
       <div className="flex min-h-0 flex-1">
         <aside className={`hidden shrink-0 overflow-y-auto px-3 py-5 transition-[width] duration-200 lg:block ${pathCollapsed ? "w-[72px]" : "w-[268px]"}`}>
           <div className={`flex items-center ${pathCollapsed ? "justify-center" : "justify-between px-3"}`}>
-            {!pathCollapsed && <p className="text-[11px] font-black tracking-[.2em] text-slate-400">{t.learnerPath.toUpperCase()}</p>}
+            {!pathCollapsed && <p className="text-[11px] font-bold tracking-[.2em] text-slate-400">{t.learnerPath.toUpperCase()}</p>}
             <button type="button" onClick={() => setPathCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800" aria-label={pathCollapsed ? "展开学习路径" : "收起学习路径"}>
               {pathCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
             </button>
@@ -918,19 +934,19 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             {activeIndex === 0 && (
               <div className="mb-9 grid gap-6 border-b border-slate-200 pb-8 sm:grid-cols-2 sm:gap-8 lg:mb-12 lg:pb-10">
                 <div>
-                  <p className="text-xs font-black tracking-[.18em] text-[#5C9ECF]">{t.scene.toUpperCase()}</p>
+                  <p className="text-xs font-bold tracking-[.18em] text-[var(--support)]">{t.scene.toUpperCase()}</p>
                   <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.scenario)}</p>
                 </div>
                 <div>
-                  <p className="text-xs font-black tracking-[.18em] text-[#2F8F7D]">{t.objective.toUpperCase()}</p>
+                  <p className="text-xs font-bold tracking-[.18em] text-[var(--status-success)]">{t.objective.toUpperCase()}</p>
                   <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.goal)}</p>
                 </div>
               </div>
             )}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div>
-                <p className="text-xs font-black tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
-                <h2 className="mt-3 text-2xl font-black tracking-[-.04em] text-slate-950 sm:text-[34px]">{localize(activeModule.title)}</h2>
+                <p className="text-xs font-bold tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
+                <h3 className="mt-3 text-2xl font-bold tracking-[-.04em] text-slate-950 sm:text-[34px]">{localize(activeModule.title)}</h3>
                 <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500 sm:text-[16px]">{localize(activeModule.description)}</p>
               </div>
               <div className="flex shrink-0 items-center gap-2 text-xs font-semibold text-slate-400 sm:pt-1">
@@ -941,7 +957,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               <article key={node.id} className="mt-10 sm:mt-12">
                 <div className="flex items-center gap-3">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} />
-                  <h3 className="text-lg font-black text-slate-900">{localize(node.title)}</h3>
+                  <h4 className="text-lg font-bold text-slate-900">{localize(node.title)}</h4>
                 </div>
                 <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
                 {node.activities.map((activity) => (
@@ -960,7 +976,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             </button>
           </div>
           {assistantCollapsed ? (
-            <button type="button" onClick={() => setAssistantCollapsed(false)} className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[#EEEFFD] text-[#6F72E6]" aria-label={t.tutor}>
+            <button type="button" onClick={() => setAssistantCollapsed(false)} className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]" aria-label={t.tutor}>
               <MessageCircle size={18} />
             </button>
           ) : <div className="min-h-0 flex-1">{renderTutorPanel()}</div>}
@@ -976,7 +992,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
             <span className="text-xs font-semibold text-slate-400">{activeIndex + 1} / {textbook.modules.length}</span>
             <div className="hidden items-center gap-1.5 sm:flex">
               {textbook.modules.map((module, index) => (
-                <button key={module.id} type="button" onClick={() => setActiveIndex(index)} aria-label={`Step ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-8" : "w-1.5"}`} style={{ backgroundColor: index === activeIndex ? accent.solid : moduleDone(index) ? "#2F8F7D" : "#CBD5E1" }} />
+                <button key={module.id} type="button" onClick={() => setActiveIndex(index)} aria-label={`Step ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-8" : "w-1.5"}`} style={{ backgroundColor: index === activeIndex ? accent.solid : moduleDone(index) ? "var(--status-success)" : "var(--border)" }} />
               ))}
             </div>
           </div>
@@ -1000,10 +1016,10 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
 
       {mobilePanel && (
         <div className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm lg:hidden" role="presentation" onClick={() => setMobilePanel(null)}>
-          <aside className={`absolute bottom-0 top-0 w-[min(88vw,360px)] bg-[#F4F7F6] p-4 shadow-2xl ${mobilePanel === "path" ? "left-0" : "right-0"}`} onClick={(event) => event.stopPropagation()} aria-label={mobilePanel === "path" ? t.learnerPath : t.tutor}>
+          <aside className={`absolute bottom-0 top-0 w-[min(88vw,360px)] bg-[var(--background)] p-4 shadow-2xl ${mobilePanel === "path" ? "left-0" : "right-0"}`} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={mobilePanel === "path" ? t.learnerPath : t.tutor}>
             <div className="mb-3 flex items-center justify-between">
-              <div className="flex items-center gap-2 font-black text-slate-900">
-                {mobilePanel === "path" ? <BookOpen size={18} className="text-[#2F8F7D]" /> : <MessageCircle size={18} className="text-[#6F72E6]" />}
+              <div className="flex items-center gap-2 font-bold text-slate-900">
+                {mobilePanel === "path" ? <BookOpen size={18} className="text-[var(--status-success)]" /> : <MessageCircle size={18} className="text-[var(--primary)]" />}
                 {mobilePanel === "path" ? t.learnerPath : t.tutor}
               </div>
               <button type="button" onClick={() => setMobilePanel(null)} className="rounded-full bg-white p-2 text-slate-500" aria-label="关闭">

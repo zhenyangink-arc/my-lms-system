@@ -26,7 +26,7 @@ import type {
 } from "./types";
 
 const inputClass =
-  "h-9 w-full border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs outline-none focus:border-[var(--app-accent)]";
+  "h-9 w-full border border-[var(--border)] bg-[var(--card)] px-3 text-xs outline-none focus:border-[var(--primary)]";
 
 function SaveButton() {
   const { pending } = useFormStatus();
@@ -34,7 +34,7 @@ function SaveButton() {
     <button
       type="submit"
       disabled={pending}
-      className="h-9 bg-[var(--app-accent)] px-4 text-xs font-semibold text-white disabled:opacity-50"
+      className="h-9 bg-[var(--primary)] px-4 text-xs font-semibold text-white disabled:opacity-50"
     >
       {pending ? "正在保存…" : "保存修改"}
     </button>
@@ -53,7 +53,7 @@ export function EditApplicationRequirementDialog({
           <button
             type="button"
             aria-label={`编辑 ${requirement.title}`}
-            className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)]"
+            className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)]"
           >
             <Pencil className="size-3" />编辑
           </button>
@@ -108,7 +108,7 @@ export function EditVisaRequirementDialog({
           <button
             type="button"
             aria-label={`编辑 ${requirement.title}`}
-            className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)]"
+            className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)]"
           >
             <Pencil className="size-3" />编辑
           </button>

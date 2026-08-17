@@ -34,16 +34,16 @@ export function VisaCaseCellAction({
           `/dashboard/admin/visa/${item.studentId}`,
           dashboardBasePath,
         )}
-        className="inline-flex h-8 items-center border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+        className="inline-flex h-8 items-center border border-[var(--border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--surface-soft)]"
       >
         查看详情
       </Link>
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
         <DialogTrigger
           type="button"
-          className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--surface-soft)]"
         >
-          <Pencil size={13} />
+          <Pencil size={13} aria-hidden="true" />
           编辑档案
         </DialogTrigger>
         <DialogContent className="max-h-[90vh] max-w-[min(1180px,calc(100vw-2rem))] overflow-y-auto">

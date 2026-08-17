@@ -29,25 +29,25 @@ export function TenantComposer() {
         开通新租户
       </DialogTrigger>
       <DialogContent className="max-w-[780px] gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">开通新租户</DialogTitle>
           <DialogDescription className="text-xs">创建独立机构空间，并同时建立该机构的负责人登录账号。</DialogDescription>
         </DialogHeader>
 
         <form ref={formRef} action={formAction}>
-          <div className="grid border-b sm:grid-cols-2" style={{ borderColor: "var(--app-border)" }}>
-            <label className="border-b sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
-              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>租户名称</span>
+          <div className="grid border-b sm:grid-cols-2" style={{ borderColor: "var(--border)" }}>
+            <label className="border-b sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
+              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>租户名称</span>
               <span className="block px-5 py-3"><input name="name" required minLength={2} maxLength={80} placeholder="例如：首尔语言学院" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></span>
             </label>
             <label>
-              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>租户标识</span>
+              <span className="block border-b px-5 py-2.5 text-[11px] font-semibold" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>租户标识</span>
               <span className="block px-5 py-3"><input name="slug" required minLength={2} maxLength={48} pattern="[a-z0-9]+(-[a-z0-9]+)*" placeholder="例如：seoul-language" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /><small className="app-muted-text mt-1.5 block text-[10px]">仅限小写字母、数字和短横线，创建后保持稳定。</small></span>
             </label>
           </div>
 
-          <label className="grid border-b sm:grid-cols-[160px_minmax(0,1fr)]" style={{ borderColor: "var(--app-border)" }}>
-            <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>服务套餐</span>
+          <label className="grid border-b sm:grid-cols-[160px_minmax(0,1fr)]" style={{ borderColor: "var(--border)" }}>
+            <span className="border-b px-5 py-3 text-xs font-semibold sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>服务套餐</span>
             <span className="px-5 py-3">
               <select name="plan_key" defaultValue="starter" className="app-input h-9 w-full rounded-md border px-2.5 text-xs font-medium">
                 <option value="starter">入门套餐</option>
@@ -57,12 +57,12 @@ export function TenantComposer() {
             </span>
           </label>
 
-          <div className="border-b" style={{ borderColor: "var(--app-border)" }}>
-            <div className="px-5 py-3" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+          <div className="border-b" style={{ borderColor: "var(--border)" }}>
+            <div className="px-5 py-3" style={{ backgroundColor: "var(--surface-soft)" }}>
               <p className="text-xs font-semibold">机构负责人账号</p>
               <p className="app-muted-text mt-1 text-[10px]">该账号只属于新租户，并自动获得机构负责人权限。</p>
             </div>
-            <div className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0" style={{ borderColor: "var(--app-border)" }}>
+            <div className="grid divide-y sm:grid-cols-3 sm:divide-x sm:divide-y-0" style={{ borderColor: "var(--border)" }}>
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">负责人姓名</span><input name="manager_name" required minLength={2} maxLength={50} placeholder="例如：张老师" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">登录账号</span><input name="manager_login_id" required minLength={3} maxLength={32} pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}" autoCapitalize="none" placeholder="例如：seoul-admin" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">初始密码</span><input name="initial_password" required type="password" minLength={8} maxLength={72} autoComplete="new-password" placeholder="至少 8 位，含字母和数字" className="app-input h-9 w-full rounded-md border px-2.5 text-xs" /></label>

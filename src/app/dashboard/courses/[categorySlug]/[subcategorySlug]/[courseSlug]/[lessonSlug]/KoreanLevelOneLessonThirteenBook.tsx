@@ -111,15 +111,15 @@ function Note({
   tone?: "blue" | "rose" | "green" | "amber";
 }) {
   const tones = {
-    blue: "border-[#cfddec] bg-[#f1f6fb]",
-    rose: "border-[#ead0d6] bg-[#fff4f6]",
-    green: "border-[#cfe3d4] bg-[#f2f8f3]",
-    amber: "border-[#ead8be] bg-[#fff8ed]",
+    blue: "border-[var(--border)] bg-[var(--accent)]",
+    rose: "border-[var(--border)] bg-[var(--card)]",
+    green: "border-[var(--border)] bg-[var(--status-success-surface)]",
+    amber: "border-[var(--border)] bg-[var(--status-warning-surface)]",
   };
   return (
     <section className={`mt-4 rounded-2xl border p-4 ${tones[tone]}`}>
-      <p className="text-[11px] font-black">{title}</p>
-      <div className="mt-2 text-xs font-bold leading-6 text-[#45574f]">{children}</div>
+      <p className="text-[11px] font-bold">{title}</p>
+      <div className="mt-2 text-xs font-bold leading-6 text-[var(--foreground-secondary)]">{children}</div>
     </section>
   );
 }
@@ -182,14 +182,14 @@ function CardGrid({
       {cards.map((card) => (
         <article
           key={`${card.label}-${card.korean}`}
-          className="min-h-[82px] rounded-2xl border border-[#cfddec] bg-white p-5"
+          className="min-h-[82px] rounded-2xl border border-[var(--border)] bg-white p-5"
         >
-          <b className="text-[10px] text-[#3d6f9f]">{card.label}</b>
-          <div className="mt-2 text-sm font-black">
+          <b className="text-[10px] text-[var(--primary)]">{card.label}</b>
+          <div className="mt-2 text-sm font-bold">
             <SpeakLine text={card.korean} speak={speak} />
           </div>
           <p
-            className={`mt-1 text-[10px] text-[#71857b] ${
+            className={`mt-1 text-[10px] text-[var(--foreground-secondary)] ${
               showChinese ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -216,16 +216,16 @@ function Dialogue({
         <div
           key={`${index}-${line.speaker}-${line.korean}`}
           className={`flex gap-2 rounded-xl p-3.5 ${
-            index % 2 ? "bg-[#fff7ed]" : "bg-[#f4f8f6]"
+            index % 2 ? "bg-[var(--status-warning-surface)]" : "bg-[var(--status-success-surface)]"
           }`}
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[9px] font-black">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[9px] font-bold">
             {line.speaker}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-black leading-6">{line.korean}</p>
+            <p className="text-[13px] font-bold leading-6">{line.korean}</p>
             <p
-              className={`text-[10px] font-bold leading-5 text-[#71857b] ${
+              className={`text-[10px] font-bold leading-5 text-[var(--foreground-secondary)] ${
                 showChinese ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -251,13 +251,13 @@ function Exercise({
       {items.map(([question, answer]) => (
         <article
           key={`${question}-${answer}`}
-          className={`rounded-xl border border-[#cfe3d4] bg-white text-xs font-black ${
+          className={`rounded-xl border border-[var(--border)] bg-white text-xs font-bold ${
             items.length > 10 ? "min-h-[58px] p-3" : "min-h-[68px] p-4"
           }`}
         >
           <span>{question}</span>
           <p
-            className={`mt-3 leading-5 text-[#347b69] ${
+            className={`mt-3 leading-5 text-[var(--status-success)] ${
               shown ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -331,49 +331,49 @@ const dividers: Record<
     step: "第一步",
     title: "课前导航",
     goal: "建立“说明计划—选择交通工具—确认路线—提出请求—到达目的地”的交际链。",
-    icon: <MapPinned size={24} />,
+    icon: <MapPinned aria-hidden="true" size={24} />,
   },
   "04": {
     step: "第二步",
     title: "核心词汇",
     goal: "掌握交通工具、移动动词、交通设施、方向词和车站发音。",
-    icon: <Bus size={24} />,
+    icon: <Bus aria-hidden="true" size={24} />,
   },
   "09": {
     step: "第三步",
     title: "语法讲解",
     goal: "四个语法各占一页：计划、地点起终点、请求与方向／交通手段。",
-    icon: <NotebookPen size={24} />,
+    icon: <NotebookPen aria-hidden="true" size={24} />,
   },
   "14": {
     step: "第四步",
     title: "句型操练",
     goal: "把旅行计划、路线、交通工具和司机请求组合成完整表达。",
-    icon: <Route size={24} />,
+    icon: <Route aria-hidden="true" size={24} />,
   },
   "18": {
     step: "第五步",
     title: "实战对话",
     goal: "完成出租车、地铁问路和假期计划三组八句交通对话。",
-    icon: <MessageCircle size={24} />,
+    icon: <MessageCircle aria-hidden="true" size={24} />,
   },
   "22": {
     step: "第六步",
     title: "听说任务",
     goal: "从路线说明中抓住出发地、换乘站、出口、时间与交通方式。",
-    icon: <Headphones size={24} />,
+    icon: <Headphones aria-hidden="true" size={24} />,
   },
   "26": {
     step: "第七步",
     title: "读写拓展",
     goal: "读懂交通路线说明，并写出从出发地到目的地的完整路线。",
-    icon: <BookOpenCheck size={24} />,
+    icon: <BookOpenCheck aria-hidden="true" size={24} />,
   },
   "29": {
     step: "第八步",
     title: "自测与复盘",
     goal: "检查交通词汇、四项语法、发音和完整出行交际能力。",
-    icon: <CheckCircle2 size={24} />,
+    icon: <CheckCircle2 aria-hidden="true" size={24} />,
   },
 };
 
@@ -520,7 +520,7 @@ export function KoreanLevelOneLessonThirteenBook({
         number,
         dialogue.title,
         dialogue.description,
-        <MessageCircle size={22} />,
+        <MessageCircle aria-hidden="true" size={22} />,
         <>
           <Dialogue
             lines={dialogue.lines}
@@ -543,7 +543,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "03",
         "一次出行的五步路线",
         "先说计划，再确认起终点、选择交通工具、提出请求，最后确认时间。",
-        <Route size={22} />,
+        <Route aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -570,7 +570,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "05",
         "1. 交通工具",
         "交通工具既可以作타다的宾语，也可以接-(으)로表示出行手段。",
-        <Bus size={22} />,
+        <Bus aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={transportWords}
@@ -597,7 +597,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "06",
         "2. 交通与移动动词",
         "乘车、下车、换乘和花费时间都有固定助词搭配。",
-        <TrainFront size={22} />,
+        <TrainFront aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={movementWords}
@@ -617,7 +617,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "07",
         "3. 交通设施与方向",
         "在真实车站里，出口、站台、线路和方向词比单个地名更重要。",
-        <MapPinned size={22} />,
+        <MapPinned aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={facilityWords}
@@ -644,7 +644,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "08",
         "4. 车站发音与交通词块",
         "站名遇到역时常出现ㄴ或ㄹ添加；先听整体，再记拼写。",
-        <Headphones size={22} />,
+        <Headphones aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={pronunciationWords}
@@ -664,7 +664,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "10",
         "1. V-(으)려고 하다",
         "表示说话人的意图或尚未实施的计划，相当于“打算……”。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -691,7 +691,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "11",
         "2. N에서 N까지",
         "连接两个地点，表示移动范围的起点和终点。",
-        <Route size={22} />,
+        <Route aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -718,7 +718,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "12",
         "3. V-아/어 주다",
         "表示为别人做某事；请求时常使用礼貌形式-아/어 주세요。",
-        <CircleParking size={22} />,
+        <CircleParking aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -745,7 +745,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "13",
         "4. N-(으)로",
         "表示移动方向或交通手段；根据名词最后的收音选择로／으로。",
-        <Navigation size={22} />,
+        <Navigation aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -772,7 +772,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "15",
         "1. 假期计划工坊",
         "把动词变成-(으)려고 해요，并说明目的地或交通工具。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["제주도에 가다", "제주도에 가려고 해요."],
@@ -798,7 +798,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "16",
         "2. 起点、终点与交通工具",
         "先连接地点区间，再选择-(으)로或을/를 타다表达交通方式。",
-        <Route size={22} />,
+        <Route aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["家→学校／步行", "집에서 학교까지 걸어가요."],
@@ -824,7 +824,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "17",
         "3. 出租车请求实验",
         "把目的地、方向和动作组合成自然、礼貌的司机请求。",
-        <CircleParking size={22} />,
+        <CircleParking aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["请带我去首尔站。", "서울역으로 가 주세요."],
@@ -850,7 +850,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "23",
         "1. 听力 · 地铁路线信息表",
         "听路线，记录起点、换乘站、线路、出口和预计时间。",
-        <Headphones size={22} />,
+        <Headphones aria-hidden="true" size={22} />,
         <>
           <button
             type="button"
@@ -859,9 +859,9 @@ export function KoreanLevelOneLessonThirteenBook({
                 "서울역에서 경복궁까지 지하철로 가세요. 서울역에서 4호선을 타고 충무로역에서 3호선으로 갈아타세요. 경복궁역에서 내려서 5번 출구로 나가세요. 이십오 분쯤 걸려요."
               )
             }
-            className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#3e7fa3] p-4 text-sm font-black text-white"
+            className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] p-4 text-sm font-bold text-white"
           >
-            <Volume2 size={17} />
+            <Volume2 aria-hidden="true" size={17} />
             播放地铁路线
           </button>
           <Exercise
@@ -888,7 +888,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "24",
         "2. 询问交通时间",
         "用얼마나 걸려요?询问耗时，用时间数量回答。",
-        <TrainFront size={22} />,
+        <TrainFront aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -915,7 +915,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "25",
         "3. 60秒路线说明挑战",
         "不看稿说明一条包含换乘、出口和时间的完整路线。",
-        <Mic2 size={22} />,
+        <Mic2 aria-hidden="true" size={22} />,
         <>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Note title="问路者">
@@ -947,7 +947,7 @@ export function KoreanLevelOneLessonThirteenBook({
               왼쪽으로 가요?
             </Note>
           </div>
-          <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">
+          <p className="mt-auto text-center text-[11px] font-bold text-[var(--foreground-secondary)]">
             至少使用：-(으)려고 하다、에서～까지、-아/어 주세요、-(으)로各一次。
           </p>
         </>
@@ -956,10 +956,10 @@ export function KoreanLevelOneLessonThirteenBook({
         "27",
         "1. 阅读 · 서울역에서 경복궁까지",
         "找出路线中的交通工具、下车站、出口、步行方向与总时间。",
-        <BookOpenCheck size={22} />,
+        <BookOpenCheck aria-hidden="true" size={22} />,
         <>
-          <section className="mt-4 rounded-2xl border border-[#cfe3d4] bg-white p-5">
-            <p className="text-[11px] font-black text-[#347b69]">길 안내</p>
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-[11px] font-bold text-[var(--status-success)]">길 안내</p>
             <p className="mt-3 text-sm font-bold leading-7">
               서울역에서 경복궁까지 지하철로 가세요. 서울역에서 4호선을 타고
               충무로역에서 3호선으로 갈아타세요. 경복궁역에서 내려서 5번
@@ -991,7 +991,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "28",
         "2. 写作 · 我的上学路线",
         "写7—9句原创路线说明，读者必须能够照着路线到达。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Note title="内容骨架" tone="green">
@@ -1007,8 +1007,8 @@ export function KoreanLevelOneLessonThirteenBook({
               타다／내리다各一次
             </Note>
           </div>
-          <section className="mt-4 rounded-2xl border border-dashed border-[#9fc8b9] bg-[#fbfdfa] p-5">
-            <p className="text-[11px] font-black text-[#347b69]">原创示范</p>
+          <section className="mt-4 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-[11px] font-bold text-[var(--status-success)]">原创示范</p>
             <p className="mt-3 text-sm font-bold leading-7">
               저는 아침에 학교에 가려고 해요. 집에서 학교까지 버스와 지하철로
               가요. 집 앞 정류장에서 273번 버스를 타요. 신촌역에서 내려서
@@ -1016,14 +1016,14 @@ export function KoreanLevelOneLessonThirteenBook({
               출구에서 학교까지 걸어가요. 모두 오십 분쯤 걸려요.
             </p>
           </section>
-          <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-black text-[#347b69]">
+          <div className="mt-4 grid grid-cols-2 gap-2 text-[11px] font-bold text-[var(--status-success)]">
             {[
               "✓ 가려고 해요",
               "✓ 집에서 학교까지",
               "✓ 2호선으로 갈아타요",
               "✓ 9번 출구로 나가요",
             ].map((item) => (
-              <span key={item} className="rounded-xl bg-[#f2f8f3] px-3 py-2">
+              <span key={item} className="rounded-xl bg-[var(--status-success-surface)] px-3 py-2">
                 {item}
               </span>
             ))}
@@ -1034,7 +1034,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "30",
         "1. 交通词汇闪测",
         "看到中文后两秒内说出韩语，并检查固定助词搭配。",
-        <Bus size={22} />,
+        <Bus aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["公交车", "버스"],
@@ -1062,7 +1062,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "31",
         "2. 计划与区间检测",
         "完成-(으)려고 하다与地点에서～까지。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["가다 + 려고 해요", "가려고 해요."],
@@ -1088,7 +1088,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "32",
         "3. 请求与方向检测",
         "根据收音选择로／으로，并完成礼貌请求。",
-        <Navigation size={22} />,
+        <Navigation aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["学校 + 로", "학교로"],
@@ -1114,7 +1114,7 @@ export function KoreanLevelOneLessonThirteenBook({
         "33",
         "4. 易错点诊所",
         "纠正时间与地点范围、交通工具助词以及역结尾判断。",
-        <CheckCircle2 size={22} />,
+        <CheckCircle2 aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["집부터 역까지 ×", "집에서 역까지 ✓"],
@@ -1140,10 +1140,10 @@ export function KoreanLevelOneLessonThirteenBook({
         "34",
         "5. 口语验收 · 十句完整路线",
         "交换角色完成问路，并给出一条真正可以执行的交通路线。",
-        <Mic2 size={22} />,
+        <Mic2 aria-hidden="true" size={22} />,
         <>
-          <section className="mt-4 rounded-2xl border border-[#cfe3d4] bg-[#f2f8f3] p-5">
-            <p className="text-xs font-black text-[#487a54]">八项必达信息</p>
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-5">
+            <p className="text-xs font-bold text-[var(--status-success)]">八项必达信息</p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
               {[
                 "说出目的地",
@@ -1159,16 +1159,16 @@ export function KoreanLevelOneLessonThirteenBook({
                   key={task}
                   className="flex items-center gap-2 rounded-xl bg-white p-3 font-bold"
                 >
-                  <input type="checkbox" className="accent-[#487a54]" />
+                  <input type="checkbox" className="accent-[var(--status-success)]" />
                   {task}
                 </label>
               ))}
             </div>
           </section>
-          <div className="mt-4 grid grid-cols-3 gap-3 text-center text-[11px] font-black">
-            <span className="rounded-xl bg-[#f1f6fb] px-3 py-2 text-[#3d6f9f]">路线完整 40%</span>
-            <span className="rounded-xl bg-[#f2f8f3] px-3 py-2 text-[#487a54]">语法正确 40%</span>
-            <span className="rounded-xl bg-[#fff8ed] px-3 py-2 text-[#9a6b2f]">表达自然 20%</span>
+          <div className="mt-4 grid grid-cols-3 gap-3 text-center text-[11px] font-bold">
+            <span className="rounded-xl bg-[var(--accent)] px-3 py-2 text-[var(--primary)]">路线完整 40%</span>
+            <span className="rounded-xl bg-[var(--status-success-surface)] px-3 py-2 text-[var(--status-success)]">语法正确 40%</span>
+            <span className="rounded-xl bg-[var(--status-warning-surface)] px-3 py-2 text-[var(--status-warning)]">表达自然 20%</span>
           </div>
           <button
             type="button"
@@ -1177,9 +1177,9 @@ export function KoreanLevelOneLessonThirteenBook({
                 "서울역에서 경복궁에 가려고 해요. 어떻게 가요? 서울역에서 충무로역까지 4호선을 타세요. 충무로역에서 갈아타요? 네, 3호선으로 갈아타세요. 몇 번 출구로 나가요? 5번 출구로 나가세요. 시간이 얼마나 걸려요? 이십오 분쯤 걸려요. 네, 감사합니다."
               )
             }
-            className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[#487a54] p-4 text-sm font-black text-white"
+            className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] p-4 text-sm font-bold text-white"
           >
-            <Volume2 size={16} />
+            <Volume2 aria-hidden="true" size={16} />
             播放十句示范
           </button>
         </>
@@ -1187,15 +1187,15 @@ export function KoreanLevelOneLessonThirteenBook({
       "35": (
         <div className="flex h-full flex-col justify-center">
           <div className="mx-auto w-full max-w-[440px] text-center">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f4eb] text-[#487a54]">
-              <Sparkles size={27} />
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]">
+              <Sparkles aria-hidden="true" size={27} />
             </span>
-            <p className="mt-4 text-xs font-black tracking-[0.18em] text-[#487a54]">
+            <p className="mt-4 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
               LESSON 13 · COMPLETE
             </p>
-            <h2 className="mt-3 text-4xl font-black">서울역으로 가 주세요.</h2>
-            <p className="mt-3 text-lg font-black">你已经完成第十三课</p>
-            <p className="mx-auto mt-3 max-w-[390px] text-sm leading-7 text-[#60736a]">
+            <h3 className="mt-3 text-4xl font-bold">서울역으로 가 주세요.</h3>
+            <p className="mt-3 text-lg font-bold">你已经完成第十三课</p>
+            <p className="mx-auto mt-3 max-w-[390px] text-sm leading-7 text-[var(--foreground-secondary)]">
               现在你能说明出行计划、选择交通工具、描述起点和终点、完成换乘，并向司机或路人提出礼貌请求。
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-left">
@@ -1207,18 +1207,18 @@ export function KoreanLevelOneLessonThirteenBook({
               ].map(([index, title, detail]) => (
                 <div
                   key={index}
-                  className="rounded-xl border border-[#dce8e1] bg-white px-4 py-3"
+                  className="rounded-xl border border-[var(--border)] bg-white px-4 py-3"
                 >
-                  <p className="text-[10px] font-black text-[#487a54]">{index}</p>
-                  <p className="mt-1 text-xs font-black">{title}</p>
-                  <p className="mt-1 text-[10px] text-[#71857b]">{detail}</p>
+                  <p className="text-[10px] font-bold text-[var(--status-success)]">{index}</p>
+                  <p className="mt-1 text-xs font-bold">{title}</p>
+                  <p className="mt-1 text-[10px] text-[var(--foreground-secondary)]">{detail}</p>
                 </div>
               ))}
             </div>
             <button
               type="button"
               onClick={() => flipBookRef.current?.pageFlip()?.flip(1)}
-              className="mt-4 rounded-full bg-[#eaf2fb] px-4 py-3 text-xs font-black text-[#3d6f9f]"
+              className="mt-4 rounded-full bg-[var(--accent)] px-4 py-3 text-xs font-bold text-[var(--primary)]"
             >
               返回目录
             </button>
@@ -1241,7 +1241,7 @@ export function KoreanLevelOneLessonThirteenBook({
   return (
     <section
       ref={containerRef}
-      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"
+      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2 [&_input:focus-visible]:outline-none [&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-[var(--ring)] [&_input:focus-visible]:ring-offset-2"
     >
       <div
         className="relative shrink-0"
@@ -1251,17 +1251,17 @@ export function KoreanLevelOneLessonThirteenBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
           aria-label="上一页"
-          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg"
+          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft aria-hidden="true" size={18} />
         </button>
         <button
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
           aria-label="下一页"
-          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg"
+          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg"
         >
-          <ArrowRight size={18} />
+          <ArrowRight aria-hidden="true" size={18} />
         </button>
         <div
           className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left"

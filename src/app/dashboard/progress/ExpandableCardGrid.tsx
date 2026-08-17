@@ -28,7 +28,7 @@ export function ExpandableCardGrid({
         <button
           type="button"
           onClick={() => setExpanded(true)}
-          className="app-soft-card mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border px-4 py-3 text-xs font-black"
+          className="app-soft-card mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-2xl border px-4 py-3 text-xs font-bold"
         >
           展开剩下的 {remaining} 道题
           <ChevronDown size={14} aria-hidden="true" />

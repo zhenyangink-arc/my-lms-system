@@ -124,7 +124,7 @@ export default async function KoreanChapterTestPage({
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-4 px-4 sm:px-6 lg:px-8">
         <Link
           href="/dashboard/assignments?type=chapter_test"
-          className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+          className="app-muted-text inline-flex items-center gap-2 text-xs font-bold"
         >
           <ArrowLeft size={14} />
           返回章节测试中心

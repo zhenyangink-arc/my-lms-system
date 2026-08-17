@@ -17,16 +17,16 @@ function stepTone(done: boolean, active: boolean, isFinal: boolean) {
     return { color: "#fff", backgroundColor: FINAL_RED };
   }
   return {
-    color: done || active ? "#fff" : "var(--app-muted)",
-    backgroundColor: done ? "var(--app-success)" : active ? "var(--app-accent)" : "var(--app-soft-bg)",
+    color: done || active ? "#fff" : "var(--foreground-muted)",
+    backgroundColor: done ? "var(--status-success)" : active ? "var(--primary)" : "var(--surface-soft)",
   };
 }
 
 function labelTone(done: boolean, active: boolean, isFinal: boolean) {
   if (isFinal && active && !done) return FINAL_RED;
-  if (done) return "var(--app-success)";
-  if (active) return "var(--app-accent-strong)";
-  return "var(--app-muted)";
+  if (done) return "var(--status-success)";
+  if (active) return "var(--primary-hover)";
+  return "var(--foreground-muted)";
 }
 
 export function AdminApplicationStageControl({
@@ -66,14 +66,14 @@ export function AdminApplicationStageControl({
 
   return (
     <div>
-      <div className="mb-4 border-y border-black/[0.07] px-3 py-3" style={{ backgroundColor: channelConfirmed ? "var(--app-success-soft)" : "var(--app-soft-bg)" }}>
+      <div className="mb-4 border-y border-black/[0.07] px-3 py-3" style={{ backgroundColor: channelConfirmed ? "var(--status-success-surface)" : "var(--surface-soft)" }}>
         <div className="flex flex-wrap items-start justify-between gap-2">
           <div>
             <p className="text-[10px] font-medium">第9步前确认签证办理方式</p>
             <p className="app-muted-text mt-1 text-[9px]">选择办理通道并点击确认后，才能点亮“请进入申请签证页面”。</p>
           </div>
           {channelConfirmed && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: "var(--app-success)" }}>
+            <span className="inline-flex items-center gap-1 text-[10px] font-medium" style={{ color: "var(--status-success)" }}>
               <CircleCheckBig size={12} />已确认
             </span>
           )}
@@ -90,8 +90,8 @@ export function AdminApplicationStageControl({
                 onClick={() => setSelectedChannel(option.value)}
                 className="rounded-md border px-3 py-2 text-left text-[10px] font-medium transition disabled:cursor-not-allowed disabled:opacity-60"
                 style={selected
-                  ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }
-                  : { color: "var(--app-muted)", borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-card-bg)" }}
+                  ? { color: "var(--primary-hover)", borderColor: "var(--primary)", backgroundColor: "var(--accent)" }
+                  : { color: "var(--foreground-muted)", borderColor: "var(--border-subtle)", backgroundColor: "var(--card)" }}
               >
                 {option.label}
               </button>
@@ -126,7 +126,7 @@ export function AdminApplicationStageControl({
               className="flex flex-col items-center gap-1 text-center transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
             >
               <span
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-black"
+                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold"
                 style={stepTone(done, active, isFinal)}
               >
                 {done ? <Check size={11} /> : stepNumber}

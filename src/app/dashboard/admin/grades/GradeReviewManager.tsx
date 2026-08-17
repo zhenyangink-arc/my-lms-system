@@ -23,15 +23,15 @@ export function GradeReviewManager({
   return (
     <details className="group">
       <summary
-        className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md px-2.5 py-2 text-[10px] font-black text-white"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        className="inline-flex cursor-pointer list-none items-center gap-1 rounded-md px-2.5 py-2 text-[10px] font-semibold text-white"
+        style={{ backgroundColor: "var(--primary)" }}
       >
         <SearchCheck size={11} />处理复核
       </summary>
       <form
         action={formAction}
         className="mt-2 min-w-[240px] space-y-2 border-t pt-2"
-        style={{ borderColor: "var(--app-border-soft)" }}
+        style={{ borderColor: "var(--border-subtle)" }}
       >
         <select
           name="status"
@@ -59,7 +59,7 @@ export function GradeReviewManager({
               color:
                 state.status === "error"
                   ? "#c94f45"
-                  : "var(--app-success)",
+                  : "var(--status-success)",
             }}
           >
             {state.message}
@@ -68,8 +68,8 @@ export function GradeReviewManager({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[10px] font-black text-white disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          className="inline-flex items-center gap-1.5 rounded-md px-2.5 py-2 text-[10px] font-semibold text-white disabled:opacity-50"
+          style={{ backgroundColor: "var(--primary)" }}
         >
           <SearchCheck size={10} />{pending ? "保存中…" : "保存处理结果"}
         </button>

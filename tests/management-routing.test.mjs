@@ -77,7 +77,9 @@ test("学生应用顶部栏保留可用的外观设置入口", () => {
 
   assert.match(topbarSource, /aria-label="打开外观设置"/);
   assert.match(topbarSource, /id="student-system-glass-popover"/);
-  assert.match(globalStyles, /\.student-system-glass-control\s*\{/);
+  assert.match(topbarSource, /<Popover open=\{appearanceOpen\}/);
+  assert.match(topbarSource, /initialFocus=\{firstThemeButtonRef\}/);
+  assert.match(topbarSource, /positionerClassName="student-system-floating-layer"/);
   assert.match(globalStyles, /\.student-system-glass-popover\s*\{/);
 });
 

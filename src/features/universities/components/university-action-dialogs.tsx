@@ -41,7 +41,7 @@ import {
 } from "../constants/university-options";
 
 const inputClass =
-  "h-9 w-full border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs outline-none focus:border-[var(--app-accent)]";
+  "h-9 w-full border border-[var(--border)] bg-[var(--card)] px-3 text-xs outline-none focus:border-[var(--primary)]";
 const textareaClass = `${inputClass} h-auto resize-y py-2 leading-5`;
 
 function SubmitButton({ label }: { label: string }) {
@@ -50,7 +50,7 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="h-9 bg-[var(--app-accent)] px-4 text-xs font-semibold text-white disabled:opacity-50"
+      className="h-9 bg-[var(--primary)] px-4 text-xs font-semibold text-white disabled:opacity-50"
     >
       {pending ? "正在保存…" : label}
     </button>
@@ -72,7 +72,7 @@ function DeleteSubmitButton() {
 
 function Field({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <label className="space-y-1.5 text-xs font-semibold text-[var(--app-text-soft)]">
+    <label className="space-y-1.5 text-xs font-semibold text-[var(--foreground-secondary)]">
       <span>{label}</span>
       {children}
     </label>
@@ -120,7 +120,7 @@ function UniversityFormFields({ university }: { university?: ManagedUniversity }
         <input name="logoUrl" type="url" placeholder="https://…" defaultValue={university?.logo_url ?? ""} className={inputClass} />
       </Field>
 
-      <div className="flex flex-wrap gap-5 text-xs text-[var(--app-text-soft)]">
+      <div className="flex flex-wrap gap-5 text-xs text-[var(--foreground-secondary)]">
         <label className="flex items-center gap-2">
           <input name="isFeatured" type="checkbox" defaultChecked={university?.is_featured ?? false} />
           重点推荐
@@ -150,7 +150,7 @@ function UniversityFormFields({ university }: { university?: ManagedUniversity }
       </div>
 
       <fieldset className="space-y-2">
-        <legend className="text-xs font-semibold text-[var(--app-text-soft)]">申请阶段</legend>
+        <legend className="text-xs font-semibold text-[var(--foreground-secondary)]">申请阶段</legend>
         <div className="flex flex-wrap gap-4">
           {Object.entries(UNIVERSITY_ADMISSION_STAGE_LABELS).map(([value, label]) => (
             <label key={value} className="flex items-center gap-2 text-xs">
@@ -161,7 +161,7 @@ function UniversityFormFields({ university }: { university?: ManagedUniversity }
         </div>
       </fieldset>
       <fieldset className="space-y-2">
-        <legend className="text-xs font-semibold text-[var(--app-text-soft)]">优势学科</legend>
+        <legend className="text-xs font-semibold text-[var(--foreground-secondary)]">优势学科</legend>
         <div className="flex flex-wrap gap-4">
           {Object.entries(UNIVERSITY_DISCIPLINE_GROUP_LABELS).map(([value, label]) => (
             <label key={value} className="flex items-center gap-2 text-xs">
@@ -224,11 +224,11 @@ function PermanentUniversityDelete({
 export function CreateUniversityDialog() {
   return (
     <Dialog>
-      <DialogTrigger className="inline-flex h-9 items-center gap-2 bg-[var(--app-accent)] px-4 text-xs font-semibold text-white">
+      <DialogTrigger className="inline-flex h-9 items-center gap-2 bg-[var(--primary)] px-4 text-xs font-semibold text-white">
         <Plus className="size-3.5" />新增大学
       </DialogTrigger>
       <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[980px]">
-        <DialogHeader className="border-b border-[var(--app-border)] px-6 py-4">
+        <DialogHeader className="border-b border-[var(--border)] px-6 py-4">
           <DialogTitle>新增大学</DialogTitle>
           <DialogDescription>内部技术标识由系统生成，只需维护学生可见资料。</DialogDescription>
         </DialogHeader>
@@ -259,11 +259,11 @@ export function EditUniversityDialog({
   return (
     <>
       <Dialog open={editOpen} onOpenChange={setEditOpen}>
-        <DialogTrigger className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)]">
+        <DialogTrigger className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)]">
           <Pencil className="size-3" />编辑
         </DialogTrigger>
         <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden p-0 sm:max-w-[980px]">
-          <DialogHeader className="border-b border-[var(--app-border)] px-6 py-4">
+          <DialogHeader className="border-b border-[var(--border)] px-6 py-4">
             <DialogTitle>编辑大学资料</DialogTitle>
             <DialogDescription>{university.name_zh} · {university.name_ko}</DialogDescription>
           </DialogHeader>

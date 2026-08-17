@@ -81,7 +81,7 @@ const inspectionColumns: ColumnDef<TenantAnnouncementSummary>[] = [
     accessorKey: "name",
     header: sortableHeader("机构名称"),
     cell: ({ row }) => (
-      <span className="font-semibold text-[var(--app-text)]">
+      <span className="font-semibold text-[var(--foreground)]">
         {row.original.name}
       </span>
     ),
@@ -95,7 +95,7 @@ const inspectionColumns: ColumnDef<TenantAnnouncementSummary>[] = [
     accessorKey: "latestPublishedAt",
     header: sortableHeader("最近发布"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.latestPublishedAt}
           options={DATE_OPTIONS}
@@ -162,17 +162,17 @@ export function TenantAnnouncementInspection({
       isEmpty={summaries.length === 0}
       emptyContent="暂无可巡检机构"
       footer={
-        <p className="text-xs text-[var(--app-muted)]">
+        <p className="text-xs text-[var(--foreground-muted)]">
           共 {summaries.length} 个机构；平台端仅查看机构公告，不在此处代替机构操作。
         </p>
       }
     >
       <Table className="min-w-[920px]">
-        <TableHeader className="bg-[var(--app-soft-bg)]">
+        <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 text-xs">
+                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                   {header.isPlaceholder
                     ? null
                     : flexRender(
@@ -209,7 +209,7 @@ function TenantInspectionDialog({
     <Dialog>
       <DialogTrigger
         type="button"
-        className="h-8 rounded-md border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        className="h-8 rounded-md border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
         查看公告
       </DialogTrigger>
@@ -220,9 +220,9 @@ function TenantInspectionDialog({
             共 {summary.total} 条公告，平台端保持只读。
           </DialogDescription>
         </DialogHeader>
-        <div className="overflow-x-auto border border-[var(--app-border)]">
+        <div className="overflow-x-auto border border-[var(--border)]">
           <table className="w-full min-w-[680px] border-collapse text-left text-xs">
-            <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]">
+            <thead className="bg-[var(--surface-soft)] text-[var(--foreground-muted)]">
               <tr>
                 <th className="px-3 py-2.5 font-medium">公告标题</th>
                 <th className="px-3 py-2.5 font-medium">状态</th>
@@ -234,7 +234,7 @@ function TenantInspectionDialog({
               {summary.announcements.map((announcement) => (
                 <tr
                   key={announcement.id}
-                  className="border-t border-[var(--app-border-soft)]"
+                  className="border-t border-[var(--border-subtle)]"
                 >
                   <td className="max-w-72 truncate px-3 py-2.5 font-medium">
                     {announcement.title}
@@ -249,7 +249,7 @@ function TenantInspectionDialog({
                   <td className="px-3 py-2.5 font-mono tabular-nums">
                     {announcement.readCount} / {announcement.audienceCount}
                   </td>
-                  <td className="px-3 py-2.5 text-[var(--app-muted)]">
+                  <td className="px-3 py-2.5 text-[var(--foreground-muted)]">
                     <LocalDateTime
                       value={announcement.publishedAt}
                       options={DATE_OPTIONS}
@@ -262,7 +262,7 @@ function TenantInspectionDialog({
                 <tr>
                   <td
                     colSpan={4}
-                    className="px-3 py-10 text-center text-[var(--app-muted)]"
+                    className="px-3 py-10 text-center text-[var(--foreground-muted)]"
                   >
                     该机构暂无公告
                   </td>

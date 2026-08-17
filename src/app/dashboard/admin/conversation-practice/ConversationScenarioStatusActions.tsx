@@ -14,9 +14,12 @@ function StatusButton({ id, status, target, label }: { id: string; status: Conve
   if (status === target) return null;
   return (
     <form action={formAction}>
-      <button type="submit" disabled={pending} title={state.message || undefined} className="app-soft-card inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-black disabled:opacity-50">
-        <Icon size={12} />{pending ? "处理中…" : label}
+      <button type="submit" disabled={pending} className="app-soft-card inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50">
+        <Icon size={12} aria-hidden="true" />{pending ? "处理中…" : label}
       </button>
+      <p aria-live="polite" aria-atomic="true" className={`mt-1 min-h-4 text-xs font-bold ${state.status === "error" ? "text-[var(--status-danger)]" : "text-[var(--status-success)]"}`}>
+        {state.message}
+      </p>
     </form>
   );
 }

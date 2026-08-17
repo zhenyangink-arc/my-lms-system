@@ -36,7 +36,7 @@ export function HomeTreeViewTabs({
     <>
       <div
         className="inline-flex flex-wrap gap-1 rounded-lg p-1"
-        style={{ backgroundColor: "var(--app-soft-bg)" }}
+        style={{ backgroundColor: "var(--surface-soft)" }}
       >
         {views.map((v) => {
           const isActive = v.slug === active;
@@ -47,8 +47,8 @@ export function HomeTreeViewTabs({
               onClick={() => setOpen(true)}
               className="rounded-md px-3 py-1.5 text-xs font-bold transition"
               style={{
-                backgroundColor: isActive ? "var(--app-card-bg)" : "transparent",
-                color: isActive ? "var(--app-text)" : "var(--app-muted)",
+                backgroundColor: isActive ? "var(--card)" : "transparent",
+                color: isActive ? "var(--foreground)" : "var(--foreground-muted)",
                 boxShadow: isActive ? "0 1px 2px rgba(0,0,0,0.06)" : "none",
               }}
             >
@@ -65,15 +65,15 @@ export function HomeTreeViewTabs({
           className="!max-w-[960px] gap-0 rounded-[20px] p-0 app-glass-panel overflow-hidden"
         >
           <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-3">
-            <DialogTitle className="flex items-center gap-2 text-base font-black">
-              <BookOpen size={18} style={{ color: "var(--app-accent)" }} />
+            <DialogTitle className="flex items-center gap-2 text-base font-semibold">
+              <BookOpen size={18} style={{ color: "var(--primary)" }} />
               {views.find((v) => v.slug === active)?.title ?? "课程树"} · 预览
             </DialogTitle>
             <span
-              className="shrink-0 rounded-full px-3 py-1 text-xs font-black"
+              className="shrink-0 rounded-full px-3 py-1 text-xs font-semibold"
               style={{
-                color: "var(--app-accent-strong)",
-                backgroundColor: "var(--app-accent-soft)",
+                color: "var(--primary-hover)",
+                backgroundColor: "var(--accent)",
               }}
             >
               {tree.nodes.length} 节点
@@ -83,7 +83,7 @@ export function HomeTreeViewTabs({
           <div className="px-4 pb-4">
             <div
               className="h-[480px] overflow-hidden rounded-2xl border"
-              style={{ borderColor: "var(--app-border)" }}
+              style={{ borderColor: "var(--border)" }}
             >
               {nodes.length > 0 ? (
                 <ReactFlow
@@ -104,7 +104,7 @@ export function HomeTreeViewTabs({
                 </ReactFlow>
               ) : (
                 <div className="flex h-full flex-col items-center justify-center text-center">
-                  <p className="text-sm font-black">该视图还没有课程</p>
+                  <p className="text-sm font-semibold">该视图还没有课程</p>
                   <p className="mt-1 text-xs app-muted-text">
                     打开下面的开关后，课程会出现在这里
                   </p>
@@ -117,8 +117,8 @@ export function HomeTreeViewTabs({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)]"
-              style={{ color: "var(--app-muted)" }}
+              className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--accent)_30%,transparent)]"
+              style={{ color: "var(--foreground-muted)" }}
             >
               关闭
             </button>

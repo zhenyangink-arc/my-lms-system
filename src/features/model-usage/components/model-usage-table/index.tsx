@@ -185,17 +185,17 @@ export function ModelUsageTable({
         isEmpty={filteredData.length === 0}
         emptyContent={invalidDateRange ? "请调整日期范围" : "没有符合条件的模型用量数据"}
         footer={
-          <p className="text-xs text-[var(--app-muted)]">
+          <p className="text-xs text-[var(--foreground-muted)]">
             当前显示 {filteredData.length} 个用量主体；数据来自最近 {queryLimit.toLocaleString("zh-CN")} 条调用记录
           </p>
         }
       >
         <Table className="min-w-[1280px]">
-          <TableHeader className="bg-[var(--app-soft-bg)]">
+          <TableHeader className="bg-[var(--surface-soft)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="px-4 text-xs">
+                  <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}

@@ -14,6 +14,9 @@ import { UniversitiesTable } from "./universities-table";
 
 export default async function UniversityListing() {
   const result = await getUniversityManagementData();
+  const universityDataAvailable = !result.universitiesError;
+  const requirementDataAvailable =
+    !result.requirementsError && !result.visaRequirementsError;
   const publishedCount = result.universities.filter(
     (university) => university.is_published,
   ).length;
@@ -59,7 +62,7 @@ export default async function UniversityListing() {
       )}
       {result.hasError && (
         <ManagementNotice tone="warning">
-          大学资料暂时无法完整读取，请稍后刷新重试。
+          大学资料暂时无法完整读取。未成功读取的区域已隐藏，请稍后刷新重试。
         </ManagementNotice>
       )}
       {result.isInstitutionViewer && (
@@ -68,33 +71,42 @@ export default async function UniversityListing() {
         </ManagementNotice>
       )}
 
-      <ManagementMetricStrip
-        label="大学资料概况"
-        items={[
-          {
-            label: "资料范围",
-            value: result.canManageContent ? "平台资料" : "可查看资料",
-          },
-          { label: "大学总数", value: result.universities.length },
-          { label: "已发布", value: publishedCount },
-          { label: "未发布", value: result.universities.length - publishedCount },
-          { label: "重点推荐", value: featuredCount },
-          { label: "覆盖地区", value: regionCount },
-        ]}
-      />
+      {universityDataAvailable && (
+        <ManagementMetricStrip
+          label="大学资料概况"
+          items={[
+            {
+              label: "资料范围",
+              value: result.canManageContent ? "平台资料" : "可查看资料",
+            },
+            { label: "大学总数", value: result.universities.length },
+            { label: "已发布", value: publishedCount },
+            {
+              label: "未发布",
+              value: result.universities.length - publishedCount,
+            },
+            { label: "重点推荐", value: featuredCount },
+            { label: "覆盖地区", value: regionCount },
+          ]}
+        />
+      )}
 
-      <UniversitiesTable
-        data={result.universities}
-        canManageContent={result.canManageContent}
-        canPermanentlyDelete={result.canPermanentlyDelete}
-      />
+      {universityDataAvailable && (
+        <UniversitiesTable
+          data={result.universities}
+          canManageContent={result.canManageContent}
+          canPermanentlyDelete={result.canPermanentlyDelete}
+        />
+      )}
 
-      <UniversityRequirementsWorkspace
-        requirements={requirements}
-        visaRequirements={visaRequirements}
-        universities={universityOptions}
-        canManageContent={result.canManageContent}
-      />
+      {universityDataAvailable && requirementDataAvailable && (
+        <UniversityRequirementsWorkspace
+          requirements={requirements}
+          visaRequirements={visaRequirements}
+          universities={universityOptions}
+          canManageContent={result.canManageContent}
+        />
+      )}
     </div>
   );
 }

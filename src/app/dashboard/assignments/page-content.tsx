@@ -214,7 +214,7 @@ export default async function AssignmentsPage({
     )
     .map(([slug]) => slug);
 
-  const { data: chapterAttemptData } = allChapterTests.length
+  const { data: chapterAttemptData, error: chapterAttemptError } = allChapterTests.length
     ? await supabase
         .from("chapter_test_attempts")
         .select("test_slug,score,passed,attempted_at")
@@ -377,7 +377,8 @@ export default async function AssignmentsPage({
     Boolean(categoriesResult.error) ||
     Boolean(chapterTestsResult.error) ||
     Boolean(chapterQuestionsResult.error) ||
-    Boolean(ebookProgressResult.error);
+    Boolean(ebookProgressResult.error) ||
+    Boolean(chapterAttemptError);
 
   return (
     <div className="pb-12">
@@ -386,22 +387,23 @@ export default async function AssignmentsPage({
           <div className="flex justify-end">
             <Link
               href="/dashboard/admin/assignments"
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+              style={{ backgroundColor: "var(--support)" }}
             >
               进入作业管理
-              <ArrowRight size={15} />
+              <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         )}
 
         {hasReadError && (
           <section
+            role="alert"
             className="rounded-2xl border p-4 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
-              borderColor: "var(--app-warm)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
             }}
           >
             学习任务暂时无法完整读取，请稍后刷新页面。

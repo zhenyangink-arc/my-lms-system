@@ -118,7 +118,7 @@ export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
           <GraduationCap size={16} />
         </span>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-black text-[#173f4a]">老师已进入实时课堂</p>
+          <p className="text-sm font-bold text-[#173f4a]">老师已进入实时课堂</p>
           <p className="app-muted-text truncate text-[11px] font-medium">
             进入课堂，实时跟随老师的讲解与圈点。
           </p>
@@ -126,7 +126,7 @@ export function LiveClassEntryBanner({ lessonId }: { lessonId: string }) {
         <button
           type="button"
           onClick={() => router.push(href)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#238777] px-4 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60]"
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#238777] px-4 py-2 text-xs font-bold text-white transition hover:bg-[#1d6d60]"
         >
           进入课堂
         </button>

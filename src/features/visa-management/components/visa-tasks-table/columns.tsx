@@ -65,10 +65,10 @@ export const visaTaskColumns: ColumnDef<VisaTaskDisplayRow>[] = [
     header: sortableHeader("学生"),
     cell: ({ row }) => (
       <div className="min-w-36">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.studentName}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.universityName}
         </p>
       </div>
@@ -93,8 +93,8 @@ export const visaTaskColumns: ColumnDef<VisaTaskDisplayRow>[] = [
     accessorKey: "status",
     header: sortableHeader("状态"),
     cell: ({ row }) => (
-      <span className="inline-flex items-center gap-1.5 font-medium text-[var(--app-secondary)]">
-        <span className="size-1.5 rounded-full bg-current" />
+      <span className="inline-flex items-center gap-1.5 font-medium text-[var(--support)]">
+        <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
         {TASK_STATUS_LABELS[row.original.status] ?? row.original.status}
       </span>
     ),
@@ -104,7 +104,7 @@ export const visaTaskColumns: ColumnDef<VisaTaskDisplayRow>[] = [
     accessorKey: "studentNote",
     header: sortableHeader("学生说明"),
     cell: ({ row }) => (
-      <p className="max-w-64 truncate text-[var(--app-muted)]">
+      <p className="max-w-64 truncate text-[var(--foreground-muted)]">
         {row.original.studentNote || "—"}
       </p>
     ),
@@ -114,7 +114,7 @@ export const visaTaskColumns: ColumnDef<VisaTaskDisplayRow>[] = [
     accessorKey: "adminNote",
     header: sortableHeader("审核意见"),
     cell: ({ row }) => (
-      <p className="max-w-64 truncate text-[var(--app-muted)]">
+      <p className="max-w-64 truncate text-[var(--foreground-muted)]">
         {row.original.adminNote || "—"}
       </p>
     ),

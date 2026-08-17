@@ -276,7 +276,8 @@ export async function getVisaManagementStudentDetailData(
         .gte("application_stage", 9),
     ]);
 
-  if (caseResult.error || targetsResult.error) return null;
+  if (caseResult.error) throw caseResult.error;
+  if (targetsResult.error) throw targetsResult.error;
 
   const visaCase = caseResult.data as VisaCaseDetailRow | null;
   const targets = (targetsResult.data ?? []) as VisaTargetRow[];

@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { ManagementPageHeader } from "@/components/layout/management-page";
 import { cn } from "@/lib/utils";
 
 export interface PageContainerProps {
@@ -22,8 +23,8 @@ function PageSkeleton() {
       aria-label="页面加载中"
       className="flex flex-1 animate-pulse flex-col gap-3"
     >
-      <div className="h-10 w-full bg-[var(--app-soft-bg)]" />
-      <div className="h-72 w-full bg-[var(--app-soft-bg)]" />
+      <div className="h-10 w-full bg-muted" />
+      <div className="h-72 w-full bg-muted" />
     </div>
   );
 }
@@ -44,7 +45,7 @@ export default function PageContainer({
     return (
       <div
         role="status"
-        className="flex min-h-48 flex-1 items-center justify-center px-4 py-8 text-center text-sm text-[var(--app-muted)] md:px-6"
+        className="flex min-h-48 flex-1 items-center justify-center px-4 py-8 text-center text-sm text-muted-foreground md:px-6"
       >
         {accessFallback ?? "你没有访问此页面的权限。"}
       </div>
@@ -54,27 +55,15 @@ export default function PageContainer({
   const hasHeader = Boolean(pageTitle || pageHeaderAction);
 
   return (
-    <div className={cn("page-container flex w-full flex-1 flex-col px-4 pb-5 md:px-6", className)}>
+    <div className={cn("page-container management-page-shell flex w-full flex-1 flex-col", className)}>
       {hasHeader && (
-        <div className="page-container-header mb-4 flex items-start justify-between gap-4">
-          {pageTitle ? (
-            <div className="min-w-0">
-              <h1 className="page-container-title text-xl font-semibold tracking-tight text-[var(--app-text)]">
-                {pageTitle}
-              </h1>
-              {pageDescription && (
-                <p className="page-container-description mt-1 text-xs leading-5 text-[var(--app-muted)]">
-                  {pageDescription}
-                </p>
-              )}
-            </div>
-          ) : (
-            <span aria-hidden="true" />
-          )}
-          {pageHeaderAction && <div className="shrink-0">{pageHeaderAction}</div>}
-        </div>
+        <ManagementPageHeader
+          title={pageTitle ?? "管理工作台"}
+          description={pageDescription}
+          action={pageHeaderAction}
+        />
       )}
-      <div className={cn("page-container-content min-w-0 flex-1", contentClassName)}>
+      <div className={cn("page-container-content management-page-body min-w-0 flex-1", contentClassName)}>
         {isLoading ? (loadingFallback ?? <PageSkeleton />) : children}
       </div>
     </div>

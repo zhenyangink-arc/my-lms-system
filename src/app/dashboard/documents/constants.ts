@@ -35,9 +35,9 @@ export const STATUS_LABELS: Record<string, string> = {
 };
 
 export const STATUS_TONES: Record<string, { color: string; soft: string }> = {
-  preparing: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
-  completed: { color: "var(--app-success)", soft: "var(--app-success-soft)" },
-  not_needed: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
+  preparing: { color: "var(--support)", soft: "var(--support-surface)" },
+  completed: { color: "var(--status-success)", soft: "var(--status-success-surface)" },
+  not_needed: { color: "var(--foreground-muted)", soft: "var(--surface-soft)" },
 };
 
 export const APPLICATION_STAGE_LABELS = [

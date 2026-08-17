@@ -47,10 +47,10 @@ export function getApplicationRequirementColumns(
     header: sortableHeader("大学"),
     cell: ({ row }) => (
       <div className="min-w-52">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.universityName}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.universityNameKo} · {row.original.universityProvince}
         </p>
       </div>
@@ -60,7 +60,7 @@ export function getApplicationRequirementColumns(
     accessorKey: "title",
     header: sortableHeader("要求名称"),
     cell: ({ row }) => (
-      <p className="min-w-60 max-w-96 font-medium text-[var(--app-text-soft)]">
+      <p className="min-w-60 max-w-96 font-medium text-[var(--foreground-secondary)]">
         {row.original.title}
       </p>
     ),
@@ -74,7 +74,7 @@ export function getApplicationRequirementColumns(
     accessorKey: "description",
     header: sortableHeader("说明"),
     cell: ({ row }) => (
-      <p className="min-w-72 max-w-[32rem] whitespace-normal leading-5 text-[var(--app-muted)]">
+      <p className="min-w-72 max-w-[32rem] whitespace-normal leading-5 text-[var(--foreground-muted)]">
         {row.original.description || "暂无补充说明"}
       </p>
     ),
@@ -112,10 +112,10 @@ export function getVisaRequirementColumns(
     header: sortableHeader("大学"),
     cell: ({ row }) => (
       <div className="min-w-52">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.universityName}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.universityNameKo} · {row.original.universityProvince}
         </p>
       </div>
@@ -125,7 +125,7 @@ export function getVisaRequirementColumns(
     accessorKey: "title",
     header: sortableHeader("要求名称"),
     cell: ({ row }) => (
-      <p className="min-w-60 max-w-96 font-medium text-[var(--app-text-soft)]">
+      <p className="min-w-60 max-w-96 font-medium text-[var(--foreground-secondary)]">
         {row.original.title}
       </p>
     ),
@@ -144,7 +144,7 @@ export function getVisaRequirementColumns(
         {row.original.applicable_scopes.map((scope) => (
           <span
             key={scope}
-            className="bg-[var(--app-soft-bg)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--app-text-soft)]"
+            className="bg-[var(--surface-soft)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--foreground-secondary)]"
           >
             {UNIVERSITY_ADMISSION_STAGE_LABELS[scope]}
           </span>
@@ -156,7 +156,7 @@ export function getVisaRequirementColumns(
     accessorKey: "description",
     header: sortableHeader("说明"),
     cell: ({ row }) => (
-      <p className="min-w-72 max-w-[32rem] whitespace-normal leading-5 text-[var(--app-muted)]">
+      <p className="min-w-72 max-w-[32rem] whitespace-normal leading-5 text-[var(--foreground-muted)]">
         {row.original.description || "暂无补充说明"}
       </p>
     ),

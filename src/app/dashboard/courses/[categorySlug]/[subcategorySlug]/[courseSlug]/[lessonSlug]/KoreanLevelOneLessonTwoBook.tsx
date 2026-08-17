@@ -213,22 +213,22 @@ function Dialogue({
           key={`${speaker}-${korean}`}
           className={`flex gap-3 rounded-2xl border px-4 py-2.5 ${
             index % 2 === 0
-              ? "border-[#d7e8e1] bg-[#f3f9f6]"
-              : "border-[#eadfd3] bg-[#fff8ef]"
+              ? "border-[var(--border)] bg-[var(--status-success-surface)]"
+              : "border-[var(--border)] bg-[var(--card)]"
           }`}
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white text-[11px] font-black text-[#60736a]">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-xl bg-white text-[11px] font-bold text-[var(--foreground-secondary)]">
             {speaker}
           </span>
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-3">
-              <p className="text-[13px] font-black leading-5 text-[#294f43]">
+              <p className="text-[13px] font-bold leading-5 text-[var(--status-success)]">
                 {korean}
               </p>
               <SpeakButton text={korean} speak={speak} />
             </div>
             <p
-              className={`mt-0.5 text-[10px] leading-4 text-[#7b8d84] transition ${
+              className={`mt-0.5 text-[10px] leading-4 text-[var(--foreground-secondary)] transition ${
                 showMeaning ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -256,13 +256,13 @@ function PatternBox({
 }) {
   return (
     <section
-      className={`rounded-2xl border border-[#ded4eb] bg-[#f8f4fc] ${
+      className={`rounded-2xl border border-[var(--border)] bg-[var(--card)] ${
         compact ? "p-4" : "p-5"
       }`}
     >
-      <p className="text-xs font-black text-[#75559a]">核心结构</p>
-      <h3 className="mt-2 text-xl font-black text-[#38294b]">{pattern}</h3>
-      <p className="mt-2 text-xs leading-6 text-[#71647c]">{meaning}</p>
+      <p className="text-xs font-bold text-[var(--primary)]">核心结构</p>
+      <h4 className="mt-2 text-xl font-bold text-[var(--primary)]">{pattern}</h4>
+      <p className="mt-2 text-xs leading-6 text-[var(--foreground-secondary)]">{meaning}</p>
       <div className={`${compact ? "mt-3" : "mt-4"} space-y-2`}>
         {examples.map(([korean, chinese]) => (
           <button
@@ -274,14 +274,14 @@ function PatternBox({
             }`}
           >
             <span>
-              <span className="block text-sm font-black text-[#433653]">
+              <span className="block text-sm font-bold text-[var(--primary)]">
                 {korean}
               </span>
-              <span className="mt-1 block text-[11px] text-[#81758b]">
+              <span className="mt-1 block text-[11px] text-[var(--foreground-secondary)]">
                 {chinese}
               </span>
             </span>
-            <Volume2 className="text-[#75559a]" size={15} />
+            <Volume2 aria-hidden="true" className="text-[var(--primary)]" size={15} />
           </button>
         ))}
       </div>
@@ -367,7 +367,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第一步"
         title="课前导航"
         goal="从真实距离和使用场景出发，学会询问物品名称、说明手边有什么，并完成一次简单购买。"
-        icon={<Compass size={24} />}
+        icon={<Compass aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-03" number="03">
@@ -375,23 +375,23 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 看见东西时，先会问、再会拿"
           description="这一课不从背单词开始，而是从教室和小商店中的四个连续动作开始。"
-          icon={<Compass size={22} />}
+          icon={<Compass aria-hidden="true" size={22} />}
         />
-        <section className="mt-5 grid grid-cols-[1.15fr_0.85fr] overflow-hidden rounded-2xl border border-[#d7e8e1] bg-[#f2f8f5]">
+        <section className="mt-5 grid grid-cols-[1.15fr_0.85fr] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)]">
           <div className="px-5 py-4">
-            <p className="text-[11px] font-black tracking-[0.12em] text-[#4d907f]">
+            <p className="text-[11px] font-bold tracking-[0.12em] text-[var(--status-success)]">
               本课交际任务
             </p>
-            <h3 className="mt-2 text-base font-black">
+            <h4 className="mt-2 text-base font-bold">
               找到需要的学习用品并礼貌提出请求
-            </h3>
-            <p className="mt-2 text-[11px] leading-5 text-[#71857b]">
+            </h4>
+            <p className="mt-2 text-[11px] leading-5 text-[var(--foreground-secondary)]">
               场景：新生体验课前，你在服务台确认物品并领取课堂用品。
             </p>
           </div>
-          <div className="border-l border-[#e5dccf] bg-[#fff8ee] px-5 py-4">
-            <p className="text-[11px] font-bold text-[#a17b50]">完成标准</p>
-            <p className="mt-2 text-xs font-black leading-5 text-[#765c49]">
+          <div className="border-l border-[var(--border)] bg-[var(--card)] px-5 py-4">
+            <p className="text-[11px] font-bold text-[var(--status-warning)]">完成标准</p>
+            <p className="mt-2 text-xs font-bold leading-5 text-[var(--status-warning)]">
               能根据远近选择指示词，并完成“询问—确认—请求—回应”。
             </p>
           </div>
@@ -405,21 +405,21 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([number, title, text]) => (
             <article
               key={number}
-              className="rounded-2xl border border-[#dce8e1] bg-white p-4"
+              className="rounded-2xl border border-[var(--border)] bg-white p-4"
             >
-              <span className="text-xs font-black text-[#b87131]">
+              <span className="text-xs font-bold text-[var(--status-warning)]">
                 {number}
               </span>
-              <h3 className="mt-2 text-sm font-black">{title}</h3>
-              <p className="mt-2 text-[11px] leading-5 text-[#71857b]">
+              <h4 className="mt-2 text-sm font-bold">{title}</h4>
+              <p className="mt-2 text-[11px] leading-5 text-[var(--foreground-secondary)]">
                 {text}
               </p>
             </article>
           ))}
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          <section className="rounded-2xl bg-[#e7f4ef] p-5">
-            <p className="text-xs font-black text-[#238777]">语言工具</p>
+          <section className="rounded-2xl bg-[var(--status-success-surface)] p-5">
+            <p className="text-xs font-bold text-[var(--status-success)]">语言工具</p>
             <div className="mt-3 space-y-1.5 text-xs leading-5">
               <p><strong>N이／가 있어요(없어요)</strong>　说明物品有无</p>
               <p><strong>이거는／그거는／저거는 N이에요／예요</strong>　指物并说明名称</p>
@@ -427,9 +427,9 @@ export function KoreanLevelOneLessonTwoBook({
               <p><strong>N하고 N／N과／와 N</strong>　连接两个名词</p>
             </div>
           </section>
-          <section className="rounded-2xl bg-[#fff3e3] p-5">
-            <p className="text-xs font-black text-[#b87131]">对话路线</p>
-            <p className="mt-3 text-xs font-black leading-6">
+          <section className="rounded-2xl bg-[var(--status-warning-surface)] p-5">
+            <p className="text-xs font-bold text-[var(--status-warning)]">对话路线</p>
+            <p className="mt-3 text-xs font-bold leading-6">
               指物 → 问名称 → 确认有无 → 提出请求
             </p>
           </section>
@@ -441,7 +441,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第二步"
         title="核心词汇表"
         goal="先掌握教室物品、随身物品和商店表达，再把它们放进完整句子中。"
-        icon={<ListChecks size={24} />}
+        icon={<ListChecks aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-05" number="05">
@@ -449,7 +449,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 教室里常见的东西"
           description="点击喇叭听读；先看韩语猜意思，再显示中文核对。"
-          icon={<Sparkles size={22} />}
+          icon={<Sparkles aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.vocab1)}
@@ -475,7 +475,7 @@ export function KoreanLevelOneLessonTwoBook({
             ["교과서", "教材", "名词"],
           ]}
         />
-        <p className="mt-auto rounded-2xl bg-[#e8f4ef] px-5 py-3 text-xs leading-6">
+        <p className="mt-auto rounded-2xl bg-[var(--status-success-surface)] px-5 py-3 text-xs leading-6">
           记忆动作：边指真实物品边说“이 책、이 공책、이 연필”，让词和位置一起进入记忆。
         </p>
       </div>
@@ -485,7 +485,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 随身物品与生活用品"
           description="这些词可以直接用于“这是什么”和“我有／没有”的练习。"
-          icon={<PackageSearch size={22} />}
+          icon={<PackageSearch aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.vocab2)}
@@ -512,10 +512,10 @@ export function KoreanLevelOneLessonTwoBook({
           ]}
         />
         <div className="mt-auto grid grid-cols-2 gap-3 text-xs">
-          <p className="rounded-2xl bg-[#f1eafb] p-4">
+          <p className="rounded-2xl bg-[var(--accent)] p-4">
             <strong>发音留意：</strong> 휴대폰 连续读，不要逐个字母停顿。
           </p>
-          <p className="rounded-2xl bg-[#fff3e3] p-4">
+          <p className="rounded-2xl bg-[var(--status-warning-surface)] p-4">
             <strong>分类记忆：</strong> 放进包里的、放在桌上的、出门会带的。
           </p>
         </div>
@@ -526,7 +526,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="3. 指物、询问与请求表达"
           description="这些不是孤立单词，而是可以立即拿来完成对话的工具。"
-          icon={<ShoppingBag size={22} />}
+          icon={<ShoppingBag aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.vocab3)}
@@ -553,12 +553,12 @@ export function KoreanLevelOneLessonTwoBook({
               key={korean}
               type="button"
               onClick={() => speak(korean)}
-              className="flex items-center justify-between rounded-2xl border border-[#dce8e1] bg-white px-4 py-3 text-left"
+              className="flex items-center justify-between rounded-2xl border border-[var(--border)] bg-white px-4 py-3 text-left"
             >
               <span className="min-w-0">
-                <span className="text-sm font-black">{korean}</span>
+                <span className="text-sm font-bold">{korean}</span>
                 <span
-                  className={`ml-3 text-[11px] text-[#75877e] transition ${
+                  className={`ml-3 text-[11px] text-[var(--foreground-secondary)] transition ${
                     revealed.vocab3 ? "opacity-100" : "opacity-0"
                   }`}
                 >
@@ -569,10 +569,10 @@ export function KoreanLevelOneLessonTwoBook({
                 <span
                   className={`flex h-5 w-5 items-center justify-center rounded-full ${getVocabularyTypeTone(type)}`}
                 >
-                  <Volume2 size={11} />
+                  <Volume2 aria-hidden="true" size={11} />
                 </span>
                 <span
-                  className={`rounded-full px-1.5 py-0.5 text-[9px] font-black ${getVocabularyTypeTone(type)}`}
+                  className={`rounded-full px-1.5 py-0.5 text-[9px] font-bold ${getVocabularyTypeTone(type)}`}
                 >
                   {type}
                 </span>
@@ -580,7 +580,7 @@ export function KoreanLevelOneLessonTwoBook({
             </button>
           ))}
         </div>
-        <div className="mt-auto rounded-2xl bg-[#fff3e3] p-4 text-xs leading-6">
+        <div className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
           礼貌提示：向店员或不熟悉的人提出请求时，物品后接 주세요，声音平稳、句尾不要太急。
         </div>
       </div>
@@ -590,7 +590,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第三步"
         title="语法解说"
         goal="掌握有无表达、指物说明、礼貌请求和名词连接四项核心语法，并把它们组合成完整交流。"
-        icon={<BookOpenCheck size={24} />}
+        icon={<BookOpenCheck aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-09" number="09">
@@ -598,7 +598,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. N이／가 있어요(없어요)"
           description="用 이／가 标出存在或不存在的物品；名词有收音接 이，无收音接 가。"
-          icon={<BookOpenCheck size={22} />}
+          icon={<BookOpenCheck aria-hidden="true" size={22} />}
         />
         <div className="mt-5 grid grid-cols-2 gap-4">
           <PatternBox
@@ -624,31 +624,31 @@ export function KoreanLevelOneLessonTwoBook({
             ]}
           />
         </div>
-        <section className="mt-5 rounded-2xl border border-[#ded4eb] bg-white p-4">
-          <p className="text-xs font-black text-[#75559a]">先看收音，再选择助词</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-white p-4">
+          <p className="text-xs font-bold text-[var(--primary)]">先看收音，再选择助词</p>
           <div className="mt-3 grid grid-cols-2 gap-3 text-center">
             {[
               ["책 + 이 → 책이", "책 有收音"],
               ["의자 + 가 → 의자가", "의자 无收音"],
             ].map(([form, rule]) => (
-              <div key={form} className="rounded-xl bg-[#f8f4fc] px-3 py-3">
-                <span className="block text-sm font-black">{form}</span>
-                <span className="mt-1 block text-[11px] text-[#81758b]">{rule}</span>
+              <div key={form} className="rounded-xl bg-[var(--card)] px-3 py-3">
+                <span className="block text-sm font-bold">{form}</span>
+                <span className="mt-1 block text-[11px] text-[var(--foreground-secondary)]">{rule}</span>
               </div>
             ))}
           </div>
         </section>
         <div className="mt-4 grid grid-cols-2 gap-3 text-[11px] leading-5">
-          <p className="rounded-xl bg-[#fff3e3] p-3">
-            <strong className="text-[#b87131]">使用注意：</strong>
+          <p className="rounded-xl bg-[var(--status-warning-surface)] p-3">
+            <strong className="text-[var(--status-warning)]">使用注意：</strong>
             있어요／없어요 既可表示“有／没有”，也可按场景表示“在／不在”。
           </p>
-          <p className="rounded-xl bg-[#fbeaec] p-3">
-            <strong className="text-[#a65b68]">常见错误：</strong>
+          <p className="rounded-xl bg-[var(--status-warning-surface)] p-3">
+            <strong className="text-[var(--destructive)]">常见错误：</strong>
             标准形式是 없어요，不是 없으요；이／가 只根据前面名词的收音选择。
           </p>
         </div>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           回答时可以省略已经明确的名词：네, 있어요.／아니요, 없어요.
         </p>
       </div>
@@ -658,7 +658,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 이거는(그거는, 저거는) N이에요／예요"
           description="根据物品与说话双方的距离选择 이거、그거、저거，再用 이에요／예요说明名称。"
-          icon={<MessageCircle size={22} />}
+          icon={<MessageCircle aria-hidden="true" size={22} />}
         />
         <div className="mt-5 grid grid-cols-2 gap-4">
           <PatternBox
@@ -684,22 +684,22 @@ export function KoreanLevelOneLessonTwoBook({
             ]}
           />
         </div>
-        <div className="mt-5 rounded-2xl bg-[#fff3e3] p-5">
-          <p className="text-xs font-black text-[#b87131]">对话节奏</p>
+        <div className="mt-5 rounded-2xl bg-[var(--status-warning-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--status-warning)]">对话节奏</p>
           <button
             type="button"
             onClick={() => speak("이거는 뭐예요? 이거는 공책이에요.")}
             className="mt-3 flex w-full items-center justify-between rounded-xl bg-white px-4 py-4 text-left"
           >
-            <span className="text-base font-black">
+            <span className="text-base font-bold">
               이거는 뭐예요?　—　이거는 공책이에요.
             </span>
-            <Volume2 size={16} />
+            <Volume2 aria-hidden="true" size={16} />
           </button>
-          <p className="mt-3 text-[11px] leading-5 text-[#806a52]">
+          <p className="mt-3 text-[11px] leading-5 text-[var(--status-warning)]">
             问句句尾自然上扬，回答句尾稳定下降。先模仿语调，再关注助词。
           </p>
-          <div className="mt-3 grid grid-cols-2 gap-3 border-t border-[#ead3b5] pt-3 text-[11px] leading-5">
+          <div className="mt-3 grid grid-cols-2 gap-3 border-t border-[var(--border)] pt-3 text-[11px] leading-5">
             <p>
               <strong>使用注意：</strong>回答时可以只说“공책이에요”；需要强调所指物时再保留 이거는。
             </p>
@@ -715,16 +715,16 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="3. N 주세요"
           description="在商店、服务台或课堂上，直接把需要的物品放在 주세요 前面，礼貌地表达“请给我……”。"
-          icon={<ShoppingBag size={22} />}
+          icon={<ShoppingBag aria-hidden="true" size={22} />}
         />
-        <section className="mt-5 rounded-2xl border border-[#ded4eb] bg-[#f8f4fc] p-5">
-          <p className="text-xs font-black text-[#75559a]">核心结构</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+          <p className="text-xs font-bold text-[var(--primary)]">核心结构</p>
           <div className="mt-3 flex items-center justify-center gap-3 text-center">
-            <span className="rounded-xl bg-white px-5 py-3 text-lg font-black">需要的物品 N</span>
-            <span className="font-black text-[#75559a]">＋</span>
-            <span className="rounded-xl bg-white px-5 py-3 text-lg font-black">주세요</span>
+            <span className="rounded-xl bg-white px-5 py-3 text-lg font-bold">需要的物品 N</span>
+            <span className="font-bold text-[var(--primary)]">＋</span>
+            <span className="rounded-xl bg-white px-5 py-3 text-lg font-bold">주세요</span>
           </div>
-          <p className="mt-3 text-center text-[11px] leading-5 text-[#71647c]">
+          <p className="mt-3 text-center text-[11px] leading-5 text-[var(--foreground-secondary)]">
             주세요 来自 주다“给”，这里先作为完整的礼貌请求形式记忆。
           </p>
         </section>
@@ -738,31 +738,31 @@ export function KoreanLevelOneLessonTwoBook({
               key={korean}
               type="button"
               onClick={() => speak(korean)}
-              className="rounded-2xl border border-[#ded4eb] bg-white p-4 text-left"
+              className="rounded-2xl border border-[var(--border)] bg-white p-4 text-left"
             >
-              <span className="block text-sm font-black">{korean}</span>
-              <span className="mt-2 block text-[11px] text-[#81758b]">{chinese}</span>
+              <span className="block text-sm font-bold">{korean}</span>
+              <span className="mt-2 block text-[11px] text-[var(--foreground-secondary)]">{chinese}</span>
             </button>
           ))}
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 text-xs leading-5">
-          <section className="rounded-2xl bg-[#fff3e3] p-4">
-            <p className="font-black text-[#b87131]">使用注意</p>
+          <section className="rounded-2xl bg-[var(--status-warning-surface)] p-4">
+            <p className="font-bold text-[var(--status-warning)]">使用注意</p>
             <p className="mt-2">购买或领取物品时，初级阶段直接说“N 주세요”最自然；语气保持平稳，不要读成命令。</p>
           </section>
-          <section className="rounded-2xl bg-[#fbeaec] p-4">
-            <p className="font-black text-[#a65b68]">不要混淆</p>
+          <section className="rounded-2xl bg-[var(--status-warning-surface)] p-4">
+            <p className="font-bold text-[var(--destructive)]">不要混淆</p>
             <p className="mt-2"><strong>N이／가 있어요?</strong> 是询问“有没有”；<strong>N 주세요.</strong> 才是提出“请给我”的请求。</p>
           </section>
         </div>
-        <section className="mt-auto rounded-2xl border border-[#dce8e1] bg-white p-4">
-          <p className="text-xs font-black text-[#238777]">完整交流</p>
+        <section className="mt-auto rounded-2xl border border-[var(--border)] bg-white p-4">
+          <p className="text-xs font-bold text-[var(--status-success)]">完整交流</p>
           <button
             type="button"
             onClick={() => speak("공책이 있어요? 네, 있어요. 공책 주세요. 네, 여기 있어요.")}
-            className="mt-2 w-full rounded-xl bg-[#f2f8f5] px-4 py-2.5 text-left"
+            className="mt-2 w-full rounded-xl bg-[var(--status-success-surface)] px-4 py-2.5 text-left"
           >
-            <p className="text-[13px] font-black leading-6">공책이 있어요? → 네, 있어요. → 공책 주세요. → 네, 여기 있어요.</p>
+            <p className="text-[13px] font-bold leading-6">공책이 있어요? → 네, 있어요. → 공책 주세요. → 네, 여기 있어요.</p>
           </button>
         </section>
       </div>
@@ -772,10 +772,10 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="4. N하고 N, N과／와 N"
           description="三个形式都表示名词之间的“和”；하고 更常用于日常口语，과／와 更常见于书面或较正式表达。"
-          icon={<ListChecks size={22} />}
+          icon={<ListChecks aria-hidden="true" size={22} />}
         />
-        <section className="mt-5 rounded-2xl border border-[#ded4eb] bg-[#f8f4fc] p-5">
-          <p className="text-xs font-black text-[#75559a]">接续规则</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+          <p className="text-xs font-bold text-[var(--primary)]">接续规则</p>
           <div className="mt-3 grid grid-cols-3 gap-3">
             {[
               ["N하고 N", "不看收音，任何名词后都可以接 하고", "공책하고 연필"],
@@ -788,35 +788,35 @@ export function KoreanLevelOneLessonTwoBook({
                 onClick={() => speak(example)}
                 className="rounded-2xl bg-white p-4 text-left"
               >
-                <span className="block text-base font-black text-[#4d3767]">{form}</span>
-                <span className="mt-2 block text-[11px] leading-5 text-[#71647c]">{rule}</span>
-                <span className="mt-3 block rounded-xl bg-[#f1eafb] px-3 py-2 text-xs font-black">{example}</span>
+                <span className="block text-base font-bold text-[var(--primary)]">{form}</span>
+                <span className="mt-2 block text-[11px] leading-5 text-[var(--foreground-secondary)]">{rule}</span>
+                <span className="mt-3 block rounded-xl bg-[var(--accent)] px-3 py-2 text-xs font-bold">{example}</span>
               </button>
             ))}
           </div>
         </section>
         <div className="mt-4 grid grid-cols-2 gap-3 text-xs leading-5">
-          <section className="rounded-2xl bg-[#e7f5f1] p-4">
-            <p className="font-black text-[#347b69]">如何选择</p>
+          <section className="rounded-2xl bg-[var(--status-success-surface)] p-4">
+            <p className="font-bold text-[var(--status-success)]">如何选择</p>
             <p className="mt-2">日常对话优先使用 하고；需要较正式或书面的表达时，再根据前一个名词有没有收音选择 과／와。</p>
           </section>
-          <section className="rounded-2xl bg-[#fbeaec] p-4">
-            <p className="font-black text-[#a65b68]">常见错误</p>
+          <section className="rounded-2xl bg-[var(--status-warning-surface)] p-4">
+            <p className="font-bold text-[var(--destructive)]">常见错误</p>
             <p className="mt-2">判断 과／와 时只看它前面的名词：책有收音，所以是 책과；의자无收音，所以是 의자와。</p>
           </section>
         </div>
-        <section className="mt-4 rounded-2xl border border-[#dce8e1] bg-white p-4">
-          <p className="text-xs font-black text-[#238777]">放进请求句</p>
+        <section className="mt-4 rounded-2xl border border-[var(--border)] bg-white p-4">
+          <p className="text-xs font-bold text-[var(--status-success)]">放进请求句</p>
           <button
             type="button"
             onClick={() => speak("공책하고 연필 주세요. 책과 공책이 있어요.")}
-            className="mt-2 w-full rounded-xl bg-[#f2f8f5] px-4 py-3 text-left"
+            className="mt-2 w-full rounded-xl bg-[var(--status-success-surface)] px-4 py-3 text-left"
           >
-            <p className="text-sm font-black">공책하고 연필 주세요.</p>
-            <p className="mt-1 text-[11px] text-[#71857b]">请给我笔记本和铅笔。</p>
+            <p className="text-sm font-bold">공책하고 연필 주세요.</p>
+            <p className="mt-1 text-[11px] text-[var(--foreground-secondary)]">请给我笔记本和铅笔。</p>
           </button>
         </section>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           注意：하고／과／와 连接的是并列名词，不表示物品“有／没有”。
         </p>
       </div>
@@ -826,7 +826,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第四步"
         title="句型操练"
         goal="通过距离判断、助词选择和信息转换，把规则变成不假思索的口头反应。"
-        icon={<NotebookPen size={24} />}
+        icon={<NotebookPen aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-14" number="14">
@@ -834,7 +834,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 距离反应训练"
           description="先读场景，再选择 이、그、저；完成后点击答案核对。"
-          icon={<Compass size={22} />}
+          icon={<Compass aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.practice1)}
@@ -854,14 +854,14 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([prompt, answer], index) => (
             <article
               key={prompt}
-              className="grid grid-cols-[36px_1fr_150px] items-center gap-3 rounded-2xl border border-[#e7ded3] bg-white px-4 py-3"
+              className="grid grid-cols-[36px_1fr_150px] items-center gap-3 rounded-2xl border border-[var(--border)] bg-white px-4 py-3"
             >
-              <span className="text-xs font-black text-[#b46624]">
+              <span className="text-xs font-bold text-[var(--status-warning)]">
                 {index + 1}
               </span>
               <p className="text-sm font-bold">{prompt}</p>
               <p
-                className={`rounded-xl bg-[#fff2df] px-3 py-2 text-center text-xs font-black text-[#9c5d25] transition ${
+                className={`rounded-xl bg-[var(--status-warning-surface)] px-3 py-2 text-center text-xs font-bold text-[var(--status-warning)] transition ${
                   revealed.practice1 ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -870,7 +870,7 @@ export function KoreanLevelOneLessonTwoBook({
             </article>
           ))}
         </div>
-        <p className="mt-auto rounded-2xl bg-[#f5f1eb] p-4 text-xs leading-6">
+        <p className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
           口头加练：把每个答案扩展成“___는 뭐예요?”，再自己回答物品名称。
         </p>
       </div>
@@ -880,7 +880,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 选择 이／가，再说明有无"
           description="先看名词末尾有没有收音，然后完成句子。"
-          icon={<PencilLine size={22} />}
+          icon={<PencilLine aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.practice2)}
@@ -904,14 +904,14 @@ export function KoreanLevelOneLessonTwoBook({
               key={prompt}
               type="button"
               onClick={() => speak(answer)}
-              className="rounded-2xl border border-[#e7ded3] bg-white p-4 text-left"
+              className="rounded-2xl border border-[var(--border)] bg-white p-4 text-left"
             >
-              <span className="text-[10px] font-black text-[#b46624]">
+              <span className="text-[10px] font-bold text-[var(--status-warning)]">
                 {String(index + 1).padStart(2, "0")}
               </span>
-              <p className="mt-2 text-sm font-black">{prompt}</p>
+              <p className="mt-2 text-sm font-bold">{prompt}</p>
               <p
-                className={`mt-2 text-xs text-[#8b633c] transition ${
+                className={`mt-2 text-xs text-[var(--status-warning)] transition ${
                   revealed.practice2 ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -920,7 +920,7 @@ export function KoreanLevelOneLessonTwoBook({
             </button>
           ))}
         </div>
-        <div className="mt-auto rounded-2xl bg-[#fff2df] p-4 text-xs leading-6">
+        <div className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
           自我检查：先说“有没有”，再把 있어요 换成 없어요，练习同一名词的两种答案。
         </div>
       </div>
@@ -930,7 +930,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="3. 把提示变成店内请求"
           description="每组都要说完整的“询问—确认—请求”，不要只说单个词。"
-          icon={<ShoppingBag size={22} />}
+          icon={<ShoppingBag aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.practice3)}
@@ -949,18 +949,18 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([prompt, answer], index) => (
             <article
               key={prompt}
-              className="rounded-2xl border border-[#e7ded3] bg-white px-4 py-2.5"
+              className="rounded-2xl border border-[var(--border)] bg-white px-4 py-2.5"
             >
               <div className="flex items-center gap-3">
-                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#fff2df] text-xs font-black text-[#b46624]">
+                <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--status-warning-surface)] text-xs font-bold text-[var(--status-warning)]">
                   {index + 1}
                 </span>
-                <p className="text-sm font-black">{prompt}</p>
+                <p className="text-sm font-bold">{prompt}</p>
               </div>
               <button
                 type="button"
                 onClick={() => speak(answer.replaceAll("—", ""))}
-                className={`mt-2 w-full rounded-xl bg-[#f8f4ed] px-4 py-2 text-left text-xs font-bold leading-5 text-[#765c49] transition ${
+                className={`mt-2 w-full rounded-xl bg-[var(--status-warning-surface)] px-4 py-2 text-left text-xs font-bold leading-5 text-[var(--status-warning)] transition ${
                   revealed.practice3 ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -969,7 +969,7 @@ export function KoreanLevelOneLessonTwoBook({
             </article>
           ))}
         </div>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           能在3秒内开始第一句，就算通过本区。
         </p>
       </div>
@@ -979,7 +979,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第五步"
         title="实战对话"
         goal="把本课语言工具放进服务台、教室、文具店和便利店四个原创场景。"
-        icon={<MessageCircle size={24} />}
+        icon={<MessageCircle aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-18" number="18">
@@ -987,7 +987,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 服务台领取学习用品"
           description="任务：确认桌上的物品，并领取一本笔记本。"
-          icon={<MessageCircle size={22} />}
+          icon={<MessageCircle aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.dialog1)}
@@ -1007,7 +1007,7 @@ export function KoreanLevelOneLessonTwoBook({
             ["B", "네, 받으세요.", "好的，请收下。"],
           ]}
         />
-        <div className="mt-auto rounded-2xl bg-[#fbeaec] p-4 text-xs leading-6">
+        <div className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
           替换任务：把“笔记本＋铅笔”换成“教材＋橡皮”，保持对话结构不变。
         </div>
       </div>
@@ -1017,7 +1017,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 教室里寻找失物"
           description="任务：确认对方身边的雨伞是不是自己的。"
-          icon={<PackageSearch size={22} />}
+          icon={<PackageSearch aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.dialog2)}
@@ -1038,10 +1038,10 @@ export function KoreanLevelOneLessonTwoBook({
           ]}
         />
         <div className="mt-auto grid grid-cols-2 gap-3 text-xs">
-          <p className="rounded-2xl bg-[#f2f8f5] p-4">
+          <p className="rounded-2xl bg-[var(--status-success-surface)] p-4">
             <strong>找线索：</strong> 이、그、저 随着说话位置变化。
           </p>
-          <p className="rounded-2xl bg-[#fff3e3] p-4">
+          <p className="rounded-2xl bg-[var(--status-warning-surface)] p-4">
             <strong>拓展：</strong> 제 是“我的”的礼貌说法，本课只需认读。
           </p>
         </div>
@@ -1052,7 +1052,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="3. 在文具店找商品"
           description="任务：先问物品名称，再确认有没有需要的颜色。"
-          icon={<ShoppingBag size={22} />}
+          icon={<ShoppingBag aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.dialog3)}
@@ -1072,7 +1072,7 @@ export function KoreanLevelOneLessonTwoBook({
             ["점", "네, 여기 있습니다.", "好的，在这里。"],
           ]}
         />
-        <p className="mt-auto rounded-2xl bg-[#fbeaec] p-4 text-xs leading-6">
+        <p className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
           손＝顾客，점＝店员。对话中的颜色是扩展信息；核心仍是 뭐예요、있어요／없어요、주세요。
         </p>
       </div>
@@ -1082,12 +1082,12 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="4. 便利店角色任务"
           description="不用背固定台词，根据任务卡完成一次20秒交流。"
-          icon={<Mic2 size={22} />}
+          icon={<Mic2 aria-hidden="true" size={22} />}
         />
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-[#efd5d9] bg-[#fff7f8] p-5">
-            <p className="text-xs font-black text-[#a65b68]">顾客卡</p>
-            <h3 className="mt-3 text-lg font-black">你需要水和一把雨伞</h3>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--destructive)]">顾客卡</p>
+            <h4 className="mt-3 text-lg font-bold">你需要水和一把雨伞</h4>
             <ol className="mt-4 space-y-3 text-xs leading-6">
               <li>1. 指着柜台上的物品问名称。</li>
               <li>2. 问店里有没有雨伞。</li>
@@ -1095,9 +1095,9 @@ export function KoreanLevelOneLessonTwoBook({
               <li>4. 用 감사합니다 结束。</li>
             </ol>
           </section>
-          <section className="rounded-2xl border border-[#d7e8e1] bg-[#f3f9f6] p-5">
-            <p className="text-xs font-black text-[#238777]">店员卡</p>
-            <h3 className="mt-3 text-lg font-black">水有，雨伞没有</h3>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-5">
+            <p className="text-xs font-bold text-[var(--status-success)]">店员卡</p>
+            <h4 className="mt-3 text-lg font-bold">水有，雨伞没有</h4>
             <ol className="mt-4 space-y-3 text-xs leading-6">
               <li>1. 回答物品名称。</li>
               <li>2. 对雨伞回答 없어요。</li>
@@ -1113,9 +1113,9 @@ export function KoreanLevelOneLessonTwoBook({
               "이거는 뭐예요? 물이에요. 우산이 있어요? 아니요, 없어요. 그럼 물 주세요."
             )
           }
-          className="mt-5 rounded-2xl bg-[#424b47] p-5 text-left text-white"
+          className="mt-5 rounded-2xl bg-[var(--foreground)] p-5 text-left text-white"
         >
-          <p className="text-xs font-black text-[#d8c39b]">需要提示时再听</p>
+          <p className="text-xs font-bold text-[var(--border)]">需要提示时再听</p>
           <p
             className={`mt-3 text-sm font-bold leading-7 transition ${
               revealed.dialog4 ? "opacity-100" : "opacity-0"
@@ -1128,7 +1128,7 @@ export function KoreanLevelOneLessonTwoBook({
           shown={Boolean(revealed.dialog4)}
           onClick={() => toggle("dialog4")}
         />
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           完成后交换角色，再做一次。
         </p>
       </div>
@@ -1138,7 +1138,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第六步"
         title="听说任务"
         goal="训练对距离词、物品名称和有无回答的即时辨认，并完成信息差交流。"
-        icon={<Headphones size={24} />}
+        icon={<Headphones aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-23" number="23">
@@ -1146,7 +1146,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 听距离，选物品"
           description="点击播放后，只根据听到的指示词选择 A、B 或 C。"
-          icon={<Headphones size={22} />}
+          icon={<Headphones aria-hidden="true" size={22} />}
         />
         <div className="mt-4 space-y-3">
           {[
@@ -1157,10 +1157,10 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([audio, choices, answer], index) => (
             <article
               key={audio as string}
-              className="rounded-2xl border border-[#d6e5ed] bg-[#f4f9fc] px-4 py-3"
+              className="rounded-2xl border border-[var(--border)] bg-[var(--card)] px-4 py-3"
             >
               <div className="flex items-center justify-between">
-                <p className="text-xs font-black text-[#3e7fa3]">
+                <p className="text-xs font-bold text-[var(--primary)]">
                   音频 {index + 1}
                 </p>
                 <SpeakButton text={audio as string} speak={speak} />
@@ -1176,7 +1176,7 @@ export function KoreanLevelOneLessonTwoBook({
                 ))}
               </div>
               <p
-                className={`mt-2 text-right text-xs font-black text-[#3e7fa3] transition ${
+                className={`mt-2 text-right text-xs font-bold text-[var(--primary)] transition ${
                   revealed.listen1 ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -1199,7 +1199,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 影子跟读：保持问答节奏"
           description="每句先听两遍，再在声音结束后立即复述；第三遍尝试同步跟读。"
-          icon={<Mic2 size={22} />}
+          icon={<Mic2 aria-hidden="true" size={22} />}
         />
         <div className="mt-5 space-y-3">
           {[
@@ -1214,22 +1214,22 @@ export function KoreanLevelOneLessonTwoBook({
               key={korean}
               type="button"
               onClick={() => speak(korean)}
-              className="flex w-full items-center gap-4 rounded-2xl border border-[#d6e5ed] bg-white p-4 text-left"
+              className="flex w-full items-center gap-4 rounded-2xl border border-[var(--border)] bg-white p-4 text-left"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[#eaf4fa] text-xs font-black text-[#3e7fa3]">
+              <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">
                 {index + 1}
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black">{korean}</span>
-                <span className="mt-1 block text-[11px] text-[#71857b]">
+                <span className="block text-sm font-bold">{korean}</span>
+                <span className="mt-1 block text-[11px] text-[var(--foreground-secondary)]">
                   {tip}
                 </span>
               </span>
-              <Volume2 size={16} className="text-[#3e7fa3]" />
+              <Volume2 aria-hidden="true" size={16} className="text-[var(--primary)]" />
             </button>
           ))}
         </div>
-        <div className="mt-auto rounded-2xl bg-[#eaf4fa] p-4 text-xs leading-6">
+        <div className="mt-auto rounded-2xl bg-[var(--accent)] p-4 text-xs leading-6">
           录音自检：是否听得清 뭐예요、있어요、없어요 的句尾差异？是否每句话都没有中文式停顿？
         </div>
       </div>
@@ -1239,29 +1239,29 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="3. 信息差：我的包里有什么？"
           description="A 和 B 各自只看一张卡，通过韩语问答找出三处不同。"
-          icon={<Mic2 size={22} />}
+          icon={<Mic2 aria-hidden="true" size={22} />}
         />
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-[#cfe1e8] bg-[#f4f9fc] p-5">
-            <p className="text-xs font-black text-[#3e7fa3]">A 卡</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--primary)]">A 卡</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {["책", "연필", "휴대폰", "우산", "카드"].map((item) => (
                 <span
                   key={item}
-                  className="rounded-full bg-white px-3 py-2 text-sm font-black"
+                  className="rounded-full bg-white px-3 py-2 text-sm font-bold"
                 >
                   {item}
                 </span>
               ))}
             </div>
           </section>
-          <section className="rounded-2xl border border-[#e8d8c7] bg-[#fff9f1] p-5">
-            <p className="text-xs font-black text-[#b87131]">B 卡</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--status-warning)]">B 卡</p>
             <div className="mt-4 flex flex-wrap gap-2">
               {["책", "지우개", "휴대폰", "안경", "카드"].map((item) => (
                 <span
                   key={item}
-                  className="rounded-full bg-white px-3 py-2 text-sm font-black"
+                  className="rounded-full bg-white px-3 py-2 text-sm font-bold"
                 >
                   {item}
                 </span>
@@ -1269,40 +1269,40 @@ export function KoreanLevelOneLessonTwoBook({
             </div>
           </section>
         </div>
-        <section className="mt-5 rounded-2xl border border-[#dce8e1] bg-white p-5">
-          <p className="text-xs font-black text-[#238777]">只能使用这些问句</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <p className="text-xs font-bold text-[var(--status-success)]">只能使用这些问句</p>
           <div className="mt-3 grid grid-cols-2 gap-3 text-xs font-bold">
             <button
               type="button"
               onClick={() => speak("가방에 연필이 있어요?")}
-              className="rounded-xl bg-[#f2f8f5] p-3 text-left"
+              className="rounded-xl bg-[var(--status-success-surface)] p-3 text-left"
             >
               가방에 연필이 있어요?
             </button>
             <button
               type="button"
               onClick={() => speak("네, 있어요.")}
-              className="rounded-xl bg-[#f2f8f5] p-3 text-left"
+              className="rounded-xl bg-[var(--status-success-surface)] p-3 text-left"
             >
               네, 있어요.
             </button>
             <button
               type="button"
               onClick={() => speak("아니요, 없어요.")}
-              className="rounded-xl bg-[#f2f8f5] p-3 text-left"
+              className="rounded-xl bg-[var(--status-success-surface)] p-3 text-left"
             >
               아니요, 없어요.
             </button>
             <button
               type="button"
               onClick={() => speak("그거는 뭐예요?")}
-              className="rounded-xl bg-[#f2f8f5] p-3 text-left"
+              className="rounded-xl bg-[var(--status-success-surface)] p-3 text-left"
             >
               그거는 뭐예요?
             </button>
           </div>
         </section>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           不直接念卡片；必须一问一答获得信息。
         </p>
       </div>
@@ -1312,7 +1312,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第七步"
         title="读写拓展"
         goal="读懂一则简短失物信息，并用本课句型描述自己的学习用品。"
-        icon={<PencilLine size={24} />}
+        icon={<PencilLine aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-27" number="27">
@@ -1320,7 +1320,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 阅读：失物招领台"
           description="先读短文回答问题，再显示参考答案。"
-          icon={<BookOpenCheck size={22} />}
+          icon={<BookOpenCheck aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.reading)}
@@ -1329,13 +1329,13 @@ export function KoreanLevelOneLessonTwoBook({
             />
           }
         />
-        <article className="mt-5 rounded-2xl border border-[#cfe5dc] bg-[#f1f8f5] p-5">
-          <p className="text-xs font-black text-[#347b69]">분실물 안내</p>
-          <p className="mt-4 text-base font-black leading-8">
+        <article className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--status-success)]">분실물 안내</p>
+          <p className="mt-4 text-base font-bold leading-8">
             여기에 가방이 있어요. 검은색 가방이에요. 가방 안에 공책하고 안경이 있어요. 휴대폰은 없어요. 이 가방 주인은 안내 데스크로 오세요.
           </p>
           <p
-            className={`mt-3 text-xs leading-6 text-[#71857b] transition ${
+            className={`mt-3 text-xs leading-6 text-[var(--foreground-secondary)] transition ${
               revealed.reading ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -1350,11 +1350,11 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([question, answer]) => (
             <div
               key={question}
-              className="grid grid-cols-[1fr_190px] gap-3 rounded-xl border border-[#dce8e1] bg-white p-3 text-xs"
+              className="grid grid-cols-[1fr_190px] gap-3 rounded-xl border border-[var(--border)] bg-white p-3 text-xs"
             >
-              <p className="font-black">{question}</p>
+              <p className="font-bold">{question}</p>
               <p
-                className={`text-[#347b69] transition ${
+                className={`text-[var(--status-success)] transition ${
                   revealed.reading ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -1363,7 +1363,7 @@ export function KoreanLevelOneLessonTwoBook({
             </div>
           ))}
         </div>
-        <p className="mt-auto text-[11px] leading-5 text-[#83948b]">
+        <p className="mt-auto text-[11px] leading-5 text-[var(--foreground-secondary)]">
           “가방 안에”表示“在包里面”，属于阅读拓展；会认即可。
         </p>
       </div>
@@ -1373,7 +1373,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 写作：我的学习包"
           description="按照三步写5句，不需要使用本课以外的复杂语法。"
-          icon={<PencilLine size={22} />}
+          icon={<PencilLine aria-hidden="true" size={22} />}
         />
         <div className="mt-5 grid grid-cols-3 gap-3">
           {[
@@ -1383,18 +1383,18 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([step, title, example]) => (
             <article
               key={step}
-              className="rounded-2xl border border-[#cfe5dc] bg-[#f1f8f5] p-4"
+              className="rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-4"
             >
-              <p className="text-[10px] font-black text-[#347b69]">{step}</p>
-              <h3 className="mt-2 text-sm font-black">{title}</h3>
-              <p className="mt-3 text-[11px] leading-5 text-[#71857b]">
+              <p className="text-[10px] font-bold text-[var(--status-success)]">{step}</p>
+              <h4 className="mt-2 text-sm font-bold">{title}</h4>
+              <p className="mt-3 text-[11px] leading-5 text-[var(--foreground-secondary)]">
                 {example}
               </p>
             </article>
           ))}
         </div>
-        <section className="mt-5 rounded-2xl border border-[#dce8e1] bg-white p-5">
-          <p className="text-xs font-black">写作框架</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-white p-5">
+          <p className="text-xs font-bold">写作框架</p>
           <div className="mt-4 space-y-3 text-sm">
             {[
               "이거는 제 __________이에요／예요.",
@@ -1405,14 +1405,14 @@ export function KoreanLevelOneLessonTwoBook({
             ].map((line) => (
               <p
                 key={line}
-                className="rounded-xl border border-dashed border-[#b8ccc3] px-4 py-3"
+                className="rounded-xl border border-dashed border-[var(--border)] px-4 py-3"
               >
                 {line}
               </p>
             ))}
           </div>
         </section>
-        <div className="mt-auto rounded-2xl bg-[#e7f5f1] p-4 text-xs leading-6">
+        <div className="mt-auto rounded-2xl bg-[var(--status-success-surface)] p-4 text-xs leading-6">
           检查：每句有没有句号？이／가 是否按收音选择？至少使用一次 있어요 和 없어요。
         </div>
       </div>
@@ -1422,7 +1422,7 @@ export function KoreanLevelOneLessonTwoBook({
         step="第八步"
         title="自测与复盘"
         goal="用词汇、语法、阅读和口语四类任务确认自己是否真正具备本课能力。"
-        icon={<CheckCircle2 size={24} />}
+        icon={<CheckCircle2 aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="02-30" number="30">
@@ -1430,7 +1430,7 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="1. 10题快速自测"
           description="先独立完成，再显示答案；答对8题以上即可进入口语验收。"
-          icon={<CheckCircle2 size={22} />}
+          icon={<CheckCircle2 aria-hidden="true" size={22} />}
           action={
             <RevealButton
               shown={Boolean(revealed.test)}
@@ -1454,11 +1454,11 @@ export function KoreanLevelOneLessonTwoBook({
           ].map(([question, answer]) => (
             <article
               key={question}
-              className="rounded-xl border border-[#d4e5d8] bg-white px-4 py-3"
+              className="rounded-xl border border-[var(--border)] bg-white px-4 py-3"
             >
-              <p className="text-xs font-black leading-5">{question}</p>
+              <p className="text-xs font-bold leading-5">{question}</p>
               <p
-                className={`mt-2 rounded-lg bg-[#e8f4eb] px-3 py-2 text-[11px] font-bold text-[#487a54] transition ${
+                className={`mt-2 rounded-lg bg-[var(--status-success-surface)] px-3 py-2 text-[11px] font-bold text-[var(--status-success)] transition ${
                   revealed.test ? "opacity-100" : "opacity-0"
                 }`}
               >
@@ -1467,7 +1467,7 @@ export function KoreanLevelOneLessonTwoBook({
             </article>
           ))}
         </div>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">
           6—7题：回看语法页；5题以下：从词汇页重新跟读一轮。
         </p>
       </div>
@@ -1477,10 +1477,10 @@ export function KoreanLevelOneLessonTwoBook({
         <Heading
           title="2. 口语验收与学习复盘"
           description="选择身边三件物品，完成一段不看稿的30秒表达。"
-          icon={<Mic2 size={22} />}
+          icon={<Mic2 aria-hidden="true" size={22} />}
         />
-        <section className="mt-5 rounded-2xl border border-[#cfe3d4] bg-[#f2f8f3] p-5">
-          <p className="text-xs font-black text-[#487a54]">口语任务</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--status-success)]">口语任务</p>
           <ol className="mt-4 grid grid-cols-2 gap-3 text-xs leading-6">
             {[
               "指一件近处物品，问并回答名称。",
@@ -1492,15 +1492,15 @@ export function KoreanLevelOneLessonTwoBook({
                 key={task}
                 className="rounded-xl bg-white p-4 font-bold"
               >
-                <span className="mr-2 text-[#487a54]">{index + 1}.</span>
+                <span className="mr-2 text-[var(--status-success)]">{index + 1}.</span>
                 {task}
               </li>
             ))}
           </ol>
         </section>
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-[#dce8e1] bg-white p-5">
-            <p className="text-xs font-black">我已经能做到</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-xs font-bold">我已经能做到</p>
             <div className="mt-4 space-y-3 text-xs">
               {[
                 "根据距离选择 이／그／저",
@@ -1509,14 +1509,14 @@ export function KoreanLevelOneLessonTwoBook({
                 "使用 주세요 提出请求",
               ].map((item) => (
                 <label key={item} className="flex items-center gap-3">
-                  <input type="checkbox" className="h-4 w-4 accent-[#487a54]" />
+                  <input type="checkbox" className="h-4 w-4 accent-[var(--status-success)]" />
                   {item}
                 </label>
               ))}
             </div>
           </section>
-          <section className="rounded-2xl border border-[#eadfcf] bg-[#fffaf2] p-5">
-            <p className="text-xs font-black text-[#9b6b32]">下一次练习重点</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--status-warning)]">下一次练习重点</p>
             <div className="mt-4 space-y-3 text-xs leading-5">
               <p>□ 指示词反应速度</p>
               <p>□ 이／가 的选择</p>
@@ -1532,9 +1532,9 @@ export function KoreanLevelOneLessonTwoBook({
               "이거는 뭐예요? 공책이에요. 연필이 있어요? 네, 있어요. 그 연필 주세요."
             )
           }
-          className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[#487a54] px-5 py-4 text-sm font-black text-white"
+          className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] px-5 py-4 text-sm font-bold text-white"
         >
-          <Volume2 size={16} />
+          <Volume2 aria-hidden="true" size={16} />
           播放最终示范节奏
         </button>
       </div>
@@ -1542,19 +1542,19 @@ export function KoreanLevelOneLessonTwoBook({
     <Page key="02-32-ending" number="32">
       <div className="flex h-full flex-col justify-center">
         <div className="mx-auto w-full max-w-[440px] text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f4eb] text-[#487a54]">
-            <Sparkles size={27} />
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]">
+            <Sparkles aria-hidden="true" size={27} />
           </span>
-          <p className="mt-5 text-xs font-black tracking-[0.18em] text-[#487a54]">
+          <p className="mt-5 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
             LESSON 02 · COMPLETE
           </p>
-          <h2 className="mt-3 text-4xl font-black text-[#1f2e28]">
+          <h3 className="mt-3 text-4xl font-bold text-[var(--status-success)]">
             이거는 뭐예요?
-          </h2>
-          <p className="mt-3 text-lg font-black text-[#303432]">
+          </h3>
+          <p className="mt-3 text-lg font-bold text-[var(--foreground)]">
             你已经完成第二课
           </p>
-          <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[#60736a]">
+          <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[var(--foreground-secondary)]">
             从询问物品名称，到表达有无、礼貌请求和连接名词，你已经能围绕身边物品完成一段完整交流。
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 text-left">
@@ -1566,27 +1566,27 @@ export function KoreanLevelOneLessonTwoBook({
             ].map(([number, title, detail]) => (
               <div
                 key={number}
-                className="rounded-xl border border-[#dce8e1] bg-white px-4 py-3"
+                className="rounded-xl border border-[var(--border)] bg-white px-4 py-3"
               >
-                <p className="text-[10px] font-black text-[#487a54]">
+                <p className="text-[10px] font-bold text-[var(--status-success)]">
                   {number}
                 </p>
-                <p className="mt-1 text-xs font-black text-[#294f43]">
+                <p className="mt-1 text-xs font-bold text-[var(--status-success)]">
                   {title}
                 </p>
-                <p className="mt-1 text-[10px] leading-4 text-[#71857b]">
+                <p className="mt-1 text-[10px] leading-4 text-[var(--foreground-secondary)]">
                   {detail}
                 </p>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-2xl border border-[#cfe3d4] bg-[#f2f8f3] px-5 py-3.5 text-left">
+          <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] px-5 py-3.5 text-left">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-black tracking-[0.14em] text-[#487a54]">
+                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">
                   LESSON 2 TEST · 本课测试
                 </p>
-                <p className="mt-1 text-xs font-bold text-[#52685e]">
+                <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">
                   前往章节测试专区，检验本课词汇、语法、听辨和情境表达。
                 </p>
               </div>
@@ -1595,35 +1595,35 @@ export function KoreanLevelOneLessonTwoBook({
                 onClick={() =>
                   window.location.assign("/dashboard/assignments/korean")
                 }
-                className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-black text-[#487a54] shadow-sm"
+                className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[var(--status-success)] shadow-sm"
               >
                 前往测试专区
               </button>
             </div>
           </div>
-          <div className="mt-5 rounded-2xl bg-[#eaf2fb] px-5 py-4 text-left">
-            <p className="text-[10px] font-black tracking-[0.14em] text-[#3d6f9f]">
+          <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">
               NEXT · LESSON 03
             </p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div>
-                <p className="text-lg font-black text-[#243d35]">
+                <p className="text-lg font-bold text-[var(--status-success)]">
                   한국어를 공부해요.
                 </p>
-                <p className="mt-1 text-[11px] text-[#60736a]">
+                <p className="mt-1 text-[11px] text-[var(--foreground-secondary)]">
                   下一课：学习用动词表达正在做什么、学习什么。
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => flipBookRef.current?.pageFlip()?.flip(1)}
-                className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-black text-[#3d6f9f] shadow-sm"
+                className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[var(--primary)] shadow-sm"
               >
                 返回目录
               </button>
             </div>
           </div>
-          <p className="mt-3 text-xs font-bold text-[#6c7d74]">
+          <p className="mt-3 text-xs font-bold text-[var(--foreground-secondary)]">
             能够说清眼前的事物，就是把韩语带进真实生活的开始。
           </p>
         </div>
@@ -1634,7 +1634,7 @@ export function KoreanLevelOneLessonTwoBook({
   return (
     <section
       ref={containerRef}
-      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"
+      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2 [&_input:focus-visible]:outline-none [&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-[var(--ring)] [&_input:focus-visible]:ring-offset-2"
     >
       <div
         className="relative shrink-0"
@@ -1644,17 +1644,17 @@ export function KoreanLevelOneLessonTwoBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
           aria-label="上一页"
-          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"
+          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft aria-hidden="true" size={18} />
         </button>
         <button
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
           aria-label="下一页"
-          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"
+          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"
         >
-          <ArrowRight size={18} />
+          <ArrowRight aria-hidden="true" size={18} />
         </button>
 
         <div

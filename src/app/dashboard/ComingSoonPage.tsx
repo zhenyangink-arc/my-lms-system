@@ -71,18 +71,18 @@ export function ComingSoonPage({
               <div className="flex items-center gap-3">
                 <span
                   className="flex h-10 w-10 items-center justify-center rounded-2xl"
-                  style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}
+                  style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}
                 >
                   <CheckCircle2 size={19} aria-hidden="true" />
                 </span>
                 <div>
-                  <DashboardTitleWithHint headingLevel={3} titleClassName="text-sm font-black" title="页面结构已准备" description="等待业务数据接入" />
+                  <DashboardTitleWithHint headingLevel={3} titleClassName="text-sm font-bold" title="页面结构已准备" description="等待业务数据接入" />
                 </div>
               </div>
-              <div className="mt-5 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+              <div className="mt-5 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
                 <div
                   className="h-full w-2/3 rounded-full"
-                  style={{ background: "linear-gradient(90deg, var(--app-secondary), var(--app-accent))" }}
+                  style={{ background: "linear-gradient(90deg, var(--support), var(--primary))" }}
                 />
               </div>
               <p className="mt-3 flex items-center gap-2 text-xs app-muted-text">
@@ -93,23 +93,23 @@ export function ComingSoonPage({
 
         <section>
           <div className="mb-4">
-            <DashboardTitleWithHint headingLevel={3} titleClassName="text-lg font-black" title="计划功能" description="数据表与业务流程接入后，将按以下结构直接启用。" />
+            <DashboardTitleWithHint headingLevel={3} titleClassName="text-lg font-bold" title="计划功能" description="数据表与业务流程接入后，将按以下结构直接启用。" />
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {blueprints.map((feature, index) => (
               <article key={feature.title} className="app-card rounded-2xl border p-5">
                 <div className="flex items-center justify-between gap-3">
                   <span
-                    className="flex h-9 w-9 items-center justify-center rounded-xl text-xs font-black"
-                    style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+                    className="flex h-9 w-9 items-center justify-center rounded-xl text-xs font-bold"
+                    style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}
                   >
                     {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                  <span className="rounded-full px-2.5 py-1 text-xs font-bold app-muted-text" style={{ backgroundColor: "var(--surface-soft)" }}>
                     规划中
                   </span>
                 </div>
-                <DashboardTitleWithHint className="mt-5" headingLevel={4} titleClassName="text-base font-black" title={feature.title} description={feature.description} />
+                <DashboardTitleWithHint className="mt-5" headingLevel={4} titleClassName="text-base font-bold" title={feature.title} description={feature.description} />
               </article>
             ))}
           </div>
@@ -120,10 +120,10 @@ export function ComingSoonPage({
           className="app-card flex items-center justify-between gap-4 rounded-2xl border p-4 transition"
         >
           <span>
-            <span className="block text-sm font-black">先回到成长首页继续今天的计划</span>
+            <span className="block text-sm font-bold">先回到成长首页继续今天的计划</span>
             <span className="mt-1 block text-xs app-muted-text">未来功能会一直保留在导航中</span>
           </span>
-          <ArrowRight size={18} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />
+          <ArrowRight size={18} className="shrink-0" style={{ color: "var(--primary)" }} aria-hidden="true" />
         </Link>
       </div>
     </>

@@ -53,46 +53,46 @@ export function ProfileView({
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
       {/* 头部横幅：个人身份 + 账号元信息合并成一张卡，避免右栏出现零碎小卡片 */}
-      <section className="app-card overflow-hidden rounded-3xl border" style={{ background: "linear-gradient(120deg, var(--app-hero-start), var(--app-card-bg) 52%, var(--app-hero-end))" }}>
+      <section className="app-card overflow-hidden rounded-3xl border" style={{ background: "linear-gradient(120deg, var(--card), var(--card) 52%, var(--accent))" }}>
         <div className="flex flex-col gap-5 p-5 sm:p-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex min-w-0 items-center gap-5">
             <span
-              className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-cover bg-center text-3xl font-black text-white shadow-sm sm:h-24 sm:w-24"
+              className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-3xl bg-cover bg-center text-3xl font-bold text-white shadow-sm sm:h-24 sm:w-24"
               style={{
-                backgroundImage: avatarUrl ? `url("${avatarUrl}")` : "linear-gradient(135deg, var(--app-secondary), var(--app-accent))",
+                backgroundImage: avatarUrl ? `url("${avatarUrl}")` : "linear-gradient(135deg, var(--support), var(--primary))",
               }}
             >
               {!avatarUrl && (displayName.trim().slice(0, 1) || "学")}
             </span>
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>
+                <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}>
                   <Sparkles size={12} aria-hidden="true" />{roleLabel}
                 </span>
                 <span
-                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-black"
+                  className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold"
                   style={emailConfirmed
-                    ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }
-                    : { color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+                    ? { color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }
+                    : { color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
                 >
                   <ShieldCheck size={12} aria-hidden="true" />{emailConfirmed ? "邮箱已验证" : "邮箱待验证"}
                 </span>
               </div>
-              <h2 className="mt-2.5 truncate text-2xl font-black">{displayName}</h2>
+              <h2 className="mt-2.5 truncate text-2xl font-bold">{displayName}</h2>
               <p className="mt-1.5 flex items-center gap-1.5 truncate text-sm app-muted-text"><Mail size={14} className="shrink-0" aria-hidden="true" />{email}</p>
             </div>
           </div>
 
-          <div className="flex w-full shrink-0 items-center gap-4 lg:w-72 lg:border-l lg:pl-8" style={{ borderColor: "var(--app-border)" }}>
+          <div className="flex w-full shrink-0 items-center gap-4 lg:w-72 lg:border-l lg:pl-8" style={{ borderColor: "var(--border)" }}>
             <div className="relative h-[84px] w-[84px] shrink-0" aria-label={`资料完成度 ${completionPercent}%`}>
               <svg width="84" height="84" viewBox="0 0 100 100" className="-rotate-90">
-                <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--app-soft-bg)" strokeWidth="10" />
+                <circle cx="50" cy="50" r={ringRadius} fill="none" stroke="var(--surface-soft)" strokeWidth="10" />
                 <circle
                   cx="50"
                   cy="50"
                   r={ringRadius}
                   fill="none"
-                  stroke="var(--app-success)"
+                  stroke="var(--status-success)"
                   strokeWidth="10"
                   strokeDasharray={ringCircumference}
                   strokeDashoffset={ringCircumference * (1 - completionPercent / 100)}
@@ -100,7 +100,7 @@ export function ProfileView({
                 />
               </svg>
               <span className="absolute inset-0 flex items-center justify-center">
-                <strong className="text-lg font-black">{completionPercent}%</strong>
+                <strong className="text-lg font-bold">{completionPercent}%</strong>
               </span>
             </div>
             <DashboardTitleWithHint
@@ -119,12 +119,12 @@ export function ProfileView({
         {/* 账号元信息栏：原来的"账号记录"小卡片并进头部，一行读完 */}
         <div className="flex flex-col gap-3 border-t px-6 py-4 app-divider sm:flex-row sm:items-center sm:gap-8 sm:px-8">
           <p className="flex items-center gap-2 text-xs app-muted-text">
-            <CalendarDays size={14} className="shrink-0" style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-            加入时间<strong className="font-black" style={{ color: "var(--app-text)" }}>{createdAtLabel}</strong>
+            <CalendarDays size={14} className="shrink-0" style={{ color: "var(--support)" }} aria-hidden="true" />
+            加入时间<strong className="font-bold" style={{ color: "var(--foreground)" }}>{createdAtLabel}</strong>
           </p>
           <p className="flex items-center gap-2 text-xs app-muted-text">
-            <Clock3 size={14} className="shrink-0" style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-            最近登录<strong className="font-black" style={{ color: "var(--app-text)" }}>{lastSignInLabel}</strong>
+            <Clock3 size={14} className="shrink-0" style={{ color: "var(--primary)" }} aria-hidden="true" />
+            最近登录<strong className="font-bold" style={{ color: "var(--foreground)" }}>{lastSignInLabel}</strong>
           </p>
         </div>
       </section>
@@ -136,23 +136,23 @@ export function ProfileView({
         <aside className="xl:sticky xl:top-6">
           <section className="app-card rounded-3xl border p-5">
             <div className="flex items-center gap-3">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>
                 <ListChecks size={19} aria-hidden="true" />
               </span>
               <div>
-                <DashboardTitleWithHint headingLevel={2} titleClassName="text-sm font-black" title={<>资料完善清单</>} description={<>已完成 {doneCount} / {checklist.length} 项</>} />
+                <DashboardTitleWithHint headingLevel={2} titleClassName="text-sm font-bold" title={<>资料完善清单</>} description={<>已完成 {doneCount} / {checklist.length} 项</>} />
               </div>
             </div>
             <ul className="mt-4 space-y-1">
               {checklist.map((item) => (
                 <li key={item.label} className="app-flat-row flex items-center gap-2.5 rounded-xl px-2.5 py-2 text-sm">
                   {item.done ? (
-                    <CheckCircle2 size={16} className="shrink-0" style={{ color: "var(--app-success)" }} aria-hidden="true" />
+                    <CheckCircle2 size={16} className="shrink-0" style={{ color: "var(--status-success)" }} aria-hidden="true" />
                   ) : (
-                    <Circle size={16} className="shrink-0" style={{ color: "var(--app-muted-light)" }} aria-hidden="true" />
+                    <Circle size={16} className="shrink-0" style={{ color: "var(--foreground-subtle)" }} aria-hidden="true" />
                   )}
                   <span className={item.done ? "font-bold" : "font-bold app-muted-text"}>{item.label}</span>
-                  {!item.done && <span className="ml-auto rounded-full px-2 py-0.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>待完善</span>}
+                  {!item.done && <span className="ml-auto rounded-full px-2 py-0.5 text-xs font-bold" style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}>待完善</span>}
                 </li>
               ))}
             </ul>

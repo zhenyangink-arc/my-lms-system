@@ -32,7 +32,7 @@ export function CourseCatalogToolbar({
       <label className="relative min-w-60 flex-1 lg:max-w-md">
         <Search
           size={14}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--app-muted)]"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]"
         />
         <input
           value={filters.query}
@@ -47,7 +47,7 @@ export function CourseCatalogToolbar({
             type="button"
             aria-label="清空搜索"
             onClick={() => onFiltersChange({ ...filters, query: "" })}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--app-muted)]"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--foreground-muted)]"
           >
             <X size={13} />
           </button>
@@ -88,18 +88,18 @@ export function CourseCatalogToolbar({
         <option value="incomplete">内容待完善</option>
       </select>
 
-      <div className="flex items-center border border-[var(--app-border)]">
+      <div className="flex items-center border border-[var(--border)]">
         <button
           type="button"
           onClick={onExpandAll}
-          className="px-3 py-2 text-xs font-medium text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+          className="px-3 py-2 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
         >
           全部展开
         </button>
         <button
           type="button"
           onClick={onCollapseAll}
-          className="border-l border-[var(--app-border)] px-3 py-2 text-xs font-medium text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+          className="border-l border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
         >
           全部收起
         </button>

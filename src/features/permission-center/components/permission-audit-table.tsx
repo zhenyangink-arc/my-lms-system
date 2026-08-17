@@ -113,7 +113,7 @@ export function PermissionAuditTable({
             <p className="font-medium">
               {permissionLabels[row.original.permissionKey] || row.original.permissionKey}
             </p>
-            <p className="mt-0.5 font-mono text-[10px] text-[var(--app-muted)]">
+            <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
               {row.original.permissionKey}
             </p>
           </div>
@@ -163,17 +163,17 @@ export function PermissionAuditTable({
       isEmpty={data.length === 0}
       emptyContent="当前没有统一权限变更记录"
       footer={
-        <p className="text-xs text-[var(--app-muted)]">
+        <p className="text-xs text-[var(--foreground-muted)]">
           展示最近 {data.length} / 200 条授权审计记录。
         </p>
       }
     >
       <Table className="min-w-[1080px]">
-        <TableHeader className="bg-[var(--app-soft-bg)]">
+        <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((group) => (
             <TableRow key={group.id}>
               {group.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 text-xs">
+                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                   {header.isPlaceholder
                     ? null
                     : flexRender(

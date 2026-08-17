@@ -108,6 +108,9 @@ export async function getAccountList(
   if (profilesResult.error) {
     throw new Error("账号列表加载失败，请稍后重试。");
   }
+  if (auditResult.error || deletionAuditResult.error) {
+    throw new Error("账号审计记录加载失败，请稍后重试。");
+  }
 
   const visibleProfiles =
     (profilesResult.data as AccountListProfile[] | null) ?? [];
@@ -137,12 +140,9 @@ export async function getAccountList(
           }
         : profile;
     });
-  const auditLogs = auditResult.error
-    ? []
-    : ((auditResult.data as AccountAuditLog[] | null) ?? []);
-  const deletionAuditLogs = deletionAuditResult.error
-    ? []
-    : ((deletionAuditResult.data as AccountDeletionAuditLog[] | null) ?? []);
+  const auditLogs = (auditResult.data as AccountAuditLog[] | null) ?? [];
+  const deletionAuditLogs =
+    (deletionAuditResult.data as AccountDeletionAuditLog[] | null) ?? [];
   const normalizedQuery = queryText.toLocaleLowerCase("zh-CN");
 
   let profiles = allProfiles.filter((profile) => {
@@ -237,7 +237,7 @@ export async function getAccountDetail(
     .from("tenant_memberships")
     .select("tenant_id, role, status, membership_tier")
     .eq("user_id", profileId);
-  if (membershipError) notFound();
+  if (membershipError) throw membershipError;
   const isInViewerScope = tenant
     ? (targetMemberships ?? []).some(
         (membership) => membership.tenant_id === tenant.id,
@@ -266,7 +266,8 @@ export async function getAccountDetail(
       : Promise.resolve({ data: [], error: null }),
   ]);
 
-  if (profileResult.error || !profileResult.data) notFound();
+  if (profileResult.error) throw profileResult.error;
+  if (!profileResult.data) notFound();
   const storedProfile = profileResult.data as AccountDetail;
   if (
     !tenant &&

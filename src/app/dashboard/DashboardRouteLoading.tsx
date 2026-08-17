@@ -11,7 +11,7 @@ export function ManagementRouteLoading() {
       aria-busy="true"
     >
       <span className="sr-only">正在打开管理页面…</span>
-      <div className="flex min-h-28 items-end gap-4 border-b border-[var(--app-border-soft)] px-1 pb-6">
+      <div className="flex min-h-28 items-end gap-4 border-b border-[var(--border-subtle)] px-1 pb-6">
         <LoadingBlock className="size-11 shrink-0 rounded-xl" />
         <div className="min-w-0 flex-1 space-y-3">
           <LoadingBlock className="block h-3 w-24 rounded-full" />
@@ -19,11 +19,11 @@ export function ManagementRouteLoading() {
           <LoadingBlock className="block h-3 w-full max-w-xl rounded-full" />
         </div>
       </div>
-      <div className="mt-5 grid overflow-hidden rounded-lg border border-[var(--app-border)] bg-[var(--app-card-bg)] sm:grid-cols-3">
+      <div className="mt-5 grid overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--card)] sm:grid-cols-3">
         {[0, 1, 2].map((item) => (
           <div
             key={item}
-            className="min-h-24 space-y-3 border-b border-[var(--app-border)] px-5 py-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
+            className="min-h-24 space-y-3 border-b border-[var(--border)] px-5 py-5 last:border-b-0 sm:border-b-0 sm:border-r sm:last:border-r-0"
           >
             <LoadingBlock className="block h-3 w-20 rounded-full" />
             <LoadingBlock className="block h-7 w-16 rounded-md" />
@@ -34,7 +34,7 @@ export function ManagementRouteLoading() {
         {[0, 1, 2, 3, 4, 5].map((item) => (
           <div
             key={item}
-            className="min-h-40 rounded-lg border border-[var(--app-border)] bg-[var(--app-card-bg)] p-5"
+            className="min-h-40 rounded-lg border border-[var(--border)] bg-[var(--card)] p-5"
           >
             <LoadingBlock className="block size-9 rounded-lg" />
             <LoadingBlock className="mt-5 block h-4 w-28 rounded-full" />

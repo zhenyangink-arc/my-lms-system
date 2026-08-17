@@ -446,20 +446,20 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
   ref
 ) {
   return (
-    <div ref={ref} className={`h-full overflow-hidden shadow-[inset_0_0_28px_rgba(57,78,67,0.08)] ${
-      goals ? "bg-[linear-gradient(145deg,#eef4fb_0%,#e4edf7_100%)]" : "bg-[#fffef9]"
+    <div ref={ref} className={`h-full overflow-hidden shadow-sm ${
+      goals ? "bg-[linear-gradient(145deg,var(--accent)_0%,var(--accent)_100%)]" : "bg-[var(--card)]"
     }`}>
       {cover ? children : (
         <div className="flex h-full flex-col px-9 py-8">
-          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-black tracking-[0.12em] ${
-            goals ? "border-[#c7d6e6]" : "border-[#dce8e1]"
+          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-bold tracking-[0.12em] ${
+            goals ? "border-[var(--border)]" : "border-[var(--border)]"
           }`}>
-            <span className="text-[#267a8b]">{header}</span>
-            <span className="text-[#789087]">第四章 · 发音规则与实用拼读</span>
+            <span className="text-[var(--primary)]">{header}</span>
+            <span className="text-[var(--foreground-secondary)]">第四章 · 发音规则与实用拼读</span>
           </div>
           <div className="min-h-0 flex-1 pt-5">{children}</div>
-          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[#92a099] ${
-            goals ? "border-[#c7d6e6]" : "border-[#e4ebe7]"
+          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[var(--foreground-muted)] ${
+            goals ? "border-[var(--border)]" : "border-[var(--border)]"
           }`}>
             <span>互动电子书</span><span>{number}</span>
           </div>
@@ -473,24 +473,24 @@ function RuleContent({ page, onSpeak }: { page: RulePage; onSpeak: (text: string
   const green = page.accent === "green";
   return (
     <div className="flex h-full flex-col">
-      <h2 className="text-3xl font-black leading-tight text-[#173f4a]">{page.title}</h2>
-      <p className="mt-4 text-sm leading-7 text-[#60736a]">{page.lead}</p>
+      <h3 className="text-3xl font-bold leading-tight text-[var(--foreground)]">{page.title}</h3>
+      <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
       <div className={`mt-5 grid flex-1 content-center gap-3 ${page.items.length >= 5 ? "grid-cols-3" : "grid-cols-2"}`}>
         {page.items.map((item, itemIndex) => (
           <button key={`${page.number}-${itemIndex}`} type="button" onClick={() => onSpeak(item.sound)}
             className={`rounded-[22px] border bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${
-              green ? "border-[#d5e7df] hover:border-[#72b7a7]" : "border-[#eadfce] hover:border-[#d6975f]"
+              green ? "border-[var(--border)] hover:border-[var(--primary)]" : "border-[var(--border)] hover:border-[var(--status-warning)]"
             }`}>
             <span className="flex items-start justify-between gap-2">
-              <span className={`text-2xl font-black ${green ? "text-[#238777]" : "text-[#9b5e2e]"}`}>{item.value}</span>
-              <Volume2 size={16} className={green ? "text-[#72b7a7]" : "text-[#d6975f]"} />
+              <span className={`text-2xl font-bold ${green ? "text-[var(--primary)]" : "text-[var(--status-warning)]"}`}>{item.value}</span>
+              <Volume2 size={16} className={green ? "text-[var(--primary)]" : "text-[var(--status-warning)]"} />
             </span>
-            <span className="mt-3 block text-sm font-black text-[#294f43]">{item.structure}</span>
-            <span className="mt-1 block text-xs leading-5 text-[#7a8d84]">{item.hint}</span>
+            <span className="mt-3 block text-sm font-bold text-[var(--foreground)]">{item.structure}</span>
+            <span className="mt-1 block text-xs leading-5 text-[var(--foreground-secondary)]">{item.hint}</span>
           </button>
         ))}
       </div>
-      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[#e9f6f1] text-[#42675b]" : "bg-[#fff2e2] text-[#765c49]"}`}>
+      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[var(--status-success-surface)] text-[var(--foreground-secondary)]" : "bg-[var(--status-warning-surface)] text-[var(--foreground-secondary)]"}`}>
         <Lightbulb size={18} className="mt-0.5 shrink-0" />
         <p className="text-sm font-bold leading-6">{page.tip}</p>
       </div>
@@ -586,22 +586,22 @@ export function PronunciationRulesBook({
   }
 
   return (
-    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2">
       <div className={`relative shrink-0 ${isFullscreen ? "" : "-translate-y-2.5"}`} style={{ width: BOOK_WIDTH * bookScale, height: BOOK_HEIGHT * bookScale }}>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">←</button>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg">→</button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="电子书上一页" className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-white text-2xl font-bold text-[var(--primary)] shadow-lg">←</button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="电子书下一页" className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-white text-2xl font-bold text-[var(--primary)] shadow-lg">→</button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${bookScale})` }}>
           <HTMLFlipBook ref={flipBookRef} width={590} height={822} startPage={initialPage} size="fixed" minWidth={590} maxWidth={590} minHeight={822} maxHeight={822} drawShadow maxShadowOpacity={0.32} flippingTime={650} usePortrait startZIndex={0} autoSize={false} showCover={false} mobileScrollSupport swipeDistance={24} clickEventForward useMouseEvents={true} showPageCorners={false} disableFlipByClick onFlip={(event) => onPageChange?.(event.data)} className="h-[822px] w-[1180px]" style={{}}>
             <Page number={0} cover>
-              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d7eaf1_0,_transparent_34%),linear-gradient(145deg,_#fffef9_0%,_#e7f2f5_100%)] px-10 py-11 text-center">
-                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[#173f4a]" />
-                <div className="relative"><p className="text-2xl font-black tracking-[0.22em] text-[#b87131]">韩语字母入门</p><div className="mx-auto mt-2 h-px w-48 bg-[#cfe2d9]" /></div>
+              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--accent)_0,_transparent_34%),linear-gradient(145deg,_var(--card)_0%,_var(--accent)_100%)] px-10 py-11 text-center">
+                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[var(--foreground)]" />
+                <div className="relative"><p className="text-2xl font-bold tracking-[0.22em] text-[var(--status-warning)]">韩语字母入门</p><div className="mx-auto mt-2 h-px w-48 bg-[var(--border)]" /></div>
                 <div className="relative">
-                  <p className="text-base font-black tracking-[0.16em] text-[#267a8b]">第四章</p>
-                  <h1 className="mt-5 text-5xl font-black tracking-tight text-[#173f4a]">发音规则与实用拼读</h1>
-                  <p className="mt-4 text-xl font-black text-[#267a8b]">발음 규칙과 읽기</p>
-                  <p className="mx-auto mt-7 max-w-md text-base leading-8 text-[#60736a]">看懂声音怎样变化，把规则真正用进问候、数字、自我介绍和生活短句。</p>
-                  <div className="mt-14 flex justify-center gap-3">{["연음", "경음", "격음"].map((text) => <span key={text} className="rounded-2xl bg-white px-5 py-4 text-lg font-black text-[#267a8b] shadow-sm ring-1 ring-[#d7e8e1]">{text}</span>)}</div>
+                  <p className="text-base font-bold tracking-[0.16em] text-[var(--primary)]">第四章</p>
+                  <h3 className="mt-5 text-5xl font-bold tracking-tight text-[var(--foreground)]">发音规则与实用拼读</h3>
+                  <p className="mt-4 text-xl font-bold text-[var(--primary)]">발음 규칙과 읽기</p>
+                  <p className="mx-auto mt-7 max-w-md text-base leading-8 text-[var(--foreground-secondary)]">看懂声音怎样变化，把规则真正用进问候、数字、自我介绍和生活短句。</p>
+                  <div className="mt-14 flex justify-center gap-3">{["연음", "경음", "격음"].map((text) => <span key={text} className="rounded-2xl bg-white px-5 py-4 text-lg font-bold text-[var(--primary)] shadow-sm ring-1 ring-[var(--border)]">{text}</span>)}</div>
                 </div>
                 <div className="relative flex items-center justify-between text-sm font-bold text-white/80"><span className="inline-flex items-center gap-2"><Headphones size={16} />互动电子书</span><span>30 个学习主题</span></div>
               </div>
@@ -609,15 +609,15 @@ export function PronunciationRulesBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">第四章</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
-                <ol className="mt-5 divide-y divide-[#e5ece7] rounded-2xl border border-[#dce8e1] bg-white px-5 py-2 text-left">
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--primary)]">第四章</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--foreground)]">目录</h3>
+                <ol className="mt-5 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white px-5 py-2 text-left">
                   {[
                     [1, "本章学习目标"], [2, "4.1 发音规则是怎么产生的"], [5, "4.2 连音现象"],
                     [10, "4.3 紧音化"], [14, "4.4 激音化"], [18, "4.5 鼻音化与流音化"],
                     [23, "4.6 其他高频发音规则"], [28, "4.7 日常词汇与句子拼读"], [31, "4.8 综合应用与本章小结"],
                   ].map(([page, title]) => (
-                    <li key={page}><button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(Number(page) + 1)} className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[#526c60] transition hover:text-[#267a8b]"><span>{title}</span><span className="font-black text-[#267a8b]">{String(page).padStart(2, "0")}</span></button></li>
+                    <li key={page}><button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(Number(page) + 1)} className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[var(--foreground-secondary)] transition hover:text-[var(--primary)]"><span>{title}</span><span className="font-bold text-[var(--primary)]">{String(page).padStart(2, "0")}</span></button></li>
                   ))}
                 </ol>
               </div>
@@ -625,19 +625,19 @@ export function PronunciationRulesBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#267a8b]">第四章 · GOALS</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
-                <p className="mt-4 text-sm leading-7 text-[#60736a]">不靠死记中文谐音，根据音节边界和相邻声音推导韩语词句的实际读音。</p>
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--primary)]">第四章 · GOALS</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--foreground)]">学完这一章，你将能够</h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">不靠死记中文谐音，根据音节边界和相邻声音推导韩语词句的实际读音。</p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
                   {[
                     ["01", "看懂规则", "找到音变发生的交界处，并解释连音、紧音、激音、鼻音和流音变化。"],
                     ["02", "独立推导", "面对陌生词时按固定步骤写出中间过程和实际读音。"],
                     ["03", "开口应用", "自然朗读问候、数字、价格、自我介绍和常用生活短句。"],
                   ].map(([number, title, description]) => (
-                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[#cbdbe8] bg-white p-5"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e5eef6] text-sm font-black text-[#267a8b]">{number}</span><div><h3 className="text-base font-black text-[#294f43]">{title}</h3><p className="mt-1 text-xs leading-6 text-[#71857b]">{description}</p></div></section>
+                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[var(--border)] bg-white p-5"><span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--accent)] text-sm font-bold text-[var(--primary)]">{number}</span><div><h4 className="text-base font-bold text-[var(--foreground)]">{title}</h4><p className="mt-1 text-xs leading-6 text-[var(--foreground-secondary)]">{description}</p></div></section>
                   ))}
                 </div>
-                <div className="mt-6 rounded-2xl bg-[#fff3e3] p-4 text-sm font-bold leading-6 text-[#765c49]">学习建议：每个案例先自己标出音节边界，再点击卡片听音，不要直接背最终标音。</div>
+                <div className="mt-6 rounded-2xl bg-[var(--status-warning-surface)] p-4 text-sm font-bold leading-6 text-[var(--foreground-secondary)]">学习建议：每个案例先自己标出音节边界，再点击卡片听音，不要直接背最终标音。</div>
               </div>
             </Page>
 
@@ -645,14 +645,14 @@ export function PronunciationRulesBook({
 
             <Page number="32" header="本章结束">
               <div className="relative flex h-full flex-col items-center justify-center overflow-hidden text-center">
-                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4eff4]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
+                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[var(--accent)]" /><div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第四章完成</p>
-                  <h2 className="mt-5 text-4xl font-black text-[#173f4a]">从看懂规则，到读出真实韩语</h2>
-                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">你已经完成连音、紧音化、激音化、鼻音化、流音化及其他高频规则的系统学习。接下来进入本章测试检查判断能力。</p>
-                  <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한국어", "[한구거]"], ["학교", "[학꾜]"], ["국물", "[궁물]"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm"><p className="text-xl font-black text-[#267a8b]">{value}</p><p className="mt-2 text-xs font-bold text-[#789087]">{label}</p></div>)}</div>
-                  <button type="button" onClick={onStartTest} disabled={testLocked} title={testLocked ? "完成本章学习目标后解锁测试" : undefined} className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#267a8b] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#206a78] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none">{testLocked && <Lock size={17} />}进入本章测试</button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">{testLocked ? "完成本章学习目标后解锁测试" : "完成本章测试，巩固发音规则"}</p>
+                  <p className="text-sm font-bold tracking-[0.2em] text-[var(--status-warning)]">第四章完成</p>
+                  <h3 className="mt-5 text-4xl font-bold text-[var(--foreground)]">从看懂规则，到读出真实韩语</h3>
+                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[var(--foreground-secondary)]">你已经完成连音、紧音化、激音化、鼻音化、流音化及其他高频规则的系统学习。接下来进入本章测试检查判断能力。</p>
+                  <div className="mx-auto mt-9 grid max-w-md grid-cols-3 gap-3">{[["한국어", "[한구거]"], ["학교", "[학꾜]"], ["국물", "[궁물]"]].map(([value, label]) => <div key={value} className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-sm"><p className="text-xl font-bold text-[var(--primary)]">{value}</p><p className="mt-2 text-xs font-bold text-[var(--foreground-secondary)]">{label}</p></div>)}</div>
+                  <button type="button" onClick={onStartTest} disabled={testLocked} title={testLocked ? "完成本章学习目标后解锁测试" : undefined} className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--primary)] px-8 py-4 text-base font-bold text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[var(--primary)] disabled:cursor-not-allowed disabled:bg-[var(--foreground-muted)] disabled:shadow-none">{testLocked && <Lock size={17} />}进入本章测试</button>
+                  <p className="mt-4 text-xs font-bold text-[var(--foreground-muted)]">{testLocked ? "完成本章学习目标后解锁测试" : "完成本章测试，巩固发音规则"}</p>
                 </div>
               </div>
             </Page>

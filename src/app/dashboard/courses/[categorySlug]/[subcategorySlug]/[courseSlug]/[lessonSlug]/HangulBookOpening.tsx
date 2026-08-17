@@ -131,20 +131,20 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
   ref
 ) {
   return (
-    <div ref={ref} className={`h-full overflow-hidden text-[#294f43] shadow-[inset_0_0_28px_rgba(57,78,67,0.08)] ${
-      goals ? "bg-[linear-gradient(145deg,#edf8f3_0%,#e4f3ed_100%)]" : "bg-[#fffef9]"
+    <div ref={ref} className={`h-full overflow-hidden text-[var(--foreground-secondary)] shadow-sm ${
+      goals ? "bg-[linear-gradient(145deg,var(--card)_0%,var(--status-success-surface)_100%)]" : "bg-[var(--card)]"
     }`}>
       {cover || fullBleed ? children : (
         <div className="flex h-full flex-col px-9 py-8">
-          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-black tracking-[0.12em] ${
-            goals ? "border-[#bedbce]" : "border-[#dce8e1]"
+          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-bold tracking-[0.12em] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--status-success-surface)]"
           }`}>
-            <span className="text-[#238777]">{header}</span>
-            <span className="text-[#789087]">第一章 · 认识韩语字母</span>
+            <span className="text-[var(--status-success)]">{header}</span>
+            <span className="text-[var(--foreground-muted)]">第一章 · 认识韩语字母</span>
           </div>
           <div className="min-h-0 flex-1 pt-5">{children}</div>
-          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[#92a099] ${
-            goals ? "border-[#bedbce]" : "border-[#e4ebe7]"
+          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[var(--foreground-muted)] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--surface-soft)]"
           }`}>
             <span>互动电子书</span>
             <span>{number}</span>
@@ -170,71 +170,71 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
           <div>
             {/* 标题 */}
-            <h2 className="text-3xl font-black leading-tight text-[#294f43]">
+            <h3 className="text-3xl font-bold leading-tight text-[var(--foreground-secondary)]">
               {page.title}
-            </h2>
+            </h3>
             {/* 👇 标题和正文之间的间距 mt-4 */}
-            <p className="mt-3 text-sm leading-7 text-[#60736a]">
+            <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
               {page.lead}
             </p>
           </div>
 
           {/* 右侧韩文卡片 */}
-          <div className="flex min-h-[100px] flex-col justify-center rounded-[28px] bg-[#173f4a] p-5 text-center text-white">
-            <p className="text-5xl font-black">한글</p>
+          <div className="flex min-h-[100px] flex-col justify-center rounded-[28px] bg-[var(--primary)] p-5 text-center text-white">
+            <p className="text-5xl font-bold">한글</p>
 
             {/* 👇 韩文和副标题之间的间距 mt-3 */}
-            <p className="mt-4 text-xs font-bold text-[#9bcfc0]">声音写成字</p>
+            <p className="mt-4 text-xs font-bold text-[var(--border)]">声音写成字</p>
           </div>
         </div>
 
         {/* 👇 三个卡片容器的顶部间距 mt-5，卡片之间间距 gap-3 */}
         <div className="mt-5 grid grid-cols-3 gap-3">
-          <div className="min-h-[82px] rounded-2xl border border-[#dce8e1] p-3 text-xs leading-5 text-[#526c60]"><b className="text-[#b87131]">01</b><p className="mt-1">{page.points[0]}</p></div>
-          <div className="min-h-[82px] rounded-2xl border border-[#dce8e1] p-3 text-xs leading-5 text-[#526c60]"><b className="text-[#b87131]">02</b><p className="mt-1">{page.points[1]}</p></div>
-          <div className="min-h-[82px] rounded-2xl border border-[#dce8e1] p-3 text-xs leading-5 text-[#526c60]"><b className="text-[#b87131]">03</b><p className="mt-1">{page.points[2]}</p></div>
+          <div className="min-h-[82px] rounded-2xl border border-[var(--status-success-surface)] p-3 text-xs leading-5 text-[var(--foreground-secondary)]"><b className="text-[var(--destructive)]">01</b><p className="mt-1">{page.points[0]}</p></div>
+          <div className="min-h-[82px] rounded-2xl border border-[var(--status-success-surface)] p-3 text-xs leading-5 text-[var(--foreground-secondary)]"><b className="text-[var(--destructive)]">02</b><p className="mt-1">{page.points[1]}</p></div>
+          <div className="min-h-[82px] rounded-2xl border border-[var(--status-success-surface)] p-3 text-xs leading-5 text-[var(--foreground-secondary)]"><b className="text-[var(--destructive)]">03</b><p className="mt-1">{page.points[2]}</p></div>
         </div>
 
         {/* 👇 mt-auto 让这个区块自动贴底 */}
-        <div className="mt-3 mb-1 min-h-[78px] rounded-2xl bg-[#fff4e7] p-5 text-sm leading-7 text-[#765c49]">
-          <b className="text-[#b87131]">中文类比：</b>
+        <div className="mt-3 mb-1 min-h-[78px] rounded-2xl bg-[var(--card)] p-5 text-sm leading-7 text-[var(--foreground-secondary)]">
+          <b className="text-[var(--destructive)]">中文类比：</b>
           {page.chineseExample}
         </div>
 
         {/* 用拼音和韩文音节方块的结构做视觉对比，方便一眼理解「组合成声音」。 */}
-        <div className="mt-1 mb-1 p-1 text-[#765c49]">
+        <div className="mt-1 mb-1 p-1 text-[var(--foreground-secondary)]">
           <div className="mt-3 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
-            <div className="min-h-[102px] rounded-xl bg-white p-3 text-center shadow-sm ring-1 ring-[#f2e5d6]">
-              <p className="text-[10px] font-bold tracking-[0.12em] text-[#a27b5b]">中文拼音</p>
-              <div className="mt-2 flex items-center justify-center gap-1 text-lg font-black">
-                <span className="rounded-md bg-[#fff0df] px-2 py-1 text-[#bd7228]">m</span>
-                <span className="text-[#b8a18e]">+</span>
-                <span className="rounded-md bg-[#fff0df] px-2 py-1 text-[#bd7228]">a</span>
-                <span className="text-[#b8a18e]">=</span>
-                <span className="text-[#294f43]">ma</span>
+            <div className="min-h-[102px] rounded-xl bg-white p-3 text-center shadow-sm ring-1 ring-[var(--status-warning-surface)]">
+              <p className="text-[10px] font-bold tracking-[0.12em] text-[var(--status-warning)]">中文拼音</p>
+              <div className="mt-2 flex items-center justify-center gap-1 text-lg font-bold">
+                <span className="rounded-md bg-[var(--status-warning-surface)] px-2 py-1 text-[var(--destructive)]">m</span>
+                <span className="text-[var(--foreground-muted)]">+</span>
+                <span className="rounded-md bg-[var(--status-warning-surface)] px-2 py-1 text-[var(--destructive)]">a</span>
+                <span className="text-[var(--foreground-muted)]">=</span>
+                <span className="text-[var(--foreground-secondary)]">ma</span>
               </div>
-              <p className="mt-2 text-[10px] text-[#8c7561]">声母 + 韵母，横向拼读</p>
+              <p className="mt-2 text-[10px] text-[var(--foreground-secondary)]">声母 + 韵母，横向拼读</p>
             </div>
 
-            <span className="text-xl font-black text-[#d29a58]">→</span>
+            <span className="text-xl font-bold text-[var(--destructive)]">→</span>
 
-            <div className="min-h-[102px] rounded-xl bg-[#e8f5f0] p-3 text-center ring-1 ring-[#cbe7dc]">
-              <p className="text-[10px] font-bold tracking-[0.12em] text-[#238777]">韩文音节方块</p>
-              <div className="mt-2 flex items-center justify-center gap-1 text-lg font-black">
-                <span className="rounded-md bg-white px-2 py-1 text-[#238777]">ㄱ</span>
-                <span className="text-[#72ae9e]">+</span>
-                <span className="rounded-md bg-white px-2 py-1 text-[#238777]">ㅏ</span>
-                <span className="text-[#72ae9e]">=</span>
-                <span className="rounded-md bg-[#238777] px-2 py-1 text-white">가</span>
+            <div className="min-h-[102px] rounded-xl bg-[var(--status-success-surface)] p-3 text-center ring-1 ring-[var(--border-subtle)]">
+              <p className="text-[10px] font-bold tracking-[0.12em] text-[var(--status-success)]">韩文音节方块</p>
+              <div className="mt-2 flex items-center justify-center gap-1 text-lg font-bold">
+                <span className="rounded-md bg-white px-2 py-1 text-[var(--status-success)]">ㄱ</span>
+                <span className="text-[var(--status-success)]">+</span>
+                <span className="rounded-md bg-white px-2 py-1 text-[var(--status-success)]">ㅏ</span>
+                <span className="text-[var(--status-success)]">=</span>
+                <span className="rounded-md bg-[var(--status-success)] px-2 py-1 text-white">가</span>
               </div>
-              <p className="mt-2 text-[10px] text-[#568576]">辅音 + 元音，装进一格</p>
+              <p className="mt-2 text-[10px] text-[var(--status-success)]">辅音 + 元音，装进一格</p>
             </div>
           </div>
         </div>
 
         {/* 第一页专用：点播卡片直接放在本页阅读区内，颜色、间距、大小都在这里调整。 */}
         <section className="mt-7 min-h-[100px]  px-4 py-3">
-          <p className="text-xs font-black text-[#c58b2a]">点击听韩语</p>
+          <p className="text-xs font-bold text-[var(--destructive)]">点击听韩语</p>
           <div className="mt-3 grid grid-cols-5 gap-2">
             {[
               { text: "가", phonetic: "[가]" },
@@ -248,11 +248,11 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
                 type="button"
                 onClick={() => onSpeak(word.text)}
                 title={`播放 ${word.text}`}
-                className="group relative min-h-[48px] rounded-lg bg-white px-2 py-1 text-center shadow-sm ring-1 ring-[#dce8e1] transition hover:!bg-[#238777] hover:!text-white hover:!ring-[#238777]"
+                className="group relative min-h-[48px] rounded-lg bg-white px-2 py-1 text-center shadow-sm ring-1 ring-[var(--status-success-surface)] transition hover:!bg-[var(--status-success)] hover:!text-white hover:!ring-[var(--status-success)]"
               >
-                <span className="absolute right-1.5 top-1 text-[10px] text-[#238777] transition group-hover:!text-white">🔊</span>
-                <span className="block text-lg font-black text-[#173f4a] transition group-hover:!text-white">{word.text}</span>
-                <span className="mt-0.5 block text-[10px] font-bold text-[#71857b] transition group-hover:!text-white/80">{word.phonetic}</span>
+                <span className="absolute right-1.5 top-1 text-[10px] text-[var(--status-success)] transition group-hover:!text-white">🔊</span>
+                <span className="block text-lg font-bold text-[var(--primary)] transition group-hover:!text-white">{word.text}</span>
+                <span className="mt-0.5 block text-[10px] font-bold text-[var(--foreground-muted)] transition group-hover:!text-white/80">{word.phonetic}</span>
               </button>
             ))}
           </div>
@@ -272,63 +272,63 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       {/* ===== 顶部：章节标题与主题印章 ===== */}
       <div className="mt-4 flex items-start justify-between gap-5">
         <div>
-          <h2 className="mt-2 text-3xl font-black leading-tight text-[#3c332e]">{page.title}</h2>
+          <h3 className="mt-2 text-3xl font-bold leading-tight text-[var(--foreground)]">{page.title}</h3>
         </div>
 
         {/* 右上角韩文主题标记 */}
-        <div className="rounded-full bg-[#f5b700] px-4 py-3 text-center text-white">
-          <p className="text-2xl font-black">훈민</p>
-          <p className="text-2xl font-black">정음</p>
+        <div className="rounded-full bg-[var(--status-warning)] px-4 py-3 text-center text-white">
+          <p className="text-2xl font-bold">훈민</p>
+          <p className="text-2xl font-bold">정음</p>
         </div>
       </div>
 
       {/* 标题下方的导读文字 */}
-      <p className="mt-3 text-sm leading-7 text-[#6d655f]">{page.lead}</p>
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
 
       {/* ===== 中部：韩文创制时间线 ===== */}
       <div className="mt-5">
-        <p className="text-xs font-black text-[#c58b2a]">一条时间线，读懂它为何诞生</p>
+        <p className="text-xs font-bold text-[var(--destructive)]">一条时间线，读懂它为何诞生</p>
 
         {/* 三张并列时间卡：年份 → 图标 → 标题 → 说明 */}
         <div className="mt-3 grid grid-cols-3 gap-3">
-          <div className="min-h-[174px] rounded-[26px] bg-[#f1eeea] p-4 text-center">
-            <p className="text-lg font-black text-[#3c332e]">1443</p>
+          <div className="min-h-[174px] rounded-[26px] bg-[var(--surface-soft)] p-4 text-center">
+            <p className="text-lg font-bold text-[var(--foreground)]">1443</p>
             <span className="mt-2 block text-3xl">📜</span>
-            <p className="mt-2 font-black text-[#3c332e]">开始创制</p>
-            <p className="mt-2 text-xs leading-5 text-[#5f5751]">世宗启动新文字的创制。</p>
+            <p className="mt-2 font-bold text-[var(--foreground)]">开始创制</p>
+            <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">世宗启动新文字的创制。</p>
           </div>
 
-          <div className="min-h-[174px] rounded-[26px] bg-[#f1eeea] p-4 text-center">
-            <p className="text-lg font-black text-[#3c332e]">1446</p>
+          <div className="min-h-[174px] rounded-[26px] bg-[var(--surface-soft)] p-4 text-center">
+            <p className="text-lg font-bold text-[var(--foreground)]">1446</p>
             <span className="mt-2 block text-3xl">📄</span>
-            <p className="mt-2 font-black text-[#3c332e]">正式颁布</p>
-            <p className="mt-2 text-xs leading-5 text-[#5f5751]">《训民正音》说明字母的发音原理。</p>
+            <p className="mt-2 font-bold text-[var(--foreground)]">正式颁布</p>
+            <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">《训民正音》说明字母的发音原理。</p>
           </div>
 
-          <div className="min-h-[174px] rounded-[26px] bg-[#f1eeea] p-4 text-center">
-            <p className="text-lg font-black text-[#3c332e]">今天</p>
+          <div className="min-h-[174px] rounded-[26px] bg-[var(--surface-soft)] p-4 text-center">
+            <p className="text-lg font-bold text-[var(--foreground)]">今天</p>
             <span className="mt-2 block text-3xl">📚</span>
-            <p className="mt-2 font-black text-[#3c332e]">持续使用</p>
-            <p className="mt-2 text-xs leading-5 text-[#5f5751]">它仍以规则清楚、容易学习而闻名。</p>
+            <p className="mt-2 font-bold text-[var(--foreground)]">持续使用</p>
+            <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">它仍以规则清楚、容易学习而闻名。</p>
           </div>
         </div>
       </div>
 
       {/* ===== 底部：学习重点与中文类比 ===== */}
       <div className="mt-6 grid grid-cols-[.5fr_1.5fr] items-stretch gap-">
-        <div className="flex min-h-[92px] flex-col justify-center rounded-2xl bg-[#3c332e] p-4 text-center text-white">
-          <p className="text-xs font-bold text-[#f4c66d]">核心愿望</p>
-          <p className="mt-2 text-lg font-black">简单，人人能读写</p>
+        <div className="flex min-h-[92px] flex-col justify-center rounded-2xl bg-[var(--foreground)] p-4 text-center text-white">
+          <p className="text-xs font-bold text-[var(--border-subtle)]">核心愿望</p>
+          <p className="mt-2 text-lg font-bold">简单，人人能读写</p>
         </div>
 
-        <div className="min-h-[92px] rounded-2xl border border-[#e5dfd9] bg-[#faf9f7] p-4 text-xs leading-6 text-[#5f5751]">
-          <b className="text-[#c58b2a]">中文类比：</b>
-          中文的“人”字用字形帮助记忆；韩文更进一步，把<strong className="font-black text-[#3c332e]">发音动作</strong>做进字母设计，让<strong className="font-black text-[#3c332e]">普通人也能读写</strong>。
+        <div className="min-h-[92px] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]">
+          <b className="text-[var(--destructive)]">中文类比：</b>
+          中文的“人”字用字形帮助记忆；韩文更进一步，把<strong className="font-bold text-[var(--foreground)]">发音动作</strong>做进字母设计，让<strong className="font-bold text-[var(--foreground)]">普通人也能读写</strong>。
         </div>
       </div>
       {/* ===== 点播区：本页历史主题词 ===== */}
       <section className="mt-11">
-        <p className="text-xs font-black text-[#c58b2a]">点击听韩语</p>
+        <p className="text-xs font-bold text-[var(--destructive)]">点击听韩语</p>
 
         {/* 单词按钮：点击后调用 onSpeak 播放韩语发音 */}
         <div className="mt-3 grid grid-cols-4 gap-3">
@@ -343,11 +343,11 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
               type="button"
               onClick={() => onSpeak(word.text)}
               title={`播放 ${word.text}`}
-              className="group relative min-h-[54px] rounded-lg border border-[#e5dfd9] bg-white px-2 py-1 text-center transition hover:!border-[#3c332e] hover:!bg-[#3c332e] hover:!text-white"
+              className="group relative min-h-[54px] rounded-lg border border-[var(--border-subtle)] bg-white px-2 py-1 text-center transition hover:!border-[var(--foreground)] hover:!bg-[var(--foreground)] hover:!text-white"
             >
-              <span className="absolute right-1.5 top-1 text-[10px] text-[#c58b2a] transition group-hover:!text-[#f4c66d]">🔊</span>
-              <span className="block text-lg font-black text-[#3c332e] transition group-hover:!text-white">{word.text}</span>
-              <span className="mt-0.5 block text-[10px] font-bold text-[#837a73] transition group-hover:!text-white/80">{word.phonetic}</span>
+              <span className="absolute right-1.5 top-1 text-[10px] text-[var(--destructive)] transition group-hover:!text-[var(--border-subtle)]">🔊</span>
+              <span className="block text-lg font-bold text-[var(--foreground)] transition group-hover:!text-white">{word.text}</span>
+              <span className="mt-0.5 block text-[10px] font-bold text-[var(--foreground-secondary)] transition group-hover:!text-white/80">{word.phonetic}</span>
             </button>
           ))}
         </div>
@@ -360,14 +360,14 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
 
       {/* ===== 声音积木公式：深青蓝是本页主视觉色 ===== */}
-      <div className="mt-5 rounded-[30px] bg-[#2897a8] px-8 py-6 text-center text-white shadow-[0_10px_24px_rgba(23,103,123,0.16)] h-26 flex flex-col items-center justify-center ">
-        <p className="text-xs font-bold text-[#bfe2e9]">声音积木</p>
-        <p className="mt-3 text-4xl font-black tracking-[0.08em]">ㄱ ＋ ㅏ ＝ 가</p>
+      <div className="mt-5 rounded-[30px] bg-[var(--primary)] px-8 py-6 text-center text-white shadow-sm h-26 flex flex-col items-center justify-center ">
+        <p className="text-xs font-bold text-[var(--border-subtle)]">声音积木</p>
+        <p className="mt-3 text-4xl font-bold tracking-[0.08em]">ㄱ ＋ ㅏ ＝ 가</p>
       </div>
 
       {/* ===== 标题与导读 ===== */}
-      <h2 className="mt-5 text-2xl font-black text-[#233b48]">先把韩文当作“声音积木”</h2>
-      <p className="mt-3 text-sm leading- text-[#52636d]">学习时，不要把 가、나、다 当成孤立图形。它们都是由辅音和元音拼出的声音积木：先找到零件，再看它们怎样放进一个方块。</p>
+      <h3 className="mt-5 text-2xl font-bold text-[var(--foreground)]">先把韩文当作“声音积木”</h3>
+      <p className="mt-3 text-sm leading- text-[var(--foreground-secondary)]">学习时，不要把 가、나、다 当成孤立图形。它们都是由辅音和元音拼出的声音积木：先找到零件，再看它们怎样放进一个方块。</p>
 
       {/* 三个基础规则：保持白底，避免与下方三种结构争夺颜色 */}
       <div className="mt-4 grid grid-cols-3 gap-3">
@@ -376,36 +376,36 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
           "元音决定声音与摆放方向",
           "一个完整方块是一个音节",
         ].map((point, i) => (
-          <div key={point} className="rounded-2xl border border-[#d7e0e1] bg-white p-3 text-center text-xs leading-5 text-[#52636d]">
-            <span className="mx-auto flex h-7 w-7 items-center justify-center rounded-full bg-[#17677b] text-xs font-black text-white">{i + 1}</span>
+          <div key={point} className="rounded-2xl border border-[var(--border-subtle)] bg-white p-3 text-center text-xs leading-5 text-[var(--foreground-secondary)]">
+            <span className="mx-auto flex h-7 w-7 items-center justify-center rounded-full bg-[var(--primary)] text-xs font-bold text-white">{i + 1}</span>
             <p className="mt-2">{point}</p>
           </div>
         ))}
       </div>
 
       {/* 中文类比：只使用柔和琥珀，作为说明而非主色 */}
-      <div className="mt-4 rounded-2xl bg-[#fff1dc] px-5 py-3 text-xs leading-6 text-[#765b45]">
+      <div className="mt-4 rounded-2xl bg-[var(--status-warning-surface)] px-5 py-3 text-xs leading-6 text-[var(--status-warning)]">
         <span className="mr-1 text-base">💡</span>
         <b>像拼“妈”：</b>先有声母 m，再接韵母 a，读成 ma。韩文则把<strong>辅音和元音</strong>装进同一方块
       </div>
 
       {/* ===== 三种音节结构：蓝＝左右、绿＝上下、砖红＝带收音 ===== */}
 
-      <p className="mt-8 text-2xl font-black text-[#233b48]">三种核心积木拼装结构</p>
+      <p className="mt-8 text-2xl font-bold text-[var(--foreground)]">三种核心积木拼装结构</p>
       <div className="mt-3 grid grid-cols-3 gap-3">
-        <div className="rounded-[22px] bg-[#d9eef5] p-3 text-center text-[#254f5d] flex flex-col">
-          <p className="font-black">【左右结构】</p><span className="mt-1 block text-xl">💡</span>
-          <p className="mt-1 text-2xl font-black">ㄱㅏ</p><p className="mt-1 text-sm font-black">가 (ga)　나 (na)</p>
+        <div className="rounded-[22px] bg-[var(--status-success-surface)] p-3 text-center text-[var(--primary)] flex flex-col">
+          <p className="font-bold">【左右结构】</p><span className="mt-1 block text-xl">💡</span>
+          <p className="mt-1 text-2xl font-bold">ㄱㅏ</p><p className="mt-1 text-sm font-bold">가 (ga)　나 (na)</p>
           <p className="mt-9 text-xs leading-5">左右结构：左ㄱ、右ㅏ，适合竖向元音。</p>
         </div>
-        <div className="rounded-[22px] bg-[#dfead7] p-3 text-center text-[#405b3f]">
-          <p className="font-black">【上下结构】</p><span className="mt-1 block text-xl">☘️</span>
-          <p className="mt-1 text-2xl font-black">ㄱ<br />ㅗ</p><p className="mt-1 text-sm font-black">고 (go)　누 (nu)</p>
+        <div className="rounded-[22px] bg-[var(--status-success-surface)] p-3 text-center text-[var(--foreground-secondary)]">
+          <p className="font-bold">【上下结构】</p><span className="mt-1 block text-xl">☘️</span>
+          <p className="mt-1 text-2xl font-bold">ㄱ<br />ㅗ</p><p className="mt-1 text-sm font-bold">고 (go)　누 (nu)</p>
           <p className="mt-2 text-xs leading-5">上下结构：ㄱ－ㅗ，适合横向元音。</p>
         </div>
-        <div className="rounded-[22px] bg-[#f0d9d5] p-3 text-center text-[#6f3f3d]">
-          <p className="font-black">【带收音结构】</p><span className="mt-1 block text-xl">✦</span>
-          <p className="mt-1 text-2xl font-black">ㄱㅏ<br />　ㄴ</p><p className="mt-1 text-sm font-black">강 (gang)　눈 (nun)</p>
+        <div className="rounded-[22px] bg-[var(--border-subtle)] p-3 text-center text-[var(--destructive)]">
+          <p className="font-bold">【带收音结构】</p><span className="mt-1 block text-xl">✦</span>
+          <p className="mt-1 text-2xl font-bold">ㄱㅏ<br />　ㄴ</p><p className="mt-1 text-sm font-bold">강 (gang)　눈 (nun)</p>
           <p className="mt-2 text-xs leading-5">带收音结构：下方再加辅音收尾。</p>
         </div>
       </div>
@@ -419,21 +419,21 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第一行：声音积木卡片 ===== */}
       {/* 👇 与 heading 的间距：mt-4（1rem / 16px） */}
-      <div className="mt-4 rounded-[28px] bg-[#e9f6f1] p-6 text-center">
-        <p className="text-xs font-black text-[#238777]">声音积木</p>
+      <div className="mt-4 rounded-[28px] bg-[var(--status-success-surface)] p-6 text-center">
+        <p className="text-xs font-bold text-[var(--status-success)]">声音积木</p>
         {/* 👇 标签与公式之间的间距：mt-3（0.75rem / 12px） */}
-        <p className="mt-3 text-4xl font-black text-[#173f4a]">ㄱ ＋ ㅏ ＝ 가</p>
+        <p className="mt-3 text-4xl font-bold text-[var(--primary)]">ㄱ ＋ ㅏ ＝ 가</p>
       </div>
 
       {/* ===== 第二行：标题 ===== */}
       {/* 👇 与上方卡片的间距：mt-5（1.25rem / 20px） */}
-      <h2 className="mt-5 text-2xl font-black text-[#294f43]">
+      <h3 className="mt-5 text-2xl font-bold text-[var(--foreground-secondary)]">
         {page.title}
-      </h2>
+      </h3>
 
       {/* ===== 第三行：正文 ===== */}
       {/* 👇 与标题的间距：mt-3（0.75rem / 12px） */}
-      <p className="mt-3 text-sm leading-7 text-[#60736a]">
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
         {page.lead}
       </p>
 
@@ -442,13 +442,13 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       {/* 👇 三个卡片之间的水平间距：gap-3（0.75rem / 12px） */}
       <div className="mt-5 flex items-stretch gap-3">
         {page.points.map((point, i) => (
-          <div key={point} className="flex-1 rounded-2xl bg-[#fbfdfa] p-4 text-center ring-1 ring-[#dce8e1]">
+          <div key={point} className="flex-1 rounded-2xl bg-[var(--card)] p-4 text-center ring-1 ring-[var(--status-success-surface)]">
             {/* 编号圆圈 */}
-            <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-[#238777] text-xs font-black text-white">
+            <span className="mx-auto flex h-8 w-8 items-center justify-center rounded-full bg-[var(--status-success)] text-xs font-bold text-white">
               {i + 1}
             </span>
             {/* 👇 编号与文字之间的间距：mt-3（0.75rem / 12px） */}
-            <p className="mt-3 text-xs leading-5 text-[#526c60]">
+            <p className="mt-3 text-xs leading-5 text-[var(--foreground-secondary)]">
               {point}
             </p>
           </div>
@@ -458,7 +458,7 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       {/* ===== 第五行：中文类比 ===== */}
       {/* 👇 mt-auto：自动推到底部（flex容器的底部对齐） */}
       {/* 👇 内边距：p-4（1rem / 16px） */}
-      <p className="mt-auto rounded-xl bg-[#fff4e7] p-4 text-xs leading-6 text-[#765c49]">
+      <p className="mt-auto rounded-xl bg-[var(--card)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]">
         {page.chineseExample}
       </p>
     </div>
@@ -467,28 +467,28 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
   if (index === 3) return (
     <div className="flex h-full flex-col">
       {/* ===== 顶部：标题、导读；章节名已由电子书页眉统一显示 ===== */}
-      <h2 className="mt-4 text-2xl font-black text-[#274d47]">{page.title}</h2>
-      <p className="mt-3 text-sm leading-7 text-[#5d7069]">{page.lead}</p>
+      <h3 className="mt-4 text-2xl font-bold text-[var(--foreground)]">{page.title}</h3>
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
 
       {/* ===== 中部：元音与辅音两张主题卡 ===== */}
       <div className="mt-5 grid grid-cols-[.96fr_1.04fr] items-stretch gap-4">
         {/* 左卡：以青绿色表现自然、安静的天地人概念 */}
-        <div className="flex min-h-[250px] flex-col rounded-[26px] bg-[#dff3ed] p-5 text-[#245d55] shadow-[0_8px_20px_rgba(38,112,100,0.08)]">
-          <p className="text-xs font-black">元音 · 天地自然</p>
+        <div className="flex min-h-[250px] flex-col rounded-[26px] bg-[var(--status-success-surface)] p-5 text-[var(--status-success)] shadow-sm">
+          <p className="text-xs font-bold">元音 · 天地自然</p>
           <div className="mt-5 grid grid-cols-3 gap-2 text-center">
-            <div><p className="text-4xl font-black">·</p><span className="mt-3 block text-2xl">🌤️</span><p className="mt-2 text-xs font-bold">天 (tiān)</p></div>
-            <div><p className="text-4xl font-black">ㅡ</p><span className="mt-3 block text-2xl">🌄</span><p className="mt-2 text-xs font-bold">地 (dì)</p></div>
-            <div><p className="text-4xl font-black">ㅣ</p><span className="mt-3 block text-2xl">🧍</span><p className="mt-2 text-xs font-bold">人 (rén)</p></div>
+            <div><p className="text-4xl font-bold">·</p><span className="mt-3 block text-2xl">🌤️</span><p className="mt-2 text-xs font-bold">天 (tiān)</p></div>
+            <div><p className="text-4xl font-bold">ㅡ</p><span className="mt-3 block text-2xl">🌄</span><p className="mt-2 text-xs font-bold">地 (dì)</p></div>
+            <div><p className="text-4xl font-bold">ㅣ</p><span className="mt-3 block text-2xl">🧍</span><p className="mt-2 text-xs font-bold">人 (rén)</p></div>
           </div>
-          <p className="mt-auto border-t border-[#b9ddd3] pt-4 text-xs leading-6">从天、地、人三个形象出发，组合出元音。</p>
+          <p className="mt-auto border-t border-[var(--border-subtle)] pt-4 text-xs leading-6">从天、地、人三个形象出发，组合出元音。</p>
         </div>
 
         {/* 右卡：暖沙色表现口腔与发音器官 */}
-        <div className="flex min-h-[250px] flex-col rounded-[26px] bg-[#fff0dc] p-5 text-[#785337] shadow-[0_8px_20px_rgba(146,91,48,0.08)]">
-          <p className="text-xs font-black">辅音 · 发音器官</p>
+        <div className="flex min-h-[250px] flex-col rounded-[26px] bg-[var(--status-warning-surface)] p-5 text-[var(--destructive)] shadow-sm">
+          <p className="text-xs font-bold">辅音 · 发音器官</p>
 
           {/* 正常侧脸发音插图：保留发音动作，不展示口腔剖面。 */}
-          <div className="relative mt-3 overflow-hidden rounded-2xl bg-[#f7ddca]">
+          <div className="relative mt-3 overflow-hidden rounded-2xl bg-[var(--status-warning-surface)]">
             <Image
               src="/images/hangul/pronunciation-side-profile.png"
               alt="人物侧脸发音示意"
@@ -499,25 +499,25 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
             {/* 引线教学层：人物是正常侧脸，字母仍对应舌根、舌尖、嘴唇与喉咙的位置。 */}
             <svg viewBox="0 0 280 132" aria-hidden="true" className="pointer-events-none absolute inset-0 h-full w-full">
-              <g fill="none" stroke="#5e4638" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+              <g fill="none" stroke="var(--foreground-secondary)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M36 22 H95 L183 76" />
                 <path d="M36 50 H103 L158 70" />
                 <path d="M36 78 H100 L140 63" />
                 <path d="M36 106 H128 L184 105" />
               </g>
-              <g fill="#fffaf4" stroke="#7f5944" strokeWidth="1">
+              <g fill="var(--card)" stroke="var(--destructive)" strokeWidth="1">
                 <rect x="8" y="11" width="28" height="22" rx="6" />
                 <rect x="8" y="39" width="28" height="22" rx="6" />
                 <rect x="8" y="67" width="28" height="22" rx="6" />
                 <rect x="8" y="95" width="28" height="22" rx="6" />
               </g>
-              <g fill="#3d3028" fontSize="15" fontWeight="800" textAnchor="middle">
+              <g fill="var(--foreground)" fontSize="15" fontWeight="800" textAnchor="middle">
                 <text x="22" y="27">ㄱ</text>
                 <text x="22" y="55">ㄴ</text>
                 <text x="22" y="83">ㅁ</text>
                 <text x="22" y="111">ㅇ</text>
               </g>
-              <g fill="#c77d35" stroke="#fffaf4" strokeWidth="1.5">
+              <g fill="var(--destructive)" stroke="var(--card)" strokeWidth="1.5">
                 <circle cx="183" cy="76" r="3.5" />
                 <circle cx="158" cy="70" r="3.5" />
                 <circle cx="140" cy="63" r="3.5" />
@@ -529,7 +529,7 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
           {/* 旧版剖面结构已停用，保留在源码中便于后续对比。 */}
           <div className="hidden mt-3 grid grid-cols-[38px_1fr] items-center gap-1 rounded-2xl bg-white/55 px-2 py-1">
             {/* 参考教材案例：只显示字母，连接线负责指出对应器官 */}
-            <div className="flex h-[132px] flex-col justify-around text-center text-lg font-black text-[#332d29]">
+            <div className="flex h-[132px] flex-col justify-around text-center text-lg font-bold text-[var(--foreground)]">
               <span>ㄱ</span>
               <span>ㄴ</span>
               <span>ㅁ</span>
@@ -539,58 +539,58 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
             <svg viewBox="0 0 205 150" role="img" aria-label="辅音发音器官侧视示意图" className="h-[132px] w-full">
               <defs>
                 <linearGradient id="faceSkin" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#f4c3a6" />
-                  <stop offset="100%" stopColor="#dfa080" />
+                  <stop offset="0%" stopColor="var(--border-subtle)" />
+                  <stop offset="100%" stopColor="var(--destructive)" />
                 </linearGradient>
                 <linearGradient id="tongueFill" x1="0" y1="0" x2="1" y2="1">
-                  <stop offset="0%" stopColor="#f28b87" />
-                  <stop offset="100%" stopColor="#cf6467" />
+                  <stop offset="0%" stopColor="var(--destructive)" />
+                  <stop offset="100%" stopColor="var(--destructive)" />
                 </linearGradient>
               </defs>
 
               {/* 面部侧面：朝向左侧，鼻、唇、下巴和颈部轮廓清晰可辨 */}
               <path
                 d="M94 7 C139 2 181 19 195 53 C204 74 194 91 181 101 C174 107 174 122 177 144 H105 C108 129 103 118 91 112 C72 103 61 94 57 83 C51 81 47 78 48 73 C50 68 50 65 44 62 L35 58 C46 52 53 47 55 39 C58 24 72 12 94 7Z"
-                fill="url(#faceSkin)"
-                stroke="#875449"
+                fill="url(var(--primary)Skin)"
+                stroke="var(--destructive)"
                 strokeWidth="2"
               />
 
               {/* 鼻腔：位于口腔上方 */}
               <path
                 d="M55 46 C78 31 126 32 161 49 C138 46 114 47 91 55 C76 60 63 57 55 46Z"
-                fill="#f8d9ca"
-                stroke="#a66759"
+                fill="var(--border-subtle)"
+                stroke="var(--destructive)"
                 strokeWidth="1.5"
               />
-              <path d="M62 49 C87 42 119 42 150 49" fill="none" stroke="#b87566" strokeWidth="2" strokeLinecap="round" />
+              <path d="M62 49 C87 42 119 42 150 49" fill="none" stroke="var(--destructive)" strokeWidth="2" strokeLinecap="round" />
 
               {/* 硬腭、牙齿和口腔空间 */}
-              <path d="M53 62 C81 52 121 53 158 67 C140 66 124 70 113 80 C94 96 68 86 53 75Z" fill="#9f454b" />
-              <path d="M54 58 L92 55 L90 65 L56 67Z" fill="#fffdf8" stroke="#8e7065" strokeWidth="1.2" />
-              <path d="M91 55 C112 54 137 57 157 66" fill="none" stroke="#6f453f" strokeWidth="4" strokeLinecap="round" />
+              <path d="M53 62 C81 52 121 53 158 67 C140 66 124 70 113 80 C94 96 68 86 53 75Z" fill="var(--destructive)" />
+              <path d="M54 58 L92 55 L90 65 L56 67Z" fill="var(--card)" stroke="var(--foreground-secondary)" strokeWidth="1.2" />
+              <path d="M91 55 C112 54 137 57 157 66" fill="none" stroke="var(--destructive)" strokeWidth="4" strokeLinecap="round" />
 
               {/* 舌头：舌尖在左、舌根在右 */}
               <path
                 d="M57 78 C77 68 112 68 137 78 C124 82 120 95 99 99 C79 101 63 92 57 78Z"
                 fill="url(#tongueFill)"
-                stroke="#874044"
+                stroke="var(--destructive)"
                 strokeWidth="1.5"
               />
-              <path d="M65 79 C84 74 108 75 124 81" fill="none" stroke="#f8b2aa" strokeWidth="2" strokeLinecap="round" />
+              <path d="M65 79 C84 74 108 75 124 81" fill="none" stroke="var(--destructive)" strokeWidth="2" strokeLinecap="round" />
 
               {/* 咽喉与气流通道 */}
-              <path d="M157 66 C169 83 164 111 166 143" fill="none" stroke="#6f453f" strokeWidth="7" strokeLinecap="round" />
-              <path d="M160 72 C164 91 160 113 162 139" fill="none" stroke="#f4b9a5" strokeWidth="2.5" strokeLinecap="round" />
+              <path d="M157 66 C169 83 164 111 166 143" fill="none" stroke="var(--destructive)" strokeWidth="7" strokeLinecap="round" />
+              <path d="M160 72 C164 91 160 113 162 139" fill="none" stroke="var(--status-warning)" strokeWidth="2.5" strokeLinecap="round" />
 
               {/* 四条发音定位线：舌根、舌尖、闭唇、喉咙 */}
-              <g fill="none" stroke="#5f5752" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
+              <g fill="none" stroke="var(--foreground-secondary)" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M2 20 H38 L126 87" />
                 <path d="M2 52 H35 L62 78" />
                 <path d="M2 84 H31 L49 73" />
                 <path d="M2 116 H97 L164 116" />
               </g>
-              <g fill="#c87931" stroke="#fff9f2" strokeWidth="2">
+              <g fill="var(--destructive)" stroke="var(--card)" strokeWidth="2">
                 <circle cx="126" cy="87" r="4.5" />
                 <circle cx="62" cy="78" r="4.5" />
                 <circle cx="49" cy="73" r="4.5" />
@@ -599,37 +599,37 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
             </svg>
           </div>
 
-          <div className="mt-auto flex items-center justify-between border-t border-[#edd2b4] pt-3">
-            <p className="text-2xl font-black tracking-[0.22em]">ㄱ ㄴ ㅁ ㅇ</p>
+          <div className="mt-auto flex items-center justify-between border-t border-[var(--border-subtle)] pt-3">
+            <p className="text-2xl font-bold tracking-[0.22em]">ㄱ ㄴ ㅁ ㅇ</p>
             <p className="text-[10px] leading-4">形状来自<br />发音动作</p>
           </div>
         </div>
       </div>
 
       {/* 统一结论条：深青绿用于强调本页结论 */}
-      <div className="mt-8 rounded-full bg-[#218b7b] px-5 py-2 text-center text-lg font-black text-white">
+      <div className="mt-8 rounded-full bg-[var(--status-success)] px-5 py-2 text-center text-lg font-bold text-white">
         韩文字母为什么长这样？　辅音模仿的是一张发音示意图。</div>
 
       {/* ===== 底部：中文类比与组合示例 ===== */}
       <div className="mt-8 grid grid-cols-[1.5fr_.9fr] gap-4">
-        <div className="border-l-4 border-[#d1923a] pl-4 text-xs leading-6 text-[#675b4f]">
-          中国传统思想也常用<strong className="text-[#8b5e28]">“天、地、人”</strong>理解世界；韩文把这个熟悉的观念变成元音的基本笔画。先记住<strong className="text-[#8b5e28]">三个形象</strong>，再看它们怎样组合。
+        <div className="border-l-4 border-[var(--destructive)] pl-4 text-xs leading-6 text-[var(--foreground-secondary)]">
+          中国传统思想也常用<strong className="text-[var(--destructive)]">“天、地、人”</strong>理解世界；韩文把这个熟悉的观念变成元音的基本笔画。先记住<strong className="text-[var(--destructive)]">三个形象</strong>，再看它们怎样组合。
         </div>
-        <div className="rounded-[22px] bg-[#e8e4dc] p-4 text-center text-[#5c534b]">
-          <p className="text-xs font-black">💡 组合与演示小示例</p>
-          <p className="mt-3 text-lg font-black">
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">ㅣ</span>
+        <div className="rounded-[22px] bg-[var(--surface-soft)] p-4 text-center text-[var(--foreground-secondary)]">
+          <p className="text-xs font-bold">💡 组合与演示小示例</p>
+          <p className="mt-3 text-lg font-bold">
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">ㅣ</span>
             ＋
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">·</span>
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">·</span>
             ＝
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">ㅏ</span>
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">ㅏ</span>
           </p>
-          <p className="mt-2 text-lg font-black">
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">ㄱ</span>
+          <p className="mt-2 text-lg font-bold">
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">ㄱ</span>
             ＋
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">ㅏ</span>
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">ㅏ</span>
             ＝
-            <span className="inline-block rounded-lg bg-[#fed7aa] px-1">가</span>
+            <span className="inline-block rounded-lg bg-[var(--border-subtle)] px-1">가</span>
           </p>
         </div>
       </div>
@@ -642,9 +642,9 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第一行：标题 ===== */}
       {/* 👇 与 heading 的间距：mt-3（0.75rem / 12px） */}
-      <h2 className="mt-3 text-2xl font-black text-[#294f43]">
+      <h3 className="mt-3 text-2xl font-bold text-[var(--foreground-secondary)]">
         {page.title}
-      </h2>
+      </h3>
 
       {/* ===== 第二行：天地人三个圆形容器 ===== */}
       {/* 👇 容器与标题的间距：mt-6（1.5rem / 24px） */}
@@ -653,53 +653,53 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       <div className="mx-auto mt-6 grid w-full grid-cols-3 gap-4">
 
         {/* 天 */}
-        <div className="rounded-full bg-[#dff2eb] p-7">
-          <p className="text-4xl font-black text-[#238777]">·</p>
+        <div className="rounded-full bg-[var(--status-success-surface)] p-7">
+          <p className="text-4xl font-bold text-[var(--status-success)]">·</p>
           {/* 👇 符号与文字的间距：mt-2（0.5rem / 8px） */}
-          <b className="mt-2 block text-sm text-[#294f43]">天</b>
+          <b className="mt-2 block text-sm text-[var(--foreground-secondary)]">天</b>
         </div>
 
         {/* 地 */}
-        <div className="rounded-full bg-[#fff0dc] p-7">
-          <p className="text-4xl font-black text-[#b87131]">ㅡ</p>
+        <div className="rounded-full bg-[var(--status-warning-surface)] p-7">
+          <p className="text-4xl font-bold text-[var(--destructive)]">ㅡ</p>
           {/* 👇 符号与文字的间距：mt-2（0.5rem / 8px） */}
-          <b className="mt-2 block text-sm text-[#654b35]">地</b>
+          <b className="mt-2 block text-sm text-[var(--status-warning)]">地</b>
         </div>
 
         {/* 人 */}
-        <div className="rounded-full bg-[#e8efeb] p-7">
-          <p className="text-4xl font-black text-[#60736a]">ㅣ</p>
+        <div className="rounded-full bg-[var(--surface-soft)] p-7">
+          <p className="text-4xl font-bold text-[var(--foreground-secondary)]">ㅣ</p>
           {/* 👇 符号与文字的间距：mt-2（0.5rem / 8px） */}
-          <b className="mt-2 block text-sm text-[#294f43]">人</b>
+          <b className="mt-2 block text-sm text-[var(--foreground-secondary)]">人</b>
         </div>
       </div>
 
       {/* ===== 第三行：正文 ===== */}
       {/* 👇 与上方圆形容器的间距：mt-5（1.25rem / 20px） */}
-      <p className="mt-5 text-sm leading-7 text-[#60736a]">
+      <p className="mt-5 text-sm leading-7 text-[var(--foreground-secondary)]">
         {page.lead}
       </p>
 
       {/* ===== 第四行：元音展示条 ===== */}
       {/* 👇 与上方正文的间距：mt-5（1.25rem / 20px） */}
       {/* 👇 上下内边距：py-4（1rem / 16px） */}
-      <div className="mt-5 rounded-2xl border-y border-[#cfe2d9] py-4 text-xl font-black text-[#238777]">
+      <div className="mt-5 rounded-2xl border-y border-[var(--border-subtle)] py-4 text-xl font-bold text-[var(--status-success)]">
         ㅏ · ㅓ · ㅗ · ㅜ · ㅡ · ㅣ
       </div>
 
       {/* ===== 补充练习：从三个基本笔画延伸到实际元音 ===== */}
       <div className="mt-5 grid flex-1 grid-cols-2 gap-4">
-        <div className="rounded-[24px] bg-[#e9f6f1] p-5 text-left">
-          <p className="text-xs font-black text-[#238777]">组合方向提示</p>
-          <div className="mt-4 flex items-center justify-around text-center text-[#173f4a]">
-            <div><p className="text-3xl font-black">ㅣ + ·</p><p className="mt-2 text-xs">点在右侧 → ㅏ</p></div>
-            <span className="text-xl text-[#238777]">→</span>
-            <div><p className="text-4xl font-black">ㅏ</p><p className="mt-2 text-xs">右开口</p></div>
+        <div className="rounded-[24px] bg-[var(--status-success-surface)] p-5 text-left">
+          <p className="text-xs font-bold text-[var(--status-success)]">组合方向提示</p>
+          <div className="mt-4 flex items-center justify-around text-center text-[var(--primary)]">
+            <div><p className="text-3xl font-bold">ㅣ + ·</p><p className="mt-2 text-xs">点在右侧 → ㅏ</p></div>
+            <span className="text-xl text-[var(--status-success)]">→</span>
+            <div><p className="text-4xl font-bold">ㅏ</p><p className="mt-2 text-xs">右开口</p></div>
           </div>
         </div>
-        <div className="rounded-[24px] bg-[#fff4e7] p-5 text-left">
-          <p className="text-xs font-black text-[#b87131]">先记住这三件事</p>
-          <ol className="mt-3 space-y-2 text-xs leading-5 text-[#765c49]"><li>01 · 点代表天</li><li>02 · 横线代表地</li><li>03 · 竖线代表人</li></ol>
+        <div className="rounded-[24px] bg-[var(--card)] p-5 text-left">
+          <p className="text-xs font-bold text-[var(--destructive)]">先记住这三件事</p>
+          <ol className="mt-3 space-y-2 text-xs leading-5 text-[var(--foreground-secondary)]"><li>01 · 点代表天</li><li>02 · 横线代表地</li><li>03 · 竖线代表人</li></ol>
         </div>
       </div>
 
@@ -707,7 +707,7 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       {/* 👇 mt-auto：自动推到底部（flex容器的底部对齐） */}
       {/* 👇 内边距：p-4（1rem / 16px） */}
       {/* 👇 文字左对齐：text-left（覆盖父容器的 text-center） */}
-      <p className="mt-4 rounded-2xl bg-[#fff4e7] p-4 text-left text-xs leading-6 text-[#765c49]">
+      <p className="mt-4 rounded-2xl bg-[var(--card)] p-4 text-left text-xs leading-6 text-[var(--foreground-secondary)]">
         {page.chineseExample}
       </p>
     </div>
@@ -719,13 +719,13 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第一行：标题 ===== */}
       {/* 👇 与 heading 的间距：mt-3（0.75rem / 12px） */}
-      <h2 className="mt-3 text-2xl font-black text-[#294f43]">
+      <h3 className="mt-3 text-2xl font-bold text-[var(--foreground-secondary)]">
         {page.title}
-      </h2>
+      </h3>
 
       {/* ===== 第二行：正文 ===== */}
       {/* 👇 与标题的间距：mt-3（0.75rem / 12px） */}
-      <p className="mt-3 text-sm leading-7 text-[#60736a]">
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
         {page.lead}
       </p>
 
@@ -739,17 +739,17 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
         ["ㅁ", "双唇合拢", "妈 m"],
         ["ㅇ", "喉咙开口", "零声母/ng"]].map(([letter, organ, zh]) => (
 
-          <div key={letter} className="flex min-h-[104px] items-center gap-4 rounded-2xl border border-[#dce8e1] bg-[#fbfdfa] p-4">
+          <div key={letter} className="flex min-h-[104px] items-center gap-4 rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-4">
             {/* 👇 字母与文字信息的间距：gap-4（1rem / 16px） */}
 
             {/* 韩文字母 */}
-            <span className="text-4xl font-black text-[#238777]">{letter}</span>
+            <span className="text-4xl font-bold text-[var(--status-success)]">{letter}</span>
 
             {/* 文字信息 */}
             <div>
-              <b className="text-sm text-[#294f43]">{organ}</b>
+              <b className="text-sm text-[var(--foreground-secondary)]">{organ}</b>
               {/* 👇 器官名称与中文对照的间距：mt-1（0.25rem / 4px） */}
-              <p className="mt-1 text-xs text-[#b87131]">中文：{zh}</p>
+              <p className="mt-1 text-xs text-[var(--destructive)]">中文：{zh}</p>
             </div>
           </div>
         ))}
@@ -757,19 +757,19 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第四行：把发音动作和字母真正连起来 ===== */}
       <div className="mt-4 grid grid-cols-[.9fr_1.1fr] gap-3">
-        <div className="rounded-2xl bg-[#e9f6f1] p-4 text-center text-[#294f43]">
-          <p className="text-xs font-black text-[#238777]">动作连线</p>
-          <p className="mt-3 text-lg font-black">双唇合拢　→　ㅁ</p>
-          <p className="mt-1 text-xs text-[#60736a]">像念中文“妈”的起音</p>
+        <div className="rounded-2xl bg-[var(--status-success-surface)] p-4 text-center text-[var(--foreground-secondary)]">
+          <p className="text-xs font-bold text-[var(--status-success)]">动作连线</p>
+          <p className="mt-3 text-lg font-bold">双唇合拢　→　ㅁ</p>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">像念中文“妈”的起音</p>
         </div>
-        <div className="rounded-2xl border border-dashed border-[#d9c7ad] bg-[#fffaf3] p-4 text-xs leading-6 text-[#765c49]">
-          <b className="text-[#b87131]">试一试：</b>先无声地做“舌根抬起、舌尖上抬、双唇合拢、喉咙打开”四个动作，再分别读出 ㄱ、ㄴ、ㅁ、ㅇ。
+        <div className="rounded-2xl border border-dashed border-[var(--border-subtle)] bg-[var(--card)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]">
+          <b className="text-[var(--destructive)]">试一试：</b>先无声地做“舌根抬起、舌尖上抬、双唇合拢、喉咙打开”四个动作，再分别读出 ㄱ、ㄴ、ㅁ、ㅇ。
         </div>
       </div>
 
       {/* ===== 第五行：发音实验区块 ===== */}
-      <div className="mt-4 rounded-2xl bg-[#173f4a] p-5 text-sm leading-7 text-white">
-        <b className="text-[#9bcfc0]">发音实验：</b>
+      <div className="mt-4 rounded-2xl bg-[var(--primary)] p-5 text-sm leading-7 text-white">
+        <b className="text-[var(--border)]">发音实验：</b>
         {page.chineseExample}
       </div>
     </div>
@@ -781,9 +781,9 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第一行：标题 ===== */}
       {/* 👇 与 heading 的间距：mt-3（0.75rem / 12px） */}
-      <h2 className="mt-3 text-2xl font-black text-[#294f43]">
+      <h3 className="mt-3 text-2xl font-bold text-[var(--foreground-secondary)]">
         {page.title}
-      </h2>
+      </h3>
 
       {/* ===== 第二行：拼写公式（ㄱ + ㅏ = 가） ===== */}
       {/* 👇 容器与标题的间距：mt-6（1.5rem / 24px） */}
@@ -792,34 +792,34 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       <div className="mt-6 flex items-center justify-center gap-3">
 
         {/* ㄱ */}
-        <span className="rounded-2xl bg-[#e9f6f1] p-6 text-5xl font-black text-[#238777]">
+        <span className="rounded-2xl bg-[var(--status-success-surface)] p-6 text-5xl font-bold text-[var(--status-success)]">
           ㄱ
         </span>
 
         {/* ＋ */}
-        <span className="text-2xl font-black text-[#83948b]">
+        <span className="text-2xl font-bold text-[var(--foreground-muted)]">
           ＋
         </span>
 
         {/* ㅏ */}
-        <span className="rounded-2xl bg-[#fff4e7] p-6 text-5xl font-black text-[#b87131]">
+        <span className="rounded-2xl bg-[var(--card)] p-6 text-5xl font-bold text-[var(--destructive)]">
           ㅏ
         </span>
 
         {/* ＝ */}
-        <span className="text-2xl font-black text-[#83948b]">
+        <span className="text-2xl font-bold text-[var(--foreground-muted)]">
           ＝
         </span>
 
         {/* 가 */}
-        <span className="rounded-2xl bg-[#173f4a] p-6 text-5xl font-black text-white">
+        <span className="rounded-2xl bg-[var(--primary)] p-6 text-5xl font-bold text-white">
           가
         </span>
       </div>
 
       {/* ===== 第三行：正文 ===== */}
       {/* 👇 与上方公式的间距：mt-6（1.5rem / 24px） */}
-      <p className="mt-6 text-sm leading-7 text-[#60736a]">
+      <p className="mt-6 text-sm leading-7 text-[var(--foreground-secondary)]">
         {page.lead}
       </p>
 
@@ -828,8 +828,8 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       {/* 👇 三个卡片之间的间距：gap-3（0.75rem / 12px） */}
       <div className="mt-5 grid flex-1 grid-cols-3 gap-3 text-center">
         {page.points.map((point, i) => (
-          <div key={point} className="flex min-h-[112px] flex-col justify-center rounded-xl bg-[#f3f8f5] p-3 text-xs leading-5 text-[#526c60]">
-            <b className="text-[#238777]">步骤 {i + 1}</b>
+          <div key={point} className="flex min-h-[112px] flex-col justify-center rounded-xl bg-[var(--card)] p-3 text-xs leading-5 text-[var(--foreground-secondary)]">
+            <b className="text-[var(--status-success)]">步骤 {i + 1}</b>
             {/* 👇 标签与内容的间距：mt-1（0.25rem / 4px） */}
             <p className="mt-1">{point}</p>
           </div>
@@ -837,21 +837,21 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       </div>
 
       {/* ===== 第五行：拼装练习，换一组字母再做一次 ===== */}
-      <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-2xl border border-[#dce8e1] bg-[#fffef9] p-4 text-center">
-        <div><p className="text-xs font-black text-[#238777]">先放辅音</p><p className="mt-2 text-3xl font-black text-[#173f4a]">ㄴ</p></div>
-        <span className="text-2xl font-black text-[#b87131]">＋</span>
-        <div><p className="text-xs font-black text-[#b87131]">再放元音</p><p className="mt-2 text-3xl font-black text-[#654b35]">ㅏ　→　나</p></div>
+      <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-4 text-center">
+        <div><p className="text-xs font-bold text-[var(--status-success)]">先放辅音</p><p className="mt-2 text-3xl font-bold text-[var(--primary)]">ㄴ</p></div>
+        <span className="text-2xl font-bold text-[var(--destructive)]">＋</span>
+        <div><p className="text-xs font-bold text-[var(--destructive)]">再放元音</p><p className="mt-2 text-3xl font-bold text-[var(--status-warning)]">ㅏ　→　나</p></div>
       </div>
 
       {/* 连续三个方块：每个方块独立对应一个音节 */}
-      <div className="mt-3 rounded-2xl border border-[#cfe2d9] bg-[#e9f6f1] px-5 py-3 text-center text-[#173f4a]">
-        <p className="text-xs font-bold text-[#238777]">连续三个音节，也是一格一读</p>
-        <p className="mt-2 text-3xl font-black tracking-[0.28em]">가　나　다</p>
-        <p className="mt-2 text-xs text-[#b87131]">ga · na · da</p>
+      <div className="mt-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--status-success-surface)] px-5 py-3 text-center text-[var(--primary)]">
+        <p className="text-xs font-bold text-[var(--status-success)]">连续三个音节，也是一格一读</p>
+        <p className="mt-2 text-3xl font-bold tracking-[0.28em]">가　나　다</p>
+        <p className="mt-2 text-xs text-[var(--destructive)]">ga · na · da</p>
       </div>
 
       {/* ===== 第六行：中文类比 ===== */}
-      <p className="mt-4 border-t border-dashed border-[#cfe2d9] pt-4 text-xs leading-6 text-[#765c49]">
+      <p className="mt-4 border-t border-dashed border-[var(--border-subtle)] pt-4 text-xs leading-6 text-[var(--foreground-secondary)]">
         {page.chineseExample}
       </p>
     </div>
@@ -863,13 +863,13 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* ===== 第一行：标题 ===== */}
       {/* 👇 与 heading 的间距：mt-3（0.75rem / 12px） */}
-      <h2 className="mt-3 text-2xl font-black text-[#294f43]">
+      <h3 className="mt-3 text-2xl font-bold text-[var(--foreground-secondary)]">
         {page.title}
-      </h2>
+      </h3>
 
       {/* ===== 第二行：正文 ===== */}
       {/* 👇 与标题的间距：mt-3（0.75rem / 12px） */}
-      <p className="mt-3 text-sm leading-7 text-[#60736a]">
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
         {page.lead}
       </p>
 
@@ -879,37 +879,37 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
       <div className="mt-6 grid flex-1 grid-cols-2 gap-5">
 
         {/* 左侧卡片：竖向元音 */}
-        <div className="flex min-h-[216px] flex-col justify-center rounded-[24px] border-2 border-[#9bcfc0] p-5 text-center">
-          <p className="text-xs font-black text-[#238777]">竖向元音 · 左右组合</p>
+        <div className="flex min-h-[216px] flex-col justify-center rounded-[24px] border-2 border-[var(--border)] p-5 text-center">
+          <p className="text-xs font-bold text-[var(--status-success)]">竖向元音 · 左右组合</p>
           {/* 👇 标签与公式的间距：mt-5（1.25rem / 20px） */}
-          <p className="mt-5 text-4xl font-black text-[#173f4a]">ㄱ ㅏ → 가</p>
+          <p className="mt-5 text-4xl font-bold text-[var(--primary)]">ㄱ ㅏ → 가</p>
           {/* 👇 公式与示例的间距：mt-4（1rem / 16px） */}
-          <p className="mt-4 text-xs text-[#60736a]">ㅏ · ㅓ · ㅣ</p>
+          <p className="mt-4 text-xs text-[var(--foreground-secondary)]">ㅏ · ㅓ · ㅣ</p>
         </div>
 
         {/* 右侧卡片：横向元音 */}
-        <div className="flex min-h-[216px] flex-col justify-center rounded-[24px] border-2 border-[#e5b37a] p-5 text-center">
-          <p className="text-xs font-black text-[#b87131]">横向元音 · 上下组合</p>
+        <div className="flex min-h-[216px] flex-col justify-center rounded-[24px] border-2 border-[var(--status-warning)] p-5 text-center">
+          <p className="text-xs font-bold text-[var(--destructive)]">横向元音 · 上下组合</p>
           {/* 👇 标签与公式的间距：mt-5（1.25rem / 20px） */}
-          <p className="mt-5 text-4xl font-black text-[#654b35]">
+          <p className="mt-5 text-4xl font-bold text-[var(--status-warning)]">
             ㄱ<br />  {/* 换行，让 ㄱ 在上一行，ㅗ 在下一行 */}
             ㅗ　→ 고
           </p>
           {/* 👇 公式与示例的间距：mt-4（1rem / 16px） */}
-          <p className="mt-4 text-xs text-[#8c7865]">ㅗ · ㅜ · ㅡ</p>
+          <p className="mt-4 text-xs text-[var(--foreground-secondary)]">ㅗ · ㅜ · ㅡ</p>
         </div>
       </div>
 
       {/* ===== 第四行：方向判断练习 ===== */}
       <div className="mt-4 grid grid-cols-3 gap-3 text-center">
-        <div className="rounded-xl bg-[#e9f6f1] p-3 text-xs text-[#526c60]"><b className="text-[#238777]">看到 ㅏ</b><p className="mt-2 text-2xl font-black text-[#173f4a]">ㄱ　ㅏ</p><p className="mt-1">放右边</p></div>
-        <div className="rounded-xl bg-[#fff4e7] p-3 text-xs text-[#765c49]"><b className="text-[#b87131]">看到 ㅗ</b><p className="mt-2 text-2xl font-black text-[#654b35]">ㄱ<br />ㅗ</p><p className="mt-1">放下边</p></div>
-        <div className="rounded-xl border border-dashed border-[#d8e3db] p-3 text-xs text-[#526c60]"><b className="text-[#294f43]">快速口诀</b><p className="mt-2 leading-5">竖元音左右排<br />横元音上下排</p></div>
+        <div className="rounded-xl bg-[var(--status-success-surface)] p-3 text-xs text-[var(--foreground-secondary)]"><b className="text-[var(--status-success)]">看到 ㅏ</b><p className="mt-2 text-2xl font-bold text-[var(--primary)]">ㄱ　ㅏ</p><p className="mt-1">放右边</p></div>
+        <div className="rounded-xl bg-[var(--card)] p-3 text-xs text-[var(--foreground-secondary)]"><b className="text-[var(--destructive)]">看到 ㅗ</b><p className="mt-2 text-2xl font-bold text-[var(--status-warning)]">ㄱ<br />ㅗ</p><p className="mt-1">放下边</p></div>
+        <div className="rounded-xl border border-dashed border-[var(--border-subtle)] p-3 text-xs text-[var(--foreground-secondary)]"><b className="text-[var(--foreground-secondary)]">快速口诀</b><p className="mt-2 leading-5">竖元音左右排<br />横元音上下排</p></div>
       </div>
 
       {/* ===== 第五行：田字格联想 ===== */}
-      <div className="mt-4 rounded-2xl bg-[#eef4f0] p-5 text-xs leading-6 text-[#526c60]">
-        <b className="text-[#238777]">田字格联想：</b>
+      <div className="mt-4 rounded-2xl bg-[var(--surface-soft)] p-5 text-xs leading-6 text-[var(--foreground-secondary)]">
+        <b className="text-[var(--status-success)]">田字格联想：</b>
         {page.chineseExample}
       </div>
     </div>
@@ -918,13 +918,13 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
   if (index === 9) return (
     <div className="flex h-full flex-col text-center">
       {/* ===== 简洁结束页：完成提示 + 答题入口 ===== */}
-      <p className="mt-10 text-xs font-black tracking-[0.18em] text-[#c98520]">第一步完成</p>
-      <h2 className="mt-4 text-3xl font-black leading-tight text-[#294f43]">{page.title}</h2>
-      <p className="mx-auto mt-4 max-w-[78%] text-sm leading-7 text-[#60736a]">声音、字母、音节方块——你已经完成第一步。</p>
+      <p className="mt-10 text-xs font-bold tracking-[0.18em] text-[var(--destructive)]">第一步完成</p>
+      <h3 className="mt-4 text-3xl font-bold leading-tight text-[var(--foreground-secondary)]">{page.title}</h3>
+      <p className="mx-auto mt-4 max-w-[78%] text-sm leading-7 text-[var(--foreground-secondary)]">声音、字母、音节方块——你已经完成第一步。</p>
 
-      <div className="mt-8 rounded-[30px] border border-[#cfe2d9] bg-[#e9f6f1] px-6 py-8 text-[#173f4a]">
-        <p className="text-4xl font-black">시작이 반이다</p>
-        <p className="mt-3 text-sm text-[#60736a]">好的开始，是成功的一半。</p>
+      <div className="mt-8 rounded-[30px] border border-[var(--border-subtle)] bg-[var(--status-success-surface)] px-6 py-8 text-[var(--primary)]">
+        <p className="text-4xl font-bold">시작이 반이다</p>
+        <p className="mt-3 text-sm text-[var(--foreground-secondary)]">好的开始，是成功的一半。</p>
       </div>
 
     </div>
@@ -934,21 +934,21 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
   return (
     <div className="flex h-full flex-col">
       {/* 标题与导读 */}
-      <h2 className="mt-3 text-2xl font-black text-[#294f43]">{page.title}</h2>
-      <p className="mt-3 text-sm leading-7 text-[#60736a]">{page.lead}</p>
+      <h3 className="mt-3 text-2xl font-bold text-[var(--foreground-secondary)]">{page.title}</h3>
+      <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
 
       {/* 收音放在音节方块的底部，整张卡作为本页核心视觉 */}
-      <div className="mt-5 rounded-[28px] bg-[#173f4a] p-6 text-center text-white">
-        <p className="text-xs font-bold text-[#9bcfc0]">完整音节结构</p>
-        <p className="mt-4 text-5xl font-black tracking-[0.12em]">ㅎ ＋ ㅏ ＋ ㄴ　→　한</p>
+      <div className="mt-5 rounded-[28px] bg-[var(--primary)] p-6 text-center text-white">
+        <p className="text-xs font-bold text-[var(--border)]">完整音节结构</p>
+        <p className="mt-4 text-5xl font-bold tracking-[0.12em]">ㅎ ＋ ㅏ ＋ ㄴ　→　한</p>
         <div className="mt-4 grid grid-cols-3 border-t border-white/20 pt-4 text-xs text-white/75"><span>初声</span><span>中声</span><span>终声（收音）</span></div>
       </div>
 
       {/* 三个检查点填满中段，学习者可按顺序自查 */}
       <div className="mt-5 grid flex-1 grid-cols-3 gap-3">
         {page.points.map((point, i) => (
-          <div key={point} className="flex min-h-[112px] flex-col justify-center rounded-2xl border border-[#dce8e1] bg-[#fbfdfa] p-4 text-xs leading-5 text-[#526c60]">
-            <b className="text-[#b87131]">检查 {i + 1}</b>
+          <div key={point} className="flex min-h-[112px] flex-col justify-center rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-4 text-xs leading-5 text-[var(--foreground-secondary)]">
+            <b className="text-[var(--destructive)]">检查 {i + 1}</b>
             <p className="mt-2">{point}</p>
           </div>
         ))}
@@ -956,11 +956,11 @@ function IntroLessonPage({ page, index, onSpeak }: { page: IntroBookPage; index:
 
       {/* 中文拼音与韩文收音并排，帮助建立已有经验的连接 */}
       <div className="mt-5 grid grid-cols-2 gap-3">
-        <div className="rounded-2xl bg-[#fff4e7] p-4 text-xs leading-6 text-[#765c49]"><b className="text-[#b87131]">中文收尾音：</b><br />安（n）· 帮（ng）</div>
-        <div className="rounded-2xl bg-[#e9f6f1] p-4 text-xs leading-6 text-[#526c60]"><b className="text-[#238777]">韩文收音：</b><br />한 · 반 · 강</div>
+        <div className="rounded-2xl bg-[var(--card)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]"><b className="text-[var(--destructive)]">中文收尾音：</b><br />安（n）· 帮（ng）</div>
+        <div className="rounded-2xl bg-[var(--status-success-surface)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]"><b className="text-[var(--status-success)]">韩文收音：</b><br />한 · 반 · 강</div>
       </div>
 
-      <p className="mt-4 rounded-2xl border border-dashed border-[#d8e3db] p-4 text-xs leading-6 text-[#765c49]">{page.chineseExample}</p>
+      <p className="mt-4 rounded-2xl border border-dashed border-[var(--border-subtle)] p-4 text-xs leading-6 text-[var(--foreground-secondary)]">{page.chineseExample}</p>
     </div>
   );
 }
@@ -1106,7 +1106,7 @@ export function HangulBookOpening({
   return (
     <section
       ref={containerRef}
-      className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden"
+      className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2"
     >
       <div
         className={`relative shrink-0 ${isFullscreen ? "" : "-translate-y-2.5"}`}
@@ -1118,7 +1118,7 @@ export function HangulBookOpening({
             onClick={goToPreviousPage}
             aria-label="电子书上一页"
             title="上一页"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] shadow-lg transition duration-200 hover:bg-[#e9f6f1]"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white/95 text-2xl font-bold text-[var(--status-success)] shadow-lg transition duration-200 hover:bg-[var(--status-success-surface)]"
           >
             ←
           </button>
@@ -1129,7 +1129,7 @@ export function HangulBookOpening({
             onClick={goToNextPage}
             aria-label="电子书下一页"
             title="下一页"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-[#cfe2d9] bg-white/95 text-2xl font-black text-[#238777] shadow-lg transition duration-200 hover:bg-[#e9f6f1]"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white/95 text-2xl font-bold text-[var(--status-success)] shadow-lg transition duration-200 hover:bg-[var(--status-success-surface)]"
           >
             →
           </button>
@@ -1166,21 +1166,21 @@ export function HangulBookOpening({
             style={{}}
           >
             <Page number={0} cover>
-              <div className="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d8f0e7_0,_transparent_30%),linear-gradient(145deg,_#fffef9_0%,_#e8f6f0_100%)] px-10 py-11 text-center">
-                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[42%] bg-[#173f4a]" />
-                <div aria-hidden="true" className="absolute -left-12 -top-12 h-44 w-44 rounded-full border-[18px] border-[#e5f3ee]" />
-                <div aria-hidden="true" className="absolute -bottom-16 -right-12 h-52 w-52 rounded-full border-[22px] border-[#fff0dc]" />
+              <div className="relative flex h-full w-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--status-success-surface)_0,_transparent_30%),linear-gradient(145deg,_var(--card)_0%,_var(--status-success-surface)_100%)] px-10 py-11 text-center">
+                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[42%] bg-[var(--primary)]" />
+                <div aria-hidden="true" className="absolute -left-12 -top-12 h-44 w-44 rounded-full border-[18px] border-[var(--status-success-surface)]" />
+                <div aria-hidden="true" className="absolute -bottom-16 -right-12 h-52 w-52 rounded-full border-[22px] border-[var(--status-warning-surface)]" />
                 <div className="relative">
-                  <p className="text-2xl font-black tracking-[0.22em] text-[#b87131]">韩语字母入门</p>
-                  <div className="mx-auto mt-2 h-px w-50 bg-[#cfe2d9]" />
+                  <p className="text-2xl font-bold tracking-[0.22em] text-[var(--destructive)]">韩语字母入门</p>
+                  <div className="mx-auto mt-2 h-px w-50 bg-[var(--border-subtle)]" />
                 </div>
                 <div className="relative">
-                  <p className="text-base font-black tracking-[0.16em] text-[#238777]">第一章</p>
-                  <h1 className="mt-5 text-5xl font-black tracking-tight text-[#173f4a]">认识韩语字母</h1>
-                  <p className="mt-4 text-lg font-bold text-[#60736a]">先看懂结构，再记住声音</p>
-                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[#60736a]">从文字的来历与设计出发，读懂辅音、元音和音节方块如何一起工作。</p>
+                  <p className="text-base font-bold tracking-[0.16em] text-[var(--status-success)]">第一章</p>
+                  <h3 className="mt-5 text-5xl font-bold tracking-tight text-[var(--primary)]">认识韩语字母</h3>
+                  <p className="mt-4 text-lg font-bold text-[var(--foreground-secondary)]">先看懂结构，再记住声音</p>
+                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[var(--foreground-secondary)]">从文字的来历与设计出发，读懂辅音、元音和音节方块如何一起工作。</p>
                   <div className="mt-20 flex justify-center gap-4">
-                    {["ㄱ", "ㅏ", "가"].map((letter, index) => <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-black ${index === 2 ? "bg-[#238777] text-white" : "bg-white text-[#238777] shadow-sm ring-1 ring-[#d7e8e1]"}`}>{letter}</span>)}
+                    {["ㄱ", "ㅏ", "가"].map((letter, index) => <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-bold ${index === 2 ? "bg-[var(--status-success)] text-white" : "bg-white text-[var(--status-success)] shadow-sm ring-1 ring-[var(--status-success-surface)]"}`}>{letter}</span>)}
                   </div>
                 </div>
                 <div className="relative flex items-center justify-between text-sm font-bold text-white/80">
@@ -1193,10 +1193,10 @@ export function HangulBookOpening({
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
 
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第一章</p>
-                <h2 className="mt-3 text-2xl font-black tracking-tight">目录</h2>
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第一章</p>
+                <h3 className="mt-3 text-2xl font-bold tracking-tight">目录</h3>
 
-                <ol className="mt-7 divide-y divide-[#dce8e1] rounded-2xl border border-[#dce8e1] bg-white px-5 text-left">
+                <ol className="mt-7 divide-y divide-[var(--status-success-surface)] rounded-2xl border border-[var(--status-success-surface)] bg-white px-5 text-left">
                   {[
                     ["01", "本章学习目标"],
                     ["02–04", "1.1 什么是韩文（谚文）"],
@@ -1208,10 +1208,10 @@ export function HangulBookOpening({
                       <button
                         type="button"
                         onClick={() => flipBookRef.current?.pageFlip()?.flip(Number.parseInt(page, 10) + 1)}
-                        className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[#526c60] transition hover:text-[#238777]"
+                        className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[var(--foreground-secondary)] transition hover:text-[var(--status-success)]"
                       >
                         <span>{title}</span>
-                        <span className="font-black text-[#238777]">{page.slice(0, 2)}</span>
+                        <span className="font-bold text-[var(--status-success)]">{page.slice(0, 2)}</span>
                       </button>
                     </li>
                   ))}
@@ -1222,9 +1222,9 @@ export function HangulBookOpening({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第一章 · GOALS</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
-                <p className="mt-4 text-sm leading-7 text-[#60736a]">
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第一章 · GOALS</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">学完这一章，你将能够</h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">
                   先建立对韩文整体结构的认识，再进入具体字母学习。带着目标阅读，会更容易抓住每一页的重点。
                 </p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
@@ -1233,16 +1233,16 @@ export function HangulBookOpening({
                     ["02", "看懂字母的设计", "理解元音与天地人、辅音与发音器官之间的联系。"],
                     ["03", "认识音节方块", "能判断字母的左右、上下与底部位置，读懂音节的基本结构。"],
                   ].map(([number, title, description]) => (
-                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[#dce8e1] bg-white p-5">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e7f4ef] text-sm font-black text-[#238777]">{number}</span>
+                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[var(--status-success-surface)] bg-white p-5">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-sm font-bold text-[var(--status-success)]">{number}</span>
                       <div>
-                        <h3 className="text-base font-black text-[#294f43]">{title}</h3>
-                        <p className="mt-1 text-xs leading-6 text-[#71857b]">{description}</p>
+                        <h4 className="text-base font-bold text-[var(--foreground-secondary)]">{title}</h4>
+                        <p className="mt-1 text-xs leading-6 text-[var(--foreground-muted)]">{description}</p>
                       </div>
                     </section>
                   ))}
                 </div>
-                <div className="mt-6 rounded-2xl bg-[#fff3e3] p-4 text-sm font-bold leading-6 text-[#765c49]">
+                <div className="mt-6 rounded-2xl bg-[var(--surface-soft)] p-4 text-sm font-bold leading-6 text-[var(--foreground-secondary)]">
                   阅读建议：先理解规则，再点击页面中的韩文字母听音、跟读。
                 </div>
               </div>
@@ -1255,17 +1255,17 @@ export function HangulBookOpening({
             ))}
 
             <Page number="11" header="1.4 本章结束" fullBleed>
-              <div className="relative flex h-full flex-col items-center justify-center overflow-hidden bg-[linear-gradient(145deg,#fffef9_0%,#f0f8f4_100%)] px-10 py-10 text-center">
-                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4f3ed]" />
-                <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
-                <div className="absolute left-8 right-8 top-8 flex items-center justify-between border-b border-[#dce8e1] pb-3 text-xs font-black">
-                  <span className="text-[#238777]">1.4 本章结束</span>
-                  <span className="text-[#789087]">第一章 · 认识韩语字母</span>
+              <div className="relative flex h-full flex-col items-center justify-center overflow-hidden bg-[linear-gradient(145deg,var(--card)_0%,var(--card)_100%)] px-10 py-10 text-center">
+                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[var(--status-success-surface)]" />
+                <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]" />
+                <div className="absolute left-8 right-8 top-8 flex items-center justify-between border-b border-[var(--status-success-surface)] pb-3 text-xs font-bold">
+                  <span className="text-[var(--status-success)]">1.4 本章结束</span>
+                  <span className="text-[var(--foreground-muted)]">第一章 · 认识韩语字母</span>
                 </div>
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第一章完成</p>
-                  <h2 className="mt-5 text-4xl font-black text-[#173f4a]">你已经拿到读懂韩文的第一把钥匙</h2>
-                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">
+                  <p className="text-sm font-bold tracking-[0.2em] text-[var(--destructive)]">第一章完成</p>
+                  <h3 className="mt-5 text-4xl font-bold text-[var(--primary)]">你已经拿到读懂韩文的第一把钥匙</h3>
+                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[var(--foreground-secondary)]">
                     你已经了解韩文的来历、字母的设计原理和音节方块的基本结构。韩文不再只是一组陌生符号，接下来通过本章测试检查自己是否真正理解。
                   </p>
 
@@ -1275,9 +1275,9 @@ export function HangulBookOpening({
                       ["ㅏ", "元音"],
                       ["가", "音节"],
                     ].map(([letter, label]) => (
-                      <div key={letter} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm">
-                        <p className="text-3xl font-black text-[#238777]">{letter}</p>
-                        <p className="mt-2 text-xs font-bold text-[#789087]">{label}</p>
+                      <div key={letter} className="rounded-2xl border border-[var(--status-success-surface)] bg-white p-4 shadow-sm">
+                        <p className="text-3xl font-bold text-[var(--status-success)]">{letter}</p>
+                        <p className="mt-2 text-xs font-bold text-[var(--foreground-muted)]">{label}</p>
                       </div>
                     ))}
                   </div>
@@ -1287,18 +1287,18 @@ export function HangulBookOpening({
                     onClick={onStartTest}
                     disabled={testLocked}
                     title={testLocked ? "完成本章学习目标后解锁测试" : undefined}
-                    className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#238777] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#1d7468] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none"
+                    className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] px-8 py-4 text-base font-bold text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[var(--status-success)] disabled:cursor-not-allowed disabled:bg-[var(--border)] disabled:shadow-none"
                   >
                     {testLocked && <Lock size={17} />}
                     进入本章测试
                   </button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">
+                  <p className="mt-4 text-xs font-bold text-[var(--foreground-muted)]">
                     {testLocked ? "完成本章学习目标后解锁测试" : "完成测试后将解锁下一章"}
                   </p>
                 </div>
-                <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between border-t border-[#dce8e1] pt-3 text-xs font-bold text-[#71857b]">
+                <div className="absolute bottom-8 left-8 right-8 flex items-center justify-between border-t border-[var(--status-success-surface)] pt-3 text-xs font-bold text-[var(--foreground-muted)]">
                   <span>互动电子书</span>
-                  <span className="font-black text-[#238777]">11</span>
+                  <span className="font-bold text-[var(--status-success)]">11</span>
                 </div>
               </div>
             </Page>

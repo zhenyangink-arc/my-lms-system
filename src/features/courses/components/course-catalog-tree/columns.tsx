@@ -79,7 +79,7 @@ function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
           aria-label={row.getIsExpanded() ? "收起下级内容" : "展开下级内容"}
           aria-expanded={row.getIsExpanded()}
           onClick={row.getToggleExpandedHandler()}
-          className="flex h-7 w-7 shrink-0 items-center justify-center text-[var(--app-muted)] hover:bg-[var(--app-soft-bg)]"
+          className="flex h-7 w-7 shrink-0 items-center justify-center text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"
         >
           <ChevronRight
             size={13}
@@ -89,14 +89,14 @@ function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
       ) : (
         <span className="h-7 w-7 shrink-0" />
       )}
-      <span className="shrink-0 text-[var(--app-muted)]">
+      <span className="shrink-0 text-[var(--foreground-muted)]">
         <NodeIcon kind={row.original.kind} />
       </span>
       <span className="min-w-0">
-        <span className="block truncate font-semibold text-[var(--app-text)]">
+        <span className="block truncate font-semibold text-[var(--foreground)]">
           {row.original.title}
         </span>
-        <span className="mt-0.5 block truncate font-mono text-[10px] text-[var(--app-muted)]">
+        <span className="mt-0.5 block truncate font-mono text-[10px] text-[var(--foreground-muted)]">
           {row.original.slug}
         </span>
       </span>
@@ -145,14 +145,14 @@ export function getCourseCatalogTreeColumns({
     accessorKey: "kindLabel",
     header: sortableHeader("类型"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-text-soft)]">{row.original.kindLabel}</span>
+      <span className="text-[var(--foreground-secondary)]">{row.original.kindLabel}</span>
     ),
   },
   {
     accessorKey: "parentTitle",
     header: sortableHeader("所属上级"),
     cell: ({ row }) => (
-      <span className="block max-w-48 truncate text-[var(--app-muted)]">
+      <span className="block max-w-48 truncate text-[var(--foreground-muted)]">
         {row.original.parentTitle}
       </span>
     ),
@@ -161,7 +161,7 @@ export function getCourseCatalogTreeColumns({
     accessorKey: "contentLabel",
     header: sortableHeader("下级内容"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-text-soft)]">{row.original.contentLabel}</span>
+      <span className="text-[var(--foreground-secondary)]">{row.original.contentLabel}</span>
     ),
   },
   {
@@ -170,15 +170,15 @@ export function getCourseCatalogTreeColumns({
     cell: ({ row }) => (
       <div className="min-w-28">
         <div className="flex items-center gap-2">
-          <span className="h-1 w-16 overflow-hidden bg-[var(--app-soft-bg)]">
+          <span className="h-1 w-16 overflow-hidden bg-[var(--surface-soft)]">
             <span
               className="block h-full"
               style={{
                 width: `${row.original.completeness}%`,
                 backgroundColor:
                   row.original.completeness === 100
-                    ? "var(--app-success)"
-                    : "var(--app-warm)",
+                    ? "var(--status-success)"
+                    : "var(--status-warning)",
               }}
             />
           </span>
@@ -188,7 +188,7 @@ export function getCourseCatalogTreeColumns({
         </div>
         {row.original.missingItems.length > 0 && (
           <p
-            className="mt-1 max-w-32 truncate text-[9px] text-[var(--app-muted)]"
+            className="mt-1 max-w-32 truncate text-[9px] text-[var(--foreground-muted)]"
             title={row.original.missingItems.join("、")}
           >
             缺少：{row.original.missingItems.join("、")}
@@ -201,7 +201,7 @@ export function getCourseCatalogTreeColumns({
     accessorKey: "unlockMode",
     header: sortableHeader("开放方式"),
     cell: ({ row }) => (
-      <span className="block max-w-44 truncate text-[var(--app-muted)]">
+      <span className="block max-w-44 truncate text-[var(--foreground-muted)]">
         {row.original.unlockMode}
       </span>
     ),
@@ -217,7 +217,7 @@ export function getCourseCatalogTreeColumns({
     accessorKey: "sortOrder",
     header: sortableHeader("排序"),
     cell: ({ row }) => (
-      <span className="font-mono tabular-nums text-[var(--app-muted)]">
+      <span className="font-mono tabular-nums text-[var(--foreground-muted)]">
         {row.original.sortOrder}
       </span>
     ),
@@ -241,7 +241,7 @@ export function getCourseCatalogTreeColumns({
                     dashboardBasePath,
                   )
             }
-            className="inline-flex h-8 items-center border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"
+            className="inline-flex h-8 items-center border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"
           >
             查看内容
           </Link>

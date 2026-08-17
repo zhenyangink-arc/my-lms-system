@@ -24,7 +24,7 @@ export function AccountGroup({
 
   return (
     <>
-      <tr className="border-b" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>
+      <tr className="border-b" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>
         <td colSpan={colSpan} className="px-0 py-0">
           <button
             type="button"

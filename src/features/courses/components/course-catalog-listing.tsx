@@ -342,10 +342,10 @@ export default async function CourseCatalogListing({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="text-base font-semibold text-[var(--app-text)]">
+            <h2 className="text-base font-semibold text-[var(--foreground)]">
               课程目录结构
             </h2>
-            <p className="mt-1 text-xs text-[var(--app-muted)]">
+            <p className="mt-1 text-xs text-[var(--foreground-muted)]">
               按分类、课程、课时和章节查看并维护平台课程层级。
             </p>
           </div>
@@ -378,19 +378,19 @@ export default async function CourseCatalogListing({
       </section>
 
       {selectedKind && selectedNode && (
-        <section id="course-content" className="scroll-mt-20 space-y-4 border-t border-[var(--app-border)] pt-5">
+        <section id="course-content" className="scroll-mt-20 space-y-4 border-t border-[var(--border)] pt-5">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h2 className="text-base font-semibold text-[var(--app-text)]">
+              <h2 className="text-base font-semibold text-[var(--foreground)]">
                 内容与资料详情
               </h2>
-              <p className="mt-1 text-xs text-[var(--app-muted)]">
+              <p className="mt-1 text-xs text-[var(--foreground-muted)]">
                 查看当前节点的封面、正文、教学信息和课时资料。
               </p>
             </div>
             <Link
               href={catalogRoute}
-              className="inline-flex h-9 items-center border border-[var(--app-border)] px-4 text-xs font-semibold hover:bg-[var(--app-soft-bg)]"
+              className="inline-flex h-9 items-center border border-[var(--border)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]"
             >
               收起详情
             </Link>

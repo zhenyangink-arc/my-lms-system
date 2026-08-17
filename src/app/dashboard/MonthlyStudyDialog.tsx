@@ -71,8 +71,8 @@ export function MonthlyStudyDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-full px-3 py-2 text-xs font-black transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2"
-        style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+        className="inline-flex min-h-11 cursor-pointer items-center gap-1 rounded-full px-3 py-2 text-xs font-bold transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+        style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
       >
         {buttonLabel}
         <ChevronDown size={12} aria-hidden="true" />
@@ -85,13 +85,13 @@ export function MonthlyStudyDialog({
           className="!max-w-[920px] gap-0 rounded-[20px] p-0 app-glass-panel overflow-hidden"
         >
           <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-3">
-            <DialogTitle className="flex items-center gap-2 text-base font-black">
-              <BarChart3 size={18} style={{ color: "var(--app-accent)" }} />
+            <DialogTitle className="flex items-center gap-2 text-base font-bold">
+              <BarChart3 size={18} style={{ color: "var(--primary)" }} />
               {monthLabel}学习记录
             </DialogTitle>
             <span
-              className="shrink-0 rounded-full px-3 py-1 text-xs font-black"
-              style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+              className="shrink-0 rounded-full px-3 py-1 text-xs font-bold"
+              style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
             >
               本月累计学习 {formatStudyMinutes(totalMinutes)}
             </span>
@@ -116,7 +116,7 @@ export function MonthlyStudyDialog({
                         y1={y}
                         x2={CHART_W - PAD.right}
                         y2={y}
-                        stroke="var(--app-border)"
+                        stroke="var(--border)"
                         strokeOpacity="0.45"
                         strokeWidth="1"
                         strokeDasharray="4 4"
@@ -126,7 +126,7 @@ export function MonthlyStudyDialog({
                         y={y + 3}
                         textAnchor="end"
                         fontSize="10"
-                        fill="var(--app-muted)"
+                        fill="var(--foreground-muted)"
                       >
                         {g.label}
                       </text>
@@ -145,7 +145,7 @@ export function MonthlyStudyDialog({
                         y={PAD.top}
                         width={barW}
                         height={plotH}
-                        fill="color-mix(in srgb, var(--app-border) 40%, transparent)"
+                        fill="color-mix(in srgb, var(--border) 40%, transparent)"
                         onMouseEnter={() => setHovered(i)}
                         onMouseLeave={() => setHovered(null)}
                       />
@@ -172,7 +172,7 @@ export function MonthlyStudyDialog({
                     y={CHART_H - 6}
                     textAnchor="middle"
                     fontSize="10"
-                    fill="var(--app-muted)"
+                    fill="var(--foreground-muted)"
                   >
                     {i + 1}
                     {xLabelUnit}
@@ -186,9 +186,9 @@ export function MonthlyStudyDialog({
                     left: `${((PAD.left + hovered * barStep + barStep / 2) / CHART_W) * 100}%`,
                     top: `${(hoveredBarTopY / CHART_H) * 100}%`,
                     marginBottom: "8px",
-                    backgroundColor: "var(--app-card-bg)",
-                    color: "var(--app-text)",
-                    border: "1px solid var(--app-border)",
+                    backgroundColor: "var(--card)",
+                    color: "var(--foreground)",
+                    border: "1px solid var(--border)",
                   }}
                 >
                   {dayTips[hovered] ??
@@ -198,8 +198,8 @@ export function MonthlyStudyDialog({
               </div>
             ) : (
               <div className="flex min-h-40 flex-col items-center justify-center rounded-2xl text-center">
-                <BarChart3 size={22} style={{ color: "var(--app-success)" }} aria-hidden="true" />
-                <p className="mt-3 text-sm font-black">本月还没有学习记录</p>
+                <BarChart3 size={22} style={{ color: "var(--status-success)" }} aria-hidden="true" />
+                <p className="mt-3 text-sm font-bold">本月还没有学习记录</p>
                 <p className="mt-1 text-xs app-muted-text">
                   开始学习后，这里会画出你本月的学习曲线
                 </p>
@@ -211,8 +211,8 @@ export function MonthlyStudyDialog({
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="min-h-11 w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
-              style={{ color: "var(--app-muted)" }}
+              className="min-h-11 w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--accent)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+              style={{ color: "var(--foreground-muted)" }}
             >
               关闭
             </button>

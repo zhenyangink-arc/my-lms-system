@@ -12,13 +12,13 @@ export default function NotFound() {
         <div className="mt-6 flex flex-wrap justify-center gap-3">
           <Link
             href="/"
-            className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800"
+            className="rounded-xl bg-gray-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-gray-800 motion-reduce:transition-none"
           >
             返回首页
           </Link>
           <Link
             href="/dashboard"
-            className="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-50"
+            className="rounded-xl border border-gray-200 px-5 py-2.5 text-sm font-bold text-gray-700 transition hover:bg-gray-50 motion-reduce:transition-none"
           >
             进入学习中心
           </Link>

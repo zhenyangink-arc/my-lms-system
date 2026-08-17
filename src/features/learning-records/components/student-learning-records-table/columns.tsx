@@ -42,7 +42,7 @@ function Count({ value, detail }: { value: number; detail?: string }) {
   return (
     <div>
       <p className="font-mono font-semibold tabular-nums">{value.toLocaleString("zh-CN")}</p>
-      {detail && <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">{detail}</p>}
+      {detail && <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">{detail}</p>}
     </div>
   );
 }
@@ -62,8 +62,8 @@ export function getStudentLearningRecordColumns(
       const name = student.full_name?.trim() || "未填写姓名";
       return (
         <div className="min-w-48">
-          <p className="truncate font-semibold text-[var(--app-text)]">{name}</p>
-          <p className="mt-0.5 truncate text-[11px] text-[var(--app-muted)]">
+          <p className="truncate font-semibold text-[var(--foreground)]">{name}</p>
+          <p className="mt-0.5 truncate text-[11px] text-[var(--foreground-muted)]">
             {student.email || `账号 …${student.student_id.slice(-8)}`}
           </p>
         </div>
@@ -111,7 +111,7 @@ export function getStudentLearningRecordColumns(
     accessorKey: "last_learning_at",
     header: sortableHeader("最近学习"),
     cell: ({ row }) => (
-      <span className="text-[11px] text-[var(--app-muted)]">
+      <span className="text-[11px] text-[var(--foreground-muted)]">
         <LocalDateTime value={row.original.last_learning_at} options={DATE_TIME_OPTIONS} fallback="尚未开始" />
       </span>
     ),
@@ -125,7 +125,7 @@ export function getStudentLearningRecordColumns(
       const student = row.original;
       const status = student.attention_count > 0 ? "attention" : student.last_learning_at ? "learning" : "pending";
       const label = status === "attention" ? "需关注" : status === "learning" ? "学习中" : "待开始";
-      const color = status === "attention" ? "var(--app-warm)" : status === "learning" ? "var(--app-success)" : "var(--app-muted)";
+      const color = status === "attention" ? "var(--status-warning)" : status === "learning" ? "var(--status-success)" : "var(--foreground-muted)";
       return (
         <span className="inline-flex items-center gap-2 font-medium" style={{ color }}>
           <span className="size-1.5 rounded-full" style={{ backgroundColor: color }} />

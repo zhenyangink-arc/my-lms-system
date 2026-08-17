@@ -56,23 +56,23 @@ const LIBRARY_AUDIO_SLUG = "growth-toolbox";
 const COLOR_OPTIONS = [
   {
     label: "绿色",
-    accent: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    accent: "var(--primary)",
+    soft: "var(--accent)",
   },
   {
     label: "暖棕色",
-    accent: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    accent: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
   {
     label: "辅助色",
-    accent: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    accent: "var(--support)",
+    soft: "var(--support-surface)",
   },
   {
     label: "成功色",
-    accent: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    accent: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
 ] as const;
 
@@ -125,13 +125,13 @@ export function EditToolboxItemDialog({
           setMessage("");
           setOpen(true);
         }}
-        className="h-8 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
         编辑
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-2xl">
-          <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+          <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>编辑工具入口</DialogTitle>
             <DialogDescription className="text-xs">
               修改后会影响学生端入口的名称、链接、颜色、启停状态和显示顺序。
@@ -217,14 +217,14 @@ export function EditToolboxItemDialog({
                 className={TEXTAREA_CLASS}
               />
             </FormField>
-            <label className="flex items-center gap-2 text-xs font-medium text-[var(--app-text-soft)] sm:col-span-2">
+            <label className="flex items-center gap-2 text-xs font-medium text-[var(--foreground-secondary)] sm:col-span-2">
               <input
                 type="checkbox"
                 checked={draft.isEnabled}
                 onChange={(event) =>
                   setDraft({ ...draft, isEnabled: event.target.checked })
                 }
-                className="size-4 accent-[var(--app-accent)]"
+                className="size-4 accent-[var(--primary)]"
               />
               在学生端启用这个入口
             </label>
@@ -320,7 +320,7 @@ export function VocabularyCellAction({
       <button
         type="button"
         onClick={() => setEditOpen(true)}
-        className="h-8 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
         编辑
       </button>
@@ -417,7 +417,7 @@ function VocabularyDialog({
         }}
       >
         <DialogContent className="p-0 sm:max-w-xl">
-          <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+          <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription className="text-xs">
               词汇库与互动教材内容独立，保存后用于学生端单词练习。
@@ -539,7 +539,7 @@ export function GrammarCellAction({
       <button
         type="button"
         onClick={() => setEditOpen(true)}
-        className="h-8 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
         编辑
       </button>
@@ -636,7 +636,7 @@ function GrammarDialog({
         }}
       >
         <DialogContent className="max-h-[92vh] overflow-y-auto p-0 sm:max-w-4xl">
-          <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+          <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription className="text-xs">
               音频继续上传到既有 R2 路径，数据库只保存对象标识。
@@ -803,13 +803,13 @@ function GrammarRowsSection({
   children: React.ReactNode;
 }) {
   return (
-    <section className="space-y-2 border border-[var(--app-border)] p-3">
+    <section className="space-y-2 border border-[var(--border)] p-3">
       <div className="flex items-center justify-between gap-3">
-        <h3 className="text-xs font-semibold text-[var(--app-text)]">{title}</h3>
+        <h3 className="text-xs font-semibold text-[var(--foreground)]">{title}</h3>
         <button
           type="button"
           onClick={onAdd}
-          className="inline-flex h-8 items-center gap-1 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center gap-1 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
         >
           <Plus className="size-3.5" aria-hidden="true" />
           {addLabel}
@@ -894,25 +894,25 @@ function GrammarAudioField({
 
   return (
     <div className="min-w-0">
-      <div className="flex h-9 items-center gap-1 border border-[var(--app-border)] px-2">
+      <div className="flex h-9 items-center gap-1 border border-[var(--border)] px-2">
         {value ? (
           <>
-            <Volume2 className="size-3.5 shrink-0 text-[var(--app-accent)]" aria-hidden="true" />
+            <Volume2 className="size-3.5 shrink-0 text-[var(--primary)]" aria-hidden="true" />
             <span className="min-w-0 flex-1 truncate text-[10px]" title={value}>
               {value.split("/").pop()}
             </span>
-            <button type="button" onClick={() => void preview()} disabled={pending} className="text-[10px] font-semibold text-[var(--app-accent)] disabled:opacity-50">试听</button>
+            <button type="button" onClick={() => void preview()} disabled={pending} className="text-[10px] font-semibold text-[var(--primary)] disabled:opacity-50">试听</button>
             <button type="button" onClick={() => onChange("")} disabled={pending} className="text-[10px] font-semibold text-rose-700 disabled:opacity-50">移除</button>
           </>
         ) : (
-          <label htmlFor={inputId} className="flex flex-1 cursor-pointer items-center justify-center gap-1 text-[10px] font-semibold text-[var(--app-text-soft)]">
+          <label htmlFor={inputId} className="flex flex-1 cursor-pointer items-center justify-center gap-1 text-[10px] font-semibold text-[var(--foreground-secondary)]">
             {pending ? <LoaderCircle className="size-3.5 animate-spin" aria-hidden="true" /> : <Upload className="size-3.5" aria-hidden="true" />}
             {pending ? "上传中…" : "上传音频"}
           </label>
         )}
       </div>
       <input id={inputId} type="file" accept="audio/*" disabled={pending} className="sr-only" onChange={(event) => void upload(event.target.files?.[0])} />
-      {message && <p className="mt-1 text-[10px] text-[var(--app-muted)]">{message}</p>}
+      {message && <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">{message}</p>}
     </div>
   );
 }
@@ -928,7 +928,7 @@ function FormField({
 }) {
   return (
     <label className={className}>
-      <span className="mb-1.5 block text-xs font-medium text-[var(--app-muted)]">{label}</span>
+      <span className="mb-1.5 block text-xs font-medium text-[var(--foreground-muted)]">{label}</span>
       {children}
     </label>
   );

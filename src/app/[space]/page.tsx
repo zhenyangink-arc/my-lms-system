@@ -344,6 +344,12 @@ export default async function StudentPortalPage({
 
   return (
     <>
+      <a
+        href="#tenant-portal-main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      >
+        跳到主要内容
+      </a>
       <PortalTopbar
         portalPath={portalPath}
         dashboardBasePath={koreanAppPath}
@@ -355,7 +361,11 @@ export default async function StudentPortalPage({
         settingsContent={<PortalSettingsPanel />}
       />
 
-      <main className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef3f8_48%,#f8fafc_100%)] px-4 pb-12 pt-[6.5rem] text-slate-950 sm:px-6 lg:px-8">
+      <main
+        id="tenant-portal-main-content"
+        tabIndex={-1}
+        className="min-h-screen scroll-mt-20 bg-[linear-gradient(180deg,#f8fafc_0%,#eef3f8_48%,#f8fafc_100%)] px-4 pb-12 pt-[6.5rem] text-slate-950 sm:px-6 lg:px-8"
+      >
         <div className="mx-auto max-w-7xl space-y-8">
           <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl sm:p-8 lg:p-10">
             <div aria-hidden="true" className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-emerald-300/16 blur-3xl" />
@@ -383,7 +393,7 @@ export default async function StudentPortalPage({
                   ) : koreanApp ? (
                     <Link
                       href={getStudentAppPath(space, "korean", "/courses")}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     >
                       <Languages size={18} aria-hidden="true" />
                       开始韩语学习
@@ -392,7 +402,7 @@ export default async function StudentPortalPage({
                   ) : primaryApp ? (
                     <Link
                       href={getStudentAppBasePath(space, primaryApp.slug)}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white"
+                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
                     >
                       <PlayCircle size={18} aria-hidden="true" />
                       进入{primaryApp.portalTitle}

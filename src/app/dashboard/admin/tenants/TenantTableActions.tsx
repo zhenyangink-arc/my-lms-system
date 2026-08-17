@@ -31,7 +31,7 @@ function StatusControl({ tenantId, status }: { tenantId: string; status: "active
 
   return (
     <form action={action} className="grid sm:grid-cols-[150px_minmax(0,1fr)_112px]">
-      <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+      <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
         <p className="text-xs font-semibold">运行状态</p>
         <p className="app-muted-text mt-1 text-[10px]">当前：{status === "active" ? "运行中" : "已停用"}</p>
       </div>
@@ -40,7 +40,7 @@ function StatusControl({ tenantId, status }: { tenantId: string; status: "active
         <ResultMessage state={state} />
       </div>
       <div className="flex items-center px-5 pb-4 sm:px-4 sm:py-4">
-        <button disabled={pending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--app-border)", color: nextStatus === "suspended" ? "#a5650d" : "#18754f" }}>{pending ? "处理中…" : nextStatus === "suspended" ? "停用租户" : "恢复租户"}</button>
+        <button disabled={pending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--border)", color: nextStatus === "suspended" ? "#a5650d" : "#18754f" }}>{pending ? "处理中…" : nextStatus === "suspended" ? "停用租户" : "恢复租户"}</button>
       </div>
     </form>
   );
@@ -51,7 +51,7 @@ function PasswordResetRow({ tenantId, manager }: { tenantId: string; manager: Ma
 
   return (
     <form action={action} className="grid sm:grid-cols-[150px_minmax(0,1fr)_112px]">
-      <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+      <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
         <p className="text-xs font-semibold">负责人密码</p>
         <p className="app-muted-text mt-1 truncate text-[10px]">{manager.name} · {manager.loginId}</p>
       </div>
@@ -60,7 +60,7 @@ function PasswordResetRow({ tenantId, manager }: { tenantId: string; manager: Ma
         <ResultMessage state={state} />
       </div>
       <div className="flex items-start px-5 pb-4 sm:px-4 sm:py-4">
-        <button disabled={pending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--app-border)" }}>{pending ? "更新中…" : "重置密码"}</button>
+        <button disabled={pending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--border)" }}>{pending ? "更新中…" : "重置密码"}</button>
       </div>
     </form>
   );
@@ -103,16 +103,16 @@ export function TenantTableActions({
 
   return (
     <Dialog>
-      <DialogTrigger type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>
+      <DialogTrigger type="button" className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--border)" }}>
         <MoreHorizontal size={14} />
         管理
       </DialogTrigger>
       <DialogContent className="max-w-[760px] gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">管理租户</DialogTitle>
           <DialogDescription className="text-xs">{name} · {slug}</DialogDescription>
         </DialogHeader>
-        <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+        <div className="divide-y" style={{ borderColor: "var(--border)" }}>
           <StatusControl tenantId={tenantId} status={status} />
           {managers.map((manager) => <PasswordResetRow key={manager.id} tenantId={tenantId} manager={manager} />)}
           {managers.length === 0 && <div className="px-5 py-4 text-xs text-amber-700">当前没有可重置密码的有效机构负责人账号。</div>}

@@ -24,7 +24,7 @@ export function DataTableViewOptions({
 
   return (
     <details className={cn("group relative", className)}>
-      <summary className="flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)] transition-colors hover:bg-[var(--app-soft-bg)]">
+      <summary className="flex h-9 cursor-pointer list-none items-center gap-1.5 rounded-md border border-border bg-card px-3 text-xs font-semibold text-secondary-foreground transition-colors hover:bg-muted">
         <Icons.columns className="size-3.5" aria-hidden="true" />
         显示列
         <Icons.chevronDown
@@ -32,17 +32,17 @@ export function DataTableViewOptions({
           aria-hidden="true"
         />
       </summary>
-      <div className="absolute right-0 z-30 mt-1 min-w-40 border border-[var(--app-border)] bg-[var(--app-card-bg)] p-1 shadow-lg">
+      <div className="absolute right-0 z-30 mt-1 min-w-40 border border-border bg-popover p-1 text-popover-foreground shadow-lg">
         {hideableOptions.map((option) => (
           <label
             key={option.id}
-            className="flex cursor-pointer items-center gap-2 px-2 py-2 text-xs font-medium text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+            className="flex cursor-pointer items-center gap-2 px-2 py-2 text-xs font-medium text-secondary-foreground hover:bg-muted"
           >
             <input
               type="checkbox"
               checked={option.visible}
               onChange={(event) => option.onVisibleChange(event.target.checked)}
-              className="size-3.5 accent-[var(--app-accent)]"
+              className="size-3.5 accent-primary"
             />
             <span>{option.label}</span>
           </label>

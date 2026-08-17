@@ -46,7 +46,7 @@ export function AssessmentPaperQuestionDrawer({
         onClick={() => setIsOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] hover:underline"
+        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
       >
         <Eye size={12} />
         查看题目
@@ -72,7 +72,7 @@ export function AssessmentPaperQuestionDrawer({
                 </p>
                 <h2
                   id={`paper-questions-${paperCode}`}
-                  className="mt-1 text-xl font-black"
+                  className="mt-1 text-xl font-semibold"
                 >
                   {title}
                 </h2>
@@ -100,9 +100,9 @@ export function AssessmentPaperQuestionDrawer({
                   <tr
                     className="border-b app-muted-text"
                     style={{
-                      borderColor: "var(--app-border-soft)",
+                      borderColor: "var(--border-subtle)",
                       backgroundColor:
-                        "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                        "color-mix(in srgb, var(--card) 84%, transparent)",
                     }}
                   >
                     <th className="px-3 py-3 text-center text-[11px] font-bold">
@@ -127,7 +127,7 @@ export function AssessmentPaperQuestionDrawer({
                     <tr
                       key={question.id}
                       className="border-b align-top last:border-b-0"
-                      style={{ borderColor: "var(--app-border-soft)" }}
+                      style={{ borderColor: "var(--border-subtle)" }}
                     >
                       <td className="px-3 py-4 text-center font-mono text-xs tabular-nums">
                         {String(index + 1).padStart(2, "0")}

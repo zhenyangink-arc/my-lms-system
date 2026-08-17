@@ -68,10 +68,10 @@ export function getHelpTicketColumns(
     header: sortableHeader("问题"),
     cell: ({ row }) => (
       <div className="min-w-60 max-w-md">
-        <p className="truncate font-semibold text-[var(--app-text)]">
+        <p className="truncate font-semibold text-[var(--foreground)]">
           {row.original.subject}
         </p>
-        <p className="mt-1 font-mono text-[10px] text-[var(--app-muted)]">
+        <p className="mt-1 font-mono text-[10px] text-[var(--foreground-muted)]">
           工单 {row.original.id.slice(0, 8).toUpperCase()}
         </p>
       </div>
@@ -116,7 +116,7 @@ export function getHelpTicketColumns(
     accessorKey: "updatedAt",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-muted)]">
+      <span className="text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updatedAt}
           options={DATE_OPTIONS}
@@ -136,7 +136,7 @@ export function getHelpTicketColumns(
           `/dashboard/admin/help/tickets/${row.original.id}`,
           dashboardBasePath,
         )}
-        className="inline-flex h-8 items-center border border-[var(--app-border)] px-3 text-[11px] font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+        className="inline-flex h-8 items-center border border-[var(--border)] px-3 text-[11px] font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
         查看详情
       </Link>

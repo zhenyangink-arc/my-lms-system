@@ -29,13 +29,13 @@ export function TenantCreateDialog() {
     <Dialog>
       <DialogTrigger
         type="button"
-        className="inline-flex h-9 items-center gap-2 bg-neutral-950 px-3.5 text-xs font-semibold text-white transition hover:bg-neutral-800"
+        className="inline-flex h-9 items-center gap-2 bg-[var(--primary)] px-3.5 text-xs font-semibold text-[var(--primary-foreground)] transition hover:opacity-90"
       >
-        <Plus size={15} />
+        <Plus size={15} aria-hidden="true" />
         创建机构
       </DialogTrigger>
       <DialogContent className="max-w-[780px] gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
           <DialogTitle className="text-base">创建机构</DialogTitle>
           <DialogDescription className="text-xs">
             创建独立机构空间，并通过现有初始化流程建立机构负责人账号。
@@ -43,9 +43,9 @@ export function TenantCreateDialog() {
         </DialogHeader>
 
         <form ref={formRef} action={formAction}>
-          <div className="grid border-b border-[var(--app-border)] sm:grid-cols-2">
-            <label className="border-b border-[var(--app-border)] sm:border-r sm:border-b-0">
-              <span className="block border-b border-[var(--app-border)] bg-[var(--app-soft-bg)] px-5 py-2.5 text-[11px] font-semibold">
+          <div className="grid border-b border-[var(--border)] sm:grid-cols-2">
+            <label className="border-b border-[var(--border)] sm:border-r sm:border-b-0">
+              <span className="block border-b border-[var(--border)] bg-[var(--surface-soft)] px-5 py-2.5 text-[11px] font-semibold">
                 机构名称
               </span>
               <span className="block px-5 py-3">
@@ -53,18 +53,18 @@ export function TenantCreateDialog() {
               </span>
             </label>
             <label>
-              <span className="block border-b border-[var(--app-border)] bg-[var(--app-soft-bg)] px-5 py-2.5 text-[11px] font-semibold">
+              <span className="block border-b border-[var(--border)] bg-[var(--surface-soft)] px-5 py-2.5 text-[11px] font-semibold">
                 机构标识
               </span>
               <span className="block px-5 py-3">
                 <input name="slug" required minLength={2} maxLength={48} pattern="[a-z0-9]+(-[a-z0-9]+)*" autoCapitalize="none" placeholder="例如：seoul-language" className="app-input h-9 w-full border px-2.5 text-xs" />
-                <small className="mt-1.5 block text-[10px] text-[var(--app-muted)]">仅限小写字母、数字和短横线，创建后应保持稳定。</small>
+                <small className="mt-1.5 block text-[10px] text-[var(--foreground-muted)]">仅限小写字母、数字和短横线，创建后应保持稳定。</small>
               </span>
             </label>
           </div>
 
-          <label className="grid border-b border-[var(--app-border)] sm:grid-cols-[160px_minmax(0,1fr)]">
-            <span className="border-b border-[var(--app-border)] px-5 py-3 text-xs font-semibold sm:border-r sm:border-b-0">服务套餐</span>
+          <label className="grid border-b border-[var(--border)] sm:grid-cols-[160px_minmax(0,1fr)]">
+            <span className="border-b border-[var(--border)] px-5 py-3 text-xs font-semibold sm:border-r sm:border-b-0">服务套餐</span>
             <span className="px-5 py-3">
               <select name="plan_key" defaultValue="starter" className="app-input h-9 w-full border px-2.5 text-xs font-medium">
                 <option value="starter">入门套餐</option>
@@ -74,12 +74,12 @@ export function TenantCreateDialog() {
             </span>
           </label>
 
-          <div className="border-b border-[var(--app-border)]">
-            <div className="bg-[var(--app-soft-bg)] px-5 py-3">
+          <div className="border-b border-[var(--border)]">
+            <div className="bg-[var(--surface-soft)] px-5 py-3">
               <p className="text-xs font-semibold">机构负责人账号</p>
-              <p className="mt-1 text-[10px] text-[var(--app-muted)]">账号创建、成员关系和负责人身份继续使用现有服务端流程。</p>
+              <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">账号创建、成员关系和负责人身份继续使用现有服务端流程。</p>
             </div>
-            <div className="grid divide-y divide-[var(--app-border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+            <div className="grid divide-y divide-[var(--border)] sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">负责人姓名</span><input name="manager_name" required minLength={2} maxLength={50} placeholder="例如：张老师" className="app-input h-9 w-full border px-2.5 text-xs" /></label>
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">登录账号</span><input name="manager_login_id" required minLength={3} maxLength={32} pattern="[a-z0-9](?:[a-z0-9_]|-){2,31}" autoCapitalize="none" placeholder="例如：seoul-admin" className="app-input h-9 w-full border px-2.5 text-xs" /></label>
               <label className="px-5 py-3"><span className="mb-1.5 block text-[11px] font-semibold">初始密码</span><input name="initial_password" required type="password" minLength={8} maxLength={72} autoComplete="new-password" placeholder="至少8位，含字母和数字" className="app-input h-9 w-full border px-2.5 text-xs" /></label>
@@ -93,7 +93,7 @@ export function TenantCreateDialog() {
           )}
 
           <div className="flex items-center justify-between gap-4 px-5 py-4">
-            <p className="text-[10px] text-[var(--app-muted)]">本界面不改变创建机构的事务边界和失败回滚行为。</p>
+            <p className="text-[10px] text-[var(--foreground-muted)]">本界面不改变创建机构的事务边界和失败回滚行为。</p>
             <button type="submit" disabled={pending} className="h-9 bg-neutral-950 px-4 text-xs font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-50">
               {pending ? "正在创建…" : "确认创建"}
             </button>

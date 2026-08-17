@@ -21,7 +21,7 @@ function StatusButton({
   const action = changeAnnouncementStatusAction.bind(null, announcementId, status);
   const [state, formAction, pending] = useActionState(action, initialAnnouncementActionState);
   const Icon = status === "published" ? Send : status === "archived" ? Archive : FilePenLine;
-  const color = tone === "accent" ? "var(--app-accent)" : tone === "warm" ? "var(--app-warm)" : "var(--app-muted)";
+  const color = tone === "accent" ? "var(--primary)" : tone === "warm" ? "var(--status-warning)" : "var(--foreground-muted)";
 
   return (
     <form action={formAction} className="inline-flex flex-col items-start">

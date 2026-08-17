@@ -29,7 +29,7 @@ export function ChapterTestDurationEditor({
           title={
             state.message || `修改当前 ${durationMinutes} 分钟的测试时长`
           }
-          className="group inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 font-mono text-xs font-semibold tabular-nums transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--app-secondary)]"
+          className="group inline-flex min-h-8 items-center gap-1.5 rounded-md px-2 font-mono text-xs font-semibold tabular-nums transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--support)]"
         >
           <span>{durationMinutes}</span>
           <span className="app-muted-text font-sans text-[10px]">分钟</span>
@@ -65,7 +65,7 @@ export function ChapterTestDurationEditor({
         disabled={pending}
         aria-label="保存测试时长"
         className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white disabled:opacity-50"
-        style={{ backgroundColor: "var(--app-success)" }}
+        style={{ backgroundColor: "var(--status-success)" }}
       >
         {pending ? (
           <LoaderCircle size={13} className="animate-spin" />
@@ -78,7 +78,7 @@ export function ChapterTestDurationEditor({
         onClick={() => setEditing(false)}
         disabled={pending}
         aria-label="取消修改"
-        className="app-muted-text inline-flex h-8 w-7 items-center justify-center rounded-md hover:bg-[var(--app-soft-bg)] disabled:opacity-50"
+        className="app-muted-text inline-flex h-8 w-7 items-center justify-center rounded-md hover:bg-[var(--surface-soft)] disabled:opacity-50"
       >
         <X size={13} />
       </button>

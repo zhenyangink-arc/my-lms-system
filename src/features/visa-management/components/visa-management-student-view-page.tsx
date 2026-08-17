@@ -10,6 +10,10 @@ import {
 } from "@/app/dashboard/admin/visa/VisaAdminControls";
 import { getVisaCaseStatusLabel } from "@/app/dashboard/visa/visa-case-stages";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  ManagementMetricStrip,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { getVisaManagementStudentDetailData } from "../api/service";
 
@@ -138,57 +142,53 @@ export default async function VisaManagementStudentViewPage({
   ];
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-3">
+    <ManagementPage
+      eyebrow="签证管理"
+      title={displayName}
+      description="查看学生的签证案件、入境安排和任务审核状态，并在当前管理范围内进行跟进。"
+      icon={ShieldCheck}
+      meta={
+        <>
+          <span>{student.email || `账号 …${studentId.slice(-8)}`}</span>
+          <span>
+            {getVisaCaseStatusLabel(
+              visaCase.application_channel,
+              visaCase.case_status,
+            )}
+          </span>
+        </>
+      }
+      action={
         <Link
           href={scopeDashboardPath(
             "/dashboard/admin/visa",
             result.dashboardBasePath,
           )}
-          className="inline-flex items-center gap-2 text-xs font-semibold text-[var(--app-muted)] hover:text-[var(--app-text)]"
+          className="management-secondary-button inline-flex items-center gap-2 border px-3 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
         >
-          <ArrowLeft size={13} />
+          <ArrowLeft size={13} aria-hidden="true" />
           返回签证管理
         </Link>
-        <StudentModuleCardDeleteDialog
-          action={deleteStudentVisaCardAction.bind(null, studentId)}
-          studentName={displayName}
-          cardLabel="签证档案"
-          description="将永久清空签证档案、全部准备任务和审核记录。"
-        />
-      </div>
+      }
+    >
+      <ManagementMetricStrip
+        label="签证任务概况"
+        items={[
+          { label: "全部任务", value: tasks.length },
+          { label: "等待审核", value: reviewCount },
+          { label: "补件／协助", value: supportCount },
+          { label: "已经确认", value: approvedCount },
+        ]}
+      />
 
-      <section className="management-table-panel overflow-hidden border">
-        <header className="flex flex-col gap-4 border-b border-[var(--app-border)] px-4 py-4 xl:flex-row xl:items-end xl:justify-between">
-          <div>
-            <p className="text-[10px] font-semibold text-[var(--app-muted)]">
-              学生签证案件 · {studentId.slice(-8)}
-            </p>
-            <h2 className="mt-1 text-lg font-semibold text-[var(--app-text)]">
-              {displayName}
-            </h2>
-            <p className="mt-1 text-xs text-[var(--app-muted)]">
-              {student.email || "未填写邮箱"}
-            </p>
-          </div>
-          <dl className="grid grid-cols-2 gap-px overflow-hidden border border-[var(--app-border)] bg-[var(--app-border)] sm:grid-cols-4">
-            {[
-              ["全部任务", tasks.length],
-              ["等待审核", reviewCount],
-              ["补件／协助", supportCount],
-              ["已经确认", approvedCount],
-            ].map(([label, value]) => (
-              <div key={String(label)} className="min-w-24 bg-[var(--app-card-bg)] px-3 py-2">
-                <dt className="text-[10px] text-[var(--app-muted)]">{label}</dt>
-                <dd className="mt-0.5 font-mono text-base font-semibold tabular-nums">
-                  {value}
-                </dd>
-              </div>
-            ))}
-          </dl>
-        </header>
-
-        <div className="overflow-x-auto border-b border-[var(--app-border)]">
+      <section
+        aria-labelledby="visa-case-summary-title"
+        className="management-table-panel overflow-hidden border"
+      >
+        <h2 id="visa-case-summary-title" className="sr-only">
+          签证案件概况
+        </h2>
+        <div className="overflow-x-auto border-b border-[var(--border)]">
           <table className="management-summary-table w-full min-w-[1040px] text-left">
             <thead>
               <tr>
@@ -226,10 +226,14 @@ export default async function VisaManagementStudentViewPage({
           </table>
         </div>
 
-        <div className="border-b border-[var(--app-border)] p-4">
+        <div className="border-b border-[var(--border)] p-4">
           <div className="mb-3 flex items-center gap-2">
-            <ShieldCheck size={14} className="text-[var(--app-muted)]" />
-            <h3 className="text-sm font-semibold">整体办理设置</h3>
+            <ShieldCheck
+              size={14}
+              className="text-[var(--foreground-muted)]"
+              aria-hidden="true"
+            />
+            <h2 className="text-sm font-semibold">整体办理设置</h2>
           </div>
           <VisaCaseAdminForm
             studentId={studentId}
@@ -241,21 +245,28 @@ export default async function VisaManagementStudentViewPage({
           />
         </div>
 
-        <div className="grid gap-px border-b border-[var(--app-border)] bg-[var(--app-border)] sm:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-px border-b border-[var(--border)] bg-[var(--border)] sm:grid-cols-2 xl:grid-cols-4">
           {entryRows.map(([label, value]) => (
-            <div key={label} className="bg-[var(--app-card-bg)] px-4 py-3">
-              <p className="text-[10px] text-[var(--app-muted)]">{label}</p>
-              <p className="mt-1 text-xs font-semibold text-[var(--app-text-soft)]">
+            <div key={label} className="bg-[var(--card)] px-4 py-3">
+              <p className="text-[10px] text-[var(--foreground-muted)]">{label}</p>
+              <p className="mt-1 text-xs font-semibold text-[var(--foreground-secondary)]">
                 {value}
               </p>
             </div>
           ))}
         </div>
 
+        <div className="border-b border-[var(--border)] px-4 py-3">
+          <h2 className="text-sm font-semibold">签证任务与审核</h2>
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
+            按办理阶段查看学生提交与管理员审核记录。
+          </p>
+        </div>
+
         <div className="overflow-x-auto">
           <table className="w-full min-w-[1480px] border-collapse text-left text-xs">
-            <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]">
-              <tr className="border-b border-[var(--app-border)]">
+            <thead className="bg-[var(--surface-soft)] text-[var(--foreground-muted)]">
+              <tr className="border-b border-[var(--border)]">
                 <th className="px-3 py-3 font-semibold">序号</th>
                 <th className="px-3 py-3 font-semibold">任务阶段</th>
                 <th className="px-3 py-3 font-semibold">任务</th>
@@ -268,12 +279,12 @@ export default async function VisaManagementStudentViewPage({
             </thead>
             <tbody>
               {tasks.map((task, index) => (
-                <tr key={task.id} className="border-b border-[var(--app-border)] align-top last:border-b-0">
-                  <td className="px-3 py-4 font-mono text-[var(--app-muted)]">{index + 1}</td>
+                <tr key={task.id} className="border-b border-[var(--border)] align-top last:border-b-0">
+                  <td className="px-3 py-4 font-mono text-[var(--foreground-muted)]">{index + 1}</td>
                   <td className="px-3 py-4">{STAGE_LABELS[task.stage] ?? task.stage}</td>
                   <td className="max-w-64 px-3 py-4">
                     <p className="font-semibold">{task.title}</p>
-                    <p className="mt-1 text-[11px] leading-5 text-[var(--app-muted)]">
+                    <p className="mt-1 text-[11px] leading-5 text-[var(--foreground-muted)]">
                       {task.description || "—"}
                     </p>
                   </td>
@@ -286,14 +297,14 @@ export default async function VisaManagementStudentViewPage({
                   <td className="max-w-64 whitespace-pre-wrap px-3 py-4 leading-5">
                     {task.admin_note || "—"}
                   </td>
-                  <td className="px-3 py-4 text-[11px] text-[var(--app-muted)]">
+                  <td className="px-3 py-4 text-[11px] text-[var(--foreground-muted)]">
                     <p>第 {task.submission_version} 次</p>
                     <LocalDateTime value={task.submitted_at} options={DATE_OPTIONS} />
                   </td>
                   <td className="w-64 px-4 py-3">
                     <VisaTaskReviewControls taskId={task.id} status={task.status} />
                     {task.status !== "submitted" && task.status !== "reviewing" && (
-                      <p className="border border-[var(--app-border)] bg-[var(--app-soft-bg)] px-3 py-2 text-[11px] leading-5 text-[var(--app-muted)]">
+                      <p className="border border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2 text-[11px] leading-5 text-[var(--foreground-muted)]">
                         {taskStatusMessage(task.status)}
                       </p>
                     )}
@@ -302,7 +313,7 @@ export default async function VisaManagementStudentViewPage({
               ))}
               {tasks.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="px-5 py-16 text-center text-[var(--app-muted)]">
+                  <td colSpan={8} className="px-5 py-16 text-center text-[var(--foreground-muted)]">
                     这名学生尚未生成签证任务
                   </td>
                 </tr>
@@ -311,6 +322,28 @@ export default async function VisaManagementStudentViewPage({
           </table>
         </div>
       </section>
-    </div>
+
+      <section
+        aria-labelledby="visa-danger-zone-title"
+        className="management-table-panel border p-4"
+      >
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 id="visa-danger-zone-title" className="text-sm font-semibold">
+              签证档案操作
+            </h2>
+            <p className="mt-1 text-xs text-[var(--foreground-muted)]">
+              删除会永久清空签证档案、准备任务和审核记录。
+            </p>
+          </div>
+          <StudentModuleCardDeleteDialog
+            action={deleteStudentVisaCardAction.bind(null, studentId)}
+            studentName={displayName}
+            cardLabel="签证档案"
+            description="将永久清空签证档案、全部准备任务和审核记录。"
+          />
+        </div>
+      </section>
+    </ManagementPage>
   );
 }

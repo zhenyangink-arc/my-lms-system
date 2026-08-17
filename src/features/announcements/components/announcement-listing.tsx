@@ -66,6 +66,8 @@ export default async function AnnouncementListing() {
         </ManagementNotice>
       )}
 
+      <AnnouncementsTable data={ownAnnouncements} scope={result.scope} />
+
       <ManagementMetricStrip
         label="公告运营概况"
         items={[
@@ -79,8 +81,6 @@ export default async function AnnouncementListing() {
           { label: "已归档", value: archivedCount },
         ]}
       />
-
-      <AnnouncementsTable data={ownAnnouncements} scope={result.scope} />
 
       {result.scope === "platform" && (
         <TenantAnnouncementInspection

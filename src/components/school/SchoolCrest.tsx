@@ -20,7 +20,7 @@ export function SchoolCrest({ logoUrl, name, size = "md" }: { logoUrl?: string |
       role="img"
       aria-label={`${name}校徽`}
       className={`${size === "xs" ? "border border-black/10 bg-white" : "app-soft-card border"} flex shrink-0 items-center justify-center bg-contain bg-center bg-no-repeat ${sizeClass}`}
-      style={imageUrl ? { backgroundImage: `url(${JSON.stringify(imageUrl).slice(1, -1)})`, backgroundColor: "white" } : { color: "var(--app-accent)" }}
+      style={imageUrl ? { backgroundImage: `url(${JSON.stringify(imageUrl).slice(1, -1)})`, backgroundColor: "white" } : { color: "var(--primary)" }}
     >
       {!imageUrl && <GraduationCap size={size === "lg" ? 30 : size === "sm" ? 17 : size === "xs" ? 12 : 22} />}
     </span>

@@ -4,7 +4,6 @@ import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { redirect } from "next/navigation";
 
 import { requireAccountOwner, requireExecutive, requirePlatformOwner } from "@/lib/admin";
-import { requireActiveUser } from "@/lib/auth";
 import { isValidLoginId, loginIdToInternalEmail, normalizeLoginId } from "@/lib/login-id";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { AccountActionState } from "./action-state";
@@ -85,17 +84,16 @@ export async function createManagedAccountAction(
   if (password.length < 8 || password.length > 72 || !/[A-Za-z]/.test(password) || !/[0-9]/.test(password)) return actionError("初始密码需为 8 至 72 位，并同时包含字母和数字。");
   if (!CREATABLE_ACCOUNT_ROLES.includes(role as (typeof CREATABLE_ACCOUNT_ROLES)[number])) return actionError("这里只能创建员工或学生账号。");
 
-  const auth = await requireActiveUser();
-  const isPlatformOwner = auth.platformProfile?.role === "platform_super_admin";
-  const isTenantOwner = auth.tenant?.role === "tenant_super_admin";
-  if (!isPlatformOwner && !isTenantOwner) return actionError("只有平台负责人或机构负责人可以创建账号。");
+  const { tenant, role: viewerRole, user } = await requireAccountOwner();
+  const isPlatformOwner = viewerRole === "platform_super_admin";
+  if (isPlatformOwner) await requirePlatformOwner();
 
-  const tenantId = isPlatformOwner ? (requestedTenantId || auth.tenant?.id || "") : auth.tenant?.id ?? "";
+  const tenantId = isPlatformOwner ? (requestedTenantId || tenant?.id || "") : tenant?.id ?? "";
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(tenantId)) return actionError("机构编号不正确。");
 
   const admin = createAdminClient();
-  const { data: tenant } = await admin.from("tenants").select("id").eq("id", tenantId).eq("status", "active").maybeSingle();
-  if (!tenant) return actionError("目标机构不存在或当前不可用。");
+  const { data: targetTenant } = await admin.from("tenants").select("id").eq("id", tenantId).eq("status", "active").maybeSingle();
+  if (!targetTenant) return actionError("目标机构不存在或当前不可用。");
 
   const { data: created, error: createError } = await admin.auth.admin.createUser({
     email: loginIdToInternalEmail(loginId), password, email_confirm: true,
@@ -108,7 +106,7 @@ export async function createManagedAccountAction(
   const { error: cleanupError } = await admin.from("tenant_memberships").delete().eq("user_id", userId);
   const { error: membershipError } = await admin.from("tenant_memberships").insert({
     tenant_id: tenantId, user_id: userId, role, status: "active", membership_tier: "normal",
-    is_default: true, invited_by: auth.user.id, joined_at: new Date().toISOString(),
+    is_default: true, invited_by: user.id, joined_at: new Date().toISOString(),
   });
 
   if (profileError || cleanupError || membershipError) {

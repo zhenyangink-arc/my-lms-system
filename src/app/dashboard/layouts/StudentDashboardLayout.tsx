@@ -39,6 +39,12 @@ export function StudentDashboardLayout({
         data-dashboard-ui="student"
         data-student-shell="system"
       >
+        <a
+          href="#student-main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[80] focus:rounded-xl focus:bg-[var(--card)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--foreground)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
+        >
+          跳到主要内容
+        </a>
         {!isPlatformAudit && <StudentFullscreenPrompt />}
         {!isPlatformAudit && <StudentPwaInstallPrompt />}
 
@@ -75,7 +81,11 @@ export function StudentDashboardLayout({
                 </div>
               )}
 
-              <main className="app-student-main student-system-main min-w-0">
+              <main
+                id="student-main-content"
+                tabIndex={-1}
+                className="app-student-main student-system-main min-w-0 scroll-mt-20"
+              >
                 <StudentPageHeader
                   studentId={studentId}
                   dashboardBasePath={dashboardBasePath}

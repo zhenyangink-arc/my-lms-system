@@ -71,11 +71,11 @@ export function getLibraryResourceColumns({
               推荐
             </span>
           )}
-          <p className="truncate font-semibold text-[var(--app-text)]">
+          <p className="truncate font-semibold text-[var(--foreground)]">
             {row.original.title}
           </p>
         </div>
-        <p className="mt-1 truncate text-[11px] text-[var(--app-muted)]">
+        <p className="mt-1 truncate text-[11px] text-[var(--foreground-muted)]">
           {row.original.description || row.original.original_file_name || "暂无说明"}
         </p>
       </div>
@@ -86,10 +86,10 @@ export function getLibraryResourceColumns({
     header: sortableHeader("所属课程"),
     cell: ({ row }) => (
       <div className="min-w-40">
-        <p className="font-medium text-[var(--app-text-soft)]">
+        <p className="font-medium text-[var(--foreground-secondary)]">
           {row.original.courseLabel}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.lessonLabel}
         </p>
       </div>
@@ -110,7 +110,7 @@ export function getLibraryResourceColumns({
     cell: ({ row }) => (
       <div className="min-w-24">
         <p>{LIBRARY_RESOURCE_TYPE_LABELS[row.original.resource_type]}</p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {formatFileSize(row.original.file_size)}
         </p>
       </div>
@@ -147,7 +147,7 @@ export function getLibraryResourceColumns({
     accessorKey: "updated_at",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updated_at}
           options={DATE_OPTIONS}

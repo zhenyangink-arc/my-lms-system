@@ -248,7 +248,7 @@ export async function getDocumentReviewStudentDetailData(
       .order("priority", { ascending: false }),
   ]);
 
-  if (documentsResult.error || targetsResult.error) {
+  if (profileResult.error || documentsResult.error || targetsResult.error) {
     throw new Error("学生申请资料读取失败，请稍后重试。");
   }
 

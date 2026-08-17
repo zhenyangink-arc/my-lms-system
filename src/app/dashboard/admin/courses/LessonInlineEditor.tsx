@@ -64,7 +64,7 @@ function TextAreaField({ name, label, value, rows = 4 }: { name: string; label: 
 }
 
 function SaveButton({ label }: { label: string }) {
-  return <button type="submit" className="rounded-[7px] px-4 py-2.5 text-[12px] font-semibold text-white" style={{ backgroundColor: "var(--app-accent)" }}>{label}</button>;
+  return <button type="submit" className="rounded-[7px] px-4 py-2.5 text-[12px] font-semibold text-white" style={{ backgroundColor: "var(--primary)" }}>{label}</button>;
 }
 
 export function LessonInlineEditor({
@@ -109,7 +109,7 @@ export function LessonInlineEditor({
               </div>
             </div>
           </div>
-          <div className="border-t pt-5" style={{ borderColor: "var(--app-border)" }}>
+          <div className="border-t pt-5" style={{ borderColor: "var(--border)" }}>
             <h3 className="mb-1 text-[12px] font-semibold">视频来源</h3>
             <p className="app-muted-text mb-4 text-[10px]">对象存储视频填写对象键；外部视频填写完整链接。</p>
             <div className="grid gap-4 md:grid-cols-2">
@@ -127,8 +127,8 @@ export function LessonInlineEditor({
           <input type="hidden" name="id" value={lesson.id} />
           <input type="hidden" name="editor_section" value="content" />
           <div><h3 className="mb-4 text-[12px] font-semibold">学习引导</h3><div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="learning_objectives" label="学习目标" value={lesson.learning_objectives} /><TextAreaField name="lesson_tasks" label="本课任务" value={lesson.lesson_tasks} /><TextAreaField name="teacher_note" label="教师提示" value={lesson.teacher_note} /></div></div>
-          <div className="border-t pt-5" style={{ borderColor: "var(--app-border)" }}><h3 className="mb-4 text-[12px] font-semibold">核心学习内容</h3><div className="space-y-4"><TextAreaField name="content_text" label="课程正文" value={lesson.content_text} rows={10} /><div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="key_points" label="重点提炼" value={lesson.key_points} /><TextAreaField name="case_study" label="案例说明" value={lesson.case_study} /><TextAreaField name="common_mistakes" label="常见错误" value={lesson.common_mistakes} /></div></div></div>
-          <div className="border-t pt-5" style={{ borderColor: "var(--app-border)" }}><h3 className="mb-4 text-[12px] font-semibold">学习完成区</h3><div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="summary_text" label="本课小结" value={lesson.summary_text} /><TextAreaField name="reflection_questions" label="思考题" value={lesson.reflection_questions} /><TextAreaField name="extra_note" label="补充说明" value={lesson.extra_note} /></div></div>
+          <div className="border-t pt-5" style={{ borderColor: "var(--border)" }}><h3 className="mb-4 text-[12px] font-semibold">核心学习内容</h3><div className="space-y-4"><TextAreaField name="content_text" label="课程正文" value={lesson.content_text} rows={10} /><div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="key_points" label="重点提炼" value={lesson.key_points} /><TextAreaField name="case_study" label="案例说明" value={lesson.case_study} /><TextAreaField name="common_mistakes" label="常见错误" value={lesson.common_mistakes} /></div></div></div>
+          <div className="border-t pt-5" style={{ borderColor: "var(--border)" }}><h3 className="mb-4 text-[12px] font-semibold">学习完成区</h3><div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="summary_text" label="本课小结" value={lesson.summary_text} /><TextAreaField name="reflection_questions" label="思考题" value={lesson.reflection_questions} /><TextAreaField name="extra_note" label="补充说明" value={lesson.extra_note} /></div></div>
           <SaveButton label="保存课程内容" />
         </form>
       }

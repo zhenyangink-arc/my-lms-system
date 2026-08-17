@@ -32,8 +32,8 @@ export function ModelUsageTableToolbar({
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
-        <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 xl:max-w-sm">
-          <Icons.search className="size-3.5 shrink-0 text-[var(--app-muted)]" aria-hidden="true" />
+        <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 xl:max-w-sm">
+          <Icons.search className="size-3.5 shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
           <span className="sr-only">搜索用量主体</span>
           <input
             value={filters.query}
@@ -53,7 +53,7 @@ export function ModelUsageTableToolbar({
                   kind: event.target.value as ModelUsageFilters["kind"],
                 })
               }
-              className="h-9 min-w-28 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs font-medium"
+              className="h-9 min-w-28 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
             >
               <option value="all">全部范围</option>
               <option value="platform">平台</option>
@@ -61,8 +61,8 @@ export function ModelUsageTableToolbar({
             </select>
           </label>
         )}
-        <label className="flex h-9 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs">
-          <span className="whitespace-nowrap text-[var(--app-muted)]">开始日期</span>
+        <label className="flex h-9 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs">
+          <span className="whitespace-nowrap text-[var(--foreground-muted)]">开始日期</span>
           <input
             type="date"
             value={filters.from}
@@ -70,8 +70,8 @@ export function ModelUsageTableToolbar({
             className="bg-transparent outline-none"
           />
         </label>
-        <label className="flex h-9 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs">
-          <span className="whitespace-nowrap text-[var(--app-muted)]">结束日期</span>
+        <label className="flex h-9 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs">
+          <span className="whitespace-nowrap text-[var(--foreground-muted)]">结束日期</span>
           <input
             type="date"
             value={filters.to}
@@ -84,7 +84,7 @@ export function ModelUsageTableToolbar({
             <button
               type="button"
               onClick={() => onFiltersChange({ query: "", kind: "all", from: "", to: "" })}
-              className="h-9 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)]"
+              className="h-9 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]"
             >
               清除筛选
             </button>

@@ -67,10 +67,10 @@ function SaveButton({
       type="button"
       onClick={onClick}
       disabled={disabled || pending}
-      className="inline-flex shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
-      style={{ backgroundColor: "var(--app-secondary)" }}
+      className="inline-flex shrink-0 items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+      style={{ backgroundColor: "var(--support)" }}
     >
-      <Save size={14} />
+      <Save size={14} aria-hidden="true" />
       {pending ? "保存中…" : "保存"}
     </button>
   );
@@ -82,10 +82,10 @@ function SubmitConfirmButton() {
     <AlertDialogAction
       type="submit"
       disabled={pending}
-      className="gap-2 text-white disabled:opacity-60"
-      style={{ backgroundColor: "var(--app-success)" }}
+      className="gap-2 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-60"
+      style={{ backgroundColor: "var(--status-success)" }}
     >
-      <UploadCloud size={14} />
+      <UploadCloud size={14} aria-hidden="true" />
       {pending ? "提交中…" : "确认上传"}
     </AlertDialogAction>
   );
@@ -151,10 +151,11 @@ export function ApplicationDocumentChecklist({
         <button
           type="button"
           onClick={() => setExpanded((prev) => !prev)}
-          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black transition hover:-translate-y-0.5"
-          style={{ color: "var(--app-accent)", borderColor: "var(--app-accent)" }}
+          aria-expanded={expanded}
+          className="inline-flex shrink-0 items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+          style={{ color: "var(--primary)", borderColor: "var(--primary)" }}
         >
-          {expanded ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+          {expanded ? <ChevronUp size={14} aria-hidden="true" /> : <ChevronDown size={14} aria-hidden="true" />}
           {expanded ? "收起全部分类" : "展开全部分类"}
         </button>
       </div>
@@ -168,12 +169,12 @@ export function ApplicationDocumentChecklist({
         const doneCount = items.filter((item) => item.status !== "preparing").length;
         return (
           <div key={category}>
-            <div className="mb-3 flex items-center justify-between gap-3 border-b pb-2.5" style={{ borderColor: "var(--app-border-soft)" }}>
+            <div className="mb-3 flex items-center justify-between gap-3 border-b pb-2.5" style={{ borderColor: "var(--border-subtle)" }}>
               <div className="flex items-center gap-2">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
-                  <CategoryIcon size={14} />
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
+                  <CategoryIcon size={14} aria-hidden="true" />
                 </span>
-                <h3 className="text-sm font-black">{CATEGORY_LABELS[category] ?? category}</h3>
+                <h3 className="text-sm font-bold">{CATEGORY_LABELS[category] ?? category}</h3>
               </div>
               <span className="app-muted-text text-xs font-bold">{doneCount}/{items.length} 已处理</span>
             </div>
@@ -188,33 +189,33 @@ export function ApplicationDocumentChecklist({
                 return (
                   <article
                     key={document.id}
-                    className="app-soft-card rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--app-shadow)]"
+                    className="app-soft-card rounded-2xl border p-4 transition duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-floating)]"
                     style={document.status === "not_needed" ? { opacity: 0.7 } : undefined}
                   >
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: tone.color, backgroundColor: tone.soft }}>
-                        <StatusIcon size={19} />
+                        <StatusIcon size={19} aria-hidden="true" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-black">{document.title}</h3>
+                        <h3 className="text-sm font-bold">{document.title}</h3>
                         <div className="mt-1 flex flex-wrap items-center gap-2">
-                          <span className="rounded-full px-2.5 py-0.5 text-xs font-black" style={{ color: tone.color, backgroundColor: tone.soft }}>
+                          <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ color: tone.color, backgroundColor: tone.soft }}>
                             {STATUS_LABELS[document.status] ?? document.status}
                           </span>
                           {isDirty && (
-                            <span className="rounded-full px-2.5 py-0.5 text-xs font-black" style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}>
+                            <span className="rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}>
                               未保存
                             </span>
                           )}
                           {itemLocked && (
-                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>
-                              <Lock size={10} />
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}>
+                              <Lock size={10} aria-hidden="true" />
                               管理员已锁定
                             </span>
                           )}
                           {document.dueMeta && (
-                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-black" style={{ color: document.dueMeta.color, backgroundColor: document.dueMeta.soft }}>
-                              <CalendarClock size={11} />
+                            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-bold" style={{ color: document.dueMeta.color, backgroundColor: document.dueMeta.soft }}>
+                              <CalendarClock size={11} aria-hidden="true" />
                               {document.dueMeta.label}
                             </span>
                           )}
@@ -223,8 +224,8 @@ export function ApplicationDocumentChecklist({
                     </div>
 
                     {document.notes && (
-                      <div className="mt-3 flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}>
-                        <MessageSquareText className="mt-0.5 shrink-0" size={14} />
+                      <div className="mt-3 flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>
+                        <MessageSquareText className="mt-0.5 shrink-0" size={14} aria-hidden="true" />
                         <p className="whitespace-pre-wrap">
                           <b>资料备注：</b>
                           {document.notes}
@@ -233,8 +234,8 @@ export function ApplicationDocumentChecklist({
                     )}
 
                     {document.admin_note && (
-                      <div className="mt-3 flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5" style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}>
-                        <MessageSquarePlus className="mt-0.5 shrink-0" size={14} />
+                      <div className="mt-3 flex items-start gap-2 rounded-xl px-3 py-2.5 text-xs leading-5" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}>
+                        <MessageSquarePlus className="mt-0.5 shrink-0" size={14} aria-hidden="true" />
                         <p className="whitespace-pre-wrap">
                           <b>管理员备注：</b>
                           {document.admin_note}
@@ -242,7 +243,7 @@ export function ApplicationDocumentChecklist({
                       </div>
                     )}
 
-                    <div className="mt-3 border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}>
+                    <div className="mt-3 border-t pt-3" style={{ borderColor: "var(--border-subtle)" }}>
                       <ApplicationDocumentForm
                         currentStatus={document.status}
                         disabled={locked || itemLocked || isSaving}
@@ -257,10 +258,10 @@ export function ApplicationDocumentChecklist({
         );
       })}
 
-      <div className="flex flex-col items-center gap-3 rounded-2xl border p-4 sm:flex-row sm:justify-between" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
+      <div className="flex flex-col items-center gap-3 rounded-2xl border p-4 sm:flex-row sm:justify-between" style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}>
         <div className="app-muted-text flex flex-col gap-1 text-xs font-bold">
           <p className="flex items-center gap-1.5">
-            {locked && <Lock size={13} style={{ color: "var(--app-warm)" }} />}
+            {locked && <Lock size={13} style={{ color: "var(--status-warning)" }} aria-hidden="true" />}
             {locked
               ? "申请资料已上传提交，页面已锁定，仅供查看。如需修改，请联系管理员协助解锁。"
               : hasUnsavedChanges
@@ -269,8 +270,8 @@ export function ApplicationDocumentChecklist({
                   ? "所有材料状态都已选择并保存，点击「上传」正式提交并锁定该申请表。"
                   : "还有材料未标记为「已完成」或「无」，全部处理并保存后可以上传提交。"}
           </p>
-          {saveError && <p className="font-bold text-rose-600">{saveError}</p>}
-          {submitError && <p className="font-bold text-rose-600">{submitError}</p>}
+          {saveError && <p role="alert" className="font-bold" style={{ color: "var(--destructive)" }}>{saveError}</p>}
+          {submitError && <p role="alert" className="font-bold" style={{ color: "var(--destructive)" }}>{submitError}</p>}
         </div>
         {!locked && (
           <div className="flex shrink-0 items-center gap-2">
@@ -279,15 +280,15 @@ export function ApplicationDocumentChecklist({
               <AlertDialogTrigger
                 type="button"
                 disabled={hasUnsavedChanges || !allResolved}
-                className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-black text-white transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
-                style={{ backgroundColor: "var(--app-success)" }}
+                className="inline-flex items-center gap-2 rounded-xl px-5 py-2.5 text-xs font-bold text-white transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:translate-y-0"
+                style={{ backgroundColor: "var(--status-success)" }}
               >
-                <UploadCloud size={14} />
+                <UploadCloud size={14} aria-hidden="true" />
                 上传
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
-                  <AlertDialogTitle className="font-black">确认上传申请资料？</AlertDialogTitle>
+                  <AlertDialogTitle className="font-bold">确认上传申请资料？</AlertDialogTitle>
                   <AlertDialogDescription className="leading-6">
                     提交后这份申请表会立即锁定，无法自行修改；如果之后需要调整，请联系管理员协助解锁。
                   </AlertDialogDescription>

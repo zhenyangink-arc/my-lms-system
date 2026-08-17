@@ -456,7 +456,7 @@ export function LiveClassRoom({
         <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[#fdecea] text-[#c92a2a]">
           <PhoneOff size={22} />
         </div>
-        <h2 className="text-lg font-black text-slate-900">课堂已结束</h2>
+        <h2 className="text-lg font-bold text-slate-900">课堂已结束</h2>
         <p className="app-muted-text text-sm">
           {isTeacher ? "你已结束这节伴学课堂。" : "老师已结束这节伴学课堂，下次上课见。"}
         </p>
@@ -495,7 +495,7 @@ export function LiveClassRoom({
                 aria-label="课堂参与者"
                 className="flex items-center gap-1.5 overflow-x-auto whitespace-nowrap [scrollbar-width:thin]"
               >
-                <span className="mr-1 shrink-0 text-[10px] font-black tracking-wide text-slate-500">
+                <span className="mr-1 shrink-0 text-[10px] font-bold tracking-wide text-slate-500">
                   参与者 {participantRows.length}
                 </span>
                 {participantRows.map((participant) => (
@@ -539,7 +539,7 @@ export function LiveClassRoom({
         {isTeacher && (
           <div
             className="fixed z-50 flex flex-col gap-1 rounded-2xl border bg-white/95 p-2 shadow-xl backdrop-blur"
-            style={{ borderColor: "var(--app-border)", left: toolbarPos.x, top: toolbarPos.y }}
+            style={{ borderColor: "var(--border)", left: toolbarPos.x, top: toolbarPos.y }}
             onPointerMove={(event) => {
               const drag = toolbarDragRef.current;
               if (!drag) return;
@@ -650,7 +650,7 @@ export function LiveClassRoom({
         {!connected && (
           <div className="absolute inset-0 z-40 flex items-center justify-center bg-white/70 backdrop-blur-sm">
             <div className="flex flex-col items-center gap-3 text-sm">
-              <Loader2 className="animate-spin" size={22} style={{ color: "var(--app-muted-text)" }} />
+              <Loader2 className="animate-spin" size={22} style={{ color: "var(--foreground-muted)" }} />
               <p className="app-muted-text text-xs">正在连接课堂…</p>
             </div>
           </div>
@@ -664,7 +664,7 @@ export function LiveClassRoom({
         aria-expanded={isClassDrawerOpen}
         aria-label={isClassDrawerOpen ? "收起伴学课堂" : "展开伴学课堂"}
         title={isClassDrawerOpen ? "收起伴学课堂" : "展开伴学课堂"}
-        className={`fixed top-1/2 z-[70] flex -translate-y-1/2 items-center gap-1 rounded-l-xl border border-r-0 border-[#cfe2d9] bg-[#238777] px-2 py-3 text-xs font-black text-white shadow-lg transition-[right] duration-300 hover:bg-[#1d6d60] ${
+        className={`fixed top-1/2 z-[70] flex -translate-y-1/2 items-center gap-1 rounded-l-xl border border-r-0 border-[#cfe2d9] bg-[#238777] px-2 py-3 text-xs font-bold text-white shadow-lg transition-[right] duration-300 hover:bg-[#1d6d60] ${
           isClassDrawerOpen ? "right-72" : "right-0"
         }`}
       >
@@ -678,7 +678,7 @@ export function LiveClassRoom({
         className={`fixed inset-y-0 right-0 z-[60] flex w-72 shrink-0 flex-col overflow-hidden border-l bg-[#f0f7f4] shadow-[-8px_0_24px_rgba(23,63,74,0.08)] transition-transform duration-300 ease-out ${
           isClassDrawerOpen ? "translate-x-0" : "pointer-events-none translate-x-full"
         }`}
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <div className="min-h-0 flex-1 space-y-4 overflow-y-auto p-4">
           <div>
@@ -687,7 +687,7 @@ export function LiveClassRoom({
               <GraduationCap size={19} />
             </span>
             <div className="min-w-0">
-              <p className="truncate text-sm font-black text-slate-900">伴学课堂</p>
+              <p className="truncate text-sm font-bold text-slate-900">伴学课堂</p>
             </div>
           </div>
           <p className="app-muted-text mt-2.5 text-[11px] font-semibold leading-5">
@@ -696,7 +696,7 @@ export function LiveClassRoom({
           <a
             href={backHref}
             className="mt-3 inline-flex w-full items-center justify-center gap-1.5 rounded-full border bg-white px-3 py-2 text-xs font-bold text-[#315f52] transition hover:bg-[#e9f6f1]"
-            style={{ borderColor: "var(--app-border)" }}
+            style={{ borderColor: "var(--border)" }}
           >
             <ArrowLeft size={14} />
             返回
@@ -707,12 +707,12 @@ export function LiveClassRoom({
 
           <div>
             <div className="flex items-center justify-between gap-2">
-              <p className="text-[11px] font-black tracking-wide text-slate-600">参与者</p>
+              <p className="text-[11px] font-bold tracking-wide text-slate-600">参与者</p>
               {isTeacher && session.mode === "group" && (
                 <button
                   type="button"
                   onClick={() => void openInvite()}
-                  className="inline-flex items-center gap-1 rounded-full bg-[#e2f2ed] px-2.5 py-1 text-[11px] font-black text-[#1d6d60] transition hover:bg-[#d4ebe4]"
+                  className="inline-flex items-center gap-1 rounded-full bg-[#e2f2ed] px-2.5 py-1 text-[11px] font-bold text-[#1d6d60] transition hover:bg-[#d4ebe4]"
                 >
                   <UserPlus size={12} />
                   添加学生
@@ -733,12 +733,12 @@ export function LiveClassRoom({
                       {participant.label} {participant.name}
                     </span>
                     {session.mode === "group" && groupVoiceChat.speakerIds.has(participant.id) && (
-                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e2f2ed] px-2 py-0.5 text-[10px] font-black text-[#1d6d60]">
+                      <span className="inline-flex shrink-0 items-center gap-1 rounded-full bg-[#e2f2ed] px-2 py-0.5 text-[10px] font-bold text-[#1d6d60]">
                         <Mic size={10} /> 发言中
                       </span>
                     )}
                     <span
-                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-black ${
+                      className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold ${
                         participant.online
                           ? "bg-emerald-100 text-emerald-700"
                           : participant.status === "连接中"
@@ -759,7 +759,7 @@ export function LiveClassRoom({
                           !groupVoiceChat.grantedStudentIds.has(participant.id)
                         )
                       }
-                      className={`mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-full px-2 py-1 text-[10px] font-black transition disabled:opacity-50 ${
+                      className={`mt-1.5 inline-flex w-full items-center justify-center gap-1 rounded-full px-2 py-1 text-[10px] font-bold transition disabled:opacity-50 ${
                         groupVoiceChat.grantedStudentIds.has(participant.id)
                           ? "bg-[#fdecea] text-[#c92a2a] hover:bg-[#fbdcd9]"
                           : "bg-[#e2f2ed] text-[#1d6d60] hover:bg-[#d4ebe4]"
@@ -783,7 +783,7 @@ export function LiveClassRoom({
 
             {inviteOpen && (
               <div className="mt-3 rounded-xl border border-[#cfe2d9] bg-white p-2.5 shadow-sm">
-                <p className="text-[11px] font-black text-[#315f52]">选择允许中途加入的学生</p>
+                <p className="text-[11px] font-bold text-[#315f52]">选择允许中途加入的学生</p>
                 {inviteLoading ? (
                   <p className="mt-2 inline-flex items-center gap-1.5 text-[11px] text-slate-500">
                     <Loader2 size={12} className="animate-spin" /> 正在读取学生…
@@ -830,7 +830,7 @@ export function LiveClassRoom({
                     type="button"
                     onClick={() => void confirmInvite()}
                     disabled={inviteChecked.size === 0 || inviteAdding || inviteLoading}
-                    className="inline-flex items-center gap-1 rounded-full bg-[#238777] px-3 py-1.5 text-[11px] font-black text-white disabled:opacity-50"
+                    className="inline-flex items-center gap-1 rounded-full bg-[#238777] px-3 py-1.5 text-[11px] font-bold text-white disabled:opacity-50"
                   >
                     {inviteAdding && <Loader2 size={11} className="animate-spin" />}
                     确认加入{inviteChecked.size > 0 ? ` (${inviteChecked.size})` : ""}
@@ -843,7 +843,7 @@ export function LiveClassRoom({
           <div className="h-px bg-black/[0.07]" />
 
           <div>
-            <p className="text-[11px] font-black tracking-wide text-slate-600">语音</p>
+            <p className="text-[11px] font-bold tracking-wide text-slate-600">语音</p>
             <div className="mt-2 space-y-2">
               {session.mode === "group" ? (
                 <>
@@ -871,7 +871,7 @@ export function LiveClassRoom({
                       type="button"
                       onClick={() => void groupVoiceChat.stopPublishing()}
                       className="w-full rounded-full border bg-white px-3 py-2 text-xs font-bold text-[#c92a2a] transition hover:bg-[#fdecea]"
-                      style={{ borderColor: "var(--app-border)" }}
+                      style={{ borderColor: "var(--border)" }}
                     >
                       <span className="inline-flex items-center gap-1.5">
                         <MicOff size={13} /> 关闭自己的麦克风
@@ -882,7 +882,7 @@ export function LiveClassRoom({
                       type="button"
                       onClick={() => void groupVoiceChat.startPublishing()}
                       disabled={groupVoiceChat.configured === false}
-                      className="w-full rounded-full bg-[#238777] px-3 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60] disabled:opacity-50"
+                      className="w-full rounded-full bg-[#238777] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#1d6d60] disabled:opacity-50"
                     >
                       <span className="inline-flex items-center justify-center gap-1.5">
                         <Mic size={14} />
@@ -898,7 +898,7 @@ export function LiveClassRoom({
                     <button
                       type="button"
                       onClick={() => void groupVoiceChat.enablePlayback()}
-                      className="w-full rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-black text-amber-700"
+                      className="w-full rounded-full border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-bold text-amber-700"
                     >
                       点击启用课堂声音
                     </button>
@@ -923,7 +923,7 @@ export function LiveClassRoom({
                         type="button"
                         onClick={peerVoiceChat.stopVoice}
                         className="w-full rounded-full border bg-white px-3 py-2 text-xs font-bold text-[#c92a2a] transition hover:bg-[#fdecea]"
-                        style={{ borderColor: "var(--app-border)" }}
+                        style={{ borderColor: "var(--border)" }}
                       >
                         挂断语音
                       </button>
@@ -932,7 +932,7 @@ export function LiveClassRoom({
                     <button
                       type="button"
                       onClick={() => void peerVoiceChat.startVoice()}
-                      className="w-full rounded-full bg-[#238777] px-3 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60]"
+                      className="w-full rounded-full bg-[#238777] px-3 py-2 text-xs font-bold text-white transition hover:bg-[#1d6d60]"
                     >
                       <span className="inline-flex items-center justify-center gap-1.5">
                         <Mic size={14} /> 开启语音讲解
@@ -954,7 +954,7 @@ export function LiveClassRoom({
 
         <div
           className="shrink-0 space-y-2 border-t bg-[#f0f7f4] p-4 shadow-[0_-8px_20px_rgba(27,67,57,0.06)]"
-          style={{ borderColor: "var(--app-border)" }}
+          style={{ borderColor: "var(--border)" }}
         >
           {endError && (
             <p className="rounded-lg bg-[#fdecea] px-3 py-2 text-[11px] font-semibold leading-4 text-[#c92a2a]">
@@ -967,7 +967,7 @@ export function LiveClassRoom({
               type="button"
               onClick={handleEnd}
               disabled={ending}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#fdecea] px-3 py-2.5 text-xs font-black text-[#c92a2a] transition hover:bg-[#fbdcd9] disabled:opacity-60"
+              className="inline-flex w-full items-center justify-center gap-1.5 rounded-full bg-[#fdecea] px-3 py-2.5 text-xs font-bold text-[#c92a2a] transition hover:bg-[#fbdcd9] disabled:opacity-60"
             >
               {ending ? <Loader2 size={14} className="animate-spin" /> : <PhoneOff size={14} />}
               结束课堂
@@ -978,7 +978,7 @@ export function LiveClassRoom({
               onClick={handleLeave}
               disabled={leaving}
               className="inline-flex w-full items-center justify-center gap-1.5 rounded-full border bg-white px-3 py-2.5 text-xs font-bold text-slate-600 transition hover:bg-black/[0.035]"
-              style={{ borderColor: "var(--app-border)" }}
+              style={{ borderColor: "var(--border)" }}
             >
               {leaving ? <Loader2 size={14} className="animate-spin" /> : <LogOut size={14} />}
               退出课堂

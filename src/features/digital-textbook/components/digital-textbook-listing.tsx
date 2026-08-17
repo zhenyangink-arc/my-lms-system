@@ -75,10 +75,10 @@ export default async function DigitalTextbookListing({ studentAppId }: { student
 
       <section className="space-y-3">
         <div>
-          <h2 className="text-base font-semibold text-[var(--app-text)]">
+          <h2 className="text-base font-semibold text-[var(--foreground)]">
             教材内容层级
           </h2>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
             按课程、课时、教材、版本和章节查看词汇与语法模块；
             {result.canManage ? "当前账号可以维护内容。" : "当前账号为只读查看。"}
           </p>

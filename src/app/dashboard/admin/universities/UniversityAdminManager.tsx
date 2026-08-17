@@ -188,7 +188,7 @@ function UniversityDeleteDialog({ university }: { university: AdminUniversity })
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-black">永久删除 {university.name_zh}？</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold">永久删除 {university.name_zh}？</AlertDialogTitle>
           <AlertDialogDescription className="leading-6">
             只有在该大学没有任何学生目标、对比或评估记录时才能永久删除；有关联数据时请改用“停止展示”。
           </AlertDialogDescription>

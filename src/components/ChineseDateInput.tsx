@@ -122,13 +122,13 @@ export function ChineseDateInput({
           "app-input mt-1.5 w-full rounded-xl border px-2.5 py-2 text-left text-[11px] outline-none"
         }
       >
-        {value || <span style={{ color: "var(--app-muted)" }}>{placeholder}</span>}
+        {value || <span style={{ color: "var(--foreground-muted)" }}>{placeholder}</span>}
       </button>
       {name && <input type="hidden" name={name} value={value} required={required} />}
       {open && (
         <div
           className="app-card absolute z-20 mt-1.5 w-64 rounded-xl border p-3 text-xs shadow-lg"
-          style={{ backgroundColor: "var(--app-card-bg)" }}
+          style={{ backgroundColor: "var(--card)" }}
         >
           <div className="flex items-center justify-between">
             <button type="button" onClick={goToPrevMonth} className="rounded-lg p-1 hover:opacity-70">
@@ -161,10 +161,10 @@ export function ChineseDateInput({
                   }}
                   className="rounded-lg py-1 text-[11px] font-bold transition disabled:cursor-not-allowed disabled:opacity-35"
                   style={{
-                    color: cell.inMonth ? "inherit" : "var(--app-muted)",
-                    backgroundColor: isSelected ? "var(--app-accent)" : "transparent",
+                    color: cell.inMonth ? "inherit" : "var(--foreground-muted)",
+                    backgroundColor: isSelected ? "var(--primary)" : "transparent",
                     ...(isSelected ? { color: "#fff" } : {}),
-                    outline: isToday && !isSelected ? "1px solid var(--app-accent)" : undefined,
+                    outline: isToday && !isSelected ? "1px solid var(--primary)" : undefined,
                   }}
                 >
                   {cell.day}

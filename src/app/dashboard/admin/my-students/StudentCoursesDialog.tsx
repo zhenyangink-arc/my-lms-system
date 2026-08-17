@@ -52,7 +52,7 @@ function CourseRow({ course, expanded, onToggle, expandedLessons, onToggleLesson
   onStartLive: (lesson: StudentLessonProgress, courseId: string) => void;
 }) {
   return (
-    <div className="border-b text-xs last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+    <div className="border-b text-xs last:border-b-0" style={{ borderColor: "var(--border)" }}>
       <button
         type="button"
         onClick={onToggle}
@@ -66,10 +66,10 @@ function CourseRow({ course, expanded, onToggle, expandedLessons, onToggleLesson
         <span className="w-10 shrink-0 text-right font-medium tabular-nums">{course.percent}%</span>
       </button>
       <div className="px-4 pb-2">
-        <div className="h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-border-soft)" }}>
+        <div className="h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--border-subtle)" }}>
           <div
             className="h-full rounded-full"
-            style={{ width: `${course.percent}%`, backgroundColor: "var(--app-accent)" }}
+            style={{ width: `${course.percent}%`, backgroundColor: "var(--primary)" }}
           />
         </div>
       </div>
@@ -80,26 +80,26 @@ function CourseRow({ course, expanded, onToggle, expandedLessons, onToggleLesson
             <span>进行中 {course.inProgressLessons}</span>
             <span>共 {course.totalLessons} 课时</span>
           </div>
-          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--app-border)" }}>
+          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--border)" }}>
             {course.lessons.map((lesson, index) => {
               const statusColor =
                 lesson.status === "completed"
-                  ? "var(--app-success)"
+                  ? "var(--status-success)"
                   : lesson.status === "in_progress"
-                    ? "var(--app-warm)"
-                    : "var(--app-muted-text)";
+                    ? "var(--status-warning)"
+                    : "var(--foreground-muted)";
               const statusDot =
                 lesson.status === "completed"
-                  ? "var(--app-success)"
+                  ? "var(--status-success)"
                   : lesson.status === "in_progress"
-                    ? "var(--app-warm)"
-                    : "var(--app-border)";
+                    ? "var(--status-warning)"
+                    : "var(--border)";
               const lessonExpanded = expandedLessons.has(lesson.lessonId);
               return (
                 <div
                   key={lesson.lessonId}
                   className={`${index > 0 ? "border-t" : ""} bg-white`}
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   <button
                     type="button"
@@ -130,7 +130,7 @@ function CourseRow({ course, expanded, onToggle, expandedLessons, onToggleLesson
                         disabled={startingLessonId === lesson.lessonId}
                         title="进入该课时的电子书，给学生实时上课、画笔圈点"
                         className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1 text-[11px] font-bold text-[#238777] transition hover:bg-[#e9f6f1] disabled:opacity-60"
-                        style={{ borderColor: "var(--app-border)" }}
+                        style={{ borderColor: "var(--border)" }}
                       >
                         {startingLessonId === lesson.lessonId ? (
                           <Loader2 size={12} className="animate-spin" />
@@ -143,26 +143,26 @@ function CourseRow({ course, expanded, onToggle, expandedLessons, onToggleLesson
                   )}
                   {lessonExpanded && lesson.chapters.length > 0 && (
                     <div className="px-3 pb-2 pl-9">
-                      <div className="rounded-md border px-3 py-1" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>
+                      <div className="rounded-md border px-3 py-1" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>
                         {lesson.chapters.map((chapter, chapterIndex) => {
                           const isLocked = chapter.status === "locked";
                           const chapterColor =
                             chapter.status === "completed"
-                              ? "var(--app-success)"
+                              ? "var(--status-success)"
                               : chapter.status === "in_progress"
-                                ? "var(--app-warm)"
-                                : "var(--app-muted-text)";
+                                ? "var(--status-warning)"
+                                : "var(--foreground-muted)";
                           const chapterDot =
                             chapter.status === "completed"
-                              ? "var(--app-success)"
+                              ? "var(--status-success)"
                               : chapter.status === "in_progress"
-                                ? "var(--app-warm)"
-                                : "var(--app-border)";
+                                ? "var(--status-warning)"
+                                : "var(--border)";
                           return (
                             <div
                               key={chapter.id}
                               className={`flex items-center gap-2 py-1 text-[11px] ${chapterIndex > 0 ? "border-t" : ""}`}
-                              style={{ borderColor: "var(--app-border)" }}
+                              style={{ borderColor: "var(--border)" }}
                             >
                               <span className="h-1 w-1 shrink-0 rounded-full" style={{ backgroundColor: chapterDot }} />
                               <span className={`min-w-0 flex-1 truncate font-medium ${isLocked ? "opacity-50" : ""}`}>
@@ -281,19 +281,19 @@ export function StudentCoursesDialog({
       <DialogTrigger
         type="button"
         className="inline-flex h-8 items-center rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         课程
       </DialogTrigger>
       <DialogContent className="max-h-[1100px] w-full max-w-[600px] gap-0 overflow-y-auto p-0 sm:max-w-[600px]">
-        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-sm font-semibold">学生课程进度</DialogTitle>
           <DialogDescription className="text-xs">{studentName} 正在学习的课程与课时进度。</DialogDescription>
         </DialogHeader>
 
         {loading && (
           <div className="flex flex-col items-center justify-center gap-3 py-16 text-sm">
-            <Loader2 className="animate-spin" size={18} style={{ color: "var(--app-muted-text)" }} />
+            <Loader2 className="animate-spin" size={18} style={{ color: "var(--foreground-muted)" }} />
             <p className="app-muted-text text-xs">正在加载课程进度…</p>
           </div>
         )}
@@ -339,7 +339,7 @@ export function StudentCoursesDialog({
                           <span className="app-muted-text font-medium">{groupCoursesList.length} 门课</span>
                         </button>
                         {!collapsed && (
-                          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--app-border)" }}>
+                          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--border)" }}>
                             {groupCoursesList.map((course) => (
                               <CourseRow
                                 key={course.courseId}

@@ -63,14 +63,14 @@ export function UniversityTargetForm({
       action={addUniversityTargetFromFormAction}
       className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-6 xl:items-end"
     >
-      <label className="text-xs font-black xl:col-span-2">
+      <label className="text-xs font-bold xl:col-span-2">
         选择大学
         <select
           name="universityId"
           required
           value={universityId}
           onChange={(event) => handleUniversityChange(event.target.value)}
-          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
+          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         >
           <option value="" disabled>请选择学校库中的大学</option>
           {universities.map((university) => (
@@ -81,13 +81,13 @@ export function UniversityTargetForm({
         </select>
       </label>
 
-      <label className="text-xs font-black">
+      <label className="text-xs font-bold">
         申请阶段
         <select
           name="admissionTrack"
           value={admissionTrack}
           onChange={(event) => setAdmissionTrack(event.target.value as AdmissionStage)}
-          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
+          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         >
           {availableStages.map(([value, label]) => (
             <option key={value} value={value}>{label}</option>
@@ -95,31 +95,31 @@ export function UniversityTargetForm({
         </select>
       </label>
 
-      <label className="text-xs font-black">
+      <label className="text-xs font-bold">
         申请专业
         <input
           name="programName"
           maxLength={120}
           placeholder="可以稍后补充"
-          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
+          className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
         />
       </label>
 
-      <div className="text-xs font-black">
+      <div className="text-xs font-bold">
         截止日期
         <div className="app-input mt-2 flex min-h-12 items-center gap-2 rounded-xl border px-3 py-3 text-sm">
-          <CalendarDays size={15} className="shrink-0 app-muted-text" />
+          <CalendarDays size={15} className="shrink-0 app-muted-text" aria-hidden="true" />
           <span>{!selectedUniversity ? "选择学校后显示" : deadline ? formatDeadline(deadline) : "暂未公布"}</span>
         </div>
       </div>
 
       <div className="flex gap-2">
-        <label className="min-w-20 flex-1 text-xs font-black">
+        <label className="min-w-20 flex-1 text-xs font-bold">
           优先级
           <select
             name="priority"
             defaultValue="3"
-            className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm outline-none"
+            className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             {[5, 4, 3, 2, 1].map((value) => (
               <option key={value} value={value}>{value} 级</option>
@@ -129,10 +129,10 @@ export function UniversityTargetForm({
         <button
           disabled={universities.length === 0 || availableStages.length === 0}
           type="submit"
-          className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-black text-white disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          className="mt-6 inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-3 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:opacity-50"
+          style={{ backgroundColor: "var(--primary)" }}
         >
-          <Plus size={14} /> 添加
+          <Plus size={14} aria-hidden="true" /> 添加
         </button>
       </div>
     </form>

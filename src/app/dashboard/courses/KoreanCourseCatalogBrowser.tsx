@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+
 export type KoreanCourseLearningStatus =
   | "preparing"
   | "not_started"
@@ -64,30 +67,30 @@ const STATUS_PRESENTATION: Record<
 > = {
   preparing: {
     label: "内容准备中",
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
   not_started: {
     label: "未开始",
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   in_progress: {
     label: "进行中",
-    color: "var(--app-accent-strong)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary-hover)",
+    soft: "var(--accent)",
   },
   completed: {
     label: "已完成",
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
 };
 
 function progressColor(progressPercent: number) {
-  if (progressPercent >= 100) return "var(--app-success)";
-  if (progressPercent > 0) return "var(--app-accent)";
-  return "var(--app-muted)";
+  if (progressPercent >= 100) return "var(--status-success)";
+  if (progressPercent > 0) return "var(--primary)";
+  return "var(--foreground-muted)";
 }
 
 function normalizeSearch(value: string) {
@@ -145,8 +148,8 @@ export function KoreanCourseCatalogBrowser({
               <a
                 key={section.id}
                 href={`#course-category-${section.slug}`}
-                className="inline-flex min-h-11 flex-1 basis-40 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors hover:bg-[var(--app-accent-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
-                style={{ color: "var(--app-accent-strong)" }}
+                className="inline-flex min-h-11 flex-1 basis-40 items-center justify-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-colors hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+                style={{ color: "var(--primary-hover)" }}
               >
                 <CategoryIcon size={17} aria-hidden="true" />
                 <span>{section.title}</span>
@@ -156,41 +159,42 @@ export function KoreanCourseCatalogBrowser({
           })}
         </nav>
 
-        <div className="mt-3 grid gap-3 border-t border-[var(--app-border-soft)] pt-3 lg:grid-cols-[minmax(240px,0.8fr)_minmax(0,1.2fr)_auto] lg:items-center">
-          <label className="app-input flex min-h-11 items-center gap-2 rounded-xl border px-3 focus-within:ring-2 focus-within:ring-[var(--app-accent)]">
-            <Search size={17} className="shrink-0 text-[var(--app-muted)]" aria-hidden="true" />
+        <div className="mt-3 grid gap-3 border-t border-[var(--border-subtle)] pt-3 lg:grid-cols-[minmax(240px,0.8fr)_minmax(0,1.2fr)_auto] lg:items-center">
+          <label className="app-input flex min-h-11 items-center gap-2 rounded-xl border px-3 focus-within:ring-2 focus-within:ring-[var(--primary)]">
+            <Search size={17} className="shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
             <span className="sr-only">搜索韩语课程</span>
-            <input
+            <Input
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
               placeholder="搜索课程名称或简介"
-              className="min-w-0 flex-1 bg-transparent text-base outline-none placeholder:text-[var(--app-muted)] lg:text-sm"
+              className="h-auto min-w-0 flex-1 border-0 bg-transparent px-0 py-0 text-base shadow-none placeholder:text-[var(--foreground-muted)] focus-visible:ring-0 lg:text-sm"
             />
           </label>
 
           <div
-            className="grid grid-cols-2 gap-1 rounded-xl border border-[var(--app-border-soft)] bg-[var(--app-soft-bg)] p-1 sm:grid-cols-5"
+            className="grid grid-cols-2 gap-1 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1 sm:grid-cols-5"
             role="group"
             aria-label="按学习状态筛选课程"
           >
             {FILTERS.map((filter) => {
               const active = status === filter.value;
               return (
-                <button
+                <Button
                   key={filter.value}
                   type="button"
+                  variant="ghost"
                   onClick={() => setStatus(filter.value)}
                   aria-pressed={active}
-                  className="min-h-10 cursor-pointer rounded-lg px-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                  className="min-h-10 cursor-pointer rounded-lg px-2 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                   style={{
-                    color: active ? "var(--app-accent-strong)" : "var(--app-muted)",
-                    backgroundColor: active ? "var(--app-card-bg)" : "transparent",
-                    boxShadow: active ? "0 1px 4px rgba(30, 45, 64, 0.08)" : "none",
+                    color: active ? "var(--primary-hover)" : "var(--foreground-muted)",
+                    backgroundColor: active ? "var(--card)" : "transparent",
+                    boxShadow: active ? "var(--shadow-surface)" : "none",
                   }}
                 >
                   {filter.label}
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -201,7 +205,7 @@ export function KoreanCourseCatalogBrowser({
         </div>
       </section>
 
-      <main aria-labelledby="korean-course-catalog-title" className="space-y-8">
+      <div aria-labelledby="korean-course-catalog-title" className="space-y-8">
         {visibleSections.map((section) => {
           const CategoryIcon = CATEGORY_ICONS[section.slug] ?? BookOpen;
           const sectionTitleId = `course-category-title-${section.slug}`;
@@ -216,17 +220,17 @@ export function KoreanCourseCatalogBrowser({
               <div
                 className="relative mb-4 overflow-hidden rounded-2xl border p-4 sm:p-5"
                 style={{
-                  borderColor: "var(--app-border)",
-                  background: "linear-gradient(135deg, var(--app-card-bg), var(--app-accent-soft))",
+                  borderColor: "var(--border)",
+                  background: "linear-gradient(135deg, var(--card), var(--accent))",
                 }}
               >
                 <span
-                  className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-[var(--app-secondary-soft)] opacity-50 blur-2xl"
+                  className="pointer-events-none absolute -right-10 -top-16 h-40 w-40 rounded-full bg-[var(--support-surface)] opacity-50 blur-2xl"
                   aria-hidden="true"
                 />
                 <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-start gap-3">
-                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--app-accent-soft)] text-[var(--app-accent-strong)]">
+                    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary-hover)]">
                       <CategoryIcon size={21} aria-hidden="true" />
                     </span>
                     <div className="min-w-0">
@@ -260,10 +264,10 @@ export function KoreanCourseCatalogBrowser({
                   return (
                     <article
                       key={course.id}
-                      className="app-card group flex h-full min-h-[348px] flex-col overflow-hidden rounded-2xl border p-5 transition-[border-color,box-shadow] hover:border-[var(--app-accent)] hover:shadow-md"
+                      className="app-card group flex h-full min-h-[348px] flex-col overflow-hidden rounded-2xl border p-5 transition-[border-color,box-shadow] hover:border-[var(--primary)] hover:shadow-md"
                     >
                       <div className="flex items-start justify-between gap-3">
-                        <span className="inline-flex min-h-8 items-center rounded-full bg-[var(--app-soft-bg)] px-3 text-xs font-semibold tabular-nums text-[var(--app-text-soft)]">
+                        <span className="inline-flex min-h-8 items-center rounded-full bg-[var(--surface-soft)] px-3 text-xs font-semibold tabular-nums text-[var(--foreground-secondary)]">
                           第 {course.sequence} 课
                         </span>
                         <span
@@ -290,8 +294,8 @@ export function KoreanCourseCatalogBrowser({
 
                       <div className="mt-auto pt-5">
                         {course.learningStatus === "preparing" ? (
-                          <div className="rounded-xl border border-dashed border-[var(--app-warm)] bg-[var(--app-warm-soft)] p-3">
-                            <p className="text-xs font-semibold text-[var(--app-warm)]">尚未发布可学习课时</p>
+                          <div className="rounded-xl border border-dashed border-[var(--status-warning)] bg-[var(--status-warning-surface)] p-3">
+                            <p className="text-xs font-semibold text-[var(--status-warning)]">尚未发布可学习课时</p>
                             <p className="app-muted-text mt-1 text-xs font-medium">课程介绍可以查看，正式内容发布后即可开始。</p>
                           </div>
                         ) : (
@@ -303,7 +307,7 @@ export function KoreanCourseCatalogBrowser({
                               </strong>
                             </div>
                             <div
-                              className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
+                              className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--surface-soft)]"
                               role="progressbar"
                               aria-label={`${course.title}学习进度`}
                               aria-valuemin={0}
@@ -323,7 +327,7 @@ export function KoreanCourseCatalogBrowser({
 
                         <Link
                           href={course.href}
-                          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--app-accent)] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2"
+                          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
                           aria-label={`${buttonLabel}：${course.title}`}
                         >
                           <PlayCircle size={17} aria-hidden="true" />
@@ -341,22 +345,23 @@ export function KoreanCourseCatalogBrowser({
 
         {visibleCourseCount === 0 && (
           <section className="app-empty-state flex min-h-56 flex-col items-center justify-center rounded-2xl border border-dashed p-6 text-center">
-            <Search size={28} className="text-[var(--app-muted)]" aria-hidden="true" />
+            <Search size={28} className="text-[var(--foreground-muted)]" aria-hidden="true" />
             <h2 className="mt-3 text-base font-bold">没有找到符合条件的课程</h2>
             <p className="app-muted-text mt-1 text-sm font-medium">更换关键词或学习状态后再试。</p>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => {
                 setSearch("");
                 setStatus("all");
               }}
-              className="mt-4 min-h-11 cursor-pointer rounded-xl bg-[var(--app-accent-soft)] px-4 text-sm font-semibold text-[var(--app-accent-strong)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+              className="mt-4 min-h-11 cursor-pointer rounded-xl bg-[var(--accent)] px-4 text-sm font-semibold text-[var(--primary-hover)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             >
               清除筛选
-            </button>
+            </Button>
           </section>
         )}
-      </main>
+      </div>
     </>
   );
 }

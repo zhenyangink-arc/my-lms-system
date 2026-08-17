@@ -77,7 +77,7 @@ export function CourseCoverUploadField({
       <input type="hidden" name="cover_object_key" value={objectKey} />
       <div
         className="relative flex aspect-[16/8] items-center justify-center overflow-hidden rounded-[7px] border"
-        style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
       >
         {previewUrl ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -92,9 +92,9 @@ export function CourseCoverUploadField({
           htmlFor={inputId}
           className="absolute inset-x-2 bottom-2 flex cursor-pointer items-center justify-center gap-1.5 rounded-[6px] border px-3 py-2 text-[12px] font-medium backdrop-blur"
           style={{
-            color: "var(--app-text)",
-            borderColor: "var(--app-border)",
-            backgroundColor: "color-mix(in srgb, var(--app-card-bg) 88%, transparent)",
+            color: "var(--foreground)",
+            borderColor: "var(--border)",
+            backgroundColor: "color-mix(in srgb, var(--card) 88%, transparent)",
           }}
         >
           {status === "uploading" ? (
@@ -117,7 +117,7 @@ export function CourseCoverUploadField({
       </div>
       <p
         className="text-[11px] leading-5"
-        style={{ color: status === "error" ? "var(--app-warm)" : "var(--app-muted)" }}
+        style={{ color: status === "error" ? "var(--status-warning)" : "var(--foreground-muted)" }}
       >
         {message || "支持常见图片格式，最大 5 兆；建议使用 16:9 横图。"}
       </p>

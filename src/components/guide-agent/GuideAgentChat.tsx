@@ -595,8 +595,8 @@ export function GuideAgentChat({
           }}
           className="app-glass-card inline-flex shrink-0 items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight transition hover:-translate-y-0.5 sm:px-4 sm:text-lg"
           style={{
-            color: isOpen ? "var(--app-accent-strong)" : "var(--app-text)",
-            borderColor: isOpen ? "var(--app-accent)" : undefined,
+            color: isOpen ? "var(--primary-hover)" : "var(--foreground)",
+            borderColor: isOpen ? "var(--primary)" : undefined,
           }}
         >
           <span className="relative">
@@ -604,8 +604,8 @@ export function GuideAgentChat({
             <span
               className="absolute -right-1 -top-1 h-2 w-2 rounded-full ring-2"
               style={{
-                backgroundColor: "var(--app-success)",
-                boxShadow: "0 0 0 2px var(--app-card-bg)",
+                backgroundColor: "var(--status-success)",
+                boxShadow: "0 0 0 2px var(--card)",
               }}
             />
           </span>
@@ -620,30 +620,30 @@ export function GuideAgentChat({
           aria-label="智能学习助手对话"
           className={`${triggerVariant === "dashboard" ? "student-system-floating-layer " : ""}fixed inset-x-3 bottom-36 z-[90] flex h-[min(620px,calc(100dvh-10rem))] flex-col overflow-hidden rounded-[20px] border shadow-[0_24px_70px_rgba(15,23,42,0.22)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-3 sm:inset-x-auto sm:right-6 sm:w-[390px] md:bottom-24`}
           style={{
-            color: "var(--app-text)",
-            borderColor: "var(--app-border)",
+            color: "var(--foreground)",
+            borderColor: "var(--border)",
             backgroundColor:
-              "color-mix(in srgb, var(--app-card-bg) 96%, transparent)",
+              "color-mix(in srgb, var(--card) 96%, transparent)",
           }}
         >
           <header
             className="relative overflow-hidden border-b px-4 py-4"
             style={{
-              borderColor: "var(--app-border-soft)",
+              borderColor: "var(--border-subtle)",
               background:
-                "linear-gradient(135deg, var(--app-accent-soft), var(--app-hero-end), var(--app-card-bg))",
+                "linear-gradient(135deg, var(--accent), var(--accent), var(--card))",
             }}
           >
             <div
               className="pointer-events-none absolute -right-6 -top-8 h-24 w-24 rounded-full opacity-50 blur-2xl"
-              style={{ backgroundColor: "var(--app-secondary-soft)" }}
+              style={{ backgroundColor: "var(--support-surface)" }}
             />
             <div className="relative flex items-center gap-3">
               <span
                 className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+                    "linear-gradient(135deg, var(--primary-hover), var(--primary))",
                 }}
               >
                 <Bot size={22} aria-hidden="true" />
@@ -653,14 +653,14 @@ export function GuideAgentChat({
                   Guide Agent
                   <Sparkles
                     size={14}
-                    style={{ color: "var(--app-warm)" }}
+                    style={{ color: "var(--status-warning)" }}
                     aria-hidden="true"
                   />
                 </span>
                 <span className="mt-0.5 flex items-center gap-1.5 text-xs font-semibold app-muted-text">
                   <span
                     className="h-2 w-2 rounded-full"
-                    style={{ backgroundColor: "var(--app-success)" }}
+                    style={{ backgroundColor: "var(--status-success)" }}
                   />
                   在线 · 你的专属学习向导
                 </span>
@@ -671,9 +671,9 @@ export function GuideAgentChat({
                 onClick={() => setIsOpen(false)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition hover:scale-105"
                 style={{
-                  color: "var(--app-muted)",
+                  color: "var(--foreground-muted)",
                   backgroundColor:
-                    "color-mix(in srgb, var(--app-card-bg) 72%, transparent)",
+                    "color-mix(in srgb, var(--card) 72%, transparent)",
                 }}
               >
                 <X size={17} aria-hidden="true" />
@@ -699,8 +699,8 @@ export function GuideAgentChat({
                       <span
                         className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl"
                         style={{
-                          color: "var(--app-accent-strong)",
-                          backgroundColor: "var(--app-accent-soft)",
+                          color: "var(--primary-hover)",
+                          backgroundColor: "var(--accent)",
                         }}
                       >
                         <Bot size={14} aria-hidden="true" />
@@ -716,7 +716,7 @@ export function GuideAgentChat({
                         isUser
                           ? {
                               background:
-                                "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+                                "linear-gradient(135deg, var(--primary-hover), var(--primary))",
                             }
                           : message.isError
                             ? {
@@ -724,12 +724,12 @@ export function GuideAgentChat({
                                 borderColor:
                                   "color-mix(in srgb, var(--destructive) 24%, transparent)",
                                 backgroundColor:
-                                  "color-mix(in srgb, var(--destructive) 7%, var(--app-card-bg))",
+                                  "color-mix(in srgb, var(--destructive) 7%, var(--card))",
                               }
                             : {
-                                color: "var(--app-text-soft)",
-                                borderColor: "var(--app-border-soft)",
-                                backgroundColor: "var(--app-soft-bg)",
+                                color: "var(--foreground-secondary)",
+                                borderColor: "var(--border-subtle)",
+                                backgroundColor: "var(--surface-soft)",
                               }
                       }
                     >
@@ -744,8 +744,8 @@ export function GuideAgentChat({
                   <span
                     className="mb-1 flex h-7 w-7 shrink-0 items-center justify-center rounded-xl"
                     style={{
-                      color: "var(--app-accent-strong)",
-                      backgroundColor: "var(--app-accent-soft)",
+                      color: "var(--primary-hover)",
+                      backgroundColor: "var(--accent)",
                     }}
                   >
                     <Bot size={14} aria-hidden="true" />
@@ -753,8 +753,8 @@ export function GuideAgentChat({
                   <div
                     className="flex items-center gap-2 rounded-[18px] rounded-bl-md border px-3.5 py-2.5 text-sm font-semibold app-muted-text"
                     style={{
-                      borderColor: "var(--app-border-soft)",
-                      backgroundColor: "var(--app-soft-bg)",
+                      borderColor: "var(--border-subtle)",
+                      backgroundColor: "var(--surface-soft)",
                     }}
                   >
                     <LoaderCircle
@@ -774,19 +774,19 @@ export function GuideAgentChat({
             onSubmit={handleSubmit}
             className="border-t p-3.5"
             style={{
-              borderColor: "var(--app-border-soft)",
+              borderColor: "var(--border-subtle)",
               backgroundColor:
-                "color-mix(in srgb, var(--app-card-bg) 94%, transparent)",
+                "color-mix(in srgb, var(--card) 94%, transparent)",
             }}
           >
             <div
               className="flex items-end gap-2 rounded-2xl border p-2 transition focus-within:ring-2"
               style={{
-                borderColor: "var(--app-border)",
-                backgroundColor: "var(--app-input-bg)",
+                borderColor: "var(--border)",
+                backgroundColor: "var(--card)",
                 boxShadow: loading
                   ? "none"
-                  : "0 0 0 1px color-mix(in srgb, var(--app-accent) 8%, transparent)",
+                  : "0 0 0 1px color-mix(in srgb, var(--primary) 8%, transparent)",
               }}
             >
               <textarea
@@ -799,7 +799,7 @@ export function GuideAgentChat({
                 maxLength={2000}
                 aria-label="输入要咨询的问题"
                 placeholder={loading ? "助手正在思考…" : "问问课程、进度或学习建议…"}
-                className="max-h-28 min-h-11 min-w-0 flex-1 resize-none bg-transparent px-1.5 py-1 text-sm leading-5 outline-none placeholder:text-[color:var(--app-muted-light)] disabled:cursor-not-allowed disabled:opacity-60"
+                className="max-h-28 min-h-11 min-w-0 flex-1 resize-none bg-transparent px-1.5 py-1 text-sm leading-5 outline-none placeholder:text-[color:var(--foreground-subtle)] disabled:cursor-not-allowed disabled:opacity-60"
               />
               <button
                 type="submit"
@@ -808,7 +808,7 @@ export function GuideAgentChat({
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-white shadow-sm transition hover:scale-105 disabled:cursor-not-allowed disabled:opacity-45"
                 style={{
                   background:
-                    "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+                    "linear-gradient(135deg, var(--primary-hover), var(--primary))",
                 }}
               >
                 {loading ? (
@@ -870,8 +870,8 @@ export function GuideAgentChat({
               }`}
               style={{
                 background: isOpen
-                  ? "linear-gradient(135deg, var(--app-secondary), var(--app-warm))"
-                  : "linear-gradient(135deg, var(--app-accent-strong), var(--app-accent))",
+                  ? "linear-gradient(135deg, var(--support), var(--status-warning))"
+                  : "linear-gradient(135deg, var(--primary-hover), var(--primary))",
               }}
             >
               {isOpen ? (
@@ -891,7 +891,7 @@ export function GuideAgentChat({
                 setIsOpen(false);
                 setIsFloatingVisible(false);
               }}
-              className="absolute -right-1.5 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/80 bg-white text-slate-500 shadow-md transition hover:scale-105 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2"
+              className="absolute -right-1.5 -top-2 z-10 flex h-7 w-7 items-center justify-center rounded-full border border-white/80 bg-white text-slate-500 shadow-md transition hover:scale-105 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
             >
               <X size={13} aria-hidden="true" />
             </button>

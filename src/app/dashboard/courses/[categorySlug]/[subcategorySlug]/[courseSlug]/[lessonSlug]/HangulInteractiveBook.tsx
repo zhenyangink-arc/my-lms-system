@@ -691,45 +691,45 @@ export function HangulInteractiveBook({
     <div
       id="guide-target-beginner-course"
       ref={bookRef}
-      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col overflow-hidden bg-[#f3efe6] text-[#3f403b] transition-[right] duration-300 ${
+      className={`fixed inset-y-0 left-0 z-50 flex h-[100dvh] flex-col overflow-hidden bg-[var(--status-warning-surface)] text-[var(--foreground)] transition-[right] duration-300 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2 [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-[var(--ring)] [&_a:focus-visible]:ring-offset-2 [&_input:focus-visible]:outline-none [&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-[var(--ring)] [&_input:focus-visible]:ring-offset-2 ${
         liveMode?.sidePanelOpen ? "right-72" : "right-0 w-full"
       }`}
     >
-      <header className="relative z-40 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[#e4ddd0] bg-[#fffdf8]/95 px-3 py-2.5 shadow-[0_1px_0_rgba(89,72,47,0.04)] backdrop-blur-xl sm:px-5">
+      <header className="relative z-40 flex min-h-16 shrink-0 items-center justify-between gap-3 border-b border-[var(--border)] bg-[var(--card)]/95 px-3 py-2.5 shadow-[0_1px_0_var(--border)] backdrop-blur-xl sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setIsExitDialogOpen(true)}
             aria-label="返回课程"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#e4ddd0] bg-[#fffdf8] text-[#626159] shadow-sm transition hover:-translate-x-0.5 hover:border-[#cfc3b2] hover:bg-[#f7f3eb]"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)] shadow-sm transition hover:-translate-x-0.5 hover:border-[var(--border)] hover:bg-[var(--status-warning-surface)]"
           >
-            <ArrowLeft size={17} />
+            <ArrowLeft aria-hidden="true" size={17} />
           </button>
           <button
             type="button"
             onClick={() => setIsMenuOpen((value) => !value)}
             aria-label="打开章节目录"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[#e4ddd0] text-[#6f6b62] transition hover:bg-[#f7f3eb] lg:hidden"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:bg-[var(--status-warning-surface)] lg:hidden"
           >
-            <Menu size={17} />
+            <Menu aria-hidden="true" size={17} />
           </button>
           <button
             type="button"
             onClick={() => setIsSidebarCollapsed((current) => !current)}
             aria-label={isSidebarCollapsed ? "展开章节目录" : "收起章节目录"}
-            className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[#6f6b62] transition hover:bg-[#f7f3eb] lg:flex"
+            className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[var(--foreground-secondary)] transition hover:bg-[var(--status-warning-surface)] lg:flex"
           >
-            {isSidebarCollapsed ? <PanelLeftOpen size={18} /> : <PanelLeftClose size={18} />}
+            {isSidebarCollapsed ? <PanelLeftOpen aria-hidden="true" size={18} /> : <PanelLeftClose aria-hidden="true" size={18} />}
           </button>
-          <span className="hidden h-6 w-px bg-[#e4ddd0] sm:block" />
+          <span className="hidden h-6 w-px bg-[var(--status-warning-surface)] sm:block" />
           <div className="min-w-0">
             <div className="flex min-w-0 items-center gap-2">
-              <p className="truncate text-sm font-black text-[#343833] sm:text-[15px]">韩语字母入门</p>
-              <span className="hidden rounded-full bg-[#f1eadf] px-2 py-0.5 text-[10px] font-black text-[#80654e] md:inline">
+              <p className="truncate text-sm font-bold text-[var(--foreground)] sm:text-[15px]">韩语字母入门</p>
+              <span className="hidden rounded-full bg-[var(--status-warning-surface)] px-2 py-0.5 text-[10px] font-bold text-[var(--status-warning)] md:inline">
                 第 {chapterIndex + 1} 章
               </span>
             </div>
-            <p className="mt-0.5 hidden max-w-[26rem] truncate text-[11px] font-bold text-[#6f6b62] sm:block">
+            <p className="mt-0.5 hidden max-w-[26rem] truncate text-[11px] font-bold text-[var(--foreground-secondary)] sm:block">
               {chapter.title} · {chapter.koreanTitle}
             </p>
           </div>
@@ -738,21 +738,21 @@ export function HangulInteractiveBook({
         <div className="flex min-w-0 flex-1 items-center justify-end gap-1.5 sm:gap-2">
           {liveMode && (
             <span
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-3 py-1.5 text-[11px] font-black text-white shadow-sm"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success)] px-3 py-1.5 text-[11px] font-bold text-white shadow-sm"
               title="实时伴学课堂"
             >
-              <GraduationCap size={13} />
+              <GraduationCap aria-hidden="true" size={13} />
               伴学课堂
             </span>
           )}
           <div className="flex min-w-0 items-center gap-1.5 overflow-x-auto" aria-label="学习工具">
-            <span className="flex shrink-0 items-center gap-1 text-[11px] font-black text-[#526b60]">
-              <Settings2 size={14} />
+            <span className="flex shrink-0 items-center gap-1 text-[11px] font-bold text-[var(--status-success)]">
+              <Settings2 aria-hidden="true" size={14} />
               学习工具
             </span>
-            <div className="flex shrink-0 items-center gap-1 rounded-xl bg-[#f3f7f5] p-1" title="选择速度后会播放韩语示例；电子书内扬声器发音按此速度播放">
-              <Volume2 size={13} className="ml-1 text-[#526b60]" />
-              <span className="text-[10px] font-black text-[#526b60]">发音速度</span>
+            <div className="flex shrink-0 items-center gap-1 rounded-xl bg-[var(--status-success-surface)] p-1" title="选择速度后会播放韩语示例；电子书内扬声器发音按此速度播放">
+              <Volume2 aria-hidden="true" size={13} className="ml-1 text-[var(--status-success)]" />
+              <span className="text-[10px] font-bold text-[var(--status-success)]">发音速度</span>
               {[
                 { label: "慢速", value: 0.8 },
                 { label: "标准", value: 1 },
@@ -767,10 +767,10 @@ export function HangulInteractiveBook({
                   }}
                   aria-pressed={speechRate === option.value}
                   title={`切换到${option.label}并试听`}
-                  className={`rounded-lg px-2 py-1.5 text-[10px] font-black transition ${
+                  className={`rounded-lg px-2 py-1.5 text-[10px] font-bold transition ${
                     speechRate === option.value
-                      ? "bg-[#238777] text-white shadow-sm"
-                      : "text-[#6f6b62] hover:bg-white hover:text-[#238777]"
+                      ? "bg-[var(--status-success)] text-white shadow-sm"
+                      : "text-[var(--foreground-secondary)] hover:bg-white hover:text-[var(--status-success)]"
                   }`}
                 >
                   {option.label}
@@ -780,36 +780,36 @@ export function HangulInteractiveBook({
             <button
               type="button"
               onClick={() => setIsReferenceOpen(true)}
-              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-[#e4ddd0] bg-white px-2.5 text-[11px] font-black text-[#526b60] transition hover:border-[#b9d4ca] hover:bg-[#f3f9f6] hover:text-[#238777]"
+              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-[var(--border)] bg-white px-2.5 text-[11px] font-bold text-[var(--status-success)] transition hover:border-[var(--border)] hover:bg-[var(--status-success-surface)] hover:text-[var(--status-success)]"
             >
-              <Search size={14} />
+              <Search aria-hidden="true" size={14} />
               字母速查
             </button>
             <button
               type="button"
               onClick={toggleBookmark}
               aria-pressed={isBookmarked}
-              className={`inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border px-2.5 text-[11px] font-black transition ${
+              className={`inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border px-2.5 text-[11px] font-bold transition ${
                 isBookmarked
-                  ? "border-[#efd5af] bg-[#fff6e9] text-[#b56e32] hover:bg-[#ffecd2]"
-                  : "border-[#e4ddd0] bg-white text-[#526b60] hover:border-[#efd5af] hover:bg-[#fff8ee] hover:text-[#b56e32]"
+                  ? "border-[var(--border)] bg-[var(--status-warning-surface)] text-[var(--status-warning)] hover:bg-[var(--status-warning-surface)]"
+                  : "border-[var(--border)] bg-white text-[var(--status-success)] hover:border-[var(--border)] hover:bg-[var(--card)] hover:text-[var(--status-warning)]"
               }`}
             >
-              {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+              {isBookmarked ? <BookmarkCheck aria-hidden="true" size={14} /> : <Bookmark aria-hidden="true" size={14} />}
               {isBookmarked ? "已加书签" : "加入书签"}
             </button>
             <button
               type="button"
               onClick={() => setIsNotesOpen(true)}
-              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-[#e4ddd0] bg-white px-2.5 text-[11px] font-black text-[#526b60] transition hover:border-[#b9d4ca] hover:bg-[#f3f9f6] hover:text-[#238777]"
+              className="inline-flex h-9 shrink-0 items-center gap-1 rounded-xl border border-[var(--border)] bg-white px-2.5 text-[11px] font-bold text-[var(--status-success)] transition hover:border-[var(--border)] hover:bg-[var(--status-success-surface)] hover:text-[var(--status-success)]"
             >
-              <NotebookPen size={14} />
+              <NotebookPen aria-hidden="true" size={14} />
               本章笔记
             </button>
           </div>
-          <div className="hidden min-w-32 items-center justify-between gap-3 rounded-2xl bg-[#f6f2e9] px-3 py-2 md:flex">
-            <span className="text-[10px] font-black text-[#6f6b62]">本章阅读</span>
-            <span className="tabular-nums text-xs font-black text-[#80654e]">
+          <div className="hidden min-w-32 items-center justify-between gap-3 rounded-2xl bg-[var(--status-warning-surface)] px-3 py-2 md:flex">
+            <span className="text-[10px] font-bold text-[var(--foreground-secondary)]">本章阅读</span>
+            <span className="tabular-nums text-xs font-bold text-[var(--status-warning)]">
               {formatReadingTime(currentReadingSeconds)}
             </span>
           </div>
@@ -819,28 +819,28 @@ export function HangulInteractiveBook({
             onClick={toggleBookFullscreen}
             aria-label={isBookFullscreen ? "退出电子书全屏" : "电子书全屏"}
             aria-pressed={isBookFullscreen}
-            className="inline-flex h-10 items-center gap-2 rounded-xl bg-[#173f4a] px-3 text-xs font-black text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[#205463] hover:shadow-md"
+            className="inline-flex h-10 items-center gap-2 rounded-xl bg-[var(--primary)] px-3 text-xs font-bold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-[var(--primary)] hover:shadow-md"
           >
-            {isBookFullscreen ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
+            {isBookFullscreen ? <Minimize2 aria-hidden="true" size={17} /> : <Maximize2 aria-hidden="true" size={17} />}
             <span className="hidden lg:inline">{isBookFullscreen ? "退出专注" : "专注阅读"}</span>
           </button>
         </div>
       </header>
 
       {liveMode?.participantBar && (
-        <div className="shrink-0 border-b border-[#e4ddd0] bg-[#faf7f0]/95 px-4 py-1.5 sm:px-5">
+        <div className="shrink-0 border-b border-[var(--border)] bg-[var(--status-warning-surface)]/95 px-4 py-1.5 sm:px-5">
           {liveMode.participantBar}
         </div>
       )}
 
       <div className="relative flex min-h-0 flex-1">
         <aside
-          className={`absolute inset-y-0 left-0 z-30 flex w-72 shrink-0 flex-col border-r border-[#e4ddd0] bg-[#f7f3eb]/95 p-4 shadow-xl backdrop-blur-xl transition-[transform,width,padding] duration-300 lg:static lg:translate-x-0 lg:shadow-none ${
+          className={`absolute inset-y-0 left-0 z-30 flex w-72 shrink-0 flex-col border-r border-[var(--border)] bg-[var(--status-warning-surface)]/95 p-4 shadow-xl backdrop-blur-xl transition-[transform,width,padding] duration-300 lg:static lg:translate-x-0 lg:shadow-none ${
             isMenuOpen ? "translate-x-0" : "-translate-x-full"
           } ${isSidebarCollapsed ? "lg:w-[76px] lg:p-3" : "lg:w-64 lg:p-4"}`}
         >
-          <div className={`mb-4 flex min-h-9 items-center text-sm font-black text-[#484a45] ${isSidebarCollapsed ? "justify-center" : "gap-2 px-2"}`}>
-            <LibraryBig size={17} className="shrink-0" />
+          <div className={`mb-4 flex min-h-9 items-center text-sm font-bold text-[var(--foreground-secondary)] ${isSidebarCollapsed ? "justify-center" : "gap-2 px-2"}`}>
+            <LibraryBig aria-hidden="true" size={17} className="shrink-0" />
             {!isSidebarCollapsed && <span>学习目录</span>}
           </div>
           <nav className="space-y-2" aria-label="章节目录">
@@ -873,30 +873,30 @@ export function HangulInteractiveBook({
                           : "p-3"
                     } ${
                       active
-                        ? "bg-[#fffdf8] shadow-[0_8px_24px_rgba(89,72,47,0.08)] ring-1 ring-[#ddd3c5]"
+                        ? "bg-[var(--card)] shadow-[0_8px_24px_var(--border)] ring-1 ring-[var(--border)]"
                         : unlocked
                           ? "hover:bg-white/70"
-                          : "cursor-not-allowed border border-[#ded6ca] bg-[#eee9e0]/75"
+                          : "cursor-not-allowed border border-[var(--border)] bg-[var(--status-warning-surface)]/75"
                     }`}
                   >
                     <span className={`flex items-start ${isSidebarCollapsed ? "justify-center" : "gap-3"}`}>
-                      <span className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-black transition ${
-                        active ? "bg-[#238777] text-white" : "bg-[#e8e2d8] text-[#6f6b62]"
+                      <span className={`relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold transition ${
+                        active ? "bg-[var(--status-success)] text-white" : "bg-[var(--status-warning-surface)] text-[var(--foreground-secondary)]"
                       }`}>
                         {String(index + 1).padStart(2, "0")}
                         {!unlocked && isSidebarCollapsed && (
-                          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[#d8b98f] text-[#654b36] ring-2 ring-[#f7f3eb]">
-                            <Lock size={9} strokeWidth={2.5} />
+                          <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[var(--border)] text-[var(--status-warning)] ring-2 ring-[var(--border)]">
+                            <Lock aria-hidden="true" size={9} strokeWidth={2.5} />
                           </span>
                         )}
                       </span>
                       {!isSidebarCollapsed && (
                         <>
                           <span className="min-w-0 flex-1">
-                            <span className="block text-sm font-black text-[#3f403b]">{item.title}</span>
-                            <span className="mt-1 block text-[11px] font-bold text-[#6f6b62]">{item.koreanTitle}</span>
+                            <span className="block text-sm font-bold text-[var(--foreground)]">{item.title}</span>
+                            <span className="mt-1 block text-[11px] font-bold text-[var(--foreground-secondary)]">{item.koreanTitle}</span>
                             {unlocked && (
-                              <span className="mt-2 block text-[10px] font-black text-[#80654e]">
+                              <span className="mt-2 block text-[10px] font-bold text-[var(--status-warning)]">
                                 {chapterProgress > 0
                                   ? `阅读 ${chapterProgress}%`
                                   : "尚未阅读"}
@@ -904,8 +904,8 @@ export function HangulInteractiveBook({
                             )}
                           </span>
                           {!unlocked && (
-                            <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[#e4d2bb] text-[#76583f] ring-1 ring-[#d6bea0]">
-                              <Lock size={13} strokeWidth={2.4} />
+                            <span className="ml-auto flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-[var(--status-warning-surface)] text-[var(--status-warning)] ring-1 ring-[var(--border)]">
+                              <Lock aria-hidden="true" size={13} strokeWidth={2.4} />
                             </span>
                           )}
                         </>
@@ -918,25 +918,25 @@ export function HangulInteractiveBook({
                       onClick={() => removeBookmark(index)}
                       aria-label={`取消第 ${index + 1} 章书签`}
                       title="点击取消书签"
-                      className={`absolute z-20 flex items-center justify-center rounded-lg border border-[#efd5af] bg-[#fff6e9] text-[#c9803c] shadow-sm transition hover:bg-[#ffecd2] hover:text-[#9f5e29] ${
+                      className={`absolute z-20 flex items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--status-warning-surface)] text-[var(--status-warning)] shadow-sm transition hover:bg-[var(--status-warning-surface)] hover:text-[var(--status-warning)] ${
                         isSidebarCollapsed
                           ? "-bottom-1 -right-1 h-6 w-6"
                           : "right-3 top-3 h-7 w-7"
                       }`}
                     >
-                      <BookmarkCheck size={14} />
+                      <BookmarkCheck aria-hidden="true" size={14} />
                     </button>
                   )}
                   {!unlocked && (
                     <div
                       role="tooltip"
-                      className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-50 w-64 -translate-y-1/2 translate-x-1 rounded-xl border border-[#ded3c3] bg-[#fffdf8] px-3 py-2.5 opacity-0 shadow-[0_14px_38px_rgba(74,61,45,0.18)] transition duration-150 group-hover:translate-x-0 group-hover:opacity-100"
+                      className="pointer-events-none absolute left-[calc(100%+10px)] top-1/2 z-50 w-64 -translate-y-1/2 translate-x-1 rounded-xl border border-[var(--border)] bg-[var(--card)] px-3 py-2.5 opacity-0 shadow-[0_14px_38px_var(--border)] transition duration-150 group-hover:translate-x-0 group-hover:opacity-100"
                     >
-                      <p className="flex items-center gap-1.5 text-[10px] font-black text-[#5d5045]">
-                        <Lock size={11} />
+                      <p className="flex items-center gap-1.5 text-[10px] font-bold text-[var(--status-warning)]">
+                        <Lock aria-hidden="true" size={11} />
                         第 {index + 1} 章尚未解锁
                       </p>
-                      <p className="mt-1 text-[11px] font-bold leading-5 text-[#765f4d]">
+                      <p className="mt-1 text-[11px] font-bold leading-5 text-[var(--status-warning)]">
                         {unlockRequirement}
                       </p>
                     </div>
@@ -946,19 +946,19 @@ export function HangulInteractiveBook({
             })}
           </nav>
           {!isSidebarCollapsed && (
-            <div className="mt-auto rounded-2xl border border-[#ddd6ca] bg-[linear-gradient(145deg,#f1f0e7,#faf7f0)] p-4">
-              <div className="flex items-center justify-between text-[11px] font-black text-[#484a45]">
+            <div className="mt-auto rounded-2xl border border-[var(--border)] bg-[linear-gradient(145deg,var(--status-warning-surface),var(--status-warning-surface))] p-4">
+              <div className="flex items-center justify-between text-[11px] font-bold text-[var(--foreground-secondary)]">
                 <span>本章学习目标</span>
-                <span className="tabular-nums text-[#80654e]">
+                <span className="tabular-nums text-[var(--status-warning)]">
                   {readingTimeTargetReached
                     ? "已达标"
                     : `剩余 ${formatReadingTime(targetTimerSeconds)}`}
                 </span>
               </div>
               <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-white">
-                <div className="h-full rounded-full bg-[#4b9b85]" style={{ width: `${currentTargetTimePercent}%` }} />
+                <div className="h-full rounded-full bg-[var(--status-success)]" style={{ width: `${currentTargetTimePercent}%` }} />
               </div>
-              <p className="mt-2 text-[10px] leading-4 text-[#6f6b62]">
+              <p className="mt-2 text-[10px] leading-4 text-[var(--foreground-secondary)]">
                 连续 60 秒无学习操作会暂停计时；累计有效阅读时间达标后完成本章。
               </p>
             </div>
@@ -970,18 +970,18 @@ export function HangulInteractiveBook({
             type="button"
             aria-label="关闭章节目录"
             onClick={() => setIsMenuOpen(false)}
-            className="absolute inset-0 z-20 bg-[#173f4a]/25 lg:hidden"
+            className="absolute inset-0 z-20 bg-[var(--primary)]/25 lg:hidden"
           />
         )}
 
-        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_20%_0%,rgba(255,253,248,0.96),transparent_36%),radial-gradient(circle_at_100%_100%,rgba(222,211,191,0.68),transparent_42%),linear-gradient(145deg,#f4f0e8,#ede6da)] px-2 py-3 sm:px-4 lg:px-6 lg:py-5">
+        <main className="relative min-w-0 flex-1 overflow-hidden bg-[radial-gradient(circle_at_20%_0%,var(--card),transparent_36%),radial-gradient(circle_at_100%_100%,var(--border),transparent_42%),linear-gradient(145deg,var(--status-warning-surface),var(--status-warning-surface))] px-2 py-3 sm:px-4 lg:px-6 lg:py-5">
           <div aria-hidden="true" className="pointer-events-none absolute -left-20 bottom-8 h-56 w-56 rounded-full border-[28px] border-white/30" />
-          <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#e9dfcf]/55 blur-2xl" />
+          <div aria-hidden="true" className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]/55" />
           <section
             ref={connectEbookElement}
-            className={`relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] items-stretch justify-center overflow-hidden rounded-[26px] border border-[#fffaf0]/90 bg-[#fffaf0]/35 p-1 shadow-[0_28px_80px_rgba(89,72,47,0.13)] ring-1 ring-[#d8cdbc]/45 backdrop-blur-sm transition-[right] duration-300 sm:p-2 ${
+            className={`relative mx-auto flex h-full min-h-0 w-full max-w-[1500px] items-stretch justify-center overflow-hidden rounded-[26px] border border-[var(--border)] bg-[var(--card)] p-1 shadow-lg ring-1 ring-[var(--border)] transition-[right] duration-300 sm:p-2 ${
             isBookFullscreen
-              ? `fixed inset-y-0 left-0 z-[80] h-[100dvh] max-w-none rounded-none border-0 bg-[#101613] p-0 ring-0 ${
+              ? `fixed inset-y-0 left-0 z-[80] h-[100dvh] max-w-none rounded-none border-0 bg-[var(--status-success)] p-0 ring-0 ${
                   liveMode?.sidePanelOpen ? "right-72" : "right-0 w-screen"
                 }`
               : ""
@@ -999,9 +999,9 @@ export function HangulInteractiveBook({
               <button
                 type="button"
                 onClick={() => void toggleBookFullscreen()}
-                className="absolute right-5 top-5 z-[90] inline-flex items-center gap-2 rounded-xl border border-white/20 bg-[#173f4a]/85 px-3 py-2 text-xs font-black text-white shadow-lg backdrop-blur transition hover:bg-[#173f4a]"
+                className="absolute right-5 top-5 z-[90] inline-flex items-center gap-2 rounded-xl border border-white/20 bg-[var(--primary)]/85 px-3 py-2 text-xs font-bold text-white shadow-lg backdrop-blur transition hover:bg-[var(--primary)]"
               >
-                <Minimize2 size={16} />
+                <Minimize2 aria-hidden="true" size={16} />
                 退出专注
               </button>
             )}
@@ -1011,12 +1011,12 @@ export function HangulInteractiveBook({
 
       {isReferenceOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#173f4a]/35 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--primary)]/35 p-4"
           role="presentation"
           onClick={() => setIsReferenceOpen(false)}
         >
           <section
-            className="w-full max-w-6xl rounded-[28px] border border-[#cfe2d9] bg-[#f3faf7] p-7 shadow-2xl sm:p-10"
+            className="w-full max-w-6xl rounded-[28px] border border-[var(--border)] bg-[var(--card)] p-7 shadow-2xl sm:p-10"
             role="dialog"
             aria-modal="true"
             aria-labelledby="hangul-reference-title"
@@ -1024,14 +1024,14 @@ export function HangulInteractiveBook({
           >
             <div className="flex items-center justify-between">
               <div>
-                <h2 id="hangul-reference-title" className="text-xl font-black text-[#294f43]">韩文字母速查表</h2>
-                <p className="mt-2 text-base text-[#71857b]">点击任意字母即可听发音；下方为拼音近似读音</p>
+                <h3 id="hangul-reference-title" className="text-xl font-bold text-[var(--status-success)]">韩文字母速查表</h3>
+                <p className="mt-2 text-base text-[var(--foreground-secondary)]">点击任意字母即可听发音；下方为拼音近似读音</p>
               </div>
-              <button type="button" onClick={() => setIsReferenceOpen(false)} className="text-base font-bold text-[#71857b]">关闭</button>
+              <button type="button" onClick={() => setIsReferenceOpen(false)} className="text-base font-bold text-[var(--foreground-secondary)]">关闭</button>
             </div>
             <div className="mt-8 grid gap-8 lg:grid-cols-3">
               <div>
-                <p className="mb-4 text-base font-black tracking-widest text-[#238777]">
+                <p className="mb-4 text-base font-bold tracking-widest text-[var(--status-success)]">
                   单元音 · {hangulReference.vowels.slice(0, 10).length} 个
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -1041,16 +1041,16 @@ export function HangulInteractiveBook({
                       type="button"
                       title={`播放 ${letter} 的发音`}
                       onClick={() => speak(letter)}
-                      className="flex h-[88px] w-20 flex-col items-center justify-center rounded-2xl border border-[#d6e5de] bg-white transition hover:border-[#68ad9e] hover:text-[#238777]"
+                      className="flex h-[88px] w-20 flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-white transition hover:border-[var(--border)] hover:text-[var(--status-success)]"
                     >
-                      <span className="text-3xl font-black text-[#173f4a]">{letter}</span>
-                      <span className="mt-1.5 text-xs font-bold leading-none text-[#71857b]">{hangulPinyinHints[letter]}</span>
+                      <span className="text-3xl font-bold text-[var(--primary)]">{letter}</span>
+                      <span className="mt-1.5 text-xs font-bold leading-none text-[var(--foreground-secondary)]">{hangulPinyinHints[letter]}</span>
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="mb-4 text-base font-black tracking-widest text-[#238777]">
+                <p className="mb-4 text-base font-bold tracking-widest text-[var(--status-success)]">
                   双元音 · {hangulReference.vowels.slice(10).length} 个
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -1060,16 +1060,16 @@ export function HangulInteractiveBook({
                       type="button"
                       title={`播放 ${letter} 的发音`}
                       onClick={() => speak(letter)}
-                      className="flex h-[88px] w-20 flex-col items-center justify-center rounded-2xl border border-[#d6e5de] bg-white transition hover:border-[#68ad9e] hover:text-[#238777]"
+                      className="flex h-[88px] w-20 flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-white transition hover:border-[var(--border)] hover:text-[var(--status-success)]"
                     >
-                      <span className="text-3xl font-black text-[#173f4a]">{letter}</span>
-                      <span className="mt-1.5 text-xs font-bold leading-none text-[#71857b]">{hangulPinyinHints[letter]}</span>
+                      <span className="text-3xl font-bold text-[var(--primary)]">{letter}</span>
+                      <span className="mt-1.5 text-xs font-bold leading-none text-[var(--foreground-secondary)]">{hangulPinyinHints[letter]}</span>
                     </button>
                   ))}
                 </div>
               </div>
               <div>
-                <p className="mb-4 text-base font-black tracking-widest text-[#238777]">
+                <p className="mb-4 text-base font-bold tracking-widest text-[var(--status-success)]">
                   辅音 · {hangulReference.consonants.length} 个
                 </p>
                 <div className="flex flex-wrap gap-4">
@@ -1079,10 +1079,10 @@ export function HangulInteractiveBook({
                       type="button"
                       title={`播放 ${letter} 的发音`}
                       onClick={() => speak(letter)}
-                      className="flex h-[88px] w-24 flex-col items-center justify-center rounded-2xl border border-[#d6e5de] bg-white transition hover:border-[#68ad9e] hover:text-[#238777]"
+                      className="flex h-[88px] w-24 flex-col items-center justify-center rounded-2xl border border-[var(--border)] bg-white transition hover:border-[var(--border)] hover:text-[var(--status-success)]"
                     >
-                      <span className="text-3xl font-black text-[#173f4a]">{letter}</span>
-                      <span className="mt-1.5 text-xs font-bold leading-none text-[#71857b]">{hangulPinyinHints[letter]}</span>
+                      <span className="text-3xl font-bold text-[var(--primary)]">{letter}</span>
+                      <span className="mt-1.5 text-xs font-bold leading-none text-[var(--foreground-secondary)]">{hangulPinyinHints[letter]}</span>
                     </button>
                   ))}
                 </div>
@@ -1094,25 +1094,25 @@ export function HangulInteractiveBook({
 
       {isExitDialogOpen && (
         <div
-          className="fixed inset-0 z-[70] flex items-center justify-center bg-[#102f35]/55 p-5 backdrop-blur-sm"
+          className="fixed inset-0 z-[70] flex items-center justify-center bg-[var(--primary)]/55 p-5 backdrop-blur-sm"
           role="presentation"
           onClick={() => setIsExitDialogOpen(false)}
         >
           <section
-            className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/70 bg-[#f9fcfa] shadow-2xl"
+            className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/70 bg-[var(--card)] shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="exit-reader-title"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="border-b border-[#dce8e1] bg-[linear-gradient(135deg,#e7f4ef_0%,#f9fcfa_70%)] px-7 py-6">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[#238777] shadow-sm">
-                <ArrowLeft size={20} />
+            <div className="border-b border-[var(--border)] bg-[linear-gradient(135deg,var(--status-success-surface)_0%,var(--card)_70%)] px-7 py-6">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-[var(--status-success)] shadow-sm">
+                <ArrowLeft aria-hidden="true" size={20} />
               </div>
-              <h2 id="exit-reader-title" className="mt-4 text-xl font-black tracking-tight text-[#173f4a]">
+              <h3 id="exit-reader-title" className="mt-4 text-xl font-bold tracking-tight text-[var(--primary)]">
                 要退出本次阅读吗？
-              </h2>
-              <p className="mt-2 text-sm leading-6 text-[#60736a]">
+              </h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
                 你的笔记与书签已自动保存。确认后将退出全屏并返回课程目录。
               </p>
             </div>
@@ -1120,14 +1120,14 @@ export function HangulInteractiveBook({
               <button
                 type="button"
                 onClick={() => setIsExitDialogOpen(false)}
-                className="flex-1 rounded-xl border border-[#d7e4de] bg-white px-4 py-3 text-sm font-black text-[#526b60] transition hover:bg-[#f2f7f4]"
+                className="flex-1 rounded-xl border border-[var(--border)] bg-white px-4 py-3 text-sm font-bold text-[var(--status-success)] transition hover:bg-[var(--status-success-surface)]"
               >
                 继续阅读
               </button>
               <button
                 type="button"
                 onClick={() => void confirmExitReader()}
-                className="flex-1 rounded-xl bg-[#238777] px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-[#1d7466]"
+                className="flex-1 rounded-xl bg-[var(--status-success)] px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[var(--status-success)]"
               >
                 确认退出
               </button>
@@ -1137,20 +1137,20 @@ export function HangulInteractiveBook({
       )}
 
       {isIdleWarningOpen && (
-        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[#3b342b]/45 p-5 backdrop-blur-sm">
+        <div className="fixed inset-0 z-[80] flex items-center justify-center bg-[var(--status-warning)]/45 p-5 backdrop-blur-sm">
           <section
             role="alertdialog"
             aria-modal="true"
             aria-labelledby="reading-idle-warning-title"
-            className="w-full max-w-sm rounded-[26px] border border-white/70 bg-[#fffdf8] p-6 text-center shadow-2xl"
+            className="w-full max-w-sm rounded-[26px] border border-white/70 bg-[var(--card)] p-6 text-center shadow-2xl"
           >
-            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#f1eadf] text-[#80654e]">
-              <Clock3 size={22} />
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
+              <Clock3 aria-hidden="true" size={22} />
             </div>
-            <h2 id="reading-idle-warning-title" className="mt-4 text-lg font-black text-[#3f403b]">
+            <h3 id="reading-idle-warning-title" className="mt-4 text-lg font-bold text-[var(--foreground)]">
               阅读计时已暂停
-            </h2>
-            <p className="mt-2 text-sm font-bold leading-6 text-[#6f6b62]">
+            </h3>
+            <p className="mt-2 text-sm font-bold leading-6 text-[var(--foreground-secondary)]">
               连续 60 秒未检测到学习操作。移动鼠标、使用键盘、触摸页面或点击下方按钮即可继续。
             </p>
             <button
@@ -1162,7 +1162,7 @@ export function HangulInteractiveBook({
                 setLiveElapsed(0);
                 setIsIdleWarningOpen(false);
               }}
-              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-xl bg-[#238777] px-4 text-sm font-black text-white transition hover:bg-[#1d7466]"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center rounded-xl bg-[var(--status-success)] px-4 text-sm font-bold text-white transition hover:bg-[var(--status-success)]"
             >
               继续学习
             </button>
@@ -1172,12 +1172,12 @@ export function HangulInteractiveBook({
 
       {isNotesOpen && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-[#173f4a]/35 p-4"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--primary)]/35 p-4"
           role="presentation"
           onClick={() => setIsNotesOpen(false)}
         >
           <section
-            className="w-full max-w-2xl rounded-[24px] border border-[#ead9c5] bg-[#fffaf2] p-5 shadow-2xl"
+            className="w-full max-w-2xl rounded-[24px] border border-[var(--border)] bg-[var(--card)] p-5 shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="chapter-notes-title"
@@ -1185,15 +1185,15 @@ export function HangulInteractiveBook({
           >
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 id="chapter-notes-title" className="text-base font-black text-[#704f2f]">
+                <h3 id="chapter-notes-title" className="text-base font-bold text-[var(--status-warning)]">
                   第 {chapterIndex + 1} 章学习笔记
-                </h2>
-                <p className="mt-1 text-xs text-[#92785e]">内容自动保存在当前浏览器</p>
+                </h3>
+                <p className="mt-1 text-xs text-[var(--status-warning)]">内容自动保存在当前浏览器</p>
               </div>
               <button
                 type="button"
                 onClick={() => setIsNotesOpen(false)}
-                className="text-xs font-bold text-[#92785e]"
+                className="text-xs font-bold text-[var(--status-warning)]"
               >
                 关闭
               </button>
@@ -1204,7 +1204,7 @@ export function HangulInteractiveBook({
                 setNotes((current) => ({ ...current, [chapterIndex]: event.target.value }))
               }
               placeholder="记下容易混淆的字母、发音口型或自己的记忆方法……"
-              className="mt-4 min-h-36 w-full resize-y rounded-2xl border border-[#ead9c5] bg-white/80 p-4 text-sm leading-6 text-[#5f4a36] outline-none transition placeholder:text-[#b6a28f] focus:border-[#c9803c] focus:ring-2 focus:ring-[#f5dfc7]"
+              className="mt-4 min-h-36 w-full resize-y rounded-2xl border border-[var(--border)] bg-white/80 p-4 text-sm leading-6 text-[var(--foreground-secondary)] outline-none transition placeholder:text-[var(--foreground-muted)] focus:border-[var(--ring)] focus:ring-2 focus:ring-[var(--ring)]"
             />
           </section>
         </div>

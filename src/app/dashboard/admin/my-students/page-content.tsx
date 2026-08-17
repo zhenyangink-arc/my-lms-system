@@ -59,13 +59,13 @@ export default async function MyStudentsPage() {
             <GroupClassDialog students={students.map((s) => ({ id: s.id, full_name: s.full_name, login_id: s.login_id }))} />
           </div>
         </div>
-        <div className="grid border-t sm:grid-cols-3" style={{ borderColor: "var(--app-border)" }}>
+        <div className="grid border-t sm:grid-cols-3" style={{ borderColor: "var(--border)" }}>
           {[
             ["负责学生", students.length],
             ["正常使用", activeCount],
             ["会员学生", vipCount],
           ].map(([label, value], index) => (
-            <div key={String(label)} className={`px-5 py-3 ${index > 0 ? "border-t sm:border-t-0 sm:border-l" : ""}`} style={{ borderColor: "var(--app-border)" }}>
+            <div key={String(label)} className={`px-5 py-3 ${index > 0 ? "border-t sm:border-t-0 sm:border-l" : ""}`} style={{ borderColor: "var(--border)" }}>
               <p className="app-muted-text text-[11px] font-medium">{label}</p>
               <p className="mt-0.5 text-lg font-semibold tabular-nums">{value}</p>
             </div>
@@ -77,7 +77,7 @@ export default async function MyStudentsPage() {
         <div className="overflow-x-auto">
           <table className="w-full min-w-[900px] border-collapse text-left">
             <thead>
-              <tr className="border-b text-[11px] font-medium" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}>
+              <tr className="border-b text-[11px] font-medium" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
                 <th className="w-[30%] px-4 py-2.5 font-medium">学生</th>
                 <th className="w-[12%] px-4 py-2.5 font-medium">会员档位</th>
                 <th className="w-[10%] px-4 py-2.5 font-medium">状态</th>
@@ -92,10 +92,10 @@ export default async function MyStudentsPage() {
                 const loginId = student.login_id || student.email?.split("@")[0] || `…${student.id.slice(-8)}`;
                 const tier = normalizeMembershipTier(student.membership_tier);
                 return (
-                  <tr key={student.id} className="border-b text-xs last:border-b-0 hover:bg-black/[0.018]" style={{ borderColor: "var(--app-border)" }}>
+                  <tr key={student.id} className="border-b text-xs last:border-b-0 hover:bg-black/[0.018]" style={{ borderColor: "var(--border)" }}>
                     <td className="px-4 py-3">
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>{displayName === "未填写姓名" ? "?" : displayName.slice(0, 1)}</span>
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>{displayName === "未填写姓名" ? "?" : displayName.slice(0, 1)}</span>
                         <div className="min-w-0">
                           <p className="truncate font-semibold">{displayName}</p>
                           <p className="app-muted-text mt-0.5 truncate text-[11px]">{loginId}{student.email && student.email !== loginId ? ` · ${student.email}` : ""}</p>
@@ -106,8 +106,8 @@ export default async function MyStudentsPage() {
                       <span className="inline-flex rounded-md bg-black/[0.035] px-2 py-1 text-[11px] font-medium">{MEMBERSHIP_TIER_LABELS[tier]}</span>
                     </td>
                     <td className="px-4 py-3">
-                      <span className="inline-flex items-center gap-2 font-medium" style={{ color: student.status === "active" ? "var(--app-success)" : student.status === "suspended" ? "var(--app-warm)" : "var(--app-muted-text)" }}>
-                        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: student.status === "active" ? "var(--app-success)" : student.status === "suspended" ? "var(--app-warm)" : "var(--app-border)" }} />
+                      <span className="inline-flex items-center gap-2 font-medium" style={{ color: student.status === "active" ? "var(--status-success)" : student.status === "suspended" ? "var(--status-warning)" : "var(--foreground-muted)" }}>
+                        <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: student.status === "active" ? "var(--status-success)" : student.status === "suspended" ? "var(--status-warning)" : "var(--border)" }} />
                         {student.status === "active" ? "正常" : student.status === "suspended" ? "暂停" : student.status === "inactive" ? "已停用" : student.status || "未知"}
                       </span>
                     </td>

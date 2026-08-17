@@ -70,8 +70,8 @@ const categoryOptions = [
     label: "身份材料",
     description: "确认学生身份、国籍和证件信息",
     icon: UserRound,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
     suggestions: ["护照", "身份证", "户口本", "证件照", "外国人登录证"],
   },
   {
@@ -79,8 +79,8 @@ const categoryOptions = [
     label: "学历材料",
     description: "在读、毕业、学位及成绩证明",
     icon: BookOpenCheck,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
     suggestions: ["成绩单", "在读证明", "毕业证明", "学位证", "会考成绩", "高考成绩", "学信网认证"],
   },
   {
@@ -88,8 +88,8 @@ const categoryOptions = [
     label: "申请文书",
     description: "大学申请表与个人陈述类文书",
     icon: FilePenLine,
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
     suggestions: ["入学申请表", "学习计划书", "自我介绍书", "推荐信", "个人简历", "作品集"],
   },
   {
@@ -97,8 +97,8 @@ const categoryOptions = [
     label: "资金材料",
     description: "留学资金及担保关系证明",
     icon: BadgeDollarSign,
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
     suggestions: ["存款证明", "银行流水", "父母在职证明", "收入证明", "亲属关系证明"],
   },
   {
@@ -119,8 +119,8 @@ function AddRequirementButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-black text-white disabled:opacity-60"
-      style={{ backgroundColor: "var(--app-accent)" }}
+      className="inline-flex shrink-0 items-center justify-center gap-1.5 rounded-xl px-3 py-2.5 text-xs font-semibold text-white disabled:opacity-60"
+      style={{ backgroundColor: "var(--primary)" }}
     >
       <Plus size={13} />
       {pending ? "添加中…" : "添加"}
@@ -150,8 +150,8 @@ function EditRequirementButton() {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-60"
-      style={{ backgroundColor: "var(--app-accent)" }}
+      className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-60"
+      style={{ backgroundColor: "var(--primary)" }}
     >
       <Pencil size={13} />
       {pending ? "保存中…" : "保存修改"}
@@ -178,7 +178,7 @@ function SortRequirementButton({
       aria-label={title}
       title={title}
       className="inline-flex h-8 w-8 items-center justify-center rounded-lg transition hover:bg-white disabled:cursor-not-allowed disabled:opacity-25"
-      style={{ color: "var(--app-muted)" }}
+      style={{ color: "var(--foreground-muted)" }}
     >
       <Icon size={14} />
     </button>
@@ -221,13 +221,13 @@ function RequirementEditDialog({
         type="button"
         aria-label={`修改${requirement.title}`}
         className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg transition hover:bg-white"
-        style={{ color: "var(--app-accent)" }}
+        style={{ color: "var(--primary)" }}
       >
         <Pencil size={13} />
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="font-black">修改申请资料</DialogTitle>
+          <DialogTitle className="font-semibold">修改申请资料</DialogTitle>
           <DialogDescription className="leading-6">
             修改会同步到该校现有学生的对应资料项目，不会删除已提交文件或审核记录。
           </DialogDescription>
@@ -237,9 +237,9 @@ function RequirementEditDialog({
           className="space-y-4"
         >
           <div className="overflow-hidden rounded-xl border"><table className="w-full border-collapse text-left text-xs"><tbody>
-            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="w-[110px] border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>资料名称</th><td className="px-3 py-2"><input name="title" required minLength={1} maxLength={100} defaultValue={requirement.title} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none" /></td></tr>
-            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black" style={{ borderColor: "var(--app-border-soft)" }}>所属分类</th><td className="px-3 py-2"><select name="category" defaultValue={requirement.category} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none">{categoryOptions.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></td></tr>
-            <tr><th className="border-r bg-[var(--app-soft-bg)] px-3 py-3 font-black align-top" style={{ borderColor: "var(--app-border-soft)" }}>学生备注</th><td className="px-3 py-2"><textarea name="description" maxLength={300} rows={4} defaultValue={requirement.description ?? ""} placeholder="学生可以看到的资料说明" className="app-input w-full resize-y rounded-lg border px-3 py-2.5 leading-6 outline-none" /></td></tr>
+            <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}><th className="w-[110px] border-r bg-[var(--surface-soft)] px-3 py-3 font-semibold" style={{ borderColor: "var(--border-subtle)" }}>资料名称</th><td className="px-3 py-2"><input name="title" required minLength={1} maxLength={100} defaultValue={requirement.title} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none" /></td></tr>
+            <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}><th className="border-r bg-[var(--surface-soft)] px-3 py-3 font-semibold" style={{ borderColor: "var(--border-subtle)" }}>所属分类</th><td className="px-3 py-2"><select name="category" defaultValue={requirement.category} className="app-input w-full rounded-lg border px-3 py-2.5 outline-none">{categoryOptions.map((category) => <option key={category.key} value={category.key}>{category.label}</option>)}</select></td></tr>
+            <tr><th className="border-r bg-[var(--surface-soft)] px-3 py-3 font-semibold align-top" style={{ borderColor: "var(--border-subtle)" }}>学生备注</th><td className="px-3 py-2"><textarea name="description" maxLength={300} rows={4} defaultValue={requirement.description ?? ""} placeholder="学生可以看到的资料说明" className="app-input w-full resize-y rounded-lg border px-3 py-2.5 leading-6 outline-none" /></td></tr>
           </tbody></table></div>
           <div className="flex justify-end">
             <EditRequirementButton />
@@ -268,7 +268,7 @@ function RequirementDeleteDialog({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-black">删除“{requirement.title}”？</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold">删除“{requirement.title}”？</AlertDialogTitle>
           <AlertDialogDescription className="leading-6">
             该校尚未提交的这项资料会从学生申请表中移除；已经提交或审核过的文件会归档保留，但不再显示在当前清单中。
           </AlertDialogDescription>
@@ -302,14 +302,14 @@ export function UniversityRequirementsDialog({
     <Dialog>
       <DialogTrigger
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black"
-        style={{ color: "var(--app-accent)", borderColor: "var(--app-accent)" }}
+        className="inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-semibold"
+        style={{ color: "var(--primary)", borderColor: "var(--primary)" }}
       >
         <FileText size={13} /> 申请资料
       </DialogTrigger>
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
-          <DialogTitle className="text-lg font-black">{universityName} · 申请资料模板</DialogTitle>
+          <DialogTitle className="text-lg font-semibold">{universityName} · 申请资料模板</DialogTitle>
           <DialogDescription className="leading-6">
             {canManage
               ? "维护这所大学实际要求的申请资料，修改会同步到学生端。"
@@ -319,7 +319,7 @@ export function UniversityRequirementsDialog({
 
         <div
           className="flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5"
-          style={{ color: "var(--app-secondary)", borderColor: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+          style={{ color: "var(--support)", borderColor: "var(--support)", backgroundColor: "var(--support-surface)" }}
         >
           <ShieldCheck className="mt-0.5 shrink-0" size={17} />
           <p>
@@ -327,7 +327,7 @@ export function UniversityRequirementsDialog({
           </p>
         </div>
 
-        <section className="rounded-2xl border p-3" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
+        <section className="rounded-2xl border p-3" style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}>
           <div className="grid gap-2 sm:grid-cols-5">
             {admissionStageOptions.map((stage) => {
               const stageCount = requirements.filter((requirement) => requirement.admission_stage === stage.key).length;
@@ -339,10 +339,10 @@ export function UniversityRequirementsDialog({
                   onClick={() => setSelectedStage(stage.key)}
                   className="rounded-xl border px-3 py-3 text-left transition"
                   style={active
-                    ? { color: "var(--app-accent-strong)", borderColor: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }
-                    : { color: "var(--app-muted)", borderColor: "transparent", backgroundColor: "var(--app-card-bg)" }}
+                    ? { color: "var(--primary-hover)", borderColor: "var(--primary)", backgroundColor: "var(--accent)" }
+                    : { color: "var(--foreground-muted)", borderColor: "transparent", backgroundColor: "var(--card)" }}
                 >
-                  <span className="block text-xs font-black">{stage.label}</span>
+                  <span className="block text-xs font-semibold">{stage.label}</span>
                   <span className="mt-1 block text-[10px] font-bold">{stageCount} 项资料</span>
                 </button>
               );
@@ -355,7 +355,7 @@ export function UniversityRequirementsDialog({
 
         <div key={selectedStage} className="overflow-x-auto rounded-xl border">
           <table className="w-full min-w-[860px] border-collapse text-left text-xs">
-            <thead><tr className="border-b bg-[var(--app-soft-bg)] text-[10px] font-black app-muted-text" style={{ borderColor: "var(--app-border)" }}><th className="w-[135px] px-4 py-3">资料分类</th><th className="w-[220px] px-3 py-3">资料名称</th><th className="px-3 py-3">学生可见备注</th><th className="w-[90px] px-3 py-3 text-center">顺序</th><th className="w-[100px] px-4 py-3 text-right">操作</th></tr></thead>
+            <thead><tr className="border-b bg-[var(--surface-soft)] text-[10px] font-semibold app-muted-text" style={{ borderColor: "var(--border)" }}><th className="w-[135px] px-4 py-3">资料分类</th><th className="w-[220px] px-3 py-3">资料名称</th><th className="px-3 py-3">学生可见备注</th><th className="w-[90px] px-3 py-3 text-center">顺序</th><th className="w-[100px] px-4 py-3 text-right">操作</th></tr></thead>
             <tbody>{categoryOptions.map((category) => {
             const items = requirements
               .filter((requirement) => requirement.admission_stage === selectedStage && requirement.category === category.key)
@@ -364,9 +364,9 @@ export function UniversityRequirementsDialog({
 
             return (
               <Fragment key={category.key}>
-                {items.map((requirement, itemIndex) => <tr key={requirement.id} className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{itemIndex === 0 ? category.label : ""}</td><td className="px-3 py-3 font-black">{requirement.title}</td><td className="app-muted-text whitespace-pre-wrap px-3 py-3 leading-5">{requirement.description || "—"}</td><td className="px-3 py-3 text-center">{canManage ? <RequirementSortControls universityId={universityId} requirement={requirement} index={itemIndex} itemCount={items.length} /> : requirement.sort_order}</td><td className="px-4 py-3"><div className="flex justify-end gap-1">{canManage && <><RequirementEditDialog universityId={universityId} requirement={requirement} /><RequirementDeleteDialog universityId={universityId} requirement={requirement} /></>}</div></td></tr>)}
-                {items.length === 0 && !canManage && <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{category.label}</td><td colSpan={4} className="app-muted-text px-3 py-3">暂未要求此类资料</td></tr>}
-                {canManage && <tr className="border-b bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }}><td className="px-4 py-3 font-black" style={{ color: category.color }}>{items.length === 0 ? category.label : "新增"}</td><td colSpan={4} className="px-3 py-2"><form action={createUniversityDocumentRequirementAction.bind(null, universityId, selectedStage, category.key)} className="grid gap-2 sm:grid-cols-[220px_minmax(0,1fr)_80px]"><input name="title" required minLength={1} maxLength={100} list={dataListId} placeholder={`输入或选择${category.label}`} className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><datalist id={dataListId}>{category.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist><input name="description" maxLength={300} placeholder="备注（可选）" className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><AddRequirementButton /></form></td></tr>}
+                {items.map((requirement, itemIndex) => <tr key={requirement.id} className="border-b" style={{ borderColor: "var(--border-subtle)" }}><td className="px-4 py-3 font-semibold" style={{ color: category.color }}>{itemIndex === 0 ? category.label : ""}</td><td className="px-3 py-3 font-semibold">{requirement.title}</td><td className="app-muted-text whitespace-pre-wrap px-3 py-3 leading-5">{requirement.description || "—"}</td><td className="px-3 py-3 text-center">{canManage ? <RequirementSortControls universityId={universityId} requirement={requirement} index={itemIndex} itemCount={items.length} /> : requirement.sort_order}</td><td className="px-4 py-3"><div className="flex justify-end gap-1">{canManage && <><RequirementEditDialog universityId={universityId} requirement={requirement} /><RequirementDeleteDialog universityId={universityId} requirement={requirement} /></>}</div></td></tr>)}
+                {items.length === 0 && !canManage && <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}><td className="px-4 py-3 font-semibold" style={{ color: category.color }}>{category.label}</td><td colSpan={4} className="app-muted-text px-3 py-3">暂未要求此类资料</td></tr>}
+                {canManage && <tr className="border-b bg-[var(--surface-soft)]" style={{ borderColor: "var(--border-subtle)" }}><td className="px-4 py-3 font-semibold" style={{ color: category.color }}>{items.length === 0 ? category.label : "新增"}</td><td colSpan={4} className="px-3 py-2"><form action={createUniversityDocumentRequirementAction.bind(null, universityId, selectedStage, category.key)} className="grid gap-2 sm:grid-cols-[220px_minmax(0,1fr)_80px]"><input name="title" required minLength={1} maxLength={100} list={dataListId} placeholder={`输入或选择${category.label}`} className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><datalist id={dataListId}>{category.suggestions.map((suggestion) => <option key={suggestion} value={suggestion} />)}</datalist><input name="description" maxLength={300} placeholder="备注（可选）" className="app-input rounded-lg border px-3 py-2 text-xs outline-none" /><AddRequirementButton /></form></td></tr>}
               </Fragment>
             );
           })}</tbody>

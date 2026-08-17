@@ -56,21 +56,21 @@ export function PlatformAccountTableActions({
       <DialogTrigger
         type="button"
         className="inline-flex h-8 items-center rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         管理
       </DialogTrigger>
       <DialogContent className="max-w-[720px] gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">管理平台账号</DialogTitle>
           <DialogDescription className="text-xs">
             {displayName} · {profile.login_id || profile.email || `…${profile.id.slice(-8)}`}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+        <div className="divide-y" style={{ borderColor: "var(--border)" }}>
           <form action={roleAction} className="grid sm:grid-cols-[150px_minmax(0,1fr)_112px]">
-            <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+            <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
               <p className="text-xs font-semibold">平台角色</p>
               <p className="app-muted-text mt-1 text-[11px]">当前：{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</p>
             </div>
@@ -98,7 +98,7 @@ export function PlatformAccountTableActions({
           <ResultMessage state={roleState} />
 
           <form action={statusAction} className="grid sm:grid-cols-[150px_minmax(0,1fr)_112px]">
-            <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+            <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
               <p className="text-xs font-semibold">账号状态</p>
               <p className="app-muted-text mt-1 text-[11px]">当前：{STATUS_LABELS[profile.status] ?? profile.status}</p>
             </div>
@@ -130,7 +130,7 @@ export function PlatformAccountTableActions({
                 type="submit"
                 disabled={statusPending}
                 className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50"
-                style={{ borderColor: "var(--app-border)" }}
+                style={{ borderColor: "var(--border)" }}
               >
                 {statusPending ? "保存中…" : "保存状态"}
               </button>

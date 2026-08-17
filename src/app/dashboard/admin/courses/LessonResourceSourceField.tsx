@@ -131,7 +131,7 @@ export function LessonResourceSourceField({
             </p>
           )}
           {fileName && !uploading && (
-            <p className="mt-2 flex items-center gap-1.5 text-[11px]" style={{ color: "var(--app-success)" }}>
+            <p className="mt-2 flex items-center gap-1.5 text-[11px]" style={{ color: "var(--status-success)" }}>
               <CheckCircle2 size={13} />已上传：{fileName}
             </p>
           )}

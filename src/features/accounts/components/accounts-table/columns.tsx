@@ -57,8 +57,8 @@ export function getAccountColumns({
         const name = profile.full_name?.trim() || "未填写姓名";
         return (
           <div className="min-w-52">
-            <p className="truncate font-semibold text-[var(--app-text)]">{name}</p>
-            <p className="mt-0.5 truncate text-[11px] text-[var(--app-muted)]">
+            <p className="truncate font-semibold text-[var(--foreground)]">{name}</p>
+            <p className="mt-0.5 truncate text-[11px] text-[var(--foreground-muted)]">
               {profile.login_id || profile.email || `账号 …${profile.id.slice(-8)}`}
             </p>
           </div>
@@ -103,7 +103,7 @@ export function getAccountColumns({
       accessorKey: "last_active_at",
       header: sortableHeader("最近活动"),
       cell: ({ row }) => (
-        <span className="text-[11px] text-[var(--app-muted)]">
+        <span className="text-[11px] text-[var(--foreground-muted)]">
           <LocalDateTime value={row.original.last_active_at} options={ACCOUNT_DATE_TIME_OPTIONS} fallback="暂无记录" />
         </span>
       ),
@@ -113,7 +113,7 @@ export function getAccountColumns({
       accessorFn: (profile) => profile.registered_at || profile.created_at,
       header: sortableHeader("注册时间"),
       cell: ({ row }) => (
-        <span className="text-[11px] text-[var(--app-muted)]">
+        <span className="text-[11px] text-[var(--foreground-muted)]">
           <LocalDateTime value={row.original.registered_at || row.original.created_at} options={ACCOUNT_DATE_OPTIONS} fallback="暂无记录" />
         </span>
       ),

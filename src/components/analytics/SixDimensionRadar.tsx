@@ -38,43 +38,43 @@ export const languageSkillPresentation = {
     label: "听",
     fullLabel: "听力理解",
     icon: Ear,
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
   speaking: {
     label: "说",
     fullLabel: "口语表达",
     icon: Mic2,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   reading: {
     label: "读",
     fullLabel: "阅读理解",
     icon: BookOpen,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   writing: {
     label: "写",
     fullLabel: "书面表达",
     icon: PenLine,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   grammar: {
     label: "语",
     fullLabel: "语法运用",
     icon: Shapes,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   vocabulary: {
     label: "词",
     fullLabel: "词汇运用",
     icon: Languages,
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
 } satisfies Record<
   LanguageSkill,
@@ -188,7 +188,7 @@ export function SixDimensionRadar({
 
   return (
     <section className="app-card overflow-hidden rounded-2xl border">
-      <header className="flex flex-col gap-4 border-b border-[var(--app-border-soft)] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+      <header className="flex flex-col gap-4 border-b border-[var(--border-subtle)] px-5 py-5 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div className="flex items-center gap-3">
           <span
             className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg"
@@ -210,7 +210,7 @@ export function SixDimensionRadar({
           </div>
         </div>
         <div className="flex flex-wrap gap-2">
-          <span className="rounded-full bg-[var(--app-soft-bg)] px-3 py-2 text-xs font-semibold tabular-nums">
+          <span className="rounded-full bg-[var(--surface-soft)] px-3 py-2 text-xs font-semibold tabular-nums">
             综合 {average == null ? "—" : `${average.toFixed(1)}%`}
           </span>
           <span
@@ -224,9 +224,9 @@ export function SixDimensionRadar({
 
       <div className="grid gap-5 p-5 sm:p-6 xl:grid-cols-[minmax(360px,0.88fr)_minmax(0,1.12fr)] xl:items-stretch">
         <div
-          className="rounded-lg border border-[var(--app-border-soft)] p-3 sm:p-5"
+          className="rounded-lg border border-[var(--border-subtle)] p-3 sm:p-5"
           style={{
-            background: `linear-gradient(145deg, var(--app-soft-bg), color-mix(in srgb, ${soft} 55%, var(--app-card-bg)))`,
+            background: `linear-gradient(145deg, var(--surface-soft), color-mix(in srgb, ${soft} 55%, var(--card)))`,
           }}
         >
           <div className="flex items-center justify-between px-1">
@@ -236,7 +236,7 @@ export function SixDimensionRadar({
                 越接近外圈，当前掌握越稳定
               </p>
             </div>
-            <span className="rounded-full bg-[var(--app-card-bg)] px-2.5 py-1.5 text-[11px] font-semibold">
+            <span className="rounded-full bg-[var(--card)] px-2.5 py-1.5 text-[11px] font-semibold">
               每圈 25 分
             </span>
           </div>
@@ -253,10 +253,10 @@ export function SixDimensionRadar({
                 points={gridPoints(level)}
                 fill={
                   level === 100
-                    ? "color-mix(in srgb, var(--app-card-bg) 62%, transparent)"
+                    ? "color-mix(in srgb, var(--card) 62%, transparent)"
                     : "none"
                 }
-                stroke="var(--app-border)"
+                stroke="var(--border)"
                 strokeWidth={level === 100 ? 1.5 : 1}
               />
             ))}
@@ -273,7 +273,7 @@ export function SixDimensionRadar({
                   y1={RADAR_CENTER}
                   x2={x}
                   y2={y}
-                  stroke="var(--app-border)"
+                  stroke="var(--border)"
                   strokeWidth="1"
                 />
               );
@@ -301,7 +301,7 @@ export function SixDimensionRadar({
                   cx={x}
                   cy={y}
                   r="5"
-                  fill="var(--app-card-bg)"
+                  fill="var(--card)"
                   stroke={color}
                   strokeWidth="3"
                 />
@@ -322,7 +322,7 @@ export function SixDimensionRadar({
                   y={y}
                   textAnchor={textAnchor}
                   dominantBaseline="middle"
-                  className="fill-[var(--app-text)] text-[12px] font-semibold"
+                  className="fill-[var(--foreground)] text-[12px] font-semibold"
                 >
                   <tspan x={x} dy="-0.35em">
                     {languageSkillPresentation[skill].label}
@@ -330,7 +330,7 @@ export function SixDimensionRadar({
                   <tspan
                     x={x}
                     dy="1.3em"
-                    className="fill-[var(--app-muted)] text-[10px] font-medium"
+                    className="fill-[var(--foreground-muted)] text-[10px] font-medium"
                   >
                     {values[index] == null
                       ? "待积累"
@@ -344,7 +344,7 @@ export function SixDimensionRadar({
                 x="160"
                 y="164"
                 textAnchor="middle"
-                className="fill-[var(--app-muted)] text-[12px] font-medium"
+                className="fill-[var(--foreground-muted)] text-[12px] font-medium"
               >
                 暂无有效能力数据
               </text>
@@ -356,7 +356,7 @@ export function SixDimensionRadar({
           <div
             className={
               evidenceOnly
-                ? "divide-y divide-[var(--app-border-soft)] border-y border-[var(--app-border-soft)]"
+                ? "divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)]"
                 : "grid gap-2 sm:grid-cols-2"
             }
           >
@@ -369,7 +369,7 @@ export function SixDimensionRadar({
                   className={
                     evidenceOnly
                       ? "flex items-center gap-3 py-3"
-                      : "rounded-lg border border-[var(--app-border-soft)] bg-[var(--app-card-bg)] p-3.5"
+                      : "rounded-lg border border-[var(--border-subtle)] bg-[var(--card)] p-3.5"
                   }
                 >
                   <span
@@ -400,7 +400,7 @@ export function SixDimensionRadar({
                     </p>
                     {!evidenceOnly && (
                       <div
-                        className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
+                        className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-soft)]"
                         role="progressbar"
                         aria-label={`${presentation.fullLabel}能力`}
                         aria-valuemin={0}
@@ -430,7 +430,7 @@ export function SixDimensionRadar({
           <div
             className={
               sparseInsight
-                ? "mt-auto border-t border-[var(--app-border-soft)] px-1 py-3"
+                ? "mt-auto border-t border-[var(--border-subtle)] px-1 py-3"
                 : "mt-auto rounded-lg border px-4 py-4"
             }
             style={
@@ -441,7 +441,7 @@ export function SixDimensionRadar({
           >
             <p
               className="flex items-center gap-2 text-xs font-semibold"
-              style={{ color: sparseInsight ? "var(--app-muted)" : color }}
+              style={{ color: sparseInsight ? "var(--foreground-muted)" : color }}
             >
               <Sparkles size={13} aria-hidden="true" />
               {insightLabel}

@@ -15,25 +15,25 @@ type Tone = {
 };
 
 const tones: Record<KnowledgeInteractionType, Tone> = {
-  assemble: { color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  deconstruct: { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
-  repair: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  classify: { color: "var(--app-text-soft)", soft: "var(--app-soft-bg)" },
+  assemble: { color: "var(--primary)", soft: "var(--accent)" },
+  deconstruct: { color: "var(--support)", soft: "var(--support-surface)" },
+  repair: { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  classify: { color: "var(--foreground-secondary)", soft: "var(--surface-soft)" },
 };
 
 const fireworkColors = [
-  "#e45f65",
-  "#e7a83e",
-  "#4da78a",
-  "#568ec4",
-  "#8b69b3",
-  "#ef7e52",
+  "var(--status-danger)",
+  "var(--status-warning)",
+  "var(--status-success)",
+  "var(--primary)",
+  "var(--support)",
+  "var(--foreground-secondary)",
 ];
 
-const activeSelectionColor = "#79d995";
-const activeSelectionText = "#174b2d";
-const completedSelectionColor = "#ffda6b";
-const completedSelectionText = "#5c4310";
+const activeSelectionColor = "var(--accent)";
+const activeSelectionText = "var(--primary)";
+const completedSelectionColor = "var(--status-warning-surface)";
+const completedSelectionText = "var(--status-warning)";
 
 const interactionTypes = [
   { id: "assemble" as const, label: "拼装", icon: Puzzle },
@@ -435,16 +435,16 @@ export function KnowledgeInteractionLab({
   return (
     <div
       className="border-t p-4 sm:p-6"
-      style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}
+      style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-sm font-black">互动练习台</p>
+          <p className="text-sm font-bold">互动练习台</p>
           <p className="app-muted-text mt-1 text-[10px]">
             每类答对 3 题，即可完成这一项训练。
           </p>
         </div>
-        <span className="text-[10px] font-black" style={{ color: tone.color }}>
+        <span className="text-[10px] font-bold" style={{ color: tone.color }}>
           本项进度 {correctCounts[type]} / 3
         </span>
       </div>
@@ -460,7 +460,7 @@ export function KnowledgeInteractionLab({
               key={item.id}
               type="button"
               onClick={() => chooseType(item.id)}
-              className="flex items-center gap-2 rounded-2xl border px-3 py-3 text-left text-xs font-black"
+              className="flex items-center gap-2 rounded-2xl border px-3 py-3 text-left text-xs font-bold"
               style={{
                 color: selected ? "white" : itemTone.color,
                 borderColor: selected
@@ -477,7 +477,7 @@ export function KnowledgeInteractionLab({
                 <CheckCircle2
                   className="ml-auto"
                   size={14}
-                  style={{ color: "var(--app-success)" }}
+                  style={{ color: "var(--status-success)" }}
                 />
               )}
             </button>
@@ -503,7 +503,10 @@ export function KnowledgeInteractionLab({
                   {
                     left: burstIndex === 0 ? "32%" : "70%",
                     top: burstIndex === 0 ? "42%" : "36%",
-                    color: burstIndex === 0 ? "#e7a83e" : "#8b69b3",
+                    color:
+                      burstIndex === 0
+                        ? "var(--status-warning)"
+                        : "var(--support)",
                     "--delay": `${burstIndex * 80}ms`,
                   } as CSSProperties
                 }
@@ -541,10 +544,10 @@ export function KnowledgeInteractionLab({
         {type === "assemble" && (
           <div className="grid items-center gap-5 lg:grid-cols-[150px_minmax(0,1fr)_150px]">
             <div className="text-center">
-              <p className="text-[10px] font-black" style={{ color: tone.color }}>
+              <p className="text-[10px] font-bold" style={{ color: tone.color }}>
                 拼出目标音节
               </p>
-              <p className="mt-2 text-7xl font-black">{assemble.target}</p>
+              <p className="mt-2 text-7xl font-bold">{assemble.target}</p>
             </div>
             <div>
               <div className="grid grid-cols-3 gap-2">
@@ -560,12 +563,12 @@ export function KnowledgeInteractionLab({
                           ? activeSelectionText
                           : touchedSlots[slotIndex]
                             ? completedSelectionText
-                            : "var(--app-text)",
+                            : "var(--foreground)",
                       borderColor:
                         activeSlot === slotIndex
                           ? activeSelectionColor
                           : touchedSlots[slotIndex]
-                            ? "#d6a83f"
+                            ? "var(--status-warning)"
                             : `${tone.color}66`,
                       backgroundColor:
                         activeSlot === slotIndex
@@ -576,7 +579,7 @@ export function KnowledgeInteractionLab({
                     }}
                   >
                     <span
-                      className="block text-[9px] font-black"
+                      className="block text-[9px] font-bold"
                       style={{
                         color:
                           activeSlot === slotIndex
@@ -588,7 +591,7 @@ export function KnowledgeInteractionLab({
                     >
                       {label}
                     </span>
-                    <span className="mt-2 block text-2xl font-black">
+                    <span className="mt-2 block text-2xl font-bold">
                       {touchedSlots[slotIndex]
                         ? slots[slotIndex] || "无"
                         : "＋"}
@@ -622,13 +625,13 @@ export function KnowledgeInteractionLab({
                         setActiveSlot(nextUntouchedSlot);
                         setResult(null);
                       }}
-                      className="min-w-11 rounded-xl border px-3 py-2 text-sm font-black transition hover:-translate-y-0.5"
+                      className="min-w-11 rounded-xl border px-3 py-2 text-sm font-bold transition hover:-translate-y-0.5"
                       style={{
                         color: selectedLetter
                           ? completedSelectionText
-                          : "var(--app-text)",
+                          : "var(--foreground)",
                         borderColor: selectedLetter
-                          ? "#d6a83f"
+                          ? "var(--status-warning)"
                           : `${tone.color}66`,
                         backgroundColor: selectedLetter
                           ? completedSelectionColor
@@ -648,7 +651,7 @@ export function KnowledgeInteractionLab({
                         slots.join("|") === assemble.expected.join("|"),
                     )
                   }
-                  className="ml-auto rounded-xl px-4 py-2 text-xs font-black text-white"
+                  className="ml-auto rounded-xl px-4 py-2 text-xs font-bold text-white"
                   style={{ backgroundColor: tone.color }}
                 >
                   检查拼装
@@ -659,10 +662,10 @@ export function KnowledgeInteractionLab({
               className="rounded-3xl border bg-white px-3 py-4 text-center"
               style={{ borderColor: tone.color }}
             >
-              <p className="text-[10px] font-black" style={{ color: tone.color }}>
+              <p className="text-[10px] font-bold" style={{ color: tone.color }}>
                 我的拼装
               </p>
-              <p className="mt-2 text-6xl font-black">{assembledPreview}</p>
+              <p className="mt-2 text-6xl font-bold">{assembledPreview}</p>
               <div className="mt-3 grid gap-1 text-[9px] font-bold">
                 {["初声", "中声", "终声"].map((label, slotIndex) => (
                   <p key={label} className="flex items-center justify-between gap-2">
@@ -682,14 +685,14 @@ export function KnowledgeInteractionLab({
         {type === "deconstruct" && (
           <div className="grid items-center gap-5 lg:grid-cols-[160px_minmax(0,1fr)]">
             <div className="text-center">
-              <p className="text-[10px] font-black" style={{ color: tone.color }}>
+              <p className="text-[10px] font-bold" style={{ color: tone.color }}>
                 拆开目标音节
               </p>
-              <p className="mt-2 text-7xl font-black">{deconstruct.target}</p>
+              <p className="mt-2 text-7xl font-bold">{deconstruct.target}</p>
             </div>
             <div>
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-xs font-black">把部件放进正确的结构槽位</p>
+                <p className="text-xs font-bold">把部件放进正确的结构槽位</p>
                 <p className="app-muted-text text-[9px] font-bold">
                   支持拖动，也可以先点槽位再点部件
                 </p>
@@ -715,11 +718,11 @@ export function KnowledgeInteractionLab({
                           ? activeSelectionText
                           : value
                             ? completedSelectionText
-                            : "var(--app-text)",
+                            : "var(--foreground)",
                         borderColor: active
-                          ? "#55b978"
+                          ? "var(--primary)"
                           : value
-                            ? "#d6a83f"
+                            ? "var(--status-warning)"
                             : `${tone.color}66`,
                         backgroundColor: active
                           ? activeSelectionColor
@@ -728,8 +731,8 @@ export function KnowledgeInteractionLab({
                             : "white",
                       }}
                     >
-                      <span className="block text-[9px] font-black">{label}</span>
-                      <span className="mt-2 block text-2xl font-black">
+                      <span className="block text-[9px] font-bold">{label}</span>
+                      <span className="mt-2 block text-2xl font-bold">
                         {value === "—" ? "无终声" : value || "放这里"}
                       </span>
                     </button>
@@ -737,7 +740,7 @@ export function KnowledgeInteractionLab({
                 })}
               </div>
               <div className="mt-3 flex flex-wrap items-center gap-2 rounded-2xl bg-white p-3">
-                <span className="app-muted-text mr-1 text-[9px] font-black">
+                <span className="app-muted-text mr-1 text-[9px] font-bold">
                   部件库
                 </span>
                 {deconstructBank.map((part) => {
@@ -755,12 +758,14 @@ export function KnowledgeInteractionLab({
                           placeDeconstructPart(deconstructActiveSlot, part);
                         }
                       }}
-                      className="min-w-12 cursor-grab rounded-xl border px-3 py-2 text-sm font-black transition active:cursor-grabbing"
+                      className="min-w-12 cursor-grab rounded-xl border px-3 py-2 text-sm font-bold transition active:cursor-grabbing"
                       style={{
                         color: used
                           ? completedSelectionText
-                          : "var(--app-text)",
-                        borderColor: used ? "#d6a83f" : `${tone.color}66`,
+                          : "var(--foreground)",
+                        borderColor: used
+                          ? "var(--status-warning)"
+                          : `${tone.color}66`,
                         backgroundColor: used
                           ? completedSelectionColor
                           : "white",
@@ -778,13 +783,13 @@ export function KnowledgeInteractionLab({
         {type === "repair" && (
           <div className="grid items-center gap-5 lg:grid-cols-[140px_minmax(0,1fr)_170px]">
             <div className="text-center">
-              <p className="text-[10px] font-black" style={{ color: tone.color }}>
+              <p className="text-[10px] font-bold" style={{ color: tone.color }}>
                 目标音节
               </p>
-              <p className="mt-2 text-7xl font-black">{repair.symbol}</p>
+              <p className="mt-2 text-7xl font-bold">{repair.symbol}</p>
             </div>
             <div>
-              <p className="text-sm font-black leading-6">{repair.prompt}</p>
+              <p className="text-sm font-bold leading-6">{repair.prompt}</p>
               <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {["初声", "中声", "终声"].map((label, slotIndex) => {
                   const active = repairSourceSlot === slotIndex;
@@ -816,11 +821,11 @@ export function KnowledgeInteractionLab({
                         ? activeSelectionText
                         : repairTouchedSlots[slotIndex]
                           ? completedSelectionText
-                          : "var(--app-text)",
+                          : "var(--foreground)",
                       borderColor: active
-                        ? "#55b978"
+                        ? "var(--primary)"
                         : repairTouchedSlots[slotIndex]
-                          ? "#d6a83f"
+                          ? "var(--status-warning)"
                           : `${tone.color}66`,
                       backgroundColor: active
                         ? activeSelectionColor
@@ -829,8 +834,8 @@ export function KnowledgeInteractionLab({
                           : "white",
                     }}
                   >
-                    <span className="block text-[9px] font-black">{label}</span>
-                    <span className="mt-2 block text-2xl font-black">
+                    <span className="block text-[9px] font-bold">{label}</span>
+                    <span className="mt-2 block text-2xl font-bold">
                       {repairSlots[slotIndex] || "空位"}
                     </span>
                   </button>
@@ -848,7 +853,7 @@ export function KnowledgeInteractionLab({
                       repairSlots.join("|") === repair.expected.join("|"),
                     )
                   }
-                  className="rounded-xl px-4 py-2 text-xs font-black text-white"
+                  className="rounded-xl px-4 py-2 text-xs font-bold text-white"
                   style={{ backgroundColor: tone.color }}
                 >
                   检查修复
@@ -856,19 +861,19 @@ export function KnowledgeInteractionLab({
               </div>
             </div>
             <div className="grid gap-2 rounded-3xl border bg-white p-3 text-center" style={{ borderColor: `${tone.color}66` }}>
-              <div className="rounded-2xl px-2 py-3" style={{ backgroundColor: "var(--app-accent-soft)" }}>
-                <p className="text-[9px] font-black" style={{ color: tone.color }}>
+              <div className="rounded-2xl px-2 py-3" style={{ backgroundColor: "var(--accent)" }}>
+                <p className="text-[9px] font-bold" style={{ color: tone.color }}>
                   修改前
                 </p>
-                <p className="mt-1 text-2xl font-black">
+                <p className="mt-1 text-2xl font-bold">
                   {repair.wrong.map((part) => part || "□").join(" · ")}
                 </p>
               </div>
               <div className="rounded-2xl px-2 py-3" style={{ backgroundColor: tone.soft }}>
-                <p className="text-[9px] font-black" style={{ color: tone.color }}>
+                <p className="text-[9px] font-bold" style={{ color: tone.color }}>
                   当前结构
                 </p>
-                <p className="mt-1 text-4xl font-black">
+                <p className="mt-1 text-4xl font-bold">
                   {composeHangul(repairSlots)}
                 </p>
               </div>
@@ -879,13 +884,13 @@ export function KnowledgeInteractionLab({
         {type === "classify" && (
           <div>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <p className="text-sm font-black">{classify.prompt}</p>
+              <p className="text-sm font-bold">{classify.prompt}</p>
               <p className="app-muted-text text-[9px] font-bold">
                 拖进分类盒，或先点音节再点分类盒
               </p>
             </div>
             <div className="mt-3 flex min-h-16 flex-wrap items-center gap-2 rounded-2xl bg-white p-3">
-              <span className="app-muted-text mr-1 text-[9px] font-black">
+              <span className="app-muted-text mr-1 text-[9px] font-bold">
                 待分类
               </span>
               {classify.items
@@ -905,13 +910,13 @@ export function KnowledgeInteractionLab({
                         selected ? null : item.symbol,
                       )
                     }
-                    className="min-w-14 cursor-grab rounded-xl border px-3 py-2 text-lg font-black transition active:cursor-grabbing"
+                    className="min-w-14 cursor-grab rounded-xl border px-3 py-2 text-lg font-bold transition active:cursor-grabbing"
                     style={{
                       color: selected
                         ? activeSelectionText
-                        : "var(--app-text)",
+                        : "var(--foreground)",
                       borderColor: selected
-                        ? "#55b978"
+                        ? "var(--primary)"
                         : `${tone.color}66`,
                       backgroundColor: selected
                         ? activeSelectionColor
@@ -965,7 +970,7 @@ export function KnowledgeInteractionLab({
                         : `${tone.color}66`,
                     }}
                   >
-                    <span className="block text-[10px] font-black" style={{ color: tone.color }}>
+                    <span className="block text-[10px] font-bold" style={{ color: tone.color }}>
                       {bucket.label}
                     </span>
                     <span className="mt-3 flex flex-wrap gap-2">
@@ -994,10 +999,10 @@ export function KnowledgeInteractionLab({
                             setSelectedClassifyItem(item.symbol);
                             setResult(null);
                           }}
-                          className="rounded-xl border px-3 py-2 text-lg font-black"
+                          className="rounded-xl border px-3 py-2 text-lg font-bold"
                           style={{
                             color: completedSelectionText,
-                            borderColor: "#d6a83f",
+                            borderColor: "var(--status-warning)",
                             backgroundColor: completedSelectionColor,
                           }}
                         >
@@ -1017,10 +1022,10 @@ export function KnowledgeInteractionLab({
           style={{
             color:
               result === "correct"
-                ? "var(--app-success)"
+                ? "var(--status-success)"
                 : result === "wrong"
-                  ? "#c94f45"
-                  : "var(--app-muted)",
+                  ? "var(--status-danger)"
+                  : "var(--foreground-muted)",
           }}
         >
           <span className="flex-1">
@@ -1034,7 +1039,7 @@ export function KnowledgeInteractionLab({
             <button
               type="button"
               onClick={nextQuestion}
-              className="inline-flex items-center gap-1 font-black"
+              className="inline-flex items-center gap-1 font-bold"
             >
               下一题
               <ArrowRight size={12} />

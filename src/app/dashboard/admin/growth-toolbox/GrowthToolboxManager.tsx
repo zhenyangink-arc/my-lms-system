@@ -213,11 +213,11 @@ export function GrowthToolboxManager({
   }
 
   return (
-    <section className="rounded-xl border" style={{ borderColor: "var(--app-border)" }}>
+    <section className="rounded-xl border" style={{ borderColor: "var(--border)" }}>
       {/* 工具栏 */}
       <div
         className="flex flex-wrap items-center gap-2 border-b px-3 py-2.5"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <label className="relative">
           <Search size={12} className="app-muted-text absolute left-2.5 top-1/2 -translate-y-1/2" aria-hidden="true" />
@@ -251,8 +251,8 @@ export function GrowthToolboxManager({
         <button
           type="button"
           onClick={() => setLibraryOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[11px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-          style={{ borderColor: "var(--app-border)", color: "var(--app-accent)" }}
+          className="inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[11px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+          style={{ borderColor: "var(--border)", color: "var(--primary)" }}
         >
           <BookOpenCheck size={12} aria-hidden="true" />
           练习词库（{vocabularyLibrary.length}）
@@ -260,8 +260,8 @@ export function GrowthToolboxManager({
         <button
           type="button"
           onClick={() => setGrammarOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[11px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-          style={{ borderColor: "var(--app-border)", color: "var(--app-secondary)" }}
+          className="inline-flex items-center gap-1.5 rounded-[6px] border px-3 py-2 text-[11px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+          style={{ borderColor: "var(--border)", color: "var(--support)" }}
         >
           <BookOpen size={12} aria-hidden="true" />
           语法库（{grammarLibrary.length}）
@@ -272,7 +272,7 @@ export function GrowthToolboxManager({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[880px] border-collapse text-left">
           <thead>
-            <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+            <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
               <th className="w-[34%] px-4 py-2.5 font-medium">课程结构</th>
               <th className="w-[18%] px-3 py-2.5 font-medium">互动教材</th>
               <th className="w-[8%] px-3 py-2.5 font-medium">章节</th>
@@ -293,7 +293,7 @@ export function GrowthToolboxManager({
                 if (row.kind === "course") {
                   const stats = courseStats(row.course);
                   return (
-                    <tr key={`c-${row.course.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                    <tr key={`c-${row.course.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                       <td className="px-4 py-2.5">
                         <div className="flex min-w-0 items-center gap-1">
                           <ToggleButton
@@ -319,7 +319,7 @@ export function GrowthToolboxManager({
                   const stats = lessonStats(row.lesson);
                   const textbook = row.lesson.textbooks[0];
                   return (
-                    <tr key={`l-${row.lesson.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
+                    <tr key={`l-${row.lesson.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}>
                       <td className="px-4 py-2.5">
                         <div className="flex min-w-0 items-center gap-1" style={{ paddingLeft: "18px" }}>
                           <ToggleButton
@@ -360,7 +360,7 @@ export function GrowthToolboxManager({
                 }
 
                 return (
-                  <tr key={`ch-${row.chapter.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                  <tr key={`ch-${row.chapter.id}`} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                     <td className="px-4 py-2">
                       <div className="flex min-w-0 items-center gap-1" style={{ paddingLeft: "42px" }}>
                         <span className="w-6 shrink-0" />
@@ -380,14 +380,14 @@ export function GrowthToolboxManager({
                         <button
                           type="button"
                           onClick={() => setLibraryOpen(true)}
-                          className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--app-accent)] hover:underline"
+                          className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--primary)] hover:underline"
                         >
                           词汇编辑
                         </button>
                         <button
                           type="button"
                           onClick={() => setGrammarOpen(true)}
-                          className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--app-secondary)] hover:underline"
+                          className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--support)] hover:underline"
                         >
                           语法编辑
                         </button>
@@ -435,7 +435,7 @@ function ToggleButton({
       aria-label={open ? `收起${label}` : `展开${label}`}
       aria-expanded={open}
       onClick={onClick}
-      className="app-muted-text flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--app-soft-bg)]"
+      className="app-muted-text flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--surface-soft)]"
     >
       <ChevronRight size={12} className={`transition-transform ${open ? "rotate-90" : ""}`} />
     </button>
@@ -445,10 +445,10 @@ function ToggleButton({
 function RowStatus({ status }: { status: string }) {
   const tone =
     status === "published"
-      ? "var(--app-success)"
+      ? "var(--status-success)"
       : status === "draft"
-        ? "var(--app-warm)"
-        : "var(--app-muted)";
+        ? "var(--status-warning)"
+        : "var(--foreground-muted)";
   const label = status === "published" ? "已发布" : status === "draft" ? "草稿" : "已归档";
   return (
     <span
@@ -485,7 +485,7 @@ function StatusSwitch({
       type="button"
       onClick={run}
       disabled={pending}
-      className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--app-accent)] hover:underline disabled:opacity-50"
+      className="app-muted-text font-medium underline-offset-2 transition hover:text-[var(--primary)] hover:underline disabled:opacity-50"
     >
       {pending ? (
         <LoaderCircle size={11} className="inline animate-spin" aria-hidden="true" />
@@ -571,11 +571,11 @@ export function VocabularyLibraryWorkspace({
     >
       <div
         className="course-editor-window app-card relative flex h-[min(800px,calc(100vh-24px))] w-full max-w-[1500px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <div
           className="flex h-12 shrink-0 items-center justify-between border-b px-4"
-          style={{ borderColor: "var(--app-border)" }}
+          style={{ borderColor: "var(--border)" }}
         >
           <div className="flex min-w-0 items-center gap-2 text-[11px]">
             <span className="truncate font-semibold">练习词库</span>
@@ -587,8 +587,8 @@ export function VocabularyLibraryWorkspace({
             type="button"
             onClick={onClose}
             aria-label="关闭练习词库"
-            className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--app-soft-bg)]"
-            style={{ borderColor: "var(--app-border)" }}
+            className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--surface-soft)]"
+            style={{ borderColor: "var(--border)" }}
           >
             <X size={14} />
           </button>
@@ -604,24 +604,24 @@ export function VocabularyLibraryWorkspace({
           )}
 
           {items.length > 0 && (
-            <div className="overflow-x-auto rounded-xl border" style={{ borderColor: "var(--app-border)" }}>
+            <div className="overflow-x-auto rounded-xl border" style={{ borderColor: "var(--border)" }}>
               <table className="w-full min-w-[760px] border-collapse text-left">
                 <thead>
-                  <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+                  <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
                     <th className="w-[14%] px-3 py-2 font-medium">来源</th>
-                    <th className="w-[5%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>#</th>
-                    <th className="w-[17%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>韩语</th>
-                    <th className="w-[17%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>中文</th>
-                    <th className="w-[10%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>词性</th>
-                    <th className="w-[16%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>搭配</th>
-                    <th className="w-[13%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>音标</th>
-                    <th className="w-[12%] border-l px-3 py-2 text-right font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
+                    <th className="w-[5%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>#</th>
+                    <th className="w-[17%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>韩语</th>
+                    <th className="w-[17%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>中文</th>
+                    <th className="w-[10%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>词性</th>
+                    <th className="w-[16%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>搭配</th>
+                    <th className="w-[13%] border-l px-3 py-2 font-medium" style={{ borderColor: "var(--border)" }}>音标</th>
+                    <th className="w-[12%] border-l px-3 py-2 text-right font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, itemIndex) =>
                     editId === item.id ? (
-                      <tr key={item.id} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                      <tr key={item.id} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
                         <td colSpan={8} className="px-3 py-2">
                           <div className="grid gap-2 sm:grid-cols-5">
                             <LibraryWordInput value={draft.ko} onChange={(value) => setDraft({ ...draft, ko: value })} placeholder="韩语" />
@@ -636,7 +636,7 @@ export function VocabularyLibraryWorkspace({
                               onClick={() => submitUpdate(item.id)}
                               disabled={pending}
                               className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-                              style={{ backgroundColor: "var(--app-accent)" }}
+                              style={{ backgroundColor: "var(--primary)" }}
                             >
                               {pending ? <LoaderCircle size={11} className="animate-spin" aria-hidden="true" /> : <Check size={11} aria-hidden="true" />}
                               保存
@@ -647,8 +647,8 @@ export function VocabularyLibraryWorkspace({
                                 setEditId(null);
                                 setDraft(EMPTY_LIBRARY_WORD);
                               }}
-                              className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-                              style={{ borderColor: "var(--app-border)" }}
+                              className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+                              style={{ borderColor: "var(--border)" }}
                             >
                               取消
                             </button>
@@ -656,17 +656,17 @@ export function VocabularyLibraryWorkspace({
                         </td>
                       </tr>
                     ) : (
-                      <tr key={item.id} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                      <tr key={item.id} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--border)" }}>
                         <td className="px-3 py-2.5">
                           <SourceBadge source={item.source} />
                         </td>
-                        <td className="app-muted-text border-l px-3 py-2.5 font-mono text-[10px]" style={{ borderColor: "var(--app-border)" }}>{itemIndex + 1}</td>
-                        <td className="border-l px-3 py-2.5 font-semibold" style={{ borderColor: "var(--app-border)" }}>{item.ko}</td>
-                        <td className="border-l px-3 py-2.5" style={{ borderColor: "var(--app-border)" }}>{item.zh}</td>
-                        <td className="app-muted-text border-l px-3 py-2.5" style={{ borderColor: "var(--app-border)" }}>{item.pos}</td>
-                        <td className="border-l px-3 py-2.5 text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>{item.collocation}</td>
-                        <td className="border-l px-3 py-2.5" style={{ borderColor: "var(--app-border)" }}>{item.transcription}</td>
-                        <td className="border-l px-3 py-2.5 text-right" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="app-muted-text border-l px-3 py-2.5 font-mono text-[10px]" style={{ borderColor: "var(--border)" }}>{itemIndex + 1}</td>
+                        <td className="border-l px-3 py-2.5 font-semibold" style={{ borderColor: "var(--border)" }}>{item.ko}</td>
+                        <td className="border-l px-3 py-2.5" style={{ borderColor: "var(--border)" }}>{item.zh}</td>
+                        <td className="app-muted-text border-l px-3 py-2.5" style={{ borderColor: "var(--border)" }}>{item.pos}</td>
+                        <td className="border-l px-3 py-2.5 text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>{item.collocation}</td>
+                        <td className="border-l px-3 py-2.5" style={{ borderColor: "var(--border)" }}>{item.transcription}</td>
+                        <td className="border-l px-3 py-2.5 text-right" style={{ borderColor: "var(--border)" }}>
                           <div className="inline-flex gap-1">
                             <button
                               type="button"
@@ -680,7 +680,7 @@ export function VocabularyLibraryWorkspace({
                                   transcription: item.transcription,
                                 });
                               }}
-                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-accent)]"
+                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--primary)]"
                               title="编辑"
                             >
                               <Pencil size={12} aria-hidden="true" />
@@ -689,7 +689,7 @@ export function VocabularyLibraryWorkspace({
                               type="button"
                               onClick={() => remove(item.id)}
                               disabled={pending}
-                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)] disabled:opacity-50"
+                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)] disabled:opacity-50"
                               title="删除"
                             >
                               {pending ? <LoaderCircle size={12} className="animate-spin" aria-hidden="true" /> : <Trash2 size={12} aria-hidden="true" />}
@@ -705,7 +705,7 @@ export function VocabularyLibraryWorkspace({
           )}
 
           {addOpen ? (
-            <div className="mt-4 rounded-xl border p-3" style={{ borderColor: "var(--app-border)", background: "var(--app-soft-bg)" }}>
+            <div className="mt-4 rounded-xl border p-3" style={{ borderColor: "var(--border)", background: "var(--surface-soft)" }}>
               <p className="text-[11px] font-semibold">新增单词（仅加入练习词库，不影响互动教材）</p>
               <div className="mt-2 grid gap-2 sm:grid-cols-5">
                 <LibraryWordInput value={draft.ko} onChange={(value) => setDraft({ ...draft, ko: value })} placeholder="韩语（必填）" />
@@ -720,7 +720,7 @@ export function VocabularyLibraryWorkspace({
                   onClick={submitAdd}
                   disabled={pending}
                   className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-                  style={{ backgroundColor: "var(--app-accent)" }}
+                  style={{ backgroundColor: "var(--primary)" }}
                 >
                   {pending ? <LoaderCircle size={11} className="animate-spin" aria-hidden="true" /> : <Plus size={11} aria-hidden="true" />}
                   添加
@@ -731,8 +731,8 @@ export function VocabularyLibraryWorkspace({
                     setAddOpen(false);
                     setDraft(EMPTY_LIBRARY_WORD);
                   }}
-                  className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-                  style={{ borderColor: "var(--app-border)" }}
+                  className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+                  style={{ borderColor: "var(--border)" }}
                 >
                   取消
                 </button>
@@ -742,7 +742,7 @@ export function VocabularyLibraryWorkspace({
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="app-muted-text mt-4 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--app-accent)]"
+              className="app-muted-text mt-4 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--primary)]"
             >
               <Plus size={12} aria-hidden="true" />
               添加单词
@@ -769,14 +769,14 @@ function LibraryWordInput({
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder={placeholder}
-      className="w-full rounded-[6px] border px-2.5 py-1.5 text-[11px] font-medium outline-none transition-colors focus:border-[var(--app-accent)]"
-      style={{ borderColor: "var(--app-border)", background: "var(--app-card-bg)" }}
+      className="w-full rounded-[6px] border px-2.5 py-1.5 text-[11px] font-medium outline-none transition-colors focus:border-[var(--primary)]"
+      style={{ borderColor: "var(--border)", background: "var(--card)" }}
     />
   );
 }
 
 function SourceBadge({ source }: { source: "textbook" | "custom" }) {
-  const tone = source === "textbook" ? "var(--app-secondary)" : "var(--app-accent)";
+  const tone = source === "textbook" ? "var(--support)" : "var(--primary)";
   return (
     <span
       className="inline-flex items-center gap-1 rounded-full px-1 py-0.5 text-[8px] font-medium leading-none"
@@ -789,7 +789,7 @@ function SourceBadge({ source }: { source: "textbook" | "custom" }) {
 }
 
 function Feedback({ message }: { message: string }) {
-  return <p className="mt-1 text-[10px] font-medium" style={{ color: "var(--app-warm)" }}>{message}</p>;
+  return <p className="mt-1 text-[10px] font-medium" style={{ color: "var(--status-warning)" }}>{message}</p>;
 }
 
 type LibraryGrammarDraft = {
@@ -895,11 +895,11 @@ export function GrammarLibraryWorkspace({
     >
       <div
         className="course-editor-window app-card relative flex h-[min(800px,calc(100vh-24px))] w-full max-w-[1500px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <div
           className="flex h-12 shrink-0 items-center justify-between border-b px-4"
-          style={{ borderColor: "var(--app-border)" }}
+          style={{ borderColor: "var(--border)" }}
         >
           <div className="flex min-w-0 items-center gap-2 text-[11px]">
             <span className="truncate font-semibold">语法库</span>
@@ -909,8 +909,8 @@ export function GrammarLibraryWorkspace({
             type="button"
             onClick={onClose}
             aria-label="关闭语法库"
-            className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--app-soft-bg)]"
-            style={{ borderColor: "var(--app-border)" }}
+            className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--surface-soft)]"
+            style={{ borderColor: "var(--border)" }}
           >
             <X size={14} />
           </button>
@@ -926,30 +926,30 @@ export function GrammarLibraryWorkspace({
           )}
 
           {items.length > 0 && (
-            <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--app-border)" }}>
+            <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--border)" }}>
               <table className="w-full border-collapse text-left">
                 <thead>
-                  <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+                  <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
                     <th className="w-[4%] px-3 py-2 font-medium">#</th>
-                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>语法</th>
-                    <th className="w-[8%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>中文含义</th>
-                    <th className="w-[7%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>尾字收音</th>
-                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>情况说明</th>
-                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>形态</th>
-                    <th className="w-[9%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>组合</th>
-                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>形态组合音频</th>
-                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>例句展示</th>
-                    <th className="w-[9%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>例句中文</th>
-                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>例句展示语音</th>
-                    <th className="w-[20%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>注意事项</th>
-                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--app-border)" }}>来源</th>
-                    <th className="w-[5%] border-l px-2 py-2 text-right font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
+                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>语法</th>
+                    <th className="w-[8%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>中文含义</th>
+                    <th className="w-[7%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>尾字收音</th>
+                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>情况说明</th>
+                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>形态</th>
+                    <th className="w-[9%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>组合</th>
+                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>形态组合音频</th>
+                    <th className="w-[10%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>例句展示</th>
+                    <th className="w-[9%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>例句中文</th>
+                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>例句展示语音</th>
+                    <th className="w-[20%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>注意事项</th>
+                    <th className="w-[5%] border-l px-2 py-2 font-medium" style={{ borderColor: "var(--border)" }}>来源</th>
+                    <th className="w-[5%] border-l px-2 py-2 text-right font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
                   </tr>
                 </thead>
                 <tbody>
                   {items.map((item, index) =>
                     editId === item.id ? (
-                      <tr key={item.id} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                      <tr key={item.id} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
                         <td colSpan={14} className="px-3 py-2">
                           <LibraryGrammarItemForm
                             draft={draft}
@@ -965,70 +965,70 @@ export function GrammarLibraryWorkspace({
                         </td>
                       </tr>
                     ) : (
-                      <tr key={item.id} className="border-b align-top text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                      <tr key={item.id} className="border-b align-top text-[11px] last:border-b-0" style={{ borderColor: "var(--border)" }}>
                         <td className="app-muted-text px-2 py-2.5 font-mono text-[10px]">{index + 1}</td>
-                        <td className="border-l px-2 py-2.5 font-semibold" style={{ borderColor: "var(--app-border)" }}>{item.title}</td>
-                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--app-border)" }}>{item.meaning}</td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 font-semibold" style={{ borderColor: "var(--border)" }}>{item.title}</td>
+                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--border)" }}>{item.meaning}</td>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.cases.map((caseRow, caseIndex) => (
                             <p
                               key={caseIndex}
                               className="py-1"
-                              style={caseIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={caseIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               {caseRow.batchim}
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.cases.map((caseRow, caseIndex) => (
                             <p
                               key={caseIndex}
                               className="py-1"
-                              style={caseIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={caseIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               {caseRow.conjugation}
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.rows.map((row, rowIndex) => (
                             <p
                               key={rowIndex}
                               className="py-1"
-                              style={rowIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={rowIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               {row.form}
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.rows.map((row, rowIndex) => (
                             <p
                               key={rowIndex}
                               className="py-1"
-                              style={rowIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={rowIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               {row.combination}
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--border)" }}>
                           {item.rows.length === 0 && <span className="app-muted-text">—</span>}
                           {item.rows.map((row, rowIndex) =>
                             row.audio ? (
                               <p
                                 key={rowIndex}
                                 className="flex items-center gap-1 py-1"
-                                style={rowIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                                style={rowIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                               >
-                                <Volume2 size={11} aria-hidden="true" style={{ color: "var(--app-accent)" }} />
+                                <Volume2 size={11} aria-hidden="true" style={{ color: "var(--primary)" }} />
                                 <span className="max-w-[110px] truncate text-[10px] font-medium" title={row.audio}>{row.audio.split("/").pop()}</span>
                                 <button
                                   type="button"
                                   onClick={() => void playAudio(row.audio)}
                                   disabled={audioPending}
-                                  className="app-muted-text shrink-0 rounded-[4px] px-1 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-accent)] disabled:opacity-50"
+                                  className="app-muted-text shrink-0 rounded-[4px] px-1 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] disabled:opacity-50"
                                 >
                                   {audioPending ? "…" : "试听"}
                                 </button>
@@ -1037,51 +1037,51 @@ export function GrammarLibraryWorkspace({
                               <p
                                 key={rowIndex}
                                 className="app-muted-text py-1 text-[10px]"
-                                style={rowIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                                style={rowIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                               >
                                 —
                               </p>
                             )
                           )}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.examples.map((example, exampleIndex) => (
                             <p
                               key={exampleIndex}
                               className="py-1"
-                              style={exampleIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={exampleIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               <span className="font-semibold">{example.ko}</span>
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.examples.map((example, exampleIndex) => (
                             <p
                               key={exampleIndex}
                               className="py-1"
-                              style={exampleIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                              style={exampleIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                             >
                               <span className="app-muted-text">{example.zh}</span>
                             </p>
                           ))}
                         </td>
-                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--border)" }}>
                           {item.examples.length === 0 && <span className="app-muted-text">—</span>}
                           {item.examples.map((example, exampleIndex) =>
                             example.audio ? (
                               <p
                                 key={exampleIndex}
                                 className="flex items-center gap-1 py-1"
-                                style={exampleIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                                style={exampleIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                               >
-                                <Volume2 size={11} aria-hidden="true" style={{ color: "var(--app-accent)" }} />
+                                <Volume2 size={11} aria-hidden="true" style={{ color: "var(--primary)" }} />
                                 <span className="max-w-[110px] truncate text-[10px] font-medium" title={example.audio}>{example.audio.split("/").pop()}</span>
                                 <button
                                   type="button"
                                   onClick={() => void playAudio(example.audio)}
                                   disabled={audioPending}
-                                  className="app-muted-text shrink-0 rounded-[4px] px-1 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-accent)] disabled:opacity-50"
+                                  className="app-muted-text shrink-0 rounded-[4px] px-1 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] disabled:opacity-50"
                                 >
                                   {audioPending ? "…" : "试听"}
                                 </button>
@@ -1090,24 +1090,24 @@ export function GrammarLibraryWorkspace({
                               <p
                                 key={exampleIndex}
                                 className="app-muted-text py-1 text-[10px]"
-                                style={exampleIndex > 0 ? { borderTop: "1px solid var(--app-border)", paddingTop: 4 } : undefined}
+                                style={exampleIndex > 0 ? { borderTop: "1px solid var(--border)", paddingTop: 4 } : undefined}
                               >
                                 —
                               </p>
                             )
                           )}
                         </td>
-                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 leading-5" style={{ borderColor: "var(--border)" }}>
                           {item.caution ? (
-                            <p style={{ color: "var(--app-warm)" }}>{item.caution}</p>
+                            <p style={{ color: "var(--status-warning)" }}>{item.caution}</p>
                           ) : (
                             <span className="app-muted-text">—</span>
                           )}
                         </td>
-                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5" style={{ borderColor: "var(--border)" }}>
                           <SourceBadge source={item.source} />
                         </td>
-                        <td className="border-l px-2 py-2.5 text-right" style={{ borderColor: "var(--app-border)" }}>
+                        <td className="border-l px-2 py-2.5 text-right" style={{ borderColor: "var(--border)" }}>
                           <div className="inline-flex gap-1">
                             <button
                               type="button"
@@ -1115,7 +1115,7 @@ export function GrammarLibraryWorkspace({
                                 setEditId(item.id);
                                 setDraft(toDraft(item));
                               }}
-                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-accent)]"
+                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--primary)]"
                               title="编辑"
                             >
                               <Pencil size={12} aria-hidden="true" />
@@ -1124,7 +1124,7 @@ export function GrammarLibraryWorkspace({
                               type="button"
                               onClick={() => void remove(item.id)}
                               disabled={pending}
-                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)] disabled:opacity-50"
+                              className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)] disabled:opacity-50"
                               title="删除"
                             >
                               {pending ? <LoaderCircle size={12} className="animate-spin" aria-hidden="true" /> : <Trash2 size={12} aria-hidden="true" />}
@@ -1155,7 +1155,7 @@ export function GrammarLibraryWorkspace({
             <button
               type="button"
               onClick={() => setAddOpen(true)}
-              className="app-muted-text inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--app-accent)]"
+              className="app-muted-text inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--primary)]"
             >
               <Plus size={12} aria-hidden="true" />
               添加语法点
@@ -1185,7 +1185,7 @@ function LibraryGrammarItemForm({
   onCancel: () => void;
 }) {
   const inputClass =
-    "w-full rounded-[6px] border px-2.5 py-1.5 text-[11px] font-medium outline-none transition-colors focus:border-[var(--app-accent)]";
+    "w-full rounded-[6px] border px-2.5 py-1.5 text-[11px] font-medium outline-none transition-colors focus:border-[var(--primary)]";
   const labelClass = "block text-[10px] font-semibold app-muted-text";
 
   function patch(patch: Partial<LibraryGrammarDraft>) {
@@ -1213,7 +1213,7 @@ function LibraryGrammarItemForm({
   return (
     <div
       className="rounded-xl border p-3.5"
-      style={{ borderColor: "var(--app-border)", background: "var(--app-soft-bg)" }}
+      style={{ borderColor: "var(--border)", background: "var(--surface-soft)" }}
     >
       <div className="space-y-2">
         <div>
@@ -1226,14 +1226,14 @@ function LibraryGrammarItemForm({
         </div>
         <div>
           <label className={labelClass}>收音情况（每行一个尾字收音 + 情况说明）</label>
-          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--app-border)" }}>
+          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--border)" }}>
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
                   <th className="w-[5%] px-2 py-1.5 font-medium">#</th>
-                  <th className="w-[44%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>尾字收音</th>
-                  <th className="w-[45%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>情况说明</th>
-                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
+                  <th className="w-[44%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>尾字收音</th>
+                  <th className="w-[45%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>情况说明</th>
+                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -1243,20 +1243,20 @@ function LibraryGrammarItemForm({
                   </tr>
                 )}
                 {draft.cases.map((caseRow, caseIndex) => (
-                  <tr key={caseIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                  <tr key={caseIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border)" }}>
                     <td className="app-muted-text px-2 py-2 font-mono text-[10px]">{caseIndex + 1}</td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={caseRow.batchim} onChange={(event) => updateCase(caseIndex, { batchim: event.target.value })} placeholder="如 无收音" className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={caseRow.conjugation} onChange={(event) => updateCase(caseIndex, { conjugation: event.target.value })} placeholder="如 无收音 → 예요" className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--border)" }}>
                       <button
                         type="button"
                         onClick={() => setDraft((current) => ({ ...current, cases: current.cases.filter((_, i) => i !== caseIndex) }))}
                         title="删除这一行"
-                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)]"
+                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)]"
                       >
                         <X size={12} aria-hidden="true" />
                       </button>
@@ -1269,7 +1269,7 @@ function LibraryGrammarItemForm({
           <button
             type="button"
             onClick={() => setDraft((current) => ({ ...current, cases: [...current.cases, { batchim: "", conjugation: "" }] }))}
-            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--app-accent)]"
+            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--primary)]"
           >
             <Plus size={12} aria-hidden="true" />
             添加一行
@@ -1277,15 +1277,15 @@ function LibraryGrammarItemForm({
         </div>
         <div>
           <label className={labelClass}>形态组合（每行一个形态 + 组合结果，可各自配音频）</label>
-          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--app-border)" }}>
+          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--border)" }}>
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
                   <th className="w-[5%] px-2 py-1.5 font-medium">#</th>
-                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>形态</th>
-                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>组合</th>
-                  <th className="w-[37%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>音频</th>
-                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
+                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>形态</th>
+                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>组合</th>
+                  <th className="w-[37%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>音频</th>
+                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -1295,23 +1295,23 @@ function LibraryGrammarItemForm({
                   </tr>
                 )}
                 {draft.rows.map((row, rowIndex) => (
-                  <tr key={rowIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                  <tr key={rowIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border)" }}>
                     <td className="app-muted-text px-2 py-2 font-mono text-[10px]">{rowIndex + 1}</td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={row.form} onChange={(event) => updateRow(rowIndex, { form: event.target.value })} placeholder="如 민지 + 예요" className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={row.combination} onChange={(event) => updateRow(rowIndex, { combination: event.target.value })} placeholder="如 민지예요" className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <LibraryGrammarRowAudioField value={row.audio} onChange={(objectKey) => updateRow(rowIndex, { audio: objectKey })} />
                     </td>
-                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--border)" }}>
                       <button
                         type="button"
                         onClick={() => setDraft((current) => ({ ...current, rows: current.rows.filter((_, i) => i !== rowIndex) }))}
                         title="删除这一行"
-                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)]"
+                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)]"
                       >
                         <X size={12} aria-hidden="true" />
                       </button>
@@ -1324,7 +1324,7 @@ function LibraryGrammarItemForm({
           <button
             type="button"
             onClick={() => setDraft((current) => ({ ...current, rows: [...current.rows, { form: "", combination: "", audio: "" }] }))}
-            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--app-accent)]"
+            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--primary)]"
           >
             <Plus size={12} aria-hidden="true" />
             添加一行
@@ -1332,15 +1332,15 @@ function LibraryGrammarItemForm({
         </div>
         <div>
           <label className={labelClass}>例句展示（每行一例：韩语 + 中文，可各自配语音）</label>
-          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--app-border)" }}>
+          <div className="mt-1 overflow-hidden rounded-[6px] border" style={{ borderColor: "var(--border)" }}>
             <table className="w-full border-collapse text-left">
               <thead>
-                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+                <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
                   <th className="w-[5%] px-2 py-1.5 font-medium">#</th>
-                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>韩语</th>
-                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>中文</th>
-                  <th className="w-[37%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--app-border)" }}>语音</th>
-                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
+                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>韩语</th>
+                  <th className="w-[26%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>中文</th>
+                  <th className="w-[37%] border-l px-2 py-1.5 font-medium" style={{ borderColor: "var(--border)" }}>语音</th>
+                  <th className="w-[6%] border-l px-2 py-1.5 text-right font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -1350,23 +1350,23 @@ function LibraryGrammarItemForm({
                   </tr>
                 )}
                 {draft.examples.map((example, exampleIndex) => (
-                  <tr key={exampleIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                  <tr key={exampleIndex} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border)" }}>
                     <td className="app-muted-text px-2 py-2 font-mono text-[10px]">{exampleIndex + 1}</td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={example.ko} onChange={(event) => updateExample(exampleIndex, { ko: event.target.value })} placeholder="如 저는 학생이에요." className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <input type="text" value={example.zh} onChange={(event) => updateExample(exampleIndex, { zh: event.target.value })} placeholder="如 我是学生。" className={inputClass} />
                     </td>
-                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2" style={{ borderColor: "var(--border)" }}>
                       <LibraryGrammarRowAudioField value={example.audio} onChange={(objectKey) => updateExample(exampleIndex, { audio: objectKey })} />
                     </td>
-                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--app-border)" }}>
+                    <td className="border-l px-2 py-2 text-right" style={{ borderColor: "var(--border)" }}>
                       <button
                         type="button"
                         onClick={() => setDraft((current) => ({ ...current, examples: current.examples.filter((_, i) => i !== exampleIndex) }))}
                         title="删除这一行"
-                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)]"
+                        className="app-muted-text rounded-[5px] p-1.5 transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)]"
                       >
                         <X size={12} aria-hidden="true" />
                       </button>
@@ -1379,7 +1379,7 @@ function LibraryGrammarItemForm({
           <button
             type="button"
             onClick={() => setDraft((current) => ({ ...current, examples: [...current.examples, { ko: "", zh: "", audio: "" }] }))}
-            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--app-accent)]"
+            className="app-muted-text mt-2 inline-flex items-center gap-1.5 text-[11px] font-medium transition hover:text-[var(--primary)]"
           >
             <Plus size={12} aria-hidden="true" />
             添加一行
@@ -1396,7 +1396,7 @@ function LibraryGrammarItemForm({
           onClick={onSubmit}
           disabled={pending}
           className="inline-flex items-center gap-1.5 rounded-[6px] px-3 py-1.5 text-[11px] font-semibold text-white transition-opacity hover:opacity-90 disabled:opacity-60"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          style={{ backgroundColor: "var(--primary)" }}
         >
           {pending ? <LoaderCircle size={11} className="animate-spin" aria-hidden="true" /> : <Check size={11} aria-hidden="true" />}
           {submitLabel}
@@ -1404,8 +1404,8 @@ function LibraryGrammarItemForm({
         <button
           type="button"
           onClick={onCancel}
-          className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-          style={{ borderColor: "var(--app-border)" }}
+          className="rounded-[6px] border px-3 py-1.5 text-[11px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+          style={{ borderColor: "var(--border)" }}
         >
           取消
         </button>
@@ -1477,14 +1477,14 @@ function LibraryGrammarRowAudioField({
         <div className="flex flex-col gap-1">
           <div className="flex items-center gap-1.5">
             <span className="flex min-w-0 flex-1 items-center gap-1 text-[10px] font-medium">
-              <Volume2 size={11} aria-hidden="true" style={{ color: "var(--app-accent)" }} />
+              <Volume2 size={11} aria-hidden="true" style={{ color: "var(--primary)" }} />
               <span className="truncate" title={value}>{value.split("/").pop()}</span>
             </span>
             <button
               type="button"
               onClick={() => void preview()}
-              className="app-muted-text shrink-0 rounded-[5px] border px-1.5 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
-              style={{ borderColor: "var(--app-border)" }}
+              className="app-muted-text shrink-0 rounded-[5px] border px-1.5 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--surface-soft)]"
+              style={{ borderColor: "var(--border)" }}
             >
               试听
             </button>
@@ -1495,8 +1495,8 @@ function LibraryGrammarRowAudioField({
                 setPreviewUrl("");
                 setMessage("");
               }}
-              className="app-muted-text shrink-0 rounded-[5px] border px-1.5 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-warm)]"
-              style={{ borderColor: "var(--app-border)" }}
+              className="app-muted-text shrink-0 rounded-[5px] border px-1.5 py-0.5 text-[10px] font-semibold transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--status-warning)]"
+              style={{ borderColor: "var(--border)" }}
             >
               移除
             </button>
@@ -1508,8 +1508,8 @@ function LibraryGrammarRowAudioField({
       ) : (
         <label
           htmlFor={inputId}
-          className="flex cursor-pointer items-center justify-center gap-1.5 rounded-[6px] border border-dashed px-2 py-1.5 text-[10px] font-medium transition-colors hover:bg-[var(--app-soft-bg)]"
-          style={{ borderColor: "var(--app-border)" }}
+          className="flex cursor-pointer items-center justify-center gap-1.5 rounded-[6px] border border-dashed px-2 py-1.5 text-[10px] font-medium transition-colors hover:bg-[var(--surface-soft)]"
+          style={{ borderColor: "var(--border)" }}
         >
           {status === "uploading" ? <LoaderCircle size={11} className="animate-spin" aria-hidden="true" /> : <Volume2 size={11} aria-hidden="true" />}
           {status === "uploading" ? "上传中…" : "点击上传音频"}
@@ -1524,7 +1524,7 @@ function LibraryGrammarRowAudioField({
         onChange={(event) => void upload(event.target.files?.[0])}
       />
       {message && (
-        <p className="mt-0.5 text-[9px] leading-4" style={{ color: status === "error" ? "var(--app-warm)" : "var(--app-muted)" }}>
+        <p className="mt-0.5 text-[9px] leading-4" style={{ color: status === "error" ? "var(--status-warning)" : "var(--foreground-muted)" }}>
           {message}
         </p>
       )}

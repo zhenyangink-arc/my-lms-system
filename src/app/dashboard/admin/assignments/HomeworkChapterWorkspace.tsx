@@ -407,7 +407,7 @@ export async function HomeworkChapterWorkspace({
         {!embedded && (
           <Link
             href="/dashboard/admin/assignments?workspace=homework"
-            className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+            className="app-muted-text inline-flex items-center gap-2 text-xs font-semibold"
           >
             <ArrowLeft size={14} />
             返回作业管理
@@ -417,7 +417,7 @@ export async function HomeworkChapterWorkspace({
         <section className="border-y py-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-black">课程章节作业树</p>
+              <p className="text-sm font-semibold">课程章节作业树</p>
               <p className="app-muted-text mt-1 text-xs">
                 每个章节固定包含听、说、读、写四项，可分别设置题量、分值、作答方式和时长。
               </p>
@@ -434,7 +434,7 @@ export async function HomeworkChapterWorkspace({
                   className={`min-w-24 px-4 text-center ${
                     index === 0 ? "" : "border-l"
                   }`}
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <dd className="font-mono text-xl font-bold tabular-nums">
                     {String(value)}
@@ -452,9 +452,9 @@ export async function HomeworkChapterWorkspace({
           <section
             className="border p-4 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
-              borderColor: "var(--app-warm)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
             }}
           >
             章节作业暂时无法完整读取，请稍后刷新页面。
@@ -464,22 +464,22 @@ export async function HomeworkChapterWorkspace({
         <section
           className="border"
           style={{
-            borderColor: "var(--app-border)",
-            backgroundColor: "var(--app-card-bg)",
+            borderColor: "var(--border)",
+            backgroundColor: "var(--card)",
           }}
         >
           {tableChannels.map((channel) => (
             <details
               key={channel.id}
               className="group border-b last:border-b-0"
-              style={{ borderColor: "var(--app-border)" }}
+              style={{ borderColor: "var(--border)" }}
             >
-              <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--app-soft-bg)]">
+              <summary className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--surface-soft)]">
                 <ChevronDown
                   className="app-muted-text shrink-0 transition-transform group-open:rotate-180"
                   size={15}
                 />
-                <span className="min-w-0 text-sm font-black">
+                <span className="min-w-0 text-sm font-semibold">
                   {channel.title}
                 </span>
                 <span className="app-muted-text text-xs">
@@ -494,7 +494,7 @@ export async function HomeworkChapterWorkspace({
 
               <div
                 className="overflow-x-auto border-t"
-                style={{ borderColor: "var(--app-border)" }}
+                style={{ borderColor: "var(--border)" }}
               >
                 <table className="w-full min-w-[900px] table-fixed border-collapse text-left">
                   <colgroup>
@@ -512,15 +512,15 @@ export async function HomeworkChapterWorkspace({
                     className="sticky top-0 z-20 backdrop-blur-xl backdrop-saturate-150"
                     style={{
                       backgroundColor:
-                        "color-mix(in srgb, var(--app-card-bg) 82%, transparent)",
-                      boxShadow: "0 1px 0 var(--app-border)",
+                        "color-mix(in srgb, var(--card) 82%, transparent)",
+                      boxShadow: "0 1px 0 var(--border)",
                     }}
                   >
                     <tr
                       className="border-b text-[11px] font-bold app-muted-text"
                       style={{
-                        borderColor: "var(--app-border-soft)",
-                        backgroundColor: "var(--app-soft-bg)",
+                        borderColor: "var(--border-subtle)",
+                        backgroundColor: "var(--surface-soft)",
                       }}
                     >
                       <th className="px-4 py-2.5">课程 / 课时</th>
@@ -550,7 +550,7 @@ export async function HomeworkChapterWorkspace({
                       {group.chapters.length === 0 ? (
                         <tr
                           className="border-b last:border-b-0"
-                          style={{ borderColor: "var(--app-border-soft)" }}
+                          style={{ borderColor: "var(--border-subtle)" }}
                         >
                           <td className="app-muted-text relative px-4 py-3.5 text-xs">
                             <span
@@ -558,7 +558,7 @@ export async function HomeworkChapterWorkspace({
                               className="absolute left-[22px] top-0 h-1/2 border-l"
                               style={{
                                 borderColor:
-                                  "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                  "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                               }}
                             />
                             <span
@@ -566,7 +566,7 @@ export async function HomeworkChapterWorkspace({
                               className="absolute left-[22px] top-1/2 w-4 border-t"
                               style={{
                                 borderColor:
-                                  "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                  "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                               }}
                             />
                             <span className="inline-block pl-8">暂无章节</span>
@@ -594,8 +594,8 @@ export async function HomeworkChapterWorkspace({
                           return (
                             <tr
                               key={chapter.id}
-                              className="border-b align-middle transition-colors last:border-b-0 hover:bg-[var(--app-soft-bg)]"
-                              style={{ borderColor: "var(--app-border-soft)" }}
+                              className="border-b align-middle transition-colors last:border-b-0 hover:bg-[var(--surface-soft)]"
+                              style={{ borderColor: "var(--border-subtle)" }}
                             >
                               <td className="relative px-4 py-3">
                                 <span
@@ -608,7 +608,7 @@ export async function HomeworkChapterWorkspace({
                                   }`}
                                   style={{
                                     borderColor:
-                                      "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                      "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                   }}
                                 />
                                 <span
@@ -616,7 +616,7 @@ export async function HomeworkChapterWorkspace({
                                   className="absolute left-[22px] top-1/2 w-4 border-t"
                                   style={{
                                     borderColor:
-                                      "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                      "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                   }}
                                 />
                                 <span className="app-muted-text inline-flex pl-8 font-mono text-[11px]">
@@ -647,8 +647,8 @@ export async function HomeworkChapterWorkspace({
                                   style={{
                                     color:
                                       plan?.status === "published"
-                                        ? "var(--app-success)"
-                                        : "var(--app-muted)",
+                                        ? "var(--status-success)"
+                                        : "var(--foreground-muted)",
                                   }}
                                 >
                                   <span
@@ -656,8 +656,8 @@ export async function HomeworkChapterWorkspace({
                                     style={{
                                       backgroundColor:
                                         plan?.status === "published"
-                                          ? "var(--app-success)"
-                                          : "var(--app-muted)",
+                                          ? "var(--status-success)"
+                                          : "var(--foreground-muted)",
                                     }}
                                   />
                                   {plan?.status === "published"

@@ -106,7 +106,7 @@ export function AssessmentWorkspaceLayout({
                 <ClipboardCheck size={19} aria-hidden="true" />
               </span>
               <span className="min-w-0">
-                <span className="block truncate text-sm font-black tracking-tight sm:text-base">
+                <span className="block truncate text-sm font-bold tracking-tight sm:text-base">
                   作业与考试
                 </span>
                 <span className="assessment-nav-muted hidden text-[10px] font-bold sm:block">
@@ -133,7 +133,7 @@ export function AssessmentWorkspaceLayout({
                     <Icon size={15} aria-hidden="true" />
                   </span>
                   <span className="min-w-0 text-left">
-                    <span className="block truncate text-xs font-black">
+                    <span className="block truncate text-xs font-bold">
                       {navigationSection.label}
                     </span>
                     <span className="assessment-nav-muted block truncate text-[9px] font-bold">
@@ -147,7 +147,7 @@ export function AssessmentWorkspaceLayout({
 
           <Link
             href={scopeDashboardPath("/dashboard", dashboardBasePath)}
-            className="assessment-home-link hidden shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black transition hover:-translate-y-0.5 lg:inline-flex"
+            className="assessment-home-link hidden shrink-0 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold transition hover:-translate-y-0.5 lg:inline-flex"
           >
             <LayoutDashboard size={15} aria-hidden="true" />
             学习首页

@@ -28,7 +28,7 @@ export function LessonResourceTableToolbar({
       <label className="relative min-w-60 flex-1 lg:max-w-md">
         <Search
           size={14}
-          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--app-muted)]"
+          className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-[var(--foreground-muted)]"
         />
         <input
           value={filters.query}
@@ -43,7 +43,7 @@ export function LessonResourceTableToolbar({
             type="button"
             aria-label="清空搜索"
             onClick={() => onFiltersChange({ ...filters, query: "" })}
-            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--app-muted)]"
+            className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-[var(--foreground-muted)]"
           >
             <X size={13} />
           </button>

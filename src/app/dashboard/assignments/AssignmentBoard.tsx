@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   ASSIGNMENT_DATE_OPTIONS,
@@ -116,22 +117,22 @@ const kindPresentation = {
     label: "章节测试",
     shortLabel: "课后练习",
     icon: BookOpenCheck,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   homework: {
     label: "老师作业",
     shortLabel: "需提交",
     icon: FilePenLine,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   exam: {
     label: "正式考试",
     shortLabel: "限时",
     icon: ClipboardCheck,
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
 } satisfies Record<
   TaskKind,
@@ -139,14 +140,14 @@ const kindPresentation = {
 >;
 
 const statePresentation: Record<TaskState, { label: string; color: string; soft: string }> = {
-  pending: { label: "待完成", color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  revision_required: { label: "需修改", color: "#c94f45", soft: "#fff0ed" },
-  submitted: { label: "待批改", color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  graded: { label: "已完成", color: "var(--app-success)", soft: "var(--app-success-soft)" },
-  upcoming: { label: "未开放", color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
-  overdue: { label: "已截止", color: "#8b5d56", soft: "#f7eeec" },
-  locked: { label: "未解锁", color: "#80654e", soft: "#f1eadf" },
-  preview: { label: "学生端预览", color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" },
+  pending: { label: "待完成", color: "var(--primary)", soft: "var(--accent)" },
+  revision_required: { label: "需修改", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
+  submitted: { label: "待批改", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  graded: { label: "已完成", color: "var(--status-success)", soft: "var(--status-success-surface)" },
+  upcoming: { label: "未开放", color: "var(--support)", soft: "var(--support-surface)" },
+  overdue: { label: "已截止", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
+  locked: { label: "未解锁", color: "var(--foreground-muted)", soft: "var(--surface-soft)" },
+  preview: { label: "学生端预览", color: "var(--support)", soft: "var(--support-surface)" },
 };
 
 const typeStatusFilters: Record<
@@ -259,7 +260,7 @@ function TaskRow({
       size="sm"
       className={`relative gap-0 overflow-hidden py-0 transition duration-200 ${
         locked
-          ? "bg-[var(--app-soft-bg)] opacity-85"
+          ? "bg-[var(--surface-soft)] opacity-85"
           : "group-hover:-translate-y-0.5 group-hover:shadow-md"
       }`}
     >
@@ -274,12 +275,12 @@ function TaskRow({
 
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="text-[10px] font-black" style={{ color: kind.color }}>{task.courseTitle}</span>
-            <span className="rounded-full px-2 py-0.5 text-[9px] font-black" style={{ color: state.color, backgroundColor: state.soft }}>
+            <span className="text-[10px] font-bold" style={{ color: kind.color }}>{task.courseTitle}</span>
+            <span className="rounded-full px-2 py-0.5 text-[9px] font-bold" style={{ color: state.color, backgroundColor: state.soft }}>
               {state.label}
             </span>
           </div>
-          <h3 className="mt-1 truncate text-sm font-black sm:text-[15px]">{task.title}</h3>
+          <h5 className="mt-1 truncate text-sm font-bold sm:text-[15px]">{task.title}</h5>
           <div className="app-muted-text mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[10px] font-bold">
             <span>{kind.label}</span>
             {task.chapterNumber && <span>第 {task.chapterNumber} 章</span>}
@@ -290,14 +291,14 @@ function TaskRow({
           </div>
         </div>
 
-        <div className="col-span-2 flex items-center justify-between gap-3 border-t pt-2.5 lg:col-span-1 lg:block lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" style={{ borderColor: "var(--app-border-soft)" }}>
-          <p className="flex items-start gap-1.5 text-[11px] font-black leading-5" style={{ color: urgent ? "#c94f45" : locked ? state.color : "var(--app-foreground)" }}>
+        <div className="col-span-2 flex items-center justify-between gap-3 border-t pt-2.5 lg:col-span-1 lg:block lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" style={{ borderColor: "var(--border-subtle)" }}>
+          <p className="flex items-start gap-1.5 text-[11px] font-bold leading-5" style={{ color: urgent ? "var(--status-danger)" : locked ? state.color : "var(--foreground)" }}>
             {urgent ? <AlertCircle className="mt-1 shrink-0" size={12} /> : <Clock3 className="mt-1 shrink-0" size={12} />}
             <span>{deadlineLabel}</span>
           </p>
           {task.dueAt && <p className="app-muted-text mt-1 text-[9px]">{formatAssignmentDate(task.dueAt)}</p>}
           {task.score !== null && task.state === "graded" && (
-            <p className="text-base font-black lg:mt-1" style={{ color: state.color }}>
+            <p className="text-base font-bold lg:mt-1" style={{ color: state.color }}>
               {task.score}<span className="ml-0.5 text-[9px] app-muted-text">/ {task.totalPoints}</span>
             </p>
           )}
@@ -307,14 +308,14 @@ function TaskRow({
           <div className="col-span-2 flex items-center justify-end gap-2 lg:col-span-1">
             <Link
               href={task.studyHref}
-              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-black text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-secondary)] focus-visible:ring-offset-2"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-bold text-white transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--support)] focus-visible:ring-offset-2"
+              style={{ backgroundColor: "var(--support)" }}
             >
               <BookOpenCheck size={13} />
               学习本章
             </Link>
             <span
-              className="inline-flex h-8 cursor-not-allowed items-center justify-center rounded-lg px-3 text-xs font-black"
+              className="inline-flex h-8 cursor-not-allowed items-center justify-center rounded-lg px-3 text-xs font-bold"
               style={{ color: state.color, backgroundColor: state.soft }}
             >
               {getActionLabel(task)}
@@ -322,11 +323,11 @@ function TaskRow({
           </div>
         ) : (
           <span
-            className="col-span-2 inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-black text-white transition group-hover:brightness-95 lg:col-span-1"
+            className="col-span-2 inline-flex h-8 items-center justify-center gap-1.5 rounded-lg px-3 text-xs font-bold text-white transition group-hover:brightness-95 lg:col-span-1"
             style={{
               backgroundColor:
                 task.kind === "chapter_test" && task.state === "graded"
-                  ? "#c77a35"
+                  ? "var(--status-warning)"
                   : state.color,
             }}
           >
@@ -343,7 +344,7 @@ function TaskRow({
       {timeline && (
         <span
           aria-hidden="true"
-          className="absolute -left-[29px] top-10 z-10 h-4 w-4 rounded-full border-[3px] border-[var(--app-card-bg)] shadow-sm"
+          className="absolute -left-[29px] top-10 z-10 h-4 w-4 rounded-full border-[3px] border-[var(--card)] shadow-sm"
           style={{ backgroundColor: state.color }}
         />
       )}
@@ -352,7 +353,7 @@ function TaskRow({
       ) : (
         <Link
           href={task.href}
-          className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-secondary)] focus-visible:ring-offset-2"
+          className="group block rounded-xl outline-none focus-visible:ring-2 focus-visible:ring-[var(--support)] focus-visible:ring-offset-2"
         >
           {card}
         </Link>
@@ -484,28 +485,28 @@ export function AssignmentBoard({
         className="app-card overflow-hidden rounded-[2rem] border p-5 sm:p-6"
         style={{
           background:
-            "linear-gradient(130deg, var(--app-hero-end), var(--app-card-bg) 56%, var(--app-secondary-soft))",
+            "linear-gradient(130deg, var(--accent), var(--card) 56%, var(--support-surface))",
         }}
       >
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           {isManager && (
             <div>
               <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
-                style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
+                style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}
               >
                 <ClipboardCheck size={15} />
                 学生端任务预览
               </span>
-              <h1 className="mt-3 text-3xl font-black tracking-tight">学习任务</h1>
+              <h2 className="mt-3 text-3xl font-bold tracking-tight">学习任务</h2>
             </div>
           )}
 
           <div className={`grid grid-cols-3 gap-2 ${isManager ? "sm:min-w-[360px]" : "w-full"}`}>
             {[
-              ["待完成", counts.todo, FilePenLine, "var(--app-accent)", "var(--app-accent-soft)"],
-              ["需修改", counts.revision, RotateCcw, "#c94f45", "#fff0ed"],
-              ["已完成", counts.completed, Award, "var(--app-success)", "var(--app-success-soft)"],
+              ["待完成", counts.todo, FilePenLine, "var(--primary)", "var(--accent)"],
+              ["需修改", counts.revision, RotateCcw, "var(--status-danger)", "var(--status-danger-surface)"],
+              ["已完成", counts.completed, Award, "var(--status-success)", "var(--status-success-surface)"],
             ].map(([label, value, Icon, color, soft]) => {
               const MetricIcon = Icon as typeof Award;
               return (
@@ -517,8 +518,8 @@ export function AssignmentBoard({
                     <MetricIcon size={16} />
                   </span>
                   <div>
-                    <p className="text-xl font-black leading-none">{String(value)}</p>
-                    <p className="app-muted-text mt-1 text-[10px] font-black">{String(label)}</p>
+                    <p className="text-xl font-bold leading-none">{String(value)}</p>
+                    <p className="app-muted-text mt-1 text-[10px] font-bold">{String(label)}</p>
                   </div>
                 </div>
               );
@@ -531,10 +532,10 @@ export function AssignmentBoard({
         <div>
           <div className="flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="text-lg font-black tracking-tight">我的学习任务</p>
+              <h3 className="text-lg font-bold tracking-tight">我的学习任务</h3>
               <p className="app-muted-text mt-1 text-xs font-bold">按优先顺序完成测试、作业和考试</p>
             </div>
-            <p className="app-muted-text text-xs font-black">共 {tasks.length} 项</p>
+            <p className="app-muted-text text-xs font-bold">共 {tasks.length} 项</p>
           </div>
 
           <div className="mt-4 grid gap-2 sm:grid-cols-3">
@@ -544,8 +545,9 @@ export function AssignmentBoard({
               const active = taskTypeFilter === kind;
               return (
                 <div key={kind} className="min-w-0">
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
                     onClick={() => {
                       setTaskTypeFilter(active && statusFilter === "all" ? "all" : kind);
                       setStatusFilter("all");
@@ -553,8 +555,8 @@ export function AssignmentBoard({
                     aria-pressed={active && statusFilter === "all"}
                     className="flex min-h-18 w-full items-center gap-3 rounded-2xl border px-3.5 py-3 text-left transition hover:-translate-y-0.5 hover:shadow-sm"
                     style={{
-                      backgroundColor: active ? item.soft : "var(--app-card-bg)",
-                      borderColor: active ? item.color : "var(--app-border-soft)",
+                      backgroundColor: active ? item.soft : "var(--card)",
+                      borderColor: active ? item.color : "var(--border-subtle)",
                       boxShadow: active ? `0 0 0 1px ${item.color}` : undefined,
                     }}
                   >
@@ -565,13 +567,13 @@ export function AssignmentBoard({
                       <Icon size={18} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block text-sm font-black">{item.label}</span>
+                      <span className="block text-sm font-bold">{item.label}</span>
                       <span className="app-muted-text mt-0.5 block text-[10px] font-bold">{item.shortLabel}</span>
                     </span>
-                    <span className="text-2xl font-black tabular-nums" style={{ color: item.color }}>
+                    <span className="text-2xl font-bold tabular-nums" style={{ color: item.color }}>
                       {typeCounts[kind]}
                     </span>
-                  </button>
+                  </Button>
 
                   <div className="mt-1.5 flex min-w-0 gap-1 overflow-x-auto px-1">
                     {typeStatusFilters[kind].map((filter) => {
@@ -580,23 +582,24 @@ export function AssignmentBoard({
                       ).length;
                       const selected = active && statusFilter === filter.value;
                       return (
-                        <button
+                        <Button
                           key={filter.value}
                           type="button"
+                          variant="ghost"
                           onClick={() => {
                             setTaskTypeFilter(kind);
                             setStatusFilter(selected ? "all" : filter.value);
                           }}
                           aria-pressed={selected}
-                          className="inline-flex h-7 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg px-1.5 text-[9px] font-black transition"
+                          className="inline-flex h-7 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg px-1.5 text-[9px] font-bold transition"
                           style={{
-                            color: selected ? item.color : "var(--app-muted)",
-                            backgroundColor: selected ? item.soft : "var(--app-soft-bg)",
+                            color: selected ? item.color : "var(--foreground-muted)",
+                            backgroundColor: selected ? item.soft : "var(--surface-soft)",
                           }}
                         >
                           <span className="truncate">{filter.label}</span>
                           <span className="tabular-nums opacity-75">{count}</span>
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
@@ -606,7 +609,7 @@ export function AssignmentBoard({
           </div>
 
           {(tasks.length > 6 || courseGroups.length > 1) && (
-            <div className="mt-3 flex justify-end border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}>
+            <div className="mt-3 flex justify-end border-t pt-3" style={{ borderColor: "var(--border-subtle)" }}>
               <div className="grid w-full shrink-0 gap-2 sm:w-[460px] sm:grid-cols-2">
                 <label className="relative">
                   <span className="sr-only">搜索任务</span>
@@ -633,10 +636,10 @@ export function AssignmentBoard({
           {chapterTimelineTasks.length > 0 && (
             <div>
               <div className="mb-3 px-1">
-                <h3 className="text-sm font-black">章节学习路线</h3>
+                <h4 className="text-sm font-bold">章节学习路线</h4>
                 <p className="app-muted-text mt-1 text-[10px] font-bold">学完本章电子书，并按顺序通过前一章测试后解锁</p>
               </div>
-              <div className="ml-5 space-y-2 border-l pl-5" style={{ borderColor: "var(--app-border-soft)" }}>
+              <div className="ml-5 space-y-2 border-l pl-5" style={{ borderColor: "var(--border-subtle)" }}>
                 {chapterTimelineTasks.map((task) => (
                   <TaskRow key={task.id} task={task} currentTime={currentTime} timeline />
                 ))}
@@ -647,7 +650,7 @@ export function AssignmentBoard({
           {assignmentListTasks.length > 0 && (
             <div>
               <div className="mb-3 px-1">
-                <h3 className="text-sm font-black">老师作业与考试</h3>
+                <h4 className="text-sm font-bold">老师作业与考试</h4>
                 <p className="app-muted-text mt-1 text-[10px] font-bold">按截止时间与完成状态排列</p>
               </div>
               <div className="space-y-2">
@@ -661,21 +664,22 @@ export function AssignmentBoard({
 
         {filteredTasks.length === 0 && (
           <div className="app-card rounded-3xl border border-dashed p-10 text-center">
-            <CheckCircle2 className="mx-auto" size={34} style={{ color: "var(--app-success)" }} />
-            <h3 className="mt-3 font-black">没有符合条件的任务</h3>
-            <button
+            <CheckCircle2 className="mx-auto" size={34} style={{ color: "var(--status-success)" }} />
+            <h4 className="mt-3 font-bold">没有符合条件的任务</h4>
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => {
                 setStatusFilter("all");
                 setTaskTypeFilter("all");
                 setCourseFilter("all");
                 setQuery("");
               }}
-              className="mt-4 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="mt-4 rounded-xl px-4 py-2.5 text-xs font-bold text-[var(--primary-foreground)]"
+              style={{ backgroundColor: "var(--support)" }}
             >
               清除筛选
-            </button>
+            </Button>
           </div>
         )}
       </section>

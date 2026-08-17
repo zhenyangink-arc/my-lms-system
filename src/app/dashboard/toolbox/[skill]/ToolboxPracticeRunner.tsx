@@ -178,10 +178,10 @@ export function ToolboxPracticeRunner({
         >
           <CheckCircle2 size={30} aria-hidden="true" />
         </span>
-        <p className="mt-5 text-[10px] font-black tracking-[0.14em]" style={{ color: accent }}>
+        <p className="mt-5 text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
           练习结果已保存
         </p>
-        <h2 className="mt-2 text-2xl font-black">本次得分 {result.percentage.toFixed(1)}%</h2>
+        <h2 className="mt-2 text-2xl font-bold">本次得分 {result.percentage.toFixed(1)}%</h2>
         <p className="app-muted-text mt-2 text-sm font-bold">
           答对 {result.correctCount} / {result.answeredCount} 题 · 有效练习 {formatSeconds(elapsedSeconds)}
         </p>
@@ -189,15 +189,15 @@ export function ToolboxPracticeRunner({
           <button
             type="button"
             onClick={restart}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-black transition hover:bg-black/[0.03] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
-            style={{ borderColor: "var(--app-border)" }}
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl border px-5 text-sm font-bold transition hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+            style={{ borderColor: "var(--border)" }}
           >
             <RotateCcw size={16} aria-hidden="true" />
             再练一次
           </button>
           <Link
             href={backHref}
-            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 text-sm font-black text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+            className="inline-flex min-h-12 items-center justify-center gap-2 rounded-2xl px-5 text-sm font-bold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
             style={{ backgroundColor: accent }}
           >
             查看能力画像
@@ -213,10 +213,10 @@ export function ToolboxPracticeRunner({
       <aside className="space-y-4 xl:sticky xl:top-5">
         {exercise.passage && (
           <section className="app-card rounded-[2rem] border p-5 sm:p-6">
-            <p className="text-[10px] font-black tracking-[0.14em]" style={{ color: accent }}>
+            <p className="text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
               阅读材料
             </p>
-            <h2 className="mt-2 text-lg font-black">{exercise.passageTitle}</h2>
+            <h2 className="mt-2 text-lg font-bold">{exercise.passageTitle}</h2>
             <p className="mt-4 whitespace-pre-line text-base font-bold leading-8" lang="ko">
               {exercise.passage}
             </p>
@@ -225,13 +225,13 @@ export function ToolboxPracticeRunner({
 
         <section className="app-soft-card rounded-3xl border p-5">
           <div className="flex items-center justify-between gap-3">
-            <p className="text-xs font-black">本轮进度</p>
-            <span className="text-xs font-black tabular-nums" style={{ color: accent }}>
+            <p className="text-xs font-bold">本轮进度</p>
+            <span className="text-xs font-bold tabular-nums" style={{ color: accent }}>
               {answeredCount}/{questions.length}
             </span>
           </div>
           <div
-            className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--app-card-bg)]"
+            className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--card)]"
             role="progressbar"
             aria-label="练习完成进度"
             aria-valuemin={0}
@@ -243,7 +243,7 @@ export function ToolboxPracticeRunner({
               style={{ width: `${progress}%`, backgroundColor: accent }}
             />
           </div>
-          <div className="app-muted-text mt-4 flex items-center gap-2 text-xs font-black tabular-nums">
+          <div className="app-muted-text mt-4 flex items-center gap-2 text-xs font-bold tabular-nums">
             <Clock3 size={14} aria-hidden="true" />
             有效练习 {formatSeconds(elapsedSeconds)}
           </div>
@@ -256,12 +256,12 @@ export function ToolboxPracticeRunner({
       <section className="app-card rounded-[2rem] border p-5 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[10px] font-black tracking-[0.14em]" style={{ color: accent }}>
+            <p className="text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
               第 {currentIndex + 1} 题 · 共 {questions.length} 题
             </p>
-            <h2 className="mt-2 text-xl font-black leading-8">{currentQuestion.prompt}</h2>
+            <h2 className="mt-2 text-xl font-bold leading-8">{currentQuestion.prompt}</h2>
           </div>
-          <span className="rounded-full px-3 py-1.5 text-[10px] font-black" style={{ color: accent, backgroundColor: soft }}>
+          <span className="rounded-full px-3 py-1.5 text-[10px] font-bold" style={{ color: accent, backgroundColor: soft }}>
             {currentQuestion.maxScore} 分
           </span>
         </div>
@@ -275,17 +275,17 @@ export function ToolboxPracticeRunner({
         {currentQuestion.stimulus && (
           <section
             className="mt-4 flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between"
-            style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+            style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
             aria-label="听力材料"
           >
             <div>
-              <p className="text-sm font-black">播放本题韩语材料</p>
+              <p className="text-sm font-bold">播放本题韩语材料</p>
               <p className="app-muted-text mt-1 text-xs font-bold">可以重复播放，材料文字不会提前显示。</p>
             </div>
             <button
               type="button"
               onClick={playStimulus}
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-4 text-xs font-black text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-4 text-xs font-bold text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
               style={{ backgroundColor: accent, outlineColor: accent }}
             >
               <Volume2 size={16} aria-hidden="true" />
@@ -295,7 +295,7 @@ export function ToolboxPracticeRunner({
         )}
 
         {currentQuestion.speakBeforeAnswer && (
-          <p className="mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-black" style={{ color: accent, backgroundColor: soft }}>
+          <p className="mt-4 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold" style={{ color: accent, backgroundColor: soft }}>
             <Mic size={16} aria-hidden="true" />
             先把你认为正确的表达大声说出来，再选择答案。
           </p>
@@ -304,7 +304,7 @@ export function ToolboxPracticeRunner({
         <div className="mt-6">
           {currentQuestion.questionType === "short_text" ? (
             <div>
-              <label htmlFor={`answer-${currentQuestion.id}`} className="text-xs font-black">
+              <label htmlFor={`answer-${currentQuestion.id}`} className="text-xs font-bold">
                 你的答案
               </label>
               <textarea
@@ -314,8 +314,8 @@ export function ToolboxPracticeRunner({
                 rows={5}
                 lang="ko"
                 maxLength={5000}
-                className="mt-2 min-h-36 w-full resize-y rounded-2xl border bg-[var(--app-card-bg)] px-4 py-3 text-base font-bold leading-7 outline-none transition focus:border-[var(--app-accent)] focus:ring-2 focus:ring-[var(--app-accent-soft)]"
-                style={{ borderColor: "var(--app-border)" }}
+                className="mt-2 min-h-36 w-full resize-y rounded-2xl border bg-[var(--card)] px-4 py-3 text-base font-bold leading-7 outline-none transition focus:border-[var(--primary)] focus:ring-2 focus:ring-[var(--accent)]"
+                style={{ borderColor: "var(--border)" }}
                 placeholder="请在这里输入完整的韩语句子"
               />
             </div>
@@ -328,10 +328,10 @@ export function ToolboxPracticeRunner({
                   return (
                     <label
                       key={option.value}
-                      className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-black transition hover:bg-[var(--app-soft-bg)]"
+                      className="flex min-h-14 cursor-pointer items-center gap-3 rounded-2xl border px-4 py-3 text-sm font-bold transition hover:bg-[var(--surface-soft)]"
                       style={{
-                        borderColor: selected ? accent : "var(--app-border)",
-                        backgroundColor: selected ? soft : "var(--app-card-bg)",
+                        borderColor: selected ? accent : "var(--border)",
+                        backgroundColor: selected ? soft : "var(--card)",
                       }}
                     >
                       <input
@@ -340,7 +340,7 @@ export function ToolboxPracticeRunner({
                         value={option.value}
                         checked={selected}
                         onChange={() => updateAnswer(option.value)}
-                        className="h-4 w-4 accent-[var(--app-accent)]"
+                        className="h-4 w-4 accent-[var(--primary)]"
                       />
                       <span lang="ko">{option.label}</span>
                     </label>
@@ -354,21 +354,21 @@ export function ToolboxPracticeRunner({
         {error && (
           <p
             role="alert"
-            className="mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-xs font-black"
-            style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+            className="mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-xs font-bold"
+            style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
           >
             <CircleAlert size={15} aria-hidden="true" />
             {error}
           </p>
         )}
 
-        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--app-border-soft)] pt-5">
+        <div className="mt-7 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-5">
           <button
             type="button"
             disabled={currentIndex === 0 || isPending}
             onClick={() => setCurrentIndex((value) => Math.max(0, value - 1))}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 text-xs font-black transition disabled:cursor-not-allowed disabled:opacity-40"
-            style={{ borderColor: "var(--app-border)" }}
+            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40"
+            style={{ borderColor: "var(--border)" }}
           >
             <ArrowLeft size={15} aria-hidden="true" />
             上一题
@@ -379,7 +379,7 @@ export function ToolboxPracticeRunner({
               type="button"
               disabled={isPending}
               onClick={() => setCurrentIndex((value) => Math.min(questions.length - 1, value + 1))}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-xs font-black text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-xs font-bold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: accent }}
             >
               下一题
@@ -390,7 +390,7 @@ export function ToolboxPracticeRunner({
               type="button"
               disabled={isPending}
               onClick={submit}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-xs font-black text-white transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-xs font-bold text-white transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
               style={{ backgroundColor: accent }}
             >
               <Send size={15} aria-hidden="true" />

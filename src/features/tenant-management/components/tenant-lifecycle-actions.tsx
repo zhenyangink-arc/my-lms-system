@@ -32,7 +32,7 @@ function SuspendTenantDialog({ tenantId, tenantName }: { tenantId: string; tenan
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<button type="button" className="inline-flex h-9 items-center gap-2 border border-amber-300 bg-amber-50 px-3 text-xs font-semibold text-amber-800" />}>
-        <Archive size={14} />停用机构
+        <Archive size={14} aria-hidden="true" />停用机构
       </DialogTrigger>
       <DialogContent>
         <DialogHeader><DialogTitle>确认停用机构？</DialogTitle><DialogDescription>将停用“{tenantName}”。现有 RPC 只更新机构状态并写入审计日志，成员和业务数据继续保留。</DialogDescription></DialogHeader>
@@ -50,7 +50,7 @@ function RestoreTenantButton({ tenantId }: { tenantId: string }) {
   const [state, formAction, pending] = useActionState(action, initialTenantActionState);
   return (
     <form action={formAction}>
-      <button disabled={pending} className="inline-flex h-9 items-center gap-2 border border-emerald-300 bg-emerald-50 px-3 text-xs font-semibold text-emerald-800 disabled:opacity-50"><RotateCcw size={14} />{pending ? "恢复中…" : "恢复机构"}</button>
+      <button disabled={pending} className="inline-flex h-9 items-center gap-2 border border-emerald-300 bg-emerald-50 px-3 text-xs font-semibold text-emerald-800 disabled:opacity-50"><RotateCcw size={14} aria-hidden="true" />{pending ? "恢复中…" : "恢复机构"}</button>
       <ResultMessage {...state} />
     </form>
   );
@@ -69,7 +69,7 @@ function PermanentDeleteTenantDialog({ tenantId, tenantName, slug, listHref }: {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger render={<button type="button" className="inline-flex h-9 items-center gap-2 bg-rose-600 px-3 text-xs font-semibold text-white" />}>
-        <Trash2 size={14} />永久删除
+        <Trash2 size={14} aria-hidden="true" />永久删除
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -91,7 +91,7 @@ export function TenantLifecycleActions({ tenantId, tenantName, slug, status, can
   return (
     <section className="management-table-panel border p-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div><h2 className="text-sm font-semibold">机构生命周期</h2><p className="mt-1 text-xs text-[var(--app-muted)]">停用可恢复；永久删除只在停用或历史归档状态下开放。</p></div>
+        <div><h2 className="text-sm font-semibold">机构生命周期</h2><p className="mt-1 text-xs text-[var(--foreground-muted)]">停用可恢复；永久删除只在停用或历史归档状态下开放。</p></div>
         <div className="flex flex-wrap items-start gap-2">
           {status === "active" && <SuspendTenantDialog tenantId={tenantId} tenantName={tenantName} />}
           {inactive && <RestoreTenantButton tenantId={tenantId} />}

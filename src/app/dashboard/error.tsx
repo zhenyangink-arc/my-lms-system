@@ -16,9 +16,15 @@ export default function DashboardError({
 
   return (
     <div className="flex min-h-[70vh] items-center justify-center p-5">
-      <section className="app-card w-full max-w-lg rounded-2xl border p-6 text-center">
+      <section
+        className="app-card w-full max-w-lg rounded-2xl border p-6 text-center"
+        role="alert"
+        aria-labelledby="dashboard-error-title"
+      >
         <p className="text-sm font-bold text-red-600">控制台加载失败</p>
-        <h1 className="mt-2 text-2xl font-black">暂时无法读取这部分数据</h1>
+        <h1 id="dashboard-error-title" className="mt-2 text-2xl font-bold">
+          暂时无法读取这部分数据
+        </h1>
         <p className="app-muted-text mt-3 text-sm leading-6">
           请重新加载当前区域。若问题持续出现，请联系平台管理员。
         </p>
@@ -27,16 +33,16 @@ export default function DashboardError({
             type="button"
             onClick={unstable_retry}
             className="rounded-xl px-5 py-2.5 text-sm font-bold text-white"
-            style={{ backgroundColor: "var(--app-accent)" }}
+            style={{ backgroundColor: "var(--primary)" }}
           >
             重新加载
           </button>
           <Link
-            href="/dashboard"
+            href="/"
             className="rounded-xl border px-5 py-2.5 text-sm font-bold"
-            style={{ borderColor: "var(--app-border)" }}
+            style={{ borderColor: "var(--border)" }}
           >
-            返回控制台
+            返回首页
           </Link>
         </div>
       </section>

@@ -465,14 +465,14 @@ export default async function GradesPage() {
               <span
                 className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
                 style={{
-                  color: "var(--app-secondary)",
-                  backgroundColor: "var(--app-secondary-soft)",
+                  color: "var(--support)",
+                  backgroundColor: "var(--support-surface)",
                 }}
               >
                 <Eye size={18} aria-hidden="true" />
               </span>
               <div className="min-w-0">
-                <p className="text-xs font-semibold text-[var(--app-secondary)]">
+                <p className="text-xs font-semibold text-[var(--support)]">
                   预览模式
                 </p>
                 <h2 className="mt-1 text-base font-bold">
@@ -485,8 +485,8 @@ export default async function GradesPage() {
             </div>
             <Link
               href="/dashboard/admin/grades"
-              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-secondary)] focus-visible:ring-offset-2"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--support)] focus-visible:ring-offset-2"
+              style={{ backgroundColor: "var(--support)" }}
             >
               进入成绩后台
               <ArrowRight size={15} aria-hidden="true" />
@@ -498,8 +498,8 @@ export default async function GradesPage() {
           <section
             className="rounded-2xl border px-4 py-3 text-sm font-semibold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
             }}
           >
             部分成绩暂时无法读取，请稍后刷新页面。

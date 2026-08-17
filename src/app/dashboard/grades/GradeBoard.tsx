@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { Button } from "@/components/ui/button";
 import {
   SixDimensionRadar,
   languageSkillPresentation,
@@ -74,15 +75,15 @@ const categoryPresentation = {
     label: "老师作业",
     shortLabel: "平时学习成果与老师批改",
     icon: FilePenLine,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   exam: {
     label: "正式考试",
     shortLabel: "阶段性正式成绩",
     icon: ClipboardCheck,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
 } satisfies Record<
   GradeCategory,
@@ -98,19 +99,19 @@ const categoryPresentation = {
 function reviewTone(status: GradeReviewStatus) {
   if (status === "resolved") {
     return {
-      color: "var(--app-success)",
-      background: "var(--app-success-soft)",
+      color: "var(--status-success)",
+      background: "var(--status-success-surface)",
     };
   }
   if (status === "rejected") {
     return {
-      color: "var(--app-muted)",
-      background: "var(--app-soft-bg)",
+      color: "var(--foreground-muted)",
+      background: "var(--surface-soft)",
     };
   }
   return {
-    color: "var(--app-warm)",
-    background: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    background: "var(--status-warning-surface)",
   };
 }
 
@@ -309,12 +310,12 @@ export function GradeBoard({
       >
         <header className="flex flex-col gap-4 px-1 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <h1
+            <h2
               id="grade-center-title"
-              className="text-2xl font-black tracking-[-0.03em] sm:text-3xl"
+              className="text-2xl font-bold tracking-[-0.03em] sm:text-3xl"
             >
               我的成绩
-            </h1>
+            </h2>
             <p className="app-muted-text mt-2 text-sm font-medium leading-6">
               选择老师作业或正式考试，概览、能力画像和成绩明细会一起切换。章节测试仍在对应章节内查看。
             </p>
@@ -331,7 +332,7 @@ export function GradeBoard({
               <a
                 key={href}
                 href={href}
-                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-[var(--app-border-soft)] bg-[var(--app-card-bg)] px-4 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                className="inline-flex min-h-11 cursor-pointer items-center rounded-lg border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-xs font-semibold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 {label}
               </a>
@@ -340,7 +341,7 @@ export function GradeBoard({
         </header>
 
         <div
-          className="app-card grid grid-cols-2 gap-2 rounded-2xl border bg-[var(--app-soft-bg)] p-2"
+          className="app-card grid grid-cols-2 gap-2 rounded-2xl border bg-[var(--surface-soft)] p-2"
           role="group"
           aria-label="选择成绩类型"
         >
@@ -349,18 +350,19 @@ export function GradeBoard({
             const Icon = item.icon;
             const active = category === key;
             return (
-              <button
+              <Button
                 key={key}
                 type="button"
+                variant="outline"
                 onClick={() => selectCategory(key)}
                 aria-pressed={active}
-                className="flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] sm:px-4"
+                className="flex min-h-14 cursor-pointer items-center gap-3 rounded-lg border px-3 py-2 text-left transition-[border-color,background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] sm:px-4"
                 style={{
-                  color: active ? item.color : "var(--app-text)",
+                  color: active ? item.color : "var(--foreground)",
                   backgroundColor: active
-                    ? "var(--app-card-bg)"
+                    ? "var(--card)"
                     : "transparent",
-                  borderColor: active ? item.color : "var(--app-border-soft)",
+                  borderColor: active ? item.color : "var(--border-subtle)",
                 }}
               >
                 <Icon size={18} className="shrink-0" aria-hidden="true" />
@@ -378,7 +380,7 @@ export function GradeBoard({
                     当前
                   </span>
                 )}
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -424,29 +426,29 @@ export function GradeBoard({
               label: "最高得分率",
               value: bestResult ? `${percentage(bestResult).toFixed(1)}%` : "—",
               icon: Trophy,
-              color: "var(--app-secondary)",
-              soft: "var(--app-secondary-soft)",
+              color: "var(--support)",
+              soft: "var(--support-surface)",
             },
             {
               label: "达标率",
               value: passRate == null ? "—" : `${passRate.toFixed(0)}%`,
               icon: CheckCircle2,
-              color: "var(--app-success)",
-              soft: "var(--app-success-soft)",
+              color: "var(--status-success)",
+              soft: "var(--status-success-surface)",
             },
             {
               label: "复核处理中",
               value: String(pendingReviews),
               icon: SearchCheck,
-              color: "var(--app-warm)",
-              soft: "var(--app-warm-soft)",
+              color: "var(--status-warning)",
+              soft: "var(--status-warning-surface)",
             },
           ].map((item, index) => {
             const Icon = item.icon;
             return (
               <article
                 key={item.label}
-                className={`${index < 2 ? "border-b" : ""} ${index % 2 === 1 ? "border-l" : ""} flex min-h-24 items-center gap-3 border-[var(--app-border-soft)] p-4 xl:border-b-0 ${index > 0 ? "xl:border-l" : "xl:border-l-0"}`}
+                className={`${index < 2 ? "border-b" : ""} ${index % 2 === 1 ? "border-l" : ""} flex min-h-24 items-center gap-3 border-[var(--border-subtle)] p-4 xl:border-b-0 ${index > 0 ? "xl:border-l" : "xl:border-l-0"}`}
               >
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg"
@@ -455,7 +457,7 @@ export function GradeBoard({
                   <Icon size={17} aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-lg font-black tabular-nums sm:text-xl">
+                  <p className="text-lg font-bold tabular-nums sm:text-xl">
                     {item.value}
                   </p>
                   <p className="app-muted-text mt-1 text-xs font-medium">
@@ -503,7 +505,7 @@ export function GradeBoard({
         </div>
 
         {filteredResults.length > 0 && (
-          <div className="app-card divide-y divide-[var(--app-border-soft)] overflow-hidden rounded-2xl border">
+          <div className="app-card divide-y divide-[var(--border-subtle)] overflow-hidden rounded-2xl border">
             {filteredResults.map((result) => {
             const review = reviewBySource.get(
               `${result.sourceType}:${result.sourceResultId}`,
@@ -536,7 +538,7 @@ export function GradeBoard({
                     >
                       {result.courseName} · {result.typeLabel}
                     </p>
-                    <h3 className="mt-1 text-sm font-black leading-5">
+                    <h3 className="mt-1 text-sm font-bold leading-5">
                       {result.title}
                     </h3>
                     <p className="app-muted-text mt-1 text-xs font-medium leading-5">
@@ -548,7 +550,7 @@ export function GradeBoard({
                     </p>
                   </div>
                   <div className="shrink-0 text-right">
-                    <p className="text-xl font-black tabular-nums sm:text-2xl">
+                    <p className="text-xl font-bold tabular-nums sm:text-2xl">
                       {percent.toFixed(1)}%
                     </p>
                     <p className="app-muted-text mt-0.5 text-xs font-medium tabular-nums">
@@ -558,7 +560,7 @@ export function GradeBoard({
                 </div>
 
                 <div
-                  className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--app-soft-bg)]"
+                  className="mt-4 h-2 overflow-hidden rounded-full bg-[var(--surface-soft)]"
                   role="progressbar"
                   aria-label={`${result.title}得分率`}
                   aria-valuemin={0}
@@ -570,8 +572,8 @@ export function GradeBoard({
                     style={{
                       width: `${percent}%`,
                       backgroundColor: result.passed
-                        ? "var(--app-success)"
-                        : "var(--app-warm)",
+                        ? "var(--status-success)"
+                        : "var(--status-warning)",
                     }}
                   />
                 </div>
@@ -581,11 +583,11 @@ export function GradeBoard({
                     className="inline-flex items-center gap-1 rounded-full px-2.5 py-1.5 text-xs font-semibold"
                     style={{
                       color: result.passed
-                        ? "var(--app-success)"
-                        : "var(--app-warm)",
+                        ? "var(--status-success)"
+                        : "var(--status-warning)",
                       backgroundColor: result.passed
-                        ? "var(--app-success-soft)"
-                        : "var(--app-warm-soft)",
+                        ? "var(--status-success-surface)"
+                        : "var(--status-warning-surface)",
                     }}
                   >
                     {result.passed ? (
@@ -624,7 +626,7 @@ export function GradeBoard({
                 {(result.feedback || review?.response) && (
                   <div className="mt-4 grid gap-3 lg:grid-cols-2">
                     {result.feedback && (
-                      <div className="border-l-2 border-[var(--app-border)] bg-[var(--app-soft-bg)] px-3 py-2.5">
+                      <div className="border-l-2 border-[var(--border)] bg-[var(--surface-soft)] px-3 py-2.5">
                         <p className="app-muted-text text-xs font-semibold">
                           老师评语
                         </p>
@@ -637,8 +639,8 @@ export function GradeBoard({
                       </div>
                     )}
                     {review?.response && (
-                      <div className="border-l-2 border-[var(--app-success)] bg-[var(--app-success-soft)] px-3 py-2.5">
-                        <p className="text-xs font-semibold text-[var(--app-success)]">
+                      <div className="border-l-2 border-[var(--status-success)] bg-[var(--status-success-surface)] px-3 py-2.5">
+                        <p className="text-xs font-semibold text-[var(--status-success)]">
                           复核回复
                         </p>
                         <p
@@ -652,11 +654,11 @@ export function GradeBoard({
                   </div>
                 )}
 
-                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--app-border-soft)] pt-4">
+                <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-4">
                   <Link
                     href={result.href}
                     className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold"
-                    style={{ color: "var(--app-secondary)" }}
+                    style={{ color: "var(--support)" }}
                   >
                     查看原记录
                     <ArrowRight size={12} aria-hidden="true" />
@@ -694,7 +696,7 @@ export function GradeBoard({
       <section className="app-soft-card flex items-center gap-3 rounded-2xl border p-4">
         <Award
           size={18}
-          className="shrink-0 text-[var(--app-secondary)]"
+          className="shrink-0 text-[var(--support)]"
           aria-hidden="true"
         />
         <p className="app-muted-text text-xs font-medium leading-5">

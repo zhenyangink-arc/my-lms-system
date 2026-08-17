@@ -29,7 +29,7 @@ export function QuestionBankSectionNav({
     <nav
       aria-label="平台题库分区"
       className="grid border sm:grid-cols-3"
-      style={{ borderColor: "var(--app-border)" }}
+      style={{ borderColor: "var(--border)" }}
     >
       {sections.map((section) => {
         const selected = section.key === active;
@@ -38,17 +38,17 @@ export function QuestionBankSectionNav({
             key={section.key}
             href={`?bank=${section.key}`}
             aria-current={selected ? "page" : undefined}
-            className="border-b px-4 py-3 transition-colors last:border-b-0 hover:bg-[var(--app-soft-bg)] sm:border-b-0 sm:border-r sm:last:border-r-0"
+            className="border-b px-4 py-3 transition-colors last:border-b-0 hover:bg-[var(--surface-soft)] sm:border-b-0 sm:border-r sm:last:border-r-0"
             style={
               selected
                 ? {
-                    color: "var(--app-secondary)",
-                    backgroundColor: "var(--app-secondary-soft)",
+                    color: "var(--support)",
+                    backgroundColor: "var(--support-surface)",
                   }
                 : undefined
             }
           >
-            <span className="block text-sm font-black">{section.label}</span>
+            <span className="block text-sm font-semibold">{section.label}</span>
           </Link>
         );
       })}

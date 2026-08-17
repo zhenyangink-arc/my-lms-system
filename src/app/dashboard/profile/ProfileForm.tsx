@@ -99,14 +99,14 @@ function ProfileTableSection({
     <tr
       className="border-y"
       style={{
-        backgroundColor: "color-mix(in srgb, var(--app-accent-soft) 58%, var(--app-accent) 42%)",
-        borderColor: "color-mix(in srgb, var(--app-accent) 62%, var(--app-border))",
+        backgroundColor: "color-mix(in srgb, var(--accent) 58%, var(--primary) 42%)",
+        borderColor: "color-mix(in srgb, var(--primary) 62%, var(--border))",
       }}
     >
       <th colSpan={3} className="px-4 py-4 text-left sm:px-5">
-        <span className="flex items-center gap-2.5 text-base font-black" style={{ color: "var(--app-accent-strong)" }}>
+        <span className="flex items-center gap-2.5 text-base font-bold" style={{ color: "var(--primary-hover)" }}>
           <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/65">
-            <Icon size={18} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
+            <Icon size={18} style={{ color: "var(--primary)" }} aria-hidden="true" />
           </span>
           {title}
         </span>
@@ -132,12 +132,12 @@ function ProfileTableRow({
         {simple ? (
           <span className="text-xs font-semibold tabular-nums text-slate-400">{String(number).padStart(2, "0")}</span>
         ) : (
-          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-bold text-white" style={{ backgroundColor: "var(--primary)" }}>
             {number}
           </span>
         )}
       </td>
-      <th scope="row" className={simple ? "w-32 px-3 py-5 text-left text-sm font-semibold text-slate-700 sm:w-40 sm:px-5" : "w-32 px-3 py-5 text-left text-sm font-black sm:w-44 sm:px-5"}>
+      <th scope="row" className={simple ? "w-32 px-3 py-5 text-left text-sm font-semibold text-slate-700 sm:w-40 sm:px-5" : "w-32 px-3 py-5 text-left text-sm font-bold sm:w-44 sm:px-5"}>
         {label}
       </th>
       <td className="min-w-[260px] px-3 py-4 sm:px-5 sm:py-5">{children}</td>
@@ -217,10 +217,10 @@ export function ProfileForm({
             <col />
           </colgroup>
           <thead>
-            <tr className={simple ? "border-b border-slate-200 bg-slate-100" : undefined} style={simple ? undefined : { backgroundColor: "color-mix(in srgb, var(--app-secondary) 68%, var(--app-text-soft) 32%)" }}>
-              <th className={simple ? "px-3 py-3 text-center text-xs font-semibold text-slate-500" : "px-3 py-4 text-center text-sm font-black text-white"}>序号</th>
-              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-black text-white"}>资料项目</th>
-              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-black text-white"}>资料内容</th>
+            <tr className={simple ? "border-b border-slate-200 bg-slate-100" : undefined} style={simple ? undefined : { backgroundColor: "color-mix(in srgb, var(--support) 68%, var(--foreground-secondary) 32%)" }}>
+              <th className={simple ? "px-3 py-3 text-center text-xs font-semibold text-slate-500" : "px-3 py-4 text-center text-sm font-bold text-white"}>序号</th>
+              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-bold text-white"}>资料项目</th>
+              <th className={simple ? "px-5 py-3 text-left text-xs font-semibold text-slate-500" : "px-5 py-4 text-left text-sm font-bold text-white"}>资料内容</th>
             </tr>
           </thead>
           <tbody>
@@ -228,16 +228,16 @@ export function ProfileForm({
             <ProfileTableRow number={1} label="个人照片" simple={simple}>
               <div className="flex items-center gap-4">
                 <span
-                  className={simple ? "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-100 bg-cover bg-center text-base font-bold text-slate-500" : "flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-black"}
+                  className={simple ? "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-100 bg-cover bg-center text-base font-bold text-slate-500" : "flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-bold"}
                   style={{
-                    color: simple ? undefined : "var(--app-secondary)",
-                    backgroundColor: simple ? undefined : "var(--app-soft-bg)",
+                    color: simple ? undefined : "var(--support)",
+                    backgroundColor: simple ? undefined : "var(--surface-soft)",
                     backgroundImage: photoPreview ? `url("${photoPreview}")` : undefined,
                   }}
                 >
                   {!photoPreview && (initialValue.fullName.slice(0, 1) || "学")}
                 </span>
-                <label className={`${inputSurfaceClass} inline-flex cursor-pointer items-center gap-2 border px-4 py-2.5 text-sm ${simple ? "rounded-lg font-semibold text-slate-700" : "rounded-xl font-black"}`}>
+                <label className={`${inputSurfaceClass} inline-flex cursor-pointer items-center gap-2 border px-4 py-2.5 text-sm ${simple ? "rounded-lg font-semibold text-slate-700" : "rounded-xl font-bold"}`}>
                   <Camera size={15} aria-hidden="true" />上传照片
                   <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handlePhotoChange} />
                 </label>
@@ -251,7 +251,7 @@ export function ProfileForm({
               <div className="grid max-w-sm grid-cols-2 gap-2">
                 {[["male", "男"], ["female", "女"]].map(([value, label]) => (
                   <label key={value} className={`${inputSurfaceClass} flex cursor-pointer items-center justify-center gap-2 border px-3 text-sm ${simple ? "rounded-lg py-2.5 font-semibold text-slate-700" : "rounded-2xl py-3 font-bold"}`}>
-                    <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--app-accent)]" />{label}
+                    <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--primary)]" />{label}
                   </label>
                 ))}
               </div>
@@ -312,7 +312,7 @@ export function ProfileForm({
                   aria-invalid={academicAverageWarning || Boolean(state.fieldErrors?.academicAverage)}
                   className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-sm font-semibold outline-none"
                 />
-                <span className="border-l px-3 text-sm font-black app-muted-text app-divider">%</span>
+                <span className="border-l px-3 text-sm font-bold app-muted-text app-divider">%</span>
               </span>
               {(academicAverageWarning || state.fieldErrors?.academicAverage) && (
                 <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.academicAverage ?? "成绩必须在 0—100 之间。"}</span>
@@ -359,11 +359,11 @@ export function ProfileForm({
         </table>
       </div>
 
-      {state.message && <p aria-live="polite" className="mx-4 mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold sm:mx-6" style={state.status === "success" ? { color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
+      {state.message && <p aria-live="polite" className="mx-4 mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold sm:mx-6" style={state.status === "success" ? { color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
 
-      <div className={simple ? "sticky bottom-0 flex flex-col gap-3 border-t border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5" : "flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6"} style={simple ? undefined : { backgroundColor: "var(--app-soft-bg)" }}>
+      <div className={simple ? "sticky bottom-0 flex flex-col gap-3 border-t border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5" : "flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6"} style={simple ? undefined : { backgroundColor: "var(--surface-soft)" }}>
         <p className={simple ? "text-sm text-slate-500" : "text-sm font-bold app-muted-text"}>请确认全部项目后统一保存。</p>
-        <button type="submit" disabled={pending} className={simple ? "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" : "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-black text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"} style={simple ? undefined : { backgroundColor: "var(--app-accent)" }}>
+        <button type="submit" disabled={pending} className={simple ? "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" : "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"} style={simple ? undefined : { backgroundColor: "var(--primary)" }}>
           {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}
           {pending ? "正在保存资料" : "保存全部资料"}
         </button>

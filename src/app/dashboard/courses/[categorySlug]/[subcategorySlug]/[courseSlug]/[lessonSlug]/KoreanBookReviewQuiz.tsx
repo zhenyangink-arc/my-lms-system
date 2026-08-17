@@ -53,7 +53,7 @@ export function KoreanBookReviewQuiz({
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col">
+    <div className="flex min-h-0 flex-1 flex-col [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2">
       <div
         ref={scrollRef}
         className="mt-5 min-h-0 flex-1 space-y-3 overflow-y-auto pr-2"
@@ -63,18 +63,18 @@ export function KoreanBookReviewQuiz({
           return (
             <section
               key={question.id}
-              className="rounded-2xl border border-[#dce8e1] bg-white p-3.5"
+              className="rounded-2xl border border-[var(--border)] bg-white p-3.5"
             >
               <div className="flex items-start justify-between gap-3">
-                <h3 className="text-sm font-black text-[#294f43]">
+                <h3 className="text-sm font-bold text-[var(--status-success)]">
                   {questionIndex + 1}. {question.prompt}
                 </h3>
                 {answerState && (
                   <span
-                    className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-black ${
+                    className={`shrink-0 rounded-full px-2 py-1 text-[10px] font-bold ${
                       answerState.correct
-                        ? "bg-[#e1f4ec] text-[#238777]"
-                        : "bg-[#fff0e1] text-[#b87131]"
+                        ? "bg-[var(--status-success-surface)] text-[var(--status-success)]"
+                        : "bg-[var(--status-warning-surface)] text-[var(--status-warning)]"
                     }`}
                   >
                     {answerState.correct ? "回答正确" : "再想一想"}
@@ -93,12 +93,12 @@ export function KoreanBookReviewQuiz({
                         isPending && pendingQuestionId === question.id
                       }
                       onClick={() => answer(question.id, optionIndex)}
-                      className={`rounded-xl border px-3 py-2.5 text-sm font-black transition disabled:opacity-50 ${
+                      className={`rounded-xl border px-3 py-2.5 text-sm font-bold transition disabled:opacity-50 ${
                         selected && answerState.correct
-                          ? "border-[#69bca7] bg-[#e4f5ef] text-[#196d61]"
+                          ? "border-[var(--border)] bg-[var(--status-success-surface)] text-[var(--status-success)]"
                           : selected
-                            ? "border-[#dda36d] bg-[#fff0e1] text-[#9c5c27]"
-                            : "border-[#dce8e1] bg-[#f8fbf9] text-[#526c60] hover:border-[#8bc5b6]"
+                            ? "border-[var(--border)] bg-[var(--status-warning-surface)] text-[var(--status-warning)]"
+                            : "border-[var(--border)] bg-[var(--card)] text-[var(--status-success)] hover:border-[var(--border)]"
                       }`}
                     >
                       {String.fromCharCode(65 + optionIndex)}. {option}
@@ -111,8 +111,8 @@ export function KoreanBookReviewQuiz({
         })}
       </div>
 
-      <div className="mt-5 rounded-2xl bg-[#173f4a] p-4 text-center text-white">
-        <p className="text-sm font-black">
+      <div className="mt-5 rounded-2xl bg-[var(--primary)] p-4 text-center text-white">
+        <p className="text-sm font-bold">
           已答对 {correctCount} / {quiz.questions.length} 题
         </p>
         <p className="mt-1 text-xs text-white/70">
@@ -124,7 +124,7 @@ export function KoreanBookReviewQuiz({
           type="button"
           disabled={!isComplete}
           onClick={onComplete}
-          className="mt-3 rounded-xl bg-white/10 px-4 py-2 text-xs font-black text-white transition enabled:hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-35"
+          className="mt-3 rounded-xl bg-white/10 px-4 py-2 text-xs font-bold text-white transition enabled:hover:bg-white/20 disabled:cursor-not-allowed disabled:opacity-35"
         >
           返回第一页
         </button>

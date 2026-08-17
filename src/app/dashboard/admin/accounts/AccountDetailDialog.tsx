@@ -87,19 +87,19 @@ function PropertyTable({
   rows: { label: string; value: ReactNode }[];
 }) {
   return (
-    <div className="w-full overflow-hidden rounded-md border" style={{ borderColor: "var(--app-border)" }}>
+    <div className="w-full overflow-hidden rounded-md border" style={{ borderColor: "var(--border)" }}>
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="app-muted-text bg-[var(--app-soft-bg)]">
-            <th className="w-36 border-b px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>{headerLabel}</th>
-            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>{headerValue}</th>
+          <tr className="app-muted-text bg-[var(--surface-soft)]">
+            <th className="w-36 border-b px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>{headerLabel}</th>
+            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>{headerValue}</th>
           </tr>
         </thead>
         <tbody>
           {rows.map((row, index) => (
-            <tr key={index} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+            <tr key={index} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
               <td className="app-muted-text w-36 px-4 py-2.5 text-xs">{row.label}</td>
-              <td className="border-l px-4 py-2.5 text-[13px] font-medium" style={{ borderColor: "var(--app-border)" }}>{row.value}</td>
+              <td className="border-l px-4 py-2.5 text-[13px] font-medium" style={{ borderColor: "var(--border)" }}>{row.value}</td>
             </tr>
           ))}
         </tbody>
@@ -110,25 +110,25 @@ function PropertyTable({
 
 function AuditTable({ auditLogs, actorNames }: { auditLogs: AccountDetailAuditLog[]; actorNames: Record<string, string> }) {
   return (
-    <div className="w-full overflow-hidden rounded-md border" style={{ borderColor: "var(--app-border)" }}>
+    <div className="w-full overflow-hidden rounded-md border" style={{ borderColor: "var(--border)" }}>
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="app-muted-text bg-[var(--app-soft-bg)]">
-            <th className="border-b px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>时间</th>
-            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>操作</th>
-            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>操作人</th>
-            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>变更内容</th>
+          <tr className="app-muted-text bg-[var(--surface-soft)]">
+            <th className="border-b px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>时间</th>
+            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>操作</th>
+            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>操作人</th>
+            <th className="border-b border-l px-4 py-2 text-xs font-medium" style={{ borderColor: "var(--border)" }}>变更内容</th>
           </tr>
         </thead>
         <tbody>
           {auditLogs.map((log) => (
-            <tr key={log.id} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+            <tr key={log.id} className="border-b last:border-b-0" style={{ borderColor: "var(--border)" }}>
               <td className="app-muted-text px-4 py-2.5 whitespace-nowrap text-xs tabular-nums">
                 <FormattedProfileDate value={log.created_at} includeTime />
               </td>
-              <td className="border-l px-4 py-2.5 text-xs font-medium" style={{ borderColor: "var(--app-border)" }}>{ACTION_LABELS[log.action] ?? "账号更新"}</td>
-              <td className="border-l px-4 py-2.5 text-xs" style={{ borderColor: "var(--app-border)" }}>{actorNames[log.actor_id ?? ""] ?? "系统管理员"}</td>
-              <td className="app-muted-text border-l px-4 py-2.5 text-xs" style={{ borderColor: "var(--app-border)" }}>
+              <td className="border-l px-4 py-2.5 text-xs font-medium" style={{ borderColor: "var(--border)" }}>{ACTION_LABELS[log.action] ?? "账号更新"}</td>
+              <td className="border-l px-4 py-2.5 text-xs" style={{ borderColor: "var(--border)" }}>{actorNames[log.actor_id ?? ""] ?? "系统管理员"}</td>
+              <td className="app-muted-text border-l px-4 py-2.5 text-xs" style={{ borderColor: "var(--border)" }}>
                 {(log.changed_fields ?? []).map((field) => FIELD_LABELS[field] ?? field).join("、") || "系统记录"}
               </td>
             </tr>
@@ -151,7 +151,7 @@ function GroupTitle({ children }: { children: ReactNode }) {
 function LoadingState() {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-16 text-sm">
-      <Loader2 className="animate-spin" size={18} style={{ color: "var(--app-muted-text)" }} />
+      <Loader2 className="animate-spin" size={18} style={{ color: "var(--foreground-muted)" }} />
       <p className="app-muted-text text-xs">正在加载账号档案…</p>
     </div>
   );
@@ -165,7 +165,7 @@ function ErrorState({ message, onRetry }: { message: string; onRetry: () => void
         type="button"
         onClick={onRetry}
         className="rounded-md border px-3 py-1.5 text-xs transition hover:bg-black/[0.035]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         重试
       </button>
@@ -348,7 +348,7 @@ export function AccountDetailDialog({ profile }: { profile: AccountListProfile }
         详情
       </DialogTrigger>
       <DialogContent className="max-h-[min(880px,calc(100vh-32px))] w-full max-w-[1024px] gap-0 overflow-y-auto p-0 sm:max-w-[1024px]">
-        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-sm font-semibold">账号档案</DialogTitle>
           <DialogDescription className="text-xs">
             {displayName} · {profile.login_id || profile.email || `…${profile.id.slice(-8)}`}

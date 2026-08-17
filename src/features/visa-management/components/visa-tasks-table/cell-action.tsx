@@ -19,7 +19,7 @@ export function VisaTaskCellAction({ task }: { task: VisaTaskDisplayRow }) {
 
   if (task.status !== "submitted" && task.status !== "reviewing") {
     return (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         {task.status === "approved"
           ? "审核已完成"
           : task.status === "revision_required"
@@ -33,7 +33,7 @@ export function VisaTaskCellAction({ task }: { task: VisaTaskDisplayRow }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger
         type="button"
-        className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-secondary)] transition-colors hover:bg-[var(--app-secondary-soft)]"
+        className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--support)] transition-colors hover:bg-[var(--support-surface)]"
       >
         <ClipboardCheck size={13} />
         {task.status === "submitted" ? "开始审核" : "完成审核"}

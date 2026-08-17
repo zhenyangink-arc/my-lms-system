@@ -8,16 +8,56 @@ import {
 
 import { cn } from "@/lib/utils";
 
-type ManagementPageProps = {
-  children: ReactNode;
+export type ManagementPageHeaderProps = {
   title: string;
-  description: string;
+  description?: string;
   eyebrow?: string;
-  icon: LucideIcon;
+  icon?: LucideIcon;
   action?: ReactNode;
   meta?: ReactNode;
   className?: string;
 };
+
+type ManagementPageProps = ManagementPageHeaderProps & {
+  children: ReactNode;
+};
+
+export function ManagementPageHeader({
+  title,
+  description,
+  eyebrow = "管理工作台",
+  icon: Icon,
+  action,
+  meta,
+  className,
+}: ManagementPageHeaderProps) {
+  return (
+    <header
+      className={cn("management-page-hero", className)}
+      data-has-icon={Icon ? "true" : "false"}
+    >
+      <div className="management-page-heading">
+        {Icon && (
+          <span className="management-page-icon" aria-hidden="true">
+            <Icon size={20} strokeWidth={1.8} />
+          </span>
+        )}
+        <div className="min-w-0">
+          <p className="management-page-eyebrow">{eyebrow}</p>
+          <h1>{title}</h1>
+          {description && <p className="management-page-lead">{description}</p>}
+        </div>
+      </div>
+
+      {(meta || action) && (
+        <div className="management-page-tools">
+          {meta && <div className="management-page-meta">{meta}</div>}
+          {action && <div className="management-page-actions">{action}</div>}
+        </div>
+      )}
+    </header>
+  );
+}
 
 export function ManagementPage({
   children,
@@ -31,25 +71,14 @@ export function ManagementPage({
 }: ManagementPageProps) {
   return (
     <div className={cn("management-page management-page-shell", className)}>
-      <header className="management-page-hero">
-        <div className="management-page-heading">
-          <span className="management-page-icon" aria-hidden="true">
-            <Icon size={20} strokeWidth={1.8} />
-          </span>
-          <div className="min-w-0">
-            <p className="management-page-eyebrow">{eyebrow}</p>
-            <h1>{title}</h1>
-            <p className="management-page-lead">{description}</p>
-          </div>
-        </div>
-
-        {(meta || action) && (
-          <div className="management-page-tools">
-            {meta && <div className="management-page-meta">{meta}</div>}
-            {action && <div className="management-page-actions">{action}</div>}
-          </div>
-        )}
-      </header>
+      <ManagementPageHeader
+        title={title}
+        description={description}
+        eyebrow={eyebrow}
+        icon={Icon}
+        action={action}
+        meta={meta}
+      />
 
       <div className="management-page-body">{children}</div>
     </div>

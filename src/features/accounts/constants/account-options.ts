@@ -88,16 +88,16 @@ export const PLATFORM_ROLE_TONES: Record<
   { color: string; backgroundColor: string }
 > = {
   platform_deputy: {
-    color: "var(--app-warm)",
-    backgroundColor: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    backgroundColor: "var(--status-warning-surface)",
   },
   platform_admin: {
-    color: "var(--app-accent-strong)",
-    backgroundColor: "var(--app-accent-soft)",
+    color: "var(--primary-hover)",
+    backgroundColor: "var(--accent)",
   },
   platform_course_inspector: {
-    color: "var(--app-secondary)",
-    backgroundColor: "var(--app-soft-bg)",
+    color: "var(--support)",
+    backgroundColor: "var(--surface-soft)",
   },
 };
 
@@ -106,20 +106,20 @@ export const TENANT_ROLE_TONES: Record<
   { color: string; backgroundColor: string }
 > = {
   ceo: {
-    color: "var(--app-warm)",
-    backgroundColor: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    backgroundColor: "var(--status-warning-surface)",
   },
   admin: {
-    color: "var(--app-accent-strong)",
-    backgroundColor: "var(--app-accent-soft)",
+    color: "var(--primary-hover)",
+    backgroundColor: "var(--accent)",
   },
   teacher: {
-    color: "var(--app-secondary)",
-    backgroundColor: "var(--app-soft-bg)",
+    color: "var(--support)",
+    backgroundColor: "var(--surface-soft)",
   },
   student: {
-    color: "var(--app-success)",
-    backgroundColor: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    backgroundColor: "var(--status-success-surface)",
   },
 };
 
@@ -127,12 +127,12 @@ export const ACCOUNT_STATUS_TONES: Record<
   string,
   { dot: string; text: string }
 > = {
-  active: { dot: "var(--app-success)", text: "var(--app-success)" },
+  active: { dot: "var(--status-success)", text: "var(--status-success)" },
   inactive: {
-    dot: "var(--app-muted-light)",
-    text: "var(--app-muted)",
+    dot: "var(--foreground-subtle)",
+    text: "var(--foreground-muted)",
   },
-  suspended: { dot: "var(--app-warm)", text: "var(--app-warm)" },
+  suspended: { dot: "var(--status-warning)", text: "var(--status-warning)" },
 };
 
 export function getAssignableRoles(

@@ -63,9 +63,9 @@ export type AccountListProfile = {
 };
 
 const STATUS_STYLES: Record<string, { bg: string; text: string }> = {
-  active: { bg: "var(--app-status-active-bg)", text: "var(--app-status-active-text)" },
-  inactive: { bg: "var(--app-status-inactive-bg)", text: "var(--app-status-inactive-text)" },
-  suspended: { bg: "var(--app-status-suspended-bg)", text: "var(--app-status-suspended-text)" },
+  active: { bg: "var(--status-active-bg)", text: "var(--status-active-text)" },
+  inactive: { bg: "var(--status-inactive-bg)", text: "var(--status-inactive-text)" },
+  suspended: { bg: "var(--status-suspended-bg)", text: "var(--status-suspended-text)" },
 };
 
 function SubmitButton({ label }: { label: string }) {
@@ -75,8 +75,8 @@ function SubmitButton({ label }: { label: string }) {
     <button
       type="submit"
       disabled={pending}
-      className="w-full rounded-2xl px-4 py-3 text-sm font-black text-white transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
-      style={{ backgroundColor: "var(--app-accent)" }}
+      className="w-full rounded-2xl px-4 py-3 text-sm font-semibold text-white transition hover:opacity-90 disabled:cursor-wait disabled:opacity-60"
+      style={{ backgroundColor: "var(--primary)" }}
     >
       {pending ? "正在保存…" : label}
     </button>
@@ -86,7 +86,7 @@ function SubmitButton({ label }: { label: string }) {
 function DangerSubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" disabled={disabled || pending} className="w-full rounded-2xl bg-rose-600 px-4 py-3 text-sm font-black text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-40">
+    <button type="submit" disabled={disabled || pending} className="w-full rounded-2xl bg-rose-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-rose-700 disabled:cursor-not-allowed disabled:opacity-40">
       {pending ? "正在永久删除…" : "永久删除这个账号"}
     </button>
   );
@@ -147,8 +147,8 @@ function MembershipDialog({ profile, displayName }: { profile: AccountListProfil
     <Dialog>
       <DialogTrigger
         type="button"
-        className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-black transition hover:-translate-y-0.5 hover:opacity-90"
-        style={{ color: "var(--app-secondary)" }}
+        className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition hover:-translate-y-0.5 hover:opacity-90"
+        style={{ color: "var(--support)" }}
       >
         <Crown size={15} />会员档位
       </DialogTrigger>
@@ -159,11 +159,11 @@ function MembershipDialog({ profile, displayName }: { profile: AccountListProfil
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="app-soft-card rounded-2xl border p-4">
-            <p className="font-black">{displayName}</p>
+            <p className="font-semibold">{displayName}</p>
             <p className="app-muted-text mt-1 text-xs">当前档位：{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</p>
           </div>
           <label className="block">
-            <span className="mb-2 block text-sm font-black">新的会员档位</span>
+            <span className="mb-2 block text-sm font-semibold">新的会员档位</span>
             <select name="membership_tier" defaultValue={normalizeMembershipTier(profile.membership_tier)} className="app-input w-full rounded-2xl border px-3 py-3 text-sm font-bold">
               <option value="normal">普通学生</option>
               <option value="vip1">一级会员学生</option>
@@ -192,7 +192,7 @@ function RoleDialog({ profile, displayName, viewerRole, accountScope }: { profil
 
   return (
     <Dialog>
-      <DialogTrigger type="button" className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-black transition hover:-translate-y-0.5 hover:opacity-90" style={{ color: "var(--app-accent)" }}>
+      <DialogTrigger type="button" className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition hover:-translate-y-0.5 hover:opacity-90" style={{ color: "var(--primary)" }}>
         <UserCog size={15} />修改角色
       </DialogTrigger>
       <DialogContent>
@@ -203,11 +203,11 @@ function RoleDialog({ profile, displayName, viewerRole, accountScope }: { profil
         <form action={formAction} className="space-y-4">
           <div className="app-soft-card rounded-2xl border p-4 text-sm">
             <p className="app-muted-text text-xs font-bold">正在修改</p>
-            <p className="mt-1 font-black">{displayName}</p>
+            <p className="mt-1 font-semibold">{displayName}</p>
             <p className="app-muted-text mt-1 text-xs">当前角色：{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</p>
           </div>
           <label className="block">
-            <span className="mb-2 block text-sm font-black">新的角色</span>
+            <span className="mb-2 block text-sm font-semibold">新的角色</span>
             <select name="role" defaultValue={profile.role} className="app-input w-full rounded-2xl border px-3 py-3 text-sm font-bold">
               {assignableRoles.map((role) => <option key={role} value={role}>{ROLE_LABELS[role]}</option>)}
             </select>
@@ -229,7 +229,7 @@ function StatusDialog({ profile, displayName }: { profile: AccountListProfile; d
 
   return (
     <Dialog>
-      <DialogTrigger type="button" className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-black transition hover:-translate-y-0.5 hover:opacity-90" style={{ color: "var(--app-warm)" }}>
+      <DialogTrigger type="button" className="app-soft-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-xs font-semibold transition hover:-translate-y-0.5 hover:opacity-90" style={{ color: "var(--status-warning)" }}>
         <CircleAlert size={15} />修改状态
       </DialogTrigger>
       <DialogContent>
@@ -240,11 +240,11 @@ function StatusDialog({ profile, displayName }: { profile: AccountListProfile; d
         <form action={formAction} className="space-y-4">
           <div className="app-soft-card rounded-2xl border p-4 text-sm">
             <p className="app-muted-text text-xs font-bold">正在修改</p>
-            <p className="mt-1 font-black">{displayName}</p>
+            <p className="mt-1 font-semibold">{displayName}</p>
             <p className="app-muted-text mt-1 text-xs">当前状态：{STATUS_LABELS[profile.status] ?? profile.status}</p>
           </div>
           <label className="block">
-            <span className="mb-2 block text-sm font-black">新的状态</span>
+            <span className="mb-2 block text-sm font-semibold">新的状态</span>
             <select name="status" defaultValue={profile.status} onChange={(event) => setStatusChoice(event.target.value)} className="app-input w-full rounded-2xl border px-3 py-3 text-sm font-bold">
               <option value="active">正常</option>
               <option value="inactive">已停用</option>
@@ -253,7 +253,7 @@ function StatusDialog({ profile, displayName }: { profile: AccountListProfile; d
           </label>
           {statusChoice !== "active" && (
             <label className="block">
-              <span className="mb-2 block text-sm font-black">调整原因（必填）</span>
+              <span className="mb-2 block text-sm font-semibold">调整原因（必填）</span>
               <textarea name="deactivate_reason" required maxLength={300} rows={4} defaultValue={profile.deactivate_reason ?? ""} placeholder="例如：学习服务已结束，暂时停用账号。" className="app-input w-full resize-none rounded-2xl border px-3 py-3 text-sm" />
               <p className="app-muted-text mt-1 text-xs">原因会保留在账号档案中，方便团队后续交接。</p>
             </label>
@@ -277,7 +277,7 @@ function DeleteAccountDialog({ profile, displayName }: { profile: AccountListPro
 
   return (
     <Dialog>
-      <DialogTrigger type="button" className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-black text-rose-700 transition hover:-translate-y-0.5 hover:bg-rose-100">
+      <DialogTrigger type="button" className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-rose-200 bg-rose-50 px-3 py-2.5 text-xs font-semibold text-rose-700 transition hover:-translate-y-0.5 hover:bg-rose-100">
         <Trash2 size={15} />删除账号
       </DialogTrigger>
       <DialogContent>
@@ -287,16 +287,16 @@ function DeleteAccountDialog({ profile, displayName }: { profile: AccountListPro
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="rounded-2xl border border-rose-200 bg-rose-50 p-4">
-            <p className="text-sm font-black text-rose-900">{displayName}</p>
+            <p className="text-sm font-semibold text-rose-900">{displayName}</p>
             <p className="mt-1 break-all text-xs text-rose-700">{profile.email || `账号编号：${profile.id}`}</p>
           </div>
           <label className="block">
-            <span className="mb-2 block text-sm font-black">删除原因</span>
+            <span className="mb-2 block text-sm font-semibold">删除原因</span>
             <textarea name="deletion_reason" required minLength={2} maxLength={300} rows={3} defaultValue="清理测试账号" className="app-input w-full resize-none rounded-2xl border px-3 py-3 text-sm" />
           </label>
           <label className="block">
-            <span className="mb-2 block text-sm font-black">请输入以下内容确认删除</span>
-            <code className="mb-2 block rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-700">{expectedConfirmation}</code>
+            <span className="mb-2 block text-sm font-semibold">请输入以下内容确认删除</span>
+            <code className="mb-2 block rounded-xl bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-700">{expectedConfirmation}</code>
             <input name="confirmation" required autoComplete="off" value={confirmation} onChange={(event) => setConfirmation(event.target.value)} placeholder="完整输入上方内容" className="app-input w-full rounded-2xl border px-3 py-3 text-sm" />
           </label>
           <ActionMessage state={state} />
@@ -335,30 +335,30 @@ export function AccountCard({ profile, viewerRole, accountScope }: { profile: Ac
   return (
     <article className="app-card group flex h-full flex-col rounded-[1.75rem] border p-5 transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
       <div className="flex items-start gap-3.5">
-        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-black" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
+        <div className="relative flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-lg font-semibold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
           {avatarText}
-          <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2" style={{ backgroundColor: profile.status === "active" ? "#34c985" : "#f59e0b", borderColor: "var(--app-card-bg)" }} />
+          <span className="absolute -bottom-1 -right-1 h-3.5 w-3.5 rounded-full border-2" style={{ backgroundColor: profile.status === "active" ? "#34c985" : "#f59e0b", borderColor: "var(--card)" }} />
         </div>
 
         <div className="min-w-0 flex-1">
           <div className="flex items-start justify-between gap-2">
             <div className="min-w-0">
-              <h3 className="truncate text-lg font-black tracking-tight">{displayName}</h3>
+              <h3 className="truncate text-lg font-semibold tracking-tight">{displayName}</h3>
               {profile.email ? (
                 <p className="app-muted-text mt-1 flex min-w-0 items-center gap-1.5 truncate text-xs"><Mail className="shrink-0" size={13} />{profile.email}</p>
               ) : (
                 <p className="mt-1 text-xs font-bold text-amber-700">尚未同步邮箱</p>
               )}
             </div>
-            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-black" style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
+            <span className="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold" style={{ backgroundColor: statusStyle.bg, color: statusStyle.text }}>
               {STATUS_LABELS[profile.status] ?? profile.status}
             </span>
           </div>
 
           <div className="mt-3 flex flex-wrap gap-1.5">
-            <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-black"><Shield size={12} />{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</span>
+            <span className="app-soft-card inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold"><Shield size={12} />{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</span>
             {profile.role === "student" && (
-              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-black" style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}><Crown size={12} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span>
+              <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}><Crown size={12} />{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</span>
             )}
           </div>
         </div>
@@ -366,19 +366,19 @@ export function AccountCard({ profile, viewerRole, accountScope }: { profile: Ac
 
       <div className="mt-5 grid grid-cols-2 gap-2">
         <div className="app-soft-card rounded-2xl border px-3 py-3">
-          <div className="flex items-center gap-1.5"><CalendarDays className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">注册时间</p></div>
-          <p className="mt-1.5 text-xs font-black"><KoreanTime value={registeredAt} includeTime={false} /></p>
+          <div className="flex items-center gap-1.5"><CalendarDays className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-semibold">注册时间</p></div>
+          <p className="mt-1.5 text-xs font-semibold"><KoreanTime value={registeredAt} includeTime={false} /></p>
         </div>
         <div className="app-soft-card rounded-2xl border px-3 py-3">
-          <div className="flex items-center gap-1.5"><Activity className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-black">最近活动</p></div>
-          <p className="mt-1.5 truncate text-xs font-black">{recentActivity(profile.last_active_at)}</p>
+          <div className="flex items-center gap-1.5"><Activity className="app-muted-text" size={14} /><p className="app-muted-text text-xs font-semibold">最近活动</p></div>
+          <p className="mt-1.5 truncate text-xs font-semibold">{recentActivity(profile.last_active_at)}</p>
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5" style={{ backgroundColor: isProfileStarted ? "var(--app-accent-soft)" : "var(--app-warm-soft)" }}>
+      <div className="mt-3 flex items-center justify-between gap-3 rounded-2xl px-3 py-2.5" style={{ backgroundColor: isProfileStarted ? "var(--accent)" : "var(--status-warning-surface)" }}>
         <div className="flex min-w-0 items-center gap-2">
-          {isProfileStarted ? <FileCheck2 size={16} style={{ color: "var(--app-accent)" }} /> : <Clock3 size={16} style={{ color: "var(--app-warm)" }} />}
-          <p className="truncate text-xs font-black">{isProfileStarted ? "个人资料已开始完善" : "个人资料等待填写"}</p>
+          {isProfileStarted ? <FileCheck2 size={16} style={{ color: "var(--primary)" }} /> : <Clock3 size={16} style={{ color: "var(--status-warning)" }} />}
+          <p className="truncate text-xs font-semibold">{isProfileStarted ? "个人资料已开始完善" : "个人资料等待填写"}</p>
         </div>
         <span className="app-muted-text shrink-0 text-xs font-bold">…{profile.id.slice(-6)}</span>
       </div>
@@ -391,7 +391,7 @@ export function AccountCard({ profile, viewerRole, accountScope }: { profile: Ac
       )}
 
       <div className="mt-auto pt-5">
-        <Link href={`/dashboard/admin/accounts/${profile.id}`} className="mb-2 flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-black transition hover:opacity-80" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
+        <Link href={`/dashboard/admin/accounts/${profile.id}`} className="mb-2 flex items-center justify-between rounded-xl px-3 py-2.5 text-xs font-semibold transition hover:opacity-80" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
           查看完整账号档案
           <ChevronRight size={15} className="transition group-hover:translate-x-0.5" />
         </Link>

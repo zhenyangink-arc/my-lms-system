@@ -263,6 +263,13 @@ export async function ChapterTestWorkspace({
   const activeQuestionCount = questions.filter(
     (question) => question.is_chapter_test_item
   ).length;
+  const chapterReadError = Boolean(
+    testsResult.error ||
+      questionsResult.error ||
+      lessonsResult.error ||
+      coursesResult.error ||
+      categoriesResult.error
+  );
 
   return (
     <div className={embedded ? "" : "pb-12"}>
@@ -274,9 +281,9 @@ export async function ChapterTestWorkspace({
         {!embedded && (
           <Link
             href="/dashboard/admin/assignments"
-            className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+            className="app-muted-text inline-flex items-center gap-2 rounded-md text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--support)]"
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft aria-hidden="true" size={14} />
             返回作业考试管理
           </Link>
         )}
@@ -284,20 +291,20 @@ export async function ChapterTestWorkspace({
         <section className="border-y py-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-black">课程章节树</p>
+              <h2 className="text-sm font-semibold">课程章节树</h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-3 text-sm">
               {[
-                ["全部章节", tests.length],
-                ["已发布", publishedCount],
-                ["当前题目", activeQuestionCount],
+                ["全部章节", chapterReadError ? "—" : tests.length],
+                ["已发布", chapterReadError ? "—" : publishedCount],
+                ["当前题目", chapterReadError ? "—" : activeQuestionCount],
               ].map(([label, value], index) => (
                 <div
                   key={String(label)}
                   className={`min-w-28 px-5 text-center ${
                     index === 0 ? "" : "border-l"
                   }`}
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <dd className="font-mono text-xl font-bold tabular-nums">
                     {String(value)}
@@ -311,45 +318,54 @@ export async function ChapterTestWorkspace({
           </div>
         </section>
 
-        {(testsResult.error ||
-          questionsResult.error ||
-          lessonsResult.error ||
-          coursesResult.error ||
-          categoriesResult.error) && (
+        {chapterReadError && (
           <section
+            role="alert"
+            aria-labelledby="chapter-test-read-error"
             className="rounded-2xl border p-4 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
-              borderColor: "var(--app-warm)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
             }}
           >
-            章节测试暂时无法完整读取，请稍后刷新页面。
+            <h2 id="chapter-test-read-error" className="text-sm font-semibold">
+              章节测试读取失败
+            </h2>
+            <p className="mt-1 font-normal">
+              章节测试暂时无法完整读取，请稍后刷新页面。失败数据不会显示为“暂无数据”。
+            </p>
           </section>
         )}
 
-        <section
-          className="border"
-          style={{
-            borderColor: "var(--app-border)",
-            backgroundColor: "var(--app-card-bg)",
-          }}
-        >
-          {tableChannels.map((channel) => (
+        {!chapterReadError && (
+          <section
+            aria-labelledby="chapter-test-table-heading"
+            className="border"
+            style={{
+              borderColor: "var(--border)",
+              backgroundColor: "var(--card)",
+            }}
+          >
+            <h2 id="chapter-test-table-heading" className="sr-only">
+              章节测试列表
+            </h2>
+            {tableChannels.map((channel) => (
             <details
               key={channel.id}
               className="group border-b last:border-b-0"
-              style={{ borderColor: "var(--app-border)" }}
+              style={{ borderColor: "var(--border)" }}
             >
               <summary
-                className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--app-soft-bg)]"
-                style={{ borderColor: "var(--app-border-soft)" }}
+                className="flex cursor-pointer list-none items-center gap-3 px-4 py-3.5 transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--support)]"
+                style={{ borderColor: "var(--border-subtle)" }}
               >
                 <ChevronDown
+                  aria-hidden="true"
                   className="app-muted-text shrink-0 transition-transform group-open:rotate-180"
                   size={15}
                 />
-                <span className="min-w-0 text-sm font-black">
+                <span className="min-w-0 text-sm font-semibold">
                   {channel.title}
                 </span>
                 <span className="app-muted-text text-xs">
@@ -363,10 +379,13 @@ export async function ChapterTestWorkspace({
               </summary>
 
               <div
-                className="overflow-x-auto border-t md:overflow-visible"
-                style={{ borderColor: "var(--app-border)" }}
+                className="overflow-x-auto border-t"
+                style={{ borderColor: "var(--border)" }}
               >
                 <table className="w-full min-w-[980px] table-fixed border-collapse text-left">
+                  <caption className="sr-only">
+                    {channel.title}课程通道的章节测试，按课程和课时目录顺序排列
+                  </caption>
                   <colgroup>
                     <col className="w-[23%]" />
                     <col className="w-[20%]" />
@@ -380,15 +399,15 @@ export async function ChapterTestWorkspace({
                     className="sticky top-14 z-20 backdrop-blur-xl backdrop-saturate-150"
                     style={{
                       backgroundColor:
-                        "color-mix(in srgb, var(--app-card-bg) 78%, transparent)",
-                      boxShadow: "0 1px 0 var(--app-border)",
+                        "color-mix(in srgb, var(--card) 78%, transparent)",
+                      boxShadow: "0 1px 0 var(--border)",
                     }}
                   >
                     <tr
                       className="border-b text-[11px] font-bold uppercase tracking-[0.08em] app-muted-text"
                       style={{
-                        borderColor: "var(--app-border-soft)",
-                        backgroundColor: "var(--app-soft-bg)",
+                        borderColor: "var(--border-subtle)",
+                        backgroundColor: "var(--surface-soft)",
                       }}
                     >
                       <th className="px-4 py-2.5 font-bold">课程 / 课时</th>
@@ -426,7 +445,7 @@ export async function ChapterTestWorkspace({
                         return (
                           <tr
                             className="border-b last:border-b-0"
-                            style={{ borderColor: "var(--app-border-soft)" }}
+                            style={{ borderColor: "var(--border-subtle)" }}
                           >
                             <td className="app-muted-text relative px-4 py-3.5 text-xs">
                               <span
@@ -434,7 +453,7 @@ export async function ChapterTestWorkspace({
                                 className="absolute left-[22px] top-0 h-1/2 border-l"
                                 style={{
                                   borderColor:
-                                    "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                    "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                 }}
                               />
                               <span
@@ -442,7 +461,7 @@ export async function ChapterTestWorkspace({
                                 className="absolute left-[22px] top-1/2 w-4 border-t"
                                 style={{
                                   borderColor:
-                                    "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                    "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                 }}
                               />
                               <span className="inline-block pl-8">暂无章节</span>
@@ -474,9 +493,9 @@ export async function ChapterTestWorkspace({
                         return (
                           <tr
                             key={test.id}
-                            className="border-b align-middle transition-colors last:border-b-0 hover:bg-[var(--app-soft-bg)]"
+                            className="border-b align-middle transition-colors last:border-b-0 hover:bg-[var(--surface-soft)]"
                             style={{
-                              borderColor: "var(--app-border-soft)",
+                              borderColor: "var(--border-subtle)",
                             }}
                           >
                             <td className="relative px-4 py-3.5">
@@ -489,7 +508,7 @@ export async function ChapterTestWorkspace({
                                 }`}
                                 style={{
                                   borderColor:
-                                    "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                    "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                 }}
                               />
                               <span
@@ -497,7 +516,7 @@ export async function ChapterTestWorkspace({
                                 className="absolute left-[22px] top-1/2 w-4 border-t"
                                 style={{
                                   borderColor:
-                                    "color-mix(in srgb, var(--app-muted) 38%, transparent)",
+                                    "color-mix(in srgb, var(--foreground-muted) 38%, transparent)",
                                 }}
                               />
                               <span className="app-muted-text inline-flex items-center gap-2 pl-8 font-mono text-[11px]">
@@ -523,17 +542,18 @@ export async function ChapterTestWorkspace({
                                 style={{
                                   color:
                                     test.status === "published"
-                                      ? "var(--app-success)"
-                                      : "var(--app-muted)",
+                                      ? "var(--status-success)"
+                                      : "var(--foreground-muted)",
                                 }}
                               >
                                 <span
+                                  aria-hidden="true"
                                   className="h-1.5 w-1.5 rounded-full"
                                   style={{
                                     backgroundColor:
                                       test.status === "published"
-                                        ? "var(--app-success)"
-                                        : "var(--app-muted)",
+                                        ? "var(--status-success)"
+                                        : "var(--foreground-muted)",
                                   }}
                                 />
                                 {test.status === "published"
@@ -614,15 +634,20 @@ export async function ChapterTestWorkspace({
                 </table>
               </div>
             </details>
-          ))}
+            ))}
 
-          {tableChannels.length === 0 && (
-            <div className="px-5 py-16 text-center">
-              <FlaskConical className="mx-auto opacity-30" size={28} />
-              <p className="mt-3 text-sm font-bold">暂无章节测试数据</p>
-            </div>
-          )}
-        </section>
+            {tableChannels.length === 0 && (
+              <div className="px-5 py-16 text-center">
+                <FlaskConical
+                  aria-hidden="true"
+                  className="mx-auto opacity-30"
+                  size={28}
+                />
+                <p className="mt-3 text-sm font-bold">暂无章节测试数据</p>
+              </div>
+            )}
+          </section>
+        )}
       </div>
     </div>
   );

@@ -59,28 +59,28 @@ type InstitutionSummary = {
 };
 
 const workToneStyles = {
-  blue: { solid: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  orange: { solid: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  violet: { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
-  teal: { solid: "var(--app-success)", soft: "var(--app-success-soft)" },
-  rose: { solid: "#dc2626", soft: "#fef2f2" },
-  sky: { solid: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  indigo: { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
+  blue: { solid: "var(--primary)", soft: "var(--accent)" },
+  orange: { solid: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  violet: { solid: "var(--support)", soft: "var(--surface-soft)" },
+  teal: { solid: "var(--status-success)", soft: "var(--status-success-surface)" },
+  rose: { solid: "var(--status-danger)", soft: "var(--status-danger-surface)" },
+  sky: { solid: "var(--primary)", soft: "var(--accent)" },
+  indigo: { solid: "var(--support)", soft: "var(--surface-soft)" },
 } as const;
 
 const institutionSeries = [
-  { key: "gradeReviews", label: "成绩", color: "var(--app-accent)", soft: "var(--app-accent-soft)" },
-  { key: "attentionRecords", label: "记录", color: "#dc2626", soft: "#fef2f2" },
-  { key: "documentReviews", label: "资料", color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  { key: "visaTasks", label: "签证", color: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
-  { key: "helpTickets", label: "工单", color: "var(--app-success)", soft: "var(--app-success-soft)" },
+  { key: "gradeReviews", label: "成绩", color: "var(--primary)", soft: "var(--accent)" },
+  { key: "attentionRecords", label: "记录", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
+  { key: "documentReviews", label: "资料", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  { key: "visaTasks", label: "签证", color: "var(--support)", soft: "var(--surface-soft)" },
+  { key: "helpTickets", label: "工单", color: "var(--status-success)", soft: "var(--status-success-surface)" },
 ] as const;
 
 const metricToneStyles = [
-  { solid: "var(--app-accent)", soft: "var(--app-soft-bg)" },
-  { solid: "var(--app-secondary)", soft: "var(--app-soft-bg)" },
-  { solid: "var(--app-success)", soft: "var(--app-soft-bg)" },
-  { solid: "var(--app-warm)", soft: "var(--app-soft-bg)" },
+  { solid: "var(--primary)", soft: "var(--surface-soft)" },
+  { solid: "var(--support)", soft: "var(--surface-soft)" },
+  { solid: "var(--status-success)", soft: "var(--surface-soft)" },
+  { solid: "var(--status-warning)", soft: "var(--surface-soft)" },
 ] as const;
 
 function emptyCount(): Promise<CountResult> {
@@ -508,7 +508,7 @@ export default async function AdminCenterPage() {
                       style={{ width: `${width}%`, backgroundColor: tone.solid }}
                     />
                   </span>
-                  <b style={{ color: item.count > 0 ? tone.solid : "var(--app-muted)" }}>
+                  <b style={{ color: item.count > 0 ? tone.solid : "var(--foreground-muted)" }}>
                     {item.count}
                   </b>
                   <ArrowRight size={16} aria-hidden="true" />

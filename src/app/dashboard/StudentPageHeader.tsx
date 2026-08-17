@@ -146,10 +146,10 @@ export function StudentPageHeader({
         <div className="app-glass-card flex min-w-0 items-center gap-2 rounded-2xl px-4 py-2.5 sm:px-5">
           <PageIcon
             size={18}
-            style={{ color: "var(--app-accent-strong)" }}
+            style={{ color: "var(--primary-hover)" }}
             aria-hidden={true}
           />
-          <h1 className="truncate text-base font-black tracking-tight sm:text-lg">
+          <h1 className="truncate text-base font-bold tracking-tight sm:text-lg">
             {title}
           </h1>
         </div>
@@ -166,7 +166,7 @@ export function StudentPageHeader({
               disabled
               aria-label="智能辅助仅对学生开放"
               title="智能辅助仅对学生开放"
-              className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-black tracking-tight opacity-60 sm:px-4 sm:text-lg"
+              className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-bold tracking-tight opacity-60 sm:px-4 sm:text-lg"
             >
               <Bot size={18} aria-hidden="true" />
               <span>智能辅助</span>

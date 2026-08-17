@@ -37,14 +37,14 @@ export function LearningActivityPanel({
       className="app-card overflow-hidden rounded-3xl border"
       aria-labelledby="learning-activity-title"
     >
-      <header className="flex flex-col gap-4 border-b border-[var(--app-border-soft)] px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
+      <header className="flex flex-col gap-4 border-b border-[var(--border-subtle)] px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--app-accent)]">
+          <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--primary)]">
             每日学习
           </p>
           <h2
             id="learning-activity-title"
-            className="mt-1 text-lg font-black tracking-tight"
+            className="mt-1 text-lg font-bold tracking-tight"
           >
             学习投入与完成足迹
           </h2>
@@ -54,7 +54,7 @@ export function LearningActivityPanel({
         </div>
 
         <div
-          className="grid w-full grid-cols-2 gap-1 rounded-2xl bg-[var(--app-soft-bg)] p-1 sm:w-auto"
+          className="grid w-full grid-cols-2 gap-1 rounded-2xl bg-[var(--surface-soft)] p-1 sm:w-auto"
           role="tablist"
           aria-label="切换每日学习视图"
         >
@@ -96,11 +96,11 @@ export function LearningActivityPanel({
                       ?.focus();
                   });
                 }}
-                className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                className="inline-flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-xl px-4 text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                 style={{
-                  color: active ? "var(--app-accent)" : "var(--app-muted)",
+                  color: active ? "var(--primary)" : "var(--foreground-muted)",
                   backgroundColor: active
-                    ? "var(--app-card-bg)"
+                    ? "var(--card)"
                     : "transparent",
                 }}
               >

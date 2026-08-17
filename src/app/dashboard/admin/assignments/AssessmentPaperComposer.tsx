@@ -118,6 +118,7 @@ export function AssessmentPaperComposer({
   }
 
   function removeQuestion(questionId: string) {
+    if (!window.confirm("确认从试卷中移除这道题？")) return;
     setSelected((current) =>
       current.filter((item) => item.questionId !== questionId)
     );
@@ -141,8 +142,8 @@ export function AssessmentPaperComposer({
           setSelected([]);
           dialogRef.current?.showModal();
         }}
-        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
+        style={{ backgroundColor: "var(--primary)" }}
       >
         <FilePlus2 size={16} />
         新增标准{typeLabel}卷
@@ -154,18 +155,18 @@ export function AssessmentPaperComposer({
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
         className="m-auto max-h-[92dvh] w-[min(1180px,calc(100%-2rem))] overflow-hidden rounded-3xl border bg-transparent p-0 shadow-2xl backdrop:bg-black/45"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <div className="app-card max-h-[92dvh] overflow-y-auto rounded-3xl">
           <div
             className="sticky top-0 z-10 flex items-start justify-between gap-4 border-b px-5 py-4 sm:px-6"
             style={{
-              borderColor: "var(--app-border-soft)",
-              backgroundColor: "var(--app-card-bg)",
+              borderColor: "var(--border-subtle)",
+              backgroundColor: "var(--card)",
             }}
           >
             <div>
-              <h2 className="text-xl font-black">新增标准{typeLabel}卷</h2>
+              <h2 className="text-xl font-semibold">新增标准{typeLabel}卷</h2>
               <p className="app-muted-text mt-1 text-xs">
                 A—E只是命名示例，平台可以持续新增任意数量的完整试卷。
               </p>
@@ -189,7 +190,7 @@ export function AssessmentPaperComposer({
             <input type="hidden" name="source_test_id" value={groupId} />
 
             <section className="grid gap-4 md:grid-cols-2">
-              <label className="text-xs font-black">
+              <label className="text-xs font-semibold">
                 试卷名称
                 <input
                   name="title"
@@ -200,7 +201,7 @@ export function AssessmentPaperComposer({
                   className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"
                 />
               </label>
-              <label className="text-xs font-black">
+              <label className="text-xs font-semibold">
                 题库章节
                 <select
                   value={groupId}
@@ -218,7 +219,7 @@ export function AssessmentPaperComposer({
                   ))}
                 </select>
               </label>
-              <label className="text-xs font-black md:col-span-2">
+              <label className="text-xs font-semibold md:col-span-2">
                 试卷说明
                 <textarea
                   name="description"
@@ -228,7 +229,7 @@ export function AssessmentPaperComposer({
                   className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm leading-6"
                 />
               </label>
-              <label className="text-xs font-black">
+              <label className="text-xs font-semibold">
                 建议用时（分钟）
                 <input
                   name="duration_minutes"
@@ -239,7 +240,7 @@ export function AssessmentPaperComposer({
                   className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"
                 />
               </label>
-              <label className="text-xs font-black">
+              <label className="text-xs font-semibold">
                 及格线（百分制）
                 <input
                   name="passing_score"
@@ -251,7 +252,7 @@ export function AssessmentPaperComposer({
                   className="app-input mt-2 w-full rounded-xl border px-3 py-3 text-sm"
                 />
               </label>
-              <label className="flex items-center gap-3 border-y py-3 text-xs font-black md:col-span-2">
+              <label className="flex items-center gap-3 border-y py-3 text-xs font-semibold md:col-span-2">
                 <input
                   name="allow_resubmission"
                   type="checkbox"
@@ -287,7 +288,7 @@ export function AssessmentPaperComposer({
 
               <div className="mt-5 flex flex-wrap items-end justify-between gap-3">
                 <div>
-                  <h3 className="font-black">从本章标准题库组卷</h3>
+                  <h3 className="font-semibold">从本章标准题库组卷</h3>
                   <p className="app-muted-text mt-1 text-xs">
                     只有平台可以进行这一步；机构发布端不会出现单题选择。
                   </p>
@@ -299,7 +300,7 @@ export function AssessmentPaperComposer({
                       setDifficulty(event.target.value);
                       setPage(1);
                     }}
-                    className="app-input rounded-xl border px-3 py-2.5 text-xs font-black"
+                    className="app-input rounded-xl border px-3 py-2.5 text-xs font-semibold"
                   >
                     <option value="all">全部难度</option>
                     {Object.entries(difficultyLabels).map(([value, label]) => (
@@ -332,7 +333,7 @@ export function AssessmentPaperComposer({
                     <col />
                     <col className="w-24" />
                   </colgroup>
-                  <thead className="bg-[var(--app-soft-bg)]">
+                  <thead className="bg-[var(--surface-soft)]">
                     <tr className="border-b app-muted-text">
                       <th className="px-3 py-2.5 text-center text-[11px] font-bold">难度</th>
                       <th className="border-l px-3 py-2.5 text-center text-[11px] font-bold">技能</th>
@@ -345,7 +346,7 @@ export function AssessmentPaperComposer({
                     {visible.map((question) => {
                       const isSelected = selectedIds.has(question.id);
                       return (
-                        <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                        <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                           <td className="px-3 py-3 text-center text-xs font-bold">{difficultyLabels[question.difficulty] ?? question.difficulty}</td>
                           <td className="app-muted-text border-l px-3 py-3 text-center text-xs">{question.skill || "综合"}</td>
                           <td className="border-l px-4 py-3 text-xs font-bold leading-5">{question.prompt}</td>
@@ -355,7 +356,7 @@ export function AssessmentPaperComposer({
                             )) : "—"}
                           </td>
                           <td className="border-l px-3 py-3 text-right">
-                            <button type="button" disabled={isSelected} onClick={() => addQuestion(question)} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] disabled:text-[var(--app-success)]">
+                            <button type="button" disabled={isSelected} onClick={() => addQuestion(question)} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] disabled:text-[var(--status-success)]">
                               {isSelected ? <Check size={11} /> : <Plus size={11} />}
                               {isSelected ? "已加入" : "加入"}
                             </button>
@@ -399,7 +400,7 @@ export function AssessmentPaperComposer({
             <section className="border">
               <div className="flex items-center justify-between gap-3 border-b px-4 py-3">
                 <div>
-                  <h3 className="font-black">已选试卷内容</h3>
+                  <h3 className="font-semibold">已选试卷内容</h3>
                   <p className="app-muted-text mt-1 text-xs">
                     {selected.length} 道题 · 合计 {totalPoints} 分
                   </p>
@@ -407,7 +408,7 @@ export function AssessmentPaperComposer({
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[760px] border-collapse text-left">
-                  <thead className="bg-[var(--app-soft-bg)]">
+                  <thead className="bg-[var(--surface-soft)]">
                     <tr className="border-b app-muted-text">
                       <th className="w-16 px-3 py-2.5 text-center text-[11px] font-bold">顺序</th>
                       <th className="border-l px-4 py-2.5 text-[11px] font-bold">题目</th>
@@ -420,7 +421,7 @@ export function AssessmentPaperComposer({
                       const question = questionMap.get(item.questionId);
                       if (!question) return null;
                       return (
-                        <tr key={item.questionId} className="border-b last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                        <tr key={item.questionId} className="border-b last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                           <td className="px-3 py-3 text-center font-mono text-xs">{String(index + 1).padStart(2, "0")}</td>
                           <td className="border-l px-4 py-3 text-xs font-bold">{question.prompt}</td>
                           <td className="border-l px-3 py-2 text-center">
@@ -430,7 +431,7 @@ export function AssessmentPaperComposer({
                             <div className="flex items-center justify-end gap-1">
                               <button type="button" disabled={index === 0} onClick={() => moveQuestion(index, -1)} className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30" aria-label="上移"><ArrowUp size={13} /></button>
                               <button type="button" disabled={index === selected.length - 1} onClick={() => moveQuestion(index, 1)} className="app-soft-card flex h-8 w-8 items-center justify-center rounded-lg border disabled:opacity-30" aria-label="下移"><ArrowDown size={13} /></button>
-                              <button type="button" onClick={() => removeQuestion(item.questionId)} className="flex h-8 w-8 items-center justify-center rounded-lg" style={{ color: "#c94f45", backgroundColor: "#fff0ed" }} aria-label="移除题目"><Trash2 size={13} /></button>
+                              <button type="button" onClick={() => removeQuestion(item.questionId)} className="flex h-8 w-8 items-center justify-center rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2" style={{ color: "var(--status-danger)", backgroundColor: "var(--status-danger-surface)" }} aria-label="移除题目"><Trash2 size={13} aria-hidden="true" /></button>
                             </div>
                           </td>
                         </tr>
@@ -452,23 +453,23 @@ export function AssessmentPaperComposer({
                 style={{
                   color:
                     state.status === "error"
-                      ? "#c94f45"
-                      : "var(--app-success)",
+                      ? "var(--status-danger)"
+                      : "var(--status-success)",
                   backgroundColor:
                     state.status === "error"
-                      ? "#fff0ed"
-                      : "var(--app-success-soft)",
+                      ? "var(--status-danger-surface)"
+                      : "var(--status-success-surface)",
                 }}
               >
                 {state.message}
               </p>
             )}
 
-            <div className="flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end" style={{ borderColor: "var(--app-border-soft)" }}>
+            <div className="flex flex-col-reverse gap-3 border-t pt-5 sm:flex-row sm:justify-end" style={{ borderColor: "var(--border-subtle)" }}>
               <button
                 type="button"
                 onClick={() => dialogRef.current?.close()}
-                className="app-soft-card rounded-xl border px-5 py-3 text-xs font-black"
+                className="app-soft-card rounded-xl border px-5 py-3 text-xs font-semibold"
               >
                 取消
               </button>
@@ -477,7 +478,7 @@ export function AssessmentPaperComposer({
                 name="intent"
                 value="draft"
                 disabled={pending || selected.length === 0}
-                className="app-soft-card inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-xs font-black disabled:opacity-50"
+                className="app-soft-card inline-flex items-center justify-center gap-2 rounded-xl border px-5 py-3 text-xs font-semibold disabled:opacity-50"
               >
                 <Save size={14} />
                 保存草稿
@@ -487,8 +488,8 @@ export function AssessmentPaperComposer({
                 name="intent"
                 value="publish"
                 disabled={pending || selected.length === 0}
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs font-black text-white disabled:opacity-50"
-                style={{ backgroundColor: "var(--app-accent)" }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs font-semibold text-white disabled:opacity-50"
+                style={{ backgroundColor: "var(--primary)" }}
               >
                 <Send size={14} />
                 {pending ? "正在保存…" : "保存并提供给机构"}

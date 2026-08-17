@@ -70,7 +70,7 @@ export function AssignStudentsDialog({
         分配学生
       </DialogTrigger>
       <DialogContent className="max-h-[min(760px,calc(100vh-32px))] w-full max-w-[680px] gap-0 overflow-y-auto p-0 sm:max-w-[680px]">
-        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 pr-12 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-sm font-semibold">分配学生给负责老师</DialogTitle>
           <DialogDescription className="text-xs">
             可多选学生与多选老师；一个学生可同时归多位老师负责。
@@ -79,7 +79,7 @@ export function AssignStudentsDialog({
         <form action={formAction} className="space-y-5 p-5">
           <div>
             <p className="mb-2 text-xs font-semibold">选择学生（已选 {selectedStudents.size} 人）</p>
-            <div className="grid max-h-[220px] grid-cols-2 gap-1 overflow-y-auto rounded-md border p-2" style={{ borderColor: "var(--app-border)" }}>
+            <div className="grid max-h-[220px] grid-cols-2 gap-1 overflow-y-auto rounded-md border p-2" style={{ borderColor: "var(--border)" }}>
               {students.map((student) => {
                 const checked = selectedStudents.has(student.id);
                 return (
@@ -108,7 +108,7 @@ export function AssignStudentsDialog({
 
           <div>
             <p className="mb-2 text-xs font-semibold">选择负责老师（已选 {selectedTeachers.size} 人）</p>
-            <div className="grid max-h-[180px] grid-cols-2 gap-1 overflow-y-auto rounded-md border p-2" style={{ borderColor: "var(--app-border)" }}>
+            <div className="grid max-h-[180px] grid-cols-2 gap-1 overflow-y-auto rounded-md border p-2" style={{ borderColor: "var(--border)" }}>
               {teachers.map((teacher) => {
                 const checked = selectedTeachers.has(teacher.id);
                 return (
@@ -178,14 +178,14 @@ export function TeacherAssignmentList({
 
   return (
     <section className="app-card overflow-hidden rounded-xl border">
-      <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
+      <div className="flex items-center justify-between gap-3 border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
         <h2 className="text-sm font-semibold">老师与负责学生</h2>
         <span className="app-muted-text text-[11px]">{teachers.length} 位老师</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[860px] border-collapse text-left">
           <thead>
-            <tr className="border-b text-[11px] font-medium" style={{ borderColor: "var(--app-border)", color: "var(--app-muted-text)" }}>
+            <tr className="border-b text-[11px] font-medium" style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}>
               <th className="w-[24%] px-4 py-2.5 font-medium">负责老师</th>
               <th className="px-4 py-2.5 font-medium">负责学生</th>
             </tr>
@@ -194,12 +194,12 @@ export function TeacherAssignmentList({
             {teachers.map((teacher) => {
               const studentIds = byTeacher.get(teacher.id) ?? [];
               return (
-                <tr key={teacher.id} className="border-b text-xs last:border-b-0 hover:bg-black/[0.018]" style={{ borderColor: "var(--app-border)" }}>
+                <tr key={teacher.id} className="border-b text-xs last:border-b-0 hover:bg-black/[0.018]" style={{ borderColor: "var(--border)" }}>
                   <td className="px-4 py-3">
                     <div className="flex min-w-0 items-center gap-3">
                       <span
                         className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border text-[11px] font-semibold"
-                        style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+                        style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
                       >
                         {(teacher.full_name || "?").slice(0, 1)}
                       </span>
@@ -220,7 +220,7 @@ export function TeacherAssignmentList({
                             <span
                               key={studentId}
                               className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px]"
-                              style={{ borderColor: "var(--app-border)" }}
+                              style={{ borderColor: "var(--border)" }}
                             >
                               <span className="font-medium">{memberName(student)}</span>
                               <span className="app-muted-text">{memberSub(student)}</span>

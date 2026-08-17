@@ -34,7 +34,7 @@ function ActionButton({ children, danger = false }: { children: React.ReactNode;
   return (
     <button
       className={`rounded-[6px] border px-2.5 py-1.5 text-[10px] font-medium ${danger ? "text-red-600" : ""}`}
-      style={{ borderColor: "var(--app-border)" }}
+      style={{ borderColor: "var(--border)" }}
     >
       {children}
     </button>
@@ -67,21 +67,21 @@ export function LessonResourceTable({
 
       {errorMessage && <p className="border-y px-3 py-3 text-[11px] text-red-600">读取资料失败：{errorMessage}</p>}
 
-      <div className="border-y" style={{ borderColor: "var(--app-border)" }}>
-        <div className="app-muted-text hidden grid-cols-[minmax(0,1.5fr)_100px_minmax(0,1fr)_80px_70px_120px] gap-3 border-b px-3 py-2 text-[9px] font-medium md:grid" style={{ borderColor: "var(--app-border-soft)" }}>
+      <div className="border-y" style={{ borderColor: "var(--border)" }}>
+        <div className="app-muted-text hidden grid-cols-[minmax(0,1.5fr)_100px_minmax(0,1fr)_80px_70px_120px] gap-3 border-b px-3 py-2 text-[9px] font-medium md:grid" style={{ borderColor: "var(--border-subtle)" }}>
           <span>资料名称</span><span>类型</span><span>来源</span><span>状态</span><span>排序</span><span className="text-right">操作</span>
         </div>
         {activeResources.map((resource) => (
-          <details key={resource.id} className="group border-b last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+          <details key={resource.id} className="group border-b last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
             <summary className="grid cursor-pointer list-none gap-2 px-3 py-3 text-[11px] md:grid-cols-[minmax(0,1.5fr)_100px_minmax(0,1fr)_80px_70px_120px] md:items-center md:gap-3">
-              <span className="min-w-0 truncate font-medium">{resource.title}{resource.is_required && <small className="ml-2 text-[9px]" style={{ color: "var(--app-warm)" }}>必学</small>}</span>
+              <span className="min-w-0 truncate font-medium">{resource.title}{resource.is_required && <small className="ml-2 text-[9px]" style={{ color: "var(--status-warning)" }}>必学</small>}</span>
               <span className="app-muted-text">{resource.resource_type}</span>
               <span className="app-muted-text min-w-0 truncate">{resource.original_file_name ?? resource.resource_url ?? "—"}</span>
               <span className="app-muted-text">{resource.is_published ? "已发布" : "已隐藏"}</span>
               <span className="app-muted-text font-mono">{resource.sort_order}</span>
-              <span className="text-right font-medium" style={{ color: "var(--app-accent-strong)" }}>展开编辑</span>
+              <span className="text-right font-medium" style={{ color: "var(--primary-hover)" }}>展开编辑</span>
             </summary>
-            <div className="border-t px-3 py-4" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
+            <div className="border-t px-3 py-4" style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}>
               <form action={updateLessonResourceAction.bind(null, resource.id)} className="space-y-3">
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className={labelClass}>资料名称<input name="resource_title" required defaultValue={resource.title} className={inputClass} /></label>
@@ -94,7 +94,7 @@ export function LessonResourceTable({
                   <ActionButton>保存资料</ActionButton>
                 </div>
               </form>
-              <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3" style={{ borderColor: "var(--app-border-soft)" }}>
+              <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3" style={{ borderColor: "var(--border-subtle)" }}>
                 <form action={setLessonResourcePublishedAction.bind(null, resource.id, !resource.is_published)}><ActionButton>{resource.is_published ? "隐藏资料" : "重新发布"}</ActionButton></form>
                 {!resource.is_published && (
                   <form action={moveLessonResourceToRecycleBinAction.bind(null, resource.id)} className="flex min-w-0 flex-1 gap-2">
@@ -109,9 +109,9 @@ export function LessonResourceTable({
         {activeResources.length === 0 && <p className="app-muted-text px-5 py-8 text-center text-[11px]">当前课时还没有资料。</p>}
       </div>
 
-      <details className="border-b" style={{ borderColor: "var(--app-border)" }}>
+      <details className="border-b" style={{ borderColor: "var(--border)" }}>
         <summary className="cursor-pointer list-none py-3 text-[11px] font-semibold">＋ 新增课时资料</summary>
-        <form action={createLessonResourceAction} className="space-y-3 border-t py-4" style={{ borderColor: "var(--app-border-soft)" }}>
+        <form action={createLessonResourceAction} className="space-y-3 border-t py-4" style={{ borderColor: "var(--border-subtle)" }}>
           <input type="hidden" name="lesson_id" value={lessonId} />
           <div className="grid gap-3 sm:grid-cols-2">
             <label className={labelClass}>资料名称<input name="resource_title" required className={inputClass} /></label>
@@ -127,9 +127,9 @@ export function LessonResourceTable({
       </details>
 
       {deletedResources.length > 0 && (
-        <details className="border-b" style={{ borderColor: "var(--app-border)" }}>
+        <details className="border-b" style={{ borderColor: "var(--border)" }}>
           <summary className="cursor-pointer list-none py-3 text-[11px] font-semibold">资料回收站（{deletedResources.length}）</summary>
-          <div className="divide-y border-t" style={{ borderColor: "var(--app-border-soft)" }}>
+          <div className="divide-y border-t" style={{ borderColor: "var(--border-subtle)" }}>
             {deletedResources.map((resource) => (
               <div key={resource.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
                 <div><p className="text-[11px] font-medium">{resource.title}</p><p className="app-muted-text mt-1 text-[9px]">{resource.delete_reason || "未填写原因"}</p></div>

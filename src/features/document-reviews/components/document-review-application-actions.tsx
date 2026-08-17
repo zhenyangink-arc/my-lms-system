@@ -56,15 +56,15 @@ export function DocumentReviewDecisionActions({
 
   if (application.reviewStatus !== "pending_review") {
     return (
-      <p className="border-t border-[var(--app-border)] px-5 py-4 text-xs text-[var(--app-muted)]">
+      <p className="border-t border-[var(--border)] px-5 py-4 text-xs text-[var(--foreground-muted)]">
         当前申请单不在待确认状态，不能执行退回补充或审核通过。
       </p>
     );
   }
 
   return (
-    <section className="border-t border-[var(--app-border)] bg-[var(--app-soft-bg)] px-5 py-4">
-      <label className="block text-xs font-semibold text-[var(--app-text)]">
+    <section className="border-t border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4">
+      <label className="block text-xs font-semibold text-[var(--foreground)]">
         审核意见
         <textarea
           value={note}
@@ -72,7 +72,7 @@ export function DocumentReviewDecisionActions({
           maxLength={2000}
           rows={3}
           placeholder="退回补充时必须填写至少 2 个字符的原因；审核通过时可以填写内部说明。"
-          className="mt-2 w-full resize-y border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 py-2 text-xs font-normal leading-5 outline-none focus:border-[var(--app-accent)]"
+          className="mt-2 w-full resize-y border border-[var(--border)] bg-[var(--card)] px-3 py-2 text-xs font-normal leading-5 outline-none focus:border-[var(--primary)]"
         />
       </label>
 
@@ -82,10 +82,10 @@ export function DocumentReviewDecisionActions({
             <p className="text-red-700">{activeState.message}</p>
           )}
           {activeState.status === "success" && (
-            <p className="text-[var(--app-success)]">{activeState.message}</p>
+            <p className="text-[var(--status-success)]">{activeState.message}</p>
           )}
           {unresolvedCount > 0 && activeState.status === "idle" && (
-            <p className="text-[var(--app-warm)]">
+            <p className="text-[var(--status-warning)]">
               仍有 {unresolvedCount} 项未完成资料，只能退回补充。
             </p>
           )}
@@ -97,9 +97,9 @@ export function DocumentReviewDecisionActions({
             <button
               type="submit"
               disabled={revisionPending || approvalPending || note.trim().length < 2}
-              className="inline-flex h-9 items-center gap-1.5 border border-red-200 bg-[var(--app-card-bg)] px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 items-center gap-1.5 border border-red-200 bg-[var(--card)] px-3 text-xs font-semibold text-red-700 transition-colors hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <RotateCcw size={14} />
+              <RotateCcw size={14} aria-hidden="true" />
               {revisionPending ? "正在退回…" : "退回补充"}
             </button>
           </form>
@@ -110,9 +110,9 @@ export function DocumentReviewDecisionActions({
               disabled={
                 unresolvedCount > 0 || revisionPending || approvalPending
               }
-              className="inline-flex h-9 items-center gap-1.5 bg-[var(--app-accent)] px-3 text-xs font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex h-9 items-center gap-1.5 bg-[var(--primary)] px-3 text-xs font-semibold text-white transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <Check size={14} />
+              <Check size={14} aria-hidden="true" />
               {approvalPending ? "正在确认…" : "审核通过"}
             </button>
           </form>
@@ -138,9 +138,9 @@ function LockActionButton({
       type="button"
       disabled={pending}
       onClick={onClick}
-      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--app-text-soft)] hover:text-[var(--app-text)] disabled:opacity-40"
+      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--foreground-secondary)] hover:text-[var(--foreground)] disabled:opacity-40"
     >
-      {locked ? <Unlock size={13} /> : <Lock size={13} />}
+      {locked ? <Unlock size={13} aria-hidden="true" /> : <Lock size={13} aria-hidden="true" />}
       {pending ? "处理中…" : label}
     </button>
   );

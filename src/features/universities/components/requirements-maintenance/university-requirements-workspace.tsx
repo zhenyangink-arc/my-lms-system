@@ -25,15 +25,15 @@ export function UniversityRequirementsWorkspace({
 
   return (
     <section className="space-y-3">
-      <div className="flex flex-wrap items-center gap-1 border-b border-[var(--app-border)]">
+      <div className="flex flex-wrap items-center gap-1 border-b border-[var(--border)]">
         <button
           type="button"
           aria-pressed={view === "application"}
           onClick={() => setView("application")}
           className={`border-b-2 px-4 py-2.5 text-sm font-semibold ${
             view === "application"
-              ? "border-[var(--app-accent)] text-[var(--app-text)]"
-              : "border-transparent text-[var(--app-muted)]"
+              ? "border-[var(--primary)] text-[var(--foreground)]"
+              : "border-transparent text-[var(--foreground-muted)]"
           }`}
         >
           申请要求
@@ -47,8 +47,8 @@ export function UniversityRequirementsWorkspace({
           onClick={() => setView("visa")}
           className={`border-b-2 px-4 py-2.5 text-sm font-semibold ${
             view === "visa"
-              ? "border-[var(--app-accent)] text-[var(--app-text)]"
-              : "border-transparent text-[var(--app-muted)]"
+              ? "border-[var(--primary)] text-[var(--foreground)]"
+              : "border-transparent text-[var(--foreground-muted)]"
           }`}
         >
           签证要求
@@ -56,7 +56,7 @@ export function UniversityRequirementsWorkspace({
             {visaRequirements.length}
           </span>
         </button>
-        <p className="ml-auto px-2 text-xs text-[var(--app-muted)]">
+        <p className="ml-auto px-2 text-xs text-[var(--foreground-muted)]">
           当前仅供查看，编辑操作将在下一阶段接入
         </p>
       </div>

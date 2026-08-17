@@ -33,7 +33,7 @@ export type LibraryResourceFormValue = {
 };
 
 const labelCellClass =
-  "w-[150px] border-r bg-[var(--app-soft-bg)] px-4 py-3 text-[11px] font-black align-top";
+  "w-[150px] border-r bg-[var(--surface-soft)] px-4 py-3 text-[11px] font-semibold align-top";
 const valueCellClass = "px-4 py-3";
 const inputClass =
   "app-input w-full rounded-lg border px-3 py-2.5 text-xs outline-none";
@@ -88,7 +88,7 @@ export function LibraryResourceForm({
         <table className="w-full min-w-[720px] border-collapse text-left">
           <tbody>
             {!lockedCourse && (
-              <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+              <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
                 <th className={labelCellClass}>所属课程</th>
                 <td className={valueCellClass}>
                   <select
@@ -114,7 +114,7 @@ export function LibraryResourceForm({
                 </td>
               </tr>
             )}
-            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+            <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
               <th className={labelCellClass}>资料标题</th>
               <td className={valueCellClass}>
                 <input
@@ -128,7 +128,7 @@ export function LibraryResourceForm({
                 />
               </td>
             </tr>
-            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+            <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
               <th className={labelCellClass}>资料说明</th>
               <td className={valueCellClass}>
                 <textarea
@@ -141,7 +141,7 @@ export function LibraryResourceForm({
                 />
               </td>
             </tr>
-            <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+            <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
               <th className={labelCellClass}>分类与顺序</th>
               <td className={valueCellClass}>
                 <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_180px]">
@@ -174,7 +174,7 @@ export function LibraryResourceForm({
 
             {!resource && (
               <>
-                <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+                <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
                   <th className={labelCellClass}>资料来源</th>
                   <td className={valueCellClass}>
                     <div className="flex flex-wrap gap-5 text-xs font-bold">
@@ -201,7 +201,7 @@ export function LibraryResourceForm({
                     </div>
                   </td>
                 </tr>
-                <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+                <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
                   <th className={labelCellClass}>
                     {source === "file" ? "选择文件" : "链接地址"}
                   </th>
@@ -254,9 +254,9 @@ export function LibraryResourceForm({
         <p
           className="mt-3 rounded-lg px-3 py-2.5 text-xs font-bold"
           style={{
-            color: state.status === "error" ? "#c94f45" : "var(--app-success)",
+            color: state.status === "error" ? "#c94f45" : "var(--status-success)",
             backgroundColor:
-              state.status === "error" ? "#fff0ed" : "var(--app-success-soft)",
+              state.status === "error" ? "#fff0ed" : "var(--status-success-surface)",
           }}
         >
           {state.message}
@@ -268,8 +268,8 @@ export function LibraryResourceForm({
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
-            style={{ backgroundColor: "var(--app-secondary)" }}
+            className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+            style={{ backgroundColor: "var(--support)" }}
           >
             <Save size={14} />
             {pending ? "正在保存…" : "保存修改"}
@@ -281,8 +281,8 @@ export function LibraryResourceForm({
               name="intent"
               value="publish"
               disabled={pending || courses.length === 0}
-              className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
-              style={{ backgroundColor: "var(--app-accent)" }}
+              className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+              style={{ backgroundColor: "var(--primary)" }}
             >
               <Upload size={14} />
               {pending ? "正在上传…" : "上传并发布"}
@@ -292,7 +292,7 @@ export function LibraryResourceForm({
               name="intent"
               value="draft"
               disabled={pending || courses.length === 0}
-              className="app-soft-card inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-xs font-black disabled:opacity-50"
+              className="app-soft-card inline-flex items-center gap-2 rounded-lg border px-4 py-2.5 text-xs font-semibold disabled:opacity-50"
             >
               <Save size={14} />
               保存草稿

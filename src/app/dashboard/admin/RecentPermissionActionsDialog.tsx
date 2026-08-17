@@ -51,7 +51,7 @@ export function RecentPermissionActionsDialog({ actions }: { actions: Permission
             aria-labelledby="recent-permission-actions-title"
             className="app-card w-full max-w-xl overflow-hidden rounded-xl border shadow-2xl"
           >
-            <header className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
+            <header className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
               <div>
                 <h2 id="recent-permission-actions-title" className="text-xs font-semibold">最近权限操作</h2>
                 <p className="app-muted-text mt-0.5 text-[9px]">最近 {actions.length} 条平台权限变更记录</p>
@@ -61,7 +61,7 @@ export function RecentPermissionActionsDialog({ actions }: { actions: Permission
 
             <div className="max-h-[60vh] overflow-y-auto">
               {actions.map((row, index) => (
-                <div key={`${row.time}-${index}`} className="grid grid-cols-[minmax(0,1fr)_72px_100px] items-center border-b px-4 py-3 text-[9px] last:border-b-0" style={{ borderColor: "var(--app-border)" }}>
+                <div key={`${row.time}-${index}`} className="grid grid-cols-[minmax(0,1fr)_72px_100px] items-center border-b px-4 py-3 text-[9px] last:border-b-0" style={{ borderColor: "var(--border)" }}>
                   <span className="truncate font-semibold">{row.label}</span>
                   <span className={row.action === "granted" ? "font-semibold text-emerald-700" : "font-semibold text-rose-700"}>{row.action === "granted" ? "已授权" : "已收回"}</span>
                   <span className="app-muted-text text-right tabular-nums"><LocalDateTime value={row.time} options={TIME_OPTIONS} /></span>

@@ -11,7 +11,7 @@ export function GradeResultAction({ result }: { result: LiveGradeResult }) {
   const params = useParams<{ space?: string }>();
 
   if (result.source_type !== "assignment_submission") {
-    return <span className="text-[10px] text-[var(--app-muted)]">自动评分</span>;
+    return <span className="text-[10px] text-[var(--foreground-muted)]">自动评分</span>;
   }
 
   const tenantSlug =
@@ -26,7 +26,7 @@ export function GradeResultAction({ result }: { result: LiveGradeResult }) {
   return (
     <Link
       href={href}
-      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--app-accent)] hover:underline"
+      className="inline-flex items-center gap-1 text-xs font-semibold text-[var(--primary)] hover:underline"
     >
       进入批改
       <ArrowRight size={12} aria-hidden="true" />

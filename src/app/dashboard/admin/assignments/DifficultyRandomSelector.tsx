@@ -182,19 +182,19 @@ export function DifficultyRandomSelector({
     return (
       <section
         className="border"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         <div
           className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-2.5"
-          style={{ borderColor: "var(--app-border-soft)" }}
+          style={{ borderColor: "var(--border-subtle)" }}
         >
           <div className="flex items-center gap-2">
             <SlidersHorizontal
               size={15}
-              style={{ color: "var(--app-accent)" }}
+              style={{ color: "var(--primary)" }}
             />
             <div>
-              <h3 className="text-xs font-black">难度配额</h3>
+              <h3 className="text-xs font-semibold">难度配额</h3>
               <p className="app-muted-text mt-0.5 text-[10px]">
                 百分比合计必须为 100%，随机结果可反复生成。
               </p>
@@ -219,8 +219,8 @@ export function DifficultyRandomSelector({
               <tr
                 className="border-b app-muted-text"
                 style={{
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--surface-soft)",
                 }}
               >
                 <th className="px-4 py-2 text-[11px] font-bold">难度</th>
@@ -240,7 +240,7 @@ export function DifficultyRandomSelector({
                 <tr
                   key={difficulty}
                   className="border-b last:border-b-0"
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <td className="px-4 py-2 text-xs font-bold">
                     {QUESTION_DIFFICULTY_LABELS[difficulty]}
@@ -278,13 +278,13 @@ export function DifficultyRandomSelector({
 
         <div
           className="flex flex-wrap items-center justify-between gap-3 border-t px-4 py-2.5"
-          style={{ borderColor: "var(--app-border-soft)" }}
+          style={{ borderColor: "var(--border-subtle)" }}
         >
           <p
             className="text-[11px] font-bold"
             style={{
               color:
-                percentageTotal === 100 ? "var(--app-success)" : "#c94f45",
+                percentageTotal === 100 ? "var(--status-success)" : "#c94f45",
             }}
           >
             当前比例合计：{percentageTotal}%
@@ -293,8 +293,8 @@ export function DifficultyRandomSelector({
             type="button"
             onClick={selectRandomQuestions}
             disabled={questions.length === 0}
-            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-black text-white disabled:opacity-50"
-            style={{ backgroundColor: "var(--app-accent)" }}
+            className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-white disabled:opacity-50"
+            style={{ backgroundColor: "var(--primary)" }}
           >
             <Dices size={14} />
             一键随机选题
@@ -305,12 +305,12 @@ export function DifficultyRandomSelector({
           <p
             className="border-t px-4 py-3 text-[11px] font-bold"
             style={{
-              borderColor: "var(--app-border-soft)",
+              borderColor: "var(--border-subtle)",
               color: message.startsWith("已随机")
-                ? "var(--app-success)"
+                ? "var(--status-success)"
                 : "#c94f45",
               backgroundColor: message.startsWith("已随机")
-                ? "var(--app-success-soft)"
+                ? "var(--status-success-surface)"
                 : "#fff0ed",
             }}
           >
@@ -326,19 +326,19 @@ export function DifficultyRandomSelector({
       className={`rounded-2xl border ${
         compact ? "p-3" : "app-soft-card p-4"
       }`}
-      style={{ borderColor: "var(--app-border)" }}
+      style={{ borderColor: "var(--border)" }}
     >
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-2">
-          <SlidersHorizontal size={16} style={{ color: "var(--app-accent)" }} />
+          <SlidersHorizontal size={16} style={{ color: "var(--primary)" }} />
           <div>
-            <h4 className="text-xs font-black">按难度比例一键选题</h4>
+            <h4 className="text-xs font-semibold">按难度比例一键选题</h4>
             <p className="app-muted-text mt-0.5 text-[10px]">
               随机结果会替换当前尚未保存的选题，可继续手动调整。
             </p>
           </div>
         </div>
-        <label className="text-[10px] font-black">
+        <label className="text-[10px] font-semibold">
           总题数
           <input
             type="number"
@@ -355,7 +355,7 @@ export function DifficultyRandomSelector({
         {QUESTION_DIFFICULTIES.map((difficulty) => (
           <label
             key={difficulty}
-            className="app-card rounded-xl border p-2.5 text-[10px] font-black"
+            className="app-card rounded-xl border p-2.5 text-[10px] font-semibold"
           >
             <span className="flex items-center justify-between gap-2">
               {QUESTION_DIFFICULTY_LABELS[difficulty]}
@@ -386,10 +386,10 @@ export function DifficultyRandomSelector({
 
       <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
         <p
-          className="text-[10px] font-black"
+          className="text-[10px] font-semibold"
           style={{
             color:
-              percentageTotal === 100 ? "var(--app-success)" : "#c94f45",
+              percentageTotal === 100 ? "var(--status-success)" : "#c94f45",
           }}
         >
           当前比例合计：{percentageTotal}%
@@ -398,8 +398,8 @@ export function DifficultyRandomSelector({
           type="button"
           onClick={selectRandomQuestions}
           disabled={questions.length === 0}
-          className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+          style={{ backgroundColor: "var(--primary)" }}
         >
           <Dices size={14} />
           一键随机选题
@@ -410,10 +410,10 @@ export function DifficultyRandomSelector({
           className="mt-3 rounded-xl px-3 py-2 text-[10px] font-bold"
           style={{
             color: message.startsWith("已随机")
-              ? "var(--app-success)"
+              ? "var(--status-success)"
               : "#c94f45",
             backgroundColor: message.startsWith("已随机")
-              ? "var(--app-success-soft)"
+              ? "var(--status-success-surface)"
               : "#fff0ed",
           }}
         >

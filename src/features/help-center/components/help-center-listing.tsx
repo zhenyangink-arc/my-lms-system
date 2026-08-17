@@ -78,7 +78,7 @@ export default async function HelpCenterListing() {
       />
 
       <section className="management-content-section space-y-3">
-        <h2 className="text-base font-semibold text-[var(--app-text)]">学生工单</h2>
+        <h2 className="text-base font-semibold text-[var(--foreground)]">学生工单</h2>
         <HelpTicketsTable
           data={ticketResult.tickets}
           dashboardBasePath={access.dashboardBasePath}
@@ -88,7 +88,7 @@ export default async function HelpCenterListing() {
       {articleResult.canManageArticles && (
         <section className="management-content-section space-y-3">
           <div className="flex items-center justify-between gap-3">
-            <h2 className="text-base font-semibold text-[var(--app-text)]">帮助文章</h2>
+            <h2 className="text-base font-semibold text-[var(--foreground)]">帮助文章</h2>
             <CreateHelpArticleDialog />
           </div>
           <HelpArticlesTable data={articleResult.articles} />

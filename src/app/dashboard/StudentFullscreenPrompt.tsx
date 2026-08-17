@@ -90,9 +90,9 @@ export function StudentFullscreenPrompt() {
     <aside
       className="fixed inset-x-4 bottom-24 z-[90] mx-auto max-w-md rounded-2xl border p-4 shadow-2xl backdrop-blur-xl md:bottom-6"
       style={{
-        color: "var(--app-text)",
-        borderColor: "var(--app-border)",
-        backgroundColor: "color-mix(in srgb, var(--app-card-bg) 94%, transparent)",
+        color: "var(--foreground)",
+        borderColor: "var(--border)",
+        backgroundColor: "color-mix(in srgb, var(--card) 94%, transparent)",
       }}
       role="dialog"
       aria-labelledby="student-fullscreen-title"
@@ -110,12 +110,12 @@ export function StudentFullscreenPrompt() {
       <div className="flex gap-3 pr-8">
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+          style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
         >
           <Maximize2 size={20} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h2 id="student-fullscreen-title" className="font-black">
+          <h2 id="student-fullscreen-title" className="font-bold">
             进入全屏学习
           </h2>
           <p id="student-fullscreen-description" className="app-muted-text mt-1 text-xs font-bold leading-5">
@@ -125,7 +125,7 @@ export function StudentFullscreenPrompt() {
       </div>
 
       {errorMessage && (
-        <p className="mt-3 text-xs font-bold" role="alert" style={{ color: "var(--app-warm)" }}>
+        <p className="mt-3 text-xs font-bold" role="alert" style={{ color: "var(--status-warning)" }}>
           {errorMessage}
         </p>
       )}
@@ -134,8 +134,8 @@ export function StudentFullscreenPrompt() {
         <button
           type="button"
           onClick={enterFullscreen}
-          className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-black text-white transition hover:opacity-90"
-          style={{ backgroundColor: "var(--app-accent)" }}
+          className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90"
+          style={{ backgroundColor: "var(--primary)" }}
         >
           <Maximize2 size={16} aria-hidden="true" />
           进入全屏学习
@@ -143,7 +143,7 @@ export function StudentFullscreenPrompt() {
         <button
           type="button"
           onClick={dismiss}
-          className="app-soft-card h-10 rounded-xl border px-4 text-sm font-black"
+          className="app-soft-card h-10 rounded-xl border px-4 text-sm font-bold"
         >
           暂不进入
         </button>

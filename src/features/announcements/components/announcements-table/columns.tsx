@@ -69,11 +69,11 @@ export const announcementColumns: ColumnDef<ManagedAnnouncement>[] = [
               置顶
             </span>
           )}
-          <p className="truncate font-semibold text-[var(--app-text)]">
+          <p className="truncate font-semibold text-[var(--foreground)]">
             {row.original.title}
           </p>
         </div>
-        <p className="mt-1 truncate text-[11px] text-[var(--app-muted)]">
+        <p className="mt-1 truncate text-[11px] text-[var(--foreground-muted)]">
           {row.original.authorName}
         </p>
       </div>
@@ -129,7 +129,7 @@ export const announcementColumns: ColumnDef<ManagedAnnouncement>[] = [
           <p className="font-mono font-semibold tabular-nums">
             {row.original.readCount} / {row.original.audienceCount}
           </p>
-          <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+          <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
             {row.original.status === "published" ? `${rate}%` : "尚未发布"}
           </p>
         </div>
@@ -140,7 +140,7 @@ export const announcementColumns: ColumnDef<ManagedAnnouncement>[] = [
     accessorKey: "publishedAt",
     header: sortableHeader("发布时间"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.publishedAt}
           options={DATE_OPTIONS}
@@ -153,7 +153,7 @@ export const announcementColumns: ColumnDef<ManagedAnnouncement>[] = [
     accessorKey: "updatedAt",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updatedAt}
           options={DATE_OPTIONS}

@@ -324,7 +324,7 @@ export default async function StandardQuestionBankPage({
               mode: "browse",
               page: 1,
             })}
-            className="inline-flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-black"
+            className="inline-flex items-center gap-2 rounded-md border px-4 py-2.5 text-sm font-semibold"
           >
             <ArrowLeft size={15} />
             返回题目管理
@@ -333,7 +333,7 @@ export default async function StandardQuestionBankPage({
         <section className="border-y py-4">
           <div className="flex flex-col gap-5 xl:flex-row xl:items-end xl:justify-between">
             <div className="min-w-0">
-              <h2 className="text-xl font-black tracking-tight">
+              <h2 className="text-xl font-semibold tracking-tight">
                 章节测试题库
               </h2>
             </div>
@@ -349,11 +349,11 @@ export default async function StandardQuestionBankPage({
                   <div
                     key={String(label)}
                     className="min-w-28 border-l px-5 first:border-l-0 xl:first:border-l"
-                    style={{ borderColor: "var(--app-border-soft)" }}
+                    style={{ borderColor: "var(--border-subtle)" }}
                   >
                     <dd className="flex items-center justify-center gap-1.5">
                       <MetricIcon className="app-muted-text" size={14} />
-                      <span className="font-mono text-lg font-black tabular-nums">
+                      <span className="font-mono text-lg font-semibold tabular-nums">
                         {String(value)}
                         <span className="ml-0.5 text-[10px]">{String(unit)}</span>
                       </span>
@@ -390,11 +390,11 @@ export default async function StandardQuestionBankPage({
             {activeLabeledGroup ? (
               <>
                 <section className="flex items-start gap-3 border-y py-4">
-                  <span className="mt-0.5 text-[var(--app-accent)]">
+                  <span className="mt-0.5 text-[var(--primary)]">
                     <Plus size={15} />
                   </span>
                   <div>
-                    <DashboardTitleWithHint headingLevel={2} titleClassName="text-sm font-black" title={<>创建新的标准题目</>} description={<>当前章节已固定为
+                    <DashboardTitleWithHint headingLevel={2} titleClassName="text-sm font-semibold" title={<>创建新的标准题目</>} description={<>当前章节已固定为
                       “{activeLabeledGroup.curriculum_label}”，填写题目、标准答案和解析即可。</>} />
                   </div>
                 </section>
@@ -405,7 +405,7 @@ export default async function StandardQuestionBankPage({
               </>
             ) : (
               <section className="border-y py-10 text-center">
-                <h2 className="text-base font-black">请先选择具体章节</h2>
+                <h2 className="text-base font-semibold">请先选择具体章节</h2>
                 <p className="app-muted-text mt-2 text-xs leading-5">
                   新增入口已放到每个章节卡片中，避免在全部课程范围内重复选择。
                 </p>
@@ -414,8 +414,8 @@ export default async function StandardQuestionBankPage({
                     mode: "browse",
                     page: 1,
                   })}
-                  className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-                  style={{ backgroundColor: "var(--app-secondary)" }}
+                  className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white"
+                  style={{ backgroundColor: "var(--support)" }}
                 >
                   <ArrowLeft size={15} />
                   返回选择章节
@@ -444,22 +444,22 @@ export default async function StandardQuestionBankPage({
                       open={channelHasActiveGroup}
                       className="group border-b last:border-b-0"
                     >
-                      <summary className="cursor-pointer list-none bg-[var(--app-card-bg)] px-4 py-3 transition-colors hover:bg-[var(--app-soft-bg)]">
+                      <summary className="cursor-pointer list-none bg-[var(--card)] px-4 py-3 transition-colors hover:bg-[var(--surface-soft)]">
                         <div className="flex items-center justify-between gap-4">
                           <div className="flex items-center gap-3">
-                            <span className="font-mono text-[11px] font-black text-[var(--app-secondary)]">
+                            <span className="font-mono text-[11px] font-semibold text-[var(--support)]">
                               {String(channel.sort_order).padStart(2, "0")}
                             </span>
                             <div>
-                              <p className="app-muted-text text-[10px] font-black">
+                              <p className="app-muted-text text-[10px] font-semibold">
                                 {koreanCategory?.title ?? "韩语课程"} · 题库通道
                               </p>
-                              <h3 className="mt-0.5 font-black">
+                              <h3 className="mt-0.5 font-semibold">
                                 {channel.title}
                               </h3>
                             </div>
                           </div>
-                          <span className="app-muted-text text-xs font-black">
+                          <span className="app-muted-text text-xs font-semibold">
                             {channel.courses.length} 门课程 ·{" "}
                             {channel.groupCount} 个章节
                           </span>
@@ -468,11 +468,11 @@ export default async function StandardQuestionBankPage({
 
                       <div
                         className="border-t"
-                        style={{ borderColor: "var(--app-border-soft)" }}
+                        style={{ borderColor: "var(--border-subtle)" }}
                       >
                         {channel.courses.map((course) => (
                           <section key={course.id} className="border-b last:border-b-0">
-                            <h3 className="border-b bg-[var(--app-soft-bg)] px-4 py-2.5 text-sm font-black">
+                            <h3 className="border-b bg-[var(--surface-soft)] px-4 py-2.5 text-sm font-semibold">
                               {course.title}
                             </h3>
 
@@ -494,16 +494,16 @@ export default async function StandardQuestionBankPage({
                                       ? "top-0 h-1/2"
                                       : "bottom-0 top-0"
                                   }`}
-                                  style={{ borderColor: "var(--app-border-soft)" }}
+                                  style={{ borderColor: "var(--border-subtle)" }}
                                 />
                                 <span
                                   aria-hidden="true"
                                   className="pointer-events-none absolute left-4 top-6 w-4 border-t"
-                                  style={{ borderColor: "var(--app-border-soft)" }}
+                                  style={{ borderColor: "var(--border-subtle)" }}
                                 />
-                                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 bg-[var(--app-card-bg)] py-3 pl-10 pr-4 hover:bg-[var(--app-soft-bg)]">
-                                  <h4 className="text-sm font-black">{lesson.title}</h4>
-                                  <span className="ml-auto app-muted-text text-[11px] font-black">
+                                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 bg-[var(--card)] py-3 pl-10 pr-4 hover:bg-[var(--surface-soft)]">
+                                  <h4 className="text-sm font-semibold">{lesson.title}</h4>
+                                  <span className="ml-auto app-muted-text text-[11px] font-semibold">
                                     {lesson.groups.length} 个章节
                                   </span>
                                   <ChevronDown
@@ -512,10 +512,10 @@ export default async function StandardQuestionBankPage({
                                   />
                                 </summary>
 
-                              <div className="overflow-x-auto border-t bg-[var(--app-card-bg)]">
+                              <div className="overflow-x-auto border-t bg-[var(--card)]">
                                 <table className="w-full min-w-[980px] border-collapse text-left">
                                   <thead>
-                                    <tr className="border-b bg-[var(--app-soft-bg)] app-muted-text">
+                                    <tr className="border-b bg-[var(--surface-soft)] app-muted-text">
                                       <th className="px-4 py-2.5 text-[11px] font-bold">章节</th>
                                       <th className="border-l px-4 py-2.5 text-[11px] font-bold">章节标题</th>
                                       <th className="border-l px-4 py-2.5 text-center text-[11px] font-bold">题目</th>
@@ -562,21 +562,21 @@ export default async function StandardQuestionBankPage({
                                     return (
                                       <tr
                                         key={group.id}
-                                        className="border-b last:border-b-0 hover:bg-[var(--app-soft-bg)]"
+                                        className="border-b last:border-b-0 hover:bg-[var(--surface-soft)]"
                                         style={
                                           active
                                             ? {
                                                 backgroundColor:
-                                                  "var(--app-secondary-soft)",
+                                                  "var(--support-surface)",
                                               }
                                             : undefined
                                         }
                                       >
-                                        <td className="px-4 py-3 font-mono text-[11px] font-black app-muted-text">
+                                        <td className="px-4 py-3 font-mono text-[11px] font-semibold app-muted-text">
                                           CH {String(group.chapter_number).padStart(2, "0")}
                                         </td>
-                                        <td className="border-l px-4 py-3"><p className="text-sm font-black">{group.title}</p><p className="app-muted-text mt-0.5 text-[10px]">{group.korean_title}{groupDrafts > 0 ? ` · ${groupDrafts} 题待发布` : ""}</p></td>
-                                        <td className="border-l px-4 py-3 text-center font-mono text-xs font-black">{groupQuestions.length}</td>
+                                        <td className="border-l px-4 py-3"><p className="text-sm font-semibold">{group.title}</p><p className="app-muted-text mt-0.5 text-[10px]">{group.korean_title}{groupDrafts > 0 ? ` · ${groupDrafts} 题待发布` : ""}</p></td>
+                                        <td className="border-l px-4 py-3 text-center font-mono text-xs font-semibold">{groupQuestions.length}</td>
                                         <td className="border-l px-4 py-3 text-center font-mono text-xs">{difficultyCounts.foundation ?? 0}</td>
                                         <td className="border-l px-4 py-3 text-center font-mono text-xs">{difficultyCounts.medium ?? 0}</td>
                                         <td className="border-l px-4 py-3 text-[11px] leading-5">{ebookSections.map(koreanEbookSectionLabel).join("、") || "未标注"}</td>
@@ -627,10 +627,10 @@ export default async function StandardQuestionBankPage({
                 <section className="border-y px-4 py-3">
                   <div className="flex flex-col gap-4 lg:flex-row lg:items-center">
                     <div className="min-w-0 flex-1">
-                      <p className="app-muted-text text-[11px] font-black">
+                      <p className="app-muted-text text-[11px] font-semibold">
                         第二步 · 第 {activeGroup.chapter_number} 章
                       </p>
-                      <h2 className="mt-1 text-xl font-black">
+                      <h2 className="mt-1 text-xl font-semibold">
                         {activeGroup.title}
                       </h2>
                       <p className="app-muted-text mt-1 text-xs">
@@ -683,8 +683,8 @@ export default async function StandardQuestionBankPage({
                       </select>
                       <button
                         type="submit"
-                        className="rounded-md px-4 py-2 text-xs font-black text-white"
-                        style={{ backgroundColor: "var(--app-secondary)" }}
+                        className="rounded-md px-4 py-2 text-xs font-semibold text-white"
+                        style={{ backgroundColor: "var(--support)" }}
                       >
                         筛选
                       </button>
@@ -695,7 +695,7 @@ export default async function StandardQuestionBankPage({
                 <section className="overflow-x-auto border-y">
                   <table className="w-full min-w-[1350px] border-collapse text-left">
                     <thead>
-                      <tr className="border-b bg-[var(--app-soft-bg)] app-muted-text">
+                      <tr className="border-b bg-[var(--surface-soft)] app-muted-text">
                         <th className="px-3 py-2.5 text-[11px]">序号</th>
                         <th className="border-l px-3 py-2.5 text-[11px]">电子书目录</th>
                         <th className="border-l px-3 py-2.5 text-center text-[11px]">难度</th>
@@ -719,13 +719,13 @@ export default async function StandardQuestionBankPage({
                         key={question.id}
                         className="border-b align-top last:border-b-0"
                       >
-                        <td className="px-3 py-3 text-center font-mono text-[11px] font-black text-[var(--app-secondary)]">{String(absoluteIndex).padStart(2, "0")}</td>
-                        <td className="border-l px-3 py-3 text-[11px] leading-5"><span className="font-black">{koreanEbookSectionLabel(question.ebook_section_step)}</span>{question.ebook_page_reference && <span className="app-muted-text block">{question.ebook_page_reference}</span>}</td>
+                        <td className="px-3 py-3 text-center font-mono text-[11px] font-semibold text-[var(--support)]">{String(absoluteIndex).padStart(2, "0")}</td>
+                        <td className="border-l px-3 py-3 text-[11px] leading-5"><span className="font-semibold">{koreanEbookSectionLabel(question.ebook_section_step)}</span>{question.ebook_page_reference && <span className="app-muted-text block">{question.ebook_page_reference}</span>}</td>
                         <td className="border-l px-3 py-3 text-center text-xs font-bold">{question.difficulty === "foundation" || question.difficulty === "medium" ? DIFFICULTY_LABELS[question.difficulty] : question.difficulty}</td>
-                        <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-black leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {group ? `第 ${group.chapter_number} 章` : "课程题目"}</p></td>
-                        <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-black text-[var(--app-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
-                        <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-black text-[var(--app-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
-                        <td className="border-l px-3 py-3 text-xs"><p className="font-black">{SKILL_LABELS[question.skill] ?? "综合"}</p><p className="app-muted-text mt-1">{STATUS_LABELS[question.status]} · 版本 {question.version} · {question.default_points} 分</p></td>
+                        <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-semibold leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {group ? `第 ${group.chapter_number} 章` : "课程题目"}</p></td>
+                        <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-semibold text-[var(--status-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
+                        <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-semibold text-[var(--status-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
+                        <td className="border-l px-3 py-3 text-xs"><p className="font-semibold">{SKILL_LABELS[question.skill] ?? "综合"}</p><p className="app-muted-text mt-1">{STATUS_LABELS[question.status]} · 版本 {question.version} · {question.default_points} 分</p></td>
                         <td className="border-l px-3 py-3 text-right"><EditStandardQuestionForm groups={labeledGroups} question={question} compact /></td>
                       </tr>
                     );
@@ -752,13 +752,13 @@ export default async function StandardQuestionBankPage({
                           href={pageHref(currentValues, {
                             page: currentPage - 1,
                           })}
-                          className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-black"
+                          className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-semibold"
                         >
                           <ChevronLeft size={13} />
                           上一页
                         </Link>
                       ) : (
-                        <span className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-black opacity-30">
+                        <span className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-semibold opacity-30">
                           <ChevronLeft size={13} />
                           上一页
                         </span>
@@ -768,13 +768,13 @@ export default async function StandardQuestionBankPage({
                           href={pageHref(currentValues, {
                             page: currentPage + 1,
                           })}
-                          className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-black"
+                          className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-semibold"
                         >
                           下一页
                           <ChevronRight size={13} />
                         </Link>
                       ) : (
-                        <span className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-black opacity-30">
+                        <span className="inline-flex items-center gap-1 rounded-md border px-3 py-2 text-xs font-semibold opacity-30">
                           下一页
                           <ChevronRight size={13} />
                         </span>

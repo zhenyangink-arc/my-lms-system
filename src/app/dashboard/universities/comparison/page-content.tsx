@@ -43,7 +43,7 @@ function formatWan(value: number) {
 
 export default async function UniversityComparisonPage() {
   const { supabase, user } = await requireActiveUser();
-  const { data: comparisonRows } = await supabase
+  const { data: comparisonRows, error: comparisonError } = await supabase
     .from("student_university_comparisons")
     .select("university_id, created_at")
     .eq("user_id", user.id)
@@ -51,12 +51,14 @@ export default async function UniversityComparisonPage() {
 
   const orderedIds = (comparisonRows ?? []).map((row) => row.university_id as string).slice(0, 4);
   let universities: KoreanUniversity[] = [];
+  let universityError = false;
   if (orderedIds.length > 0) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("korean_universities")
       .select("id, slug, name_zh, name_ko, name_en, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, highlights, ranking_source_url, is_featured")
       .in("id", orderedIds)
       .eq("is_published", true);
+    universityError = Boolean(error);
     const byId = new Map(((data ?? []) as KoreanUniversity[]).map((university) => [university.id, university]));
     universities = orderedIds.map((id) => byId.get(id)).filter((university): university is KoreanUniversity => Boolean(university));
   }
@@ -76,51 +78,58 @@ export default async function UniversityComparisonPage() {
     <>
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <Link href="/dashboard/universities" className="inline-flex items-center gap-2 text-xs font-black app-muted-text"><ArrowLeft size={14} /> 返回选校规划中心</Link>
+          <Link href="/dashboard/universities" className="inline-flex items-center gap-2 rounded-lg text-xs font-bold app-muted-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"><ArrowLeft size={14} aria-hidden="true" /> 返回选校规划中心</Link>
           <div className="flex gap-2">
-            <Link href="/dashboard/universities/library" className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}><LibraryBig size={13} /> 去学校库选择</Link>
-            {universities.length > 0 && <form action={clearUniversityComparisonsAction} data-permission="university_comparison"><button type="submit" className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-black text-red-600"><Trash2 size={13} /> 清空对比</button></form>}
+            <Link href="/dashboard/universities/library" className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ backgroundColor: "var(--primary)" }}><LibraryBig size={13} aria-hidden="true" /> 去学校库选择</Link>
+            {universities.length > 0 && <form action={clearUniversityComparisonsAction} data-permission="university_comparison"><button type="submit" className="app-soft-card inline-flex items-center gap-1.5 rounded-xl border px-3 py-2 text-xs font-bold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"><Trash2 size={13} aria-hidden="true" /> 清空对比</button></form>}
           </div>
         </div>
 
-        <section className="app-card rounded-3xl border p-4 sm:p-5">
+        {(comparisonError || universityError) && (
+          <section role="alert" className="rounded-2xl border p-4" style={{ color: "var(--destructive)", borderColor: "var(--destructive)", backgroundColor: "var(--surface-soft)" }}>
+            <h3 className="text-sm font-bold">学校对比暂时无法读取</h3>
+            <p className="mt-1 text-sm leading-6">请稍后刷新页面；当前状态不是空对比清单。</p>
+          </section>
+        )}
+
+        {!comparisonError && !universityError && <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}><Scale size={20} /></span><div><DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-black" title={<>四校对比席位</>} description={<>当前选择 {universities.length}／4 所，数据库也会强制执行上限。</>} /></div></div>
+            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}><Scale size={20} aria-hidden="true" /></span><div><DashboardTitleWithHint headingLevel={3} titleClassName="text-base font-bold" title={<>四校对比席位</>} description={<>当前选择 {universities.length}／4 所，数据库也会强制执行上限。</>} /></div></div>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[0, 1, 2, 3].map((index) => {
               const university = universities[index];
               return university ? (
                 <article key={university.id} className="app-soft-card rounded-2xl border p-4">
-                  <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-black text-white" style={{ backgroundColor: "var(--app-secondary)" }}>{university.name_zh.slice(0, 1)}</span><form action={removeUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison"><button type="submit" className="flex h-8 w-8 items-center justify-center rounded-lg text-red-600 hover:bg-red-50" title={`移出${university.name_zh}`} aria-label={`移出${university.name_zh}`}><Trash2 size={14} /></button></form></div>
-                  <h3 className="mt-4 text-sm font-black">{university.name_zh}</h3>
+                  <div className="flex items-start justify-between gap-2"><span className="flex h-9 w-9 items-center justify-center rounded-xl text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>{university.name_zh.slice(0, 1)}</span><form action={removeUniversityComparisonAction.bind(null, university.id)} data-permission="university_comparison"><button type="submit" className="flex h-8 w-8 items-center justify-center rounded-lg text-[var(--destructive)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" title={`移出${university.name_zh}`} aria-label={`移出${university.name_zh}`}><Trash2 size={14} aria-hidden="true" /></button></form></div>
+                  <h4 className="mt-4 text-sm font-bold">{university.name_zh}</h4>
                   <p className="mt-1 text-xs font-bold app-muted-text">{university.name_ko} · {university.city}</p>
                 </article>
-              ) : <div key={`empty-${index}`} className="flex min-h-32 items-center justify-center rounded-2xl border border-dashed text-xs font-bold app-muted-text" style={{ borderColor: "var(--app-border)" }}>待选择</div>;
+              ) : <div key={`empty-${index}`} className="flex min-h-32 items-center justify-center rounded-2xl border border-dashed text-xs font-bold app-muted-text" style={{ borderColor: "var(--border)" }}>待选择</div>;
             })}
           </div>
-        </section>
+        </section>}
 
-        {universities.length > 0 ? (
+        {!comparisonError && !universityError && (universities.length > 0 ? (
           <section className="app-card overflow-hidden rounded-3xl border">
             <div className="overflow-x-auto">
               <div className="min-w-[760px]" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))` }}>
-                <div className="grid border-b" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))`, borderColor: "var(--app-border)" }}>
-                  <div className="p-4 text-xs font-black app-muted-text">比较项目</div>
-                  {universities.map((university) => <div key={university.id} className="border-l p-4 text-sm font-black" style={{ borderColor: "var(--app-border)" }}>{university.name_zh}</div>)}
+                <div className="grid border-b" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))`, borderColor: "var(--border)" }}>
+                  <div className="p-4 text-xs font-bold app-muted-text">比较项目</div>
+                  {universities.map((university) => <div key={university.id} className="border-l p-4 text-sm font-bold" style={{ borderColor: "var(--border)" }}>{university.name_zh}</div>)}
                 </div>
                 {comparisonRowsData.map(({ label, icon: Icon, value }) => (
-                  <div key={label} className="grid border-b last:border-b-0" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))`, borderColor: "var(--app-border-soft)" }}>
-                    <div className="flex items-start gap-2 p-4 text-xs font-black"><Icon className="mt-0.5 shrink-0" size={14} style={{ color: "var(--app-accent)" }} />{label}</div>
-                    {universities.map((university) => <div key={university.id} className="border-l p-4 text-xs font-bold leading-6 app-muted-text" style={{ borderColor: "var(--app-border-soft)" }}>{value(university)}</div>)}
+                  <div key={label} className="grid border-b last:border-b-0" style={{ gridTemplateColumns: `170px repeat(${universities.length}, minmax(190px, 1fr))`, borderColor: "var(--border-subtle)" }}>
+                    <div className="flex items-start gap-2 p-4 text-xs font-bold"><Icon className="mt-0.5 shrink-0" size={14} style={{ color: "var(--primary)" }} aria-hidden="true" />{label}</div>
+                    {universities.map((university) => <div key={university.id} className="border-l p-4 text-xs font-bold leading-6 app-muted-text" style={{ borderColor: "var(--border-subtle)" }}>{value(university)}</div>)}
                   </div>
                 ))}
               </div>
             </div>
           </section>
         ) : (
-          <section className="app-card flex min-h-72 flex-col items-center justify-center rounded-3xl border p-6 text-center"><Scale size={30} style={{ color: "var(--app-secondary)" }} /><h2 className="mt-4 text-base font-black">还没有选择对比学校</h2><p className="mt-2 text-xs app-muted-text">进入大学学校库，点击卡片上的“加入对比”即可占用一个席位。</p><Link href="/dashboard/universities/library" className="mt-5 rounded-xl px-4 py-2.5 text-xs font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>进入学校库</Link></section>
-        )}
+          <section className="app-card flex min-h-72 flex-col items-center justify-center rounded-3xl border p-6 text-center"><Scale size={30} style={{ color: "var(--support)" }} aria-hidden="true" /><h3 className="mt-4 text-base font-bold">还没有选择对比学校</h3><p className="mt-2 text-xs app-muted-text">进入大学学校库，点击卡片上的“加入对比”即可占用一个席位。</p><Link href="/dashboard/universities/library" className="mt-5 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ backgroundColor: "var(--primary)" }}>进入学校库</Link></section>
+        ))}
       </div>
     </>
   );

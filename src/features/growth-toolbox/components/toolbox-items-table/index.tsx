@@ -120,17 +120,17 @@ export function GrowthToolboxItemsTable({
       isEmpty={filteredData.length === 0}
       emptyContent="没有符合条件的工具入口"
       footer={
-        <p className="text-xs text-[var(--app-muted)]">
+        <p className="text-xs text-[var(--foreground-muted)]">
           当前显示 {filteredData.length} 项，共 {data.length} 项工具入口
         </p>
       }
     >
       <Table className="min-w-[1200px]">
-        <TableHeader className="bg-[var(--app-soft-bg)]">
+        <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 text-xs">
+                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                   {header.isPlaceholder
                     ? null
                     : flexRender(

@@ -280,6 +280,14 @@ export async function deleteTenantPermanentlyAction(
     .from("tenant_provisioned_accounts")
     .select("user_id")
     .eq("tenant_id", tenantId);
+  const { data: tenantMembers } = await admin
+    .from("tenant_memberships")
+    .select("user_id")
+    .eq("tenant_id", tenantId);
+  const accountIds = new Set([
+    ...(provisionedAccounts ?? []).map((account) => account.user_id as string),
+    ...(tenantMembers ?? []).map((membership) => membership.user_id as string),
+  ]);
   const { error } = await supabase.rpc("delete_tenant_permanently", {
     requested_tenant_id: tenantId,
     requested_slug_confirmation: confirmation,
@@ -296,13 +304,13 @@ export async function deleteTenantPermanentlyAction(
   }
 
   let removedAccounts = 0;
-  for (const account of provisionedAccounts ?? []) {
+  for (const userId of accountIds) {
     const { count } = await admin
       .from("tenant_memberships")
       .select("user_id", { count: "exact", head: true })
-      .eq("user_id", account.user_id as string);
+      .eq("user_id", userId);
     if (count === 0) {
-      const { error: deleteUserError } = await admin.auth.admin.deleteUser(account.user_id as string);
+      const { error: deleteUserError } = await admin.auth.admin.deleteUser(userId);
       if (!deleteUserError) removedAccounts += 1;
     }
   }

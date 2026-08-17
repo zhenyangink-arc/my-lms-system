@@ -27,8 +27,8 @@ const introductions: Array<{
       "沿着已报名课程和章节继续精研，把电子书学习、章节理解与测试进度连成一条清晰路线。",
     points: ["按课程推进", "按章节巩固", "延续已有进度"],
     icon: BookOpenCheck,
-    color: "var(--app-accent-strong)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary-hover)",
+    soft: "var(--accent)",
   },
   {
     slug: "skills",
@@ -38,8 +38,8 @@ const introductions: Array<{
       "从听、说、读、写、词汇和语法六个维度单独训练，帮助你看清并补强具体能力。",
     points: ["六维能力训练", "独立能力画像", "练习结果留痕"],
     icon: Dumbbell,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   {
     slug: "review",
@@ -49,8 +49,8 @@ const introductions: Array<{
       "集中查看章节测试中主动加入复习的题目，随时回到原测试重新理解和验证。",
     points: ["错题集中整理", "快速返回原章节", "掌握后随时移出"],
     icon: BookmarkCheck,
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
 ];
 
@@ -71,7 +71,7 @@ export function PracticeSectionIntro({ basePath }: { basePath: string }) {
         aria-labelledby={`practice-intro-${introduction.slug}`}
         style={{
           background:
-            "linear-gradient(135deg, var(--app-card-bg), var(--app-hero-end))",
+            "linear-gradient(135deg, var(--card), var(--accent))",
         }}
       >
         <span
@@ -93,14 +93,14 @@ export function PracticeSectionIntro({ basePath }: { basePath: string }) {
             </span>
             <div className="min-w-0">
               <p
-                className="text-[10px] font-black tracking-[0.14em]"
+                className="text-[10px] font-bold tracking-[0.14em]"
                 style={{ color: introduction.color }}
               >
                 巩固中心 · {introduction.eyebrow}
               </p>
               <h2
                 id={`practice-intro-${introduction.slug}`}
-                className="mt-1 text-xl font-black tracking-tight sm:text-2xl"
+                className="mt-1 text-xl font-bold tracking-tight sm:text-2xl"
               >
                 {introduction.title}
               </h2>
@@ -114,10 +114,10 @@ export function PracticeSectionIntro({ basePath }: { basePath: string }) {
             {introduction.points.map((point) => (
               <li
                 key={point}
-                className="flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-black"
+                className="flex min-h-11 items-center gap-2 rounded-xl border px-3 py-2 text-xs font-bold"
                 style={{
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--surface-soft)",
                 }}
               >
                 <CheckCircle2

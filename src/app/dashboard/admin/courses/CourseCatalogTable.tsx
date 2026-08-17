@@ -37,11 +37,11 @@ function RowStatus({ row }: { row: CourseCatalogTableRow }) {
     <span
       className="inline-flex items-center gap-1.5 rounded-full px-2 py-1 text-[10px] font-medium"
       style={{
-        color: published ? "var(--app-success)" : "var(--app-muted)",
-        backgroundColor: published ? "var(--app-success-soft)" : "var(--app-soft-bg)",
+        color: published ? "var(--status-success)" : "var(--foreground-muted)",
+        backgroundColor: published ? "var(--status-success-surface)" : "var(--surface-soft)",
       }}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: published ? "var(--app-success)" : "var(--app-muted-light)" }} />
+      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: published ? "var(--status-success)" : "var(--foreground-subtle)" }} />
       {row.locked ? "已锁定" : row.published ? "已发布" : "草稿"}
     </span>
   );
@@ -128,13 +128,13 @@ export function CourseCatalogTable({
 
   return (
     <>
-      <section className="overflow-hidden border-y" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
-      <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
+      <section className="overflow-hidden border-y" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
+      <div className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
         <div>
           <h2 className="text-[13px] font-semibold">完整课程目录</h2>
         </div>
       </div>
-      <div className="flex flex-wrap items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
+      <div className="flex flex-wrap items-center gap-2 border-b px-4 py-3" style={{ borderColor: "var(--border)" }}>
         <label className="relative min-w-[220px] flex-1 lg:max-w-md">
           <Search size={13} className="app-muted-text pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -156,7 +156,7 @@ export function CourseCatalogTable({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[880px] border-collapse text-left">
           <thead>
-            <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--app-border)" }}>
+            <tr className="app-muted-text border-b text-[10px] font-medium" style={{ borderColor: "var(--border)" }}>
               <th className="w-[34%] px-4 py-2.5 font-medium">课程结构</th>
               <th className="w-[9%] px-3 py-2.5 font-medium">类型</th>
               <th className="w-[10%] px-3 py-2.5 font-medium">内容</th>
@@ -173,7 +173,7 @@ export function CourseCatalogTable({
                 <tr
                   key={row.key}
                   className="border-b text-[11px] last:border-b-0"
-                  style={{ borderColor: "var(--app-border-soft)", backgroundColor: row.active ? "var(--app-accent-soft)" : undefined }}
+                  style={{ borderColor: "var(--border-subtle)", backgroundColor: row.active ? "var(--accent)" : undefined }}
                 >
                   <td className="px-4 py-2.5">
                     <div className="flex min-w-0 items-center gap-1" style={{ paddingLeft: `${row.depth * 18}px` }}>
@@ -183,7 +183,7 @@ export function CourseCatalogTable({
                           aria-label={collapsed ? `展开${row.title}` : `收起${row.title}`}
                           aria-expanded={!collapsed}
                           onClick={() => toggleRow(row.key)}
-                          className="app-muted-text flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--app-soft-bg)]"
+                          className="app-muted-text flex h-6 w-6 shrink-0 items-center justify-center rounded-[5px] transition-colors hover:bg-[var(--surface-soft)]"
                         >
                           <ChevronRight size={12} className={`transition-transform ${collapsed ? "" : "rotate-90"}`} />
                         </button>
@@ -199,12 +199,12 @@ export function CourseCatalogTable({
                   <td className="app-muted-text px-3 py-2.5">{row.kindLabel}</td>
                   <td className="app-muted-text px-3 py-2.5">{row.contentLabel}</td>
                   <td className="px-3 py-2.5">
-                    <div className="flex items-center gap-2"><span className="h-1 w-16 overflow-hidden bg-[var(--app-soft-bg)]"><span className="block h-full" style={{ width: `${row.completeness}%`, backgroundColor: row.completeness === 100 ? "var(--app-success)" : "var(--app-warm)" }} /></span><span className="font-mono text-[9px]">{row.completeness}%</span></div>
+                    <div className="flex items-center gap-2"><span className="h-1 w-16 overflow-hidden bg-[var(--surface-soft)]"><span className="block h-full" style={{ width: `${row.completeness}%`, backgroundColor: row.completeness === 100 ? "var(--status-success)" : "var(--status-warning)" }} /></span><span className="font-mono text-[9px]">{row.completeness}%</span></div>
                     {row.missingItems.length > 0 && <p className="app-muted-text mt-1 max-w-[170px] truncate text-[9px]" title={row.missingItems.join("、")}>缺少：{row.missingItems.join("、")}</p>}
                   </td>
                   <td className="app-muted-text px-3 py-2.5">{row.rule}</td>
                   <td className="px-3 py-2.5"><RowStatus row={row} /></td>
-                  <td className="px-4 py-2.5 text-right"><Link href={row.href} className="font-medium" style={{ color: "var(--app-accent-strong)" }}>编辑</Link></td>
+                  <td className="px-4 py-2.5 text-right"><Link href={row.href} className="font-medium" style={{ color: "var(--primary-hover)" }}>编辑</Link></td>
                 </tr>
               );
             })}
@@ -216,8 +216,8 @@ export function CourseCatalogTable({
 
       {children && activeRow && (
         <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/25 p-3 backdrop-blur-[1px] sm:p-5" role="dialog" aria-modal="true" aria-label={`${activeRow.title}编辑工作窗`}>
-          <div className="course-editor-window app-card relative flex h-[min(920px,calc(100vh-24px))] w-full max-w-[1500px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]" style={{ borderColor: "var(--app-border)" }}>
-            <div className="flex h-12 shrink-0 items-center justify-between border-b px-4" style={{ borderColor: "var(--app-border)" }}>
+          <div className="course-editor-window app-card relative flex h-[min(920px,calc(100vh-24px))] w-full max-w-[1500px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]" style={{ borderColor: "var(--border)" }}>
+            <div className="flex h-12 shrink-0 items-center justify-between border-b px-4" style={{ borderColor: "var(--border)" }}>
               <div className="flex min-w-0 items-center gap-2 text-[11px]">
                 <span className="app-muted-text"><RowIcon kind={activeRow.kind} /></span>
                 <span className="truncate font-semibold">{activeRow.title}</span>
@@ -227,8 +227,8 @@ export function CourseCatalogTable({
                 type="button"
                 onClick={() => router.replace("/dashboard/admin/courses", { scroll: false })}
                 aria-label="关闭编辑工作窗"
-                className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--app-soft-bg)]"
-                style={{ borderColor: "var(--app-border)" }}
+                className="app-muted-text flex h-8 w-8 items-center justify-center rounded-[6px] border transition-colors hover:bg-[var(--surface-soft)]"
+                style={{ borderColor: "var(--border)" }}
               >
                 <X size={14} />
               </button>

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 
 import { ManagementPage } from "@/components/layout/management-page";
+import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
 import {
   requireManagementAppAccess,
   type ManagementAppAccess,
@@ -189,10 +190,11 @@ export function ManagementApplicationSectionFrame({
       action={
         <Link
           href={access.appPath}
-          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold"
+          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           返回{access.appTitle}
+          <RouteLinkStatus />
         </Link>
       }
     >

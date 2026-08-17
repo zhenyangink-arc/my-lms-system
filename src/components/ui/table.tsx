@@ -65,10 +65,27 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
   )
 }
 
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+type TableSortDirection = "asc" | "desc" | false;
+
+type TableHeadProps = React.ComponentProps<"th"> & {
+  /** Pass false for a sortable but currently unsorted column. */
+  sortDirection?: TableSortDirection;
+};
+
+function TableHead({ className, sortDirection, ...props }: TableHeadProps) {
+  const ariaSort =
+    sortDirection === undefined
+      ? undefined
+      : sortDirection === "asc"
+        ? "ascending"
+        : sortDirection === "desc"
+          ? "descending"
+          : "none";
+
   return (
     <th
       data-slot="table-head"
+      aria-sort={ariaSort}
       className={cn(
         "h-10 px-2 text-left align-middle font-medium whitespace-nowrap text-foreground [&:has([role=checkbox])]:pr-0",
         className

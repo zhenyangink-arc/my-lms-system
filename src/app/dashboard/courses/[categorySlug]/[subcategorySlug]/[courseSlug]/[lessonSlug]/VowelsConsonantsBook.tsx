@@ -205,20 +205,20 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
   ref
 ) {
   return (
-    <div ref={ref} className={`h-full overflow-hidden shadow-[inset_0_0_28px_rgba(57,78,67,0.08)] ${
-      goals ? "bg-[linear-gradient(145deg,#edf8f3_0%,#e4f3ed_100%)]" : "bg-[#fffef9]"
+    <div ref={ref} className={`h-full overflow-hidden shadow-sm ${
+      goals ? "bg-[linear-gradient(145deg,var(--card)_0%,var(--status-success-surface)_100%)]" : "bg-[var(--card)]"
     }`}>
       {cover ? children : (
         <div className="flex h-full flex-col px-9 py-8">
-          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-black tracking-[0.12em] ${
-            goals ? "border-[#bedbce]" : "border-[#dce8e1]"
+          <div className={`flex items-center justify-between border-b pb-3 text-[11px] font-bold tracking-[0.12em] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--status-success-surface)]"
           }`}>
-            <span className="text-[#238777]">{header}</span>
-            <span className="text-[#789087]">第二章 · 元音和辅音</span>
+            <span className="text-[var(--status-success)]">{header}</span>
+            <span className="text-[var(--foreground-muted)]">第二章 · 元音和辅音</span>
           </div>
           <div className="min-h-0 flex-1 pt-5">{children}</div>
-          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[#92a099] ${
-            goals ? "border-[#bedbce]" : "border-[#e4ebe7]"
+          <div className={`mt-4 flex items-center justify-between border-t pt-3 text-[11px] font-bold text-[var(--foreground-muted)] ${
+            goals ? "border-[var(--border-subtle)]" : "border-[var(--surface-soft)]"
           }`}>
             <span>互动电子书</span>
             <span>{number}</span>
@@ -234,8 +234,8 @@ function LessonContent({ page, onSpeak }: { page: LessonPage; onSpeak: (text: st
 
   return (
     <div className="flex h-full flex-col">
-      <h2 className="text-3xl font-black leading-tight text-[#173f4a]">{page.title}</h2>
-      <p className="mt-4 text-sm leading-7 text-[#60736a]">{page.lead}</p>
+      <h3 className="text-3xl font-bold leading-tight text-[var(--primary)]">{page.title}</h3>
+      <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">{page.lead}</p>
 
       <div className={`mt-5 grid flex-1 content-center gap-3 ${page.items.length >= 6 ? "grid-cols-3" : "grid-cols-2"}`}>
         {page.items.map((item) => (
@@ -244,20 +244,20 @@ function LessonContent({ page, onSpeak }: { page: LessonPage; onSpeak: (text: st
             type="button"
             onClick={() => onSpeak(item.sound)}
             className={`group rounded-[22px] border bg-white p-4 text-left transition hover:-translate-y-0.5 hover:shadow-md ${
-              green ? "border-[#d5e7df] hover:border-[#72b7a7]" : "border-[#eadfce] hover:border-[#d6975f]"
+              green ? "border-[var(--status-success-surface)] hover:border-[var(--status-success)]" : "border-[var(--border-subtle)] hover:border-[var(--destructive)]"
             }`}
           >
             <span className="flex items-start justify-between gap-2">
-              <span className={`text-4xl font-black ${green ? "text-[#238777]" : "text-[#9b5e2e]"}`}>{item.letter}</span>
-              <Volume2 size={16} className={green ? "text-[#72b7a7]" : "text-[#d6975f]"} />
+              <span className={`text-4xl font-bold ${green ? "text-[var(--status-success)]" : "text-[var(--destructive)]"}`}>{item.letter}</span>
+              <Volume2 size={16} className={green ? "text-[var(--status-success)]" : "text-[var(--destructive)]"} />
             </span>
-            <span className="mt-3 block text-sm font-black text-[#294f43]">{item.romanization}</span>
-            <span className="mt-1 block text-xs leading-5 text-[#7a8d84]">{item.hint}</span>
+            <span className="mt-3 block text-sm font-bold text-[var(--foreground-secondary)]">{item.romanization}</span>
+            <span className="mt-1 block text-xs leading-5 text-[var(--foreground-muted)]">{item.hint}</span>
           </button>
         ))}
       </div>
 
-      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[#e9f6f1] text-[#42675b]" : "bg-[#fff2e2] text-[#765c49]"}`}>
+      <div className={`mt-5 flex gap-3 rounded-2xl p-4 ${green ? "bg-[var(--status-success-surface)] text-[var(--foreground-secondary)]" : "bg-[var(--status-warning-surface)] text-[var(--foreground-secondary)]"}`}>
         <Lightbulb size={18} className="mt-0.5 shrink-0" />
         <p className="text-sm font-bold leading-6">{page.tip}</p>
       </div>
@@ -356,7 +356,7 @@ export function VowelsConsonantsBook({
   }
 
   return (
-    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="mt-0 flex h-full min-h-0 w-full flex-1 items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2">
       <div
         className={`relative shrink-0 ${isFullscreen ? "" : "-translate-y-2.5"}`}
         style={{ width: BOOK_WIDTH * bookScale, height: BOOK_HEIGHT * bookScale }}
@@ -365,7 +365,7 @@ export function VowelsConsonantsBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
           aria-label="电子书上一页"
-          className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg"
+          className="absolute left-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-2xl font-bold text-[var(--status-success)] shadow-lg"
         >
           ←
         </button>
@@ -373,7 +373,7 @@ export function VowelsConsonantsBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
           aria-label="电子书下一页"
-          className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[#cfe2d9] bg-white text-2xl font-black text-[#238777] shadow-lg"
+          className="absolute right-[-58px] top-1/2 z-20 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border-subtle)] bg-white text-2xl font-bold text-[var(--status-success)] shadow-lg"
         >
           →
         </button>
@@ -407,22 +407,22 @@ export function VowelsConsonantsBook({
             style={{}}
           >
             <Page number={0} cover>
-              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_#d8f0e7_0,_transparent_32%),linear-gradient(145deg,_#fffef9_0%,_#e8f6f0_100%)] px-10 py-11 text-center">
-                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[#173f4a]" />
+              <div className="relative flex h-full flex-col justify-between overflow-hidden bg-[radial-gradient(circle_at_top_right,_var(--status-success-surface)_0,_transparent_32%),linear-gradient(145deg,_var(--card)_0%,_var(--status-success-surface)_100%)] px-10 py-11 text-center">
+                <div aria-hidden="true" className="absolute bottom-0 left-0 right-0 h-[40%] bg-[var(--primary)]" />
                 <div className="relative">
-                  <p className="text-2xl font-black tracking-[0.22em] text-[#b87131]">韩语字母入门</p>
-                  <div className="mx-auto mt-2 h-px w-48 bg-[#cfe2d9]" />
+                  <p className="text-2xl font-bold tracking-[0.22em] text-[var(--destructive)]">韩语字母入门</p>
+                  <div className="mx-auto mt-2 h-px w-48 bg-[var(--border-subtle)]" />
                 </div>
                 <div className="relative">
-                  <p className="text-base font-black tracking-[0.16em] text-[#238777]">第二章</p>
-                  <h1 className="mt-5 text-5xl font-black tracking-tight text-[#173f4a]">元音和辅音</h1>
-                  <p className="mt-4 text-lg font-bold text-[#60736a]">先听声音，再看动作</p>
-                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[#60736a]">
+                  <p className="text-base font-bold tracking-[0.16em] text-[var(--status-success)]">第二章</p>
+                  <h3 className="mt-5 text-5xl font-bold tracking-tight text-[var(--primary)]">元音和辅音</h3>
+                  <p className="mt-4 text-lg font-bold text-[var(--foreground-secondary)]">先听声音，再看动作</p>
+                  <p className="mx-auto mt-7 max-w-sm text-base leading-8 text-[var(--foreground-secondary)]">
                     用口型认识元音，用发音部位认识辅音，再把它们组合成完整音节。
                   </p>
                   <div className="mt-16 flex justify-center gap-4">
                     {["ㅏ", "ㄱ", "가"].map((letter, index) => (
-                      <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-black ${index === 2 ? "bg-[#238777] text-white" : "bg-white text-[#238777] shadow-sm ring-1 ring-[#d7e8e1]"}`}>
+                      <span key={letter} className={`flex h-16 w-16 items-center justify-center rounded-2xl text-3xl font-bold ${index === 2 ? "bg-[var(--status-success)] text-white" : "bg-white text-[var(--status-success)] shadow-sm ring-1 ring-[var(--status-success-surface)]"}`}>
                         {letter}
                       </span>
                     ))}
@@ -437,9 +437,9 @@ export function VowelsConsonantsBook({
 
             <Page number="00" header="目录">
               <div className="flex h-full flex-col justify-center text-center">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第二章</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">目录</h2>
-                <ol className="mt-8 divide-y divide-[#dce8e1] rounded-2xl border border-[#dce8e1] bg-white px-5 text-left">
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第二章</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">目录</h3>
+                <ol className="mt-8 divide-y divide-[var(--status-success-surface)] rounded-2xl border border-[var(--status-success-surface)] bg-white px-5 text-left">
                   {[
                     [1, "本章学习目标"],
                     [2, "2.1 元音和辅音是什么"],
@@ -456,10 +456,10 @@ export function VowelsConsonantsBook({
                       <button
                         type="button"
                         onClick={() => flipBookRef.current?.pageFlip()?.flip(Number(pageNumber) + 1)}
-                        className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[#526c60] transition hover:text-[#238777]"
+                        className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[var(--foreground-secondary)] transition hover:text-[var(--status-success)]"
                       >
                         <span>{title}</span>
-                        <span className="font-black text-[#238777]">{String(pageNumber).padStart(2, "0")}</span>
+                        <span className="font-bold text-[var(--status-success)]">{String(pageNumber).padStart(2, "0")}</span>
                       </button>
                     </li>
                   ))}
@@ -469,9 +469,9 @@ export function VowelsConsonantsBook({
 
             <Page number="01" header="本章学习目标" goals>
               <div className="flex h-full flex-col">
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">第二章 · GOALS</p>
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">学完这一章，你将能够</h2>
-                <p className="mt-4 text-sm leading-7 text-[#60736a]">
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">第二章 · GOALS</p>
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">学完这一章，你将能够</h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">
                   从口型、舌位和气流出发认识元音与辅音，并把字形、声音和发音动作建立稳定联系。
                 </p>
                 <div className="mt-7 grid flex-1 content-center gap-4">
@@ -480,16 +480,16 @@ export function VowelsConsonantsBook({
                     ["02", "掌握发音动作", "能通过口型、舌位与气流区分基本音、送气音和紧音。"],
                     ["03", "完成音节组合", "能把辅音和元音放进正确位置，拼读简单的韩语音节。"],
                   ].map(([number, title, description]) => (
-                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[#dce8e1] bg-white p-5">
-                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#e7f4ef] text-sm font-black text-[#238777]">{number}</span>
+                    <section key={number} className="grid grid-cols-[54px_1fr] gap-4 rounded-[22px] border border-[var(--status-success-surface)] bg-white p-5">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-sm font-bold text-[var(--status-success)]">{number}</span>
                       <div>
-                        <h3 className="text-base font-black text-[#294f43]">{title}</h3>
-                        <p className="mt-1 text-xs leading-6 text-[#71857b]">{description}</p>
+                        <h4 className="text-base font-bold text-[var(--foreground-secondary)]">{title}</h4>
+                        <p className="mt-1 text-xs leading-6 text-[var(--foreground-muted)]">{description}</p>
                       </div>
                     </section>
                   ))}
                 </div>
-                <div className="mt-6 rounded-2xl bg-[#fff3e3] p-4 text-sm font-bold leading-6 text-[#765c49]">
+                <div className="mt-6 rounded-2xl bg-[var(--surface-soft)] p-4 text-sm font-bold leading-6 text-[var(--foreground-secondary)]">
                   阅读建议：每学一个字母，都要完成“看字形、听声音、跟读三遍”。
                 </div>
               </div>
@@ -503,12 +503,12 @@ export function VowelsConsonantsBook({
 
             <Page number="12" header="2.9 本章结束">
               <div className="relative flex h-full flex-col items-center justify-center overflow-hidden text-center">
-                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[#e4f3ed]" />
-                <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[#fff0dc]" />
+                <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full bg-[var(--status-success-surface)]" />
+                <div aria-hidden="true" className="absolute -bottom-20 -left-20 h-64 w-64 rounded-full bg-[var(--status-warning-surface)]" />
                 <div className="relative">
-                  <p className="text-sm font-black tracking-[0.2em] text-[#b87131]">第二章完成</p>
-                  <h2 className="mt-5 text-4xl font-black text-[#173f4a]">元音和辅音学习完成</h2>
-                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[#60736a]">
+                  <p className="text-sm font-bold tracking-[0.2em] text-[var(--destructive)]">第二章完成</p>
+                  <h3 className="mt-5 text-4xl font-bold text-[var(--primary)]">元音和辅音学习完成</h3>
+                  <p className="mx-auto mt-5 max-w-md text-base leading-8 text-[var(--foreground-secondary)]">
                     你已经认识了基本元音、复合元音、基础辅音、送气音和紧音。接下来通过本章测试检查自己是否真正掌握。
                   </p>
 
@@ -518,9 +518,9 @@ export function VowelsConsonantsBook({
                       ["ㄱ", "辅音"],
                       ["가", "音节"],
                     ].map(([letter, label]) => (
-                      <div key={letter} className="rounded-2xl border border-[#d8e7e0] bg-white p-4 shadow-sm">
-                        <p className="text-3xl font-black text-[#238777]">{letter}</p>
-                        <p className="mt-2 text-xs font-bold text-[#789087]">{label}</p>
+                      <div key={letter} className="rounded-2xl border border-[var(--status-success-surface)] bg-white p-4 shadow-sm">
+                        <p className="text-3xl font-bold text-[var(--status-success)]">{letter}</p>
+                        <p className="mt-2 text-xs font-bold text-[var(--foreground-muted)]">{label}</p>
                       </div>
                     ))}
                   </div>
@@ -530,12 +530,12 @@ export function VowelsConsonantsBook({
                     onClick={onStartTest}
                     disabled={testLocked}
                     title={testLocked ? "完成本章学习目标后解锁测试" : undefined}
-                    className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[#238777] px-8 py-4 text-base font-black text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[#1d7468] disabled:cursor-not-allowed disabled:bg-[#a9afa9] disabled:shadow-none"
+                    className="mt-10 inline-flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] px-8 py-4 text-base font-bold text-white shadow-lg transition enabled:hover:-translate-y-0.5 enabled:hover:bg-[var(--status-success)] disabled:cursor-not-allowed disabled:bg-[var(--border)] disabled:shadow-none"
                   >
                     {testLocked && <Lock size={17} />}
                     进入本章测试
                   </button>
-                  <p className="mt-4 text-xs font-bold text-[#8a9b93]">
+                  <p className="mt-4 text-xs font-bold text-[var(--foreground-muted)]">
                     {testLocked ? "完成本章学习目标后解锁测试" : "完成测试后将解锁下一章"}
                   </p>
                 </div>

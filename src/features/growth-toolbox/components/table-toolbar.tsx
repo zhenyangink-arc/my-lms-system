@@ -42,9 +42,9 @@ export function GrowthToolboxTableToolbar({
 
   return (
     <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
-      <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 xl:max-w-sm">
+      <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 xl:max-w-sm">
         <Icons.search
-          className="size-3.5 shrink-0 text-[var(--app-muted)]"
+          className="size-3.5 shrink-0 text-[var(--foreground-muted)]"
           aria-hidden="true"
         />
         <span className="sr-only">{queryLabel}</span>
@@ -62,7 +62,7 @@ export function GrowthToolboxTableToolbar({
           <select
             value={filter.value}
             onChange={(event) => onFilterChange(filter.id, event.target.value)}
-            className="h-9 min-w-28 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs font-medium"
+            className="h-9 min-w-28 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
           >
             <option value="all">全部{filter.label}</option>
             {filter.options.map((option) => (
@@ -79,7 +79,7 @@ export function GrowthToolboxTableToolbar({
           <button
             type="button"
             onClick={onReset}
-            className="h-9 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)]"
+            className="h-9 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]"
           >
             清除筛选
           </button>

@@ -32,16 +32,22 @@ export function DataTableColumnHeader({
       : direction === "desc"
         ? Icons.sortDescending
         : Icons.sort;
+  const directionLabel =
+    direction === "asc"
+      ? "当前升序"
+      : direction === "desc"
+        ? "当前降序"
+        : "当前未排序";
 
   return (
     <button
       type="button"
       className={cn(
-        "inline-flex h-7 items-center gap-1 font-medium text-[var(--app-muted)] transition-colors hover:text-[var(--app-text)] disabled:pointer-events-none disabled:opacity-50",
+        "inline-flex h-7 items-center gap-1 font-medium text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-50",
         className,
       )}
       disabled={disabled}
-      aria-label={`${String(title)}排序`}
+      aria-label={`${typeof title === "string" ? title : "此列"}排序，${directionLabel}`}
       {...props}
     >
       <span>{title}</span>

@@ -38,7 +38,7 @@ const initialLanguageBankActionState: LanguageBankActionState = {
 };
 
 const fieldClass = "app-input w-full rounded-md border px-3 py-2.5 text-xs";
-const headerCellClass = "w-36 bg-[var(--app-soft-bg)] px-3 py-3 text-xs font-black";
+const headerCellClass = "w-36 bg-[var(--surface-soft)] px-3 py-3 text-xs font-semibold";
 const valueCellClass = "px-3 py-3";
 
 const courseLabels: Record<string, string> = {
@@ -102,7 +102,7 @@ function ChapterSelect({
     return (
       <>
         <input type="hidden" name="chapter_test_id" value={chapters[0].id} />
-        <p className="py-2.5 text-xs font-black">{chapterLabel(chapters[0])}</p>
+        <p className="py-2.5 text-xs font-semibold">{chapterLabel(chapters[0])}</p>
       </>
     );
   }
@@ -135,18 +135,18 @@ function ActionMessage({ state }: { state: typeof initialLanguageBankActionState
   if (!state.message) return null;
   return (
     <p aria-live="polite" className="border-t px-4 py-3 text-xs font-bold" style={{
-      color: state.status === "error" ? "#c94f45" : "var(--app-success)",
-      backgroundColor: state.status === "error" ? "#fff0ed" : "var(--app-success-soft)",
-      borderColor: "var(--app-border-soft)",
+      color: state.status === "error" ? "#c94f45" : "var(--status-success)",
+      backgroundColor: state.status === "error" ? "#fff0ed" : "var(--status-success-surface)",
+      borderColor: "var(--border-subtle)",
     }}>{state.message}</p>
   );
 }
 
 function FormFooter({ pending, label }: { pending: boolean; label: string }) {
   return (
-    <div className="flex items-center justify-between gap-3 border-t px-4 py-3" style={{ borderColor: "var(--app-border-soft)" }}>
+    <div className="flex items-center justify-between gap-3 border-t px-4 py-3" style={{ borderColor: "var(--border-subtle)" }}>
       <span className="app-muted-text inline-flex items-center gap-1.5 text-[10px] font-bold"><ShieldCheck size={12} />中文题面和答案会被数据库拒绝</span>
-      <button disabled={pending} className="rounded-md px-4 py-2.5 text-xs font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-accent)" }}>
+      <button disabled={pending} className="rounded-md px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50" style={{ backgroundColor: "var(--primary)" }}>
         {pending ? "正在保存…" : label}
       </button>
     </div>
@@ -183,14 +183,14 @@ export function LanguageBankCreateForms({
   const questionTitle = skill === "listening" ? "新增听力选择题" : skill === "reading" ? "新增阅读题" : `新增${skillLabels[skill]}题`;
 
   return (
-    <section className="border" style={{ borderColor: "var(--app-border)" }}>
+    <section className="border" style={{ borderColor: "var(--border)" }}>
       {hasSource && (
-        <details className="border-b" style={{ borderColor: "var(--app-border)" }}>
-          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-black hover:bg-[var(--app-soft-bg)]">
-            <Plus size={14} style={{ color: "var(--app-accent)" }} />{sourceTitle}
+        <details className="border-b" style={{ borderColor: "var(--border)" }}>
+          <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-semibold hover:bg-[var(--surface-soft)]">
+            <Plus size={14} style={{ color: "var(--primary)" }} />{sourceTitle}
             <span className="app-muted-text ml-auto text-[10px]">先录入电子书对应资源，再给资源配置题目</span>
           </summary>
-          <form action={materialAction} className="border-t" style={{ borderColor: "var(--app-border-soft)" }}>
+          <form action={materialAction} className="border-t" style={{ borderColor: "var(--border-subtle)" }}>
             <input type="hidden" name="language_skill" value={skill} />
             <div className="overflow-x-auto">
               <table className="w-full min-w-[900px] border-collapse text-left"><tbody className="divide-y">
@@ -198,7 +198,7 @@ export function LanguageBankCreateForms({
                 <tr><th className={headerCellClass}>电子书页码</th><td className={valueCellClass}><input name="ebook_page_reference" maxLength={80} className={fieldClass} placeholder="例如：第 22—25 页" /></td><th className={`${headerCellClass} border-l`}>韩语资源名称</th><td className={valueCellClass}><input name="title_ko" required className={fieldClass} placeholder="학교에서 있었던 일" /></td></tr>
                 <tr><th className={headerCellClass}>难度</th><td className={valueCellClass}><select name="difficulty" className={fieldClass}><option value="beginner">低级</option><option value="intermediate">中级</option><option value="advanced">高级</option></select></td><th className={`${headerCellClass} border-l`}>长度</th><td className={valueCellClass}><select name="material_length" className={fieldClass}><option value="short">短篇</option><option value="medium">中篇</option><option value="long">长篇</option></select></td></tr>
                 <tr><th className={headerCellClass}>状态</th><td className={valueCellClass}><select name="status" className={fieldClass}><option value="draft">草稿</option><option value="review">待审核</option><option value="published">已发布</option></select></td><th className={`${headerCellClass} border-l`}>{skill === "listening" ? "音频路径" : "阅读文章"}</th><td className={valueCellClass}>{skill === "listening" ? <input name="audio_path" required className={fieldClass} placeholder="question-bank/audio/example.mp3" /> : <textarea name="content_ko" required rows={6} className={fieldClass} placeholder="읽기 자료를 한국어로 입력하십시오." />}</td></tr>
-                {skill === "listening" && <><tr><th className={headerCellClass}>音频秒数</th><td className={valueCellClass}><input name="audio_duration_seconds" type="number" min={1} required className={fieldClass} /></td><th className={`${headerCellClass} border-l`}>原文权限</th><td className="px-3 py-3 text-xs font-bold text-[var(--app-success)]">仅题库管理员可读，学生接口不可读</td></tr><tr><th className={headerCellClass}>韩语听力原文</th><td colSpan={3} className={valueCellClass}><textarea name="transcript_ko" required rows={6} className={fieldClass} placeholder="학생에게 전달되지 않는 관리자 전용 원문" /></td></tr></>}
+                {skill === "listening" && <><tr><th className={headerCellClass}>音频秒数</th><td className={valueCellClass}><input name="audio_duration_seconds" type="number" min={1} required className={fieldClass} /></td><th className={`${headerCellClass} border-l`}>原文权限</th><td className="px-3 py-3 text-xs font-bold text-[var(--status-success)]">仅题库管理员可读，学生接口不可读</td></tr><tr><th className={headerCellClass}>韩语听力原文</th><td colSpan={3} className={valueCellClass}><textarea name="transcript_ko" required rows={6} className={fieldClass} placeholder="학생에게 전달되지 않는 관리자 전용 원문" /></td></tr></>}
               </tbody></table>
             </div>
             <FormFooter pending={materialPending} label={`保存${skill === "listening" ? "听力音频" : "阅读文章"}`} />
@@ -208,11 +208,11 @@ export function LanguageBankCreateForms({
       )}
 
       <details>
-        <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-black hover:bg-[var(--app-soft-bg)]">
-          <Plus size={14} style={{ color: "var(--app-accent)" }} />{questionTitle}
+        <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-semibold hover:bg-[var(--surface-soft)]">
+          <Plus size={14} style={{ color: "var(--primary)" }} />{questionTitle}
           <span className="app-muted-text ml-auto text-[10px]">题面与答案分别保存</span>
         </summary>
-        <form action={questionAction} className="border-t" style={{ borderColor: "var(--app-border-soft)" }}>
+        <form action={questionAction} className="border-t" style={{ borderColor: "var(--border-subtle)" }}>
           <input type="hidden" name="language_skill" value={skill} />
           <div className="overflow-x-auto">
             <table className="w-full min-w-[900px] border-collapse text-left"><tbody className="divide-y">

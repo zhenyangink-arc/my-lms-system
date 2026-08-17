@@ -66,36 +66,36 @@ export function StudentLearningRecordDialog({
         查看
       </DialogTrigger>
       <DialogContent className="max-h-[min(900px,calc(100vh-32px))] max-w-[980px] gap-0 overflow-y-auto p-0">
-        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">{student.name}的学习档案</DialogTitle>
           <DialogDescription className="text-xs">{student.email} · {student.membershipLabel}</DialogDescription>
         </DialogHeader>
 
-        <div className="overflow-x-auto border-b" style={{ borderColor: "var(--app-border)" }}>
-          <table className="w-full min-w-[620px] border-collapse text-left text-xs [&_td]:border-b [&_td]:border-r [&_td]:border-[var(--app-border-soft)] [&_td]:px-4 [&_td]:py-3 [&_td]:text-base [&_td]:font-semibold [&_th]:border-b [&_th]:border-r [&_th]:border-[var(--app-border-soft)] [&_th]:bg-[var(--app-soft-bg)] [&_th]:px-4 [&_th]:py-3 [&_th]:font-medium [&_th]:text-[var(--app-muted)] [&_tr>*:last-child]:border-r-0">
+        <div className="overflow-x-auto border-b" style={{ borderColor: "var(--border)" }}>
+          <table className="w-full min-w-[620px] border-collapse text-left text-xs [&_td]:border-b [&_td]:border-r [&_td]:border-[var(--border-subtle)] [&_td]:px-4 [&_td]:py-3 [&_td]:text-base [&_td]:font-semibold [&_th]:border-b [&_th]:border-r [&_th]:border-[var(--border-subtle)] [&_th]:bg-[var(--surface-soft)] [&_th]:px-4 [&_th]:py-3 [&_th]:font-medium [&_th]:text-[var(--foreground-muted)] [&_tr>*:last-child]:border-r-0">
             <thead><tr><th>统计项目</th><th>完成课时</th><th>任务提交</th><th>会话练习</th><th>成绩记录</th><th>关注事项</th></tr></thead>
             <tbody><tr><th>当前数量</th><td>{summary.completedLessons}</td><td>{summary.submissions}</td><td>{summary.conversationPractices}</td><td>{summary.grades}</td><td>{summary.attentionCount}</td></tr></tbody>
           </table>
         </div>
 
         <section>
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{ borderColor: "var(--app-border)" }}>
+          <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{ borderColor: "var(--border)" }}>
             <div>
               <h3 className="text-xs font-semibold">人工辅导备注</h3>
               <p className="app-muted-text mt-1 text-[10px]">可选内容，不是创建学习档案；系统学习数据会自动进入上方汇总。</p>
             </div>
-            <button type="button" onClick={() => setShowComposer((current) => !current)} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>
+            <button type="button" onClick={() => setShowComposer((current) => !current)} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--border)" }}>
               <Plus size={13} />{showComposer ? "收起" : "添加辅导备注"}
             </button>
           </div>
 
           {showComposer && (
-            <div className="border-b p-4 sm:p-5" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>
+            <div className="border-b p-4 sm:p-5" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>
               <LearningRecordForm students={formStudents} studentId={student.id} />
             </div>
           )}
 
-          <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
             {notes.map((note) => (
               <article key={note.id} className="grid gap-3 px-5 py-4 lg:grid-cols-[minmax(0,1fr)_auto] lg:items-start">
                 <div className="min-w-0">
@@ -124,8 +124,8 @@ export function StudentLearningRecordDialog({
           </div>
         </section>
 
-        <div className="flex justify-end border-t px-5 py-3" style={{ borderColor: "var(--app-border)" }}>
-          <Link href={scopeDashboardPath(`/dashboard/admin/accounts/${student.id}`, dashboardBasePath)} className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>查看账号档案</Link>
+        <div className="flex justify-end border-t px-5 py-3" style={{ borderColor: "var(--border)" }}>
+          <Link href={scopeDashboardPath(`/dashboard/admin/accounts/${student.id}`, dashboardBasePath)} className="inline-flex h-8 items-center rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--border)" }}>查看账号档案</Link>
         </div>
       </DialogContent>
     </Dialog>

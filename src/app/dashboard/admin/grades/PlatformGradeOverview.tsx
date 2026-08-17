@@ -84,22 +84,22 @@ export function PlatformGradeOverview({
         <section
           className="flex flex-col gap-4 rounded-2xl border px-4 py-4 sm:flex-row sm:items-center"
           style={{
-            color: "var(--app-secondary)",
-            borderColor: "var(--app-secondary)",
-            backgroundColor: "var(--app-secondary-soft)",
+            color: "var(--support)",
+            borderColor: "var(--support)",
+            backgroundColor: "var(--support-surface)",
           }}
         >
           <div className="min-w-0 flex-1">
-            <p className="text-xs font-black">平台数据边界</p>
+            <p className="text-xs font-semibold">平台数据边界</p>
             <p className="mt-1 text-[11px] leading-5">
               平台负责人用于判断各机构成绩业务是否正常运行；学生成绩核对和复核处理仍由对应机构完成。
             </p>
           </div>
           <div className="shrink-0 text-left sm:text-right">
-            <p className="text-xl font-black">
+            <p className="text-xl font-semibold">
               {overallAverage == null ? "—" : `${overallAverage.toFixed(1)}%`}
             </p>
-            <p className="text-[10px] font-black">平台总体平均得分率</p>
+            <p className="text-[10px] font-semibold">平台总体平均得分率</p>
           </div>
         </section>
 
@@ -107,8 +107,8 @@ export function PlatformGradeOverview({
           <section
             className="rounded-2xl border px-4 py-3 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
             }}
           >
             机构成绩汇总暂时无法读取，请确认数据库迁移已经执行。
@@ -118,15 +118,15 @@ export function PlatformGradeOverview({
         <section className="app-card overflow-hidden rounded-3xl border">
           <div
             className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-4 sm:px-5"
-            style={{ borderColor: "var(--app-border)" }}
+            style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <h2 className="text-base font-black">机构成绩运行表</h2>
+              <h2 className="text-base font-semibold">机构成绩运行表</h2>
               <p className="app-muted-text mt-1 text-[10px]">
                 每行对应一个机构，仅展示汇总统计。
               </p>
             </div>
-            <span className="app-muted-text text-xs font-black">
+            <span className="app-muted-text text-xs font-semibold">
               共 {institutionCount} 个机构
             </span>
           </div>
@@ -134,18 +134,18 @@ export function PlatformGradeOverview({
             <table className="w-full min-w-[1280px] border-collapse text-left">
               <thead>
                 <tr
-                  className="app-muted-text border-b bg-[var(--app-soft-bg)] text-[10px]"
-                  style={{ borderColor: "var(--app-border)" }}
+                  className="app-muted-text border-b bg-[var(--surface-soft)] text-[10px]"
+                  style={{ borderColor: "var(--border)" }}
                 >
-                  <th className="w-[20%] px-5 py-3 font-black">机构</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">活跃学生</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">已发布任务</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">成绩记录</th>
-                  <th className="w-[11%] px-3 py-3 font-black">平均得分率</th>
-                  <th className="w-[10%] px-3 py-3 font-black">通过率</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">待复核</th>
-                  <th className="w-[11%] px-3 py-3 font-black">最近成绩</th>
-                  <th className="w-[8%] px-5 py-3 font-black">操作</th>
+                  <th className="w-[20%] px-5 py-3 font-semibold">机构</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">活跃学生</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">已发布任务</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">成绩记录</th>
+                  <th className="w-[11%] px-3 py-3 font-semibold">平均得分率</th>
+                  <th className="w-[10%] px-3 py-3 font-semibold">通过率</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">待复核</th>
+                  <th className="w-[11%] px-3 py-3 font-semibold">最近成绩</th>
+                  <th className="w-[8%] px-5 py-3 font-semibold">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -155,48 +155,48 @@ export function PlatformGradeOverview({
                     <tr
                       key={row.tenant_id}
                       className="border-b text-[11px] last:border-b-0"
-                      style={{ borderColor: "var(--app-border-soft)" }}
+                      style={{ borderColor: "var(--border-subtle)" }}
                     >
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <span
                             className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                             style={{
-                              color: "var(--app-secondary)",
-                              backgroundColor: "var(--app-secondary-soft)",
+                              color: "var(--support)",
+                              backgroundColor: "var(--support-surface)",
                             }}
                           >
                             <Building2 size={16} />
                           </span>
                           <div className="min-w-0">
-                            <p className="truncate font-black">{row.tenant_name}</p>
+                            <p className="truncate font-semibold">{row.tenant_name}</p>
                             <p className="app-muted-text mt-1 text-[9px]">
                               {row.tenant_slug} · {row.tenant_status === "active" ? "正常" : "已停用"}
                             </p>
                           </div>
                         </div>
                       </td>
-                      <td className="px-3 py-4 text-center font-mono font-black">
+                      <td className="px-3 py-4 text-center font-mono font-semibold">
                         {numberValue(row.active_student_count)}
                       </td>
-                      <td className="px-3 py-4 text-center font-mono font-black">
+                      <td className="px-3 py-4 text-center font-mono font-semibold">
                         {numberValue(row.published_assignment_count)}
                       </td>
-                      <td className="px-3 py-4 text-center font-mono font-black">
+                      <td className="px-3 py-4 text-center font-mono font-semibold">
                         {numberValue(row.grade_record_count)}
                       </td>
-                      <td className="px-3 py-4 font-mono font-black">
+                      <td className="px-3 py-4 font-mono font-semibold">
                         {formatPercent(row.average_score_percent)}
                       </td>
-                      <td className="px-3 py-4 font-mono font-black">
+                      <td className="px-3 py-4 font-mono font-semibold">
                         {formatPercent(row.pass_rate_percent)}
                       </td>
                       <td className="px-3 py-4 text-center">
                         <span
-                          className="inline-flex min-w-8 justify-center rounded-full px-2 py-1 font-mono text-[9px] font-black"
+                          className="inline-flex min-w-8 justify-center rounded-full px-2 py-1 font-mono text-[9px] font-semibold"
                           style={{
-                            color: pending > 0 ? "var(--app-warm)" : "var(--app-success)",
-                            backgroundColor: pending > 0 ? "var(--app-warm-soft)" : "var(--app-success-soft)",
+                            color: pending > 0 ? "var(--status-warning)" : "var(--status-success)",
+                            backgroundColor: pending > 0 ? "var(--status-warning-surface)" : "var(--status-success-surface)",
                           }}
                         >
                           {pending}
@@ -210,8 +210,8 @@ export function PlatformGradeOverview({
                       <td className="px-5 py-4">
                         <Link
                           href={`/dashboard/admin/tenants/${row.tenant_id}`}
-                          className="inline-flex items-center gap-1 font-black"
-                          style={{ color: "var(--app-secondary)" }}
+                          className="inline-flex items-center gap-1 font-semibold"
+                          style={{ color: "var(--support)" }}
                         >
                           查看机构
                           <ArrowRight size={11} />

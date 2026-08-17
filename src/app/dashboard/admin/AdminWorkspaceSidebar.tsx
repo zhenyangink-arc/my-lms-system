@@ -20,21 +20,7 @@ const NAVIGATION_PRIORITY: Record<string, number> = {
   "/dashboard/admin": 0,
   "/dashboard/admin/apps": 1,
   "/dashboard/courses": 0,
-  "/dashboard/admin/my-students": 0,
-  "/dashboard/admin/student-assignments": 1,
-  "/dashboard/admin/assignments": 2,
-  "/dashboard/admin/grades": 3,
-  "/dashboard/admin/records": 4,
-  "/dashboard/admin/conversation-practice": 5,
-  "/dashboard/admin/courses": 0,
-  "/dashboard/admin/digital-textbook": 1,
-  "/dashboard/admin/home-tree": 2,
-  "/dashboard/admin/question-bank": 3,
-  "/dashboard/admin/growth-toolbox": 4,
   "/dashboard/admin/library": 5,
-  "/dashboard/admin/universities": 0,
-  "/dashboard/admin/documents": 1,
-  "/dashboard/admin/visa": 2,
   "/dashboard/admin/announcements": 0,
   "/dashboard/admin/help": 1,
   "/dashboard/admin/tenants": 0,
@@ -167,7 +153,8 @@ export function AdminWorkspaceSidebar({
                           href={scopeDashboardPath(item.href, dashboardBasePath)}
                           onClick={() => setMobileOpen(false)}
                           data-active={active ? "true" : "false"}
-                          className="management-nav-item group/item flex h-10 items-center gap-2 overflow-hidden rounded-md px-2 text-sm"
+                          aria-current={active ? "page" : undefined}
+                          className="management-nav-item group/item flex h-10 items-center gap-2 overflow-hidden rounded-md px-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
                           title={collapsed ? item.label : undefined}
                           aria-label={item.label}
                         >
@@ -187,7 +174,12 @@ export function AdminWorkspaceSidebar({
       </nav>
 
       <div className="management-sidebar-footer shrink-0 border-t p-2">
-        <Link href={scopeDashboardPath("/dashboard/admin/profile", dashboardBasePath)} className="management-sidebar-account flex h-12 items-center gap-2 overflow-hidden rounded-md p-2" title={collapsed ? getAdminRoleLabel(role) : undefined}>
+        <Link
+          href={scopeDashboardPath("/dashboard/admin/profile", dashboardBasePath)}
+          aria-current={isActivePath(pathname, "/dashboard/admin/profile") ? "page" : undefined}
+          className="management-sidebar-account flex h-12 items-center gap-2 overflow-hidden rounded-md p-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+          title={collapsed ? getAdminRoleLabel(role) : undefined}
+        >
           <span className="management-account-avatar flex size-8 shrink-0 items-center justify-center rounded-md text-xs font-semibold">{workspaceLabel.slice(0, 1)}</span>
           <span className="management-sidebar-copy min-w-0 flex-1">
             <span className="block truncate text-sm font-medium">{getAdminRoleLabel(role)}</span>

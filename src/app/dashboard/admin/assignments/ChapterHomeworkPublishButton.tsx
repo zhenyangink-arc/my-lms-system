@@ -42,7 +42,7 @@ export function ChapterHomeworkPublishButton({
         title={title}
         className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-bold hover:underline disabled:opacity-50"
         style={{
-          color: isPublished ? "var(--app-success)" : "var(--app-accent)",
+          color: isPublished ? "var(--status-success)" : "var(--primary)",
         }}
       >
         <Icon size={12} />

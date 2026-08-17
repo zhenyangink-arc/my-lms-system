@@ -110,13 +110,6 @@ const learningGroups: NavGroup[] = [
       { label: "帮助中心", href: "/dashboard/help", icon: HelpCircle },
     ],
   },
-  {
-    label: "后台管理",
-    adminOnly: true,
-    items: [
-      { label: "管理中心", href: "/dashboard/admin", icon: PanelsTopLeft, teacherVisible: true },
-    ],
-  },
 ];
 
 const studyAbroadGroups: NavGroup[] = [
@@ -340,7 +333,7 @@ export function StudentSystemSidebar({
       <aside className="student-system-sidebar hidden shrink-0 flex-col md:flex" aria-label="学生端主导航">
         <Link
           href={dashboardBasePath}
-          className="student-system-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+          className="student-system-brand focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
           aria-label={studentAppSlug ? `返回${getStudentAppDefinition(studentAppSlug).title}首页` : "返回成长首页"}
         >
           <span className="student-system-brand-mark">
@@ -417,13 +410,13 @@ export function StudentSystemSidebar({
         <SheetContent
           id="student-mobile-navigation-sheet"
           side="bottom"
-          className="student-mobile-navigation-sheet max-h-[min(78dvh,680px)] overflow-hidden rounded-t-[24px] border-[var(--app-border)] bg-[var(--app-card-bg)] text-[var(--app-text)] md:hidden"
+          className="student-mobile-navigation-sheet max-h-[min(78dvh,680px)] overflow-hidden rounded-t-[24px] border-[var(--border)] bg-[var(--card)] text-[var(--foreground)] md:hidden"
         >
-          <SheetHeader className="border-b border-[var(--app-border)] px-5 pb-4 pt-5 text-left">
-            <SheetTitle className="text-lg font-bold text-[var(--app-text)]">
+          <SheetHeader className="border-b border-[var(--border)] px-5 pb-4 pt-5 text-left">
+            <SheetTitle className="text-lg font-bold text-[var(--foreground)]">
               全部功能
             </SheetTitle>
-            <SheetDescription className="text-sm text-[var(--app-muted)]">
+            <SheetDescription className="text-sm text-[var(--foreground-muted)]">
               选择要进入的学习与服务页面
             </SheetDescription>
           </SheetHeader>
@@ -431,7 +424,7 @@ export function StudentSystemSidebar({
           <nav className="min-h-0 overflow-y-auto px-4 pb-[calc(16px+env(safe-area-inset-bottom))]" aria-label="全部学生功能">
             {visibleGroups.map((group) => (
               <section key={group.label} className="py-3" aria-labelledby={`mobile-nav-${group.label}`}>
-                <h2 id={`mobile-nav-${group.label}`} className="px-2 pb-2 text-xs font-semibold tracking-wide text-[var(--app-muted)]">
+                <h2 id={`mobile-nav-${group.label}`} className="px-2 pb-2 text-xs font-semibold tracking-wide text-[var(--foreground-muted)]">
                   {group.label}
                 </h2>
                 <div className="grid grid-cols-2 gap-2">
@@ -458,7 +451,7 @@ export function StudentSystemSidebar({
               </section>
             ))}
 
-            <div className="border-t border-[var(--app-border)] pt-3">
+            <div className="border-t border-[var(--border)] pt-3">
               <LogoutButton appearance="sheet" />
             </div>
           </nav>

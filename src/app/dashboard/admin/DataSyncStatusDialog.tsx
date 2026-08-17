@@ -41,7 +41,7 @@ export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: n
           }}
         >
           <section role="dialog" aria-modal="true" aria-labelledby="sync-status-title" className="app-card w-full max-w-xl overflow-hidden rounded-xl border shadow-2xl">
-            <header className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--app-border)", backgroundColor: isHealthy ? "#f0fdf4" : "#fffbeb" }}>
+            <header className="flex items-center justify-between border-b px-4 py-3" style={{ borderColor: "var(--border)", backgroundColor: isHealthy ? "#f0fdf4" : "#fffbeb" }}>
               <div className="flex items-center gap-2.5">
                 <span className={`flex size-8 items-center justify-center rounded-full ${isHealthy ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>{isHealthy ? <CheckCircle2 size={15} /> : <CircleAlert size={15} />}</span>
                 <div><h2 id="sync-status-title" className="text-xs font-semibold">{isHealthy ? "数据同步正常" : "发现数据同步异常"}</h2><p className="app-muted-text mt-0.5 text-[9px]">已检查当前身份可访问的 {checkedCount} 个数据来源</p></div>
@@ -53,13 +53,13 @@ export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: n
               {isHealthy ? (
                 <div className="px-5 py-10 text-center"><CheckCircle2 className="mx-auto text-emerald-600" size={22} /><p className="mt-3 text-[11px] font-semibold">当前没有发现读取异常</p><p className="app-muted-text mt-1 text-[9px]">首页数据已按当前账号的数据范围完成检查。</p></div>
               ) : (
-                <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+                <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                   {issues.map((issue) => <div key={issue.label} className="grid grid-cols-[120px_minmax(0,1fr)] gap-3 px-4 py-3 text-[9px]"><span className="font-semibold text-amber-800">{issue.label}</span><span className="app-muted-text break-words">{issue.message}</span></div>)}
                 </div>
               )}
             </div>
 
-            <footer className="flex items-center justify-between border-t px-4 py-3" style={{ borderColor: "var(--app-border)" }}>
+            <footer className="flex items-center justify-between border-t px-4 py-3" style={{ borderColor: "var(--border)" }}>
               <p className="app-muted-text text-[8px]">这里只显示业务来源和安全错误摘要。</p>
               <button type="button" onClick={() => window.location.reload()} className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[9px] font-semibold hover:bg-black/[0.025]"><RefreshCw size={11} />重新检查</button>
             </footer>

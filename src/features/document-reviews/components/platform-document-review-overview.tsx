@@ -69,13 +69,13 @@ export function PlatformDocumentReviewOverview({
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"
         footer={
-          <p className="text-xs text-[var(--app-muted)]">
+          <p className="text-xs text-[var(--foreground-muted)]">
             平台负责人视图只展示机构级匿名汇总，不包含学生姓名、账号编号、目标大学、资料名称或审核意见。
           </p>
         }
       >
         <Table className="min-w-[1180px]">
-          <TableHeader className="bg-[var(--app-soft-bg)]">
+          <TableHeader className="bg-[var(--surface-soft)]">
             <TableRow>
               <TableHead>机构</TableHead>
               <TableHead>活跃学生</TableHead>
@@ -92,10 +92,10 @@ export function PlatformDocumentReviewOverview({
             {rows.map((row) => (
               <TableRow key={row.tenantId}>
                 <TableCell>
-                  <p className="font-semibold text-[var(--app-text)]">
+                  <p className="font-semibold text-[var(--foreground)]">
                     {row.tenantName}
                   </p>
-                  <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+                  <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
                     {row.tenantStatus === "active" ? "运行中" : "已停用"}
                   </p>
                 </TableCell>
@@ -105,14 +105,14 @@ export function PlatformDocumentReviewOverview({
                 <NumberCell value={row.pendingReviewCount} />
                 <NumberCell value={row.revisionRequiredCount} />
                 <NumberCell value={row.approvedCount} />
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime
                     value={row.oldestPendingAt}
                     options={DATE_TIME_OPTIONS}
                     fallback="暂无待确认"
                   />
                 </TableCell>
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime
                     value={row.lastActivityAt}
                     options={DATE_TIME_OPTIONS}

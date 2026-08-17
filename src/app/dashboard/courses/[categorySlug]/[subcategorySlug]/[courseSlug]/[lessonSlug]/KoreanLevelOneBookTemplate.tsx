@@ -31,14 +31,14 @@ export type KoreanEbookSectionDefinition = {
 };
 
 export const KOREAN_EBOOK_SECTION_TONES: Record<string, KoreanEbookSectionTone> = {
-  "第一步": { color: "#bd741e", soft: "#fff0df" },
-  "第二步": { color: "#3d6f9f", soft: "#eaf2fb" },
-  "第三步": { color: "#75559a", soft: "#f1eafb" },
-  "第四步": { color: "#b46624", soft: "#fff2df" },
-  "第五步": { color: "#a65b68", soft: "#fbeaec" },
-  "第六步": { color: "#3e7fa3", soft: "#eaf4fa" },
-  "第七步": { color: "#347b69", soft: "#e7f5f1" },
-  "第八步": { color: "#487a54", soft: "#e8f4eb" },
+  "第一步": { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  "第二步": { color: "var(--primary)", soft: "var(--accent)" },
+  "第三步": { color: "var(--primary)", soft: "var(--accent)" },
+  "第四步": { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  "第五步": { color: "var(--destructive)", soft: "var(--status-warning-surface)" },
+  "第六步": { color: "var(--primary)", soft: "var(--accent)" },
+  "第七步": { color: "var(--status-success)", soft: "var(--status-success-surface)" },
+  "第八步": { color: "var(--status-success)", soft: "var(--status-success-surface)" },
 };
 
 export function getKoreanEbookStepTone(step: string) {
@@ -49,26 +49,26 @@ export function getKoreanEbookStepTone(step: string) {
 }
 
 export function getKoreanEbookStepToneClass(step: string) {
-  if (step.includes("第一步")) return "bg-[#fff0df] text-[#bd741e]";
-  if (step.includes("第二步")) return "bg-[#eaf2fb] text-[#3d6f9f]";
-  if (step.includes("第三步")) return "bg-[#f1eafb] text-[#75559a]";
-  if (step.includes("第四步")) return "bg-[#fff2df] text-[#b46624]";
-  if (step.includes("第五步")) return "bg-[#fbeaec] text-[#a65b68]";
-  if (step.includes("第六步")) return "bg-[#eaf4fa] text-[#3e7fa3]";
-  if (step.includes("第七步")) return "bg-[#e7f5f1] text-[#347b69]";
-  return "bg-[#e8f4eb] text-[#487a54]";
+  if (step.includes("第一步")) return "bg-[var(--status-warning-surface)] text-[var(--status-warning)]";
+  if (step.includes("第二步")) return "bg-[var(--accent)] text-[var(--primary)]";
+  if (step.includes("第三步")) return "bg-[var(--accent)] text-[var(--primary)]";
+  if (step.includes("第四步")) return "bg-[var(--status-warning-surface)] text-[var(--status-warning)]";
+  if (step.includes("第五步")) return "bg-[var(--status-warning-surface)] text-[var(--destructive)]";
+  if (step.includes("第六步")) return "bg-[var(--accent)] text-[var(--primary)]";
+  if (step.includes("第七步")) return "bg-[var(--status-success-surface)] text-[var(--status-success)]";
+  return "bg-[var(--status-success-surface)] text-[var(--status-success)]";
 }
 
 export function getKoreanEbookVocabularyTone(type: string) {
-  if (type.includes("名词")) return "bg-[#e8f0fb] text-[#3d6f9f]";
-  if (type.includes("动词")) return "bg-[#fff0df] text-[#b46624]";
-  if (type.includes("代词")) return "bg-[#f1eafb] text-[#75559a]";
-  if (type.includes("副词")) return "bg-[#fff6d9] text-[#a37a14]";
-  if (type.includes("形容词")) return "bg-[#fcecf4] text-[#a65778]";
+  if (type.includes("名词")) return "bg-[var(--accent)] text-[var(--primary)]";
+  if (type.includes("动词")) return "bg-[var(--status-warning-surface)] text-[var(--status-warning)]";
+  if (type.includes("代词")) return "bg-[var(--accent)] text-[var(--primary)]";
+  if (type.includes("副词")) return "bg-[var(--status-warning-surface)] text-[var(--status-warning)]";
+  if (type.includes("形容词")) return "bg-[var(--status-warning-surface)] text-[var(--destructive)]";
   if (type.includes("表达") || type.includes("回答")) {
-    return "bg-[#e6f4ef] text-[#347b69]";
+    return "bg-[var(--status-success-surface)] text-[var(--status-success)]";
   }
-  return "bg-[#fbeaec] text-[#a65b68]";
+  return "bg-[var(--status-warning-surface)] text-[var(--destructive)]";
 }
 
 function formatBookPage(page: number) {
@@ -172,20 +172,20 @@ export const KoreanEbookPage = forwardRef<
     <div
       ref={ref}
       data-book-page={number}
-      className="h-full overflow-hidden bg-[#fffef9] text-[#294f43] shadow-[inset_0_0_28px_rgba(57,78,67,0.08)]"
+      className="h-full overflow-hidden bg-[var(--card)] text-[var(--foreground)] shadow-sm"
     >
       {cover ? (
         children
       ) : (
         <div className="book-black-copy relative flex h-full flex-col px-10 py-6">
-          <div className="flex min-h-8 items-start justify-between gap-3 border-b border-[#dce8e1] pb-2 text-[12px] font-black tracking-[0.12em]">
-            <span className="text-[#303432]">{header}</span>
+          <div className="flex min-h-8 items-start justify-between gap-3 border-b border-[var(--border)] pb-2 text-[12px] font-bold tracking-[0.12em]">
+            <span className="text-[var(--foreground)]">{header}</span>
             {learningTools && (
               <div className="flex shrink-0 items-center gap-1.5 tracking-normal">
                 <button
                   type="button"
                   onClick={speakPageKorean}
-                  className="flex h-7 w-7 items-center justify-center rounded-full border border-[#cfe2d9] bg-[#f7fbf9] text-[#238777] transition hover:bg-[#e8f4ef]"
+                  className="flex h-7 w-7 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--status-success-surface)] text-[var(--status-success)] transition hover:bg-[var(--status-success-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                   aria-label="朗读本页韩语"
                   title="朗读本页韩语"
                 >
@@ -210,7 +210,7 @@ export const KoreanEbookPage = forwardRef<
           </div>
           {sectionMeta && (
             <div
-              className="absolute right-0 top-28 flex h-28 w-8 items-center justify-center rounded-l-xl text-[10px] font-black tracking-[0.08em]"
+              className="absolute right-0 top-28 flex h-28 w-8 items-center justify-center rounded-l-xl text-[10px] font-bold tracking-[0.08em]"
               style={{
                 backgroundColor: sectionMeta.soft,
                 color: sectionMeta.color,
@@ -238,7 +238,7 @@ export const KoreanEbookPage = forwardRef<
           >
             {children}
           </div>
-          <div className="mt-3 flex justify-between border-t border-[#e4ebe7] pt-2 text-[12px] font-bold text-[#92a099]">
+          <div className="mt-3 flex justify-between border-t border-[var(--border)] pt-2 text-[12px] font-bold text-[var(--foreground-muted)]">
             <span>
               {sectionMeta
                 ? `韩国语 1级 · ${sectionMeta.label} · ${sectionMeta.progress}`
@@ -275,14 +275,14 @@ export function KoreanEbookHeading({
           {icon}
         </span>
         <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
-          <h2 className="text-2xl font-black leading-tight text-[#173f4a]">
+          <h3 className="text-2xl font-bold leading-tight text-[var(--foreground)]">
             {title}
-          </h2>
+          </h3>
           {action}
         </div>
       </div>
       {description && (
-        <p className="mt-3 text-sm leading-7 text-[#60736a]">{description}</p>
+        <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">{description}</p>
       )}
     </div>
   );
@@ -312,29 +312,29 @@ export function KoreanEbookSectionDivider({
             {icon}
           </span>
           <p
-            className="text-sm font-black tracking-[0.16em]"
+            className="text-sm font-bold tracking-[0.16em]"
             style={{ color: tone.color }}
           >
             LEARNING SECTION
           </p>
         </div>
         <p
-          className="mt-9 text-lg font-black tracking-[0.14em]"
+          className="mt-9 text-lg font-bold tracking-[0.14em]"
           style={{ color: tone.color }}
         >
           {step}
         </p>
-        <h2 className="mt-3 text-4xl font-black tracking-tight text-[#1f2e28]">
+        <h3 className="mt-3 text-4xl font-bold tracking-tight text-[var(--foreground)]">
           {title}
-        </h2>
+        </h3>
         <div
           className="mt-7 rounded-2xl px-5 py-4"
           style={{ backgroundColor: tone.soft }}
         >
-          <p className="text-xs font-black" style={{ color: tone.color }}>
+          <p className="text-xs font-bold" style={{ color: tone.color }}>
             本区学习目标
           </p>
-          <p className="mt-2 text-sm leading-7 text-[#3f5149]">{goal}</p>
+          <p className="mt-2 text-sm leading-7 text-[var(--foreground)]">{goal}</p>
         </div>
       </div>
     </div>
@@ -357,7 +357,8 @@ export function KoreanEbookRevealButton({
     <button
       type="button"
       onClick={onClick}
-      className="shrink-0 rounded-full border border-[#d7e8e1] bg-[#f7fbf9] px-3 py-1.5 text-[11px] font-black text-[#347b69] transition hover:bg-[#eaf5f0]"
+      aria-pressed={shown}
+      className="shrink-0 rounded-full border border-[var(--border)] bg-[var(--status-success-surface)] px-3 py-1.5 text-[11px] font-bold text-[var(--status-success)] transition hover:bg-[var(--status-success-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
     >
       {shown ? `隐藏${target}` : `显示${target}`}
     </button>
@@ -377,7 +378,7 @@ export function KoreanEbookSpeakButton({
     <button
       type="button"
       onClick={() => onSpeak(text)}
-      className={`flex shrink-0 items-center justify-center bg-[#e8f4ef] text-[#238777] transition hover:bg-[#d8eee5] ${
+      className={`flex shrink-0 items-center justify-center bg-[var(--status-success-surface)] text-[var(--status-success)] transition hover:bg-[var(--status-success-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ${
         compact ? "h-5 w-5 rounded-full" : "h-8 w-8 rounded-xl"
       }`}
       aria-label={`播放 ${text}`}
@@ -411,20 +412,20 @@ export function KoreanEbookVocabularyCard({
       type="button"
       onClick={() => onSpeak(korean)}
       aria-label={`播放${korean}的读音`}
-      className={`rounded-xl border border-[#dce8e1] bg-white text-left transition hover:border-[#79b9aa] hover:bg-[#f5faf8] ${
+      className={`rounded-xl border border-[var(--border)] bg-white text-left transition hover:border-[var(--border)] hover:bg-[var(--status-success-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ${
         compact ? "px-2.5 py-1.5" : "px-3 py-2.5"
       }`}
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3
-            className={`${compact ? "text-[13px]" : "text-[15px]"} font-black leading-5 text-[#173f4a]`}
+          <h4
+            className={`${compact ? "text-[13px]" : "text-[15px]"} font-bold leading-5 text-[var(--foreground)]`}
           >
             {korean}
-          </h3>
+          </h4>
           {displayedPronunciation && (
             <span
-              className={`block font-bold leading-4 text-[#5f7f75] ${
+              className={`block font-bold leading-4 text-[var(--foreground-secondary)] ${
                 compact ? "text-[9px]" : "mt-0.5 text-[10px]"
               }`}
             >
@@ -441,7 +442,7 @@ export function KoreanEbookVocabularyCard({
             <Volume2 size={compact ? 9 : 11} />
           </span>
           <span
-            className={`rounded-full px-1.5 font-black ${
+            className={`rounded-full px-1.5 font-bold ${
               compact ? "py-px text-[8px]" : "py-0.5 text-[9px]"
             } ${tone}`}
           >
@@ -475,13 +476,13 @@ export function KoreanEbookTableOfContents({
 }) {
   return (
     <div className="flex h-full flex-col justify-center text-center">
-      <p className="text-xs font-black tracking-[0.18em] text-[#238777]">
+      <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
         LESSON {String(lessonNumber).padStart(2, "0")}
       </p>
-      <h2 className="mt-3 text-2xl font-black tracking-tight text-[#173f4a]">
+      <h3 className="mt-3 text-2xl font-bold tracking-tight text-[var(--foreground)]">
         目录
-      </h2>
-      <ol className="mt-7 divide-y divide-[#dce8e1] rounded-2xl border border-[#dce8e1] bg-white px-5 text-left">
+      </h3>
+      <ol className="mt-7 divide-y divide-[var(--border)] rounded-2xl border border-[var(--border)] bg-white px-5 text-left">
         {entries.map(({ step, title, pageRange, detail }) => {
           const startPage = pageRange.slice(0, 2);
           return (
@@ -489,18 +490,18 @@ export function KoreanEbookTableOfContents({
               <button
                 type="button"
                 onClick={() => onNavigate(Number.parseInt(pageRange, 10))}
-                className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[#526c60] transition hover:text-[#238777]"
+                className="flex w-full items-center justify-between py-3 text-left text-sm font-bold text-[var(--foreground-secondary)] transition hover:text-[var(--status-success)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
               >
                 <span className="flex items-baseline gap-2">
                   <span>{step}. {title}</span>
                   {detail && (
-                    <span className="text-[11px] font-bold text-[#81938a]">
+                    <span className="text-[11px] font-bold text-[var(--foreground-secondary)]">
                       {detail}
                     </span>
                   )}
                 </span>
                 <span
-                  className="font-black"
+                  className="font-bold"
                   style={{ color: pageMeta[startPage]?.color }}
                 >
                   {startPage}
@@ -523,37 +524,37 @@ export function KoreanEbookCover({
 }) {
   const lessonNumber = String(lesson.number).padStart(2, "0");
   return (
-    <div className="relative h-full overflow-hidden bg-[#f4efe4] text-[#232726]">
-      <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[38px] border-[#e7dac6]" />
-      <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#dcebe4]" />
+    <div className="relative h-full overflow-hidden bg-[var(--status-warning-surface)] text-[var(--foreground)]">
+      <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[38px] border-[var(--border)]" />
+      <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[var(--status-success-surface)]" />
       <div className="relative flex h-full flex-col px-14 py-12">
-        <div className="flex items-center justify-between text-[11px] font-black tracking-[0.2em] text-[#6f746f]">
+        <div className="flex items-center justify-between text-[11px] font-bold tracking-[0.2em] text-[var(--foreground-secondary)]">
           <span>韩国语</span>
           <span>一级</span>
         </div>
         <div className="my-auto">
-          <p className="text-sm font-black tracking-[0.28em] text-[#b85f4d]">
+          <p className="text-sm font-bold tracking-[0.28em] text-[var(--destructive)]">
             韩语1级学习和语法全解
           </p>
           <div className="mt-7 flex items-end gap-6">
-            <span className="text-[76px] font-black leading-none tracking-[-0.07em]">
+            <span className="text-[76px] font-bold leading-none tracking-[-0.07em]">
               {lessonNumber}
             </span>
-            <span className="mb-2 text-lg font-black tracking-[0.2em] text-[#b85f4d]">
+            <span className="mb-2 text-lg font-bold tracking-[0.2em] text-[var(--destructive)]">
               LESSON
             </span>
           </div>
-          <div className="mt-9 border-t border-[#232726]/25 pt-7">
-            <h1 className="text-[42px] font-black leading-tight tracking-[-0.04em]">
+          <div className="mt-9 border-t border-[var(--foreground)]/25 pt-7">
+            <h3 className="text-[42px] font-bold leading-tight tracking-[-0.04em]">
               {lesson.korean}
-            </h1>
-            <p className="mt-4 text-xl font-black text-[#555b58]">
+            </h3>
+            <p className="mt-4 text-xl font-bold text-[var(--foreground)]">
               {lesson.chinese}
             </p>
           </div>
         </div>
-        <div className="rounded-3xl bg-[#424b47] px-7 py-6 text-white">
-          <p className="text-xs font-black tracking-[0.18em] text-[#d8c39b]">
+        <div className="rounded-3xl bg-[var(--foreground)] px-7 py-6 text-white">
+          <p className="text-xs font-bold tracking-[0.18em] text-[var(--border)]">
             第 {lessonNumber} 课
           </p>
           <p className="mt-3 text-sm font-bold text-white/70">{subtitle}</p>

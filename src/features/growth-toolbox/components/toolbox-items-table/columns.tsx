@@ -45,10 +45,10 @@ export function getGrowthToolboxItemColumns(
     header: sortableHeader("工具入口"),
     cell: ({ row }) => (
       <div className="min-w-64 max-w-96">
-        <p className="truncate font-semibold text-[var(--app-text)]">
+        <p className="truncate font-semibold text-[var(--foreground)]">
           {row.original.title}
         </p>
-        <p className="mt-1 line-clamp-2 text-[11px] text-[var(--app-muted)]">
+        <p className="mt-1 line-clamp-2 text-[11px] text-[var(--foreground-muted)]">
           {row.original.description || "暂无说明"}
         </p>
       </div>
@@ -58,7 +58,7 @@ export function getGrowthToolboxItemColumns(
     accessorKey: "slug",
     header: sortableHeader("标识"),
     cell: ({ row }) => (
-      <span className="font-mono text-[11px] text-[var(--app-text-soft)]">
+      <span className="font-mono text-[11px] text-[var(--foreground-secondary)]">
         {row.original.slug}
       </span>
     ),
@@ -68,11 +68,11 @@ export function getGrowthToolboxItemColumns(
     header: sortableHeader("关联课程"),
     cell: ({ row }) => (
       <div className="min-w-40">
-        <p className="font-medium text-[var(--app-text-soft)]">
+        <p className="font-medium text-[var(--foreground-secondary)]">
           {row.original.relatedCourseTitle}
         </p>
         {row.original.relatedCourseId && (
-          <p className="mt-0.5 font-mono text-[10px] text-[var(--app-muted)]">
+          <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
             …{row.original.relatedCourseId.slice(-8)}
           </p>
         )}
@@ -83,7 +83,7 @@ export function getGrowthToolboxItemColumns(
     accessorKey: "href",
     header: sortableHeader("学生端路径"),
     cell: ({ row }) => (
-      <span className="block min-w-56 truncate font-mono text-[11px] text-[var(--app-muted)]">
+      <span className="block min-w-56 truncate font-mono text-[11px] text-[var(--foreground-muted)]">
         {row.original.href}
       </span>
     ),
@@ -92,7 +92,7 @@ export function getGrowthToolboxItemColumns(
     accessorKey: "iconName",
     header: sortableHeader("图标"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-text-soft)]">{row.original.iconName}</span>
+      <span className="text-[var(--foreground-secondary)]">{row.original.iconName}</span>
     ),
   },
   {
@@ -131,7 +131,7 @@ export function getGrowthToolboxItemColumns(
             courses={courses}
           />
         ) : (
-          <span className="text-[11px] text-[var(--app-muted)]">只读</span>
+          <span className="text-[11px] text-[var(--foreground-muted)]">只读</span>
         )}
       </div>
     ),

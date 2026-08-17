@@ -1,4 +1,5 @@
-import { MessageCircleMore } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, MessageCircleMore } from "lucide-react";
+import Link from "next/link";
 
 import {
   CONVERSATION_CATEGORY_LABELS,
@@ -49,6 +50,26 @@ type ProgressRow = {
 };
 
 type ProfileRow = { id: string; full_name: string | null; email: string | null };
+
+type ProgressSortKey =
+  | "student"
+  | "status"
+  | "practiceCount"
+  | "confidence"
+  | "lastPracticedAt";
+type ProgressSortDirection = "ascending" | "descending";
+
+const PROGRESS_SORT_KEYS = new Set<ProgressSortKey>([
+  "student",
+  "status",
+  "practiceCount",
+  "confidence",
+  "lastPracticedAt",
+]);
+
+function isProgressSortKey(value: string | undefined): value is ProgressSortKey {
+  return Boolean(value && PROGRESS_SORT_KEYS.has(value as ProgressSortKey));
+}
 
 function strings(value: unknown): string[] {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
@@ -102,9 +123,69 @@ function getCompleteness(row: ScenarioRow) {
   return { completeness: Math.round(((checks.length - missingItems.length) / checks.length) * 100), missingItems };
 }
 
-function PracticeDataTable({ progress, studentNames }: { progress: ProgressRow[]; studentNames: Map<string, string> }) {
+function SortableProgressHeader({
+  title,
+  column,
+  scenarioId,
+  routeBasePath,
+  sortKey,
+  sortDirection,
+}: {
+  title: string;
+  column: ProgressSortKey;
+  scenarioId: string;
+  routeBasePath: string;
+  sortKey: ProgressSortKey | null;
+  sortDirection: ProgressSortDirection;
+}) {
+  const active = sortKey === column;
+  const nextDirection =
+    active && sortDirection === "ascending" ? "descending" : "ascending";
+  const query = new URLSearchParams({
+    scenario: scenarioId,
+    progressSort: column,
+    progressDirection: nextDirection,
+  });
+  const SortIcon = active
+    ? sortDirection === "ascending"
+      ? ArrowUp
+      : ArrowDown
+    : ArrowUpDown;
+
   return (
-    <section className="mt-8 border-t pt-6" style={{ borderColor: "var(--app-border)" }}>
+    <th
+      aria-sort={active ? sortDirection : "none"}
+      className="px-3 py-2.5 font-medium"
+    >
+      <Link
+        href={`${routeBasePath}?${query.toString()}`}
+        className="inline-flex items-center gap-1 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+        aria-label={`${title}排序，${active ? `当前${sortDirection === "ascending" ? "升序" : "降序"}` : "当前未排序"}`}
+      >
+        {title}
+        <SortIcon size={12} aria-hidden="true" />
+      </Link>
+    </th>
+  );
+}
+
+function PracticeDataTable({
+  progress,
+  studentNames,
+  scenarioId,
+  routeBasePath,
+  sortKey,
+  sortDirection,
+}: {
+  progress: ProgressRow[];
+  studentNames: Map<string, string>;
+  scenarioId: string;
+  routeBasePath: string;
+  sortKey: ProgressSortKey | null;
+  sortDirection: ProgressSortDirection;
+}) {
+  return (
+    <section className="mt-8 border-t pt-6" style={{ borderColor: "var(--border)" }}>
       <div className="mb-3 flex items-end justify-between gap-3">
         <div>
           <h3 className="text-[13px] font-semibold">学生练习记录</h3>
@@ -112,24 +193,24 @@ function PracticeDataTable({ progress, studentNames }: { progress: ProgressRow[]
         </div>
         <span className="app-muted-text font-mono text-[10px]">{progress.length} RESULTS</span>
       </div>
-      <div className="overflow-x-auto border-y" style={{ borderColor: "var(--app-border)" }}>
+      <div className="overflow-x-auto border-y" style={{ borderColor: "var(--border)" }}>
         <table className="w-full min-w-[780px] border-collapse text-left">
           <thead>
-            <tr className="app-muted-text border-b text-[10px]" style={{ borderColor: "var(--app-border)" }}>
-              <th className="px-3 py-2.5 font-medium">学生</th>
-              <th className="px-3 py-2.5 font-medium">状态</th>
-              <th className="px-3 py-2.5 font-medium">练习次数</th>
-              <th className="px-3 py-2.5 font-medium">自信等级</th>
-              <th className="px-3 py-2.5 font-medium">最近练习</th>
+            <tr className="app-muted-text border-b text-[10px]" style={{ borderColor: "var(--border)" }}>
+              <SortableProgressHeader title="学生" column="student" scenarioId={scenarioId} routeBasePath={routeBasePath} sortKey={sortKey} sortDirection={sortDirection} />
+              <SortableProgressHeader title="状态" column="status" scenarioId={scenarioId} routeBasePath={routeBasePath} sortKey={sortKey} sortDirection={sortDirection} />
+              <SortableProgressHeader title="练习次数" column="practiceCount" scenarioId={scenarioId} routeBasePath={routeBasePath} sortKey={sortKey} sortDirection={sortDirection} />
+              <SortableProgressHeader title="自信等级" column="confidence" scenarioId={scenarioId} routeBasePath={routeBasePath} sortKey={sortKey} sortDirection={sortDirection} />
+              <SortableProgressHeader title="最近练习" column="lastPracticedAt" scenarioId={scenarioId} routeBasePath={routeBasePath} sortKey={sortKey} sortDirection={sortDirection} />
               <th className="w-[36%] px-3 py-2.5 font-medium">练习复盘</th>
             </tr>
           </thead>
           <tbody>
             {progress.map((item) => (
-              <tr key={item.user_id} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+              <tr key={item.user_id} className="border-b text-[11px] last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                 <td className="px-3 py-3 font-medium">{studentNames.get(item.user_id) || "学生"}</td>
                 <td className="px-3 py-3">
-                  <span className="inline-flex rounded-full px-2 py-1 text-[9px] font-medium" style={{ color: item.status === "completed" ? "var(--app-success)" : "var(--app-accent)", backgroundColor: item.status === "completed" ? "var(--app-success-soft)" : "var(--app-accent-soft)" }}>
+                  <span className="inline-flex rounded-full px-2 py-1 text-[9px] font-medium" style={{ color: item.status === "completed" ? "var(--status-success)" : "var(--primary)", backgroundColor: item.status === "completed" ? "var(--status-success-surface)" : "var(--accent)" }}>
                     {item.status === "completed" ? "已掌握" : "练习中"}
                   </span>
                 </td>
@@ -155,7 +236,12 @@ export async function ConversationPracticeManagementContent({
   routeBasePath = "/dashboard/admin/conversation-practice",
   embedded = false,
 }: {
-  searchParams: Promise<{ scenario?: string; mode?: string }>;
+  searchParams: Promise<{
+    scenario?: string;
+    mode?: string;
+    progressSort?: string;
+    progressDirection?: string;
+  }>;
   studentAppId?: string;
   routeBasePath?: string;
   embedded?: boolean;
@@ -218,6 +304,34 @@ export async function ConversationPracticeManagementContent({
   const studentNames = new Map(
     ((selectedProfiles ?? []) as ProfileRow[]).map((student) => [student.id, student.full_name?.trim() || student.email || "学生"])
   );
+  const progressSortKey = isProgressSortKey(params.progressSort)
+    ? params.progressSort
+    : null;
+  const progressSortDirection: ProgressSortDirection =
+    params.progressDirection === "descending" ? "descending" : "ascending";
+  const sortedSelectedProgress = progressSortKey
+    ? [...selectedProgress].sort((a, b) => {
+        let comparison = 0;
+        if (progressSortKey === "student") {
+          comparison = (studentNames.get(a.user_id) ?? "学生").localeCompare(
+            studentNames.get(b.user_id) ?? "学生",
+            "zh-CN",
+          );
+        } else if (progressSortKey === "status") {
+          comparison = a.status.localeCompare(b.status);
+        } else if (progressSortKey === "practiceCount") {
+          comparison = a.practice_count - b.practice_count;
+        } else if (progressSortKey === "confidence") {
+          comparison = (a.confidence ?? -1) - (b.confidence ?? -1);
+        } else {
+          comparison =
+            new Date(a.last_practiced_at).getTime() -
+            new Date(b.last_practiced_at).getTime();
+        }
+        if (comparison === 0) comparison = a.user_id.localeCompare(b.user_id);
+        return progressSortDirection === "ascending" ? comparison : -comparison;
+      })
+    : selectedProgress;
 
   const rows: ConversationScenarioTableRow[] = scenarios.map((scenario) => {
     const scenarioProgress = progressByScenario.get(scenario.id) ?? [];
@@ -277,7 +391,7 @@ export async function ConversationPracticeManagementContent({
             <ConversationScenarioForm workspace />
           ) : selectedScenario ? (
             <>
-              <div className="mb-6 flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "var(--app-border)" }}>
+              <div className="mb-6 flex flex-col gap-3 border-b pb-4 sm:flex-row sm:items-center sm:justify-between" style={{ borderColor: "var(--border)" }}>
                 <div>
                   <p className="app-muted-text text-[10px]">当前状态</p>
                   <p className="mt-1 text-[12px] font-semibold">{CONVERSATION_STATUS_LABELS[selectedScenario.status]}</p>
@@ -287,7 +401,14 @@ export async function ConversationPracticeManagementContent({
                 </div>
               </div>
               <ConversationScenarioForm scenario={selectedScenario} workspace />
-              <PracticeDataTable progress={selectedProgress} studentNames={studentNames} />
+              <PracticeDataTable
+                progress={sortedSelectedProgress}
+                studentNames={studentNames}
+                scenarioId={selectedScenario.id}
+                routeBasePath={routeBasePath}
+                sortKey={progressSortKey}
+                sortDirection={progressSortDirection}
+              />
             </>
           ) : null}
         </ConversationScenarioTable>
@@ -299,7 +420,12 @@ export async function ConversationPracticeManagementContent({
 export default function ConversationPracticeManagementPage({
   searchParams,
 }: {
-  searchParams: Promise<{ scenario?: string; mode?: string }>;
+  searchParams: Promise<{
+    scenario?: string;
+    mode?: string;
+    progressSort?: string;
+    progressDirection?: string;
+  }>;
 }) {
   return (
     <ConversationPracticeManagementContent searchParams={searchParams} />

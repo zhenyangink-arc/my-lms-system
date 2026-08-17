@@ -40,7 +40,7 @@ function ConfirmDeleteButton({ label }: { label: string }) {
       disabled={pending}
       className="gap-2 bg-red-600 text-white hover:bg-red-700 disabled:opacity-60"
     >
-      <Trash2 size={14} />
+      <Trash2 size={14} aria-hidden="true" />
       {pending ? "正在删除…" : label}
     </AlertDialogAction>
   );
@@ -63,16 +63,16 @@ export function StudentModuleCardDeleteDialog({
     <AlertDialog>
       <AlertDialogTrigger
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-black text-red-700 transition hover:bg-red-100"
+        className="inline-flex items-center gap-1.5 rounded-xl border border-red-200 bg-red-50 px-3 py-2 text-xs font-semibold text-red-700 transition hover:bg-red-100"
       >
-        <Trash2 size={13} />删除{cardLabel}
+        <Trash2 size={13} aria-hidden="true" />删除{cardLabel}
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
           <span className="mb-2 inline-flex h-11 w-11 items-center justify-center rounded-xl bg-red-50 text-red-700">
-            <TriangleAlert size={21} />
+            <TriangleAlert size={21} aria-hidden="true" />
           </span>
-          <AlertDialogTitle className="font-black text-red-700">
+          <AlertDialogTitle className="font-semibold text-red-700">
             删除 {studentName} 的{cardLabel}？
           </AlertDialogTitle>
           <AlertDialogDescription className="leading-6">

@@ -1,5 +1,5 @@
 .pageShell {
-  color: var(--app-text);
+  color: var(--foreground);
   background: transparent;
   font-family:
     "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC",
@@ -27,7 +27,7 @@
   z-index: -1;
   border-radius: 999px;
   content: "";
-  border: 2px solid color-mix(in srgb, var(--app-accent) 30%, transparent);
+  border: 2px solid color-mix(in srgb, var(--primary) 30%, transparent);
   opacity: 0;
 }
 
@@ -36,7 +36,7 @@
 .themeScope :global([class*="border-[#"]),
 .themeScope :global([class*="border-white"]),
 .themeScope :global([class*="border-dashed"]) {
-  border-color: var(--app-border) !important;
+  border-color: var(--border) !important;
 }
 
 .themeScope :global([class*="bg-white"]),
@@ -51,52 +51,52 @@
 .themeScope :global([class*="bg-[#5"]),
 .themeScope :global([class*="bg-[#4"]),
 .themeScope :global([class*="bg-[#3"]) {
-  background-color: var(--app-card-bg) !important;
+  background-color: var(--card) !important;
 }
 
 .themeScope :global([class*="text-[#"]) {
-  color: var(--app-text-soft) !important;
+  color: var(--foreground-secondary) !important;
 }
 
 .themeScope :global([class*="placeholder:text-[#"]) {
-  color: var(--app-muted-light) !important;
+  color: var(--foreground-subtle) !important;
 }
 
 .themeScope :global([class*="from-[#"]) {
-  --tw-gradient-from: var(--app-secondary) var(--tw-gradient-from-position) !important;
-  --tw-gradient-to: color-mix(in srgb, var(--app-secondary) 0%, transparent) var(--tw-gradient-to-position) !important;
+  --tw-gradient-from: var(--support) var(--tw-gradient-from-position) !important;
+  --tw-gradient-to: color-mix(in srgb, var(--support) 0%, transparent) var(--tw-gradient-to-position) !important;
 }
 
 .themeScope :global([class*="to-[#"]) {
-  --tw-gradient-to: var(--app-warm) var(--tw-gradient-to-position) !important;
+  --tw-gradient-to: var(--status-warning) var(--tw-gradient-to-position) !important;
 }
 
 .themeScope :global([class*="ring-[#"]) {
-  --tw-ring-color: var(--app-accent-soft) !important;
+  --tw-ring-color: var(--accent) !important;
 }
 
 .themeScope :global([class*="shadow-["]) {
-  box-shadow: var(--app-shadow) !important;
+  box-shadow: var(--shadow-floating) !important;
 }
 
 .themeScope :global([class*="bg-[#5f9af4]"]),
 .themeScope :global([class*="bg-[#3388b4]"]) {
-  background-color: var(--app-accent) !important;
-  color: var(--app-accent-contrast) !important;
+  background-color: var(--primary) !important;
+  color: var(--primary-foreground) !important;
 }
 
 .themeScope :global([class*="hover:bg-[#"]:hover) {
-  background-color: var(--app-accent-soft) !important;
+  background-color: var(--accent) !important;
 }
 
 .themeScope :global([class*="bg-[#e7f7ee]"]),
 .themeScope :global([class*="bg-[#e9f7ef]"]) {
-  background-color: var(--app-success-soft) !important;
+  background-color: var(--status-success-surface) !important;
 }
 
 .themeScope :global([class*="text-[#418c62]"]),
 .themeScope :global([class*="text-[#4da374]"]) {
-  color: var(--app-success) !important;
+  color: var(--status-success) !important;
 }
 
 .micActive::before {

@@ -133,7 +133,7 @@ function getStatusAccent({
     return color.inProgress;
   }
 
-  return "var(--app-muted)";
+  return "var(--foreground-muted)";
 }
 
 export default async function SubcategoryCoursesPage({
@@ -270,12 +270,12 @@ export default async function SubcategoryCoursesPage({
   const isFocusCategory =
     parentCategory.slug === "service" || parentCategory.slug === "korean";
   const focusAccent = parentCategory.slug === "service"
-    ? "var(--app-accent)"
-    : "var(--app-secondary)";
+    ? "var(--primary)"
+    : "var(--support)";
   const color = isFocusCategory
     ? {
         accent: focusAccent,
-        completed: "var(--app-success)",
+        completed: "var(--status-success)",
         inProgress: focusAccent,
       }
     : accentColorMap[
@@ -314,20 +314,20 @@ export default async function SubcategoryCoursesPage({
           <Link
             href={`/dashboard/courses/${parentCategory.slug}`}
             className="inline-flex items-center gap-2 text-sm font-medium transition"
-            style={{ color: "var(--app-muted)" }}
+            style={{ color: "var(--foreground-muted)" }}
           >
             <ArrowLeft size={16} />
             返回{parentCategory.title}
           </Link>
 
-          <span className="text-sm" style={{ color: "var(--app-muted-light)" }}>
+          <span className="text-sm" style={{ color: "var(--foreground-subtle)" }}>
             /
           </span>
 
           <Link
             href="/dashboard/courses"
             className="text-sm font-medium transition"
-            style={{ color: "var(--app-muted)" }}
+            style={{ color: "var(--foreground-muted)" }}
           >
             我的课程
           </Link>
@@ -341,8 +341,8 @@ export default async function SubcategoryCoursesPage({
               ? {
                   background:
                     parentCategory.slug === "service"
-                      ? "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-start))"
-                      : "linear-gradient(125deg, var(--app-card-bg), var(--app-hero-end))",
+                      ? "linear-gradient(125deg, var(--card), var(--card))"
+                      : "linear-gradient(125deg, var(--card), var(--accent))",
                 }
               : undefined
           }
@@ -354,8 +354,8 @@ export default async function SubcategoryCoursesPage({
                 <span
                   className="rounded-full border px-3 py-1 text-xs font-semibold"
                   style={{
-                    backgroundColor: "var(--app-soft-bg)",
-                    borderColor: "var(--app-border)",
+                    backgroundColor: "var(--surface-soft)",
+                    borderColor: "var(--border)",
                     color: color.accent,
                   }}
                 >
@@ -368,35 +368,35 @@ export default async function SubcategoryCoursesPage({
               </div>
 
               <h2
-                className="text-2xl font-black tracking-tight"
-                style={{ color: "var(--app-text)" }}
+                className="text-2xl font-bold tracking-tight"
+                style={{ color: "var(--foreground)" }}
               >
                 选择具体课程
               </h2>
             </div>
 
             {/* 右侧：当前分类整体进度 */}
-            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--app-border)" }}>
+            <div className="lg:border-l lg:pl-6" style={{ borderColor: "var(--border)" }}>
               <div className="flex items-start justify-between gap-3">
                 <div>
                   <p
-                    className="text-sm font-black"
-                    style={{ color: "var(--app-text)" }}
+                    className="text-sm font-bold"
+                    style={{ color: "var(--foreground)" }}
                   >
                     课程进度
                   </p>
 
                   <p
                     className="mt-1 text-xs"
-                    style={{ color: "var(--app-muted)" }}
+                    style={{ color: "var(--foreground-muted)" }}
                   >
                     已完成 {totalCompletedLessons} / {totalCourseLessons} 个课时
                   </p>
                 </div>
 
                 <p
-                  className="text-2xl font-black tracking-tight"
-                  style={{ color: "var(--app-text)" }}
+                  className="text-2xl font-bold tracking-tight"
+                  style={{ color: "var(--foreground)" }}
                 >
                   {overallCourseProgressPercent}%
                 </p>
@@ -404,13 +404,13 @@ export default async function SubcategoryCoursesPage({
 
               <div
                 className="mt-4 h-2 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-soft-bg)" }}
+                style={{ backgroundColor: "var(--surface-soft)" }}
               >
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
                     width: `${overallCourseProgressPercent}%`,
-                    backgroundColor: "var(--app-success)",
+                    backgroundColor: "var(--status-success)",
                   }}
                 />
               </div>
@@ -422,8 +422,8 @@ export default async function SubcategoryCoursesPage({
         <section className="app-card rounded-3xl border p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <h3
-              className="text-lg font-black tracking-tight"
-              style={{ color: "var(--app-text)" }}
+              className="text-lg font-bold tracking-tight"
+              style={{ color: "var(--foreground)" }}
             >
               课程列表
             </h3>
@@ -500,8 +500,8 @@ export default async function SubcategoryCoursesPage({
                         <div
                           className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border"
                           style={{
-                            backgroundColor: "var(--app-soft-bg)",
-                            borderColor: "var(--app-border)",
+                            backgroundColor: "var(--surface-soft)",
+                            borderColor: "var(--border)",
                             color: isCompleted ? color.completed : color.accent,
                           }}
                         >
@@ -517,8 +517,8 @@ export default async function SubcategoryCoursesPage({
                             <span
                               className="rounded-full border px-3 py-1 text-xs font-semibold"
                               style={{
-                                backgroundColor: "var(--app-soft-bg)",
-                                borderColor: "var(--app-border)",
+                                backgroundColor: "var(--surface-soft)",
+                                borderColor: "var(--border)",
                                 color: color.accent,
                               }}
                             >
@@ -534,8 +534,8 @@ export default async function SubcategoryCoursesPage({
                             <span
                               className="rounded-full border px-3 py-1 text-xs font-semibold"
                               style={{
-                                backgroundColor: "var(--app-soft-bg)",
-                                borderColor: "var(--app-border)",
+                                backgroundColor: "var(--surface-soft)",
+                                borderColor: "var(--border)",
                                 color: statusAccent,
                               }}
                             >
@@ -549,7 +549,7 @@ export default async function SubcategoryCoursesPage({
 
                           <DashboardTitleWithHint
                             headingLevel={3}
-                            titleClassName="text-lg font-black tracking-tight"
+                            titleClassName="text-lg font-bold tracking-tight"
                             title={course.title}
                             description={course.description || "暂无课程简介"}
                           />
@@ -557,19 +557,19 @@ export default async function SubcategoryCoursesPage({
                       </div>
 
                       {/* 中间：学习进度 */}
-                      <div className="lg:border-l lg:pl-5" style={{ borderColor: "var(--app-border)" }}>
+                      <div className="lg:border-l lg:pl-5" style={{ borderColor: "var(--border)" }}>
                         <div className="mb-3 flex items-center justify-between gap-3">
                           <div
                             className="inline-flex items-center gap-1.5 text-xs font-medium"
-                            style={{ color: "var(--app-muted)" }}
+                            style={{ color: "var(--foreground-muted)" }}
                           >
                             <Clock size={13} />
                             共 {totalLessons} 个课时
                           </div>
 
                           <span
-                            className="text-sm font-black"
-                            style={{ color: "var(--app-text)" }}
+                            className="text-sm font-bold"
+                            style={{ color: "var(--foreground)" }}
                           >
                             {courseProgressPercent}%
                           </span>
@@ -577,7 +577,7 @@ export default async function SubcategoryCoursesPage({
 
                         <div
                           className="mb-2 flex items-center justify-between text-xs"
-                          style={{ color: "var(--app-muted)" }}
+                          style={{ color: "var(--foreground-muted)" }}
                         >
                           <span>
                             已完成 {completedCount} / {totalLessons}
@@ -594,13 +594,13 @@ export default async function SubcategoryCoursesPage({
 
                         <div
                           className="h-2 overflow-hidden rounded-full"
-                          style={{ backgroundColor: "var(--app-soft-bg)" }}
+                          style={{ backgroundColor: "var(--surface-soft)" }}
                         >
                           <div
                             className="h-full rounded-full transition-all"
                             style={{
                               width: `${courseProgressPercent}%`,
-                              backgroundColor: "var(--app-success)",
+                              backgroundColor: "var(--status-success)",
                             }}
                           />
                         </div>
@@ -610,7 +610,7 @@ export default async function SubcategoryCoursesPage({
                       {courseLocked ? (
                         <span
                           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-center text-sm font-semibold lg:w-auto"
-                          style={{ color: "var(--app-muted)", borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+                          style={{ color: "var(--foreground-muted)", borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
                         >
                           <Lock size={15} />{buttonLabel}
                         </span>
@@ -649,13 +649,13 @@ export default async function SubcategoryCoursesPage({
             <div className="app-empty-state rounded-2xl p-6 text-center">
               <p
                 className="font-semibold"
-                style={{ color: "var(--app-text)" }}
+                style={{ color: "var(--foreground)" }}
               >
                 暂无课程
               </p>
               <p
                 className="mt-2 text-sm"
-                style={{ color: "var(--app-muted)" }}
+                style={{ color: "var(--foreground-muted)" }}
               >
                 当前分类下还没有发布课程。
               </p>

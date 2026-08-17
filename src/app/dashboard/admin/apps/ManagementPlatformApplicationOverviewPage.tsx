@@ -192,7 +192,7 @@ export async function ManagementPlatformApplicationOverviewPage({
       </p>
       {hasError ? (
         <ManagementNotice tone="warning">
-          部分应用汇总暂时无法读取，请检查数据库迁移和应用归属。
+          部分应用汇总暂时无法读取，请稍后刷新页面重试；当前结果可能不完整。
         </ManagementNotice>
       ) : null}
       <ManagementMetricStrip
@@ -221,9 +221,10 @@ export async function ManagementPlatformApplicationOverviewPage({
           },
         ]}
       />
-      <div className="overflow-x-auto border bg-[var(--app-card-bg)]">
+      <div className="overflow-x-auto border bg-[var(--card)]">
         <table className="w-full min-w-[760px] border-collapse text-left text-xs">
-          <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]"><tr><th className="px-4 py-3">机构</th>{columns.map((column) => <th key={column} className="px-4 py-3">{column}</th>)}</tr></thead>
+          <caption className="sr-only">{access.appTitle}机构级运营数据</caption>
+          <thead className="bg-[var(--surface-soft)] text-[var(--foreground-muted)]"><tr><th scope="col" className="px-4 py-3">机构</th>{columns.map((column) => <th key={column} scope="col" className="px-4 py-3">{column}</th>)}</tr></thead>
           <tbody>
             {rows.map((row) => {
               const values = mode === "students"
@@ -233,9 +234,9 @@ export async function ManagementPlatformApplicationOverviewPage({
                   : mode === "records"
                     ? [row.students, `${row.learningHours.toFixed(1)} 小时`, row.notes, row.activeNotes]
                     : [row.scenarios, row.publishedScenarios, row.conversationPractices, row.completedConversationPractices];
-              return <tr key={row.id} className="border-t border-[var(--app-border-soft)]"><td className="px-4 py-3 font-medium">{row.name}</td>{values.map((value, index) => <td key={columns[index]} className="px-4 py-3 tabular-nums">{value}</td>)}</tr>;
+              return <tr key={row.id} className="border-t border-[var(--border-subtle)]"><td className="px-4 py-3 font-medium">{row.name}</td>{values.map((value, index) => <td key={columns[index]} className="px-4 py-3 tabular-nums">{value}</td>)}</tr>;
             })}
-            {rows.length === 0 ? <tr><td colSpan={5} className="app-muted-text px-4 py-10 text-center">当前应用还没有机构级运营数据。</td></tr> : null}
+            {rows.length === 0 ? <tr><td colSpan={5} className="app-muted-text px-4 py-10 text-center">{hasError ? "暂时没有可显示的机构级运营数据，请先处理上方读取异常后重试。" : "当前应用还没有机构级运营数据。"}</td></tr> : null}
           </tbody>
         </table>
       </div>

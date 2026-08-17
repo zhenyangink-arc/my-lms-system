@@ -71,10 +71,10 @@ export function getVisaCaseColumns(
     header: sortableHeader("学生"),
     cell: ({ row }) => (
       <div className="min-w-36">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.studentName}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.studentEmail || "未读取邮箱"}
         </p>
       </div>
@@ -87,7 +87,7 @@ export function getVisaCaseColumns(
     cell: ({ row }) => (
       <div className="min-w-48">
         <p className="font-medium">{row.original.universityName}</p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {[row.original.programName, row.original.admissionTrack]
             .filter(Boolean)
             .join(" · ") || "项目待确认"}
@@ -112,8 +112,8 @@ export function getVisaCaseColumns(
     accessorKey: "caseStatus",
     header: sortableHeader("办理阶段"),
     cell: ({ row }) => (
-      <span className="inline-flex items-center gap-1.5 font-medium text-[var(--app-secondary)]">
-        <span className="size-1.5 rounded-full bg-current" />
+      <span className="inline-flex items-center gap-1.5 font-medium text-[var(--support)]">
+        <span className="size-1.5 rounded-full bg-current" aria-hidden="true" />
         {CASE_STATUS_LABELS[row.original.caseStatus] ?? row.original.caseStatus}
       </span>
     ),
@@ -146,7 +146,7 @@ export function getVisaCaseColumns(
     accessorKey: "updatedAt",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updatedAt}
           options={DATE_TIME_OPTIONS}

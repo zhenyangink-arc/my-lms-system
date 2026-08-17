@@ -118,8 +118,8 @@ export function LessonSupportSheet({
   return (
     <Sheet>
       {/* 不用 asChild，避免 button 嵌套问题 */}
-      <SheetTrigger className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800">
-        <MessageCircle size={16} />
+      <SheetTrigger className="inline-flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-gray-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+        <MessageCircle aria-hidden="true" size={16} />
         学习支持 / 咨询
       </SheetTrigger>
 
@@ -137,12 +137,12 @@ export function LessonSupportSheet({
         <div className="mt-6 space-y-5">
           {/* 负责老师区域 */}
           <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-            <h3 className="text-lg font-black text-gray-900">负责老师</h3>
+            <h3 className="text-lg font-bold text-gray-900">负责老师</h3>
 
             <div className="mt-4 rounded-2xl bg-gray-50 p-4">
               <div className="flex items-center gap-3">
                 <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white shadow-sm">
-                  <UserRound size={22} className="text-gray-700" />
+                  <UserRound aria-hidden="true" size={22} className="text-gray-700" />
                 </div>
 
                 <div>
@@ -168,7 +168,7 @@ export function LessonSupportSheet({
 
               {aiSupportEnabled && (
                 <div className="mt-4 flex items-start gap-3 rounded-xl bg-indigo-50 px-4 py-3">
-                  <Bot size={18} className="mt-0.5 shrink-0 text-indigo-600" />
+                  <Bot aria-hidden="true" size={18} className="mt-0.5 shrink-0 text-indigo-600" />
                   <p className="text-sm leading-6 text-indigo-700">
                     智能助教第一版先保存问题记录，后续会接入自动回答功能。
                   </p>
@@ -181,7 +181,7 @@ export function LessonSupportSheet({
           {allowQuestions && (
             <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
               <div className="mb-5 flex items-center gap-2">
-                <MessageCircle size={18} className="text-gray-700" />
+                <MessageCircle aria-hidden="true" size={18} className="text-gray-700" />
                 <h3 className="font-bold text-gray-900">咨询问题</h3>
               </div>
 
@@ -244,7 +244,7 @@ export function LessonSupportSheet({
 
                     {question.status === "pending" && (
                       <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                        <CheckCircle2 size={13} />
+                        <CheckCircle2 aria-hidden="true" size={13} />
                         已提交，等待处理
                       </div>
                     )}

@@ -549,8 +549,8 @@ export default async function LearningRecordsPage() {
                 "/dashboard/admin/records",
                 dashboardBasePath,
               )}
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+              style={{ backgroundColor: "var(--support)" }}
             >
               进入记录后台
               <ArrowRight size={15} />

@@ -171,15 +171,15 @@ function RuleCard({
   tone?: "purple" | "amber" | "green" | "blue";
 }) {
   const colors = {
-    purple: "border-[#ddd0ee] bg-[#f7f2fc] text-[#75559a]",
-    amber: "border-[#ead8be] bg-[#fff8ed] text-[#9b6b32]",
-    green: "border-[#cfe3d4] bg-[#f2f8f3] text-[#487a54]",
-    blue: "border-[#cfddec] bg-[#f1f6fb] text-[#3d6f9f]",
+    purple: "border-[var(--border)] bg-[var(--card)] text-[var(--primary)]",
+    amber: "border-[var(--border)] bg-[var(--status-warning-surface)] text-[var(--status-warning)]",
+    green: "border-[var(--border)] bg-[var(--status-success-surface)] text-[var(--status-success)]",
+    blue: "border-[var(--border)] bg-[var(--accent)] text-[var(--primary)]",
   };
   return (
     <section className={`rounded-2xl border p-4 ${colors[tone]}`}>
-      <p className="text-[11px] font-black tracking-[0.1em]">{label}</p>
-      <div className="mt-2 text-xs font-bold leading-6 text-[#45574f]">
+      <p className="text-[11px] font-bold tracking-[0.1em]">{label}</p>
+      <div className="mt-2 text-xs font-bold leading-6 text-[var(--foreground-secondary)]">
         {children}
       </div>
     </section>
@@ -218,16 +218,16 @@ function DialogueBlock({
         <div
           key={`${line.speaker}-${line.korean}`}
           className={`flex gap-3 rounded-2xl p-3 ${
-            index % 2 === 0 ? "bg-[#f4f8f6]" : "bg-[#fff7ed]"
+            index % 2 === 0 ? "bg-[var(--status-success-surface)]" : "bg-[var(--status-warning-surface)]"
           }`}
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-black text-[#526c60]">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold text-[var(--status-success)]">
             {line.speaker}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-sm font-black text-[#173f4a]">{line.korean}</p>
+            <p className="text-sm font-bold text-[var(--primary)]">{line.korean}</p>
             <p
-              className={`mt-1 text-[11px] font-bold text-[#71857b] transition ${
+              className={`mt-1 text-[11px] font-bold text-[var(--foreground-secondary)] transition ${
                 showChinese ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -368,7 +368,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第一步"
         title="课前导航"
         goal="先建立“谁—在哪里—做什么”的句子骨架，再把词汇和语法逐层装进去。"
-        icon={<Compass size={24} />}
+        icon={<Compass aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-03" number="03">
@@ -376,7 +376,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="这一课，你要会说什么？"
           description="第三课的核心不是背单个动词，而是能描述一段真实的日常行动。"
-          icon={<MapPin size={22} />}
+          icon={<MapPin aria-hidden="true" size={22} />}
           action={
             <KoreanEbookRevealButton
               shown={Boolean(revealed.navigation)}
@@ -395,28 +395,28 @@ export function KoreanLevelOneLessonThreeBook({
               key={number}
               type="button"
               onClick={() => speak(korean)}
-              className="rounded-2xl border border-[#e1e8e4] bg-white p-4 text-left"
+              className="rounded-2xl border border-[var(--border)] bg-white p-4 text-left"
             >
               <div className="flex items-center justify-between gap-2">
-                <p className="text-[10px] font-black text-[#bd741e]">{number} · {title}</p>
-                <Volume2 size={13} className="text-[#238777]" />
+                <p className="text-[10px] font-bold text-[var(--status-warning)]">{number} · {title}</p>
+                <Volume2 aria-hidden="true" size={13} className="text-[var(--status-success)]" />
               </div>
-              <p className="mt-2 text-sm font-black text-[#173f4a]">{korean}</p>
-              <p className={`mt-1 text-[11px] font-bold text-[#71857b] transition ${revealed.navigation ? "opacity-100" : "opacity-0"}`}>{chinese}</p>
+              <p className="mt-2 text-sm font-bold text-[var(--primary)]">{korean}</p>
+              <p className={`mt-1 text-[11px] font-bold text-[var(--foreground-secondary)] transition ${revealed.navigation ? "opacity-100" : "opacity-0"}`}>{chinese}</p>
             </button>
           ))}
         </div>
-        <section className="mt-5 rounded-2xl bg-[#fff4e7] p-5">
-          <p className="text-xs font-black text-[#a26024]">本课句子发动机</p>
-          <p className="mt-3 text-center text-lg font-black text-[#294f43]">
+        <section className="mt-5 rounded-2xl bg-[var(--status-warning-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--status-warning)]">本课句子发动机</p>
+          <p className="mt-3 text-center text-lg font-bold text-[var(--status-success)]">
             场所에서 + 对象을／를 +（안）动作아요／어요
           </p>
-          <p className="mt-3 text-xs leading-6 text-[#6c6f69]">
+          <p className="mt-3 text-xs leading-6 text-[var(--foreground-secondary)]">
             韩语中各成分可以按语境省略，但动词通常放在句尾。先抓住句尾，就能更快听懂整句。
           </p>
         </section>
-        <div className="mt-auto rounded-2xl border border-[#dce8e1] bg-[#f7faf8] p-4 text-xs leading-6">
-          <span className="font-black text-[#238777]">学习挑战：</span>
+        <div className="mt-auto rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 text-xs leading-6">
+          <span className="font-bold text-[var(--status-success)]">学习挑战：</span>
           每学完一个语法，就用“图书馆、咖啡厅、家”各造一个新句子。
         </div>
       </div>
@@ -426,7 +426,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第二步"
         title="核心词汇表"
         goal="按“动作—场所—对象”建立词汇网络，点击卡片即可听韩语读音。"
-        icon={<Library size={24} />}
+        icon={<Library aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-05" number="05">
@@ -434,7 +434,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. 动作动词"
           description="先记词典形，再观察口语形。带 하다 的动词会统一变成 해요。"
-          icon={<Sparkles size={22} />}
+          icon={<Sparkles aria-hidden="true" size={22} />}
           action={
             <KoreanEbookRevealButton
               shown={Boolean(revealed.actionWords)}
@@ -443,7 +443,7 @@ export function KoreanLevelOneLessonThreeBook({
           }
         />
         <VocabularyGrid items={actionVerbs} speak={speak} showChinese={Boolean(revealed.actionWords)} />
-        <p className="mt-auto rounded-xl bg-[#fff5e8] p-3 text-[11px] font-bold leading-5 text-[#8b642f]">
+        <p className="mt-auto rounded-xl bg-[var(--status-warning-surface)] p-3 text-[11px] font-bold leading-5 text-[var(--status-warning)]">
           发音提示：읽다 的实际读音接近 [익따]，먹다 接近 [먹따]；先听再跟读，不要逐字母硬拼。
         </p>
       </div>
@@ -453,7 +453,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="2. 场所名词"
           description="这些地点既可与 에 表示去向或存在，也可与 에서 表示动作发生地。"
-          icon={<MapPin size={22} />}
+          icon={<MapPin aria-hidden="true" size={22} />}
           action={
             <KoreanEbookRevealButton
               shown={Boolean(revealed.placeWords)}
@@ -462,7 +462,7 @@ export function KoreanLevelOneLessonThreeBook({
           }
         />
         <VocabularyGrid items={placeNouns} speak={speak} showChinese={Boolean(revealed.placeWords)} />
-        <p className="mt-auto rounded-xl bg-[#eef5fb] p-3 text-[11px] font-bold leading-5 text-[#3d6f9f]">
+        <p className="mt-auto rounded-xl bg-[var(--accent)] p-3 text-[11px] font-bold leading-5 text-[var(--primary)]">
           词块记忆：학교에 가요（去学校）／학교에서 공부해요（在学校学习）。
         </p>
       </div>
@@ -472,7 +472,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="3. 动作对象与辅助词"
           description="把名词和动词成对记忆，比只背中文意思更容易开口。"
-          icon={<BookOpenCheck size={22} />}
+          icon={<BookOpenCheck aria-hidden="true" size={22} />}
           action={
             <KoreanEbookRevealButton
               shown={Boolean(revealed.objectWords)}
@@ -481,11 +481,11 @@ export function KoreanLevelOneLessonThreeBook({
           }
         />
         <VocabularyGrid items={objectWords} speak={speak} showChinese={Boolean(revealed.objectWords)} />
-        <div className="mt-auto grid grid-cols-3 gap-2 text-center text-[10px] font-black">
+        <div className="mt-auto grid grid-cols-3 gap-2 text-center text-[10px] font-bold">
           {[
-            ["책을 읽어요", "bg-[#f1eafb] text-[#75559a]"],
-            ["음악을 들어요", "bg-[#e7f5f1] text-[#347b69]"],
-            ["친구를 만나요", "bg-[#fff0df] text-[#b46624]"],
+            ["책을 읽어요", "bg-[var(--accent)] text-[var(--primary)]"],
+            ["음악을 들어요", "bg-[var(--status-success-surface)] text-[var(--status-success)]"],
+            ["친구를 만나요", "bg-[var(--status-warning-surface)] text-[var(--status-warning)]"],
           ].map(([sentence, tone]) => (
             <button
               key={sentence}
@@ -493,7 +493,7 @@ export function KoreanLevelOneLessonThreeBook({
               onClick={() => speak(sentence)}
               className={`flex items-center justify-center gap-1.5 rounded-xl px-2 py-2 ${tone}`}
             >
-              <Volume2 size={10} />
+              <Volume2 aria-hidden="true" size={10} />
               {sentence}
             </button>
           ))}
@@ -505,7 +505,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第三步"
         title="语法讲解"
         goal="四个语法各占一页：理解意义、掌握形式、辨认易错点，并立即完成一句输出。"
-        icon={<NotebookPen size={24} />}
+        icon={<NotebookPen aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-09" number="09">
@@ -513,7 +513,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. V／A-아／어요"
           description="非格式体敬语的现在时句尾，用于日常陈述、提问和回答。"
-          icon={<NotebookPen size={22} />}
+          icon={<NotebookPen aria-hidden="true" size={22} />}
         />
         <div className="mt-4 grid grid-cols-3 gap-3">
           <RuleCard label="① ㅏ／ㅗ → -아요" tone="amber">
@@ -536,14 +536,14 @@ export function KoreanLevelOneLessonThreeBook({
           보다 + 아요 不是机械地保留两个元音，而会缩约成 <b>봐요</b>；마시다 + 어요 会形成
           <b> 마셔요</b>。初级阶段先把常见口语形当作完整声音记住。
         </RuleCard>
-        <section className="mt-3 rounded-2xl border border-[#ead8be] bg-white p-4">
-          <p className="text-xs font-black text-[#9b6b32]">语调决定句子功能</p>
+        <section className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-4">
+          <p className="text-xs font-bold text-[var(--status-warning)]">语调决定句子功能</p>
           <div className="mt-2 grid grid-cols-2 gap-3 text-xs">
-            <p className="rounded-xl bg-[#fff8ed] p-3"><b>공부해요.</b><br />下降语调：在学习。</p>
-            <p className="rounded-xl bg-[#fff8ed] p-3"><b>공부해요?</b><br />上扬语调：学习吗？</p>
+            <p className="rounded-xl bg-[var(--status-warning-surface)] p-3"><b>공부해요.</b><br />下降语调：在学习。</p>
+            <p className="rounded-xl bg-[var(--status-warning-surface)] p-3"><b>공부해요?</b><br />上扬语调：学习吗？</p>
           </div>
         </section>
-        <p className="mt-auto text-[11px] font-bold text-[#71857b]">
+        <p className="mt-auto text-[11px] font-bold text-[var(--foreground-secondary)]">
           注意：本页是口语敬语，不等于不礼貌；它比书面正式体更适合熟人和一般日常场景。
         </p>
       </div>
@@ -553,7 +553,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="2. N-을／를"
           description="宾格助词标记动作直接作用的对象，帮助听者快速识别“做什么”。"
-          icon={<NotebookPen size={22} />}
+          icon={<NotebookPen aria-hidden="true" size={22} />}
         />
         <div className="mt-4 grid grid-cols-2 gap-3">
           <RuleCard label="有收音 + 을" tone="blue">
@@ -567,12 +567,12 @@ export function KoreanLevelOneLessonThreeBook({
             <RuleSentence text="영화를 봐요." speak={speak}>영화<b>를</b> 봐요.</RuleSentence>
           </RuleCard>
         </div>
-        <section className="mt-3 rounded-2xl bg-[#f7f2fc] p-4">
-          <p className="text-xs font-black text-[#75559a]">判断顺序</p>
+        <section className="mt-3 rounded-2xl bg-[var(--card)] p-4">
+          <p className="text-xs font-bold text-[var(--primary)]">判断顺序</p>
           <p className="mt-2 text-xs leading-6">
             先找到动作动词 → 再问“这个动作作用于什么？” → 找到对象名词 → 看名词末尾有没有收音。
           </p>
-          <p className="mt-2 text-center text-base font-black text-[#294f43]">
+          <p className="mt-2 text-center text-base font-bold text-[var(--status-success)]">
             친구 + 를 + 만나요
           </p>
         </section>
@@ -580,8 +580,8 @@ export function KoreanLevelOneLessonThreeBook({
           当对象已非常明确时，口语中可以说 “책 읽어요.”。学习阶段建议先保留 을／를，
           因为它能让句子关系更清楚，也便于建立正确语感。
         </RuleCard>
-        <div className="mt-auto rounded-xl border border-[#dce8e1] p-3 text-xs">
-          <b className="text-[#3d6f9f]">快速检查：</b>
+        <div className="mt-auto rounded-xl border border-[var(--border)] p-3 text-xs">
+          <b className="text-[var(--primary)]">快速检查：</b>
           “사과___ 사요” 中 사과 无收音，所以填 <b>를</b>。
         </div>
       </div>
@@ -591,35 +591,35 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="3. 场所 N-에서"
           description="表示动作实际发生的地点，相当于“在某地做……”。"
-          icon={<MapPin size={22} />}
+          icon={<MapPin aria-hidden="true" size={22} />}
         />
-        <section className="mt-4 rounded-2xl bg-[#f1f6fb] p-5 text-center">
-          <p className="text-[11px] font-black text-[#3d6f9f]">核心结构</p>
-          <p className="mt-3 text-lg font-black text-[#173f4a]">
+        <section className="mt-4 rounded-2xl bg-[var(--accent)] p-5 text-center">
+          <p className="text-[11px] font-bold text-[var(--primary)]">核心结构</p>
+          <p className="mt-3 text-lg font-bold text-[var(--primary)]">
             场所 + 에서 + 对象 + 을／를 + 动作
           </p>
-          <p className="mt-3 text-sm font-black">도서관에서 책을 읽어요.</p>
-          <p className="mt-1 text-xs text-[#71857b]">在图书馆看书。</p>
+          <p className="mt-3 text-sm font-bold">도서관에서 책을 읽어요.</p>
+          <p className="mt-1 text-xs text-[var(--foreground-secondary)]">在图书馆看书。</p>
         </section>
         <div className="mt-3 grid grid-cols-2 gap-3">
           <RuleCard label="-에：存在／移动的终点" tone="amber">
             <RuleSentence text="학교에 가요." speak={speak}>학교<b>에</b> 가요.</RuleSentence>
-            <span className="block text-[10px] font-medium text-[#71857b]">去学校。</span>
+            <span className="block text-[10px] font-medium text-[var(--foreground-secondary)]">去学校。</span>
             <RuleSentence text="집에 있어요." speak={speak}>집<b>에</b> 있어요.</RuleSentence>
-            <span className="block text-[10px] font-medium text-[#71857b]">在家。</span>
+            <span className="block text-[10px] font-medium text-[var(--foreground-secondary)]">在家。</span>
           </RuleCard>
           <RuleCard label="-에서：动作发生的舞台" tone="green">
             <RuleSentence text="학교에서 공부해요." speak={speak}>학교<b>에서</b> 공부해요.</RuleSentence>
-            <span className="block text-[10px] font-medium text-[#71857b]">在学校学习。</span>
+            <span className="block text-[10px] font-medium text-[var(--foreground-secondary)]">在学校学习。</span>
             <RuleSentence text="집에서 쉬어요." speak={speak}>집<b>에서</b> 쉬어요.</RuleSentence>
-            <span className="block text-[10px] font-medium text-[#71857b]">在家休息。</span>
+            <span className="block text-[10px] font-medium text-[var(--foreground-secondary)]">在家休息。</span>
           </RuleCard>
         </div>
         <RuleCard label="不要只按中文“在”来选择" tone="purple">
           中文都可以译成“在”，韩语却要看句尾：있어요／없어요 表示存在时常用 에；
           공부해요／먹어요／일해요 等动作发生时用 에서。
         </RuleCard>
-        <p className="mt-auto text-[11px] font-bold text-[#71857b]">
+        <p className="mt-auto text-[11px] font-bold text-[var(--foreground-secondary)]">
           记忆画面：에 是地图上的“点”，에서 是动作展开的“舞台”。
         </p>
       </div>
@@ -629,7 +629,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="4. 안 + V／A"
           description="把 안 放在谓语前，表达“不做”或“不是某种状态”。"
-          icon={<NotebookPen size={22} />}
+          icon={<NotebookPen aria-hidden="true" size={22} />}
         />
         <div className="mt-4 grid grid-cols-2 gap-3">
           <RuleCard label="普通动词：안 + 动词" tone="blue">
@@ -643,21 +643,21 @@ export function KoreanLevelOneLessonThreeBook({
             <RuleSentence text="일 안 해요." speak={speak}>일 안 해요（不工作）</RuleSentence>
           </RuleCard>
         </div>
-        <section className="mt-3 rounded-2xl border border-[#ead8be] bg-[#fff8ed] p-4">
-          <p className="text-xs font-black text-[#9b6b32]">结构拆解</p>
-          <p className="mt-2 text-sm font-black text-[#294f43]">
+        <section className="mt-3 rounded-2xl border border-[var(--border)] bg-[var(--status-warning-surface)] p-4">
+          <p className="text-xs font-bold text-[var(--status-warning)]">结构拆解</p>
+          <p className="mt-2 text-sm font-bold text-[var(--status-success)]">
             공부하다 = 공부（学习这件事）+ 하다（做）
           </p>
           <p className="mt-2 text-xs leading-6">
             因此否定的是“做”，自然说 <b>공부 안 해요</b>。初学阶段不要说
-            <span className="mx-1 rounded bg-[#fde7e7] px-1 text-[#a84d4d]">안 공부해요</span>。
+            <span className="mx-1 rounded bg-[var(--status-warning-surface)] px-1 text-[var(--destructive)]">안 공부해요</span>。
           </p>
         </section>
         <RuleCard label="语用提示：안 常表示当前选择" tone="purple">
           “오늘 커피 안 마셔요.” 更像“今天不喝咖啡”。如果要表达能力上“不会／不能”，
           后续会学习 못；两者不能简单互换。
         </RuleCard>
-        <div className="mt-auto rounded-xl bg-[#e8f4eb] p-3 text-xs font-bold text-[#487a54]">
+        <div className="mt-auto rounded-xl bg-[var(--status-success-surface)] p-3 text-xs font-bold text-[var(--status-success)]">
           一秒改句：운동해요 → 운동 안 해요；책을 읽어요 → 책을 안 읽어요。
         </div>
       </div>
@@ -667,7 +667,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第四步"
         title="句型操练"
         goal="先练词尾变形，再选择助词，最后把动作、对象与场所组合成完整句。"
-        icon={<PencilLine size={24} />}
+        icon={<PencilLine aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-14" number="14">
@@ -675,7 +675,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. 动词变形工坊"
           description="先判断词干末尾元音，再说出口语形。点击按钮核对答案。"
-          icon={<PencilLine size={22} />}
+          icon={<PencilLine aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.conjugation)} onClick={() => toggle("conjugation")} answer />}
         />
         <div className="mt-4 grid grid-cols-2 gap-3">
@@ -689,18 +689,18 @@ export function KoreanLevelOneLessonThreeBook({
             ["공부하다", "공부해요", "하다 → 해요"],
             ["운동하다", "운동해요", "하다 → 해요"],
           ].map(([base, answer, clue]) => (
-            <div key={base} className="rounded-xl border border-[#ead8be] bg-white p-3">
+            <div key={base} className="rounded-xl border border-[var(--border)] bg-white p-3">
               <div className="flex items-center justify-between">
-                <p className="text-sm font-black">{base}</p>
-                <span className="text-[10px] font-bold text-[#9b6b32]">{clue}</span>
+                <p className="text-sm font-bold">{base}</p>
+                <span className="text-[10px] font-bold text-[var(--status-warning)]">{clue}</span>
               </div>
-              <p className={`mt-2 rounded-lg bg-[#fff8ed] px-3 py-2 text-xs font-black text-[#b46624] ${revealed.conjugation ? "opacity-100" : "opacity-0"}`}>
+              <p className={`mt-2 rounded-lg bg-[var(--status-warning-surface)] px-3 py-2 text-xs font-bold text-[var(--status-warning)] ${revealed.conjugation ? "opacity-100" : "opacity-0"}`}>
                 {answer}
               </p>
             </div>
           ))}
         </div>
-        <p className="mt-auto text-[11px] leading-5 text-[#71857b]">
+        <p className="mt-auto text-[11px] leading-5 text-[var(--foreground-secondary)]">
           创新记忆法：不要只背“规则编号”，把 가요／먹어요／해요 当成三个声音抽屉，新动词放进对应抽屉。
         </p>
       </div>
@@ -710,7 +710,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="2. 助词选择实验"
           description="观察名词末尾和句尾动词，分别选择 을／를、에／에서。"
-          icon={<ClipboardCheck size={22} />}
+          icon={<ClipboardCheck aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.particles)} onClick={() => toggle("particles")} answer />}
         />
         <div className="mt-4 space-y-2.5">
@@ -722,17 +722,17 @@ export function KoreanLevelOneLessonThreeBook({
             ["공원( 에 / 에서 ) 운동해요.", "공원에서 운동해요.", "运动在此发生"],
             ["백화점( 에 / 에서 ) 가요.", "백화점에 가요.", "가요的目的地"],
           ].map(([question, answer, clue], index) => (
-            <div key={question} className="grid grid-cols-[28px_1fr_1fr] items-center gap-3 rounded-xl border border-[#dce8e1] bg-white p-3">
-              <span className="text-xs font-black text-[#b46624]">{index + 1}</span>
-              <p className="text-xs font-black">{question}</p>
-              <p className={`text-[11px] font-bold text-[#347b69] ${revealed.particles ? "opacity-100" : "opacity-0"}`}>
-                {answer}<span className="ml-2 text-[#81938a]">· {clue}</span>
+            <div key={question} className="grid grid-cols-[28px_1fr_1fr] items-center gap-3 rounded-xl border border-[var(--border)] bg-white p-3">
+              <span className="text-xs font-bold text-[var(--status-warning)]">{index + 1}</span>
+              <p className="text-xs font-bold">{question}</p>
+              <p className={`text-[11px] font-bold text-[var(--status-success)] ${revealed.particles ? "opacity-100" : "opacity-0"}`}>
+                {answer}<span className="ml-2 text-[var(--foreground-secondary)]">· {clue}</span>
               </p>
             </div>
           ))}
         </div>
-        <section className="mt-auto rounded-2xl bg-[#fff2df] p-4 text-xs leading-6">
-          <b className="text-[#b46624]">解题顺序：</b>
+        <section className="mt-auto rounded-2xl bg-[var(--status-warning-surface)] p-4 text-xs leading-6">
+          <b className="text-[var(--status-warning)]">解题顺序：</b>
           을／를 看前面的名词收音；에／에서 看后面的谓语意义。
         </section>
       </div>
@@ -742,7 +742,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="3. 句子组装台"
           description="按“时间／人物—场所—对象—动作”的顺序组织信息，重点保持动词在句尾。"
-          icon={<PencilLine size={22} />}
+          icon={<PencilLine aria-hidden="true" size={22} />}
           action={
             <KoreanEbookRevealButton
               shown={Boolean(revealed.assembly)}
@@ -760,18 +760,18 @@ export function KoreanLevelOneLessonThreeBook({
           ].map((parts, index) => {
             const answer = parts[parts.length - 1];
             return (
-              <article key={answer} className="rounded-2xl border border-[#ead8be] bg-white p-4">
+              <article key={answer} className="rounded-2xl border border-[var(--border)] bg-white p-4">
                 <div className="flex flex-wrap gap-2">
                   {parts.slice(0, -1).map((part) => (
-                    <span key={part} className="rounded-full bg-[#fff2df] px-3 py-1 text-[11px] font-black text-[#b46624]">{part}</span>
+                    <span key={part} className="rounded-full bg-[var(--status-warning-surface)] px-3 py-1 text-[11px] font-bold text-[var(--status-warning)]">{part}</span>
                   ))}
                 </div>
-                <p className={`mt-3 text-sm font-black text-[#294f43] transition ${revealed.assembly ? "opacity-100" : "opacity-0"}`}>{index + 1}. {answer}</p>
+                <p className={`mt-3 text-sm font-bold text-[var(--status-success)] transition ${revealed.assembly ? "opacity-100" : "opacity-0"}`}>{index + 1}. {answer}</p>
               </article>
             );
           })}
         </div>
-        <p className="mt-auto rounded-xl bg-[#f7faf8] p-3 text-[11px] font-bold leading-5 text-[#60736a]">
+        <p className="mt-auto rounded-xl bg-[var(--card)] p-3 text-[11px] font-bold leading-5 text-[var(--foreground-secondary)]">
           更自然的韩语不等于固定死顺序；这里先用稳定骨架建立准确度，熟练后再根据重点调整。
         </p>
       </div>
@@ -781,7 +781,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第五步"
         title="实战对话"
         goal="进入四个生活场景：课间、图书馆、午休和周末计划，把语法变成即时交流。"
-        icon={<MessageCircle size={24} />}
+        icon={<MessageCircle aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-18" number="18">
@@ -789,7 +789,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="场景 1 · 课间在做什么？"
           description="目标：用现在时询问并回答眼前的动作。"
-          icon={<MessageCircle size={22} />}
+          icon={<MessageCircle aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.dialogueOne)} onClick={() => toggle("dialogueOne")} />}
         />
         <DialogueBlock
@@ -802,8 +802,8 @@ export function KoreanLevelOneLessonThreeBook({
             { speaker: "B", korean: "교실에서 공부해요.", chinese: "在教室学习。" },
           ]}
         />
-        <section className="mt-5 rounded-2xl bg-[#fbeaec] p-4">
-          <p className="text-xs font-black text-[#a65b68]">替换练习</p>
+        <section className="mt-5 rounded-2xl bg-[var(--status-warning-surface)] p-4">
+          <p className="text-xs font-bold text-[var(--destructive)]">替换练习</p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-xs font-bold">
             <p className="rounded-xl bg-white p-3">신문을 읽어요.</p>
             <p className="rounded-xl bg-white p-3">음악을 들어요.</p>
@@ -811,7 +811,7 @@ export function KoreanLevelOneLessonThreeBook({
             <p className="rounded-xl bg-white p-3">친구를 만나요.</p>
           </div>
         </section>
-        <p className="mt-auto text-[11px] text-[#71857b]">回答时已知的“저는”可以省略，让口语更自然。</p>
+        <p className="mt-auto text-[11px] text-[var(--foreground-secondary)]">回答时已知的“저는”可以省略，让口语更自然。</p>
       </div>
     </Page>,
     <Page key="03-19" number="19">
@@ -819,7 +819,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="场景 2 · 图书馆偶遇"
           description="目标：表达动作对象，并自然使用否定。"
-          icon={<Library size={22} />}
+          icon={<Library aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.dialogueTwo)} onClick={() => toggle("dialogueTwo")} />}
         />
         <DialogueBlock
@@ -835,8 +835,8 @@ export function KoreanLevelOneLessonThreeBook({
         <RuleCard label="会话接力词：N은／는요?" tone="purple">
           “수진 씨는요?” 相当于“秀珍呢？”。它把话题自然交给对方，不必重复完整问题。
         </RuleCard>
-        <div className="mt-auto rounded-2xl border border-[#ead0d6] bg-white p-4 text-xs">
-          <b className="text-[#a65b68]">你的版本：</b>
+        <div className="mt-auto rounded-2xl border border-[var(--border)] bg-white p-4 text-xs">
+          <b className="text-[var(--destructive)]">你的版本：</b>
           把 도서관 换成 커피숍，把 책 换成 커피，重新演一遍。
         </div>
       </div>
@@ -846,7 +846,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="场景 3 · 午休时间"
           description="目标：用 장소에서 + 목적어를 + 동사 描述完整行动。"
-          icon={<MessageCircle size={22} />}
+          icon={<MessageCircle aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.dialogueThree)} onClick={() => toggle("dialogueThree")} />}
         />
         <DialogueBlock
@@ -859,9 +859,9 @@ export function KoreanLevelOneLessonThreeBook({
             { speaker: "B", korean: "아니요, 오늘은 커피 안 마셔요.", chinese: "不，今天不喝咖啡。" },
           ]}
         />
-        <section className="mt-4 rounded-2xl bg-[#fff5f0] p-4">
-          <p className="text-xs font-black text-[#a65b68]">信息层级</p>
-          <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-black">
+        <section className="mt-4 rounded-2xl bg-[var(--card)] p-4">
+          <p className="text-xs font-bold text-[var(--destructive)]">信息层级</p>
+          <div className="mt-3 flex items-center justify-center gap-2 text-[11px] font-bold">
             <span className="rounded-full bg-white px-3 py-2">점심에 · 时间</span>
             <span>→</span>
             <span className="rounded-full bg-white px-3 py-2">식당에서 · 场所</span>
@@ -869,7 +869,7 @@ export function KoreanLevelOneLessonThreeBook({
             <span className="rounded-full bg-white px-3 py-2">밥을 먹어요 · 动作</span>
           </div>
         </section>
-        <p className="mt-auto text-[11px] leading-5 text-[#71857b]">도 表示“也”，这里作为自然会话扩展词理解即可。</p>
+        <p className="mt-auto text-[11px] leading-5 text-[var(--foreground-secondary)]">도 表示“也”，这里作为自然会话扩展词理解即可。</p>
       </div>
     </Page>,
     <Page key="03-21" number="21">
@@ -877,7 +877,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="场景 4 · 周末行动卡"
           description="目标：根据地点卡和动作卡即时生成对话，不依赖固定台词。"
-          icon={<Sparkles size={22} />}
+          icon={<Sparkles aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.weekendCards)} onClick={() => toggle("weekendCards")} />}
         />
         <div className="mt-4 grid grid-cols-3 gap-3 text-center">
@@ -889,25 +889,25 @@ export function KoreanLevelOneLessonThreeBook({
             ["집", "음악을 들어요", "在家听音乐"],
             ["도서관", "책을 읽어요", "在图书馆看书"],
           ].map(([place, action, chinese]) => (
-            <button key={place} type="button" onClick={() => speak(`${place}에서 ${action}.`)} className="rounded-2xl border border-[#ead0d6] bg-white p-4">
+            <button key={place} type="button" onClick={() => speak(`${place}에서 ${action}.`)} className="rounded-2xl border border-[var(--border)] bg-white p-4">
               <div className="flex items-center justify-center gap-1.5">
-                <p className="text-xs font-black text-[#a65b68]">{place}</p>
-                <Volume2 size={11} className="text-[#238777]" />
+                <p className="text-xs font-bold text-[var(--destructive)]">{place}</p>
+                <Volume2 aria-hidden="true" size={11} className="text-[var(--status-success)]" />
               </div>
-              <p className="mt-2 text-sm font-black">{action}</p>
-              <p className={`mt-1 text-[10px] text-[#81938a] transition ${revealed.weekendCards ? "opacity-100" : "opacity-0"}`}>{chinese}</p>
+              <p className="mt-2 text-sm font-bold">{action}</p>
+              <p className={`mt-1 text-[10px] text-[var(--foreground-secondary)] transition ${revealed.weekendCards ? "opacity-100" : "opacity-0"}`}>{chinese}</p>
             </button>
           ))}
         </div>
-        <section className="mt-5 rounded-2xl bg-[#fbeaec] p-5">
-          <p className="text-xs font-black text-[#a65b68]">双人规则</p>
+        <section className="mt-5 rounded-2xl bg-[var(--status-warning-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--destructive)]">双人规则</p>
           <ol className="mt-2 list-decimal space-y-1 pl-4 text-xs leading-6">
             <li>学生甲问：주말에 어디에서 뭐 해요?</li>
             <li>学生乙随机选一张卡回答。</li>
             <li>学生甲再问一个是非问题，学生乙必须用 안 回答一次。</li>
           </ol>
         </section>
-        <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">同一张卡说出两个版本，才算真正掌握。</p>
+        <p className="mt-auto text-center text-[11px] font-bold text-[var(--foreground-secondary)]">同一张卡说出两个版本，才算真正掌握。</p>
       </div>
     </Page>,
     <Page key="03-22" number="22">
@@ -915,7 +915,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第六步"
         title="听说任务"
         goal="训练助词、词尾和否定位置的听辨，再完成带节奏的独立表达。"
-        icon={<Headphones size={24} />}
+        icon={<Headphones aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-23" number="23">
@@ -923,7 +923,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. 听见句子的骨架"
           description="不要逐词翻译，先听场所、对象和最后的动作。"
-          icon={<Headphones size={22} />}
+          icon={<Headphones aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.listening)} onClick={() => toggle("listening")} answer />}
         />
         <div className="mt-4 space-y-3">
@@ -933,28 +933,28 @@ export function KoreanLevelOneLessonThreeBook({
             ["오늘 회사에서 일 안 해요.", "场所：회사／否定动作：일 안 해요"],
             ["시장에서 과일을 사요.", "场所：시장／对象：과일／动作：사요"],
           ].map(([sentence, answer], index) => (
-            <article key={sentence} className="rounded-2xl border border-[#cfdfeb] bg-white p-4">
+            <article key={sentence} className="rounded-2xl border border-[var(--border)] bg-white p-4">
               <div className="flex items-center gap-3">
-                <button type="button" onClick={() => speak(sentence)} className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#eaf4fa] text-[#3e7fa3]"><Volume2 size={16} /></button>
-                <p className="text-xs font-black">音频 {index + 1} · 听两遍后再看分析</p>
+                <button type="button" onClick={() => speak(sentence)} aria-label={`播放例句：${sentence}`} className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary)]"><Volume2 aria-hidden="true" size={16} /></button>
+                <p className="text-xs font-bold">音频 {index + 1} · 听两遍后再看分析</p>
               </div>
-              <p className={`mt-3 rounded-lg bg-[#f1f6fb] px-3 py-2 text-[11px] font-bold text-[#3d6f9f] ${revealed.listening ? "opacity-100" : "opacity-0"}`}>{answer}</p>
+              <p className={`mt-3 rounded-lg bg-[var(--accent)] px-3 py-2 text-[11px] font-bold text-[var(--primary)] ${revealed.listening ? "opacity-100" : "opacity-0"}`}>{answer}</p>
             </article>
           ))}
         </div>
-        <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">
+        <p className="mt-auto text-center text-[11px] font-bold text-[var(--foreground-secondary)]">
           四段全部听完后，再使用标题栏右侧的“显示答案”统一核对。
         </p>
       </div>
     </Page>,
     <Page key="03-24" number="24">
       <div className="flex h-full flex-col">
-        <Heading title="2. 节奏跟读" description="用短停顿切分信息块，句尾不拖长，问句只在最后自然上扬。" icon={<Mic2 size={22} />} />
-        <section className="mt-5 rounded-2xl bg-[#eaf4fa] p-5 text-center">
-          <p className="text-xs font-black text-[#3e7fa3]">三拍句</p>
-          <p className="mt-4 text-xl font-black">도서관에서 ／ 책을 ／ 읽어요.</p>
-          <p className="mt-2 text-xs text-[#71857b]">场所 ／ 对象 ／ 动作</p>
-          <button type="button" onClick={() => speak("도서관에서 책을 읽어요.")} className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-black text-[#3e7fa3]">播放完整节奏</button>
+        <Heading title="2. 节奏跟读" description="用短停顿切分信息块，句尾不拖长，问句只在最后自然上扬。" icon={<Mic2 aria-hidden="true" size={22} />} />
+        <section className="mt-5 rounded-2xl bg-[var(--accent)] p-5 text-center">
+          <p className="text-xs font-bold text-[var(--primary)]">三拍句</p>
+          <p className="mt-4 text-xl font-bold">도서관에서 ／ 책을 ／ 읽어요.</p>
+          <p className="mt-2 text-xs text-[var(--foreground-secondary)]">场所 ／ 对象 ／ 动作</p>
+          <button type="button" onClick={() => speak("도서관에서 책을 읽어요.")} className="mt-4 rounded-full bg-white px-4 py-2 text-xs font-bold text-[var(--primary)]">播放完整节奏</button>
         </section>
         <div className="mt-4 grid grid-cols-2 gap-3">
           {[
@@ -963,21 +963,21 @@ export function KoreanLevelOneLessonThreeBook({
             ["오늘은 ／ 커피 ／ 안 마셔요.", "三拍：主题＋对象＋否定动作"],
             ["학교에서 ／ 뭐 해요?", "两拍：场所＋疑问动作"],
           ].map(([sentence, note]) => (
-            <button key={sentence} type="button" onClick={() => speak(sentence.replaceAll("／", ""))} className="rounded-xl border border-[#cfdfeb] bg-white p-4 text-left">
-              <p className="text-sm font-black">{sentence}</p>
-              <p className="mt-2 text-[10px] font-bold text-[#3e7fa3]">{note}</p>
+            <button key={sentence} type="button" onClick={() => speak(sentence.replaceAll("／", ""))} className="rounded-xl border border-[var(--border)] bg-white p-4 text-left">
+              <p className="text-sm font-bold">{sentence}</p>
+              <p className="mt-2 text-[10px] font-bold text-[var(--primary)]">{note}</p>
             </button>
           ))}
         </div>
-        <p className="mt-auto text-[11px] leading-5 text-[#71857b]">跟读三轮：看文字慢读 → 跟音频同步 → 遮住文字独立说。</p>
+        <p className="mt-auto text-[11px] leading-5 text-[var(--foreground-secondary)]">跟读三轮：看文字慢读 → 跟音频同步 → 遮住文字独立说。</p>
       </div>
     </Page>,
     <Page key="03-25" number="25">
       <div className="flex h-full flex-col">
-        <Heading title="3. 我的行动播报" description="用 30 秒说明今天在哪里做什么，以及一件今天不做的事。" icon={<Mic2 size={22} />} />
+        <Heading title="3. 我的行动播报" description="用 30 秒说明今天在哪里做什么，以及一件今天不做的事。" icon={<Mic2 aria-hidden="true" size={22} />} />
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-[#cfdfeb] bg-white p-5">
-            <p className="text-xs font-black text-[#3e7fa3]">表达脚手架</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-xs font-bold text-[var(--primary)]">表达脚手架</p>
             <div className="mt-4 space-y-3 text-xs leading-6">
               <p>① 지금 저는 ______에 있어요.</p>
               <p>② ______에서 ______을／를 해요.</p>
@@ -985,25 +985,25 @@ export function KoreanLevelOneLessonThreeBook({
               <p>④ 오늘은 ______ 안 해요.</p>
             </div>
           </section>
-          <section className="rounded-2xl bg-[#eaf4fa] p-5">
-            <p className="text-xs font-black text-[#3e7fa3]">示范</p>
-            <p className="mt-4 text-sm font-black leading-7">
+          <section className="rounded-2xl bg-[var(--accent)] p-5">
+            <p className="text-xs font-bold text-[var(--primary)]">示范</p>
+            <p className="mt-4 text-sm font-bold leading-7">
               지금 저는 학교에 있어요. 도서관에서 한국어를 공부해요. 그리고 책을 읽어요. 오늘은 운동 안 해요.
             </p>
-            <button type="button" onClick={() => speak("지금 저는 학교에 있어요. 도서관에서 한국어를 공부해요. 그리고 책을 읽어요. 오늘은 운동 안 해요.")} className="mt-4 rounded-full bg-white px-4 py-2 text-[11px] font-black text-[#3e7fa3]">播放示范</button>
+            <button type="button" onClick={() => speak("지금 저는 학교에 있어요. 도서관에서 한국어를 공부해요. 그리고 책을 읽어요. 오늘은 운동 안 해요.")} className="mt-4 rounded-full bg-white px-4 py-2 text-[11px] font-bold text-[var(--primary)]">播放示范</button>
           </section>
         </div>
-        <section className="mt-5 rounded-2xl border border-[#dce8e1] p-5">
-          <p className="text-xs font-black">自我评分 · 每项 1 分</p>
+        <section className="mt-5 rounded-2xl border border-[var(--border)] p-5">
+          <p className="text-xs font-bold">自我评分 · 每项 1 分</p>
           <div className="mt-3 grid grid-cols-2 gap-2 text-[11px]">
             {["有一个 에서 场所", "有一个 을／를 对象", "词尾使用 아／어요", "안 的位置正确"].map((item) => (
-              <label key={item} className="flex items-center gap-2 rounded-xl bg-[#f7faf8] p-3">
-                <input type="checkbox" className="accent-[#3e7fa3]" />{item}
+              <label key={item} className="flex items-center gap-2 rounded-xl bg-[var(--card)] p-3">
+                <input type="checkbox" className="accent-[var(--primary)]" />{item}
               </label>
             ))}
           </div>
         </section>
-        <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">目标不是一次说快，而是信息完整、助词清楚、句尾稳定。</p>
+        <p className="mt-auto text-center text-[11px] font-bold text-[var(--foreground-secondary)]">目标不是一次说快，而是信息完整、助词清楚、句尾稳定。</p>
       </div>
     </Page>,
     <Page key="03-26" number="26">
@@ -1011,7 +1011,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第七步"
         title="读写拓展"
         goal="从短文中提取人物行动路线，再写出属于自己的三地点学习日记。"
-        icon={<BookOpenCheck size={24} />}
+        icon={<BookOpenCheck aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-27" number="27">
@@ -1019,11 +1019,11 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. 阅读 · 지민 씨의 하루"
           description="先圈出场所，再给动作画线，最后判断哪件事没有做。"
-          icon={<BookOpenCheck size={22} />}
+          icon={<BookOpenCheck aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.reading)} onClick={() => toggle("reading")} answer />}
         />
-        <section className="mt-5 rounded-2xl bg-[#eef8f4] p-5">
-          <p className="text-sm font-black leading-8">
+        <section className="mt-5 rounded-2xl bg-[var(--status-success-surface)] p-5">
+          <p className="text-sm font-bold leading-8">
             지민 씨는 아침에 학교에 가요. 학교에서 한국어를 공부해요.
             점심에는 친구하고 식당에서 밥을 먹어요. 오후에는 도서관에서 책을 읽어요.
             오늘은 커피를 안 마셔요. 저녁에는 집에서 쉬어요.
@@ -1035,10 +1035,10 @@ export function KoreanLevelOneLessonThreeBook({
             ["식당", "친구하고 밥을 먹어요", "中午"],
             ["도서관", "책을 읽어요", "下午"],
           ].map(([place, action, time]) => (
-            <div key={place} className={`rounded-xl border border-[#cfe3d9] bg-white p-3 transition ${revealed.reading ? "opacity-100" : "opacity-0"}`}>
-              <p className="text-[10px] font-black text-[#347b69]">{time}</p>
-              <p className="mt-1 text-sm font-black">{place}</p>
-              <p className="mt-1 text-[10px] text-[#71857b]">{action}</p>
+            <div key={place} className={`rounded-xl border border-[var(--border)] bg-white p-3 transition ${revealed.reading ? "opacity-100" : "opacity-0"}`}>
+              <p className="text-[10px] font-bold text-[var(--status-success)]">{time}</p>
+              <p className="mt-1 text-sm font-bold">{place}</p>
+              <p className="mt-1 text-[10px] text-[var(--foreground-secondary)]">{action}</p>
             </div>
           ))}
         </div>
@@ -1047,15 +1047,15 @@ export function KoreanLevelOneLessonThreeBook({
           2. 누구하고 밥을 먹어요?<br />
           3. 오늘 무엇을 안 마셔요?
         </RuleCard>
-        <p className="mt-auto text-[11px] text-[#71857b]">提示：阅读时先找 에／에서／을／를，助词会替你标出句子关系。</p>
+        <p className="mt-auto text-[11px] text-[var(--foreground-secondary)]">提示：阅读时先找 에／에서／을／를，助词会替你标出句子关系。</p>
       </div>
     </Page>,
     <Page key="03-28" number="28">
       <div className="flex h-full flex-col">
-        <Heading title="2. 写作 · 我的三地点日记" description="选择三个地点，每个地点写一个动作，最后补充一个否定句。" icon={<PencilLine size={22} />} />
+        <Heading title="2. 写作 · 我的三地点日记" description="选择三个地点，每个地点写一个动作，最后补充一个否定句。" icon={<PencilLine aria-hidden="true" size={22} />} />
         <div className="mt-5 grid grid-cols-[1fr_1.4fr] gap-4">
-          <section className="rounded-2xl bg-[#e7f5f1] p-5">
-            <p className="text-xs font-black text-[#347b69]">写作清单</p>
+          <section className="rounded-2xl bg-[var(--status-success-surface)] p-5">
+            <p className="text-xs font-bold text-[var(--status-success)]">写作清单</p>
             <ol className="mt-3 list-decimal space-y-2 pl-4 text-xs leading-6">
               <li>时间词至少 1 个</li>
               <li>에서 场所至少 2 个</li>
@@ -1063,8 +1063,8 @@ export function KoreanLevelOneLessonThreeBook({
               <li>안 否定句 1 个</li>
             </ol>
           </section>
-          <section className="rounded-2xl border border-[#cfe3d9] bg-white p-5">
-            <p className="text-xs font-black">句子模板</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-xs font-bold">句子模板</p>
             <div className="mt-3 space-y-3 text-xs leading-6">
               <p>아침에 ______에서 ______.</p>
               <p>오후에 ______에서 ______을／를 ______.</p>
@@ -1073,15 +1073,15 @@ export function KoreanLevelOneLessonThreeBook({
             </div>
           </section>
         </div>
-        <section className="mt-5 rounded-2xl border border-dashed border-[#77a997] bg-[#fbfdfc] p-5">
-          <p className="text-xs font-black text-[#347b69]">创意升级 · 路线而不是句子堆</p>
+        <section className="mt-5 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-5">
+          <p className="text-xs font-bold text-[var(--status-success)]">创意升级 · 路线而不是句子堆</p>
           <p className="mt-2 text-xs leading-6">
             用 “그리고（然后／并且）” 连接两句，让读者感受到一天的移动：
             <b> 학교에서 공부해요. 그리고 도서관에서 책을 읽어요.</b>
           </p>
         </section>
-        <div className="mt-auto flex items-center gap-3 rounded-xl bg-[#f7faf8] p-3 text-[11px] font-bold">
-          <CheckCircle2 size={16} className="text-[#347b69]" />
+        <div className="mt-auto flex items-center gap-3 rounded-xl bg-[var(--card)] p-3 text-[11px] font-bold">
+          <CheckCircle2 aria-hidden="true" size={16} className="text-[var(--status-success)]" />
           写完后只检查三件事：助词、안 的位置、动词是否在句尾。
         </div>
       </div>
@@ -1091,7 +1091,7 @@ export function KoreanLevelOneLessonThreeBook({
         step="第八步"
         title="自测与复盘"
         goal="通过八题知识检测和一次口语验收，确认自己能够描述真实日常行动。"
-        icon={<CheckCircle2 size={24} />}
+        icon={<CheckCircle2 aria-hidden="true" size={24} />}
       />
     </Page>,
     <Page key="03-30" number="30">
@@ -1099,7 +1099,7 @@ export function KoreanLevelOneLessonThreeBook({
         <Heading
           title="1. 八题核心检测"
           description="先独立完成，再展开答案。每题都对应一个可解释的规则。"
-          icon={<ClipboardCheck size={22} />}
+          icon={<ClipboardCheck aria-hidden="true" size={22} />}
           action={<KoreanEbookRevealButton shown={Boolean(revealed.test)} onClick={() => toggle("test")} answer />}
         />
         <div className="mt-4 grid grid-cols-2 gap-2.5">
@@ -1113,20 +1113,20 @@ export function KoreanLevelOneLessonThreeBook({
             ["운동하다 的否定", "운동 안 해요"],
             ["오늘 커피를 ___ 마셔요", "안"],
           ].map(([question, answer], index) => (
-            <article key={question} className="rounded-xl border border-[#cfe3d4] bg-white p-3">
-              <p className="text-[11px] font-black"><span className="mr-2 text-[#487a54]">{index + 1}.</span>{question}</p>
-              <p className={`mt-2 rounded-lg bg-[#e8f4eb] px-3 py-2 text-[11px] font-black text-[#487a54] ${revealed.test ? "opacity-100" : "opacity-0"}`}>{answer}</p>
+            <article key={question} className="rounded-xl border border-[var(--border)] bg-white p-3">
+              <p className="text-[11px] font-bold"><span className="mr-2 text-[var(--status-success)]">{index + 1}.</span>{question}</p>
+              <p className={`mt-2 rounded-lg bg-[var(--status-success-surface)] px-3 py-2 text-[11px] font-bold text-[var(--status-success)] ${revealed.test ? "opacity-100" : "opacity-0"}`}>{answer}</p>
             </article>
           ))}
         </div>
-        <p className="mt-auto text-center text-[11px] text-[#83948b]">7—8题：进入口语验收；6题以下：回看对应语法页并重做一题。</p>
+        <p className="mt-auto text-center text-[11px] text-[var(--foreground-secondary)]">7—8题：进入口语验收；6题以下：回看对应语法页并重做一题。</p>
       </div>
     </Page>,
     <Page key="03-31" number="31">
       <div className="flex h-full flex-col">
-        <Heading title="2. 口语验收 · 我的一天" description="不看稿完成 40 秒表达，并回答一个追问。" icon={<Mic2 size={22} />} />
-        <section className="mt-5 rounded-2xl border border-[#cfe3d4] bg-[#f2f8f3] p-5">
-          <p className="text-xs font-black text-[#487a54]">必含信息</p>
+        <Heading title="2. 口语验收 · 我的一天" description="不看稿完成 40 秒表达，并回答一个追问。" icon={<Mic2 aria-hidden="true" size={22} />} />
+        <section className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] p-5">
+          <p className="text-xs font-bold text-[var(--status-success)]">必含信息</p>
           <ol className="mt-4 grid grid-cols-2 gap-3 text-xs leading-6">
             {[
               "一个现在正在做的动作",
@@ -1135,22 +1135,22 @@ export function KoreanLevelOneLessonThreeBook({
               "一个使用 안 的否定句",
             ].map((task, index) => (
               <li key={task} className="rounded-xl bg-white p-4 font-bold">
-                <span className="mr-2 text-[#487a54]">{index + 1}.</span>{task}
+                <span className="mr-2 text-[var(--status-success)]">{index + 1}.</span>{task}
               </li>
             ))}
           </ol>
         </section>
         <div className="mt-5 grid grid-cols-2 gap-4">
-          <section className="rounded-2xl border border-[#dce8e1] bg-white p-5">
-            <p className="text-xs font-black">我已经能做到</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-xs font-bold">我已经能做到</p>
             <div className="mt-4 space-y-3 text-xs">
               {["根据元音选择 아／어요", "根据收音选择 을／를", "区分 에 与 에서", "正确放置 안"].map((item) => (
-                <label key={item} className="flex items-center gap-3"><input type="checkbox" className="h-4 w-4 accent-[#487a54]" />{item}</label>
+                <label key={item} className="flex items-center gap-3"><input type="checkbox" className="h-4 w-4 accent-[var(--status-success)]" />{item}</label>
               ))}
             </div>
           </section>
-          <section className="rounded-2xl border border-[#eadfcf] bg-[#fffaf2] p-5">
-            <p className="text-xs font-black text-[#9b6b32]">追问卡</p>
+          <section className="rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--status-warning)]">追问卡</p>
             <div className="mt-4 space-y-3 text-xs leading-5">
               <p>□ 어디에서 공부해요?</p>
               <p>□ 뭐를 먹어요?</p>
@@ -1159,19 +1159,19 @@ export function KoreanLevelOneLessonThreeBook({
             </div>
           </section>
         </div>
-        <button type="button" onClick={() => speak("저는 학교에서 한국어를 공부해요. 도서관에서 책을 읽어요. 오늘은 커피 안 마셔요.")} className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[#487a54] px-5 py-4 text-sm font-black text-white">
-          <Volume2 size={16} />播放最终示范
+        <button type="button" onClick={() => speak("저는 학교에서 한국어를 공부해요. 도서관에서 책을 읽어요. 오늘은 커피 안 마셔요.")} className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[var(--status-success)] px-5 py-4 text-sm font-bold text-white">
+          <Volume2 aria-hidden="true" size={16} />播放最终示范
         </button>
       </div>
     </Page>,
     <Page key="03-32-ending" number="32">
       <div className="flex h-full flex-col justify-center">
         <div className="mx-auto w-full max-w-[440px] text-center">
-          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#e8f4eb] text-[#487a54]"><Sparkles size={27} /></span>
-          <p className="mt-5 text-xs font-black tracking-[0.18em] text-[#487a54]">LESSON 03 · COMPLETE</p>
-          <h2 className="mt-3 text-4xl font-black text-[#1f2e28]">한국어를 공부해요.</h2>
-          <p className="mt-3 text-lg font-black text-[#303432]">你已经完成第三课</p>
-          <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[#60736a]">
+          <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]"><Sparkles aria-hidden="true" size={27} /></span>
+          <p className="mt-5 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">LESSON 03 · COMPLETE</p>
+          <h3 className="mt-3 text-4xl font-bold text-[var(--status-success)]">한국어를 공부해요.</h3>
+          <p className="mt-3 text-lg font-bold text-[var(--foreground)]">你已经完成第三课</p>
+          <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[var(--foreground-secondary)]">
             你已经能把动作、对象、场所和否定组合起来，描述此刻与日常生活中的真实行动。
           </p>
           <div className="mt-4 grid grid-cols-2 gap-3 text-left">
@@ -1181,43 +1181,43 @@ export function KoreanLevelOneLessonThreeBook({
               ["03", "动作场所", "场所 N-에서"],
               ["04", "简短否定", "안 + V／A"],
             ].map(([number, title, detail]) => (
-              <div key={number} className="rounded-xl border border-[#dce8e1] bg-white px-4 py-3">
-                <p className="text-[10px] font-black text-[#487a54]">{number}</p>
-                <p className="mt-1 text-xs font-black text-[#294f43]">{title}</p>
-                <p className="mt-1 text-[10px] leading-4 text-[#71857b]">{detail}</p>
+              <div key={number} className="rounded-xl border border-[var(--border)] bg-white px-4 py-3">
+                <p className="text-[10px] font-bold text-[var(--status-success)]">{number}</p>
+                <p className="mt-1 text-xs font-bold text-[var(--status-success)]">{title}</p>
+                <p className="mt-1 text-[10px] leading-4 text-[var(--foreground-secondary)]">{detail}</p>
               </div>
             ))}
           </div>
-          <div className="mt-4 rounded-2xl border border-[#cfe3d4] bg-[#f2f8f3] px-5 py-3.5 text-left">
+          <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] px-5 py-3.5 text-left">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-black tracking-[0.14em] text-[#487a54]">LESSON 3 TEST · 本课测试</p>
-                <p className="mt-1 text-xs font-bold text-[#52685e]">前往章节测试专区，检验词尾、助词、听辨与场景表达。</p>
+                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">LESSON 3 TEST · 本课测试</p>
+                <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">前往章节测试专区，检验词尾、助词、听辨与场景表达。</p>
               </div>
-              <button type="button" onClick={() => window.location.assign("/dashboard/assignments/korean")} className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-black text-[#487a54] shadow-sm">前往测试专区</button>
+              <button type="button" onClick={() => window.location.assign("/dashboard/assignments/korean")} className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[var(--status-success)] shadow-sm">前往测试专区</button>
             </div>
           </div>
-          <div className="mt-5 rounded-2xl bg-[#eaf2fb] px-5 py-4 text-left">
-            <p className="text-[10px] font-black tracking-[0.14em] text-[#3d6f9f]">NEXT · LESSON 04</p>
+          <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">
+            <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">NEXT · LESSON 04</p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div>
-                <p className="text-lg font-black text-[#243d35]">어디에 있어요?</p>
-                <p className="mt-1 text-[11px] text-[#60736a]">下一课：学习说明人物与物品的具体位置。</p>
+                <p className="text-lg font-bold text-[var(--status-success)]">어디에 있어요?</p>
+                <p className="mt-1 text-[11px] text-[var(--foreground-secondary)]">下一课：学习说明人物与物品的具体位置。</p>
               </div>
-              <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(1)} className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-black text-[#3d6f9f] shadow-sm">返回目录</button>
+              <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flip(1)} className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[var(--primary)] shadow-sm">返回目录</button>
             </div>
           </div>
-          <p className="mt-3 text-xs font-bold text-[#6c7d74]">当你能说清“在哪里做什么”，韩语就开始拥有了行动。</p>
+          <p className="mt-3 text-xs font-bold text-[var(--foreground-secondary)]">当你能说清“在哪里做什么”，韩语就开始拥有了行动。</p>
         </div>
       </div>
     </Page>,
   ];
 
   return (
-    <section ref={containerRef} className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden">
+    <section ref={containerRef} className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2 [&_input:focus-visible]:outline-none [&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-[var(--ring)] [&_input:focus-visible]:ring-offset-2">
       <div className="relative shrink-0" style={{ width: BOOK_WIDTH * scale, height: BOOK_HEIGHT * scale }}>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="上一页" className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"><ArrowLeft size={18} /></button>
-        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="下一页" className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"><ArrowRight size={18} /></button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()} aria-label="上一页" className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"><ArrowLeft aria-hidden="true" size={18} /></button>
+        <button type="button" onClick={() => flipBookRef.current?.pageFlip()?.flipNext()} aria-label="下一页" className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"><ArrowRight aria-hidden="true" size={18} /></button>
         <div className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left" style={{ transform: `scale(${scale})` }}>
           <HTMLFlipBook
             ref={flipBookRef}

@@ -21,6 +21,7 @@ import {
   XCircle,
 } from "lucide-react";
 
+import { GradeReviewForm } from "@/app/dashboard/grades/GradeReviewForm";
 import type { PublicKoreanChapterTest } from "@/lib/korean-chapter-tests";
 import {
   addKoreanQuestionToReviewAction,
@@ -376,11 +377,17 @@ export function KoreanChapterTestRunner({
             backgroundColor: "#fff7df",
           }
         : {
-            color: "var(--app-success)",
-            borderColor: "var(--app-success)",
-            backgroundColor: "var(--app-success-soft)",
+            color: "var(--status-success)",
+            borderColor: "var(--status-success)",
+            backgroundColor: "var(--status-success-surface)",
           };
   const successfulResult = result?.status === "success" ? result : null;
+  const savedAttemptId =
+    successfulResult &&
+    "attemptId" in successfulResult &&
+    typeof successfulResult.attemptId === "string"
+      ? successfulResult.attemptId
+      : null;
   const dimensionCards = successfulResult
     ? Object.entries(successfulResult.dimensionScores ?? {}).map(
         ([skill, dimension]) => ({
@@ -407,35 +414,35 @@ export function KoreanChapterTestRunner({
             className="flex h-10 w-10 items-center justify-center rounded-xl"
             style={{
               color: successfulResult?.passed
-                ? "var(--app-success)"
+                ? "var(--status-success)"
                 : successfulResult
-                  ? "var(--app-warm)"
-                  : "var(--app-success)",
+                  ? "var(--status-warning)"
+                  : "var(--status-success)",
               backgroundColor: successfulResult?.passed
-                ? "var(--app-success-soft)"
+                ? "var(--status-success-surface)"
                 : successfulResult
-                  ? "var(--app-warm-soft)"
-                  : "var(--app-success-soft)",
+                  ? "var(--status-warning-surface)"
+                  : "var(--status-success-surface)",
             }}
           >
             {successfulResult?.passed ? <Trophy size={19} /> : <Target size={19} />}
           </span>
-          <p className="mt-2 text-3xl font-black">
+          <p className="mt-2 text-3xl font-bold">
             {successfulResult?.score ?? "—"}
           </p>
-          <p className="app-muted-text mt-1 text-[10px] font-black">
+          <p className="app-muted-text mt-1 text-[10px] font-bold">
             {successfulResult
               ? `答对 ${successfulResult.correctCount}/${successfulResult.totalQuestions} 题`
               : `共 ${test.questions.length} 题`}
           </p>
           <p
-            className="mt-1 text-[11px] font-black"
+            className="mt-1 text-[11px] font-bold"
             style={{
               color: successfulResult?.passed
-                ? "var(--app-success)"
+                ? "var(--status-success)"
                 : successfulResult
-                  ? "var(--app-warm)"
-                  : "var(--app-success)",
+                  ? "var(--status-warning)"
+                  : "var(--status-success)",
             }}
           >
             {successfulResult
@@ -451,11 +458,11 @@ export function KoreanChapterTestRunner({
           style={{
             background:
               successfulResult?.passed || !successfulResult
-                ? "linear-gradient(135deg, var(--app-card-bg), var(--app-success-soft))"
-                : "linear-gradient(135deg, var(--app-card-bg), var(--app-warm-soft))",
+                ? "linear-gradient(135deg, var(--card), var(--status-success-surface))"
+                : "linear-gradient(135deg, var(--card), var(--status-warning-surface))",
           }}
         >
-          <h2 className="text-sm font-black">能力分布</h2>
+          <h2 className="text-sm font-bold">能力分布</h2>
           <div className="mt-3 grid gap-2 sm:grid-cols-3">
                 {dimensionCards.map((dimension) => (
                     <div
@@ -463,14 +470,14 @@ export function KoreanChapterTestRunner({
                       className="app-card rounded-xl border p-3"
                     >
                       <div className="flex items-center justify-between gap-2">
-                        <p className="text-[10px] font-black">{dimension.label}</p>
-                        <span className="text-xs font-black">
+                        <p className="text-[10px] font-bold">{dimension.label}</p>
+                        <span className="text-xs font-bold">
                           {dimension.percent === null ? "—" : `${dimension.percent}%`}
                         </span>
                       </div>
                       <div
                         className="mt-2 h-1.5 overflow-hidden rounded-full"
-                        style={{ backgroundColor: "var(--app-soft-bg)" }}
+                        style={{ backgroundColor: "var(--surface-soft)" }}
                       >
                         <div
                           className="h-full rounded-full"
@@ -479,8 +486,8 @@ export function KoreanChapterTestRunner({
                             backgroundColor:
                               dimension.percent !== null &&
                               dimension.percent >= test.passingScore
-                                ? "var(--app-success)"
-                                : "var(--app-warm)",
+                                ? "var(--status-success)"
+                                : "var(--status-warning)",
                           }}
                         />
                       </div>
@@ -506,28 +513,28 @@ export function KoreanChapterTestRunner({
             : "xl:grid-cols-[300px_minmax(0,1fr)_300px]"
         }`}
         style={{
-          backgroundColor: isFullscreen ? "var(--app-bg)" : undefined,
+          backgroundColor: isFullscreen ? "var(--background)" : undefined,
         }}
       >
         <aside className="app-card h-fit rounded-3xl border p-4 lg:sticky lg:top-5">
           <div
             className="rounded-2xl border p-3"
-            style={{ borderColor: "var(--app-border-soft)" }}
+            style={{ borderColor: "var(--border-subtle)" }}
           >
             <div className="relative flex min-h-12 items-center justify-center">
               <span
                 className="absolute left-0 flex h-9 w-9 items-center justify-center rounded-xl"
                 style={{
                   color: successfulResult?.passed
-                    ? "var(--app-success)"
+                    ? "var(--status-success)"
                     : successfulResult
-                      ? "var(--app-warm)"
-                      : "var(--app-success)",
+                      ? "var(--status-warning)"
+                      : "var(--status-success)",
                   backgroundColor: successfulResult?.passed
-                    ? "var(--app-success-soft)"
+                    ? "var(--status-success-surface)"
                     : successfulResult
-                      ? "var(--app-warm-soft)"
-                      : "var(--app-success-soft)",
+                      ? "var(--status-warning-surface)"
+                      : "var(--status-success-surface)",
                 }}
               >
                 {successfulResult?.passed ? (
@@ -537,17 +544,17 @@ export function KoreanChapterTestRunner({
                 )}
               </span>
               <div className="min-w-0 text-center">
-                <p className="text-2xl font-black">
+                <p className="text-2xl font-bold">
                   {successfulResult ? `${successfulResult.score} 分` : "—"}
                 </p>
                 <p
-                  className="mt-1 text-[10px] font-black"
+                  className="mt-1 text-[10px] font-bold"
                   style={{
                     color: successfulResult?.passed
-                      ? "var(--app-success)"
+                      ? "var(--status-success)"
                       : successfulResult
-                        ? "var(--app-warm)"
-                        : "var(--app-success)",
+                        ? "var(--status-warning)"
+                        : "var(--status-success)",
                   }}
                 >
                   {successfulResult
@@ -561,20 +568,20 @@ export function KoreanChapterTestRunner({
           </div>
 
           <div className="mt-4 flex items-center justify-between gap-2">
-            <p className="text-xs font-black">答题进度</p>
-            <span className="app-muted-text text-[10px] font-black">
+            <p className="text-xs font-bold">答题进度</p>
+            <span className="app-muted-text text-[10px] font-bold">
               {answeredCount}/{test.questions.length}
             </span>
           </div>
           <div
             className="mt-3 h-2 overflow-hidden rounded-full"
-            style={{ backgroundColor: "var(--app-soft-bg)" }}
+            style={{ backgroundColor: "var(--surface-soft)" }}
           >
             <div
               className="h-full rounded-full transition-all"
               style={{
                 width: `${(answeredCount / test.questions.length) * 100}%`,
-                backgroundColor: "var(--app-secondary)",
+                backgroundColor: "var(--support)",
               }}
             />
           </div>
@@ -591,29 +598,29 @@ export function KoreanChapterTestRunner({
                   disabled={!hasExamStarted && !result}
                   onClick={() => setCurrentIndex(index)}
                   aria-label={`前往第 ${index + 1} 题`}
-                  className="relative flex aspect-square items-center justify-center rounded-lg border text-[10px] font-black transition disabled:cursor-not-allowed disabled:opacity-55"
+                  className="relative flex aspect-square items-center justify-center rounded-lg border text-[10px] font-bold transition disabled:cursor-not-allowed disabled:opacity-55"
                   style={{
                     color: active
                       ? "white"
                       : review
                         ? review.correct
-                          ? "var(--app-success)"
+                          ? "var(--status-success)"
                           : "#c94f45"
                         : answered
-                          ? "var(--app-secondary)"
-                          : "var(--app-muted)",
+                          ? "var(--support)"
+                          : "var(--foreground-muted)",
                     backgroundColor: active
-                      ? "var(--app-secondary)"
+                      ? "var(--support)"
                       : review
                         ? review.correct
-                          ? "var(--app-success-soft)"
+                          ? "var(--status-success-surface)"
                           : "#fff0ed"
                         : answered
-                          ? "var(--app-secondary-soft)"
-                          : "var(--app-card-bg)",
+                          ? "var(--support-surface)"
+                          : "var(--card)",
                     borderColor: active
-                      ? "var(--app-secondary)"
-                      : "var(--app-border-soft)",
+                      ? "var(--support)"
+                      : "var(--border-subtle)",
                   }}
                 >
                   {index + 1}
@@ -629,9 +636,9 @@ export function KoreanChapterTestRunner({
           </div>
           <div
             className="mt-4 rounded-2xl border p-3"
-            style={{ borderColor: "var(--app-border-soft)" }}
+            style={{ borderColor: "var(--border-subtle)" }}
           >
-            <p className="text-[10px] font-black">本次答题统计</p>
+            <p className="text-[10px] font-bold">本次答题统计</p>
             <div className="mt-2 grid grid-cols-3 gap-1.5 text-center">
               {[
                 {
@@ -640,7 +647,7 @@ export function KoreanChapterTestRunner({
                     result?.status === "success"
                       ? String(result.correctCount ?? 0)
                       : "—",
-                  color: "var(--app-success)",
+                  color: "var(--status-success)",
                 },
                 {
                   label: "答错",
@@ -651,7 +658,7 @@ export function KoreanChapterTestRunner({
                             (result.correctCount ?? 0)
                         )
                       : "—",
-                  color: "var(--app-warm)",
+                  color: "var(--status-warning)",
                 },
                 {
                   label: "用时",
@@ -659,22 +666,22 @@ export function KoreanChapterTestRunner({
                     elapsedSeconds === null
                       ? "—"
                       : formatElapsedTime(elapsedSeconds),
-                  color: "var(--app-secondary)",
+                  color: "var(--support)",
                 },
               ].map((item) => (
                 <div
                   key={item.label}
                   className="rounded-xl px-1 py-2"
-                  style={{ backgroundColor: "var(--app-soft-bg)" }}
+                  style={{ backgroundColor: "var(--surface-soft)" }}
                 >
                   <p
-                    className="truncate text-xs font-black"
+                    className="truncate text-xs font-bold"
                     style={{ color: item.color }}
                     title={item.value}
                   >
                     {item.value}
                   </p>
-                  <p className="app-muted-text mt-0.5 text-[8px] font-black">
+                  <p className="app-muted-text mt-0.5 text-[8px] font-bold">
                     {item.label}
                   </p>
                 </div>
@@ -682,24 +689,24 @@ export function KoreanChapterTestRunner({
             </div>
           </div>
           <div className="mt-4">
-            <p className="text-[10px] font-black">能力分布</p>
+            <p className="text-[10px] font-bold">能力分布</p>
             <div className="mt-2 space-y-2">
               {dimensionCards.map((dimension) => (
                 <div
                   key={dimension.skill}
                   className="rounded-xl border p-2.5"
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex min-w-0 items-center gap-2">
-                      <p className="truncate text-[9px] font-black">
+                      <p className="truncate text-[9px] font-bold">
                         {dimension.label}
                       </p>
                       <span className="app-muted-text shrink-0 text-[8px]">
                         {dimension.detail}
                       </span>
                     </div>
-                    <span className="text-[10px] font-black">
+                    <span className="text-[10px] font-bold">
                       {dimension.percent === null
                         ? "—"
                         : `${dimension.percent}%`}
@@ -707,7 +714,7 @@ export function KoreanChapterTestRunner({
                   </div>
                   <div
                     className="mt-1.5 h-1 overflow-hidden rounded-full"
-                    style={{ backgroundColor: "var(--app-soft-bg)" }}
+                    style={{ backgroundColor: "var(--surface-soft)" }}
                   >
                     <div
                       className="h-full rounded-full"
@@ -716,8 +723,8 @@ export function KoreanChapterTestRunner({
                         backgroundColor:
                           dimension.percent !== null &&
                           dimension.percent >= test.passingScore
-                            ? "var(--app-success)"
-                            : "var(--app-warm)",
+                            ? "var(--status-success)"
+                            : "var(--status-warning)",
                       }}
                     />
                   </div>
@@ -730,12 +737,20 @@ export function KoreanChapterTestRunner({
               本次评分已完成，但成绩记录尚未写入数据库；应用最新数据库迁移后即可自动保存。
             </p>
           )}
+          {savedAttemptId && !previewMode && (
+            <div className="mt-3">
+              <GradeReviewForm
+                sourceType="chapter_test_attempt"
+                sourceResultId={savedAttemptId}
+              />
+            </div>
+          )}
           {successfulResult && (
             <button
               type="button"
               onClick={restartTest}
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-bold text-white"
+              style={{ backgroundColor: "var(--support)" }}
             >
               <RotateCcw size={14} />
               重新完整测试
@@ -759,24 +774,24 @@ export function KoreanChapterTestRunner({
                 <section
                   key={question.id}
                   className="rounded-2xl border p-4 sm:p-5"
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <div className="flex items-center justify-between gap-3">
                     <span
-                      className="rounded-full px-3 py-1.5 text-[10px] font-black"
+                      className="rounded-full px-3 py-1.5 text-[10px] font-bold"
                       style={{
-                        color: "var(--app-secondary)",
-                        backgroundColor: "var(--app-secondary-soft)",
+                        color: "var(--support)",
+                        backgroundColor: "var(--support-surface)",
                       }}
                     >
                       第 {questionIndex + 1} 题 / {test.questions.length}
                     </span>
-                    <span className="app-muted-text text-[10px] font-black">
+                    <span className="app-muted-text text-[10px] font-bold">
                       {test.skills[question.skill]}
                     </span>
                   </div>
 
-                  <h2 className="mt-4 min-h-14 text-base font-black leading-7 sm:text-lg">
+                  <h2 className="mt-4 min-h-14 text-base font-bold leading-7 sm:text-lg">
                     {question.prompt}
                   </h2>
 
@@ -801,24 +816,24 @@ export function KoreanChapterTestRunner({
                             className="flex w-full overflow-hidden rounded-xl border text-xs font-bold transition"
                             style={{
                               color: isCorrectOption
-                                ? "var(--app-success)"
+                                ? "var(--status-success)"
                                 : isWrongSelected
                                   ? "#c94f45"
-                                  : "var(--app-foreground)",
+                                  : "var(--foreground)",
                               backgroundColor: isCorrectOption
-                                ? "var(--app-success-soft)"
+                                ? "var(--status-success-surface)"
                                 : isWrongSelected
                                   ? "#fff0ed"
                                   : selected
-                                    ? "var(--app-secondary-soft)"
-                                    : "var(--app-card-bg)",
+                                    ? "var(--support-surface)"
+                                    : "var(--card)",
                               borderColor: isCorrectOption
-                                ? "var(--app-success)"
+                                ? "var(--status-success)"
                                 : isWrongSelected
                                   ? "#c94f45"
                                   : selected
-                                    ? "var(--app-secondary)"
-                                    : "var(--app-border-soft)",
+                                    ? "var(--support)"
+                                    : "var(--border-subtle)",
                               opacity: eliminated ? 0.48 : 1,
                             }}
                           >
@@ -835,14 +850,14 @@ export function KoreanChapterTestRunner({
                               className="flex min-w-0 flex-1 items-center gap-2.5 p-3 text-left transition enabled:hover:bg-black/[0.02] disabled:cursor-default"
                             >
                               <span
-                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-black"
+                                className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-[10px] font-bold"
                                 style={{
                                   backgroundColor:
                                     isCorrectOption ||
                                     isWrongSelected ||
                                     selected
                                       ? "rgba(255,255,255,.7)"
-                                      : "var(--app-soft-bg)",
+                                      : "var(--surface-soft)",
                                 }}
                               >
                                 {String.fromCharCode(65 + optionIndex)}
@@ -873,10 +888,10 @@ export function KoreanChapterTestRunner({
                                 }
                                 className="flex w-10 shrink-0 items-center justify-center border-l transition hover:bg-black/[0.03] disabled:cursor-not-allowed disabled:opacity-30"
                                 style={{
-                                  borderColor: "var(--app-border-soft)",
+                                  borderColor: "var(--border-subtle)",
                                   color: eliminated
-                                    ? "var(--app-warm)"
-                                    : "var(--app-muted)",
+                                    ? "var(--status-warning)"
+                                    : "var(--foreground-muted)",
                                 }}
                               >
                                 <EyeOff size={14} />
@@ -893,17 +908,17 @@ export function KoreanChapterTestRunner({
                       className="mt-4 rounded-xl border p-3"
                       style={{
                         color: review.correct
-                          ? "var(--app-success)"
-                          : "var(--app-warm)",
+                          ? "var(--status-success)"
+                          : "var(--status-warning)",
                         backgroundColor: review.correct
-                          ? "var(--app-success-soft)"
-                          : "var(--app-warm-soft)",
+                          ? "var(--status-success-surface)"
+                          : "var(--status-warning-surface)",
                         borderColor: review.correct
-                          ? "var(--app-success)"
-                          : "var(--app-warm)",
+                          ? "var(--status-success)"
+                          : "var(--status-warning)",
                       }}
                     >
-                      <p className="text-[10px] font-black">
+                      <p className="text-[10px] font-bold">
                         {review.correct ? "回答正确" : "本题需要复习"}
                       </p>
                       <p className="mt-1.5 text-[11px] font-bold leading-5">
@@ -918,13 +933,13 @@ export function KoreanChapterTestRunner({
 
           <div
             className="mt-5 flex flex-col gap-3 border-t pt-4 sm:flex-row sm:items-center sm:justify-between"
-            style={{ borderColor: "var(--app-border-soft)" }}
+            style={{ borderColor: "var(--border-subtle)" }}
           >
             <button
               type="button"
               disabled={!hasExamStarted || currentIndex === 0}
               onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
-              className="app-soft-card inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-black disabled:opacity-35"
+              className="app-soft-card inline-flex items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold disabled:opacity-35"
             >
               <ArrowLeft size={14} />
               上一题
@@ -934,12 +949,12 @@ export function KoreanChapterTestRunner({
               {message && (
                 <p
                   aria-live="polite"
-                  className="text-xs font-black"
+                  className="text-xs font-bold"
                   style={{
                     color:
                       result?.status === "success" && result.passed
-                        ? "var(--app-success)"
-                        : "var(--app-warm)",
+                        ? "var(--status-success)"
+                        : "var(--status-warning)",
                   }}
                 >
                   {message}
@@ -950,8 +965,8 @@ export function KoreanChapterTestRunner({
                   type="button"
                   disabled={pending || !hasExamStarted}
                   onClick={() => submitTest()}
-                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
-                  style={{ backgroundColor: "var(--app-success)" }}
+                  className="mt-2 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white disabled:opacity-50"
+                  style={{ backgroundColor: "var(--status-success)" }}
                 >
                   <Send size={14} />
                   {pending ? "正在评分…" : "交卷并查看结果"}
@@ -970,8 +985,8 @@ export function KoreanChapterTestRunner({
                   Math.min(test.questions.length - 1, index + 1)
                 )
               }
-              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:cursor-not-allowed disabled:opacity-35"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white disabled:cursor-not-allowed disabled:opacity-35"
+              style={{ backgroundColor: "var(--support)" }}
             >
               下一题
               <ArrowRight size={14} />
@@ -980,7 +995,7 @@ export function KoreanChapterTestRunner({
         </article>
 
         <aside className="app-card h-fit rounded-3xl border p-4 lg:col-start-2 xl:col-start-auto xl:h-full xl:self-stretch">
-          <p className="text-center text-xs font-black">答题工具</p>
+          <p className="text-center text-xs font-bold">答题工具</p>
 
           <div
             className="mt-3 rounded-2xl border p-3 text-center"
@@ -990,14 +1005,14 @@ export function KoreanChapterTestRunner({
             }}
           >
             <div
-              className="flex items-center justify-center gap-1.5 text-[9px] font-black"
+              className="flex items-center justify-center gap-1.5 text-[9px] font-bold"
               style={{ color: countdownTone.color }}
             >
               <Clock3 size={12} />
               剩余时间
             </div>
             <p
-              className="mt-1 font-mono text-2xl font-black tracking-wider"
+              className="mt-1 font-mono text-2xl font-bold tracking-wider"
               style={{ color: countdownTone.color }}
             >
               {formatCountdown(remainingSeconds)}
@@ -1006,8 +1021,8 @@ export function KoreanChapterTestRunner({
               <button
                 type="button"
                 onClick={startExam}
-                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-black text-white transition hover:-translate-y-0.5"
-                style={{ backgroundColor: "var(--app-success)" }}
+                className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2.5 text-[10px] font-bold text-white transition hover:-translate-y-0.5"
+                style={{ backgroundColor: "var(--status-success)" }}
               >
                 <Play size={13} fill="currentColor" />
                 开始答题
@@ -1015,7 +1030,7 @@ export function KoreanChapterTestRunner({
             )}
             {hasExamStarted && !result && (
               <p
-                className="mt-2 text-[9px] font-black"
+                className="mt-2 text-[9px] font-bold"
                 style={{ color: countdownTone.color }}
               >
                 计时进行中
@@ -1023,7 +1038,7 @@ export function KoreanChapterTestRunner({
             )}
             {remainingSeconds === 0 && !result && (
               <p
-                className="mt-1 text-[9px] font-black"
+                className="mt-1 text-[9px] font-bold"
                 style={{ color: countdownTone.color }}
               >
                 时间已到，正在自动交卷…
@@ -1034,11 +1049,11 @@ export function KoreanChapterTestRunner({
           <button
             type="button"
             onClick={toggleFullscreen}
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-black transition hover:-translate-y-0.5"
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-bold transition hover:-translate-y-0.5"
             style={{
-              color: "var(--app-foreground)",
-              borderColor: "var(--app-border-soft)",
-              backgroundColor: "var(--app-card-bg)",
+              color: "var(--foreground)",
+              borderColor: "var(--border-subtle)",
+              backgroundColor: "var(--card)",
             }}
           >
             {isFullscreen ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
@@ -1049,11 +1064,11 @@ export function KoreanChapterTestRunner({
             href={ebookHref}
             target="_blank"
             rel="noreferrer"
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-black transition hover:-translate-y-0.5"
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-bold transition hover:-translate-y-0.5"
             style={{
-              color: "var(--app-secondary)",
-              borderColor: "var(--app-secondary)",
-              backgroundColor: "var(--app-secondary-soft)",
+              color: "var(--support)",
+              borderColor: "var(--support)",
+              backgroundColor: "var(--support-surface)",
             }}
           >
             <BookOpen size={14} />
@@ -1064,17 +1079,17 @@ export function KoreanChapterTestRunner({
             type="button"
             disabled={reviewPending}
             onClick={() => toggleQuestionReview(currentQuestion.id)}
-            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-black transition enabled:hover:-translate-y-0.5 disabled:cursor-default"
+            className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-3 py-2.5 text-[10px] font-bold transition enabled:hover:-translate-y-0.5 disabled:cursor-default"
             style={{
               color: markedQuestions[currentQuestion.id]
-                ? "var(--app-secondary)"
-                : "var(--app-foreground)",
+                ? "var(--support)"
+                : "var(--foreground)",
               borderColor: markedQuestions[currentQuestion.id]
-                ? "var(--app-secondary)"
-                : "var(--app-border-soft)",
+                ? "var(--support)"
+                : "var(--border-subtle)",
               backgroundColor: markedQuestions[currentQuestion.id]
-                ? "var(--app-secondary-soft)"
-                : "var(--app-card-bg)",
+                ? "var(--support-surface)"
+                : "var(--card)",
             }}
           >
             {markedQuestions[currentQuestion.id] ? (
@@ -1092,12 +1107,12 @@ export function KoreanChapterTestRunner({
           <div
             className="mt-5 rounded-xl border p-3"
             style={{
-              color: "var(--app-muted)",
-              borderColor: "var(--app-border-soft)",
-              backgroundColor: "var(--app-soft-bg)",
+              color: "var(--foreground-muted)",
+              borderColor: "var(--border-subtle)",
+              backgroundColor: "var(--surface-soft)",
             }}
           >
-            <p className="flex items-center gap-1.5 text-[9px] font-black">
+            <p className="flex items-center gap-1.5 text-[9px] font-bold">
               <Lightbulb size={11} />
               Tip
             </p>

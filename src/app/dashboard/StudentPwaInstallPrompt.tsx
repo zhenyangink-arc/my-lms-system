@@ -134,9 +134,9 @@ export function StudentPwaInstallPrompt() {
     <aside
       className="fixed right-4 top-20 z-[80] w-[calc(100%-2rem)] max-w-sm rounded-2xl border p-4 shadow-2xl backdrop-blur-xl sm:right-6 sm:top-24"
       style={{
-        color: "var(--app-text)",
-        borderColor: "var(--app-border)",
-        backgroundColor: "color-mix(in srgb, var(--app-card-bg) 94%, transparent)",
+        color: "var(--foreground)",
+        borderColor: "var(--border)",
+        backgroundColor: "color-mix(in srgb, var(--card) 94%, transparent)",
       }}
       role="dialog"
       aria-labelledby="student-pwa-title"
@@ -157,12 +157,12 @@ export function StudentPwaInstallPrompt() {
       <div className="flex gap-3 pr-8">
         <span
           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+          style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
         >
           <Download size={20} aria-hidden="true" />
         </span>
         <div>
-          <h2 id="student-pwa-title" className="font-black">安装 PUFFY 学习应用</h2>
+          <h2 id="student-pwa-title" className="font-bold">安装 PUFFY 学习应用</h2>
           <p id="student-pwa-description" className="app-muted-text mt-1 text-xs font-bold leading-5">
             安装后从桌面独立打开，不显示浏览器地址栏，使用体验更接近原生应用。
           </p>
@@ -172,8 +172,8 @@ export function StudentPwaInstallPrompt() {
       <button
         type="button"
         onClick={installApp}
-        className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-black text-white transition hover:opacity-90"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        className="mt-4 inline-flex h-10 w-full items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90"
+        style={{ backgroundColor: "var(--primary)" }}
       >
         <Download size={16} aria-hidden="true" />
         安装到桌面
@@ -185,8 +185,8 @@ export function StudentPwaInstallPrompt() {
           markHiddenToday();
           setIsVisible(false);
         }}
-        className="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl border px-4 text-xs font-black transition hover:bg-black/[0.02]"
-        style={{ borderColor: "var(--app-border)", color: "var(--app-muted)" }}
+        className="mt-2 inline-flex h-9 w-full items-center justify-center gap-2 rounded-xl border px-4 text-xs font-bold transition hover:bg-black/[0.02]"
+        style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}
       >
         今天不显示
       </button>

@@ -84,23 +84,23 @@ export function TenantAccountTableActions({
         type="button"
         aria-label={`管理${displayName}`}
         className="inline-flex h-8 items-center rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         管理
       </DialogTrigger>
       <DialogContent className="max-h-[min(880px,calc(100vh-32px))] max-w-[780px] gap-0 overflow-y-auto p-0">
-        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--app-border)" }}>
+        <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">管理机构账号</DialogTitle>
           <DialogDescription className="text-xs">
             {displayName} · {profile.login_id || profile.email || `…${profile.id.slice(-8)}`}
           </DialogDescription>
         </DialogHeader>
 
-        <div className="divide-y" style={{ borderColor: "var(--app-border)" }}>
+        <div className="divide-y" style={{ borderColor: "var(--border)" }}>
           {profile.role === "student" && (
             <section>
               <form action={membershipAction} className="grid sm:grid-cols-[160px_minmax(0,1fr)_112px]">
-                <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+                <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
                   <p className="text-xs font-semibold">会员档位</p>
                   <p className="app-muted-text mt-1 text-[11px]">当前：{MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile.membership_tier)]}</p>
                 </div>
@@ -113,7 +113,7 @@ export function TenantAccountTableActions({
                   </select>
                 </div>
                 <div className="flex items-center px-5 pb-4 sm:px-4 sm:py-4">
-                  <button type="submit" disabled={membershipPending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--app-border)" }}>{membershipPending ? "保存中…" : "保存档位"}</button>
+                  <button type="submit" disabled={membershipPending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--border)" }}>{membershipPending ? "保存中…" : "保存档位"}</button>
                 </div>
               </form>
               <ResultMessage state={membershipState} />
@@ -122,7 +122,7 @@ export function TenantAccountTableActions({
 
           <section>
             <form action={roleAction} className="grid sm:grid-cols-[160px_minmax(0,1fr)_112px]">
-              <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+              <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
                 <p className="text-xs font-semibold">账号角色</p>
                 <p className="app-muted-text mt-1 text-[11px]">当前：{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</p>
               </div>
@@ -140,7 +140,7 @@ export function TenantAccountTableActions({
 
           <section>
             <form action={statusAction} className="grid sm:grid-cols-[160px_minmax(0,1fr)_112px]">
-              <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+              <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
                 <p className="text-xs font-semibold">账号状态</p>
                 <p className="app-muted-text mt-1 text-[11px]">当前：{STATUS_LABELS[profile.status] ?? profile.status}</p>
               </div>
@@ -155,7 +155,7 @@ export function TenantAccountTableActions({
                 )}
               </div>
               <div className="flex items-start px-5 pb-4 sm:px-4 sm:py-4">
-                <button type="submit" disabled={statusPending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--app-border)" }}>{statusPending ? "保存中…" : "保存状态"}</button>
+                <button type="submit" disabled={statusPending} className="h-9 w-full rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50" style={{ borderColor: "var(--border)" }}>{statusPending ? "保存中…" : "保存状态"}</button>
               </div>
             </form>
             <ResultMessage state={statusState} />
@@ -164,7 +164,7 @@ export function TenantAccountTableActions({
           {viewerRole === "tenant_super_admin" && (
             <section className="bg-rose-50/35">
               <form action={deleteAction} className="grid sm:grid-cols-[160px_minmax(0,1fr)_112px]">
-                <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--app-border)" }}>
+                <div className="border-b px-5 py-4 sm:border-b-0 sm:border-r" style={{ borderColor: "var(--border)" }}>
                   <p className="flex items-center gap-1.5 text-xs font-semibold text-rose-700"><Trash2 size={13} />永久删除</p>
                   <p className="mt-1 text-[11px] text-rose-600">此操作无法恢复</p>
                 </div>

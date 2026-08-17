@@ -71,8 +71,8 @@ function getColumns(dashboardBasePath: string): ColumnDef<TenantListItem>[] {
       header: sortableHeader("机构"),
       cell: ({ row }) => (
         <div className="min-w-44">
-          <p className="font-semibold text-[var(--app-text)]">{row.original.name}</p>
-          <p className="mt-0.5 font-mono text-[10px] text-[var(--app-muted)]">{row.original.slug}</p>
+          <p className="font-semibold text-[var(--foreground)]">{row.original.name}</p>
+          <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">{row.original.slug}</p>
         </div>
       ),
     },
@@ -85,7 +85,7 @@ function getColumns(dashboardBasePath: string): ColumnDef<TenantListItem>[] {
         return manager ? (
           <div className="min-w-36">
             <p className="font-medium">{manager.name}{row.original.managers.length > 1 ? ` +${row.original.managers.length - 1}` : ""}</p>
-            <p className="mt-0.5 font-mono text-[10px] text-[var(--app-muted)]">{manager.loginId}</p>
+            <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">{manager.loginId}</p>
           </div>
         ) : <span className="text-amber-700">负责人待配置</span>;
       },
@@ -127,7 +127,7 @@ function getColumns(dashboardBasePath: string): ColumnDef<TenantListItem>[] {
       cell: ({ row }) => (
         <Link
           href={scopeDashboardPath(`/dashboard/admin/tenants/${row.original.id}`, dashboardBasePath)}
-          className="inline-flex h-8 items-center border border-[var(--app-border)] px-3 text-xs font-semibold hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center border border-[var(--border)] px-3 text-xs font-semibold hover:bg-[var(--surface-soft)]"
         >
           查看详情
         </Link>
@@ -174,7 +174,7 @@ export function TenantOverviewTable({ data, dashboardBasePath, scopeLabel }: { d
       toolbar={
         <div className="flex flex-wrap items-center gap-2">
           <label className="app-input flex h-9 min-w-64 flex-1 items-center gap-2 border px-2.5 sm:max-w-sm">
-            <Search size={14} className="text-[var(--app-muted)]" />
+            <Search size={14} className="text-[var(--foreground-muted)]" />
             <span className="sr-only">搜索机构</span>
             <input value={filters.query} onChange={(event) => setFilters({ ...filters, query: event.target.value })} placeholder="搜索机构、标识或负责人" className="min-w-0 flex-1 bg-transparent text-xs outline-none" />
           </label>
@@ -189,10 +189,10 @@ export function TenantOverviewTable({ data, dashboardBasePath, scopeLabel }: { d
       }
       isEmpty={filteredData.length === 0}
       emptyContent="没有符合条件的机构"
-      footer={<p className="text-xs text-[var(--app-muted)]">{scopeLabel} · 当前显示 {filteredData.length} / {data.length} 个机构，本步骤仅提供只读查看</p>}
+      footer={<p className="text-xs text-[var(--foreground-muted)]">{scopeLabel} · 当前显示 {filteredData.length} / {data.length} 个机构，本步骤仅提供只读查看</p>}
     >
       <Table className="min-w-[1080px]">
-        <TableHeader className="bg-[var(--app-soft-bg)]">{table.getHeaderGroups().map((group) => <TableRow key={group.id}>{group.headers.map((header) => <TableHead key={header.id} className="px-4 text-xs">{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
+        <TableHeader className="bg-[var(--surface-soft)]">{table.getHeaderGroups().map((group) => <TableRow key={group.id}>{group.headers.map((header) => <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">{header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}</TableHead>)}</TableRow>)}</TableHeader>
         <TableBody>{table.getRowModel().rows.map((row) => <TableRow key={row.id}>{row.getVisibleCells().map((cell) => <TableCell key={cell.id} className="px-4 py-3 text-xs">{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>)}</TableRow>)}</TableBody>
       </Table>
     </DataTable>

@@ -222,8 +222,8 @@ export function KoreanLearningCenter({
     ? (isService ? null : getKoreanBeginnerLesson(recommendedLesson.lesson.slug)?.title) ?? recommendedLesson.lesson.title
     : null;
   const recommendedProgress = recommendedLesson?.progress?.progress_percent ?? 0;
-  const centerColor = isService ? "var(--app-accent)" : "var(--app-secondary)";
-  const centerSoft = isService ? "var(--app-accent-soft)" : "var(--app-secondary-soft)";
+  const centerColor = isService ? "var(--primary)" : "var(--support)";
+  const centerSoft = isService ? "var(--accent)" : "var(--support-surface)";
   const stageMetricLabel = isService ? "准备阶段" : "学习阶段";
   const curriculumTitle = isService ? "完整服务路线" : "完整学习路线";
   const nextActionLabel = isService ? "接下来完成" : "接下来学";
@@ -251,20 +251,20 @@ export function KoreanLearningCenter({
                 >
                   <Route size={18} aria-hidden="true" />
                 </span>
-                <h3 id="course-curriculum-title" className="text-lg font-black sm:text-xl">{curriculumTitle}</h3>
+                <h3 id="course-curriculum-title" className="text-lg font-bold sm:text-xl">{curriculumTitle}</h3>
               </div>
             </div>
             <div className="grid grid-cols-3 gap-2 sm:gap-3">
               <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{progressPercent}%</p>
+                <p className="text-xl font-bold sm:text-2xl">{progressPercent}%</p>
                 <p className="mt-0.5 text-[11px] font-bold app-muted-text">总进度</p>
               </div>
               <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{subcategories.length}</p>
+                <p className="text-xl font-bold sm:text-2xl">{subcategories.length}</p>
                 <p className="mt-0.5 text-[11px] font-bold app-muted-text">{stageMetricLabel}</p>
               </div>
               <div className="app-card rounded-2xl border p-3 text-center sm:px-4">
-                <p className="text-xl font-black sm:text-2xl">{lessons.length}</p>
+                <p className="text-xl font-bold sm:text-2xl">{lessons.length}</p>
                 <p className="mt-0.5 text-[11px] font-bold app-muted-text">可见课时</p>
               </div>
             </div>
@@ -281,29 +281,29 @@ export function KoreanLearningCenter({
                   key={subcategory.id}
                   id={`stage-${subcategory.slug}`}
                   className="group scroll-mt-24 overflow-hidden rounded-2xl border"
-                  style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}
+                  style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}
                 >
                   <summary
-                    className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-secondary)] sm:p-4 [&::-webkit-details-marker]:hidden"
-                    style={{ backgroundColor: "var(--app-secondary-soft)" }}
+                    className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--support)] sm:p-4 [&::-webkit-details-marker]:hidden"
+                    style={{ backgroundColor: "var(--support-surface)" }}
                   >
                     <span
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-black"
-                      style={{ color: "var(--app-secondary)", backgroundColor: "var(--app-secondary-soft)" }}
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold"
+                      style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}
                     >
                       {String(subcategoryIndex + 1).padStart(2, "0")}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-black">{subcategory.title}</h4>
+                      <h4 className="font-bold">{subcategory.title}</h4>
                       <p className="mt-0.5 text-xs app-muted-text">
                         {subcategoryCourses.length} 门课程 · {subcategoryItems.length} 个可见课时
                       </p>
                     </div>
                     <span
-                      className="hidden rounded-full px-2.5 py-1 text-[10px] font-black sm:inline-flex"
+                      className="hidden rounded-full px-2.5 py-1 text-[10px] font-bold sm:inline-flex"
                       style={{
-                        color: status === "upcoming" ? "var(--app-warm)" : "var(--app-secondary)",
-                        backgroundColor: status === "upcoming" ? "var(--app-warm-soft)" : "var(--app-secondary-soft)",
+                        color: status === "upcoming" ? "var(--status-warning)" : "var(--support)",
+                        backgroundColor: status === "upcoming" ? "var(--status-warning-surface)" : "var(--support-surface)",
                       }}
                     >
                       {getStatusLabel(status)}
@@ -311,7 +311,7 @@ export function KoreanLearningCenter({
                     <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
                   </summary>
 
-                  <div className="space-y-3 border-t p-3 sm:p-4" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}>
+                  <div className="space-y-3 border-t p-3 sm:p-4" style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}>
                     {subcategoryCourses.length > 0 ? subcategoryCourses.map((course) => {
                       const courseItems = lessonItems.filter((item) => item.course.id === course.id);
                       const courseUnlocked = courseUnlockedById.get(course.id) ?? false;
@@ -330,22 +330,22 @@ export function KoreanLearningCenter({
                           key={course.id}
                           id={`course-${course.slug}`}
                           className="group/course scroll-mt-24 overflow-hidden rounded-2xl border"
-                          style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}
+                          style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}
                         >
                           <summary
-                            className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--app-secondary)] [&::-webkit-details-marker]:hidden"
+                            className="flex cursor-pointer list-none items-center gap-3 p-3.5 outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--support)] [&::-webkit-details-marker]:hidden"
                             style={{
-                              borderLeft: courseUnlocked ? "4px solid var(--app-accent)" : "4px solid transparent",
-                              backgroundColor: courseUnlocked ? "var(--app-card-bg)" : "var(--app-soft-bg)",
+                              borderLeft: courseUnlocked ? "4px solid var(--primary)" : "4px solid transparent",
+                              backgroundColor: courseUnlocked ? "var(--card)" : "var(--surface-soft)",
                             }}
                           >
-                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ color: courseUnlocked ? "var(--app-accent-strong)" : "var(--app-muted)", backgroundColor: "var(--app-card-bg)" }}>
+                            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ color: courseUnlocked ? "var(--primary-hover)" : "var(--foreground-muted)", backgroundColor: "var(--card)" }}>
                               {courseUnlocked ? <GraduationCap size={18} aria-hidden="true" /> : <LockKeyhole size={16} aria-hidden="true" />}
                             </span>
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
-                                <h5 className="font-black">{course.title}</h5>
-                                {levelLabel && <span className="rounded-full px-2 py-0.5 text-[10px] font-black app-muted-text" style={{ backgroundColor: "var(--app-soft-bg)" }}>{levelLabel}</span>}
+                                <h5 className="font-bold">{course.title}</h5>
+                                {levelLabel && <span className="rounded-full px-2 py-0.5 text-[10px] font-bold app-muted-text" style={{ backgroundColor: "var(--surface-soft)" }}>{levelLabel}</span>}
                                 <span className="shrink-0 text-xs app-muted-text">
                                   {courseItems.length > 0
                                     ? `${courseCompletedCount}/${courseItems.length} 课时完成 · ${getStatusLabel(courseStatus)}`
@@ -355,13 +355,13 @@ export function KoreanLearningCenter({
                                 </span>
                                 {courseUnlocked && courseItems.length > 0 && (
                                   <>
-                                    <div className="h-1.5 w-16 overflow-hidden rounded-full sm:w-20" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                                    <div className="h-1.5 w-16 overflow-hidden rounded-full sm:w-20" style={{ backgroundColor: "var(--surface-soft)" }}>
                                       <div
                                         className="h-full rounded-full"
-                                        style={{ width: `${courseProgressPercent}%`, backgroundColor: "var(--app-accent)" }}
+                                        style={{ width: `${courseProgressPercent}%`, backgroundColor: "var(--primary)" }}
                                       />
                                     </div>
-                                    <span className="shrink-0 text-[10px] font-black" style={{ color: "var(--app-accent-strong)" }}>
+                                    <span className="shrink-0 text-[10px] font-bold" style={{ color: "var(--primary-hover)" }}>
                                       课程进度 {courseProgressPercent}%
                                     </span>
                                   </>
@@ -373,7 +373,7 @@ export function KoreanLearningCenter({
 
                           <div
                             className="space-y-2 border-t p-3 sm:ml-4 sm:p-4"
-                            style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-soft-bg)" }}
+                            style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
                           >
                             {courseItems.length > 0 ? courseItems.map((item, lessonIndex) => {
                               const curatedLesson = isService ? undefined : getKoreanBeginnerLesson(item.lesson.slug);
@@ -386,21 +386,21 @@ export function KoreanLearningCenter({
                                   key={item.lesson.id}
                                   className="grid grid-cols-[36px_minmax(0,1fr)] items-center gap-x-3 gap-y-3 rounded-xl border p-3.5 sm:grid-cols-[36px_minmax(0,1fr)_auto]"
                                   style={{
-                                    borderColor: "var(--app-border)",
-                                    borderLeft: status === "in_progress" ? "3px solid var(--app-accent)" : "3px solid transparent",
+                                    borderColor: "var(--border)",
+                                    borderLeft: status === "in_progress" ? "3px solid var(--primary)" : "3px solid transparent",
                                     backgroundColor:
                                       status === "in_progress"
-                                        ? "var(--app-accent-soft)"
+                                        ? "var(--accent)"
                                         : status === "completed"
-                                          ? "var(--app-success-soft)"
-                                          : "var(--app-card-bg)",
+                                          ? "var(--status-success-surface)"
+                                          : "var(--card)",
                                   }}
                                 >
                                   <span
-                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-black"
+                                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-xs font-bold"
                                     style={{
-                                      color: status === "completed" ? "var(--app-success)" : status === "in_progress" ? "var(--app-accent-strong)" : item.unlocked ? centerColor : "var(--app-muted)",
-                                      backgroundColor: "var(--app-card-bg)",
+                                      color: status === "completed" ? "var(--status-success)" : status === "in_progress" ? "var(--primary-hover)" : item.unlocked ? centerColor : "var(--foreground-muted)",
+                                      backgroundColor: "var(--card)",
                                     }}
                                   >
                                     {status === "completed" ? <CheckCircle2 size={17} aria-hidden="true" /> : String(lessonIndex + 1).padStart(2, "0")}
@@ -417,8 +417,8 @@ export function KoreanLearningCenter({
                                     href={lessonHref}
                                     shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
                                     locked={!item.unlocked}
-                                    className="col-span-2 inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-black transition hover:opacity-90 sm:col-span-1"
-                                    style={{ borderColor: "var(--app-border)", color: item.unlocked ? centerColor : "var(--app-muted)", backgroundColor: "var(--app-card-bg)" }}
+                                    className="col-span-2 inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-bold transition hover:opacity-90 sm:col-span-1"
+                                    style={{ borderColor: "var(--border)", color: item.unlocked ? centerColor : "var(--foreground-muted)", backgroundColor: "var(--card)" }}
                                   >
                                     {item.unlocked ? <PlayCircle size={14} aria-hidden="true" /> : <LockKeyhole size={13} aria-hidden="true" />}
                                     {!item.unlocked ? "尚未解锁" : status === "completed" ? "复习" : status === "in_progress" ? "继续" : "开始"}
@@ -426,7 +426,7 @@ export function KoreanLearningCenter({
                                 </div>
                               );
                             }) : (
-                              <p className="rounded-xl border border-dashed p-4 text-center text-xs app-muted-text" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                              <p className="rounded-xl border border-dashed p-4 text-center text-xs app-muted-text" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                                 {courseUnlocked ? "课程内容正在准备中" : "完成前置课程后自动开放"}
                               </p>
                             )}
@@ -434,7 +434,7 @@ export function KoreanLearningCenter({
                         </details>
                       );
                     }) : (
-                      <p className="rounded-2xl border border-dashed p-5 text-center text-sm app-muted-text" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                      <p className="rounded-2xl border border-dashed p-5 text-center text-sm app-muted-text" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                         这一阶段的课程正在准备中
                       </p>
                     )}
@@ -450,40 +450,40 @@ export function KoreanLearningCenter({
             <div className="flex items-end justify-between gap-3">
               <div>
                 <p className="text-xs font-bold app-muted-text">{totalProgressLabel}</p>
-                <p className="mt-1 text-3xl font-black">{progressPercent}%</p>
+                <p className="mt-1 text-3xl font-bold">{progressPercent}%</p>
               </div>
-              <span className="rounded-full px-2.5 py-1 text-[10px] font-black" style={{ color: "var(--app-success)", backgroundColor: "var(--app-success-soft)" }}>
+              <span className="rounded-full px-2.5 py-1 text-[10px] font-bold" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}>
                 {completedCount} 课时完成
               </span>
             </div>
-            <div className="mt-4 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-              <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
+            <div className="mt-4 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
+              <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--status-success)" }} />
             </div>
           </section>
 
           <section
             className="app-card relative overflow-hidden rounded-[28px] border p-5 shadow-sm"
-            style={{ borderColor: centerColor, background: `linear-gradient(145deg, ${centerSoft}, var(--app-card-bg) 72%)` }}
+            style={{ borderColor: centerColor, background: `linear-gradient(145deg, ${centerSoft}, var(--card) 72%)` }}
           >
             <span className="absolute -right-8 -top-8 h-28 w-28 rounded-full opacity-70" style={{ backgroundColor: centerSoft }} aria-hidden="true" />
             <div className="relative">
-              <p className="flex items-center gap-2 text-xs font-black" style={{ color: centerColor }}>
+              <p className="flex items-center gap-2 text-xs font-bold" style={{ color: centerColor }}>
                 <PlayCircle size={15} aria-hidden="true" />
                 {nextActionLabel}
               </p>
               {recommendedLesson && recommendedTitle ? (
                 <>
-                  <h3 className="mt-4 text-xl font-black leading-snug">{recommendedTitle}</h3>
+                  <h3 className="mt-4 text-xl font-bold leading-snug">{recommendedTitle}</h3>
                   <p className="mt-2 text-xs font-bold app-muted-text">
                     {recommendedLesson.subcategory.title} · {recommendedLesson.course.title}
                   </p>
-                  <div className="mt-5 rounded-2xl border p-3.5" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                  <div className="mt-5 rounded-2xl border p-3.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                     <div className="flex items-center justify-between gap-3 text-xs font-bold">
                       <span>{recommendedIsInProgress ? "本课学习进度" : `${recommendedLesson.lesson.duration_minutes} 分钟`}</span>
                       {recommendedIsInProgress && <span>{recommendedProgress}%</span>}
                     </div>
                     {recommendedIsInProgress && (
-                      <div className="mt-2 h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                      <div className="mt-2 h-1.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
                         <div className="h-full rounded-full" style={{ width: `${recommendedProgress}%`, backgroundColor: centerColor }} />
                       </div>
                     )}
@@ -492,15 +492,15 @@ export function KoreanLearningCenter({
                     href={recommendedHref ?? "#"}
                     shouldEnterFullscreen={!isService && (recommendedLesson.lesson.slug === "hangul-introduction" || recommendedLesson.lesson.slug === "basic-pronunciation")}
                     locked={!recommendedHref}
-                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-black shadow-sm transition hover:opacity-90"
-                    style={{ color: "var(--app-accent-contrast)", backgroundColor: "var(--app-accent-strong)" }}
+                    className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm transition hover:opacity-90"
+                    style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary-hover)" }}
                   >
                     <PlayCircle size={17} aria-hidden="true" />
                     {recommendedLabel}
                   </HangulLessonLaunchLink>
                 </>
               ) : (
-                <p className="mt-4 rounded-2xl p-4 text-sm font-bold app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>暂无可进入的课时</p>
+                <p className="mt-4 rounded-2xl p-4 text-sm font-bold app-muted-text" style={{ backgroundColor: "var(--card)" }}>暂无可进入的课时</p>
               )}
             </div>
           </section>

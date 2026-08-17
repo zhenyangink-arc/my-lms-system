@@ -37,8 +37,8 @@ export function getGrowthToolboxVocabularyColumns(
     header: sortableHeader("韩语词汇"),
     cell: ({ row }) => (
       <div className="min-w-40">
-        <p className="font-semibold text-[var(--app-text)]">{row.original.ko || "—"}</p>
-        <p className="mt-0.5 text-[11px] text-[var(--app-muted)]">
+        <p className="font-semibold text-[var(--foreground)]">{row.original.ko || "—"}</p>
+        <p className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">
           {row.original.transcription || "暂无音标"}
         </p>
       </div>
@@ -48,7 +48,7 @@ export function getGrowthToolboxVocabularyColumns(
     accessorKey: "zh",
     header: sortableHeader("中文释义"),
     cell: ({ row }) => (
-      <span className="block min-w-40 font-medium text-[var(--app-text-soft)]">
+      <span className="block min-w-40 font-medium text-[var(--foreground-secondary)]">
         {row.original.zh || "—"}
       </span>
     ),
@@ -62,7 +62,7 @@ export function getGrowthToolboxVocabularyColumns(
     accessorKey: "collocation",
     header: sortableHeader("搭配与说明"),
     cell: ({ row }) => (
-      <span className="block min-w-64 max-w-96 whitespace-normal text-[var(--app-text-soft)]">
+      <span className="block min-w-64 max-w-96 whitespace-normal text-[var(--foreground-secondary)]">
         {row.original.collocation || "暂无"}
       </span>
     ),
@@ -97,7 +97,7 @@ export function getGrowthToolboxVocabularyColumns(
     cell: ({ row }) => canManage ? (
       <VocabularyCellAction studentAppId={studentAppId} item={row.original} />
     ) : (
-      <span className="block text-right text-[11px] text-[var(--app-muted)]">只读</span>
+      <span className="block text-right text-[11px] text-[var(--foreground-muted)]">只读</span>
     ),
   },
   ];

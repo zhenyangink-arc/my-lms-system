@@ -51,15 +51,27 @@ export function HangulLessonLaunchLink({
           {children}
         </span>
       ) : (
-        <Link href={href} className={className} style={style} onClick={openLesson}>
+        <Link
+          href={href}
+          className={`${className} focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2`}
+          style={style}
+          onClick={openLesson}
+        >
           {children}
         </Link>
       )}
       {isLaunching && (
-        <div className="fixed inset-0 z-[60] flex h-[100dvh] items-center justify-center bg-[#f7faf8] text-[#173f4a]">
+        <div
+          className="fixed inset-0 z-[60] flex h-[100dvh] items-center justify-center bg-[var(--card)] text-[var(--primary)]"
+          role="status"
+          aria-live="polite"
+        >
           <div className="flex flex-col items-center gap-4">
-            <span className="h-10 w-10 animate-spin rounded-full border-4 border-[#dce8e1] border-t-[#238777]" />
-            <p className="text-sm font-black">正在打开阅读器…</p>
+            <span
+              aria-hidden="true"
+              className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--border)] border-t-[var(--status-success)]"
+            />
+            <p className="text-sm font-bold">正在打开阅读器…</p>
           </div>
         </div>
       )}

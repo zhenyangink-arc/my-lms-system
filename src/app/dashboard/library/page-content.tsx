@@ -75,11 +75,11 @@ export async function LibraryPageContent({
           <div className="flex justify-end">
             <Link
               href="/dashboard/admin/library"
-              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white"
+              style={{ backgroundColor: "var(--support)" }}
             >
               {canCurate ? "进入资料库后台" : "查看机构资料清单"}
-              <ArrowRight size={15} />
+              <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         )}
@@ -87,28 +87,28 @@ export async function LibraryPageContent({
           className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6"
           style={{
             background:
-              "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg), var(--app-secondary-soft))",
+              "linear-gradient(125deg, var(--card), var(--card), var(--support-surface))",
           }}
         >
           <div className={canManage ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center" : "grid"}>
             {canManage && <div>
               <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
                 style={{
-                  color: "var(--app-accent)",
-                  backgroundColor: "var(--app-accent-soft)",
+                  color: "var(--primary)",
+                  backgroundColor: "var(--accent)",
                 }}
               >
-                <Library size={14} />
+                <Library size={14} aria-hidden="true" />
                 学习资料一站查找
               </span>
               <DashboardTitleWithHint className="mt-3" title="把需要的资料，放进自己的学习收藏夹" description="文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。" />
             </div>}
             <div className={canManage ? "dashboard-title-metrics" : "grid grid-cols-3 gap-2"}>
               {[
-                ["已发布资料", resources.length, Library, "var(--app-accent)", "var(--app-accent-soft)"],
-                ["我的收藏", favorites.length, FolderHeart, "#d95768", "#fff0f3"],
-                ["累计获取", downloadCount, Download, "var(--app-success)", "var(--app-success-soft)"],
+                ["已发布资料", resources.length, Library, "var(--primary)", "var(--accent)"],
+                ["我的收藏", favorites.length, FolderHeart, "var(--support)", "var(--support-surface)"],
+                ["累计获取", downloadCount, Download, "var(--status-success)", "var(--status-success-surface)"],
               ].map(([label, value, Icon, color, soft]) => {
                 const MetricIcon = Icon as typeof Library;
                 return (
@@ -117,10 +117,10 @@ export async function LibraryPageContent({
                       className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl"
                       style={{ color: String(color), backgroundColor: String(soft) }}
                     >
-                      <MetricIcon size={17} />
+                      <MetricIcon size={17} aria-hidden="true" />
                     </span>
-                    <p className="mt-2 text-2xl font-black">{String(value)}</p>
-                    <p className="app-muted-text text-xs font-black">{String(label)}</p>
+                    <p className="mt-2 text-2xl font-bold">{String(value)}</p>
+                    <p className="app-muted-text text-xs font-bold">{String(label)}</p>
                   </div>
                 );
               })}
@@ -129,10 +129,10 @@ export async function LibraryPageContent({
 
           {featuredCount > 0 && (
             <div
-              className="mt-6 inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-black"
-              style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+              className="mt-6 inline-flex items-center gap-2 rounded-xl px-3 py-2 text-xs font-bold"
+              style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
             >
-              <Sparkles size={14} />
+              <Sparkles size={14} aria-hidden="true" />
               当前有 {featuredCount} 项推荐资料
             </div>
           )}
@@ -140,8 +140,9 @@ export async function LibraryPageContent({
 
         {(resourcesResult.error || favoritesResult.error) && (
           <section
+            role="alert"
             className="rounded-2xl border p-4 text-sm font-bold"
-            style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+            style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
           >
             资料库暂时无法读取，请确认数据库迁移已经执行。
           </section>
@@ -150,7 +151,7 @@ export async function LibraryPageContent({
         <LibraryBrowser resources={resources} favorites={favorites} />
 
         <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5 app-muted-text">
-          <ShieldCheck className="mt-0.5 shrink-0" size={16} />
+          <ShieldCheck className="mt-0.5 shrink-0" size={16} aria-hidden="true" />
           <p>
             资料文件保存在私有空间，只有登录且账号状态正常的用户可以获取已发布资料。每次获取都会形成后台记录。
           </p>

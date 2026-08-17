@@ -64,7 +64,7 @@ export function getGradeReviewColumns(
     accessorKey: "student_name",
     header: sortableHeader("学生"),
     cell: ({ row }) => (
-      <span className="font-semibold text-[var(--app-text)]">
+      <span className="font-semibold text-[var(--foreground)]">
         {row.original.student_name}
       </span>
     ),
@@ -75,10 +75,10 @@ export function getGradeReviewColumns(
     header: sortableHeader("成绩来源"),
     cell: ({ row }) => (
       <div className="min-w-52">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.source_title || "历史成绩"}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {SOURCE_LABELS[row.original.source_type]}
           {row.original.source_score != null &&
           row.original.source_total_points != null
@@ -103,7 +103,7 @@ export function getGradeReviewColumns(
     accessorKey: "requested_at",
     header: sortableHeader("申请时间"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.requested_at}
           options={DATE_TIME_OPTIONS}
@@ -119,10 +119,10 @@ export function getGradeReviewColumns(
       const status = row.original.status;
       const color =
         status === "resolved"
-          ? "var(--app-success)"
+          ? "var(--status-success)"
           : status === "rejected"
-            ? "var(--app-muted)"
-            : "var(--app-warm)";
+            ? "var(--foreground-muted)"
+            : "var(--status-warning)";
       return (
         <span className="inline-flex items-center gap-1.5 font-medium" style={{ color }}>
           <span className="size-1.5 rounded-full" style={{ backgroundColor: "currentColor" }} />
@@ -136,7 +136,7 @@ export function getGradeReviewColumns(
     accessorKey: "response",
     header: sortableHeader("处理说明"),
     cell: ({ row }) => (
-      <p className="max-w-sm whitespace-pre-wrap text-xs text-[var(--app-muted)]">
+      <p className="max-w-sm whitespace-pre-wrap text-xs text-[var(--foreground-muted)]">
         {row.original.response || "尚未填写处理说明"}
       </p>
     ),
@@ -154,7 +154,7 @@ export function getGradeReviewColumns(
           studentAppId={studentAppId}
         />
       ) : (
-        <span className="text-[10px] text-[var(--app-muted)]">仅查看</span>
+        <span className="text-[10px] text-[var(--foreground-muted)]">仅查看</span>
       ),
   },
   ];

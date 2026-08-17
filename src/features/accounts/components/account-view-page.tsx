@@ -61,15 +61,12 @@ export default async function AccountViewPage({ profileId }: { profileId: string
         </>
       }
       action={
-        <>
-          <Link
-            href={scopeDashboardPath("/dashboard/admin/accounts", dashboardBasePath)}
-            className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
-          >
-            返回账号管理
-          </Link>
-        <AccountManagementActions profile={profile} viewerRole={result.viewerRole} accountScope={result.scope} />
-        </>
+        <Link
+          href={scopeDashboardPath("/dashboard/admin/accounts", dashboardBasePath)}
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
+        >
+          返回账号管理
+        </Link>
       }
     >
 
@@ -81,7 +78,7 @@ export default async function AccountViewPage({ profileId }: { profileId: string
             value: (
               <span className="flex min-w-0 items-center gap-2.5">
                 <span
-                  className="size-8 shrink-0 rounded-full bg-[var(--app-accent-soft)] bg-cover bg-center text-center text-xs leading-8 text-[var(--app-accent)]"
+                  className="size-8 shrink-0 rounded-full bg-[var(--accent)] bg-cover bg-center text-center text-xs leading-8 text-[var(--primary)]"
                   style={
                     result.avatarUrl
                       ? {
@@ -158,6 +155,25 @@ export default async function AccountViewPage({ profileId }: { profileId: string
         </tr></tbody>
       </TableSection>
 
+      <section
+        aria-labelledby="account-actions-title"
+        className="management-table-panel border p-4"
+      >
+        <div className="mb-3">
+          <h2 id="account-actions-title" className="text-sm font-semibold">
+            账号操作
+          </h2>
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
+            根据当前管理范围调整会员、角色或账号状态。
+          </p>
+        </div>
+        <AccountManagementActions
+          profile={profile}
+          viewerRole={result.viewerRole}
+          accountScope={result.scope}
+        />
+      </section>
+
       <div className="flex justify-end">
         <AccountDetailActivityDialog logs={result.auditLogs} actorNames={actorNames} />
       </div>
@@ -165,19 +181,21 @@ export default async function AccountViewPage({ profileId }: { profileId: string
   );
 }
 
-function TableSection({ title, minWidth, children }: { title?: string; minWidth: string; children: ReactNode }) {
+function TableSection({ title, minWidth, children }: { title: string; minWidth: string; children: ReactNode }) {
   return (
-    <section className="management-table-panel overflow-hidden border">
-      {title && <div className="border-b border-[var(--app-border)] px-4 py-3 text-sm font-semibold text-[var(--app-text)]">{title}</div>}
+    <section className="management-table-panel overflow-hidden border" aria-labelledby={`account-section-${title}`}>
+      <div className="border-b border-[var(--border)] px-4 py-3">
+        <h2 id={`account-section-${title}`} className="text-sm font-semibold text-[var(--foreground)]">{title}</h2>
+      </div>
       <div className="overflow-x-auto"><table className="w-full border-collapse text-left text-xs" style={{ minWidth }}>{children}</table></div>
     </section>
   );
 }
 
 function HeaderCell({ children }: { children: ReactNode }) {
-  return <th className="border-b border-[var(--app-border)] bg-[var(--app-soft-bg)] px-4 py-3 font-semibold text-[var(--app-text-soft)]">{children}</th>;
+  return <th className="border-b border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3 font-semibold text-[var(--foreground-secondary)]">{children}</th>;
 }
 
 function DataCell({ children, strong = false }: { children: ReactNode; strong?: boolean }) {
-  return <td className={`px-4 py-4 text-[var(--app-text-soft)] ${strong ? "font-semibold text-[var(--app-text)]" : ""}`}>{children}</td>;
+  return <td className={`px-4 py-4 text-[var(--foreground-secondary)] ${strong ? "font-semibold text-[var(--foreground)]" : ""}`}>{children}</td>;
 }

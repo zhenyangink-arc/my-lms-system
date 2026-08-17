@@ -46,7 +46,7 @@ export function getGradeResultColumns(
     accessorKey: "student_name",
     header: sortableHeader("学生"),
     cell: ({ row }) => (
-      <span className="font-semibold text-[var(--app-text)]">
+      <span className="font-semibold text-[var(--foreground)]">
         {row.original.student_name}
       </span>
     ),
@@ -71,10 +71,10 @@ export function getGradeResultColumns(
     header: sortableHeader("考核内容"),
     cell: ({ row }) => (
       <div className="min-w-56">
-        <p className="font-semibold text-[var(--app-text)]">
+        <p className="font-semibold text-[var(--foreground)]">
           {row.original.title}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.type_label} · {row.original.detail}
         </p>
       </div>
@@ -95,7 +95,7 @@ export function getGradeResultColumns(
           <p className="font-mono font-semibold tabular-nums">
             {result.score} / {result.total_points}
           </p>
-          <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+          <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
             {percent.toFixed(1)}%
           </p>
         </div>
@@ -112,8 +112,8 @@ export function getGradeResultColumns(
           className="inline-flex items-center gap-1.5 font-medium"
           style={{
             color: row.original.passed
-              ? "var(--app-success)"
-              : "var(--app-warm)",
+              ? "var(--status-success)"
+              : "var(--status-warning)",
           }}
         >
           <span
@@ -123,7 +123,7 @@ export function getGradeResultColumns(
           {row.original.result_label}
         </span>
         {row.original.review_status && (
-          <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+          <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
             已提交复核
           </p>
         )}
@@ -135,7 +135,7 @@ export function getGradeResultColumns(
     accessorKey: "recorded_at",
     header: sortableHeader("记录时间"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.recorded_at}
           options={DATE_TIME_OPTIONS}
@@ -152,7 +152,7 @@ export function getGradeResultColumns(
       canManageGrades ? (
         <GradeResultAction result={row.original} />
       ) : (
-        <span className="text-[10px] text-[var(--app-muted)]">仅查看</span>
+        <span className="text-[10px] text-[var(--foreground-muted)]">仅查看</span>
       ),
   },
   ];

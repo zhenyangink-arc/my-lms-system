@@ -19,7 +19,10 @@ import {
   Wrench,
 } from "lucide-react";
 
-import { ManagementPage } from "@/components/layout/management-page";
+import {
+  ManagementNotice,
+  ManagementPage,
+} from "@/components/layout/management-page";
 import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
 import { getManagementAppsPath } from "@/lib/management-app-path";
 import {
@@ -241,6 +244,12 @@ export async function ManagementApplicationWorkspacePage({
     { label: access.app.kind === "service" ? "申请项目" : "教学任务", value: countValue(assignmentResult) },
     { label: access.app.kind === "service" ? "材料清单" : "有效记录", value: countValue(recordResult) },
   ];
+  const hasMetricError = [
+    courseResult,
+    studentResult,
+    assignmentResult,
+    recordResult,
+  ].some((result) => Boolean(result.error));
 
   return (
     <ManagementPage
@@ -259,15 +268,20 @@ export async function ManagementApplicationWorkspacePage({
       action={
         <Link
           href={getManagementAppsPath(access.dashboardBasePath)}
-          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold"
+          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
         >
           <ArrowLeft size={14} aria-hidden="true" />
           返回应用中心
+          <RouteLinkStatus />
         </Link>
       }
     >
-
-      <section className="grid overflow-hidden rounded-lg border bg-[var(--app-card-bg)] sm:grid-cols-2 xl:grid-cols-4" aria-label="当前应用概况">
+      {hasMetricError && (
+        <ManagementNotice tone="warning">
+          当前应用的部分概况数据读取失败；模块入口仍可使用，请稍后刷新重试。
+        </ManagementNotice>
+      )}
+      <section className="grid overflow-hidden rounded-lg border bg-[var(--card)] sm:grid-cols-2 xl:grid-cols-4" aria-label="当前应用概况">
         {metrics.map((metric, index) => (
           <div key={metric.label} className={`min-h-24 px-5 py-4 ${index > 0 ? "border-t sm:border-l sm:border-t-0" : ""}`}>
             <p className="app-muted-text text-xs">{metric.label}</p>
@@ -293,7 +307,7 @@ export async function ManagementApplicationWorkspacePage({
                 <h3 className="mt-4 text-sm font-semibold">{module.title}</h3>
                 <p className="app-muted-text mt-1.5 min-h-10 text-xs leading-5">{module.description}</p>
                 <span className="mt-auto flex items-center justify-between pt-4 text-xs font-medium">
-                  <span className={enabled ? "text-[var(--app-accent-strong)]" : "app-muted-text"}>
+                  <span className={enabled ? "text-[var(--primary-hover)]" : "app-muted-text"}>
                     {enabled ? "进入模块" : "当前账号无权限"}
                   </span>
                   {enabled && (
@@ -310,7 +324,8 @@ export async function ManagementApplicationWorkspacePage({
               <Link
                 key={module.key}
                 href={`${access.appPath}/${module.key}`}
-                className="management-module-card flex min-h-48 flex-col border p-4 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                aria-label={`进入${module.title}模块`}
+                className="management-module-card flex min-h-48 flex-col border p-4 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 {content}
               </Link>

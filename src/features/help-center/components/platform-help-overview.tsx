@@ -38,13 +38,13 @@ export function PlatformHelpOverview({
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"
         footer={
-          <p className="text-xs text-[var(--app-muted)]">
+          <p className="text-xs text-[var(--foreground-muted)]">
             平台范围仅展示机构级统计，不包含学生姓名、问题正文或消息记录。
           </p>
         }
       >
         <Table className="min-w-[1320px]">
-          <TableHeader className="bg-[var(--app-soft-bg)]">
+          <TableHeader className="bg-[var(--surface-soft)]">
             <TableRow>
               <TableHead>机构</TableHead>
               <TableHead>活跃成员</TableHead>
@@ -63,8 +63,8 @@ export function PlatformHelpOverview({
             {rows.map((row) => (
               <TableRow key={row.tenantId}>
                 <TableCell>
-                  <p className="font-semibold text-[var(--app-text)]">{row.tenantName}</p>
-                  <p className="mt-1 text-[10px] text-[var(--app-muted)]">
+                  <p className="font-semibold text-[var(--foreground)]">{row.tenantName}</p>
+                  <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">
                     {row.tenantStatus === "active" ? "运行中" : "已停用"}
                   </p>
                 </TableCell>
@@ -76,10 +76,10 @@ export function PlatformHelpOverview({
                 <NumberCell value={row.urgentPendingTickets} />
                 <NumberCell value={row.overdueTickets} />
                 <TableCell className="font-mono tabular-nums">{row.resolutionRate}%</TableCell>
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   {elapsedLabel(row.oldestWaitingAt)}
                 </TableCell>
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime
                     value={row.lastUpdatedAt}
                     options={DATE_OPTIONS}

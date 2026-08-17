@@ -48,7 +48,7 @@ export function CreateAnnouncementDialog({
       </button>
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-3xl">
-          <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+          <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>
               新建{scope === "platform" ? "全平台" : "本机构"}公告
             </DialogTitle>
@@ -65,7 +65,7 @@ export function CreateAnnouncementDialog({
                 name="intent"
                 value="draft"
                 disabled={pending}
-                className="h-9 rounded-md border border-[var(--app-border)] px-4 text-xs font-semibold text-[var(--app-text-soft)] disabled:opacity-50"
+                className="h-9 rounded-md border border-[var(--border)] px-4 text-xs font-semibold text-[var(--foreground-secondary)] disabled:opacity-50"
               >
                 {pending ? "保存中…" : "保存草稿"}
               </button>
@@ -103,7 +103,7 @@ export function EditAnnouncementDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-3xl">
-        <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
           <DialogTitle>编辑公告</DialogTitle>
           <DialogDescription className="text-xs">
             只能修改当前发布范围内的公告，发布来源不能变更。
@@ -133,9 +133,9 @@ function AnnouncementFields({
   announcement?: ManagedAnnouncement;
 }) {
   return (
-    <div className="overflow-hidden border border-[var(--app-border)] text-xs">
-      <label className="grid border-b border-[var(--app-border-soft)] sm:grid-cols-[130px_minmax(0,1fr)]">
-        <span className="bg-[var(--app-soft-bg)] px-3 py-3 font-medium text-[var(--app-muted)]">
+    <div className="overflow-hidden border border-[var(--border)] text-xs">
+      <label className="grid border-b border-[var(--border-subtle)] sm:grid-cols-[130px_minmax(0,1fr)]">
+        <span className="bg-[var(--surface-soft)] px-3 py-3 font-medium text-[var(--foreground-muted)]">
           公告标题
         </span>
         <span className="p-2">
@@ -150,9 +150,9 @@ function AnnouncementFields({
           />
         </span>
       </label>
-      <div className="grid border-b border-[var(--app-border-soft)] sm:grid-cols-2">
-        <label className="grid border-b border-[var(--app-border-soft)] sm:grid-cols-[130px_minmax(0,1fr)] sm:border-r sm:border-b-0">
-          <span className="bg-[var(--app-soft-bg)] px-3 py-3 font-medium text-[var(--app-muted)]">
+      <div className="grid border-b border-[var(--border-subtle)] sm:grid-cols-2">
+        <label className="grid border-b border-[var(--border-subtle)] sm:grid-cols-[130px_minmax(0,1fr)] sm:border-r sm:border-b-0">
+          <span className="bg-[var(--surface-soft)] px-3 py-3 font-medium text-[var(--foreground-muted)]">
             公告分类
           </span>
           <span className="p-2">
@@ -170,7 +170,7 @@ function AnnouncementFields({
           </span>
         </label>
         <label className="grid sm:grid-cols-[130px_minmax(0,1fr)]">
-          <span className="bg-[var(--app-soft-bg)] px-3 py-3 font-medium text-[var(--app-muted)]">
+          <span className="bg-[var(--surface-soft)] px-3 py-3 font-medium text-[var(--foreground-muted)]">
             重要程度
           </span>
           <span className="p-2">
@@ -188,8 +188,8 @@ function AnnouncementFields({
           </span>
         </label>
       </div>
-      <label className="grid border-b border-[var(--app-border-soft)] sm:grid-cols-[130px_minmax(0,1fr)]">
-        <span className="bg-[var(--app-soft-bg)] px-3 py-3 font-medium text-[var(--app-muted)]">
+      <label className="grid border-b border-[var(--border-subtle)] sm:grid-cols-[130px_minmax(0,1fr)]">
+        <span className="bg-[var(--surface-soft)] px-3 py-3 font-medium text-[var(--foreground-muted)]">
           公告内容
         </span>
         <span className="p-2">
@@ -205,15 +205,15 @@ function AnnouncementFields({
           />
         </span>
       </label>
-      <label className="flex min-h-11 items-center gap-3 px-3 text-xs text-[var(--app-text-soft)]">
+      <label className="flex min-h-11 items-center gap-3 px-3 text-xs text-[var(--foreground-secondary)]">
         <input
           name="is_pinned"
           type="checkbox"
           defaultChecked={announcement?.isPinned}
-          className="size-3.5 accent-[var(--app-accent)]"
+          className="size-3.5 accent-[var(--primary)]"
         />
         置顶这条公告
-        <span className="ml-auto text-[11px] text-[var(--app-muted)]">
+        <span className="ml-auto text-[11px] text-[var(--foreground-muted)]">
           平台置顶作用于全部机构；机构置顶只作用于本机构
         </span>
       </label>

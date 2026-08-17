@@ -53,48 +53,48 @@ const skillMap: Record<
     subtitle: "按课程章节练听辨",
     description: "重复播放本章韩语材料，训练关键信息捕捉和即时理解。",
     icon: Ear,
-    accent: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    accent: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
   speaking: {
     title: "口语训练",
     subtitle: "按课程章节练表达",
     description: "先开口说，再完成情境表达判断，让本章句型真正进入口语。",
     icon: Mic,
-    accent: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    accent: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
   reading: {
     title: "阅读训练",
     subtitle: "按课程章节练理解",
     description: "围绕本章字词、句型和语境完成信息定位与规则理解。",
     icon: BookOpen,
-    accent: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    accent: "var(--support)",
+    soft: "var(--support-surface)",
   },
   writing: {
     title: "写作训练",
     subtitle: "按课程章节练书写",
     description: "先独立写出本章表达，再输入答案完成准确性核验。",
     icon: PenTool,
-    accent: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    accent: "var(--primary)",
+    soft: "var(--accent)",
   },
   grammar: {
     title: "语法训练",
     subtitle: "按课程章节练结构",
     description: "把本章助词、句型和发音规则拆成短练习，逐项形成语感。",
     icon: Shapes,
-    accent: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    accent: "var(--support)",
+    soft: "var(--support-surface)",
   },
   vocabulary: {
     title: "词汇训练",
     subtitle: "按课程章节练字词",
     description: "按本章语境辨认核心词语、韩文字母和常用搭配。",
     icon: BookOpen,
-    accent: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    accent: "var(--primary)",
+    soft: "var(--accent)",
   },
 };
 
@@ -274,7 +274,7 @@ export async function ToolboxSkillPage({
     platformProfile?.role ?? profile?.role,
   );
 
-  const { data: courseData } = await admin
+  const { data: courseData, error: courseError } = await admin
     .from("courses")
     .select(
       "id,category_id,slug,title,description,level,sort_order,unlock_mode,prerequisite_course_id,available_from,is_manually_locked",
@@ -285,7 +285,7 @@ export async function ToolboxSkillPage({
   const courses = (courseData ?? []) as CourseRow[];
   const courseIds = courses.map((course) => course.id);
 
-  const { data: lessonData } = courseIds.length
+  const { data: lessonData, error: lessonError } = courseIds.length
     ? await admin
         .from("lessons")
         .select(
@@ -294,16 +294,16 @@ export async function ToolboxSkillPage({
         .in("course_id", courseIds)
         .eq("is_published", true)
         .order("sort_order", { ascending: true })
-    : { data: [] };
+    : { data: [], error: null };
   const lessons = (lessonData ?? []) as LessonRow[];
   const lessonIds = lessons.map((lesson) => lesson.id);
 
   const [
-    { data: courseChapterData },
-    { data: exerciseData },
-    { data: attemptData },
-    { data: sessionData },
-    { data: lessonProgressData },
+    { data: courseChapterData, error: courseChapterError },
+    { data: exerciseData, error: exerciseError },
+    { data: attemptData, error: attemptError },
+    { data: sessionData, error: sessionError },
+    { data: lessonProgressData, error: lessonProgressError },
   ] = await Promise.all([
     lessonIds.length
       ? admin
@@ -314,7 +314,7 @@ export async function ToolboxSkillPage({
           .in("lesson_id", lessonIds)
           .eq("is_published", true)
           .order("sort_order", { ascending: true })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     withStudentAppSchemaFallback(
       supabase
         .from("growth_toolbox_exercises")
@@ -362,21 +362,21 @@ export async function ToolboxSkillPage({
           .select("lesson_id,status")
           .eq("user_id", user.id)
           .in("lesson_id", lessonIds)
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
   ]);
 
   const courseChapters = (courseChapterData ?? []) as CourseChapterRow[];
   const chapterTestIds = courseChapters.flatMap((chapter) =>
     chapter.chapter_test_id ? [chapter.chapter_test_id] : [],
   );
-  const { data: chapterTestData } = chapterTestIds.length
+  const { data: chapterTestData, error: chapterTestError } = chapterTestIds.length
     ? await admin
         .from("chapter_tests")
         .select("id,slug,course_key,chapter_number,title,korean_title,skills")
         .in("id", chapterTestIds)
         .eq("student_app_id", STUDENT_APP_IDS.korean)
         .eq("status", "published")
-    : { data: [] };
+    : { data: [], error: null };
 
   const chapterTests = (chapterTestData ?? []) as ChapterTestRow[];
   const chapterTestById = new Map(chapterTests.map((test) => [test.id, test]));
@@ -467,6 +467,37 @@ export async function ToolboxSkillPage({
     }
   }
 
+  const catalogDataError = Boolean(
+    courseError ||
+      lessonError ||
+      courseChapterError ||
+      exerciseError ||
+      attemptError ||
+      sessionError ||
+      lessonProgressError ||
+      chapterTestError,
+  );
+  if (catalogDataError) {
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+        <section role="alert" className="app-card rounded-3xl border p-8 text-center">
+          <Circle className="mx-auto opacity-50" size={32} aria-hidden="true" />
+          <h2 className="mt-3 text-lg font-bold">专项训练暂时无法读取</h2>
+          <p className="app-muted-text mt-2 text-sm leading-6">
+            课程或练习数据加载失败，请稍后刷新页面；你也可以先返回专项训练目录。
+          </p>
+          <Link
+            href={toolboxHref}
+            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+            style={{ borderColor: "var(--border)", outlineColor: "var(--primary)" }}
+          >
+            返回专项训练目录
+          </Link>
+        </section>
+      </div>
+    );
+  }
+
   const selectedUnit = selection.course && selection.chapter
     ? courseChapters.flatMap((chapter) => {
         const lesson = lessons.find((candidate) => candidate.id === chapter.lesson_id);
@@ -500,7 +531,24 @@ export async function ToolboxSkillPage({
       !lessonUnlocked.get(selectedUnit.lesson.id) ||
       !chapterUnlocked.get(selectedUnit.chapter.id))
   ) {
-    notFound();
+    return (
+      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6">
+        <section className="app-card rounded-3xl border p-8 text-center">
+          <LockKeyhole className="mx-auto" size={32} aria-hidden="true" />
+          <h2 className="mt-3 text-lg font-bold">本章训练尚未开放</h2>
+          <p className="app-muted-text mt-2 text-sm leading-6">
+            请先完成前置课程、课时或章节，再返回这里继续训练。
+          </p>
+          <Link
+            href={skillCatalogHref}
+            className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl border px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+            style={{ borderColor: "var(--border)", outlineColor: "var(--primary)" }}
+          >
+            返回{entry.title}课程目录
+          </Link>
+        </section>
+      </div>
+    );
   }
   if (selectedUnit && !renderExercisePage) {
     redirect(
@@ -512,13 +560,13 @@ export async function ToolboxSkillPage({
   const selectedExercise = selectedUnit
     ? exerciseByCourseChapterId.get(selectedUnit.chapter.id) ?? null
     : null;
-  const { data: questionData } = selectedExercise
+  const { data: questionData, error: questionError } = selectedExercise
     ? await supabase
         .from("growth_toolbox_questions")
         .select("id,question_type,prompt,content_payload,max_score")
         .eq("exercise_id", selectedExercise.id)
         .order("sort_order", { ascending: true })
-    : { data: [] };
+    : { data: [], error: null };
 
   const exercisePayload = objectPayload(selectedExercise?.content_payload);
   const exercise: ToolboxExercise | null = selectedExercise
@@ -570,7 +618,8 @@ export async function ToolboxSkillPage({
       <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Link
           href={toolboxHref}
-          className="app-muted-text inline-flex min-h-11 items-center gap-2 text-xs font-black"
+          className="app-muted-text inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          style={{ outlineColor: "var(--primary)" }}
         >
           <ArrowLeft size={14} aria-hidden="true" />
           返回专项训练
@@ -586,10 +635,10 @@ export async function ToolboxSkillPage({
                 <Icon size={26} aria-hidden="true" />
               </span>
               <div>
-                <p className="text-[11px] font-black tracking-[0.1em]" style={{ color: entry.accent }}>
+                <p className="text-[11px] font-bold tracking-[0.1em]" style={{ color: entry.accent }}>
                   专项训练 · {entry.subtitle}
                 </p>
-                <h1 className="mt-1 text-2xl font-black tracking-tight">{entry.title}</h1>
+                <h2 className="mt-1 text-2xl font-bold tracking-tight">{entry.title}</h2>
                 <p className="app-muted-text mt-2 max-w-2xl text-sm font-bold leading-6">
                   {entry.description}
                 </p>
@@ -601,8 +650,8 @@ export async function ToolboxSkillPage({
                 [lessons.length, "个课时"],
                 [exercises.length, "章可练"],
               ].map(([value, label]) => (
-                <span key={label} className="rounded-xl px-3 py-2 text-center" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                  <strong className="block text-lg font-black tabular-nums">{value}</strong>
+                <span key={label} className="rounded-xl px-3 py-2 text-center" style={{ backgroundColor: "var(--surface-soft)" }}>
+                  <strong className="block text-lg font-bold tabular-nums">{value}</strong>
                   <small className="app-muted-text text-[10px] font-bold">{label}</small>
                 </span>
               ))}
@@ -612,12 +661,21 @@ export async function ToolboxSkillPage({
 
         <section aria-labelledby="skill-chapter-title">
           <div className="mb-3 px-1">
-            <h2 id="skill-chapter-title" className="text-lg font-black">选择课程、课时与章节</h2>
+            <h2 id="skill-chapter-title" className="text-lg font-bold">选择课程、课时与章节</h2>
             <p className="app-muted-text mt-1 text-xs font-bold">
               与韩语课程目录一一对应；正式章节遵循学习顺序，新课程首批课时直接进入对应训练。
             </p>
           </div>
           <div className="space-y-3">
+            {catalog.length === 0 && (
+              <div className="app-soft-card rounded-3xl border border-dashed p-8 text-center">
+                <BookOpen className="mx-auto opacity-40" size={30} aria-hidden="true" />
+                <p className="mt-3 text-sm font-bold">暂无可训练课程</p>
+                <p className="app-muted-text mt-2 text-xs leading-5">
+                  课程与训练章节发布后会显示在这里。
+                </p>
+              </div>
+            )}
             {catalog.map((course, courseIndex) => {
               const courseChapterCount = course.lessons.reduce(
                 (total, lesson) => total + lesson.chapters.length,
@@ -636,8 +694,8 @@ export async function ToolboxSkillPage({
                     </span>
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-center gap-2">
-                        <strong className="text-sm font-black">{course.title}</strong>
-                        <small className="rounded-full px-2 py-0.5 text-[10px] font-black" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+                        <strong className="text-sm font-bold">{course.title}</strong>
+                        <small className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
                           {levelLabel(course.level)}
                         </small>
                       </span>
@@ -648,25 +706,35 @@ export async function ToolboxSkillPage({
                     <ChevronDown size={16} className="transition-transform group-open:rotate-180" aria-hidden="true" />
                   </summary>
 
-                  <div className="space-y-3 border-t p-3" style={{ borderColor: "var(--app-border-soft)", backgroundColor: "var(--app-soft-bg)" }}>
+                  <div className="space-y-3 border-t p-3" style={{ borderColor: "var(--border-subtle)", backgroundColor: "var(--surface-soft)" }}>
+                    {course.lessons.length === 0 && (
+                      <p className="app-muted-text rounded-2xl border border-dashed p-5 text-center text-xs font-bold">
+                        本课程暂无已发布课时。
+                      </p>
+                    )}
                     {course.lessons.map((lesson, lessonIndex) => {
                       const isLessonAvailable = isCourseAvailable && (lessonUnlocked.get(lesson.id) ?? false);
                       return (
                         <section key={lesson.id} className="app-card overflow-hidden rounded-2xl border">
-                          <header className="flex items-center gap-3 border-b px-4 py-3" style={{ borderColor: "var(--app-border-soft)" }}>
-                            <span className="app-muted-text text-[11px] font-black tabular-nums">
+                          <header className="flex items-center gap-3 border-b px-4 py-3" style={{ borderColor: "var(--border-subtle)" }}>
+                            <span className="app-muted-text text-[11px] font-bold tabular-nums">
                               {String(lessonIndex + 1).padStart(2, "0")}
                             </span>
                             <div className="min-w-0 flex-1">
-                              <h3 className="text-sm font-black">{lesson.title}</h3>
+                              <h3 className="text-sm font-bold">{lesson.title}</h3>
                               <p className="app-muted-text mt-0.5 line-clamp-1 text-[11px] font-bold">{lesson.description}</p>
                             </div>
-                            <small className="app-muted-text shrink-0 text-[10px] font-black">
+                            <small className="app-muted-text shrink-0 text-[10px] font-bold">
                               {lesson.chapters.length} 章
                             </small>
                           </header>
 
                           <div className="grid gap-2 p-3 sm:grid-cols-2">
+                            {lesson.chapters.length === 0 && (
+                              <p className="app-muted-text p-3 text-xs font-bold sm:col-span-2">
+                                本课时暂无训练章节。
+                              </p>
+                            )}
                             {lesson.chapters.map((chapter) => {
                               const chapterExercise = exerciseByCourseChapterId.get(chapter.id) ?? null;
                               const test = chapter.chapter_test_id
@@ -683,27 +751,27 @@ export async function ToolboxSkillPage({
                               const content = (
                                 <>
                                   <span
-                                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-black"
-                                    style={{ color: unlocked ? entry.accent : "var(--app-muted)", backgroundColor: "var(--app-soft-bg)" }}
+                                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold"
+                                    style={{ color: unlocked ? entry.accent : "var(--foreground-muted)", backgroundColor: "var(--surface-soft)" }}
                                   >
                                     {!unlocked ? <LockKeyhole size={15} aria-hidden="true" /> : completed ? <CheckCircle2 size={16} aria-hidden="true" /> : String(displayNumber).padStart(2, "0")}
                                   </span>
                                   <span className="min-w-0 flex-1">
-                                    <strong className="block text-sm font-black">{displayTitle}</strong>
+                                    <strong className="block text-sm font-bold">{displayTitle}</strong>
                                     <small className="app-muted-text mt-0.5 block text-[11px] font-bold">
                                       {test?.korean_title || (test ? "正式章节题库" : "与本课正文同步")}
                                     </small>
                                     {focus.length > 0 && (
                                       <span className="mt-2 flex flex-wrap gap-1.5">
                                         {focus.map((item, focusIndex) => (
-                                          <small key={`${focusIndex}-${item}`} className="max-w-full truncate rounded-full px-2 py-0.5 text-[10px] font-black" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+                                          <small key={`${focusIndex}-${item}`} className="max-w-full truncate rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
                                             {item}
                                           </small>
                                         ))}
                                       </span>
                                     )}
                                   </span>
-                                  <span className="inline-flex min-h-11 shrink-0 items-center gap-1 text-xs font-black" style={{ color: unlocked && available ? entry.accent : "var(--app-muted)" }}>
+                                  <span className="inline-flex min-h-11 shrink-0 items-center gap-1 text-xs font-bold" style={{ color: unlocked && available ? entry.accent : "var(--foreground-muted)" }}>
                                     {!unlocked ? "未开放" : !available ? "同步中" : completed ? "再练" : "开始"}
                                     {unlocked && available && <ArrowRight size={13} aria-hidden="true" />}
                                   </span>
@@ -745,7 +813,8 @@ export async function ToolboxSkillPage({
       {exercise && questions.length > 0 && <ToolboxStudyTimer skill={skill} />}
       <Link
         href={skillCatalogHref}
-        className="app-muted-text inline-flex min-h-11 items-center gap-2 text-xs font-black"
+        className="app-muted-text inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+        style={{ outlineColor: "var(--primary)" }}
       >
         <ArrowLeft size={14} aria-hidden="true" />
         返回{entry.title}课程目录
@@ -758,34 +827,42 @@ export async function ToolboxSkillPage({
               <Icon size={26} aria-hidden="true" />
             </span>
             <div>
-              <p className="text-[11px] font-black tracking-[0.08em]" style={{ color: entry.accent }}>
+              <p className="text-[11px] font-bold tracking-[0.08em]" style={{ color: entry.accent }}>
                 {entry.title} · {selectedUnit.course.title} · {selectedUnit.lesson.title} · 第 {String(selectedNumber).padStart(2, "0")} 章
               </p>
-              <h1 className="mt-1 text-2xl font-black tracking-tight">
+              <h2 className="mt-1 text-2xl font-bold tracking-tight">
                 {selectedUnit.test?.title ?? "本课专项训练"}
-              </h1>
+              </h2>
               <p className="app-muted-text mt-1 text-sm font-bold">
                 {selectedUnit.test?.korean_title || selectedUnit.chapter.description}
               </p>
             </div>
           </div>
           {exercise && (
-            <span className="rounded-full px-3 py-2 text-[11px] font-black" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+            <span className="rounded-full px-3 py-2 text-[11px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
               {questions.length} 题 · 结果独立记录
             </span>
           )}
         </div>
         {exercise?.instructions && (
-          <p className="app-muted-text mt-4 border-t pt-4 text-sm font-bold leading-6" style={{ borderColor: "var(--app-border-soft)" }}>
+          <p className="app-muted-text mt-4 border-t pt-4 text-sm font-bold leading-6" style={{ borderColor: "var(--border-subtle)" }}>
             {exercise.instructions}
           </p>
         )}
       </header>
 
-      {!exercise || questions.length === 0 ? (
+      {questionError ? (
+        <section role="alert" className="app-card flex min-h-56 flex-col items-center justify-center rounded-3xl border p-8 text-center">
+          <Circle className="opacity-50" size={28} aria-hidden="true" />
+          <h2 className="mt-3 text-base font-bold">练习题暂时无法读取</h2>
+          <p className="app-muted-text mt-2 max-w-md text-sm font-bold leading-6">
+            题目加载失败，请稍后刷新页面；已完成的学习进度不会受影响。
+          </p>
+        </section>
+      ) : !exercise || questions.length === 0 ? (
         <section className="app-soft-card flex min-h-56 flex-col items-center justify-center rounded-3xl border p-8 text-center">
           <Circle size={28} className="opacity-40" aria-hidden="true" />
-          <h2 className="mt-3 text-base font-black">本章练习正在同步</h2>
+          <h2 className="mt-3 text-base font-bold">本章练习正在同步</h2>
           <p className="app-muted-text mt-2 max-w-md text-sm font-bold leading-6">
             课程、课时与章节关系已经建立，题目发布后会直接显示在这里。
           </p>

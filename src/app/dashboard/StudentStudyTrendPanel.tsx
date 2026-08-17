@@ -55,7 +55,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
           </p>
         </div>
         <div
-          className="grid grid-cols-3 rounded-xl border border-[var(--app-border-soft)] bg-[var(--app-soft-bg)] p-1"
+          className="grid grid-cols-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1"
           role="group"
           aria-label="选择学习趋势时间范围"
         >
@@ -67,10 +67,10 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
                 type="button"
                 onClick={() => chooseRange(item.id)}
                 aria-pressed={active}
-                className="min-h-10 cursor-pointer rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                className="min-h-10 cursor-pointer rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--primary)]"
                 style={{
-                  color: active ? "var(--app-accent-strong)" : "var(--app-muted)",
-                  backgroundColor: active ? "var(--app-card-bg)" : "transparent",
+                  color: active ? "var(--primary-hover)" : "var(--foreground-muted)",
+                  backgroundColor: active ? "var(--card)" : "transparent",
                   boxShadow: active ? "0 1px 4px rgba(30, 45, 64, 0.08)" : "none",
                 }}
               >
@@ -83,7 +83,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
 
       <div className="mt-5 overflow-x-auto pb-1" tabIndex={0} aria-label={`${range.periodLabel}学习柱状图，可横向滚动`}>
         <div
-          className="grid h-52 items-end gap-1.5 border-b border-[var(--app-border-soft)] px-1 pt-8"
+          className="grid h-52 items-end gap-1.5 border-b border-[var(--border-subtle)] px-1 pt-8"
           style={{
             minWidth: `${minimumChartWidth}px`,
             gridTemplateColumns: `repeat(${range.values.length}, minmax(0, 1fr))`,
@@ -107,9 +107,9 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
                     role="tooltip"
                     className="pointer-events-none absolute left-1/2 top-0 z-20 w-max max-w-48 -translate-x-1/2 rounded-lg border px-2.5 py-1.5 text-center text-xs font-semibold shadow-lg"
                     style={{
-                      color: "var(--app-text)",
-                      borderColor: "var(--app-border)",
-                      backgroundColor: "var(--app-card-bg)",
+                      color: "var(--foreground)",
+                      borderColor: "var(--border)",
+                      backgroundColor: "var(--card)",
                     }}
                   >
                     {range.tips[index] ?? `${range.axisLabels[index]} · ${formatMinutes(minutes)}`}
@@ -117,7 +117,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
                 )}
                 <button
                   type="button"
-                  className="group flex min-h-0 w-full cursor-pointer items-end rounded-t-lg bg-[color-mix(in_srgb,var(--app-border-soft)_52%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                  className="group flex min-h-0 w-full cursor-pointer items-end rounded-t-lg bg-[color-mix(in_srgb,var(--border-subtle)_52%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                   onMouseEnter={() => setActiveIndex(index)}
                   onMouseLeave={() => setActiveIndex(null)}
                   onFocus={() => setActiveIndex(index)}
@@ -132,13 +132,13 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
                       minHeight: "5px",
                       background: minutes > 0
                         ? active
-                          ? "var(--app-accent-strong)"
+                          ? "var(--primary-hover)"
                           : "linear-gradient(180deg, #4ea5ff, #087cf0)"
-                        : "var(--app-border)",
+                        : "var(--border)",
                     }}
                   />
                 </button>
-                <span className="truncate text-center text-[11px] font-medium text-[var(--app-muted)]">
+                <span className="truncate text-center text-[11px] font-medium text-[var(--foreground-muted)]">
                   {showAxisLabel ? range.axisLabels[index] : ""}
                 </span>
               </div>
@@ -147,7 +147,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 grid overflow-hidden rounded-xl border border-[var(--app-border-soft)] sm:grid-cols-3">
+      <div className="mt-4 grid overflow-hidden rounded-xl border border-[var(--border-subtle)] sm:grid-cols-3">
         {[
           ["有效学习", formatMinutes(summary.total)],
           [range.id === "year" ? "活跃月份" : "活跃天数", `${summary.activeCount} ${range.id === "year" ? "个月" : "天"}`],
@@ -156,7 +156,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
           <div
             key={label}
             className="border-t p-3 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0"
-            style={{ borderColor: "var(--app-border-soft)" }}
+            style={{ borderColor: "var(--border-subtle)" }}
           >
             <span className="app-muted-text block text-xs font-medium">{label}</span>
             <strong className="mt-1 block text-sm font-bold tabular-nums">{value}</strong>

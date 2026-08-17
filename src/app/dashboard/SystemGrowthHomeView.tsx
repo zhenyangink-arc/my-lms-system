@@ -107,7 +107,7 @@ function SystemProgress({ value, label }: { value: number; label: string }) {
         <span className="tabular-nums">{safeValue}%</span>
       </div>
       <div
-        className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--app-border-soft)]"
+        className="mt-2 h-1.5 overflow-hidden rounded-full bg-[var(--border-subtle)]"
         role="progressbar"
         aria-label={`${label} ${safeValue}%`}
         aria-valuemin={0}
@@ -166,38 +166,38 @@ export function SystemGrowthHomeView({
       value: `${inProgressLessonsCount} 个课时`,
       note: inProgressLessonsCount > 0 ? "从上次位置继续即可" : "选择一节新课开始学习",
       icon: BookOpen,
-      color: "var(--app-accent)",
-      soft: "var(--app-accent-soft)",
+      color: "var(--primary)",
+      soft: "var(--accent)",
     },
     {
       label: "累计完成",
       value: `${completedLessonsCount} 个课时`,
       note: "来自课程学习进度",
       icon: Trophy,
-      color: "var(--app-success)",
-      soft: "var(--app-success-soft)",
+      color: "var(--status-success)",
+      soft: "var(--status-success-surface)",
     },
     {
       label: "本周完成",
       value: `${thisWeekCompletedCount} 个课时`,
       note: "按首尔时间周一重新统计",
       icon: CheckCircle2,
-      color: "var(--app-secondary)",
-      soft: "var(--app-secondary-soft)",
+      color: "var(--support)",
+      soft: "var(--support-surface)",
     },
     {
       label: "本周目标",
       value: `${weeklyGoalPercent}%`,
       note: `目标每周学习 5 天，已完成 ${recentSevenDayActiveDays} 天`,
       icon: Target,
-      color: "var(--app-warm)",
-      soft: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      soft: "var(--status-warning-surface)",
     },
   ];
 
   const reminderContent = primaryReminder ? (
     <span className="flex min-h-16 items-center gap-3 px-4 py-3">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent)]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]">
         <BellRing size={18} aria-hidden="true" />
       </span>
       <span className="min-w-0 flex-1">
@@ -207,7 +207,7 @@ export function SystemGrowthHomeView({
           {reminders.length > 1 ? `，另有 ${reminders.length - 1} 条老师回复` : ""}
         </span>
       </span>
-      <span className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl bg-[var(--app-accent)] px-3 text-xs font-semibold text-white">
+      <span className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl bg-[var(--primary)] px-3 text-xs font-semibold text-white">
         查看回复
         <ArrowRight size={14} aria-hidden="true" />
       </span>
@@ -251,38 +251,38 @@ export function SystemGrowthHomeView({
         : "核心词语与语境搭配",
       href: vocabularyHref,
       icon: BookText,
-      color: "var(--app-accent)",
-      soft: "var(--app-accent-soft)",
+      color: "var(--primary)",
+      soft: "var(--accent)",
     },
     {
       label: "口语练习",
       description: "情境表达与朗读模仿",
       href: `${toolboxHref}/speaking`,
       icon: Mic,
-      color: "var(--app-warm)",
-      soft: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      soft: "var(--status-warning-surface)",
     },
     {
       label: "语法练习",
       description: "句型结构与语言运用",
       href: `${toolboxHref}/grammar`,
       icon: Shapes,
-      color: "var(--app-secondary)",
-      soft: "var(--app-secondary-soft)",
+      color: "var(--support)",
+      soft: "var(--support-surface)",
     },
     {
       label: "听力练习",
       description: "听音辨义与关键信息",
       href: `${toolboxHref}/listening`,
       icon: Headphones,
-      color: "var(--app-success)",
-      soft: "var(--app-success-soft)",
+      color: "var(--status-success)",
+      soft: "var(--status-success-surface)",
     },
   ];
 
   return (
     <div className="software-growth-home px-4 pb-10 pt-4 sm:px-6 sm:pt-5 xl:px-7">
-      <h1 className="sr-only">成长首页</h1>
+      <h2 className="sr-only">成长首页</h2>
 
       <section className="student-system-welcome" aria-labelledby="growth-welcome-title">
         <div className="student-system-welcome-main">
@@ -347,7 +347,7 @@ export function SystemGrowthHomeView({
               <h2 id="continue-learning-title" className="text-base font-bold tracking-tight">继续学习</h2>
               <p className="app-muted-text mt-1 text-xs font-medium">从上次停下的位置继续</p>
             </div>
-            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
+            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--primary-hover)] hover:bg-[var(--accent)]">
               全部课程 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </header>
@@ -355,7 +355,7 @@ export function SystemGrowthHomeView({
           {hero ? (
             <div className="app-soft-card mt-4 rounded-xl border p-5">
               <div className="flex flex-wrap items-center gap-2 text-xs font-semibold">
-                <span className="rounded-full bg-[var(--app-accent-soft)] px-2.5 py-1 text-[var(--app-accent-strong)]">{hero.courseTitle}</span>
+                <span className="rounded-full bg-[var(--accent)] px-2.5 py-1 text-[var(--primary-hover)]">{hero.courseTitle}</span>
                 <span className="app-muted-text">{STATUS_LABELS[hero.status] ?? hero.status}</span>
               </div>
               <h3 className="mt-4 text-lg font-bold leading-7 tracking-tight">{hero.lessonTitle}</h3>
@@ -369,31 +369,31 @@ export function SystemGrowthHomeView({
               )}
               <div className="mt-5 flex flex-wrap gap-2">
                 {heroHref && (
-                  <Link href={heroHref} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--app-accent)] px-4 text-xs font-semibold text-white">
+                  <Link href={heroHref} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 text-xs font-semibold text-white">
                     <Play size={14} fill="currentColor" aria-hidden="true" />
                     {hero.status === "completed" ? "重新学习" : "继续学习"}
                   </Link>
                 )}
-                <Link href={coursesHref} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--app-border)] px-4 text-xs font-semibold">
+                <Link href={coursesHref} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-[var(--border)] px-4 text-xs font-semibold">
                   课程目录
                 </Link>
               </div>
             </div>
           ) : (
-            <div className="mt-4 flex min-h-52 flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--app-border)] p-6 text-center">
-              <BookOpen size={24} className="text-[var(--app-muted)]" aria-hidden="true" />
+            <div className="mt-4 flex min-h-52 flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] p-6 text-center">
+              <BookOpen size={24} className="text-[var(--foreground-muted)]" aria-hidden="true" />
               <h3 className="mt-3 text-sm font-bold">从第一门课程开始</h3>
               <p className="app-muted-text mt-1 max-w-72 text-xs font-medium leading-5">选择课程后，这里会显示下一步最适合学习的内容。</p>
-              <Link href={coursesHref} className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[var(--app-accent)] px-4 text-xs font-semibold text-white">选择课程</Link>
+              <Link href={coursesHref} className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[var(--primary)] px-4 text-xs font-semibold text-white">选择课程</Link>
             </div>
           )}
 
           {secondaryRecentActivity.length > 0 && (
-            <div className="mt-3 divide-y divide-[var(--app-border-soft)]" aria-label="其他最近学习">
+            <div className="mt-3 divide-y divide-[var(--border-subtle)]" aria-label="其他最近学习">
               {secondaryRecentActivity.map((item) => {
                 const row = (
-                  <span className="flex min-h-14 items-center gap-3 rounded-xl px-2 py-2 hover:bg-[var(--app-soft-bg)]">
-                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "completed" ? "bg-[var(--app-success)]" : "bg-[var(--app-accent)]"}`} aria-hidden="true" />
+                  <span className="flex min-h-14 items-center gap-3 rounded-xl px-2 py-2 hover:bg-[var(--surface-soft)]">
+                    <span className={`h-2.5 w-2.5 shrink-0 rounded-full ${item.status === "completed" ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} aria-hidden="true" />
                     <span className="min-w-0 flex-1">
                       <strong className="block truncate text-xs font-semibold">{item.lessonTitle}</strong>
                       <span className="app-muted-text mt-1 block truncate text-xs font-medium">{item.courseTitle}</span>
@@ -416,8 +416,8 @@ export function SystemGrowthHomeView({
 
         <section className="app-card min-w-0 rounded-2xl border p-5 xl:col-span-7" aria-labelledby="study-trend-title">
           <StudentStudyTrendPanel ranges={studyRanges} />
-          <div className="mt-4 flex flex-wrap items-start gap-3 rounded-xl bg-[var(--app-soft-bg)] p-4">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent-strong)]">
+          <div className="mt-4 flex flex-wrap items-start gap-3 rounded-xl bg-[var(--surface-soft)] p-4">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary-hover)]">
               <CalendarDays size={17} aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
@@ -430,7 +430,7 @@ export function SystemGrowthHomeView({
                     : `已有 ${recentSevenDayActiveDays} 天有效学习。把学习分散到更多天，比单日集中更容易保持。`}
               </p>
             </div>
-            <Link href={recordsHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
+            <Link href={recordsHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--primary-hover)] hover:bg-[var(--accent)]">
               学习记录 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </div>
@@ -446,7 +446,7 @@ export function SystemGrowthHomeView({
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
                   <p className="app-muted-text text-xs font-semibold">{metric.label}</p>
-                  <p className="mt-2 text-xl font-black tracking-tight tabular-nums sm:text-2xl">{metric.value}</p>
+                  <p className="mt-2 text-xl font-bold tracking-tight tabular-nums sm:text-2xl">{metric.value}</p>
                 </div>
                 <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full" style={{ color: metric.color, backgroundColor: metric.soft }}>
                   <Icon size={17} aria-hidden="true" />
@@ -465,7 +465,7 @@ export function SystemGrowthHomeView({
               <h2 id="course-progress-title" className="text-base font-bold tracking-tight">课程进度</h2>
               <p className="app-muted-text mt-1 text-xs font-medium">最近学习的课程与完成进度</p>
             </div>
-            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--app-accent-strong)] hover:bg-[var(--app-accent-soft)]">
+            <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--primary-hover)] hover:bg-[var(--accent)]">
               查看全部 <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </header>
@@ -476,9 +476,9 @@ export function SystemGrowthHomeView({
                 const content = (
                   <>
                     <div className="flex items-start justify-between gap-2">
-                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--app-accent-soft)] text-[var(--app-accent-strong)]"><BookOpen size={17} aria-hidden="true" /></span>
+                      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary-hover)]"><BookOpen size={17} aria-hidden="true" /></span>
                       {!course.href && (
-                        <span className="rounded-full bg-[var(--app-warm-soft)] px-2 py-1 text-[11px] font-semibold text-[var(--app-warm)]">入口待完善</span>
+                        <span className="rounded-full bg-[var(--status-warning-surface)] px-2 py-1 text-[11px] font-semibold text-[var(--status-warning)]">入口待完善</span>
                       )}
                     </div>
                     <h3 className="mt-3 min-h-10 text-sm font-bold leading-5">{course.title}</h3>
@@ -495,7 +495,7 @@ export function SystemGrowthHomeView({
                   <Link
                     key={course.courseId}
                     href={course.href ? scopeDashboardPath(course.href, dashboardBasePath) : coursesHref}
-                    className="rounded-xl border border-[var(--app-border-soft)] p-4 transition hover:border-[var(--app-accent)] hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                    className="rounded-xl border border-[var(--border-subtle)] p-4 transition hover:border-[var(--primary)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                     aria-label={!course.href ? `${course.title}入口待完善，前往课程目录` : undefined}
                   >
                     {content}
@@ -504,8 +504,8 @@ export function SystemGrowthHomeView({
               })}
             </div>
           ) : (
-            <div className="mt-4 flex min-h-44 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--app-border)] p-6 text-center">
-              <BookOpen size={24} className="text-[var(--app-muted)]" aria-hidden="true" />
+            <div className="mt-4 flex min-h-44 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] p-6 text-center">
+              <BookOpen size={24} className="text-[var(--foreground-muted)]" aria-hidden="true" />
               <h3 className="mt-3 text-sm font-bold">还没有课程进度</h3>
               <p className="app-muted-text mt-1 text-xs font-medium">进入课程学习后，这里会形成你的课程地图。</p>
             </div>
@@ -524,7 +524,7 @@ export function SystemGrowthHomeView({
                 <Link
                   key={entry.label}
                   href={entry.href}
-                  className="group min-h-32 rounded-xl border border-[var(--app-border-soft)] p-3 transition hover:border-[var(--app-accent)] hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                  className="group min-h-32 rounded-xl border border-[var(--border-subtle)] p-3 transition hover:border-[var(--primary)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                 >
                   <span className="flex h-9 w-9 items-center justify-center rounded-full" style={{ color: entry.color, backgroundColor: entry.soft }}>
                     <Icon size={17} aria-hidden="true" />
@@ -535,7 +535,7 @@ export function SystemGrowthHomeView({
               );
             })}
           </div>
-          <Link href={toolboxHref} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-xl border border-[var(--app-border)] text-xs font-semibold hover:bg-[var(--app-soft-bg)]">
+          <Link href={toolboxHref} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-1 rounded-xl border border-[var(--border)] text-xs font-semibold hover:bg-[var(--surface-soft)]">
             查看全部专项训练 <ArrowRight size={14} aria-hidden="true" />
           </Link>
         </section>

@@ -63,17 +63,17 @@ export function AccountAuditLogDialog({
         className={compact
           ? "inline-flex h-9 items-center justify-center gap-2 rounded-md border px-3 text-xs font-semibold transition hover:bg-black/[0.035]"
           : "app-card flex w-full items-center justify-between gap-3 rounded-[1.75rem] border p-5 text-left transition hover:-translate-y-0.5 hover:shadow-lg sm:p-6"}
-        style={compact ? { borderColor: "var(--app-border)" } : undefined}
+        style={compact ? { borderColor: "var(--border)" } : undefined}
       >
         {compact ? (
           <><Activity size={14} />变更记录</>
         ) : (
           <>
             <div>
-              <p className="app-muted-text text-xs font-black">最近记录</p>
-              <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-black" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
+              <p className="app-muted-text text-xs font-semibold">最近记录</p>
+              <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-semibold" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
             </div>
-            <Activity size={22} style={{ color: "var(--app-secondary)" }} />
+            <Activity size={22} style={{ color: "var(--support)" }} />
           </>
         )}
       </DialogTrigger>
@@ -85,9 +85,9 @@ export function AccountAuditLogDialog({
         <div className="max-h-[60vh] space-y-3 overflow-y-auto">
           {logs.map((log) => (
             <div key={log.id} className="flex gap-3">
-              <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: log.action === "status_changed" ? "var(--app-warm)" : log.action === "membership_changed" ? "var(--app-secondary)" : "var(--app-accent)" }} />
-              <div className="min-w-0 flex-1 border-b pb-3" style={{ borderColor: "var(--app-border-soft)" }}>
-                <p className="truncate text-xs font-black">{accountNames[log.actor_id ?? ""] ?? "系统管理员"} {AUDIT_LABELS[log.action] ?? "更新了账号"}</p>
+              <span className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: log.action === "status_changed" ? "var(--status-warning)" : log.action === "membership_changed" ? "var(--support)" : "var(--primary)" }} />
+              <div className="min-w-0 flex-1 border-b pb-3" style={{ borderColor: "var(--border-subtle)" }}>
+                <p className="truncate text-xs font-semibold">{accountNames[log.actor_id ?? ""] ?? "系统管理员"} {AUDIT_LABELS[log.action] ?? "更新了账号"}</p>
                 <p className="app-muted-text mt-1 truncate text-xs">对象：{accountNames[log.target_user_id] ?? `账号 …${log.target_user_id.slice(-6)}`}</p>
               </div>
               <span className="app-muted-text shrink-0 text-xs font-bold"><AuditTime value={log.created_at} /></span>
@@ -96,7 +96,7 @@ export function AccountAuditLogDialog({
           {logs.length === 0 && (
             <div className="app-soft-card rounded-2xl border border-dashed p-5 text-center">
               <Clock3 className="mx-auto opacity-30" size={24} />
-              <p className="mt-2 text-xs font-black">暂无账号变更记录</p>
+              <p className="mt-2 text-xs font-semibold">暂无账号变更记录</p>
             </div>
           )}
         </div>
@@ -121,8 +121,8 @@ export function AccountDeletionAuditDialog({ logs, compact = false }: { logs: Ac
         ) : (
           <>
             <div>
-              <p className="text-xs font-black text-rose-600">负责人审计</p>
-              <h2 className="mt-1 text-xl font-black">永久删除记录</h2>
+              <p className="text-xs font-semibold text-rose-600">负责人审计</p>
+              <h2 className="mt-1 text-xl font-semibold">永久删除记录</h2>
               <p className="mt-2 text-xs text-rose-700">点击查看最近 {logs.length} 条永久删除记录</p>
             </div>
             <UserRoundX size={22} className="text-rose-500" />
@@ -141,7 +141,7 @@ export function AccountDeletionAuditDialog({ logs, compact = false }: { logs: Ac
               <div key={log.id} className="rounded-2xl border border-rose-100 bg-rose-50/60 p-4">
                 <div className="flex items-start justify-between gap-3">
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-black">{log.target_full_name || log.target_email || `账号 …${log.target_user_id.slice(-6)}`}</p>
+                    <p className="truncate text-sm font-semibold">{log.target_full_name || log.target_email || `账号 …${log.target_user_id.slice(-6)}`}</p>
                     <p className="mt-1 break-all text-xs text-rose-700">{log.target_email || log.target_role || "历史账号"}</p>
                   </div>
                   <span className="shrink-0 text-xs font-bold text-rose-600"><AuditTime value={log.deleted_at} /></span>

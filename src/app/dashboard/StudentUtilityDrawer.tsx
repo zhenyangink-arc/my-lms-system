@@ -44,13 +44,13 @@ export function StudentUtilityDrawer({
             <span
               className="mx-auto flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-white shadow-sm"
               style={{
-                background: "linear-gradient(135deg, var(--app-secondary), var(--app-accent))",
+                background: "linear-gradient(135deg, var(--support), var(--primary))",
               }}
             >
               <GraduationCap size={18} aria-hidden="true" />
             </span>
             <div className="app-student-utility-expanded min-w-0 text-center">
-              <p className="truncate text-xs font-black tracking-tight">{tenantName}</p>
+              <p className="truncate text-xs font-bold tracking-tight">{tenantName}</p>
               <p className="truncate text-[9px] font-semibold app-muted-text">
                 韩语成长工作台
               </p>
@@ -64,8 +64,8 @@ export function StudentUtilityDrawer({
             <Link
               href="/"
               title="网站首页"
-              className="flex items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
-              style={{ color: "var(--app-muted)" }}
+              className="flex items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--accent)_40%,transparent)]"
+              style={{ color: "var(--foreground-muted)" }}
             >
               <Home size={18} className="shrink-0" />
               <span className="app-student-utility-expanded truncate">网站首页</span>
@@ -75,8 +75,8 @@ export function StudentUtilityDrawer({
               type="button"
               onClick={() => setReminderOpen(true)}
               title={unreadCount > 0 ? `${unreadCount} 条未读提醒` : "通知提醒"}
-              className="flex w-full items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_40%,transparent)]"
-              style={{ color: "var(--app-muted)" }}
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl px-2 py-2 text-[11px] font-semibold transition hover:bg-[color-mix(in_srgb,var(--accent)_40%,transparent)]"
+              style={{ color: "var(--foreground-muted)" }}
             >
               <span className="relative shrink-0">
                 <Bell size={18} aria-hidden="true" />
@@ -84,8 +84,8 @@ export function StudentUtilityDrawer({
                   <span
                     className="absolute -right-1 -top-1 h-3.5 w-3.5 rounded-full border-2"
                     style={{
-                      backgroundColor: "var(--app-warm)",
-                      borderColor: "var(--app-card-bg)",
+                      backgroundColor: "var(--status-warning)",
+                      borderColor: "var(--card)",
                     }}
                   />
                 )}
@@ -93,8 +93,8 @@ export function StudentUtilityDrawer({
               <span className="app-student-utility-expanded min-w-0 truncate">通知提醒</span>
               {unreadCount > 0 && (
                 <span
-                  className="app-student-utility-expanded flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-black text-white"
-                  style={{ backgroundColor: "var(--app-accent)" }}
+                  className="app-student-utility-expanded flex h-5 min-w-5 items-center justify-center rounded-full px-1 text-[10px] font-bold text-white"
+                  style={{ backgroundColor: "var(--primary)" }}
                 >
                   {unreadCount > 9 ? "9+" : unreadCount}
                 </span>

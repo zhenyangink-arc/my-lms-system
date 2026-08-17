@@ -43,7 +43,7 @@ export function ChapterTestQuestionViewer({
         onClick={() => setIsOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-accent)] hover:underline"
+        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
       >
         <Eye size={12} />
         查看题目
@@ -64,12 +64,12 @@ export function ChapterTestQuestionViewer({
           >
             <div className="flex items-center justify-between gap-4 border-b p-5 sm:px-6">
               <div>
-                <p className="app-muted-text text-[11px] font-black">
+                <p className="app-muted-text text-[11px] font-semibold">
                   当前测试题目 · {questions.length} 题
                 </p>
                 <h2
                   id={`chapter-test-viewer-${questions[0]?.id ?? "empty"}`}
-                  className="mt-1 text-xl font-black"
+                  className="mt-1 text-xl font-semibold"
                 >
                   {testTitle}
                 </h2>
@@ -96,9 +96,9 @@ export function ChapterTestQuestionViewer({
                   <tr
                     className="border-b app-muted-text"
                     style={{
-                      borderColor: "var(--app-border-soft)",
+                      borderColor: "var(--border-subtle)",
                       backgroundColor:
-                        "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                        "color-mix(in srgb, var(--card) 84%, transparent)",
                     }}
                   >
                     <th className="px-4 py-3 text-center text-[11px] font-bold">
@@ -120,7 +120,7 @@ export function ChapterTestQuestionViewer({
                     <tr
                       key={question.id}
                       className="border-b align-top last:border-b-0"
-                      style={{ borderColor: "var(--app-border-soft)" }}
+                      style={{ borderColor: "var(--border-subtle)" }}
                     >
                       <td className="px-4 py-4 text-center font-mono text-xs tabular-nums">
                         {String(index + 1).padStart(2, "0")}
@@ -142,7 +142,7 @@ export function ChapterTestQuestionViewer({
                               className="flex items-center gap-2 py-0.5"
                               style={{
                                 color: isCorrect
-                                  ? "var(--app-success)"
+                                  ? "var(--status-success)"
                                   : undefined,
                                 fontWeight: isCorrect ? 700 : undefined,
                               }}
@@ -154,7 +154,7 @@ export function ChapterTestQuestionViewer({
                               {isCorrect && (
                                 <span
                                   className="ml-auto inline-flex items-center gap-1 whitespace-nowrap text-[10px] font-bold"
-                                  style={{ color: "var(--app-success)" }}
+                                  style={{ color: "var(--status-success)" }}
                                 >
                                   <Check size={11} />
                                   正确答案

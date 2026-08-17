@@ -180,7 +180,7 @@ export default async function KoreanAssignmentTestsPage() {
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
         <Link
           href="/dashboard/assignments#chapter-tests"
-          className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+          className="app-muted-text inline-flex items-center gap-2 text-xs font-bold"
         >
           <ArrowLeft size={14} />
           返回学习任务
@@ -190,16 +190,16 @@ export default async function KoreanAssignmentTestsPage() {
           className="app-card overflow-hidden rounded-3xl border p-5 sm:p-7"
           style={{
             background:
-              "linear-gradient(125deg, var(--app-card-bg), var(--app-accent-soft), var(--app-secondary-soft))",
+              "linear-gradient(125deg, var(--card), var(--accent), var(--support-surface))",
           }}
         >
           <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_420px] lg:items-center">
             <div>
               <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
                 style={{
-                  color: "var(--app-secondary)",
-                  backgroundColor: "var(--app-secondary-soft)",
+                  color: "var(--support)",
+                  backgroundColor: "var(--support-surface)",
                 }}
               >
                 <Languages size={15} />
@@ -207,7 +207,7 @@ export default async function KoreanAssignmentTestsPage() {
               </span>
               <DashboardTitleWithHint
                 className="mt-4"
-                titleClassName="text-3xl font-black tracking-tight"
+                titleClassName="text-3xl font-bold tracking-tight"
                 title="学完一章，马上检验自己是否真正掌握"
                 description="章节测试跟随“我的课程”的学习进度自动开放，不需要老师单独布置，也没有作业截止时间。完成测试后可以复习薄弱知识点，再继续下一章。"
               />
@@ -219,8 +219,8 @@ export default async function KoreanAssignmentTestsPage() {
                 ["可测试", String(availableTestCount)],
               ].map(([label, value]) => (
                 <div key={label} className="app-card rounded-2xl border p-4 text-center">
-                  <p className="text-2xl font-black">{value}</p>
-                  <p className="app-muted-text mt-1 text-[11px] font-black">{label}</p>
+                  <p className="text-2xl font-bold">{value}</p>
+                  <p className="app-muted-text mt-1 text-[11px] font-bold">{label}</p>
                 </div>
               ))}
             </div>
@@ -232,7 +232,7 @@ export default async function KoreanAssignmentTestsPage() {
           title="韩语字母入门"
           description="四章测试已经独立设计，建议学完对应章节后进入；可以反复练习，系统保留最近一次成绩。"
           meta={`${hangulTests.length} 章`}
-          accentColor="var(--app-warm)"
+          accentColor="var(--status-warning)"
         >
           <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {hangulTests.map((test) => {
@@ -244,15 +244,15 @@ export default async function KoreanAssignmentTestsPage() {
                 <>
                   <div className="min-w-0 p-2.5">
                     <span
-                      className="rounded-full px-2 py-0.5 text-[8px] font-black"
+                      className="rounded-full px-2 py-0.5 text-[8px] font-bold"
                       style={{
-                        color: "var(--app-accent)",
-                        backgroundColor: "var(--app-accent-soft)",
+                        color: "var(--primary)",
+                        backgroundColor: "var(--accent)",
                       }}
                     >
                       第 {String(test.chapter_number).padStart(2, "0")} 章
                     </span>
-                    <h3 className="mt-1.5 text-[10px] font-black leading-[14px]">
+                    <h3 className="mt-1.5 text-[10px] font-bold leading-[14px]">
                       {test.title}
                     </h3>
                     <p className="app-muted-text mt-0.5 text-[9px] leading-3">
@@ -267,8 +267,8 @@ export default async function KoreanAssignmentTestsPage() {
                     </p>
                     {isUnlocked && (
                       <span
-                        className="mt-1.5 inline-flex items-center gap-1 text-[8px] font-black leading-3"
-                        style={{ color: "var(--app-secondary)" }}
+                        className="mt-1.5 inline-flex items-center gap-1 text-[8px] font-bold leading-3"
+                        style={{ color: "var(--support)" }}
                       >
                         {attempt ? "重新测试" : "开始测试"}
                         <ArrowRight size={11} />
@@ -280,28 +280,28 @@ export default async function KoreanAssignmentTestsPage() {
                     style={{
                       borderColor: attempt
                         ? attempt.passed
-                          ? "var(--app-success)"
-                          : "var(--app-warm)"
-                        : "var(--app-border-soft)",
+                          ? "var(--status-success)"
+                          : "var(--status-warning)"
+                        : "var(--border-subtle)",
                       backgroundColor: attempt
                         ? attempt.passed
-                          ? "var(--app-success-soft)"
-                          : "var(--app-warm-soft)"
-                        : "var(--app-card-bg)",
+                          ? "var(--status-success-surface)"
+                          : "var(--status-warning-surface)"
+                        : "var(--card)",
                     }}
                   >
                     {!isUnlocked ? (
-                      <span className="app-muted-text inline-flex flex-col items-center gap-1 text-[8px] font-black">
+                      <span className="app-muted-text inline-flex flex-col items-center gap-1 text-[8px] font-bold">
                         <Lock size={14} />
                         未开放
                       </span>
                     ) : attempt ? (
                       <span
-                        className="inline-flex flex-col items-center gap-1 text-[9px] font-black"
+                        className="inline-flex flex-col items-center gap-1 text-[9px] font-bold"
                         style={{
                           color: attempt.passed
-                            ? "var(--app-success)"
-                            : "var(--app-warm)",
+                            ? "var(--status-success)"
+                            : "var(--status-warning)",
                         }}
                       >
                         {attempt.passed ? (
@@ -313,7 +313,7 @@ export default async function KoreanAssignmentTestsPage() {
                       </span>
                     ) : (
                       <span
-                        className="app-muted-text inline-flex flex-col items-center gap-1 text-[8px] font-black"
+                        className="app-muted-text inline-flex flex-col items-center gap-1 text-[8px] font-bold"
                       >
                         <CircleDashed size={14} />
                         未测试
@@ -325,14 +325,14 @@ export default async function KoreanAssignmentTestsPage() {
               const cardStyle = {
                 background: attempt
                   ? attempt.passed
-                    ? "linear-gradient(135deg, var(--app-card-bg), var(--app-success-soft))"
-                    : "linear-gradient(135deg, var(--app-card-bg), var(--app-warm-soft))"
-                  : "linear-gradient(135deg, var(--app-card-bg), var(--app-secondary-soft))",
+                    ? "linear-gradient(135deg, var(--card), var(--status-success-surface))"
+                    : "linear-gradient(135deg, var(--card), var(--status-warning-surface))"
+                  : "linear-gradient(135deg, var(--card), var(--support-surface))",
                 borderColor: attempt
                   ? attempt.passed
-                    ? "var(--app-success)"
-                    : "var(--app-warm)"
-                  : "var(--app-border-soft)",
+                    ? "var(--status-success)"
+                    : "var(--status-warning)"
+                  : "var(--border-subtle)",
               };
               return isUnlocked ? (
                 <Link
@@ -361,7 +361,7 @@ export default async function KoreanAssignmentTestsPage() {
           title="韩国语1级"
           description="依照1A＋1B的16课进度，逐课开放配套测试。"
           meta={`已开放 ${openedLevelOneCount}／16`}
-          accentColor="var(--app-accent)"
+          accentColor="var(--primary)"
         >
           <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
             {levelOneUnits.map(([number, korean, chinese]) => {
@@ -375,28 +375,28 @@ export default async function KoreanAssignmentTestsPage() {
               const passed = attempt?.passed === true;
               const failed = Boolean(attempt) && !passed;
               const statusColor = passed
-                ? "var(--app-success)"
+                ? "var(--status-success)"
                 : failed
-                  ? "var(--app-warm)"
-                  : "var(--app-muted)";
+                  ? "var(--status-warning)"
+                  : "var(--foreground-muted)";
               const statusSoft = passed
-                ? "var(--app-success-soft)"
+                ? "var(--status-success-surface)"
                 : failed
-                  ? "var(--app-warm-soft)"
-                  : "var(--app-card-bg)";
+                  ? "var(--status-warning-surface)"
+                  : "var(--card)";
               const cardContent = (
                 <>
                   <div className="min-w-0 p-2.5">
                     <span
-                      className="rounded-full px-2 py-0.5 text-[8px] font-black"
+                      className="rounded-full px-2 py-0.5 text-[8px] font-bold"
                       style={{
-                        color: "var(--app-accent)",
-                        backgroundColor: "var(--app-accent-soft)",
+                        color: "var(--primary)",
+                        backgroundColor: "var(--accent)",
                       }}
                     >
                       第{number}课
                     </span>
-                    <h3 className="mt-1.5 text-[10px] font-black leading-[14px]">
+                    <h3 className="mt-1.5 text-[10px] font-bold leading-[14px]">
                       {korean}
                     </h3>
                     <p className="app-muted-text mt-0.5 text-[9px] leading-3">
@@ -413,8 +413,8 @@ export default async function KoreanAssignmentTestsPage() {
                     </p>
                     {test && isUnlocked && (
                       <span
-                        className="mt-1.5 inline-flex items-center gap-1 text-[8px] font-black leading-3"
-                        style={{ color: "var(--app-secondary)" }}
+                        className="mt-1.5 inline-flex items-center gap-1 text-[8px] font-bold leading-3"
+                        style={{ color: "var(--support)" }}
                       >
                         {attempt ? "重新测试" : "开始测试"}
                         <ArrowRight size={11} />
@@ -426,14 +426,14 @@ export default async function KoreanAssignmentTestsPage() {
                     style={{
                       color: statusColor,
                       borderColor: passed
-                        ? "var(--app-success)"
+                        ? "var(--status-success)"
                         : failed
-                          ? "var(--app-warm)"
-                          : "var(--app-border-soft)",
+                          ? "var(--status-warning)"
+                          : "var(--border-subtle)",
                       backgroundColor: statusSoft,
                     }}
                   >
-                    <span className="inline-flex flex-col items-center gap-1 text-[8px] font-black">
+                    <span className="inline-flex flex-col items-center gap-1 text-[8px] font-bold">
                       {!isUnlocked ? (
                         <Lock size={14} />
                       ) : passed ? (
@@ -456,15 +456,15 @@ export default async function KoreanAssignmentTestsPage() {
               );
               const cardStyle = {
                 background: passed
-                  ? "linear-gradient(135deg, var(--app-card-bg), var(--app-success-soft))"
+                  ? "linear-gradient(135deg, var(--card), var(--status-success-surface))"
                   : failed
-                    ? "linear-gradient(135deg, var(--app-card-bg), var(--app-warm-soft))"
-                    : "linear-gradient(135deg, var(--app-card-bg), var(--app-secondary-soft))",
+                    ? "linear-gradient(135deg, var(--card), var(--status-warning-surface))"
+                    : "linear-gradient(135deg, var(--card), var(--support-surface))",
                 borderColor: passed
-                  ? "var(--app-success)"
+                  ? "var(--status-success)"
                   : failed
-                    ? "var(--app-warm)"
-                    : "var(--app-border-soft)",
+                    ? "var(--status-warning)"
+                    : "var(--border-subtle)",
               };
               return test && isUnlocked ? (
                 <Link
@@ -491,28 +491,28 @@ export default async function KoreanAssignmentTestsPage() {
         <section
           className="rounded-3xl border border-dashed p-5 sm:p-6"
           style={{
-            borderColor: "var(--app-border)",
-            backgroundColor: "var(--app-soft-bg)",
+            borderColor: "var(--border)",
+            backgroundColor: "var(--surface-soft)",
           }}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
             <span
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
               style={{
-                color: "var(--app-success)",
-                backgroundColor: "var(--app-success-soft)",
+                color: "var(--status-success)",
+                backgroundColor: "var(--status-success-surface)",
               }}
             >
               <BookOpenCheck size={21} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-black" style={{ color: "var(--app-success)" }}>
+              <p className="text-xs font-bold" style={{ color: "var(--status-success)" }}>
                 路线 03 · 能力进阶
               </p>
               <DashboardTitleWithHint
                 className="mt-1"
                 headingLevel={2}
-                titleClassName="font-black"
+                titleClassName="font-bold"
                 title="韩国语2级测试线路"
                 description="待韩国语2级课程章节完成后，再按相同结构逐章开放。"
               />
@@ -520,8 +520,8 @@ export default async function KoreanAssignmentTestsPage() {
             {isManager && (
               <Link
                 href="/dashboard/admin/courses"
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-                style={{ backgroundColor: "var(--app-secondary)" }}
+                className="inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-xs font-bold text-white"
+                style={{ backgroundColor: "var(--support)" }}
               >
                 进入课程内容管理
                 <ArrowRight size={13} />

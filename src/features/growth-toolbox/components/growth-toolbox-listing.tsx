@@ -119,8 +119,8 @@ function ReadOnlySection({
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
         <div>
-          <h2 className="text-base font-semibold text-[var(--app-text)]">{title}</h2>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">{description}</p>
+          <h2 className="text-base font-semibold text-[var(--foreground)]">{title}</h2>
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">{description}</p>
         </div>
         {action}
       </div>

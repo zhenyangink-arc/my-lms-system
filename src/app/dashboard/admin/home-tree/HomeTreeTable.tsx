@@ -82,8 +82,8 @@ function renderRows({
     const rows: ReactNode[] = [
       <tr
         key={node.id}
-        className="border-t transition-colors hover:bg-[color-mix(in_srgb,var(--app-border)_22%,transparent)]"
-        style={{ borderColor: "var(--app-border)" }}
+        className="border-t transition-colors hover:bg-[color-mix(in_srgb,var(--border)_22%,transparent)]"
+        style={{ borderColor: "var(--border)" }}
       >
         <td className="py-2 pr-3">
           <button

@@ -110,15 +110,15 @@ function Note({
   tone?: "blue" | "rose" | "green" | "amber";
 }) {
   const tones = {
-    blue: "border-[#cfddec] bg-[#f1f6fb]",
-    rose: "border-[#ead0d6] bg-[#fff4f6]",
-    green: "border-[#cfe3d4] bg-[#f2f8f3]",
-    amber: "border-[#ead8be] bg-[#fff8ed]",
+    blue: "border-[var(--border)] bg-[var(--accent)]",
+    rose: "border-[var(--border)] bg-[var(--card)]",
+    green: "border-[var(--border)] bg-[var(--status-success-surface)]",
+    amber: "border-[var(--border)] bg-[var(--status-warning-surface)]",
   };
   return (
     <section className={`mt-4 rounded-2xl border p-4 ${tones[tone]}`}>
-      <p className="text-[11px] font-black">{title}</p>
-      <div className="mt-2 text-xs font-bold leading-6 text-[#45574f]">{children}</div>
+      <p className="text-[11px] font-bold">{title}</p>
+      <div className="mt-2 text-xs font-bold leading-6 text-[var(--foreground-secondary)]">{children}</div>
     </section>
   );
 }
@@ -181,14 +181,14 @@ function CardGrid({
       {cards.map((card) => (
         <article
           key={`${card.label}-${card.korean}`}
-          className="min-h-[82px] rounded-2xl border border-[#ead0d6] bg-white p-5"
+          className="min-h-[82px] rounded-2xl border border-[var(--border)] bg-white p-5"
         >
-          <b className="text-[10px] text-[#a65b68]">{card.label}</b>
-          <div className="mt-2 text-sm font-black">
+          <b className="text-[10px] text-[var(--destructive)]">{card.label}</b>
+          <div className="mt-2 text-sm font-bold">
             <SpeakLine text={card.korean} speak={speak} />
           </div>
           <p
-            className={`mt-1 text-[10px] text-[#71857b] ${
+            className={`mt-1 text-[10px] text-[var(--foreground-secondary)] ${
               showChinese ? "opacity-100" : "opacity-0"
             }`}
           >
@@ -215,16 +215,16 @@ function Dialogue({
         <div
           key={`${index}-${line.speaker}-${line.korean}`}
           className={`flex gap-2.5 rounded-xl p-3.5 ${
-            index % 2 ? "bg-[#fff7ed]" : "bg-[#f4f8f6]"
+            index % 2 ? "bg-[var(--status-warning-surface)]" : "bg-[var(--status-success-surface)]"
           }`}
         >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-black">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-[10px] font-bold">
             {line.speaker}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[13px] font-black leading-6">{line.korean}</p>
+            <p className="text-[13px] font-bold leading-6">{line.korean}</p>
             <p
-              className={`text-[10px] font-bold leading-5 text-[#71857b] ${
+              className={`text-[10px] font-bold leading-5 text-[var(--foreground-secondary)] ${
                 showChinese ? "opacity-100" : "opacity-0"
               }`}
             >
@@ -250,12 +250,12 @@ function Exercise({
       {items.map(([question, answer]) => (
         <article
           key={`${question}-${answer}`}
-          className={`rounded-xl border border-[#ead8be] bg-white text-xs font-black ${
+          className={`rounded-xl border border-[var(--border)] bg-white text-xs font-bold ${
             items.length > 10 ? "min-h-[58px] p-3" : "min-h-[68px] p-4"
           }`}
         >
           <span>{question}</span>
-          <p className={`mt-3 leading-5 text-[#a65b68] ${shown ? "opacity-100" : "opacity-0"}`}>
+          <p className={`mt-3 leading-5 text-[var(--destructive)] ${shown ? "opacity-100" : "opacity-0"}`}>
             {answer}
           </p>
         </article>
@@ -341,49 +341,49 @@ const dividers: Record<
     step: "第一步",
     title: "课前导航",
     goal: "建立“描述商品—选择尺码—建议试穿—评价搭配—决定购买／送礼”的购物交际链。",
-    icon: <ShoppingBag size={24} />,
+    icon: <ShoppingBag aria-hidden="true" size={24} />,
   },
   "04": {
     step: "第二步",
     title: "核心词汇",
     goal: "掌握服饰、外观形容词、穿戴动词、购物与送礼表达。",
-    icon: <Shirt size={24} />,
+    icon: <Shirt aria-hidden="true" size={24} />,
   },
   "09": {
     step: "第三步",
     title: "语法讲解",
     goal: "四个语法各占一页：形容词定语、ㄹ脱落、尝试建议和动作对象。",
-    icon: <NotebookPen size={24} />,
+    icon: <NotebookPen aria-hidden="true" size={24} />,
   },
   "14": {
     step: "第四步",
     title: "句型操练",
     goal: "把商品特征、穿戴动作、试穿建议和送礼对象组合成完整表达。",
-    icon: <Tags size={24} />,
+    icon: <Tags aria-hidden="true" size={24} />,
   },
   "18": {
     step: "第五步",
     title: "实战对话",
     goal: "完成试衣、试鞋和生日礼物三组八句购物对话。",
-    icon: <MessageCircle size={24} />,
+    icon: <MessageCircle aria-hidden="true" size={24} />,
   },
   "22": {
     step: "第六步",
     title: "听说任务",
     goal: "从购物对话中提取商品、颜色、尺码、评价、收礼人和最终决定。",
-    icon: <Headphones size={24} />,
+    icon: <Headphones aria-hidden="true" size={24} />,
   },
   "26": {
     step: "第七步",
     title: "读写拓展",
     goal: "读懂商品推荐，并写出包含特征、试穿建议和送礼对象的推荐文。",
-    icon: <BookOpenCheck size={24} />,
+    icon: <BookOpenCheck aria-hidden="true" size={24} />,
   },
   "29": {
     step: "第八步",
     title: "自测与复盘",
     goal: "检查服饰词汇、四项语法、穿戴搭配、双收音和购物交际能力。",
-    icon: <CheckCircle2 size={24} />,
+    icon: <CheckCircle2 aria-hidden="true" size={24} />,
   },
 };
 
@@ -530,7 +530,7 @@ export function KoreanLevelOneLessonFourteenBook({
         number,
         dialogue.title,
         dialogue.description,
-        <MessageCircle size={22} />,
+        <MessageCircle aria-hidden="true" size={22} />,
         <>
           <Dialogue
             lines={dialogue.lines}
@@ -553,7 +553,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "03",
         "一次购物的五步结构",
         "描述商品、确认大小、建议试穿、评价搭配，最后决定购买或送礼。",
-        <ShoppingBag size={22} />,
+        <ShoppingBag aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -580,7 +580,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "05",
         "1. 服饰与配饰",
         "记忆服饰时同时绑定正确的穿戴动词，避免全部翻译成“穿”。",
-        <Shirt size={22} />,
+        <Shirt aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={clothesWords}
@@ -601,7 +601,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "06",
         "2. 外观与穿着评价",
         "用大小、长短、外观和舒适度描述商品，再用어울리다评价搭配。",
-        <Tags size={22} />,
+        <Tags aria-hidden="true" size={22} />,
         <WordGrid
           words={adjectiveWords}
           speak={speak}
@@ -616,7 +616,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "07",
         "3. 穿戴动词",
         "衣服、鞋袜、帽子眼镜、戒指手套和手表分别使用不同动词。",
-        <Glasses size={22} />,
+        <Glasses aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={wearingWords}
@@ -636,7 +636,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "08",
         "4. 送礼表达与双收音发音",
         "先掌握赠送对象与敬语，再辨认짧다等双收音的实际读音。",
-        <Gift size={22} />,
+        <Gift aria-hidden="true" size={22} />,
         <>
           <WordGrid
             words={[...cultureWords, ...pronunciationWords]}
@@ -656,7 +656,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "10",
         "1. A-(으)ㄴ N",
         "把形容词放在名词前作定语，相当于中文“……的 + 名词”。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -683,7 +683,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "11",
         "2. ㄹ 탈락",
         "词干以ㄹ收音结尾，遇到ㄴ、ㅂ、ㅅ开头的词尾时，ㄹ脱落。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -710,7 +710,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "12",
         "3. V-아/어 보세요",
         "礼貌建议对方尝试某个动作；购物时常用于试穿、试戴和试用。",
-        <Shirt size={22} />,
+        <Shirt aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -737,7 +737,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "13",
         "4. N한테／께",
         "标记动作的接受者；한테用于一般口语，께用于需要尊敬的对象。",
-        <Gift size={22} />,
+        <Gift aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -764,7 +764,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "15",
         "1. 形容词定语工坊",
         "把基本形转换成名词前的修饰形，并注意있다／없다和ㄹ脱落。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["크다 + 옷", "큰 옷"],
@@ -790,7 +790,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "16",
         "2. 穿戴动作配对",
         "先判断身体位置，再选择입다、신다、쓰다、끼다或차다。",
-        <Glasses size={22} />,
+        <Glasses aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["衣服", "옷을 입어요."],
@@ -816,7 +816,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "17",
         "3. 试穿与送礼实验",
         "把穿戴动作变成建议句，并根据收礼人选择한테／께和주다／드리다。",
-        <Gift size={22} />,
+        <Gift aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["请试穿这件衣服。", "이 옷을 입어 보세요."],
@@ -842,7 +842,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "23",
         "1. 听力 · 服装店购物单",
         "听购物对话，记录商品、颜色、尺码、问题和最终决定。",
-        <Headphones size={22} />,
+        <Headphones aria-hidden="true" size={22} />,
         <>
           <button
             type="button"
@@ -851,9 +851,9 @@ export function KoreanLevelOneLessonFourteenBook({
                 "어서 오세요. 어떤 옷을 찾으세요? 검은색 바지를 찾고 있어요. 이 긴 바지는 어때요? 디자인은 멋있지만 저한테 조금 커요. 그럼 한 사이즈 작은 바지를 입어 보세요. 네, 입어 볼게요."
               )
             }
-            className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[#a65b68] p-4 text-sm font-black text-white"
+            className="mt-5 flex items-center justify-center gap-2 rounded-2xl bg-[var(--destructive)] p-4 text-sm font-bold text-white"
           >
-            <Volume2 size={17} />
+            <Volume2 aria-hidden="true" size={17} />
             播放购物对话
           </button>
           <Exercise
@@ -880,7 +880,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "24",
         "2. 礼物对象与文化提醒",
         "选择礼物时既要考虑敬语，也要区分传统说法与现代个人偏好。",
-        <Gift size={22} />,
+        <Gift aria-hidden="true" size={22} />,
         <>
           <CardGrid
             cards={[
@@ -907,7 +907,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "25",
         "3. 60秒商品推荐挑战",
         "不看稿推荐一件商品，并给出试穿建议和适合的收礼人。",
-        <Mic2 size={22} />,
+        <Mic2 aria-hidden="true" size={22} />,
         <>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Note title="顾客">
@@ -953,7 +953,7 @@ export function KoreanLevelOneLessonFourteenBook({
               부모님께 드리려고 해요.
             </Note>
           </div>
-          <p className="mt-auto text-center text-[11px] font-bold text-[#71857b]">
+          <p className="mt-auto text-center text-[11px] font-bold text-[var(--foreground-secondary)]">
             至少使用：A-(으)ㄴ N、ㄹ脱落词、-아/어 보세요、한테／께各一次。
           </p>
         </>
@@ -962,10 +962,10 @@ export function KoreanLevelOneLessonFourteenBook({
         "27",
         "1. 阅读 · 선물 추천",
         "找出推荐商品的外观、尺寸、穿戴动作、适合对象与文化提醒。",
-        <BookOpenCheck size={22} />,
+        <BookOpenCheck aria-hidden="true" size={22} />,
         <>
-          <section className="mt-4 rounded-2xl border border-[#ead0d6] bg-white p-5">
-            <p className="text-[11px] font-black text-[#a65b68]">오늘의 선물 추천</p>
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-white p-5">
+            <p className="text-[11px] font-bold text-[var(--destructive)]">오늘의 선물 추천</p>
             <p className="mt-3 text-sm font-bold leading-7">
               이 가방은 작고 가벼운 가방이에요. 밝은 색이 아주 예뻐요. 짧은
               끈과 긴 끈이 모두 있어서 편하게 사용할 수 있어요. 어머니께 드릴
@@ -997,7 +997,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "28",
         "2. 写作 · 我的商品推荐",
         "写7—9句原创推荐，让读者知道商品特征、试用方法和适合对象。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <>
           <div className="mt-4 grid grid-cols-2 gap-3">
             <Note title="内容骨架" tone="green">
@@ -1013,8 +1013,8 @@ export function KoreanLevelOneLessonFourteenBook({
               한테／께一次
             </Note>
           </div>
-          <section className="mt-4 rounded-2xl border border-dashed border-[#d9aeb8] bg-[#fff9fa] p-5">
-            <p className="text-[11px] font-black text-[#a65b68]">原创示范</p>
+          <section className="mt-4 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-[11px] font-bold text-[var(--destructive)]">原创示范</p>
             <p className="mt-3 text-sm font-bold leading-7">
               이 모자는 밝은 파란색이에요. 작고 가벼운 모자라서 편해요. 긴
               머리에도 잘 어울려요. 디자인이 단순하지만 멋있어요. 가게에서
@@ -1022,11 +1022,11 @@ export function KoreanLevelOneLessonFourteenBook({
               파란색을 좋아해서 이 모자가 좋은 선물이 될 거예요.
             </p>
           </section>
-          <div className="mt-3 grid grid-cols-2 gap-3 text-xs font-black">
-            <span className="rounded-xl bg-[#f2f8f3] p-3">✓ 예쁜 모자</span>
-            <span className="rounded-xl bg-[#fff8ed] p-3">✓ 긴 머리</span>
-            <span className="rounded-xl bg-[#f2f8f3] p-3">✓ 써 보세요</span>
-            <span className="rounded-xl bg-[#fff8ed] p-3">✓ 친구한테 선물해요</span>
+          <div className="mt-3 grid grid-cols-2 gap-3 text-xs font-bold">
+            <span className="rounded-xl bg-[var(--status-success-surface)] p-3">✓ 예쁜 모자</span>
+            <span className="rounded-xl bg-[var(--status-warning-surface)] p-3">✓ 긴 머리</span>
+            <span className="rounded-xl bg-[var(--status-success-surface)] p-3">✓ 써 보세요</span>
+            <span className="rounded-xl bg-[var(--status-warning-surface)] p-3">✓ 친구한테 선물해요</span>
           </div>
         </>
       ),
@@ -1034,7 +1034,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "30",
         "1. 服饰词汇闪测",
         "看到中文后两秒内说出韩语，并配对正确穿戴动词。",
-        <Shirt size={22} />,
+        <Shirt aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["衣服", "옷"],
@@ -1062,7 +1062,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "31",
         "2. 形容词定语检测",
         "根据收音和特殊词形完成A-(으)ㄴ N。",
-        <NotebookPen size={22} />,
+        <NotebookPen aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["크다 + 옷", "큰 옷"],
@@ -1088,7 +1088,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "32",
         "3. 试穿与送礼检测",
         "完成建议句，并让助词与敬语动词保持一致。",
-        <Gift size={22} />,
+        <Gift aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["입다 + 보세요", "입어 보세요."],
@@ -1114,7 +1114,7 @@ export function KoreanLevelOneLessonFourteenBook({
         "33",
         "4. 发音与易错点诊所",
         "纠正ㄹ脱落、双收音、穿戴动词和敬语对象的常见错误。",
-        <CheckCircle2 size={22} />,
+        <CheckCircle2 aria-hidden="true" size={22} />,
         <Exercise
           items={[
             ["길은 치마 ×", "긴 치마 ✓"],
@@ -1140,10 +1140,10 @@ export function KoreanLevelOneLessonFourteenBook({
         "34",
         "5. 口语验收 · 十句完整购物",
         "交换角色完成购物，并正确描述商品、建议试穿和决定送礼。",
-        <Mic2 size={22} />,
+        <Mic2 aria-hidden="true" size={22} />,
         <>
-          <section className="mt-4 rounded-2xl border border-[#ead0d6] bg-[#fff4f6] p-5">
-            <p className="text-xs font-black text-[#a65b68]">八项必达信息</p>
+          <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] p-5">
+            <p className="text-xs font-bold text-[var(--destructive)]">八项必达信息</p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
               {[
                 "说出目标商品",
@@ -1159,16 +1159,16 @@ export function KoreanLevelOneLessonFourteenBook({
                   key={task}
                   className="flex items-center gap-2 rounded-xl bg-white p-3 font-bold"
                 >
-                  <input type="checkbox" className="accent-[#a65b68]" />
+                  <input type="checkbox" className="accent-[var(--destructive)]" />
                   {task}
                 </label>
               ))}
             </div>
           </section>
-          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-black">
-            <span className="rounded-xl bg-[#eef6fb] p-3">商品描述 40%</span>
-            <span className="rounded-xl bg-[#f2f8f3] p-3">语法正确 40%</span>
-            <span className="rounded-xl bg-[#fff8ed] p-3">交流自然 20%</span>
+          <div className="mt-3 grid grid-cols-3 gap-2 text-center text-[11px] font-bold">
+            <span className="rounded-xl bg-[var(--accent)] p-3">商品描述 40%</span>
+            <span className="rounded-xl bg-[var(--status-success-surface)] p-3">语法正确 40%</span>
+            <span className="rounded-xl bg-[var(--status-warning-surface)] p-3">交流自然 20%</span>
           </div>
           <button
             type="button"
@@ -1177,9 +1177,9 @@ export function KoreanLevelOneLessonFourteenBook({
                 "어서 오세요. 어떤 옷을 찾으세요? 예쁜 치마를 찾고 있어요. 이 긴 치마는 어때요? 저한테 조금 커요. 그럼 이 짧은 치마를 입어 보세요. 어디에서 입어 봐요? 저쪽 탈의실에서 입어 보세요. 네, 잘 어울리면 어머니께 드리려고 해요. 좋은 선물이 될 거예요."
               )
             }
-            className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[#a65b68] p-4 text-sm font-black text-white"
+            className="mt-auto flex items-center justify-center gap-2 rounded-2xl bg-[var(--destructive)] p-4 text-sm font-bold text-white"
           >
-            <Volume2 size={16} />
+            <Volume2 aria-hidden="true" size={16} />
             播放十句示范
           </button>
         </>
@@ -1187,15 +1187,15 @@ export function KoreanLevelOneLessonFourteenBook({
       "35": (
         <div className="flex h-full flex-col justify-center">
           <div className="mx-auto w-full max-w-[440px] text-center">
-            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[#fff0f3] text-[#a65b68]">
-              <Sparkles size={27} />
+            <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--card)] text-[var(--destructive)]">
+              <Sparkles aria-hidden="true" size={27} />
             </span>
-            <p className="mt-4 text-xs font-black tracking-[0.18em] text-[#a65b68]">
+            <p className="mt-4 text-xs font-bold tracking-[0.18em] text-[var(--destructive)]">
               LESSON 14 · COMPLETE
             </p>
-            <h2 className="mt-3 text-4xl font-black">이 옷을 입어 보세요.</h2>
-            <p className="mt-3 text-lg font-black">你已经完成第十四课</p>
-            <p className="mx-auto mt-3 max-w-[390px] text-sm leading-7 text-[#60736a]">
+            <h3 className="mt-3 text-4xl font-bold">이 옷을 입어 보세요.</h3>
+            <p className="mt-3 text-lg font-bold">你已经完成第十四课</p>
+            <p className="mx-auto mt-3 max-w-[390px] text-sm leading-7 text-[var(--foreground-secondary)]">
               现在你能描述服饰特征、正确使用穿戴动词、建议别人试穿，并根据收礼对象选择恰当的助词与敬语。
             </p>
             <div className="mt-4 grid grid-cols-2 gap-3 text-left">
@@ -1207,18 +1207,18 @@ export function KoreanLevelOneLessonFourteenBook({
               ].map(([index, title, detail]) => (
                 <div
                   key={index}
-                  className="rounded-xl border border-[#ead0d6] bg-white px-4 py-3"
+                  className="rounded-xl border border-[var(--border)] bg-white px-4 py-3"
                 >
-                  <p className="text-[10px] font-black text-[#a65b68]">{index}</p>
-                  <p className="mt-1 text-xs font-black">{title}</p>
-                  <p className="mt-1 text-[10px] text-[#71857b]">{detail}</p>
+                  <p className="text-[10px] font-bold text-[var(--destructive)]">{index}</p>
+                  <p className="mt-1 text-xs font-bold">{title}</p>
+                  <p className="mt-1 text-[10px] text-[var(--foreground-secondary)]">{detail}</p>
                 </div>
               ))}
             </div>
             <button
               type="button"
               onClick={() => flipBookRef.current?.pageFlip()?.flip(1)}
-              className="mt-4 rounded-full bg-[#fff0f3] px-4 py-3 text-xs font-black text-[#a65b68]"
+              className="mt-4 rounded-full bg-[var(--card)] px-4 py-3 text-xs font-bold text-[var(--destructive)]"
             >
               返回目录
             </button>
@@ -1241,7 +1241,7 @@ export function KoreanLevelOneLessonFourteenBook({
   return (
     <section
       ref={containerRef}
-      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"
+      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2 [&_input:focus-visible]:outline-none [&_input:focus-visible]:ring-2 [&_input:focus-visible]:ring-[var(--ring)] [&_input:focus-visible]:ring-offset-2"
     >
       <div
         className="relative shrink-0"
@@ -1251,17 +1251,17 @@ export function KoreanLevelOneLessonFourteenBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
           aria-label="上一页"
-          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"
+          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--destructive)] shadow-lg"
         >
-          <ArrowLeft size={18} />
+          <ArrowLeft aria-hidden="true" size={18} />
         </button>
         <button
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
           aria-label="下一页"
-          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#ead0d6] bg-white p-3 text-[#a65b68] shadow-lg"
+          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border)] bg-white p-3 text-[var(--destructive)] shadow-lg"
         >
-          <ArrowRight size={18} />
+          <ArrowRight aria-hidden="true" size={18} />
         </button>
         <div
           className="absolute left-0 top-0 h-[822px] w-[1180px] origin-top-left"

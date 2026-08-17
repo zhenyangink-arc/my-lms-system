@@ -33,15 +33,15 @@ export function GradeReviewAction({
 
   return (
     <details className="group relative">
-      <summary className="inline-flex h-8 cursor-pointer list-none items-center gap-1.5 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-2.5 text-[10px] font-semibold text-[var(--app-text)] hover:bg-[var(--app-soft-bg)]">
+      <summary className="inline-flex h-8 cursor-pointer list-none items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-2.5 text-[10px] font-semibold text-[var(--foreground)] hover:bg-[var(--surface-soft)]">
         <SearchCheck size={12} aria-hidden="true" />
         处理复核
       </summary>
       <form
         action={formAction}
-        className="absolute right-0 z-30 mt-1 w-72 space-y-3 border border-[var(--app-border)] bg-[var(--app-card-bg)] p-3 shadow-lg"
+        className="absolute right-0 z-30 mt-1 w-72 space-y-3 border border-[var(--border)] bg-[var(--card)] p-3 shadow-lg"
       >
-        <label className="block text-[10px] font-semibold text-[var(--app-text-soft)]">
+        <label className="block text-[10px] font-semibold text-[var(--foreground-secondary)]">
           处理状态
           <select
             name="status"
@@ -55,7 +55,7 @@ export function GradeReviewAction({
             ))}
           </select>
         </label>
-        <label className="block text-[10px] font-semibold text-[var(--app-text-soft)]">
+        <label className="block text-[10px] font-semibold text-[var(--foreground-secondary)]">
           处理说明
           <textarea
             name="response"
@@ -72,8 +72,8 @@ export function GradeReviewAction({
             style={{
               color:
                 state.status === "error"
-                  ? "var(--app-danger)"
-                  : "var(--app-success)",
+                  ? "var(--status-danger)"
+                  : "var(--status-success)",
             }}
           >
             {state.message}
@@ -82,7 +82,7 @@ export function GradeReviewAction({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex h-8 items-center gap-1.5 bg-[var(--app-accent)] px-3 text-[10px] font-semibold text-white disabled:opacity-50"
+          className="inline-flex h-8 items-center gap-1.5 bg-[var(--primary)] px-3 text-[10px] font-semibold text-white disabled:opacity-50"
         >
           <SearchCheck size={11} aria-hidden="true" />
           {pending ? "保存中…" : "保存处理结果"}

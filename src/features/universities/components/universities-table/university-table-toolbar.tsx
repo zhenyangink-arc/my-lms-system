@@ -50,12 +50,14 @@ export function UniversityTableToolbar({
   return (
     <div className="space-y-2">
       <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
-        <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 xl:max-w-sm">
+        <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 transition focus-within:border-[var(--ring)] focus-within:ring-2 focus-within:ring-[var(--ring)] focus-within:ring-offset-2 xl:max-w-sm">
           <Icons.search
-            className="size-3.5 shrink-0 text-[var(--app-muted)]"
+            className="size-3.5 shrink-0 text-[var(--foreground-muted)]"
             aria-hidden="true"
           />
-          <span className="sr-only">搜索大学</span>
+          <span className="shrink-0 text-[10px] font-semibold text-[var(--foreground-secondary)]">
+            搜索大学
+          </span>
           <input
             value={filters.query}
             onChange={(event) =>
@@ -130,7 +132,7 @@ export function UniversityTableToolbar({
               onClick={() =>
                 onFiltersChange(INITIAL_UNIVERSITY_TABLE_FILTERS)
               }
-              className="h-9 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)]"
+              className="h-9 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]"
             >
               清除筛选
             </button>
@@ -158,7 +160,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 min-w-32 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs font-medium"
+        className="h-9 min-w-32 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
       >
         <option value="all">全部{label}</option>
         {options.map((option) => (

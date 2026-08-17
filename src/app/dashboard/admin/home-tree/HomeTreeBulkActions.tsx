@@ -27,7 +27,7 @@ export function HomeTreeBulkActions({ viewSlug }: { viewSlug: string }) {
         disabled={pending}
         onClick={() => run(true)}
         className="rounded-full px-3.5 py-1.5 text-xs font-bold text-white transition hover:opacity-85 disabled:opacity-50"
-        style={{ backgroundColor: "var(--app-accent)" }}
+        style={{ backgroundColor: "var(--primary)" }}
       >
         一键全部开
       </button>
@@ -37,8 +37,8 @@ export function HomeTreeBulkActions({ viewSlug }: { viewSlug: string }) {
         onClick={() => run(false)}
         className="rounded-full px-3.5 py-1.5 text-xs font-bold transition hover:opacity-85 disabled:opacity-50"
         style={{
-          backgroundColor: "color-mix(in srgb, var(--app-border) 60%, transparent)",
-          color: "var(--app-muted)",
+          backgroundColor: "color-mix(in srgb, var(--border) 60%, transparent)",
+          color: "var(--foreground-muted)",
         }}
       >
         一键全部关

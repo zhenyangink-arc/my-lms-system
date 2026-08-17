@@ -34,8 +34,8 @@ export function HelpArticleTableToolbar({
 
   return (
     <div className="flex flex-col gap-2 xl:flex-row xl:items-center">
-      <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 xl:max-w-sm">
-        <Icons.search className="size-3.5 text-[var(--app-muted)]" aria-hidden="true" />
+      <label className="flex h-9 min-w-0 flex-1 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 xl:max-w-sm">
+        <Icons.search className="size-3.5 text-[var(--foreground-muted)]" aria-hidden="true" />
         <span className="sr-only">搜索帮助文章</span>
         <input
           value={filters.query}
@@ -75,7 +75,7 @@ export function HelpArticleTableToolbar({
             onClick={() =>
               onFiltersChange({ query: "", status: "all", category: "all" })
             }
-            className="h-9 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-3 text-xs font-semibold text-[var(--app-text-soft)]"
+            className="h-9 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]"
           >
             清除筛选
           </button>
@@ -103,7 +103,7 @@ function FilterSelect({
       <select
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="h-9 min-w-32 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2.5 text-xs font-medium"
+        className="h-9 min-w-32 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
       >
         <option value="all">全部{label}</option>
         {Object.entries(options).map(([optionValue, optionLabel]) => (

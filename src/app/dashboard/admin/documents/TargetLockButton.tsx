@@ -11,8 +11,8 @@ function ToggleButton({ locked }: { locked: boolean }) {
     <button
       type="submit"
       disabled={pending}
-      className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-black text-white disabled:opacity-60"
-      style={{ backgroundColor: locked ? "var(--app-secondary)" : "var(--app-warm)" }}
+      className="inline-flex shrink-0 items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-60"
+      style={{ backgroundColor: locked ? "var(--support)" : "var(--status-warning)" }}
     >
       {locked ? <Unlock size={13} /> : <Lock size={13} />}
       {pending ? "处理中…" : locked ? "解锁学生端" : "锁定学生端"}

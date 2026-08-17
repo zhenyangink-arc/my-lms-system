@@ -35,7 +35,7 @@ export function ResourceDetailDialog({
     <Dialog>
       <DialogTrigger
         type="button"
-        className="h-8 rounded-md border border-[var(--app-border)] px-2.5 text-xs font-semibold text-[var(--app-text-soft)] transition-colors hover:bg-[var(--app-soft-bg)]"
+        className="h-8 rounded-md border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] transition-colors hover:bg-[var(--surface-soft)]"
       >
         查看详情
       </DialogTrigger>
@@ -46,7 +46,7 @@ export function ResourceDetailDialog({
             {resource.targetLabel}・{LIBRARY_STATUS_LABELS[resource.status]}
           </DialogDescription>
         </DialogHeader>
-        <dl className="grid border border-[var(--app-border)] text-xs sm:grid-cols-2">
+        <dl className="grid border border-[var(--border)] text-xs sm:grid-cols-2">
           <DetailItem label="课程分组" value={resource.groupTitle} />
           <DetailItem label="所属课程" value={resource.courseLabel} />
           <DetailItem label="资料位置" value={resource.lessonLabel} />
@@ -79,9 +79,9 @@ export function ResourceDetailDialog({
             }
           />
         </dl>
-        <section className="border border-[var(--app-border)] bg-[var(--app-soft-bg)] px-4 py-4">
-          <p className="text-xs font-semibold text-[var(--app-muted)]">资料说明</p>
-          <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-[var(--app-text-soft)]">
+        <section className="border border-[var(--border)] bg-[var(--surface-soft)] px-4 py-4">
+          <p className="text-xs font-semibold text-[var(--foreground-muted)]">资料说明</p>
+          <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-[var(--foreground-secondary)]">
             {resource.description || "暂无资料说明"}
           </p>
         </section>
@@ -98,9 +98,9 @@ function DetailItem({
   value: React.ReactNode;
 }) {
   return (
-    <div className="border-b border-[var(--app-border-soft)] px-3 py-3 odd:sm:border-r">
-      <dt className="text-[var(--app-muted)]">{label}</dt>
-      <dd className="mt-1 break-words font-medium text-[var(--app-text)]">
+    <div className="border-b border-[var(--border-subtle)] px-3 py-3 odd:sm:border-r">
+      <dt className="text-[var(--foreground-muted)]">{label}</dt>
+      <dd className="mt-1 break-words font-medium text-[var(--foreground)]">
         {value}
       </dd>
     </div>

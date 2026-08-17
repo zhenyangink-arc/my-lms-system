@@ -120,19 +120,19 @@ function buildCourseDirectory(courses: LibraryCourseRow[]) {
 function statusColors(status: LibraryStatus) {
   if (status === "published") {
     return {
-      color: "var(--app-success)",
-      backgroundColor: "var(--app-success-soft)",
+      color: "var(--status-success)",
+      backgroundColor: "var(--status-success-surface)",
     };
   }
   if (status === "archived") {
     return {
-      color: "var(--app-warm)",
-      backgroundColor: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      backgroundColor: "var(--status-warning-surface)",
     };
   }
   return {
-    color: "var(--app-muted)",
-    backgroundColor: "var(--app-soft-bg)",
+    color: "var(--foreground-muted)",
+    backgroundColor: "var(--surface-soft)",
   };
 }
 
@@ -242,16 +242,16 @@ export function LibraryCourseResourceTable({
       <section className="app-card overflow-hidden rounded-2xl border">
         <div
           className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3.5 sm:px-5"
-          style={{ borderColor: "var(--app-border)" }}
+          style={{ borderColor: "var(--border)" }}
         >
           <div>
-            <h2 className="text-sm font-black">全部课程</h2>
+            <h2 className="text-sm font-semibold">全部课程</h2>
           </div>
           <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:flex-nowrap">
             <button
               type="button"
               onClick={toggleAll}
-              className="app-soft-card inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-[10px] font-black"
+              className="app-soft-card inline-flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-2 text-[10px] font-semibold"
             >
               <ChevronsUpDown size={12} />
               {isEverythingExpanded ? "全部收起" : "全部展开"}
@@ -272,13 +272,13 @@ export function LibraryCourseResourceTable({
           <table className="w-full min-w-[920px] border-collapse text-left">
             <thead>
               <tr
-                className="app-muted-text border-b bg-[var(--app-soft-bg)] text-[10px]"
-                style={{ borderColor: "var(--app-border)" }}
+                className="app-muted-text border-b bg-[var(--surface-soft)] text-[10px]"
+                style={{ borderColor: "var(--border)" }}
               >
-                <th className="w-[39%] px-5 py-2.5 font-black">课程</th>
-                <th className="w-[18%] px-3 py-2.5 font-black">资料</th>
-                <th className="w-[19%] px-3 py-2.5 font-black">最近更新</th>
-                <th className="w-[24%] px-5 py-2.5 text-right font-black">操作</th>
+                <th className="w-[39%] px-5 py-2.5 font-semibold">课程</th>
+                <th className="w-[18%] px-3 py-2.5 font-semibold">资料</th>
+                <th className="w-[19%] px-3 py-2.5 font-semibold">最近更新</th>
+                <th className="w-[24%] px-5 py-2.5 text-right font-semibold">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -302,7 +302,7 @@ export function LibraryCourseResourceTable({
                 <tr>
                   <td colSpan={4} className="px-5 py-12 text-center">
                     <Archive className="mx-auto opacity-30" size={28} />
-                    <p className="mt-3 text-xs font-black">没有匹配的课程</p>
+                    <p className="mt-3 text-xs font-semibold">没有匹配的课程</p>
                     <p className="app-muted-text mt-1 text-[10px]">
                       更换课程名称或目录关键词后重试。
                     </p>
@@ -372,16 +372,16 @@ function CourseGroupRows({
       <tr
         className="border-b"
         style={{
-          color: "var(--app-secondary)",
-          borderColor: "var(--app-border)",
-          backgroundColor: "var(--app-secondary-soft)",
+          color: "var(--support)",
+          borderColor: "var(--border)",
+          backgroundColor: "var(--support-surface)",
         }}
       >
         <th colSpan={4} className="p-0">
           <button
             type="button"
             onClick={onToggleGroup}
-            className="flex w-full items-center gap-2 px-5 py-3 text-left text-[11px] font-black"
+            className="flex w-full items-center gap-2 px-5 py-3 text-left text-[11px] font-semibold"
             aria-expanded={groupExpanded}
           >
             {groupExpanded ? <ChevronDown size={15} /> : <ChevronRight size={15} />}
@@ -400,16 +400,16 @@ function CourseGroupRows({
               <tr
                 className="border-b"
                 style={{
-                  color: "var(--app-foreground)",
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-accent-soft)",
+                  color: "var(--foreground)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--accent)",
                 }}
               >
                 <th colSpan={4} className="p-0">
                   <button
                     type="button"
                     onClick={() => onToggleStage(stage.key)}
-                    className="flex w-full items-center gap-2 py-2.5 pl-10 pr-5 text-left text-[10px] font-black"
+                    className="flex w-full items-center gap-2 py-2.5 pl-10 pr-5 text-left text-[10px] font-semibold"
                     aria-expanded={stageExpanded}
                   >
                     {stageExpanded ? (
@@ -467,7 +467,7 @@ function CourseTableRow({
   return (
     <tr
       className="border-b text-[11px] last:border-b-0"
-      style={{ borderColor: "var(--app-border-soft)" }}
+      style={{ borderColor: "var(--border-subtle)" }}
     >
       <td className="py-3 pl-14 pr-5">
         <div className="flex items-center gap-3">
@@ -475,12 +475,12 @@ function CourseTableRow({
             className="h-8 w-1 shrink-0 rounded-full"
             style={{
               backgroundColor: course.is_published
-                ? "var(--app-success)"
-                : "var(--app-warm)",
+                ? "var(--status-success)"
+                : "var(--status-warning)",
             }}
           />
           <div className="min-w-0">
-            <p className="truncate font-black">{course.title}</p>
+            <p className="truncate font-semibold">{course.title}</p>
             <p className="app-muted-text mt-1 text-[9px]">
               {course.category_label} · {course.is_published ? "已发布" : "草稿"}
             </p>
@@ -488,7 +488,7 @@ function CourseTableRow({
         </div>
       </td>
       <td className="px-3 py-3 text-[10px]">
-        <span className="font-mono font-black">{resources.length}</span>
+        <span className="font-mono font-semibold">{resources.length}</span>
         <span className="app-muted-text ml-1">项</span>
         <span className="app-muted-text ml-2">已发布 {publishedCount}</span>
       </td>
@@ -502,7 +502,7 @@ function CourseTableRow({
           <button
             type="button"
             onClick={onManage}
-            className="app-soft-card rounded-lg border px-3 py-2 text-[10px] font-black"
+            className="app-soft-card rounded-lg border px-3 py-2 text-[10px] font-semibold"
           >
             {canCurate ? "管理资料" : "查看资料"}
           </button>
@@ -510,8 +510,8 @@ function CourseTableRow({
             <button
               type="button"
               onClick={onUpload}
-              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-black text-white"
-              style={{ backgroundColor: "var(--app-accent)" }}
+              className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-semibold text-white"
+              style={{ backgroundColor: "var(--primary)" }}
             >
               <Upload size={11} />
               上传资料
@@ -548,8 +548,8 @@ function CourseResourceDialog({
           <button
             type="button"
             onClick={onUpload}
-            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-black text-white"
-            style={{ backgroundColor: "var(--app-accent)" }}
+            className="inline-flex items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-semibold text-white"
+            style={{ backgroundColor: "var(--primary)" }}
           >
             <Upload size={11} />
             上传资料
@@ -613,10 +613,10 @@ function ModalShell({
       <section className="app-card max-h-[92vh] w-full max-w-[1120px] overflow-y-auto rounded-2xl border p-5 shadow-2xl">
         <div
           className="mb-4 flex items-center justify-between gap-4 border-b pb-4"
-          style={{ borderColor: "var(--app-border-soft)" }}
+          style={{ borderColor: "var(--border-subtle)" }}
         >
           <div className="min-w-0">
-            <h3 className="truncate text-base font-black">{title}</h3>
+            <h3 className="truncate text-base font-semibold">{title}</h3>
             <p className="app-muted-text mt-1 text-[10px]">{description}</p>
           </div>
           <div className="flex shrink-0 items-center gap-2">
@@ -650,8 +650,8 @@ function ResourceSubtable({
 }) {
   if (resources.length === 0) {
     return (
-      <div className="rounded-lg border border-dashed bg-[var(--app-soft-bg)] px-4 py-12 text-center">
-        <p className="text-xs font-black">本课程还没有资料</p>
+      <div className="rounded-lg border border-dashed bg-[var(--surface-soft)] px-4 py-12 text-center">
+        <p className="text-xs font-semibold">本课程还没有资料</p>
         <p className="app-muted-text mt-1 text-[10px]">
           {canCurate
             ? "点击窗口右上角的“上传资料”即可添加。"
@@ -666,15 +666,15 @@ function ResourceSubtable({
       <table className="w-full min-w-[1040px] border-collapse text-left">
         <thead>
           <tr
-            className="app-muted-text border-b bg-[var(--app-soft-bg)] text-[9px]"
-            style={{ borderColor: "var(--app-border-soft)" }}
+            className="app-muted-text border-b bg-[var(--surface-soft)] text-[9px]"
+            style={{ borderColor: "var(--border-subtle)" }}
           >
-            <th className="w-[31%] px-4 py-2.5 font-black">资料</th>
-            <th className="w-[13%] px-3 py-2.5 font-black">分类 / 类型</th>
-            <th className="w-[18%] px-3 py-2.5 font-black">文件信息</th>
-            <th className="w-[9%] px-3 py-2.5 font-black">状态</th>
-            <th className="w-[8%] px-3 py-2.5 text-center font-black">获取</th>
-            <th className="w-[21%] px-4 py-2.5 text-right font-black">操作</th>
+            <th className="w-[31%] px-4 py-2.5 font-semibold">资料</th>
+            <th className="w-[13%] px-3 py-2.5 font-semibold">分类 / 类型</th>
+            <th className="w-[18%] px-3 py-2.5 font-semibold">文件信息</th>
+            <th className="w-[9%] px-3 py-2.5 font-semibold">状态</th>
+            <th className="w-[8%] px-3 py-2.5 text-center font-semibold">获取</th>
+            <th className="w-[21%] px-4 py-2.5 text-right font-semibold">操作</th>
           </tr>
         </thead>
         <tbody>
@@ -684,27 +684,27 @@ function ResourceSubtable({
               <tr
                 key={resource.id}
                 className="border-b align-top text-[10px] last:border-b-0"
-                style={{ borderColor: "var(--app-border-soft)" }}
+                style={{ borderColor: "var(--border-subtle)" }}
               >
                 <td className="px-4 py-3">
                   <div className="flex items-start gap-2.5">
                     <span
                       className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg"
                       style={{
-                        color: "var(--app-accent)",
-                        backgroundColor: "var(--app-accent-soft)",
+                        color: "var(--primary)",
+                        backgroundColor: "var(--accent)",
                       }}
                     >
                       <ResourceIcon size={14} />
                     </span>
                     <div className="min-w-0">
-                      <p className="flex items-center gap-1 truncate font-black">
+                      <p className="flex items-center gap-1 truncate font-semibold">
                         {resource.title}
                         {resource.is_featured && (
                           <Sparkles
                             className="shrink-0"
                             size={10}
-                            style={{ color: "var(--app-warm)" }}
+                            style={{ color: "var(--status-warning)" }}
                           />
                         )}
                       </p>
@@ -715,7 +715,7 @@ function ResourceSubtable({
                   </div>
                 </td>
                 <td className="px-3 py-3 leading-5">
-                  <p className="font-black">
+                  <p className="font-semibold">
                     {LIBRARY_CATEGORY_LABELS[resource.category]}
                   </p>
                   <p className="app-muted-text">
@@ -732,13 +732,13 @@ function ResourceSubtable({
                 </td>
                 <td className="px-3 py-3">
                   <span
-                    className="inline-flex rounded-full px-2 py-1 text-[9px] font-black"
+                    className="inline-flex rounded-full px-2 py-1 text-[9px] font-semibold"
                     style={statusColors(resource.status)}
                   >
                     {LIBRARY_STATUS_LABELS[resource.status]}
                   </span>
                 </td>
-                <td className="px-3 py-3 text-center font-mono font-black">
+                <td className="px-3 py-3 text-center font-mono font-semibold">
                   {resource.download_count}
                 </td>
                 <td className="px-4 py-3">
@@ -747,14 +747,14 @@ function ResourceSubtable({
                       href={`/api/library/${resource.id}/download?mode=view`}
                       target="_blank"
                       rel="noreferrer"
-                      className="app-soft-card inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 font-black"
+                      className="app-soft-card inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 font-semibold"
                     >
                       <Eye size={10} />
                       查看
                     </a>
                     <a
                       href={`/api/library/${resource.id}/download`}
-                      className="app-soft-card inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 font-black"
+                      className="app-soft-card inline-flex items-center gap-1 rounded-lg border px-2 py-1.5 font-semibold"
                     >
                       <Download size={10} />
                       下载

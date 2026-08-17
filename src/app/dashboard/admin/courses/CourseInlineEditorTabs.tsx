@@ -27,8 +27,8 @@ export function CourseInlineEditorTabs({
   const panels: Record<TabId, ReactNode> = { basic, content, rules, resources };
 
   return (
-    <div className="border-y" style={{ borderColor: "var(--app-border)" }}>
-      <div className="flex min-w-0 overflow-x-auto border-b" style={{ borderColor: "var(--app-border)" }}>
+    <div className="border-y" style={{ borderColor: "var(--border)" }}>
+      <div className="flex min-w-0 overflow-x-auto border-b" style={{ borderColor: "var(--border)" }}>
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const active = activeTab === tab.id;
@@ -38,11 +38,11 @@ export function CourseInlineEditorTabs({
               type="button"
               onClick={() => setActiveTab(tab.id)}
               className="relative flex shrink-0 items-center gap-2 px-4 py-3 text-[11px] font-medium transition-colors"
-              style={{ color: active ? "var(--app-text)" : "var(--app-muted)" }}
+              style={{ color: active ? "var(--foreground)" : "var(--foreground-muted)" }}
             >
               <Icon size={12} strokeWidth={1.7} />
               {tab.label}
-              {active && <span className="absolute inset-x-3 bottom-0 h-px" style={{ backgroundColor: "var(--app-accent)" }} />}
+              {active && <span className="absolute inset-x-3 bottom-0 h-px" style={{ backgroundColor: "var(--primary)" }} />}
             </button>
           );
         })}

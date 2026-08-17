@@ -33,10 +33,10 @@ const ICON_NAMES = new Set([
 ]);
 
 const COLOR_KEYS = new Set([
-  "var(--app-accent)",
-  "var(--app-warm)",
-  "var(--app-secondary)",
-  "var(--app-success)",
+  "var(--primary)",
+  "var(--status-warning)",
+  "var(--support)",
+  "var(--status-success)",
 ]);
 
 async function canManageTextbooks(): Promise<boolean> {
@@ -59,8 +59,8 @@ function cleanInput(raw: Partial<ToolboxItemInput>): ToolboxItemInput {
     description: String(raw.description ?? "").trim(),
     href,
     iconName: String(raw.iconName ?? "wrench").trim(),
-    accent: String(raw.accent ?? "var(--app-accent)").trim(),
-    soft: String(raw.soft ?? "var(--app-accent-soft)").trim(),
+    accent: String(raw.accent ?? "var(--primary)").trim(),
+    soft: String(raw.soft ?? "var(--accent)").trim(),
     sortOrder: Number(raw.sortOrder ?? 0),
     isEnabled: Boolean(raw.isEnabled),
     relatedCourseId: relatedCourseId || null,

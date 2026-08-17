@@ -223,9 +223,9 @@ export async function getTenantManagementDetailData(
       .order("created_at", { ascending: true }),
   ]);
 
-  if (tenantResult.error || membershipResult.error || !tenantResult.data) {
-    return null;
-  }
+  if (tenantResult.error) throw tenantResult.error;
+  if (membershipResult.error) throw membershipResult.error;
+  if (!tenantResult.data) return null;
 
   const tenant = tenantResult.data as TenantRow;
   const memberships = (membershipResult.data ?? []) as TenantMembershipRow[];

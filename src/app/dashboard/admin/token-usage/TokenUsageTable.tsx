@@ -54,13 +54,13 @@ function TrendCell({
 }) {
   const max = Math.max(...values, 1);
   const trendColor =
-    kind === "platform" ? "var(--app-accent)" : "var(--app-secondary)";
+    kind === "platform" ? "var(--primary)" : "var(--support)";
 
   return (
     <div className="flex min-w-[130px] items-center justify-center gap-3">
       <span
         className="min-w-12 font-mono text-[12px] font-semibold tabular-nums"
-        style={{ color: total > 0 ? "var(--app-success)" : "var(--app-muted)" }}
+        style={{ color: total > 0 ? "var(--status-success)" : "var(--foreground-muted)" }}
       >
         +{total.toLocaleString()}
       </span>
@@ -71,7 +71,7 @@ function TrendCell({
             className="min-h-px flex-1"
             style={{
               height: `${Math.max(8, Math.round((value / max) * 100))}%`,
-              backgroundColor: value > 0 ? trendColor : "var(--app-border)",
+              backgroundColor: value > 0 ? trendColor : "var(--border)",
             }}
           />
         ))}
@@ -84,18 +84,18 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const tone = rows[0]?.kind ?? "organization";
   const toneColor =
-    tone === "platform" ? "var(--app-accent)" : "var(--app-secondary)";
+    tone === "platform" ? "var(--primary)" : "var(--support)";
   const toneSoft =
-    tone === "platform" ? "var(--app-accent-soft)" : "var(--app-secondary-soft)";
+    tone === "platform" ? "var(--accent)" : "var(--support-surface)";
 
   return (
     <div
       className="token-usage-table overflow-x-auto border"
       data-tone={tone}
       style={{
-        borderColor: `color-mix(in srgb, ${toneColor} 24%, var(--app-border))`,
+        borderColor: `color-mix(in srgb, ${toneColor} 24%, var(--border))`,
         borderRadius: "8px",
-        backgroundColor: "var(--app-card-bg)",
+        backgroundColor: "var(--card)",
       }}
     >
       <table className="w-full min-w-[1040px] border-collapse text-center">
@@ -126,18 +126,18 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
                       style={{
                         borderColor: `color-mix(in srgb, ${
                           row.kind === "platform"
-                            ? "var(--app-accent)"
-                            : "var(--app-secondary)"
-                        } 24%, var(--app-border))`,
+                            ? "var(--primary)"
+                            : "var(--support)"
+                        } 24%, var(--border))`,
                         borderRadius: "4px",
                         color:
                           row.kind === "platform"
-                            ? "var(--app-accent-strong)"
-                            : "var(--app-secondary)",
+                            ? "var(--primary-hover)"
+                            : "var(--support)",
                         backgroundColor:
                           row.kind === "platform"
-                            ? "var(--app-accent-soft)"
-                            : "var(--app-secondary-soft)",
+                            ? "var(--accent)"
+                            : "var(--support-surface)",
                       }}
                     >
                       {row.kind === "platform" ? "Platform" : "Org"}
@@ -145,7 +145,7 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
                     {row.isCurrent && (
                       <span
                         className="ml-1.5 text-[9px] font-semibold uppercase tracking-[0.08em]"
-                        style={{ color: "var(--app-success)" }}
+                        style={{ color: "var(--status-success)" }}
                       >
                         Current
                       </span>
@@ -176,8 +176,8 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
                       style={{
                         color:
                           row.logCount > 0
-                            ? "var(--app-accent-strong)"
-                            : "var(--app-muted)",
+                            ? "var(--primary-hover)"
+                            : "var(--foreground-muted)",
                       }}
                       aria-expanded={expanded}
                     >
@@ -203,8 +203,8 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
                       colSpan={7}
                       className="border-t p-0"
                       style={{
-                        borderColor: "var(--app-border)",
-                        backgroundColor: "var(--app-card-bg)",
+                        borderColor: "var(--border)",
+                        backgroundColor: "var(--card)",
                       }}
                     >
                       <div className="grid grid-cols-[minmax(220px,1fr)_repeat(3,minmax(120px,0.45fr))] px-5 py-2 text-center text-[10px] font-medium uppercase tracking-[0.08em] app-muted-text">
@@ -217,7 +217,7 @@ export function TokenUsageTable({ rows }: { rows: TokenUsageTableRow[] }) {
                         <div
                           key={`${log.createdAt}-${index}`}
                           className="grid grid-cols-[minmax(220px,1fr)_repeat(3,minmax(120px,0.45fr))] border-t px-5 py-2.5 text-center text-[12px]"
-                          style={{ borderColor: "var(--app-border-soft)" }}
+                          style={{ borderColor: "var(--border-subtle)" }}
                         >
                           <span className="app-muted-text">
                             {new Date(log.createdAt).toLocaleString("zh-CN")}

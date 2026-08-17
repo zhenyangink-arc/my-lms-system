@@ -1,0 +1,13 @@
+# Help ticket detail
+
+- Route: `/help/tickets/[ticketId]` (runtime Student path `/dashboard/help/tickets/[ticketId]`; Management path `/dashboard/admin/help/tickets/[ticketId]`)
+- Audience: Student | Management
+- Archetype: Deep / Support conversation
+- Primary job: Review the original request and its current workflow state, continue the support conversation, and understand the resolution.
+- Primary action: Send a reply; when eligible, the Student can additionally confirm that the issue is resolved, while Management can update handling state and assignment in its own workspace.
+- Information hierarchy: Return path and ticket identity → category, textual status and priority → original request and timestamps → resolution or handling controls → conversation history → labeled reply form and submission feedback.
+- Layout and density: Shared, audience-neutral conversation semantics with audience-specific composition. Student uses a comfortable single-column card layout and chat-style message alignment; Management uses standard desktop density with a management header, metric strip, structured handling controls, student-request detail, reply form, and record list.
+- Special components: Keyboard-reachable return link, localized timestamps, textual status and priority badges, explicit empty and message-load error states, resolution panel, closed-ticket notice, and the shared reply form with pending, success, and error feedback.
+- Allowed deviations: Management may expose assignment, status, priority, and resolution controls before the record; Student may expose confirmation only for waiting/resolved tickets. These differences must not change shared status semantics, reply validation, or keyboard behavior.
+- Accessibility risks: Decorative conversation/status icons entering the accessibility tree; status or priority conveyed by color alone; reply textarea labeled only by placeholder; field errors not associated or announced; duplicate async submission; weak focus on return and action controls; empty and failed message loads appearing identical.
+- Acceptance criteria: The existing shell supplies the sole H1 and content headings remain sequential; return, reply, and confirmation actions have visible keyboard focus; decorative icons are hidden; status and priority retain visible text; the reply field has a persistent label, `aria-invalid`/`aria-describedby` error association, and loading/success/error feedback; missing tickets and unauthorized Student access use the not-found boundary; dashboard loading and error boundaries remain available; empty and failed message states are distinct; closed tickets cannot be replied to; no raw hex/RGB values or legacy `--app-*` tokens appear in the owned components.

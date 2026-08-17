@@ -50,17 +50,17 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
   return (
     <div
       ref={ref}
-      className="h-full overflow-hidden bg-[#fffef9] text-[#294f43] shadow-[inset_0_0_28px_rgba(57,78,67,0.08)]"
+      className="h-full overflow-hidden bg-[var(--card)] text-[var(--foreground-secondary)] shadow-sm"
     >
       {cover ? (
         children
       ) : (
         <div className="book-black-copy flex h-full flex-col px-10 py-6">
-        <div className="border-b border-[#dce8e1] pb-2 text-[12px] font-black tracking-[0.12em]">
-            <span className="text-[#303432]">{section}</span>
+        <div className="border-b border-[var(--status-success-surface)] pb-2 text-[12px] font-bold tracking-[0.12em]">
+            <span className="text-[var(--foreground)]">{section}</span>
           </div>
           <div className="min-h-0 flex-1 pt-5">{children}</div>
-        <div className="mt-3 flex justify-between border-t border-[#e4ebe7] pt-2 text-[12px] font-bold text-[#92a099]">
+        <div className="mt-3 flex justify-between border-t border-[var(--surface-soft)] pt-2 text-[12px] font-bold text-[var(--foreground-muted)]">
             <span>韩国语 1级</span>
             <span>{number}</span>
           </div>
@@ -72,15 +72,15 @@ const Page = forwardRef<HTMLDivElement, PageProps>(function Page(
 
 function LessonCard({ number, korean, chinese, focus }: LessonCardProps) {
   return (
-    <article className="rounded-2xl border border-[#dce8e1] bg-white p-4 shadow-[0_7px_20px_rgba(42,88,70,0.04)]">
+    <article className="rounded-2xl border border-[var(--status-success-surface)] bg-white p-4 shadow-sm">
       <div className="flex items-start gap-3">
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[#e5f3ee] text-xs font-black text-[#238777]">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--status-success-surface)] text-xs font-bold text-[var(--status-success)]">
           {String(number).padStart(2, "0")}
         </span>
         <div className="min-w-0">
-          <h3 className="text-[15px] font-black leading-6 text-[#173f4a]">{korean}</h3>
-          <p className="mt-0.5 text-xs font-bold text-[#60736a]">{chinese}</p>
-          <p className="mt-2 text-xs leading-5 text-[#8a6a42]">{focus}</p>
+          <h4 className="text-[15px] font-bold leading-6 text-[var(--primary)]">{korean}</h4>
+          <p className="mt-0.5 text-xs font-bold text-[var(--foreground-secondary)]">{chinese}</p>
+          <p className="mt-2 text-xs leading-5 text-[var(--status-warning)]">{focus}</p>
         </div>
       </div>
     </article>
@@ -99,13 +99,13 @@ function StructureCard({
   task: string;
 }) {
   return (
-    <article className="rounded-2xl border border-[#dce8e1] bg-[#fbfdfb] p-4">
+    <article className="rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-4">
       <div className="flex items-center gap-3">
-        <span className="text-xs font-black text-[#b87131]">{number}</span>
-        <h3 className="font-black text-[#294f43]">{title}</h3>
+        <span className="text-xs font-bold text-[var(--destructive)]">{number}</span>
+        <h4 className="font-bold text-[var(--foreground-secondary)]">{title}</h4>
       </div>
-      <p className="mt-3 text-xs leading-5 text-[#71857b]">{description}</p>
-      <p className="mt-3 rounded-xl bg-white px-3 py-2 text-[11px] font-bold leading-5 text-[#4f685c]">
+      <p className="mt-3 text-xs leading-5 text-[var(--foreground-muted)]">{description}</p>
+      <p className="mt-3 rounded-xl bg-white px-3 py-2 text-[11px] font-bold leading-5 text-[var(--foreground-secondary)]">
         使用动作：{task}
       </p>
     </article>
@@ -145,7 +145,7 @@ export function KoreanLevelOneGuideBook({
   return (
     <section
       ref={containerRef}
-      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden"
+      className="flex h-full min-h-0 w-full items-center justify-center overflow-hidden [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2"
     >
       <div
         className="relative shrink-0"
@@ -155,7 +155,7 @@ export function KoreanLevelOneGuideBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipPrev()}
           aria-label="上一页"
-          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"
+          className="absolute -left-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border-subtle)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"
         >
           <ArrowLeft size={18} />
         </button>
@@ -163,7 +163,7 @@ export function KoreanLevelOneGuideBook({
           type="button"
           onClick={() => flipBookRef.current?.pageFlip()?.flipNext()}
           aria-label="下一页"
-          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[#cfe2d9] bg-white p-3 text-[#238777] shadow-lg transition hover:bg-[#e9f6f1]"
+          className="absolute -right-14 top-1/2 z-20 -translate-y-1/2 rounded-full border border-[var(--border-subtle)] bg-white p-3 text-[var(--status-success)] shadow-lg transition hover:bg-[var(--status-success-surface)]"
         >
           <ArrowRight size={18} />
         </button>
@@ -200,40 +200,40 @@ export function KoreanLevelOneGuideBook({
             style={{}}
           >
             <Page number="封面" cover>
-              <div className="relative h-full overflow-hidden bg-[#f4efe4] text-[#232726]">
-                <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[38px] border-[#e7dac6]" />
-                <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[#dcebe4]" />
+              <div className="relative h-full overflow-hidden bg-[var(--surface-soft)] text-[var(--foreground)]">
+                <div className="absolute -right-16 -top-20 h-72 w-72 rounded-full border-[38px] border-[var(--border-subtle)]" />
+                <div className="absolute -bottom-20 -left-20 h-72 w-72 rounded-full bg-[var(--status-success-surface)]" />
                 <div className="relative flex h-full flex-col px-14 py-12">
-                  <div className="flex items-center justify-between text-[11px] font-black tracking-[0.2em] text-[#6f746f]">
+                  <div className="flex items-center justify-between text-[11px] font-bold tracking-[0.2em] text-[var(--foreground-secondary)]">
                     <span>韩国语</span>
                     <span>一级 · 上册和下册</span>
                   </div>
                   <div className="my-auto">
                     <div className="flex items-end gap-6">
                       <div>
-                        <p className="text-sm font-black tracking-[0.28em] text-[#b85f4d]">
+                        <p className="text-sm font-bold tracking-[0.28em] text-[var(--destructive)]">
                           适配《首尔大韩国语1》进度的学习笔记
                         </p>
-                        <h1 className="mt-5 text-[58px] font-black leading-[1.02] tracking-[-0.06em] text-[#232726]">
+                        <h3 className="mt-5 text-[58px] font-bold leading-[1.02] tracking-[-0.06em] text-[var(--foreground)]">
                           韩语1级
                           <span className="mt-2 block text-[42px] tracking-[-0.04em]">
                             学习和语法全解
                           </span>
-                        </h1>
+                        </h3>
                       </div>
-                      <span className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-[#e7dac6] text-[72px] font-black leading-none text-[#b85f4d]">
+                      <span className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-[var(--border-subtle)] text-[72px] font-bold leading-none text-[var(--destructive)]">
                         1
                       </span>
                     </div>
-                    <div className="mt-9 w-64 border-t border-[#232726]/25 pt-6">
-                      <p className="text-4xl font-black tracking-tight">课程导读</p>
-                      <p className="mt-3 text-xs font-bold tracking-[0.18em] text-[#737976]">
+                    <div className="mt-9 w-64 border-t border-[var(--foreground)]/25 pt-6">
+                      <p className="text-4xl font-bold tracking-tight">课程导读</p>
+                      <p className="mt-3 text-xs font-bold tracking-[0.18em] text-[var(--foreground-secondary)]">
                         课程指南
                       </p>
                     </div>
                   </div>
-                  <div className="rounded-3xl bg-[#424b47] p-7 text-white">
-                    <p className="text-xl font-black">从第一句“안녕하세요?”开始</p>
+                  <div className="rounded-3xl bg-[var(--foreground-secondary)] p-7 text-white">
+                    <p className="text-xl font-bold">从第一句“안녕하세요?”开始</p>
                     <p className="mt-3 text-sm leading-7 text-white/70">
                       用16课搭建韩国生活中的基础沟通能力，让每一个词、每一个句型都走进真实使用场景。
                     </p>
@@ -244,11 +244,11 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="01" section="01 · 写给即将出发的你">
               <div className="flex h-full flex-col">
-                <Compass className="text-[#238777]" size={30} />
-                <h2 className="mt-3 text-4xl font-black leading-tight text-[#173f4a]">
+                <Compass className="text-[var(--status-success)]" size={30} />
+                <h3 className="mt-3 text-4xl font-bold leading-tight text-[var(--primary)]">
                   欢迎你，未来的韩语使用者
-                </h2>
-                <div className="mt-6 space-y-4 text-[15px] leading-8 text-[#526b61]">
+                </h3>
+                <div className="mt-6 space-y-4 text-[15px] leading-8 text-[var(--foreground-secondary)]">
                   <p>
                     如果你刚刚认识韩文字母，或者还不敢开口说出完整句子，请放心：韩国语1级本来就是一条为初学者铺设的路。你不需要“一次全懂”，只需要在每一课里多听一次、多说一句、多完成一个真实任务。
                   </p>
@@ -259,9 +259,9 @@ export function KoreanLevelOneGuideBook({
                     我们希望你学到的不是孤立的知识点，而是能在需要时自然说出口的表达。语法是骨架，词汇是材料，听说读写练习则把它们变成真正属于你的语言能力。
                   </p>
                 </div>
-                <div className="mt-auto rounded-3xl bg-[#173f4a] p-6 text-white">
-                  <p className="text-lg font-black">《韩语1级学习和语法全解》</p>
-                  <p className="mt-2 text-sm font-bold leading-7 text-[#9fd7c8]">
+                <div className="mt-auto rounded-3xl bg-[var(--primary)] p-6 text-white">
+                  <p className="text-lg font-bold">《韩语1级学习和语法全解》</p>
+                  <p className="mt-2 text-sm font-bold leading-7 text-[var(--border-subtle)]">
                     适配《首尔大韩国语1》进度的学习笔记
                   </p>
                   <p className="mt-2 text-xs leading-6 text-white/60">
@@ -273,10 +273,10 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="02" section="完成16课后，你将能够">
               <div className="flex h-full flex-col">
-                <Sparkles className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <Sparkles className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   在韩国生活中完成这些基础任务
-                </h2>
+                </h3>
                 <div className="mt-7 grid grid-cols-2 gap-4">
                   {[
                     ["建立联系", "自然问候、介绍自己，也能介绍家人与基本关系。"],
@@ -288,19 +288,19 @@ export function KoreanLevelOneGuideBook({
                   ].map(([title, text], index) => (
                     <article
                       key={title}
-                      className="rounded-2xl border border-[#dce8e1] bg-[#f8fbf9] p-4"
+                      className="rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-4"
                     >
-                      <span className="text-xs font-black text-[#b87131]">
+                      <span className="text-xs font-bold text-[var(--destructive)]">
                         0{index + 1}
                       </span>
-                      <h3 className="mt-2 font-black text-[#294f43]">{title}</h3>
-                      <p className="mt-2 text-xs leading-6 text-[#71857b]">{text}</p>
+                      <h4 className="mt-2 font-bold text-[var(--foreground-secondary)]">{title}</h4>
+                      <p className="mt-2 text-xs leading-6 text-[var(--foreground-muted)]">{text}</p>
                     </article>
                   ))}
                 </div>
-                <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[#ead3a7] bg-[#fff7e8] p-5">
-                  <CheckCircle2 className="shrink-0 text-[#b87131]" size={25} />
-                  <p className="text-sm font-bold leading-6 text-[#6f583d]">
+                <div className="mt-4 flex items-center gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-5">
+                  <CheckCircle2 className="shrink-0 text-[var(--destructive)]" size={25} />
+                  <p className="text-sm font-bold leading-6 text-[var(--status-warning)]">
                     最终目标：面对熟悉的生活情境，能够听懂关键信息，并用简短、完整、得体的韩语作出回应。
                   </p>
                 </div>
@@ -309,15 +309,15 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="03" section="02 · 从生存表达走向生活交流">
               <div className="flex h-full flex-col">
-                <BookOpenCheck className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <BookOpenCheck className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   四个模块，一条清晰的成长路线
-                </h2>
-                <p className="mt-4 text-sm leading-7 text-[#60736a]">
+                </h3>
+                <p className="mt-4 text-sm leading-7 text-[var(--foreground-secondary)]">
                   16课不是16个彼此分离的主题，而是一条由“认识彼此”逐渐走向“独立行动与安排未来”的能力阶梯。
                 </p>
                 <div className="relative mt-7 space-y-4">
-                  <div className="absolute bottom-6 left-[19px] top-6 w-px bg-[#cfe2d9]" />
+                  <div className="absolute bottom-6 left-[19px] top-6 w-px bg-[var(--border-subtle)]" />
                   {[
                     ["模块一", "基础破冰", "第1—4课", "认识人、事、动作与空间"],
                     ["模块二", "生活运转", "第5—8课", "谈经历、购物、天气与约定"],
@@ -325,24 +325,24 @@ export function KoreanLevelOneGuideBook({
                     ["模块四", "出行与未来", "第13—16课", "交通、问路、兴趣与计划"],
                   ].map(([label, title, lessons, goal], index) => (
                     <div key={label} className="relative flex gap-4">
-                      <span className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#238777] text-sm font-black text-white">
+                      <span className="z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--status-success)] text-sm font-bold text-white">
                         {index + 1}
                       </span>
-                      <div className="flex flex-1 items-center justify-between rounded-2xl border border-[#dce8e1] bg-white px-5 py-4">
+                      <div className="flex flex-1 items-center justify-between rounded-2xl border border-[var(--status-success-surface)] bg-white px-5 py-4">
                         <div>
-                          <p className="text-[11px] font-black tracking-[0.12em] text-[#b87131]">
+                          <p className="text-[11px] font-bold tracking-[0.12em] text-[var(--destructive)]">
                             {label} · {lessons}
                           </p>
-                          <h3 className="mt-1 text-lg font-black text-[#294f43]">{title}</h3>
+                          <h4 className="mt-1 text-lg font-bold text-[var(--foreground-secondary)]">{title}</h4>
                         </div>
-                        <p className="max-w-[190px] text-right text-xs leading-5 text-[#71857b]">
+                        <p className="max-w-[190px] text-right text-xs leading-5 text-[var(--foreground-muted)]">
                           {goal}
                         </p>
                       </div>
                     </div>
                   ))}
                 </div>
-                <div className="mt-auto rounded-2xl bg-[#e5f3ee] px-5 py-4 text-sm font-bold leading-6 text-[#315f52]">
+                <div className="mt-auto rounded-2xl bg-[var(--status-success-surface)] px-5 py-4 text-sm font-bold leading-6 text-[var(--status-success)]">
                   每完成一个模块，请用“我现在能做什么”检验学习成果，而不是只用“我背了多少”衡量进步。
                 </div>
               </div>
@@ -350,8 +350,8 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="04" section="MODULE 01 · 1A 第1—4课">
               <div className="flex h-full flex-col">
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">基础破冰：让语言开始运转</h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">基础破冰：让语言开始运转</h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   先学会确认“我是谁、这是什么、我在做什么、它在哪里”，搭起最基础的韩语句子框架。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -380,9 +380,9 @@ export function KoreanLevelOneGuideBook({
                     focus="描述位置与存在"
                   />
                 </div>
-                <div className="mt-auto rounded-3xl bg-[#173f4a] p-6 text-white">
-                  <p className="text-xs font-black tracking-[0.14em] text-[#9fd7c8]">阶段任务</p>
-                  <p className="mt-2 text-lg font-black">完成一次“初次见面＋认识环境”的交流</p>
+                <div className="mt-auto rounded-3xl bg-[var(--primary)] p-6 text-white">
+                  <p className="text-xs font-bold tracking-[0.14em] text-[var(--border-subtle)]">阶段任务</p>
+                  <p className="mt-2 text-lg font-bold">完成一次“初次见面＋认识环境”的交流</p>
                   <p className="mt-2 text-sm leading-6 text-white/65">
                     能介绍自己，询问物品名称，说出正在进行的动作，并说明常见人物或物品的位置。
                   </p>
@@ -392,8 +392,8 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="05" section="MODULE 02 · 1A 第5—8课">
               <div className="flex h-full flex-col">
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">生活运转：把句子放进一天</h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">生活运转：把句子放进一天</h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   从“现在”扩展到“过去”，再进入数字、天气和邀约，让你能够谈论真实发生的生活。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -422,10 +422,10 @@ export function KoreanLevelOneGuideBook({
                     focus="提议与约定"
                   />
                 </div>
-                <div className="mt-auto rounded-3xl bg-[#fff2df] p-6 text-[#684b2d]">
-                  <p className="text-xs font-black tracking-[0.14em] text-[#b87131]">1A阶段里程碑</p>
-                  <p className="mt-2 text-lg font-black">完成基础生存交际</p>
-                  <p className="mt-2 text-sm leading-6 text-[#806344]">
+                <div className="mt-auto rounded-3xl bg-[var(--status-warning-surface)] p-6 text-[var(--destructive)]">
+                  <p className="text-xs font-bold tracking-[0.14em] text-[var(--destructive)]">1A阶段里程碑</p>
+                  <p className="mt-2 text-lg font-bold">完成基础生存交际</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--status-warning)]">
                     能谈周末经历、询价购物、交流天气，并主动发出一个简单邀约、确认约定。
                   </p>
                 </div>
@@ -434,8 +434,8 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="06" section="MODULE 03 · 1B 第9—12课">
               <div className="flex h-full flex-col">
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">关系与照护：表达更得体</h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">关系与照护：表达更得体</h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   进入家庭、作息、电话与就医场景，在信息表达之外，开始关注称谓、敬意和沟通礼貌。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -464,9 +464,9 @@ export function KoreanLevelOneGuideBook({
                     focus="医院就诊与健康"
                   />
                 </div>
-                <div className="mt-auto rounded-3xl bg-[#173f4a] p-6 text-white">
-                  <p className="text-xs font-black tracking-[0.14em] text-[#9fd7c8]">阶段任务</p>
-                  <p className="mt-2 text-lg font-black">在需要礼貌与关照的场景中完成交流</p>
+                <div className="mt-auto rounded-3xl bg-[var(--primary)] p-6 text-white">
+                  <p className="text-xs font-bold tracking-[0.14em] text-[var(--border-subtle)]">阶段任务</p>
+                  <p className="mt-2 text-lg font-bold">在需要礼貌与关照的场景中完成交流</p>
                   <p className="mt-2 text-sm leading-6 text-white/65">
                     能介绍家人和作息，完成简短电话沟通，并向医护人员说明常见不适。
                   </p>
@@ -476,8 +476,8 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="07" section="MODULE 04 · 1B 第13—16课">
               <div className="flex h-full flex-col">
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">出行与未来：走得更远</h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">出行与未来：走得更远</h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   从到达一个地方，到表达自己的兴趣和下一步安排，你将开始用韩语独立行动、规划未来。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -506,10 +506,10 @@ export function KoreanLevelOneGuideBook({
                     focus="假期计划与未来时态"
                   />
                 </div>
-                <div className="mt-auto rounded-3xl bg-[#e5f3ee] p-6 text-[#315f52]">
-                  <p className="text-xs font-black tracking-[0.14em] text-[#238777]">1级全册里程碑</p>
-                  <p className="mt-2 text-lg font-black">完成扩展生活场景交际</p>
-                  <p className="mt-2 text-sm leading-6 text-[#557469]">
+                <div className="mt-auto rounded-3xl bg-[var(--status-success-surface)] p-6 text-[var(--status-success)]">
+                  <p className="text-xs font-bold tracking-[0.14em] text-[var(--status-success)]">1级全册里程碑</p>
+                  <p className="mt-2 text-lg font-bold">完成扩展生活场景交际</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
                     能处理基础出行问题、交流兴趣，并用将来表达安排一次假期或旅行计划。
                   </p>
                 </div>
@@ -518,11 +518,11 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="08" section="03 · 每课内部结构（上）">
               <div className="flex h-full flex-col">
-                <ListChecks className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <ListChecks className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   先理解，再模仿；先组织，再开口
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   每课围绕一个生活任务展开。请按栏目顺序学习，也可根据自己的薄弱点回查。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -556,11 +556,11 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="09" section="03 · 每课内部结构（下）">
               <div className="flex h-full flex-col">
-                <MessageCircle className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <MessageCircle className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   把知识送进真实交流
-                </h2>
-                <p className="mt-3 text-sm leading-7 text-[#60736a]">
+                </h3>
+                <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
                   后半程强调输入、输出与复盘。本书仅适配课程主题与语法进度，不复刻原教材编排；所有对话、例句、阅读与练习均为独立原创。
                 </p>
                 <div className="mt-6 grid grid-cols-2 gap-4">
@@ -594,10 +594,10 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="10" section="一课三轮 · 每次20—30分钟">
               <div className="flex h-full flex-col">
-                <Clock3 className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <Clock3 className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   推荐的高效学习节奏
-                </h2>
+                </h3>
                 <div className="mt-7 space-y-4">
                   {[
                     ["第一轮 · 看懂", "词汇＋语法＋原创建模例句", "弄清“这句话在什么情况下说、怎样组成”。"],
@@ -606,32 +606,32 @@ export function KoreanLevelOneGuideBook({
                   ].map(([title, focus, goal], index) => (
                     <article
                       key={title}
-                      className="flex gap-5 rounded-2xl border border-[#dce8e1] bg-white p-5"
+                      className="flex gap-5 rounded-2xl border border-[var(--status-success-surface)] bg-white p-5"
                     >
-                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#e5f3ee] text-lg font-black text-[#238777]">
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-lg font-bold text-[var(--status-success)]">
                         {index + 1}
                       </span>
                       <div>
-                        <h3 className="font-black text-[#294f43]">{title}</h3>
-                        <p className="mt-1 text-xs font-bold text-[#b87131]">{focus}</p>
-                        <p className="mt-2 text-xs leading-6 text-[#71857b]">{goal}</p>
+                        <h4 className="font-bold text-[var(--foreground-secondary)]">{title}</h4>
+                        <p className="mt-1 text-xs font-bold text-[var(--destructive)]">{focus}</p>
+                        <p className="mt-2 text-xs leading-6 text-[var(--foreground-muted)]">{goal}</p>
                       </div>
                     </article>
                   ))}
                 </div>
                 <div className="mt-6 grid grid-cols-2 gap-4">
-                  <div className="rounded-2xl bg-[#173f4a] p-5 text-white">
-                    <Headphones size={21} className="text-[#9fd7c8]" />
-                    <p className="mt-3 text-sm font-black">输入标准</p>
+                  <div className="rounded-2xl bg-[var(--primary)] p-5 text-white">
+                    <Headphones size={21} className="text-[var(--border-subtle)]" />
+                    <p className="mt-3 text-sm font-bold">输入标准</p>
                     <p className="mt-2 text-xs leading-5 text-white/65">能听出场景、人物关系与关键信息。</p>
                   </div>
-                  <div className="rounded-2xl bg-[#fff2df] p-5 text-[#684b2d]">
-                    <Mic2 size={21} className="text-[#b87131]" />
-                    <p className="mt-3 text-sm font-black">输出标准</p>
-                    <p className="mt-2 text-xs leading-5 text-[#806344]">能不用范文，以自己的信息完成任务。</p>
+                  <div className="rounded-2xl bg-[var(--status-warning-surface)] p-5 text-[var(--destructive)]">
+                    <Mic2 size={21} className="text-[var(--destructive)]" />
+                    <p className="mt-3 text-sm font-bold">输出标准</p>
+                    <p className="mt-2 text-xs leading-5 text-[var(--status-warning)]">能不用范文，以自己的信息完成任务。</p>
                   </div>
                 </div>
-                <p className="mt-auto text-center text-xs leading-5 text-[#83948b]">
+                <p className="mt-auto text-center text-xs leading-5 text-[var(--foreground-muted)]">
                   建议每完成4课安排一次综合复习；遗忘不是退步，而是提醒你进行下一次提取练习。
                 </p>
               </div>
@@ -639,10 +639,10 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="11" section="04 · 给零基础自学者的三句话">
               <div className="flex h-full flex-col">
-                <Lightbulb className="text-[#238777]" size={28} />
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <Lightbulb className="text-[var(--status-success)]" size={28} />
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   愿你稳稳地学，也勇敢地说
-                </h2>
+                </h3>
                 <div className="mt-8 space-y-5">
                   {[
                     [
@@ -658,17 +658,17 @@ export function KoreanLevelOneGuideBook({
                   ].map(([number, title, text]) => (
                     <article
                       key={number}
-                      className="rounded-2xl border border-[#dce8e1] bg-[#fbfdfb] p-6"
+                      className="rounded-2xl border border-[var(--status-success-surface)] bg-[var(--card)] p-6"
                     >
                       <div className="flex items-center gap-4">
-                        <span className="text-lg font-black text-[#b87131]">{number}</span>
-                        <h3 className="text-lg font-black text-[#294f43]">{title}</h3>
+                        <span className="text-lg font-bold text-[var(--destructive)]">{number}</span>
+                        <h4 className="text-lg font-bold text-[var(--foreground-secondary)]">{title}</h4>
                       </div>
-                      <p className="mt-3 pl-10 text-sm leading-7 text-[#60736a]">{text}</p>
+                      <p className="mt-3 pl-10 text-sm leading-7 text-[var(--foreground-secondary)]">{text}</p>
                     </article>
                   ))}
                 </div>
-                <div className="mt-auto rounded-2xl bg-[#e5f3ee] px-5 py-4 text-sm font-bold leading-6 text-[#315f52]">
+                <div className="mt-auto rounded-2xl bg-[var(--status-success-surface)] px-5 py-4 text-sm font-bold leading-6 text-[var(--status-success)]">
                   学语言最重要的不是一次学得很多，而是让正确的声音、句型和表达一次次重新出现。
                 </div>
               </div>
@@ -676,15 +676,15 @@ export function KoreanLevelOneGuideBook({
 
             <Page number="12" section="04 · 给零基础自学者的三句话">
               <div className="flex h-full flex-col">
-                <h2 className="mt-3 text-3xl font-black text-[#173f4a]">
+                <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">
                   把每一次复习，变成下一次开口
-                </h2>
-                <article className="mt-8 rounded-3xl border border-[#dce8e1] bg-[#fbfdfb] p-7">
+                </h3>
+                <article className="mt-8 rounded-3xl border border-[var(--status-success-surface)] bg-[var(--card)] p-7">
                   <div className="flex items-center gap-4">
-                    <span className="text-xl font-black text-[#b87131]">03</span>
-                    <h3 className="text-xl font-black text-[#294f43]">小步复习，持续输出</h3>
+                    <span className="text-xl font-bold text-[var(--destructive)]">03</span>
+                    <h4 className="text-xl font-bold text-[var(--foreground-secondary)]">小步复习，持续输出</h4>
                   </div>
-                  <p className="mt-5 text-[15px] leading-8 text-[#60736a]">
+                  <p className="mt-5 text-[15px] leading-8 text-[var(--foreground-secondary)]">
                     采用“当天—次日—一周后”的复习节奏。每次不求重学整课，只需回忆关键词、口述一个场景、重做一道错题。稳定的十分钟，胜过偶尔突击两小时。
                   </p>
                   <div className="mt-6 grid grid-cols-3 gap-3 text-center">
@@ -694,20 +694,20 @@ export function KoreanLevelOneGuideBook({
                       ["一周后", "完成场景表达"],
                     ].map(([time, task]) => (
                       <div key={time} className="rounded-2xl bg-white p-4">
-                        <p className="text-sm font-black text-[#238777]">{time}</p>
-                        <p className="mt-2 text-xs leading-5 text-[#71857b]">{task}</p>
+                        <p className="text-sm font-bold text-[var(--status-success)]">{time}</p>
+                        <p className="mt-2 text-xs leading-5 text-[var(--foreground-muted)]">{task}</p>
                       </div>
                     ))}
                   </div>
                 </article>
-                <div className="mt-7 border-t border-[#dce8e1] pt-6 text-center">
-                  <NotebookPen className="mx-auto text-[#238777]" size={23} />
-                  <p className="mt-3 text-lg font-black text-[#173f4a]">
+                <div className="mt-7 border-t border-[var(--status-success-surface)] pt-6 text-center">
+                  <NotebookPen className="mx-auto text-[var(--status-success)]" size={23} />
+                  <p className="mt-3 text-lg font-bold text-[var(--primary)]">
                     지금부터 시작해요. 现在，就开始吧。
                   </p>
-                  <p className="mt-2 text-xs tracking-[0.12em] text-[#789087]">主编寄语</p>
+                  <p className="mt-2 text-xs tracking-[0.12em] text-[var(--foreground-muted)]">主编寄语</p>
                 </div>
-                <p className="mt-auto rounded-xl bg-[#f1f5f2] px-4 py-3 text-[10px] leading-5 text-[#71857b]">
+                <p className="mt-auto rounded-xl bg-[var(--surface-soft)] px-4 py-3 text-[10px] leading-5 text-[var(--foreground-muted)]">
                   版权说明：书名中的教材名称仅用于说明学习进度的适配关系。本书为独立编写的学习笔记，不代表原教材著作权人或出版方授权、监制或联合出品；相关名称及权益归其权利人所有。
                 </p>
               </div>

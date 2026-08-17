@@ -91,10 +91,10 @@ export function ActivePermissionGrantsTable({
         header: sortableHeader("被授权账号"),
         cell: ({ row }) => (
           <div>
-            <p className="font-semibold text-[var(--app-text)]">
+            <p className="font-semibold text-[var(--foreground)]">
               {identityName(row.original.subject, row.original.subjectUserId)}
             </p>
-            <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+            <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
               {row.original.subject?.loginId || `账号 …${row.original.subjectUserId.slice(-8)}`}
             </p>
           </div>
@@ -109,7 +109,7 @@ export function ActivePermissionGrantsTable({
             <p className="font-medium">
               {permissionLabels[row.original.permissionKey] || row.original.permissionKey}
             </p>
-            <p className="mt-0.5 font-mono text-[10px] text-[var(--app-muted)]">
+            <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
               {row.original.permissionKey}
             </p>
           </div>
@@ -179,17 +179,17 @@ export function ActivePermissionGrantsTable({
       isEmpty={data.length === 0}
       emptyContent="当前没有生效中的账号例外授权"
       footer={
-        <p className="text-xs text-[var(--app-muted)]">
+        <p className="text-xs text-[var(--foreground-muted)]">
           当前共 {data.length} 条生效授权；撤销后从下一次服务端权限检查开始生效。
         </p>
       }
     >
       <Table className="min-w-[1080px]">
-        <TableHeader className="bg-[var(--app-soft-bg)]">
+        <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((group) => (
             <TableRow key={group.id}>
               {group.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 text-xs">
+                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                   {header.isPlaceholder
                     ? null
                     : flexRender(

@@ -94,13 +94,13 @@ export function getDigitalTextbookColumns(
     header: sortableHeader("课程与教材"),
     cell: ({ row }) => (
       <div className="min-w-72 max-w-md">
-        <p className="text-[10px] font-medium text-[var(--app-muted)]">
+        <p className="text-[10px] font-medium text-[var(--foreground-muted)]">
           {row.original.courseTitle}　›　{row.original.lessonTitle}
         </p>
-        <p className="mt-1 truncate font-semibold text-[var(--app-text)]">
+        <p className="mt-1 truncate font-semibold text-[var(--foreground)]">
           {row.original.textbookTitle}
         </p>
-        <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]">
           {row.original.textbookSlug}
         </p>
       </div>
@@ -111,7 +111,7 @@ export function getDigitalTextbookColumns(
     header: sortableHeader("版本"),
     cell: ({ row }) => (
       <div className="min-w-20">
-        <p className="font-semibold tabular-nums text-[var(--app-text-soft)]">
+        <p className="font-semibold tabular-nums text-[var(--foreground-secondary)]">
           第 {row.original.versionNumber} 版
         </p>
         <div className="mt-1">
@@ -125,10 +125,10 @@ export function getDigitalTextbookColumns(
     header: sortableHeader("章节"),
     cell: ({ row }) => (
       <div className="min-w-28">
-        <p className="font-semibold tabular-nums text-[var(--app-text-soft)]">
+        <p className="font-semibold tabular-nums text-[var(--foreground-secondary)]">
           第 {row.original.chapterNumber} 章
         </p>
-        <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]">
           {row.original.chapterSlug}
         </p>
       </div>
@@ -144,13 +144,13 @@ export function getDigitalTextbookColumns(
           row.original.moduleCodes.map((code) => (
             <span
               key={`${row.original.id}:${code}`}
-              className="bg-[var(--app-soft-bg)] px-2 py-1 text-[10px] font-medium text-[var(--app-text-soft)]"
+              className="bg-[var(--surface-soft)] px-2 py-1 text-[10px] font-medium text-[var(--foreground-secondary)]"
             >
               {moduleLabel(code)}
             </span>
           ))
         ) : (
-          <span className="text-[var(--app-muted)]">暂无模块</span>
+          <span className="text-[var(--foreground-muted)]">暂无模块</span>
         )}
       </div>
     ),
@@ -198,7 +198,7 @@ export function getDigitalTextbookColumns(
         {canManage ? (
           <DigitalTextbookCellAction row={row.original} />
         ) : (
-          <span className="text-[11px] text-[var(--app-muted)]">只读</span>
+          <span className="text-[11px] text-[var(--foreground-muted)]">只读</span>
         )}
       </div>
     ),

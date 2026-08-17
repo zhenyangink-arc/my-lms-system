@@ -49,7 +49,7 @@ export function AdminProfileForm({
   return (
     <div className="grid gap-4 lg:grid-cols-2">
       <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex items-center gap-2 border-b px-5 py-3.5" style={{ borderColor: "var(--app-border)" }}>
+        <div className="flex items-center gap-2 border-b px-5 py-3.5" style={{ borderColor: "var(--border)" }}>
           <UserRound size={15} className="app-muted-text" />
           <h2 className="text-sm font-semibold">基本资料</h2>
         </div>
@@ -58,8 +58,8 @@ export function AdminProfileForm({
             <div
               className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border text-xl font-semibold"
               style={{
-                borderColor: "var(--app-border)",
-                backgroundColor: "var(--app-soft-bg)",
+                borderColor: "var(--border)",
+                backgroundColor: "var(--surface-soft)",
                 ...(photoPreview || avatarUrl
                   ? {
                       backgroundImage: `url(${photoPreview || avatarUrl})`,
@@ -72,7 +72,7 @@ export function AdminProfileForm({
             >
               {displayName.trim().slice(0, 1) || "?"}
             </div>
-            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium transition hover:bg-black/[0.035]" style={{ borderColor: "var(--app-border)" }}>
+            <label className="inline-flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-xs font-medium transition hover:bg-black/[0.035]" style={{ borderColor: "var(--border)" }}>
               <Camera size={14} className="app-muted-text" />
               更换头像
               <input
@@ -153,7 +153,7 @@ export function AdminProfileForm({
       </section>
 
       <section className="app-card overflow-hidden rounded-xl border">
-        <div className="flex items-center gap-2 border-b px-5 py-3.5" style={{ borderColor: "var(--app-border)" }}>
+        <div className="flex items-center gap-2 border-b px-5 py-3.5" style={{ borderColor: "var(--border)" }}>
           <KeyRound size={15} className="app-muted-text" />
           <h2 className="text-sm font-semibold">修改登录密码</h2>
         </div>
@@ -190,7 +190,7 @@ export function AdminProfileForm({
             type="submit"
             disabled={passwordPending}
             className="h-9 w-full rounded-md border px-4 text-xs font-semibold transition hover:bg-black/[0.035] disabled:opacity-50"
-            style={{ borderColor: "var(--app-border)" }}
+            style={{ borderColor: "var(--border)" }}
           >
             {passwordPending ? (
               <span className="inline-flex items-center gap-2"><Loader2 className="animate-spin" size={13} />更新中…</span>

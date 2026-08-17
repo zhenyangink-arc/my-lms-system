@@ -93,8 +93,8 @@ export function ChapterQuestionBankActions({
         <button
           type="button"
           onClick={() => setOpenModal("view")}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-black hover:bg-[var(--app-soft-bg)]"
-          style={{ color: "var(--app-secondary)" }}
+          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-semibold hover:bg-[var(--surface-soft)]"
+          style={{ color: "var(--support)" }}
         >
           <Eye size={14} />
           查看题目
@@ -102,9 +102,9 @@ export function ChapterQuestionBankActions({
         <button
           type="button"
           onClick={() => setOpenModal("create")}
-          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-black hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex items-center justify-center gap-1.5 rounded-md px-2.5 py-2 text-xs font-semibold hover:bg-[var(--surface-soft)]"
           style={{
-            color: "var(--app-accent)",
+            color: "var(--primary)",
           }}
         >
           <Plus size={14} />
@@ -124,21 +124,21 @@ export function ChapterQuestionBankActions({
             role="dialog"
             aria-modal="true"
             aria-labelledby={`question-bank-modal-${group.id}`}
-            className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden border bg-[var(--app-card-bg)] shadow-2xl"
+            className="flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden border bg-[var(--card)] shadow-2xl"
           >
             <header
               className="flex items-start justify-between gap-4 border-b p-4 sm:p-5"
-              style={{ borderColor: "var(--app-border-soft)" }}
+              style={{ borderColor: "var(--border-subtle)" }}
             >
               <div className="min-w-0">
-                <p className="app-muted-text text-[11px] font-black">
+                <p className="app-muted-text text-[11px] font-semibold">
                   {openModal === "view"
                     ? `当前章节 · ${questions.length} 道题`
                     : "当前章节 · 新增题目"}
                 </p>
                 <h2
                   id={`question-bank-modal-${group.id}`}
-                  className="mt-1 text-base font-black sm:text-lg"
+                  className="mt-1 text-base font-semibold sm:text-lg"
                 >
                   {title}
                 </h2>
@@ -161,12 +161,12 @@ export function ChapterQuestionBankActions({
                 />
               ) : questions.length === 0 ? (
                 <div className="border-y py-10 text-center">
-                  <p className="font-black">当前章节还没有标准题目</p>
+                  <p className="font-semibold">当前章节还没有标准题目</p>
                   <button
                     type="button"
                     onClick={() => setOpenModal("create")}
-                    className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-black text-white"
-                    style={{ backgroundColor: "var(--app-accent)" }}
+                    className="mt-4 inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-xs font-semibold text-white"
+                    style={{ backgroundColor: "var(--primary)" }}
                   >
                     <Plus size={14} />
                     新增第一道题
@@ -175,7 +175,7 @@ export function ChapterQuestionBankActions({
               ) : (
                 <div className="overflow-x-auto border-y">
                   <table className="w-full min-w-[1050px] border-collapse text-left">
-                    <thead><tr className="border-b bg-[var(--app-soft-bg)] app-muted-text"><th className="px-3 py-2.5 text-[11px]">序号</th><th className="border-l px-3 py-2.5 text-[11px]">电子书目录</th><th className="border-l px-3 py-2.5 text-center text-[11px]">难度</th><th className="border-l px-3 py-2.5 text-[11px]">题目</th><th className="border-l px-3 py-2.5 text-[11px]">四个选项</th><th className="border-l px-3 py-2.5 text-[11px]">答案与解析</th><th className="border-l px-3 py-2.5 text-[11px]">状态</th></tr></thead>
+                    <thead><tr className="border-b bg-[var(--surface-soft)] app-muted-text"><th className="px-3 py-2.5 text-[11px]">序号</th><th className="border-l px-3 py-2.5 text-[11px]">电子书目录</th><th className="border-l px-3 py-2.5 text-center text-[11px]">难度</th><th className="border-l px-3 py-2.5 text-[11px]">题目</th><th className="border-l px-3 py-2.5 text-[11px]">四个选项</th><th className="border-l px-3 py-2.5 text-[11px]">答案与解析</th><th className="border-l px-3 py-2.5 text-[11px]">状态</th></tr></thead>
                     <tbody>
                   {questions.map((question, index) => {
                     const options = questionOptions(question.options);
@@ -186,13 +186,13 @@ export function ChapterQuestionBankActions({
                         key={question.id}
                         className="border-b align-top last:border-b-0"
                       >
-                        <td className="px-3 py-3 text-center font-mono text-xs font-black text-[var(--app-secondary)]">{index + 1}</td>
-                        <td className="border-l px-3 py-3 text-[11px] leading-5"><span className="font-black">{koreanEbookSectionLabel(question.ebook_section_step)}</span>{question.ebook_page_reference && <span className="app-muted-text block">{question.ebook_page_reference}</span>}</td>
+                        <td className="px-3 py-3 text-center font-mono text-xs font-semibold text-[var(--support)]">{index + 1}</td>
+                        <td className="border-l px-3 py-3 text-[11px] leading-5"><span className="font-semibold">{koreanEbookSectionLabel(question.ebook_section_step)}</span>{question.ebook_page_reference && <span className="app-muted-text block">{question.ebook_page_reference}</span>}</td>
                         <td className="border-l px-3 py-3 text-center text-xs font-bold">{DIFFICULTY_LABELS[question.difficulty]}</td>
-                        <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-black leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {SKILL_LABELS[question.skill] ?? "综合"}</p></td>
-                        <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-black text-[var(--app-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
-                        <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-black text-[var(--app-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
-                        <td className="border-l px-3 py-3 text-xs"><p className="font-black">{STATUS_LABELS[question.status]}</p><p className="app-muted-text mt-1">{question.default_points} 分</p></td>
+                        <td className="border-l px-3 py-3"><p className="whitespace-pre-wrap text-sm font-semibold leading-6">{question.prompt}</p><p className="app-muted-text mt-1 text-[10px]">{QUESTION_TYPE_LABELS[question.question_type]} · {SKILL_LABELS[question.skill] ?? "综合"}</p></td>
+                        <td className="border-l px-3 py-3 text-xs leading-5">{options.map((option, optionIndex) => <p key={`${question.id}-${optionIndex}`} className={optionIndex === question.correct_option ? "font-semibold text-[var(--status-success)]" : ""}><span className="mr-1 font-mono">{String.fromCharCode(65 + optionIndex)}.</span>{option}</p>)}</td>
+                        <td className="border-l px-3 py-3 text-xs leading-5"><p className="font-semibold text-[var(--status-success)]">{answer || "人工批改"}</p>{question.explanation && <p className="app-muted-text mt-1.5">{question.explanation}</p>}</td>
+                        <td className="border-l px-3 py-3 text-xs"><p className="font-semibold">{STATUS_LABELS[question.status]}</p><p className="app-muted-text mt-1">{question.default_points} 分</p></td>
                       </tr>
                     );
                   })}

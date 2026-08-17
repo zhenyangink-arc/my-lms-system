@@ -32,15 +32,15 @@ export const teacherAssignmentColumns: ColumnDef<TeacherAssignmentDisplayRow>[] 
     id: "teacher",
     accessorFn: (row) => memberName(row.teacher),
     header: sortableHeader("负责老师"),
-    cell: ({ row }) => <div className="min-w-44"><p className="font-semibold text-[var(--app-text)]">{memberName(row.original.teacher)}</p><p className="mt-0.5 text-[11px] text-[var(--app-muted)]">{memberAccount(row.original.teacher)}</p></div>,
+    cell: ({ row }) => <div className="min-w-44"><p className="font-semibold text-[var(--foreground)]">{memberName(row.original.teacher)}</p><p className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">{memberAccount(row.original.teacher)}</p></div>,
   },
   {
     id: "student",
     accessorFn: (row) => row.student ? memberName(row.student) : "",
     header: sortableHeader("负责学生"),
     cell: ({ row }) => row.original.student
-      ? <div className="min-w-44"><p className="font-medium text-[var(--app-text-soft)]">{memberName(row.original.student)}</p><p className="mt-0.5 text-[11px] text-[var(--app-muted)]">{memberAccount(row.original.student)}</p></div>
-      : <span className="text-[var(--app-muted)]">暂无负责学生</span>,
+      ? <div className="min-w-44"><p className="font-medium text-[var(--foreground-secondary)]">{memberName(row.original.student)}</p><p className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">{memberAccount(row.original.student)}</p></div>
+      : <span className="text-[var(--foreground-muted)]">暂无负责学生</span>,
   },
   {
     id: "assignmentStatus",

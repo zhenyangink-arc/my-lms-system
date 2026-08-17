@@ -52,7 +52,7 @@ export async function LearningRecordListingContent({
   return (
     <div className="space-y-4">
       {hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <p className="border border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-4 py-3 text-sm font-medium text-[var(--status-warning)]">
           学生学习档案暂时无法完整读取，请稍后刷新。
         </p>
       )}

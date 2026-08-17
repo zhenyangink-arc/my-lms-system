@@ -51,19 +51,19 @@ export function PracticeHubNavigation({ basePath }: { basePath: string }) {
               style={
                 selected
                   ? {
-                      color: "var(--app-accent-strong)",
-                      backgroundColor: "var(--app-accent-soft)",
-                      outlineColor: "var(--app-accent)",
+                      color: "var(--primary-hover)",
+                      backgroundColor: "var(--accent)",
+                      outlineColor: "var(--primary)",
                     }
                   : {
-                      color: "var(--app-muted)",
-                      outlineColor: "var(--app-accent)",
+                      color: "var(--foreground-muted)",
+                      outlineColor: "var(--primary)",
                     }
               }
             >
               <Icon size={18} className="shrink-0" aria-hidden="true" />
               <span className="min-w-0">
-                <strong className="block truncate text-xs font-black sm:text-sm">
+                <strong className="block truncate text-xs font-bold sm:text-sm">
                   {section.label}
                 </strong>
                 <small className="mt-0.5 hidden truncate text-[10px] font-bold opacity-75 sm:block">

@@ -37,15 +37,17 @@ export function TargetStatusForm({
   return (
     <form
       action={updateUniversityStatusAction.bind(null, targetId)}
-      className="flex min-w-0 flex-1 gap-2"
+      className="flex min-w-0 flex-1 items-end gap-2"
     >
-      <select
+      <label className="min-w-0 flex-1 text-xs font-bold">
+        申请状态
+        <select
         name="status"
         value={status}
         onChange={(event) => setStatus(event.target.value)}
         disabled={isSubmitted}
         aria-label={`${universityName}的申请状态`}
-        className="app-input min-w-0 flex-1 rounded-xl border px-3 py-2.5 text-xs font-bold outline-none disabled:cursor-not-allowed disabled:opacity-70"
+        className="app-input mt-1 w-full min-w-0 rounded-xl border px-3 py-2.5 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70"
       >
         {!statusOptions.some(([value]) => value === status) && (
           <option value={status}>已提交</option>
@@ -55,17 +57,18 @@ export function TargetStatusForm({
             {label}
           </option>
         ))}
-      </select>
+        </select>
+      </label>
 
       <button
         type="submit"
         disabled={isSubmitted}
         aria-hidden={!showSubmit && !isSubmitted}
         tabIndex={showSubmit || isSubmitted ? 0 : -1}
-        className={`rounded-xl px-3 py-2.5 text-xs font-black text-white ${
+        className={`rounded-xl px-3 py-2.5 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 ${
           showSubmit || isSubmitted ? "" : "invisible"
         } disabled:cursor-not-allowed disabled:opacity-80`}
-        style={{ backgroundColor: "var(--app-secondary)" }}
+        style={{ backgroundColor: "var(--support)" }}
       >
         {isSubmitted ? "已提交" : "提交"}
       </button>

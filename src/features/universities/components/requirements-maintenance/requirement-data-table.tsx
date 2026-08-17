@@ -81,7 +81,7 @@ export function RequirementDataTable<T extends object>({
       isEmpty={data.length === 0}
       emptyContent={emptyContent}
       footer={
-        <div className="flex flex-col gap-2 text-xs text-[var(--app-muted)] sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-2 text-xs text-[var(--foreground-muted)] sm:flex-row sm:items-center sm:justify-between">
           <p>
             当前显示 {start} 至 {end} 条，共 {data.length} 条
           </p>
@@ -91,7 +91,7 @@ export function RequirementDataTable<T extends object>({
               <select
                 value={pagination.pageSize}
                 onChange={(event) => table.setPageSize(Number(event.target.value))}
-                className="h-8 border border-[var(--app-border)] bg-[var(--app-input-bg)] px-2 text-xs text-[var(--app-text-soft)]"
+                className="h-8 border border-[var(--border)] bg-[var(--card)] px-2 text-xs text-[var(--foreground-secondary)]"
               >
                 {[25, 50, 100].map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
@@ -107,7 +107,7 @@ export function RequirementDataTable<T extends object>({
               type="button"
               disabled={!table.getCanPreviousPage()}
               onClick={() => table.previousPage()}
-              className="h-8 border border-[var(--app-border)] px-2.5 font-semibold text-[var(--app-text-soft)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="h-8 border border-[var(--border)] px-2.5 font-semibold text-[var(--foreground-secondary)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               上一页
             </button>
@@ -115,7 +115,7 @@ export function RequirementDataTable<T extends object>({
               type="button"
               disabled={!table.getCanNextPage()}
               onClick={() => table.nextPage()}
-              className="h-8 border border-[var(--app-border)] px-2.5 font-semibold text-[var(--app-text-soft)] disabled:cursor-not-allowed disabled:opacity-40"
+              className="h-8 border border-[var(--border)] px-2.5 font-semibold text-[var(--foreground-secondary)] disabled:cursor-not-allowed disabled:opacity-40"
             >
               下一页
             </button>
@@ -124,11 +124,11 @@ export function RequirementDataTable<T extends object>({
       }
     >
       <Table className={tableClassName}>
-        <TableHeader className="bg-[var(--app-soft-bg)]">
+        <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} className="px-4 text-xs">
+                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
                   {header.isPlaceholder
                     ? null
                     : flexRender(

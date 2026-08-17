@@ -120,13 +120,13 @@ export function AssessmentPaperReleaseCatalog({
       <section
         className="border"
         style={{
-          borderColor: "var(--app-border)",
-          backgroundColor: "var(--app-card-bg)",
+          borderColor: "var(--border)",
+          backgroundColor: "var(--card)",
         }}
       >
         <div className="flex items-center justify-between gap-3 border-b px-4 py-3.5">
           <div>
-            <h2 className="text-sm font-black">平台标准{typeLabel}卷</h2>
+            <h2 className="text-sm font-semibold">平台标准{typeLabel}卷</h2>
           </div>
           <span className="font-mono text-xs font-bold tabular-nums">
             {papers.length} 套可用
@@ -149,7 +149,7 @@ export function AssessmentPaperReleaseCatalog({
               className="sticky top-0 z-20 backdrop-blur-xl"
               style={{
                 backgroundColor:
-                  "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                  "color-mix(in srgb, var(--card) 84%, transparent)",
               }}
             >
               <tr className="border-b app-muted-text">
@@ -182,8 +182,8 @@ export function AssessmentPaperReleaseCatalog({
               {papers.map((paper) => (
                 <tr
                   key={paper.id}
-                  className="border-b last:border-b-0 hover:bg-[var(--app-soft-bg)]"
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  className="border-b last:border-b-0 hover:bg-[var(--surface-soft)]"
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <td className="px-3 py-3.5">
                     <p className="text-sm font-bold">{paper.title}</p>
@@ -213,7 +213,7 @@ export function AssessmentPaperReleaseCatalog({
                     <button
                       type="button"
                       onClick={() => openPaper(paper.id)}
-                      className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--app-secondary)] hover:underline"
+                      className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--support)] hover:underline"
                     >
                       <UsersRound size={12} />
                       指向学生并发布
@@ -258,7 +258,7 @@ export function AssessmentPaperReleaseCatalog({
                 </p>
                 <h2
                   id={`release-paper-${selectedPaper.id}`}
-                  className="mt-1 text-xl font-black"
+                  className="mt-1 text-xl font-semibold"
                 >
                   指向学生并发布
                 </h2>
@@ -280,7 +280,7 @@ export function AssessmentPaperReleaseCatalog({
                 <section className="border-b">
                   <table className="w-full border-collapse text-left">
                     <tbody>
-                      <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+                      <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
                         <th className="app-muted-text w-32 px-5 py-3 text-[11px] font-bold">试卷名称</th>
                         <td className="border-l px-4 py-3 text-sm font-bold">{selectedPaper.title}</td>
                         <th className="app-muted-text w-28 border-l px-4 py-3 text-[11px] font-bold">题量 / 总分</th>
@@ -298,7 +298,7 @@ export function AssessmentPaperReleaseCatalog({
 
                 <section className="border-b">
                   <div className="border-b px-5 py-3">
-                    <h3 className="text-sm font-black">试卷题目</h3>
+                    <h3 className="text-sm font-semibold">试卷题目</h3>
                     <p className="app-muted-text mt-0.5 text-[11px]">
                       发布后会复制为固定快照。
                     </p>
@@ -311,7 +311,7 @@ export function AssessmentPaperReleaseCatalog({
                         <col />
                         <col className="w-20" />
                       </colgroup>
-                      <thead className="sticky top-0 z-10 bg-[var(--app-card-bg)]">
+                      <thead className="sticky top-0 z-10 bg-[var(--card)]">
                         <tr className="border-b app-muted-text">
                           <th className="px-3 py-2.5 text-center text-[11px] font-bold">题号</th>
                           <th className="border-l px-4 py-2.5 text-[11px] font-bold">题目</th>
@@ -321,7 +321,7 @@ export function AssessmentPaperReleaseCatalog({
                       </thead>
                       <tbody>
                         {selectedQuestions.map((question, index) => (
-                          <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--app-border-soft)" }}>
+                          <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
                             <td className="px-3 py-3 text-center font-mono text-xs">{String(index + 1).padStart(2, "0")}</td>
                             <td className="border-l px-4 py-3 text-xs font-bold leading-5">{question.prompt}</td>
                             <td className="app-muted-text border-l px-4 py-3 text-[11px] leading-5">
@@ -339,11 +339,11 @@ export function AssessmentPaperReleaseCatalog({
 
                 <section className="border-b">
                   <div className="border-b px-5 py-3">
-                    <h3 className="text-sm font-black">发布安排</h3>
+                    <h3 className="text-sm font-semibold">发布安排</h3>
                   </div>
                   <table className="w-full border-collapse">
                     <tbody>
-                      <tr className="border-b" style={{ borderColor: "var(--app-border-soft)" }}>
+                      <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
                         <td className="w-1/3 px-4 py-3">
                           <label className="text-[11px] font-bold">
                             关联机构课程
@@ -380,7 +380,7 @@ export function AssessmentPaperReleaseCatalog({
 
                 <section>
                   <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
-                    <h3 className="text-sm font-black">指向学生</h3>
+                    <h3 className="text-sm font-semibold">指向学生</h3>
                     <label className="inline-flex items-center gap-2 text-xs font-bold">
                       <input type="radio" name="target_scope" value="all_students" checked={targetScope === "all_students"} onChange={() => setTargetScope("all_students")} />
                       全部在籍学生
@@ -402,7 +402,7 @@ export function AssessmentPaperReleaseCatalog({
                   {targetScope === "selected_students" && (
                     <div className="max-h-64 overflow-auto">
                       <table className="w-full border-collapse text-left">
-                        <thead className="sticky top-0 z-10 bg-[var(--app-card-bg)]">
+                        <thead className="sticky top-0 z-10 bg-[var(--card)]">
                           <tr className="border-b app-muted-text">
                             <th className="w-14 px-4 py-2.5 text-center text-[11px] font-bold">选择</th>
                             <th className="border-l px-4 py-2.5 text-[11px] font-bold">学生</th>
@@ -412,7 +412,7 @@ export function AssessmentPaperReleaseCatalog({
                         </thead>
                         <tbody>
                           {filteredStudents.map((student) => (
-                            <tr key={student.id} className="cursor-pointer border-b last:border-b-0 hover:bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }} onClick={() => toggleStudent(student.id)}>
+                            <tr key={student.id} className="cursor-pointer border-b last:border-b-0 hover:bg-[var(--surface-soft)]" style={{ borderColor: "var(--border-subtle)" }} onClick={() => toggleStudent(student.id)}>
                               <td className="px-4 py-3 text-center">
                                 <input name="target_ids" value={student.id} type="checkbox" checked={selectedStudentIds.has(student.id)} onChange={() => toggleStudent(student.id)} onClick={(event) => event.stopPropagation()} />
                               </td>
@@ -433,7 +433,7 @@ export function AssessmentPaperReleaseCatalog({
 
               <div className="border-t px-5 py-4 sm:px-6">
                 {state.message && (
-                  <p className="mb-3 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)" }}>
+                  <p className="mb-3 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--status-success)" }}>
                     {state.message}
                   </p>
                 )}
@@ -441,7 +441,7 @@ export function AssessmentPaperReleaseCatalog({
                   <button type="button" onClick={() => setSelectedPaperId("")} disabled={pending} className="app-soft-card rounded-lg border px-4 py-2.5 text-xs font-bold disabled:opacity-50">
                     取消
                   </button>
-                  <button type="submit" disabled={pending || (targetScope === "selected_students" && selectedStudentIds.size === 0)} className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-secondary)" }}>
+                  <button type="submit" disabled={pending || (targetScope === "selected_students" && selectedStudentIds.size === 0)} className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
                     <Send size={14} />
                     {pending ? "正在发布…" : `确认发布${typeLabel}`}
                   </button>

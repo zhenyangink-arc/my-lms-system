@@ -28,18 +28,18 @@ export function PermissionToggleButton({
       aria-label={
         enabled ? `收回${label}权限` : `授予${label}权限`
       }
-      className="mx-auto flex h-8 min-w-14 items-center justify-center gap-1 rounded-full border px-2 text-[11px] font-black transition enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55"
+      className="mx-auto flex h-8 min-w-14 items-center justify-center gap-1 rounded-full border px-2 text-[11px] font-semibold transition enabled:hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55"
       style={
         enabled
           ? {
-              color: "var(--app-success)",
-              backgroundColor: "var(--app-success-soft)",
-              borderColor: "var(--app-success)",
+              color: "var(--status-success)",
+              backgroundColor: "var(--status-success-surface)",
+              borderColor: "var(--status-success)",
             }
           : {
-              color: "var(--app-muted)",
-              backgroundColor: "var(--app-soft-bg)",
-              borderColor: "var(--app-border)",
+              color: "var(--foreground-muted)",
+              backgroundColor: "var(--surface-soft)",
+              borderColor: "var(--border)",
             }
       }
     >

@@ -18,7 +18,7 @@ export function StudentRecordTableToolbar({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <label className="app-input flex h-9 min-w-64 flex-1 items-center gap-2 border px-2.5 sm:max-w-sm">
-        <Search className="shrink-0 text-[var(--app-muted)]" size={14} />
+        <Search className="shrink-0 text-[var(--foreground-muted)]" size={14} />
         <span className="sr-only">搜索学生档案</span>
         <input
           value={filters.query}
@@ -26,7 +26,7 @@ export function StudentRecordTableToolbar({
             onFiltersChange({ ...filters, query: event.target.value })
           }
           placeholder="搜索姓名、邮箱或账号编号"
-          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--app-muted)]"
+          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--foreground-muted)]"
         />
       </label>
       <label>

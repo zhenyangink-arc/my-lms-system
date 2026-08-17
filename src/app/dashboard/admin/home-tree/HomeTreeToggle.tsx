@@ -36,8 +36,8 @@ export function HomeTreeToggle({ table, id, checked, viewSlug }: Props) {
       className="relative h-6 w-11 shrink-0 rounded-full transition disabled:opacity-50"
       style={{
         backgroundColor: checked
-          ? "var(--app-accent)"
-          : "color-mix(in srgb, var(--app-border) 60%, transparent)",
+          ? "var(--primary)"
+          : "color-mix(in srgb, var(--border) 60%, transparent)",
       }}
     >
       <span

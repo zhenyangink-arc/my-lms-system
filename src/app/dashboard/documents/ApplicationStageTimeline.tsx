@@ -2,23 +2,25 @@ import { Check } from "lucide-react";
 
 import { APPLICATION_FINAL_STAGE, APPLICATION_STAGE_LABELS } from "./constants";
 
-const FINAL_RED = "#dc2626";
-
 function stepTone(done: boolean, active: boolean, isFinal: boolean) {
   if (isFinal && active && !done) {
-    return { color: "#fff", backgroundColor: FINAL_RED };
+    return { color: "var(--destructive-foreground)", backgroundColor: "var(--destructive)" };
   }
   return {
-    color: done || active ? "#fff" : "var(--app-muted)",
-    backgroundColor: done ? "var(--app-success)" : active ? "var(--app-accent)" : "var(--app-soft-bg)",
+    color: done
+      ? "var(--status-success-foreground)"
+      : active
+        ? "var(--primary-foreground)"
+        : "var(--foreground-muted)",
+    backgroundColor: done ? "var(--status-success)" : active ? "var(--primary)" : "var(--surface-soft)",
   };
 }
 
 function labelTone(done: boolean, active: boolean, isFinal: boolean) {
-  if (isFinal && active && !done) return FINAL_RED;
-  if (done) return "var(--app-success)";
-  if (active) return "var(--app-accent-strong)";
-  return "var(--app-muted)";
+  if (isFinal && active && !done) return "var(--destructive)";
+  if (done) return "var(--status-success)";
+  if (active) return "var(--primary-hover)";
+  return "var(--foreground-muted)";
 }
 
 function HorizontalStageTimeline({ stage }: { stage: number }) {
@@ -27,7 +29,7 @@ function HorizontalStageTimeline({ stage }: { stage: number }) {
 
   return (
     <div>
-      <p className="app-muted-text text-xs font-black">申请进程</p>
+      <p className="app-muted-text text-xs font-bold">申请进程</p>
       <div className="mt-2 flex items-center">
         {APPLICATION_STAGE_LABELS.map((label, index) => {
           const stepNumber = index + 1;
@@ -38,19 +40,19 @@ function HorizontalStageTimeline({ stage }: { stage: number }) {
             <div key={label} className={`flex items-center ${index < APPLICATION_STAGE_LABELS.length - 1 ? "flex-1" : ""}`}>
               <span
                 title={label}
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
                 style={stepTone(done, active, isFinal)}
               >
-                {done ? <Check size={10} /> : stepNumber}
+                {done ? <Check size={10} aria-hidden="true" /> : stepNumber}
               </span>
               {index < APPLICATION_STAGE_LABELS.length - 1 && (
-                <span className="mx-1 h-0.5 flex-1 rounded-full" style={{ backgroundColor: done ? "var(--app-success)" : "var(--app-soft-bg)" }} />
+                <span className="mx-1 h-0.5 flex-1 rounded-full" style={{ backgroundColor: done ? "var(--status-success)" : "var(--surface-soft)" }} />
               )}
             </div>
           );
         })}
       </div>
-      <p className="mt-1.5 text-xs font-black" style={{ color: stage >= 1 ? labelTone(false, true, currentIsFinal) : "var(--app-muted)" }}>
+      <p className="mt-1.5 text-xs font-bold" style={{ color: stage >= 1 ? labelTone(false, true, currentIsFinal) : "var(--foreground-muted)" }}>
         {stage >= 1 ? `${stage}. ${currentLabel}` : currentLabel}
       </p>
     </div>
@@ -60,7 +62,7 @@ function HorizontalStageTimeline({ stage }: { stage: number }) {
 function VerticalStageTimeline({ stage }: { stage: number }) {
   return (
     <div className="space-y-2.5">
-      <p className="app-muted-text text-xs font-black">申请进程</p>
+      <p className="app-muted-text text-xs font-bold">申请进程</p>
       {APPLICATION_STAGE_LABELS.map((label, index) => {
         const stepNumber = index + 1;
         const done = stage >= stepNumber;
@@ -68,8 +70,8 @@ function VerticalStageTimeline({ stage }: { stage: number }) {
         const isFinal = stepNumber === APPLICATION_FINAL_STAGE;
         return (
           <div key={label} className="flex items-start gap-2">
-            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black" style={stepTone(done, active, isFinal)}>
-              {done ? <Check size={11} /> : stepNumber}
+            <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold" style={stepTone(done, active, isFinal)}>
+              {done ? <Check size={11} aria-hidden="true" /> : stepNumber}
             </span>
             <p
               className="text-xs leading-4"
@@ -90,7 +92,7 @@ function VerticalStageTimeline({ stage }: { stage: number }) {
 function GridStageTimeline({ stage }: { stage: number }) {
   return (
     <div>
-      <p className="app-muted-text text-xs font-black">申请进程</p>
+      <p className="app-muted-text text-xs font-bold">申请进程</p>
       <div className="mt-2 grid grid-cols-5 gap-x-2 gap-y-3">
         {APPLICATION_STAGE_LABELS.map((label, index) => {
           const stepNumber = index + 1;
@@ -100,10 +102,10 @@ function GridStageTimeline({ stage }: { stage: number }) {
           return (
             <div key={label} className="flex flex-col items-center gap-1 text-center">
               <span
-                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black"
+                className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
                 style={stepTone(done, active, isFinal)}
               >
-                {done ? <Check size={10} /> : stepNumber}
+                {done ? <Check size={10} aria-hidden="true" /> : stepNumber}
               </span>
               <p
                 className="text-[10px] leading-3"

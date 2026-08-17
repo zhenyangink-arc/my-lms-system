@@ -67,10 +67,10 @@ export function getLessonResourceColumns({
     header: sortableHeader("资料名称"),
     cell: ({ row }) => (
       <div className="min-w-64 max-w-md">
-        <p className="truncate font-semibold text-[var(--app-text)]">
+        <p className="truncate font-semibold text-[var(--foreground)]">
           {row.original.title}
         </p>
-        <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-[var(--app-muted)]">
+        <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-[var(--foreground-muted)]">
           {row.original.description || "暂无说明"}
         </p>
       </div>
@@ -80,7 +80,7 @@ export function getLessonResourceColumns({
     accessorKey: "resource_type",
     header: sortableHeader("类型"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-text-soft)]">
+      <span className="text-[var(--foreground-secondary)]">
         {RESOURCE_TYPE_LABELS[row.original.resource_type] ?? "其他资料"}
       </span>
     ),
@@ -91,7 +91,7 @@ export function getLessonResourceColumns({
     header: sortableHeader("资料来源"),
     cell: ({ row }) => (
       <span
-        className="block max-w-72 truncate text-[var(--app-muted)]"
+        className="block max-w-72 truncate text-[var(--foreground-muted)]"
         title={row.original.original_file_name ?? row.original.resource_url ?? undefined}
       >
         {row.original.original_file_name ??
@@ -104,7 +104,7 @@ export function getLessonResourceColumns({
     accessorKey: "is_required",
     header: sortableHeader("学习要求"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-text-soft)]">
+      <span className="text-[var(--foreground-secondary)]">
         {row.original.is_required ? "必学" : "选学"}
       </span>
     ),
@@ -120,7 +120,7 @@ export function getLessonResourceColumns({
     accessorKey: "sort_order",
     header: sortableHeader("排序"),
     cell: ({ row }) => (
-      <span className="font-mono tabular-nums text-[var(--app-muted)]">
+      <span className="font-mono tabular-nums text-[var(--foreground-muted)]">
         {row.original.sort_order}
       </span>
     ),

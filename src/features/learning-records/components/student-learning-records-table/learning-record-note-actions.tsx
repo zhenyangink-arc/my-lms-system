@@ -22,7 +22,7 @@ function localDate(value?: string) {
 }
 
 const inputClass =
-  "h-9 w-full border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-xs outline-none focus:border-[var(--app-secondary)]";
+  "h-9 w-full border border-[var(--border)] bg-[var(--card)] px-3 text-xs outline-none focus:border-[var(--support)]";
 
 export function LearningRecordNoteEditor({
   studentId,
@@ -59,7 +59,7 @@ export function LearningRecordNoteEditor({
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="space-y-1.5 text-xs font-medium">
           <span>学生</span>
-          <span className="flex h-9 items-center border border-[var(--app-border)] bg-[var(--app-soft-bg)] px-3 text-[var(--app-muted)]">
+          <span className="flex h-9 items-center border border-[var(--border)] bg-[var(--surface-soft)] px-3 text-[var(--foreground-muted)]">
             {studentName}
           </span>
         </label>
@@ -146,12 +146,12 @@ export function LearningRecordNoteEditor({
         />
       </label>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--app-border)] pt-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] pt-4">
         <p
           className={`text-xs ${
             state.status === "error"
               ? "text-red-600"
-              : "text-[var(--app-muted)]"
+              : "text-[var(--foreground-muted)]"
           }`}
           role={state.status === "error" ? "alert" : undefined}
         >
@@ -163,14 +163,14 @@ export function LearningRecordNoteEditor({
             type="button"
             onClick={onCancel}
             disabled={pending}
-            className="h-9 border border-[var(--app-border)] px-4 text-xs font-semibold disabled:opacity-50"
+            className="h-9 border border-[var(--border)] px-4 text-xs font-semibold disabled:opacity-50"
           >
             取消
           </button>
           <button
             type="submit"
             disabled={pending}
-            className="inline-flex h-9 items-center gap-2 bg-[var(--app-secondary)] px-4 text-xs font-semibold text-white disabled:opacity-50"
+            className="inline-flex h-9 items-center gap-2 bg-[var(--support)] px-4 text-xs font-semibold text-white disabled:opacity-50"
           >
             <Save size={14} />
             {pending ? "正在保存…" : note ? "保存修改" : "新增人工辅导备注"}
@@ -218,7 +218,7 @@ export function LearningRecordNoteStatusAction({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)] disabled:opacity-50"
+        className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--surface-soft)] disabled:opacity-50"
       >
         <Icon size={13} />
         {pending ? "处理中…" : nextStatus === "archived" ? "归档" : "恢复"}

@@ -34,20 +34,20 @@ export function DigitalTextbookCellAction({
     <>
       <details className="group relative inline-block text-left">
         <summary
-          className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--app-muted)] transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-text)]"
+          className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
           aria-label="打开互动教材操作"
         >
           <Icons.more className="size-4" aria-hidden="true" />
         </summary>
-        <div className="absolute right-0 z-30 mt-1 w-44 border border-[var(--app-border)] bg-[var(--app-card-bg)] p-1 shadow-lg">
+        <div className="absolute right-0 z-30 mt-1 w-44 border border-[var(--border)] bg-[var(--card)] p-1 shadow-lg">
           <MenuButton label="编辑章节词汇" onClick={() => setPanel("vocabulary")} />
           <MenuButton label="编辑章节语法" onClick={() => setPanel("grammar")} />
-          <div className="my-1 border-t border-[var(--app-border)]" />
+          <div className="my-1 border-t border-[var(--border)]" />
           <button
             type="button"
             onClick={changeStatus}
             disabled={pending}
-            className={`flex w-full items-center px-2 py-2 text-left text-xs font-medium hover:bg-[var(--app-soft-bg)] disabled:opacity-50 ${
+            className={`flex w-full items-center px-2 py-2 text-left text-xs font-medium hover:bg-[var(--surface-soft)] disabled:opacity-50 ${
               nextStatus === "published"
                 ? "text-emerald-700"
                 : "text-amber-700"
@@ -90,7 +90,7 @@ function MenuButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex w-full items-center px-2 py-2 text-left text-xs font-medium text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+      className="flex w-full items-center px-2 py-2 text-left text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
     >
       {label}
     </button>

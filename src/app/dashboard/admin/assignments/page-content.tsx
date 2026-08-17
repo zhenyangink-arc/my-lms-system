@@ -83,28 +83,28 @@ export default async function AssignmentManagementPage({
                 className="group flex min-h-20 items-center gap-3 border-b px-5 py-4 transition-colors last:border-b-0 md:border-b-0 md:border-r md:last:border-r-0"
                 style={{
                   color: isActive
-                    ? "var(--app-accent)"
-                    : "var(--app-text)",
+                    ? "var(--primary)"
+                    : "var(--foreground)",
                   backgroundColor: isActive
-                    ? "var(--app-accent-soft)"
-                    : "var(--app-card-bg)",
-                  borderColor: "var(--app-border-soft)",
+                    ? "var(--accent)"
+                    : "var(--card)",
+                  borderColor: "var(--border-subtle)",
                 }}
               >
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border"
                   style={{
                     color: isActive
-                      ? "var(--app-accent)"
-                      : "var(--app-muted)",
-                    backgroundColor: "var(--app-card-bg)",
-                    borderColor: "var(--app-border-soft)",
+                      ? "var(--primary)"
+                      : "var(--foreground-muted)",
+                    backgroundColor: "var(--card)",
+                    borderColor: "var(--border-subtle)",
                   }}
                 >
                   <Icon size={18} />
                 </span>
                 <span className="min-w-0">
-                  <span className="block text-sm font-black">{item.label}</span>
+                  <span className="block text-sm font-semibold">{item.label}</span>
                   <span className="app-muted-text mt-1 block text-xs">
                     {item.description}
                   </span>

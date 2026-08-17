@@ -23,7 +23,7 @@ export function GradeResultsTableToolbar({
   return (
     <div className="flex flex-wrap items-center gap-2">
       <label className="app-input flex h-9 min-w-64 flex-1 items-center gap-2 border px-2.5 sm:max-w-sm">
-        <Search className="shrink-0 text-[var(--app-muted)]" size={14} />
+        <Search className="shrink-0 text-[var(--foreground-muted)]" size={14} />
         <span className="sr-only">搜索学生成绩</span>
         <input
           value={filters.query}
@@ -31,7 +31,7 @@ export function GradeResultsTableToolbar({
             onFiltersChange({ ...filters, query: event.target.value })
           }
           placeholder="搜索学生、课程或考核内容"
-          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--app-muted)]"
+          className="min-w-0 flex-1 bg-transparent text-xs outline-none placeholder:text-[var(--foreground-muted)]"
         />
       </label>
       <label>

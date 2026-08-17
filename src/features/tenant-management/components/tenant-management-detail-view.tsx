@@ -36,7 +36,7 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
       action={
         <Link
           href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
-          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold"
+          className="management-secondary-button inline-flex items-center border px-3 text-xs font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--ring)]"
         >
           返回机构管理
         </Link>
@@ -57,6 +57,11 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
         ]}
       />
 
+      <section aria-labelledby="tenant-members-title" className="space-y-2">
+        <h2 id="tenant-members-title" className="sr-only">机构成员</h2>
+        <TenantMembersTable data={result.members} institutionName={result.tenant.name} />
+      </section>
+
       <TenantLifecycleActions
         tenantId={result.tenant.id}
         tenantName={result.tenant.name}
@@ -65,8 +70,6 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
         canPermanentlyDelete={result.viewer.canPermanentlyDelete}
         listHref={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}
       />
-
-      <TenantMembersTable data={result.members} institutionName={result.tenant.name} />
     </ManagementPage>
   );
 }

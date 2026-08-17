@@ -134,7 +134,7 @@ export function DeleteChecklistItemButton({
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle className="font-black text-red-700">删除「{title}」？</AlertDialogTitle>
+          <AlertDialogTitle className="font-semibold text-red-700">删除「{title}」？</AlertDialogTitle>
           <AlertDialogDescription className="leading-6">
             这项资料会从学生的申请资料清单中移除，学生端也会同步消失。此操作无法恢复。
           </AlertDialogDescription>

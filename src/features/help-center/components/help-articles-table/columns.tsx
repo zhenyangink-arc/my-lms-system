@@ -55,7 +55,7 @@ export const helpArticleColumns: ColumnDef<ManagedHelpArticle>[] = [
     cell: ({ row }) => (
       <div className="min-w-64 max-w-xl">
         <div className="flex items-center gap-2">
-          <p className="truncate font-semibold text-[var(--app-text)]">
+          <p className="truncate font-semibold text-[var(--foreground)]">
             {row.original.title}
           </p>
           {row.original.is_featured && (
@@ -64,7 +64,7 @@ export const helpArticleColumns: ColumnDef<ManagedHelpArticle>[] = [
             </span>
           )}
         </div>
-        <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-[var(--app-muted)]">
+        <p className="mt-1 line-clamp-2 text-[11px] leading-5 text-[var(--foreground-muted)]">
           {row.original.summary || "暂无摘要"}
         </p>
       </div>
@@ -97,7 +97,7 @@ export const helpArticleColumns: ColumnDef<ManagedHelpArticle>[] = [
     accessorKey: "updatedAt",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-[var(--app-muted)]">
+      <span className="text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updatedAt}
           options={DATE_OPTIONS}

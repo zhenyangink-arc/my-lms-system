@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import {
+  ArrowLeft,
   ArrowRight,
   CheckCircle2,
   Clock3,
@@ -151,34 +152,34 @@ export function FormalConversationPractice() {
         <section
           className="app-card overflow-hidden rounded-[2rem] border p-6 sm:p-8"
         >
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color: "var(--app-success)", backgroundColor: "var(--app-card-bg)" }}>
-            <CheckCircle2 size={26} />
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--card)" }}>
+            <CheckCircle2 size={26} aria-hidden="true" />
           </span>
-          <p className="mt-6 text-xs font-black tracking-[0.14em]" style={{ color: "var(--app-success)" }}>正式练习完成</p>
-          <h1 className="mt-2 text-3xl font-black">{summary.config.scenario}</h1>
+          <p className="mt-6 text-xs font-bold tracking-[0.14em]" style={{ color: "var(--status-success)" }}>正式练习完成</p>
+          <h2 className="mt-2 text-3xl font-bold">{summary.config.scenario}</h2>
 
           <div className="mt-7 grid gap-3 sm:grid-cols-3">
             <div className="app-card rounded-2xl border p-4">
-              <Clock3 size={17} style={{ color: "var(--app-secondary)" }} />
-              <p className="mt-3 text-2xl font-black">{formatDuration(summary.elapsedSeconds)}</p>
-              <p className="app-muted-text mt-1 text-xs font-black">练习时间</p>
+              <Clock3 size={17} style={{ color: "var(--support)" }} aria-hidden="true" />
+              <p className="mt-3 text-2xl font-bold">{formatDuration(summary.elapsedSeconds)}</p>
+              <p className="app-muted-text mt-1 text-xs font-bold">练习时间</p>
             </div>
             <div className="app-card rounded-2xl border p-4">
-              <MessageCircleMore size={17} style={{ color: "var(--app-accent)" }} />
-              <p className="mt-3 text-2xl font-black">{totalTurns}</p>
-              <p className="app-muted-text mt-1 text-xs font-black">交流轮次</p>
+              <MessageCircleMore size={17} style={{ color: "var(--primary)" }} aria-hidden="true" />
+              <p className="mt-3 text-2xl font-bold">{totalTurns}</p>
+              <p className="app-muted-text mt-1 text-xs font-bold">交流轮次</p>
             </div>
             <div className="app-card rounded-2xl border p-4">
-              <Sparkles size={17} style={{ color: "var(--app-warm)" }} />
-              <p className="mt-3 text-2xl font-black">
+              <Sparkles size={17} style={{ color: "var(--status-warning)" }} aria-hidden="true" />
+              <p className="mt-3 text-2xl font-bold">
                 {summary.config.difficulty === "beginner" ? "初级" : summary.config.difficulty === "intermediate" ? "中级" : "高级"}
               </p>
-              <p className="app-muted-text mt-1 text-xs font-black">练习难度</p>
+              <p className="app-muted-text mt-1 text-xs font-bold">练习难度</p>
             </div>
           </div>
 
           <div className="app-card mt-5 rounded-2xl border p-5">
-            <h2 className="font-black">本次建议</h2>
+            <h2 className="font-bold">本次建议</h2>
             <p className="app-muted-text mt-2 text-sm font-bold leading-7">
               {totalTurns >= 5
                 ? "已经完成多轮交流。下一次可以减少中文辅助，尝试用更完整的韩语句子继续话题。"
@@ -197,16 +198,16 @@ export function FormalConversationPractice() {
                 setMicStatus("ready");
                 setPhase("setup");
               }}
-              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-black text-white"
-              style={{ backgroundColor: "var(--app-secondary)" }}
+              className="inline-flex h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+              style={{ color: "var(--status-warning-foreground)", backgroundColor: "var(--support)" }}
             >
-              <RotateCcw size={15} />再练一次
+              <RotateCcw size={15} aria-hidden="true" />再练一次
             </button>
             <Link
               href="/dashboard/conversation-practice/ai-experience"
-              className="app-card inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-black"
+              className="app-card inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
-              返回智能交流 <ArrowRight size={15} />
+              返回智能交流 <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </section>
@@ -216,67 +217,70 @@ export function FormalConversationPractice() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
+      <Link href="/dashboard/conversation-practice/ai-experience" className="app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+        <ArrowLeft size={14} aria-hidden="true" />返回练习方式
+      </Link>
       <section className="app-card overflow-hidden rounded-[2rem] border">
-        <header className="p-6 sm:p-8" style={{ backgroundColor: "var(--app-secondary-soft)" }}>
-          <h2 className="text-3xl font-black">准备本次练习</h2>
+        <header className="p-6 sm:p-8" style={{ backgroundColor: "var(--support-surface)" }}>
+          <h2 className="text-3xl font-bold">准备本次练习</h2>
         </header>
 
         <div className="space-y-7 p-6 sm:p-8">
           <fieldset>
-            <legend className="text-sm font-black">练习情境</legend>
+            <legend className="text-sm font-bold">练习情境</legend>
             <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
               {scenarios.map((item) => (
-                <button key={item} type="button" onClick={() => setScenario(item)} className="rounded-xl border px-3 py-3 text-sm font-black transition" style={{ color: scenario === item ? "white" : "var(--app-text)", borderColor: scenario === item ? "var(--app-secondary)" : "var(--app-border)", backgroundColor: scenario === item ? "var(--app-secondary)" : "var(--app-soft-bg)" }}>{item}</button>
+                <button key={item} type="button" onClick={() => setScenario(item)} aria-pressed={scenario === item} className="rounded-xl border px-3 py-3 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ color: scenario === item ? "var(--status-warning-foreground)" : "var(--foreground)", borderColor: scenario === item ? "var(--support)" : "var(--border)", backgroundColor: scenario === item ? "var(--support)" : "var(--surface-soft)" }}>{item}</button>
               ))}
             </div>
           </fieldset>
 
           <div className="grid gap-7 md:grid-cols-2">
             <fieldset>
-              <legend className="text-sm font-black">难度</legend>
+              <legend className="text-sm font-bold">难度</legend>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {difficulties.map(([value, label]) => (
-                  <button key={value} type="button" onClick={() => setDifficulty(value)} className="rounded-xl border px-3 py-3 text-sm font-black" style={{ color: difficulty === value ? "white" : "var(--app-text)", backgroundColor: difficulty === value ? "var(--app-accent)" : "var(--app-soft-bg)" }}>{label}</button>
+                  <button key={value} type="button" onClick={() => setDifficulty(value)} aria-pressed={difficulty === value} className="rounded-xl border px-3 py-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ color: difficulty === value ? "var(--primary-foreground)" : "var(--foreground)", backgroundColor: difficulty === value ? "var(--primary)" : "var(--surface-soft)" }}>{label}</button>
                 ))}
               </div>
             </fieldset>
 
             <fieldset>
-              <legend className="text-sm font-black">练习时间</legend>
+              <legend className="text-sm font-bold">练习时间</legend>
               <div className="mt-3 grid grid-cols-3 gap-2">
                 {durations.map((value) => (
-                  <button key={value} type="button" onClick={() => setDurationMinutes(value)} className="rounded-xl border px-3 py-3 text-sm font-black" style={{ color: durationMinutes === value ? "white" : "var(--app-text)", backgroundColor: durationMinutes === value ? "var(--app-warm)" : "var(--app-soft-bg)" }}>{value} 分钟</button>
+                  <button key={value} type="button" onClick={() => setDurationMinutes(value)} aria-pressed={durationMinutes === value} className="rounded-xl border px-3 py-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ color: durationMinutes === value ? "var(--status-warning-foreground)" : "var(--foreground)", backgroundColor: durationMinutes === value ? "var(--status-warning)" : "var(--surface-soft)" }}>{value} 分钟</button>
                 ))}
               </div>
             </fieldset>
           </div>
 
           <fieldset>
-            <legend className="text-sm font-black">回答方式</legend>
+            <legend className="text-sm font-bold">回答方式</legend>
             <div className="mt-3 grid gap-2 sm:grid-cols-3">
               {replyModes.map(([value, label]) => (
-                <button key={value} type="button" onClick={() => setReplyLanguageMode(value)} className="rounded-xl border px-3 py-3 text-sm font-black" style={{ color: replyLanguageMode === value ? "white" : "var(--app-text)", backgroundColor: replyLanguageMode === value ? "var(--app-success)" : "var(--app-soft-bg)" }}>{label}</button>
+                <button key={value} type="button" onClick={() => setReplyLanguageMode(value)} aria-pressed={replyLanguageMode === value} className="rounded-xl border px-3 py-3 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" style={{ color: replyLanguageMode === value ? "var(--status-success-foreground)" : "var(--foreground)", backgroundColor: replyLanguageMode === value ? "var(--status-success)" : "var(--surface-soft)" }}>{label}</button>
               ))}
             </div>
           </fieldset>
 
-          <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center" style={{ borderColor: "var(--app-border-soft)" }}>
-            <span className="inline-flex flex-1 items-center gap-2 text-xs font-black" style={{ color: micStatus === "error" ? "var(--app-warm)" : micStatus === "ready" ? "var(--app-success)" : "var(--app-muted)" }}>
-              <Mic size={14} />
+          <div className="flex flex-col gap-3 border-t pt-6 sm:flex-row sm:items-center" style={{ borderColor: "var(--border-subtle)" }}>
+            <span className="inline-flex flex-1 items-center gap-2 text-xs font-bold" style={{ color: micStatus === "error" ? "var(--status-danger)" : micStatus === "ready" ? "var(--status-success)" : "var(--foreground-muted)" }}>
+              <Mic size={14} aria-hidden="true" />
               {micStatus === "checking" ? "正在检测麦克风" : micStatus === "ready" ? "麦克风可用" : micStatus === "error" ? "麦克风不可用" : "开始时检测麦克风"}
             </span>
             <button
               type="button"
               onClick={startPractice}
               disabled={micStatus === "checking"}
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-black text-white disabled:opacity-50"
-              style={{ backgroundColor: "#647abd" }}
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-xl px-6 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}
             >
-              <Timer size={16} />检测麦克风并开始
+              <Timer size={16} aria-hidden="true" />检测麦克风并开始
             </button>
           </div>
 
-          {errorMessage && <p className="text-sm font-bold" role="alert" style={{ color: "var(--app-warm)" }}>{errorMessage}</p>}
+          {errorMessage && <p className="text-sm font-bold" role="alert" style={{ color: "var(--status-danger)" }}>{errorMessage}</p>}
         </div>
       </section>
     </div>

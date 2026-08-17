@@ -35,7 +35,7 @@ function localDate(value?: string) {
 }
 
 const labelCellClass =
-  "w-[130px] border-b bg-[var(--app-soft-bg)] px-4 py-3 text-[11px] font-black align-top";
+  "w-[130px] border-b bg-[var(--surface-soft)] px-4 py-3 text-[11px] font-semibold align-top";
 const fieldCellClass = "border-b px-4 py-3";
 
 export function LearningRecordForm({
@@ -163,7 +163,7 @@ export function LearningRecordForm({
               </td>
             </tr>
             <tr>
-              <th className="w-[130px] bg-[var(--app-soft-bg)] px-4 py-3 text-[11px] font-black align-top">
+              <th className="w-[130px] bg-[var(--surface-soft)] px-4 py-3 text-[11px] font-semibold align-top">
                 下一步建议
               </th>
               <td className="px-4 py-3" colSpan={3}>
@@ -186,9 +186,9 @@ export function LearningRecordForm({
           <p
             className="rounded-lg px-3 py-2 text-xs font-bold"
             style={{
-              color: state.status === "error" ? "#c94f45" : "var(--app-success)",
+              color: state.status === "error" ? "#c94f45" : "var(--status-success)",
               backgroundColor:
-                state.status === "error" ? "#fff0ed" : "var(--app-success-soft)",
+                state.status === "error" ? "#fff0ed" : "var(--status-success-surface)",
             }}
           >
             {state.message}
@@ -201,8 +201,8 @@ export function LearningRecordForm({
         <button
           type="submit"
           disabled={pending}
-          className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-black text-white disabled:opacity-50"
-          style={{ backgroundColor: "var(--app-secondary)" }}
+          className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50"
+          style={{ backgroundColor: "var(--support)" }}
         >
           <Save size={14} />
           {pending ? "正在保存…" : note ? "保存修改" : "添加辅导备注"}

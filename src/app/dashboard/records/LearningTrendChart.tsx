@@ -180,7 +180,7 @@ export function LearningTrendChart({
           折线越高，表示当天经过计时确认的学习时间越长。
         </p>
         <div
-          className="grid grid-cols-4 gap-1 rounded-2xl bg-[var(--app-soft-bg)] p-1"
+          className="grid grid-cols-4 gap-1 rounded-2xl bg-[var(--surface-soft)] p-1"
           role="group"
           aria-label="选择学习趋势范围"
         >
@@ -194,15 +194,15 @@ export function LearningTrendChart({
                 onRangeChange(option.value);
               }}
               aria-pressed={rangeDays === option.value}
-              className="min-h-11 cursor-pointer rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+              className="min-h-11 cursor-pointer rounded-xl px-3 text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               style={{
                 color:
                   rangeDays === option.value
-                    ? "var(--app-accent)"
-                    : "var(--app-muted)",
+                    ? "var(--primary)"
+                    : "var(--foreground-muted)",
                 backgroundColor:
                   rangeDays === option.value
-                    ? "var(--app-card-bg)"
+                    ? "var(--card)"
                     : "transparent",
               }}
             >
@@ -217,7 +217,7 @@ export function LearningTrendChart({
           <div className="relative">
             <svg
               viewBox="0 0 820 260"
-              className="h-auto w-full touch-manipulation rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+              className="h-auto w-full touch-manipulation rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               role="img"
               tabIndex={0}
               aria-label={`${rangeDays === 365 ? "近一年" : `最近 ${rangeDays} 天`}累计有效学习 ${formatLearningDuration(chart.totalSeconds)}，${chart.activeDays} 个学习日。${chart.comparison}。可使用鼠标、触摸或左右方向键查看每日数据。`}
@@ -254,12 +254,12 @@ export function LearningTrendChart({
                 >
                   <stop
                     offset="0%"
-                    stopColor="var(--app-accent)"
+                    stopColor="var(--primary)"
                     stopOpacity="0.2"
                   />
                   <stop
                     offset="100%"
-                    stopColor="var(--app-accent)"
+                    stopColor="var(--primary)"
                     stopOpacity="0.01"
                   />
                 </linearGradient>
@@ -276,14 +276,14 @@ export function LearningTrendChart({
                       x2={chart.plot.right}
                       y1={y}
                       y2={y}
-                      stroke="var(--app-border-soft)"
+                      stroke="var(--border-subtle)"
                       strokeDasharray={ratio === 1 ? undefined : "5 7"}
                     />
                     <text
                       x={chart.plot.left - 10}
                       y={y + 4}
                       textAnchor="end"
-                      fill="var(--app-muted)"
+                      fill="var(--foreground-muted)"
                       fontSize="10"
                       fontWeight="500"
                     >
@@ -299,7 +299,7 @@ export function LearningTrendChart({
                 <path
                   d={chart.linePath}
                   fill="none"
-                  stroke="var(--app-accent)"
+                  stroke="var(--primary)"
                   strokeWidth="4"
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -311,7 +311,7 @@ export function LearningTrendChart({
                   x2={activePoint.x}
                   y1={chart.plot.top}
                   y2={chart.plot.bottom}
-                  stroke="var(--app-accent)"
+                  stroke="var(--primary)"
                   strokeDasharray="4 5"
                   strokeOpacity="0.65"
                 />
@@ -323,8 +323,8 @@ export function LearningTrendChart({
                       cx={point.x}
                       cy={point.y}
                       r={safeActiveIndex === index ? 6 : 4}
-                      fill="var(--app-card-bg)"
-                      stroke="var(--app-accent)"
+                      fill="var(--card)"
+                      stroke="var(--primary)"
                       strokeWidth="3"
                     />
                   )}
@@ -333,8 +333,8 @@ export function LearningTrendChart({
                       cx={point.x}
                       cy={point.y}
                       r="5"
-                      fill="var(--app-secondary)"
-                      stroke="var(--app-card-bg)"
+                      fill="var(--support)"
+                      stroke="var(--card)"
                       strokeWidth="2"
                     />
                   )}
@@ -343,7 +343,7 @@ export function LearningTrendChart({
                       x={point.x}
                       y="246"
                       textAnchor="middle"
-                      fill="var(--app-muted)"
+                      fill="var(--foreground-muted)"
                       fontSize="10"
                       fontWeight="500"
                     >
@@ -358,7 +358,7 @@ export function LearningTrendChart({
               <div
                 id="learning-chart-tooltip"
                 role="tooltip"
-                className="pointer-events-none absolute z-10 min-w-40 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 py-2 shadow-lg"
+                className="pointer-events-none absolute z-10 min-w-40 border border-[var(--border)] bg-[var(--card)] px-3 py-2 shadow-lg"
                 style={{
                   left: `${(activePoint.x / VIEWBOX_WIDTH) * 100}%`,
                   top: `${(activePoint.y / 260) * 100}%`,
@@ -368,7 +368,7 @@ export function LearningTrendChart({
                 <p className="text-xs font-semibold">
                   {fullLearningDateLabel(activePoint.key)}
                 </p>
-                <p className="mt-1 text-sm font-black tabular-nums text-[var(--app-accent)]">
+                <p className="mt-1 text-sm font-bold tabular-nums text-[var(--primary)]">
                   {formatLearningDuration(activePoint.seconds)}
                 </p>
                 <p className="app-muted-text mt-0.5 text-xs font-medium">
@@ -384,13 +384,13 @@ export function LearningTrendChart({
             </p>
           )}
 
-          <details className="mt-3 border-t border-[var(--app-border-soft)]">
-            <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]">
+          <details className="mt-3 border-t border-[var(--border-subtle)]">
+            <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
               查看每日数据表
             </summary>
-            <div className="max-h-72 overflow-auto border-t border-[var(--app-border-soft)]">
+            <div className="max-h-72 overflow-auto border-t border-[var(--border-subtle)]">
               <table className="w-full text-left text-xs">
-                <thead className="sticky top-0 bg-[var(--app-card-bg)]">
+                <thead className="sticky top-0 bg-[var(--card)]">
                   <tr>
                     <th className="px-3 py-3 font-semibold">日期</th>
                     <th className="px-3 py-3 text-right font-semibold">
@@ -405,7 +405,7 @@ export function LearningTrendChart({
                   {[...chart.visibleDays].reverse().map((day) => (
                     <tr
                       key={day.key}
-                      className="border-t border-[var(--app-border-soft)]"
+                      className="border-t border-[var(--border-subtle)]"
                     >
                       <td className="px-3 py-3 font-medium">
                         {fullLearningDateLabel(day.key)}
@@ -424,26 +424,26 @@ export function LearningTrendChart({
           </details>
         </div>
 
-        <aside className="divide-y divide-[var(--app-border-soft)] border-y border-[var(--app-border-soft)] xl:border-y-0 xl:border-l">
+        <aside className="divide-y divide-[var(--border-subtle)] border-y border-[var(--border-subtle)] xl:border-y-0 xl:border-l">
           {[
             {
               label:
                 rangeDays === 365 ? "近一年累计" : `最近 ${rangeDays} 天累计`,
               value: formatLearningDuration(chart.totalSeconds),
               icon: Clock3,
-              color: "var(--app-accent)",
+              color: "var(--primary)",
             },
             {
               label: "有学习活动的日期",
               value: `${chart.activeDays} 天`,
               icon: CalendarDays,
-              color: "var(--app-success)",
+              color: "var(--status-success)",
             },
             {
               label: "有计时日期的日均",
               value: formatLearningDuration(chart.averageSeconds),
               icon: BarChart3,
-              color: "var(--app-secondary)",
+              color: "var(--support)",
             },
           ].map((metric) => {
             const MetricIcon = metric.icon;
@@ -455,7 +455,7 @@ export function LearningTrendChart({
                   aria-hidden="true"
                 />
                 <div className="min-w-0">
-                  <p className="text-base font-black tabular-nums">
+                  <p className="text-base font-bold tabular-nums">
                     {metric.value}
                   </p>
                   <p className="app-muted-text mt-0.5 text-xs font-medium">
@@ -469,7 +469,7 @@ export function LearningTrendChart({
             className="flex items-start gap-2 px-3 py-4 text-xs font-semibold leading-5 xl:px-5"
             style={{
               color:
-                chart.delta >= 0 ? "var(--app-success)" : "var(--app-warm)",
+                chart.delta >= 0 ? "var(--status-success)" : "var(--status-warning)",
             }}
           >
             <TrendIcon size={15} className="mt-0.5 shrink-0" aria-hidden="true" />

@@ -27,15 +27,15 @@ export function ReminderDialog({ open, onOpenChange, reminders }: Props) {
       >
         {/* 头部 */}
         <div className="flex items-center justify-between px-5 pt-5 pb-3">
-          <DialogTitle className="flex items-center gap-2 text-base font-black">
-            <BellRing size={18} style={{ color: "var(--app-accent)" }} />
+          <DialogTitle className="flex items-center gap-2 text-base font-bold">
+            <BellRing size={18} style={{ color: "var(--primary)" }} />
             通知提醒
           </DialogTitle>
           <span
-            className="rounded-full px-2.5 py-1 text-xs font-black"
+            className="rounded-full px-2.5 py-1 text-xs font-bold"
             style={{
-              color: "var(--app-accent-strong)",
-              backgroundColor: "var(--app-accent-soft)",
+              color: "var(--primary-hover)",
+              backgroundColor: "var(--accent)",
             }}
           >
             {reminders.length} 项
@@ -51,19 +51,19 @@ export function ReminderDialog({ open, onOpenChange, reminders }: Props) {
                   <form key={item.id} action={item.actionHref} method="post">
                     <button
                       type="submit"
-                      className="flex w-full items-start gap-3 px-5 py-3 text-left transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)]"
+                      className="flex w-full items-start gap-3 px-5 py-3 text-left transition hover:bg-[color-mix(in_srgb,var(--accent)_30%,transparent)]"
                     >
                       <span
                         className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                         style={{
-                          color: "var(--app-accent)",
-                          backgroundColor: "var(--app-accent-soft)",
+                          color: "var(--primary)",
+                          backgroundColor: "var(--accent)",
                         }}
                       >
                         <MessageSquare size={16} aria-hidden="true" />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-sm font-black">
+                        <span className="block truncate text-sm font-bold">
                           {item.title}
                         </span>
                         <span className="mt-0.5 block truncate text-xs app-muted-text">
@@ -85,14 +85,14 @@ export function ReminderDialog({ open, onOpenChange, reminders }: Props) {
                     <span
                       className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                       style={{
-                        color: "var(--app-accent)",
-                        backgroundColor: "var(--app-accent-soft)",
+                        color: "var(--primary)",
+                        backgroundColor: "var(--accent)",
                       }}
                     >
                       <MessageSquare size={16} aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-sm font-black">
+                      <span className="block truncate text-sm font-bold">
                         {item.title}
                       </span>
                       <span className="mt-0.5 block truncate text-xs app-muted-text">
@@ -107,15 +107,15 @@ export function ReminderDialog({ open, onOpenChange, reminders }: Props) {
             <div className="flex flex-col items-center justify-center px-5 py-14 text-center">
               <span
                 className="flex h-12 w-12 items-center justify-center rounded-2xl"
-                style={{ backgroundColor: "var(--app-accent-soft)" }}
+                style={{ backgroundColor: "var(--accent)" }}
               >
                 <BellRing
                   size={22}
-                  style={{ color: "var(--app-accent)" }}
+                  style={{ color: "var(--primary)" }}
                   aria-hidden="true"
                 />
               </span>
-              <p className="mt-3 text-sm font-black">暂时没有新提醒</p>
+              <p className="mt-3 text-sm font-bold">暂时没有新提醒</p>
               <p className="mt-1 text-xs app-muted-text">
                 老师回复你之后会出现在这里
               </p>
@@ -128,8 +128,8 @@ export function ReminderDialog({ open, onOpenChange, reminders }: Props) {
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)]"
-            style={{ color: "var(--app-muted)" }}
+            className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--accent)_30%,transparent)]"
+            style={{ color: "var(--foreground-muted)" }}
           >
             关闭
           </button>

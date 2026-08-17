@@ -45,13 +45,13 @@ export function PlatformLearningRecordOverview({
         isEmpty={!hasError && rows.length === 0}
         emptyContent="当前没有可巡检机构"
         footer={
-          <p className="text-xs text-[var(--app-muted)]">
+          <p className="text-xs text-[var(--foreground-muted)]">
             平台负责人视图仅展示机构级匿名汇总，不包含学生姓名、账号编号、人工辅导备注标题或正文。
           </p>
         }
       >
         <Table className="min-w-[1180px]">
-          <TableHeader className="bg-[var(--app-soft-bg)]">
+          <TableHeader className="bg-[var(--surface-soft)]">
             <TableRow>
               <TableHead>机构</TableHead>
               <TableHead>活跃学生</TableHead>
@@ -68,8 +68,8 @@ export function PlatformLearningRecordOverview({
             {rows.map((row) => (
               <TableRow key={row.tenant_id}>
                 <TableCell>
-                  <p className="font-semibold text-[var(--app-text)]">{row.tenant_name}</p>
-                  <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+                  <p className="font-semibold text-[var(--foreground)]">{row.tenant_name}</p>
+                  <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
                     {row.tenant_status === "active" ? "运行中" : "已停用"}
                   </p>
                 </TableCell>
@@ -80,7 +80,7 @@ export function PlatformLearningRecordOverview({
                 <NumberCell value={row.internal_record_count} />
                 <NumberCell value={row.attention_record_count} />
                 <NumberCell value={row.plan_record_count} />
-                <TableCell className="text-xs text-[var(--app-muted)]">
+                <TableCell className="text-xs text-[var(--foreground-muted)]">
                   <LocalDateTime value={row.last_record_at} options={DATE_TIME_OPTIONS} fallback="暂无记录" />
                 </TableCell>
               </TableRow>

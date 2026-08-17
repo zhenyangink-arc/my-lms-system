@@ -44,8 +44,8 @@ export function getGrowthToolboxGrammarColumns(
     header: sortableHeader("语法名称"),
     cell: ({ row }) => (
       <div className="min-w-56 max-w-80">
-        <p className="font-semibold text-[var(--app-text)]">{row.original.title}</p>
-        <p className="mt-1 line-clamp-2 text-[11px] text-[var(--app-muted)]">
+        <p className="font-semibold text-[var(--foreground)]">{row.original.title}</p>
+        <p className="mt-1 line-clamp-2 text-[11px] text-[var(--foreground-muted)]">
           {row.original.meaning || "暂无中文含义"}
         </p>
       </div>
@@ -83,11 +83,11 @@ export function getGrowthToolboxGrammarColumns(
       const keys = audioKeys(row.original);
       return keys.length > 0 ? (
         <div className="min-w-48 max-w-72">
-          <p className="font-medium text-[var(--app-text-soft)]">
+          <p className="font-medium text-[var(--foreground-secondary)]">
             已配置 {keys.length} 个音频
           </p>
           <p
-            className="mt-0.5 truncate font-mono text-[10px] text-[var(--app-muted)]"
+            className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]"
             title={keys.join("\n")}
           >
             {keys[0].split("/").pop()}
@@ -95,7 +95,7 @@ export function getGrowthToolboxGrammarColumns(
           </p>
         </div>
       ) : (
-        <span className="text-[var(--app-muted)]">未配置</span>
+        <span className="text-[var(--foreground-muted)]">未配置</span>
       );
     },
   },
@@ -103,7 +103,7 @@ export function getGrowthToolboxGrammarColumns(
     accessorKey: "caution",
     header: sortableHeader("注意事项"),
     cell: ({ row }) => (
-      <span className="block min-w-56 max-w-80 whitespace-normal text-[var(--app-text-soft)]">
+      <span className="block min-w-56 max-w-80 whitespace-normal text-[var(--foreground-secondary)]">
         {row.original.caution || "暂无"}
       </span>
     ),
@@ -138,7 +138,7 @@ export function getGrowthToolboxGrammarColumns(
     cell: ({ row }) => canManage ? (
       <GrammarCellAction studentAppId={studentAppId} item={row.original} />
     ) : (
-      <span className="block text-right text-[11px] text-[var(--app-muted)]">只读</span>
+      <span className="block text-right text-[11px] text-[var(--foreground-muted)]">只读</span>
     ),
   },
   ];

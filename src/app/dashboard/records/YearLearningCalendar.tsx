@@ -44,19 +44,19 @@ function buildMonths(days: LearningDay[]) {
 
 function dayBackground(day: CalendarDay) {
   if (day.seconds <= 0 && day.activityCount > 0) {
-    return "var(--app-secondary-soft)";
+    return "var(--support-surface)";
   }
-  if (day.level === 0) return "var(--app-soft-bg)";
+  if (day.level === 0) return "var(--surface-soft)";
   if (day.level === 1) {
-    return "color-mix(in srgb, var(--app-success) 24%, var(--app-card-bg))";
+    return "color-mix(in srgb, var(--status-success) 24%, var(--card))";
   }
   if (day.level === 2) {
-    return "color-mix(in srgb, var(--app-success) 48%, var(--app-card-bg))";
+    return "color-mix(in srgb, var(--status-success) 48%, var(--card))";
   }
   if (day.level === 3) {
-    return "color-mix(in srgb, var(--app-success) 72%, var(--app-card-bg))";
+    return "color-mix(in srgb, var(--status-success) 72%, var(--card))";
   }
-  return "var(--app-success)";
+  return "var(--status-success)";
 }
 
 export function YearLearningCalendar({
@@ -90,13 +90,13 @@ export function YearLearningCalendar({
         </p>
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <p className="font-medium">
-            <span className="font-black tabular-nums text-[var(--app-success)]">
+            <span className="font-bold tabular-nums text-[var(--status-success)]">
               {activeDays}
             </span>{" "}
             个学习日
           </p>
           <p className="font-medium">
-            <span className="font-black tabular-nums">
+            <span className="font-bold tabular-nums">
               {formatLearningDuration(totalSeconds)}
             </span>{" "}
             有效学习
@@ -108,11 +108,11 @@ export function YearLearningCalendar({
         {visibleMonths.map((month) => (
           <section
             key={month.key}
-            className="border-b border-[var(--app-border-soft)] pb-5"
+            className="border-b border-[var(--border-subtle)] pb-5"
           >
             <h3 className="mb-3 text-sm font-semibold">{month.label}</h3>
             <div
-              className="mb-1 grid grid-cols-7 gap-1 text-center text-[10px] font-medium text-[var(--app-muted)]"
+              className="mb-1 grid grid-cols-7 gap-1 text-center text-[10px] font-medium text-[var(--foreground-muted)]"
               aria-hidden="true"
             >
               {["一", "二", "三", "四", "五", "六", "日"].map(
@@ -139,20 +139,20 @@ export function YearLearningCalendar({
                     aria-pressed={selected}
                     aria-label={`${fullLearningDateLabel(day.key)}，${detail}`}
                     title={`${fullLearningDateLabel(day.key)} · ${detail}`}
-                    className="relative aspect-square min-h-9 cursor-pointer rounded-md border text-[10px] font-semibold tabular-nums transition-[border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-success)]"
+                    className="relative aspect-square min-h-9 cursor-pointer rounded-md border text-[10px] font-semibold tabular-nums transition-[border-color,box-shadow] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--status-success)]"
                     style={{
                       color:
                         day.level >= 3
                           ? "white"
                           : active
-                            ? "var(--app-text)"
-                            : "var(--app-muted)",
+                            ? "var(--foreground)"
+                            : "var(--foreground-muted)",
                       backgroundColor: dayBackground(day),
                       borderColor: selected
-                        ? "var(--app-text)"
+                        ? "var(--foreground)"
                         : "transparent",
                       boxShadow: selected
-                        ? "0 0 0 2px var(--app-card-bg), 0 0 0 4px var(--app-success)"
+                        ? "0 0 0 2px var(--card), 0 0 0 4px var(--status-success)"
                         : undefined,
                     }}
                   >
@@ -160,7 +160,7 @@ export function YearLearningCalendar({
                     {day.activityCount > 0 && (
                       <span
                         aria-hidden="true"
-                        className="absolute bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[var(--app-secondary)] ring-1 ring-[var(--app-card-bg)]"
+                        className="absolute bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-[var(--support)] ring-1 ring-[var(--card)]"
                       />
                     )}
                   </button>
@@ -177,7 +177,7 @@ export function YearLearningCalendar({
             type="button"
             aria-expanded={expanded}
             onClick={() => setExpanded((current) => !current)}
-            className="inline-flex min-h-11 cursor-pointer items-center gap-2 px-4 text-sm font-semibold text-[var(--app-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-secondary)]"
+            className="inline-flex min-h-11 cursor-pointer items-center gap-2 px-4 text-sm font-semibold text-[var(--support)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--support)]"
           >
             {expanded ? (
               <>
@@ -194,17 +194,17 @@ export function YearLearningCalendar({
         </div>
       )}
 
-      <div className="mt-4 flex flex-col gap-3 border-t border-[var(--app-border-soft)] pt-4 sm:flex-row sm:items-center sm:justify-between">
+      <div className="mt-4 flex flex-col gap-3 border-t border-[var(--border-subtle)] pt-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="app-muted-text text-sm font-medium" aria-live="polite">
           {selectedDay
             ? `${fullLearningDateLabel(selectedDay.key)} · ${formatLearningDuration(selectedDay.seconds)} · ${selectedDay.activityCount} 项学习活动`
             : "点击任意日期，下方会直接显示当天的学习记录。"}
         </p>
         <div
-          className="flex flex-wrap items-center gap-2 text-[10px] font-medium text-[var(--app-muted)]"
+          className="flex flex-wrap items-center gap-2 text-[10px] font-medium text-[var(--foreground-muted)]"
           aria-label="学习日历图例"
         >
-          <span className="h-3 w-3 bg-[var(--app-secondary-soft)] ring-1 ring-[var(--app-secondary)]" />
+          <span className="h-3 w-3 bg-[var(--support-surface)] ring-1 ring-[var(--support)]" />
           <span>有活动</span>
           <span className="ml-2">时长少</span>
           {[1, 2, 3, 4].map((level) => (
@@ -214,8 +214,8 @@ export function YearLearningCalendar({
               style={{
                 backgroundColor:
                   level === 4
-                    ? "var(--app-success)"
-                    : `color-mix(in srgb, var(--app-success) ${level * 24}%, var(--app-card-bg))`,
+                    ? "var(--status-success)"
+                    : `color-mix(in srgb, var(--status-success) ${level * 24}%, var(--card))`,
               }}
             />
           ))}

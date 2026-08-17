@@ -35,9 +35,9 @@ export type ConversationScenarioFormValue = {
 };
 
 const fieldClass =
-  "app-input w-full rounded-md border px-3 py-2.5 text-xs outline-none";
+  "app-input w-full rounded-md border px-3 py-2.5 text-xs focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2";
 const headerCellClass =
-  "w-36 bg-[var(--app-soft-bg)] px-3 py-3 text-left text-[11px] font-black align-top";
+  "w-36 bg-[var(--surface-soft)] px-3 py-3 text-left text-[11px] font-semibold align-top";
 const valueCellClass = "px-3 py-3 align-top";
 
 export function ConversationScenarioForm({
@@ -53,25 +53,25 @@ export function ConversationScenarioForm({
   return (
     <section id={scenario ? "edit-scenario" : "create-scenario"} className={workspace ? "" : "app-card rounded-3xl border p-4 sm:p-5"}>
       {workspace ? (
-        <div className="border-b pb-4" style={{ borderColor: "var(--app-border)" }}>
+        <div className="border-b pb-4" style={{ borderColor: "var(--border)" }}>
           <h2 className="text-[13px] font-semibold">{scenario ? "场景内容" : "新建会话场景"}</h2>
           <p className="app-muted-text mt-1 text-[10px]">填写基本信息、练习内容和发布设置</p>
         </div>
       ) : (
         <div className="flex items-start gap-3">
-          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}><BookOpenCheck size={20} /></span>
-          <div><h2 className="text-lg font-black">{scenario ? "编辑会话场景" : "新建会话场景"}</h2><p className="app-muted-text mt-1 text-xs leading-5">先整理情景、示范对话和重点表达，再决定保存草稿或发布。</p></div>
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><BookOpenCheck size={20} aria-hidden="true" /></span>
+          <div><h2 className="text-lg font-semibold">{scenario ? "编辑会话场景" : "新建会话场景"}</h2><p className="app-muted-text mt-1 text-xs leading-5">先整理情景、示范对话和重点表达，再决定保存草稿或发布。</p></div>
         </div>
       )}
 
       <form action={formAction} className="mt-5 space-y-4">
         {scenario && <input type="hidden" name="status" value={scenario.status} />}
-        <div className="overflow-hidden border" style={{ borderColor: "var(--app-border)" }}>
+        <div className="overflow-hidden border" style={{ borderColor: "var(--border)" }}>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[980px] table-fixed border-collapse text-left">
               <tbody className="divide-y">
                 <tr>
-                  <th colSpan={4} className="bg-[var(--app-soft-bg)] px-3 py-2.5 text-[11px] font-black" style={{ color: "var(--app-accent-strong)" }}>基础信息</th>
+                  <th colSpan={4} className="bg-[var(--surface-soft)] px-3 py-2.5 text-[11px] font-semibold" style={{ color: "var(--primary-hover)" }}>基础信息</th>
                 </tr>
                 <tr>
                   <th className={headerCellClass}><label htmlFor="conversation-title">场景标题</label></th>
@@ -101,7 +101,7 @@ export function ConversationScenarioForm({
                 </tr>
 
                 <tr>
-                  <th colSpan={4} className="bg-[var(--app-soft-bg)] px-3 py-2.5 text-[11px] font-black" style={{ color: "var(--app-accent-strong)" }}>练习内容</th>
+                  <th colSpan={4} className="bg-[var(--surface-soft)] px-3 py-2.5 text-[11px] font-semibold" style={{ color: "var(--primary-hover)" }}>练习内容</th>
                 </tr>
                 <tr>
                   <th className={headerCellClass}><label htmlFor="conversation-objectives">学习目标</label><span className="app-muted-text mt-1 block text-[9px] font-medium">每行一条</span></th>
@@ -121,7 +121,7 @@ export function ConversationScenarioForm({
                 </tr>
 
                 <tr>
-                  <th colSpan={4} className="bg-[var(--app-soft-bg)] px-3 py-2.5 text-[11px] font-black" style={{ color: "var(--app-accent-strong)" }}>发布设置</th>
+                  <th colSpan={4} className="bg-[var(--surface-soft)] px-3 py-2.5 text-[11px] font-semibold" style={{ color: "var(--primary-hover)" }}>发布设置</th>
                 </tr>
                 <tr>
                   <th className={headerCellClass}><label htmlFor="conversation-duration">建议时长</label></th>
@@ -140,15 +140,15 @@ export function ConversationScenarioForm({
           </div>
         </div>
 
-        {state.message && <p aria-live="polite" className="rounded-xl px-4 py-3 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)", backgroundColor: state.status === "error" ? "#fff0ed" : "var(--app-success-soft)" }}>{state.message}</p>}
+        {state.message && <p aria-live="polite" className="rounded-xl px-4 py-3 text-xs font-bold" style={{ color: state.status === "error" ? "var(--status-danger)" : "var(--status-success)", backgroundColor: state.status === "error" ? "var(--status-danger-surface)" : "var(--status-success-surface)" }}>{state.message}</p>}
 
-        <div className="sticky bottom-0 flex flex-wrap gap-2 border-t bg-[var(--app-card-bg)] py-3" style={{ borderColor: "var(--app-border)" }}>
+        <div className="sticky bottom-0 flex flex-wrap gap-2 border-t bg-[var(--card)] py-3" style={{ borderColor: "var(--border)" }}>
           {scenario ? (
-            <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-accent)" }}><Save size={15} />{pending ? "正在保存…" : "保存修改"}</button>
+            <button type="submit" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50" style={{ backgroundColor: "var(--primary)" }}><Save size={15} aria-hidden="true" />{pending ? "正在保存…" : "保存修改"}</button>
           ) : (
             <>
-              <button type="submit" name="intent" value="publish" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black text-white disabled:opacity-50" style={{ backgroundColor: "var(--app-accent)" }}><Send size={15} />{pending ? "正在保存…" : "保存并发布"}</button>
-              <button type="submit" name="intent" value="draft" disabled={pending} className="app-soft-card inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-black disabled:opacity-50"><Save size={15} />保存草稿</button>
+              <button type="submit" name="intent" value="publish" disabled={pending} className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50" style={{ backgroundColor: "var(--primary)" }}><Send size={15} aria-hidden="true" />{pending ? "正在保存…" : "保存并发布"}</button>
+              <button type="submit" name="intent" value="draft" disabled={pending} className="app-soft-card inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50"><Save size={15} aria-hidden="true" />保存草稿</button>
             </>
           )}
         </div>

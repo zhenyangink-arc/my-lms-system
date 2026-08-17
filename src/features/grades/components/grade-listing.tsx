@@ -40,7 +40,7 @@ export async function GradeListingContent({
   return (
     <div className="space-y-4">
       {result.hasError && (
-        <p className="border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-medium text-amber-800">
+        <p className="border border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-4 py-3 text-sm font-medium text-[var(--status-warning)]">
           部分实时成绩数据暂时无法读取，请稍后刷新。
         </p>
       )}

@@ -88,24 +88,24 @@ const KIND_STYLE: Record<
   { background: string; color: string; borderColor: string }
 > = {
   category: {
-    background: "var(--app-accent-soft)",
-    color: "var(--app-accent-strong)",
-    borderColor: "var(--app-accent)",
+    background: "var(--accent)",
+    color: "var(--primary-hover)",
+    borderColor: "var(--primary)",
   },
   course: {
-    background: "var(--app-warm-soft)",
-    color: "var(--app-warm)",
-    borderColor: "var(--app-warm)",
+    background: "var(--status-warning-surface)",
+    color: "var(--status-warning)",
+    borderColor: "var(--status-warning)",
   },
   lesson: {
-    background: "var(--app-secondary-soft)",
-    color: "var(--app-secondary)",
-    borderColor: "var(--app-secondary)",
+    background: "var(--support-surface)",
+    color: "var(--support)",
+    borderColor: "var(--support)",
   },
   chapter: {
     background: "white",
-    color: "var(--app-muted)",
-    borderColor: "var(--app-border)",
+    color: "var(--foreground-muted)",
+    borderColor: "var(--border)",
   },
 };
 
@@ -121,27 +121,27 @@ export function TreeLabelNode({ data }: NodeProps) {
         <div
           className="w-[168px] rounded-2xl border p-3 shadow-sm transition hover:-translate-y-0.5"
           style={{
-            background: "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-end))",
-            borderColor: "var(--app-border)",
+            background: "linear-gradient(145deg, var(--card), var(--accent))",
+            borderColor: "var(--border)",
             cursor: data.href ? "pointer" : "default",
           }}
         >
           <div className="flex items-center justify-between">
             <span
               className="flex h-8 w-8 items-center justify-center rounded-xl"
-              style={{ backgroundColor: "var(--app-accent-soft)", color: "var(--app-accent)" }}
+              style={{ backgroundColor: "var(--accent)", color: "var(--primary)" }}
             >
               <BookOpen size={15} aria-hidden="true" />
             </span>
-            <span className="text-[11px] font-black" style={{ color: "var(--app-success)" }}>
+            <span className="text-[11px] font-bold" style={{ color: "var(--status-success)" }}>
               {percent}%
             </span>
           </div>
-          <p className="mt-2 truncate text-xs font-black">{String(data.label)}</p>
-          <div className="mt-2 h-1 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+          <p className="mt-2 truncate text-xs font-bold">{String(data.label)}</p>
+          <div className="mt-2 h-1 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
             <div
               className="h-full rounded-full"
-              style={{ width: `${percent}%`, backgroundColor: "var(--app-accent)" }}
+              style={{ width: `${percent}%`, backgroundColor: "var(--primary)" }}
             />
           </div>
         </div>
@@ -156,11 +156,11 @@ export function TreeLabelNode({ data }: NodeProps) {
       <>
         <Handle type="target" position={Position.Left} style={{ opacity: 0 }} />
         <div
-          className="flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-black"
+          className="flex items-center gap-1.5 rounded-xl border px-3 py-2 text-[11px] font-bold"
           style={{
-            backgroundColor: "var(--app-accent-soft)",
-            color: "var(--app-accent-strong)",
-            borderColor: "var(--app-accent)",
+            backgroundColor: "var(--accent)",
+            color: "var(--primary-hover)",
+            borderColor: "var(--primary)",
             whiteSpace: "nowrap",
           }}
         >
@@ -204,7 +204,7 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
         type="button"
         onClick={() => setOpen(true)}
         className="inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition hover:-translate-y-0.5"
-        style={{ borderColor: "var(--app-border)" }}
+        style={{ borderColor: "var(--border)" }}
       >
         查看全部课程
       </button>
@@ -216,20 +216,20 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
           className="!max-w-[960px] gap-0 rounded-[20px] p-0 app-glass-panel overflow-hidden"
         >
           <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-3">
-            <DialogTitle className="flex items-center gap-2 text-base font-black">
-              <BookOpen size={18} style={{ color: "var(--app-accent)" }} />
+            <DialogTitle className="flex items-center gap-2 text-base font-bold">
+              <BookOpen size={18} style={{ color: "var(--primary)" }} />
               全部课程 · 课程体系树
             </DialogTitle>
             <span
-              className="shrink-0 rounded-full px-3 py-1 text-xs font-black"
-              style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+              className="shrink-0 rounded-full px-3 py-1 text-xs font-bold"
+              style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
             >
               {tree.nodes.length} 节点
             </span>
           </div>
 
           <div className="px-4 pb-4">
-            <div className="h-[480px] overflow-hidden rounded-2xl border" style={{ borderColor: "var(--app-border)" }}>
+            <div className="h-[480px] overflow-hidden rounded-2xl border" style={{ borderColor: "var(--border)" }}>
               {nodes.length > 0 ? (
                 <ReactFlow
                   nodes={nodes}
@@ -256,7 +256,7 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
                 </ReactFlow>
               ) : (
                 <div className="flex h-full flex-col items-center justify-center text-center">
-                  <p className="text-sm font-black">还没有课程</p>
+                  <p className="text-sm font-bold">还没有课程</p>
                   <p className="mt-1 text-xs app-muted-text">课程上架后会显示在这里</p>
                 </div>
               )}
@@ -267,8 +267,8 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--app-accent-soft)_30%,transparent)]"
-              style={{ color: "var(--app-muted)" }}
+              className="w-full rounded-xl py-2 text-xs font-bold transition hover:bg-[color-mix(in_srgb,var(--accent)_30%,transparent)]"
+              style={{ color: "var(--foreground-muted)" }}
             >
               关闭
             </button>

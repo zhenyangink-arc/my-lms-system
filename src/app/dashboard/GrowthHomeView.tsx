@@ -110,7 +110,7 @@ const DATE_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
 };
 
 const FOCUS_RING =
-  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--app-bg)]";
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--background)]";
 
 function formatMinutes(minutes: number) {
   if (minutes < 60) return `${Math.round(minutes)} 分钟`;
@@ -168,14 +168,14 @@ function SectionHeading({
         <span
           className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
           style={{
-            color: "var(--app-accent-strong)",
-            backgroundColor: "var(--app-accent-soft)",
+            color: "var(--primary-hover)",
+            backgroundColor: "var(--accent)",
           }}
         >
           <Icon size={19} aria-hidden="true" />
         </span>
         <div className="min-w-0">
-          <h2 className="text-lg font-black tracking-tight sm:text-xl">{title}</h2>
+          <h2 className="text-lg font-bold tracking-tight sm:text-xl">{title}</h2>
           <p className="mt-1 text-sm leading-6 app-muted-text">{description}</p>
         </div>
       </div>
@@ -194,7 +194,7 @@ function ProgressBar({ value, label }: { value: number; label: string }) {
       </div>
       <div
         className="mt-2 h-2 overflow-hidden rounded-full"
-        style={{ backgroundColor: "var(--app-soft-bg)" }}
+        style={{ backgroundColor: "var(--surface-soft)" }}
         role="progressbar"
         aria-label={`${label} ${safeValue}%`}
         aria-valuemin={0}
@@ -205,7 +205,7 @@ function ProgressBar({ value, label }: { value: number; label: string }) {
           className="h-full rounded-full"
           style={{
             width: `${safeValue}%`,
-            backgroundColor: "var(--app-accent)",
+            backgroundColor: "var(--primary)",
           }}
         />
       </div>
@@ -268,32 +268,32 @@ export function GrowthHomeView({
       value: completedLessonsCount,
       suffix: "课时",
       icon: CheckCircle2,
-      color: "var(--app-success)",
-      soft: "var(--app-success-soft)",
+      color: "var(--status-success)",
+      soft: "var(--status-success-surface)",
     },
     {
       label: "正在学习",
       value: inProgressLessonsCount,
       suffix: "课时",
       icon: PlayCircle,
-      color: "var(--app-accent-strong)",
-      soft: "var(--app-accent-soft)",
+      color: "var(--primary-hover)",
+      soft: "var(--accent)",
     },
     {
       label: "本周完成",
       value: thisWeekCompletedCount,
       suffix: "课时",
       icon: CalendarCheck2,
-      color: "var(--app-secondary)",
-      soft: "var(--app-secondary-soft)",
+      color: "var(--support)",
+      soft: "var(--support-surface)",
     },
     {
       label: "连续学习",
       value: streakDays,
       suffix: "天",
       icon: Flame,
-      color: "var(--app-warm)",
-      soft: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      soft: "var(--status-warning-surface)",
     },
   ];
 
@@ -308,16 +308,16 @@ export function GrowthHomeView({
           <div className="flex flex-col justify-between gap-6 lg:flex-row lg:items-start">
             <div className="min-w-0">
               <p
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
                 style={{
-                  color: "var(--app-accent-strong)",
-                  backgroundColor: "var(--app-accent-soft)",
+                  color: "var(--primary-hover)",
+                  backgroundColor: "var(--accent)",
                 }}
               >
                 <Sparkles size={14} aria-hidden="true" />
                 今日成长计划
               </p>
-              <h2 className="mt-4 max-w-3xl text-balance text-2xl font-black tracking-tight sm:text-3xl">
+              <h2 className="mt-4 max-w-3xl text-balance text-2xl font-bold tracking-tight sm:text-3xl">
                 {greeting}，{studentName}
               </h2>
               <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text sm:text-base">
@@ -329,10 +329,10 @@ export function GrowthHomeView({
               </p>
             </div>
             <div className="growth-panel growth-panel--quiet flex shrink-0 items-center gap-3 rounded-2xl border px-4 py-3">
-              <Timer size={19} style={{ color: "var(--app-accent-strong)" }} aria-hidden="true" />
+              <Timer size={19} style={{ color: "var(--primary-hover)" }} aria-hidden="true" />
               <div>
                 <p className="text-xs font-bold app-muted-text">今日有效学习</p>
-                <p className="mt-0.5 text-lg font-black tabular-nums">
+                <p className="mt-0.5 text-lg font-bold tabular-nums">
                   {formatMinutes(todayStudyMinutes)}
                 </p>
               </div>
@@ -347,13 +347,13 @@ export function GrowthHomeView({
                   <span aria-hidden="true" className="app-muted-text">·</span>
                   <span
                     className="inline-flex items-center gap-1.5"
-                    style={{ color: "var(--app-accent-strong)" }}
+                    style={{ color: "var(--primary-hover)" }}
                   >
                     <Clock3 size={13} aria-hidden="true" />
                     {STATUS_LABELS[hero.status] ?? hero.status}
                   </span>
                 </div>
-                <h3 className="mt-2 text-xl font-black leading-8 sm:text-2xl">
+                <h3 className="mt-2 text-xl font-bold leading-8 sm:text-2xl">
                   {hero.lessonTitle}
                 </h3>
                 <div className="mt-5 max-w-xl">
@@ -370,10 +370,10 @@ export function GrowthHomeView({
                 {heroHref && (
                   <Link
                     href={heroHref}
-                    className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-black motion-safe:transition motion-safe:hover:-translate-y-0.5 ${FOCUS_RING}`}
+                    className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-bold motion-safe:transition motion-safe:hover:-translate-y-0.5 ${FOCUS_RING}`}
                     style={{
-                      color: "var(--app-accent-contrast)",
-                      backgroundColor: "var(--app-accent-strong)",
+                      color: "var(--primary-foreground)",
+                      backgroundColor: "var(--primary-hover)",
                     }}
                   >
                     <PlayCircle size={17} aria-hidden="true" />
@@ -383,8 +383,8 @@ export function GrowthHomeView({
                 )}
                 <Link
                   href={coursesHref}
-                  className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-bold motion-safe:transition hover:bg-[var(--app-soft-bg)] ${FOCUS_RING}`}
-                  style={{ borderColor: "var(--app-border)" }}
+                  className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-5 py-3 text-sm font-bold motion-safe:transition hover:bg-[var(--surface-soft)] ${FOCUS_RING}`}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   查看课程目录
                 </Link>
@@ -393,19 +393,19 @@ export function GrowthHomeView({
           ) : (
             <div
               className="mt-7 flex flex-col items-start rounded-[18px] border border-dashed p-5 sm:p-6"
-              style={{ borderColor: "var(--app-border)" }}
+              style={{ borderColor: "var(--border)" }}
             >
-              <BookOpen size={25} style={{ color: "var(--app-accent)" }} aria-hidden="true" />
-              <h3 className="mt-3 text-base font-black">从第一门课程开始</h3>
+              <BookOpen size={25} style={{ color: "var(--primary)" }} aria-hidden="true" />
+              <h3 className="mt-3 text-base font-bold">从第一门课程开始</h3>
               <p className="mt-1 text-sm leading-6 app-muted-text">
                 选择课程后，这里会显示你下一步最适合继续的课时。
               </p>
               <Link
                 href={coursesHref}
-                className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl px-5 py-3 text-sm font-black ${FOCUS_RING}`}
+                className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold ${FOCUS_RING}`}
                 style={{
-                  color: "var(--app-accent-contrast)",
-                  backgroundColor: "var(--app-accent-strong)",
+                  color: "var(--primary-foreground)",
+                  backgroundColor: "var(--primary-hover)",
                 }}
               >
                 选择第一门课程
@@ -418,14 +418,14 @@ export function GrowthHomeView({
         <Surface tone="quiet" className="flex flex-col p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-black tracking-tight sm:text-xl">需要你关注</h2>
+              <h2 className="text-lg font-bold tracking-tight sm:text-xl">需要你关注</h2>
               <p className="mt-1 text-sm leading-6 app-muted-text">答疑回复与必读资料</p>
             </div>
             <span
-              className="rounded-full px-2.5 py-1 text-xs font-black"
+              className="rounded-full px-2.5 py-1 text-xs font-bold"
               style={{
-                color: "var(--app-accent-strong)",
-                backgroundColor: "var(--app-accent-soft)",
+                color: "var(--primary-hover)",
+                backgroundColor: "var(--accent)",
               }}
             >
               {reminders.length} 项
@@ -436,24 +436,24 @@ export function GrowthHomeView({
               {reminders.map((item) => {
                 const Icon = item.kind === "teacher_reply" ? BellRing : TriangleAlert;
                 const content = (
-                  <span className="flex min-h-14 items-start gap-3 rounded-xl px-2 py-3 text-left motion-safe:transition hover:bg-[var(--app-soft-bg)]">
+                  <span className="flex min-h-14 items-start gap-3 rounded-xl px-2 py-3 text-left motion-safe:transition hover:bg-[var(--surface-soft)]">
                     <span
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
                       style={{
                         color:
                           item.kind === "teacher_reply"
-                            ? "var(--app-accent-strong)"
-                            : "var(--app-warm)",
+                            ? "var(--primary-hover)"
+                            : "var(--status-warning)",
                         backgroundColor:
                           item.kind === "teacher_reply"
-                            ? "var(--app-accent-soft)"
-                            : "var(--app-warm-soft)",
+                            ? "var(--accent)"
+                            : "var(--status-warning-surface)",
                       }}
                     >
                       <Icon size={17} aria-hidden="true" />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block line-clamp-2 text-sm font-black leading-5">
+                      <span className="block line-clamp-2 text-sm font-bold leading-5">
                         {item.title}
                       </span>
                       <span className="mt-1 block text-xs leading-5 app-muted-text">
@@ -484,13 +484,13 @@ export function GrowthHomeView({
               <span
                 className="flex h-12 w-12 items-center justify-center rounded-2xl"
                 style={{
-                  color: "var(--app-success)",
-                  backgroundColor: "var(--app-success-soft)",
+                  color: "var(--status-success)",
+                  backgroundColor: "var(--status-success-surface)",
                 }}
               >
                 <CheckCircle2 size={23} aria-hidden="true" />
               </span>
-              <h3 className="mt-3 text-sm font-black">今天没有待处理事项</h3>
+              <h3 className="mt-3 text-sm font-bold">今天没有待处理事项</h3>
               <p className="mt-1 text-sm leading-6 app-muted-text">可以专心完成当前课程</p>
             </div>
           )}
@@ -506,7 +506,7 @@ export function GrowthHomeView({
               <div
                 key={stat.label}
                 className={`p-4 sm:p-5 ${index % 2 ? "border-l" : ""} ${index >= 2 ? "border-t lg:border-t-0" : ""} ${index === 2 ? "lg:border-l" : ""}`}
-                style={{ borderColor: "var(--app-border-soft)" }}
+                style={{ borderColor: "var(--border-subtle)" }}
               >
                 <div className="flex items-center gap-3">
                   <span
@@ -517,7 +517,7 @@ export function GrowthHomeView({
                   </span>
                   <div>
                     <p className="text-xs font-bold app-muted-text">{stat.label}</p>
-                    <p className="mt-0.5 text-xl font-black tabular-nums sm:text-2xl">
+                    <p className="mt-0.5 text-xl font-bold tabular-nums sm:text-2xl">
                       {stat.value}
                       <span className="ml-1 text-xs font-bold app-muted-text">{stat.suffix}</span>
                     </p>
@@ -571,7 +571,7 @@ export function GrowthHomeView({
                 : 6;
               return (
                 <div key={day.dateString} className="flex h-full min-w-0 flex-col items-center justify-end gap-2">
-                  <span className="text-xs font-black tabular-nums app-muted-text">
+                  <span className="text-xs font-bold tabular-nums app-muted-text">
                     {day.minutes > 0 ? `${day.minutes}` : "–"}
                     <span className="sr-only">分钟</span>
                   </span>
@@ -581,7 +581,7 @@ export function GrowthHomeView({
                       style={{
                         height: `${height}%`,
                         backgroundColor:
-                          day.minutes > 0 ? "var(--app-accent)" : "var(--app-border)",
+                          day.minutes > 0 ? "var(--primary)" : "var(--border)",
                         opacity: day.minutes > 0 ? 1 : 0.7,
                       }}
                     />
@@ -608,15 +608,15 @@ export function GrowthHomeView({
           <div className="mt-6 grid grid-cols-2 gap-3">
             <div className="growth-panel growth-panel--accent rounded-2xl p-4">
               <p className="text-xs font-bold app-muted-text">有效学习</p>
-              <p className="mt-1 text-xl font-black tabular-nums">{formatMinutes(recentSevenDayStudyMinutes)}</p>
+              <p className="mt-1 text-xl font-bold tabular-nums">{formatMinutes(recentSevenDayStudyMinutes)}</p>
             </div>
             <div className="growth-panel growth-panel--warm rounded-2xl p-4">
               <p className="text-xs font-bold app-muted-text">活跃天数</p>
-              <p className="mt-1 text-xl font-black tabular-nums">{recentSevenDayActiveDays}<span className="ml-1 text-xs">天</span></p>
+              <p className="mt-1 text-xl font-bold tabular-nums">{recentSevenDayActiveDays}<span className="ml-1 text-xs">天</span></p>
             </div>
           </div>
           <div className="growth-panel growth-panel--raised mt-4 flex-1 rounded-2xl p-4">
-            <p className="text-sm font-black">本周建议</p>
+            <p className="text-sm font-bold">本周建议</p>
             <p className="mt-2 text-sm leading-7 app-muted-text">
               {recentSevenDayStudyMinutes === 0
                 ? "还没有有效学习时长。先完成一次短学习，成长趋势会从真实记录开始生成。"
@@ -625,15 +625,15 @@ export function GrowthHomeView({
                   : `最近已有 ${recentSevenDayActiveDays} 天有效学习。可以把学习安排得更均匀，保持连续性比单日突击更重要。`}
             </p>
             {bestStudyDay && bestStudyDay.minutes > 0 && (
-              <p className="mt-3 text-xs font-bold" style={{ color: "var(--app-accent-strong)" }}>
+              <p className="mt-3 text-xs font-bold" style={{ color: "var(--primary-hover)" }}>
                 最投入：{getShortDate(bestStudyDay.dateString)} · {formatMinutes(bestStudyDay.minutes)}
               </p>
             )}
           </div>
           <Link
             href={recordsHref}
-            className={`mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-black motion-safe:transition hover:bg-[var(--app-soft-bg)] ${FOCUS_RING}`}
-            style={{ borderColor: "var(--app-border)" }}
+            className={`mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold motion-safe:transition hover:bg-[var(--surface-soft)] ${FOCUS_RING}`}
+            style={{ borderColor: "var(--border)" }}
           >
             查看完整学习分析
             <ArrowRight size={15} aria-hidden="true" />
@@ -650,7 +650,7 @@ export function GrowthHomeView({
             action={
               <Link
                 href={coursesHref}
-                className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-black app-muted-text motion-safe:transition hover:bg-[var(--app-soft-bg)] ${FOCUS_RING}`}
+                className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold app-muted-text motion-safe:transition hover:bg-[var(--surface-soft)] ${FOCUS_RING}`}
               >
                 全部课程
                 <ArrowRight size={14} aria-hidden="true" />
@@ -668,13 +668,13 @@ export function GrowthHomeView({
                   <div className="flex items-start justify-between gap-3">
                     <span
                       className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
-                      style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-accent-soft)" }}
+                      style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
                     >
                       <BookOpen size={18} aria-hidden="true" />
                     </span>
                     <ArrowRight size={15} className="app-muted-text motion-safe:transition group-hover:translate-x-0.5" aria-hidden="true" />
                   </div>
-                  <h3 className="mt-5 line-clamp-2 text-base font-black leading-6">{course.title}</h3>
+                  <h3 className="mt-5 line-clamp-2 text-base font-bold leading-6">{course.title}</h3>
                   <p className="mt-1 min-h-5 text-xs app-muted-text">
                     {course.teacherName ? `${course.teacherName} 老师` : "自主学习课程"}
                   </p>
@@ -685,8 +685,8 @@ export function GrowthHomeView({
               ))}
             </div>
           ) : (
-            <div className="mt-6 rounded-2xl border border-dashed p-6 text-center" style={{ borderColor: "var(--app-border)" }}>
-              <p className="text-sm font-black">还没有课程进度</p>
+            <div className="mt-6 rounded-2xl border border-dashed p-6 text-center" style={{ borderColor: "var(--border)" }}>
+              <p className="text-sm font-bold">还没有课程进度</p>
               <p className="mt-1 text-sm app-muted-text">进入课程学习后，这里会显示整体进展。</p>
             </div>
           )}
@@ -705,14 +705,14 @@ export function GrowthHomeView({
             <div className="flex items-start justify-between gap-4">
               <span
                 className="flex h-11 w-11 items-center justify-center rounded-2xl"
-                style={{ color: "var(--app-accent-strong)", backgroundColor: "var(--app-card-bg)" }}
+                style={{ color: "var(--primary-hover)", backgroundColor: "var(--card)" }}
               >
                 <BookText size={21} aria-hidden="true" />
               </span>
               <ArrowRight size={17} className="motion-safe:transition group-hover:translate-x-1" aria-hidden="true" />
             </div>
             <div className="mt-8">
-              <h3 className="text-lg font-black">单词练习</h3>
+              <h3 className="text-lg font-bold">单词练习</h3>
               <p className="mt-2 text-sm leading-6 app-muted-text">
                 {vocabularyThisWeekMinutes > 0
                   ? `本周已练习 ${vocabularyThisWeekMinutes} 分钟，继续保持。`
@@ -722,8 +722,8 @@ export function GrowthHomeView({
           </Link>
           <Link
             href={toolboxHref}
-            className={`mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-black motion-safe:transition hover:bg-[var(--app-soft-bg)] ${FOCUS_RING}`}
-            style={{ borderColor: "var(--app-border)" }}
+            className={`mt-4 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-bold motion-safe:transition hover:bg-[var(--surface-soft)] ${FOCUS_RING}`}
+            style={{ borderColor: "var(--border)" }}
           >
             查看全部工具
             <ArrowRight size={14} aria-hidden="true" />
@@ -740,7 +740,7 @@ export function GrowthHomeView({
             action={
               <Link
                 href={recordsHref}
-                className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-black app-muted-text motion-safe:transition hover:bg-[var(--app-soft-bg)] ${FOCUS_RING}`}
+                className={`inline-flex min-h-11 items-center gap-1.5 rounded-xl px-3 text-sm font-bold app-muted-text motion-safe:transition hover:bg-[var(--surface-soft)] ${FOCUS_RING}`}
               >
                 查看全部
                 <ArrowRight size={14} aria-hidden="true" />
@@ -754,8 +754,8 @@ export function GrowthHomeView({
                   <span
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl"
                     style={{
-                      color: item.status === "completed" ? "var(--app-success)" : "var(--app-accent-strong)",
-                      backgroundColor: item.status === "completed" ? "var(--app-success-soft)" : "var(--app-accent-soft)",
+                      color: item.status === "completed" ? "var(--status-success)" : "var(--primary-hover)",
+                      backgroundColor: item.status === "completed" ? "var(--status-success-surface)" : "var(--accent)",
                     }}
                   >
                     {item.status === "completed" ? (
@@ -765,13 +765,13 @@ export function GrowthHomeView({
                     )}
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="block truncate text-sm font-black">{item.lessonTitle}</span>
+                    <span className="block truncate text-sm font-bold">{item.lessonTitle}</span>
                     <span className="mt-1 block truncate text-xs app-muted-text">{item.courseTitle}</span>
                     <span className="mt-1 block text-xs app-muted-text">
                       <LocalDateTime value={item.lastViewedAt} options={DATE_TIME_OPTIONS} />
                     </span>
                   </span>
-                  <span className="shrink-0 text-sm font-black tabular-nums" style={{ color: "var(--app-accent-strong)" }}>
+                  <span className="shrink-0 text-sm font-bold tabular-nums" style={{ color: "var(--primary-hover)" }}>
                     {Math.min(100, Math.max(0, item.progressPercent))}%
                   </span>
                 </span>

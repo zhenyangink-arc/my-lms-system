@@ -20,7 +20,7 @@ export const platformCoverageColumns: ColumnDef<PlatformTenantAssignmentRow>[] =
   {
     accessorKey: "name",
     header: sortableHeader("机构"),
-    cell: ({ row }) => <span className="font-semibold text-[var(--app-text)]">{row.original.name}</span>,
+    cell: ({ row }) => <span className="font-semibold text-[var(--foreground)]">{row.original.name}</span>,
   },
   {
     accessorKey: "status",

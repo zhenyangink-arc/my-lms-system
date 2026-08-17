@@ -65,9 +65,9 @@ export function PlatformLearningRecordOverview({
         <section
           className="rounded-2xl border px-4 py-3 text-[11px] font-bold leading-5"
           style={{
-            color: "var(--app-secondary)",
-            borderColor: "var(--app-secondary)",
-            backgroundColor: "var(--app-secondary-soft)",
+            color: "var(--support)",
+            borderColor: "var(--support)",
+            backgroundColor: "var(--support-surface)",
           }}
         >
           平台只用于确认各机构是否持续维护学习记录；具体内容和学生信息由对应机构自行管理。
@@ -77,8 +77,8 @@ export function PlatformLearningRecordOverview({
           <section
             className="rounded-2xl border px-4 py-3 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
             }}
           >
             机构学习记录汇总暂时无法读取，请确认数据库迁移已经执行。
@@ -88,12 +88,12 @@ export function PlatformLearningRecordOverview({
         <section className="management-table-panel overflow-hidden border">
           <div
             className="flex items-center justify-between gap-3 border-b px-4 py-4 sm:px-5"
-            style={{ borderColor: "var(--app-border)" }}
+            style={{ borderColor: "var(--border)" }}
           >
             <div>
-              <h2 className="text-base font-black">机构学习记录运行表</h2>
+              <h2 className="text-base font-semibold">机构学习记录运行表</h2>
             </div>
-            <span className="app-muted-text text-xs font-black">
+            <span className="app-muted-text text-xs font-semibold">
               共 {rows.length} 个机构
             </span>
           </div>
@@ -101,18 +101,18 @@ export function PlatformLearningRecordOverview({
             <table className="w-full min-w-[1280px] border-collapse text-left">
               <thead>
                 <tr
-                  className="app-muted-text border-b bg-[var(--app-soft-bg)] text-[10px]"
-                  style={{ borderColor: "var(--app-border)" }}
+                  className="app-muted-text border-b bg-[var(--surface-soft)] text-[10px]"
+                  style={{ borderColor: "var(--border)" }}
                 >
-                  <th className="w-[21%] px-5 py-3 font-black">机构</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">活跃学生</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">有效记录</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">学生可见</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">内部记录</th>
-                  <th className="w-[10%] px-3 py-3 text-center font-black">关注事项</th>
-                  <th className="w-[9%] px-3 py-3 text-center font-black">学习计划</th>
-                  <th className="w-[12%] px-3 py-3 font-black">最近记录</th>
-                  <th className="w-[8%] px-5 py-3 font-black">操作</th>
+                  <th className="w-[21%] px-5 py-3 font-semibold">机构</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">活跃学生</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">有效记录</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">学生可见</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">内部记录</th>
+                  <th className="w-[10%] px-3 py-3 text-center font-semibold">关注事项</th>
+                  <th className="w-[9%] px-3 py-3 text-center font-semibold">学习计划</th>
+                  <th className="w-[12%] px-3 py-3 font-semibold">最近记录</th>
+                  <th className="w-[8%] px-5 py-3 font-semibold">操作</th>
                 </tr>
               </thead>
               <tbody>
@@ -120,49 +120,49 @@ export function PlatformLearningRecordOverview({
                   <tr
                     key={row.tenant_id}
                     className="border-b text-[11px] last:border-b-0"
-                    style={{ borderColor: "var(--app-border-soft)" }}
+                    style={{ borderColor: "var(--border-subtle)" }}
                   >
                     <td className="px-5 py-4">
                       <div className="flex items-center gap-3">
                         <span
                           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl"
                           style={{
-                            color: "var(--app-secondary)",
-                            backgroundColor: "var(--app-secondary-soft)",
+                            color: "var(--support)",
+                            backgroundColor: "var(--support-surface)",
                           }}
                         >
                           <Building2 size={16} />
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate font-black">{row.tenant_name}</p>
+                          <p className="truncate font-semibold">{row.tenant_name}</p>
                           <p className="app-muted-text mt-1 text-[9px]">
                             {row.tenant_slug} · {row.tenant_status === "active" ? "正常" : "已停用"}
                           </p>
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-4 text-center font-mono font-black">
+                    <td className="px-3 py-4 text-center font-mono font-semibold">
                       {numberValue(row.active_student_count)}
                     </td>
-                    <td className="px-3 py-4 text-center font-mono font-black">
+                    <td className="px-3 py-4 text-center font-mono font-semibold">
                       {numberValue(row.active_record_count)}
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <span className="inline-flex items-center gap-1 font-mono font-black" style={{ color: "var(--app-success)" }}>
+                      <span className="inline-flex items-center gap-1 font-mono font-semibold" style={{ color: "var(--status-success)" }}>
                         <Eye size={11} />
                         {numberValue(row.student_visible_count)}
                       </span>
                     </td>
                     <td className="px-3 py-4 text-center">
-                      <span className="app-muted-text inline-flex items-center gap-1 font-mono font-black">
+                      <span className="app-muted-text inline-flex items-center gap-1 font-mono font-semibold">
                         <EyeOff size={11} />
                         {numberValue(row.internal_record_count)}
                       </span>
                     </td>
-                    <td className="px-3 py-4 text-center font-mono font-black" style={{ color: "var(--app-warm)" }}>
+                    <td className="px-3 py-4 text-center font-mono font-semibold" style={{ color: "var(--status-warning)" }}>
                       {numberValue(row.attention_record_count)}
                     </td>
-                    <td className="px-3 py-4 text-center font-mono font-black">
+                    <td className="px-3 py-4 text-center font-mono font-semibold">
                       {numberValue(row.plan_record_count)}
                     </td>
                     <td className="app-muted-text px-3 py-4 text-[10px]">
@@ -176,8 +176,8 @@ export function PlatformLearningRecordOverview({
                           `/dashboard/admin/tenants/${row.tenant_id}`,
                           getDashboardBasePath(null),
                         )}
-                        className="inline-flex items-center gap-1 font-black"
-                        style={{ color: "var(--app-secondary)" }}
+                        className="inline-flex items-center gap-1 font-semibold"
+                        style={{ color: "var(--support)" }}
                       >
                         查看机构
                         <ArrowRight size={11} />

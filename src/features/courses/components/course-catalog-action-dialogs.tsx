@@ -39,8 +39,8 @@ export type CourseCatalogActionOptions = {
 
 const INPUT_CLASS =
   "app-input mt-1.5 w-full rounded-md border px-3 py-2.5 text-xs outline-none";
-const LABEL_CLASS = "block text-[11px] font-medium text-[var(--app-text-soft)]";
-const SECTION_CLASS = "space-y-4 border-t border-[var(--app-border)] pt-5";
+const LABEL_CLASS = "block text-[11px] font-medium text-[var(--foreground-secondary)]";
+const SECTION_CLASS = "space-y-4 border-t border-[var(--border)] pt-5";
 
 const UNLOCK_LABELS: Record<string, string> = {
   immediate: "立即开放",
@@ -70,7 +70,7 @@ function SaveButton({ label = "保存修改" }: { label?: string }) {
   return (
     <button
       type="submit"
-      className="inline-flex h-9 items-center bg-[var(--app-primary)] px-4 text-xs font-semibold text-white hover:opacity-90"
+      className="inline-flex h-9 items-center bg-[var(--primary)] px-4 text-xs font-semibold text-white hover:opacity-90"
     >
       {label}
     </button>
@@ -111,7 +111,7 @@ function CommonFields({ node }: { node: CourseCatalogNode }) {
           <input name="cover_alt" maxLength={160} defaultValue={node.cover_alt ?? node.title} className={INPUT_CLASS} />
         </label>
       </div>
-      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--app-text-soft)]">
+      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-secondary)]">
         <input name="is_published" type="checkbox" defaultChecked={node.is_published} />
         对学生端发布
       </label>
@@ -128,7 +128,7 @@ function CreateFields({ sortOrder }: { sortOrder: number }) {
       </div>
       <label className={LABEL_CLASS}>简介<textarea name="description" rows={3} maxLength={500} className={`${INPUT_CLASS} resize-y`} /></label>
       <label className={LABEL_CLASS}>排序<input name="sort_order" type="number" min={0} max={100000} defaultValue={sortOrder} className={INPUT_CLASS} /></label>
-      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--app-text-soft)]"><input name="is_published" type="checkbox" />创建后发布</label>
+      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-secondary)]"><input name="is_published" type="checkbox" />创建后发布</label>
     </>
   );
 }
@@ -203,7 +203,7 @@ function ChapterEditor({ node, options }: { node: CourseCatalogChapter; options:
   return (
     <form action={updateCourseChapterAction} className="space-y-5">
       <div className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]"><CourseCoverUploadField kind="chapter" entityId={node.id} currentObjectKey={node.cover_object_key} alt={node.cover_alt ?? node.title} /><div className="space-y-4"><CommonFields node={node} /><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={node.duration_minutes} className={INPUT_CLASS} /></label></div></div>
-      <div className={SECTION_CLASS}><h3 className="text-xs font-semibold">完成与开放规则</h3><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>完成条件<select name="completion_rule" defaultValue={node.completion_rule} className={INPUT_CLASS}>{Object.entries(COMPLETION_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.filter((item) => item.id !== node.id && item.lesson_id === node.lesson_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label></div><label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>{node.chapter_test_id && <p className="text-[10px] text-[var(--app-muted)]">已关联章节测试：{node.chapter_test_id}</p>}</div>
+      <div className={SECTION_CLASS}><h3 className="text-xs font-semibold">完成与开放规则</h3><div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>完成条件<select name="completion_rule" defaultValue={node.completion_rule} className={INPUT_CLASS}>{Object.entries(COMPLETION_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.filter((item) => item.id !== node.id && item.lesson_id === node.lesson_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label></div><label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_manually_locked" type="checkbox" defaultChecked={node.is_manually_locked} />临时锁定</label>{node.chapter_test_id && <p className="text-[10px] text-[var(--foreground-muted)]">已关联章节测试：{node.chapter_test_id}</p>}</div>
       <SaveButton />
     </form>
   );
@@ -220,9 +220,9 @@ export function CourseCatalogEditDialog({ node, options }: { node: CourseCatalog
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <button type="button" onClick={() => setOpen(true)} className="inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"><PencilLine size={12} />编辑</button>
+      <button type="button" onClick={() => setOpen(true)} className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"><PencilLine size={12} />编辑</button>
       <DialogContent className="max-h-[92vh] max-w-[min(1100px,calc(100vw-32px))] overflow-y-auto p-0">
-        <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left"><DialogTitle>编辑“{node.title}”</DialogTitle><DialogDescription>发布状态随当前完整表单一并保存，不使用额外的快捷发布操作。</DialogDescription></DialogHeader>
+        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left"><DialogTitle>编辑“{node.title}”</DialogTitle><DialogDescription>发布状态随当前完整表单一并保存，不使用额外的快捷发布操作。</DialogDescription></DialogHeader>
         <div className="p-5"><EditContent node={node} options={options} /></div>
       </DialogContent>
     </Dialog>
@@ -242,8 +242,8 @@ export function CourseCatalogCreateDialog({ target, primary = false, studentAppI
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <button type="button" onClick={() => setOpen(true)} className={primary ? "inline-flex h-9 items-center gap-1.5 bg-[var(--app-primary)] px-4 text-xs font-semibold text-white hover:opacity-90" : "inline-flex h-8 items-center gap-1.5 border border-[var(--app-border)] bg-[var(--app-card-bg)] px-3 text-[11px] font-semibold hover:bg-[var(--app-soft-bg)]"}><Plus size={13} />{target.title}</button>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>使用现有课程管理 Action 创建平台内容。</DialogDescription></DialogHeader><div className="p-5"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
+      <button type="button" onClick={() => setOpen(true)} className={primary ? "inline-flex h-9 items-center gap-1.5 bg-[var(--primary)] px-4 text-xs font-semibold text-white hover:opacity-90" : "inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"}><Plus size={13} />{target.title}</button>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>使用现有课程管理 Action 创建平台内容。</DialogDescription></DialogHeader><div className="p-5"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
     </Dialog>
   );
 }

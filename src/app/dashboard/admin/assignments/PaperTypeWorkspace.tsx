@@ -111,17 +111,26 @@ const paperStatusLabels = {
 } as const;
 
 const paperStatusTones = {
-  draft: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
+  draft: { color: "var(--foreground-muted)", soft: "var(--surface-soft)" },
   published: {
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
-  retired: { color: "var(--app-warm)", soft: "var(--app-warm-soft)" },
-  archived: { color: "var(--app-muted)", soft: "var(--app-soft-bg)" },
+  retired: {
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
+  },
+  archived: { color: "var(--foreground-muted)", soft: "var(--surface-soft)" },
 } as const;
 
 function AssignmentDate({ value }: { value: string | null }) {
-  return <LocalDateTime value={value} options={ASSIGNMENT_DATE_OPTIONS} fallback="时间待定" />;
+  return (
+    <LocalDateTime
+      value={value}
+      options={ASSIGNMENT_DATE_OPTIONS}
+      fallback="时间待定"
+    />
+  );
 }
 
 export async function PaperTypeWorkspace({
@@ -168,14 +177,16 @@ export async function PaperTypeWorkspace({
   });
 
   let bankQuestions: PaperBankQuestion[] = [];
+  let bankQuestionReadError = false;
   if (canManagePapers) {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("chapter_test_questions")
       .select(
         "id,test_id,question_key,question_type,prompt,options,correct_option,correct_answer,explanation,skill,default_points,difficulty,tags,status,version,sort_order,updated_at"
       )
       .eq("status", "published")
       .order("sort_order", { ascending: true });
+    bankQuestionReadError = Boolean(error);
     bankQuestions = ((data ?? []) as StandardQuestion[]).map((question) => ({
       id: question.id,
       groupId: question.test_id,
@@ -320,6 +331,9 @@ export async function PaperTypeWorkspace({
       sortOrder: question.sort_order,
     })
   );
+  const paperReadError = Boolean(
+    paperResult.error || paperQuestionResult.error || groupResult.error
+  );
 
   return (
     <div className={embedded ? "" : "pb-12"}>
@@ -332,7 +346,7 @@ export async function PaperTypeWorkspace({
               : `从平台标准${typeLabel}卷中选择整套试卷，安排学生和时间后发布。`
           }
           action={
-            canManagePapers ? (
+            canManagePapers && !paperReadError && !bankQuestionReadError ? (
               <AssessmentPaperComposer
                 paperType={paperType}
                 groups={groups.map((group) => ({
@@ -356,9 +370,9 @@ export async function PaperTypeWorkspace({
         {!embedded && (
           <Link
             href="/dashboard/admin/assignments"
-            className="app-muted-text inline-flex items-center gap-2 text-xs font-black"
+            className="app-muted-text inline-flex items-center gap-2 rounded-md text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--support)]"
           >
-            <ArrowLeft size={14} />
+            <ArrowLeft aria-hidden="true" size={14} />
             返回作业考试管理
           </Link>
         )}
@@ -366,22 +380,45 @@ export async function PaperTypeWorkspace({
         <section className="border-y py-4">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-sm font-black">
+              <h2 className="text-sm font-semibold">
                 {canManagePapers
                   ? `平台标准${typeLabel}卷`
                   : `机构${typeLabel}发布`}
-              </p>
+              </h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-3 text-sm">
               {[
-                [canManagePapers ? "全部试卷" : "可选试卷", canManagePapers ? papers.length : publishedPaperCount],
-                [canManagePapers ? "机构可用" : "已发布", canManagePapers ? publishedPaperCount : activeAssignmentCount],
-                [canManagePapers ? "草稿" : "发布记录", canManagePapers ? draftPaperCount : assignments.length],
+                [
+                  canManagePapers ? "全部试卷" : "可选试卷",
+                  paperReadError
+                    ? "—"
+                    : canManagePapers
+                      ? papers.length
+                      : publishedPaperCount,
+                ],
+                [
+                  canManagePapers ? "机构可用" : "已发布",
+                  paperReadError ||
+                  (!canManagePapers && assignmentReadError)
+                    ? "—"
+                    : canManagePapers
+                      ? publishedPaperCount
+                      : activeAssignmentCount,
+                ],
+                [
+                  canManagePapers ? "草稿" : "发布记录",
+                  paperReadError ||
+                  (!canManagePapers && assignmentReadError)
+                    ? "—"
+                    : canManagePapers
+                      ? draftPaperCount
+                      : assignments.length,
+                ],
               ].map(([label, value], index) => (
                 <div
                   key={String(label)}
                   className={`min-w-28 px-5 text-center ${index === 0 ? "" : "border-l"}`}
-                  style={{ borderColor: "var(--app-border-soft)" }}
+                  style={{ borderColor: "var(--border-subtle)" }}
                 >
                   <dd className="font-mono text-xl font-bold tabular-nums">
                     {String(value)}
@@ -395,38 +432,82 @@ export async function PaperTypeWorkspace({
           </div>
         </section>
 
-        {(paperResult.error ||
-          paperQuestionResult.error ||
-          groupResult.error ||
-          assignmentReadError) && (
+        {paperReadError && (
           <section
+            role="alert"
+            aria-labelledby="paper-read-error"
             className="rounded-2xl border p-4 text-sm font-bold"
             style={{
-              color: "var(--app-warm)",
-              backgroundColor: "var(--app-warm-soft)",
-              borderColor: "var(--app-warm)",
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
             }}
           >
-            标准试卷数据暂时无法完整读取，请确认最新数据库迁移已经执行。
+            <h2 id="paper-read-error" className="text-sm font-semibold">
+              标准试卷读取失败
+            </h2>
+            <p className="mt-1 font-normal">
+              标准试卷数据暂时无法完整读取，请确认最新数据库迁移已经执行。失败数据不会显示为“暂无试卷”。
+            </p>
           </section>
         )}
 
-        {canManagePapers && (
+        {bankQuestionReadError && (
+          <section
+            role="alert"
+            aria-labelledby="question-bank-read-error"
+            className="rounded-2xl border p-4 text-sm"
+            style={{
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
+            }}
+          >
+            <h2 id="question-bank-read-error" className="font-semibold">
+              题库读取失败
+            </h2>
+            <p className="mt-1">
+              暂时无法读取组卷题库。现有试卷仍可查看，但新增试卷入口已暂停，请稍后刷新页面。
+            </p>
+          </section>
+        )}
+
+        {assignmentReadError && (
+          <section
+            role="alert"
+            aria-labelledby="assignment-read-error"
+            className="rounded-2xl border p-4 text-sm"
+            style={{
+              color: "var(--status-warning)",
+              backgroundColor: "var(--status-warning-surface)",
+              borderColor: "var(--status-warning)",
+            }}
+          >
+            <h2 id="assignment-read-error" className="font-semibold">
+              发布记录读取失败
+            </h2>
+            <p className="mt-1">
+              暂时无法读取机构课程、学生或发布记录。发布入口已暂停，请稍后刷新页面。
+            </p>
+          </section>
+        )}
+
+        {canManagePapers && !paperReadError && (
           <section
             className="border"
             style={{
-              borderColor: "var(--app-border)",
-              backgroundColor: "var(--app-card-bg)",
+              borderColor: "var(--border)",
+              backgroundColor: "var(--card)",
             }}
           >
             <div className="flex flex-wrap items-center justify-between gap-3 border-b px-4 py-3.5">
               <div>
-                <h2 className="text-sm font-black">标准{typeLabel}卷</h2>
+                <h2 className="text-sm font-semibold">标准{typeLabel}卷</h2>
                 <p className="app-muted-text mt-0.5 text-[11px]">
                   共 {papers.length} 套
                 </p>
               </div>
-              {embedded && (
+              {embedded && !bankQuestionReadError && (
                 <AssessmentPaperComposer
                   paperType={paperType}
                   groups={groups.map((group) => ({
@@ -441,6 +522,9 @@ export async function PaperTypeWorkspace({
             </div>
             <div className="overflow-x-auto">
               <table className="w-full table-fixed border-collapse text-left">
+                <caption className="sr-only">
+                  标准{typeLabel}卷列表，按更新时间由近到远排列
+                </caption>
                 <colgroup>
                   <col className="w-[17%]" />
                   <col className="w-[15%]" />
@@ -456,7 +540,7 @@ export async function PaperTypeWorkspace({
                   className="sticky top-0 z-20 backdrop-blur-xl"
                   style={{
                     backgroundColor:
-                      "color-mix(in srgb, var(--app-card-bg) 84%, transparent)",
+                      "color-mix(in srgb, var(--card) 84%, transparent)",
                   }}
                 >
                   <tr className="border-b app-muted-text">
@@ -478,8 +562,8 @@ export async function PaperTypeWorkspace({
                     return (
                       <tr
                         key={paper.id}
-                        className="border-b align-middle last:border-b-0 hover:bg-[var(--app-soft-bg)]"
-                        style={{ borderColor: "var(--app-border-soft)" }}
+                        className="border-b align-middle last:border-b-0 hover:bg-[var(--surface-soft)]"
+                        style={{ borderColor: "var(--border-subtle)" }}
                       >
                         <td className="px-3 py-3.5">
                           <p className="text-sm font-bold">{paper.title}</p>
@@ -501,7 +585,7 @@ export async function PaperTypeWorkspace({
                         </td>
                         <td className="border-l px-3 py-3.5 text-center">
                           <span className="inline-flex items-center gap-1.5 text-[11px] font-bold" style={{ color: tone.color }}>
-                            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.color }} />
+                            <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: tone.color }} />
                             {paperStatusLabels[paper.status]}
                           </span>
                         </td>
@@ -549,7 +633,7 @@ export async function PaperTypeWorkspace({
           </section>
         )}
 
-        {canPublishPapers && (
+        {canPublishPapers && !paperReadError && !assignmentReadError && (
           <>
             <AssessmentPaperReleaseCatalog
               paperType={paperType}
@@ -573,17 +657,20 @@ export async function PaperTypeWorkspace({
             <section
               className="border"
               style={{
-                borderColor: "var(--app-border)",
-                backgroundColor: "var(--app-card-bg)",
+                borderColor: "var(--border)",
+                backgroundColor: "var(--card)",
               }}
             >
               <div className="flex items-center justify-between gap-3 border-b px-4 py-3.5">
                 <div>
-                  <h2 className="text-sm font-black">本机构发布记录</h2>
+                  <h2 className="text-sm font-semibold">本机构发布记录</h2>
                 </div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full table-fixed border-collapse text-left">
+                  <caption className="sr-only">
+                    本机构{typeLabel}发布记录，按创建时间由近到远排列
+                  </caption>
                   <colgroup>
                     <col className="w-[17%]" />
                     <col className="w-[10%]" />
@@ -594,7 +681,7 @@ export async function PaperTypeWorkspace({
                     <col className="w-[8%]" />
                     <col className="w-[14%]" />
                   </colgroup>
-                  <thead className="sticky top-0 z-20 backdrop-blur-xl" style={{ backgroundColor: "color-mix(in srgb, var(--app-card-bg) 84%, transparent)" }}>
+                  <thead className="sticky top-0 z-20 backdrop-blur-xl" style={{ backgroundColor: "color-mix(in srgb, var(--card) 84%, transparent)" }}>
                     <tr className="border-b app-muted-text">
                       {["作业任务", "使用试卷", "关联课程", "指向学生", "开始 / 截止", "提交 / 待批改", "状态", "操作"].map((label, index) => (
                         <th key={label} className={`${index > 0 ? "border-l" : ""} px-3 py-3 text-[11px] font-bold ${index >= 3 && index <= 6 ? "text-center" : index === 7 ? "text-right" : ""}`}>
@@ -618,7 +705,7 @@ export async function PaperTypeWorkspace({
                               ? targets.map((target) => studentNameById.get(target.student_id) ?? "未知学生").join("、")
                               : `${targets.map((target) => studentNameById.get(target.student_id) ?? "未知学生").slice(0, 2).join("、")} 等 ${targets.length} 人`;
                       return (
-                        <tr key={assignment.id} className="border-b align-middle last:border-b-0 hover:bg-[var(--app-soft-bg)]" style={{ borderColor: "var(--app-border-soft)" }}>
+                        <tr key={assignment.id} className="border-b align-middle last:border-b-0 hover:bg-[var(--surface-soft)]" style={{ borderColor: "var(--border-subtle)" }}>
                           <td className="px-3 py-3.5">
                             <p className="text-sm font-bold">{assignment.title}</p>
                             <p className="app-muted-text mt-0.5 text-[10px]">{assignment.total_points} 分</p>
@@ -645,9 +732,9 @@ export async function PaperTypeWorkspace({
                           <td className="border-l px-3 py-3.5">
                             <div className="flex items-center justify-end gap-2">
                               <AssignmentStatusActions id={assignment.id} status={assignment.status} />
-                              <Link href={`/dashboard/admin/assignments/${assignment.id}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--app-secondary)] hover:underline">
+                              <Link href={`/dashboard/admin/assignments/${assignment.id}`} className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--support)] hover:underline">
                                 查看与批改
-                                <ArrowRight size={12} />
+                                <ArrowRight aria-hidden="true" size={12} />
                               </Link>
                             </div>
                           </td>

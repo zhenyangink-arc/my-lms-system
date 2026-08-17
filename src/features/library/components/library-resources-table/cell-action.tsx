@@ -31,14 +31,14 @@ export function LibraryResourceCellAction({
           href={`/api/library/${resource.id}/download?mode=view`}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex h-8 items-center gap-1 border border-[var(--app-border)] px-2 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center gap-1 border border-[var(--border)] px-2 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
         >
           <Eye className="size-3.5" aria-hidden="true" />
           查看
         </a>
         <a
           href={`/api/library/${resource.id}/download`}
-          className="inline-flex h-8 items-center gap-1 border border-[var(--app-border)] px-2 text-xs font-semibold text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center gap-1 border border-[var(--border)] px-2 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
         >
           <Download className="size-3.5" aria-hidden="true" />
           下载
@@ -46,17 +46,17 @@ export function LibraryResourceCellAction({
         {canCurate && (
           <details className="group relative inline-block text-left">
             <summary
-              className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--app-muted)] transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-text)]"
+              className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
               aria-label="打开资料操作"
             >
               <Icons.more className="size-4" aria-hidden="true" />
             </summary>
-            <div className="absolute right-0 z-30 mt-1 w-44 border border-[var(--app-border)] bg-[var(--app-card-bg)] p-1 shadow-lg">
+            <div className="absolute right-0 z-30 mt-1 w-44 border border-[var(--border)] bg-[var(--card)] p-1 shadow-lg">
               {course ? (
                 <button
                   type="button"
                   onClick={() => setEditOpen(true)}
-                  className="flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium text-[var(--app-text-soft)] hover:bg-[var(--app-soft-bg)]"
+                  className="flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
                 >
                   <Icons.edit className="size-3.5" aria-hidden="true" />
                   编辑资料
@@ -66,7 +66,7 @@ export function LibraryResourceCellAction({
                   课程目录无法识别，暂不能编辑
                 </p>
               )}
-              <div className="my-1 border-t border-[var(--app-border)]" />
+              <div className="my-1 border-t border-[var(--border)]" />
               {resource.status !== "published" && (
                 <StatusActionButton
                   resourceId={resource.id}
@@ -135,12 +135,12 @@ function StatusActionButton({
       <button
         type="submit"
         disabled={pending}
-        className={`flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium hover:bg-[var(--app-soft-bg)] disabled:opacity-50 ${
+        className={`flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium hover:bg-[var(--surface-soft)] disabled:opacity-50 ${
           status === "archived"
             ? "text-amber-700"
             : status === "published"
               ? "text-emerald-700"
-              : "text-[var(--app-text-soft)]"
+              : "text-[var(--foreground-secondary)]"
         }`}
       >
         <Icon className="size-3.5" aria-hidden="true" />

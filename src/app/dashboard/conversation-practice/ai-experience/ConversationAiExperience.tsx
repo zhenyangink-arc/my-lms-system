@@ -1,13 +1,11 @@
 "use client";
 
 import {
+  ArrowLeft,
   Bot,
-  Check,
   Clock3,
   Crown,
-  Headphones,
   ImageIcon,
-  Languages,
   Mic,
   RotateCcw,
   Send,
@@ -15,8 +13,8 @@ import {
   Sparkles,
   Square,
   Volume2,
-  Waves,
 } from "lucide-react";
+import Link from "next/link";
 import {
   type FormEvent,
   type KeyboardEvent,
@@ -84,6 +82,9 @@ const MESSAGE_LENGTH_LIMITS: Record<ChatMode, number> = {
   image: 800,
 };
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
+
 function getInitialMessages(assistantName: string, mode: ChatMode) {
   return [{
     id: "welcome",
@@ -103,32 +104,32 @@ const STATUS_CONFIG: Record<ChatStatus, { label: string; detail: string; color: 
   ready: {
     label: "准备就绪",
     detail: "输入文字，或按住麦克风开始说韩语",
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
   recognizing: {
     label: "识别中",
     detail: "正在听你说话，松开后自动发送",
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   thinking: {
     label: "思考中",
     detail: "智能老师正在组织韩语回复",
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   synthesizing: {
     label: "语音合成中",
     detail: "正在生成中韩双语语音",
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
   playing: {
     label: "播放中",
     detail: "正在朗读智能老师的韩语回复",
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
 };
 
@@ -304,7 +305,9 @@ export function ConversationAiExperience({
   const pendingSpeechTextRef = useRef<string | null>(null);
 
   const readyDetail = chatMode === "voice"
-    ? "输入文字，或按住麦克风开始说韩语"
+    ? socketReady
+      ? "输入文字，或按住麦克风开始说韩语"
+      : "语音服务正在连接，文字输入仍可使用"
     : chatMode === "image"
       ? "输入文字或选择图片，回复仅输出文字"
       : "输入文字开始练习，回复仅输出文字";
@@ -922,308 +925,117 @@ export function ConversationAiExperience({
 
   return (
     <div className={`${styles.themeScope} mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8`}>
+      <Link href="/dashboard/conversation-practice/ai-experience" className={`app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}>
+        <ArrowLeft size={14} aria-hidden="true" />返回练习方式
+      </Link>
       <div className={`grid gap-5 ${isFormal ? "grid-cols-1" : "lg:grid-cols-[250px_minmax(0,1fr)]"}`}>
-        {!isFormal && <aside className="space-y-4 lg:sticky lg:top-[96px] lg:self-start">
-          <section className="hidden">
-            <div className="flex items-center gap-3">
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#71bfe8] to-[#8775c3] text-white shadow-sm">
-                <Bot size={23} />
-              </span>
-              <div>
-                <p className="font-black text-[#244d69]">{assistantName}</p>
-                <p className="mt-0.5 text-xs font-bold text-[#7390a1]">韩语智能口语老师</p>
+        {!isFormal && (
+          <aside className="space-y-4 lg:sticky lg:top-[96px] lg:self-start">
+            <section className="app-card rounded-[1.75rem] border p-5">
+              <h2 className="text-sm font-bold">快速开始</h2>
+              <div className="mt-3 space-y-2">
+                {PRACTICE_PROMPTS.map((prompt) => (
+                  <button key={prompt.label} type="button" onClick={() => void sendMessage(prompt.text)} disabled={isBusy} className={`w-full rounded-2xl border bg-[var(--surface-soft)] px-4 py-3 text-left text-sm font-bold transition hover:-translate-y-0.5 ${focusRing} disabled:cursor-not-allowed disabled:opacity-50`}>
+                    {prompt.label}
+                    <span className="app-muted-text mt-1 block text-xs font-medium leading-5">{prompt.text}</span>
+                  </button>
+                ))}
               </div>
-            </div>
-            <div className="mt-5 space-y-3">
-              {[
-                [Languages, "中韩双语讲解"],
-                [Headphones, "回复自动朗读"],
-                [Waves, "支持按住说话"],
-              ].map(([Icon, label]) => {
-                const FeatureIcon = Icon as typeof Languages;
-                return (
-                  <div key={label as string} className="flex items-center gap-3 rounded-2xl bg-[#f5f9fc] px-3.5 py-3 text-sm font-bold text-[#4e6d80]">
-                    <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white text-[#438caf] shadow-sm">
-                      <FeatureIcon size={15} />
-                    </span>
-                    {label as string}
-                    <Check className="ml-auto text-[#4da374]" size={14} />
-                  </div>
-                );
-              })}
-            </div>
-          </section>
+            </section>
+          </aside>
+        )}
 
-          <section className="rounded-[1.75rem] border border-[#d8eaf3] bg-[#eff7fe]/90 p-5">
-            <p className="text-xs font-black tracking-[0.12em] text-[#5990ae]">快速开始</p>
-            <div className="mt-3 space-y-2">
-              {PRACTICE_PROMPTS.map((prompt) => (
-                <button
-                  key={prompt.label}
-                  type="button"
-                  onClick={() => void sendMessage(prompt.text)}
-                  disabled={isBusy}
-                  className="w-full rounded-2xl border border-white bg-white/90 px-4 py-3 text-left text-sm font-black text-[#315c76] shadow-sm transition hover:-translate-y-0.5 hover:border-[#abd7ec] disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  {prompt.label}
-                  <span className="mt-1 block text-xs font-medium leading-5 text-[#7b94a3]">{prompt.text}</span>
-                </button>
-              ))}
-            </div>
-          </section>
-        </aside>}
-
-        <section className="overflow-hidden rounded-[2rem] border border-white/90 bg-white/90 shadow-[0_28px_80px_rgba(46,104,139,0.16)] backdrop-blur">
+        <section className="app-card overflow-hidden rounded-[2rem] border shadow-lg">
           {isFormal && formalConfig && (
-            <div
-              className="flex flex-col gap-3 border-b px-4 py-4 text-white sm:flex-row sm:items-center sm:px-6"
-              style={{ borderColor: "rgba(255,255,255,.14)", backgroundColor: "#647abd" }}
-            >
+            <div className="flex flex-col gap-3 border-b px-4 py-4 sm:flex-row sm:items-center sm:px-6" style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)", borderColor: "var(--border-subtle)" }}>
               <div className="min-w-0 flex-1">
-                <p className="text-[10px] font-black tracking-[0.14em] text-white/65">正式练习</p>
-                <h1 className="mt-1 truncate text-lg font-black">{formalConfig.scenario}</h1>
+                <p className="text-xs font-bold">正式练习</p>
+                <h2 className="mt-1 truncate text-lg font-bold">{formalConfig.scenario}</h2>
               </div>
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/12 px-3 py-1.5 text-xs font-black">
-                  {formalConfig.difficulty === "beginner" ? "初级" : formalConfig.difficulty === "intermediate" ? "中级" : "高级"}
-                </span>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-white/12 px-3 py-1.5 text-xs font-black">
-                  <Clock3 size={13} /> {formatElapsedTime(elapsedSeconds)} / {formalConfig.durationMinutes}:00
-                </span>
-                <button
-                  type="button"
-                  onClick={finishFormalPractice}
-                  className="rounded-xl bg-white px-4 py-2 text-xs font-black text-[#475f94] transition hover:bg-white/90"
-                >
-                  结束练习
-                </button>
+                <span className="rounded-full border px-3 py-1.5 text-xs font-bold">{formalConfig.difficulty === "beginner" ? "初级" : formalConfig.difficulty === "intermediate" ? "中级" : "高级"}</span>
+                <span className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-bold"><Clock3 size={13} aria-hidden="true" />{formatElapsedTime(elapsedSeconds)} / {formalConfig.durationMinutes}:00</span>
+                <button type="button" onClick={finishFormalPractice} className={`rounded-xl px-4 py-2 text-xs font-bold ${focusRing}`} style={{ color: "var(--primary)", backgroundColor: "var(--primary-foreground)" }}>结束练习</button>
               </div>
             </div>
           )}
-          <header className="flex flex-wrap items-center justify-between gap-3 border-b border-[#e4eef3] bg-white/94 px-4 py-4 sm:px-6">
+
+          <header className="flex flex-wrap items-center justify-between gap-3 border-b bg-[var(--card)] px-4 py-4 sm:px-6" style={{ borderColor: "var(--border-subtle)" }}>
             <div className="flex items-center gap-3">
-              <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl bg-[#eaf4ff] text-[#3b8db8]">
-                <Bot size={21} />
-                <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-[3px] border-white bg-[#55ad7a]" />
+              <span className="relative flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
+                <Bot size={21} aria-hidden="true" />
+                <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-[3px]" style={{ borderColor: "var(--card)", backgroundColor: "var(--status-success)" }} aria-hidden="true" />
               </span>
-              <div>
-                <h2 className="text-sm font-black text-[#254e69]">韩语自由对话教室</h2>
-                <p className="mt-0.5 text-xs font-bold text-[#7893a3]">한국어 자유 대화 교실</p>
-              </div>
+              <div><h2 className="text-sm font-bold">韩语自由对话教室</h2><p className="app-muted-text mt-0.5 text-xs font-bold">한국어 자유 대화 교실</p></div>
             </div>
             <div className="flex items-center gap-2">
-              <div
-                className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-black"
-                style={{ color: statusInfo.color, backgroundColor: statusInfo.soft }}
-                aria-live="polite"
-              >
-                <span className={`${styles.statusDot} h-2 w-2 rounded-full`} style={{ backgroundColor: statusInfo.color }} />
-                {statusInfo.label}
+              <div className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-bold" style={{ color: statusInfo.color, backgroundColor: statusInfo.soft }} role="status" aria-live="polite">
+                <span className={`${styles.statusDot} h-2 w-2 rounded-full`} style={{ backgroundColor: statusInfo.color }} aria-hidden="true" />{statusInfo.label}
               </div>
-              <button
-                type="button"
-                onClick={() => resetConversation()}
-                className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce9ef] bg-white text-[#688497] transition hover:bg-[#f4f8fb]"
-                title="重新开始对话"
-                aria-label="重新开始对话"
-              >
-                <RotateCcw size={15} />
-              </button>
+              <button type="button" onClick={() => resetConversation()} className={`flex h-10 w-10 items-center justify-center rounded-xl border bg-[var(--surface-soft)] ${focusRing}`} title="重新开始对话" aria-label="重新开始对话"><RotateCcw size={15} aria-hidden="true" /></button>
             </div>
           </header>
 
-          {!isFormal && <div className="border-b border-[#e4eef3] bg-[#f7fafc] px-4 py-4 sm:px-6">
-            <div className="grid gap-3 sm:grid-cols-3" aria-label="选择对话版本">
-              <button
-                type="button"
-                onClick={() => switchChatMode("text")}
-                disabled={isBusy}
-                aria-pressed={chatMode === "text"}
-                className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${
-                  chatMode === "text"
-                    ? "border-[#83bed8] bg-white shadow-[0_10px_28px_rgba(66,137,171,0.13)] ring-2 ring-[#dceff7]"
-                    : "border-[#dce8ed] bg-white/70 hover:border-[#b7d5e3] hover:bg-white"
-                }`}
-              >
-                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${chatMode === "text" ? "bg-[#e5f5fc] text-[#3686ac]" : "bg-[#eef3f5] text-[#718895]"}`}>
-                  <Server size={19} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-2 text-sm font-black text-[#315970]">
-                    文字版
-                    {chatMode === "text" && <span className="rounded-full bg-[#e7f7ee] px-2 py-0.5 text-xs text-[#418c62]">当前使用</span>}
-                  </span>
-                </span>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => switchChatMode("voice")}
-                disabled={isBusy}
-                aria-pressed={chatMode === "voice"}
-                className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${
-                  chatMode === "voice"
-                    ? "border-[#a99ad0] bg-white shadow-[0_10px_28px_rgba(113,93,166,0.13)] ring-2 ring-[#ece6f8]"
-                    : "border-[#dfe3ed] bg-white/70 hover:border-[#cbc0e3] hover:bg-white"
-                }`}
-              >
-                <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${chatMode === "voice" ? "bg-[#eaf3fb] text-[#755fa9]" : "bg-[#eff3f6] text-[#82779a]"}`}>
-                  <Crown size={19} />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-2 text-sm font-black text-[#315970]">
-                    语音版
-                    <span className="rounded-full bg-[#e7f7ee] px-2 py-0.5 text-xs text-[#418c62]">
-                      支持语音
-                    </span>
-                  </span>
-                </span>
-              </button>
-              <button type="button" onClick={() => switchChatMode("image")} disabled={isBusy} aria-pressed={chatMode === "image"} className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${chatMode === "image" ? "border-[#a99ad0] bg-white shadow-[0_10px_28px_rgba(113,93,166,0.13)] ring-2 ring-[#ece6f8]" : "border-[#dfe3ed] bg-white/70 hover:border-[#cbc0e3] hover:bg-white"}`}><span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${chatMode === "image" ? "bg-[#f0ebfb] text-[#755fa9]" : "bg-[#eff3f6] text-[#82779a]"}`}><ImageIcon size={19} /></span><span className="min-w-0 flex-1"><span className="flex items-center gap-2 text-sm font-black text-[#315970]">图片版<span className="rounded-full bg-[#e7f7ee] px-2 py-0.5 text-xs text-[#418c62]">文字输出</span></span></span></button>
+          {!isFormal && (
+            <div className="border-b bg-[var(--surface-soft)] px-4 py-4 sm:px-6" style={{ borderColor: "var(--border-subtle)" }}>
+              <fieldset>
+                <legend className="text-xs font-bold">对话版本</legend>
+                <div className="mt-2 grid gap-3 sm:grid-cols-3">
+                  {([
+                    ["text", "文字版", Server, "文字输出"],
+                    ["voice", "语音版", Crown, "支持语音"],
+                    ["image", "图片版", ImageIcon, "图片识别"],
+                  ] as const).map(([mode, label, Icon, detail]) => {
+                    const selected = chatMode === mode;
+                    return (
+                      <button key={mode} type="button" onClick={() => switchChatMode(mode)} disabled={isBusy} aria-pressed={selected} className={`flex items-center gap-3 rounded-2xl border p-3.5 text-left transition sm:p-4 ${focusRing} ${selected ? "ring-2 ring-[var(--ring)]" : "hover:bg-[var(--accent)]"}`} style={{ borderColor: selected ? "var(--primary)" : "var(--border)", backgroundColor: selected ? "var(--card)" : "var(--surface-soft)" }}>
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl" style={{ color: selected ? "var(--primary)" : "var(--foreground-muted)", backgroundColor: selected ? "var(--accent)" : "var(--card)" }}><Icon size={19} aria-hidden="true" /></span>
+                        <span className="min-w-0 flex-1"><span className="block text-sm font-bold">{label}</span><span className="app-muted-text mt-1 block text-xs">{detail}</span></span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+              <fieldset className="mt-4">
+                <legend className="text-xs font-bold">回复语言模式</legend>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {([ ["match", "智能跟随"], ["korean", "韩语沉浸"], ["beginner", "初级辅助"] ] as const).map(([mode, label]) => (
+                    <button key={mode} type="button" disabled={isBusy} onClick={() => setReplyLanguageMode(mode)} aria-pressed={replyLanguageMode === mode} className={`rounded-full border px-3 py-2 text-xs font-bold transition ${focusRing}`} style={{ color: replyLanguageMode === mode ? "var(--status-warning)" : "var(--foreground-secondary)", borderColor: replyLanguageMode === mode ? "var(--status-warning)" : "var(--border)", backgroundColor: replyLanguageMode === mode ? "var(--status-warning-surface)" : "var(--card)" }}>{label}</button>
+                  ))}
+                  <span className="app-muted-text self-center text-xs">{replyLanguageMode === "beginner" ? "韩语回答会附简短中文辅助" : replyLanguageMode === "korean" ? "韩语输入仅用韩语回答" : replyLanguageMode === "match" ? "按你的输入语言回答" : "请先选择一种回复语言模式。"}</span>
+                </div>
+              </fieldset>
             </div>
-            <div className="mt-3 flex flex-wrap gap-2" aria-label="回复语言模式">
-              {([
-                ["match", "智能跟随"],
-                ["korean", "韩语沉浸"],
-                ["beginner", "初级辅助"],
-              ] as const).map(([mode, label]) => (
-                <button key={mode} type="button" disabled={isBusy} onClick={() => setReplyLanguageMode(mode)} aria-pressed={replyLanguageMode === mode} className={`rounded-full border px-3 py-1.5 text-xs font-black transition ${replyLanguageMode === mode ? "border-[#e4b53f] bg-[#fff3c7] text-[#8a6400]" : "border-[#d6d6d6] bg-[#f1f1f1] text-[#777] hover:border-[#c4c4c4]"}`}>{label}</button>
-              ))}
-              <span className={`self-center text-xs ${replyLanguageMode ? "text-[#7893a3]" : "font-black text-[#a87300]"}`}>{replyLanguageMode === "beginner" ? "韩语回答会附简短中文辅助" : replyLanguageMode === "korean" ? "韩语输入仅用韩语回答" : replyLanguageMode === "match" ? "按你的输入语言回答" : "请先选择一种回复语言模式，才能开始输入。"}</span>
-            </div>
-          </div>}
+          )}
 
-          <div className={`${styles.chatGrid} flex min-h-[680px] flex-col`}>
-            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7 sm:py-8">
-              <div className="mx-auto flex w-fit items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-xs font-bold text-[#8ba0ad] shadow-sm">
-                <Sparkles size={11} /> 今天也一起勇敢开口吧
-              </div>
-
+          <div className="flex min-h-[680px] flex-col" style={{ backgroundColor: "var(--surface-soft)" }}>
+            <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7 sm:py-8" role="log" aria-live="polite" aria-relevant="additions text" aria-label="会话记录" aria-busy={requestPending || speechPending}>
+              <div className="app-card mx-auto flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold"><Sparkles size={11} aria-hidden="true" />今天也一起勇敢开口吧</div>
               {messages.map((message) => (
-                <article
-                  key={message.id}
-                  className={`${styles.messageEnter} flex items-end gap-2.5 ${message.role === "user" ? "justify-end" : "justify-start"}`}
-                >
-                  {message.role === "assistant" && (
-                    <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-[#66b8e4] to-[#8471c0] text-white shadow-sm">
-                      <Bot size={17} />
-                    </span>
-                  )}
-
+                <article key={message.id} className={`${styles.messageEnter} flex items-end gap-2.5 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
+                  {message.role === "assistant" && <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}><Bot size={17} aria-hidden="true" /></span>}
                   <div className={`max-w-[86%] sm:max-w-[72%] ${message.role === "user" ? "text-right" : ""}`}>
-                    <div
-                      className={`relative whitespace-pre-wrap px-4 py-3 text-left text-sm font-medium leading-7 shadow-sm sm:px-5 ${
-                        message.role === "user"
-                          ? "rounded-[1.35rem_1.35rem_0.35rem_1.35rem] bg-[#5f9af4] text-white"
-                          : "rounded-[1.35rem_1.35rem_1.35rem_0.35rem] border border-[#dceaf1] bg-white text-[#365b72]"
-                      }`}
-                    >
+                    <div className="relative whitespace-pre-wrap rounded-2xl border px-4 py-3 text-left text-sm font-medium leading-7 shadow-sm sm:px-5" style={{ color: message.role === "user" ? "var(--primary-foreground)" : "var(--card-foreground)", borderColor: message.role === "user" ? "var(--primary)" : "var(--border)", backgroundColor: message.role === "user" ? "var(--primary)" : "var(--card)" }}>
                       {message.content}
-                      {message.role === "assistant" && chatMode === "voice" && (
-                        <button
-                          type="button"
-                          onClick={() => requestCosyVoiceSpeech(message.content)}
-                          disabled={speechPending || requestPending}
-                          className="mt-3 flex items-center gap-1.5 rounded-full bg-[#edf5fc] px-3 py-1.5 text-xs font-black text-[#397fa5] transition hover:bg-[#dff1fa] disabled:cursor-not-allowed disabled:opacity-50"
-                          title="播放这条回复"
-                        >
-                          <Volume2 size={13} /> 播放韩语
-                        </button>
-                      )}
+                      {message.role === "assistant" && chatMode === "voice" && <button type="button" onClick={() => requestCosyVoiceSpeech(message.content)} disabled={speechPending || requestPending} className={`mt-3 flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold ${focusRing} disabled:cursor-not-allowed disabled:opacity-50`} style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><Volume2 size={13} aria-hidden="true" />播放韩语</button>}
                     </div>
-                    <p className={`mt-1.5 px-1 text-xs font-bold text-[#9aabb5] ${message.role === "user" ? "text-right" : "text-left"}`}>
-                      {message.role === "assistant" ? assistantName : "我"} · {formatTime(message.createdAt)}
-                    </p>
+                    <p className={`app-muted-text mt-1.5 px-1 text-xs font-bold ${message.role === "user" ? "text-right" : "text-left"}`}>{message.role === "assistant" ? assistantName : "我"} · {formatTime(message.createdAt)}</p>
                   </div>
                 </article>
               ))}
-
-              {requestPending && (
-                <div className={`${styles.messageEnter} flex items-end gap-2.5`}>
-                  <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-[#66b8e4] to-[#8471c0] text-white shadow-sm">
-                    <Bot size={17} />
-                  </span>
-                  <div className="flex items-center gap-1.5 rounded-[1.35rem_1.35rem_1.35rem_0.35rem] border border-[#dceaf1] bg-white px-5 py-4 shadow-sm" aria-label="智能老师思考中">
-                    {[0, 1, 2].map((dot) => (
-                      <span key={dot} className={`${styles.thinkingDot} h-2 w-2 rounded-full bg-[#65aaca]`} />
-                    ))}
-                  </div>
-                </div>
-              )}
-
+              {requestPending && <div className={`${styles.messageEnter} flex items-end gap-2.5`} role="status"><span className="flex h-9 w-9 items-center justify-center rounded-2xl" style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}><Bot size={17} aria-hidden="true" /></span><div className="app-card flex items-center gap-1.5 rounded-2xl border px-5 py-4" aria-label="智能老师思考中">{[0, 1, 2].map((dot) => <span key={dot} className={`${styles.thinkingDot} h-2 w-2 rounded-full`} style={{ backgroundColor: "var(--primary)" }} aria-hidden="true" />)}</div></div>}
               <div ref={messagesEndRef} />
             </div>
 
-            <div className="border-t border-[#dfeaf0] bg-white/96 p-3 sm:p-4">
-              <div className="mb-3 flex min-h-6 items-center justify-center text-center text-xs font-bold" aria-live="polite">
-                {errorMessage ? (
-                  <span className="rounded-full bg-[#ebf5ff] px-3 py-1 text-[#4980cf]">{errorMessage}</span>
-                ) : (
-                  <span style={{ color: statusInfo.color }}>{statusInfo.detail}</span>
-                )}
-              </div>
-
-              {chatMode === "image" && <label className="mb-3 flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-[#b8c9d5] bg-[#f8fbfd] px-3 py-2.5 text-xs font-black text-[#52758a]"><ImageIcon size={16} /><span className="truncate">{imageFile ? imageFile.name : "选择常见格式图片"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImageFile(event.target.files?.[0] ?? null)} className="sr-only" /></label>}
+            <div className="border-t bg-[var(--card)] p-3 sm:p-4" style={{ borderColor: "var(--border-subtle)" }}>
+              <div className="mb-3 flex min-h-6 items-center justify-center text-center text-xs font-bold" aria-live="polite">{errorMessage ? <span role="alert" className="rounded-full px-3 py-1" style={{ color: "var(--status-danger)", backgroundColor: "var(--status-danger-surface)" }}>{errorMessage}</span> : <span style={{ color: statusInfo.color }}>{statusInfo.detail}</span>}</div>
+              {chatMode === "image" && <label className="mb-3 flex cursor-pointer items-center gap-2 rounded-xl border border-dashed bg-[var(--surface-soft)] px-3 py-3 text-xs font-bold focus-within:ring-2 focus-within:ring-[var(--ring)] focus-within:ring-offset-2"><ImageIcon size={16} aria-hidden="true" /><span className="truncate">{imageFile ? imageFile.name : "选择常见格式图片"}</span><input type="file" accept="image/jpeg,image/png,image/webp" onChange={(event) => setImageFile(event.target.files?.[0] ?? null)} className="sr-only" /></label>}
               <form onSubmit={handleSubmit} className="grid items-end gap-3 sm:grid-cols-[minmax(0,1fr)_84px_auto]">
-                <label className="flex min-h-14 items-end rounded-2xl border border-[#d5e5ed] bg-[#f9fbfd] px-4 py-3 transition focus-within:border-[#69b5d8] focus-within:bg-white focus-within:ring-4 focus-within:ring-[#dff3fc]">
-                  <span className="sr-only">输入要练习的韩语</span>
-                  <textarea
-                    value={draft}
-                    onChange={(event) => setDraft(event.target.value.slice(0, MESSAGE_LENGTH_LIMITS[chatMode]))}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter" && !event.shiftKey) {
-                        event.preventDefault();
-                        void sendMessage(draft);
-                      }
-                    }}
-                    disabled={isBusy || requiresReplyLanguageMode}
-                    rows={1}
-                    maxLength={MESSAGE_LENGTH_LIMITS[chatMode]}
-                    placeholder={isRecording ? "正在识别你说的韩语…" : "输入韩语或中文，例如：请陪我练习自我介绍"}
-                    className="max-h-32 min-h-7 w-full resize-none bg-transparent text-sm leading-6 text-[#294f68] outline-none placeholder:text-[#9badb8] disabled:opacity-70"
-                  />
-                </label>
-
-                <div className="flex flex-col items-center gap-1">
-                  <button
-                    type="button"
-                    onPointerDown={handleMicPointerDown}
-                    onPointerUp={handleMicPointerUp}
-                    onPointerCancel={handleMicPointerUp}
-                    onKeyDown={handleMicKeyDown}
-                    onKeyUp={handleMicKeyUp}
-                    onContextMenu={(event) => event.preventDefault()}
-                    disabled={requestPending || speechPending || chatMode !== "voice"}
-                    className={`${styles.micButton} ${isRecording ? styles.micActive : ""} flex h-16 w-16 items-center justify-center rounded-full text-white shadow-[0_12px_30px_rgba(84, 147, 239,0.3)] transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50`}
-                    style={{ background: isRecording ? "linear-gradient(135deg, var(--app-warm), var(--app-accent))" : "linear-gradient(135deg, var(--app-secondary), var(--app-accent))" }}
-                    aria-label={chatMode !== "voice" ? `${chatMode === "image" ? "图片版" : "文字版"}不支持语音输入` : isRecording ? "松开发送语音" : "按住录音"}
-                  >
-                    {isRecording ? <Square size={23} fill="currentColor" /> : <Mic size={27} />}
-                  </button>
-                  <span className="text-xs font-black text-[#7b93a1]">
-                    {chatMode !== "voice" ? "切换语音版" : isRecording ? `${recordingSeconds} 秒 · 松开发送` : "按住说话"}
-                  </span>
-                </div>
-
-                <button
-                  type="submit"
-                  disabled={!(draft.trim() || (chatMode === "image" && imageFile)) || isBusy || requiresReplyLanguageMode}
-                  className="inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl bg-[#3388b4] px-5 text-sm font-black text-white shadow-[0_12px_28px_rgba(51,136,180,0.22)] transition hover:-translate-y-0.5 hover:bg-[#287ca6] disabled:cursor-not-allowed disabled:opacity-45"
-                >
-                  <Send size={17} />
-                  <span className="hidden sm:inline">发送</span>
-                </button>
+                <div><label htmlFor="conversation-draft" className="mb-1 block text-xs font-bold">对话输入</label><div className="flex min-h-14 items-end rounded-2xl border bg-[var(--surface-soft)] px-4 py-3 transition focus-within:ring-2 focus-within:ring-[var(--ring)] focus-within:ring-offset-2"><textarea id="conversation-draft" value={draft} onChange={(event) => setDraft(event.target.value.slice(0, MESSAGE_LENGTH_LIMITS[chatMode]))} onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) { event.preventDefault(); void sendMessage(draft); } }} disabled={isBusy || requiresReplyLanguageMode} rows={1} maxLength={MESSAGE_LENGTH_LIMITS[chatMode]} placeholder={isRecording ? "正在识别你说的韩语…" : "输入韩语或中文，例如：请陪我练习自我介绍"} className="max-h-32 min-h-7 w-full resize-none bg-transparent text-sm leading-6 text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)] disabled:opacity-70" /></div></div>
+                <div className="flex flex-col items-center gap-1"><button type="button" onPointerDown={handleMicPointerDown} onPointerUp={handleMicPointerUp} onPointerCancel={handleMicPointerUp} onKeyDown={handleMicKeyDown} onKeyUp={handleMicKeyUp} onBlur={() => { if (isRecording) finishVoiceInput(); }} onContextMenu={(event) => event.preventDefault()} disabled={requestPending || speechPending || chatMode !== "voice"} className={`${styles.micButton} ${isRecording ? styles.micActive : ""} flex h-16 w-16 items-center justify-center rounded-full shadow-lg transition active:scale-95 ${focusRing} disabled:cursor-not-allowed disabled:opacity-50`} style={{ color: "var(--primary-foreground)", background: isRecording ? "linear-gradient(135deg, var(--status-warning), var(--primary))" : "linear-gradient(135deg, var(--support), var(--primary))" }} aria-pressed={isRecording} aria-label={chatMode !== "voice" ? `${chatMode === "image" ? "图片版" : "文字版"}不支持语音输入` : isRecording ? "松开发送语音" : "按住录音"}>{isRecording ? <Square size={23} fill="currentColor" aria-hidden="true" /> : <Mic size={27} aria-hidden="true" />}</button><span className="app-muted-text text-xs font-bold">{chatMode !== "voice" ? "切换语音版" : isRecording ? `${recordingSeconds} 秒 · 松开发送` : "按住说话"}</span></div>
+                <button type="submit" disabled={!(draft.trim() || (chatMode === "image" && imageFile)) || isBusy || requiresReplyLanguageMode} className={`inline-flex min-h-14 items-center justify-center gap-2 rounded-2xl px-5 text-sm font-bold transition hover:-translate-y-0.5 ${focusRing} disabled:cursor-not-allowed disabled:opacity-50`} style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}><Send size={17} aria-hidden="true" /><span className="hidden sm:inline">发送</span></button>
               </form>
-
-              {status === "playing" && (
-                <button
-                  type="button"
-                  onClick={() => stopPlayback()}
-                  className="mx-auto mt-3 flex items-center gap-1.5 text-xs font-black text-[#8062ae]"
-                >
-                  <Square size={11} fill="currentColor" /> 停止播放
-                </button>
-              )}
+              {status === "playing" && <button type="button" onClick={() => stopPlayback()} className={`mx-auto mt-3 flex items-center gap-1.5 rounded-lg text-xs font-bold ${focusRing}`} style={{ color: "var(--primary)" }}><Square size={11} fill="currentColor" aria-hidden="true" />停止播放</button>}
             </div>
           </div>
         </section>

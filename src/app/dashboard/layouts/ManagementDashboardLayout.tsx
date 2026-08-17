@@ -88,7 +88,7 @@ export async function ManagementDashboardLayout({
       >
         <a
           href="#management-main-content"
-          className="management-skip-link sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[70] focus:rounded-md focus:bg-[var(--app-surface)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--app-text)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--app-accent)]"
+          className="management-skip-link sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-[70] focus:rounded-md focus:bg-[var(--card)] focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-[var(--foreground)] focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--primary)]"
         >
           跳到主要内容
         </a>

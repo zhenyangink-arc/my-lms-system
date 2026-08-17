@@ -194,7 +194,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger
         type="button"
-        className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-4 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60]"
+        className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-4 py-2 text-xs font-semibold text-white transition hover:bg-[#1d6d60]"
       >
         <Users size={14} />
         发起公共课堂
@@ -218,7 +218,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
 
         {/* 进行中的公共课堂 */}
         <section>
-          <h3 className="text-xs font-black tracking-wide text-slate-700">进行中的公共课堂</h3>
+          <h3 className="text-xs font-semibold tracking-wide text-slate-700">进行中的公共课堂</h3>
           {loading && (
             <div className="flex items-center gap-2 py-4 text-xs text-slate-400">
               <Loader2 size={14} className="animate-spin" /> 加载中…
@@ -235,11 +235,11 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                 <div
                   key={cls.id}
                   className="rounded-xl border p-3"
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   <div className="flex items-center gap-3">
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-sm font-black text-slate-900">
+                      <p className="truncate text-sm font-semibold text-slate-900">
                         {cls.courseTitle} · {cls.lessonTitle}
                       </p>
                       <p className="app-muted-text mt-0.5 text-[11px]">
@@ -260,7 +260,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                         type="button"
                         onClick={() => void handleEnd(cls.id, cls.lessonTitle)}
                         disabled={busyKey !== null}
-                        className="inline-flex items-center gap-1.5 rounded-full bg-[#fdecea] px-3.5 py-1.5 text-xs font-black text-[#c92a2a] transition hover:bg-[#fbdcd9] disabled:opacity-50"
+                        className="inline-flex items-center gap-1.5 rounded-full bg-[#fdecea] px-3.5 py-1.5 text-xs font-semibold text-[#c92a2a] transition hover:bg-[#fbdcd9] disabled:opacity-50"
                       >
                         {busyKey === `end:${cls.id}` ? (
                           <Loader2 size={13} className="animate-spin" />
@@ -309,7 +309,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                   {/* 追加学生 */}
                   <div className="mt-2.5">
                     {appendOpenFor === cls.id ? (
-                      <div className="rounded-lg border p-2.5" style={{ borderColor: "var(--app-border)" }}>
+                      <div className="rounded-lg border p-2.5" style={{ borderColor: "var(--border)" }}>
                         {appendable.length === 0 ? (
                           <p className="app-muted-text text-[11px]">所有负责学生都已在课堂中。</p>
                         ) : (
@@ -382,10 +382,10 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
 
         {/* 发起新的公共课堂 */}
         <section>
-          <h3 className="text-xs font-black tracking-wide text-slate-700">发起新的公共课堂</h3>
+          <h3 className="text-xs font-semibold tracking-wide text-slate-700">发起新的公共课堂</h3>
           <div className="mt-2.5 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-xl border p-3" style={{ borderColor: "var(--app-border)" }}>
-              <p className="mb-2 text-[11px] font-black text-slate-600">选择学生（可多选）</p>
+            <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}>
+              <p className="mb-2 text-[11px] font-semibold text-slate-600">选择学生（可多选）</p>
               <div className="max-h-44 space-y-1 overflow-y-auto">
                 {students.map((student) => (
                   <label
@@ -406,8 +406,8 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
               </div>
             </div>
 
-            <div className="rounded-xl border p-3" style={{ borderColor: "var(--app-border)" }}>
-              <p className="mb-2 text-[11px] font-black text-slate-600">选择课时</p>
+            <div className="rounded-xl border p-3" style={{ borderColor: "var(--border)" }}>
+              <p className="mb-2 text-[11px] font-semibold text-slate-600">选择课时</p>
               <label className="mb-2 block">
                 <span className="app-muted-text mb-1 block text-[11px]">课程</span>
                 <select
@@ -421,7 +421,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                     setChapterSlug(firstLesson?.firstChapterSlug ?? "");
                   }}
                   className="w-full rounded-lg border px-2.5 py-2 text-xs font-semibold outline-none"
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   {(data?.courses ?? []).map((course) => (
                     <option key={course.id} value={course.id}>
@@ -441,7 +441,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                     setChapterSlug(nextLesson?.firstChapterSlug ?? "");
                   }}
                   className="w-full rounded-lg border px-2.5 py-2 text-xs font-semibold outline-none"
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   {(selectedCourse?.lessons ?? []).map((lesson) => (
                     <option key={lesson.id} value={lesson.id} disabled={!lesson.firstChapterSlug}>
@@ -458,7 +458,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
                   onChange={(event) => setChapterSlug(event.target.value)}
                   disabled={!selectedLesson || selectedLesson.chapters.length === 0}
                   className="w-full rounded-lg border px-2.5 py-2 text-xs font-semibold outline-none disabled:opacity-50"
-                  style={{ borderColor: "var(--app-border)" }}
+                  style={{ borderColor: "var(--border)" }}
                 >
                   {(selectedLesson?.chapters ?? []).map((chapter) => (
                     <option key={chapter.slug} value={chapter.slug}>
@@ -478,7 +478,7 @@ export function GroupClassDialog({ students }: { students: StudentOption[] }) {
               type="button"
               disabled={creating}
               onClick={handleCreate}
-              className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-5 py-2 text-xs font-black text-white transition hover:bg-[#1d6d60] disabled:opacity-60"
+              className="inline-flex items-center gap-1.5 rounded-full bg-[#238777] px-5 py-2 text-xs font-semibold text-white transition hover:bg-[#1d6d60] disabled:opacity-60"
             >
               {creating ? <Loader2 size={14} className="animate-spin" /> : <Plus size={14} />}
               发起课堂并进入

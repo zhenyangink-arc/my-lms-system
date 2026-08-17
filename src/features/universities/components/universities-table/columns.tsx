@@ -43,11 +43,11 @@ function formatRanking(
   display: string | null,
   year: number | null,
 ): React.ReactNode {
-  if (!display) return <span className="text-[var(--app-muted)]">暂无</span>;
+  if (!display) return <span className="text-[var(--foreground-muted)]">暂无</span>;
   return (
     <div className="min-w-24">
-      <p className="font-semibold text-[var(--app-text-soft)]">{display}</p>
-      <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+      <p className="font-semibold text-[var(--foreground-secondary)]">{display}</p>
+      <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
         {year ? `${year} 年` : "年份待确认"}
       </p>
     </div>
@@ -78,7 +78,7 @@ export function getUniversityColumns({
         />
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <p className="truncate font-semibold text-[var(--app-text)]">
+            <p className="truncate font-semibold text-[var(--foreground)]">
               {row.original.name_zh}
             </p>
             {row.original.is_featured && (
@@ -87,7 +87,7 @@ export function getUniversityColumns({
               </span>
             )}
           </div>
-          <p className="mt-0.5 truncate text-[10px] text-[var(--app-muted)]">
+          <p className="mt-0.5 truncate text-[10px] text-[var(--foreground-muted)]">
             {row.original.name_ko} · {UNIVERSITY_OWNERSHIP_LABELS[row.original.ownership]}
           </p>
         </div>
@@ -100,10 +100,10 @@ export function getUniversityColumns({
     header: sortableHeader("地区"),
     cell: ({ row }) => (
       <div className="min-w-32">
-        <p className="font-medium text-[var(--app-text-soft)]">
+        <p className="font-medium text-[var(--foreground-secondary)]">
           {row.original.province}
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.city}
         </p>
       </div>
@@ -136,10 +136,10 @@ export function getUniversityColumns({
     header: sortableHeader("年度学费"),
     cell: ({ row }) => (
       <div className="min-w-36 tabular-nums">
-        <p className="font-medium text-[var(--app-text-soft)]">
+        <p className="font-medium text-[var(--foreground-secondary)]">
           {formatCurrency(row.original.tuition_min_cny)} 至 {formatCurrency(row.original.tuition_max_cny)} 元
         </p>
-        <p className="mt-0.5 text-[10px] text-[var(--app-muted)]">
+        <p className="mt-0.5 text-[10px] text-[var(--foreground-muted)]">
           {row.original.tuition_reference_year} 年参考
         </p>
       </div>
@@ -154,7 +154,7 @@ export function getUniversityColumns({
         {row.original.admission_stages.map((stage) => (
           <span
             key={stage}
-            className="bg-[var(--app-soft-bg)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--app-text-soft)]"
+            className="bg-[var(--surface-soft)] px-1.5 py-0.5 text-[10px] font-medium text-[var(--foreground-secondary)]"
           >
             {UNIVERSITY_ADMISSION_STAGE_LABELS[stage]}
           </span>
@@ -188,7 +188,7 @@ export function getUniversityColumns({
     accessorKey: "updated_at",
     header: sortableHeader("最近更新"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.updated_at}
           options={DATE_OPTIONS}

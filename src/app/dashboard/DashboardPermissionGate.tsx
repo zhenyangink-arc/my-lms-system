@@ -112,7 +112,7 @@ export function DashboardPermissionGate({
       <Dialog open={routeIsDenied || deniedFeature !== null} onOpenChange={(open) => !open && !routeIsDenied && setDeniedFeature(null)}>
         <DialogContent className="sm:max-w-md" showCloseButton={!routeIsDenied} overlayClassName="bg-black/80 supports-backdrop-filter:backdrop-blur-none">
           <DialogHeader>
-            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
+            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
               <LockKeyhole size={22} />
             </div>
             <DialogTitle>当前操作暂无权限</DialogTitle>
@@ -121,8 +121,8 @@ export function DashboardPermissionGate({
             </DialogDescription>
           </DialogHeader>
           <div className="app-soft-card flex items-center gap-3 rounded-2xl border p-4 text-sm">
-            <Sparkles size={17} style={{ color: "var(--app-secondary)" }} />
-            <div><p className="font-black">当前档位：{MEMBERSHIP_TIER_LABELS[membershipTier]}</p><p className="app-muted-text mt-1 text-xs">管理员授权后，该板块即可正常进入观看。</p></div>
+            <Sparkles size={17} style={{ color: "var(--support)" }} />
+            <div><p className="font-bold">当前档位：{MEMBERSHIP_TIER_LABELS[membershipTier]}</p><p className="app-muted-text mt-1 text-xs">管理员授权后，该板块即可正常进入观看。</p></div>
           </div>
         </DialogContent>
       </Dialog>

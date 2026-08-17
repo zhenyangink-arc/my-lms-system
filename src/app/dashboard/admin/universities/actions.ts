@@ -641,7 +641,7 @@ export async function moveUniversityVisaRequirementAction(
 
   const { data: requirements, error: requirementsError } = await supabase
     .from("university_visa_application_requirements")
-    .select("id, university_id, visa_type, requirement_key, stage, title, description, sort_order, is_active")
+    .select("id, university_id, visa_type, requirement_key, stage, title, description, sort_order, is_active, applicable_scopes")
     .eq("university_id", universityId)
     .eq("visa_type", current.visa_type)
     .eq("stage", current.stage)

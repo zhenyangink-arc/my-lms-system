@@ -54,10 +54,10 @@ export function AccountCellAction({
   return (
     <>
       <details className="group relative inline-block text-left">
-        <summary className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--app-muted)] transition-colors hover:bg-[var(--app-soft-bg)] hover:text-[var(--app-text)]" aria-label="打开账号操作">
+        <summary className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]" aria-label="打开账号操作">
           <Icons.more className="size-4" aria-hidden="true" />
         </summary>
-        <div className="absolute right-0 z-30 mt-1 w-40 border border-[var(--app-border)] bg-[var(--app-card-bg)] p-1 shadow-lg">
+        <div className="absolute right-0 z-30 mt-1 w-40 border border-[var(--border)] bg-[var(--card)] p-1 shadow-lg">
           <MenuButton icon={Icons.view} label="查看详情" onClick={() => router.push(`${pathname.replace(/\/$/, "")}/${profile.id}`)} />
           {canManage ? (
             <>
@@ -66,13 +66,13 @@ export function AccountCellAction({
               {profile.role === "student" && <MenuButton icon={Icons.edit} label="修改会员档位" onClick={() => openPanel("membership")} />}
               {canDelete && (
                 <>
-                  <div className="my-1 border-t border-[var(--app-border)]" />
+                  <div className="my-1 border-t border-[var(--border)]" />
                   <MenuButton icon={Icons.trash} label="删除账号" destructive onClick={() => openPanel("delete")} />
                 </>
               )}
             </>
           ) : (
-            <p className="px-2 py-2 text-xs text-[var(--app-muted)]">受保护账号</p>
+            <p className="px-2 py-2 text-xs text-[var(--foreground-muted)]">受保护账号</p>
           )}
         </div>
       </details>
@@ -130,7 +130,7 @@ function AccountActionDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[720px] gap-0 overflow-hidden p-0">
-        <DialogHeader className="border-b border-[var(--app-border)] px-5 py-4 text-left">
+        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
           <DialogTitle className="text-base">管理账号</DialogTitle>
           <DialogDescription className="text-xs">{displayName} · {profile.login_id || profile.email || `…${profile.id.slice(-8)}`}</DialogDescription>
         </DialogHeader>
@@ -201,11 +201,11 @@ function AccountActionDialog({
 }
 
 function MenuButton({ icon: Icon, label, destructive = false, onClick }: { icon: typeof Icons.view; label: string; destructive?: boolean; onClick: () => void }) {
-  return <button type="button" className={`flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium hover:bg-[var(--app-soft-bg)] ${destructive ? "text-rose-600" : "text-[var(--app-text-soft)]"}`} onClick={onClick}><Icon className="size-3.5" />{label}</button>;
+  return <button type="button" className={`flex w-full items-center gap-2 px-2 py-2 text-left text-xs font-medium hover:bg-[var(--surface-soft)] ${destructive ? "text-rose-600" : "text-[var(--foreground-secondary)]"}`} onClick={onClick}><Icon className="size-3.5" />{label}</button>;
 }
 
 function PanelLabel({ title, current, destructive = false }: { title: string; current: string; destructive?: boolean }) {
-  return <div className="border-b border-[var(--app-border)] px-5 py-4 sm:border-r sm:border-b-0"><p className={`text-xs font-semibold ${destructive ? "text-rose-700" : ""}`}>{title}</p><p className={`mt-1 text-[11px] ${destructive ? "text-rose-600" : "text-[var(--app-muted)]"}`}>当前：{current}</p></div>;
+  return <div className="border-b border-[var(--border)] px-5 py-4 sm:border-r sm:border-b-0"><p className={`text-xs font-semibold ${destructive ? "text-rose-700" : ""}`}>{title}</p><p className={`mt-1 text-[11px] ${destructive ? "text-rose-600" : "text-[var(--foreground-muted)]"}`}>当前：{current}</p></div>;
 }
 
 function SubmitCell({ pending, idleLabel, disabled = false, destructive = false }: { pending: boolean; idleLabel: string; disabled?: boolean; destructive?: boolean }) {

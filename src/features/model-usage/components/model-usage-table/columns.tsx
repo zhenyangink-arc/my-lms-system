@@ -47,7 +47,7 @@ function TokenNumber({ value, strong = false }: { value: number; strong?: boolea
 
 function TrendCell({ row }: { row: ModelUsageTableRow }) {
   const max = Math.max(...row.trend, 1);
-  const color = row.kind === "platform" ? "var(--app-accent)" : "var(--app-secondary)";
+  const color = row.kind === "platform" ? "var(--primary)" : "var(--support)";
 
   return (
     <div className="flex min-w-36 items-center gap-3">
@@ -61,7 +61,7 @@ function TrendCell({ row }: { row: ModelUsageTableRow }) {
             className="min-h-px flex-1"
             style={{
               height: `${Math.max(8, Math.round((value / max) * 100))}%`,
-              backgroundColor: value > 0 ? color : "var(--app-border)",
+              backgroundColor: value > 0 ? color : "var(--border)",
             }}
           />
         ))}
@@ -76,8 +76,8 @@ export const modelUsageColumns: ColumnDef<ModelUsageTableRow>[] = [
     header: sortableHeader("用量主体"),
     cell: ({ row }) => (
       <div className="min-w-44">
-        <p className="font-semibold text-[var(--app-text)]">{row.original.name}</p>
-        <p className="mt-0.5 text-[11px] text-[var(--app-muted)]">
+        <p className="font-semibold text-[var(--foreground)]">{row.original.name}</p>
+        <p className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">
           {row.original.slug}
           {row.original.isCurrent ? " · 当前机构" : ""}
         </p>
@@ -119,7 +119,7 @@ export const modelUsageColumns: ColumnDef<ModelUsageTableRow>[] = [
     accessorFn: (row) => row.logs[0]?.createdAt ?? "",
     header: sortableHeader("最近调用"),
     cell: ({ row }) => (
-      <span className="text-xs text-[var(--app-muted)]">
+      <span className="text-xs text-[var(--foreground-muted)]">
         <LocalDateTime
           value={row.original.logs[0]?.createdAt}
           options={RECENT_TIME_OPTIONS}

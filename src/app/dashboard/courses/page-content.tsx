@@ -165,6 +165,7 @@ function KoreanDirectCourseCatalog({
   lessons,
   progressMap,
   isPlatformAudit,
+  dataError,
 }: {
   space: string;
   subcategories: CourseCategory[];
@@ -172,6 +173,7 @@ function KoreanDirectCourseCatalog({
   lessons: Lesson[];
   progressMap: Map<string, LessonProgress>;
   isPlatformAudit: boolean;
+  dataError: boolean;
 }) {
   const subcategoryMap = new Map(
     subcategories.map((subcategory) => [subcategory.id, subcategory]),
@@ -274,11 +276,11 @@ function KoreanDirectCourseCatalog({
         className="app-card relative overflow-hidden rounded-3xl border p-6 sm:p-8"
         style={{
           background:
-            "linear-gradient(135deg, var(--app-card-bg) 0%, var(--app-accent-soft) 100%)",
+            "linear-gradient(135deg, var(--card) 0%, var(--accent) 100%)",
         }}
       >
         <span
-          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--app-secondary-soft)] opacity-60 blur-2xl"
+          className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--support-surface)] opacity-60 blur-2xl"
           aria-hidden="true"
         />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
@@ -286,27 +288,27 @@ function KoreanDirectCourseCatalog({
             <p className="app-muted-text text-xs font-semibold uppercase tracking-[0.16em]">
               韩语学习目录
             </p>
-            <h1
+            <h2
               id="korean-course-catalog-title"
-              className="mt-2 text-3xl font-black tracking-tight sm:text-4xl"
+              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
             >
               所有韩语课程，一页看清
-            </h1>
+            </h2>
             <p className="app-muted-text mt-3 max-w-2xl text-sm font-medium leading-7 sm:text-base">
               从基础能力到真实生活，再到 TOPIK 备考。课程已按教学顺序编号，也可以按自己的节奏选择。
             </p>
           </div>
 
-          <dl className="grid grid-cols-3 gap-2 sm:gap-3">
+          {!dataError && <dl className="grid grid-cols-3 gap-2 sm:gap-3">
             <div className="app-card min-w-0 rounded-2xl border px-3 py-3 text-center sm:min-w-24 sm:px-4">
               <dt className="app-muted-text text-xs font-semibold">学习方向</dt>
-              <dd className="mt-1 text-xl font-black tabular-nums">
+              <dd className="mt-1 text-xl font-bold tabular-nums">
                 {courseSections.length}
               </dd>
             </div>
             <div className="app-card min-w-0 rounded-2xl border px-3 py-3 text-center sm:min-w-24 sm:px-4">
               <dt className="app-muted-text text-xs font-semibold">课程</dt>
-              <dd className="mt-1 text-xl font-black tabular-nums">
+              <dd className="mt-1 text-xl font-bold tabular-nums">
                 {visibleCourses.length}
               </dd>
             </div>
@@ -314,7 +316,7 @@ function KoreanDirectCourseCatalog({
               <dt className="app-muted-text text-xs font-semibold">
                 {isPlatformAudit ? "已发布课时" : "我的进度"}
               </dt>
-              <dd className="mt-1 text-xl font-black tabular-nums">
+              <dd className="mt-1 text-xl font-bold tabular-nums">
                 {isPlatformAudit ? (
                   lessons.length
                 ) : (
@@ -327,11 +329,20 @@ function KoreanDirectCourseCatalog({
                 )}
               </dd>
             </div>
-          </dl>
+          </dl>}
         </div>
       </header>
 
-      <KoreanCourseCatalogBrowser sections={courseSections} />
+      {dataError ? (
+        <section
+          role="alert"
+          className="rounded-2xl border border-[var(--status-warning)] bg-[var(--status-warning-surface)] p-4 text-sm font-semibold text-[var(--status-warning)]"
+        >
+          韩语课程暂时无法读取，请稍后刷新页面重试。
+        </section>
+      ) : (
+        <KoreanCourseCatalogBrowser sections={courseSections} />
+      )}
     </div>
   );
 }
@@ -345,6 +356,7 @@ export async function CourseCatalog({
 }) {
   const { supabase, user, platformProfile } = await requireActiveUser();
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
+  let catalogReadError = false;
 
   /**
    * 1. 一级课程板块
@@ -375,6 +387,7 @@ export async function CourseCatalog({
           .order("sort_order", { ascending: true }),
     );
     categoryData = result.data;
+    catalogReadError = Boolean(result.error);
   } else {
     const result = await supabase
       .from("course_categories")
@@ -385,6 +398,7 @@ export async function CourseCatalog({
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
     categoryData = result.data;
+    catalogReadError = Boolean(result.error);
   }
 
   const categories = (categoryData ?? []) as CourseCategory[];
@@ -412,10 +426,11 @@ export async function CourseCatalog({
       );
     }
 
-    const { data: subcategoryData } = await subcategoryQuery
+    const { data: subcategoryData, error: subcategoryError } = await subcategoryQuery
       .order("sort_order", { ascending: true });
 
     subcategories = (subcategoryData ?? []) as CourseCategory[];
+    catalogReadError ||= Boolean(subcategoryError);
   }
 
   const subcategoryIds = subcategories.map((subcategory) => subcategory.id);
@@ -439,11 +454,12 @@ export async function CourseCatalog({
       );
     }
 
-    const { data: courseData } = await courseQuery
+    const { data: courseData, error: courseError } = await courseQuery
       .order("sort_order", { ascending: true })
       .order("title", { ascending: true });
 
     courses = (courseData ?? []) as Course[];
+    catalogReadError ||= Boolean(courseError);
   }
 
   const courseIds = courses.map((course) => course.id);
@@ -454,13 +470,14 @@ export async function CourseCatalog({
   let lessons: Lesson[] = [];
 
   if (courseIds.length > 0) {
-    const { data: lessonData } = await supabase
+    const { data: lessonData, error: lessonError } = await supabase
       .from("lessons")
       .select("id, course_id")
       .in("course_id", courseIds)
       .eq("is_published", true);
 
     lessons = (lessonData ?? []) as Lesson[];
+    catalogReadError ||= Boolean(lessonError);
   }
 
   const lessonIds = lessons.map((lesson) => lesson.id);
@@ -471,7 +488,7 @@ export async function CourseCatalog({
   let progressList: LessonProgress[] = [];
 
   if (!isPlatformAudit && user && lessonIds.length > 0) {
-    const { data: progressData } = await supabase
+    const { data: progressData, error: progressError } = await supabase
       .from("lesson_progress")
       .select("lesson_id, status, progress_percent")
       .eq("user_id", user.id)
@@ -482,6 +499,7 @@ export async function CourseCatalog({
       status: resolveProgressStatus(item.status),
       progress_percent: item.progress_percent ?? 0,
     }));
+    catalogReadError ||= Boolean(progressError);
   }
 
   /**
@@ -516,6 +534,7 @@ export async function CourseCatalog({
         lessons={lessons}
         progressMap={progressMap}
         isPlatformAudit={isPlatformAudit}
+        dataError={catalogReadError}
       />
     );
   }
@@ -629,11 +648,11 @@ export async function CourseCatalog({
                 if (isFocusCategory) {
                   const isServiceCourse = category.slug === "service";
                   const accent = isServiceCourse
-                    ? "var(--app-accent)"
-                    : "var(--app-secondary)";
+                    ? "var(--primary)"
+                    : "var(--support)";
                   const accentSoft = isServiceCourse
-                    ? "var(--app-accent-soft)"
-                    : "var(--app-secondary-soft)";
+                    ? "var(--accent)"
+                    : "var(--support-surface)";
 
                   return (
                     <article
@@ -641,8 +660,8 @@ export async function CourseCatalog({
                       className="app-card relative overflow-hidden rounded-3xl border p-5 transition hover:-translate-y-1"
                       style={{
                         background: isServiceCourse
-                          ? "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-start))"
-                          : "linear-gradient(145deg, var(--app-card-bg), var(--app-hero-end))",
+                          ? "linear-gradient(145deg, var(--card), var(--card))"
+                          : "linear-gradient(145deg, var(--card), var(--accent))",
                       }}
                     >
                       <div
@@ -662,7 +681,7 @@ export async function CourseCatalog({
                             )}
                           </span>
                           <span
-                            className="rounded-full px-3 py-1.5 text-xs font-black"
+                            className="rounded-full px-3 py-1.5 text-xs font-bold"
                             style={{ color: accent, backgroundColor: accentSoft }}
                           >
                             {isServiceCourse ? "留学规划主线" : "韩语成长主线"}
@@ -672,7 +691,7 @@ export async function CourseCatalog({
                         <DashboardTitleWithHint
                           className="mt-5"
                           headingLevel={3}
-                          titleClassName="text-xl font-black tracking-tight"
+                          titleClassName="text-xl font-bold tracking-tight"
                           title={category.title}
                           description={
                             category.description ||
@@ -689,7 +708,7 @@ export async function CourseCatalog({
                             ["课时", totalLessons],
                           ].map(([label, value]) => (
                             <div key={label} className="app-tile rounded-2xl border p-3 text-center">
-                              <p className="text-lg font-black">{value}</p>
+                              <p className="text-lg font-bold">{value}</p>
                               <p className="mt-0.5 text-xs font-bold app-muted-text">{label}</p>
                             </div>
                           ))}
@@ -698,14 +717,14 @@ export async function CourseCatalog({
                         <div className="mt-5">
                           <div className="flex items-center justify-between gap-3 text-xs">
                             <span className="font-bold app-muted-text">{learningStatusLabel}</span>
-                            <strong style={{ color: "var(--app-success)" }}>{progressPercent}%</strong>
+                            <strong style={{ color: "var(--status-success)" }}>{progressPercent}%</strong>
                           </div>
-                          <div className="mt-2 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                          <div className="mt-2 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
                             <div
                               className="h-full rounded-full"
                               style={{
                                 width: `${progressPercent}%`,
-                                backgroundColor: "var(--app-success)",
+                                backgroundColor: "var(--status-success)",
                               }}
                             />
                           </div>
@@ -716,7 +735,7 @@ export async function CourseCatalog({
 
                         <Link
                           href={`/dashboard/courses/${category.slug}`}
-                          className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-black text-white shadow-sm transition hover:opacity-90"
+                          className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
                           style={{ backgroundColor: accent }}
                         >
                           <PlayCircle size={17} aria-hidden="true" />
@@ -731,8 +750,8 @@ export async function CourseCatalog({
                             <input type="hidden" name="categoryId" value={category.id} />
                             <button
                               type="submit"
-                              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-black transition hover:bg-black/[0.02]"
-                              style={{ borderColor: "var(--app-border)", color: "var(--app-muted)" }}
+                              className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-xs font-bold transition hover:bg-black/[0.02]"
+                              style={{ borderColor: "var(--border)", color: "var(--foreground-muted)" }}
                             >
                               <Heart size={14} aria-hidden="true" />
                               移入收藏夹
@@ -776,7 +795,7 @@ export async function CourseCatalog({
 
                         <DashboardTitleWithHint
                           headingLevel={3}
-                          titleClassName="line-clamp-1 text-base font-black tracking-tight text-gray-900"
+                          titleClassName="line-clamp-1 text-base font-bold tracking-tight text-gray-900"
                           title={category.title}
                           description={category.description || "暂无课程板块简介"}
                         />
@@ -797,7 +816,7 @@ export async function CourseCatalog({
                           {learningStatusLabel}
                         </span>
 
-                        <span className="text-xl font-black text-gray-900">
+                        <span className="text-xl font-bold text-gray-900">
                           {progressPercent}%
                         </span>
                       </div>
@@ -833,26 +852,26 @@ export async function CourseCatalog({
               })}
               {availableCategories.length === 0 && (
                 <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-3xl p-6 text-center md:col-span-2">
-                  <BookOpen size={26} style={{ color: "var(--app-secondary)" }} aria-hidden="true" />
-                  <p className="mt-3 text-sm font-black">暂无可学课程</p>
+                  <BookOpen size={26} style={{ color: "var(--support)" }} aria-hidden="true" />
+                  <p className="mt-3 text-sm font-bold">暂无可学课程</p>
                   <p className="mt-1 text-xs app-muted-text">课程开放后会直接显示在这里。</p>
                 </div>
               )}
             </div>
             <div className="space-y-4">
             <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="收藏夹">
-              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--primary)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl"
-                  style={{ color: "var(--app-warm)", backgroundColor: "var(--app-warm-soft)" }}
+                  style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
                 >
                   <Heart size={18} aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-sm font-black">收藏夹</h2>
+                  <h2 className="text-sm font-bold">收藏夹</h2>
                   <p className="mt-0.5 text-xs app-muted-text">暂时不学的课程可以收纳在这里，之后随时恢复。</p>
                 </div>
-                <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{favoriteCategories.length}</span>
+                <span className="rounded-full px-2.5 py-1 text-xs font-bold app-muted-text" style={{ backgroundColor: "var(--card)" }}>{favoriteCategories.length}</span>
                 <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
               </summary>
               {favoriteCategories.length > 0 ? (
@@ -860,7 +879,7 @@ export async function CourseCatalog({
                   {favoriteCategories.map((category) => {
                     const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
                     return (
-                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                         <CategoryIcon size={17} className="shrink-0 app-muted-text" aria-hidden="true" />
                         <span className="min-w-0 flex-1 truncate text-sm font-bold">{category.title}</span>
                         {isPlatformAudit ? (
@@ -871,7 +890,7 @@ export async function CourseCatalog({
                             data-permission="dashboard_section"
                           >
                             <input type="hidden" name="categoryId" value={category.id} />
-                            <button type="submit" className="shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-black text-white" style={{ backgroundColor: "var(--app-accent)" }}>
+                            <button type="submit" className="shrink-0 rounded-lg px-2.5 py-1.5 text-[10px] font-bold text-white" style={{ backgroundColor: "var(--primary)" }}>
                               移出收藏夹
                             </button>
                           </form>
@@ -881,23 +900,23 @@ export async function CourseCatalog({
                   })}
                 </div>
               ) : (
-                <p className="mt-4 rounded-2xl border border-dashed p-4 text-center text-xs app-muted-text" style={{ borderColor: "var(--app-border)" }}>
+                <p className="mt-4 rounded-2xl border border-dashed p-4 text-center text-xs app-muted-text" style={{ borderColor: "var(--border)" }}>
                   收藏夹还是空的
                 </p>
               )}
             </details>
             <details className="app-soft-card group rounded-3xl border p-4 sm:p-5" aria-label="即将开放的课程">
-              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center gap-3 rounded-2xl outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--primary)] [&::-webkit-details-marker]:hidden">
                 <span
                   className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-amber-50 text-amber-700"
                 >
                   <LoaderCircle size={18} aria-hidden="true" />
                 </span>
                 <div className="min-w-0 flex-1">
-                  <h2 className="text-sm font-black">即将开放的课程</h2>
+                  <h2 className="text-sm font-bold">即将开放的课程</h2>
                   <p className="mt-0.5 text-xs app-muted-text">课程内容准备完成后，会直接显示在上方。</p>
                 </div>
-                <span className="rounded-full px-2.5 py-1 text-xs font-black app-muted-text" style={{ backgroundColor: "var(--app-card-bg)" }}>{upcomingCategories.length}</span>
+                <span className="rounded-full px-2.5 py-1 text-xs font-bold app-muted-text" style={{ backgroundColor: "var(--card)" }}>{upcomingCategories.length}</span>
                 <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
               </summary>
               {upcomingCategories.length > 0 && (
@@ -905,10 +924,10 @@ export async function CourseCatalog({
                   {upcomingCategories.map((category) => {
                     const CategoryIcon = categoryIconMap[category.slug] ?? BookOpen;
                     return (
-                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--app-border)", backgroundColor: "var(--app-card-bg)" }}>
+                      <div key={category.id} className="flex items-center gap-3 rounded-2xl border p-3" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                         <CategoryIcon size={17} className="shrink-0 app-muted-text" aria-hidden="true" />
                         <span className="min-w-0 flex-1 truncate text-sm font-bold">{category.title}</span>
-                        <span className="shrink-0 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[10px] font-black text-amber-700">即将开放</span>
+                        <span className="shrink-0 rounded-lg bg-amber-50 px-2.5 py-1.5 text-[10px] font-bold text-amber-700">即将开放</span>
                       </div>
                     );
                   })}

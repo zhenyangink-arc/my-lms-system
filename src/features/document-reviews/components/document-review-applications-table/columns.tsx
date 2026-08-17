@@ -17,10 +17,10 @@ const REVIEW_LABELS: Record<DocumentReviewApplication["reviewStatus"], string> =
 };
 
 const REVIEW_COLORS: Record<DocumentReviewApplication["reviewStatus"], string> = {
-  preparing: "var(--app-muted)",
-  pending_review: "var(--app-warm)",
-  revision_required: "#dc2626",
-  approved: "var(--app-success)",
+  preparing: "var(--foreground-muted)",
+  pending_review: "var(--status-warning)",
+  revision_required: "var(--status-danger)",
+  approved: "var(--status-success)",
 };
 
 function sortableHeader(title: string) {
@@ -54,10 +54,10 @@ export function getDocumentReviewApplicationColumns(
     header: sortableHeader("学生"),
     cell: ({ row }) => (
       <div className="min-w-48">
-        <p className="truncate font-semibold text-[var(--app-text)]">
+        <p className="truncate font-semibold text-[var(--foreground)]">
           {row.original.studentName}
         </p>
-        <p className="mt-0.5 truncate text-[11px] text-[var(--app-muted)]">
+        <p className="mt-0.5 truncate text-[11px] text-[var(--foreground-muted)]">
           {row.original.studentEmail || `账号 …${row.original.studentId.slice(-8)}`}
         </p>
       </div>
@@ -69,8 +69,8 @@ export function getDocumentReviewApplicationColumns(
     header: sortableHeader("目标大学与项目"),
     cell: ({ row }) => (
       <div className="min-w-56">
-        <p className="font-semibold text-[var(--app-text)]">{row.original.universityName}</p>
-        <p className="mt-0.5 text-[11px] text-[var(--app-muted)]">
+        <p className="font-semibold text-[var(--foreground)]">{row.original.universityName}</p>
+        <p className="mt-0.5 text-[11px] text-[var(--foreground-muted)]">
           {row.original.admissionTrackLabel}
           {row.original.programName ? ` · ${row.original.programName}` : ""}
         </p>
@@ -106,7 +106,11 @@ export function getDocumentReviewApplicationColumns(
       const color = REVIEW_COLORS[status];
       return (
         <span className="inline-flex items-center gap-2 font-medium" style={{ color }}>
-          <span className="size-1.5 rounded-full" style={{ backgroundColor: color }} />
+          <span
+            className="size-1.5 rounded-full"
+            style={{ backgroundColor: color }}
+            aria-hidden="true"
+          />
           {REVIEW_LABELS[status]}
         </span>
       );
@@ -131,7 +135,7 @@ export function getDocumentReviewApplicationColumns(
             `/dashboard/admin/documents/${row.original.studentId}?target=${row.original.id}`,
             dashboardBasePath,
           )}
-          className="inline-flex h-8 items-center border border-[var(--app-border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--app-soft-bg)]"
+          className="inline-flex h-8 items-center border border-[var(--border)] px-2.5 text-xs font-semibold transition-colors hover:bg-[var(--surface-soft)]"
         >
           管理资料
         </Link>

@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
+import { Button } from "@/components/ui/button";
 import { LearningActivityPanel } from "./LearningActivityPanel";
 import { LEARNING_RECORD_DATE_TIME_OPTIONS } from "./config";
 import {
@@ -49,29 +50,29 @@ const categoryPresentation = {
     label: "课程学习",
     shortLabel: "阅读记录和已完成课时",
     icon: BookOpenCheck,
-    color: "var(--app-accent)",
-    soft: "var(--app-accent-soft)",
+    color: "var(--primary)",
+    soft: "var(--accent)",
   },
   task: {
     label: "作业与考试",
     shortLabel: "提交、批改和修改记录",
     icon: FilePenLine,
-    color: "var(--app-secondary)",
-    soft: "var(--app-secondary-soft)",
+    color: "var(--support)",
+    soft: "var(--support-surface)",
   },
   practice: {
     label: "专项练习",
     shortLabel: "会话和技能训练记录",
     icon: MessageCircleMore,
-    color: "var(--app-success)",
-    soft: "var(--app-success-soft)",
+    color: "var(--status-success)",
+    soft: "var(--status-success-surface)",
   },
   teacher: {
     label: "老师反馈",
     shortLabel: "老师评价和下一步建议",
     icon: NotebookPen,
-    color: "var(--app-warm)",
-    soft: "var(--app-warm-soft)",
+    color: "var(--status-warning)",
+    soft: "var(--status-warning-surface)",
   },
 } satisfies Record<
   LearningRecordCategory,
@@ -183,16 +184,16 @@ export function LearningRecordBoard({
     <div className="space-y-5">
       <header className="grid gap-5 px-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
         <div>
-          <h1 className="text-2xl font-black tracking-[-0.03em] sm:text-3xl">
+          <h2 className="text-2xl font-bold tracking-[-0.03em] sm:text-3xl">
             学习记录
-          </h1>
+          </h2>
           <p className="app-muted-text mt-2 max-w-3xl text-sm font-medium leading-6">
             看清自己学了多久、完成了什么，以及下一步应该继续做什么。
           </p>
         </div>
-        <div className="border-l-2 border-[var(--app-accent)] pl-4 sm:min-w-56">
+        <div className="border-l-2 border-[var(--primary)] pl-4 sm:min-w-56">
           <p className="app-muted-text text-xs font-medium">近一年有效学习</p>
-          <p className="mt-1 text-3xl font-black tracking-tight tabular-nums text-[var(--app-accent)]">
+          <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-[var(--primary)]">
             {formatLearningDuration(yearSeconds)}
           </p>
           <p className="app-muted-text mt-1 text-xs font-medium">
@@ -208,32 +209,32 @@ export function LearningRecordBoard({
             value: formatLearningDuration(summary.todaySeconds),
             hint: "今天经过计时确认的时长",
             icon: Clock3,
-            color: "var(--app-accent)",
-            soft: "var(--app-accent-soft)",
+            color: "var(--primary)",
+            soft: "var(--accent)",
           },
           {
             label: "本周有效学习",
             value: formatLearningDuration(summary.weekSeconds),
             hint: "本周一至今天的累计时长",
             icon: CalendarDays,
-            color: "var(--app-secondary)",
-            soft: "var(--app-secondary-soft)",
+            color: "var(--support)",
+            soft: "var(--support-surface)",
           },
           {
             label: "连续学习",
             value: `${summary.streakDays} 天`,
             hint: "截至今天的连续学习天数",
             icon: Flame,
-            color: "var(--app-warm)",
-            soft: "var(--app-warm-soft)",
+            color: "var(--status-warning)",
+            soft: "var(--status-warning-surface)",
           },
           {
             label: "累计完成课时",
             value: `${summary.completedCount} 个`,
             hint: "课程中状态为已完成的课时",
             icon: CheckCircle2,
-            color: "var(--app-success)",
-            soft: "var(--app-success-soft)",
+            color: "var(--status-success)",
+            soft: "var(--status-success-surface)",
           },
         ].map((metric) => {
           const MetricIcon = metric.icon;
@@ -247,7 +248,7 @@ export function LearningRecordBoard({
                   <MetricIcon size={17} aria-hidden="true" />
                 </span>
                 <div className="min-w-0">
-                  <p className="text-lg font-black tabular-nums sm:text-xl">
+                  <p className="text-lg font-bold tabular-nums sm:text-xl">
                     {metric.value}
                   </p>
                   <h2 className="mt-1 text-xs font-semibold">{metric.label}</h2>
@@ -263,10 +264,11 @@ export function LearningRecordBoard({
 
       {dataError && (
         <section
+          role="alert"
           className="rounded-2xl border p-4 text-sm font-semibold"
           style={{
-            color: "var(--app-warm)",
-            backgroundColor: "var(--app-warm-soft)",
+            color: "var(--status-warning)",
+            backgroundColor: "var(--status-warning-surface)",
           }}
         >
           部分学习记录暂时无法读取，请稍后刷新。
@@ -276,33 +278,34 @@ export function LearningRecordBoard({
       {latestTeacherNote?.nextAction && (
         <section
           className="app-card rounded-2xl border p-5"
-          style={{ borderColor: "var(--app-warm)" }}
+          style={{ borderColor: "var(--status-warning)" }}
         >
           <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--app-warm-soft)] text-[var(--app-warm)]">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
               <Target size={18} aria-hidden="true" />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-[var(--app-warm)]">
+              <p className="text-xs font-semibold text-[var(--status-warning)]">
                 老师给你的下一步建议
               </p>
-              <h2 className="mt-1 text-sm font-black">
+              <h2 className="mt-1 text-sm font-bold">
                 {latestTeacherNote.title}
               </h2>
               <p className="app-muted-text mt-2 whitespace-pre-wrap text-xs font-medium leading-6">
                 {latestTeacherNote.nextAction}
               </p>
             </div>
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => {
                 setCategory("teacher");
                 setSelectedDate(null);
               }}
-              className="min-h-11 cursor-pointer rounded-xl bg-[var(--app-warm-soft)] px-4 text-xs font-semibold text-[var(--app-warm)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-warm)]"
+              className="min-h-11 cursor-pointer rounded-xl bg-[var(--status-warning-surface)] px-4 text-xs font-semibold text-[var(--status-warning)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--status-warning)]"
             >
               查看老师反馈
-            </button>
+            </Button>
           </div>
         </section>
       )}
@@ -318,7 +321,7 @@ export function LearningRecordBoard({
       <section aria-labelledby="record-category-title" className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3 px-1">
           <div>
-            <p className="text-[10px] font-semibold tracking-[0.12em] text-[var(--app-secondary)]">
+            <p className="text-[10px] font-semibold tracking-[0.12em] text-[var(--support)]">
               记录筛选
             </p>
             <h2 id="record-category-title" className="mt-1 text-lg font-bold tracking-tight">
@@ -339,7 +342,7 @@ export function LearningRecordBoard({
         </div>
 
         <div
-          className="grid grid-cols-2 gap-1 rounded-2xl border border-[var(--app-border-soft)] bg-[var(--app-soft-bg)] p-1 lg:grid-cols-4"
+          className="grid grid-cols-2 gap-1 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1 lg:grid-cols-4"
           role="group"
           aria-label="选择学习记录类型"
         >
@@ -348,37 +351,38 @@ export function LearningRecordBoard({
               const item = categoryPresentation[key];
               const active = category === key;
               return (
-                <button
+                <Button
                   key={key}
                   type="button"
+                  variant="outline"
                   onClick={() => setCategory(key)}
                   aria-pressed={active}
                   aria-label={`${item.label}，${item.shortLabel}，${categoryCounts[key]} 条记录`}
                   title={item.shortLabel}
-                  className="flex min-h-11 cursor-pointer items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition-[border-color,background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+                  className="flex min-h-11 cursor-pointer items-center justify-between gap-2 rounded-xl border px-3 py-2 text-left transition-[border-color,background-color,color] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                   style={{
-                    color: active ? item.color : "var(--app-text)",
+                    color: active ? item.color : "var(--foreground)",
                     backgroundColor: active
-                      ? "var(--app-card-bg)"
+                      ? "var(--card)"
                       : "transparent",
-                    borderColor: active ? item.color : "var(--app-border-soft)",
+                    borderColor: active ? item.color : "var(--border-subtle)",
                   }}
                 >
                   <span className="truncate text-xs font-semibold sm:text-sm">
                     {item.label}
                   </span>
                   <span
-                    className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-black tabular-nums"
+                    className="inline-flex min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 py-0.5 text-[10px] font-bold tabular-nums"
                     style={{
-                      color: active ? item.color : "var(--app-muted)",
+                      color: active ? item.color : "var(--foreground-muted)",
                       backgroundColor: active
                         ? item.soft
-                        : "var(--app-card-bg)",
+                        : "var(--card)",
                     }}
                   >
                     {categoryCounts[key]}
                   </span>
-                </button>
+                </Button>
               );
             },
           )}
@@ -413,14 +417,15 @@ export function LearningRecordBoard({
             </div>
           </div>
           {selectedDate && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
               onClick={() => setSelectedDate(null)}
-              className="min-h-11 cursor-pointer rounded-xl bg-[var(--app-soft-bg)] px-4 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)]"
+              className="min-h-11 cursor-pointer rounded-xl bg-[var(--surface-soft)] px-4 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               style={{ color: activePresentation.color }}
             >
               清除日期筛选
-            </button>
+            </Button>
           )}
         </div>
 
@@ -439,14 +444,14 @@ export function LearningRecordBoard({
                 );
               }}
             >
-              <summary className="mb-2 flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--app-accent)] [&::-webkit-details-marker]:hidden">
+              <summary className="mb-2 flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-xl px-2 py-2 transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] [&::-webkit-details-marker]:hidden">
                 <span className="text-xs font-semibold">
                   {relativeDateLabel(group.key)}
                 </span>
                 <span className="app-muted-text text-[9px] font-medium">
                   {group.events.length} 条
                 </span>
-                <span className="h-px flex-1 bg-[var(--app-border-soft)]" />
+                <span className="h-px flex-1 bg-[var(--border-subtle)]" />
                 <ChevronDown
                   className="app-muted-text transition-transform group-open:rotate-180"
                   size={15}
@@ -479,7 +484,7 @@ export function LearningRecordBoard({
                           </span>
                           {event.durationSeconds != null &&
                             event.durationSeconds > 0 && (
-                              <span className="rounded-full bg-[var(--app-soft-bg)] px-2 py-1 text-[9px] font-semibold">
+                              <span className="rounded-full bg-[var(--surface-soft)] px-2 py-1 text-[9px] font-semibold">
                                 有效学习 {formatLearningDuration(event.durationSeconds)}
                               </span>
                             )}
@@ -501,7 +506,7 @@ export function LearningRecordBoard({
                           </p>
                         )}
                         <h3
-                          className={`${event.subtitle ? "mt-1" : "mt-1.5"} text-sm font-black leading-5`}
+                          className={`${event.subtitle ? "mt-1" : "mt-1.5"} text-sm font-bold leading-5`}
                         >
                           {event.title}
                         </h3>
@@ -509,7 +514,7 @@ export function LearningRecordBoard({
                           {event.description}
                         </p>
                         {event.nextAction && (
-                          <p className="mt-3 border-l-2 border-[var(--app-success)] bg-[var(--app-success-soft)] px-3 py-2 text-xs font-medium leading-5">
+                          <p className="mt-3 border-l-2 border-[var(--status-success)] bg-[var(--status-success-surface)] px-3 py-2 text-xs font-medium leading-5">
                             下一步：{event.nextAction}
                           </p>
                         )}
@@ -518,7 +523,7 @@ export function LearningRecordBoard({
                         <Link
                           href={event.href}
                           className="mt-1 inline-flex min-h-8 shrink-0 items-center gap-1 text-[10px] font-semibold"
-                          style={{ color: "var(--app-secondary)" }}
+                          style={{ color: "var(--support)" }}
                         >
                           查看
                           <ArrowRight size={10} aria-hidden="true" />
@@ -548,7 +553,7 @@ export function LearningRecordBoard({
       <section className="app-soft-card flex items-center gap-3 rounded-2xl border p-4">
         <GraduationCap
           size={18}
-          className="shrink-0 text-[var(--app-secondary)]"
+          className="shrink-0 text-[var(--support)]"
           aria-hidden="true"
         />
         <p className="app-muted-text text-[10px] font-medium leading-5">

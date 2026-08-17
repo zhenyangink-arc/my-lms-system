@@ -62,31 +62,31 @@ function Hero({
       className="relative overflow-hidden rounded-3xl border p-6 sm:p-8"
       style={{
         background:
-          "linear-gradient(125deg, var(--app-accent-soft), var(--app-card-bg) 48%, var(--app-warm-soft))",
-        borderColor: "var(--app-border)",
+          "linear-gradient(125deg, var(--accent), var(--card) 48%, var(--status-warning-surface))",
+        borderColor: "var(--border)",
       }}
     >
       <div
         className="pointer-events-none absolute inset-0 opacity-40"
         style={{
-          backgroundImage: "radial-gradient(var(--app-border) 1px, transparent 1px)",
+          backgroundImage: "radial-gradient(var(--border) 1px, transparent 1px)",
           backgroundSize: "22px 22px",
         }}
       />
       <div
         className="pointer-events-none absolute -right-14 -top-16 h-52 w-52 rounded-full opacity-50 blur-3xl"
-        style={{ backgroundColor: "var(--app-accent-soft)" }}
+        style={{ backgroundColor: "var(--accent)" }}
       />
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <span
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-black tracking-wide"
-            style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold tracking-wide"
+            style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}
           >
             <Sparkles size={12} aria-hidden="true" />
             巩固中心 · 词汇专项
           </span>
-          <h1 className="mt-3 text-3xl font-black tracking-tight sm:text-4xl">单词练习</h1>
+          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">单词练习</h2>
           <p className="app-muted-text mt-2 max-w-xl text-sm font-bold leading-6">
             练习词库独立于互动教材，可自由扩充。翻卡巩固，越练越牢。
           </p>
@@ -106,11 +106,11 @@ function StatCard({ value, label }: { value: number; label: string }) {
     <div
       className="min-w-[86px] rounded-2xl border px-5 py-3.5 text-center backdrop-blur"
       style={{
-        borderColor: "var(--app-border)",
-        backgroundColor: "color-mix(in srgb, var(--app-card-bg) 82%, transparent)",
+        borderColor: "var(--border)",
+        backgroundColor: "color-mix(in srgb, var(--card) 82%, transparent)",
       }}
     >
-      <p className="text-2xl font-black tabular-nums" style={{ color: "var(--app-accent)" }}>
+      <p className="text-2xl font-bold tabular-nums" style={{ color: "var(--primary)" }}>
         {value}
       </p>
       <p className="app-muted-text mt-0.5 text-[10px] font-bold">{label}</p>

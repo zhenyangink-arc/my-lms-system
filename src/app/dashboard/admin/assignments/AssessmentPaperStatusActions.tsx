@@ -15,6 +15,7 @@ function ActionButton({
   label,
   icon: Icon,
   tone = "muted",
+  confirmation,
 }: {
   action: (
     previousState: typeof initialLearningAssignmentActionState,
@@ -23,6 +24,7 @@ function ActionButton({
   label: string;
   icon: typeof Send;
   tone?: "accent" | "muted" | "danger";
+  confirmation?: string;
 }) {
   const [state, formAction, pending] = useActionState(
     action,
@@ -31,26 +33,36 @@ function ActionButton({
   const colors =
     tone === "accent"
       ? {
-          color: "var(--app-accent)",
-          backgroundColor: "var(--app-accent-soft)",
+          color: "var(--primary)",
+          backgroundColor: "var(--accent)",
         }
       : tone === "danger"
-        ? { color: "#c94f45", backgroundColor: "#fff0ed" }
+        ? {
+            color: "var(--status-danger)",
+            backgroundColor: "var(--status-danger-surface)",
+          }
         : {
-            color: "var(--app-muted)",
-            backgroundColor: "var(--app-soft-bg)",
+            color: "var(--foreground-muted)",
+            backgroundColor: "var(--surface-soft)",
           };
 
   return (
-    <form action={formAction}>
+    <form
+      action={formAction}
+      onSubmit={(event) => {
+        if (confirmation && !window.confirm(confirmation)) {
+          event.preventDefault();
+        }
+      }}
+    >
       <button
         type="submit"
         disabled={pending}
         title={state.message || label}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-black disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50"
         style={colors}
       >
-        <Icon size={12} />
+        <Icon size={12} aria-hidden="true" />
         {pending ? "处理中…" : label}
       </button>
     </form>
@@ -105,6 +117,7 @@ export function AssessmentPaperStatusActions({
           label="停止提供"
           icon={StopCircle}
           tone="danger"
+          confirmation="确认停止向机构提供这份试卷？已创建的任务不会被删除。"
         />
       ) : (
         <ActionButton
@@ -118,7 +131,12 @@ export function AssessmentPaperStatusActions({
         <ActionButton action={draftAction} label="转为草稿" icon={FileClock} />
       )}
       {status !== "archived" && (
-        <ActionButton action={archiveAction} label="归档" icon={Archive} />
+        <ActionButton
+          action={archiveAction}
+          label="归档"
+          icon={Archive}
+          confirmation="确认归档这份试卷？归档后将不再出现在常用试卷列表中。"
+        />
       )}
     </div>
   );

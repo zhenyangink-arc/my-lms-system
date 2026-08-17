@@ -22,16 +22,16 @@ export function AnnouncementComposer() {
   return (
     <section id="publish-announcement" className="app-card scroll-mt-24 rounded-3xl border p-4 sm:p-5">
       <div className="flex items-start gap-3">
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--app-accent)", backgroundColor: "var(--app-accent-soft)" }}>
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
           <FilePenLine size={20} aria-hidden="true" />
         </span>
         <div>
-          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-black" title={<>新建通知公告</>} description={<>可以先保存草稿，确认内容后再正式发布。</>} />
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-lg font-bold" title={<>新建通知公告</>} description={<>可以先保存草稿，确认内容后再正式发布。</>} />
         </div>
       </div>
 
       <form ref={formRef} action={formAction} className="mt-6 space-y-4">
-        <label className="block text-xs font-black">
+        <label className="block text-xs font-bold">
           公告标题
           <input
             name="title"
@@ -44,13 +44,13 @@ export function AnnouncementComposer() {
         </label>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block text-xs font-black">
+          <label className="block text-xs font-bold">
             公告分类
             <select name="category" defaultValue="general" className="app-input mt-2 w-full rounded-xl border px-4 py-3 text-sm">
               {Object.entries(CATEGORY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
             </select>
           </label>
-          <label className="block text-xs font-black">
+          <label className="block text-xs font-bold">
             重要程度
             <select name="priority" defaultValue="normal" className="app-input mt-2 w-full rounded-xl border px-4 py-3 text-sm">
               {Object.entries(PRIORITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -58,7 +58,7 @@ export function AnnouncementComposer() {
           </label>
         </div>
 
-        <label className="block text-xs font-black">
+        <label className="block text-xs font-bold">
           公告内容
           <textarea
             name="content"
@@ -80,7 +80,7 @@ export function AnnouncementComposer() {
         {state.message && (
           <p
             className="rounded-xl px-4 py-3 text-xs font-bold"
-            style={{ color: state.status === "error" ? "#c94f45" : "var(--app-success)", backgroundColor: state.status === "error" ? "#fff0ed" : "var(--app-success-soft)" }}
+            style={{ color: state.status === "error" ? "#c94f45" : "var(--status-success)", backgroundColor: state.status === "error" ? "#fff0ed" : "var(--status-success-surface)" }}
             aria-live="polite"
           >
             {state.message}
@@ -93,8 +93,8 @@ export function AnnouncementComposer() {
             name="intent"
             value="publish"
             disabled={pending}
-            className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-black text-white disabled:opacity-50"
-            style={{ backgroundColor: "var(--app-accent)" }}
+            className="inline-flex items-center gap-2 rounded-xl px-5 py-3 text-sm font-bold text-white disabled:opacity-50"
+            style={{ backgroundColor: "var(--primary)" }}
           >
             <Send size={15} aria-hidden="true" /> {pending ? "正在保存…" : "立即发布"}
           </button>
@@ -103,7 +103,7 @@ export function AnnouncementComposer() {
             name="intent"
             value="draft"
             disabled={pending}
-            className="app-soft-card inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-black disabled:opacity-50"
+            className="app-soft-card inline-flex items-center gap-2 rounded-xl border px-5 py-3 text-sm font-bold disabled:opacity-50"
           >
             <Save size={15} aria-hidden="true" /> 保存草稿
           </button>

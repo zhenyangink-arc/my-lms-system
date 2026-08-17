@@ -339,14 +339,14 @@ export function KoreanLevelOneReader({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col overflow-hidden bg-[#f7faf8] text-[#173f4a]">
-      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-[#dce8e1] bg-white/95 px-4 py-3 sm:px-5">
+    <div className="fixed inset-0 z-50 flex h-[100dvh] w-full flex-col overflow-hidden bg-[var(--card)] text-[var(--primary)] [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2">
+      <header className="flex shrink-0 items-center justify-between gap-4 border-b border-[var(--status-success-surface)] bg-white/95 px-4 py-3 sm:px-5">
         <div className="flex min-w-0 items-center gap-3">
           <button
             type="button"
             onClick={() => setIsExitDialogOpen(true)}
             aria-label="退出课程阅读器"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#dce8e1] text-[#60736a] transition hover:bg-[#eef6f2]"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--status-success-surface)] text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]"
           >
             <ArrowLeft size={17} />
           </button>
@@ -354,23 +354,23 @@ export function KoreanLevelOneReader({
             type="button"
             onClick={() => setIsMenuOpen((current) => !current)}
             aria-label="打开课程目录"
-            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[#dce8e1] text-[#60736a] transition hover:bg-[#eef6f2] lg:hidden"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-[var(--status-success-surface)] text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] lg:hidden"
           >
             <Menu size={17} />
           </button>
-          <span className="hidden h-5 w-px bg-[#dce4df] sm:block" />
+          <span className="hidden h-5 w-px bg-[var(--surface-soft)] sm:block" />
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <p className="truncate text-sm font-black text-[#173f4a]">韩国语 1 级</p>
+            <p className="truncate text-sm font-bold text-[var(--primary)]">韩国语 1 级</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <label className="hidden items-center gap-2 rounded-xl border border-[#dce4df] bg-white px-3 py-2 text-xs font-bold text-[#657a70] xl:inline-flex">
+          <label className="hidden items-center gap-2 rounded-xl border border-[var(--surface-soft)] bg-white px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] xl:inline-flex">
             <Volume2 size={14} />
             <span>发音速度</span>
             <select
               value={speechRate}
               onChange={(event) => setSpeechRate(Number(event.target.value))}
-              className="bg-transparent font-black text-[#294f43] outline-none"
+              className="rounded-md bg-transparent font-bold text-[var(--foreground-secondary)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
               aria-label="选择发音速度"
             >
               <option value={0.62}>慢速</option>
@@ -381,7 +381,7 @@ export function KoreanLevelOneReader({
           <button
             type="button"
             onClick={() => setIsReferenceOpen(true)}
-            className="hidden items-center gap-1.5 rounded-xl border border-[#ead3a7] bg-[#fff4df] px-3 py-2 text-xs font-black text-[#294f43] transition hover:bg-[#ffefd0] md:inline-flex"
+            className="hidden items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--status-warning-surface)] md:inline-flex"
           >
             <Search size={16} />
             常用表达
@@ -391,8 +391,8 @@ export function KoreanLevelOneReader({
             onClick={() => setIsBookmarked((current) => !current)}
             aria-label={isBookmarked ? "取消书签" : "添加书签"}
             aria-pressed={isBookmarked}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-black transition ${
-              isBookmarked ? "bg-[#fff1df] text-[#b87131]" : "text-[#294f43] hover:bg-[#f1f5f2]"
+            className={`inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold transition ${
+              isBookmarked ? "bg-[var(--status-warning-surface)] text-[var(--destructive)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
             }`}
           >
             {isBookmarked ? <BookmarkCheck size={17} /> : <Bookmark size={17} />}
@@ -402,7 +402,7 @@ export function KoreanLevelOneReader({
             type="button"
             onClick={() => setIsNotesOpen(true)}
             aria-label="打开学习笔记"
-            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-black text-[#294f43] transition hover:bg-[#f1f5f2]"
+            className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]"
           >
             <NotebookPen size={17} />
             <span className="hidden 2xl:inline">本章笔记</span>
@@ -411,14 +411,14 @@ export function KoreanLevelOneReader({
             type="button"
             onClick={() => setIsReadingMode((current) => !current)}
             aria-pressed={isReadingMode}
-            className="inline-flex items-center gap-2 rounded-xl border border-[#dce4df] bg-white px-3 py-2 text-xs font-black text-[#4f685c] transition hover:border-[#9fbbb0] hover:bg-[#f1f7f4]"
+            className="inline-flex items-center gap-2 rounded-xl border border-[var(--surface-soft)] bg-white px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--border)] hover:bg-[var(--card)]"
           >
             {isReadingMode ? <Minimize2 size={17} /> : <Maximize2 size={17} />}
             <span className="hidden sm:inline">{isReadingMode ? "退出阅读模式" : "阅读模式"}</span>
           </button>
           <div className="hidden text-right sm:block">
-            <p className="text-[11px] font-bold text-[#83948b]">阅读进度</p>
-            <p className="text-sm font-black text-[#238777]">
+            <p className="text-[11px] font-bold text-[var(--foreground-muted)]">阅读进度</p>
+            <p className="text-sm font-bold text-[var(--status-success)]">
               {selectedTestSlug === null
                 ? `${progress}%`
                 : formatReadingTime(
@@ -428,9 +428,9 @@ export function KoreanLevelOneReader({
                   )}
             </p>
           </div>
-          <div className="hidden h-2 w-20 overflow-hidden rounded-full bg-[#e5ece8] 2xl:block">
+          <div className="hidden h-2 w-20 overflow-hidden rounded-full bg-[var(--surface-soft)] 2xl:block">
             <div
-              className="h-full rounded-full bg-[#2c9a87] transition-all"
+              className="h-full rounded-full bg-[var(--status-success)] transition-all"
               style={{
                 width: `${
                   selectedTestSlug === null
@@ -444,7 +444,7 @@ export function KoreanLevelOneReader({
             type="button"
             onClick={() => setIsExitDialogOpen(true)}
             aria-label="退出课程阅读器"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#dce4df] bg-white text-[#60736a] transition hover:border-[#d79a87] hover:bg-[#fff5f1] hover:text-[#b4513b]"
+            className="flex h-9 w-9 items-center justify-center rounded-xl border border-[var(--surface-soft)] bg-white text-[var(--foreground-secondary)] transition hover:border-[var(--destructive)] hover:bg-[var(--card)] hover:text-[var(--destructive)]"
           >
             <X size={17} />
           </button>
@@ -452,10 +452,10 @@ export function KoreanLevelOneReader({
       </header>
 
       <div className="relative flex min-h-0 flex-1">
-        <aside className={`absolute inset-y-0 left-0 z-30 flex w-72 shrink-0 flex-col border-r border-[#dce8e1] bg-[#f1f7f4] p-4 shadow-xl transition-transform lg:static lg:translate-x-0 lg:shadow-none ${
+        <aside className={`absolute inset-y-0 left-0 z-30 flex w-72 shrink-0 flex-col border-r border-[var(--status-success-surface)] bg-[var(--card)] p-4 shadow-xl transition-transform lg:static lg:translate-x-0 lg:shadow-none ${
           isReadingMode ? "hidden" : isMenuOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         }`}>
-          <div className="mb-4 flex items-center gap-2 px-2 text-sm font-black text-[#315f52]">
+          <div className="mb-4 flex items-center gap-2 px-2 text-sm font-bold text-[var(--status-success)]">
             <BookOpenCheck size={16} />
             课程目录
           </div>
@@ -485,20 +485,20 @@ export function KoreanLevelOneReader({
                   disabled={!unlocked}
                   className={`block w-full rounded-2xl p-3 text-left transition ${
                     active
-                      ? "bg-white shadow-sm ring-1 ring-[#cfe2d9]"
+                      ? "bg-white shadow-sm ring-1 ring-[var(--border-subtle)]"
                       : unlocked
                         ? "hover:bg-white/70"
                         : "cursor-not-allowed opacity-55"
                   }`}
                 >
                   <span className="flex items-start gap-3">
-                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-black ${active ? "bg-[#238777] text-white" : "bg-[#dfece6] text-[#60736a]"}`}>
+                    <span className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-xl text-xs font-bold ${active ? "bg-[var(--status-success)] text-white" : "bg-[var(--status-success-surface)] text-[var(--foreground-secondary)]"}`}>
                       {String(book.number).padStart(2, "0")}
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-sm font-black text-[#294f43]">{book.korean}</span>
-                      <span className="mt-1 block text-[11px] font-bold text-[#789087]">{book.chinese}</span>
-                      <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-black ${active ? "bg-[#e5f3ee] text-[#238777]" : "bg-[#e6ece9] text-[#71857b]"}`}>
+                      <span className="block text-sm font-bold text-[var(--foreground-secondary)]">{book.korean}</span>
+                      <span className="mt-1 block text-[11px] font-bold text-[var(--foreground-muted)]">{book.chinese}</span>
+                      <span className={`mt-2 inline-block rounded-full px-2 py-0.5 text-[10px] font-bold ${active ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--surface-soft)] text-[var(--foreground-muted)]"}`}>
                         {!unlocked
                           ? "未开放"
                           : active
@@ -511,7 +511,7 @@ export function KoreanLevelOneReader({
                       </span>
                     </span>
                     {!unlocked && (
-                      <Lock size={14} className="ml-auto shrink-0 text-[#83948b]" />
+                      <Lock size={14} className="ml-auto shrink-0 text-[var(--foreground-muted)]" />
                     )}
                   </span>
                 </button>
@@ -524,14 +524,14 @@ export function KoreanLevelOneReader({
             type="button"
             aria-label="关闭课程目录"
             onClick={() => setIsMenuOpen(false)}
-            className="absolute inset-0 z-20 bg-[#173f4a]/25 lg:hidden"
+            className="absolute inset-0 z-20 bg-[var(--primary)]/25 lg:hidden"
           />
         )}
 
         <main
           className={
             isReadingMode
-              ? "fixed inset-0 z-40 min-w-0 overflow-hidden bg-[#101613]"
+              ? "fixed inset-0 z-40 min-w-0 overflow-hidden bg-[var(--foreground)]"
               : "min-w-0 flex-1 overflow-y-auto px-5 py-6 sm:px-8 lg:px-12"
           }
         >
@@ -687,13 +687,13 @@ export function KoreanLevelOneReader({
             />
           )}
           <section className="hidden">
-            <div className="overflow-hidden rounded-[28px] border border-[#d5e8e1] bg-[linear-gradient(135deg,#eaf7f2_0%,#f8fcfb_58%,#fff7ea_100%)] p-6 shadow-sm sm:p-10">
-              <div className="inline-flex items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-xs font-black text-[#238777] shadow-sm ring-1 ring-[#d8ebe7]">
+            <div className="overflow-hidden rounded-[28px] border border-[var(--status-success-surface)] bg-[linear-gradient(135deg,var(--status-success-surface)_0%,var(--card)_58%,var(--card)_100%)] p-6 shadow-sm sm:p-10">
+              <div className="inline-flex items-center gap-2 rounded-full bg-white/85 px-3 py-1.5 text-xs font-bold text-[var(--status-success)] shadow-sm ring-1 ring-[var(--status-success-surface)]">
                 <Compass size={14} />
                 第 01 章 · 课程导读
               </div>
-              <h1 className="mt-5 text-3xl font-black tracking-tight text-[#173f4a] sm:text-4xl">从会读，到敢开口表达</h1>
-              <p className="mt-4 max-w-2xl text-base leading-8 text-[#607b7a]">韩国语 1 级将带你把韩文字母和发音基础，转换成可用于课堂与日常生活的词汇、句型和短对话能力。</p>
+              <h3 className="mt-5 text-3xl font-bold tracking-tight text-[var(--primary)] sm:text-4xl">从会读，到敢开口表达</h3>
+              <p className="mt-4 max-w-2xl text-base leading-8 text-[var(--foreground-secondary)]">韩国语 1 级将带你把韩文字母和发音基础，转换成可用于课堂与日常生活的词汇、句型和短对话能力。</p>
             </div>
 
             <div className="mt-7 grid gap-4 md:grid-cols-3">
@@ -704,42 +704,42 @@ export function KoreanLevelOneReader({
               ].map(([title, description, Icon]) => {
                 const CardIcon = Icon as typeof Sparkles;
                 return (
-                  <article key={title as string} className="rounded-3xl border border-[#dce8e1] bg-white p-5 shadow-sm">
-                    <CardIcon className="text-[#238777]" size={22} />
-                    <h2 className="mt-4 text-base font-black text-[#294f43]">{title as string}</h2>
-                    <p className="mt-2 text-sm leading-6 text-[#71857b]">{description as string}</p>
+                  <article key={title as string} className="rounded-3xl border border-[var(--status-success-surface)] bg-white p-5 shadow-sm">
+                    <CardIcon className="text-[var(--status-success)]" size={22} />
+                    <h3 className="mt-4 text-base font-bold text-[var(--foreground-secondary)]">{title as string}</h3>
+                    <p className="mt-2 text-sm leading-6 text-[var(--foreground-muted)]">{description as string}</p>
                   </article>
                 );
               })}
             </div>
 
-            <section className="mt-7 rounded-[28px] border border-[#dce8e1] bg-white p-6 sm:p-8">
+            <section className="mt-7 rounded-[28px] border border-[var(--status-success-surface)] bg-white p-6 sm:p-8">
               <div className="flex items-center gap-3">
-                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#e5f3ee] text-[#238777]"><ListChecks size={19} /></span>
+                <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]"><ListChecks size={19} /></span>
                 <div>
-                  <h2 className="font-black text-[#294f43]">建议学习顺序</h2>
-                  <p className="mt-1 text-sm text-[#71857b]">每次学习 20–30 分钟，完成练习后再进入下一模块。</p>
+                  <h3 className="font-bold text-[var(--foreground-secondary)]">建议学习顺序</h3>
+                  <p className="mt-1 text-sm text-[var(--foreground-muted)]">每次学习 20–30 分钟，完成练习后再进入下一模块。</p>
                 </div>
               </div>
               <ol className="mt-6 grid gap-3 sm:grid-cols-2">
                 {["先完成发音与课堂表达，建立开口信心", "用核心词汇为句子搭建素材", "通过基础句型组织自己的意思", "在生活会话中完成听说整合"].map((item, index) => (
-                  <li key={item} className="flex items-center gap-3 rounded-2xl bg-[#f4f8f6] p-4 text-sm font-bold text-[#46665b]">
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-black text-[#238777]">{index + 1}</span>
+                  <li key={item} className="flex items-center gap-3 rounded-2xl bg-[var(--card)] p-4 text-sm font-bold text-[var(--foreground-secondary)]">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-white text-xs font-bold text-[var(--status-success)]">{index + 1}</span>
                     {item}
                   </li>
                 ))}
               </ol>
             </section>
 
-            <p className="mt-8 flex items-center justify-center gap-2 text-xs font-bold text-[#82958c]"><Circle size={10} /> 后续模块将在课程内容发布后按顺序开放</p>
+            <p className="mt-8 flex items-center justify-center gap-2 text-xs font-bold text-[var(--foreground-muted)]"><Circle size={10} /> 后续模块将在课程内容发布后按顺序开放</p>
           </section>
         </main>
         {isReadingMode && (
-          <div className="fixed right-5 top-5 z-50 flex overflow-hidden rounded-xl border border-white/20 bg-[#173f4a]/85 text-white shadow-lg backdrop-blur">
+          <div className="fixed right-5 top-5 z-50 flex overflow-hidden rounded-xl border border-white/20 bg-[var(--primary)]/85 text-white shadow-lg backdrop-blur">
             <button
               type="button"
               onClick={() => setIsReadingMode(false)}
-              className="inline-flex items-center gap-2 px-3 py-2 text-xs font-black transition hover:bg-[#173f4a]"
+              className="inline-flex items-center gap-2 px-3 py-2 text-xs font-bold transition hover:bg-[var(--primary)]"
             >
               <Minimize2 size={16} />
               退出阅读模式
@@ -748,7 +748,7 @@ export function KoreanLevelOneReader({
               type="button"
               onClick={() => setIsExitDialogOpen(true)}
               aria-label="退出课程阅读器"
-              className="border-l border-white/20 px-3 transition hover:bg-[#173f4a]"
+              className="border-l border-white/20 px-3 transition hover:bg-[var(--primary)]"
             >
               <X size={16} />
             </button>
@@ -758,11 +758,11 @@ export function KoreanLevelOneReader({
 
       {isReferenceOpen && (
         <div
-          className="fixed inset-0 z-[65] flex items-center justify-center bg-[#173f4a]/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[65] flex items-center justify-center bg-[var(--primary)]/40 p-4 backdrop-blur-sm"
           onClick={() => setIsReferenceOpen(false)}
         >
           <section
-            className="w-full max-w-4xl rounded-[28px] border border-[#d6e5de] bg-[#f7fbf9] p-6 shadow-2xl sm:p-8"
+            className="w-full max-w-4xl rounded-[28px] border border-[var(--status-success-surface)] bg-[var(--card)] p-6 shadow-2xl sm:p-8"
             role="dialog"
             aria-modal="true"
             aria-labelledby="level-one-reference-title"
@@ -770,11 +770,11 @@ export function KoreanLevelOneReader({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <p className="text-xs font-black tracking-[0.18em] text-[#238777]">快速参考</p>
-                <h2 id="level-one-reference-title" className="mt-2 text-2xl font-black text-[#173f4a]">韩国语 1 级常用表达</h2>
-                <p className="mt-2 text-sm text-[#71857b]">点击韩语表达即可按当前速度播放发音。</p>
+                <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">快速参考</p>
+                <h3 id="level-one-reference-title" className="mt-2 text-2xl font-bold text-[var(--primary)]">韩国语 1 级常用表达</h3>
+                <p className="mt-2 text-sm text-[var(--foreground-muted)]">点击韩语表达即可按当前速度播放发音。</p>
               </div>
-              <button type="button" onClick={() => setIsReferenceOpen(false)} className="rounded-xl border border-[#dce4df] bg-white p-2 text-[#60736a]"><X size={17} /></button>
+              <button type="button" onClick={() => setIsReferenceOpen(false)} aria-label="关闭常用表达" className="rounded-xl border border-[var(--surface-soft)] bg-white p-2 text-[var(--foreground-secondary)]"><X size={17} /></button>
             </div>
             <div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
               {[
@@ -785,9 +785,9 @@ export function KoreanLevelOneReader({
                 ["잘 모르겠어요.", "我不太清楚。"],
                 ["다시 말해 주세요.", "请再说一次。"],
               ].map(([korean, chinese]) => (
-                <button key={korean} type="button" onClick={() => speak(korean)} className="rounded-2xl border border-[#dce8e1] bg-white p-4 text-left transition hover:border-[#79b9aa] hover:bg-[#f0f8f5]">
-                  <span className="block text-lg font-black text-[#294f43]">{korean}</span>
-                  <span className="mt-2 block text-xs font-bold text-[#789087]">{chinese}</span>
+                <button key={korean} type="button" onClick={() => speak(korean)} className="rounded-2xl border border-[var(--status-success-surface)] bg-white p-4 text-left transition hover:border-[var(--status-success)] hover:bg-[var(--card)]">
+                  <span className="block text-lg font-bold text-[var(--foreground-secondary)]">{korean}</span>
+                  <span className="mt-2 block text-xs font-bold text-[var(--foreground-muted)]">{chinese}</span>
                 </button>
               ))}
             </div>
@@ -797,11 +797,11 @@ export function KoreanLevelOneReader({
 
       {isNotesOpen && (
         <div
-          className="fixed inset-0 z-[65] flex items-center justify-center bg-[#173f4a]/40 p-4 backdrop-blur-sm"
+          className="fixed inset-0 z-[65] flex items-center justify-center bg-[var(--primary)]/40 p-4 backdrop-blur-sm"
           onClick={() => setIsNotesOpen(false)}
         >
           <section
-            className="w-full max-w-2xl rounded-[26px] border border-[#ead9c5] bg-[#fffaf2] p-6 shadow-2xl"
+            className="w-full max-w-2xl rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] p-6 shadow-2xl"
             role="dialog"
             aria-modal="true"
             aria-labelledby="level-one-notes-title"
@@ -809,38 +809,39 @@ export function KoreanLevelOneReader({
           >
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 id="level-one-notes-title" className="text-lg font-black text-[#704f2f]">
+                <h3 id="level-one-notes-title" className="text-lg font-bold text-[var(--destructive)]">
                   {selectedBookIndex === 0
                     ? "第 00 章学习笔记"
                     : `第 ${String(selectedBook.number).padStart(2, "0")} 课学习笔记`}
-                </h2>
-                <p className="mt-1 text-xs text-[#92785e]">笔记会自动保存在当前浏览器。</p>
+                </h3>
+                <p className="mt-1 text-xs text-[var(--status-warning)]">笔记会自动保存在当前浏览器。</p>
               </div>
-              <button type="button" onClick={() => setIsNotesOpen(false)} className="rounded-xl p-2 text-[#92785e] hover:bg-white"><X size={17} /></button>
+              <button type="button" onClick={() => setIsNotesOpen(false)} aria-label="关闭学习笔记" className="rounded-xl p-2 text-[var(--status-warning)] hover:bg-white"><X size={17} /></button>
             </div>
             <textarea
               value={note}
               onChange={(event) => setNote(event.target.value)}
+              aria-label="本章学习笔记"
               placeholder="记录学习目标、重点表达或自己的学习计划……"
-              className="mt-5 min-h-52 w-full resize-y rounded-2xl border border-[#ead9c5] bg-white/85 p-4 text-sm leading-7 text-[#5f4a36] outline-none transition placeholder:text-[#b6a28f] focus:border-[#c9803c] focus:ring-2 focus:ring-[#f5dfc7]"
+              className="mt-5 min-h-52 w-full resize-y rounded-2xl border border-[var(--border-subtle)] bg-white/85 p-4 text-sm leading-7 text-[var(--foreground-secondary)] outline-none transition placeholder:text-[var(--foreground-muted)] focus:border-[var(--destructive)] focus:ring-2 focus:ring-[var(--status-warning-surface)]"
             />
           </section>
         </div>
       )}
 
       {isExitDialogOpen && (
-        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[#102f35]/55 p-5 backdrop-blur-sm" onClick={() => setIsExitDialogOpen(false)}>
-          <section className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/70 bg-[#f9fcfa] shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="korean-level-one-exit-title" onClick={(event) => event.stopPropagation()}>
-            <div className="border-b border-[#dce8e1] bg-[linear-gradient(135deg,#e7f4ef_0%,#f9fcfa_70%)] px-7 py-6">
-              <ArrowLeft className="text-[#238777]" size={22} />
-              <h2 id="korean-level-one-exit-title" className="mt-4 text-xl font-black text-[#173f4a]">要退出本次阅读吗？</h2>
-              <p className="mt-2 text-sm leading-6 text-[#60736a]">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-[var(--foreground)]/55 p-5 backdrop-blur-sm" onClick={() => setIsExitDialogOpen(false)}>
+          <section className="w-full max-w-md overflow-hidden rounded-[28px] border border-white/70 bg-[var(--card)] shadow-2xl" role="dialog" aria-modal="true" aria-labelledby="korean-level-one-exit-title" onClick={(event) => event.stopPropagation()}>
+            <div className="border-b border-[var(--status-success-surface)] bg-[linear-gradient(135deg,var(--status-success-surface)_0%,var(--card)_70%)] px-7 py-6">
+              <ArrowLeft className="text-[var(--status-success)]" size={22} />
+              <h3 id="korean-level-one-exit-title" className="mt-4 text-xl font-bold text-[var(--primary)]">要退出本次阅读吗？</h3>
+              <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
                 当前电子书会保留在课程目录中，你可以随时重新进入。
               </p>
             </div>
             <div className="flex gap-3 px-7 py-5">
-              <button type="button" onClick={() => setIsExitDialogOpen(false)} className="flex-1 rounded-xl border border-[#d7e4de] bg-white px-4 py-3 text-sm font-black text-[#526b60] transition hover:bg-[#f2f7f4]">继续阅读</button>
-              <button type="button" onClick={() => void exitReader()} className="flex-1 rounded-xl bg-[#238777] px-4 py-3 text-sm font-black text-white shadow-sm transition hover:bg-[#1d7466]">确认退出</button>
+              <button type="button" onClick={() => setIsExitDialogOpen(false)} className="flex-1 rounded-xl border border-[var(--border-subtle)] bg-white px-4 py-3 text-sm font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--card)]">继续阅读</button>
+              <button type="button" onClick={() => void exitReader()} className="flex-1 rounded-xl bg-[var(--status-success)] px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-[var(--status-success)]">确认退出</button>
             </div>
           </section>
         </div>

@@ -18,7 +18,7 @@ import {
   Shapes,
   X,
 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
   KnowledgeInteractionLab,
   type KnowledgeInteractionType,
@@ -27,9 +27,9 @@ import { KnowledgeWorkbenchGuide } from "./KnowledgeWorkbenchGuide";
 
 type WorkbenchMode = "explain" | "deconstruct" | "compare";
 
-const EXPLAIN_TONE = { color: "var(--app-accent)", soft: "var(--app-accent-soft)" };
-const DECONSTRUCT_TONE = { color: "var(--app-secondary)", soft: "var(--app-secondary-soft)" };
-const COMPARE_TONE = { color: "var(--app-warm)", soft: "var(--app-warm-soft)" };
+const EXPLAIN_TONE = { color: "var(--primary)", soft: "var(--accent)" };
+const DECONSTRUCT_TONE = { color: "var(--support)", soft: "var(--support-surface)" };
+const COMPARE_TONE = { color: "var(--status-warning)", soft: "var(--status-warning-surface)" };
 
 const modes = [
   {
@@ -116,7 +116,7 @@ const explainCases = [
     initial: initials[3],
     vowel: vowels[5],
     finalLetter: finals[3],
-    tone: { color: "var(--app-text-soft)", soft: "var(--app-soft-bg)" },
+    tone: { color: "var(--foreground-secondary)", soft: "var(--surface-soft)" },
   },
 ];
 
@@ -206,8 +206,8 @@ const summaryContent: Record<
       eyebrow: "布局口诀",
       title: "右、下、底",
       description: "竖向元音放右边，横向元音放下边，终声固定放在底边。",
-      color: "var(--app-warm)",
-      soft: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      soft: "var(--status-warning-surface)",
     },
     {
       eyebrow: "特别提醒",
@@ -233,8 +233,8 @@ const summaryContent: Record<
       eyebrow: "符号说明",
       title: "无终声与复合收音",
       description: "“—”表示没有终声；两个辅音并排时，整体仍属于终声位置。",
-      color: "var(--app-warm)",
-      soft: "var(--app-warm-soft)",
+      color: "var(--status-warning)",
+      soft: "var(--status-warning-surface)",
     },
   ],
   compare: [
@@ -264,33 +264,33 @@ function KnowledgeSummaryStrip({ mode }: { mode: WorkbenchMode }) {
     <section
       data-guide={`summary-${mode}`}
       className="mt-5 border-t pt-4"
-      style={{ borderColor: "var(--app-border-soft)" }}
+      style={{ borderColor: "var(--border-subtle)" }}
     >
       <div className="flex items-center justify-between gap-3">
-        <p className="text-xs font-black">知识收束</p>
+        <p className="text-xs font-bold">知识收束</p>
         <span className="app-muted-text text-[9px]">进入下一部分前快速整理</span>
       </div>
       <div
         className="mt-3 grid overflow-hidden rounded-2xl border md:grid-cols-3"
-        style={{ borderColor: "var(--app-border-soft)" }}
+        style={{ borderColor: "var(--border-subtle)" }}
       >
         {summaryContent[mode].map((item, index) => (
           <article
             key={item.eyebrow}
             className="min-h-[112px] border-t p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0"
             style={{
-              borderColor: "var(--app-border-soft)",
+              borderColor: "var(--border-subtle)",
               backgroundColor:
-                index === 0 ? "var(--app-soft-bg)" : "var(--app-card-bg)",
+                index === 0 ? "var(--surface-soft)" : "var(--card)",
             }}
           >
             <p
-              className="text-[9px] font-black tracking-[0.12em]"
+              className="text-[9px] font-bold tracking-[0.12em]"
               style={{ color: item.color }}
             >
               {item.eyebrow}
             </p>
-            <h3 className="mt-2 text-xs font-black">{item.title}</h3>
+            <h3 className="mt-2 text-xs font-bold">{item.title}</h3>
             <p className="app-muted-text mt-1.5 text-[10px] leading-5">
               {item.description}
             </p>
@@ -322,15 +322,16 @@ function ChoiceButton({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3 text-sm font-black transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+      aria-pressed={selected}
+      className="flex min-h-11 min-w-11 items-center justify-center rounded-xl border px-3 text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
       style={{
-        color: selected ? "white" : "var(--app-text)",
+        color: selected ? "white" : "var(--foreground)",
         borderColor: selected
           ? tone.color
-          : "var(--app-border-soft)",
+          : "var(--border-subtle)",
         backgroundColor: selected
           ? tone.color
-          : "var(--app-card-bg)",
+          : "var(--card)",
         outlineColor: tone.color,
       }}
     >
@@ -384,6 +385,8 @@ export function KnowledgeResearchWorkbench({
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [hasInteractionStarted, setHasInteractionStarted] = useState(false);
   const [isInteractionOpen, setIsInteractionOpen] = useState(false);
+  const interactionLaunchRef = useRef<HTMLButtonElement>(null);
+  const interactionCloseRef = useRef<HTMLButtonElement>(null);
   // 服务端渲染时永远拿不到 localStorage，初始值必须和客户端首次渲染一致，
   // 否则会触发 hydration mismatch；实际的"是否已读过引导"改在挂载后用 effect 恢复。
   const [isGuideOpen, setIsGuideOpen] = useState(false);
@@ -537,6 +540,7 @@ export function KnowledgeResearchWorkbench({
         setMode("explain");
       } else if (isInteractionOpen) {
         setIsInteractionOpen(false);
+        window.requestAnimationFrame(() => interactionLaunchRef.current?.focus());
       } else {
         setIsFullscreen(false);
       }
@@ -545,6 +549,15 @@ export function KnowledgeResearchWorkbench({
     window.addEventListener("keydown", handleEscape);
     return () => window.removeEventListener("keydown", handleEscape);
   }, [isGuideOpen, isInteractionOpen]);
+
+  useEffect(() => {
+    if (isInteractionOpen) interactionCloseRef.current?.focus();
+  }, [isInteractionOpen]);
+
+  const closeInteraction = useCallback(() => {
+    setIsInteractionOpen(false);
+    window.requestAnimationFrame(() => interactionLaunchRef.current?.focus());
+  }, []);
 
   // 全屏工作台展开时，背景页面之前还能滚动，容易造成背景和弹层同时滚动的错乱体验。
   useEffect(() => {
@@ -578,7 +591,7 @@ export function KnowledgeResearchWorkbench({
           : ""
       }`}
       style={{
-        backgroundColor: isFullscreen ? "var(--app-bg)" : undefined,
+        backgroundColor: isFullscreen ? "var(--background)" : undefined,
       }}
     >
       <header
@@ -591,20 +604,20 @@ export function KnowledgeResearchWorkbench({
             <span
               className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl"
               style={{
-                color: "var(--app-accent-strong)",
-                backgroundColor: "var(--app-accent-soft)",
+                color: "var(--primary-hover)",
+                backgroundColor: "var(--accent)",
               }}
               aria-hidden="true"
             >
               <BookOpenCheck size={23} />
             </span>
             <div className="min-w-0">
-              <p className="text-[11px] font-black tracking-[0.08em] app-muted-text">
+              <p className="text-[11px] font-bold tracking-[0.08em] app-muted-text">
                 精研课程 · {courseEyebrow} · {courseTitle}
               </p>
-              <h1 className="mt-1 text-xl font-black tracking-tight sm:text-2xl">
+              <h2 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
                 第 {String(chapterNumber).padStart(2, "0")} 章 · {chapterTitle}
-              </h1>
+              </h2>
               <p className="mt-1 text-sm app-muted-text">
                 {chapterKoreanTitle ? `${chapterKoreanTitle} · ` : ""}
                 {chapterDescription}
@@ -615,23 +628,23 @@ export function KnowledgeResearchWorkbench({
           <div className="flex flex-wrap items-center gap-2 sm:flex-nowrap">
             <div
               className="mr-auto min-w-28 rounded-xl px-3 py-2 sm:mr-2"
-              style={{ backgroundColor: "var(--app-soft-bg)" }}
+              style={{ backgroundColor: "var(--surface-soft)" }}
             >
-              <div className="flex items-center justify-between gap-3 text-[11px] font-black">
+              <div className="flex items-center justify-between gap-3 text-[11px] font-bold">
                 <span className="app-muted-text">本章掌握</span>
-                <span className="tabular-nums" style={{ color: "var(--app-accent-strong)" }}>
+                <span className="tabular-nums" style={{ color: "var(--primary-hover)" }}>
                   {progress}%
                 </span>
               </div>
               <div
                 className="mt-1.5 h-1.5 overflow-hidden rounded-full"
-                style={{ backgroundColor: "var(--app-card-bg)" }}
+                style={{ backgroundColor: "var(--card)" }}
               >
                 <div
                   className="h-full rounded-full transition-[width]"
                   style={{
                     width: `${progress}%`,
-                    backgroundColor: "var(--app-accent)",
+                    backgroundColor: "var(--primary)",
                   }}
                 />
               </div>
@@ -642,10 +655,10 @@ export function KnowledgeResearchWorkbench({
                 setIsInteractionOpen(false);
                 setIsGuideOpen(true);
               }}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-black transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
               style={{
-                borderColor: "var(--app-border)",
-                outlineColor: "var(--app-accent)",
+                borderColor: "var(--border)",
+                outlineColor: "var(--primary)",
               }}
             >
               <CircleHelp size={16} aria-hidden="true" />
@@ -654,10 +667,10 @@ export function KnowledgeResearchWorkbench({
             <button
               type="button"
               onClick={toggleFullscreen}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-black transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
               style={{
-                borderColor: "var(--app-border)",
-                outlineColor: "var(--app-accent)",
+                borderColor: "var(--border)",
+                outlineColor: "var(--primary)",
               }}
             >
               {isFullscreen ? (
@@ -671,8 +684,8 @@ export function KnowledgeResearchWorkbench({
             </button>
             <Link
               href={backHref}
-              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-black transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
-              style={{ outlineColor: "var(--app-accent)" }}
+              className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+              style={{ outlineColor: "var(--primary)" }}
             >
               <ArrowLeft size={16} aria-hidden="true" />
               返回章节
@@ -688,8 +701,8 @@ export function KnowledgeResearchWorkbench({
           aria-label="精研学习方式"
           className="grid grid-cols-3 gap-1 border-b p-2"
           style={{
-            borderColor: "var(--app-border-soft)",
-            backgroundColor: "var(--app-soft-bg)",
+            borderColor: "var(--border-subtle)",
+            backgroundColor: "var(--surface-soft)",
           }}
         >
           {modes.map((item) => {
@@ -702,18 +715,18 @@ export function KnowledgeResearchWorkbench({
                 role="tab"
                 aria-selected={selected}
                 onClick={() => switchMode(item.id)}
-                className="flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-black transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                className="flex min-h-11 min-w-0 items-center justify-center gap-2 rounded-xl border px-3 text-xs font-bold transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
                 style={{
                   color: selected
-                    ? "var(--app-accent-strong)"
-                    : "var(--app-muted)",
+                    ? "var(--primary-hover)"
+                    : "var(--foreground-muted)",
                   borderColor: selected
-                    ? "var(--app-accent)"
+                    ? "var(--primary)"
                     : "transparent",
                   backgroundColor: selected
-                    ? "var(--app-card-bg)"
+                    ? "var(--card)"
                     : "transparent",
-                  outlineColor: "var(--app-accent)",
+                  outlineColor: "var(--primary)",
                 }}
               >
                 <Icon size={17} aria-hidden="true" />
@@ -732,7 +745,7 @@ export function KnowledgeResearchWorkbench({
                 backgroundColor: COMPARE_TONE.soft,
               }}
             >
-              <p className="text-xs font-black" style={{ color: COMPARE_TONE.color }}>
+              <p className="text-xs font-bold" style={{ color: COMPARE_TONE.color }}>
                 先抓住一个核心规则
               </p>
               <p className="mt-1 text-sm font-bold leading-6">
@@ -756,28 +769,29 @@ export function KnowledgeResearchWorkbench({
                       setVowel(item.vowel);
                       setFinalLetter(item.finalLetter);
                     }}
+                    aria-pressed={selected}
                     className="group flex min-h-11 items-center gap-3 rounded-2xl border p-3 text-left transition-[border-color,box-shadow] hover:shadow-sm focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
                     style={{
                       borderColor: selected
                         ? item.tone.color
-                        : "var(--app-border-soft)",
+                        : "var(--border-subtle)",
                       backgroundColor: item.tone.soft,
                       outlineColor: item.tone.color,
                     }}
                   >
                     <span
-                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl font-black"
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-2xl font-bold"
                       style={{
                         color: selected ? "white" : item.tone.color,
                         backgroundColor: selected
                           ? item.tone.color
-                          : "var(--app-card-bg)",
+                          : "var(--card)",
                       }}
                     >
                       {item.syllable}
                     </span>
                     <span className="min-w-0">
-                      <span className="block text-[9px] font-black">
+                      <span className="block text-[9px] font-bold">
                         案例 {index + 1} · {item.label}
                       </span>
                       <span className="app-muted-text mt-1 block text-[9px] leading-4">
@@ -796,24 +810,24 @@ export function KnowledgeResearchWorkbench({
               <div
                 className="flex min-h-[330px] flex-col items-center justify-center rounded-3xl border p-5 text-center"
                 style={{
-                  borderColor: "var(--app-border-soft)",
-                  backgroundColor: "var(--app-soft-bg)",
+                  borderColor: "var(--border-subtle)",
+                  backgroundColor: "var(--surface-soft)",
                 }}
               >
-                <p className="app-muted-text text-[10px] font-black tracking-[0.12em]">
+                <p className="app-muted-text text-[10px] font-bold tracking-[0.12em]">
                   实时音节方块
                 </p>
                 <div
-                  className="mt-4 flex h-36 w-36 items-center justify-center rounded-[2rem] border text-7xl font-black shadow-sm"
+                  className="mt-4 flex h-36 w-36 items-center justify-center rounded-[2rem] border text-7xl font-bold shadow-sm"
                   style={{
                     color: DECONSTRUCT_TONE.color,
                     borderColor: DECONSTRUCT_TONE.color,
-                    backgroundColor: "var(--app-card-bg)",
+                    backgroundColor: "var(--card)",
                   }}
                 >
                   {syllable}
                 </div>
-                <div className="mt-4 flex items-center gap-2 text-sm font-black">
+                <div className="mt-4 flex items-center gap-2 text-sm font-bold">
                   <span>{initial.value}</span>
                   <span className="app-muted-text">＋</span>
                   <span>{vowel.value}</span>
@@ -823,7 +837,7 @@ export function KnowledgeResearchWorkbench({
                       <span>{finalLetter.value}</span>
                     </>
                   )}
-                  <ArrowRight size={14} style={{ color: EXPLAIN_TONE.color }} />
+                  <ArrowRight size={14} style={{ color: EXPLAIN_TONE.color }} aria-hidden="true" />
                   <span style={{ color: EXPLAIN_TONE.color }}>{syllable}</span>
                 </div>
                 <p className="app-muted-text mt-3 text-[10px] leading-5">
@@ -842,7 +856,7 @@ export function KnowledgeResearchWorkbench({
                   }}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black">① 选择初声</p>
+                    <p className="text-xs font-bold">① 选择初声</p>
                     <span className="app-muted-text text-[9px]">辅音位置</span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -862,12 +876,12 @@ export function KnowledgeResearchWorkbench({
                 <div
                   className="rounded-2xl border p-4"
                   style={{
-                    borderColor: "var(--app-border)",
-                    backgroundColor: "var(--app-soft-bg)",
+                    borderColor: "var(--border)",
+                    backgroundColor: "var(--surface-soft)",
                   }}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black">② 选择中声</p>
+                    <p className="text-xs font-bold">② 选择中声</p>
                     <span className="app-muted-text text-[9px]">元音决定布局</span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -892,7 +906,7 @@ export function KnowledgeResearchWorkbench({
                   }}
                 >
                   <div className="flex items-center justify-between gap-3">
-                    <p className="text-xs font-black">③ 添加终声</p>
+                    <p className="text-xs font-bold">③ 添加终声</p>
                     <span className="app-muted-text text-[9px]">可选的收音位置</span>
                   </div>
                   <div className="mt-3 flex flex-wrap gap-2">
@@ -925,20 +939,21 @@ export function KnowledgeResearchWorkbench({
                     recordExploredCase(setExploredDeconstructCases, index);
                     setSampleIndex(index);
                   }}
-                  className="min-h-11 rounded-xl border px-4 py-2.5 text-sm font-black transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                  aria-pressed={sampleIndex === index}
+                  className="min-h-11 rounded-xl border px-4 py-2.5 text-sm font-bold transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
                   style={{
                     color:
                       sampleIndex === index
                         ? "white"
-                        : "var(--app-text)",
+                        : "var(--foreground)",
                     borderColor:
                       sampleIndex === index
                         ? DECONSTRUCT_TONE.color
-                        : "var(--app-border-soft)",
+                        : "var(--border-subtle)",
                     backgroundColor:
                       sampleIndex === index
                         ? DECONSTRUCT_TONE.color
-                        : "var(--app-card-bg)",
+                        : "var(--card)",
                     outlineColor: DECONSTRUCT_TONE.color,
                   }}
                 >
@@ -951,11 +966,11 @@ export function KnowledgeResearchWorkbench({
               <div
                 className="flex min-h-[330px] items-center justify-center rounded-3xl border"
                 style={{
-                  borderColor: "var(--app-border-soft)",
+                  borderColor: "var(--border-subtle)",
                   backgroundColor: DECONSTRUCT_TONE.soft,
                 }}
               >
-                <span className="text-8xl font-black" style={{ color: DECONSTRUCT_TONE.color }}>
+                <span className="text-8xl font-bold" style={{ color: DECONSTRUCT_TONE.color }}>
                   {sample.syllable}
                 </span>
               </div>
@@ -967,7 +982,7 @@ export function KnowledgeResearchWorkbench({
                   backgroundColor: DECONSTRUCT_TONE.soft,
                 }}
               >
-                <p className="app-muted-text text-[10px] font-black tracking-[0.12em]">
+                <p className="app-muted-text text-[10px] font-bold tracking-[0.12em]">
                   点击后逐层看清
                 </p>
                 <div className="mt-5 grid grid-cols-[1fr_auto_1fr_auto_1fr] items-center gap-2">
@@ -981,29 +996,30 @@ export function KnowledgeResearchWorkbench({
                         className="rounded-2xl border p-4 text-center"
                         style={{
                           borderColor: DECONSTRUCT_TONE.color,
-                          backgroundColor: "var(--app-card-bg)",
+                          backgroundColor: "var(--card)",
                         }}
                       >
-                        <p className="app-muted-text text-[9px] font-black">{label}</p>
-                        <p className="mt-2 text-3xl font-black">{value}</p>
+                        <p className="app-muted-text text-[9px] font-bold">{label}</p>
+                        <p className="mt-2 text-3xl font-bold">{value}</p>
                       </div>
                       {index < 2 && (
-                        <span className="app-muted-text text-lg font-black">＋</span>
+                        <span className="app-muted-text text-lg font-bold">＋</span>
                       )}
                     </div>
                   ))}
                 </div>
                 <div
                   className="mt-5 flex items-start gap-3 rounded-2xl p-4"
-                  style={{ backgroundColor: "var(--app-card-bg)" }}
+                  style={{ backgroundColor: "var(--card)" }}
                 >
                   <Shapes
                     className="mt-0.5 shrink-0"
                     size={17}
                     style={{ color: DECONSTRUCT_TONE.color }}
+                    aria-hidden="true"
                   />
                   <div>
-                    <p className="text-xs font-black">{sample.note}</p>
+                    <p className="text-xs font-bold">{sample.note}</p>
                     <p className="app-muted-text mt-1 text-[10px] leading-5">
                       阅读时先把整个方块当作一个音节，再观察内部字母的位置。
                     </p>
@@ -1027,25 +1043,26 @@ export function KnowledgeResearchWorkbench({
                       recordExploredCase(setExploredCompareCases, index);
                       setComparisonIndex(index);
                     }}
-                    className="flex min-h-11 w-full items-center justify-between rounded-2xl border px-4 py-3 text-left text-xs font-black transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                    aria-pressed={comparisonIndex === index}
+                    className="flex min-h-11 w-full items-center justify-between rounded-2xl border px-4 py-3 text-left text-xs font-bold transition-colors focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
                     style={{
                       color:
                         comparisonIndex === index
                           ? COMPARE_TONE.color
-                          : "var(--app-text)",
+                          : "var(--foreground)",
                       borderColor:
                         comparisonIndex === index
                           ? COMPARE_TONE.color
-                          : "var(--app-border-soft)",
+                          : "var(--border-subtle)",
                       backgroundColor:
                         comparisonIndex === index
                           ? COMPARE_TONE.soft
-                          : "var(--app-card-bg)",
+                          : "var(--card)",
                       outlineColor: COMPARE_TONE.color,
                     }}
                   >
                     {item.label}
-                    <ArrowRight size={13} />
+                    <ArrowRight size={13} aria-hidden="true" />
                   </button>
                 ))}
               </div>
@@ -1065,19 +1082,19 @@ export function KnowledgeResearchWorkbench({
                     <div key={`${character}-${index}`} className="contents">
                       <div
                         className="rounded-3xl border p-5 text-center"
-                        style={{ backgroundColor: "var(--app-card-bg)" }}
+                        style={{ backgroundColor: "var(--card)" }}
                       >
-                        <p className="text-6xl font-black">{character}</p>
-                        <p className="app-muted-text mt-3 text-[10px] font-black">
+                        <p className="text-6xl font-bold">{character}</p>
+                        <p className="app-muted-text mt-3 text-[10px] font-bold">
                           {parts}
                         </p>
                       </div>
                       {index === 0 && (
                         <span
-                          className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-black"
+                          className="flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold"
                           style={{
                             color: COMPARE_TONE.color,
-                            backgroundColor: "var(--app-card-bg)",
+                            backgroundColor: "var(--card)",
                           }}
                         >
                           对比
@@ -1090,7 +1107,7 @@ export function KnowledgeResearchWorkbench({
                   className="mt-4 rounded-2xl px-4 py-3 text-xs font-bold leading-6"
                   style={{
                     color: COMPARE_TONE.color,
-                    backgroundColor: "var(--app-card-bg)",
+                    backgroundColor: "var(--card)",
                   }}
                 >
                   {comparison.explanation}
@@ -1109,13 +1126,13 @@ export function KnowledgeResearchWorkbench({
         <section data-guide="mastery-path">
           <div className="flex items-center justify-between gap-3">
             <div>
-              <p className="text-sm font-black">本章进度</p>
+              <p className="text-sm font-bold">本章进度</p>
               <p className="mt-0.5 text-[10px] app-muted-text">
                 依次完成精讲、拆解和对比
               </p>
             </div>
             <span
-              className="text-sm font-black tabular-nums"
+              className="text-sm font-bold tabular-nums"
               style={{ color: EXPLAIN_TONE.color }}
             >
               {progress}%
@@ -1123,7 +1140,7 @@ export function KnowledgeResearchWorkbench({
           </div>
           <div
             className="mt-3 h-1.5 overflow-hidden rounded-full"
-            style={{ backgroundColor: "var(--app-soft-bg)" }}
+            style={{ backgroundColor: "var(--surface-soft)" }}
           >
             <div
               className="h-full rounded-full transition-[width]"
@@ -1141,17 +1158,17 @@ export function KnowledgeResearchWorkbench({
                   key={item.id}
                   type="button"
                   onClick={() => switchMode(item.id)}
-                  className="flex min-h-11 w-full items-center gap-2.5 rounded-xl px-2 text-left transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
-                  style={{ outlineColor: "var(--app-accent)" }}
+                  className="flex min-h-11 w-full items-center gap-2.5 rounded-xl px-2 text-left transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                  style={{ outlineColor: "var(--primary)" }}
                 >
                   {done ? (
-                    <CheckCircle2 size={16} style={{ color: "var(--app-success)" }} />
+                    <CheckCircle2 size={16} style={{ color: "var(--status-success)" }} aria-hidden="true" />
                   ) : (
-                    <Circle className="app-muted-text" size={16} />
+                    <Circle className="app-muted-text" size={16} aria-hidden="true" />
                   )}
                   <span
-                    className="text-[11px] font-black"
-                    style={{ color: done ? "var(--app-success)" : item.tone.color }}
+                    className="text-[11px] font-bold"
+                    style={{ color: done ? "var(--status-success)" : item.tone.color }}
                   >
                     {item.label}
                   </span>
@@ -1167,20 +1184,21 @@ export function KnowledgeResearchWorkbench({
         <section
           data-guide="interaction-launch"
           className="mt-4 border-t pt-4"
-          style={{ borderColor: "var(--app-border-soft)" }}
+          style={{ borderColor: "var(--border-subtle)" }}
         >
           <div className="mb-3 flex items-center justify-between gap-3">
             <div>
-              <p className="text-xs font-black">互动练习</p>
+              <p className="text-xs font-bold">互动练习</p>
               <p className="mt-0.5 text-[10px] app-muted-text">
                 拼装、拆解、纠错与分类
               </p>
             </div>
-            <span className="text-[10px] font-black tabular-nums app-muted-text">
+            <span className="text-[10px] font-bold tabular-nums app-muted-text">
               {masteredInteractions.size} / 4
             </span>
           </div>
           <button
+            ref={interactionLaunchRef}
             type="button"
             disabled={!isInteractionReady}
             onClick={() => {
@@ -1188,15 +1206,15 @@ export function KnowledgeResearchWorkbench({
               setHasInteractionStarted(true);
               setIsInteractionOpen(true);
             }}
-            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-black text-white transition-opacity enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+            className="flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold text-white transition-opacity enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
             style={{
               backgroundColor: isInteractionReady
-                ? "var(--app-accent)"
-                : "var(--app-muted)",
-              outlineColor: "var(--app-accent)",
+                ? "var(--primary)"
+                : "var(--foreground-muted)",
+              outlineColor: "var(--primary)",
             }}
           >
-            {isInteractionReady ? <Play size={14} /> : <LockKeyhole size={14} />}
+            {isInteractionReady ? <Play size={14} aria-hidden="true" /> : <LockKeyhole size={14} aria-hidden="true" />}
             {interactionButtonLabel}
           </button>
           <p className="app-muted-text mt-2 text-center text-[10px] leading-5">
@@ -1210,15 +1228,15 @@ export function KnowledgeResearchWorkbench({
 
         <section
           className="mt-4 border-t pt-4"
-          style={{ borderColor: "var(--app-border-soft)" }}
+          style={{ borderColor: "var(--border-subtle)" }}
         >
-          <p className="mb-2 text-xs font-black">课程入口</p>
+          <p className="mb-2 text-xs font-bold">课程入口</p>
           <Link
             href={ebookHref}
-            className="flex min-h-11 items-center justify-between rounded-xl border px-3 py-3 text-xs font-black transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+            className="flex min-h-11 items-center justify-between rounded-xl border px-3 py-3 text-xs font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
             style={{
-              borderColor: "var(--app-border)",
-              outlineColor: "var(--app-accent)",
+              borderColor: "var(--border)",
+              outlineColor: "var(--primary)",
             }}
           >
             对应电子书
@@ -1226,10 +1244,10 @@ export function KnowledgeResearchWorkbench({
           </Link>
           <Link
             href={chapterTestHref}
-            className="mt-2 flex min-h-11 items-center justify-between rounded-xl px-3 py-3 text-xs font-black text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+            className="mt-2 flex min-h-11 items-center justify-between rounded-xl px-3 py-3 text-xs font-bold text-white transition-opacity hover:opacity-90 focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
             style={{
-              backgroundColor: "var(--app-accent)",
-              outlineColor: "var(--app-accent)",
+              backgroundColor: "var(--primary)",
+              outlineColor: "var(--primary)",
             }}
           >
             进入章节测试
@@ -1254,8 +1272,8 @@ export function KnowledgeResearchWorkbench({
             setIsInteractionOpen(false);
             setLabVersion((current) => current + 1);
           }}
-          className="app-muted-text mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl text-[10px] font-black transition-colors hover:bg-[var(--app-soft-bg)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
-          style={{ outlineColor: "var(--app-accent)" }}
+          className="app-muted-text mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl text-[10px] font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          style={{ outlineColor: "var(--primary)" }}
         >
           <RotateCcw size={13} aria-hidden="true" />
           重置本章进度
@@ -1267,36 +1285,35 @@ export function KnowledgeResearchWorkbench({
           role="dialog"
           aria-modal="true"
           aria-label="韩文结构互动练习"
-          className={`fixed inset-0 z-[160] items-center justify-center p-3 sm:p-6 ${
+          className={`fixed inset-0 z-[160] items-center justify-center bg-foreground/60 p-3 sm:p-6 ${
             isInteractionOpen ? "flex" : "hidden"
           }`}
-          style={{ backgroundColor: "rgba(29, 27, 24, 0.66)" }}
         >
           <section className="app-card flex max-h-[94dvh] w-full max-w-[1180px] flex-col overflow-hidden rounded-3xl border shadow-2xl">
             <div
               className="flex items-center justify-between gap-4 border-b px-4 py-3 sm:px-5"
               style={{
-                borderColor: "var(--app-border-soft)",
-                backgroundColor: "var(--app-soft-bg)",
+                borderColor: "var(--border-subtle)",
+                backgroundColor: "var(--surface-soft)",
               }}
             >
               <div>
-                <p className="text-sm font-black">韩文结构互动练习</p>
+                <p className="text-sm font-bold">韩文结构互动练习</p>
                 <p className="app-muted-text mt-0.5 text-[9px]">
                   拼装 · 拆解 · 纠错 · 分类
                 </p>
               </div>
               <div className="flex items-center gap-3">
                 <span
-                  className="rounded-full px-2.5 py-1 text-[9px] font-black"
+                  className="rounded-full px-2.5 py-1 text-[9px] font-bold"
                   style={{
                     color:
                       masteredInteractions.size === 4
-                        ? "var(--app-success)"
+                        ? "var(--status-success)"
                         : DECONSTRUCT_TONE.color,
                     backgroundColor:
                       masteredInteractions.size === 4
-                        ? "var(--app-success-soft)"
+                        ? "var(--status-success-surface)"
                         : DECONSTRUCT_TONE.soft,
                   }}
                 >
@@ -1305,13 +1322,15 @@ export function KnowledgeResearchWorkbench({
                     : `${masteredInteractions.size} / 4 项完成`}
                 </span>
                 <button
+                  ref={interactionCloseRef}
                   type="button"
-                  onClick={() => setIsInteractionOpen(false)}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border"
+                  onClick={closeInteraction}
+                  className="flex h-11 w-11 items-center justify-center rounded-full border focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                  style={{ outlineColor: "var(--primary)" }}
                   aria-label="关闭互动练习"
                   title="关闭互动练习"
                 >
-                  <X size={15} />
+                  <X size={15} aria-hidden="true" />
                 </button>
               </div>
             </div>

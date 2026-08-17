@@ -57,7 +57,7 @@ function NodeCover({
     | CourseCatalogChapter;
 }) {
   return (
-    <div className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-soft-bg)]">
+    <div className="overflow-hidden border border-[var(--border)] bg-[var(--surface-soft)]">
       {node.cover_object_key ? (
         // 复用现有按请求鉴权并生成签名地址的封面接口。
         // eslint-disable-next-line @next/next/no-img-element
@@ -68,7 +68,7 @@ function NodeCover({
           style={{ objectPosition: node.cover_focal_point ?? "center" }}
         />
       ) : (
-        <div className="flex aspect-video flex-col items-center justify-center gap-2 text-xs text-[var(--app-muted)]">
+        <div className="flex aspect-video flex-col items-center justify-center gap-2 text-xs text-[var(--foreground-muted)]">
           <ImageOff size={20} strokeWidth={1.6} />
           暂无封面
         </div>
@@ -79,11 +79,11 @@ function NodeCover({
 
 function ReadonlyField({ label, value }: { label: string; value: string }) {
   return (
-    <div className="grid border-b border-[var(--app-border)] md:grid-cols-[150px_minmax(0,1fr)]">
-      <div className="bg-[var(--app-soft-bg)] px-4 py-3 text-xs font-semibold text-[var(--app-text-soft)]">
+    <div className="grid border-b border-[var(--border)] md:grid-cols-[150px_minmax(0,1fr)]">
+      <div className="bg-[var(--surface-soft)] px-4 py-3 text-xs font-semibold text-[var(--foreground-secondary)]">
         {label}
       </div>
-      <div className="whitespace-pre-wrap px-4 py-3 text-xs leading-6 text-[var(--app-text)]">
+      <div className="whitespace-pre-wrap px-4 py-3 text-xs leading-6 text-[var(--foreground)]">
         {value || "暂未填写"}
       </div>
     </div>
@@ -129,31 +129,31 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
 
   return (
     <div className="space-y-6">
-      <section className="grid gap-5 border-y border-[var(--app-border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <section className="grid gap-5 border-y border-[var(--border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
         <NodeCover kind={kind} node={node} />
         <div className="min-w-0">
-          <p className="text-xs font-medium text-[var(--app-muted)]">
+          <p className="text-xs font-medium text-[var(--foreground-muted)]">
             {NODE_LABELS[kind]}预览
           </p>
-          <h2 className="mt-2 text-xl font-semibold text-[var(--app-text)]">
+          <h2 className="mt-2 text-xl font-semibold text-[var(--foreground)]">
             {node.title}
           </h2>
-          <p className="mt-1 font-mono text-[11px] text-[var(--app-muted)]">
+          <p className="mt-1 font-mono text-[11px] text-[var(--foreground-muted)]">
             {node.slug}
           </p>
-          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--app-border)] bg-[var(--app-border)] sm:grid-cols-3">
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">类型</dt>
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--border)] bg-[var(--border)] sm:grid-cols-3">
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">类型</dt>
               <dd className="mt-1 text-xs font-semibold">{NODE_LABELS[kind]}</dd>
             </div>
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">发布状态</dt>
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">发布状态</dt>
               <dd className="mt-1 text-xs font-semibold">
                 {node.is_published ? "已发布" : "草稿"}
               </dd>
             </div>
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">排序</dt>
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">排序</dt>
               <dd className="mt-1 font-mono text-xs font-semibold">
                 {node.sort_order}
               </dd>
@@ -164,14 +164,14 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
 
       <section>
         <div className="mb-3">
-          <h3 className="text-base font-semibold text-[var(--app-text)]">
+          <h3 className="text-base font-semibold text-[var(--foreground)]">
             基本信息
           </h3>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
             当前步骤只读展示已保存的信息。
           </p>
         </div>
-        <div className="border-t border-[var(--app-border)]">
+        <div className="border-t border-[var(--border)]">
           {detailRows.map(([label, value]) => (
             <ReadonlyField key={label} label={label} value={value} />
           ))}

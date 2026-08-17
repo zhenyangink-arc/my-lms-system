@@ -24,7 +24,7 @@ export function LearningRecordEditDialog({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="app-soft-card inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-black"
+        className="app-soft-card inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold"
       >
         <Pencil size={11} />
         编辑
@@ -42,7 +42,7 @@ export function LearningRecordEditDialog({
           <div className="app-card max-h-[92vh] w-full max-w-[980px] overflow-y-auto rounded-3xl border p-4 shadow-2xl sm:p-5">
             <div className="mb-4 flex items-center justify-between gap-3">
               <div>
-                <h2 className="text-lg font-black">修改辅导备注</h2>
+                <h2 className="text-lg font-semibold">修改辅导备注</h2>
                 <p className="app-muted-text mt-1 text-[10px]">
                   修改后会立即更新机构备注；学生可见内容同步更新到学生端。
                 </p>

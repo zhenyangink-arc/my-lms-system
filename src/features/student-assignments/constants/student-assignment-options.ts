@@ -8,9 +8,9 @@ export const TENANT_STATUS_TONES: Record<
   string,
   { dot: string; text: string }
 > = {
-  active: { dot: "var(--app-success)", text: "var(--app-success)" },
-  suspended: { dot: "var(--app-warm)", text: "var(--app-warm)" },
-  archived: { dot: "var(--app-muted-light)", text: "var(--app-muted)" },
+  active: { dot: "var(--status-success)", text: "var(--status-success)" },
+  suspended: { dot: "var(--status-warning)", text: "var(--status-warning)" },
+  archived: { dot: "var(--foreground-subtle)", text: "var(--foreground-muted)" },
 };
 
 export const STUDENT_ASSIGNMENT_COLUMN_LABELS: Record<string, string> = {

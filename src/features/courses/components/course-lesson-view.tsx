@@ -37,7 +37,7 @@ const CONTENT_FIELDS: Array<{
 
 function LessonCover({ lesson }: { lesson: CourseCatalogLesson }) {
   return (
-    <div className="overflow-hidden border border-[var(--app-border)] bg-[var(--app-soft-bg)]">
+    <div className="overflow-hidden border border-[var(--border)] bg-[var(--surface-soft)]">
       {lesson.cover_object_key ? (
         // 复用现有按请求鉴权并生成签名地址的封面接口。
         // eslint-disable-next-line @next/next/no-img-element
@@ -48,7 +48,7 @@ function LessonCover({ lesson }: { lesson: CourseCatalogLesson }) {
           style={{ objectPosition: lesson.cover_focal_point ?? "center" }}
         />
       ) : (
-        <div className="flex aspect-video flex-col items-center justify-center gap-2 text-xs text-[var(--app-muted)]">
+        <div className="flex aspect-video flex-col items-center justify-center gap-2 text-xs text-[var(--foreground-muted)]">
           <ImageOff size={20} strokeWidth={1.6} />
           暂无课时封面
         </div>
@@ -59,16 +59,16 @@ function LessonCover({ lesson }: { lesson: CourseCatalogLesson }) {
 
 function ContentRows({ lesson }: { lesson: CourseCatalogLesson }) {
   return (
-    <div className="border-t border-[var(--app-border)]">
+    <div className="border-t border-[var(--border)]">
       {CONTENT_FIELDS.map(({ key, label }) => (
         <div
           key={key}
-          className="grid border-b border-[var(--app-border)] md:grid-cols-[150px_minmax(0,1fr)]"
+          className="grid border-b border-[var(--border)] md:grid-cols-[150px_minmax(0,1fr)]"
         >
-          <div className="bg-[var(--app-soft-bg)] px-4 py-3 text-xs font-semibold text-[var(--app-text-soft)]">
+          <div className="bg-[var(--surface-soft)] px-4 py-3 text-xs font-semibold text-[var(--foreground-secondary)]">
             {label}
           </div>
-          <div className="whitespace-pre-wrap px-4 py-3 text-xs leading-6 text-[var(--app-text)]">
+          <div className="whitespace-pre-wrap px-4 py-3 text-xs leading-6 text-[var(--foreground)]">
             {lesson[key]?.trim() || "暂未填写"}
           </div>
         </div>
@@ -92,38 +92,38 @@ export function CourseLessonView({
 }) {
   return (
     <div className="space-y-6">
-      <section className="grid gap-5 border-y border-[var(--app-border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
+      <section className="grid gap-5 border-y border-[var(--border)] py-5 lg:grid-cols-[320px_minmax(0,1fr)]">
         <LessonCover lesson={lesson} />
         <div className="min-w-0">
-          <p className="text-xs font-medium text-[var(--app-muted)]">课时内容预览</p>
-          <h2 className="mt-2 text-xl font-semibold text-[var(--app-text)]">
+          <p className="text-xs font-medium text-[var(--foreground-muted)]">课时内容预览</p>
+          <h2 className="mt-2 text-xl font-semibold text-[var(--foreground)]">
             {lesson.title}
           </h2>
-          <p className="mt-1 font-mono text-[11px] text-[var(--app-muted)]">
+          <p className="mt-1 font-mono text-[11px] text-[var(--foreground-muted)]">
             {lesson.slug}
           </p>
-          <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[var(--app-text-soft)]">
+          <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-[var(--foreground-secondary)]">
             {lesson.description || "暂无课时简介"}
           </p>
-          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--app-border)] bg-[var(--app-border)] sm:grid-cols-4">
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">课时类型</dt>
+          <dl className="mt-5 grid grid-cols-2 gap-px overflow-hidden border border-[var(--border)] bg-[var(--border)] sm:grid-cols-4">
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">课时类型</dt>
               <dd className="mt-1 text-xs font-semibold">{lesson.lesson_type || "未设置"}</dd>
             </div>
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">预计时长</dt>
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">预计时长</dt>
               <dd className="mt-1 text-xs font-semibold">
                 {lesson.duration_minutes ? `${lesson.duration_minutes} 分钟` : "未设置"}
               </dd>
             </div>
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">发布状态</dt>
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">发布状态</dt>
               <dd className="mt-1 text-xs font-semibold">
                 {lesson.is_published ? "已发布" : "草稿"}
               </dd>
             </div>
-            <div className="bg-[var(--app-card-bg)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--app-muted)]">试看权限</dt>
+            <div className="bg-[var(--card)] px-3 py-2">
+              <dt className="text-[10px] text-[var(--foreground-muted)]">试看权限</dt>
               <dd className="mt-1 text-xs font-semibold">
                 {lesson.is_free_preview ? "允许试看" : "不允许试看"}
               </dd>
@@ -134,10 +134,10 @@ export function CourseLessonView({
 
       <section>
         <div className="mb-3">
-          <h3 className="text-base font-semibold text-[var(--app-text)]">
+          <h3 className="text-base font-semibold text-[var(--foreground)]">
             课时内容
           </h3>
-          <p className="mt-1 text-xs text-[var(--app-muted)]">
+          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
             当前仅展示已保存的课时正文与教学信息。
           </p>
         </div>
@@ -147,10 +147,10 @@ export function CourseLessonView({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold text-[var(--app-text)]">
+            <h3 className="text-base font-semibold text-[var(--foreground)]">
               课时资料
             </h3>
-            <p className="mt-1 text-xs text-[var(--app-muted)]">
+            <p className="mt-1 text-xs text-[var(--foreground-muted)]">
               管理文件、链接、模板、清单和参考资料及其当前状态。
             </p>
           </div>

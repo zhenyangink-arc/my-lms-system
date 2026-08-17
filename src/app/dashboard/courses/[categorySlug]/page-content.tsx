@@ -352,11 +352,11 @@ export default async function CategoryPage({
     const isServiceCourse = parentCategory.slug === "service";
     const FocusIcon = isServiceCourse ? FileCheck2 : Languages;
     const accent = isServiceCourse
-      ? "var(--app-accent)"
-      : "var(--app-secondary)";
+      ? "var(--primary)"
+      : "var(--support)";
     const accentSoft = isServiceCourse
-      ? "var(--app-accent-soft)"
-      : "var(--app-secondary-soft)";
+      ? "var(--accent)"
+      : "var(--support-surface)";
 
     return (
       <>
@@ -373,14 +373,14 @@ export default async function CategoryPage({
             className="app-card relative overflow-hidden rounded-3xl border p-5 sm:p-6"
             style={{
               background: isServiceCourse
-                ? "linear-gradient(125deg, var(--app-hero-start), var(--app-card-bg) 58%, var(--app-accent-soft))"
-                : "linear-gradient(125deg, var(--app-hero-end), var(--app-card-bg) 58%, var(--app-secondary-soft))",
+                ? "linear-gradient(125deg, var(--card), var(--card) 58%, var(--accent))"
+                : "linear-gradient(125deg, var(--accent), var(--card) 58%, var(--support-surface))",
             }}
           >
             <div className="grid items-center gap-6 lg:grid-cols-[1fr_320px]">
               <div>
                 <span
-                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-black"
+                  className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
                   style={{ color: accent, backgroundColor: accentSoft }}
                 >
                   <Sparkles size={14} aria-hidden="true" />
@@ -411,28 +411,28 @@ export default async function CategoryPage({
                 <div className="flex items-end justify-between gap-4">
                   <div>
                     <p className="text-xs font-bold app-muted-text">板块总进度</p>
-                    <p className="mt-1 text-2xl font-black">{parentProgressPercent}%</p>
+                    <p className="mt-1 text-2xl font-bold">{parentProgressPercent}%</p>
                   </div>
                   <span className="text-xs font-bold app-muted-text">
                     {totalParentCompletedLessons}/{totalParentLessons} 课时
                   </span>
                 </div>
-                <div className="mt-4 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
+                <div className="mt-4 h-2.5 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
                   <div
                     className="h-full rounded-full"
                     style={{
                       width: `${parentProgressPercent}%`,
-                      backgroundColor: "var(--app-success)",
+                      backgroundColor: "var(--status-success)",
                     }}
                   />
                 </div>
                 <div className="mt-5 grid grid-cols-2 gap-3">
                   <div className="app-tile rounded-2xl border p-3 text-center">
-                    <p className="text-xl font-black">{subcategories.length}</p>
+                    <p className="text-xl font-bold">{subcategories.length}</p>
                     <p className="text-xs font-bold app-muted-text">课程分类</p>
                   </div>
                   <div className="app-tile rounded-2xl border p-3 text-center">
-                    <p className="text-xl font-black">{courses.length}</p>
+                    <p className="text-xl font-bold">{courses.length}</p>
                     <p className="text-xs font-bold app-muted-text">可学课程</p>
                   </div>
                 </div>
@@ -442,7 +442,7 @@ export default async function CategoryPage({
 
           <section>
             <div className="mb-4">
-              <h3 className="text-lg font-black">选择学习阶段</h3>
+              <h3 className="text-lg font-bold">选择学习阶段</h3>
             </div>
             {subcategories.length > 0 ? (
               <div className="grid gap-4 lg:grid-cols-2">
@@ -473,7 +473,7 @@ export default async function CategoryPage({
                     >
                       <div className="flex items-start gap-4">
                         <span
-                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-black"
+                          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-sm font-bold"
                           style={{ color: accent, backgroundColor: accentSoft }}
                         >
                           {String(index + 1).padStart(2, "0")}
@@ -482,7 +482,7 @@ export default async function CategoryPage({
                           <div className="flex items-start justify-between gap-3">
                             <DashboardTitleWithHint
                               headingLevel={4}
-                              titleClassName="text-base font-black"
+                              titleClassName="text-base font-bold"
                               title={subcategory.title}
                               description={subcategory.description || "查看这一阶段的课程内容。"}
                             />
@@ -492,8 +492,8 @@ export default async function CategoryPage({
                             <span>{subcategoryCourses.length} 门课程 · {subcategoryLessons.length} 个课时</span>
                             <span style={{ color: accent }}>{learningStatusLabelMap[learningStatus]}</span>
                           </div>
-                          <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--app-soft-bg)" }}>
-                            <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--app-success)" }} />
+                          <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
+                            <div className="h-full rounded-full" style={{ width: `${progressPercent}%`, backgroundColor: "var(--status-success)" }} />
                           </div>
                         </div>
                       </div>
@@ -544,7 +544,7 @@ export default async function CategoryPage({
 
               <DashboardTitleWithHint
                 headingLevel={2}
-                titleClassName="text-2xl font-black tracking-tight text-gray-900"
+                titleClassName="text-2xl font-bold tracking-tight text-gray-900"
                 title="选择课程分类"
                 description="每个分类会显示当前账号的整体学习状态。你可以从这里进入申请、签证、面试等不同课程模块。"
               />
@@ -554,14 +554,14 @@ export default async function CategoryPage({
             <div className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm">
               <div className="flex items-start justify-between gap-3">
                 <div>
-                  <p className="text-sm font-black text-gray-900">课程进度</p>
+                  <p className="text-sm font-bold text-gray-900">课程进度</p>
 
                   <p className="mt-1 text-xs text-gray-500">
                     已完成 {totalParentCompletedLessons} / {totalParentLessons} 个课时
                   </p>
                 </div>
 
-                <p className="text-2xl font-black tracking-tight text-gray-900">
+                <p className="text-2xl font-bold tracking-tight text-gray-900">
                   {parentProgressPercent}%
                 </p>
               </div>
@@ -580,7 +580,7 @@ export default async function CategoryPage({
         <section className="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
           <div className="mb-5 flex items-center justify-between gap-4">
             <div>
-              <h3 className="text-lg font-black tracking-tight text-gray-900">
+              <h3 className="text-lg font-bold tracking-tight text-gray-900">
                 课程分类
               </h3>
 
@@ -703,7 +703,7 @@ export default async function CategoryPage({
 
                           <DashboardTitleWithHint
                             headingLevel={4}
-                            titleClassName="text-lg font-black tracking-tight text-gray-900"
+                            titleClassName="text-lg font-bold tracking-tight text-gray-900"
                             title={subcategory.title}
                             description={subcategory.description || "暂无分类简介"}
                           />
@@ -718,7 +718,7 @@ export default async function CategoryPage({
                             {totalCourses} 门课程 · {totalLessons} 个课时
                           </div>
 
-                          <span className="text-xl font-black text-gray-900">
+                          <span className="text-xl font-bold text-gray-900">
                             {progressPercent}%
                           </span>
                         </div>

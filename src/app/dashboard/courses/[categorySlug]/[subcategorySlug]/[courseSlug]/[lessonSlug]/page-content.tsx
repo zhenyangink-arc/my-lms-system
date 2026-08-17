@@ -164,27 +164,27 @@ const colorMap: Record<
 > = {
     indigo: {
         iconBox: "app-soft-card border",
-        iconText: "text-[var(--app-accent)]",
+        iconText: "text-[var(--primary)]",
         badge: "app-soft-card border",
     },
     blue: {
         iconBox: "app-soft-card border",
-        iconText: "text-[var(--app-accent)]",
+        iconText: "text-[var(--primary)]",
         badge: "app-soft-card border",
     },
     emerald: {
         iconBox: "app-soft-card border",
-        iconText: "text-[var(--app-accent)]",
+        iconText: "text-[var(--primary)]",
         badge: "app-soft-card border",
     },
     purple: {
         iconBox: "app-soft-card border",
-        iconText: "text-[var(--app-accent)]",
+        iconText: "text-[var(--primary)]",
         badge: "app-soft-card border",
     },
     orange: {
         iconBox: "app-soft-card border",
-        iconText: "text-[var(--app-accent)]",
+        iconText: "text-[var(--primary)]",
         badge: "app-soft-card border",
     },
 };
@@ -222,7 +222,7 @@ function TextContent({ content }: { content: string | null }) {
     }
 
     return (
-        <div className="whitespace-pre-line text-sm leading-6 text-gray-700">
+        <div className="max-w-[75ch] whitespace-pre-line text-sm leading-7 text-gray-700">
             {content}
         </div>
     );
@@ -241,11 +241,11 @@ function WorkspaceSectionTitle({
         <div className="mb-4 flex justify-center text-center">
             <div>
                 <div className="mb-1 flex items-center justify-center gap-2">
-                    <span className="text-xs font-black tracking-widest text-gray-400">
+                    <span className="text-xs font-bold tracking-widest text-gray-400">
                         {index}
                     </span>
 
-                    <h3 className="text-lg font-black tracking-tight text-gray-900">
+                    <h3 className="text-lg font-bold tracking-tight text-gray-900">
                         {title}
                     </h3>
                 </div>
@@ -281,7 +281,7 @@ export default async function LessonDetailPage({
     const { supabase, user, profile, platformProfile, tenant } = await requireActiveUser();
     const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
-    const { data: parentCategoryData } = await supabase
+    const { data: parentCategoryData, error: parentCategoryError } = await supabase
         .from("course_categories")
         .select("id, parent_id, slug, title, description, accent_color")
         .eq("slug", categorySlug)
@@ -289,13 +289,17 @@ export default async function LessonDetailPage({
         .eq("is_published", true)
         .maybeSingle();
 
+    if (parentCategoryError) {
+        throw new Error("课程分类加载失败", { cause: parentCategoryError });
+    }
+
     if (!parentCategoryData) {
         notFound();
     }
 
     const parentCategory = parentCategoryData as CourseCategory;
 
-    const { data: subcategoryData } = await supabase
+    const { data: subcategoryData, error: subcategoryError } = await supabase
         .from("course_categories")
         .select("id, parent_id, slug, title, description, accent_color")
         .eq("slug", subcategorySlug)
@@ -303,13 +307,17 @@ export default async function LessonDetailPage({
         .eq("is_published", true)
         .maybeSingle();
 
+    if (subcategoryError) {
+        throw new Error("课程阶段加载失败", { cause: subcategoryError });
+    }
+
     if (!subcategoryData) {
         notFound();
     }
 
     const subcategory = subcategoryData as CourseCategory;
 
-    const { data: courseData } = await supabase
+    const { data: courseData, error: courseError } = await supabase
         .from("courses")
         .select(
             "id, category_id, slug, title, description, level, support_teacher_name, support_teacher_status, ai_support_enabled, support_message"
@@ -319,13 +327,17 @@ export default async function LessonDetailPage({
         .eq("is_published", true)
         .maybeSingle();
 
+    if (courseError) {
+        throw new Error("课程加载失败", { cause: courseError });
+    }
+
     if (!courseData) {
         notFound();
     }
 
     const course = courseData as Course;
 
-    const { data: lessonData } = await supabase
+    const { data: lessonData, error: lessonError } = await supabase
         .from("lessons")
         .select(
             "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, content_text, video_url, video_provider, video_object_key, video_mime_type, attachment_url, attachment_label, teacher_note, allow_questions, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked, learning_objectives, lesson_tasks, key_points, case_study, common_mistakes, summary_text, reflection_questions, extra_note"
@@ -334,6 +346,10 @@ export default async function LessonDetailPage({
         .eq("course_id", course.id)
         .eq("is_published", true)
         .maybeSingle();
+
+    if (lessonError) {
+        throw new Error("课时加载失败", { cause: lessonError });
+    }
 
     if (!lessonData) {
         notFound();
@@ -502,34 +518,34 @@ export default async function LessonDetailPage({
             : courseDirectoryHref;
 
         return (
-            <div className="fixed inset-0 z-50 overflow-y-auto bg-[#F4F7F6] text-slate-900">
+            <div className="fixed inset-0 z-50 overflow-y-auto bg-[var(--background)] text-[var(--foreground)]">
                 <div className="mx-auto flex min-h-full w-full max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
                     <Link
                         href={courseDirectoryHref}
-                        className="inline-flex w-fit items-center gap-2 text-sm font-bold text-slate-500 transition hover:text-slate-900"
+                        className="inline-flex w-fit items-center gap-2 rounded-md text-sm font-bold text-[var(--foreground-muted)] transition hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     >
                         <ArrowLeft size={16} />
                         返回课程路线
                     </Link>
                     <main className="my-auto py-10">
-                        <section className="relative overflow-hidden rounded-[32px] border border-white bg-white/85 p-6 shadow-[0_30px_100px_rgba(31,46,42,.12)] backdrop-blur-xl sm:p-10 lg:p-12">
-                            <span className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#EEEFFD]" aria-hidden="true" />
+                        <section className="app-card relative overflow-hidden rounded-3xl border p-6 shadow-sm sm:p-10 lg:p-12">
+                            <span className="pointer-events-none absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[var(--accent)]" aria-hidden="true" />
                             <div className="relative max-w-2xl">
-                                <span className="inline-flex items-center gap-2 rounded-full bg-[#FBEEE9] px-3 py-1.5 text-xs font-black text-[#B45E3E]">
+                                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--status-warning-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-warning)]">
                                     <LockKeyhole size={14} />
                                     前置学习尚未完成
                                 </span>
-                                <p className="mt-6 text-xs font-black tracking-[.18em] text-[#6F72E6]">
+                                <p className="mt-6 text-xs font-bold tracking-[.18em] text-[var(--primary)]">
                                     {curatedLesson?.stage ?? subcategory.title}
                                 </p>
-                                <h1 className="mt-2 text-3xl font-black tracking-tight sm:text-4xl">
+                                <h2 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">
                                     {curatedLesson?.title ?? lesson.title}
-                                </h1>
+                                </h2>
                                 <p className="mt-4 text-sm leading-7 text-slate-500 sm:text-base">
                                     这门课需要按学习路线逐步开放。完成前置内容后，系统会自动解锁，不需要重新收藏或报名。
                                 </p>
                                 <div className="mt-7 rounded-2xl border border-slate-100 bg-slate-50 p-4 sm:p-5">
-                                    <p className="text-xs font-black text-slate-400">下一步</p>
+                                    <p className="text-xs font-bold text-slate-400">下一步</p>
                                     <p className="mt-2 text-sm font-bold leading-6 text-slate-800 sm:text-base">
                                         {prerequisiteChapterTitle
                                             ? `完成前置课程中的「${prerequisiteChapterTitle}」章节测试`
@@ -539,13 +555,13 @@ export default async function LessonDetailPage({
                                 <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                                     <Link
                                         href={prerequisiteHref}
-                                        className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-black text-white transition hover:bg-slate-700"
+                                        className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-3 text-sm font-bold text-white transition hover:bg-slate-700"
                                     >
                                         继续前置学习 <ArrowRight size={16} />
                                     </Link>
                                     <Link
                                         href={courseDirectoryHref}
-                                        className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-600 transition hover:border-slate-300"
+                                        className="inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-bold text-slate-600 transition hover:border-slate-300"
                                     >
                                         查看完整课程路线
                                     </Link>
@@ -579,7 +595,7 @@ export default async function LessonDetailPage({
         questions = (questionData ?? []) as LessonQuestion[];
     }
 
-    const { data: resourceData } = await supabase
+    const { data: resourceData, error: resourceError } = await supabase
         .from("lesson_resources")
         .select(
             "id, title, description, resource_type, resource_url, resource_object_key, original_file_name, is_required, sort_order"
@@ -588,14 +604,22 @@ export default async function LessonDetailPage({
         .eq("is_published", true)
         .order("sort_order", { ascending: true });
 
+    if (resourceError) {
+        throw new Error("课时资料加载失败", { cause: resourceError });
+    }
+
     const resources = (resourceData ?? []) as LessonResource[];
 
-    const { data: navLessonData } = await supabase
+    const { data: navLessonData, error: navLessonError } = await supabase
         .from("lessons")
         .select("id, slug, title, sort_order")
         .eq("course_id", course.id)
         .eq("is_published", true)
         .order("sort_order", { ascending: true });
+
+    if (navLessonError) {
+        throw new Error("课时导航加载失败", { cause: navLessonError });
+    }
 
     const navLessons = (navLessonData ?? []) as LessonNavItem[];
 
@@ -769,14 +793,14 @@ export default async function LessonDetailPage({
             return (
                 <>
                     {liveClassBanner}
-                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#F4F7F6] p-8">
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)] p-8">
                       <div className="max-w-xl text-center">
-                        <p className="text-xs font-black tracking-[.2em] text-[#6F72E6]">
+                        <p className="text-xs font-bold tracking-[.2em] text-[var(--primary)]">
                             SMART DIGITAL TEXTBOOK
                         </p>
-                        <h1 className="mt-4 text-3xl font-black tracking-tight text-slate-900">
+                        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900">
                             第一章教材骨架尚未部署
-                        </h1>
+                        </h2>
                         <p className="mt-4 leading-7 text-slate-500">
                             页面代码已经切换到新版智能教材，请先应用最新数据库迁移后刷新页面。
                         </p>
@@ -816,10 +840,10 @@ export default async function LessonDetailPage({
                 }
             >
                 {/* 返回路径 */}
-                <div className="flex flex-wrap items-center gap-3">
+                <nav className="flex flex-wrap items-center gap-3" aria-label="课时上下文导航">
                     <Link
                         href={courseDirectoryHref}
-                        className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                        className="inline-flex items-center gap-2 rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     >
                         <ArrowLeft size={16} />
                         返回{course.title}
@@ -829,7 +853,7 @@ export default async function LessonDetailPage({
 
                     <Link
                         href={stageDirectoryHref}
-                        className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                        className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     >
                         {subcategory.title}
                     </Link>
@@ -838,11 +862,11 @@ export default async function LessonDetailPage({
 
                     <Link
                         href="/dashboard/courses"
-                        className="text-sm font-medium text-gray-500 transition hover:text-gray-900"
+                        className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     >
                         我的课程
                     </Link>
-                </div>
+                </nav>
 
                 {/* 课时信息 */}
                 <section className="app-card rounded-3xl border p-5 shadow-sm">
@@ -879,7 +903,7 @@ export default async function LessonDetailPage({
                                     )}
                                 </div>
 
-                                <h2 className="text-2xl font-black tracking-tight text-gray-900">
+                                <h2 className="text-2xl font-bold tracking-tight text-gray-900">
                                     {curatedLesson?.title ?? lesson.title}
                                 </h2>
 
@@ -896,7 +920,7 @@ export default async function LessonDetailPage({
                                 initialStatus={progress.status}
                                 initialProgress={progress.progress_percent}
                                 autoProgressEnabled={autoVideoProgressEnabled}
-                            /> : <div className="app-empty-state rounded-2xl p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--app-warm)" }}/><p className="mt-2 text-xs font-black">只读浏览</p></div>)}
+                            /> : <div className="app-empty-state rounded-2xl p-4 text-center"><LockKeyhole className="mx-auto" size={20} style={{ color: "var(--status-warning)" }}/><p className="mt-2 text-xs font-bold">只读浏览</p></div>)}
                         </div>
 
                         {/* 右侧：学习支持 / 咨询 + 上一课 / 下一课 */}
@@ -950,21 +974,21 @@ export default async function LessonDetailPage({
 
                 {/* 01 视频学习 + 02 学习引导 */}
                 {isHangulIntroduction && (
-                    <section className="overflow-hidden rounded-3xl border border-[#dce9e7] bg-[linear-gradient(145deg,#f6fffc_0%,#f7fbff_52%,#fffaf3_100%)] p-5 shadow-sm sm:p-6">
+                    <section className="app-card overflow-hidden rounded-3xl border p-5 shadow-sm sm:p-6">
                         <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                             <div>
-                                <span className="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 text-xs font-black text-[#21867a] shadow-sm ring-1 ring-[#d8ebe7]">
+                                <span className="inline-flex items-center gap-2 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)] shadow-sm ring-1 ring-[var(--border-subtle)]">
                                     <BookOpenCheck size={14} />
                                     章节目录
                                 </span>
-                                <h3 className="mt-3 text-xl font-black tracking-tight text-[#173f4a]">
+                                <h3 className="mt-3 text-xl font-bold tracking-tight text-[var(--foreground)]">
                                     韩语字母入门 · 5 个章节
                                 </h3>
-                                <p className="mt-1 text-sm leading-6 text-[#667d84]">
+                                <p className="mt-1 max-w-[75ch] text-sm leading-6 text-[var(--foreground-muted)]">
                                     按照“认识结构 → 学习字母 → 组合拼读 → 收音复习”的顺序完成学习。
                                 </p>
                             </div>
-                            <p className="text-xs font-bold text-[#789097]">
+                            <p className="text-xs font-bold text-[var(--foreground-muted)]">
                                 共 {hangulIntroductionChapters.reduce((total, chapter) => total + chapter.durationMinutes, 0)} 分钟
                             </p>
                         </div>
@@ -974,23 +998,23 @@ export default async function LessonDetailPage({
                                 <li
                                     key={chapter.slug}
                                     id={`chapter-${chapter.slug}`}
-                                    className="group relative rounded-2xl border border-white/80 bg-white/85 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-[#b9ddd7] hover:shadow-md"
+                                    className="group relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm transition hover:border-[var(--primary)] hover:shadow-md"
                                 >
                                     <div className="flex items-start justify-between gap-3">
-                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#e8f6f2] text-sm font-black text-[#238777]">
+                                        <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[var(--status-success-surface)] text-sm font-bold text-[var(--status-success)]">
                                             {String(index + 1).padStart(2, "0")}
                                         </span>
-                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#8a9da2]">
+                                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--foreground-muted)]">
                                             <Clock size={12} />
                                             {chapter.durationMinutes} 分钟
                                         </span>
                                     </div>
-                                    <h4 className="mt-4 font-black text-[#173f4a]">{chapter.title}</h4>
-                                    <p className="mt-1 text-xs font-bold text-[#2b9185]">{chapter.koreanTitle}</p>
-                                    <p className="mt-3 text-xs leading-5 text-[#667d84]">{chapter.description}</p>
+                                    <h4 className="mt-4 font-bold text-[var(--foreground)]">{chapter.title}</h4>
+                                    <p className="mt-1 text-xs font-bold text-[var(--status-success)]">{chapter.koreanTitle}</p>
+                                    <p className="mt-3 text-xs leading-5 text-[var(--foreground-muted)]">{chapter.description}</p>
                                     <div className="mt-4 flex flex-wrap gap-1.5">
                                         {chapter.focus.map((item) => (
-                                            <span key={item} className="inline-flex items-center gap-1 rounded-full bg-[#f1f6f6] px-2 py-1 text-[10px] font-bold text-[#698187]">
+                                            <span key={item} className="inline-flex items-center gap-1 rounded-full bg-[var(--surface-soft)] px-2 py-1 text-[10px] font-bold text-[var(--foreground-secondary)]">
                                                 <Hash size={10} />
                                                 {item}
                                             </span>
@@ -1025,7 +1049,7 @@ export default async function LessonDetailPage({
                             initialStatus={progress.status}
                             initialProgress={progress.progress_percent}
                             trackingDisabled={isPlatformAudit}
-                        /> : <div className="app-empty-state rounded-2xl p-6 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--app-warm)" }}/><h3 className="mt-4 font-black">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-5">一级会员及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
+                        /> : <div className="app-empty-state rounded-2xl p-6 text-center"><LockKeyhole className="mx-auto" size={28} style={{ color: "var(--status-warning)" }}/><h3 className="mt-4 font-bold">当前课时仅限浏览介绍</h3><p className="app-muted-text mx-auto mt-2 max-w-md text-xs leading-5">一级会员及以上学生可以播放标记为“可试听”的课时；其他正式课程权限将在后续会员方案中配置。</p></div>}
                     </section>
 
                     {/* 右侧：02 学习引导 */}
@@ -1309,7 +1333,7 @@ export default async function LessonDetailPage({
                         <Link
                             href={courseDirectoryHref}
                             className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
-                            style={{ backgroundColor: "var(--app-accent)" }}
+                            style={{ backgroundColor: "var(--primary)" }}
                         >
                             返回课程目录
                             <ArrowRight size={15} />

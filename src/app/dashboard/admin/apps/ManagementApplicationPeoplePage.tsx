@@ -87,12 +87,13 @@ export async function ManagementApplicationPeoplePage({
     ]);
   const memberships = (membershipsResult.data ?? []) as MembershipRow[];
   const userIds = memberships.map((membership) => membership.user_id);
-  const { data: profileData } = userIds.length
+  const profileResult = userIds.length
     ? await admin
         .from("profiles")
         .select("id,full_name,email")
         .in("id", userIds)
-    : { data: [] as ProfileRow[] };
+    : { data: [] as ProfileRow[], error: null };
+  const profileData = profileResult.data;
   const profiles = new Map(
     ((profileData ?? []) as ProfileRow[]).map((profile) => [profile.id, profile]),
   );
@@ -122,7 +123,8 @@ export async function ManagementApplicationPeoplePage({
       {(membershipsResult.error ||
         enrollmentsResult.error ||
         staffAccessResult.error ||
-        assignmentsResult.error) && (
+        assignmentsResult.error ||
+        profileResult.error) && (
         <ManagementNotice tone="warning">
           应用授权数据暂时无法完整读取，请确认最新数据库迁移已经部署。
         </ManagementNotice>
@@ -160,32 +162,42 @@ export async function ManagementApplicationPeoplePage({
             <h2 className="text-sm font-semibold">员工应用权限</h2>
             <p className="app-muted-text mt-1 text-xs">先让老师或运营人员进入当前应用，再建立学生负责关系。</p>
           </div>
-          <div className="overflow-x-auto border bg-[var(--app-card-bg)]">
+          <div className="overflow-x-auto border bg-[var(--card)]">
             <table className="w-full min-w-[760px] border-collapse text-left text-xs">
-              <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]"><tr><th className="px-4 py-3">员工</th><th className="px-4 py-3">机构角色</th><th className="px-4 py-3">应用角色</th><th className="px-4 py-3">状态</th><th className="px-4 py-3 text-right">保存</th></tr></thead>
+              <caption className="sr-only">当前应用的员工权限设置</caption>
+              <thead className="bg-[var(--surface-soft)] text-[var(--foreground-muted)]"><tr><th className="px-4 py-3">员工</th><th className="px-4 py-3">机构角色</th><th className="px-4 py-3">应用角色</th><th className="px-4 py-3">状态</th><th className="px-4 py-3 text-right">保存</th></tr></thead>
               <tbody>
                 {staff.map((member) => {
                   const current = staffAccessById.get(member.user_id);
                   return (
-                    <tr key={member.user_id} className="border-t border-[var(--app-border-soft)]">
+                    <tr key={member.user_id} className="border-t border-[var(--border-subtle)]">
                       <td className="px-4 py-3 font-medium">{displayName(profiles.get(member.user_id))}</td>
                       <td className="app-muted-text px-4 py-3">{roleLabels[member.role] ?? member.role}</td>
                       <td colSpan={3} className="px-4 py-2">
                         <form action={setStaffApplicationAccessAction} className="flex items-center justify-end gap-2">
                           <HiddenAccessFields access={access} />
                           <input type="hidden" name="staff_id" value={member.user_id} />
-                          <select name="access_role" defaultValue={current?.access_role ?? (member.role === "teacher" ? "teacher" : "viewer")} className="app-input h-8 border px-2">
+                          <select aria-label={`${displayName(profiles.get(member.user_id))}的应用角色`} name="access_role" defaultValue={current?.access_role ?? (member.role === "teacher" ? "teacher" : "viewer")} className="app-input h-8 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
                             <option value="administrator">应用负责人</option><option value="operator">应用运营</option><option value="teacher">老师</option><option value="viewer">只读观察</option>
                           </select>
-                          <select name="status" defaultValue={current?.status ?? "inactive"} className="app-input h-8 border px-2">
+                          <select aria-label={`${displayName(profiles.get(member.user_id))}的应用权限状态`} name="status" defaultValue={current?.status ?? "inactive"} className="app-input h-8 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
                             <option value="active">已启用</option><option value="inactive">未启用</option>
                           </select>
-                          <button className="h-8 border border-[var(--app-border)] px-3 font-semibold hover:bg-[var(--app-soft-bg)]">保存</button>
+                          <button className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">保存</button>
                         </form>
                       </td>
                     </tr>
                   );
                 })}
+                {staff.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="app-muted-text px-4 py-10 text-center">
+                      {membershipsResult.error
+                        ? "员工数据读取失败，请稍后刷新重试。"
+                        : "当前机构还没有有效员工账号。"}
+                    </td>
+                  </tr>
+                )}
               </tbody>
             </table>
           </div>
@@ -197,22 +209,23 @@ export async function ManagementApplicationPeoplePage({
           <h2 className="text-sm font-semibold">学生授权与负责老师</h2>
           <p className="app-muted-text mt-1 text-xs">只有“已开通”的学生才能进入当前应用并被分配给该应用老师。</p>
         </div>
-        <div className="overflow-x-auto border bg-[var(--app-card-bg)]">
+        <div className="overflow-x-auto border bg-[var(--card)]">
           <table className="w-full min-w-[940px] border-collapse text-left text-xs">
-            <thead className="bg-[var(--app-soft-bg)] text-[var(--app-muted)]"><tr><th className="px-4 py-3">学生</th><th className="px-4 py-3">机构等级</th><th className="px-4 py-3">应用状态</th><th className="px-4 py-3">负责老师</th><th className="px-4 py-3">新增老师</th></tr></thead>
+            <caption className="sr-only">当前应用的学生授权与负责老师设置</caption>
+            <thead className="bg-[var(--surface-soft)] text-[var(--foreground-muted)]"><tr><th className="px-4 py-3">学生</th><th className="px-4 py-3">机构等级</th><th className="px-4 py-3">应用状态</th><th className="px-4 py-3">负责老师</th><th className="px-4 py-3">新增老师</th></tr></thead>
             <tbody>
               {students.map((student) => {
                 const enrollment = enrollmentByStudent.get(student.user_id);
                 const studentAssignments = assignments.filter((item) => item.student_id === student.user_id);
                 return (
-                  <tr key={student.user_id} className="border-t border-[var(--app-border-soft)] align-top">
+                  <tr key={student.user_id} className="border-t border-[var(--border-subtle)] align-top">
                     <td className="px-4 py-3 font-medium">{displayName(profiles.get(student.user_id))}</td>
                     <td className="app-muted-text px-4 py-3">{student.membership_tier}</td>
                     <td className="px-4 py-2">
                       <form action={setStudentApplicationEnrollmentAction} className="flex items-center gap-2">
                         <HiddenAccessFields access={access} /><input type="hidden" name="student_id" value={student.user_id} />
-                        <select name="status" defaultValue={enrollment?.status ?? "paused"} className="app-input h-8 border px-2"><option value="active">已开通</option><option value="paused">已暂停</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select>
-                        <button className="h-8 border border-[var(--app-border)] px-3 font-semibold hover:bg-[var(--app-soft-bg)]">保存</button>
+                        <select aria-label={`${displayName(profiles.get(student.user_id))}的应用状态`} name="status" defaultValue={enrollment?.status ?? "paused"} className="app-input h-8 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"><option value="active">已开通</option><option value="paused">已暂停</option><option value="completed">已完成</option><option value="cancelled">已取消</option></select>
+                        <button className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">保存</button>
                       </form>
                     </td>
                     <td className="px-4 py-2">
@@ -220,7 +233,7 @@ export async function ManagementApplicationPeoplePage({
                         {studentAssignments.map((item) => (
                           <form key={item.teacher_id} action={setApplicationTeacherAssignmentAction}>
                             <HiddenAccessFields access={access} /><input type="hidden" name="student_id" value={student.user_id} /><input type="hidden" name="teacher_id" value={item.teacher_id} /><input type="hidden" name="operation" value="remove" />
-                            <button className="rounded-full border px-2.5 py-1 hover:bg-[var(--app-soft-bg)]" title="点击解除负责关系">{displayName(profiles.get(item.teacher_id))} ×</button>
+                            <button aria-label={`解除${displayName(profiles.get(item.teacher_id))}对${displayName(profiles.get(student.user_id))}的负责关系`} className="rounded-full border px-2.5 py-1 hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">{displayName(profiles.get(item.teacher_id))} ×</button>
                           </form>
                         ))}
                         {studentAssignments.length === 0 && <span className="app-muted-text py-1">尚未分配</span>}
@@ -229,14 +242,14 @@ export async function ManagementApplicationPeoplePage({
                     <td className="px-4 py-2">
                       <form action={setApplicationTeacherAssignmentAction} className="flex items-center gap-2">
                         <HiddenAccessFields access={access} /><input type="hidden" name="student_id" value={student.user_id} /><input type="hidden" name="operation" value="assign" />
-                        <select name="teacher_id" className="app-input h-8 min-w-36 border px-2" required defaultValue=""><option value="" disabled>选择应用老师</option>{activeTeachers.map((teacher) => <option key={teacher.user_id} value={teacher.user_id}>{displayName(profiles.get(teacher.user_id))}</option>)}</select>
-                        <button disabled={!enrollment || enrollment.status !== "active" || activeTeachers.length === 0} className="h-8 border border-[var(--app-border)] px-3 font-semibold hover:bg-[var(--app-soft-bg)] disabled:cursor-not-allowed disabled:opacity-40">分配</button>
+                        <select aria-label={`为${displayName(profiles.get(student.user_id))}选择负责老师`} name="teacher_id" className="app-input h-8 min-w-36 border px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]" required defaultValue=""><option value="" disabled>选择应用老师</option>{activeTeachers.map((teacher) => <option key={teacher.user_id} value={teacher.user_id}>{displayName(profiles.get(teacher.user_id))}</option>)}</select>
+                        <button disabled={!enrollment || enrollment.status !== "active" || activeTeachers.length === 0} className="h-8 border border-[var(--border)] px-3 font-semibold hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-40">分配</button>
                       </form>
                     </td>
                   </tr>
                 );
               })}
-              {students.length === 0 && <tr><td colSpan={5} className="app-muted-text px-4 py-10 text-center">当前机构还没有有效学生账号。</td></tr>}
+              {students.length === 0 && <tr><td colSpan={5} className="app-muted-text px-4 py-10 text-center">{membershipsResult.error ? "学生数据读取失败，请稍后刷新重试。" : "当前机构还没有有效学生账号。"}</td></tr>}
             </tbody>
           </table>
         </div>
