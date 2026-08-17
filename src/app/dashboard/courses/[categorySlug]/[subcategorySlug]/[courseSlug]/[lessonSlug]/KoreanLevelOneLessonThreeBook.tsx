@@ -1169,7 +1169,6 @@ export function KoreanLevelOneLessonThreeBook({
       <div className="flex h-full flex-col justify-center">
         <div className="mx-auto w-full max-w-[440px] text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]"><Sparkles aria-hidden="true" size={27} /></span>
-          <p className="mt-5 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">LESSON 03 · COMPLETE</p>
           <h3 className="mt-3 text-4xl font-bold text-[var(--status-success)]">한국어를 공부해요.</h3>
           <p className="mt-3 text-lg font-bold text-[var(--foreground)]">你已经完成第三课</p>
           <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -1192,14 +1191,13 @@ export function KoreanLevelOneLessonThreeBook({
           <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] px-5 py-3.5 text-left">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">LESSON 3 TEST · 本课测试</p>
+                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">本课测试</p>
                 <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">前往章节测试专区，检验词尾、助词、听辨与场景表达。</p>
               </div>
               <KoreanEbookTestLink />
             </div>
           </div>
           <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">
-            <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">NEXT · LESSON 04</p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div>
                 <p className="text-lg font-bold text-[var(--status-success)]">어디에 있어요?</p>

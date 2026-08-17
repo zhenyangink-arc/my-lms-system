@@ -12,6 +12,7 @@ import {
 import { redirect } from "next/navigation";
 
 import { ProfileContent } from "@/app/dashboard/profile/page-content";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import {
   MEMBERSHIP_TIER_LABELS,
@@ -465,8 +466,13 @@ export default async function StudentPortalPage({
                         {active ? "可进入" : "建设中"}
                       </span>
                     </div>
-                    <h3 className="mt-7 text-xl font-black tracking-tight">{app.portalTitle}</h3>
-                    <p className="mt-2 text-sm leading-6 text-slate-600">{app.description}</p>
+                    <CardTitleWithHint
+                      className="mt-7"
+                      headingLevel={3}
+                      title={app.portalTitle}
+                      titleClassName="text-xl font-black tracking-tight"
+                      description={app.description}
+                    />
                     <div className="mt-auto flex items-center justify-between gap-3 pt-7">
                       <span className="text-xs font-bold text-slate-500">
                         {app.kind === "service" ? "独立服务空间" : "独立学习空间"}

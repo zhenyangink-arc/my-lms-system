@@ -35,6 +35,7 @@ export async function recordLessonActivityAction(
   ) {
     return { status: "skipped" };
   }
+  const admin = createAdminClient();
 
   // lesson/course/tenant ownership is always resolved under the authenticated
   // user's RLS context. The client only supplies a lesson id; it never controls
@@ -122,10 +123,11 @@ export async function recordLessonActivityAction(
     }
   }
 
-  const { data: passedAttemptData, error: passedAttemptError } = await supabase
+  const { data: passedAttemptData, error: passedAttemptError } = await admin
     .from("chapter_test_attempts")
     .select("test_slug")
     .eq("student_id", user.id)
+    .eq("tenant_id", tenant.id)
     .eq("passed", true);
   if (passedAttemptError) return { status: "error" };
   const passedChapterSlugs = new Set(
@@ -181,10 +183,11 @@ export async function recordLessonActivityAction(
   let ebookPercent = 0;
   let hasEbookReading = false;
   if (testSlugs.length > 0) {
-    const { data: ebookRows, error: ebookError } = await supabase
+    const { data: ebookRows, error: ebookError } = await admin
       .from("course_ebook_progress")
       .select("reading_seconds")
       .eq("student_id", user.id)
+      .eq("tenant_id", tenant.id)
       .in("test_slug", testSlugs);
     if (ebookError) return { status: "error" };
     const readingSeconds = (ebookRows ?? []).map(
@@ -203,10 +206,11 @@ export async function recordLessonActivityAction(
 
   let hasPassedChapterTest = false;
   if (testSlugs.length > 0) {
-    const { data: lessonPassData, error: lessonPassError } = await supabase
+    const { data: lessonPassData, error: lessonPassError } = await admin
       .from("chapter_test_attempts")
       .select("test_slug")
       .eq("student_id", user.id)
+      .eq("tenant_id", tenant.id)
       .eq("passed", true)
       .in("test_slug", testSlugs)
       .limit(1);

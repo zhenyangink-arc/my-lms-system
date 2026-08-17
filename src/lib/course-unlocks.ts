@@ -99,7 +99,14 @@ export function isLessonUnlocked({
   if (mode === "prerequisite_passed") {
     if (lesson.prerequisite_chapter_id) {
       const prerequisiteSlug = prerequisiteChapterSlugById.get(lesson.prerequisite_chapter_id);
-      return Boolean(prerequisiteSlug && passedChapterSlugs.has(prerequisiteSlug));
+      const prerequisiteChapterPassed = Boolean(
+        prerequisiteSlug && passedChapterSlugs.has(prerequisiteSlug),
+      );
+      const prerequisiteLessonCompleted = Boolean(
+        lesson.prerequisite_lesson_id && completedLessonIds.has(lesson.prerequisite_lesson_id),
+      );
+
+      return prerequisiteChapterPassed || prerequisiteLessonCompleted;
     }
     return !lesson.prerequisite_lesson_id || completedLessonIds.has(lesson.prerequisite_lesson_id);
   }
@@ -110,10 +117,12 @@ export function isLessonUnlocked({
 export function getUnlockedChapterSlugs({
   chapters,
   passedChapterSlugs,
+  completedChapterSlugs = passedChapterSlugs,
   now = new Date(),
 }: {
   chapters: ChapterUnlockRule[];
   passedChapterSlugs: ReadonlySet<string>;
+  completedChapterSlugs?: ReadonlySet<string>;
   now?: Date;
 }) {
   const chapterSlugById = new Map(chapters.map((chapter) => [chapter.id, chapter.slug]));
@@ -127,9 +136,15 @@ export function getUnlockedChapterSlugs({
     if (mode === "scheduled") isUnlocked = isAvailableByTime(chapter.available_from, now);
     if (mode === "previous_completed") {
       const previous = chapters[index - 1];
-      isUnlocked = !previous || passedChapterSlugs.has(previous.slug);
+      isUnlocked = !previous || completedChapterSlugs.has(previous.slug);
     }
-    if (mode === "prerequisite_completed" || mode === "prerequisite_passed") {
+    if (mode === "prerequisite_completed") {
+      const prerequisiteSlug = chapter.prerequisite_chapter_id
+        ? chapterSlugById.get(chapter.prerequisite_chapter_id)
+        : null;
+      isUnlocked = !prerequisiteSlug || completedChapterSlugs.has(prerequisiteSlug);
+    }
+    if (mode === "prerequisite_passed") {
       const prerequisiteSlug = chapter.prerequisite_chapter_id
         ? chapterSlugById.get(chapter.prerequisite_chapter_id)
         : null;

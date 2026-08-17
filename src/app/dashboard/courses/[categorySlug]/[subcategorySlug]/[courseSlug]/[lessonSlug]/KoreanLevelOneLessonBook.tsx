@@ -1713,7 +1713,7 @@ export function KoreanLevelOneLessonBook({
                 <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)] p-6">
                   {showTwentiethPageSample ? (
                     <>
-                      <p className="text-xs font-bold text-[var(--status-warning)]">ORIGINAL SAMPLE · 原创样本</p>
+                      <p className="text-xs font-bold text-[var(--status-warning)]">原创样本</p>
                       <div className="mt-5 space-y-4 text-sm font-bold text-[var(--status-success)]">
                         <p className="border-b border-[var(--border)] pb-2">안녕하세요?</p>
                         <p className="border-b border-[var(--border)] pb-2">저는 하늘이에요.</p>
@@ -1874,7 +1874,6 @@ export function KoreanLevelOneLessonBook({
                 <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
                   <Sparkles aria-hidden="true" size={27} />
                 </span>
-                <p className="mt-5 text-xs font-bold tracking-[0.18em] text-[var(--status-warning)]">LESSON 01 · COMPLETE</p>
                 <h3 className="mt-3 text-4xl font-bold text-[var(--status-success)]">안녕하세요?</h3>
                 <p className="mt-3 text-lg font-bold text-[var(--foreground)]">你已经完成第一课</p>
                 <p className="mx-auto mt-3 max-w-[370px] text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -1897,14 +1896,13 @@ export function KoreanLevelOneLessonBook({
                 <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--card)] px-5 py-3.5 text-left">
                   <div className="flex items-center justify-between gap-3">
                     <div>
-                      <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-warning)]">LESSON 1 TEST · 本课测试</p>
+                      <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-warning)]">本课测试</p>
                       <p className="mt-1 text-xs font-bold text-[var(--status-warning)]">进入章节测试专区，查看本课开放的词汇、语法、听辨与情境表达测试。</p>
                     </div>
                     <KoreanEbookTestLink tone="warning" />
                   </div>
                 </div>
                 <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">
-                  <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">NEXT · LESSON 02</p>
                   <div className="mt-2 flex items-end justify-between gap-4">
                     <div>
                       <p className="text-lg font-bold text-[var(--status-success)]">이거는 뭐예요?</p>

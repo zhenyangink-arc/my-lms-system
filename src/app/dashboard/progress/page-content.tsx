@@ -74,7 +74,6 @@ type TestAttemptRow = {
 
 type LearningCourse = {
   key: string;
-  eyebrow: string;
   title: string;
   chapters: KnowledgeChapterRow[];
 };
@@ -152,13 +151,7 @@ function ChapterDirectory({
           )}
         </span>
         <div className="min-w-0 flex-1">
-          <p
-            className="text-[9px] font-bold tracking-[0.14em]"
-            style={{ color }}
-          >
-            {course.eyebrow}
-          </p>
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-3 gap-y-1">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
             <h2 className="text-base font-bold sm:text-lg">{course.title}</h2>
             <span className="text-[10px] font-bold app-muted-text">
               {passedCount}/{course.chapters.length} 章通过
@@ -428,7 +421,6 @@ export async function DeepLearningPage({
   const knowledgeCourses: LearningCourse[] = [
     {
       key: "hangul-introduction",
-      eyebrow: "字母启蒙",
       title: "韩语字母入门",
       chapters: knowledgeChapters.filter(
         (chapter) => chapter.course_key === "hangul-introduction"
@@ -436,7 +428,6 @@ export async function DeepLearningPage({
     },
     {
       key: "korean-level-one",
-      eyebrow: "基础表达",
       title: "韩国语1级",
       chapters: knowledgeChapters.filter(
         (chapter) => chapter.course_key === "korean-level-one"
@@ -577,7 +568,6 @@ export async function DeepLearningPage({
         <LazyKnowledgeResearchWorkbench
           chapterSlug={selectedKnowledgeChapter.slug}
           courseTitle={selectedCourse.title}
-          courseEyebrow={selectedCourse.eyebrow}
           chapterNumber={selectedKnowledgeChapter.chapter_number}
           chapterTitle={selectedKnowledgeChapter.title}
           chapterKoreanTitle={selectedKnowledgeChapter.korean_title}
@@ -771,7 +761,6 @@ export async function DeepLearningPage({
               <LazyKnowledgeResearchWorkbench
                 chapterSlug={selectedKnowledgeChapter.slug}
                 courseTitle={selectedCourse.title}
-                courseEyebrow={selectedCourse.eyebrow}
                 chapterNumber={selectedKnowledgeChapter.chapter_number}
                 chapterTitle={selectedKnowledgeChapter.title}
                 chapterKoreanTitle={selectedKnowledgeChapter.korean_title}

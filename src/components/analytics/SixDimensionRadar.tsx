@@ -8,6 +8,7 @@ import {
   Shapes,
   Sparkles,
 } from "lucide-react";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 
 export type LanguageSkill =
   | "listening"
@@ -127,7 +128,6 @@ function gridPoints(level: number) {
 }
 
 export function SixDimensionRadar({
-  eyebrow,
   title,
   description,
   icon: HeaderIcon,
@@ -141,7 +141,6 @@ export function SixDimensionRadar({
   evidenceOnly = false,
   deemphasizeSparseInsight = false,
 }: {
-  eyebrow: string;
   title: string;
   description: string;
   icon: LucideIcon;
@@ -197,16 +196,12 @@ export function SixDimensionRadar({
             <HeaderIcon size={19} aria-hidden="true" />
           </span>
           <div className="min-w-0">
-            <p
-              className="text-xs font-semibold tracking-[0.12em]"
-              style={{ color }}
-            >
-              {eyebrow}
-            </p>
-            <h2 className="mt-1 text-lg font-bold tracking-tight">{title}</h2>
-            <p className="app-muted-text mt-1 text-xs font-medium leading-5">
-              {description}
-            </p>
+            <CardTitleWithHint
+              title={title}
+              description={description}
+              headingLevel={2}
+              titleClassName="text-lg font-bold tracking-tight"
+            />
           </div>
         </div>
         <div className="flex flex-wrap gap-2">

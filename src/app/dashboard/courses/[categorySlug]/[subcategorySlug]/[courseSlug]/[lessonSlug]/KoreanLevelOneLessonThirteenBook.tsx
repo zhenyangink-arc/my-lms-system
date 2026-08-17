@@ -1190,9 +1190,6 @@ export function KoreanLevelOneLessonThirteenBook({
             <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]">
               <Sparkles aria-hidden="true" size={27} />
             </span>
-            <p className="mt-4 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
-              LESSON 13 · COMPLETE
-            </p>
             <h3 className="mt-3 text-4xl font-bold">서울역으로 가 주세요.</h3>
             <p className="mt-3 text-lg font-bold">你已经完成第十三课</p>
             <p className="mx-auto mt-3 max-w-[390px] text-sm leading-7 text-[var(--foreground-secondary)]">

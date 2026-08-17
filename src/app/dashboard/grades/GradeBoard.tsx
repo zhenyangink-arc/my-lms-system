@@ -186,7 +186,6 @@ function SkillRadar({
   const categoryStyle = categoryPresentation[category];
   return (
     <SixDimensionRadar
-      eyebrow={categoryStyle.label}
       title="六维学习能力"
       description="查看听、说、读、写、词汇与语法表现"
       icon={categoryStyle.icon}

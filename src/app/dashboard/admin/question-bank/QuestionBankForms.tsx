@@ -19,7 +19,7 @@ import {
 } from "./actions";
 import type { QuestionBankActionState } from "./actions";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { KOREAN_EBOOK_SECTIONS, koreanEbookSectionLabel } from "@/lib/korean-ebook-sections";
+import { KOREAN_EBOOK_SECTIONS, koreanEbookSectionLabel, koreanEbookSectionStep } from "@/lib/korean-ebook-sections";
 
 const initialQuestionBankActionState: QuestionBankActionState = {
   status: "idle",
@@ -97,7 +97,7 @@ function QuestionFields({
               <th className="bg-[var(--surface-soft)] px-3 py-3 font-semibold">电子书目录</th>
               <td className="px-3 py-3">
                 <select name="ebook_section_step" required defaultValue={question?.ebook_section_step ?? "STEP 08"} className={fieldClass}>
-                  {KOREAN_EBOOK_SECTIONS.map((section) => <option key={section.step} value={section.step}>{koreanEbookSectionLabel(section.step)}</option>)}
+                  {KOREAN_EBOOK_SECTIONS.map((section) => <option key={section.number} value={koreanEbookSectionStep(section.number)}>{koreanEbookSectionLabel(koreanEbookSectionStep(section.number))}</option>)}
                 </select>
               </td>
               <th className="border-l bg-[var(--surface-soft)] px-3 py-3 font-semibold">电子书页码</th>

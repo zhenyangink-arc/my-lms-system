@@ -340,7 +340,7 @@ export async function submitKoreanChapterTestAction(input: {
   testSlug: string;
   answers: Record<string, number>;
 }): Promise<KoreanChapterTestResult> {
-  const { supabase, user, isManager } = await requireAssignmentViewer();
+  const { supabase, user, tenant, isManager } = await requireAssignmentViewer();
   const testSlug = String(input.testSlug ?? "").trim();
   const answers = input.answers ?? {};
 
@@ -352,17 +352,24 @@ export async function submitKoreanChapterTestAction(input: {
   if (isManager) {
     return scoreManagerPreview(testSlug, answers);
   }
+  if (!tenant?.id) {
+    return { status: "error", message: "当前机构信息不可用，请重新登录后再试。" };
+  }
 
+  const admin = createAdminClient();
   const [{ data: attemptData }, { data: ebookProgressData }] =
     await Promise.all([
-      supabase
+      admin
         .from("chapter_test_attempts")
         .select("test_slug,passed")
-        .eq("student_id", user.id),
-      supabase
+        .eq("student_id", user.id)
+        .eq("tenant_id", tenant.id),
+      admin
         .from("course_ebook_progress")
         .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
-        .eq("student_id", user.id),
+        .eq("student_id", user.id)
+        .eq("tenant_id", tenant.id)
+        .eq("student_app_id", STUDENT_APP_IDS.korean),
     ]);
   const passedSlugs = (attemptData ?? [])
     .filter((attempt) => attempt.passed)

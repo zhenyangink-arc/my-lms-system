@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   ArrowRight,
   Award,
   BookOpenCheck,
   CheckCircle2,
+  ChevronDown,
   ClipboardCheck,
   Clock3,
   FilePenLine,
@@ -18,6 +19,7 @@ import {
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { Input } from "@/components/ui/input";
 import {
   ASSIGNMENT_DATE_OPTIONS,
@@ -73,6 +75,7 @@ type ChapterTestItem = {
   passingScore: number;
   questionCount: number;
   unlocked: boolean;
+  ebookProgressPercent: number;
   unlockRequirement: string | null;
   studyHref: string;
   attempt: { score: number; passed: boolean } | null;
@@ -86,6 +89,7 @@ type TaskState =
   | "graded"
   | "upcoming"
   | "overdue"
+  | "studying"
   | "locked"
   | "preview";
 type StatusFilter = "all" | "todo" | "revision" | "submitted" | "completed" | "locked";
@@ -110,6 +114,7 @@ type UnifiedTask = {
   allowResubmission: boolean;
   unlockRequirement: string | null;
   studyHref: string | null;
+  ebookProgressPercent: number | null;
 };
 
 const kindPresentation = {
@@ -136,7 +141,13 @@ const kindPresentation = {
   },
 } satisfies Record<
   TaskKind,
-  { label: string; shortLabel: string; icon: typeof BookOpenCheck; color: string; soft: string }
+  {
+    label: string;
+    shortLabel: string;
+    icon: typeof BookOpenCheck;
+    color: string;
+    soft: string;
+  }
 >;
 
 const statePresentation: Record<TaskState, { label: string; color: string; soft: string }> = {
@@ -146,6 +157,7 @@ const statePresentation: Record<TaskState, { label: string; color: string; soft:
   graded: { label: "已完成", color: "var(--status-success)", soft: "var(--status-success-surface)" },
   upcoming: { label: "未开放", color: "var(--support)", soft: "var(--support-surface)" },
   overdue: { label: "已截止", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
+  studying: { label: "学习中", color: "var(--support)", soft: "var(--support-surface)" },
   locked: { label: "未解锁", color: "var(--foreground-muted)", soft: "var(--surface-soft)" },
   preview: { label: "学生端预览", color: "var(--support)", soft: "var(--support-surface)" },
 };
@@ -176,7 +188,7 @@ const typeStatusFilters: Record<
 function taskMatchesStatus(task: UnifiedTask, filter: StatusFilter) {
   return (
     filter === "all" ||
-    (filter === "todo" && ["pending", "upcoming"].includes(task.state)) ||
+    (filter === "todo" && ["pending", "upcoming", "studying"].includes(task.state)) ||
     (filter === "revision" && task.state === "revision_required") ||
     (filter === "submitted" && task.state === "submitted") ||
     (filter === "completed" && task.state === "graded") ||
@@ -192,6 +204,9 @@ function getAssignmentState(item: AssignmentItem, isManager: boolean, now: numbe
 }
 
 function getDeadlineLabel(task: UnifiedTask, now: number) {
+  if (task.state === "studying") {
+    return `本章已学习 ${task.ebookProgressPercent ?? 0}% · 完成后解锁测试`;
+  }
   if (task.state === "locked") return task.unlockRequirement ?? "完成前置章节后解锁";
   if (task.kind === "chapter_test") return task.state === "graded" ? "已完成" : "建议现在完成";
   if (task.state === "upcoming" && task.startsAt) return `${formatAssignmentDate(task.startsAt)} 开放`;
@@ -207,6 +222,7 @@ function getDeadlineLabel(task: UnifiedTask, now: number) {
 }
 
 function getActionLabel(task: UnifiedTask) {
+  if (task.state === "studying") return "继续学习";
   if (task.state === "locked") return "尚未解锁";
   if (task.state === "revision_required") return task.kind === "chapter_test" ? "重新测试" : "查看反馈";
   if (task.state === "pending") return task.kind === "chapter_test" ? "开始测试" : "开始作答";
@@ -221,11 +237,12 @@ function sortTasks(a: UnifiedTask, b: UnifiedTask) {
     revision_required: 0,
     pending: 1,
     upcoming: 2,
-    submitted: 3,
-    preview: 4,
-    graded: 5,
-    overdue: 6,
-    locked: 7,
+    studying: 3,
+    submitted: 4,
+    preview: 5,
+    graded: 6,
+    overdue: 7,
+    locked: 8,
   };
   const stateDifference = rank[a.state] - rank[b.state];
   if (stateDifference !== 0) return stateDifference;
@@ -253,13 +270,17 @@ function TaskRow({
     task.dueAt &&
     ["pending", "revision_required"].includes(task.state) &&
     new Date(task.dueAt).getTime() - currentTime <= 3 * 86_400_000;
-  const locked = task.state === "locked";
+  const testUnavailable = task.state === "locked" || task.state === "studying";
+  const statusLabel =
+    task.state === "studying"
+      ? `学习中 ${task.ebookProgressPercent ?? 0}%`
+      : state.label;
 
   const card = (
     <Card
       size="sm"
       className={`relative gap-0 overflow-hidden py-0 transition duration-200 ${
-        locked
+        task.state === "locked"
           ? "bg-[var(--surface-soft)] opacity-85"
           : "group-hover:-translate-y-0.5 group-hover:shadow-md"
       }`}
@@ -277,7 +298,7 @@ function TaskRow({
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="text-[10px] font-bold" style={{ color: kind.color }}>{task.courseTitle}</span>
             <span className="rounded-full px-2 py-0.5 text-[9px] font-bold" style={{ color: state.color, backgroundColor: state.soft }}>
-              {state.label}
+              {statusLabel}
             </span>
           </div>
           <h5 className="mt-1 truncate text-sm font-bold sm:text-[15px]">{task.title}</h5>
@@ -285,6 +306,9 @@ function TaskRow({
             <span>{kind.label}</span>
             {task.chapterNumber && <span>第 {task.chapterNumber} 章</span>}
             {task.questionCount !== null && <span>{task.questionCount} 题</span>}
+            {task.kind === "chapter_test" && task.ebookProgressPercent !== null && (
+              <span>电子书 {task.ebookProgressPercent}%</span>
+            )}
             {task.durationMinutes && <span className="inline-flex items-center gap-1"><Timer size={10} />{task.durationMinutes} 分钟</span>}
             {task.kind !== "chapter_test" && <span>{task.totalPoints} 分</span>}
             {task.allowResubmission && task.kind !== "chapter_test" && <span className="inline-flex items-center gap-1"><RotateCcw size={10} />可再次提交</span>}
@@ -292,7 +316,7 @@ function TaskRow({
         </div>
 
         <div className="col-span-2 flex items-center justify-between gap-3 border-t pt-2.5 lg:col-span-1 lg:block lg:border-l lg:border-t-0 lg:pl-5 lg:pt-0" style={{ borderColor: "var(--border-subtle)" }}>
-          <p className="flex items-start gap-1.5 text-[11px] font-bold leading-5" style={{ color: urgent ? "var(--status-danger)" : locked ? state.color : "var(--foreground)" }}>
+          <p className="flex items-start gap-1.5 text-[11px] font-bold leading-5" style={{ color: urgent ? "var(--status-danger)" : testUnavailable ? state.color : "var(--foreground)" }}>
             {urgent ? <AlertCircle className="mt-1 shrink-0" size={12} /> : <Clock3 className="mt-1 shrink-0" size={12} />}
             <span>{deadlineLabel}</span>
           </p>
@@ -304,7 +328,7 @@ function TaskRow({
           )}
         </div>
 
-        {locked && task.studyHref ? (
+        {testUnavailable && task.studyHref ? (
           <div className="col-span-2 flex items-center justify-end gap-2 lg:col-span-1">
             <Link
               href={task.studyHref}
@@ -312,13 +336,13 @@ function TaskRow({
               style={{ backgroundColor: "var(--support)" }}
             >
               <BookOpenCheck size={13} />
-              学习本章
+              {task.state === "studying" ? "继续学习" : "学习本章"}
             </Link>
             <span
               className="inline-flex h-8 cursor-not-allowed items-center justify-center rounded-lg px-3 text-xs font-bold"
               style={{ color: state.color, backgroundColor: state.soft }}
             >
-              {getActionLabel(task)}
+              {task.state === "studying" ? "测试待解锁" : getActionLabel(task)}
             </span>
           </div>
         ) : (
@@ -348,8 +372,8 @@ function TaskRow({
           style={{ backgroundColor: state.color }}
         />
       )}
-      {locked ? (
-        <div aria-disabled="true">{card}</div>
+      {testUnavailable ? (
+        <div aria-disabled={task.state === "locked" ? true : undefined}>{card}</div>
       ) : (
         <Link
           href={task.href}
@@ -367,12 +391,14 @@ export function AssignmentBoard({
   chapterTests,
   isManager,
   currentTime,
+  preferenceScope,
   initialTaskTypeFilter = "all",
 }: {
   items: AssignmentItem[];
   chapterTests: ChapterTestItem[];
   isManager: boolean;
   currentTime: number;
+  preferenceScope: string;
   initialTaskTypeFilter?: TaskTypeFilter;
 }) {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
@@ -381,6 +407,11 @@ export function AssignmentBoard({
   );
   const [courseFilter, setCourseFilter] = useState("all");
   const [query, setQuery] = useState("");
+  const [courseDisclosurePreferences, setCourseDisclosurePreferences] =
+    useState<{ loaded: boolean; expanded: Set<string> }>({
+      loaded: false,
+      expanded: new Set(),
+    });
 
   const tasks = useMemo<UnifiedTask[]>(() => {
     const assignmentTasks = items.map<UnifiedTask>((item) => ({
@@ -404,6 +435,7 @@ export function AssignmentBoard({
       allowResubmission: item.allow_resubmission,
       unlockRequirement: null,
       studyHref: null,
+      ebookProgressPercent: null,
     }));
 
     const testTasks = chapterTests.map<UnifiedTask>((test) => ({
@@ -411,7 +443,9 @@ export function AssignmentBoard({
       href: `/dashboard/assignments/korean/${test.slug}`,
       kind: "chapter_test",
       state: !test.unlocked
-        ? "locked"
+        ? test.ebookProgressPercent > 0
+          ? "studying"
+          : "locked"
         : isManager
         ? "preview"
         : test.attempt
@@ -433,22 +467,17 @@ export function AssignmentBoard({
       allowResubmission: true,
       unlockRequirement: test.unlockRequirement,
       studyHref: test.studyHref,
+      ebookProgressPercent: test.ebookProgressPercent,
     }));
 
     return [...assignmentTasks, ...testTasks].sort(sortTasks);
   }, [chapterTests, currentTime, isManager, items]);
 
   const counts = {
-    todo: tasks.filter((task) => task.state === "pending").length,
+    todo: tasks.filter((task) => ["pending", "studying"].includes(task.state)).length,
     revision: tasks.filter((task) => task.state === "revision_required").length,
     submitted: tasks.filter((task) => task.state === "submitted").length,
     completed: tasks.filter((task) => task.state === "graded").length,
-  };
-
-  const typeCounts = {
-    chapter_test: tasks.filter((task) => task.kind === "chapter_test").length,
-    homework: tasks.filter((task) => task.kind === "homework").length,
-    exam: tasks.filter((task) => task.kind === "exam").length,
   };
 
   const courseGroups = useMemo(
@@ -471,10 +500,89 @@ export function AssignmentBoard({
   const chapterTimelineTasks = filteredTasks
     .filter((task) => task.kind === "chapter_test")
     .sort(
-      (a, b) =>
-        a.courseTitle.localeCompare(b.courseTitle, "zh-CN") ||
-        (a.chapterNumber ?? 0) - (b.chapterNumber ?? 0)
+      (a, b) => {
+        const courseRank: Record<string, number> = {
+          "韩语字母入门": 0,
+          "韩国语 1级": 1,
+        };
+        return (
+          (courseRank[a.courseTitle] ?? 99) -
+            (courseRank[b.courseTitle] ?? 99) ||
+          a.courseTitle.localeCompare(b.courseTitle, "zh-CN") ||
+          (a.chapterNumber ?? 0) - (b.chapterNumber ?? 0)
+        );
+      }
     );
+  const chapterTimelineGroups = chapterTimelineTasks.reduce<
+    Array<{ courseTitle: string; tasks: UnifiedTask[] }>
+  >((groups, task) => {
+    const currentGroup = groups.at(-1);
+    if (currentGroup?.courseTitle === task.courseTitle) {
+      currentGroup.tasks.push(task);
+    } else {
+      groups.push({ courseTitle: task.courseTitle, tasks: [task] });
+    }
+    return groups;
+  }, []);
+  const defaultExpandedCourseTitle = useMemo(() => {
+    const titles = [...new Set(chapterTests.map((test) => test.courseTitle))];
+    const courseRank: Record<string, number> = {
+      "韩语字母入门": 0,
+      "韩国语 1级": 1,
+    };
+    return titles.sort(
+      (a, b) =>
+        (courseRank[a] ?? 99) - (courseRank[b] ?? 99) ||
+        a.localeCompare(b, "zh-CN"),
+    )[0];
+  }, [chapterTests]);
+  const courseDisclosureStorageKey =
+    `assignment-board:chapter-course-disclosures:v1:${preferenceScope}`;
+
+  useEffect(() => {
+    let expanded = new Set<string>();
+    if (defaultExpandedCourseTitle) expanded.add(defaultExpandedCourseTitle);
+
+    try {
+      const stored = window.localStorage.getItem(courseDisclosureStorageKey);
+      if (stored) {
+        const parsed: unknown = JSON.parse(stored);
+        if (
+          Array.isArray(parsed) &&
+          parsed.every((courseTitle) => typeof courseTitle === "string")
+        ) {
+          expanded = new Set(parsed);
+        }
+      }
+    } catch {
+      // 本地偏好不可用或损坏时，继续使用首门课程默认展开。
+    }
+
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setCourseDisclosurePreferences({ loaded: true, expanded });
+  }, [courseDisclosureStorageKey, defaultExpandedCourseTitle]);
+
+  function rememberCourseDisclosure(courseTitle: string, expanded: boolean) {
+    setCourseDisclosurePreferences((current) => {
+      const nextExpanded = current.loaded
+        ? new Set(current.expanded)
+        : new Set(defaultExpandedCourseTitle ? [defaultExpandedCourseTitle] : []);
+
+      if (expanded) nextExpanded.add(courseTitle);
+      else nextExpanded.delete(courseTitle);
+
+      try {
+        window.localStorage.setItem(
+          courseDisclosureStorageKey,
+          JSON.stringify([...nextExpanded]),
+        );
+      } catch {
+        // 本地存储不可用时仍保留当前页面内的展开状态。
+      }
+
+      return { loaded: true, expanded: nextExpanded };
+    });
+  }
   const assignmentListTasks = filteredTasks.filter(
     (task) => task.kind !== "chapter_test"
   );
@@ -570,9 +678,6 @@ export function AssignmentBoard({
                       <span className="block text-sm font-bold">{item.label}</span>
                       <span className="app-muted-text mt-0.5 block text-[10px] font-bold">{item.shortLabel}</span>
                     </span>
-                    <span className="text-2xl font-bold tabular-nums" style={{ color: item.color }}>
-                      {typeCounts[kind]}
-                    </span>
                   </Button>
 
                   <div className="mt-1.5 flex min-w-0 gap-1 overflow-x-auto px-1">
@@ -637,12 +742,79 @@ export function AssignmentBoard({
             <div>
               <div className="mb-3 px-1">
                 <h4 className="text-sm font-bold">章节学习路线</h4>
-                <p className="app-muted-text mt-1 text-[10px] font-bold">学完本章电子书，并按顺序通过前一章测试后解锁</p>
+                <p className="app-muted-text mt-1 text-[10px] font-bold">按课程分别展示，课程内部依照章节顺序解锁</p>
               </div>
-              <div className="ml-5 space-y-2 border-l pl-5" style={{ borderColor: "var(--border-subtle)" }}>
-                {chapterTimelineTasks.map((task) => (
-                  <TaskRow key={task.id} task={task} currentTime={currentTime} timeline />
-                ))}
+
+              <div className="space-y-5">
+                {chapterTimelineGroups.map((group, groupIndex) => {
+                  const headingId = `chapter-course-${groupIndex}`;
+                  return (
+                    <details
+                      key={group.courseTitle}
+                      className="group/course overflow-hidden rounded-2xl border"
+                      open={
+                        courseDisclosurePreferences.loaded
+                          ? courseDisclosurePreferences.expanded.has(
+                              group.courseTitle,
+                            )
+                          : group.courseTitle === defaultExpandedCourseTitle
+                      }
+                      onToggle={(event) =>
+                        rememberCourseDisclosure(
+                          group.courseTitle,
+                          event.currentTarget.open,
+                        )
+                      }
+                      style={{
+                        borderColor: "var(--border-subtle)",
+                        backgroundColor: "var(--surface-soft)",
+                      }}
+                    >
+                      <summary
+                        className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-3 outline-none transition hover:bg-[var(--card)] focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--support)] sm:p-4 [&::-webkit-details-marker]:hidden"
+                        onClick={(event) => {
+                          if (
+                            event.target instanceof Element &&
+                            event.target.closest(".card-title-with-hint button")
+                          ) {
+                            event.preventDefault();
+                          }
+                        }}
+                      >
+                        <CardTitleWithHint
+                          title={<span id={headingId}>{group.courseTitle}</span>}
+                          description="按章节顺序完成本课程测试 · 点击展开或收起"
+                          headingLevel={4}
+                          titleClassName="text-sm font-bold"
+                        />
+                        <span className="flex shrink-0 items-center gap-2">
+                          <span
+                            className="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums"
+                            style={{
+                              color: "var(--support)",
+                              backgroundColor: "var(--support-surface)",
+                            }}
+                          >
+                            {group.tasks.length} 项
+                          </span>
+                          <ChevronDown
+                            aria-hidden="true"
+                            size={17}
+                            className="transition-transform duration-200 group-open/course:rotate-180"
+                            style={{ color: "var(--foreground-muted)" }}
+                          />
+                        </span>
+                      </summary>
+                      <div className="border-t p-3 sm:p-4" style={{ borderColor: "var(--border-subtle)" }}>
+                        <div className="ml-5 space-y-2 border-l pl-5" style={{ borderColor: "var(--border-subtle)" }}>
+                          {group.tasks.map((task) => (
+                            <TaskRow key={task.id} task={task} currentTime={currentTime} timeline />
+                          ))}
+                        </div>
+                      </div>
+                    </details>
+                  );
+                })}
               </div>
             </div>
           )}

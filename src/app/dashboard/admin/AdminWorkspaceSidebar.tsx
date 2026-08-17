@@ -122,7 +122,6 @@ export function AdminWorkspaceSidebar({
         </span>
         <div className="management-sidebar-copy min-w-0 flex-1">
           <p className="truncate text-sm font-semibold">{workspaceLabel}</p>
-          <p className="app-muted-text truncate text-[11px] md:hidden">PUFFY CONTROL</p>
         </div>
         <button type="button" onClick={() => setMobileOpen(false)} className="management-mobile-close flex size-10 items-center justify-center rounded-md md:hidden" aria-label="关闭管理导航">
           <X size={16} aria-hidden="true" />

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import {
     ArrowLeft,
     ArrowRight,
@@ -31,14 +31,19 @@ import {
 import { getUnlockedChapterSlugs, isLessonUnlocked } from "@/lib/course-unlocks";
 import { createR2SignedVideoUrl } from "@/lib/r2";
 import { canUseStudentFeature, normalizeMembershipTier } from "@/lib/student-permissions";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { LessonSupportSheet } from "./LessonSupportSheet";
 import { HangulInteractiveBook } from "./HangulInteractiveBook";
-import { KoreanLevelOneSmartTextbook } from "./KoreanLevelOneSmartTextbook";
+import { SmartTextbookShell } from "./SmartTextbookShell";
 import { LessonCollapsibleCard } from "./LessonCollapsibleCard";
 import { LessonActivityBoundary } from "./LessonActivityBoundary";
 import { LessonProgressStatusCard } from "./LessonProgressStatusCard";
 import { LessonVideoPlayer } from "./LessonVideoPlayer";
-import { loadKoreanLevelOneChapterOne } from "@/lib/smart-digital-textbook";
+import {
+    loadSmartDigitalTextbook,
+    loadSmartDigitalTextbookChapterProgress,
+} from "@/lib/smart-digital-textbook";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 
 type TeacherStatus = "online" | "busy" | "away" | "offline";
@@ -240,18 +245,17 @@ function WorkspaceSectionTitle({
 }) {
     return (
         <div className="mb-4 flex justify-center text-center">
-            <div>
-                <div className="mb-1 flex items-center justify-center gap-2">
-                    <span className="text-xs font-bold tracking-widest text-gray-400">
-                        {index}
-                    </span>
+            <div className="flex items-center justify-center gap-2">
+                <span className="text-xs font-bold tracking-widest text-gray-400">
+                    {index}
+                </span>
 
-                    <h3 className="text-lg font-bold tracking-tight text-gray-900">
-                        {title}
-                    </h3>
-                </div>
-
-                {description && <p className="text-sm text-gray-500">{description}</p>}
+                <CardTitleWithHint
+                    title={title}
+                    description={description}
+                    headingLevel={3}
+                    titleClassName="text-lg font-bold tracking-tight text-gray-900"
+                />
             </div>
         </div>
     );
@@ -280,6 +284,7 @@ export default async function LessonDetailPage({
             : undefined;
 
     const { supabase, user, profile, platformProfile, tenant } = await requireActiveUser();
+    const admin = createAdminClient();
     const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
 
     const { data: parentCategoryData, error: parentCategoryError } = await supabase
@@ -359,7 +364,7 @@ export default async function LessonDetailPage({
     const lesson = lessonData as Lesson;
     const usesLearningCenter = parentCategory.slug === "korean" || parentCategory.slug === "service";
     const courseDirectoryHref = usesLearningCenter
-        ? `/dashboard/courses/${parentCategory.slug}#course-${course.slug}`
+        ? `/dashboard/courses/${parentCategory.slug}?course=${encodeURIComponent(course.slug)}`
         : `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`;
     const stageDirectoryHref = usesLearningCenter
         ? `/dashboard/courses/${parentCategory.slug}#stage-${subcategory.slug}`
@@ -415,13 +420,27 @@ export default async function LessonDetailPage({
     }
     const passedChapterSlugs = new Set<string>();
     if (!bypassLearningSequence) {
-        const { data: passedAttemptData } = await supabase
+        const { data: passedAttemptData } = await admin
             .from("chapter_test_attempts")
             .select("test_slug")
             .eq("student_id", user.id)
+            .eq("tenant_id", tenant?.id ?? "")
             .eq("passed", true);
         for (const attempt of passedAttemptData ?? []) {
             passedChapterSlugs.add(String(attempt.test_slug));
+        }
+    }
+    const completedChapterSlugs = new Set(passedChapterSlugs);
+    if (!bypassLearningSequence && isKoreanLevelOne) {
+        const overviewProgress = await loadSmartDigitalTextbookChapterProgress({
+            textbookSlug: "korean-level-one-smart",
+            chapterNumber: 0,
+            userId: user.id,
+            tenantId: tenant?.id ?? null,
+            trackingDisabled: isPlatformAudit,
+        });
+        if (overviewProgress >= 100) {
+            completedChapterSlugs.add("korean-level-one-00");
         }
     }
     const completedLessonIds = new Set<string>();
@@ -461,17 +480,22 @@ export default async function LessonDetailPage({
     }>;
     const unlockedChapterSlugs = bypassLearningSequence
         ? new Set(currentChapters.map((chapter) => chapter.slug))
-        : getUnlockedChapterSlugs({ chapters: currentChapters, passedChapterSlugs });
+        : getUnlockedChapterSlugs({
+            chapters: currentChapters,
+            passedChapterSlugs,
+            completedChapterSlugs,
+        });
     let unlockedHangulChapterCount = 1;
     const ebookProgress: KoreanEbookProgressMap = {};
     if (isHangulIntroduction || isKoreanLevelOne) {
         unlockedHangulChapterCount = HANGUL_TEST_SEQUENCE.filter((slug) => unlockedChapterSlugs.has(slug)).length;
     }
     if ((isHangulIntroduction || isKoreanLevelOne) && !isPlatformAudit) {
-        const { data: ebookProgressData } = await supabase
+        const { data: ebookProgressData } = await admin
             .from("course_ebook_progress")
             .select("test_slug,current_page,total_pages,progress_percent,read_pages,reading_seconds,last_read_at")
-            .eq("student_id", user.id);
+            .eq("student_id", user.id)
+            .eq("tenant_id", tenant?.id ?? "");
         for (const item of ebookProgressData ?? []) {
             ebookProgress[String(item.test_slug)] = {
                 currentPage: Number(item.current_page),
@@ -572,6 +596,18 @@ export default async function LessonDetailPage({
                     </main>
                 </div>
             </div>
+        );
+    }
+    if (
+        isKoreanLevelOne &&
+        requestedChapter &&
+        !unlockedChapterSlugs.has(requestedChapter)
+    ) {
+        const firstUnlockedChapter = currentChapters.find((chapter) =>
+            unlockedChapterSlugs.has(chapter.slug)
+        );
+        redirect(
+            `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}${firstUnlockedChapter ? `?chapter=${encodeURIComponent(firstUnlockedChapter.slug)}` : ""}`
         );
     }
     let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;
@@ -712,7 +748,12 @@ export default async function LessonDetailPage({
     }
 
     if (isKoreanLevelOne && hasLessonAccess) {
-        const smartTextbook = await loadKoreanLevelOneChapterOne({
+        const requestedChapterIndex = requestedChapter
+            ? currentChapters.findIndex((chapter) => chapter.slug === requestedChapter)
+            : 0;
+        const smartTextbook = await loadSmartDigitalTextbook({
+            textbookSlug: "korean-level-one-smart",
+            chapterNumber: Math.max(0, requestedChapterIndex),
             userId: user.id,
             tenantId: tenant?.id ?? null,
             trackingDisabled: isPlatformAudit,
@@ -743,10 +784,14 @@ export default async function LessonDetailPage({
         return (
             <LessonActivityBoundary lessonId={lesson.id}>
                 {liveClassBanner}
-                <KoreanLevelOneSmartTextbook
+                <SmartTextbookShell
                     backHref={courseDirectoryHref}
                     textbook={smartTextbook}
                     trackingDisabled={isPlatformAudit}
+                    completionHref={smartTextbook.chapter.number === 0 && currentChapters[1]
+                        ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}?chapter=${encodeURIComponent(currentChapters[1].slug)}`
+                        : undefined}
+                    completionLabel={smartTextbook.chapter.number === 0 ? "开始第 1 章" : undefined}
                 />
             </LessonActivityBoundary>
         );

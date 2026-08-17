@@ -19,6 +19,7 @@ import {
   X,
 } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
   KnowledgeInteractionLab,
   type KnowledgeInteractionType,
@@ -188,73 +189,50 @@ const comparisons = [
 const summaryContent: Record<
   WorkbenchMode,
   Array<{
-    eyebrow: string;
     title: string;
     description: string;
-    color: string;
-    soft: string;
   }>
 > = {
   explain: [
     {
-      eyebrow: "结构公式",
       title: "音节的基本骨架",
       description: "初声＋中声＋可选终声，组合成一个完整的韩文音节方块。",
-      ...EXPLAIN_TONE,
     },
     {
-      eyebrow: "布局口诀",
       title: "右、下、底",
       description: "竖向元音放右边，横向元音放下边，终声固定放在底边。",
-      color: "var(--status-warning)",
-      soft: "var(--status-warning-surface)",
     },
     {
-      eyebrow: "特别提醒",
       title: "位置不能空缺",
       description: "元音开头用 ㅇ 占据初声；ㄺ 等复合收音仍只占一个终声位置。",
-      ...DECONSTRUCT_TONE,
     },
   ],
   deconstruct: [
     {
-      eyebrow: "拆解顺序",
       title: "从底部向上看",
       description: "先看底部有没有终声，再找中声元音，最后确认剩余的初声。",
-      ...DECONSTRUCT_TONE,
     },
     {
-      eyebrow: "术语对照",
       title: "三个位置的名称",
       description: "初声 초성 · 中声 중성 · 终声 종성，终声也常被称为 받침。",
-      ...EXPLAIN_TONE,
     },
     {
-      eyebrow: "符号说明",
       title: "无终声与复合收音",
       description: "“—”表示没有终声；两个辅音并排时，整体仍属于终声位置。",
-      color: "var(--status-warning)",
-      soft: "var(--status-warning-surface)",
     },
   ],
   compare: [
     {
-      eyebrow: "判别维度",
       title: "先找变化发生在哪里",
       description: "依次比较元音方向、终声有无，以及单收音或复合收音。",
-      ...COMPARE_TONE,
     },
     {
-      eyebrow: "迁移案例",
       title: "换一组也能看懂",
       description: "试着观察 나/노、다/달、일/읽，找出发生变化的位置。",
-      ...DECONSTRUCT_TONE,
     },
     {
-      eyebrow: "易错提醒",
       title: "字母多不等于音节多",
       description: "읽 虽然包含四个基本字母，书写时仍然只是一个音节方块。",
-      ...EXPLAIN_TONE,
     },
   ],
 };
@@ -276,7 +254,7 @@ function KnowledgeSummaryStrip({ mode }: { mode: WorkbenchMode }) {
       >
         {summaryContent[mode].map((item, index) => (
           <article
-            key={item.eyebrow}
+            key={item.title}
             className="min-h-[112px] border-t p-4 first:border-t-0 md:border-l md:border-t-0 md:first:border-l-0"
             style={{
               borderColor: "var(--border-subtle)",
@@ -284,16 +262,12 @@ function KnowledgeSummaryStrip({ mode }: { mode: WorkbenchMode }) {
                 index === 0 ? "var(--surface-soft)" : "var(--card)",
             }}
           >
-            <p
-              className="text-[9px] font-bold tracking-[0.12em]"
-              style={{ color: item.color }}
-            >
-              {item.eyebrow}
-            </p>
-            <h3 className="mt-2 text-xs font-bold">{item.title}</h3>
-            <p className="app-muted-text mt-1.5 text-[10px] leading-5">
-              {item.description}
-            </p>
+            <CardTitleWithHint
+              title={item.title}
+              description={item.description}
+              headingLevel={3}
+              titleClassName="text-xs font-bold"
+            />
           </article>
         ))}
       </div>
@@ -343,7 +317,6 @@ function ChoiceButton({
 export function KnowledgeResearchWorkbench({
   chapterSlug,
   courseTitle,
-  courseEyebrow,
   chapterNumber,
   chapterTitle,
   chapterKoreanTitle,
@@ -354,7 +327,6 @@ export function KnowledgeResearchWorkbench({
 }: {
   chapterSlug: string;
   courseTitle: string;
-  courseEyebrow: string;
   chapterNumber: number;
   chapterTitle: string;
   chapterKoreanTitle?: string;
@@ -613,7 +585,7 @@ export function KnowledgeResearchWorkbench({
             </span>
             <div className="min-w-0">
               <p className="text-[11px] font-bold tracking-[0.08em] app-muted-text">
-                精研课程 · {courseEyebrow} · {courseTitle}
+                {courseTitle}
               </p>
               <h2 className="mt-1 text-xl font-bold tracking-tight sm:text-2xl">
                 第 {String(chapterNumber).padStart(2, "0")} 章 · {chapterTitle}

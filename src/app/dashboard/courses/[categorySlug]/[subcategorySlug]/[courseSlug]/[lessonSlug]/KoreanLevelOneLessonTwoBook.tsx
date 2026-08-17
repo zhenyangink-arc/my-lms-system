@@ -1546,9 +1546,6 @@ export function KoreanLevelOneLessonTwoBook({
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]">
             <Sparkles aria-hidden="true" size={27} />
           </span>
-          <p className="mt-5 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
-            LESSON 02 · COMPLETE
-          </p>
           <h3 className="mt-3 text-4xl font-bold text-[var(--status-success)]">
             이거는 뭐예요?
           </h3>
@@ -1585,7 +1582,7 @@ export function KoreanLevelOneLessonTwoBook({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">
-                  LESSON 2 TEST · 本课测试
+                  本课测试
                 </p>
                 <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">
                   前往章节测试专区，检验本课词汇、语法、听辨和情境表达。
@@ -1595,9 +1592,6 @@ export function KoreanLevelOneLessonTwoBook({
             </div>
           </div>
           <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">
-            <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">
-              NEXT · LESSON 03
-            </p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div>
                 <p className="text-lg font-bold text-[var(--status-success)]">

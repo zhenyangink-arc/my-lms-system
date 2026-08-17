@@ -18,6 +18,7 @@ import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { requireActiveUser } from "@/lib/auth";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { COURSE_ACCENT_COLOR_MAP as colorMap } from "@/lib/course-colors";
+import { loadSmartDigitalTextbookChapterProgress } from "@/lib/smart-digital-textbook";
 import { KoreanLearningCenter } from "./KoreanLearningCenter";
 
 
@@ -72,6 +73,18 @@ type LessonProgress = {
   progress_percent: number;
 };
 
+type CourseChapter = {
+  id: string;
+  lesson_id: string;
+  slug: string;
+  title: string;
+  sort_order: number;
+  unlock_mode: string | null;
+  prerequisite_chapter_id: string | null;
+  available_from: string | null;
+  is_manually_locked: boolean | null;
+};
+
 const learningStatusLabelMap: Record<LearningStatus, string> = {
   not_started: "未开始",
   in_progress: "进行中",
@@ -114,14 +127,20 @@ function resolveLearningStatus({
 
 export default async function CategoryPage({
   params,
+  searchParams,
 }: {
   params: Promise<{
     categorySlug: string;
   }>;
+  searchParams?: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { categorySlug } = await params;
+  const query = searchParams ? await searchParams : {};
+  const requestedCourseSlug = Array.isArray(query.course)
+    ? query.course[0]
+    : query.course;
 
-  const { supabase, user, profile, platformProfile } = await requireActiveUser();
+  const { supabase, user, profile, platformProfile, tenant } = await requireActiveUser();
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
   const bypassLearningSequence = isPlatformAudit || profile?.role !== "student";
 
@@ -249,16 +268,22 @@ export default async function CategoryPage({
   );
   const prerequisiteChapterSlugById = new Map<string, string>();
   const passedChapterSlugs = new Set<string>();
+  const completedChapterSlugs = new Set<string>();
   const readingProgressByLessonId = new Map<string, number>();
+  const chapterProgressBySlug = new Map<string, number>();
+  let koreanChapters: CourseChapter[] = [];
 
   if (parentCategory.slug === "korean") {
     const { data: chapterData } = lessonIds.length > 0
       ? await supabase
           .from("course_chapters")
-          .select("id, lesson_id, slug")
+          .select("id, lesson_id, slug, title, sort_order, unlock_mode, prerequisite_chapter_id, available_from, is_manually_locked")
           .in("lesson_id", lessonIds)
           .eq("is_published", true)
-      : { data: [] as Array<{ id: string; lesson_id: string; slug: string }> };
+          .order("sort_order", { ascending: true })
+      : { data: [] as CourseChapter[] };
+
+    koreanChapters = (chapterData ?? []) as CourseChapter[];
 
     for (const chapter of chapterData ?? []) {
       if (prerequisiteChapterIds.includes(String(chapter.id))) {
@@ -278,7 +303,7 @@ export default async function CategoryPage({
     }
 
     if (!isPlatformAudit) {
-      const [{ data: attemptData }, { data: ebookProgressData }] = await Promise.all([
+      const [{ data: attemptData }, { data: ebookProgressData }, overviewProgress] = await Promise.all([
         supabase
           .from("chapter_test_attempts")
           .select("test_slug")
@@ -288,22 +313,50 @@ export default async function CategoryPage({
           .from("course_ebook_progress")
           .select("test_slug, progress_percent")
           .eq("student_id", user.id),
+        loadSmartDigitalTextbookChapterProgress({
+          textbookSlug: "korean-level-one-smart",
+          chapterNumber: 0,
+          userId: user.id,
+          tenantId: tenant?.id ?? null,
+          trackingDisabled: isPlatformAudit,
+        }),
       ]);
 
       for (const attempt of attemptData ?? []) {
-        passedChapterSlugs.add(String(attempt.test_slug));
+        const chapterSlug = String(attempt.test_slug);
+        passedChapterSlugs.add(chapterSlug);
+        completedChapterSlugs.add(chapterSlug);
       }
 
-      const lessonIdByChapterSlug = new Map(
-        (chapterData ?? []).map((chapter) => [String(chapter.slug), String(chapter.lesson_id)]),
-      );
+      chapterProgressBySlug.set("korean-level-one-00", overviewProgress);
+      if (overviewProgress >= 100) completedChapterSlugs.add("korean-level-one-00");
+
       for (const progress of ebookProgressData ?? []) {
-        const lessonId = lessonIdByChapterSlug.get(String(progress.test_slug));
-        if (!lessonId) continue;
-        const currentProgress = readingProgressByLessonId.get(lessonId) ?? 0;
+        chapterProgressBySlug.set(
+          String(progress.test_slug),
+          Math.min(100, Math.max(0, Number(progress.progress_percent) || 0)),
+        );
+      }
+
+      const chaptersByLessonId = new Map<string, CourseChapter[]>();
+      for (const chapter of koreanChapters) {
+        const lessonChapters = chaptersByLessonId.get(chapter.lesson_id) ?? [];
+        lessonChapters.push(chapter);
+        chaptersByLessonId.set(chapter.lesson_id, lessonChapters);
+      }
+      for (const [lessonId, lessonChapters] of chaptersByLessonId) {
+        if (lessonChapters.length === 0) continue;
+        const totalProgress = lessonChapters.reduce(
+          (total, chapter) =>
+            total +
+            (passedChapterSlugs.has(chapter.slug)
+              ? 100
+              : (chapterProgressBySlug.get(chapter.slug) ?? 0)),
+          0,
+        );
         readingProgressByLessonId.set(
           lessonId,
-          Math.max(currentProgress, Number(progress.progress_percent) || 0),
+          Math.round(totalProgress / lessonChapters.length),
         );
       }
     }
@@ -332,6 +385,15 @@ export default async function CategoryPage({
     parentCategory.slug === "service" || parentCategory.slug === "korean";
 
   if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
+    const defaultKoreanCourseSlug = parentCategory.slug === "korean"
+      ? (courses.find((course) => course.slug === "korean-beginner")?.slug ?? courses[0]?.slug)
+      : undefined;
+    const selectedCourseSlug = courses.some(
+      (course) => course.slug === requestedCourseSlug,
+    )
+      ? requestedCourseSlug
+      : defaultKoreanCourseSlug;
+
     return (
       <KoreanLearningCenter
         variant={parentCategory.slug}
@@ -339,11 +401,15 @@ export default async function CategoryPage({
         subcategories={subcategories}
         courses={courses}
         lessons={lessons}
+        chapters={koreanChapters}
         progressList={progressList}
         prerequisiteChapterSlugEntries={Array.from(prerequisiteChapterSlugById.entries())}
         passedChapterSlugs={Array.from(passedChapterSlugs)}
+        completedChapterSlugs={Array.from(completedChapterSlugs)}
+        chapterProgressEntries={Array.from(chapterProgressBySlug.entries())}
         readingProgressEntries={Array.from(readingProgressByLessonId.entries())}
         bypassLearningSequence={bypassLearningSequence}
+        selectedCourseSlug={selectedCourseSlug}
       />
     );
   }

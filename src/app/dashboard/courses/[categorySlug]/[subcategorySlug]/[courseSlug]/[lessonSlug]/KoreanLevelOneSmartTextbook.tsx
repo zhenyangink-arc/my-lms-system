@@ -15,13 +15,14 @@ import {
   Headphones,
   Languages,
   Lightbulb,
+  Map,
+  Maximize2,
   Menu,
   MessageCircle,
   Mic,
+  Minimize2,
   PanelLeftClose,
   PanelLeftOpen,
-  PanelRightClose,
-  PanelRightOpen,
   Pause,
   RotateCcw,
   Send,
@@ -31,6 +32,8 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 
 import type {
   SmartLocale,
@@ -43,11 +46,14 @@ import {
   saveSmartTextbookPreferenceAction,
   submitSmartTextbookActivityAction,
 } from "./smart-textbook-actions";
+import { KoreanLevelOneCourseOverview } from "./KoreanLevelOneCourseOverview";
 
-type Props = {
+export type SmartTextbookShellProps = {
   backHref: string;
   textbook: SmartTextbookData;
   trackingDisabled: boolean;
+  completionHref?: string;
+  completionLabel?: string;
 };
 
 type AnswerValue = number | number[] | string | boolean;
@@ -65,10 +71,73 @@ const accentMap = {
   sky: { solid: "var(--support)", pale: "var(--accent)", glow: "color-mix(in srgb, var(--support) 16%, transparent)" },
 } as const;
 
+const chapterOneKnowledgeMap = {
+  orientation: {
+    title: { "zh-CN": "初次见面交流目标", "ko-KR": "첫 만남의 대화 목표" },
+    summary: { "zh-CN": "完成问候、姓名、身份与礼貌结束", "ko-KR": "인사, 이름, 신분, 마무리까지 완성하기" },
+    icon: Map,
+  },
+  vocabulary: {
+    title: { "zh-CN": "问候与人物身份", "ko-KR": "인사와 인물의 신분" },
+    summary: { "zh-CN": "掌握问候、姓名与人物身份词", "ko-KR": "인사, 이름, 신분을 나타내는 어휘 익히기" },
+    icon: Languages,
+  },
+  grammar: {
+    title: { "zh-CN": "主题助词与判断句", "ko-KR": "주제 조사와 서술격 표현" },
+    summary: { "zh-CN": "会选择 은/는 和 이에요/예요", "ko-KR": "은/는과 이에요/예요를 알맞게 선택하기" },
+    icon: Lightbulb,
+  },
+  patterns: {
+    title: { "zh-CN": "姓名与身份介绍", "ko-KR": "이름과 신분 소개" },
+    summary: { "zh-CN": "组合姓名与身份介绍句", "ko-KR": "이름과 신분을 소개하는 문장 만들기" },
+    icon: Sparkles,
+  },
+  dialogue: {
+    title: { "zh-CN": "初次见面对话结构", "ko-KR": "첫 만남의 대화 구조" },
+    summary: { "zh-CN": "组织完整的初次见面对话", "ko-KR": "첫 만남의 대화를 완전하게 구성하기" },
+    icon: MessageCircle,
+  },
+  listen_speak: {
+    title: { "zh-CN": "听辨与口头表达", "ko-KR": "듣기 구별과 말하기" },
+    summary: { "zh-CN": "听出身份并完成 30 秒介绍", "ko-KR": "신분을 듣고 30초 자기소개 완성하기" },
+    icon: Headphones,
+  },
+  read_write: {
+    title: { "zh-CN": "个人介绍读写", "ko-KR": "자기소개 읽기와 쓰기" },
+    summary: { "zh-CN": "读懂并写出个人介绍", "ko-KR": "자기소개 글을 읽고 직접 쓰기" },
+    icon: BookOpen,
+  },
+  review: {
+    title: { "zh-CN": "独立交流能力", "ko-KR": "독립적인 의사소통 능력" },
+    summary: { "zh-CN": "独立完成初次见面交流", "ko-KR": "첫 만남의 대화를 혼자 완성하기" },
+    icon: CheckCircle2,
+  },
+} as const;
+
+const chapterZeroOutline = {
+  orientation: {
+    icon: Map,
+    meta: { "zh-CN": "16 课 · 4 个阶段", "ko-KR": "16개 단원 · 4단계" },
+  },
+  patterns: {
+    icon: Clock3,
+    meta: { "zh-CN": "8 步 · 3 轮学习", "ko-KR": "8단계 · 3회 학습" },
+  },
+  listen_speak: {
+    icon: Sparkles,
+    meta: { "zh-CN": "4 类常用工具", "ko-KR": "4가지 학습 도구" },
+  },
+  review: {
+    icon: CheckCircle2,
+    meta: { "zh-CN": "3 项开课准备", "ko-KR": "3가지 학습 준비" },
+  },
+} as const;
+
 const ui = {
   "zh-CN": {
     back: "返回课程",
-    chapter: "第一章",
+    fullscreen: "全屏",
+    exitFullscreen: "退出全屏",
     progress: "本章进度",
     minutes: "分钟",
     language: "语言与辅助",
@@ -121,10 +190,14 @@ const ui = {
     checklist: "我会了清单",
     noResponse: "请先完成作答。",
     saved: "设置已保存",
+    pageUpdated: "教材刚刚更新，请刷新页面后再试。",
+    requestFailed: "操作没有完成，请稍后重试。",
+    refreshPage: "刷新页面",
   },
   "ko-KR": {
     back: "강좌로 돌아가기",
-    chapter: "제1장",
+    fullscreen: "전체 화면",
+    exitFullscreen: "전체 화면 종료",
     progress: "단원 진도",
     minutes: "분",
     language: "언어와 도움",
@@ -177,8 +250,16 @@ const ui = {
     checklist: "할 수 있어요",
     noResponse: "먼저 답을 완성하세요.",
     saved: "설정을 저장했습니다",
+    pageUpdated: "교재가 방금 업데이트되었습니다. 페이지를 새로 고친 뒤 다시 시도해 주세요.",
+    requestFailed: "작업을 완료하지 못했습니다. 잠시 후 다시 시도해 주세요.",
+    refreshPage: "새로 고침",
   },
 } as const;
+
+function isStaleServerActionError(error: unknown) {
+  const message = error instanceof Error ? error.message : String(error ?? "");
+  return /unexpected response was received from the server|failed to find server action/i.test(message);
+}
 
 function objectValue(value: unknown): Record<string, unknown> {
   return value && typeof value === "object" && !Array.isArray(value)
@@ -233,6 +314,85 @@ function ContentRenderer({
   const questions = stringArray(content.questions);
   const substitutions = stringArray(content.substitutions);
   const contrast = stringArray(content.contrast);
+
+  if (node.code === "mission-map" && targets.length > 0) {
+    return (
+      <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)]">
+        <section className="flex min-h-full flex-col rounded-[22px] bg-[var(--primary)] p-6 text-[var(--primary-foreground)] sm:p-7">
+          <CardTitleWithHint
+            title={locale === "ko-KR" ? "30초 안에 자연스럽게 인사해 보세요" : "用 30 秒完成一次自然的初次见面"}
+            description={String(lead[locale] ?? "")}
+            headingLevel={4}
+            hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
+            tone="inverse"
+            titleClassName="text-2xl font-bold leading-9 tracking-tight sm:text-[28px]"
+          />
+
+          <div className="mt-6 grid grid-cols-2 gap-3">
+            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-4">
+              <p className="text-2xl font-bold tabular-nums">30 <span className="text-sm">{locale === "ko-KR" ? "초" : "秒"}</span></p>
+              <p className="mt-1 text-xs font-semibold text-white/70">{locale === "ko-KR" ? "연속 말하기" : "连续表达"}</p>
+            </div>
+            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-4">
+              <p className="text-2xl font-bold tabular-nums">{targets.length} <span className="text-sm">{locale === "ko-KR" ? "가지" : "项"}</span></p>
+              <p className="mt-1 text-xs font-semibold text-white/70">{locale === "ko-KR" ? "의사소통 기능" : "交流功能"}</p>
+            </div>
+          </div>
+
+          {String(coach[locale] ?? "") && (
+            <div className="mt-auto flex gap-3 border-t border-white/15 pt-5 text-sm leading-6 text-white/85">
+              <Lightbulb size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
+              <span>{String(coach[locale])}</span>
+            </div>
+          )}
+        </section>
+
+        <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
+          <div className="flex items-start justify-between gap-4">
+            <div>
+              <p className="text-xs font-bold tracking-[.16em] text-[var(--primary)]">
+                {t.phrases.toUpperCase()}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
+                {locale === "ko-KR" ? "카드를 누르면 한국어 발음을 들을 수 있어요." : "点击表达卡片，可以听韩语发音。"}
+              </p>
+            </div>
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">
+              <Volume2 size={18} aria-hidden="true" />
+            </span>
+          </div>
+
+          <div className="mt-5 grid gap-3 sm:grid-cols-2">
+            {targets.map((target, index) => (
+              <button
+                key={`${String(target.ko)}-${index}`}
+                type="button"
+                onClick={() => speakKorean(String(target.ko))}
+                className="group min-h-[112px] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-left transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)]"
+                title={t.playWord}
+                aria-label={`${String(target.ko)}${showChinese ? `，${String(target.zh)}` : ""}，${t.playWord}`}
+              >
+                <span className="flex items-center justify-between gap-3">
+                  <span className="text-[10px] font-bold tracking-[.14em] text-[var(--foreground-muted)]">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <Volume2 size={14} className="text-[var(--primary)] transition-transform group-hover:scale-110" aria-hidden="true" />
+                </span>
+                <span className="mt-3 block text-[18px] font-bold leading-7 text-[var(--foreground)]">
+                  {String(target.ko)}
+                </span>
+                {showChinese && (
+                  <span className="mt-1 block text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
+                    {String(target.zh)}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="mt-8 space-y-10">
@@ -485,6 +645,7 @@ function Activity({
   );
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [message, setMessage] = useState("");
+  const [needsReload, setNeedsReload] = useState(false);
   const [pending, startTransition] = useTransition();
   const hasPendingAudio =
     activity.type === "listening" && activity.config.audioStatus !== "ready";
@@ -501,10 +662,17 @@ function Activity({
       return;
     }
     setMessage("");
+    setNeedsReload(false);
     startTransition(async () => {
-      const result = await submitSmartTextbookActivityAction({ activityId: activity.id, response: answer, locale });
-      setFeedback(result);
-      if (result.ok && result.correct !== false) onCompleted(activity.id);
+      try {
+        const result = await submitSmartTextbookActivityAction({ activityId: activity.id, response: answer, locale });
+        setFeedback(result);
+        if (result.ok && result.correct !== false) onCompleted(activity.id);
+      } catch (error) {
+        const staleAction = isStaleServerActionError(error);
+        setNeedsReload(staleAction);
+        setMessage(staleAction ? t.pageUpdated : t.requestFailed);
+      }
     });
   }
 
@@ -519,20 +687,19 @@ function Activity({
   }
 
   return (
-    <section className="mt-12 border-t-2 border-slate-900 pt-7">
+    <section className="mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
-          <p className="text-xs font-bold tracking-[.18em] text-slate-400">INTERACTION · {activity.type.replace("_", " ").toUpperCase()}</p>
-          <h5 className="mt-3 text-xl font-bold leading-8 text-slate-900">{activity.prompt[locale]}</h5>
-          <p className="mt-1 text-sm text-slate-500">{activity.instruction[locale]}</p>
+          <h4 className="text-xl font-bold leading-8 text-[var(--foreground)]">{activity.prompt[locale]}</h4>
+          <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{activity.instruction[locale]}</p>
         </div>
         {feedback?.ok && <span className="shrink-0 text-xs font-bold text-[var(--status-success)]">{t.submitted}</span>}
       </div>
 
       {(activity.type === "single_choice" || activity.type === "listening") && (
-        <div className="mt-6 border-y border-slate-200">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
           {activity.options.map((option, index) => (
-            <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-slate-100 px-2 py-4 text-left last:border-b-0 ${answer === index ? "bg-slate-50" : "hover:bg-slate-50/70"} disabled:cursor-not-allowed disabled:opacity-45`}>
+            <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${answer === index ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
               <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span>
               <span className="font-medium text-slate-800">{option}</span>
               {answer === index ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
@@ -559,10 +726,10 @@ function Activity({
       )}
 
       {activity.type === "multiple_choice" && (
-        <div className="mt-6 border-y border-slate-200">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
           {activity.options.map((option, index) => {
             const selected = Array.isArray(answer) && answer.includes(index);
-            return <button key={option} type="button" onClick={() => { const current = Array.isArray(answer) ? answer : []; setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-slate-100 px-2 py-4 text-left last:border-b-0 ${selected ? "bg-slate-50" : "hover:bg-slate-50/70"}`}>
+            return <button key={option} type="button" onClick={() => { const current = Array.isArray(answer) ? answer : []; setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
               <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>;
           })}
@@ -606,7 +773,20 @@ function Activity({
 
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
-          {message && <p className="text-sm text-[var(--destructive)]">{message}</p>}
+          {message && (
+            <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--destructive)]">
+              <span>{message}</span>
+              {needsReload && (
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="rounded-lg border border-current px-3 py-1.5 text-xs font-bold hover:bg-[var(--destructive)]/5"
+                >
+                  {t.refreshPage}
+                </button>
+              )}
+            </div>
+          )}
           {feedback && (
             <div className={`flex items-start gap-2 text-sm leading-6 ${feedback.correct === false ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
               {feedback.correct === false ? <RotateCcw size={16} className="mt-1 shrink-0" /> : <CheckCircle2 size={16} className="mt-1 shrink-0" />}
@@ -619,7 +799,7 @@ function Activity({
             </div>
           )}
         </div>
-        <button type="button" onClick={submit} disabled={pending || hasPendingAudio} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
+        <button type="button" onClick={submit} disabled={pending || hasPendingAudio} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : <Send size={15} />} {t.submit}
         </button>
       </div>
@@ -627,22 +807,30 @@ function Activity({
   );
 }
 
-export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabled }: Props) {
+export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel }: SmartTextbookShellProps) {
+  const textbookRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [pathCollapsed, setPathCollapsed] = useState(false);
-  const [assistantCollapsed, setAssistantCollapsed] = useState(false);
+  const [assistantCollapsed, setAssistantCollapsed] = useState(true);
   const [mobilePanel, setMobilePanel] = useState<"path" | "assistant" | null>(null);
   const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
   const [tutorText, setTutorText] = useState("");
   const [tutorInput, setTutorInput] = useState("");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [preferenceError, setPreferenceError] = useState("");
+  const [preferenceNeedsReload, setPreferenceNeedsReload] = useState(false);
   const [isPending, startTransition] = useTransition();
   const activeModule = textbook.modules[activeIndex];
   const activeNodes = activeModule?.nodes ?? [];
   const t = ui[locale];
   const accent = accentMap[activeModule?.accent ?? "sky"];
+  const chapterLabel = locale === "ko-KR"
+    ? `제${textbook.chapter.number}장`
+    : `第 ${textbook.chapter.number} 章`;
+  const sidebarLabel = textbook.chapter.number === 1 ? "章节地图" : "章节概览";
 
   const completedNodeIds = useMemo(() => new Set(textbook.progress.filter((item) => item.status === "completed").map((item) => item.nodeId)), [textbook.progress]);
   const moduleDone = (moduleIndex: number) => {
@@ -667,31 +855,48 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
   }
 
   function savePreference(nextLocale: SmartLocale, nextSupport: SmartSupportMode) {
+    const previousLocale = locale;
+    const previousSupportMode = supportMode;
     setLocale(nextLocale);
     setSupportMode(nextSupport);
+    setPreferenceError("");
+    setPreferenceNeedsReload(false);
     startTransition(async () => {
-      await saveSmartTextbookPreferenceAction({
-        textbookId: textbook.id,
-        locale: nextLocale,
-        supportMode: nextSupport,
-      });
+      try {
+        const result = await saveSmartTextbookPreferenceAction({
+          textbookId: textbook.id,
+          locale: nextLocale,
+          supportMode: nextSupport,
+        });
+        if (!result.ok) setPreferenceError(result.message);
+      } catch (error) {
+        setLocale(previousLocale);
+        setSupportMode(previousSupportMode);
+        const staleAction = isStaleServerActionError(error);
+        setPreferenceNeedsReload(staleAction);
+        setPreferenceError(staleAction ? ui[nextLocale].pageUpdated : ui[nextLocale].requestFailed);
+      }
     });
   }
 
   function tutorReply(intent: "explain" | "hint" | "example" | "roleplay" | "ask") {
+    const moduleTitle = localize(activeModule.title);
+    const moduleDescription = localize(activeModule.description);
+    const chapterGoal = localize(textbook.chapter.goal);
+    const chapterScenario = localize(textbook.chapter.scenario);
     const koReplies = {
-      explain: `${localize(activeModule.title)}에서는 “안녕하세요? → 저는 …예요/이에요 → 만나서 반가워요”의 흐름을 익혀요. 지금 화면의 예를 소리 내어 두 번 읽어 보세요.`,
-      hint: "정답을 바로 고르기 전에 마지막 음절에 받침이 있는지 확인하세요. 학생은 받침이 있으므로 이에요를 사용합니다.",
-      example: "안녕하세요? 저는 소라예요. 저는 회사원이에요. 만나서 반가워요.",
-      roleplay: "제가 먼저 할게요. 안녕하세요? 저는 지우예요. 이름이 뭐예요?",
-      ask: tutorInput.trim() ? `질문의 핵심은 “${tutorInput.trim()}”이군요. 이 단원에서는 먼저 인사, 이름, 신분, 마무리의 네 기능 중 어디에 해당하는지 확인해 보세요.` : "궁금한 내용을 입력해 주세요.",
+      explain: `${moduleTitle}: ${moduleDescription || chapterGoal} 화면의 예시를 소리 내어 읽고 현재 활동을 완성해 보세요.`,
+      hint: `이번 단계의 목표는 “${chapterGoal}”입니다. 현재 화면의 핵심 표현과 안내 문장을 다시 확인해 보세요.`,
+      example: `${moduleTitle}의 예문과 활동을 다시 확인한 뒤, 같은 구조로 자신의 문장을 만들어 보세요.`,
+      roleplay: `“${chapterScenario}” 상황을 떠올려 보세요. 제가 상대 역할을 맡을 테니 현재 단원의 표현으로 먼저 말해 보세요.`,
+      ask: tutorInput.trim() ? `질문은 “${tutorInput.trim()}”이군요. “${moduleTitle}”와 이번 장의 목표를 바탕으로 함께 살펴볼게요.` : "궁금한 내용을 입력해 주세요.",
     };
     const zhReplies = {
-      explain: `“${activeModule.title["zh-CN"]}”的核心路径是：안녕하세요? → 저는 …예요/이에요 → 만나서 반가워요。先跟读两遍，再完成当前互动。`,
-      hint: "先别急着看答案，检查前面名词最后一个音节有没有收音：학생 有收音，所以接 이에요。",
-      example: "新例句：안녕하세요? 저는 소라예요. 저는 회사원이에요. 만나서 반가워요.",
-      roleplay: "我先扮演新同学：안녕하세요? 저는 지우예요. 이름이 뭐예요? 你用韩语回答。",
-      ask: tutorInput.trim() ? `你问的是“${tutorInput.trim()}”。先把它归到问候、姓名、身份、结束语中的一个功能，我会只用本章内容帮你拆解。` : "请先输入不明白的地方。",
+      explain: `“${moduleTitle}”：${moduleDescription || chapterGoal}。先朗读当前示例，再完成屏幕上的互动。`,
+      hint: `本阶段目标是“${chapterGoal}”。请重新查看当前页面的关键表达和任务提示。`,
+      example: `请参考“${moduleTitle}”中的例句与活动，用相同结构替换信息，组成自己的句子。`,
+      roleplay: `现在进入“${chapterScenario}”场景。我来扮演对话对象，请使用本单元表达先开口。`,
+      ask: tutorInput.trim() ? `你问的是“${tutorInput.trim()}”。我会结合“${moduleTitle}”和本章目标帮你拆解。` : "请先输入不明白的地方。",
     };
     setTutorText(supportMode === "immersion" ? koReplies[intent] : `${zhReplies[intent]}\n\n${supportMode === "bilingual" ? koReplies[intent] : ""}`.trim());
     if (intent === "ask") setTutorInput("");
@@ -706,9 +911,228 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [textbook.modules.length]);
 
-  function renderPathNavigation(compact = false) {
+  useEffect(() => {
+    function syncFullscreenState() {
+      setIsFullscreen(document.fullscreenElement === textbookRef.current);
+    }
+
+    document.addEventListener("fullscreenchange", syncFullscreenState);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreenState);
+  }, []);
+
+  async function toggleFullscreen() {
+    const textbookElement = textbookRef.current;
+    if (!textbookElement) return;
+
+    try {
+      if (document.fullscreenElement === textbookElement) {
+        await document.exitFullscreen();
+      } else if (textbookElement.requestFullscreen) {
+        await textbookElement.requestFullscreen();
+      }
+    } catch {
+      // 浏览器拒绝全屏时保留当前教材界面，不中断学习。
+    }
+  }
+
+  function toggleTutorPanel() {
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      setAssistantCollapsed((value) => !value);
+      return;
+    }
+
+    setMobilePanel((value) => value === "assistant" ? null : "assistant");
+  }
+
+  function renderChapterSidebar(compact = false) {
+    if (compact) {
+      return (
+        <div className="mt-5 flex flex-col items-center gap-3" aria-label={sidebarLabel}>
+          {textbook.chapter.number === 1 ? (
+            <Map size={18} className="text-[var(--primary)]" aria-hidden="true" />
+          ) : (
+            <BookOpen size={18} className="text-[var(--primary)]" aria-hidden="true" />
+          )}
+          <span className="text-[10px] font-bold text-[var(--foreground-muted)] [writing-mode:vertical-rl]">
+            {chapterLabel}
+          </span>
+        </div>
+      );
+    }
+
+    if (textbook.chapter.number === 0) {
+      return (
+        <div className="mt-4 px-2" aria-label={sidebarLabel}>
+          <div className="rounded-2xl bg-[var(--surface-soft)] p-3.5">
+            <div className="flex items-center justify-between gap-2 text-[var(--primary)]">
+              <div className="flex items-center gap-2">
+                <BookOpen size={17} aria-hidden="true" />
+                <span className="text-[10px] font-bold">
+                  {locale === "ko-KR" ? "제00장 개요" : "第 00 章概览"}
+                </span>
+              </div>
+              <span className="shrink-0 rounded-full bg-[var(--card)] px-2 py-1 text-[8px] font-bold text-[var(--foreground-muted)]">
+                {locale === "ko-KR" ? "4부분" : "4 个部分"}
+              </span>
+            </div>
+            <p className="mt-2 text-xs font-bold leading-5 text-[var(--foreground)]">
+              {localize(textbook.chapter.title)}
+            </p>
+            <div className="mt-3 flex items-center gap-2">
+              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--card)]">
+                <div className="h-full rounded-full bg-[var(--status-success)] transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+              </div>
+              <span className="text-[9px] font-bold tabular-nums text-[var(--foreground-muted)]">{progressPercent}%</span>
+            </div>
+          </div>
+
+          <ol className="mt-3 space-y-2.5" aria-label={locale === "ko-KR" ? "과정 안내 읽기 순서" : "课程总览阅读顺序"}>
+            {textbook.modules.map((module, index) => {
+              const active = index === activeIndex;
+              const done = moduleDone(index);
+              const outline = chapterZeroOutline[module.code as keyof typeof chapterZeroOutline];
+              const OutlineIcon = outline?.icon ?? BookOpen;
+              const minutes = module.nodes.reduce((total, node) => total + node.minutes, 0);
+              return (
+                <li key={module.id}>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveIndex(index);
+                      setMobilePanel(null);
+                    }}
+                    aria-current={active ? "step" : undefined}
+                    className={`w-full rounded-2xl border p-3 text-left transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)] shadow-sm" : "border-[var(--border-subtle)] bg-[var(--card)] hover:border-[var(--primary)]"}`}
+                  >
+                    <span className="flex items-start gap-2.5">
+                      <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${active ? "bg-[var(--card)] text-[var(--primary)]" : "bg-[var(--surface-soft)] text-[var(--foreground-muted)]"}`}>
+                        <OutlineIcon size={15} aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="flex items-start justify-between gap-2">
+                          <span className="text-xs font-bold leading-5 text-[var(--foreground)]">
+                            {String(index + 1).padStart(2, "0")} · {localize(module.title)}
+                          </span>
+                          <span className="mt-1 shrink-0"><StepStatus done={done} active={active} /></span>
+                        </span>
+                        <span className="mt-0.5 block text-[9px] font-semibold text-[var(--primary)]">
+                          {outline?.meta[locale] ?? `${minutes} ${t.minutes}`}
+                        </span>
+                        {active && (
+                          <span className="mt-1.5 block text-[10px] leading-4 text-[var(--foreground-secondary)]">
+                            {localize(module.description)}
+                          </span>
+                        )}
+                      </span>
+                    </span>
+                    {active && (
+                      <span className="mt-2.5 flex items-center justify-between border-t border-[var(--border-subtle)] pt-2.5 text-[8px] font-semibold text-[var(--foreground-muted)]">
+                        <span>{locale === "ko-KR" ? "예상 학습 시간" : "预计学习时间"}</span>
+                        <span>{minutes} {t.minutes}</span>
+                      </span>
+                    )}
+                  </button>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      );
+    }
+
+    if (textbook.chapter.number === 1) {
+      return (
+        <div className="mt-4 px-2" aria-label={sidebarLabel}>
+          <div className="rounded-2xl bg-[var(--surface-soft)] p-3.5">
+            <div className="flex items-center justify-between gap-2 text-[var(--primary)]">
+              <div className="flex items-center gap-2">
+                <Map size={17} aria-hidden="true" />
+                <span className="text-[10px] font-bold tracking-[.14em]">
+                  {locale === "ko-KR" ? "제01장 지식 지도" : "第 01 章知识地图"}
+                </span>
+              </div>
+              <span className="shrink-0 rounded-full bg-[var(--card)] px-2 py-1 text-[8px] font-bold tracking-wide text-[var(--foreground-muted)]">
+                {locale === "ko-KR" ? "8단계 연동" : "同步八步"}
+              </span>
+            </div>
+            <p className="mt-2 text-[10px] font-bold text-[var(--foreground-muted)]">
+              {locale === "ko-KR" ? "이 장의 목표" : "本章目标"}
+            </p>
+            <p className="mt-1 text-xs font-bold leading-5 text-[var(--foreground)]">
+              {localize(textbook.chapter.goal)}
+            </p>
+          </div>
+
+          <div className="relative mt-4">
+            <span className="absolute bottom-5 left-[15px] top-5 w-px bg-[var(--border-subtle)]" aria-hidden="true" />
+            <ol className="space-y-2.5" aria-label="本章知识结构">
+              {textbook.modules.map((module, index) => {
+                const active = index === activeIndex;
+                const knowledge = chapterOneKnowledgeMap[module.code as keyof typeof chapterOneKnowledgeMap];
+                const KnowledgeIcon = knowledge?.icon ?? BookOpen;
+                const knowledgeTitle = knowledge?.title[locale] ?? localize(module.title);
+                const knowledgeSummary = knowledge?.summary[locale] ?? localize(module.description);
+                return (
+                  <li key={module.id} className="relative grid grid-cols-[32px_minmax(0,1fr)] items-start gap-2.5">
+                    <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 bg-[var(--card)] ${active ? "border-[var(--primary)] text-[var(--primary)] shadow-sm" : "border-[var(--border)] text-[var(--foreground-muted)]"}`}>
+                      <KnowledgeIcon size={14} aria-hidden="true" />
+                    </span>
+                    <div className={`min-w-0 rounded-xl border px-2.5 py-2.5 transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] bg-[var(--card)]"}`}>
+                      <div className="flex items-start justify-between gap-2">
+                        <p className="min-w-0 text-xs font-bold leading-5 text-[var(--foreground)]">
+                          {knowledgeTitle}
+                        </p>
+                        {active && (
+                          <span className="shrink-0 rounded-full bg-[var(--card)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--primary)]">
+                            {locale === "ko-KR" ? "현재 학습" : "正在学习"}
+                          </span>
+                        )}
+                      </div>
+                      <p className="mt-1 text-[10px] leading-4 text-[var(--foreground-secondary)]">
+                        {knowledgeSummary}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </div>
+      );
+    }
+
     return (
-      <nav className={compact ? "mt-3 space-y-1" : "mt-5"} aria-label={t.learnerPath}>
+      <div className="mt-5 space-y-4 px-3" aria-label={sidebarLabel}>
+        <div className="rounded-2xl bg-[var(--surface-soft)] p-4">
+          <div className="flex items-center gap-2 text-[var(--primary)]">
+            <BookOpen size={17} aria-hidden="true" />
+            <span className="text-[11px] font-bold tracking-[.16em]">{chapterLabel}</span>
+          </div>
+          <p className="mt-3 text-sm font-bold leading-6 text-[var(--foreground)]">
+            {localize(textbook.chapter.title)}
+          </p>
+          <p className="mt-2 text-xs leading-5 text-[var(--foreground-muted)]">
+            {localize(textbook.chapter.goal)}
+          </p>
+        </div>
+        <div className="rounded-2xl border border-[var(--border-subtle)] p-4">
+          <p className="text-[10px] font-bold tracking-[.16em] text-[var(--foreground-muted)]">当前步骤</p>
+          <p className="mt-2 text-sm font-bold text-[var(--foreground)]">
+            {String(activeIndex + 1).padStart(2, "0")} · {localize(activeModule.title)}
+          </p>
+          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-soft)]">
+            <div className="h-full rounded-full bg-[var(--status-success)] transition-all duration-500" style={{ width: `${progressPercent}%` }} />
+          </div>
+          <p className="mt-2 text-right text-[10px] font-bold text-[var(--foreground-muted)]">{progressPercent}%</p>
+        </div>
+      </div>
+    );
+  }
+
+  function renderBottomPathNavigation() {
+    return (
+      <nav className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain py-1" aria-label={t.learnerPath}>
+        <div className="flex min-w-max items-center justify-center gap-1 px-1.5">
         {textbook.modules.map((module, index) => {
           const active = index === activeIndex;
           const done = moduleDone(index);
@@ -723,79 +1147,74 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
               }}
               aria-current={active ? "step" : undefined}
               aria-label={`${t.learnerPath} ${index + 1}: ${localize(module.title)}`}
-              title={compact ? localize(module.title) : undefined}
-              className={`relative flex w-full items-start transition ${compact ? "justify-center rounded-xl px-2 py-3" : "gap-3 rounded-2xl px-3 py-3.5 text-left"} ${active ? "bg-white/85 shadow-sm" : "hover:bg-white/50"}`}
+              title={localize(module.title)}
+              className="group flex h-11 max-w-[152px] items-center rounded-xl p-1 text-left focus-visible:outline-none"
             >
-              {!compact && index < textbook.modules.length - 1 && (
-                <span className="absolute left-[19px] top-9 h-[35px] w-px bg-slate-200" />
-              )}
-              <span
-                className="relative z-10 mt-0.5 bg-[var(--background)]"
-                style={{ color: active ? moduleAccent.solid : undefined }}
-              >
-                <StepStatus done={done} active={active} />
-              </span>
-              {!compact && (
+              <span className={`flex h-8 min-w-0 items-center gap-1.5 rounded-lg border px-2 transition group-hover:bg-[var(--surface-soft)] group-focus-visible:ring-2 group-focus-visible:ring-[var(--ring)] group-focus-visible:ring-offset-1 ${active ? "border-[var(--primary)] bg-[var(--accent)] shadow-sm" : "border-[var(--border-subtle)] bg-[var(--card)]"}`}>
+                <span className="shrink-0" style={{ color: active ? moduleAccent.solid : undefined }}>
+                  <StepStatus done={done} active={active} />
+                </span>
                 <span className="min-w-0">
-                  <span className={`block text-[11px] font-bold tracking-widest ${active ? "text-slate-500" : "text-slate-300"}`}>
-                    第 {String(index + 1).padStart(2, "0")} 步
+                  <span className="block text-[9px] font-bold leading-none tracking-wider text-[var(--foreground-muted)]">
+                    {String(index + 1).padStart(2, "0")}
                   </span>
-                  <span className={`mt-0.5 block truncate text-sm font-bold ${active ? "text-slate-900" : "text-slate-600"}`}>
+                  <span className={`hidden max-w-24 truncate text-[11px] font-bold leading-4 md:block ${active ? "text-[var(--foreground)]" : "text-[var(--foreground-secondary)]"}`}>
                     {localize(module.title)}
                   </span>
                 </span>
-              )}
+              </span>
             </button>
           );
         })}
+        </div>
       </nav>
     );
   }
 
   function renderTutorPanel(showHeader = true) {
     return (
-      <div className="flex h-full flex-col overflow-hidden rounded-[26px] bg-white/78 shadow-sm ring-1 ring-white">
-        {showHeader && <div className="border-b border-white px-5 py-5">
+      <div className="flex h-full flex-col overflow-hidden rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] shadow-sm">
+        {showHeader && <div className="border-b border-[var(--border-subtle)] px-5 py-5">
           <div className="flex items-center gap-3">
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]">
               <MessageCircle size={18} />
             </span>
             <div>
-              <p className="font-bold text-slate-900">{t.tutor}</p>
-              <p className="mt-0.5 text-[10px] leading-4 text-slate-400">{t.grounded}</p>
+              <p className="font-bold text-[var(--foreground)]">{t.tutor}</p>
+              <p className="mt-0.5 text-[10px] leading-4 text-[var(--foreground-muted)]">{t.grounded}</p>
             </div>
           </div>
         </div>}
-        <div className="flex-1 overflow-y-auto p-5">
-          <div className="text-xs font-bold tracking-wide text-slate-400">{t.currentMission}</div>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-800">{localize(activeModule.title)}</p>
+        <div className="smart-textbook-scroll flex-1 overflow-y-auto p-5">
+          <div className="text-xs font-bold tracking-wide text-[var(--foreground-muted)]">{t.currentMission}</div>
+          <p className="mt-2 text-sm font-bold leading-6 text-[var(--foreground)]">{localize(activeModule.title)}</p>
           <div className="mt-5 grid grid-cols-2 gap-2">
             {([['explain', t.explain], ['hint', t.hint], ['example', t.example], ['roleplay', t.roleplay]] as const).map(([intent, label]) => (
               <button
                 key={intent}
                 type="button"
                 onClick={() => tutorReply(intent)}
-                className="min-h-14 rounded-xl bg-white/85 px-3 py-2 text-left text-xs font-semibold leading-5 text-slate-600 shadow-sm hover:text-[var(--primary)]"
+                className="min-h-14 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-left text-xs font-semibold leading-5 text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)]"
               >
                 {label}
               </button>
             ))}
           </div>
           {tutorText && (
-            <div className="mt-5 whitespace-pre-line rounded-xl bg-[var(--background)] px-4 py-4 text-sm leading-6 text-slate-600">
+            <div className="mt-5 whitespace-pre-line rounded-xl bg-[var(--accent)] px-4 py-4 text-sm leading-6 text-[var(--foreground-secondary)]">
               <Sparkles size={15} className="mb-2 text-[var(--primary)]" />
               {tutorText}
             </div>
           )}
         </div>
-        <div className="border-t border-white p-4">
+        <div className="border-t border-[var(--border-subtle)] p-4">
           <textarea
             value={tutorInput}
             onChange={(event) => setTutorInput(event.target.value)}
             rows={2}
             aria-label={t.ask}
             placeholder={t.ask}
-            className="w-full resize-none rounded-xl bg-white/85 px-3 py-2 text-sm leading-5 text-slate-700 outline-none placeholder:text-slate-300 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            className="w-full resize-none rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-sm leading-5 text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           />
           <button
             type="button"
@@ -826,60 +1245,76 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
 
   return (
     <div
-      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col overflow-hidden bg-[var(--background)] text-slate-900 [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-[var(--ring)] [&_a:focus-visible]:ring-offset-2 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2"
-      style={{ backgroundImage: `radial-gradient(circle at 18% 8%, ${accent.glow}, transparent 28%), radial-gradient(circle at 90% 86%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 24%)` }}
+      ref={textbookRef}
+      className="fixed inset-0 z-50 flex min-h-[100dvh] flex-col overflow-hidden bg-[var(--surface-soft)] text-[var(--foreground)] [&_a:focus-visible]:outline-none [&_a:focus-visible]:ring-2 [&_a:focus-visible]:ring-[var(--ring)] [&_a:focus-visible]:ring-offset-2 [&_button:focus-visible]:outline-none [&_button:focus-visible]:ring-2 [&_button:focus-visible]:ring-[var(--ring)] [&_button:focus-visible]:ring-offset-2"
+      style={{ backgroundImage: `radial-gradient(circle at 12% 0%, ${accent.glow}, transparent 30%), radial-gradient(circle at 92% 88%, color-mix(in srgb, var(--primary) 8%, transparent), transparent 28%)` }}
     >
-      <header className="relative z-30 h-[66px] shrink-0 border-b border-white/70 bg-white/72 px-3 backdrop-blur-2xl sm:px-5 lg:h-[74px] lg:px-7">
+      <a href="#korean-textbook-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--card)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold">
+        跳到教材正文
+      </a>
+      <header className="relative z-30 h-[70px] shrink-0 border-b border-[var(--border-subtle)] bg-[var(--card)] px-3 shadow-sm sm:px-5 lg:h-[78px] lg:px-7">
         <div className="flex h-full items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
             <button
               type="button"
               onClick={() => setMobilePanel("path")}
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/80 text-slate-600 shadow-sm lg:hidden"
-              aria-label={t.learnerPath}
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--surface-soft)] text-[var(--foreground-secondary)] lg:hidden"
+              aria-label={sidebarLabel}
               aria-expanded={mobilePanel === "path"}
             >
               <Menu size={18} />
             </button>
-            <Link href={backHref} className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-slate-500 transition hover:text-slate-900">
+            <Link href={backHref} className="inline-flex shrink-0 items-center gap-2 text-sm font-semibold text-[var(--foreground-muted)] transition hover:text-[var(--foreground)]">
               <ArrowLeft size={17} />
               <span className="hidden sm:inline">{t.back}</span>
             </Link>
-            <span className="hidden h-5 w-px bg-slate-200 sm:block" />
+            <span className="hidden h-5 w-px bg-[var(--border-subtle)] sm:block" />
             <div className="min-w-0">
               <div className="hidden items-center gap-2 sm:flex">
                 <span className="text-xs font-bold tracking-[.18em] text-[var(--primary)]">{textbook.levelCode}</span>
-                <span className="text-xs text-slate-300">/</span>
-                <span className="text-xs font-semibold text-slate-500">{t.chapter}</span>
+                <span className="text-xs text-[var(--foreground-muted)]">/</span>
+                <span className="text-xs font-semibold text-[var(--foreground-muted)]">{chapterLabel}</span>
               </div>
-              <h3 className="truncate text-sm font-bold tracking-tight text-slate-900 sm:mt-0.5 sm:text-lg">
+              <h1 className="truncate text-sm font-bold tracking-tight text-[var(--foreground)] sm:mt-0.5 sm:text-lg">
                 {localize(textbook.chapter.title)}
-              </h3>
+              </h1>
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
             <div className="hidden w-36 md:block lg:w-48">
-              <div className="mb-1.5 flex justify-between text-[11px] font-bold text-slate-500">
+              <div className="mb-1.5 flex justify-between text-[11px] font-bold text-[var(--foreground-muted)]">
                 <span>{t.progress}</span><span>{progressPercent}%</span>
               </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-slate-200">
+              <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border-subtle)]">
                 <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "var(--status-success)" }} />
               </div>
             </div>
             <button
               type="button"
-              onClick={() => setMobilePanel("assistant")}
-              className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-[var(--primary)] shadow-sm lg:hidden"
+              onClick={toggleTutorPanel}
+              className={`inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border px-2.5 text-sm font-bold transition sm:px-3 ${!assistantCollapsed || mobilePanel === "assistant" ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--surface-soft)] text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)]"}`}
               aria-label={t.tutor}
-              aria-expanded={mobilePanel === "assistant"}
+              aria-expanded={!assistantCollapsed || mobilePanel === "assistant"}
             >
               <MessageCircle size={17} />
+              <span className="hidden xl:inline">{t.tutor}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => void toggleFullscreen()}
+              aria-label={isFullscreen ? t.exitFullscreen : t.fullscreen}
+              aria-pressed={isFullscreen}
+              title={isFullscreen ? t.exitFullscreen : t.fullscreen}
+              className="inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-2.5 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] sm:px-3"
+            >
+              {isFullscreen ? <Minimize2 size={17} aria-hidden="true" /> : <Maximize2 size={17} aria-hidden="true" />}
+              <span className="hidden xl:inline">{isFullscreen ? t.exitFullscreen : t.fullscreen}</span>
             </button>
             <div className="relative">
               <button
                 type="button"
                 onClick={() => setSettingsOpen((value) => !value)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-full bg-white/85 px-3 text-sm font-bold text-slate-700 shadow-sm ring-1 ring-white sm:px-4"
+                className="inline-flex h-9 items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 text-sm font-bold text-[var(--foreground-secondary)] sm:px-4"
                 aria-expanded={settingsOpen}
               >
                 <Languages size={16} className="text-[var(--primary)]" />
@@ -887,7 +1322,7 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                 <ChevronDown size={14} />
               </button>
               {settingsOpen && (
-                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[22px] bg-white/95 p-5 shadow-sm ring-1 ring-white backdrop-blur-2xl">
+                <div className="absolute right-0 top-12 w-[min(20rem,calc(100vw-1.5rem))] overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 shadow-xl">
                   <div className="mb-5 flex items-center justify-between">
                     <span className="font-bold text-slate-900">{t.language}</span>
                     <button type="button" onClick={() => setSettingsOpen(false)} className="p-1 text-slate-400" aria-label="关闭">
@@ -911,6 +1346,20 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                     ))}
                   </div>
                   {isPending && <p className="mt-3 text-xs text-slate-400">{t.saved}…</p>}
+                  {preferenceError && (
+                    <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[var(--destructive)]/5 px-3 py-2.5 text-xs font-semibold text-[var(--destructive)]">
+                      <span>{preferenceError}</span>
+                      {preferenceNeedsReload && (
+                        <button
+                          type="button"
+                          onClick={() => window.location.reload()}
+                          className="shrink-0 rounded-lg border border-current px-2.5 py-1.5 font-bold"
+                        >
+                          {t.refreshPage}
+                        </button>
+                      )}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -918,46 +1367,76 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
         </div>
       </header>
 
-      <div className="flex min-h-0 flex-1">
-        <aside className={`hidden shrink-0 overflow-y-auto px-3 py-5 transition-[width] duration-200 lg:block ${pathCollapsed ? "w-[72px]" : "w-[268px]"}`}>
+      <div className="flex min-h-0 flex-1 gap-3 p-3 lg:gap-4 lg:p-4">
+        <aside className={`smart-textbook-scroll hidden shrink-0 overflow-y-auto rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-5 shadow-sm transition-[width] duration-200 lg:block ${pathCollapsed ? "w-16" : "w-60"}`}>
           <div className={`flex items-center ${pathCollapsed ? "justify-center" : "justify-between px-3"}`}>
-            {!pathCollapsed && <p className="text-[11px] font-bold tracking-[.2em] text-slate-400">{t.learnerPath.toUpperCase()}</p>}
-            <button type="button" onClick={() => setPathCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800" aria-label={pathCollapsed ? "展开学习路径" : "收起学习路径"}>
+            {!pathCollapsed && <p className="text-[11px] font-bold tracking-[.2em] text-slate-400">{sidebarLabel}</p>}
+            <button type="button" onClick={() => setPathCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800" aria-label={pathCollapsed ? `展开${sidebarLabel}` : `收起${sidebarLabel}`}>
               {pathCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
             </button>
           </div>
-          {renderPathNavigation(pathCollapsed)}
+          {renderChapterSidebar(pathCollapsed)}
         </aside>
 
-        <main className="min-w-0 flex-1 overflow-y-auto bg-white">
-          <div className="mx-auto max-w-[900px] px-5 py-8 sm:px-8 sm:py-10 lg:px-10 xl:px-14">
-            {activeIndex === 0 && (
-              <div className="mb-9 grid gap-6 border-b border-slate-200 pb-8 sm:grid-cols-2 sm:gap-8 lg:mb-12 lg:pb-10">
-                <div>
+        <main
+          id="korean-textbook-content"
+          tabIndex={0}
+          aria-label={locale === "ko-KR" ? "교재 본문, 방향키와 페이지 키로 스크롤할 수 있습니다" : "教材正文，可使用方向键或翻页键滚动阅读"}
+          className="smart-textbook-scroll min-w-0 flex-1 overflow-y-auto overscroll-contain rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+        >
+          <div className="w-full px-5 py-8 sm:px-8 sm:py-10 lg:px-10 xl:px-12">
+            {textbook.chapter.number === 0 ? (
+              <>
+                <KoreanLevelOneCourseOverview moduleCode={activeModule.code} locale={locale} />
+                {activeNodes.flatMap((node) => node.activities).map((activity) => (
+                  <Activity
+                    key={activity.id}
+                    activity={activity}
+                    locale={locale}
+                    trackingDisabled={trackingDisabled}
+                    onCompleted={(id) => setCompletedActivities((current) => new Set(current).add(id))}
+                  />
+                ))}
+              </>
+            ) : (
+              <>
+            {activeIndex === 0 && textbook.chapter.number !== 1 && (
+              <section className="mb-10 overflow-hidden rounded-[26px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-7">
+                <div className="mb-6 flex items-center gap-3">
+                  <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">
+                    <BookOpen size={19} />
+                  </span>
+                  <div>
+                    <h2 className="mt-1 text-lg font-bold">开始本章之前</h2>
+                  </div>
+                </div>
+                <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl bg-[var(--card)] p-5 ring-1 ring-[var(--border-subtle)]">
                   <p className="text-xs font-bold tracking-[.18em] text-[var(--support)]">{t.scene.toUpperCase()}</p>
-                  <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.scenario)}</p>
+                  <p className="mt-3 text-[15px] leading-7 text-[var(--foreground-secondary)] sm:text-[16px]">{localize(textbook.chapter.scenario)}</p>
                 </div>
-                <div>
+                <div className="rounded-2xl bg-[var(--card)] p-5 ring-1 ring-[var(--border-subtle)]">
                   <p className="text-xs font-bold tracking-[.18em] text-[var(--status-success)]">{t.objective.toUpperCase()}</p>
-                  <p className="mt-3 text-[15px] leading-7 text-slate-600 sm:text-[16px]">{localize(textbook.chapter.goal)}</p>
+                  <p className="mt-3 text-[15px] leading-7 text-[var(--foreground-secondary)] sm:text-[16px]">{localize(textbook.chapter.goal)}</p>
                 </div>
-              </div>
+                </div>
+              </section>
             )}
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div>
                 <p className="text-xs font-bold tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
-                <h3 className="mt-3 text-2xl font-bold tracking-[-.04em] text-slate-950 sm:text-[34px]">{localize(activeModule.title)}</h3>
-                <p className="mt-3 max-w-2xl text-[15px] leading-7 text-slate-500 sm:text-[16px]">{localize(activeModule.description)}</p>
+                <h2 className="mt-3 text-2xl font-bold tracking-[-.04em] text-[var(--foreground)] sm:text-[34px]">{localize(activeModule.title)}</h2>
+                <p className="mt-3 max-w-2xl text-[15px] leading-7 text-[var(--foreground-secondary)] sm:text-[16px]">{localize(activeModule.description)}</p>
               </div>
-              <div className="flex shrink-0 items-center gap-2 text-xs font-semibold text-slate-400 sm:pt-1">
+              <div className="flex shrink-0 items-center gap-2 rounded-full bg-[var(--surface-soft)] px-3 py-2 text-xs font-semibold text-[var(--foreground-muted)] sm:pt-2">
                 <Clock3 size={15} /> {activeNodes.reduce((total, node) => total + node.minutes, 0)} {t.minutes}
               </div>
             </div>
             {activeNodes.map((node) => (
-              <article key={node.id} className="mt-10 sm:mt-12">
+              <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 sm:mt-10 sm:p-7">
                 <div className="flex items-center gap-3">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} />
-                  <h4 className="text-lg font-bold text-slate-900">{localize(node.title)}</h4>
+                  <h3 className="text-lg font-bold text-[var(--foreground)]">{localize(node.title)}</h3>
                 </div>
                 <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
                 {node.activities.map((activity) => (
@@ -965,49 +1444,39 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
                 ))}
               </article>
             ))}
+              </>
+            )}
             <div className="h-12" />
           </div>
         </main>
 
-        <aside className={`hidden shrink-0 flex-col border-l border-white/70 bg-white/48 p-3 backdrop-blur-xl transition-[width] duration-200 lg:flex ${assistantCollapsed ? "w-[72px]" : "w-[328px]"}`}>
-          <div className={`mb-2 flex shrink-0 ${assistantCollapsed ? "justify-center" : "justify-start"}`}>
-            <button type="button" onClick={() => setAssistantCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/70 hover:text-slate-800" aria-label={assistantCollapsed ? "展开学习助手" : "收起学习助手"}>
-              {assistantCollapsed ? <PanelRightOpen size={17} /> : <PanelRightClose size={17} />}
-            </button>
-          </div>
-          {assistantCollapsed ? (
-            <button type="button" onClick={() => setAssistantCollapsed(false)} className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]" aria-label={t.tutor}>
-              <MessageCircle size={18} />
-            </button>
-          ) : <div className="min-h-0 flex-1">{renderTutorPanel()}</div>}
+        <aside className={`hidden shrink-0 overflow-hidden rounded-[26px] bg-[var(--card)] transition-[width,opacity,padding] duration-200 lg:flex ${assistantCollapsed ? "w-0 border-0 p-0 opacity-0" : "w-[340px] border border-[var(--border-subtle)] p-3 opacity-100 shadow-sm"}`} aria-hidden={assistantCollapsed}>
+          {!assistantCollapsed && <div className="min-h-0 flex-1">{renderTutorPanel()}</div>}
         </aside>
       </div>
 
-      <footer className="relative z-30 h-[70px] shrink-0 border-t border-white/70 bg-white/78 px-3 backdrop-blur-2xl sm:px-5 lg:h-[76px] lg:px-7">
+      <footer className="relative z-30 h-[72px] shrink-0 border-t border-[var(--border-subtle)] bg-[var(--card)] px-3 sm:px-5 lg:h-[76px] lg:px-7">
         <div className="flex h-full items-center justify-between gap-3">
-          <button type="button" disabled={activeIndex === 0} onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="inline-flex min-w-0 items-center gap-1 text-xs font-bold text-slate-500 hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:text-sm">
+          <button type="button" disabled={activeIndex === 0} onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-xl px-1 text-xs font-bold text-slate-500 hover:bg-[var(--surface-soft)] hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:px-2 sm:text-sm">
             <ChevronLeft size={18} /> <span className="hidden min-[360px]:inline">{t.previous}</span>
           </button>
-          <div className="flex items-center gap-2">
-            <span className="text-xs font-semibold text-slate-400">{activeIndex + 1} / {textbook.modules.length}</span>
-            <div className="hidden items-center gap-1.5 sm:flex">
-              {textbook.modules.map((module, index) => (
-                <button key={module.id} type="button" onClick={() => setActiveIndex(index)} aria-label={`Step ${index + 1}`} className={`h-1.5 rounded-full transition-all ${index === activeIndex ? "w-8" : "w-1.5"}`} style={{ backgroundColor: index === activeIndex ? accent.solid : moduleDone(index) ? "var(--status-success)" : "var(--border)" }} />
-              ))}
-            </div>
-          </div>
+          {renderBottomPathNavigation()}
           {isLastModule ? (
             chapterTestHref ? (
-              <Link href={chapterTestHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-900 px-3.5 py-2.5 text-xs font-bold text-white hover:bg-slate-700 sm:gap-2 sm:px-5 sm:text-sm">
+              <Link href={chapterTestHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
                 {t.chapterTest} <ChevronRight size={18} />
+              </Link>
+            ) : completionHref && progressPercent >= 100 ? (
+              <Link href={completionHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
+                {completionLabel ?? t.next} <ChevronRight size={18} />
               </Link>
             ) : (
               <button type="button" disabled className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-200 px-3.5 py-2.5 text-xs font-bold text-slate-400 sm:px-5 sm:text-sm">
-                {t.testUnavailable}
+                {completionHref ? "完成本章后解锁" : t.testUnavailable}
               </button>
             )
           ) : (
-            <button type="button" onClick={() => setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1))} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-900 px-3.5 py-2.5 text-xs font-bold text-white hover:bg-slate-700 sm:gap-2 sm:px-5 sm:text-sm">
+            <button type="button" onClick={() => setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1))} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
               {t.next} <ChevronRight size={18} />
             </button>
           )}
@@ -1016,18 +1485,18 @@ export function KoreanLevelOneSmartTextbook({ backHref, textbook, trackingDisabl
 
       {mobilePanel && (
         <div className="fixed inset-0 z-40 bg-slate-950/35 backdrop-blur-sm lg:hidden" role="presentation" onClick={() => setMobilePanel(null)}>
-          <aside className={`absolute bottom-0 top-0 w-[min(88vw,360px)] bg-[var(--background)] p-4 shadow-2xl ${mobilePanel === "path" ? "left-0" : "right-0"}`} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={mobilePanel === "path" ? t.learnerPath : t.tutor}>
+          <aside className={`absolute bottom-0 top-0 w-[min(88vw,360px)] bg-[var(--background)] p-4 shadow-2xl ${mobilePanel === "path" ? "left-0" : "right-0"}`} onClick={(event) => event.stopPropagation()} role="dialog" aria-modal="true" aria-label={mobilePanel === "path" ? sidebarLabel : t.tutor}>
             <div className="mb-3 flex items-center justify-between">
               <div className="flex items-center gap-2 font-bold text-slate-900">
                 {mobilePanel === "path" ? <BookOpen size={18} className="text-[var(--status-success)]" /> : <MessageCircle size={18} className="text-[var(--primary)]" />}
-                {mobilePanel === "path" ? t.learnerPath : t.tutor}
+                {mobilePanel === "path" ? sidebarLabel : t.tutor}
               </div>
               <button type="button" onClick={() => setMobilePanel(null)} className="rounded-full bg-white p-2 text-slate-500" aria-label="关闭">
                 <X size={17} />
               </button>
             </div>
-            <div className="h-[calc(100%-3.25rem)] overflow-y-auto">
-              {mobilePanel === "path" ? renderPathNavigation(false) : renderTutorPanel(false)}
+            <div className="smart-textbook-scroll h-[calc(100%-3.25rem)] overflow-y-auto">
+              {mobilePanel === "path" ? renderChapterSidebar(false) : renderTutorPanel(false)}
             </div>
           </aside>
         </div>

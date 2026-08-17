@@ -50,7 +50,7 @@ export async function requireAssignmentStudent() {
 }
 
 export async function requireAssignmentViewer() {
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
   if (
     role === "student" &&
@@ -66,6 +66,7 @@ export async function requireAssignmentViewer() {
   return {
     supabase,
     user,
+    tenant,
     role,
     isManager: isAssignmentManagerRole(role),
   };

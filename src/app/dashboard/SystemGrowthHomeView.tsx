@@ -24,6 +24,7 @@ import type {
   GrowthReminderItem,
   GrowthWeekActivityDay,
 } from "./GrowthHomeView";
+import { DashboardTitleWithHint } from "./DashboardTitleWithHint";
 import { StudentStudyTrendPanel } from "./StudentStudyTrendPanel";
 
 type StudyRangeData = {
@@ -381,8 +382,13 @@ export function SystemGrowthHomeView({
           ) : (
             <div className="mt-4 flex min-h-52 flex-1 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] p-6 text-center">
               <BookOpen size={24} className="text-[var(--foreground-muted)]" aria-hidden="true" />
-              <h3 className="mt-3 text-sm font-bold">从第一门课程开始</h3>
-              <p className="app-muted-text mt-1 max-w-72 text-xs font-medium leading-5">选择课程后，这里会显示下一步最适合学习的内容。</p>
+              <DashboardTitleWithHint
+                className="mt-3 items-center"
+                title="从第一门课程开始"
+                description="选择课程后，这里会显示下一步最适合学习的内容。"
+                headingLevel={3}
+                titleClassName="text-sm font-bold"
+              />
               <Link href={coursesHref} className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-[var(--primary)] px-4 text-xs font-semibold text-white">选择课程</Link>
             </div>
           )}
@@ -479,33 +485,45 @@ export function SystemGrowthHomeView({
                         <span className="rounded-full bg-[var(--status-warning-surface)] px-2 py-1 text-[11px] font-semibold text-[var(--status-warning)]">入口待完善</span>
                       )}
                     </div>
-                    <h3 className="mt-3 min-h-10 text-sm font-bold leading-5">{course.title}</h3>
-                    <p className="app-muted-text mb-4 mt-1 truncate text-xs font-medium">
-                      {course.href
+                    <DashboardTitleWithHint
+                      className="mb-4 mt-3"
+                      title={course.title}
+                      description={course.href
                         ? course.teacherName ? `${course.teacherName} 老师` : "自主学习课程"
                         : "课程仍保留显示，可从课程目录继续查找"}
-                    </p>
+                      headingLevel={3}
+                      hintClassName="pointer-events-auto relative z-10"
+                      titleClassName="min-h-10 text-sm font-bold leading-5"
+                    />
                     <SystemProgress value={course.percent} label={`${course.completedCount}/${course.totalCount} 课时`} />
                   </>
                 );
 
                 return (
-                  <Link
+                  <div
                     key={course.courseId}
-                    href={course.href ? scopeDashboardPath(course.href, dashboardBasePath) : coursesHref}
-                    className="rounded-xl border border-[var(--border-subtle)] p-4 transition hover:border-[var(--primary)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
-                    aria-label={!course.href ? `${course.title}入口待完善，前往课程目录` : undefined}
+                    className="relative rounded-xl border border-[var(--border-subtle)] p-4 transition hover:border-[var(--primary)] hover:bg-[var(--surface-soft)]"
                   >
-                    {content}
-                  </Link>
+                    <Link
+                      href={course.href ? scopeDashboardPath(course.href, dashboardBasePath) : coursesHref}
+                      className="absolute inset-0 rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+                      aria-label={!course.href ? `${course.title}入口待完善，前往课程目录` : course.title}
+                    />
+                    <div className="pointer-events-none relative">{content}</div>
+                  </div>
                 );
               })}
             </div>
           ) : (
             <div className="mt-4 flex min-h-44 flex-col items-center justify-center rounded-xl border border-dashed border-[var(--border)] p-6 text-center">
               <BookOpen size={24} className="text-[var(--foreground-muted)]" aria-hidden="true" />
-              <h3 className="mt-3 text-sm font-bold">还没有课程进度</h3>
-              <p className="app-muted-text mt-1 text-xs font-medium">进入课程学习后，这里会形成你的课程地图。</p>
+              <DashboardTitleWithHint
+                className="mt-3 items-center"
+                title="还没有课程进度"
+                description="进入课程学习后，这里会形成你的课程地图。"
+                headingLevel={3}
+                titleClassName="text-sm font-bold"
+              />
             </div>
           )}
         </section>

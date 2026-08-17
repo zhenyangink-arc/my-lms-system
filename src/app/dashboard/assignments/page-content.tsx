@@ -104,7 +104,7 @@ export default async function AssignmentsPage({
 }) {
   const query = searchParams ? await searchParams : {};
   const initialTaskTypeFilter = normalizeTaskTypeFilter(query.type);
-  const { supabase, user, isManager } = await requireAssignmentViewer();
+  const { supabase, user, tenant, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const koreanScope = await getStudentAppCourseScope(supabase, "korean");
   // Request-time snapshot keeps all deadline labels consistent for this render.
@@ -179,16 +179,18 @@ export default async function AssignmentsPage({
         .eq("question_type", "single_choice")
         .eq("is_chapter_test_item", true),
       withStudentAppSchemaFallback(
-        supabase
+        admin
           .from("course_ebook_progress")
           .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
           .eq("student_id", user.id)
+          .eq("tenant_id", tenant?.id ?? "")
           .eq("student_app_id", STUDENT_APP_IDS.korean),
         () =>
-          supabase
+          admin
             .from("course_ebook_progress")
             .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
-            .eq("student_id", user.id),
+            .eq("student_id", user.id)
+            .eq("tenant_id", tenant?.id ?? ""),
       ),
     ]);
 
@@ -215,10 +217,11 @@ export default async function AssignmentsPage({
     .map(([slug]) => slug);
 
   const { data: chapterAttemptData, error: chapterAttemptError } = allChapterTests.length
-    ? await supabase
+    ? await admin
         .from("chapter_test_attempts")
         .select("test_slug,score,passed,attempted_at")
         .eq("student_id", user.id)
+        .eq("tenant_id", tenant?.id ?? "")
         .in(
           "test_slug",
           allChapterTests.map((test) => test.slug)
@@ -227,15 +230,17 @@ export default async function AssignmentsPage({
     : { data: [] as ChapterTestAttemptRow[] };
 
   const latestAttemptBySlug = new Map<string, ChapterTestAttemptRow>();
+  const passedAttemptBySlug = new Map<string, ChapterTestAttemptRow>();
   for (const attempt of (chapterAttemptData ?? []) as ChapterTestAttemptRow[]) {
     if (!latestAttemptBySlug.has(attempt.test_slug)) {
       latestAttemptBySlug.set(attempt.test_slug, attempt);
     }
+    if (attempt.passed && !passedAttemptBySlug.has(attempt.test_slug)) {
+      passedAttemptBySlug.set(attempt.test_slug, attempt);
+    }
   }
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
-    [...latestAttemptBySlug.values()]
-      .filter((attempt) => attempt.passed)
-      .map((attempt) => attempt.test_slug),
+    passedAttemptBySlug.keys(),
     completedEbookSlugs,
   );
   const questionCountByTestId = new Map<string, number>();
@@ -243,6 +248,8 @@ export default async function AssignmentsPage({
     const testId = String(question.test_id);
     questionCountByTestId.set(testId, (questionCountByTestId.get(testId) ?? 0) + 1);
   }
+
+  const testBySlug = new Map(allChapterTests.map((test) => [test.slug, test]));
 
   const visibleTestSlugs = new Set(unlockedTestSlugs);
   const lastUnlockedIndex = KOREAN_TEST_SEQUENCE.reduce(
@@ -252,13 +259,13 @@ export default async function AssignmentsPage({
   );
   const nextLockedSlug = KOREAN_TEST_SEQUENCE[lastUnlockedIndex + 1];
   if (nextLockedSlug) visibleTestSlugs.add(nextLockedSlug);
-  const testBySlug = new Map(allChapterTests.map((test) => [test.slug, test]));
 
   const chapterTests = allChapterTests
     .filter((test) => visibleTestSlugs.has(test.slug))
     .map((test) => {
       const unlocked = unlockedTestSlugs.has(test.slug);
-      const attempt = latestAttemptBySlug.get(test.slug);
+      const attempt =
+        passedAttemptBySlug.get(test.slug) ?? latestAttemptBySlug.get(test.slug);
       const sequenceIndex = KOREAN_TEST_SEQUENCE.indexOf(
         test.slug as (typeof KOREAN_TEST_SEQUENCE)[number]
       );
@@ -268,9 +275,15 @@ export default async function AssignmentsPage({
           : null;
       const prerequisitePassed =
         sequenceIndex <= 0 ||
-        latestAttemptBySlug.get(KOREAN_TEST_SEQUENCE[sequenceIndex - 1])
-          ?.passed === true;
+        passedAttemptBySlug.has(KOREAN_TEST_SEQUENCE[sequenceIndex - 1]);
       const ebookCompleted = completedEbookSlugs.includes(test.slug);
+      const ebookProgressPercent = Math.min(
+        100,
+        Math.max(
+          0,
+          Number(ebookProgressBySlug.get(test.slug)?.progress_percent) || 0,
+        ),
+      );
       const unlockRequirement = !unlocked
         ? !ebookCompleted && !prerequisitePassed && prerequisite
           ? `先通过上一章「${prerequisite.title}」的测试，并学完本章电子书后解锁`
@@ -294,6 +307,7 @@ export default async function AssignmentsPage({
         passingScore: test.passing_score,
         questionCount: questionCountByTestId.get(test.id) ?? 0,
         unlocked,
+        ebookProgressPercent,
         unlockRequirement,
         studyHref:
           `/dashboard/courses/korean/korean-basic/korean-beginner/${
@@ -416,6 +430,7 @@ export default async function AssignmentsPage({
           chapterTests={chapterTests}
           isManager={isManager}
           currentTime={currentTime}
+          preferenceScope={`${tenant?.id ?? "platform"}:${user.id}`}
           initialTaskTypeFilter={initialTaskTypeFilter}
         />
       </div>

@@ -307,7 +307,6 @@ begin
   values (module_uuid,'mission-map','mission',1,3,
     jsonb_build_object('zh-CN','今天要完成的真实任务','ko-KR','오늘의 실제 과제'),
     jsonb_build_object(
-      'eyebrow',jsonb_build_object('zh-CN','CAMPUS · FIRST MEETING','ko-KR','캠퍼스 · 첫 만남'),
       'lead',jsonb_build_object('zh-CN','你刚加入语言交换社团，需要先问候，再介绍姓名与身份。','ko-KR','언어 교환 동아리에 처음 왔습니다. 먼저 인사하고 이름과 신분을 소개하세요.'),
       'targets',jsonb_build_array(
         jsonb_build_object('ko','안녕하세요?','zh','自然发起问候'),

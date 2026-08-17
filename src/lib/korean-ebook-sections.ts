@@ -1,16 +1,24 @@
 export const KOREAN_EBOOK_SECTIONS = [
-  { step: "STEP 01", label: "课前导航" },
-  { step: "STEP 02", label: "核心词汇" },
-  { step: "STEP 03", label: "语法讲解" },
-  { step: "STEP 04", label: "句型操练" },
-  { step: "STEP 05", label: "实战对话" },
-  { step: "STEP 06", label: "听说任务" },
-  { step: "STEP 07", label: "读写拓展" },
-  { step: "STEP 08", label: "自测与复盘" },
+  { number: 1, label: "课前导航" },
+  { number: 2, label: "核心词汇" },
+  { number: 3, label: "语法讲解" },
+  { number: 4, label: "句型操练" },
+  { number: 5, label: "实战对话" },
+  { number: 6, label: "听说任务" },
+  { number: 7, label: "读写拓展" },
+  { number: 8, label: "自测与复盘" },
 ] as const;
 
-export type KoreanEbookSectionStep =
-  (typeof KOREAN_EBOOK_SECTIONS)[number]["step"];
+export type KoreanEbookSectionNumber =
+  (typeof KOREAN_EBOOK_SECTIONS)[number]["number"];
+
+export type KoreanEbookSectionStep = `STEP 0${KoreanEbookSectionNumber}`;
+
+export function koreanEbookSectionStep(
+  number: KoreanEbookSectionNumber,
+): KoreanEbookSectionStep {
+  return `STEP 0${number}`;
+}
 
 export function koreanEbookStepLabel(step: string) {
   const stepNumber = Number(step.match(/\d+/)?.[0]);
@@ -28,9 +36,12 @@ export function koreanEbookStepLabel(step: string) {
 }
 
 export function koreanEbookSectionLabel(step: string) {
-  const section = KOREAN_EBOOK_SECTIONS.find((item) => item.step === step);
+  const stepNumber = Number(step.match(/\d+/)?.[0]);
+  const section = KOREAN_EBOOK_SECTIONS.find(
+    (item) => item.number === stepNumber,
+  );
   return section
-    ? `${koreanEbookStepLabel(section.step)} · ${section.label}`
+    ? `${koreanEbookStepLabel(step)} · ${section.label}`
     : koreanEbookStepLabel(step);
 }
 

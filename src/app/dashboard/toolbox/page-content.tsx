@@ -19,6 +19,7 @@ import {
   SixDimensionRadar,
   type LanguageSkill,
 } from "@/components/analytics/SixDimensionRadar";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
@@ -220,7 +221,6 @@ export async function ToolboxPage({
       </section>}
 
       <SixDimensionRadar
-        eyebrow="日常练习能力画像"
         title="专项训练 · 六维练习能力"
         description="只统计最近 30 天的日常专项练习，与老师作业和正式考试完全分开"
         icon={Activity}
@@ -281,26 +281,30 @@ export async function ToolboxPage({
           </p>
         </section>
       ) : (
-        <section aria-labelledby="practice-modules-title">
+        <section aria-label="选择今天要巩固的能力">
           <div className="mb-3 px-1">
-            <h2 id="practice-modules-title" className="text-lg font-bold tracking-tight">
-              选择今天要巩固的能力
-            </h2>
-            <p className="app-muted-text mt-1 text-xs font-bold">
-              每项练习独立记录，时间不会直接增加能力分
-            </p>
+            <CardTitleWithHint
+              title="选择今天要巩固的能力"
+              description="每项练习独立记录，时间不会直接增加能力分"
+              headingLevel={2}
+              titleClassName="text-lg font-bold tracking-tight"
+            />
           </div>
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {tools.map((tool) => {
             const Icon = tool.icon;
             return (
-              <Link
+              <div
                 key={tool.id}
-                href={tool.href}
-                className="app-card group flex min-h-72 flex-col rounded-3xl border p-5 transition-[border-color,box-shadow] hover:shadow-md focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                className="app-card group relative flex min-h-72 flex-col rounded-3xl border p-5 transition-[border-color,box-shadow] hover:shadow-md"
                 style={{ borderColor: "var(--border)" }}
               >
-                <div className="flex h-full flex-col gap-4">
+                <Link
+                  href={tool.href}
+                  className="absolute inset-0 rounded-3xl focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+                  aria-label={tool.title}
+                />
+                <div className="pointer-events-none relative flex h-full flex-col gap-4">
                   <div className="flex items-start justify-between gap-3">
                     <span
                       className="flex h-12 w-12 items-center justify-center rounded-2xl"
@@ -320,10 +324,13 @@ export async function ToolboxPage({
                     </span>
                   </div>
                   <div className="mt-1">
-                    <h2 className="text-lg font-bold">{tool.title}</h2>
-                    <p className="app-muted-text mt-1.5 text-sm leading-6">
-                      {tool.description}
-                    </p>
+                    <CardTitleWithHint
+                      title={tool.title}
+                      description={tool.description}
+                      headingLevel={2}
+                      hintClassName="pointer-events-auto relative z-10"
+                      titleClassName="text-lg font-bold"
+                    />
                   </div>
 
                   <ul className="flex flex-wrap gap-2" aria-label={`${tool.title}训练重点`}>
@@ -351,7 +358,7 @@ export async function ToolboxPage({
                     </div>
                   </div>
                 </div>
-              </Link>
+              </div>
             );
           })}
           </div>

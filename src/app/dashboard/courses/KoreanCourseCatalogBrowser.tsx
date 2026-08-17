@@ -16,6 +16,7 @@ import {
 import type { LucideIcon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { Input } from "@/components/ui/input";
 
 export type KoreanCourseLearningStatus =
@@ -234,12 +235,12 @@ export function KoreanCourseCatalogBrowser({
                       <CategoryIcon size={21} aria-hidden="true" />
                     </span>
                     <div className="min-w-0">
-                      <h2 id={sectionTitleId} className="text-xl font-bold tracking-tight sm:text-2xl">
-                        {section.title}
-                      </h2>
-                      <p className="app-muted-text mt-1 max-w-3xl text-sm font-medium leading-6">
-                        {section.description || "课程已按教学顺序编号，可依次学习，也可以自由选择。"}
-                      </p>
+                      <CardTitleWithHint
+                        title={<span id={sectionTitleId}>{section.title}</span>}
+                        description={section.description || "课程已按教学顺序编号，可依次学习，也可以自由选择。"}
+                        headingLevel={2}
+                        titleClassName="text-xl font-bold tracking-tight sm:text-2xl"
+                      />
                     </div>
                   </div>
                   <p className="app-muted-text shrink-0 text-xs font-semibold tabular-nums">
@@ -284,14 +285,12 @@ export function KoreanCourseCatalogBrowser({
                       </div>
 
                       <div className="mt-5 min-w-0">
-                        <h3 className="line-clamp-2 min-h-14 text-xl font-bold leading-7 tracking-tight" title={course.title}>
-                          {course.title}
-                        </h3>
-                        {course.description && (
-                          <p className="app-muted-text mt-2 line-clamp-3 text-sm font-medium leading-6" title={course.description}>
-                            {course.description}
-                          </p>
-                        )}
+                        <CardTitleWithHint
+                          title={course.title}
+                          description={course.description}
+                          headingLevel={3}
+                          titleClassName="line-clamp-2 min-h-14 text-xl font-bold leading-7 tracking-tight"
+                        />
                       </div>
 
                       <div className="mt-auto pt-5">

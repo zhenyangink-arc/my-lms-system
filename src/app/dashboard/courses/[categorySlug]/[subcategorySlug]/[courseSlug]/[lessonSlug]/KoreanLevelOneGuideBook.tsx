@@ -348,7 +348,7 @@ export function KoreanLevelOneGuideBook({
               </div>
             </Page>
 
-            <Page number="04" section="MODULE 01 · 1A 第1—4课">
+            <Page number="04" section="1A 第1—4课">
               <div className="flex h-full flex-col">
                 <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">基础破冰：让语言开始运转</h3>
                 <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -390,7 +390,7 @@ export function KoreanLevelOneGuideBook({
               </div>
             </Page>
 
-            <Page number="05" section="MODULE 02 · 1A 第5—8课">
+            <Page number="05" section="1A 第5—8课">
               <div className="flex h-full flex-col">
                 <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">生活运转：把句子放进一天</h3>
                 <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -432,7 +432,7 @@ export function KoreanLevelOneGuideBook({
               </div>
             </Page>
 
-            <Page number="06" section="MODULE 03 · 1B 第9—12课">
+            <Page number="06" section="1B 第9—12课">
               <div className="flex h-full flex-col">
                 <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">关系与照护：表达更得体</h3>
                 <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -474,7 +474,7 @@ export function KoreanLevelOneGuideBook({
               </div>
             </Page>
 
-            <Page number="07" section="MODULE 04 · 1B 第13—16课">
+            <Page number="07" section="1B 第13—16课">
               <div className="flex h-full flex-col">
                 <h3 className="mt-3 text-3xl font-bold text-[var(--primary)]">出行与未来：走得更远</h3>
                 <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">

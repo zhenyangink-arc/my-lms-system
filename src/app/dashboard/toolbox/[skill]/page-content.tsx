@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 
 import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import {
@@ -634,12 +635,12 @@ export async function ToolboxSkillPage({
               >
                 <Icon size={26} aria-hidden="true" />
               </span>
-              <div>
-                <h2 className="text-2xl font-bold tracking-tight">{entry.title}</h2>
-                <p className="app-muted-text mt-2 max-w-2xl text-sm font-bold leading-6">
-                  {entry.description}
-                </p>
-              </div>
+              <CardTitleWithHint
+                title={entry.title}
+                description={entry.description}
+                headingLevel={2}
+                titleClassName="text-2xl font-bold tracking-tight"
+              />
             </div>
             <div className="grid grid-cols-3 gap-2 lg:shrink-0">
               {[
@@ -657,11 +658,13 @@ export async function ToolboxSkillPage({
         </header>
 
         <section aria-labelledby="skill-chapter-title">
-          <div className="mb-3 px-1">
-            <h2 id="skill-chapter-title" className="text-lg font-bold">选择课程、课时与章节</h2>
-            <p className="app-muted-text mt-1 text-xs font-bold">
-              正式章节按学习顺序解锁。
-            </p>
+          <div id="skill-chapter-title" className="mb-3 px-1">
+            <CardTitleWithHint
+              title="选择课程、课时与章节"
+              description="正式章节按学习顺序解锁。"
+              headingLevel={2}
+              titleClassName="text-lg font-bold"
+            />
           </div>
           <div className="space-y-3">
             {catalog.length === 0 && (
@@ -717,10 +720,13 @@ export async function ToolboxSkillPage({
                             <span className="app-muted-text text-[11px] font-bold tabular-nums">
                               {String(lessonIndex + 1).padStart(2, "0")}
                             </span>
-                            <div className="min-w-0 flex-1">
-                              <h3 className="text-sm font-bold">{lesson.title}</h3>
-                              <p className="app-muted-text mt-0.5 line-clamp-1 text-[11px] font-bold">{lesson.description}</p>
-                            </div>
+                            <CardTitleWithHint
+                              title={lesson.title}
+                              description={lesson.description}
+                              className="min-w-0 flex-1"
+                              headingLevel={3}
+                              titleClassName="text-sm font-bold"
+                            />
                             <small className="app-muted-text shrink-0 text-[10px] font-bold">
                               {lesson.chapters.length} 章
                             </small>
@@ -827,12 +833,13 @@ export async function ToolboxSkillPage({
               <p className="text-[11px] font-bold tracking-[0.08em]" style={{ color: entry.accent }}>
                 {entry.title} · {selectedUnit.course.title} · {selectedUnit.lesson.title} · 第 {String(selectedNumber).padStart(2, "0")} 章
               </p>
-              <h2 className="mt-1 text-2xl font-bold tracking-tight">
-                {selectedUnit.test?.title ?? "本课专项训练"}
-              </h2>
-              <p className="app-muted-text mt-1 text-sm font-bold">
-                {selectedUnit.test?.korean_title || selectedUnit.chapter.description}
-              </p>
+              <CardTitleWithHint
+                title={selectedUnit.test?.title ?? "本课专项训练"}
+                description={selectedUnit.test?.korean_title || selectedUnit.chapter.description}
+                className="mt-1"
+                headingLevel={2}
+                titleClassName="text-2xl font-bold tracking-tight"
+              />
             </div>
           </div>
           {exercise && (

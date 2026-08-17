@@ -27,6 +27,7 @@ type TestAttemptRow = {
   test_slug: string;
   score: number;
   passed: boolean;
+  attempted_at: string;
 };
 
 type EbookProgressRow = {
@@ -57,7 +58,7 @@ const levelOneUnits = [
 ] as const;
 
 export default async function KoreanAssignmentTestsPage() {
-  const { supabase, user, role, isManager } = await requireAssignmentViewer();
+  const { user, tenant, role, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const [{ data: testData }, { data: testQuestionData }] = await Promise.all([
     withStudentAppSchemaFallback(
@@ -111,29 +112,33 @@ export default async function KoreanAssignmentTestsPage() {
   const [{ data: testAttemptData }, { data: ebookProgressData }] =
     allChapterTests.length
       ? await Promise.all([
-          supabase
+          admin
             .from("chapter_test_attempts")
-            .select("test_slug,score,passed")
+            .select("test_slug,score,passed,attempted_at")
             .eq("student_id", user.id)
+            .eq("tenant_id", tenant?.id ?? "")
             .in(
               "test_slug",
               allChapterTests.map((test) => test.slug),
-            ),
+            )
+            .order("attempted_at", { ascending: false }),
           withStudentAppSchemaFallback(
-            supabase
+            admin
               .from("course_ebook_progress")
               .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
               .eq("student_id", user.id)
+              .eq("tenant_id", tenant?.id ?? "")
               .eq("student_app_id", STUDENT_APP_IDS.korean)
               .in(
                 "test_slug",
                 allChapterTests.map((test) => test.slug),
               ),
             () =>
-              supabase
+              admin
                 .from("course_ebook_progress")
                 .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
                 .eq("student_id", user.id)
+                .eq("tenant_id", tenant?.id ?? "")
                 .in(
                   "test_slug",
                   allChapterTests.map((test) => test.slug),
@@ -144,16 +149,27 @@ export default async function KoreanAssignmentTestsPage() {
           { data: [] as TestAttemptRow[] },
           { data: [] as EbookProgressRow[] },
         ];
-  const attemptByTestSlug = new Map(
-    ((testAttemptData ?? []) as TestAttemptRow[]).map((attempt) => [
-      attempt.test_slug,
-      attempt,
-    ])
+  const attemptByTestSlug = new Map<string, TestAttemptRow>();
+  const passedAttemptByTestSlug = new Map<string, TestAttemptRow>();
+  for (const attempt of (testAttemptData ?? []) as TestAttemptRow[]) {
+    if (!attemptByTestSlug.has(attempt.test_slug)) {
+      attemptByTestSlug.set(attempt.test_slug, attempt);
+    }
+    if (attempt.passed && !passedAttemptByTestSlug.has(attempt.test_slug)) {
+      passedAttemptByTestSlug.set(attempt.test_slug, attempt);
+    }
+  }
+  for (const [slug, attempt] of passedAttemptByTestSlug) {
+    attemptByTestSlug.set(slug, attempt);
+  }
+  const ebookProgressBySlug = new Map(
+    ((ebookProgressData ?? []) as EbookProgressRow[]).map((progress) => [
+      progress.test_slug,
+      progress,
+    ]),
   );
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
-    [...attemptByTestSlug.values()]
-      .filter((attempt) => attempt.passed)
-      .map((attempt) => attempt.test_slug),
+    passedAttemptByTestSlug.keys(),
     ((ebookProgressData ?? []) as EbookProgressRow[])
       .filter((progress) =>
         isKoreanEbookCompleted({
@@ -174,6 +190,20 @@ export default async function KoreanAssignmentTestsPage() {
   const availableTestCount = allChapterTests.filter((test) =>
     unlockedTestSlugs.has(test.slug)
   ).length;
+  const hangulCompletedCount = hangulTests.filter((test) =>
+    passedAttemptByTestSlug.has(test.slug),
+  ).length;
+  const hangulProgressPercent = hangulTests.length
+    ? Math.round(
+        hangulTests.reduce((total, test) => {
+          if (passedAttemptByTestSlug.has(test.slug)) return total + 100;
+          const progress = Number(
+            ebookProgressBySlug.get(test.slug)?.progress_percent,
+          );
+          return total + Math.min(100, Math.max(0, progress || 0));
+        }, 0) / hangulTests.length,
+      )
+    : 0;
 
   return (
     <div className="pb-12">
@@ -231,7 +261,7 @@ export default async function KoreanAssignmentTestsPage() {
           eyebrow="路线 01 · 字母启蒙"
           title="韩语字母入门"
           description="建议学完对应章节后进入；可以反复练习，系统保留最近一次成绩。"
-          meta={`${hangulTests.length} 章`}
+          meta={`${hangulCompletedCount}/${hangulTests.length} 章完成 · 总进度 ${hangulProgressPercent}%`}
           accentColor="var(--status-warning)"
         >
           <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
@@ -240,6 +270,13 @@ export default async function KoreanAssignmentTestsPage() {
               const attempt = isUnlocked
                 ? attemptByTestSlug.get(test.slug)
                 : undefined;
+              const ebookProgressPercent = Math.min(
+                100,
+                Math.max(
+                  0,
+                  Number(ebookProgressBySlug.get(test.slug)?.progress_percent) || 0,
+                ),
+              );
               const cardContent = (
                 <>
                   <div className="min-w-0 p-2.5">
@@ -260,7 +297,9 @@ export default async function KoreanAssignmentTestsPage() {
                     </p>
                     <p className="app-muted-text mt-1.5 text-[8px] font-bold leading-3">
                       {!isUnlocked
-                        ? "完成上一章测试后开放"
+                        ? ebookProgressPercent > 0
+                          ? `学习中 ${ebookProgressPercent}% · 完成后开放测试`
+                          : "完成本章学习后开放测试"
                         : attempt
                         ? `${attempt.passed ? "已通过" : "未达掌握线"} · 掌握线 ${test.passing_score} 分`
                         : `${test.questionCount} 题 · 掌握线 ${test.passing_score} 分`}
@@ -291,9 +330,23 @@ export default async function KoreanAssignmentTestsPage() {
                     }}
                   >
                     {!isUnlocked ? (
-                      <span className="app-muted-text inline-flex flex-col items-center gap-1 text-[8px] font-bold">
-                        <Lock size={14} />
-                        未开放
+                      <span
+                        className="inline-flex flex-col items-center gap-1 text-[8px] font-bold"
+                        style={{
+                          color:
+                            ebookProgressPercent > 0
+                              ? "var(--support)"
+                              : "var(--foreground-muted)",
+                        }}
+                      >
+                        {ebookProgressPercent > 0 ? (
+                          <CircleDashed size={14} />
+                        ) : (
+                          <Lock size={14} />
+                        )}
+                        {ebookProgressPercent > 0
+                          ? `学习中 ${ebookProgressPercent}%`
+                          : "未开放"}
                       </span>
                     ) : attempt ? (
                       <span
@@ -372,6 +425,15 @@ export default async function KoreanAssignmentTestsPage() {
               const attempt = test && isUnlocked
                 ? attemptByTestSlug.get(test.slug)
                 : undefined;
+              const ebookProgressPercent = test
+                ? Math.min(
+                    100,
+                    Math.max(
+                      0,
+                      Number(ebookProgressBySlug.get(test.slug)?.progress_percent) || 0,
+                    ),
+                  )
+                : 0;
               const passed = attempt?.passed === true;
               const failed = Boolean(attempt) && !passed;
               const statusColor = passed
@@ -404,7 +466,9 @@ export default async function KoreanAssignmentTestsPage() {
                     </p>
                     <p className="app-muted-text mt-1.5 text-[8px] font-bold leading-3">
                       {!isUnlocked
-                        ? "完成上一章测试后开放"
+                        ? ebookProgressPercent > 0
+                          ? `学习中 ${ebookProgressPercent}% · 完成后开放测试`
+                          : "完成本章学习后开放测试"
                         : test
                           ? attempt
                             ? `${passed ? "已通过" : "未通过"} · 掌握线 ${test.passing_score} 分`
@@ -435,7 +499,11 @@ export default async function KoreanAssignmentTestsPage() {
                   >
                     <span className="inline-flex flex-col items-center gap-1 text-[8px] font-bold">
                       {!isUnlocked ? (
-                        <Lock size={14} />
+                        ebookProgressPercent > 0 ? (
+                          <CircleDashed size={14} />
+                        ) : (
+                          <Lock size={14} />
+                        )
                       ) : passed ? (
                         <CheckCircle2 size={14} />
                       ) : failed ? (
@@ -444,7 +512,9 @@ export default async function KoreanAssignmentTestsPage() {
                         <CircleDashed size={14} />
                       )}
                       {!isUnlocked
-                        ? "未开放"
+                        ? ebookProgressPercent > 0
+                          ? `学习中 ${ebookProgressPercent}%`
+                          : "未开放"
                         : !test
                           ? "准备中"
                           : attempt

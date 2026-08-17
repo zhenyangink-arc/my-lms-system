@@ -23,7 +23,7 @@ export default async function KoreanChapterTestPage({
   params: Promise<{ testSlug: string }>;
 }) {
   const { testSlug } = await params;
-  const { supabase, user, isManager } = await requireAssignmentViewer();
+  const { supabase, user, tenant, isManager } = await requireAssignmentViewer();
   const admin = createAdminClient();
   const { data: testData } = await withStudentAppSchemaFallback(
     admin
@@ -48,21 +48,24 @@ export default async function KoreanChapterTestPage({
   if (!testData) notFound();
   const test = testData as CourseTestRow;
   const [{ data: attemptData }, { data: ebookProgressData }] = await Promise.all([
-    supabase
+    admin
       .from("chapter_test_attempts")
       .select("test_slug,passed")
-      .eq("student_id", user.id),
+      .eq("student_id", user.id)
+      .eq("tenant_id", tenant?.id ?? ""),
     withStudentAppSchemaFallback(
-      supabase
+      admin
         .from("course_ebook_progress")
         .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
         .eq("student_id", user.id)
+        .eq("tenant_id", tenant?.id ?? "")
         .eq("student_app_id", STUDENT_APP_IDS.korean),
       () =>
-        supabase
+        admin
           .from("course_ebook_progress")
           .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
-          .eq("student_id", user.id),
+          .eq("student_id", user.id)
+          .eq("tenant_id", tenant?.id ?? ""),
     ),
   ]);
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(

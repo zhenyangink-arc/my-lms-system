@@ -234,16 +234,9 @@ function KoreanDirectCourseCatalog({
           completedLessons,
           progressPercent,
           learningStatus,
-          href: getStudentAppPath(
-            space,
-            "korean",
-            [
-              "courses",
-              "korean",
-              encodeURIComponent(subcategory.slug),
-              encodeURIComponent(course.slug),
-            ].join("/"),
-          ),
+          href:
+            getStudentAppPath(space, "korean", "courses/korean") +
+            `?course=${encodeURIComponent(course.slug)}`,
         };
       });
 

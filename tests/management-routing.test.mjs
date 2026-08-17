@@ -212,6 +212,38 @@ test("韩语课程首页按完整分类展示课程并保持租户应用路由",
     ),
     "utf8",
   );
+  const koreanCategorySource = readFileSync(
+    new URL(
+      "../src/app/dashboard/courses/[categorySlug]/page-content.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const koreanLearningCenterSource = readFileSync(
+    new URL(
+      "../src/app/dashboard/courses/[categorySlug]/KoreanLearningCenter.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const koreanLessonDetailSource = readFileSync(
+    new URL(
+      "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const smartTextbookShellSource = readFileSync(
+    new URL(
+      "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/SmartTextbookShell.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+  const smartTextbookLoaderSource = readFileSync(
+    new URL("../src/lib/smart-digital-textbook.ts", import.meta.url),
+    "utf8",
+  );
   const directCatalogStart = catalogSource.indexOf(
     "function KoreanDirectCourseCatalog",
   );
@@ -248,6 +280,23 @@ test("韩语课程首页按完整分类展示课程并保持租户应用路由",
   assert.match(catalogBrowserSource, /progressPercent > 0/);
   assert.match(catalogBrowserSource, /内容准备中/);
   assert.match(directCatalogSource, /getStudentAppPath/);
+  assert.match(directCatalogSource, /\?course=\$\{encodeURIComponent\(course\.slug\)\}/);
+  assert.match(koreanCategorySource, /requestedCourseSlug/);
+  assert.match(koreanCategorySource, /defaultKoreanCourseSlug/);
+  assert.match(koreanCategorySource, /course\.slug === "korean-beginner"/);
+  assert.match(koreanCategorySource, /selectedCourseSlug=\{selectedCourseSlug\}/);
+  assert.match(koreanLearningCenterSource, /visibleCourses = selectedCourse/);
+  assert.match(koreanLearningCenterSource, /visibleLessonItems = selectedCourse/);
+  assert.match(
+    koreanLessonDetailSource,
+    /\?course=\$\{encodeURIComponent\(course\.slug\)\}/,
+  );
+  assert.match(koreanLessonDetailSource, /<SmartTextbookShell/);
+  assert.match(koreanLessonDetailSource, /loadSmartDigitalTextbook/);
+  assert.match(koreanLessonDetailSource, /chapterNumber: Math\.max/);
+  assert.match(smartTextbookShellSource, /SmartTextbookShell/);
+  assert.match(smartTextbookLoaderSource, /textbookSlug: string/);
+  assert.match(smartTextbookLoaderSource, /chapterNumber\?: number/);
   assert.doesNotMatch(directCatalogSource, /移入收藏夹/);
   assert.doesNotMatch(directCatalogSource, /\/dashboard\/courses/);
 });

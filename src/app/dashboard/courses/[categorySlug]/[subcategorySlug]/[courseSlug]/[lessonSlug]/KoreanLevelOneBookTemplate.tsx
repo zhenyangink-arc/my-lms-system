@@ -4,6 +4,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { Volume2 } from "lucide-react";
 
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type { KoreanLevelOneLesson } from "./KoreanLevelOneLessonBook";
 
@@ -307,15 +308,15 @@ export function KoreanEbookHeading({
           {icon}
         </span>
         <div className="flex min-w-0 flex-1 items-center justify-between gap-3">
-          <h3 className="text-2xl font-bold leading-tight text-[var(--foreground)]">
-            {title}
-          </h3>
+          <CardTitleWithHint
+            title={title}
+            description={description}
+            headingLevel={3}
+            titleClassName="text-2xl font-bold leading-tight text-[var(--foreground)]"
+          />
           {action}
         </div>
       </div>
-      {description && (
-        <p className="mt-3 text-sm leading-7 text-[var(--foreground-secondary)]">{description}</p>
-      )}
     </div>
   );
 }
@@ -343,12 +344,6 @@ export function KoreanEbookSectionDivider({
           >
             {icon}
           </span>
-          <p
-            className="text-sm font-bold tracking-[0.16em]"
-            style={{ color: tone.color }}
-          >
-            LEARNING SECTION
-          </p>
         </div>
         <p
           className="mt-9 text-lg font-bold tracking-[0.14em]"
@@ -508,9 +503,6 @@ export function KoreanEbookTableOfContents({
 }) {
   return (
     <div className="flex h-full flex-col justify-center text-center">
-      <p className="text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">
-        LESSON {String(lessonNumber).padStart(2, "0")}
-      </p>
       <h3 className="mt-3 text-2xl font-bold tracking-tight text-[var(--foreground)]">
         目录
       </h3>
@@ -571,9 +563,6 @@ export function KoreanEbookCover({
           <div className="mt-7 flex items-end gap-6">
             <span className="text-[76px] font-bold leading-none tracking-[-0.07em]">
               {lessonNumber}
-            </span>
-            <span className="mb-2 text-lg font-bold tracking-[0.2em] text-[var(--destructive)]">
-              LESSON
             </span>
           </div>
           <div className="mt-9 border-t border-[var(--foreground)]/25 pt-7">

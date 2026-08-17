@@ -388,13 +388,12 @@ export function KoreanLevelOneLessonFiveBook({
         <Heading title="从一句过去时，到一段故事" description="第五课的目标是回答：什么时候、做了什么、然后怎样、为什么。" icon={<History aria-hidden="true" size={22} />} action={<KoreanEbookRevealButton shown={Boolean(revealed.chinese03)} onClick={() => toggle("chinese03")} />} />
         <div className="mt-5 grid grid-cols-2 gap-3">
           {[
-            ["DATE", "오월 십일이에요.", "是5月10日。"],
-            ["DAY", "금요일이에요.", "是星期五。"],
-            ["PAST", "친구를 만났어요.", "见了朋友。"],
-            ["SEQUENCE", "밥을 먹고 산책했어요.", "吃饭后散了步。"],
-          ].map(([tag, korean, chinese]) => (
-            <button key={tag} type="button" onClick={() => speak(korean)} className="rounded-2xl border border-[var(--border)] bg-white p-4 text-left">
-              <p className="text-[10px] font-bold text-[var(--status-warning)]">{tag}</p>
+            ["오월 십일이에요.", "是5月10日。"],
+            ["금요일이에요.", "是星期五。"],
+            ["친구를 만났어요.", "见了朋友。"],
+            ["밥을 먹고 산책했어요.", "吃饭后散了步。"],
+          ].map(([korean, chinese]) => (
+            <button key={korean} type="button" onClick={() => speak(korean)} className="rounded-2xl border border-[var(--border)] bg-white p-4 text-left">
               <div className="mt-2 flex items-center justify-between gap-2">
                 <p className="text-sm font-bold">{korean}</p>
                 <Volume2 aria-hidden="true" size={14} className="shrink-0 text-[var(--primary)]" />
@@ -979,7 +978,6 @@ export function KoreanLevelOneLessonFiveBook({
       <div className="flex h-full flex-col justify-center">
         <div className="mx-auto w-full max-w-[440px] text-center">
           <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--status-success-surface)] text-[var(--status-success)]"><Sparkles aria-hidden="true" size={27} /></span>
-          <p className="mt-4 text-xs font-bold tracking-[0.18em] text-[var(--status-success)]">LESSON 05 · COMPLETE</p>
           <h3 className="mt-3 text-[34px] font-bold text-[var(--status-success)]">주말에 친구를 만났어요.</h3>
           <p className="mt-3 text-lg font-bold text-[var(--foreground)]">你已经完成第五课</p>
           <p className="mx-auto mt-3 max-w-[380px] text-sm leading-7 text-[var(--foreground-secondary)]">
@@ -1002,14 +1000,13 @@ export function KoreanLevelOneLessonFiveBook({
           <div className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--status-success-surface)] px-5 py-3.5 text-left">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">LESSON 5 TEST · 本课测试</p>
+                <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">本课测试</p>
                 <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">前往章节测试专区，检验日期星期、时间助词、过去时与动作顺序。</p>
               </div>
               <KoreanEbookTestLink />
             </div>
           </div>
           <div className="mt-4 rounded-2xl bg-[var(--accent)] px-5 py-3.5 text-left">
-            <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--primary)]">NEXT · LESSON 06</p>
             <div className="mt-2 flex items-end justify-between gap-4">
               <div>
                 <p className="text-lg font-bold text-[var(--status-success)]">얼마예요?</p>

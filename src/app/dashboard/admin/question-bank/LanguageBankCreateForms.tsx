@@ -7,6 +7,7 @@ import {
   defaultEbookSectionForSkill,
   KOREAN_EBOOK_SECTIONS,
   koreanEbookSectionLabel,
+  koreanEbookSectionStep,
 } from "@/lib/korean-ebook-sections";
 import {
   createLanguageBankMaterialAction,
@@ -125,7 +126,7 @@ function EbookSectionSelect({ skill }: { skill: LanguageSkill }) {
   return (
     <select name="ebook_section_step" required defaultValue={defaultEbookSectionForSkill(skill)} className={fieldClass}>
       {KOREAN_EBOOK_SECTIONS.map((section) => (
-        <option key={section.step} value={section.step}>{koreanEbookSectionLabel(section.step)}</option>
+        <option key={section.number} value={koreanEbookSectionStep(section.number)}>{koreanEbookSectionLabel(koreanEbookSectionStep(section.number))}</option>
       ))}
     </select>
   );

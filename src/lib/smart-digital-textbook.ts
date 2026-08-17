@@ -98,17 +98,104 @@ function asStringArray(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
 }
 
-export async function loadKoreanLevelOneChapterOne(options: {
+export type LoadSmartDigitalTextbookOptions = {
+  textbookSlug: string;
+  chapterNumber?: number;
+  chapterSlug?: string;
   userId: string;
   tenantId: string | null;
   trackingDisabled: boolean;
-}): Promise<SmartTextbookData | null> {
+};
+
+type LoadSmartDigitalChapterProgressOptions = Pick<
+  LoadSmartDigitalTextbookOptions,
+  "textbookSlug" | "chapterNumber" | "userId" | "tenantId" | "trackingDisabled"
+>;
+
+/**
+ * 返回某个智能教材章节的持久化完成度。课程目录用它判断无章节测试的
+ * `content_viewed` 章节是否已经完成，避免把“看完教材”误当成“通过测试”。
+ */
+export async function loadSmartDigitalTextbookChapterProgress(
+  options: LoadSmartDigitalChapterProgressOptions,
+) {
+  if (options.trackingDisabled || !options.tenantId) return 0;
+
+  const admin = createAdminClient();
+  const { data: textbook } = await admin
+    .from("digital_textbooks")
+    .select("id")
+    .eq("slug", options.textbookSlug)
+    .eq("status", "published")
+    .maybeSingle();
+  if (!textbook) return 0;
+
+  const { data: version } = await admin
+    .from("digital_textbook_versions")
+    .select("id")
+    .eq("textbook_id", textbook.id)
+    .eq("status", "published")
+    .order("version_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!version) return 0;
+
+  const { data: chapter } = await admin
+    .from("digital_textbook_chapters")
+    .select("id")
+    .eq("version_id", version.id)
+    .eq("chapter_number", options.chapterNumber ?? 1)
+    .eq("status", "published")
+    .maybeSingle();
+  if (!chapter) return 0;
+
+  const { data: modules } = await admin
+    .from("digital_textbook_modules")
+    .select("id")
+    .eq("chapter_id", chapter.id);
+  const moduleIds = (modules ?? []).map((module) => String(module.id));
+  if (moduleIds.length === 0) return 0;
+
+  const { data: nodes } = await admin
+    .from("digital_textbook_nodes")
+    .select("id")
+    .in("module_id", moduleIds);
+  const nodeIds = (nodes ?? []).map((node) => String(node.id));
+  if (nodeIds.length === 0) return 0;
+
+  const { data: progressRows } = await admin
+    .from("digital_textbook_node_progress")
+    .select("node_id,completion_percent,status")
+    .eq("tenant_id", options.tenantId)
+    .eq("student_id", options.userId)
+    .eq("version_id", version.id)
+    .in("node_id", nodeIds);
+  const progressByNodeId = new Map(
+    (progressRows ?? []).map((row) => [
+      String(row.node_id),
+      row.status === "completed" ? 100 : Math.max(0, Math.min(100, Number(row.completion_percent) || 0)),
+    ]),
+  );
+
+  return Math.round(
+    nodeIds.reduce((total, nodeId) => total + (progressByNodeId.get(nodeId) ?? 0), 0) /
+      nodeIds.length,
+  );
+}
+
+/**
+ * 通用智能教材加载器。新增章节只需发布同一本教材下的章节、模块、节点与活动，
+ * 页面层按 chapterNumber 或 chapterSlug 调用，无需复制教材界面。
+ */
+export async function loadSmartDigitalTextbook(
+  options: LoadSmartDigitalTextbookOptions,
+): Promise<SmartTextbookData | null> {
   const admin = createAdminClient();
 
   const { data: textbook, error: textbookError } = await admin
     .from("digital_textbooks")
     .select("id,level_code,title")
-    .eq("slug", "korean-level-one-smart")
+    .eq("slug", options.textbookSlug)
     .eq("status", "published")
     .maybeSingle();
 
@@ -131,13 +218,15 @@ export async function loadKoreanLevelOneChapterOne(options: {
   if (versionError) throw new Error(`无法读取教材版本：${versionError.message}`);
   if (!version) return null;
 
-  const { data: chapter, error: chapterError } = await admin
+  let chapterQuery = admin
     .from("digital_textbook_chapters")
     .select("id,slug,chapter_number,title,scenario,goal,chapter_test_id,chapter_tests(slug)")
     .eq("version_id", version.id)
-    .eq("chapter_number", 1)
-    .eq("status", "published")
-    .maybeSingle();
+    .eq("status", "published");
+  chapterQuery = options.chapterSlug
+    ? chapterQuery.eq("slug", options.chapterSlug)
+    : chapterQuery.eq("chapter_number", options.chapterNumber ?? 1);
+  const { data: chapter, error: chapterError } = await chapterQuery.maybeSingle();
   if (chapterError) throw new Error(`无法读取教材章节：${chapterError.message}`);
   if (!chapter) return null;
   const chapterTest = asObject(chapter.chapter_tests);
@@ -294,4 +383,15 @@ export async function loadKoreanLevelOneChapterOne(options: {
     preference,
     progress,
   };
+}
+
+/** @deprecated 新章节请直接使用 loadSmartDigitalTextbook。 */
+export function loadKoreanLevelOneChapterOne(
+  options: Omit<LoadSmartDigitalTextbookOptions, "textbookSlug" | "chapterNumber" | "chapterSlug">,
+) {
+  return loadSmartDigitalTextbook({
+    ...options,
+    textbookSlug: "korean-level-one-smart",
+    chapterNumber: 1,
+  });
 }
