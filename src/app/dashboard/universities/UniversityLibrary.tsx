@@ -644,7 +644,7 @@ export function UniversityLibrary({ universities, comparedIds, targetIds }: Univ
           <div className="app-card flex min-h-80 flex-col items-center justify-center rounded-3xl border p-6 text-center">
             <BarChart3 size={30} style={{ color: "var(--support)" }} aria-hidden="true" />
             <h3 className="mt-4 text-base font-bold">{universities.length === 0 ? "学校库尚未收录大学" : "暂时没有完全符合的大学"}</h3>
-            <p className="mt-2 max-w-md text-xs leading-5 app-muted-text">{universities.length === 0 ? "大学资料发布后会显示在这里。" : "可以减少一个排名或地区条件。学费区间会因专业不同而变化，筛选结果采用区间重叠方式计算。"}</p>
+            <p className="mt-2 max-w-md text-xs leading-5 app-muted-text">{universities.length === 0 ? "大学资料发布后会显示在这里。" : "可以减少一个排名或地区条件；学费区间会因专业不同而变化。"}</p>
             {universities.length > 0 && <button type="button" onClick={resetFilters} className={`mt-5 rounded-xl px-4 py-2.5 text-xs font-bold text-white ${focusRing}`} style={{ backgroundColor: "var(--primary)" }}>清除筛选</button>}
           </div>
         )}

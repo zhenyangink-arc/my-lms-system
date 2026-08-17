@@ -69,7 +69,7 @@ function NoteEditDialog({
         <DialogHeader className="border-b border-black/[0.08] px-5 py-4 text-left">
           <DialogTitle className="text-sm font-semibold">编辑管理员备注</DialogTitle>
           <DialogDescription className="text-[10px] leading-5">
-            管理员备注会显示在学生这项资料卡片下方，用于反馈修改要求或说明情况。
+            管理员备注会显示在学生端。
           </DialogDescription>
         </DialogHeader>
         <form action={updateApplicationChecklistItemNoteAction.bind(null, studentId, documentId)}>

@@ -333,7 +333,7 @@ export async function ChapterTestWorkspace({
               章节测试读取失败
             </h2>
             <p className="mt-1 font-normal">
-              章节测试暂时无法完整读取，请稍后刷新页面。失败数据不会显示为“暂无数据”。
+              章节测试暂时无法完整读取，请稍后刷新页面。
             </p>
           </section>
         )}
@@ -525,9 +525,6 @@ export async function ChapterTestWorkspace({
                             </td>
                             <td className="border-l px-4 py-3.5">
                               <div className="flex min-w-0 items-center gap-2">
-                                <span className="app-muted-text shrink-0 font-mono text-[11px]">
-                                  {String(test.chapter_number).padStart(2, "0")}
-                                </span>
                                 <span className="truncate text-sm font-bold">
                                   {test.title}
                                 </span>

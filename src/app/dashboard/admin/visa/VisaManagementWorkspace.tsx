@@ -182,11 +182,7 @@ export function VisaManagementWorkspace({
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-5 sm:px-5 xl:flex-row xl:items-end xl:justify-between">
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
-                机构签证工作台 / 学生案件
-              </p>
-              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">签证管理</h2>
-              <p className="mt-1 text-[11px] text-zinc-500">按学生档案跟进签证任务、补件、递签结果与入境安排；所有案件默认收缩。</p>
+              <h2 className="text-xl font-semibold tracking-[-0.035em] text-zinc-950">签证管理</h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[
@@ -333,7 +329,6 @@ export function VisaManagementWorkspace({
                     <td colSpan={11} className="px-5 py-16 text-center">
                       {query || status !== "all" ? <Search className="mx-auto text-zinc-300" size={24} /> : <FileCheck2 className="mx-auto text-zinc-300" size={24} />}
                       <p className="mt-3 text-xs font-medium text-zinc-700">{query || status !== "all" ? "没有符合条件的签证档案" : "本机构尚未产生签证档案"}</p>
-                      <p className="mt-1 text-[10px] text-zinc-400">申请流程进入签证阶段后，系统会在这里生成对应案件。</p>
                     </td>
                   </tr>
                 )}

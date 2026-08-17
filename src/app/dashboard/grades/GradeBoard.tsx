@@ -186,9 +186,9 @@ function SkillRadar({
   const categoryStyle = categoryPresentation[category];
   return (
     <SixDimensionRadar
-      eyebrow={`${categoryStyle.label}能力画像`}
-      title={`${categoryStyle.label} · 六维学习能力`}
-      description={`只使用${categoryStyle.label}中带能力标记的有效逐题得分`}
+      eyebrow={categoryStyle.label}
+      title="六维学习能力"
+      description="查看听、说、读、写、词汇与语法表现"
       icon={categoryStyle.icon}
       color={categoryStyle.color}
       soft={categoryStyle.soft}
@@ -317,7 +317,7 @@ export function GradeBoard({
               我的成绩
             </h2>
             <p className="app-muted-text mt-2 text-sm font-medium leading-6">
-              选择老师作业或正式考试，概览、能力画像和成绩明细会一起切换。章节测试仍在对应章节内查看。
+              章节测试请在对应章节内查看。
             </p>
           </div>
           <nav
@@ -386,20 +386,14 @@ export function GradeBoard({
         </div>
         <div className="flex flex-wrap items-end justify-between gap-3 px-1">
           <div>
-            <p
-              className="text-xs font-semibold tracking-[0.12em]"
-              style={{ color: activePresentation.color }}
-            >
-              当前查看
-            </p>
             <h2
               id="active-grade-overview-title"
-              className="mt-1 text-lg font-bold tracking-tight"
+              className="text-lg font-bold tracking-tight"
             >
               {activePresentation.label}概览
             </h2>
             <p className="app-muted-text mt-1 text-xs font-medium">
-              {scoreLabel(activeAverage)} · 数据只来自{activePresentation.label}
+              {scoreLabel(activeAverage)}
             </p>
           </div>
           <span
@@ -693,16 +687,6 @@ export function GradeBoard({
         )}
       </section>
 
-      <section className="app-soft-card flex items-center gap-3 rounded-2xl border p-4">
-        <Award
-          size={18}
-          className="shrink-0 text-[var(--support)]"
-          aria-hidden="true"
-        />
-        <p className="app-muted-text text-xs font-medium leading-5">
-          六维能力画像只使用有明确能力标记的逐题成绩；没有标记的成绩仍会出现在成绩明细中，但不会被强行计入听、说、读、写、词汇或语法分析。
-        </p>
-      </section>
     </div>
   );
 }

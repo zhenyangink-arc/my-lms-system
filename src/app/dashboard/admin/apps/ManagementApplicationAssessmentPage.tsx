@@ -148,7 +148,7 @@ export async function ManagementApplicationAssessmentPage({
     <div className="space-y-5">
       {(assignmentResult.error || testResult.error || paperResult.error) && (
         <ManagementNotice tone="warning">
-          作业考试数据暂时无法完整读取，请确认应用归属迁移已经部署。
+          作业考试数据暂时无法完整读取，请稍后刷新重试。
         </ManagementNotice>
       )}
       {bankQuestionResult.error && (
@@ -172,7 +172,7 @@ export async function ManagementApplicationAssessmentPage({
 
       <section className="space-y-3">
         <div className="flex flex-wrap items-start justify-between gap-3">
-          <div><h2 className="text-sm font-semibold">平台标准试卷</h2><p className="app-muted-text mt-1 text-xs">试卷从当前应用的章节测试继承归属，不能跨应用发布。</p></div>
+          <div><h2 className="text-sm font-semibold">平台标准试卷</h2><p className="app-muted-text mt-1 text-xs">不能跨应用发布。</p></div>
           {canManageStandardPapers && !testResult.error && !bankQuestionResult.error && (
             <div className="flex flex-wrap gap-2">
               <AssessmentPaperComposer
@@ -201,7 +201,7 @@ export async function ManagementApplicationAssessmentPage({
       </section>
 
       <section className="space-y-3">
-        <div><h2 className="text-sm font-semibold">机构作业与正式考试</h2><p className="app-muted-text mt-1 text-xs">列表由 `learning_assignments.student_app_id` 直接限定。</p></div>
+        <h2 className="text-sm font-semibold">机构作业与正式考试</h2>
         <div className="overflow-x-auto border bg-[var(--card)]">
           <table className="w-full min-w-[780px] border-collapse text-left text-xs">
             <caption className="sr-only">当前机构在此应用中的作业与正式考试</caption>
@@ -215,7 +215,7 @@ export async function ManagementApplicationAssessmentPage({
       </section>
 
       <section className="space-y-3">
-        <div><h2 className="text-sm font-semibold">章节测试目录</h2><p className="app-muted-text mt-1 text-xs">章节测试与其他应用的测试题库完全分开。</p></div>
+        <h2 className="text-sm font-semibold">章节测试目录</h2>
         <div className="overflow-x-auto border bg-[var(--card)]">
           <table className="w-full min-w-[680px] border-collapse text-left text-xs">
             <caption className="sr-only">当前应用的章节测试目录</caption>

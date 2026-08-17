@@ -1,5 +1,3 @@
-﻿import { Sparkles } from "lucide-react";
-
 import { requireActiveUser } from "@/lib/auth";
 import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
@@ -79,17 +77,7 @@ function Hero({
       />
       <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <span
-            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[10px] font-bold tracking-wide"
-            style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}
-          >
-            <Sparkles size={12} aria-hidden="true" />
-            巩固中心 · 词汇专项
-          </span>
-          <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">单词练习</h2>
-          <p className="app-muted-text mt-2 max-w-xl text-sm font-bold leading-6">
-            练习词库独立于互动教材，可自由扩充。翻卡巩固，越练越牢。
-          </p>
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">单词练习</h2>
         </div>
         <div className="flex shrink-0 gap-3">
           <StatCard value={totalWords} label="个单词" />

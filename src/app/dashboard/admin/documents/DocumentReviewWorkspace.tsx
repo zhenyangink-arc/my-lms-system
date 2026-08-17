@@ -280,10 +280,7 @@ function ReviewDialog({
     <Dialog open onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[92vh] flex-col gap-0 overflow-hidden rounded-lg border-black/10 bg-white p-0 shadow-[0_24px_80px_rgba(0,0,0,0.14)] sm:max-w-[1050px]">
         <DialogHeader className="border-b border-black/[0.08] px-6 py-4 pr-14 text-left">
-          <p className="text-[9px] font-medium uppercase tracking-[0.1em] text-zinc-400">
-            资料审核 / 申请单
-          </p>
-          <DialogTitle className="mt-1 text-base font-semibold tracking-[-0.025em]">
+          <DialogTitle className="text-base font-semibold tracking-[-0.025em]">
             {application.studentName} · {application.universityName}
           </DialogTitle>
           <DialogDescription className="text-[10px]">
@@ -430,9 +427,7 @@ export function DocumentReviewWorkspace({
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-5 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">留学业务 / 资料审核</p>
-              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">申请资料审核</h2>
-              <p className="mt-1 text-[11px] text-zinc-500">以“学生 × 目标大学申请单”为单位核对资料，单项准备状态与整单审核结果分开记录。</p>
+              <h2 className="text-xl font-semibold tracking-[-0.035em] text-zinc-950">申请资料审核</h2>
             </div>
             <dl className="flex flex-wrap items-center gap-y-2 text-[10px]">
               {[

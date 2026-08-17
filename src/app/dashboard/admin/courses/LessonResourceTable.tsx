@@ -62,7 +62,7 @@ export function LessonResourceTable({
           <h3 className="text-[12px] font-semibold">课时资料</h3>
           <p className="app-muted-text mt-1 text-[10px]">发布后的资料会出现在学生端当前课时中。</p>
         </div>
-        <span className="app-muted-text font-mono text-[10px]">{activeResources.length} ACTIVE / {deletedResources.length} TRASH</span>
+        <span className="app-muted-text text-[10px]">启用 {activeResources.length} / 回收站 {deletedResources.length}</span>
       </div>
 
       {errorMessage && <p className="border-y px-3 py-3 text-[11px] text-red-600">读取资料失败：{errorMessage}</p>}

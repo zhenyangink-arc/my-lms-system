@@ -534,7 +534,7 @@ export function GrowthHomeView({
           <SectionHeading
             icon={LineChart}
             title="近 7 天学习节奏"
-            description="按数据库中的有效学习时间统计，不把页面停留当作学习成果。"
+            description="有效学习时间"
             action={
               <div className="flex items-center gap-2">
                 <MonthlyStudyDialog

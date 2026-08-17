@@ -285,12 +285,9 @@ function KoreanDirectCourseCatalog({
         />
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-3xl">
-            <p className="app-muted-text text-xs font-semibold uppercase tracking-[0.16em]">
-              韩语学习目录
-            </p>
             <h2
               id="korean-course-catalog-title"
-              className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl"
+              className="text-3xl font-bold tracking-tight sm:text-4xl"
             >
               所有韩语课程，一页看清
             </h2>
@@ -854,7 +851,6 @@ export async function CourseCatalog({
                 <div className="app-empty-state flex min-h-52 flex-col items-center justify-center rounded-3xl p-6 text-center md:col-span-2">
                   <BookOpen size={26} style={{ color: "var(--support)" }} aria-hidden="true" />
                   <p className="mt-3 text-sm font-bold">暂无可学课程</p>
-                  <p className="mt-1 text-xs app-muted-text">课程开放后会直接显示在这里。</p>
                 </div>
               )}
             </div>
@@ -914,7 +910,6 @@ export async function CourseCatalog({
                 </span>
                 <div className="min-w-0 flex-1">
                   <h2 className="text-sm font-bold">即将开放的课程</h2>
-                  <p className="mt-0.5 text-xs app-muted-text">课程内容准备完成后，会直接显示在上方。</p>
                 </div>
                 <span className="rounded-full px-2.5 py-1 text-xs font-bold app-muted-text" style={{ backgroundColor: "var(--card)" }}>{upcomingCategories.length}</span>
                 <ChevronDown size={17} className="shrink-0 transition-transform duration-200 group-open:rotate-180" aria-hidden="true" />
@@ -940,9 +935,6 @@ export async function CourseCatalog({
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程板块</p>
-              <p className="mt-2 text-sm text-gray-500">
-                当前还没有发布课程板块。
-              </p>
             </div>
           )}
         </section>

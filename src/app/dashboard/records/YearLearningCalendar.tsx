@@ -84,10 +84,7 @@ export function YearLearningCalendar({
 
   return (
     <div className="p-4 sm:p-6">
-      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="app-muted-text max-w-2xl text-sm font-medium leading-6">
-          绿色深浅表示有效学习时长，蓝点表示当天有完成、提交或练习记录。
-        </p>
+      <div className="mb-5 flex justify-end">
         <div className="flex flex-wrap gap-x-5 gap-y-2 text-sm">
           <p className="font-medium">
             <span className="font-bold tabular-nums text-[var(--status-success)]">

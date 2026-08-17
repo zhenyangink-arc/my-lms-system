@@ -291,10 +291,7 @@ export async function ManagementApplicationWorkspacePage({
       </section>
 
       <section aria-labelledby="application-operations-title">
-        <div className="mb-3">
-          <h2 id="application-operations-title" className="text-sm font-semibold">运营模块</h2>
-          <p className="app-muted-text mt-1 text-xs">只展示当前应用范围内的数据与操作。</p>
-        </div>
+        <h2 id="application-operations-title" className="mb-3 text-sm font-semibold">运营模块</h2>
         <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
           {modules.map((module) => {
             const Icon = module.icon;

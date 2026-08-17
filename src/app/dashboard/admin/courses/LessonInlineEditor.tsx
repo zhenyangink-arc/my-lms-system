@@ -110,8 +110,7 @@ export function LessonInlineEditor({
             </div>
           </div>
           <div className="border-t pt-5" style={{ borderColor: "var(--border)" }}>
-            <h3 className="mb-1 text-[12px] font-semibold">视频来源</h3>
-            <p className="app-muted-text mb-4 text-[10px]">对象存储视频填写对象键；外部视频填写完整链接。</p>
+            <h3 className="mb-4 text-[12px] font-semibold">视频来源</h3>
             <div className="grid gap-4 md:grid-cols-2">
               <label className={labelClass}>视频存储方式<select name="video_provider" defaultValue={lesson.video_provider ?? "r2"} className={inputClass}><option value="r2">对象存储</option><option value="external">外部地址</option></select></label>
               <label className={labelClass}>MIME 类型<input name="video_mime_type" defaultValue={lesson.video_mime_type ?? "video/mp4"} className={inputClass} /></label>

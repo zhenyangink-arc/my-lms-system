@@ -283,13 +283,15 @@ export function KoreanCourseCatalogBrowser({
                         </span>
                       </div>
 
-                      <div className="mt-5 min-h-[132px] min-w-0">
+                      <div className="mt-5 min-w-0">
                         <h3 className="line-clamp-2 min-h-14 text-xl font-bold leading-7 tracking-tight" title={course.title}>
                           {course.title}
                         </h3>
-                        <p className="app-muted-text mt-2 line-clamp-3 h-[72px] text-sm font-medium leading-6" title={course.description ?? undefined}>
-                          {course.description || "进入课程，按照课时顺序完成韩语学习。"}
-                        </p>
+                        {course.description && (
+                          <p className="app-muted-text mt-2 line-clamp-3 text-sm font-medium leading-6" title={course.description}>
+                            {course.description}
+                          </p>
+                        )}
                       </div>
 
                       <div className="mt-auto pt-5">

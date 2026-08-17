@@ -341,7 +341,6 @@ export function StudentSystemSidebar({
           </span>
           <span>
             <strong>{studentAppSlug ? getStudentAppDefinition(studentAppSlug).title : "元智学习"}</strong>
-            <small>{studentAppSlug ? "STUDENT APP" : "STUDENT OS"}</small>
           </span>
         </Link>
 

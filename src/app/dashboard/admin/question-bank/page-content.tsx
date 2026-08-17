@@ -381,7 +381,7 @@ export default async function StandardQuestionBankPage({
               borderColor: "#c94f45",
             }}
           >
-            标准题库暂时无法读取，请确认最新数据库迁移已经执行。
+            标准题库暂时无法读取，请稍后重试或联系管理员。
           </section>
         )}
 
@@ -406,9 +406,6 @@ export default async function StandardQuestionBankPage({
             ) : (
               <section className="border-y py-10 text-center">
                 <h2 className="text-base font-semibold">请先选择具体章节</h2>
-                <p className="app-muted-text mt-2 text-xs leading-5">
-                  新增入口已放到每个章节卡片中，避免在全部课程范围内重复选择。
-                </p>
                 <Link
                   href={pageHref(currentValues, {
                     mode: "browse",

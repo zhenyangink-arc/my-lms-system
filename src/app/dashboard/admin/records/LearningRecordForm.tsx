@@ -181,10 +181,10 @@ export function LearningRecordForm({
         </table>
       </div>
 
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-        {state.message ? (
+      <div className="mt-3 flex flex-wrap items-center justify-end gap-3">
+        {state.message && (
           <p
-            className="rounded-lg px-3 py-2 text-xs font-bold"
+            className="mr-auto rounded-lg px-3 py-2 text-xs font-bold"
             style={{
               color: state.status === "error" ? "#c94f45" : "var(--status-success)",
               backgroundColor:
@@ -193,10 +193,6 @@ export function LearningRecordForm({
           >
             {state.message}
           </p>
-        ) : (
-          <span className="app-muted-text text-[10px]">
-            这是人工辅导备注；课程、作业、会话与成绩由系统自动汇总。
-          </span>
         )}
         <button
           type="submit"

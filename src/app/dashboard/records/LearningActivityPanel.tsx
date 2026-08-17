@@ -39,18 +39,12 @@ export function LearningActivityPanel({
     >
       <header className="flex flex-col gap-4 border-b border-[var(--border-subtle)] px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-6">
         <div>
-          <p className="text-[11px] font-semibold tracking-[0.12em] text-[var(--primary)]">
-            每日学习
-          </p>
           <h2
             id="learning-activity-title"
-            className="mt-1 text-lg font-bold tracking-tight"
+            className="text-lg font-bold tracking-tight"
           >
             学习投入与完成足迹
           </h2>
-          <p className="app-muted-text mt-1 text-sm font-medium leading-6">
-            在趋势图和全年日历之间切换，查看同一组每日学习数据。
-          </p>
         </div>
 
         <div

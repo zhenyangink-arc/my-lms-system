@@ -218,7 +218,7 @@ export function CourseListDialog({ tree }: { tree: CourseTreePayload }) {
           <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-3">
             <DialogTitle className="flex items-center gap-2 text-base font-bold">
               <BookOpen size={18} style={{ color: "var(--primary)" }} />
-              全部课程 · 课程体系树
+              课程体系树
             </DialogTitle>
             <span
               className="shrink-0 rounded-full px-3 py-1 text-xs font-bold"

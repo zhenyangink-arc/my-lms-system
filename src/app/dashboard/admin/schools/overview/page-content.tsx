@@ -42,7 +42,6 @@ export default async function SchoolOverviewPage() {
     <>
       <DashboardPageHeader
         title="学校总览"
-        description="集中检查五类学校的数据数量、发布状态与资料完整度。"
       />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5">
         <Link

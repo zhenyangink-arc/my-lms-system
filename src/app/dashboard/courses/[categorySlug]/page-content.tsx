@@ -761,9 +761,6 @@ export default async function CategoryPage({
           ) : (
             <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课程分类</p>
-              <p className="mt-2 text-sm text-gray-500">
-                当前课程板块下还没有发布二级分类。
-              </p>
             </div>
           )}
         </section>

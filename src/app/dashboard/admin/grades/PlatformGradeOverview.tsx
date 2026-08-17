@@ -111,7 +111,7 @@ export function PlatformGradeOverview({
               backgroundColor: "var(--status-warning-surface)",
             }}
           >
-            机构成绩汇总暂时无法读取，请确认数据库迁移已经执行。
+            机构成绩汇总暂时无法读取，请稍后重试。
           </section>
         )}
 
@@ -122,9 +122,6 @@ export function PlatformGradeOverview({
           >
             <div>
               <h2 className="text-base font-semibold">机构成绩运行表</h2>
-              <p className="app-muted-text mt-1 text-[10px]">
-                每行对应一个机构，仅展示汇总统计。
-              </p>
             </div>
             <span className="app-muted-text text-xs font-semibold">
               共 {institutionCount} 个机构

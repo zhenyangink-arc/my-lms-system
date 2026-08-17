@@ -134,10 +134,7 @@ export function PlatformVisaOverview({
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-5 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
-                平台负责人 / 机构运行巡检
-              </p>
-              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
+              <h2 className="text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 签证管理
               </h2>
             </div>
@@ -164,7 +161,7 @@ export function PlatformVisaOverview({
 
           {hasError && (
             <div className="border-b border-rose-200 bg-rose-50 px-5 py-3 text-[11px] text-rose-700">
-              机构签证汇总暂时无法读取，请确认数据库迁移已经完成。
+              机构签证汇总暂时无法读取，请稍后重试。
             </div>
           )}
 
@@ -250,7 +247,6 @@ export function PlatformVisaOverview({
                                     <th className="w-[130px] px-2 font-medium">办理阶段</th>
                                     <th className="w-[90px] px-2 text-right font-medium">档案</th>
                                     <th className="w-[90px] px-2 text-right font-medium">占比</th>
-                                    <th className="px-2 font-medium">巡检说明</th>
                                   </tr>
                                 </thead>
                                 <tbody>
@@ -261,7 +257,6 @@ export function PlatformVisaOverview({
                                       </td>
                                       <td className="px-2 text-right font-mono tabular-nums text-zinc-700">{count}</td>
                                       <td className="px-2 text-right font-mono tabular-nums text-zinc-400">{total > 0 ? `${Math.round((count / total) * 100)}%` : "—"}</td>
-                                      <td className="px-2 text-zinc-500">{count > 0 ? `${count} 份档案处于该阶段` : "当前没有档案"}</td>
                                     </tr>
                                   ))}
                                 </tbody>

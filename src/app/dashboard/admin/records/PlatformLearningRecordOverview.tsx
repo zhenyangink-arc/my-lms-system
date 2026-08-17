@@ -62,17 +62,6 @@ export function PlatformLearningRecordOverview({
           </div>
         </section>
 
-        <section
-          className="rounded-2xl border px-4 py-3 text-[11px] font-bold leading-5"
-          style={{
-            color: "var(--support)",
-            borderColor: "var(--support)",
-            backgroundColor: "var(--support-surface)",
-          }}
-        >
-          平台只用于确认各机构是否持续维护学习记录；具体内容和学生信息由对应机构自行管理。
-        </section>
-
         {hasError && (
           <section
             className="rounded-2xl border px-4 py-3 text-sm font-bold"
@@ -81,7 +70,7 @@ export function PlatformLearningRecordOverview({
               backgroundColor: "var(--status-warning-surface)",
             }}
           >
-            机构学习记录汇总暂时无法读取，请确认数据库迁移已经执行。
+            机构学习记录汇总暂时无法读取，请稍后重试。
           </section>
         )}
 

@@ -175,10 +175,7 @@ export function LearningTrendChart({
 
   return (
     <div className="p-4 sm:p-6">
-      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <p className="app-muted-text text-sm font-medium">
-          折线越高，表示当天经过计时确认的学习时间越长。
-        </p>
+      <div className="mb-4 flex justify-end">
         <div
           className="grid grid-cols-4 gap-1 rounded-2xl bg-[var(--surface-soft)] p-1"
           role="group"

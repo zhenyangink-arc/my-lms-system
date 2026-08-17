@@ -91,10 +91,7 @@ export function PlatformDocumentReviewOverview({
         <section className="border-y border-black/[0.08] bg-white">
           <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-5 sm:px-5 lg:flex-row lg:items-end lg:justify-between">
             <div>
-              <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-zinc-400">
-                平台负责人 / 机构运行概览
-              </p>
-              <h2 className="mt-1.5 text-xl font-semibold tracking-[-0.035em] text-zinc-950">
+              <h2 className="text-xl font-semibold tracking-[-0.035em] text-zinc-950">
                 资料审核管理
               </h2>
             </div>
@@ -115,7 +112,7 @@ export function PlatformDocumentReviewOverview({
 
           {hasError && (
             <div className="border-b border-rose-200 bg-rose-50 px-5 py-3 text-[11px] text-rose-700">
-              机构资料审核汇总暂时无法读取，请确认数据库迁移已经完成。
+              机构资料审核汇总暂时无法读取，请稍后重试。
             </div>
           )}
 

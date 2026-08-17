@@ -133,8 +133,8 @@ export function ChapterQuestionBankActions({
               <div className="min-w-0">
                 <p className="app-muted-text text-[11px] font-semibold">
                   {openModal === "view"
-                    ? `当前章节 · ${questions.length} 道题`
-                    : "当前章节 · 新增题目"}
+                    ? `${questions.length} 道题`
+                    : "新增题目"}
                 </p>
                 <h2
                   id={`question-bank-modal-${group.id}`}

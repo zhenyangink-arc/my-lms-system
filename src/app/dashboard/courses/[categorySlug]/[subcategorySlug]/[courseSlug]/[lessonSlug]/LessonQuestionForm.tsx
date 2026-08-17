@@ -107,7 +107,7 @@ export function LessonQuestionForm({
     if (target === "teacher") {
       setResultMessage("问题已提交给老师。");
     } else if (target === "ai") {
-      setResultMessage("问题已提交到智能助教队列。自动回答功能后续接入。");
+      setResultMessage("问题已提交，等待智能助教处理。");
     } else {
       setResultMessage("问题已提交。智能助教优先处理，必要时可转老师。");
     }

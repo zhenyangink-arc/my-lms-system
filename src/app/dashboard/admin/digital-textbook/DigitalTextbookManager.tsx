@@ -524,7 +524,7 @@ export function VocabularyWorkspace({
         </div>
         <div className="min-h-0 flex-1 overflow-y-auto p-4">
           {chapter.nodes.length === 0 ? (
-            <p className="app-muted-text py-10 text-center text-[12px]">本章还没有词汇模块节点。</p>
+            <p className="app-muted-text py-10 text-center text-[12px]">本章还没有词汇。</p>
           ) : (
             <div className="space-y-5">
               {chapter.nodes.map((node) => (
@@ -579,7 +579,7 @@ function NodeVocabularyBlock({
         </div>
       )}
       {words.length === 0 && (
-        <p className="app-muted-text py-3 text-center text-xs font-medium">这个节点还没有词汇。</p>
+        <p className="app-muted-text py-3 text-center text-xs font-medium">还没有词汇。</p>
       )}
       <AddVocabularyForm nodeId={nodeId} onRefresh={onRefresh} />
     </div>
@@ -675,7 +675,7 @@ function WordRow({
           }}
         >
           <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--support)" }} />
-          来自互动教材数据库
+          互动教材
         </span>
       </td>
       <td className="app-muted-text border-l px-3 py-2.5 font-mono text-[10px]" style={{ borderColor: "var(--border)" }}>{index + 1}</td>
@@ -845,7 +845,7 @@ function GrammarWorkspace({
         <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-4">
           {nodes.length === 0 ? (
             <p className="app-muted-text py-6 text-center text-[12px]">
-              本章还没有语法数据，点击下方的“添加语法点”创建第一条（会自动创建语法模块）。
+              本章还没有语法数据。
             </p>
           ) : (
             <div className="overflow-hidden rounded-xl border" style={{ borderColor: "var(--border)" }}>
@@ -873,7 +873,7 @@ function GrammarWorkspace({
                     node.items.length === 0 ? (
                       <tr key={node.id}>
                         <td colSpan={14} className="app-muted-text px-3 py-3 text-center text-[10px]">
-                          这个语法节点还没有内容。
+                          还没有语法内容。
                         </td>
                       </tr>
                     ) : (
@@ -1131,7 +1131,7 @@ function GrammarItemRow({
           }}
         >
           <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: "var(--support)" }} />
-          来自互动教材数据库
+          互动教材
         </span>
       </td>
       <td className="border-l px-3 py-2.5 text-right" style={{ borderColor: "var(--border)" }}>
@@ -1576,7 +1576,7 @@ function GrammarRowAudioField({
   async function upload(file: File | undefined) {
     if (!file) return;
     setStatus("uploading");
-    setMessage("正在上传音频到 R2…");
+    setMessage("正在上传音频…");
     try {
       const created = await createGrammarAudioUploadUrlAction({
         textbookSlug,
@@ -1593,7 +1593,7 @@ function GrammarRowAudioField({
         headers: { "Content-Type": file.type || "audio/mpeg" },
         body: file,
       });
-      if (!response.ok) throw new Error("R2 上传失败，请稍后重试");
+      if (!response.ok) throw new Error("上传失败，请稍后重试");
       const confirmed = await confirmGrammarAudioUploadAction({
         objectKey: created.objectKey,
         fileSize: file.size,
@@ -1702,7 +1702,7 @@ function GrammarRowAudioField({
           className="mt-1 text-[9px] leading-4"
           style={{ color: status === "error" ? "var(--status-warning)" : "var(--foreground-muted)" }}
         >
-          {message || "支持常用音频格式，文件不超过 20 兆，保存至对象存储"}
+          {message || "支持常用音频格式，文件不超过 20 兆"}
         </p>
       )}
     </div>

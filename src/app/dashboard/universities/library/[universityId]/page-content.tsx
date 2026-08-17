@@ -253,23 +253,20 @@ export default async function UniversityPublicDetailPage({
 
         {!requirementsError && (
           <section id="application-requirements" className="scroll-mt-24" aria-labelledby="application-requirements-title">
-            <div className="mb-3">
-              <h3 id="application-requirements-title" className="flex items-center gap-2 text-xl font-bold">
-                <ClipboardList size={21} style={{ color: "var(--primary)" }} aria-hidden="true" />
-                申请与签证要求
-              </h3>
-              <p className="app-muted-text mt-2 text-xs">仅展示学校当前启用的要求，并按学校维护顺序排列。</p>
-            </div>
+            <h3 id="application-requirements-title" className="mb-3 flex items-center gap-2 text-xl font-bold">
+              <ClipboardList size={21} style={{ color: "var(--primary)" }} aria-hidden="true" />
+              申请与签证要求
+            </h3>
             <div className="grid gap-4 xl:grid-cols-2">
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle><h4>申请资料要求</h4></CardTitle>
-                  <CardDescription>{documentRequirements.length} 项启用要求</CardDescription>
+                  <CardDescription>{documentRequirements.length} 项要求</CardDescription>
                 </CardHeader>
                 <CardContent className="px-0">
                   {documentRequirements.length > 0 ? (
                     <Table>
-                      <TableCaption className="sr-only">申请资料要求，按学校维护顺序排列</TableCaption>
+                      <TableCaption className="sr-only">申请资料要求</TableCaption>
                       <TableHeader>
                         <TableRow>
                           <TableHead className="pl-4">资料</TableHead>
@@ -299,12 +296,12 @@ export default async function UniversityPublicDetailPage({
               <Card>
                 <CardHeader className="border-b">
                   <CardTitle><h4>签证资料要求</h4></CardTitle>
-                  <CardDescription>{visaRequirements.length} 项启用要求</CardDescription>
+                  <CardDescription>{visaRequirements.length} 项要求</CardDescription>
                 </CardHeader>
                 <CardContent className="px-0">
                   {visaRequirements.length > 0 ? (
                     <Table>
-                      <TableCaption className="sr-only">签证资料要求，按学校维护顺序排列</TableCaption>
+                      <TableCaption className="sr-only">签证资料要求</TableCaption>
                       <TableHeader>
                         <TableRow>
                           <TableHead className="pl-4">资料</TableHead>
@@ -341,7 +338,7 @@ export default async function UniversityPublicDetailPage({
           <div className="flex items-center justify-between gap-3">
             <div>
               <h3 className="flex items-center gap-2 text-xl font-bold"><GraduationCap size={21} style={{ color: "var(--support)" }} aria-hidden="true" />学校专业介绍</h3>
-              <p className="app-muted-text mt-2 text-xs">专业与申请条件由管理人员持续复核，实际招生以当年简章为准。</p>
+              <p className="app-muted-text mt-2 text-xs">实际招生以当年简章为准。</p>
             </div>
             <span className="app-soft-card rounded-full border px-3 py-1 text-xs font-bold">{programsError ? "—" : programs.length} 个专业</span>
           </div>

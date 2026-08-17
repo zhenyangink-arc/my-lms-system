@@ -202,8 +202,7 @@ function RoleDialog({ profile, displayName, viewerRole, accountScope }: { profil
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="app-soft-card rounded-2xl border p-4 text-sm">
-            <p className="app-muted-text text-xs font-bold">正在修改</p>
-            <p className="mt-1 font-semibold">{displayName}</p>
+            <p className="font-semibold">{displayName}</p>
             <p className="app-muted-text mt-1 text-xs">当前角色：{ROLE_LABELS[profile.role as keyof typeof ROLE_LABELS] ?? profile.role}</p>
           </div>
           <label className="block">
@@ -239,8 +238,7 @@ function StatusDialog({ profile, displayName }: { profile: AccountListProfile; d
         </DialogHeader>
         <form action={formAction} className="space-y-4">
           <div className="app-soft-card rounded-2xl border p-4 text-sm">
-            <p className="app-muted-text text-xs font-bold">正在修改</p>
-            <p className="mt-1 font-semibold">{displayName}</p>
+            <p className="font-semibold">{displayName}</p>
             <p className="app-muted-text mt-1 text-xs">当前状态：{STATUS_LABELS[profile.status] ?? profile.status}</p>
           </div>
           <label className="block">

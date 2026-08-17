@@ -230,7 +230,7 @@ export default async function KoreanAssignmentTestsPage() {
         <ChapterTestSectionCard
           eyebrow="路线 01 · 字母启蒙"
           title="韩语字母入门"
-          description="四章测试已经独立设计，建议学完对应章节后进入；可以反复练习，系统保留最近一次成绩。"
+          description="建议学完对应章节后进入；可以反复练习，系统保留最近一次成绩。"
           meta={`${hangulTests.length} 章`}
           accentColor="var(--status-warning)"
         >
@@ -514,7 +514,7 @@ export default async function KoreanAssignmentTestsPage() {
                 headingLevel={2}
                 titleClassName="font-bold"
                 title="韩国语2级测试线路"
-                description="待韩国语2级课程章节完成后，再按相同结构逐章开放。"
+                description="韩国语2级章节测试暂未开放。"
               />
             </div>
             {isManager && (

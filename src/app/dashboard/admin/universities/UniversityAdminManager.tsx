@@ -99,7 +99,6 @@ function FormRow({ label, children }: { label: string; children: React.ReactNode
 }
 
 function UniversityFormFields({ university }: { university?: AdminUniversity }) {
-  const isNew = !university;
   const defaultStages = university?.admission_stages ?? stageOptions.map(([value]) => value);
   const defaultDisciplines = university?.discipline_groups ?? disciplineOptions.map(([value]) => value);
 
@@ -155,7 +154,6 @@ function UniversityFormFields({ university }: { university?: AdminUniversity }) 
           <FormRow label="中央日报排名">
             <div className="grid gap-3 sm:grid-cols-3"><input name="joongangRankDisplay" placeholder="显示值" defaultValue={university?.joongang_rank_display ?? ""} className={inputClass} /><input name="joongangRankSort" type="number" min="0" defaultValue={university?.joongang_rank_sort ?? ""} className={inputClass} placeholder="排序值" /><input name="joongangRankingYear" type="number" min="2000" defaultValue={university?.joongang_ranking_year ?? ""} className={inputClass} placeholder="年份" /></div>
           </FormRow>
-          {isNew && <FormRow label="说明"><p className="app-muted-text text-xs">内部技术标识由系统自动生成，只需维护学生能看到的资料。</p></FormRow>}
         </tbody>
       </table>
     </div>
@@ -345,8 +343,7 @@ function UniversityManagementDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden rounded-lg border-black/10 bg-white p-0 shadow-[0_24px_80px_rgba(0,0,0,0.14)] sm:max-w-[960px]">
         <DialogHeader className="border-b border-black/[0.07] px-6 py-4 pr-14 text-left">
-          <p className="text-[9px] font-medium uppercase tracking-[0.1em] text-zinc-400">大学资料 / {canManageContent ? "编辑" : "查看"}</p>
-          <DialogTitle className="mt-1 truncate text-base font-semibold tracking-[-0.025em]">{university.name_zh}</DialogTitle>
+          <DialogTitle className="truncate text-base font-semibold tracking-[-0.025em]">{university.name_zh}</DialogTitle>
           <DialogDescription className="mt-0.5 truncate text-[10px]">{university.name_ko} · {university.province} · {ownershipLabels[university.ownership]}</DialogDescription>
         </DialogHeader>
 
@@ -475,7 +472,6 @@ export function UniversityAdminManager({
     <section className="overflow-hidden border-y border-black/[0.08] bg-white">
       <header className="flex flex-col gap-4 border-b border-black/[0.08] px-4 py-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="mb-1.5 text-[9px] font-medium uppercase tracking-[0.1em] text-zinc-400">留学资源 / 韩国大学</p>
           <div className="flex flex-wrap items-baseline gap-3">
             <h2 className="text-lg font-semibold tracking-[-0.03em] text-zinc-950">韩国大学管理</h2>
             <span className="font-mono text-[10px] tabular-nums text-zinc-400">{universities.length} 所大学 · {universities.filter((university) => university.is_published).length} 所已发布</span>
@@ -569,7 +565,7 @@ export function UniversityAdminManager({
       {canManageContent && (
         <Dialog open={creatingUniversity} onOpenChange={setCreatingUniversity}>
           <DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden rounded-lg border-black/10 bg-white p-0 shadow-[0_24px_80px_rgba(0,0,0,0.14)] sm:max-w-[960px]">
-            <DialogHeader className="border-b border-black/[0.07] px-6 py-4 text-left"><p className="text-[9px] font-medium uppercase tracking-[0.1em] text-zinc-400">大学资料 / 新增</p><DialogTitle className="mt-1 text-base font-semibold tracking-[-0.025em]">新增大学</DialogTitle><DialogDescription className="text-[10px]">填写基本资料，保存后再维护申请材料和签证要求。</DialogDescription></DialogHeader>
+            <DialogHeader className="border-b border-black/[0.07] px-6 py-4 text-left"><DialogTitle className="text-base font-semibold tracking-[-0.025em]">新增大学</DialogTitle><DialogDescription className="text-[10px]">保存后可维护申请材料和签证要求。</DialogDescription></DialogHeader>
             <form action={createUniversityAction} className="flex min-h-0 flex-1 flex-col"><div className="min-h-0 flex-1 overflow-y-auto p-6"><UniversityFormFields /></div><div className="flex justify-end border-t border-black/[0.08] px-6 py-4"><SubmitButton label="新增大学" /></div></form>
           </DialogContent>
         </Dialog>

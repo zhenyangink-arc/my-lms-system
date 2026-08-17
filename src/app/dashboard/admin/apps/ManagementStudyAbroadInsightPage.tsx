@@ -235,10 +235,6 @@ export async function ManagementStudyAbroadInsightPage({
             { label: "获签完成率", value: `${issuedRate}%` },
           ]}
         />
-        <p className="app-muted-text text-xs leading-5">
-          当前共 {applications.length} 个申请项目，材料确认率为 {reviewRate}%；
-          共 {cases.length} 份签证档案，获签完成率为 {issuedRate}%。
-        </p>
         <section aria-labelledby="service-attention-heading">
           <h2 id="service-attention-heading" className="sr-only">
             留学服务待办摘要
@@ -265,9 +261,6 @@ export async function ManagementStudyAbroadInsightPage({
               <dd className="mt-2 text-2xl font-semibold tabular-nums">
                 {issuedCases}
               </dd>
-              <p className="app-muted-text mt-2 text-xs">
-                当前机构已完成签证档案
-              </p>
             </div>
           </dl>
         </section>

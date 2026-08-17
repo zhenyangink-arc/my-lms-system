@@ -126,7 +126,7 @@ export async function ManagementApplicationPeoplePage({
         assignmentsResult.error ||
         profileResult.error) && (
         <ManagementNotice tone="warning">
-          应用授权数据暂时无法完整读取，请确认最新数据库迁移已经部署。
+          应用授权数据暂时无法完整读取，请稍后刷新重试。
         </ManagementNotice>
       )}
 

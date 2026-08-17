@@ -70,8 +70,7 @@ export function AccountAuditLogDialog({
         ) : (
           <>
             <div>
-              <p className="app-muted-text text-xs font-semibold">最近记录</p>
-              <DashboardTitleWithHint className="mt-1" headingLevel={2} titleClassName="text-xl font-semibold" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
+              <DashboardTitleWithHint headingLevel={2} titleClassName="text-xl font-semibold" title={<>账号变更动态</>} description={<>点击查看最近 {logs.length} 条角色、状态与资料变更</>} />
             </div>
             <Activity size={22} style={{ color: "var(--support)" }} />
           </>

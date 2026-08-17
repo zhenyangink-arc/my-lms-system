@@ -186,12 +186,9 @@ function PracticeDataTable({
 }) {
   return (
     <section className="mt-8 border-t pt-6" style={{ borderColor: "var(--border)" }}>
-      <div className="mb-3 flex items-end justify-between gap-3">
-        <div>
-          <h3 className="text-[13px] font-semibold">学生练习记录</h3>
-          <p className="app-muted-text mt-1 text-[10px]">当前场景共有 {progress.length} 名学生留下练习记录</p>
-        </div>
-        <span className="app-muted-text font-mono text-[10px]">{progress.length} RESULTS</span>
+      <div className="mb-3">
+        <h3 className="text-[13px] font-semibold">学生练习记录</h3>
+        <p className="app-muted-text mt-1 text-[10px]">当前场景共有 {progress.length} 名学生留下练习记录</p>
       </div>
       <div className="overflow-x-auto border-y" style={{ borderColor: "var(--border)" }}>
         <table className="w-full min-w-[780px] border-collapse text-left">
@@ -376,7 +373,7 @@ export async function ConversationPracticeManagementContent({
 
         {(scenariosResult.error || progressResult.error) && (
           <ManagementNotice tone="warning">
-            会话练习后台数据暂时无法完整读取，请确认最新数据库迁移已经执行。
+            会话练习数据暂时无法完整读取，请刷新页面重试。
           </ManagementNotice>
         )}
 

@@ -94,7 +94,7 @@ export default async function UniversityComparisonPage() {
 
         {!comparisonError && !universityError && <section className="app-card rounded-3xl border p-4 sm:p-5">
           <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}><Scale size={20} aria-hidden="true" /></span><div><DashboardTitleWithHint headingLevel={3} titleClassName="text-base font-bold" title={<>四校对比席位</>} description={<>当前选择 {universities.length}／4 所，数据库也会强制执行上限。</>} /></div></div>
+            <div className="flex items-center gap-3"><span className="flex h-11 w-11 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}><Scale size={20} aria-hidden="true" /></span><div><DashboardTitleWithHint headingLevel={3} titleClassName="text-base font-bold" title={<>四校对比席位</>} description={<>当前选择 {universities.length}／4 所。</>} /></div></div>
           </div>
           <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
             {[0, 1, 2, 3].map((index) => {

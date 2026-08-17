@@ -248,10 +248,6 @@ export function LessonVideoPlayer({
             </div>
 
             <p className="mt-4 font-semibold text-gray-900">视频暂未上传</p>
-
-            <p className="mt-2 text-sm leading-6 text-gray-500">
-              当前课时已经预留视频区域。上传课程视频并保存后，这里会自动显示。
-            </p>
           </div>
         </div>
       )}

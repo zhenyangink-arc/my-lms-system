@@ -109,9 +109,6 @@ export function AssessmentWorkspaceLayout({
                 <span className="block truncate text-sm font-bold tracking-tight sm:text-base">
                   作业与考试
                 </span>
-                <span className="assessment-nav-muted hidden text-[10px] font-bold sm:block">
-                  专注完成每一次学习任务
-                </span>
               </span>
             </Link>
           </div>

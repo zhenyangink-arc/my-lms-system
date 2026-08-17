@@ -54,7 +54,7 @@ export function CourseCoverUploadField({
         headers: { "Content-Type": file.type },
         body: file,
       });
-      if (!response.ok) throw new Error("R2 上传失败，请稍后重试。");
+      if (!response.ok) throw new Error("上传失败，请稍后重试。");
       await confirmCourseCoverUploadAction({
         kind,
         entityId,

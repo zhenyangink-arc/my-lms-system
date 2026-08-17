@@ -653,12 +653,6 @@ export default async function SubcategoryCoursesPage({
               >
                 暂无课程
               </p>
-              <p
-                className="mt-2 text-sm"
-                style={{ color: "var(--foreground-muted)" }}
-              >
-                当前分类下还没有发布课程。
-              </p>
             </div>
           )}
         </section>

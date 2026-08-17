@@ -42,7 +42,7 @@ export function AdminCourierInfoForm({
     <form onSubmit={handleSubmit} className="mt-4 border-t border-black/[0.07] pt-4 text-[10px]">
       <div className="flex items-center gap-1.5 font-medium text-zinc-800">
         <PackageCheck size={12} className="text-zinc-500" />
-        中国到韩国材料寄送（管理员可随时修改，保存后同步到学生端）
+        中国到韩国材料寄送（可随时修改）
       </div>
       <div className="mt-2 grid grid-cols-2 gap-2">
         <label className="block font-medium text-zinc-600">

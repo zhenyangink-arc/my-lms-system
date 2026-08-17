@@ -53,8 +53,7 @@ export default async function AdminProfilePage() {
         <ManagementNotice tone="danger">
           <strong className="block text-sm">个人信息暂时读取失败</strong>
           <span className="mt-1 block font-normal">
-            你的账号资料未能读取（{error?.message ?? "资料行不存在"}）。其他功能不受影响；若刚更新过数据库结构，请确认
-            profiles 表包含 hired_at 字段后重新加载本页。
+            你的账号资料未能读取，其他功能不受影响，请稍后重新加载本页。
           </span>
         </ManagementNotice>
       </ManagementPage>

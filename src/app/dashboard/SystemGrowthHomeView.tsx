@@ -345,7 +345,6 @@ export function SystemGrowthHomeView({
           <header className="flex items-start justify-between gap-3">
             <div>
               <h2 id="continue-learning-title" className="text-base font-bold tracking-tight">继续学习</h2>
-              <p className="app-muted-text mt-1 text-xs font-medium">从上次停下的位置继续</p>
             </div>
             <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--primary-hover)] hover:bg-[var(--accent)]">
               全部课程 <ArrowRight size={14} aria-hidden="true" />
@@ -463,7 +462,6 @@ export function SystemGrowthHomeView({
           <header className="flex items-start justify-between gap-3">
             <div>
               <h2 id="course-progress-title" className="text-base font-bold tracking-tight">课程进度</h2>
-              <p className="app-muted-text mt-1 text-xs font-medium">最近学习的课程与完成进度</p>
             </div>
             <Link href={coursesHref} className="inline-flex min-h-10 items-center gap-1 rounded-xl px-2 text-xs font-semibold text-[var(--primary-hover)] hover:bg-[var(--accent)]">
               查看全部 <ArrowRight size={14} aria-hidden="true" />

@@ -221,7 +221,7 @@ function ChapterDirectory({
                   )}
                 </div>
                 <p className="mt-1 text-[10px] font-bold app-muted-text">
-                  CHAPTER {String(chapter.chapter_number).padStart(2, "0")} · {statusLabel}
+                  第 {String(chapter.chapter_number).padStart(2, "0")} 章 · {statusLabel}
                 </p>
               </div>
               <span
@@ -715,7 +715,7 @@ export async function DeepLearningPage({
                 {recommendedChapter && recommendedCourse ? (
                   <>
                     <h2 className="mt-4 text-xl font-bold leading-snug">{recommendedChapter.title}</h2>
-                    <p className="mt-2 text-xs font-bold app-muted-text">{recommendedCourse.title} · CHAPTER {String(recommendedChapter.chapter_number).padStart(2, "0")}</p>
+                    <p className="mt-2 text-xs font-bold app-muted-text">{recommendedCourse.title} · 第 {String(recommendedChapter.chapter_number).padStart(2, "0")} 章</p>
                     <div className="mt-5 rounded-2xl border p-3.5" style={{ borderColor: "var(--border)", backgroundColor: "var(--card)" }}>
                       <div className="flex items-center justify-between gap-3 text-xs font-bold">
                         <span>电子书 {recommendedReadingProgress}%</span>
@@ -873,7 +873,6 @@ export async function DeepLearningPage({
                   逐步开放
                 </span>
               </div>
-              <p className="mt-1 text-xs app-muted-text">按课程展开章节；已开放的章节可进入听音工作区。</p>
             </div>
             <span className="rounded-xl px-3 py-2 text-[10px] font-bold app-muted-text" style={{ backgroundColor: "var(--surface-soft)" }}>
               听音内容正在按章完善
@@ -995,7 +994,7 @@ export async function DeepLearningPage({
               backgroundColor: "var(--status-warning-surface)",
             }}
           >
-            待复习题暂时无法读取，请确认最新数据库迁移已经应用。
+            待复习题暂时无法读取，请稍后重试。
           </div>
         )}
 
@@ -1023,8 +1022,7 @@ export async function DeepLearningPage({
                       {courseLabel(item.test.course_key)}
                     </span>
                     <span className="app-muted-text text-[10px] font-bold">
-                      CHAPTER{" "}
-                      {String(item.test.chapter_number).padStart(2, "0")}
+                      第 {String(item.test.chapter_number).padStart(2, "0")} 章
                     </span>
                   </div>
                   <span className="app-muted-text text-[9px]">

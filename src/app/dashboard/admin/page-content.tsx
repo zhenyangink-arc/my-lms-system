@@ -6,7 +6,6 @@ import {
   CheckCircle2,
   CircleAlert,
   Clock3,
-  PanelsTopLeft,
   ShieldCheck,
   Sparkles,
 } from "lucide-react";
@@ -414,16 +413,7 @@ export default async function AdminCenterPage() {
     >
       <header className="management-home-hero">
         <div className="min-w-0">
-          <p className="management-home-kicker">
-            <PanelsTopLeft size={15} aria-hidden="true" />
-            Platform Control
-          </p>
           <h1>{isPlatformOwner ? "平台总览" : "管理工作台"}</h1>
-          <p className="management-home-intro">
-            {isPlatformOwner
-              ? "先处理跨机构异常，再进入具体业务。所有数字均按当前权限实时汇总。"
-              : "聚合当前身份需要处理的工作与最常使用的管理入口。"}
-          </p>
         </div>
 
         <div className="management-home-actions">
@@ -466,7 +456,6 @@ export default async function AdminCenterPage() {
         <section className="app-card management-focus-card border">
           <div className="management-card-heading">
             <div>
-              <p className="management-section-kicker">Focus</p>
               <h2>需要你处理</h2>
             </div>
             <span className={workloadTotal > 0 ? "is-warning" : "is-success"}>
@@ -528,7 +517,6 @@ export default async function AdminCenterPage() {
           <section className="app-card management-institution-card border">
             <div className="management-card-heading">
               <div>
-                <p className="management-section-kicker">Institutions</p>
                 <h2>需关注机构</h2>
               </div>
               <span className={attentionInstitutionCount > 0 ? "is-warning" : "is-success"}>
@@ -598,7 +586,6 @@ export default async function AdminCenterPage() {
       <section className="management-quick-section">
         <div className="management-section-heading">
           <div>
-            <p className="management-section-kicker">Workspace</p>
             <h2>常用工作区</h2>
             <p>有待办的模块自动排在前面，减少在导航中来回查找。</p>
           </div>
@@ -630,12 +617,6 @@ export default async function AdminCenterPage() {
         </div>
       </section>
 
-      <footer className="management-home-footer">
-        <ShieldCheck size={15} aria-hidden="true" />
-        <p>
-          首页仅汇总当前身份有权查看的数据；所有二级入口和具体操作仍由服务端权限再次校验。
-        </p>
-      </footer>
     </div>
   );
 }

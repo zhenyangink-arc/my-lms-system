@@ -12,7 +12,6 @@ import {
   FolderOpen,
   Lock,
   MinusCircle,
-  Sparkles,
 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
@@ -224,8 +223,7 @@ export default async function DocumentsPage({
       <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--card), var(--card), var(--accent))" }}>
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">
           <div>
-            <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}><Sparkles size={14} aria-hidden="true" />申请资料清单</span>
-            <DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-bold tracking-tight" title={<>{selectedTarget.university_name}申请资料</>} description={<>{ADMISSION_TRACK_LABELS[selectedTarget.admission_track ?? ""] ?? "申请阶段待确认"}{selectedTarget.program_name ? ` · ${selectedTarget.program_name}` : ""}。无需上传文件，请按实际准备情况将每项标记为“准备中”“已完成”或“无”（不需要的材料）。</>} />
+            <DashboardTitleWithHint headingLevel={2} titleClassName="text-2xl font-bold tracking-tight" title={<>{selectedTarget.university_name}申请资料</>} description={<>{ADMISSION_TRACK_LABELS[selectedTarget.admission_track ?? ""] ?? "申请阶段待确认"}{selectedTarget.program_name ? ` · ${selectedTarget.program_name}` : ""}。无需上传文件，请按实际准备情况将每项标记为“准备中”“已完成”或“无”（不需要的材料）。</>} />
           </div>
 
           <div className="space-y-3">

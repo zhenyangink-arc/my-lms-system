@@ -167,9 +167,6 @@ export function AssessmentPaperComposer({
           >
             <div>
               <h2 className="text-xl font-semibold">新增标准{typeLabel}卷</h2>
-              <p className="app-muted-text mt-1 text-xs">
-                A—E只是命名示例，平台可以持续新增任意数量的完整试卷。
-              </p>
             </div>
             <button
               type="button"

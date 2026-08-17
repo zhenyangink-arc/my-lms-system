@@ -92,17 +92,7 @@ export async function LibraryPageContent({
         >
           <div className={canManage ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_500px] xl:items-center" : "grid"}>
             {canManage && <div>
-              <span
-                className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold"
-                style={{
-                  color: "var(--primary)",
-                  backgroundColor: "var(--accent)",
-                }}
-              >
-                <Library size={14} aria-hidden="true" />
-                学习资料一站查找
-              </span>
-              <DashboardTitleWithHint className="mt-3" title="把需要的资料，放进自己的学习收藏夹" description="文件和实用链接按主题整理。下载文件会经过登录与发布状态校验，草稿资料不会出现在学生端。" />
+              <DashboardTitleWithHint title="把需要的资料，放进自己的学习收藏夹" description="按主题查找、收藏或下载已发布资料。" />
             </div>}
             <div className={canManage ? "dashboard-title-metrics" : "grid grid-cols-3 gap-2"}>
               {[
@@ -144,7 +134,7 @@ export async function LibraryPageContent({
             className="rounded-2xl border p-4 text-sm font-bold"
             style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}
           >
-            资料库暂时无法读取，请确认数据库迁移已经执行。
+            资料库暂时无法读取，请稍后重试。
           </section>
         )}
 
@@ -153,7 +143,7 @@ export async function LibraryPageContent({
         <section className="app-soft-card flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5 app-muted-text">
           <ShieldCheck className="mt-0.5 shrink-0" size={16} aria-hidden="true" />
           <p>
-            资料文件保存在私有空间，只有登录且账号状态正常的用户可以获取已发布资料。每次获取都会形成后台记录。
+            只有登录且账号状态正常的用户可以获取已发布资料。
           </p>
         </section>
       </div>

@@ -499,7 +499,7 @@ export function KoreanChapterTestRunner({
           </div>
           {successfulResult && !previewMode && !successfulResult.saved && (
             <p className="app-muted-text mt-3 text-[10px]">
-              本次评分已完成，但成绩记录尚未写入数据库；应用最新数据库迁移后即可自动保存。
+              本次评分已完成，但成绩暂未保存，请稍后重试。
             </p>
           )}
         </div>
@@ -734,7 +734,7 @@ export function KoreanChapterTestRunner({
           </div>
           {successfulResult && !previewMode && !successfulResult.saved && (
             <p className="app-muted-text mt-3 text-[9px] leading-4">
-              本次评分已完成，但成绩记录尚未写入数据库；应用最新数据库迁移后即可自动保存。
+              本次评分已完成，但成绩暂未保存，请稍后重试。
             </p>
           )}
           {savedAttemptId && !previewMode && (

@@ -8,7 +8,6 @@ import {
   GraduationCap,
   Languages,
   PlayCircle,
-  Route,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
@@ -377,9 +376,6 @@ export default async function StudentPortalPage({
                 <h1 className="mt-2 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">
                   选择今天要进入的学习应用
                 </h1>
-                <p className="mt-3 max-w-2xl text-sm leading-7 text-slate-600 sm:text-base">
-                  韩语、学科课程和留学服务已经进入各自独立空间，学习内容和记录不再混在同一个课程列表中。
-                </p>
                 <div className="mt-7 flex flex-wrap gap-3">
                   {currentCourse ? (
                     <Link
@@ -442,11 +438,7 @@ export default async function StudentPortalPage({
           <section aria-labelledby="student-apps-title">
             <div className="flex flex-wrap items-end justify-between gap-4 px-1">
               <div>
-                <p className="inline-flex items-center gap-2 text-xs font-black tracking-[0.16em] text-slate-500">
-                  <Route size={15} aria-hidden="true" />
-                  STUDENT APPLICATIONS
-                </p>
-                <h2 id="student-apps-title" className="mt-2 text-2xl font-black tracking-tight">
+                <h2 id="student-apps-title" className="text-2xl font-black tracking-tight">
                   学习与服务应用
                 </h2>
               </div>

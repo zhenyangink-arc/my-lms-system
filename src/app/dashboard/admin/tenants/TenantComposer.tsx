@@ -31,7 +31,7 @@ export function TenantComposer() {
       <DialogContent className="max-w-[780px] gap-0 overflow-hidden p-0">
         <DialogHeader className="border-b px-5 py-4 text-left" style={{ borderColor: "var(--border)" }}>
           <DialogTitle className="text-base">开通新租户</DialogTitle>
-          <DialogDescription className="text-xs">创建独立机构空间，并同时建立该机构的负责人登录账号。</DialogDescription>
+          <DialogDescription className="text-xs">同时建立机构负责人登录账号。</DialogDescription>
         </DialogHeader>
 
         <form ref={formRef} action={formAction}>

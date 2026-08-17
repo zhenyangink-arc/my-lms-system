@@ -41,7 +41,6 @@ export default async function AssignmentManagementPage({
           {
             key: "chapter-tests" as const,
             label: "章节测试管理",
-            description: "",
             icon: FlaskConical,
           },
         ]
@@ -49,15 +48,11 @@ export default async function AssignmentManagementPage({
     {
       key: "homework" as const,
       label: "作业管理",
-      description: canManagePapers
-        ? ""
-        : "作业发布与管理",
       icon: BookOpenCheck,
     },
     {
       key: "exam" as const,
       label: "考试管理",
-      description: canManagePapers ? "" : "考试发布与管理",
       icon: GraduationCap,
     },
   ];
@@ -105,9 +100,6 @@ export default async function AssignmentManagementPage({
                 </span>
                 <span className="min-w-0">
                   <span className="block text-sm font-semibold">{item.label}</span>
-                  <span className="app-muted-text mt-1 block text-xs">
-                    {item.description}
-                  </span>
                 </span>
                 {isActive && (
                   <ClipboardCheck

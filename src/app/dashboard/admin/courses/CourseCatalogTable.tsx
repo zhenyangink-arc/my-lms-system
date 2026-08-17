@@ -151,7 +151,7 @@ export function CourseCatalogTable({
         <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)} className="app-input rounded-[6px] border px-3 py-2 text-[11px] outline-none">
           <option value="all">全部状态</option><option value="published">已发布</option><option value="draft">草稿</option><option value="locked">已锁定</option><option value="incomplete">内容待完善</option>
         </select>
-        <span className="app-muted-text ml-auto font-mono text-[10px]">{visibleRows.length} RESULTS</span>
+        <span className="app-muted-text ml-auto text-[10px]">共 {visibleRows.length} 项</span>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full min-w-[880px] border-collapse text-left">

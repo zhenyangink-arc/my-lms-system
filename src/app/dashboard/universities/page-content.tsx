@@ -72,7 +72,7 @@ export default async function UniversitiesPage() {
   const entrances = [
     {
       title: "我的目标学校",
-      description: "添加意向大学、设置申请阶段和优先级，持续更新申请状态，也可以随时删除。",
+      description: "添加意向大学，设置申请阶段、优先级并更新状态。",
       href: "/dashboard/universities/targets",
       icon: Target,
       value: targetsResult.error ? "暂不可用" : `${targets.length} 所目标`,
@@ -81,7 +81,7 @@ export default async function UniversitiesPage() {
     },
     {
       title: "大学学校库",
-      description: "从韩国重点院校库按地区、性质、学科、预算和排名筛选，并查看中文学校介绍。",
+      description: "按地区、性质、学科、预算和排名筛选韩国大学。",
       href: "/dashboard/universities/library",
       icon: LibraryBig,
       value: universitiesResult.error ? "暂不可用" : `${universityCount} 所大学`,
@@ -90,7 +90,7 @@ export default async function UniversitiesPage() {
     },
     {
       title: "学校对比",
-      description: "把最多四所大学放在同一张对比表中，集中比较地区、学费、排名和申请阶段。",
+      description: "最多四校同表比较地区、学费、排名和申请阶段。",
       href: "/dashboard/universities/comparison",
       icon: Scale,
       value: comparisonsResult.error ? "暂不可用" : `${compareCount}／4 所已选`,
@@ -136,7 +136,7 @@ export default async function UniversitiesPage() {
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <span className="flex h-10 w-10 items-center justify-center rounded-2xl" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}><GraduationCap size={19} aria-hidden="true" /></span>
-              <div><h2 className="text-base font-bold">目标进度快览</h2><p className="mt-1 text-xs app-muted-text">最近的目标学校会显示在这里。</p></div>
+              <h2 className="text-base font-bold">目标进度快览</h2>
             </div>
             <Link href="/dashboard/universities/targets" className={`inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-bold ${focusRing}`} style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}>管理全部 <ArrowRight size={13} aria-hidden="true" /></Link>
           </div>

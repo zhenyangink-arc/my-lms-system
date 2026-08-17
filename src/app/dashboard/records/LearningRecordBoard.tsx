@@ -183,21 +183,13 @@ export function LearningRecordBoard({
   return (
     <div className="space-y-5">
       <header className="grid gap-5 px-1 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-        <div>
-          <h2 className="text-2xl font-bold tracking-[-0.03em] sm:text-3xl">
-            学习记录
-          </h2>
-          <p className="app-muted-text mt-2 max-w-3xl text-sm font-medium leading-6">
-            看清自己学了多久、完成了什么，以及下一步应该继续做什么。
-          </p>
-        </div>
+        <h2 className="text-2xl font-bold tracking-[-0.03em] sm:text-3xl">
+          学习记录
+        </h2>
         <div className="border-l-2 border-[var(--primary)] pl-4 sm:min-w-56">
           <p className="app-muted-text text-xs font-medium">近一年有效学习</p>
           <p className="mt-1 text-3xl font-bold tracking-tight tabular-nums text-[var(--primary)]">
             {formatLearningDuration(yearSeconds)}
-          </p>
-          <p className="app-muted-text mt-1 text-xs font-medium">
-            由真实计时记录累计
           </p>
         </div>
       </header>
@@ -207,7 +199,6 @@ export function LearningRecordBoard({
           {
             label: "今日有效学习",
             value: formatLearningDuration(summary.todaySeconds),
-            hint: "今天经过计时确认的时长",
             icon: Clock3,
             color: "var(--primary)",
             soft: "var(--accent)",
@@ -215,7 +206,6 @@ export function LearningRecordBoard({
           {
             label: "本周有效学习",
             value: formatLearningDuration(summary.weekSeconds),
-            hint: "本周一至今天的累计时长",
             icon: CalendarDays,
             color: "var(--support)",
             soft: "var(--support-surface)",
@@ -223,7 +213,6 @@ export function LearningRecordBoard({
           {
             label: "连续学习",
             value: `${summary.streakDays} 天`,
-            hint: "截至今天的连续学习天数",
             icon: Flame,
             color: "var(--status-warning)",
             soft: "var(--status-warning-surface)",
@@ -231,7 +220,6 @@ export function LearningRecordBoard({
           {
             label: "累计完成课时",
             value: `${summary.completedCount} 个`,
-            hint: "课程中状态为已完成的课时",
             icon: CheckCircle2,
             color: "var(--status-success)",
             soft: "var(--status-success-surface)",
@@ -254,9 +242,6 @@ export function LearningRecordBoard({
                   <h2 className="mt-1 text-xs font-semibold">{metric.label}</h2>
                 </div>
               </div>
-              <p className="app-muted-text mt-3 text-xs font-medium leading-5">
-                {metric.hint}
-              </p>
             </article>
           );
         })}
@@ -321,15 +306,9 @@ export function LearningRecordBoard({
       <section aria-labelledby="record-category-title" className="space-y-4">
         <div className="flex flex-wrap items-end justify-between gap-3 px-1">
           <div>
-            <p className="text-[10px] font-semibold tracking-[0.12em] text-[var(--support)]">
-              记录筛选
-            </p>
-            <h2 id="record-category-title" className="mt-1 text-lg font-bold tracking-tight">
+            <h2 id="record-category-title" className="text-lg font-bold tracking-tight">
               按记录类型查看
             </h2>
-            <p className="app-muted-text mt-1 text-xs font-medium">
-              这四个入口只负责筛选记录，点击后在下方查看对应内容
-            </p>
           </div>
           <p className="app-muted-text text-xs font-semibold">
             {selectedDate
@@ -407,13 +386,6 @@ export function LearningRecordBoard({
                   ? `${fullLearningDateLabel(selectedDate)}的${activePresentation.label}`
                   : activePresentation.label}
               </h2>
-              <p className="app-muted-text mt-1 text-[10px] font-medium">
-                {selectedDate
-                  ? "来自全年学习日历的日期筛选"
-                  : rangeDays === 365
-                    ? "显示近一年记录"
-                    : `显示最近 ${rangeDays} 天记录`}
-              </p>
             </div>
           </div>
           {selectedDate && (

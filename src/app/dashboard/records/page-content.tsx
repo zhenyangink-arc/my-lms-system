@@ -415,7 +415,7 @@ export default async function LearningRecordsPage() {
         category: "practice",
         title: metadataString(metadata, "title") ?? "会话练习",
         description: historicalSnapshot
-          ? `迁移前累计完成 ${practiceCount} 次练习；旧数据只保留了最后一次时间，之后的每次练习都会独立记录。`
+          ? `累计完成 ${practiceCount} 次练习。`
           : `完成第 ${practiceCount} 次会话练习${completed ? "，当前场景已掌握。" : "。"}`,
         date: row.occurred_at,
         status: completed ? "已掌握" : "会话练习",

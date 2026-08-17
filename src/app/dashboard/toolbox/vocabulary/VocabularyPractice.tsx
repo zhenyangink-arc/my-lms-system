@@ -88,10 +88,7 @@ export function VocabularyPractice({
             <Sparkles size={26} aria-hidden="true" />
           </span>
           <h2 className="mt-5 text-xl font-bold">开始翻卡</h2>
-          <p className="app-muted-text mx-auto mt-2 max-w-sm text-sm font-bold leading-6">
-            从练习词库中随机抽取 {words.length} 个单词，翻卡认识、再学巩固。
-          </p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
             <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
               {words.length} 个单词
             </span>
@@ -133,12 +130,7 @@ export function VocabularyPractice({
     <div className="mx-auto max-w-2xl space-y-5">
       <div className="app-card rounded-3xl border p-5" style={{ borderColor: "var(--border)" }}>
         <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <p className="app-muted-text text-[10px] font-bold tracking-[0.18em]">
-              单词练习
-            </p>
-            <h2 className="mt-0.5 truncate text-lg font-bold">本轮 · {deck.length} 词</h2>
-          </div>
+          <h2 className="min-w-0 truncate text-lg font-bold">本轮 · {deck.length} 词</h2>
           <span
             className="shrink-0 rounded-full px-3 py-1 text-xs font-bold"
             style={{
@@ -174,9 +166,6 @@ export function VocabularyPractice({
           <div className="relative">
             <PartyPopper size={36} className="mx-auto" style={{ color: "var(--status-success)" }} aria-hidden="true" />
             <h3 className="mt-4 text-xl font-bold">本轮全部完成</h3>
-            <p className="app-muted-text mt-2 text-sm font-bold">
-              你已经把 {deck.length} 个单词都过了一遍。
-            </p>
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div className="rounded-2xl p-4" style={{ backgroundColor: "var(--status-success-surface)" }}>
                 <p className="text-2xl font-bold" style={{ color: "var(--status-success)" }}>{knownCount}</p>

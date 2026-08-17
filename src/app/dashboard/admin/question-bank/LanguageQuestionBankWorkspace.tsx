@@ -87,7 +87,7 @@ export async function LanguageQuestionBankWorkspace({
           </div>
         </section>
 
-        {(chaptersResult.error || materialsResult.error || questionsResult.error) && <section className="border border-[#c94f45] bg-[#fff0ed] px-4 py-3 text-xs font-bold text-[#c94f45]">{title}暂时无法读取，请确认最新数据库迁移已经执行。</section>}
+        {(chaptersResult.error || materialsResult.error || questionsResult.error) && <section className="border border-[#c94f45] bg-[#fff0ed] px-4 py-3 text-xs font-bold text-[#c94f45]">{title}暂时无法读取，请稍后重试或联系管理员。</section>}
 
         <section className="border" style={{ borderColor: "var(--border)" }}>
           <h3 className="border-b bg-[var(--surface-soft)] px-4 py-3 text-sm font-semibold">韩语初级</h3>

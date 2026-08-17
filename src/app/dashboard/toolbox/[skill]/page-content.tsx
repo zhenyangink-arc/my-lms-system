@@ -635,10 +635,7 @@ export async function ToolboxSkillPage({
                 <Icon size={26} aria-hidden="true" />
               </span>
               <div>
-                <p className="text-[11px] font-bold tracking-[0.1em]" style={{ color: entry.accent }}>
-                  专项训练 · {entry.subtitle}
-                </p>
-                <h2 className="mt-1 text-2xl font-bold tracking-tight">{entry.title}</h2>
+                <h2 className="text-2xl font-bold tracking-tight">{entry.title}</h2>
                 <p className="app-muted-text mt-2 max-w-2xl text-sm font-bold leading-6">
                   {entry.description}
                 </p>
@@ -663,7 +660,7 @@ export async function ToolboxSkillPage({
           <div className="mb-3 px-1">
             <h2 id="skill-chapter-title" className="text-lg font-bold">选择课程、课时与章节</h2>
             <p className="app-muted-text mt-1 text-xs font-bold">
-              与韩语课程目录一一对应；正式章节遵循学习顺序，新课程首批课时直接进入对应训练。
+              正式章节按学习顺序解锁。
             </p>
           </div>
           <div className="space-y-3">
@@ -864,7 +861,7 @@ export async function ToolboxSkillPage({
           <Circle size={28} className="opacity-40" aria-hidden="true" />
           <h2 className="mt-3 text-base font-bold">本章练习正在同步</h2>
           <p className="app-muted-text mt-2 max-w-md text-sm font-bold leading-6">
-            课程、课时与章节关系已经建立，题目发布后会直接显示在这里。
+            题目发布后会显示在这里。
           </p>
         </section>
       ) : (

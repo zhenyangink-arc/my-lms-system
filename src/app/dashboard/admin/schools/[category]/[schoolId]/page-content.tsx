@@ -428,9 +428,7 @@ export default async function SchoolDetailPage({
             headingLevel={2}
             titleClassName="text-xl font-semibold"
             title={<span id="school-programs-heading">学校专业介绍</span>}
-            description={
-              <>共 {programs.length} 个专业，可分别维护学制、学费和申请要求。</>
-            }
+            description={<>共 {programs.length} 个专业</>}
           />
 
           {programResult.error && (

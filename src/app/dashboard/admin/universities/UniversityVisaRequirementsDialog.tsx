@@ -168,7 +168,6 @@ export function UniversityVisaRequirementsDialog({ canManage, universityId, univ
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-6xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">{universityName} · 签证申请资料</DialogTitle>
-          <DialogDescription className="leading-6">{canManage ? "按签证类型维护学校实际要求的资料，修改会同步到学生端。" : "查看平台已经确认的签证资料；当前账号不能新增、修改或删除。"}</DialogDescription>
         </DialogHeader>
 
         <div className="flex items-start gap-3 rounded-2xl border p-4 text-xs leading-5" style={{ color: "var(--status-success)", borderColor: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}>

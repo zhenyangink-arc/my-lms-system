@@ -154,7 +154,7 @@ export default async function UniversityTargetsPage({
           <section className="app-card flex min-h-64 flex-col items-center justify-center rounded-3xl border p-6 text-center">
             <Target size={28} style={{ color: "var(--support)" }} aria-hidden="true" />
             <h3 className="mt-4 text-base font-bold">先添加第一所目标学校</h3>
-            <p className="mt-2 text-xs app-muted-text">如果学校库中暂时没有需要的学校，可以联系管理员在大学管理中心补充。</p>
+            <p className="mt-2 text-xs app-muted-text">学校库中没有需要的学校时，请联系管理员补充。</p>
           </section>
         ))}
       </div>

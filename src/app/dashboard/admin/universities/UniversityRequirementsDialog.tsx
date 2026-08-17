@@ -310,11 +310,6 @@ export function UniversityRequirementsDialog({
       <DialogContent className="max-h-[92vh] overflow-y-auto sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle className="text-lg font-semibold">{universityName} · 申请资料模板</DialogTitle>
-          <DialogDescription className="leading-6">
-            {canManage
-              ? "维护这所大学实际要求的申请资料，修改会同步到学生端。"
-              : "查看平台已经确认的申请资料要求；当前账号不能新增、修改或删除。"}
-          </DialogDescription>
         </DialogHeader>
 
         <div

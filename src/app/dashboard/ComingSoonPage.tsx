@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock3 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 type FeatureBlueprint = {
@@ -67,33 +67,9 @@ export function ComingSoonPage({
   return (
     <>
       <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-        <section className="app-card rounded-2xl border p-5">
-              <div className="flex items-center gap-3">
-                <span
-                  className="flex h-10 w-10 items-center justify-center rounded-2xl"
-                  style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}
-                >
-                  <CheckCircle2 size={19} aria-hidden="true" />
-                </span>
-                <div>
-                  <DashboardTitleWithHint headingLevel={3} titleClassName="text-sm font-bold" title="页面结构已准备" description="等待业务数据接入" />
-                </div>
-              </div>
-              <div className="mt-5 h-2 overflow-hidden rounded-full" style={{ backgroundColor: "var(--surface-soft)" }}>
-                <div
-                  className="h-full w-2/3 rounded-full"
-                  style={{ background: "linear-gradient(90deg, var(--support), var(--primary))" }}
-                />
-              </div>
-              <p className="mt-3 flex items-center gap-2 text-xs app-muted-text">
-                <Clock3 size={13} aria-hidden="true" />
-                导航与功能分区已经保留
-              </p>
-        </section>
-
         <section>
           <div className="mb-4">
-            <DashboardTitleWithHint headingLevel={3} titleClassName="text-lg font-bold" title="计划功能" description="数据表与业务流程接入后，将按以下结构直接启用。" />
+            <h3 className="text-lg font-bold">计划功能</h3>
           </div>
           <div className="grid gap-4 md:grid-cols-3">
             {blueprints.map((feature, index) => (
@@ -119,10 +95,7 @@ export function ComingSoonPage({
           href="/dashboard"
           className="app-card flex items-center justify-between gap-4 rounded-2xl border p-4 transition"
         >
-          <span>
-            <span className="block text-sm font-bold">先回到成长首页继续今天的计划</span>
-            <span className="mt-1 block text-xs app-muted-text">未来功能会一直保留在导航中</span>
-          </span>
+          <span className="text-sm font-bold">先回到成长首页继续今天的计划</span>
           <ArrowRight size={18} className="shrink-0" style={{ color: "var(--primary)" }} aria-hidden="true" />
         </Link>
       </div>

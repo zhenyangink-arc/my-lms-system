@@ -250,7 +250,7 @@ function WorkspaceSectionTitle({
                     </h3>
                 </div>
 
-                <p className="text-sm text-gray-500">{description}</p>
+                {description && <p className="text-sm text-gray-500">{description}</p>}
             </div>
         </div>
     );
@@ -795,15 +795,9 @@ export default async function LessonDetailPage({
                     {liveClassBanner}
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-[var(--background)] p-8">
                       <div className="max-w-xl text-center">
-                        <p className="text-xs font-bold tracking-[.2em] text-[var(--primary)]">
-                            SMART DIGITAL TEXTBOOK
-                        </p>
-                        <h2 className="mt-4 text-3xl font-bold tracking-tight text-slate-900">
-                            第一章教材骨架尚未部署
+                        <h2 className="text-3xl font-bold tracking-tight text-slate-900">
+                            教材暂时不可用
                         </h2>
-                        <p className="mt-4 leading-7 text-slate-500">
-                            页面代码已经切换到新版智能教材，请先应用最新数据库迁移后刷新页面。
-                        </p>
                         <Link
                             href={courseDirectoryHref}
                             className="mt-7 inline-flex items-center gap-2 rounded-full bg-slate-900 px-5 py-2.5 text-sm font-bold text-white"
@@ -1058,7 +1052,7 @@ export default async function LessonDetailPage({
                             <WorkspaceSectionTitle
                                 index="2"
                                 title="学习引导"
-                                description="先确认本课目标、任务、资料和老师提示，再进入正式学习"
+                                description=""
                             />
 
                             <div className="grid gap-4 md:grid-cols-2">
@@ -1198,7 +1192,7 @@ export default async function LessonDetailPage({
                     <WorkspaceSectionTitle
                         index="3"
                         title="核心学习"
-                        description="学习正文内容，结合重点、案例和常见错误完成理解"
+                        description=""
                     />
 
                     <div className="grid gap-4 xl:grid-cols-2">
@@ -1250,7 +1244,7 @@ export default async function LessonDetailPage({
                     <WorkspaceSectionTitle
                         index="4"
                         title="学习完成"
-                        description="通过小结、思考和补充说明完成本课整理"
+                        description=""
                     />
 
                     <div className="grid gap-4 lg:grid-cols-3">

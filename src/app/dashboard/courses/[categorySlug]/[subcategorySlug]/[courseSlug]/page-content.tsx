@@ -734,9 +734,6 @@ export default async function CourseDetailPage({
           ) : (
             <div className="app-empty-state rounded-2xl p-6 text-center">
               <p className="font-semibold text-gray-900">暂无课时</p>
-              <p className="mt-2 text-sm text-gray-500">
-                当前课程还没有发布课时。
-              </p>
             </div>
           )}
         </section>

@@ -447,7 +447,7 @@ export async function PaperTypeWorkspace({
               标准试卷读取失败
             </h2>
             <p className="mt-1 font-normal">
-              标准试卷数据暂时无法完整读取，请确认最新数据库迁移已经执行。失败数据不会显示为“暂无试卷”。
+              标准试卷暂时无法完整读取，请稍后刷新页面。
             </p>
           </section>
         )}

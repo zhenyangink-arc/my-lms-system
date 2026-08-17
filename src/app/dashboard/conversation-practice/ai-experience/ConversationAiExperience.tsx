@@ -10,7 +10,6 @@ import {
   RotateCcw,
   Send,
   Server,
-  Sparkles,
   Square,
   Volume2,
 } from "lucide-react";
@@ -966,7 +965,7 @@ export function ConversationAiExperience({
                 <Bot size={21} aria-hidden="true" />
                 <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-[3px]" style={{ borderColor: "var(--card)", backgroundColor: "var(--status-success)" }} aria-hidden="true" />
               </span>
-              <div><h2 className="text-sm font-bold">韩语自由对话教室</h2><p className="app-muted-text mt-0.5 text-xs font-bold">한국어 자유 대화 교실</p></div>
+              <h2 className="text-sm font-bold">韩语自由对话教室</h2>
             </div>
             <div className="flex items-center gap-2">
               <div className="inline-flex items-center gap-2 rounded-full px-3 py-2 text-xs font-bold" style={{ color: statusInfo.color, backgroundColor: statusInfo.soft }} role="status" aria-live="polite">
@@ -1010,7 +1009,6 @@ export function ConversationAiExperience({
 
           <div className="flex min-h-[680px] flex-col" style={{ backgroundColor: "var(--surface-soft)" }}>
             <div className="flex-1 space-y-5 overflow-y-auto px-4 py-6 sm:px-7 sm:py-8" role="log" aria-live="polite" aria-relevant="additions text" aria-label="会话记录" aria-busy={requestPending || speechPending}>
-              <div className="app-card mx-auto flex w-fit items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-bold"><Sparkles size={11} aria-hidden="true" />今天也一起勇敢开口吧</div>
               {messages.map((message) => (
                 <article key={message.id} className={`${styles.messageEnter} flex items-end gap-2.5 ${message.role === "user" ? "justify-end" : "justify-start"}`}>
                   {message.role === "assistant" && <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}><Bot size={17} aria-hidden="true" /></span>}

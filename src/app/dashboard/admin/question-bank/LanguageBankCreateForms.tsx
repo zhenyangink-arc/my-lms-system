@@ -145,7 +145,7 @@ function ActionMessage({ state }: { state: typeof initialLanguageBankActionState
 function FormFooter({ pending, label }: { pending: boolean; label: string }) {
   return (
     <div className="flex items-center justify-between gap-3 border-t px-4 py-3" style={{ borderColor: "var(--border-subtle)" }}>
-      <span className="app-muted-text inline-flex items-center gap-1.5 text-[10px] font-bold"><ShieldCheck size={12} />中文题面和答案会被数据库拒绝</span>
+      <span className="app-muted-text inline-flex items-center gap-1.5 text-[10px] font-bold"><ShieldCheck size={12} />题面和答案仅支持韩语</span>
       <button disabled={pending} className="rounded-md px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50" style={{ backgroundColor: "var(--primary)" }}>
         {pending ? "正在保存…" : label}
       </button>
@@ -210,7 +210,6 @@ export function LanguageBankCreateForms({
       <details>
         <summary className="flex cursor-pointer list-none items-center gap-2 px-4 py-3 text-sm font-semibold hover:bg-[var(--surface-soft)]">
           <Plus size={14} style={{ color: "var(--primary)" }} />{questionTitle}
-          <span className="app-muted-text ml-auto text-[10px]">题面与答案分别保存</span>
         </summary>
         <form action={questionAction} className="border-t" style={{ borderColor: "var(--border-subtle)" }}>
           <input type="hidden" name="language_skill" value={skill} />

@@ -176,14 +176,10 @@ export function StudentApplicationHome({
               <Sparkles size={20} aria-hidden="true" />
             </span>
             <div>
-              <p className="text-xs font-bold tracking-[0.18em] app-muted-text">独立学习应用</p>
-              <h2 className="mt-2 text-2xl font-bold tracking-tight">{app.title}正在独立建设</h2>
-              <p className="mt-2 text-sm leading-6 app-muted-text">
-                这里不会再复用韩语课程、韩语成绩或韩语学习记录。后续接入的内容将只属于{app.title}。
-              </p>
+              <h2 className="text-2xl font-bold tracking-tight">{app.title}建设中</h2>
               <Link
                 href={getStudentPortalPath(space)}
-                className={`mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold ${focusRing}`}
+                className={`mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold ${focusRing}`}
                 style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
               >
                 返回应用门户

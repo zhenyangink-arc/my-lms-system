@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  Bot,
   CheckCircle2,
   MessageCircle,
   UserRound,
@@ -146,7 +145,6 @@ export function LessonSupportSheet({
                 </div>
 
                 <div>
-                  <p className="text-sm text-gray-500">老师</p>
                   <p className="font-bold text-gray-900">
                     {teacherName || "暂未指定"}
                   </p>
@@ -166,14 +164,6 @@ export function LessonSupportSheet({
                 </p>
               </div>
 
-              {aiSupportEnabled && (
-                <div className="mt-4 flex items-start gap-3 rounded-xl bg-indigo-50 px-4 py-3">
-                  <Bot aria-hidden="true" size={18} className="mt-0.5 shrink-0 text-indigo-600" />
-                  <p className="text-sm leading-6 text-indigo-700">
-                    智能助教第一版先保存问题记录，后续会接入自动回答功能。
-                  </p>
-                </div>
-              )}
             </div>
           </section>
 

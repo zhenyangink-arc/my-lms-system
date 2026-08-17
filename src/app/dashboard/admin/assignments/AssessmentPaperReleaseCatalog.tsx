@@ -300,7 +300,7 @@ export function AssessmentPaperReleaseCatalog({
                   <div className="border-b px-5 py-3">
                     <h3 className="text-sm font-semibold">试卷题目</h3>
                     <p className="app-muted-text mt-0.5 text-[11px]">
-                      发布后会复制为固定快照。
+                      发布后题目内容固定，之后修改题库不会影响已发布的试卷。
                     </p>
                   </div>
                   <div className="max-h-72 overflow-auto">

@@ -157,7 +157,7 @@ export function ProfileView({
               ))}
             </ul>
             {pendingItems.length > 0 && (
-              <p className="mt-4 text-xs leading-5 app-muted-text">在左侧表单补全对应内容并保存后，清单会自动更新。</p>
+              <p className="mt-4 text-xs leading-5 app-muted-text">在左侧表单补全对应内容并保存。</p>
             )}
           </section>
         </aside>

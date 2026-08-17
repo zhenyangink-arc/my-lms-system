@@ -202,12 +202,7 @@ export async function ToolboxPage({
             >
               <Wrench size={26} aria-hidden="true" />
             </span>
-            <div>
-              <h2 className="text-2xl font-bold tracking-tight">专项训练</h2>
-              <p className="app-muted-text mt-1 text-sm font-bold">
-                按能力维度训练，巩固每一课的知识点。
-              </p>
-            </div>
+            <h2 className="text-2xl font-bold tracking-tight">专项训练</h2>
           </div>
           <div className="flex flex-wrap gap-2">
             <span
@@ -288,10 +283,7 @@ export async function ToolboxPage({
       ) : (
         <section aria-labelledby="practice-modules-title">
           <div className="mb-3 px-1">
-            <p className="text-[10px] font-bold tracking-[0.12em] text-[var(--primary)]">
-              六维专项练习
-            </p>
-            <h2 id="practice-modules-title" className="mt-1 text-lg font-bold tracking-tight">
+            <h2 id="practice-modules-title" className="text-lg font-bold tracking-tight">
               选择今天要巩固的能力
             </h2>
             <p className="app-muted-text mt-1 text-xs font-bold">

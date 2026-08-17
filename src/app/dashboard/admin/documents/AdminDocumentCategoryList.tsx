@@ -50,7 +50,7 @@ export function AdminDocumentCategoryList({
     <section className="app-card rounded-[1.75rem] border p-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-semibold" title={<>申请资料分类清单</>} description={<>按材料分类展示，{categoryGroups.length} 个分类、共 {totalItems} 项资料。</>} />
+          <DashboardTitleWithHint headingLevel={2} titleClassName="text-base font-semibold" title={<>申请资料分类清单</>} description={<>{categoryGroups.length} 个分类、共 {totalItems} 项资料。</>} />
         </div>
         <button
           type="button"
@@ -69,9 +69,7 @@ export function AdminDocumentCategoryList({
           <p className="mt-3 font-semibold">当前没有申请资料项目</p>
           <p className="app-muted-text mt-2 text-xs">可以从上方选择目标大学并添加清单项目。</p>
         </div>
-      ) : !expanded ? (
-        <p className="app-muted-text mt-5 text-xs">已收起，点击「展开全部」查看具体资料项目。</p>
-      ) : (
+      ) : expanded ? (
         <div className="mt-5 space-y-5">
           {categoryGroups.map(({ category, items }) => {
             const CategoryIcon = CATEGORY_ICONS[category] ?? FolderOpen;
@@ -119,7 +117,7 @@ export function AdminDocumentCategoryList({
             );
           })}
         </div>
-      )}
+      ) : null}
     </section>
   );
 }

@@ -51,7 +51,7 @@ export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: n
 
             <div className="max-h-[58vh] overflow-y-auto">
               {isHealthy ? (
-                <div className="px-5 py-10 text-center"><CheckCircle2 className="mx-auto text-emerald-600" size={22} /><p className="mt-3 text-[11px] font-semibold">当前没有发现读取异常</p><p className="app-muted-text mt-1 text-[9px]">首页数据已按当前账号的数据范围完成检查。</p></div>
+                <div className="px-5 py-10 text-center"><CheckCircle2 className="mx-auto text-emerald-600" size={22} /><p className="app-muted-text mt-3 text-[9px]">首页数据已按当前账号的数据范围完成检查。</p></div>
               ) : (
                 <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                   {issues.map((issue) => <div key={issue.label} className="grid grid-cols-[120px_minmax(0,1fr)] gap-3 px-4 py-3 text-[9px]"><span className="font-semibold text-amber-800">{issue.label}</span><span className="app-muted-text break-words">{issue.message}</span></div>)}
@@ -59,8 +59,7 @@ export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: n
               )}
             </div>
 
-            <footer className="flex items-center justify-between border-t px-4 py-3" style={{ borderColor: "var(--border)" }}>
-              <p className="app-muted-text text-[8px]">这里只显示业务来源和安全错误摘要。</p>
+            <footer className="flex items-center justify-end border-t px-4 py-3" style={{ borderColor: "var(--border)" }}>
               <button type="button" onClick={() => window.location.reload()} className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[9px] font-semibold hover:bg-black/[0.025]"><RefreshCw size={11} />重新检查</button>
             </footer>
           </section>

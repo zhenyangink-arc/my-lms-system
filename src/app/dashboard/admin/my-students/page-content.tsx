@@ -53,8 +53,7 @@ export default async function MyStudentsPage() {
         <div className="px-5 py-5">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <p className="app-muted-text text-[11px] font-semibold tracking-[0.16em]">教学管理</p>
-              <h2 className="mt-1 text-xl font-semibold tracking-tight">我的学生</h2>
+              <h2 className="text-xl font-semibold tracking-tight">我的学生</h2>
             </div>
             <GroupClassDialog students={students.map((s) => ({ id: s.id, full_name: s.full_name, login_id: s.login_id }))} />
           </div>

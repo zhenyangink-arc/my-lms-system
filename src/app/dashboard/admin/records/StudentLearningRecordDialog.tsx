@@ -80,10 +80,7 @@ export function StudentLearningRecordDialog({
 
         <section>
           <div className="flex flex-wrap items-center justify-between gap-3 border-b px-5 py-3" style={{ borderColor: "var(--border)" }}>
-            <div>
-              <h3 className="text-xs font-semibold">人工辅导备注</h3>
-              <p className="app-muted-text mt-1 text-[10px]">可选内容，不是创建学习档案；系统学习数据会自动进入上方汇总。</p>
-            </div>
+            <h3 className="text-xs font-semibold">人工辅导备注</h3>
             <button type="button" onClick={() => setShowComposer((current) => !current)} className="inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 text-xs font-semibold transition hover:bg-black/[0.035]" style={{ borderColor: "var(--border)" }}>
               <Plus size={13} />{showComposer ? "收起" : "添加辅导备注"}
             </button>
@@ -118,7 +115,6 @@ export function StudentLearningRecordDialog({
             {notes.length === 0 && (
               <div className="px-5 py-10 text-center">
                 <p className="text-xs font-semibold">暂无人工辅导备注</p>
-                <p className="app-muted-text mt-1 text-[10px]">学生的自动学习档案仍然有效，并会在产生学习行为后更新。</p>
               </div>
             )}
           </div>

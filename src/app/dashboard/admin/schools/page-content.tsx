@@ -20,11 +20,11 @@ export default async function SchoolManagementPage() {
 
   return (
     <>
-      <DashboardPageHeader title="学校管理" description="六个入口分开管理学校基础资料、校徽、详细介绍和专业内容。" />
+      <DashboardPageHeader title="学校管理" description="管理学校资料与专业内容。" />
       <div className="mx-auto w-full max-w-[1500px] space-y-5 p-4 sm:p-5 lg:p-8">
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--card), var(--card), var(--accent))" }}>
           <div className="grid gap-5 xl:grid-cols-[1fr_560px] xl:items-center">
-            <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-semibold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><Database size={15} />统一学校数据中心</span><DashboardTitleWithHint className="mt-3" headingLevel={2} titleClassName="text-2xl font-semibold tracking-tight" title={<>一套结构，分开管理五类学校</>} description={<>韩国大学保留原有 100 所学校与学生目标关联；其他院校独立建档。停用展示不会删除历史数据。</>} /></div>
+            <div><DashboardTitleWithHint headingLevel={2} titleClassName="text-2xl font-semibold tracking-tight" title={<>学校资料概览</>} description={<>停用展示不会删除历史数据。</>} /></div>
             <div className="dashboard-title-metrics">{[
               { label: "学校总数", value: schools.length, icon: Layers3 },
               { label: "正在展示", value: published, icon: BadgeCheck },
@@ -34,7 +34,7 @@ export default async function SchoolManagementPage() {
           </div>
         </section>
 
-        {error && <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">学校数据暂时无法读取，请先执行最新数据库迁移。</div>}
+        {error && <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-bold text-amber-800">学校数据暂时无法读取，请刷新页面重试。</div>}
 
         <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           <Link href="/dashboard/admin/schools/overview" className="app-card group rounded-3xl border p-5 transition hover:-translate-y-1 hover:shadow-lg">

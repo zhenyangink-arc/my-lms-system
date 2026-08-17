@@ -45,7 +45,7 @@ const learningSections: Record<string, SectionDefinition> = {
   },
   content: {
     title: "课程与内容",
-    description: "当前页面只读取本应用所属的分类、课程、课时和章节。",
+    description: "管理分类、课程、课时和章节。",
     icon: BookOpenCheck,
     capability: "manageContent",
   },
@@ -57,7 +57,7 @@ const learningSections: Record<string, SectionDefinition> = {
   },
   textbooks: {
     title: "互动教材",
-    description: "教材、版本、章节、词汇和语法内容均限定在当前应用。",
+    description: "管理教材、版本、章节、词汇和语法。",
     icon: PanelsTopLeft,
     capability: "manageContent",
   },
@@ -75,13 +75,13 @@ const learningSections: Record<string, SectionDefinition> = {
   },
   toolbox: {
     title: "练习工具",
-    description: "当前页面只读取本应用的练习入口、课程词汇和语法库。",
+    description: "管理练习入口、课程词汇和语法库。",
     icon: Wrench,
     capability: "manageContent",
   },
   conversation: {
     title: "会话与课堂",
-    description: "当前页面只读取本应用的会话场景及其学生练习记录。",
+    description: "管理会话场景和学生练习记录。",
     icon: MessageSquareText,
     capability: "manageAssessments",
   },
@@ -102,7 +102,7 @@ const serviceSections: Record<string, SectionDefinition> = {
   },
   content: {
     title: "留学课程",
-    description: "当前页面只读取留学服务所属的课程、课时和发布状态。",
+    description: "管理留学服务课程、课时和发布状态。",
     icon: BookOpenCheck,
     capability: "manageContent",
   },

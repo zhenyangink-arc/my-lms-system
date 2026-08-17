@@ -783,7 +783,7 @@ function SourceBadge({ source }: { source: "textbook" | "custom" }) {
       style={{ color: tone, backgroundColor: `color-mix(in srgb, ${tone} 12%, transparent)` }}
     >
       <span className="h-1 w-1 rounded-full" style={{ backgroundColor: tone }} />
-      {source === "textbook" ? "来自互动教材数据库" : "自定义"}
+      {source === "textbook" ? "互动教材" : "自定义"}
     </span>
   );
 }
@@ -1430,7 +1430,7 @@ function LibraryGrammarRowAudioField({
   async function upload(file: File | undefined) {
     if (!file) return;
     setStatus("uploading");
-    setMessage("正在上传音频到 R2…");
+    setMessage("正在上传音频…");
     try {
       const created = await createGrammarAudioUploadUrlAction({
         textbookSlug: LIBRARY_AUDIO_SLUG,
@@ -1447,7 +1447,7 @@ function LibraryGrammarRowAudioField({
         headers: { "Content-Type": file.type || "audio/mpeg" },
         body: file,
       });
-      if (!response.ok) throw new Error("R2 上传失败，请稍后重试");
+      if (!response.ok) throw new Error("音频上传失败，请稍后重试");
       const confirmed = await confirmGrammarAudioUploadAction({
         objectKey: created.objectKey,
         fileSize: file.size,
