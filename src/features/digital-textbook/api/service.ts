@@ -49,6 +49,19 @@ type NodeRow = {
   module_id: string;
   content: Record<string, unknown> | null;
 };
+type NestedModuleRow = ModuleRow & {
+  digital_textbook_nodes: NodeRow[];
+};
+type NestedChapterRow = ChapterRow & {
+  digital_textbook_modules: NestedModuleRow[];
+};
+type NestedVersionRow = VersionRow & {
+  digital_textbook_chapters: NestedChapterRow[];
+};
+type NestedTextbookRow = TextbookRow & {
+  lessons: LessonRow | LessonRow[] | null;
+  digital_textbook_versions: NestedVersionRow[];
+};
 type VocabularyLibraryRow = {
   id: string;
   ko: string;
@@ -124,70 +137,92 @@ export async function getDigitalTextbookManagementData(
 
   const supabase = createAdminClient();
 
-  const textbookResult = await (() => {
-    let query = supabase
-      .from("digital_textbooks")
-      .select("id,lesson_id,slug,level_code,title,status")
-      .eq("student_app_id", studentAppId);
-    if (!canManage) query = query.eq("status", "published");
-    return query.order("created_at", { ascending: true });
-  })();
-  const textbooks = (textbookResult.data ?? []) as TextbookRow[];
-  const textbookIds = textbooks.map((textbook) => textbook.id);
-  const versionResult = textbookIds.length
-    ? await supabase
-        .from("digital_textbook_versions")
-        .select("id,textbook_id,version_number,status")
-        .in("textbook_id", textbookIds)
-        .order("version_number", { ascending: true })
-    : { data: [] as VersionRow[], error: null };
-  const versions = (versionResult.data ?? []) as VersionRow[];
-  const versionIds = versions.map((version) => version.id);
+  let textbookQuery = supabase
+    .from("digital_textbooks")
+    .select(
+      "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
+    )
+    .eq("student_app_id", studentAppId)
+    .in(
+      "digital_textbook_versions.digital_textbook_chapters.digital_textbook_modules.module_code",
+      ["vocabulary", "grammar"],
+    );
+  if (!canManage) textbookQuery = textbookQuery.eq("status", "published");
 
-  const [chapterResult, lessonResult, courseResult] = await Promise.all([
-    versionIds.length
-      ? supabase
-          .from("digital_textbook_chapters")
-          .select("id,version_id,slug,chapter_number,status")
-          .in("version_id", versionIds)
-          .order("chapter_number", { ascending: true })
-      : { data: [] as ChapterRow[], error: null },
-    textbooks.length
-      ? supabase
-          .from("lessons")
-          .select("id,title,course_id")
-          .in(
-            "id",
-            textbooks.map((textbook) => textbook.lesson_id),
-          )
-      : { data: [] as LessonRow[], error: null },
+  const [
+    textbookResult,
+    courseResult,
+    vocabularyLibraryResult,
+    grammarLibraryResult,
+  ] = await Promise.all([
+    textbookQuery
+      .order("created_at", { ascending: true })
+      .order("version_number", {
+        referencedTable: "digital_textbook_versions",
+      })
+      .order("chapter_number", {
+        referencedTable:
+          "digital_textbook_versions.digital_textbook_chapters",
+      }),
     supabase
       .from("courses")
       .select("id,title")
       .eq("student_app_id", studentAppId),
+    supabase
+      .from("growth_toolbox_vocabulary")
+      .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
+      .eq("student_app_id", studentAppId)
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from("growth_toolbox_grammar")
+      .select("id,title,meaning,cases,rows,examples,caution,source,sort_order")
+      .eq("student_app_id", studentAppId)
+      .order("sort_order", { ascending: true }),
   ]);
-  const chapters = (chapterResult.data ?? []) as ChapterRow[];
-  const lessons = (lessonResult.data ?? []) as LessonRow[];
+
+  const nestedTextbooks = (textbookResult.data ?? []) as NestedTextbookRow[];
+  const textbooks: TextbookRow[] = nestedTextbooks.map((row) => {
+    const textbook = { ...row };
+    Reflect.deleteProperty(textbook, "lessons");
+    Reflect.deleteProperty(textbook, "digital_textbook_versions");
+    return textbook;
+  });
+  const lessons = nestedTextbooks
+    .map((textbook) =>
+      Array.isArray(textbook.lessons)
+        ? (textbook.lessons[0] ?? null)
+        : textbook.lessons,
+    )
+    .filter((lesson): lesson is LessonRow => Boolean(lesson));
+  const versions: VersionRow[] = nestedTextbooks.flatMap((textbook) =>
+    textbook.digital_textbook_versions.map((row) => {
+      const version = { ...row };
+      Reflect.deleteProperty(version, "digital_textbook_chapters");
+      return version;
+    }),
+  );
+  const nestedChapters = nestedTextbooks.flatMap((textbook) =>
+    textbook.digital_textbook_versions.flatMap(
+      (version) => version.digital_textbook_chapters,
+    ),
+  );
+  const chapters: ChapterRow[] = nestedChapters.map((row) => {
+    const chapter = { ...row };
+    Reflect.deleteProperty(chapter, "digital_textbook_modules");
+    return chapter;
+  });
+  const nestedModules = nestedChapters.flatMap(
+    (chapter) => chapter.digital_textbook_modules,
+  );
+  const modules: ModuleRow[] = nestedModules.map((row) => {
+    const moduleRow = { ...row };
+    Reflect.deleteProperty(moduleRow, "digital_textbook_nodes");
+    return moduleRow;
+  });
+  const nodes = nestedModules.flatMap(
+    (moduleRow) => moduleRow.digital_textbook_nodes,
+  );
   const courses = (courseResult.data ?? []) as CourseRow[];
-  const chapterIds = chapters.map((chapter) => chapter.id);
-
-  const moduleResult = chapterIds.length
-    ? await supabase
-        .from("digital_textbook_modules")
-        .select("id,chapter_id,module_code")
-        .in("chapter_id", chapterIds)
-        .in("module_code", ["vocabulary", "grammar"])
-    : { data: [] as ModuleRow[], error: null };
-  const modules = (moduleResult.data ?? []) as ModuleRow[];
-  const moduleIds = modules.map((module) => module.id);
-
-  const nodeResult = moduleIds.length
-    ? await supabase
-        .from("digital_textbook_nodes")
-        .select("id,module_id,content")
-        .in("module_id", moduleIds)
-    : { data: [] as NodeRow[], error: null };
-  const nodes = (nodeResult.data ?? []) as NodeRow[];
 
   const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
   const courseById = new Map(courses.map((course) => [course.id, course]));
@@ -338,19 +373,6 @@ export async function getDigitalTextbookManagementData(
     0,
   );
 
-  const [vocabularyLibraryResult, grammarLibraryResult] = await Promise.all([
-    supabase
-      .from("growth_toolbox_vocabulary")
-      .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
-      .eq("student_app_id", studentAppId)
-      .order("sort_order", { ascending: true }),
-    supabase
-      .from("growth_toolbox_grammar")
-      .select("id,title,meaning,cases,rows,examples,caution,source,sort_order")
-      .eq("student_app_id", studentAppId)
-      .order("sort_order", { ascending: true }),
-  ]);
-
   const vocabularyLibrary: DigitalTextbookVocabularyLibraryItem[] = (
     (vocabularyLibraryResult.data ?? []) as VocabularyLibraryRow[]
   ).map((row) => ({
@@ -403,12 +425,7 @@ export async function getDigitalTextbookManagementData(
     totalVocabulary,
     hasError: Boolean(
       textbookResult.error ||
-        versionResult.error ||
-        chapterResult.error ||
-        lessonResult.error ||
         courseResult.error ||
-        moduleResult.error ||
-        nodeResult.error ||
         vocabularyLibraryResult.error ||
         grammarLibraryResult.error,
     ),

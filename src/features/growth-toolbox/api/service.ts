@@ -31,6 +31,29 @@ type ChapterRow = {
   slug: string;
   chapter_number: number;
 };
+type VocabularyNodeRow = {
+  id: string;
+  module_id: string;
+  content: Record<string, unknown> | null;
+};
+type NestedVocabularyModuleRow = {
+  id: string;
+  chapter_id: string;
+  module_code: string;
+  digital_textbook_nodes: VocabularyNodeRow[];
+};
+type NestedChapterRow = ChapterRow & {
+  digital_textbook_modules: NestedVocabularyModuleRow[];
+};
+type NestedVersionRow = VersionRow & {
+  digital_textbook_chapters: NestedChapterRow[];
+};
+type NestedTextbookRow = TextbookRow & {
+  digital_textbook_versions: NestedVersionRow[];
+};
+type LessonWithTextbook = LessonRow & {
+  digital_textbooks: NestedTextbookRow | null;
+};
 type ToolboxItemRow = {
   id: string;
   slug: string;
@@ -82,9 +105,24 @@ export async function getGrowthToolboxManagementData(
   toolboxItemsQuery = toolboxItemsQuery.eq("student_app_id", studentAppId);
   courseQuery = courseQuery.eq("student_app_id", studentAppId);
 
-  const [toolboxItemsResult, courseResult] = await Promise.all([
+  const [
+    toolboxItemsResult,
+    courseResult,
+    vocabularyResult,
+    grammarResult,
+  ] = await Promise.all([
     toolboxItemsQuery.order("sort_order", { ascending: true }),
     courseQuery.order("sort_order", { ascending: true }),
+    supabase
+      .from("growth_toolbox_vocabulary")
+      .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
+      .eq("student_app_id", studentAppId)
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from("growth_toolbox_grammar")
+      .select("id,title,meaning,cases,rows,examples,caution,source,sort_order")
+      .eq("student_app_id", studentAppId)
+      .order("sort_order", { ascending: true }),
   ]);
 
   const toolboxItems: GrowthToolboxItem[] = (
@@ -107,38 +145,49 @@ export async function getGrowthToolboxManagementData(
   const lessonResult = courseIds.length
     ? await supabase
         .from("lessons")
-        .select("id,course_id,title")
+        .select(
+          "id,course_id,title,digital_textbooks!digital_textbooks_lesson_id_fkey(id,lesson_id,slug,title,status,digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content)))))",
+        )
         .in("course_id", courseIds)
-    : { data: [] as LessonRow[], error: null };
-  const lessons = (lessonResult.data ?? []) as LessonRow[];
-
-  const lessonIds = lessons.map((lesson) => lesson.id);
-  const textbookResult = lessonIds.length
-    ? await supabase
-        .from("digital_textbooks")
-        .select("id,lesson_id,slug,title,status")
-        .in("lesson_id", lessonIds)
-    : { data: [] as TextbookRow[], error: null };
-  const textbooks = (textbookResult.data ?? []) as TextbookRow[];
-  const textbookIds = textbooks.map((textbook) => textbook.id);
-
-  const versionResult = textbookIds.length
-    ? await supabase
-        .from("digital_textbook_versions")
-        .select("id,textbook_id")
-        .in("textbook_id", textbookIds)
-    : { data: [] as VersionRow[], error: null };
-  const versions = (versionResult.data ?? []) as VersionRow[];
-  const versionIds = versions.map((version) => version.id);
-
-  const chapterResult = versionIds.length
-    ? await supabase
-        .from("digital_textbook_chapters")
-        .select("id,version_id,slug,chapter_number")
-        .in("version_id", versionIds)
-        .order("chapter_number", { ascending: true })
-    : { data: [] as ChapterRow[], error: null };
-  const chapters = (chapterResult.data ?? []) as ChapterRow[];
+        .eq(
+          "digital_textbooks.digital_textbook_versions.digital_textbook_chapters.digital_textbook_modules.module_code",
+          "vocabulary",
+        )
+        .order("chapter_number", {
+          referencedTable:
+            "digital_textbooks.digital_textbook_versions.digital_textbook_chapters",
+        })
+    : { data: [] as LessonWithTextbook[], error: null };
+  const nestedLessons = (lessonResult.data ?? []) as LessonWithTextbook[];
+  const lessons: LessonRow[] = nestedLessons.map((row) => {
+    const lesson = { ...row };
+    Reflect.deleteProperty(lesson, "digital_textbooks");
+    return lesson;
+  });
+  const nestedTextbooks = nestedLessons
+    .map((lesson) => lesson.digital_textbooks)
+    .filter((textbook): textbook is NestedTextbookRow => Boolean(textbook));
+  const textbooks: TextbookRow[] = nestedTextbooks.map((row) => {
+    const textbook = { ...row };
+    Reflect.deleteProperty(textbook, "digital_textbook_versions");
+    return textbook;
+  });
+  const nestedVersions = nestedTextbooks.flatMap(
+    (textbook) => textbook.digital_textbook_versions,
+  );
+  const versions: VersionRow[] = nestedVersions.map((row) => {
+    const version = { ...row };
+    Reflect.deleteProperty(version, "digital_textbook_chapters");
+    return version;
+  });
+  const nestedChapters = nestedVersions.flatMap(
+    (version) => version.digital_textbook_chapters,
+  );
+  const chapters: ChapterRow[] = nestedChapters.map((row) => {
+    const chapter = { ...row };
+    Reflect.deleteProperty(chapter, "digital_textbook_modules");
+    return chapter;
+  });
 
   const chapterByVersionId = new Map(
     chapters.map((chapter) => [chapter.version_id, chapter]),
@@ -159,37 +208,15 @@ export async function getGrowthToolboxManagementData(
     lessonsByCourseId.set(lesson.course_id, list);
   }
 
-  const chapterIds = chapters.map((chapter) => chapter.id);
-  const vocabularyModuleResult = chapterIds.length
-    ? await supabase
-        .from("digital_textbook_modules")
-        .select("id,chapter_id")
-        .in("chapter_id", chapterIds)
-        .eq("module_code", "vocabulary")
-    : { data: [] as { id: string; chapter_id: string }[], error: null };
-  const vocabularyModuleIds = (vocabularyModuleResult.data ?? []).map(
-    (module) => module.id,
+  const vocabularyModules = nestedChapters.flatMap(
+    (chapter) => chapter.digital_textbook_modules,
   );
-  const vocabularyNodeResult = vocabularyModuleIds.length
-    ? await supabase
-        .from("digital_textbook_nodes")
-        .select("id,module_id,content")
-        .in("module_id", vocabularyModuleIds)
-    : {
-        data: [] as {
-          id: string;
-          module_id: string;
-          content: Record<string, unknown> | null;
-        }[],
-        error: null,
-      };
   const vocabularyNodesByChapter = new Map<
     string,
     { id: string; vocabulary: GrowthToolboxVocabularyWord[] }[]
   >();
-  for (const vocabularyModule of vocabularyModuleResult.data ?? []) {
-    const nodesForModule = (vocabularyNodeResult.data ?? [])
-      .filter((node) => node.module_id === vocabularyModule.id)
+  for (const vocabularyModule of vocabularyModules) {
+    const nodesForModule = vocabularyModule.digital_textbook_nodes
       .map((node) => ({
         id: node.id,
         vocabulary: (Array.isArray(node.content?.vocabulary)
@@ -265,18 +292,6 @@ export async function getGrowthToolboxManagementData(
     }
   }
 
-  let vocabularyQuery = supabase
-    .from("growth_toolbox_vocabulary")
-    .select("id,ko,zh,pos,collocation,transcription,source,sort_order");
-  let grammarQuery = supabase
-    .from("growth_toolbox_grammar")
-    .select("id,title,meaning,cases,rows,examples,caution,source,sort_order");
-  vocabularyQuery = vocabularyQuery.eq("student_app_id", studentAppId);
-  grammarQuery = grammarQuery.eq("student_app_id", studentAppId);
-  const [vocabularyResult, grammarResult] = await Promise.all([
-    vocabularyQuery.order("sort_order", { ascending: true }),
-    grammarQuery.order("sort_order", { ascending: true }),
-  ]);
   const vocabularyLibrary: GrowthToolboxVocabularyItem[] = (
     vocabularyResult.data ?? []
   ).map((row) => ({
@@ -330,11 +345,6 @@ export async function getGrowthToolboxManagementData(
       toolboxItemsResult.error ||
         courseResult.error ||
         lessonResult.error ||
-        textbookResult.error ||
-        versionResult.error ||
-        chapterResult.error ||
-        vocabularyModuleResult.error ||
-        vocabularyNodeResult.error ||
         vocabularyResult.error ||
         grammarResult.error,
     ),

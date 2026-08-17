@@ -24,6 +24,32 @@ import type {
   AccountSearchParams,
 } from "./types";
 
+type AccountMembership = {
+  tenant_id: string;
+  role: string;
+  status: string;
+  membership_tier: string;
+};
+
+type AccountListProfileWithMemberships = AccountListProfile & {
+  memberships: AccountMembership[];
+};
+
+type AccountDetailWithMemberships = AccountDetail & {
+  memberships: AccountMembership[];
+};
+
+type AccountDetailAuditLogWithActor = AccountDetailAuditLog & {
+  actor:
+    | { full_name: string | null; email: string | null }
+    | { full_name: string | null; email: string | null }[]
+    | null;
+};
+
+function oneProfile<T>(profile: T | T[] | null): T | null {
+  return Array.isArray(profile) ? (profile[0] ?? null) : profile;
+}
+
 export async function getAccountList(
   params: AccountSearchParams,
 ): Promise<AccountListResult> {
@@ -62,25 +88,22 @@ export async function getAccountList(
     ? requestedRoleFilter
     : "all";
   const admin = createAdminClient();
-  const { data: membershipData, error: membershipError } = await admin
-    .from("tenant_memberships")
-    .select("user_id, role, status, membership_tier")
-    .match(tenant ? { tenant_id: tenant.id } : {});
-  if (membershipError) {
-    throw new Error("无法确认机构账号范围，请稍后重试。");
-  }
-  const membershipUserIds = new Set(
-    (membershipData ?? []).map((item) => String(item.user_id)),
-  );
-  const membershipByUserId = new Map(
-    (membershipData ?? []).map((item) => [String(item.user_id), item]),
-  );
+  const profileFields =
+    "id, full_name, email, login_id, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier";
+  const profilesQuery = tenant
+    ? admin
+        .from("profiles")
+        .select(
+          `${profileFields}, memberships:tenant_memberships!tenant_memberships_user_id_fkey!inner(tenant_id,role,status,membership_tier)`,
+        )
+        .eq("memberships.tenant_id", tenant.id)
+    : admin
+        .from("profiles")
+        .select(
+          `${profileFields}, memberships:tenant_memberships!tenant_memberships_user_id_fkey(tenant_id,role,status,membership_tier)`,
+        );
   const [profilesResult, auditResult, deletionAuditResult] = await Promise.all([
-    admin
-      .from("profiles")
-      .select(
-        "id, full_name, email, login_id, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier",
-      )
+    profilesQuery
       .neq("role", "tenant_super_admin")
       .order("registered_at", { ascending: false, nullsFirst: false }),
     tenant
@@ -113,32 +136,33 @@ export async function getAccountList(
   }
 
   const visibleProfiles =
-    (profilesResult.data as AccountListProfile[] | null) ?? [];
+    (profilesResult.data as AccountListProfileWithMemberships[] | null) ?? [];
   const allProfiles = visibleProfiles
-    .filter((profile) =>
-      tenant
-        ? membershipUserIds.has(profile.id)
-        : !membershipUserIds.has(profile.id) &&
+    .filter(
+      (profile) =>
+        Boolean(tenant) ||
+        (profile.memberships.length === 0 &&
           (profile.global_role === "platform_deputy" ||
             profile.global_role === "platform_admin" ||
-            profile.global_role === "platform_course_inspector"),
+            profile.global_role === "platform_course_inspector")),
     )
     .map((profile) => {
+      const { memberships, ...storedProfile } = profile;
       if (!tenant) {
         return {
-          ...profile,
+          ...storedProfile,
           role: profile.global_role ?? profile.role,
         };
       }
-      const membership = membershipByUserId.get(profile.id);
+      const membership = memberships[0];
       return membership
         ? {
-            ...profile,
+            ...storedProfile,
             role: membership.role,
             status: membership.status,
             membership_tier: membership.membership_tier,
           }
-        : profile;
+        : storedProfile;
     });
   const auditLogs = (auditResult.data as AccountAuditLog[] | null) ?? [];
   const deletionAuditLogs =
@@ -233,22 +257,11 @@ export async function getAccountDetail(
 ): Promise<AccountDetailResult> {
   const { supabase, tenant, role: viewerRole } = await requireExecutive();
   const admin = createAdminClient();
-  const { data: targetMemberships, error: membershipError } = await admin
-    .from("tenant_memberships")
-    .select("tenant_id, role, status, membership_tier")
-    .eq("user_id", profileId);
-  if (membershipError) throw membershipError;
-  const isInViewerScope = tenant
-    ? (targetMemberships ?? []).some(
-        (membership) => membership.tenant_id === tenant.id,
-      )
-    : (targetMemberships ?? []).length === 0;
-  if (!isInViewerScope) notFound();
   const [profileResult, auditResult] = await Promise.all([
     admin
       .from("profiles")
       .select(
-        "id, full_name, email, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience",
+        "id, full_name, email, role, global_role, status, created_at, registered_at, updated_at, last_active_at, profile_completed_at, registration_source, deactivate_reason, membership_tier, avatar_path, gender, birth_date, address_province, address_city, education_level, education_status, education_completion_month, academic_average, gaokao_has_score, gaokao_score, english_level, math_level, has_korean, topik_level, has_work_experience, memberships:tenant_memberships!tenant_memberships_user_id_fkey(tenant_id,role,status,membership_tier)",
       )
       .eq("id", profileId)
       .neq("role", "tenant_super_admin")
@@ -257,7 +270,7 @@ export async function getAccountDetail(
       ? admin
           .from("account_management_audit_logs")
           .select(
-            "id, actor_id, action, changed_fields, before_data, after_data, created_at",
+            "id, actor_id, action, changed_fields, before_data, after_data, created_at, actor:profiles!account_management_audit_logs_actor_id_fkey(full_name,email)",
           )
           .eq("tenant_id", tenant.id)
           .eq("target_user_id", profileId)
@@ -268,7 +281,16 @@ export async function getAccountDetail(
 
   if (profileResult.error) throw profileResult.error;
   if (!profileResult.data) notFound();
-  const storedProfile = profileResult.data as AccountDetail;
+  const storedProfileWithMemberships =
+    profileResult.data as AccountDetailWithMemberships;
+  const { memberships: targetMemberships, ...storedProfile } =
+    storedProfileWithMemberships;
+  const isInViewerScope = tenant
+    ? targetMemberships.some(
+        (membership) => membership.tenant_id === tenant.id,
+      )
+    : targetMemberships.length === 0;
+  if (!isInViewerScope) notFound();
   if (
     !tenant &&
     storedProfile.global_role !== "platform_deputy" &&
@@ -278,7 +300,7 @@ export async function getAccountDetail(
     notFound();
   }
   const currentMembership = tenant
-    ? (targetMemberships ?? []).find(
+    ? targetMemberships.find(
         (membership) => membership.tenant_id === tenant.id,
       )
     : null;
@@ -300,27 +322,20 @@ export async function getAccountDetail(
       };
   const auditLogs = auditResult.error
     ? []
-    : ((auditResult.data as AccountDetailAuditLog[] | null) ?? []);
-
-  const actorIds = [
-    ...new Set(
-      auditLogs
-        .map((log) => log.actor_id)
-        .filter((value): value is string => Boolean(value)),
-    ),
-  ];
-  const actorResult =
-    actorIds.length > 0
-      ? await admin
-          .from("profiles")
-          .select("id, full_name, email")
-          .in("id", actorIds)
-      : { data: [], error: null };
+    : ((auditResult.data as AccountDetailAuditLogWithActor[] | null) ?? []);
   const actorNames = new Map(
-    (actorResult.data ?? []).map((actor) => [
-      actor.id,
-      actor.full_name || actor.email || `管理员 …${actor.id.slice(-6)}`,
-    ]),
+    auditLogs.flatMap((log) => {
+      if (!log.actor_id) return [];
+      const actor = oneProfile(log.actor);
+      return [
+        [
+          log.actor_id,
+          actor?.full_name ||
+            actor?.email ||
+            `管理员 …${log.actor_id.slice(-6)}`,
+        ] as const,
+      ];
+    }),
   );
 
   let avatarUrl: string | null = null;
@@ -363,7 +378,10 @@ export async function getAccountDetail(
     tenantId: tenant?.id ?? null,
     viewerRole,
     profile,
-    auditLogs,
+    auditLogs: auditLogs.map(({ actor, ...log }) => {
+      void actor;
+      return log;
+    }),
     actorNames,
     avatarUrl,
     completionPercent,

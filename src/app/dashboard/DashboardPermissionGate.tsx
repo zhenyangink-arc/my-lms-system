@@ -20,6 +20,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import type { StudentAppSlug } from "@/lib/student-apps";
+import { StudentPageHeader } from "./StudentPageHeader";
 
 function featureFromPath(pathname: string): StudentFeature {
   if (pathname.startsWith("/dashboard/assignments")) return "learning_assignments";
@@ -56,12 +58,20 @@ function isRestrictedDashboardSection(pathname: string) {
 
 export function DashboardPermissionGate({
   children,
+  sidebar,
+  topbar,
+  auditBadge,
   userRole,
   membershipTier,
+  studentAppSlug,
 }: {
   children: ReactNode;
+  sidebar: ReactNode;
+  topbar: ReactNode;
+  auditBadge?: ReactNode;
   userRole: string;
   membershipTier: MembershipTier;
+  studentAppSlug?: StudentAppSlug;
 }) {
   const pathname = normalizeDashboardPathname(usePathname());
   const [deniedFeature, setDeniedFeature] = useState<StudentFeature | null>(null);
@@ -106,7 +116,28 @@ export function DashboardPermissionGate({
   return (
     <>
       <div className="contents" onSubmitCapture={handleSubmitCapture} onClickCapture={handleClickCapture}>
-        {!routeIsDenied && children}
+        {!routeIsDenied && (
+          <div className="student-system-window mx-auto flex min-h-[calc(100dvh-32px)] w-full overflow-hidden">
+            {sidebar}
+
+            <div className="student-system-workspace min-w-0 flex-1">
+              {topbar}
+              {auditBadge}
+
+              <main
+                id="student-main-content"
+                tabIndex={-1}
+                className="app-student-main student-system-main min-w-0 scroll-mt-20"
+              >
+                <StudentPageHeader
+                  pathname={pathname}
+                  studentAppSlug={studentAppSlug}
+                />
+                {children}
+              </main>
+            </div>
+          </div>
+        )}
       </div>
 
       <Dialog open={routeIsDenied || deniedFeature !== null} onOpenChange={(open) => !open && !routeIsDenied && setDeniedFeature(null)}>

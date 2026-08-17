@@ -7,7 +7,7 @@ import type { GrowthToolboxItem } from "../../api/types";
 import {
   EditToolboxItemDialog,
   type GrowthToolboxCourseOption,
-} from "../growth-toolbox-action-dialogs";
+} from "../lazy-growth-toolbox-action-dialogs";
 
 export type GrowthToolboxItemDisplayRow = GrowthToolboxItem & {
   relatedCourseTitle: string;

@@ -92,13 +92,17 @@ export function EditToolboxItemDialog({
   studentAppId,
   item,
   courses,
+  autoOpen = false,
+  onClosed,
 }: {
   studentAppId: string;
   item: GrowthToolboxItem;
   courses: GrowthToolboxCourseOption[];
+  autoOpen?: boolean;
+  onClosed?: () => void;
 }) {
   const router = useRouter();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(autoOpen);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
   const [draft, setDraft] = useState<ToolboxItemInput>(() => toToolboxDraft(item));
@@ -113,23 +117,32 @@ export function EditToolboxItemDialog({
       return;
     }
     setOpen(false);
+    onClosed?.();
     router.refresh();
   }
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => {
-          setDraft(toToolboxDraft(item));
-          setMessage("");
-          setOpen(true);
+      {!autoOpen && (
+        <button
+          type="button"
+          onClick={() => {
+            setDraft(toToolboxDraft(item));
+            setMessage("");
+            setOpen(true);
+          }}
+          className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+        >
+          编辑
+        </button>
+      )}
+      <Dialog
+        open={open}
+        onOpenChange={(nextOpen) => {
+          setOpen(nextOpen);
+          if (!nextOpen) onClosed?.();
         }}
-        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
       >
-        编辑
-      </button>
-      <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-h-[90vh] overflow-y-auto p-0 sm:max-w-2xl">
           <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>编辑工具入口</DialogTitle>
@@ -268,13 +281,21 @@ const EMPTY_WORD: VocabularyWordInput = {
   transcription: "",
 };
 
-export function CreateVocabularyDialog({ studentAppId }: { studentAppId: string }) {
-  const [open, setOpen] = useState(false);
+export function CreateVocabularyDialog({
+  studentAppId,
+  autoOpen = false,
+  onClosed,
+}: {
+  studentAppId: string;
+  autoOpen?: boolean;
+  onClosed?: () => void;
+}) {
+  const [open, setOpen] = useState(autoOpen);
   return (
     <VocabularyDialog
       title="新增词汇"
       studentAppId={studentAppId}
-      trigger={
+      trigger={autoOpen ? undefined : (
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -282,9 +303,12 @@ export function CreateVocabularyDialog({ studentAppId }: { studentAppId: string 
         >
           新增词汇
         </button>
-      }
+      )}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) onClosed?.();
+      }}
     />
   );
 }
@@ -292,13 +316,17 @@ export function CreateVocabularyDialog({ studentAppId }: { studentAppId: string 
 export function VocabularyCellAction({
   studentAppId,
   item,
+  autoOpen,
+  onClosed,
 }: {
   studentAppId: string;
   item: GrowthToolboxVocabularyItem;
+  autoOpen?: "edit" | "delete";
+  onClosed?: () => void;
 }) {
   const router = useRouter();
-  const [editOpen, setEditOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(autoOpen === "edit");
+  const [deleteOpen, setDeleteOpen] = useState(autoOpen === "delete");
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -312,33 +340,47 @@ export function VocabularyCellAction({
       return;
     }
     setDeleteOpen(false);
+    onClosed?.();
     router.refresh();
   }
 
   return (
     <div className="flex items-center justify-end gap-1">
-      <button
-        type="button"
-        onClick={() => setEditOpen(true)}
-        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
-      >
-        编辑
-      </button>
-      <button
-        type="button"
-        onClick={() => setDeleteOpen(true)}
-        className="h-8 border border-rose-200 px-2.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
-      >
-        删除
-      </button>
+      {!autoOpen && (
+        <>
+          <button
+            type="button"
+            onClick={() => setEditOpen(true)}
+            className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+          >
+            编辑
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeleteOpen(true)}
+            className="h-8 border border-rose-200 px-2.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+          >
+            删除
+          </button>
+        </>
+      )}
       <VocabularyDialog
         title="编辑词汇"
         studentAppId={studentAppId}
         item={item}
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={(nextOpen) => {
+          setEditOpen(nextOpen);
+          if (!nextOpen) onClosed?.();
+        }}
       />
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(nextOpen) => {
+          setDeleteOpen(nextOpen);
+          if (!nextOpen) onClosed?.();
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>删除词汇“{item.ko || item.zh}”？</AlertDialogTitle>
@@ -487,13 +529,21 @@ const EMPTY_GRAMMAR: GrammarLibraryItemInput = {
   caution: "",
 };
 
-export function CreateGrammarDialog({ studentAppId }: { studentAppId: string }) {
-  const [open, setOpen] = useState(false);
+export function CreateGrammarDialog({
+  studentAppId,
+  autoOpen = false,
+  onClosed,
+}: {
+  studentAppId: string;
+  autoOpen?: boolean;
+  onClosed?: () => void;
+}) {
+  const [open, setOpen] = useState(autoOpen);
   return (
     <GrammarDialog
       title="新增语法"
       studentAppId={studentAppId}
-      trigger={
+      trigger={autoOpen ? undefined : (
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -501,9 +551,12 @@ export function CreateGrammarDialog({ studentAppId }: { studentAppId: string }) 
         >
           新增语法
         </button>
-      }
+      )}
       open={open}
-      onOpenChange={setOpen}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) onClosed?.();
+      }}
     />
   );
 }
@@ -511,13 +564,17 @@ export function CreateGrammarDialog({ studentAppId }: { studentAppId: string }) 
 export function GrammarCellAction({
   studentAppId,
   item,
+  autoOpen,
+  onClosed,
 }: {
   studentAppId: string;
   item: GrowthToolboxGrammarItem;
+  autoOpen?: "edit" | "delete";
+  onClosed?: () => void;
 }) {
   const router = useRouter();
-  const [editOpen, setEditOpen] = useState(false);
-  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(autoOpen === "edit");
+  const [deleteOpen, setDeleteOpen] = useState(autoOpen === "delete");
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -531,33 +588,47 @@ export function GrammarCellAction({
       return;
     }
     setDeleteOpen(false);
+    onClosed?.();
     router.refresh();
   }
 
   return (
     <div className="flex items-center justify-end gap-1">
-      <button
-        type="button"
-        onClick={() => setEditOpen(true)}
-        className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
-      >
-        编辑
-      </button>
-      <button
-        type="button"
-        onClick={() => setDeleteOpen(true)}
-        className="h-8 border border-rose-200 px-2.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
-      >
-        删除
-      </button>
+      {!autoOpen && (
+        <>
+          <button
+            type="button"
+            onClick={() => setEditOpen(true)}
+            className="h-8 border border-[var(--border)] px-2.5 text-xs font-semibold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+          >
+            编辑
+          </button>
+          <button
+            type="button"
+            onClick={() => setDeleteOpen(true)}
+            className="h-8 border border-rose-200 px-2.5 text-xs font-semibold text-rose-700 hover:bg-rose-50"
+          >
+            删除
+          </button>
+        </>
+      )}
       <GrammarDialog
         title="编辑语法"
         studentAppId={studentAppId}
         item={item}
         open={editOpen}
-        onOpenChange={setEditOpen}
+        onOpenChange={(nextOpen) => {
+          setEditOpen(nextOpen);
+          if (!nextOpen) onClosed?.();
+        }}
       />
-      <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+      <AlertDialog
+        open={deleteOpen}
+        onOpenChange={(nextOpen) => {
+          setDeleteOpen(nextOpen);
+          if (!nextOpen) onClosed?.();
+        }}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>删除语法“{item.title}”？</AlertDialogTitle>

@@ -25,9 +25,9 @@ export type UniversityRequirementPageResult<T> = {
   error: QueryError | null;
 };
 
-export async function loadUniversityDocumentRequirementsForStage(
+async function loadUniversityDocumentRequirements(
   supabase: UniversityManagementClient,
-  admissionStage: UniversityAdmissionStage,
+  admissionStages: readonly UniversityAdmissionStage[],
 ): Promise<UniversityRequirementPageResult<UniversityDocumentRequirement>> {
   const rows: UniversityDocumentRequirement[] = [];
   let offset = 0;
@@ -39,7 +39,8 @@ export async function loadUniversityDocumentRequirementsForStage(
         "id, university_id, admission_stage, category, title, description, sort_order",
       )
       .eq("is_active", true)
-      .eq("admission_stage", admissionStage)
+      .in("admission_stage", [...admissionStages])
+      .order("admission_stage", { ascending: true })
       .order("university_id", { ascending: true })
       .order("category", { ascending: true })
       .order("sort_order", { ascending: true })
@@ -57,9 +58,9 @@ export async function loadUniversityDocumentRequirementsForStage(
   }
 }
 
-export async function loadUniversityVisaRequirementsForType(
+async function loadUniversityVisaRequirements(
   supabase: UniversityManagementClient,
-  visaType: UniversityVisaType,
+  visaTypes: readonly UniversityVisaType[],
 ): Promise<UniversityRequirementPageResult<UniversityVisaRequirement>> {
   const rows: UniversityVisaRequirement[] = [];
   let offset = 0;
@@ -71,7 +72,8 @@ export async function loadUniversityVisaRequirementsForType(
         "id, university_id, visa_type, stage, title, description, sort_order, applicable_scopes",
       )
       .eq("is_active", true)
-      .eq("visa_type", visaType)
+      .in("visa_type", [...visaTypes])
+      .order("visa_type", { ascending: true })
       .order("university_id", { ascending: true })
       .order("stage", { ascending: true })
       .order("sort_order", { ascending: true })
@@ -89,6 +91,20 @@ export async function loadUniversityVisaRequirementsForType(
   }
 }
 
+export async function loadUniversityDocumentRequirementsForStage(
+  supabase: UniversityManagementClient,
+  admissionStage: UniversityAdmissionStage,
+): Promise<UniversityRequirementPageResult<UniversityDocumentRequirement>> {
+  return loadUniversityDocumentRequirements(supabase, [admissionStage]);
+}
+
+export async function loadUniversityVisaRequirementsForType(
+  supabase: UniversityManagementClient,
+  visaType: UniversityVisaType,
+): Promise<UniversityRequirementPageResult<UniversityVisaRequirement>> {
+  return loadUniversityVisaRequirements(supabase, [visaType]);
+}
+
 export async function getUniversityManagementData(): Promise<UniversityManagementResult> {
   const {
     supabase,
@@ -99,8 +115,8 @@ export async function getUniversityManagementData(): Promise<UniversityManagemen
 
   const [
     universitiesResult,
-    requirementStageResults,
-    visaRequirementResults,
+    requirementsResult,
+    visaRequirementsResult,
   ] = await Promise.all([
     supabase
       .from("korean_universities")
@@ -108,40 +124,48 @@ export async function getUniversityManagementData(): Promise<UniversityManagemen
         "id, name_zh, name_ko, logo_url, ownership, province, city, admission_stages, discipline_groups, tuition_min_krw, tuition_max_krw, tuition_min_cny, tuition_max_cny, tuition_reference_year, qs_rank_display, qs_rank_sort, qs_ranking_year, joongang_rank_display, joongang_rank_sort, joongang_ranking_year, summary, detailed_introduction, highlights, application_deadlines, is_featured, is_published, sort_order, updated_at",
       )
       .order("sort_order", { ascending: true }),
-    Promise.all(
-      UNIVERSITY_ADMISSION_STAGES.map((stage) =>
-        loadUniversityDocumentRequirementsForStage(supabase, stage),
-      ),
-    ),
-    Promise.all(
-      UNIVERSITY_VISA_TYPES.map((visaType) =>
-        loadUniversityVisaRequirementsForType(supabase, visaType),
-      ),
-    ),
+    loadUniversityDocumentRequirements(supabase, UNIVERSITY_ADMISSION_STAGES),
+    loadUniversityVisaRequirements(supabase, UNIVERSITY_VISA_TYPES),
   ]);
 
   const universities = (universitiesResult.data ?? []) as ManagedUniversity[];
   const visibleUniversityIds = new Set(
     universities.map((university) => university.id),
   );
-  const requirements = requirementStageResults
-    .flatMap((result) => result.data)
+  const requirementsByStage = new Map(
+    UNIVERSITY_ADMISSION_STAGES.map((stage) => [
+      stage,
+      [] as UniversityDocumentRequirement[],
+    ]),
+  );
+  for (const requirement of requirementsResult.data) {
+    requirementsByStage.get(requirement.admission_stage)?.push(requirement);
+  }
+  const requirements = UNIVERSITY_ADMISSION_STAGES.flatMap(
+    (stage) => requirementsByStage.get(stage) ?? [],
+  )
     .filter(
       (requirement) =>
         canManageContent || visibleUniversityIds.has(requirement.university_id),
     );
-  const visaRequirements = visaRequirementResults
-    .flatMap((result) => result.data)
+  const visaRequirementsByType = new Map(
+    UNIVERSITY_VISA_TYPES.map((visaType) => [
+      visaType,
+      [] as UniversityVisaRequirement[],
+    ]),
+  );
+  for (const requirement of visaRequirementsResult.data) {
+    visaRequirementsByType.get(requirement.visa_type)?.push(requirement);
+  }
+  const visaRequirements = UNIVERSITY_VISA_TYPES.flatMap(
+    (visaType) => visaRequirementsByType.get(visaType) ?? [],
+  )
     .filter(
       (requirement) =>
         canManageContent || visibleUniversityIds.has(requirement.university_id),
     );
-  const requirementsError =
-    requirementStageResults.find((result) => result.error)?.error?.message ??
-    null;
-  const visaRequirementsError =
-    visaRequirementResults.find((result) => result.error)?.error?.message ??
-    null;
+  const requirementsError = requirementsResult.error?.message ?? null;
+  const visaRequirementsError = visaRequirementsResult.error?.message ?? null;
   const universitiesError = universitiesResult.error?.message ?? null;
 
   return {

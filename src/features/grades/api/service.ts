@@ -31,6 +31,24 @@ type ProfileRow = {
   email: string | null;
 };
 
+type ProfileRelation = ProfileRow | ProfileRow[] | null;
+
+type SubmissionWithStudent = LearningSubmissionGrade & {
+  student: ProfileRelation;
+};
+
+type AttemptWithStudent = ChapterTestGradeAttempt & {
+  student: ProfileRelation;
+};
+
+type ReviewWithStudent = GradeReviewDatabaseRow & {
+  student: ProfileRelation;
+};
+
+function oneProfile(profile: ProfileRelation): ProfileRow | null {
+  return Array.isArray(profile) ? (profile[0] ?? null) : profile;
+}
+
 type CourseRow = {
   id: string;
   title: string;
@@ -134,7 +152,7 @@ export async function getGradeManagementData(
   let submissionsQuery = supabase
     .from("learning_submissions")
     .select(
-      "id,assignment_id,student_id,score,overall_feedback,graded_at,submitted_at,attempt_number",
+      "id,assignment_id,student_id,score,overall_feedback,graded_at,submitted_at,attempt_number,student:profiles!learning_submissions_student_id_fkey(id,full_name,email)",
     )
     .eq("tenant_id", institutionTenantId)
     .eq("status", "graded")
@@ -143,14 +161,14 @@ export async function getGradeManagementData(
   let attemptsQuery = supabase
     .from("chapter_test_attempts")
     .select(
-      "id,student_id,test_slug,score,correct_count,total_questions,passed,attempted_at",
+      "id,student_id,test_slug,score,correct_count,total_questions,passed,attempted_at,student:profiles!course_test_attempts_student_id_fkey(id,full_name,email)",
     )
     .eq("tenant_id", institutionTenantId)
     .order("attempted_at", { ascending: false });
   let reviewsQuery = supabase
     .from("grade_review_requests")
     .select(
-      "id,record_id,student_id,source_type,source_result_id,source_title,source_score,source_total_points,source_context,reason,status,response,requested_at",
+      "id,record_id,student_id,source_type,source_result_id,source_title,source_score,source_total_points,source_context,reason,status,response,requested_at,student:profiles!grade_review_requests_student_id_fkey(id,full_name,email)",
     )
     .eq("tenant_id", institutionTenantId)
     .order("requested_at", { ascending: false });
@@ -180,9 +198,15 @@ export async function getGradeManagementData(
   ]);
 
   const assignments = (assignmentsResult.data ?? []) as AssignmentGradeSource[];
-  const submissions = (submissionsResult.data ?? []) as LearningSubmissionGrade[];
-  const attempts = (attemptsResult.data ?? []) as ChapterTestGradeAttempt[];
-  const reviewRowsRaw = (reviewsResult.data ?? []) as GradeReviewDatabaseRow[];
+  const submissions = (submissionsResult.data ?? []) as SubmissionWithStudent[];
+  const attempts = (attemptsResult.data ?? []) as AttemptWithStudent[];
+  const reviewRowsWithStudents = (reviewsResult.data ?? []) as ReviewWithStudent[];
+  const reviewRowsRaw = reviewRowsWithStudents.map(
+    ({ student, ...review }) => {
+      void student;
+      return review;
+    },
+  );
   const tests = (testsResult.data ?? []) as ChapterTestGradeSource[];
   const courses = (coursesResult.data ?? []) as CourseRow[];
   const assignmentById = new Map(
@@ -271,23 +295,18 @@ export async function getGradeManagementData(
       })
     : reviewRowsRaw;
 
-  const studentIds = [
-    ...new Set([
-      ...resultRows.map((result) => result.student_id),
-      ...reviewRows.map((review) => review.student_id),
-    ]),
-  ];
-  const { data: profileData, error: profileError } = studentIds.length
-    ? await supabase
-        .from("profiles")
-        .select("id,full_name,email")
-        .in("id", studentIds)
-    : { data: [] as ProfileRow[], error: null };
   const studentNameById = new Map(
-    ((profileData ?? []) as ProfileRow[]).map((profile) => [
-      profile.id,
-      profile.full_name?.trim() || profile.email || "学生",
-    ]),
+    [...submissions, ...attempts, ...reviewRowsWithStudents].flatMap((row) => {
+      const profile = oneProfile(row.student);
+      return profile
+        ? [
+            [
+              profile.id,
+              profile.full_name?.trim() || profile.email || "学生",
+            ] as const,
+          ]
+        : [];
+    }),
   );
   const reviewBySource = new Map(
     reviewRows
@@ -367,8 +386,7 @@ export async function getGradeManagementData(
       attemptsResult.error ||
       reviewsResult.error ||
       testsResult.error ||
-      coursesResult.error ||
-      profileError,
+      coursesResult.error,
   );
 
   return {

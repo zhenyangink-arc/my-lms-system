@@ -2,8 +2,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { LayoutDashboard } from "lucide-react";
 
-import { GuideAgentChat } from "@/components/guide-agent/GuideAgentChat";
-import { GuideAgentProvider } from "@/components/guide-agent/GuideAgentProvider";
+import { LazyGuideAgentChat } from "@/components/guide-agent/LazyGuideAgentChat";
 import { PortalAccountMenu } from "./PortalAccountMenu";
 
 type PortalTopbarProps = {
@@ -55,13 +54,10 @@ export function PortalTopbar({
         </nav>
 
         <div className="flex min-w-8 flex-1 items-center justify-end gap-2">
-          <GuideAgentProvider>
-            <GuideAgentChat
-              studentId={studentId}
-              dashboardBasePath={dashboardBasePath}
-              triggerVariant="portal"
-            />
-          </GuideAgentProvider>
+          <LazyGuideAgentChat
+            studentId={studentId}
+            dashboardBasePath={dashboardBasePath}
+          />
         </div>
 
         <Link

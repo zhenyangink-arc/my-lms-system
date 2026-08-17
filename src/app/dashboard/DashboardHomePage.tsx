@@ -7,7 +7,6 @@ import {
   type GrowthWeekActivityDay as WeekActivityDay,
 } from "@/app/dashboard/GrowthHomeView";
 import { SystemGrowthHomeView } from "@/app/dashboard/SystemGrowthHomeView";
-import { createClient } from "@/lib/supabase/server";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
@@ -47,6 +46,17 @@ type CategoryRow = {
   id: string;
   parent_id: string | null;
   slug: string;
+};
+
+type AnsweredQuestionRow = {
+  id: string;
+  title: string;
+  course_id: string;
+  lesson_id: string;
+  teacher_name: string | null;
+  answered_at: string | null;
+  student_read_at: string | null;
+  teacher_answer: string | null;
 };
 
 const MONTHLY_DAY_STUDY_MINUTES_CAP = 8 * 60;
@@ -133,6 +143,7 @@ function calculateStreak(completedDateStrings: string[]) {
 
 export default async function DashboardHomePage() {
   const auth = await requireActiveUser();
+  const { supabase, user, profile } = auth;
   const userRole = auth.profile?.role ?? "student";
   const dashboardBasePath =
     userRole === "student" && auth.tenant?.slug
@@ -147,11 +158,6 @@ export default async function DashboardHomePage() {
       )
     );
   }
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
 
   let studentName = "同学";
   let recentActivity: ActivityItem[] = [];
@@ -177,25 +183,84 @@ export default async function DashboardHomePage() {
   let courseProgressList: CourseProgressItem[] = [];
 
   if (user) {
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("id", user.id)
-      .maybeSingle();
-
     studentName =
-      profileData?.full_name || user.user_metadata?.name || user.email || "同学";
+      profile?.full_name || user.user_metadata?.name || user.email || "同学";
 
     const koreanScope = await getStudentAppCourseScope(supabase, "korean");
-    const { data: progressData } = koreanScope.courseIds.length
-      ? await supabase
-          .from("lesson_progress")
-          .select(
-            "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at"
-          )
-          .eq("user_id", user.id)
-          .in("course_id", koreanScope.courseIds)
-      : { data: [] as LessonProgressRow[] };
+    const weekStart = getWeekStartISOString();
+    const seoulTodayString = toSeoulDateString(new Date());
+    const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);
+    const learningLogFromISO = new Date(
+      Date.UTC(seoulYear, 0, 1) - 9 * 60 * 60 * 1000
+    ).toISOString();
+
+    const [
+      { data: progressData },
+      { data: learningTimeLogData },
+      { data: allCoursesData },
+      { data: allSubcategoriesData },
+      { data: allParentCategoriesData },
+      { data: answeredQuestionsData },
+    ] = await Promise.all([
+      koreanScope.courseIds.length
+        ? supabase
+            .from("lesson_progress")
+            .select(
+              "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at"
+            )
+            .eq("user_id", user.id)
+            .in("course_id", koreanScope.courseIds)
+        : Promise.resolve({ data: [] as LessonProgressRow[] }),
+      withStudentAppSchemaFallback(
+        supabase
+          .from("learning_time_log")
+          .select("seconds, recorded_at, test_slug, source")
+          .eq("student_id", user.id)
+          .eq("student_app_id", STUDENT_APP_IDS.korean)
+          .gte("recorded_at", learningLogFromISO),
+        () =>
+          supabase
+            .from("learning_time_log")
+            .select("seconds, recorded_at, test_slug, source")
+            .eq("student_id", user.id)
+            .gte("recorded_at", learningLogFromISO),
+      ),
+      koreanScope.courseIds.length
+        ? supabase
+            .from("courses")
+            .select("id, slug, title, category_id, level, support_teacher_name")
+            .in("id", koreanScope.courseIds)
+            .eq("is_published", true)
+        : Promise.resolve({ data: [] as CourseRow[] }),
+      koreanScope.categoryIds.length
+        ? supabase
+            .from("course_categories")
+            .select("id, parent_id, slug")
+            .in("id", koreanScope.categoryIds)
+            .not("parent_id", "is", null)
+            .eq("is_published", true)
+        : Promise.resolve({ data: [] as CategoryRow[] }),
+      koreanScope.categoryIds.length
+        ? supabase
+            .from("course_categories")
+            .select("id, parent_id, slug")
+            .in("id", koreanScope.categoryIds)
+            .is("parent_id", null)
+            .eq("is_published", true)
+        : Promise.resolve({ data: [] as CategoryRow[] }),
+      koreanScope.courseIds.length
+        ? supabase
+            .from("lesson_questions")
+            .select(
+              "id, title, course_id, lesson_id, teacher_name, answered_at, student_read_at, teacher_answer"
+            )
+            .eq("student_id", user.id)
+            .in("course_id", koreanScope.courseIds)
+            .not("teacher_answer", "is", null)
+            .order("answered_at", { ascending: false, nullsFirst: false })
+            .limit(10)
+        : Promise.resolve({ data: [] as AnsweredQuestionRow[] }),
+    ]);
 
     const progressRows = (progressData ?? []) as LessonProgressRow[];
 
@@ -207,34 +272,12 @@ export default async function DashboardHomePage() {
       (row) => row.status === "in_progress"
     ).length;
 
-    const weekStart = getWeekStartISOString();
     thisWeekCompletedCount = progressRows.filter(
       (row) =>
         row.status === "completed" &&
         row.completed_at &&
         row.completed_at >= weekStart
     ).length;
-
-    const seoulTodayString = toSeoulDateString(new Date());
-    const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);
-    const learningLogFromISO = new Date(
-      Date.UTC(seoulYear, 0, 1) - 9 * 60 * 60 * 1000
-    ).toISOString();
-
-    const { data: learningTimeLogData } = await withStudentAppSchemaFallback(
-      supabase
-        .from("learning_time_log")
-        .select("seconds, recorded_at, test_slug, source")
-        .eq("student_id", user.id)
-        .eq("student_app_id", STUDENT_APP_IDS.korean)
-        .gte("recorded_at", learningLogFromISO),
-      () =>
-        supabase
-          .from("learning_time_log")
-          .select("seconds, recorded_at, test_slug, source")
-          .eq("student_id", user.id)
-          .gte("recorded_at", learningLogFromISO),
-    );
 
     const learningTimeLogs = (learningTimeLogData ?? []) as {
       seconds: number;
@@ -392,36 +435,45 @@ export default async function DashboardHomePage() {
       ...new Set(recentRows.map((row) => row.lesson_id)),
     ];
 
-    const { data: lessonsData } =
+    const unreadQuestions = (
+      (answeredQuestionsData ?? []) as AnsweredQuestionRow[]
+    ).filter(
+      (row) =>
+        !row.student_read_at ||
+        (row.answered_at && row.student_read_at < row.answered_at)
+    );
+    const questionLessonIds = [
+      ...new Set(unreadQuestions.map((row) => row.lesson_id)),
+    ];
+
+    const [
+      { data: lessonsData },
+      { data: touchedLessonsData },
+      { data: questionLessonsData },
+    ] = await Promise.all([
       lessonIdsNeeded.length > 0
-        ? await supabase
+        ? supabase
             .from("lessons")
             .select("id, slug, title, course_id, is_published")
             .in("id", lessonIdsNeeded)
-        : { data: [] as LessonRow[] };
+        : Promise.resolve({ data: [] as LessonRow[] }),
+      touchedCourseIdsInOrder.length > 0
+        ? supabase
+            .from("lessons")
+            .select("id, course_id")
+            .in("course_id", touchedCourseIdsInOrder)
+            .eq("is_published", true)
+        : Promise.resolve({ data: [] as { id: string; course_id: string }[] }),
+      questionLessonIds.length > 0
+        ? supabase
+            .from("lessons")
+            .select("id, slug")
+            .in("id", questionLessonIds)
+        : Promise.resolve({ data: [] as { id: string; slug: string }[] }),
+    ]);
 
     const lessons = (lessonsData ?? []) as LessonRow[];
     const lessonMap = new Map(lessons.map((lesson) => [lesson.id, lesson]));
-
-    const { data: allCoursesData } = await supabase
-      .from("courses")
-      .select("id, slug, title, category_id, level, support_teacher_name")
-      .in("id", koreanScope.courseIds)
-      .eq("is_published", true);
-
-    const { data: allSubcategoriesData } = await supabase
-      .from("course_categories")
-      .select("id, parent_id, slug")
-      .in("id", koreanScope.categoryIds)
-      .not("parent_id", "is", null)
-      .eq("is_published", true);
-
-    const { data: allParentCategoriesData } = await supabase
-      .from("course_categories")
-      .select("id, parent_id, slug")
-      .in("id", koreanScope.categoryIds)
-      .is("parent_id", null)
-      .eq("is_published", true);
 
     const allCourses = (allCoursesData ?? []) as CourseRow[];
 
@@ -482,12 +534,6 @@ export default async function DashboardHomePage() {
     hero = recentActivity[0] ?? null;
 
     if (touchedCourseIdsInOrder.length > 0) {
-      const { data: touchedLessonsData } = await supabase
-        .from("lessons")
-        .select("id, course_id")
-        .in("course_id", touchedCourseIdsInOrder)
-        .eq("is_published", true);
-
       const totalCountByCourse = new Map<string, number>();
       for (const row of touchedLessonsData ?? []) {
         totalCountByCourse.set(
@@ -542,37 +588,6 @@ export default async function DashboardHomePage() {
         })
         .filter((item): item is CourseProgressItem => item !== null);
     }
-
-    const { data: answeredQuestionsData } = koreanScope.courseIds.length
-      ? await supabase
-          .from("lesson_questions")
-          .select(
-            "id, title, course_id, lesson_id, teacher_name, answered_at, student_read_at, teacher_answer"
-          )
-          .eq("student_id", user.id)
-          .in("course_id", koreanScope.courseIds)
-          .not("teacher_answer", "is", null)
-          .order("answered_at", { ascending: false, nullsFirst: false })
-          .limit(10)
-      : { data: [] as { id: string; title: string; course_id: string; lesson_id: string; teacher_name: string | null; answered_at: string | null; student_read_at: string | null; teacher_answer: string | null }[] };
-
-    const unreadQuestions = (answeredQuestionsData ?? []).filter(
-      (row) =>
-        !row.student_read_at ||
-        (row.answered_at && row.student_read_at < row.answered_at)
-    );
-
-    const questionLessonIds = [
-      ...new Set(unreadQuestions.map((row) => row.lesson_id)),
-    ];
-
-    const { data: questionLessonsData } =
-      questionLessonIds.length > 0
-        ? await supabase
-            .from("lessons")
-            .select("id, slug")
-            .in("id", questionLessonIds)
-        : { data: [] as { id: string; slug: string }[] };
 
     const questionLessonMap = new Map(
       (questionLessonsData ?? []).map((lesson) => [lesson.id, lesson.slug])

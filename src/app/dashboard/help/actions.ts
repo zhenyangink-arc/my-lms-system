@@ -1,5 +1,8 @@
 "use server";
 
+import { updateTag } from "next/cache";
+
+import { publishedHelpArticlesTenantTag } from "@/lib/published-tenant-content";
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import {
@@ -35,6 +38,12 @@ function refreshHelp(ticketId?: string) {
   }
 }
 
+function refreshHelpArticles(tenantId: string | null) {
+  if (!tenantId) throw new Error("帮助文章缺少租户上下文。");
+  updateTag(publishedHelpArticlesTenantTag(tenantId));
+  refreshHelp();
+}
+
 function readArticle(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const summary = String(formData.get("summary") ?? "").trim();
@@ -51,37 +60,37 @@ function readArticle(formData: FormData) {
 
 export async function createHelpArticleAction(_state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
-  const { supabase } = await requireHelpArticleManager();
+  const { supabase, tenantId } = await requireHelpArticleManager();
   const input = readArticle(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const status: HelpArticleStatus = formData.get("intent") === "publish" ? "published" : "draft";
   const { error } = await supabase.rpc("save_help_article", { p_id: null, ...input.data, p_status: status });
   if (error) return result("error", "帮助文章保存失败，请稍后重试。");
-  refreshHelp();
+  refreshHelpArticles(tenantId);
   return result("success", status === "published" ? "帮助文章已经发布。" : "帮助文章草稿已经保存。");
 }
 
 export async function updateHelpArticleAction(articleId: string, _state: HelpCenterActionState, formData: FormData): Promise<HelpCenterActionState> {
   void _state;
   if (!isUuid(articleId)) return result("error", "文章编号不正确。");
-  const { supabase } = await requireHelpArticleManager();
+  const { supabase, tenantId } = await requireHelpArticleManager();
   const input = readArticle(formData);
   if ("error" in input && input.error) return result("error", input.error);
   const status = String(formData.get("status") ?? "draft");
   if (!(HELP_ARTICLE_STATUSES as readonly string[]).includes(status)) return result("error", "文章状态不正确。");
   const { error } = await supabase.rpc("save_help_article", { p_id: articleId, ...input.data, p_status: status as HelpArticleStatus });
   if (error) return result("error", "帮助文章修改失败，请稍后重试。");
-  refreshHelp();
+  refreshHelpArticles(tenantId);
   return result("success", "帮助文章内容已经更新。");
 }
 
 export async function changeHelpArticleStatusAction(articleId: string, nextStatus: HelpArticleStatus, _state: HelpCenterActionState, _formData: FormData): Promise<HelpCenterActionState> {
   void _state; void _formData;
   if (!isUuid(articleId) || !(HELP_ARTICLE_STATUSES as readonly string[]).includes(nextStatus)) return result("error", "文章编号或状态不正确。");
-  const { supabase } = await requireHelpArticleManager();
+  const { supabase, tenantId } = await requireHelpArticleManager();
   const { error } = await supabase.rpc("change_help_article_status", { p_article_id: articleId, p_status: nextStatus });
   if (error) return result("error", "文章状态更新失败。");
-  refreshHelp();
+  refreshHelpArticles(tenantId);
   return result("success", nextStatus === "published" ? "文章已经发布。" : nextStatus === "archived" ? "文章已经归档。" : "文章已经转为草稿。");
 }
 

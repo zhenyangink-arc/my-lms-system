@@ -25,6 +25,10 @@ const CHAPTER_COLUMNS =
 const RESOURCE_COLUMNS =
   "id,lesson_id,title,description,resource_type,resource_url,resource_object_key,original_file_name,is_required,is_published,sort_order,is_deleted,deleted_at,delete_reason";
 
+type LessonWithChapters = CourseCatalogLesson & {
+  course_chapters: CourseCatalogChapter[];
+};
+
 export async function getCourseManagementData(
   selection: CourseManagementSelection = {},
   studentAppId?: string,
@@ -67,43 +71,32 @@ export async function getCourseManagementData(
   const categories = (categoryResult.data ?? []) as CourseCategory[];
   const courses = (courseResult.data ?? []) as CourseCatalogCourse[];
   const courseIds = courses.map((course) => course.id);
-  const lessonResult = studentAppId
-    ? courseIds.length
-      ? await supabase
-          .from("lessons")
-          .select(LESSON_COLUMNS)
-          .eq("content_scope", "platform")
-          .in("course_id", courseIds)
-          .order("sort_order")
-      : { data: [] as CourseCatalogLesson[], error: null }
-    : await supabase
-        .from("lessons")
-        .select(LESSON_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order");
-  const lessons = (lessonResult.data ?? []) as CourseCatalogLesson[];
-  const lessonIds = lessons.map((lesson) => lesson.id);
-  const chapterResult = studentAppId
-    ? lessonIds.length
-      ? await supabase
-          .from("course_chapters")
-          .select(CHAPTER_COLUMNS)
-          .eq("content_scope", "platform")
-          .in("lesson_id", lessonIds)
-          .order("sort_order")
-      : { data: [] as CourseCatalogChapter[], error: null }
-    : await supabase
-        .from("course_chapters")
-        .select(CHAPTER_COLUMNS)
-        .eq("content_scope", "platform")
-        .order("sort_order");
-
-  const chapters = (chapterResult.data ?? []) as CourseCatalogChapter[];
+  let lessonQuery = supabase
+    .from("lessons")
+    .select(
+      `${LESSON_COLUMNS},course_chapters!course_chapters_lesson_id_fkey(${CHAPTER_COLUMNS})`,
+    )
+    .eq("content_scope", "platform")
+    .eq("course_chapters.content_scope", "platform");
+  if (studentAppId) lessonQuery = lessonQuery.in("course_id", courseIds);
+  const lessonResult = courseIds.length || !studentAppId
+    ? await lessonQuery
+        .order("sort_order")
+        .order("sort_order", { referencedTable: "course_chapters" })
+    : { data: [] as LessonWithChapters[], error: null };
+  const lessonRows = (lessonResult.data ?? []) as LessonWithChapters[];
+  const lessons = lessonRows.map((row) => {
+    const lesson = { ...row };
+    Reflect.deleteProperty(lesson, "course_chapters");
+    return lesson;
+  });
+  const chapters = lessonRows
+    .flatMap((lesson) => lesson.course_chapters)
+    .sort((left, right) => left.sort_order - right.sort_order);
   const catalogError =
     categoryResult.error ||
     courseResult.error ||
-    lessonResult.error ||
-    chapterResult.error;
+    lessonResult.error;
 
   let resources: CourseLessonResource[] = [];
   let resourceErrorMessage: string | null = null;

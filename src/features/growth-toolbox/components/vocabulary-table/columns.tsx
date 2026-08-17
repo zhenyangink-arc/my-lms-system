@@ -4,7 +4,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { GrowthToolboxVocabularyItem } from "../../api/types";
-import { VocabularyCellAction } from "../growth-toolbox-action-dialogs";
+import { VocabularyCellAction } from "../lazy-growth-toolbox-action-dialogs";
 
 function sortableHeader(title: string) {
   return function SortableHeader({

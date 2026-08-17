@@ -1,6 +1,3 @@
-"use client";
-
-import { usePathname } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
 import {
   Award,
@@ -24,8 +21,6 @@ import {
   Wrench,
 } from "lucide-react";
 
-import { GuideAgentChat } from "@/components/guide-agent/GuideAgentChat";
-import { normalizeDashboardPathname } from "@/lib/dashboard-path";
 import {
   getStudentAppDefinition,
   type StudentAppSlug,
@@ -127,17 +122,12 @@ function resolveHeaderConfig(
 }
 
 export function StudentPageHeader({
-  studentId,
-  dashboardBasePath,
+  pathname,
   studentAppSlug,
-  showAssistant = true,
 }: {
-  studentId?: string;
-  dashboardBasePath: string;
+  pathname: string;
   studentAppSlug?: StudentAppSlug;
-  showAssistant?: boolean;
 }) {
-  const pathname = normalizeDashboardPathname(usePathname());
   const { title, icon: PageIcon } = resolveHeaderConfig(pathname, studentAppSlug);
 
   return (
@@ -153,25 +143,6 @@ export function StudentPageHeader({
             {title}
           </h1>
         </div>
-
-        {showAssistant &&
-          (studentId ? (
-            <GuideAgentChat
-              studentId={studentId}
-              dashboardBasePath={dashboardBasePath}
-            />
-          ) : (
-            <button
-              type="button"
-              disabled
-              aria-label="智能辅助仅对学生开放"
-              title="智能辅助仅对学生开放"
-              className="app-glass-card inline-flex shrink-0 cursor-default items-center gap-2 rounded-2xl px-3 py-2.5 text-base font-bold tracking-tight opacity-60 sm:px-4 sm:text-lg"
-            >
-              <Bot size={18} aria-hidden="true" />
-              <span>智能辅助</span>
-            </button>
-          ))}
       </header>
     </div>
   );

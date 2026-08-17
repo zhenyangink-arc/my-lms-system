@@ -4,6 +4,7 @@ import { ArrowRight, BookOpenText, CheckCircle2, Clock3, Eye, HelpCircle, Messag
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { getHelpCenterAccess } from "@/lib/help-center";
+import { getPublishedHelpArticlesForTenant } from "@/lib/published-tenant-content";
 import { HelpArticleBrowser } from "./HelpArticleBrowser";
 import { HelpTicketForm } from "./HelpTicketForm";
 import { HELP_DATE_TIME_OPTIONS, HELP_TICKET_CATEGORY_LABELS, HELP_TICKET_STATUS_LABELS, type HelpArticleCategory, type HelpTicketCategory, type HelpTicketPriority, type HelpTicketStatus } from "./config";
@@ -13,9 +14,15 @@ type ArticleRow = { id: string; title: string; summary: string; content: string;
 type TicketRow = { id: string; subject: string; category: HelpTicketCategory; priority: HelpTicketPriority; status: HelpTicketStatus; resolution: string; created_at: string; updated_at: string };
 
 export default async function HelpCenterPage() {
-  const { supabase, user, role, canManage } = await getHelpCenterAccess();
+  const { supabase, user, role, canManage, tenantId } = await getHelpCenterAccess();
   const [articlesResult, ticketsResult] = await Promise.all([
-    supabase.from("help_articles").select("id,title,summary,content,category,is_featured").eq("status", "published").order("is_featured", { ascending: false }).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
+    tenantId
+      ? getPublishedHelpArticlesForTenant(tenantId)
+          .then((result) => ({ data: result.data, error: null }))
+          .catch(() =>
+            supabase.from("help_articles").select("id,title,summary,content,category,is_featured").eq("status", "published").order("is_featured", { ascending: false }).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
+          )
+      : supabase.from("help_articles").select("id,title,summary,content,category,is_featured").eq("status", "published").order("is_featured", { ascending: false }).order("sort_order", { ascending: true }).order("published_at", { ascending: false }),
     role === "student" ? supabase.from("help_tickets").select("id,subject,category,priority,status,resolution,created_at,updated_at").eq("user_id", user.id).order("updated_at", { ascending: false }) : Promise.resolve({ data: [] as TicketRow[], error: null }),
   ]);
   const articles = (articlesResult.data ?? []) as ArticleRow[];

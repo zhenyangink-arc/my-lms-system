@@ -1,5 +1,11 @@
 "use server";
 
+import { updateTag } from "next/cache";
+
+import {
+  PUBLISHED_ANNOUNCEMENTS_TAG,
+  publishedAnnouncementsTenantTag,
+} from "@/lib/published-tenant-content";
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAnnouncementAccess } from "@/lib/announcements";
@@ -53,7 +59,12 @@ function readAnnouncementInput(formData: FormData) {
   } as const;
 }
 
-function refreshAnnouncements() {
+function refreshAnnouncements(scope: "platform" | "tenant", tenantId: string | null) {
+  if (scope === "platform") {
+    updateTag(PUBLISHED_ANNOUNCEMENTS_TAG);
+  } else if (tenantId) {
+    updateTag(publishedAnnouncementsTenantTag(tenantId));
+  }
   revalidateDashboard("/dashboard/announcements");
   revalidateDashboard("/dashboard/admin/announcements");
   revalidateDashboard("/dashboard");
@@ -84,7 +95,7 @@ export async function createAnnouncementAction(
     .maybeSingle();
 
   if (error || !data) return result("error", "公告保存失败，请稍后重试。");
-  refreshAnnouncements();
+  refreshAnnouncements(scope, tenantId);
   return result("success", status === "published" ? "公告已经发布。" : "公告草稿已经保存。");
 }
 
@@ -112,7 +123,7 @@ export async function updateAnnouncementAction(
     .maybeSingle();
 
   if (error || !data) return result("error", "公告修改失败，请确认记录仍然存在。");
-  refreshAnnouncements();
+  refreshAnnouncements(scope, tenantId);
   return result("success", "公告内容已经更新。");
 }
 
@@ -141,7 +152,7 @@ export async function changeAnnouncementStatusAction(
     .maybeSingle();
 
   if (error || !data) return result("error", "公告状态更新失败，请稍后重试。");
-  refreshAnnouncements();
+  refreshAnnouncements(scope, tenantId);
   return result(
     "success",
     nextStatus === "published" ? "公告已经发布。" : nextStatus === "archived" ? "公告已经归档。" : "公告已经转为草稿。"

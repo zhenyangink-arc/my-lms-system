@@ -3,6 +3,7 @@
 // @refresh reset
 
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import {
@@ -33,10 +34,36 @@ import {
   type KoreanEbookProgressMap,
 } from "@/lib/korean-ebook-progress";
 import { saveKoreanEbookProgressAction } from "./actions";
-import { BatchimReadingBook } from "./BatchimReadingBook";
-import { HangulBookOpening } from "./HangulBookOpening";
-import { PronunciationRulesBook } from "./PronunciationRulesBook";
-import { VowelsConsonantsBook } from "./VowelsConsonantsBook";
+
+function BookLoadingPlaceholder() {
+  return (
+    <div
+      className="flex min-h-[28rem] w-full items-center justify-center rounded-[22px] bg-[var(--surface-soft)] px-6 text-center text-sm font-semibold text-[var(--foreground-muted)] lg:min-h-[36rem]"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      正在加载本章电子书…
+    </div>
+  );
+}
+
+const HangulBookOpening = dynamic(
+  () => import("./HangulBookOpening").then((module) => module.HangulBookOpening),
+  { loading: BookLoadingPlaceholder },
+);
+const VowelsConsonantsBook = dynamic(
+  () => import("./VowelsConsonantsBook").then((module) => module.VowelsConsonantsBook),
+  { loading: BookLoadingPlaceholder },
+);
+const BatchimReadingBook = dynamic(
+  () => import("./BatchimReadingBook").then((module) => module.BatchimReadingBook),
+  { loading: BookLoadingPlaceholder },
+);
+const PronunciationRulesBook = dynamic(
+  () => import("./PronunciationRulesBook").then((module) => module.PronunciationRulesBook),
+  { loading: BookLoadingPlaceholder },
+);
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 

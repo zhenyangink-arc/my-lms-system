@@ -307,12 +307,27 @@ export const requireManagementAppAccess = cache(
     const tenant = auth.tenant;
     if (!tenant) redirect(dashboardBasePath);
 
-    const { data: tenantAppData, error: tenantAppError } = await auth.supabase
-      .from("tenant_student_apps")
-      .select("is_enabled,status,custom_title")
-      .eq("tenant_id", tenant.id)
-      .eq("app_id", appId)
-      .maybeSingle();
+    const isExecutive = role === "tenant_super_admin" || role === "ceo";
+    const [
+      { data: tenantAppData, error: tenantAppError },
+      { data: staffAccessData, error: staffAccessError },
+    ] = await Promise.all([
+      auth.supabase
+        .from("tenant_student_apps")
+        .select("is_enabled,status,custom_title")
+        .eq("tenant_id", tenant.id)
+        .eq("app_id", appId)
+        .maybeSingle(),
+      auth.supabase
+        .from("staff_app_assignments")
+        .select(
+          "access_role,can_manage_students,can_manage_content,can_manage_assessments,can_view_analytics,status",
+        )
+        .eq("tenant_id", tenant.id)
+        .eq("staff_id", auth.user.id)
+        .eq("app_id", appId)
+        .maybeSingle(),
+    ]);
 
     if (tenantAppError) {
       throw new Error("无法读取当前机构的应用配置，请稍后重试。");
@@ -320,17 +335,6 @@ export const requireManagementAppAccess = cache(
 
     const tenantApp = tenantAppData as TenantAppRow | null;
     if (!tenantApp) notFound();
-
-    const isExecutive = role === "tenant_super_admin" || role === "ceo";
-    const { data: staffAccessData, error: staffAccessError } = await auth.supabase
-      .from("staff_app_assignments")
-      .select(
-        "access_role,can_manage_students,can_manage_content,can_manage_assessments,can_view_analytics,status",
-      )
-      .eq("tenant_id", tenant.id)
-      .eq("staff_id", auth.user.id)
-      .eq("app_id", appId)
-      .maybeSingle();
 
     if (staffAccessError) {
       throw new Error("无法读取当前账号的应用权限，请稍后重试。");

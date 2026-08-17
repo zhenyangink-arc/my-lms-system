@@ -16,6 +16,11 @@ import {
   getStudentAppPath,
 } from "../src/lib/student-apps.ts";
 import {
+  getDashboardBasePath,
+  scopeDashboardPath,
+} from "../src/lib/dashboard-path.ts";
+import { getManagementAppPath } from "../src/lib/management-app-path.ts";
+import {
   getPracticeAppPath,
   getPracticeDashboardPath,
   getPracticeMemoryKey,
@@ -46,6 +51,67 @@ const expectedManagementApplicationSections = [
   "universities",
   "visa",
 ];
+
+test("鉴权上下文合并成员关系与租户读取且登录直接进入 canonical 路由", () => {
+  const authSource = readFileSync(
+    new URL("../src/lib/auth.ts", import.meta.url),
+    "utf8",
+  );
+  const loginRedirectSource = readFileSync(
+    new URL("../src/app/login/redirect/page.tsx", import.meta.url),
+    "utf8",
+  );
+
+  assert.match(
+    authSource,
+    /tenants!tenant_memberships_tenant_id_fkey\(id, slug, name, status, plan_key\)/,
+  );
+  assert.doesNotMatch(authSource, /\.from\("tenants"\)/);
+  assert.match(loginRedirectSource, /getDashboardBasePath\(tenant\?\.slug\)/);
+  assert.match(
+    loginRedirectSource,
+    /scopeDashboardPath\("\/dashboard\/admin", dashboardBasePath\)/,
+  );
+  assert.doesNotMatch(loginRedirectSource, /redirect\("\/dashboard"\)/);
+  assert.equal(
+    scopeDashboardPath(
+      "/dashboard/admin",
+      getDashboardBasePath("yuanzhi"),
+    ),
+    "/yuanzhi/dashboard/admin",
+  );
+});
+
+test("PERF-003 指定站内入口不再主动生成 legacy URL", () => {
+  const documentsSource = readFileSync(
+    new URL("../src/app/dashboard/documents/page-content.tsx", import.meta.url),
+    "utf8",
+  );
+  const schoolsSource = readFileSync(
+    new URL(
+      "../src/app/dashboard/admin/schools/page-content.tsx",
+      import.meta.url,
+    ),
+    "utf8",
+  );
+
+  assert.match(documentsSource, /getStudentAppPath/);
+  assert.doesNotMatch(documentsSource, /href=\{?`?\/dashboard/);
+  assert.match(schoolsSource, /getManagementAppPath/);
+  assert.doesNotMatch(schoolsSource, /href=\{?`?\/dashboard/);
+  assert.equal(
+    getStudentAppPath("yuanzhi", "study-abroad", "documents"),
+    "/yuanzhi/apps/study-abroad/documents",
+  );
+  assert.equal(
+    getManagementAppPath(
+      getDashboardBasePath("yuanzhi"),
+      "study-abroad",
+      "universities",
+    ),
+    "/yuanzhi/dashboard/admin/apps/study-abroad/universities",
+  );
+});
 
 test("管理端与学生端共用五个明确分离的应用标识", () => {
   assert.deepEqual(

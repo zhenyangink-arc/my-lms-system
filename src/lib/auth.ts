@@ -58,6 +58,10 @@ type AuthTenantRow = {
   plan_key: string;
 };
 
+type AuthTenantMembershipWithTenant = AuthTenantMembership & {
+  tenants: AuthTenantRow | null;
+};
+
 export type AuthTenantContext = {
   id: string;
   slug: string;
@@ -73,7 +77,11 @@ type SupabaseQueryError = {
 };
 
 function isTenancySchemaUnavailable(error: SupabaseQueryError | null) {
-  return error?.code === "PGRST205" || error?.code === "42P01";
+  return (
+    error?.code === "PGRST200" ||
+    error?.code === "PGRST205" ||
+    error?.code === "42P01"
+  );
 }
 
 export function isActiveProfileStatus(status: string | null | undefined) {
@@ -132,11 +140,16 @@ export const getAuthContext = cache(async () => {
     return legacyActiveContext;
   }
 
+  // Embed the active tenant in the membership read so PostgREST performs the
+  // same RLS-protected membership + tenant resolution in one network trip.
   const { data: membershipData, error: membershipError } = await supabase
     .from("tenant_memberships")
-    .select("tenant_id, role, status, membership_tier, is_default")
+    .select(
+      "tenant_id, role, status, membership_tier, is_default, tenants!tenant_memberships_tenant_id_fkey(id, slug, name, status, plan_key)",
+    )
     .eq("user_id", user.id)
     .eq("status", "active")
+    .eq("tenants.status", "active")
     .order("is_default", { ascending: false })
     .order("created_at", { ascending: true })
     .limit(1)
@@ -151,28 +164,13 @@ export const getAuthContext = cache(async () => {
     throw new Error("无法读取当前租户成员关系，请稍后重试。");
   }
 
-  const membership = membershipData as AuthTenantMembership | null;
+  const membership = membershipData as AuthTenantMembershipWithTenant | null;
 
   if (!membership) {
     throw new Error("当前账号尚未加入可用租户，请联系管理员。");
   }
 
-  const { data: tenantData, error: tenantError } = await supabase
-    .from("tenants")
-    .select("id, slug, name, status, plan_key")
-    .eq("id", membership.tenant_id)
-    .eq("status", "active")
-    .maybeSingle();
-
-  if (tenantError) {
-    if (isTenancySchemaUnavailable(tenantError)) {
-      return legacyActiveContext;
-    }
-
-    throw new Error("无法读取当前租户，请稍后重试。");
-  }
-
-  const tenantRow = tenantData as AuthTenantRow | null;
+  const tenantRow = membership.tenants;
 
   if (!tenantRow) {
     throw new Error("当前租户不可用，请联系管理员。");

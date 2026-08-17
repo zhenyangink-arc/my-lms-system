@@ -56,6 +56,18 @@ type InstitutionSummary = {
   visaTasks: number;
   helpTickets: number;
 };
+type TenantDashboardSummary = {
+  active_members: number | string | null;
+  published_assignments: number | string | null;
+  draft_assignments: number | string | null;
+  published_announcements: number | string | null;
+  draft_announcements: number | string | null;
+  open_help_tickets: number | string | null;
+  pending_grade_reviews: number | string | null;
+  pending_document_reviews: number | string | null;
+  pending_visa_tasks: number | string | null;
+  attention_records: number | string | null;
+};
 
 const workToneStyles = {
   blue: { solid: "var(--primary)", soft: "var(--accent)" },
@@ -92,6 +104,19 @@ function emptyData(): Promise<DataResult> {
 
 function countValue(result: CountResult) {
   return Number(result.count ?? 0) || 0;
+}
+
+function summaryCount(
+  result: { data: unknown; error: unknown },
+  field: keyof TenantDashboardSummary,
+): CountResult {
+  const row = Array.isArray(result.data)
+    ? (result.data[0] as TenantDashboardSummary | undefined)
+    : undefined;
+  return {
+    count: result.error ? 0 : numberValue(row?.[field]),
+    error: result.error,
+  };
 }
 
 function numberValue(value: unknown) {
@@ -133,6 +158,12 @@ export default async function AdminCenterPage() {
     redirect("/dashboard");
   }
 
+  const tenantId = auth.tenant?.id ?? null;
+  const tenantSummaryPromise = tenantId
+    ? auth.supabase.rpc("get_tenant_admin_dashboard_summary", {
+        p_tenant_id: tenantId,
+      })
+    : Promise.resolve({ data: [], error: null });
   const [
     conversationAccess,
     announcementAccess,
@@ -144,6 +175,7 @@ export default async function AdminCenterPage() {
     questionBankAccess,
     visaAccess,
     studentAssignmentAccess,
+    tenantSummaryResult,
   ] = await Promise.all([
     getConversationPracticeAccess(),
     getAnnouncementAccess(),
@@ -155,9 +187,9 @@ export default async function AdminCenterPage() {
     getStandardQuestionBankAccess(),
     getVisaManagementAccess(),
     getStudentAssignmentAccess(),
+    tenantSummaryPromise,
   ]);
 
-  const tenantId = auth.tenant?.id ?? null;
   const globalRole = auth.platformProfile?.global_role ?? null;
   const isPlatformOwner = !tenantId && role === "platform_super_admin";
   const isTenantExecutive = Boolean(tenantId) && (role === "tenant_super_admin" || role === "ceo");
@@ -188,6 +220,8 @@ export default async function AdminCenterPage() {
     else query = query.eq("scope", "tenant").eq("tenant_id", announcementAccess.tenantId);
     return query;
   };
+  const tenantSummary = (field: keyof TenantDashboardSummary) =>
+    tenantId ? summaryCount(tenantSummaryResult, field) : emptyCount();
 
   const [
     activeTenantsResult,
@@ -240,30 +274,30 @@ export default async function AdminCenterPage() {
       ? auth.supabase.from("chapter_test_questions").select("id", { count: "exact", head: true }).neq("status", "archived")
       : emptyCount(),
     isTenantExecutive && tenantId
-      ? auth.supabase.from("tenant_memberships").select("user_id", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "active")
+      ? tenantSummary("active_members")
       : emptyCount(),
     tenantId && isAssignmentManagerRole(role)
-      ? auth.supabase.from("learning_assignments").select("id", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "published")
+      ? tenantSummary("published_assignments")
       : emptyCount(),
     tenantId && isAssignmentManagerRole(role)
-      ? auth.supabase.from("learning_assignments").select("id", { count: "exact", head: true }).eq("tenant_id", tenantId).eq("status", "draft")
+      ? tenantSummary("draft_assignments")
       : emptyCount(),
-    announcementCount("published"),
-    announcementCount("draft"),
+    tenantId ? tenantSummary("published_announcements") : announcementCount("published"),
+    tenantId ? tenantSummary("draft_announcements") : announcementCount("draft"),
     helpAccess.scope === "tenant" && helpAccess.tenantId
-      ? auth.supabase.from("help_tickets").select("id", { count: "exact", head: true }).eq("tenant_id", helpAccess.tenantId).in("status", ["open", "in_progress"])
+      ? tenantSummary("open_help_tickets")
       : emptyCount(),
     gradeAccess.scope === "institution" && gradeAccess.tenantId
-      ? auth.supabase.from("grade_review_requests").select("id", { count: "exact", head: true }).eq("tenant_id", gradeAccess.tenantId).eq("status", "pending")
+      ? tenantSummary("pending_grade_reviews")
       : emptyCount(),
     documentReviewAccess.scope === "institution" && documentReviewAccess.tenantId
-      ? auth.supabase.from("student_university_targets").select("id", { count: "exact", head: true }).eq("tenant_id", documentReviewAccess.tenantId).eq("document_review_status", "pending_review")
+      ? tenantSummary("pending_document_reviews")
       : emptyCount(),
     visaAccess.scope === "institution" && visaAccess.tenantId
-      ? auth.supabase.from("student_visa_tasks").select("id", { count: "exact", head: true }).eq("tenant_id", visaAccess.tenantId).eq("is_archived", false).in("status", ["submitted", "reviewing", "revision_required", "blocked"])
+      ? tenantSummary("pending_visa_tasks")
       : emptyCount(),
     recordAccess.scope === "institution" && recordAccess.tenantId
-      ? auth.supabase.from("learning_record_notes").select("id", { count: "exact", head: true }).eq("tenant_id", recordAccess.tenantId).eq("status", "active").eq("record_type", "attention")
+      ? tenantSummary("attention_records")
       : emptyCount(),
     isPlatformOwner ? auth.supabase.rpc("get_platform_grade_overview") : emptyData(),
     isPlatformOwner ? auth.supabase.rpc("get_platform_learning_record_overview") : emptyData(),

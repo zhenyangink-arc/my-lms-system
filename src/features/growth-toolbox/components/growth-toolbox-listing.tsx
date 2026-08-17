@@ -10,7 +10,7 @@ import { GrowthToolboxVocabularyTable } from "./vocabulary-table";
 import {
   CreateGrammarDialog,
   CreateVocabularyDialog,
-} from "./growth-toolbox-action-dialogs";
+} from "./lazy-growth-toolbox-action-dialogs";
 
 export default async function GrowthToolboxListing({
   studentAppId,

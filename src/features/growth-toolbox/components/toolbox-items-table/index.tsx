@@ -24,7 +24,7 @@ import {
   getGrowthToolboxItemColumns,
   type GrowthToolboxItemDisplayRow,
 } from "./columns";
-import type { GrowthToolboxCourseOption } from "../growth-toolbox-action-dialogs";
+import type { GrowthToolboxCourseOption } from "../lazy-growth-toolbox-action-dialogs";
 
 const COLUMN_LABELS: Record<string, string> = {
   title: "工具入口",

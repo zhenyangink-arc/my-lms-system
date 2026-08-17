@@ -136,15 +136,23 @@ async function getPortalApps({
   tenantId: string;
   userId: string;
 }): Promise<PortalApp[]> {
-  const { data, error } = await supabase
-    .from("tenant_student_apps")
-    .select(
-      "is_enabled, status, custom_title, sort_order, student_apps!inner(slug, title, short_title, description, app_kind)",
-    )
-    .eq("tenant_id", tenantId)
-    .eq("is_enabled", true)
-    .neq("status", "hidden")
-    .order("sort_order", { ascending: true });
+  const [{ data, error }, enrollmentResult] = await Promise.all([
+    supabase
+      .from("tenant_student_apps")
+      .select(
+        "is_enabled, status, custom_title, sort_order, student_apps!inner(slug, title, short_title, description, app_kind)",
+      )
+      .eq("tenant_id", tenantId)
+      .eq("is_enabled", true)
+      .neq("status", "hidden")
+      .order("sort_order", { ascending: true }),
+    supabase
+      .from("student_app_enrollments")
+      .select("app_id,status,starts_at,ends_at")
+      .eq("tenant_id", tenantId)
+      .eq("student_id", userId)
+      .eq("status", "active"),
+  ]);
 
   if (error) return [];
 
@@ -172,12 +180,6 @@ async function getPortalApps({
     .filter((app): app is PortalApp => app !== null)
     .sort((a, b) => a.portalSortOrder - b.portalSortOrder);
 
-  const enrollmentResult = await supabase
-    .from("student_app_enrollments")
-    .select("app_id,status,starts_at,ends_at")
-    .eq("tenant_id", tenantId)
-    .eq("student_id", userId)
-    .eq("status", "active");
   if (enrollmentResult.error) return [];
 
   // 服务端目录过滤必须以本次请求时间判断授权有效期。

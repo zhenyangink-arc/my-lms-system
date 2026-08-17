@@ -1,12 +1,32 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { setTextbookStatusAction } from "@/app/dashboard/admin/digital-textbook/actions";
 import { Icons } from "@/components/icons";
-import { DigitalTextbookContentDialog } from "../digital-textbook-action-dialogs";
 import type { DigitalTextbookDisplayRow } from "./columns";
+
+const DigitalTextbookContentDialog = dynamic(
+  () =>
+    import("../digital-textbook-action-dialogs").then(
+      (module) => module.DigitalTextbookContentDialog,
+    ),
+  {
+    loading: () => (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/35 p-4"
+        role="status"
+        aria-live="polite"
+        aria-busy="true"
+      >
+        <div className="h-64 w-full max-w-3xl animate-pulse rounded-xl bg-[var(--card)] shadow-xl" />
+        <span className="sr-only">正在加载教材编辑器…</span>
+      </div>
+    ),
+  },
+);
 
 type EditorPanel = "vocabulary" | "grammar";
 
@@ -67,14 +87,16 @@ export function DigitalTextbookCellAction({
         </div>
       </details>
 
-      <DigitalTextbookContentDialog
-        open={panel !== null}
-        onOpenChange={(open) => {
-          if (!open) setPanel(null);
-        }}
-        panel={panel ?? "vocabulary"}
-        row={row}
-      />
+      {panel && (
+        <DigitalTextbookContentDialog
+          open
+          onOpenChange={(open) => {
+            if (!open) setPanel(null);
+          }}
+          panel={panel}
+          row={row}
+        />
+      )}
     </>
   );
 }

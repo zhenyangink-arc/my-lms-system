@@ -1,20 +1,32 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import {
-  Background,
-  Controls,
-  ReactFlow,
-} from "@xyflow/react";
-import {
-  layoutTree,
-  TreeLabelNode,
-  type CourseTreePayload,
-} from "@/app/dashboard/CourseListDialog";
+import { useState } from "react";
+import dynamic from "next/dynamic";
+import type { CourseTreePayload } from "@/app/dashboard/CourseListDialog";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { BookOpen } from "lucide-react";
 
 type View = { slug: string; title: string };
+
+const HomeTreeGraphPreview = dynamic(
+  () =>
+    import("./HomeTreeGraphPreview").then(
+      (module) => module.HomeTreeGraphPreview
+    ),
+  {
+    loading: () => (
+      <div
+        className="flex h-full items-center justify-center text-center"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="text-sm font-semibold app-muted-text">
+          正在加载课程树图形…
+        </p>
+      </div>
+    ),
+  }
+);
 
 /**
  * 课程树视图 tab：点击弹出对话框预览该视图下的课程树（不再做页面跳转）。
@@ -29,8 +41,6 @@ export function HomeTreeViewTabs({
   tree: CourseTreePayload;
 }) {
   const [open, setOpen] = useState(false);
-  const { nodes, edges } = useMemo(() => layoutTree(tree), [tree]);
-  const nodeTypes = useMemo(() => ({ treeLabel: TreeLabelNode }), []);
 
   return (
     <>
@@ -85,23 +95,8 @@ export function HomeTreeViewTabs({
               className="h-[480px] overflow-hidden rounded-2xl border"
               style={{ borderColor: "var(--border)" }}
             >
-              {nodes.length > 0 ? (
-                <ReactFlow
-                  nodes={nodes}
-                  edges={edges}
-                  nodeTypes={nodeTypes}
-                  fitView
-                  fitViewOptions={{ padding: 0.2 }}
-                  nodesConnectable={false}
-                  edgesFocusable={false}
-                  elementsSelectable
-                  minZoom={0.2}
-                  maxZoom={1.6}
-                  proOptions={{ hideAttribution: true }}
-                >
-                  <Background gap={16} size={1} />
-                  <Controls />
-                </ReactFlow>
+              {tree.nodes.length > 0 ? (
+                open && <HomeTreeGraphPreview tree={tree} />
               ) : (
                 <div className="flex h-full flex-col items-center justify-center text-center">
                   <p className="text-sm font-semibold">该视图还没有课程</p>

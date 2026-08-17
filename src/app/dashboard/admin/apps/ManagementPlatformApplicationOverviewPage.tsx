@@ -4,6 +4,7 @@ import {
 } from "@/components/layout/management-page";
 import type { ManagementAppAccess } from "@/lib/management-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 
 type OverviewMode = "students" | "grades" | "records" | "conversation";
 type TenantRow = { id: string; name: string };
@@ -13,76 +14,243 @@ type SubmissionRow = { tenant_id: string; status: string };
 type TimeRow = { tenant_id: string; seconds: number | null };
 type ScenarioRow = { id: string; tenant_id: string; status: string };
 type ConversationProgressRow = { tenant_id: string; status: string };
+type PlatformOverviewRpcRow = {
+  tenant_id: string;
+  tenant_name: string;
+  active_students: number | string;
+  active_staff: number | string;
+  assignments: number | string;
+  published_assignments: number | string;
+  submissions: number | string;
+  graded_submissions: number | string;
+  notes: number | string;
+  active_notes: number | string;
+  scenarios: number | string;
+  published_scenarios: number | string;
+  conversation_practices: number | string;
+  completed_conversation_practices: number | string;
+};
+
+type OverviewRow = {
+  id: string;
+  name: string;
+  students: number;
+  staff: number;
+  assignments: number;
+  publishedAssignments: number;
+  submissions: number;
+  gradedSubmissions: number;
+  notes: number;
+  activeNotes: number;
+  learningHours: number;
+  scenarios: number;
+  publishedScenarios: number;
+  conversationPractices: number;
+  completedConversationPractices: number;
+};
+
+type QueryError = { message?: string } | null;
+type PageResult = { data: unknown[] | null; error: QueryError };
+
+const OVERVIEW_PAGE_SIZE = 1000;
+
+function numeric(value: number | string) {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? parsed : 0;
+}
+
+async function fetchAllRows<T>(
+  loadPage: (from: number, to: number) => PromiseLike<PageResult>,
+): Promise<{ rows: T[]; error: QueryError }> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += OVERVIEW_PAGE_SIZE) {
+    const result = await loadPage(from, from + OVERVIEW_PAGE_SIZE - 1);
+    if (result.error) return { rows, error: result.error };
+    const page = (result.data ?? []) as T[];
+    rows.push(...page);
+    if (page.length < OVERVIEW_PAGE_SIZE) return { rows, error: null };
+  }
+}
+
+function normalizeRpcRows(rows: PlatformOverviewRpcRow[]): OverviewRow[] {
+  return rows.map((row) => ({
+    id: row.tenant_id,
+    name: row.tenant_name,
+    students: numeric(row.active_students),
+    staff: numeric(row.active_staff),
+    assignments: numeric(row.assignments),
+    publishedAssignments: numeric(row.published_assignments),
+    submissions: numeric(row.submissions),
+    gradedSubmissions: numeric(row.graded_submissions),
+    notes: numeric(row.notes),
+    activeNotes: numeric(row.active_notes),
+    learningHours: 0,
+    scenarios: numeric(row.scenarios),
+    publishedScenarios: numeric(row.published_scenarios),
+    conversationPractices: numeric(row.conversation_practices),
+    completedConversationPractices: numeric(
+      row.completed_conversation_practices,
+    ),
+  }));
+}
 
 function increment(map: Map<string, number>, key: string, amount = 1) {
   map.set(key, (map.get(key) ?? 0) + amount);
 }
 
-export async function ManagementPlatformApplicationOverviewPage({
-  access,
-  mode,
-}: {
-  access: ManagementAppAccess;
-  mode: OverviewMode;
-}) {
+async function loadPagedLearningHours(appId: string): Promise<{
+  rows: OverviewRow[];
+  hasError: boolean;
+}> {
   const admin = createAdminClient();
-  const [tenantResult, enrollmentResult, staffResult, assignmentResult, noteResult, timeResult, scenarioResult] =
-    await Promise.all([
-      admin.from("tenants").select("id,name").eq("status", "active").order("name"),
+  const [tenantResult, timeResult] = await Promise.all([
+    fetchAllRows<TenantRow>((from, to) =>
       admin
-        .from("student_app_enrollments")
-        .select("tenant_id,status")
-        .eq("app_id", access.appId)
-        .limit(5000),
-      admin
-        .from("staff_app_assignments")
-        .select("tenant_id,status")
-        .eq("app_id", access.appId)
-        .limit(5000),
-      admin
-        .from("learning_assignments")
-        .select("id,tenant_id,status")
-        .eq("student_app_id", access.appId)
-        .limit(5000),
-      admin
-        .from("learning_record_notes")
-        .select("tenant_id,status")
-        .eq("student_app_id", access.appId)
-        .limit(5000),
+        .from("tenants")
+        .select("id,name")
+        .eq("status", "active")
+        .order("name")
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<TimeRow>((from, to) =>
       admin
         .from("learning_time_log")
         .select("tenant_id,seconds")
-        .eq("student_app_id", access.appId)
-        .limit(5000),
+        .eq("student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+  ]);
+  const secondsByTenant = new Map<string, number>();
+  for (const row of timeResult.rows) {
+    increment(
+      secondsByTenant,
+      row.tenant_id,
+      Math.max(0, Number(row.seconds ?? 0)),
+    );
+  }
+
+  return {
+    rows: tenantResult.rows.map((tenant) => ({
+      ...tenant,
+      students: 0,
+      staff: 0,
+      assignments: 0,
+      publishedAssignments: 0,
+      submissions: 0,
+      gradedSubmissions: 0,
+      notes: 0,
+      activeNotes: 0,
+      learningHours:
+        Math.round(((secondsByTenant.get(tenant.id) ?? 0) / 3600) * 10) / 10,
+      scenarios: 0,
+      publishedScenarios: 0,
+      conversationPractices: 0,
+      completedConversationPractices: 0,
+    })),
+    hasError: Boolean(tenantResult.error || timeResult.error),
+  };
+}
+
+async function loadPagedOverview(appId: string): Promise<{
+  rows: OverviewRow[];
+  hasError: boolean;
+}> {
+  const admin = createAdminClient();
+  const [
+    tenantResult,
+    enrollmentResult,
+    staffResult,
+    assignmentResult,
+    noteResult,
+    timeResult,
+    scenarioResult,
+    submissionResult,
+    conversationProgressResult,
+  ] = await Promise.all([
+    fetchAllRows<TenantRow>((from, to) =>
+      admin
+        .from("tenants")
+        .select("id,name")
+        .eq("status", "active")
+        .order("name")
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<TenantFact>((from, to) =>
+      admin
+        .from("student_app_enrollments")
+        .select("tenant_id,status")
+        .eq("app_id", appId)
+        .order("tenant_id")
+        .order("student_id")
+        .range(from, to),
+    ),
+    fetchAllRows<TenantFact>((from, to) =>
+      admin
+        .from("staff_app_assignments")
+        .select("tenant_id,status")
+        .eq("app_id", appId)
+        .order("tenant_id")
+        .order("staff_id")
+        .range(from, to),
+    ),
+    fetchAllRows<AssignmentRow>((from, to) =>
+      admin
+        .from("learning_assignments")
+        .select("id,tenant_id,status")
+        .eq("student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<TenantFact>((from, to) =>
+      admin
+        .from("learning_record_notes")
+        .select("tenant_id,status")
+        .eq("student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<TimeRow>((from, to) =>
+      admin
+        .from("learning_time_log")
+        .select("tenant_id,seconds")
+        .eq("student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<ScenarioRow>((from, to) =>
       admin
         .from("conversation_practice_scenarios")
         .select("id,tenant_id,status")
-        .eq("student_app_id", access.appId)
-        .limit(5000),
-    ]);
-
-  const assignments = (assignmentResult.data ?? []) as AssignmentRow[];
-  const assignmentIds = assignments.map((item) => item.id);
-  const scenarios = (scenarioResult.data ?? []) as ScenarioRow[];
-  const scenarioIds = scenarios.map((item) => item.id);
-  const [submissionResult, conversationProgressResult] = await Promise.all([
-    assignmentIds.length
-      ? admin
-          .from("learning_submissions")
-          .select("tenant_id,status")
-          .in("assignment_id", assignmentIds)
-          .limit(5000)
-      : Promise.resolve({ data: [] as SubmissionRow[], error: null }),
-    scenarioIds.length
-      ? admin
-          .from("conversation_practice_progress")
-          .select("tenant_id,status")
-          .in("scenario_id", scenarioIds)
-          .limit(5000)
-      : Promise.resolve({ data: [] as ConversationProgressRow[], error: null }),
+        .eq("student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<SubmissionRow>((from, to) =>
+      admin
+        .from("learning_submissions")
+        .select(
+          "tenant_id,status,assignment:learning_assignments!learning_submissions_assignment_id_fkey!inner(student_app_id)",
+        )
+        .eq("assignment.student_app_id", appId)
+        .order("id")
+        .range(from, to),
+    ),
+    fetchAllRows<ConversationProgressRow>((from, to) =>
+      admin
+        .from("conversation_practice_progress")
+        .select(
+          "tenant_id,status,scenario:conversation_practice_scenarios!conversation_practice_progress_scenario_id_fkey!inner(student_app_id)",
+        )
+        .eq("scenario.student_app_id", appId)
+        .order("user_id")
+        .order("scenario_id")
+        .range(from, to),
+    ),
   ]);
 
-  const tenants = (tenantResult.data ?? []) as TenantRow[];
   const activeStudents = new Map<string, number>();
   const activeStaff = new Map<string, number>();
   const assignmentCounts = new Map<string, number>();
@@ -97,42 +265,48 @@ export async function ManagementPlatformApplicationOverviewPage({
   const conversationPractices = new Map<string, number>();
   const completedConversationPractices = new Map<string, number>();
 
-  for (const row of (enrollmentResult.data ?? []) as TenantFact[]) {
+  for (const row of enrollmentResult.rows) {
     if (row.status === "active") increment(activeStudents, row.tenant_id);
   }
-  for (const row of (staffResult.data ?? []) as TenantFact[]) {
+  for (const row of staffResult.rows) {
     if (row.status === "active") increment(activeStaff, row.tenant_id);
   }
-  for (const row of assignments) {
+  for (const row of assignmentResult.rows) {
     increment(assignmentCounts, row.tenant_id);
-    if (row.status === "published") increment(publishedAssignments, row.tenant_id);
+    if (row.status === "published") {
+      increment(publishedAssignments, row.tenant_id);
+    }
   }
-  for (const row of (submissionResult.data ?? []) as SubmissionRow[]) {
+  for (const row of submissionResult.rows) {
     increment(submissions, row.tenant_id);
     if (row.status === "graded") increment(gradedSubmissions, row.tenant_id);
   }
-  for (const row of (noteResult.data ?? []) as TenantFact[]) {
+  for (const row of noteResult.rows) {
     increment(notes, row.tenant_id);
     if (row.status === "active") increment(activeNotes, row.tenant_id);
   }
-  for (const row of (timeResult.data ?? []) as TimeRow[]) {
+  for (const row of timeResult.rows) {
     increment(
       learningSeconds,
       row.tenant_id,
       Math.max(0, Number(row.seconds ?? 0)),
     );
   }
-  for (const row of scenarios) {
+  for (const row of scenarioResult.rows) {
     increment(scenarioCounts, row.tenant_id);
-    if (row.status === "published") increment(publishedScenarios, row.tenant_id);
+    if (row.status === "published") {
+      increment(publishedScenarios, row.tenant_id);
+    }
   }
-  for (const row of (conversationProgressResult.data ?? []) as ConversationProgressRow[]) {
+  for (const row of conversationProgressResult.rows) {
     increment(conversationPractices, row.tenant_id);
-    if (row.status === "completed") increment(completedConversationPractices, row.tenant_id);
+    if (row.status === "completed") {
+      increment(completedConversationPractices, row.tenant_id);
+    }
   }
 
-  const rows = tenants
-    .map((tenant) => ({
+  const rows = tenantResult.rows
+    .map((tenant): OverviewRow => ({
       ...tenant,
       students: activeStudents.get(tenant.id) ?? 0,
       staff: activeStaff.get(tenant.id) ?? 0,
@@ -142,27 +316,98 @@ export async function ManagementPlatformApplicationOverviewPage({
       gradedSubmissions: gradedSubmissions.get(tenant.id) ?? 0,
       notes: notes.get(tenant.id) ?? 0,
       activeNotes: activeNotes.get(tenant.id) ?? 0,
-      learningHours: Math.round(((learningSeconds.get(tenant.id) ?? 0) / 3600) * 10) / 10,
+      learningHours:
+        Math.round(((learningSeconds.get(tenant.id) ?? 0) / 3600) * 10) / 10,
       scenarios: scenarioCounts.get(tenant.id) ?? 0,
       publishedScenarios: publishedScenarios.get(tenant.id) ?? 0,
       conversationPractices: conversationPractices.get(tenant.id) ?? 0,
-      completedConversationPractices: completedConversationPractices.get(tenant.id) ?? 0,
+      completedConversationPractices:
+        completedConversationPractices.get(tenant.id) ?? 0,
     }))
-    .filter((row) =>
-      row.students + row.staff + row.assignments + row.notes + row.learningHours + row.scenarios + row.conversationPractices > 0,
+    .filter(
+      (row) =>
+        row.students +
+          row.staff +
+          row.assignments +
+          row.notes +
+          row.learningHours +
+          row.scenarios +
+          row.conversationPractices >
+        0,
     );
+  const hasError = [
+    tenantResult,
+    enrollmentResult,
+    staffResult,
+    assignmentResult,
+    noteResult,
+    timeResult,
+    scenarioResult,
+    submissionResult,
+    conversationProgressResult,
+  ].some((result) => Boolean(result.error));
 
-  const hasError = Boolean(
-    tenantResult.error ||
-      enrollmentResult.error ||
-      staffResult.error ||
-      assignmentResult.error ||
-      noteResult.error ||
-      timeResult.error ||
-      scenarioResult.error ||
-      submissionResult.error ||
-      conversationProgressResult.error,
-  );
+  return { rows, hasError };
+}
+
+export async function ManagementPlatformApplicationOverviewPage({
+  access,
+  mode,
+}: {
+  access: ManagementAppAccess;
+  mode: OverviewMode;
+}) {
+  let rows: OverviewRow[];
+  let hasError = false;
+
+  if (access.role === "platform_super_admin") {
+    const supabase = await createClient();
+    const [rpcResult, learningTimeResult] = await Promise.all([
+      supabase.rpc("get_platform_management_app_overview", {
+        p_app_id: access.appId,
+      }),
+      loadPagedLearningHours(access.appId),
+    ]);
+    if (rpcResult.error) {
+      const fallback = await loadPagedOverview(access.appId);
+      rows = fallback.rows;
+      hasError = fallback.hasError;
+    } else {
+      const rowByTenant = new Map(
+        normalizeRpcRows(
+          (rpcResult.data ?? []) as PlatformOverviewRpcRow[],
+        ).map((row) => [row.id, row]),
+      );
+      for (const timeRow of learningTimeResult.rows) {
+        const row = rowByTenant.get(timeRow.id) ?? timeRow;
+        row.learningHours = timeRow.learningHours;
+        if (
+          row.students +
+            row.staff +
+            row.assignments +
+            row.notes +
+            row.learningHours +
+            row.scenarios +
+            row.conversationPractices >
+          0
+        ) {
+          rowByTenant.set(row.id, row);
+        }
+      }
+      rows = [...rowByTenant.values()].sort(
+        (left, right) =>
+          left.name.localeCompare(right.name, "zh-CN") ||
+          left.id.localeCompare(right.id),
+      );
+      hasError = learningTimeResult.hasError;
+    }
+  } else {
+    // 平台副负责人现有权限依赖服务端显式授权；SECURITY INVOKER RPC
+    // 不扩大其数据库直连权限，因此保留完整分页的兼容路径。
+    const fallback = await loadPagedOverview(access.appId);
+    rows = fallback.rows;
+    hasError = fallback.hasError;
+  }
   const totals = rows.reduce(
     (sum, row) => ({
       students: sum.students + row.students,

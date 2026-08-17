@@ -47,9 +47,14 @@ type ProgressRow = {
   confidence: number | null;
   reflection: string;
   last_practiced_at: string;
+  student: ProfileRow | ProfileRow[] | null;
 };
 
 type ProfileRow = { id: string; full_name: string | null; email: string | null };
+
+function oneProfile(profile: ProgressRow["student"]): ProfileRow | null {
+  return Array.isArray(profile) ? (profile[0] ?? null) : profile;
+}
 
 type ProgressSortKey =
   | "student"
@@ -274,7 +279,9 @@ export async function ConversationPracticeManagementContent({
   const scenarioIds = scenarios.map((scenario) => scenario.id);
   let progressQuery = supabase
     .from("conversation_practice_progress")
-    .select("scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at");
+    .select(
+      "scenario_id,user_id,status,practice_count,confidence,reflection,last_practiced_at,student:profiles!conversation_practice_progress_user_id_fkey(id,full_name,email)",
+    );
   if (tenantId) progressQuery = progressQuery.eq("tenant_id", tenantId);
   if (scenarioIds.length) {
     progressQuery = progressQuery.in("scenario_id", scenarioIds);
@@ -294,12 +301,18 @@ export async function ConversationPracticeManagementContent({
   const selectedRaw = canManageContent ? scenarios.find((item) => item.id === params.scenario) ?? null : null;
   const selectedScenario = selectedRaw ? toFormValue(selectedRaw) : null;
   const selectedProgress = selectedRaw ? progressByScenario.get(selectedRaw.id) ?? [] : [];
-  const selectedStudentIds = [...new Set(selectedProgress.map((item) => item.user_id))];
-  const { data: selectedProfiles } = selectedStudentIds.length
-    ? await supabase.from("profiles").select("id,full_name,email").in("id", selectedStudentIds)
-    : { data: [] as ProfileRow[] };
   const studentNames = new Map(
-    ((selectedProfiles ?? []) as ProfileRow[]).map((student) => [student.id, student.full_name?.trim() || student.email || "学生"])
+    selectedProgress.flatMap((item) => {
+      const student = oneProfile(item.student);
+      return student
+        ? [
+            [
+              student.id,
+              student.full_name?.trim() || student.email || "学生",
+            ] as const,
+          ]
+        : [];
+    }),
   );
   const progressSortKey = isProgressSortKey(params.progressSort)
     ? params.progressSort

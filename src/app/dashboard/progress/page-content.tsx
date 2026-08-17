@@ -23,7 +23,7 @@ import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import { getStudentAppPath, STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { removeCourseQuestionReviewAction } from "./actions";
-import { KnowledgeResearchWorkbench } from "./KnowledgeResearchWorkbench";
+import { LazyKnowledgeResearchWorkbench } from "./LazyKnowledgeResearchWorkbench";
 
 type ReviewRow = {
   question_id: string;
@@ -574,7 +574,7 @@ export async function DeepLearningPage({
 
     return (
       <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
-        <KnowledgeResearchWorkbench
+        <LazyKnowledgeResearchWorkbench
           chapterSlug={selectedKnowledgeChapter.slug}
           courseTitle={selectedCourse.title}
           courseEyebrow={selectedCourse.eyebrow}
@@ -768,7 +768,7 @@ export async function DeepLearningPage({
         <div className="mt-5 space-y-5">
           {selectedKnowledgeChapter && selectedCourse && (
             selectedKnowledgeChapter.slug === "meet-hangul" ? (
-              <KnowledgeResearchWorkbench
+              <LazyKnowledgeResearchWorkbench
                 chapterSlug={selectedKnowledgeChapter.slug}
                 courseTitle={selectedCourse.title}
                 courseEyebrow={selectedCourse.eyebrow}

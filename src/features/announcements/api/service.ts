@@ -13,6 +13,16 @@ import type {
   ManagedAnnouncement,
 } from "./types";
 
+type AnnouncementRowWithAuthor = AnnouncementRow & {
+  author: AnnouncementProfileRow | AnnouncementProfileRow[] | null;
+};
+
+function oneAuthor(
+  author: AnnouncementRowWithAuthor["author"],
+): AnnouncementProfileRow | null {
+  return Array.isArray(author) ? (author[0] ?? null) : author;
+}
+
 export async function getAnnouncementManagementData(): Promise<AnnouncementManagementResult> {
   const access = await requireAnnouncementAccess();
   const admin = createAdminClient();
@@ -20,7 +30,7 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
   let announcementQuery = access.supabase
     .from("announcements")
     .select(
-      "id,title,content,category,priority,status,is_pinned,scope,tenant_id,created_by,published_at,updated_at",
+      "id,title,content,category,priority,status,is_pinned,scope,tenant_id,created_by,published_at,updated_at,author:profiles!announcements_created_by_fkey(id,full_name,email)",
     )
     .order("is_pinned", { ascending: false })
     .order("updated_at", { ascending: false });
@@ -33,11 +43,8 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
 
   const { data: announcementData, error: announcementError } =
     await announcementQuery;
-  const announcementRows = (announcementData ?? []) as AnnouncementRow[];
+  const announcementRows = (announcementData ?? []) as AnnouncementRowWithAuthor[];
   const announcementIds = announcementRows.map((item) => item.id);
-  const authorIds = [
-    ...new Set(announcementRows.map((item) => item.created_by)),
-  ];
 
   const tenantQuery = admin
     .from("tenants")
@@ -55,19 +62,10 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
     membershipQuery.eq("tenant_id", access.tenantId);
   }
 
-  const [tenantResult, membershipResult, profileResult, readResult] =
+  const [tenantResult, membershipResult, readResult] =
     await Promise.all([
       tenantQuery,
       membershipQuery,
-      authorIds.length
-        ? admin
-            .from("profiles")
-            .select("id,full_name,email")
-            .in("id", authorIds)
-        : Promise.resolve({
-            data: [] as AnnouncementProfileRow[],
-            error: null,
-          }),
       announcementIds.length
         ? admin
             .from("announcement_reads")
@@ -80,7 +78,6 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
     (tenantResult.data ?? []) as AnnouncementTenantRow[]
   ).filter((tenant) => tenant.status !== "archived");
   const membershipRows = (membershipResult.data ?? []) as AnnouncementMembershipRow[];
-  const profileRows = (profileResult.data ?? []) as AnnouncementProfileRow[];
   const readRows = (readResult.data ?? []) as AnnouncementReadRow[];
 
   const tenantNameById = new Map(
@@ -92,10 +89,15 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
       .map((tenant) => tenant.id),
   );
   const authorNameById = new Map(
-    profileRows.map((profile) => [
-      profile.id,
-      profile.full_name?.trim() || profile.email?.trim() || "未填写姓名",
-    ]),
+    announcementRows.map((announcement) => {
+      const profile = oneAuthor(announcement.author);
+      return [
+        announcement.created_by,
+        profile?.full_name?.trim() ||
+          profile?.email?.trim() ||
+          "未填写姓名",
+      ];
+    }),
   );
 
   const membersByTenant = new Map<string, Set<string>>();
@@ -168,7 +170,6 @@ export async function getAnnouncementManagementData(): Promise<AnnouncementManag
       announcementError ||
         tenantResult.error ||
         membershipResult.error ||
-        profileResult.error ||
         readResult.error,
     ),
   };

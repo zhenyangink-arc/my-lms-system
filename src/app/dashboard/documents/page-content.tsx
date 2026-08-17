@@ -16,6 +16,8 @@ import {
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { requireActiveUser } from "@/lib/auth";
+import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
+import { getStudentAppPath } from "@/lib/student-apps";
 import { ApplicationDocumentChecklist } from "./ApplicationDocumentChecklist";
 import { ApplicationStageTimeline } from "./ApplicationStageTimeline";
 import { CourierInfoCard } from "./CourierInfoCard";
@@ -91,7 +93,19 @@ export default async function DocumentsPage({
   searchParams: Promise<{ target?: string }>;
 }) {
   const { target: selectedTargetId } = await searchParams;
-  const { supabase, user } = await requireActiveUser();
+  const { supabase, user, tenant } = await requireActiveUser();
+  const documentsPath = tenant?.slug
+    ? getStudentAppPath(tenant.slug, "study-abroad", "documents")
+    : scopeDashboardPath(
+        "/dashboard/documents",
+        getDashboardBasePath(null),
+      );
+  const universityTargetsPath = tenant?.slug
+    ? getStudentAppPath(tenant.slug, "study-abroad", "universities/targets")
+    : scopeDashboardPath(
+        "/dashboard/universities/targets",
+        getDashboardBasePath(null),
+      );
   const [documentsResult, targetsResult] = await Promise.all([
     supabase
       .from("student_application_documents")
@@ -111,7 +125,7 @@ export default async function DocumentsPage({
   const targetApplications = (targetsResult.data ?? []) as TargetApplication[];
   const selectedTarget = targetApplications.find((target) => target.id === selectedTargetId) ?? null;
   if (selectedTarget && selectedTarget.documents_locked_at !== null) {
-    redirect("/dashboard/documents");
+    redirect(documentsPath);
   }
   const documents = selectedTarget
     ? allDocuments.filter((document) => document.target_id === selectedTarget.id)
@@ -175,7 +189,7 @@ export default async function DocumentsPage({
                           {locked ? (
                             <span className="inline-flex shrink-0 items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold" style={{ color: "var(--foreground-muted)", backgroundColor: "var(--surface-soft)", cursor: "not-allowed" }}>查看</span>
                           ) : (
-                            <Link href={`/dashboard/documents?target=${target.id}`} className={`inline-flex shrink-0 items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-white transition hover:opacity-90 ${focusRing}`} style={{ backgroundColor: "var(--primary)" }}>查看<ArrowRight size={11} aria-hidden="true" /></Link>
+                            <Link href={`${documentsPath}?target=${target.id}`} className={`inline-flex shrink-0 items-center gap-1 rounded-xl px-3 py-1.5 text-xs font-bold text-white transition hover:opacity-90 ${focusRing}`} style={{ backgroundColor: "var(--primary)" }}>查看<ArrowRight size={11} aria-hidden="true" /></Link>
                           )}
                         </div>
                         <p className="app-muted-text mt-1 text-xs font-bold">{ADMISSION_TRACK_LABELS[target.admission_track ?? ""] ?? "申请阶段待确认"}{target.program_name ? ` · ${target.program_name}` : ""}</p>
@@ -209,7 +223,7 @@ export default async function DocumentsPage({
             <FolderOpen size={30} style={{ color: "var(--primary)" }} aria-hidden="true" />
             <h2 className="mt-4 text-base font-bold">还没有需要准备资料的申请表</h2>
             <p className="app-muted-text mt-2 text-xs">先添加目标大学，并把申请状态调整为“准备资料”。</p>
-            <Link href="/dashboard/universities/targets" className={`mt-4 inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold text-white ${focusRing}`} style={{ backgroundColor: "var(--primary)" }}>前往目标学校<ArrowRight size={13} aria-hidden="true" /></Link>
+            <Link href={universityTargetsPath} className={`mt-4 inline-flex items-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold text-white ${focusRing}`} style={{ backgroundColor: "var(--primary)" }}>前往目标学校<ArrowRight size={13} aria-hidden="true" /></Link>
           </section>
         )}
       </div>
@@ -218,7 +232,7 @@ export default async function DocumentsPage({
 
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
-      <Link href="/dashboard/documents" className={`app-muted-text inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}><ArrowLeft size={14} aria-hidden="true" />返回申请表列表</Link>
+      <Link href={documentsPath} className={`app-muted-text inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}><ArrowLeft size={14} aria-hidden="true" />返回申请表列表</Link>
 
       <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--card), var(--card), var(--accent))" }}>
         <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1fr)_420px]">

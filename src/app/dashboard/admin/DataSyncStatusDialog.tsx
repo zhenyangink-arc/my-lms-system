@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { CheckCircle2, CircleAlert, RefreshCw, X } from "lucide-react";
 
@@ -9,6 +10,7 @@ type SyncIssue = {
 };
 
 export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: number; issues: SyncIssue[] }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const isHealthy = issues.length === 0;
 
@@ -60,7 +62,7 @@ export function DataSyncStatusDialog({ checkedCount, issues }: { checkedCount: n
             </div>
 
             <footer className="flex items-center justify-end border-t px-4 py-3" style={{ borderColor: "var(--border)" }}>
-              <button type="button" onClick={() => window.location.reload()} className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[9px] font-semibold hover:bg-black/[0.025]"><RefreshCw size={11} />重新检查</button>
+              <button type="button" onClick={() => router.refresh()} className="inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-[9px] font-semibold hover:bg-black/[0.025]"><RefreshCw size={11} />重新检查</button>
             </footer>
           </section>
         </div>

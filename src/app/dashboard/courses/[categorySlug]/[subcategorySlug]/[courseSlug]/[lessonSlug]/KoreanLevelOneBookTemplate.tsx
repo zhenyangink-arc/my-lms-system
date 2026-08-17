@@ -1,8 +1,10 @@
 "use client";
 
+import { usePathname, useRouter } from "next/navigation";
 import { forwardRef, useEffect, useRef, useState } from "react";
 import { Volume2 } from "lucide-react";
 
+import { scopeDashboardPath } from "@/lib/dashboard-path";
 import type { KoreanLevelOneLesson } from "./KoreanLevelOneLessonBook";
 
 export type KoreanEbookSectionTone = {
@@ -29,6 +31,36 @@ export type KoreanEbookSectionDefinition = {
   dividerPage: number;
   contentPages: number[];
 };
+
+export function KoreanEbookTestLink({
+  tone = "success",
+}: {
+  tone?: "success" | "warning";
+}) {
+  const pathname = usePathname();
+  const router = useRouter();
+  const coursesIndex = pathname.indexOf("/courses");
+  const workspaceBasePath =
+    coursesIndex >= 0 ? pathname.slice(0, coursesIndex) : "/dashboard";
+  const href = scopeDashboardPath(
+    "/dashboard/assignments/korean",
+    workspaceBasePath,
+  );
+
+  return (
+    <button
+      type="button"
+      onClick={() => router.push(href)}
+      className={`shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold shadow-sm ${
+        tone === "warning"
+          ? "text-[var(--status-warning)]"
+          : "text-[var(--status-success)]"
+      }`}
+    >
+      前往测试专区
+    </button>
+  );
+}
 
 export const KOREAN_EBOOK_SECTION_TONES: Record<string, KoreanEbookSectionTone> = {
   "第一步": { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },

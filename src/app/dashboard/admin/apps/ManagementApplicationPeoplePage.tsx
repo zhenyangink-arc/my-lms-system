@@ -15,6 +15,7 @@ type MembershipRow = {
   user_id: string;
   role: string;
   membership_tier: string;
+  profile: ProfileRow | ProfileRow[] | null;
 };
 type ProfileRow = { id: string; full_name: string | null; email: string | null };
 type EnrollmentRow = {
@@ -43,6 +44,10 @@ function displayName(profile: ProfileRow | undefined) {
   return profile?.full_name?.trim() || profile?.email || "未命名账号";
 }
 
+function oneProfile(profile: MembershipRow["profile"]): ProfileRow | null {
+  return Array.isArray(profile) ? (profile[0] ?? null) : profile;
+}
+
 function HiddenAccessFields({ access }: { access: ManagementAppAccess }) {
   return (
     <>
@@ -66,7 +71,9 @@ export async function ManagementApplicationPeoplePage({
     await Promise.all([
       admin
         .from("tenant_memberships")
-        .select("user_id,role,membership_tier")
+        .select(
+          "user_id,role,membership_tier,profile:profiles!tenant_memberships_user_id_fkey(id,full_name,email)",
+        )
         .eq("tenant_id", access.tenantId)
         .eq("status", "active"),
       admin
@@ -86,16 +93,11 @@ export async function ManagementApplicationPeoplePage({
         .eq("student_app_id", access.appId),
     ]);
   const memberships = (membershipsResult.data ?? []) as MembershipRow[];
-  const userIds = memberships.map((membership) => membership.user_id);
-  const profileResult = userIds.length
-    ? await admin
-        .from("profiles")
-        .select("id,full_name,email")
-        .in("id", userIds)
-    : { data: [] as ProfileRow[], error: null };
-  const profileData = profileResult.data;
   const profiles = new Map(
-    ((profileData ?? []) as ProfileRow[]).map((profile) => [profile.id, profile]),
+    memberships.flatMap((membership) => {
+      const profile = oneProfile(membership.profile);
+      return profile ? [[profile.id, profile] as const] : [];
+    }),
   );
   const students = memberships.filter((item) => item.role === "student");
   const staff = memberships.filter((item) => item.role !== "student");
@@ -123,8 +125,7 @@ export async function ManagementApplicationPeoplePage({
       {(membershipsResult.error ||
         enrollmentsResult.error ||
         staffAccessResult.error ||
-        assignmentsResult.error ||
-        profileResult.error) && (
+        assignmentsResult.error) && (
         <ManagementNotice tone="warning">
           应用授权数据暂时无法完整读取，请稍后刷新重试。
         </ManagementNotice>

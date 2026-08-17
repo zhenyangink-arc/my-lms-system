@@ -39,6 +39,7 @@ import {
   KoreanEbookSectionDivider,
   KoreanEbookSpeakButton,
   KoreanEbookTableOfContents,
+  KoreanEbookTestLink,
   KoreanEbookVocabularyCard,
 } from "./KoreanLevelOneBookTemplate";
 import type { KoreanLevelOneLesson } from "./KoreanLevelOneLessonBook";
@@ -1194,7 +1195,7 @@ export function KoreanLevelOneLessonThreeBook({
                 <p className="text-[10px] font-bold tracking-[0.14em] text-[var(--status-success)]">LESSON 3 TEST · 本课测试</p>
                 <p className="mt-1 text-xs font-bold text-[var(--foreground-secondary)]">前往章节测试专区，检验词尾、助词、听辨与场景表达。</p>
               </div>
-              <button type="button" onClick={() => window.location.assign("/dashboard/assignments/korean")} className="shrink-0 rounded-full bg-white px-3 py-2 text-[10px] font-bold text-[var(--status-success)] shadow-sm">前往测试专区</button>
+              <KoreanEbookTestLink />
             </div>
           </div>
           <div className="mt-5 rounded-2xl bg-[var(--accent)] px-5 py-4 text-left">

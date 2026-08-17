@@ -7,28 +7,49 @@ import { AssignmentSubmissionForm } from "../AssignmentSubmissionForm";
 import { ASSIGNMENT_DATE_OPTIONS, ASSIGNMENT_TYPE_LABELS, QUESTION_TYPE_LABELS, SUBMISSION_STATUS_LABELS, type AssignmentType, type QuestionType, type SubmissionStatus } from "../config";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 import { LocalDateTime } from "@/components/LocalDateTime";
+import {
+  getAssignmentDetail,
+  type AssignmentDetailRow,
+} from "@/lib/assignment-detail-data";
+import { requireDashboardAccess } from "@/lib/dashboard-access";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 function AssignmentDate({ value }: { value: string | null }) {
   return <LocalDateTime value={value} options={ASSIGNMENT_DATE_OPTIONS} fallback="时间待定" />;
 }
 
 
-type AssignmentRow = { id: string; title: string; description: string; institution_note: string; assignment_type: AssignmentType; total_points: number; starts_at: string; due_at: string; duration_minutes: number | null; allow_resubmission: boolean; source_paper_code: string | null; source_paper_version: number | null };
+type AssignmentRow = Omit<AssignmentDetailRow, "status" | "student_app_id"> & { assignment_type: AssignmentType };
 type QuestionRow = { id: string; question_type: QuestionType; prompt: string; options: unknown; points: number; sort_order: number };
 type SubmissionRow = { id: string; attempt_number: number; status: SubmissionStatus; score: number | null; overall_feedback: string | null; submitted_at: string; graded_at: string | null };
 type AnswerRow = { id: string; submission_id: string; question_id: string; answer_text: string; awarded_points: number | null; grader_feedback: string | null };
 
-export default async function AssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string }> }) {
-  const { assignmentId } = await params;
+export default async function AssignmentDetailPage({ params }: { params: Promise<{ assignmentId: string; space?: string }> }) {
+  const { assignmentId, space } = await params;
   const { supabase, user, isManager } = await requireAssignmentViewer();
+  const assignmentPromise = space
+    ? (async () => {
+        const access = await requireDashboardAccess("tenant", space);
+        return getAssignmentDetail(
+          access.auth.supabase,
+          access.tenantSlug ?? space,
+          STUDENT_APP_IDS.korean,
+          assignmentId,
+        );
+      })()
+    : supabase.from("learning_assignments").select("id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,allow_resubmission,source_paper_code,source_paper_version").eq("id", assignmentId).eq("status", "published").maybeSingle();
   const [assignmentResult, questionsResult, submissionsResult] = await Promise.all([
-    supabase.from("learning_assignments").select("id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,allow_resubmission,source_paper_code,source_paper_version").eq("id", assignmentId).eq("status", "published").maybeSingle(),
+    assignmentPromise,
     supabase.from("learning_assignment_questions").select("id,question_type,prompt,options,points,sort_order").eq("assignment_id", assignmentId).order("sort_order", { ascending: true }),
     isManager
       ? Promise.resolve({ data: [] as SubmissionRow[], error: null })
       : supabase.from("learning_submissions").select("id,attempt_number,status,score,overall_feedback,submitted_at,graded_at").eq("assignment_id", assignmentId).eq("student_id", user.id).order("attempt_number", { ascending: false }),
   ]);
-  if (!assignmentResult.data || assignmentResult.error) notFound();
+  if (
+    !assignmentResult.data ||
+    assignmentResult.error ||
+    (space && (assignmentResult.data as AssignmentDetailRow).status !== "published")
+  ) notFound();
   const assignment = assignmentResult.data as AssignmentRow;
   const questions = (questionsResult.data ?? []) as QuestionRow[];
   const submissions = (submissionsResult.data ?? []) as SubmissionRow[];

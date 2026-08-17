@@ -4,6 +4,7 @@ import { ArrowRight, BellRing, CalendarDays, Megaphone, Pin, ShieldCheck } from 
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import { getAnnouncementAccess } from "@/lib/announcements";
+import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
   CATEGORY_LABELS,
   PRIORITY_LABELS,
@@ -45,12 +46,23 @@ const priorityTone: Record<AnnouncementPriority, { color: string; soft: string }
 export default async function AnnouncementsPage() {
   const access = await getAnnouncementAccess();
   const { supabase } = access;
-  const { data, error } = await supabase
-    .from("announcements")
-    .select("id,title,content,category,priority,is_pinned,scope,tenant_id,published_at")
-    .eq("status", "published")
-    .order("is_pinned", { ascending: false })
-    .order("published_at", { ascending: false, nullsFirst: false });
+  const { data, error } = access.tenantId
+    ? await getPublishedAnnouncementsForTenant(access.tenantId)
+        .then((result) => ({ data: result.data, error: null }))
+        .catch(() =>
+          supabase
+            .from("announcements")
+            .select("id,title,content,category,priority,is_pinned,scope,tenant_id,published_at")
+            .eq("status", "published")
+            .order("is_pinned", { ascending: false })
+            .order("published_at", { ascending: false, nullsFirst: false }),
+        )
+    : await supabase
+        .from("announcements")
+        .select("id,title,content,category,priority,is_pinned,scope,tenant_id,published_at")
+        .eq("status", "published")
+        .order("is_pinned", { ascending: false })
+        .order("published_at", { ascending: false, nullsFirst: false });
   const announcements = (data ?? []) as AnnouncementRow[];
   const tenantIds = [...new Set(announcements.flatMap((item) => item.tenant_id ? [item.tenant_id] : []))];
   const { data: tenantData, error: tenantError } = tenantIds.length

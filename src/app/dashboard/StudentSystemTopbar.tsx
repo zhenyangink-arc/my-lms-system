@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Bell, Eye, Home, Settings, UserRound } from "lucide-react";
 
-import { GuideAgentChat } from "@/components/guide-agent/GuideAgentChat";
+import { LazyGuideAgentChat } from "@/components/guide-agent/LazyGuideAgentChat";
 import {
   Popover,
   PopoverContent,
@@ -203,10 +203,9 @@ export function StudentSystemTopbar({
             <Home size={18} aria-hidden="true" />
           </Link>
 
-          <GuideAgentChat
+          <LazyGuideAgentChat
             studentId={studentId}
             dashboardBasePath={dashboardBasePath}
-            triggerVariant="portal"
           />
 
           <button

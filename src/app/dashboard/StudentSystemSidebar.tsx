@@ -24,7 +24,6 @@ import {
   Menu,
   MessageSquare,
   PanelsTopLeft,
-  UserRound,
   ShieldCheck,
   Target,
 } from "lucide-react";
@@ -131,13 +130,6 @@ const studyAbroadGroups: NavGroup[] = [
     ],
   },
 ];
-
-const accountGroup: NavGroup = {
-  label: "账户",
-  items: [
-    { label: "个人资料", href: "/dashboard/profile", icon: UserRound },
-  ],
-};
 
 function getStudentAppGroups(studentAppSlug?: StudentAppSlug): NavGroup[] {
   if (studentAppSlug === "study-abroad") return studyAbroadGroups;
@@ -279,7 +271,7 @@ export function StudentSystemSidebar({
     return item;
   };
 
-  const groups = [...getStudentAppGroups(studentAppSlug), accountGroup];
+  const groups = getStudentAppGroups(studentAppSlug);
   const visibleGroups = groups
     .filter((group) => !group.adminOnly || isAdmin || (isTeacher && group.items.some((item) => item.teacherVisible)))
     .map((group) => ({

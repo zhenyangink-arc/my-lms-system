@@ -1,4 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { cache } from "react";
 
 import {
   STUDENT_APP_IDS,
@@ -39,43 +40,47 @@ export async function withStudentAppSchemaFallback<
   return await scopedQuery;
 }
 
-export async function getStudentAppCourseScope(
-  supabase: SupabaseClient,
-  appSlug: StudentAppSlug,
-): Promise<StudentAppCourseScope> {
-  const appId = STUDENT_APP_IDS[appSlug];
-  const { data: categoryData, error: categoryError } = await supabase
-    .from("course_categories")
-    .select("id")
-    .eq("student_app_id", appId)
-    .eq("is_published", true);
+export const getStudentAppCourseScope = cache(
+  async (
+    supabase: SupabaseClient,
+    appSlug: StudentAppSlug,
+  ): Promise<StudentAppCourseScope> => {
+    const appId = STUDENT_APP_IDS[appSlug];
+    const { data: categoryData, error: categoryError } = await supabase
+      .from("course_categories")
+      .select("id")
+      .eq("student_app_id", appId)
+      .eq("is_published", true);
 
-  if (categoryError) {
-    return { appId, categoryIds: [], courseIds: [], lessonIds: [] };
-  }
-  const categoryIds = (categoryData ?? []).map((category) => String(category.id));
+    if (categoryError) {
+      return { appId, categoryIds: [], courseIds: [], lessonIds: [] };
+    }
+    const categoryIds = (categoryData ?? []).map((category) =>
+      String(category.id),
+    );
 
-  if (categoryIds.length === 0) {
-    return { appId, categoryIds: [], courseIds: [], lessonIds: [] };
-  }
+    if (categoryIds.length === 0) {
+      return { appId, categoryIds: [], courseIds: [], lessonIds: [] };
+    }
 
-  const { data: courseData } = await supabase
-    .from("courses")
-    .select("id")
-    .in("category_id", categoryIds)
-    .eq("is_published", true);
-  const courseIds = (courseData ?? []).map((course) => String(course.id));
+    const { data: courseData } = await supabase
+      .from("courses")
+      .select("id")
+      .in("category_id", categoryIds)
+      .eq("is_published", true);
+    const courseIds = (courseData ?? []).map((course) => String(course.id));
 
-  if (courseIds.length === 0) {
-    return { appId, categoryIds, courseIds: [], lessonIds: [] };
-  }
+    if (courseIds.length === 0) {
+      return { appId, categoryIds, courseIds: [], lessonIds: [] };
+    }
 
-  const { data: lessonData } = await supabase
-    .from("lessons")
-    .select("id")
-    .in("course_id", courseIds)
-    .eq("is_published", true);
-  const lessonIds = (lessonData ?? []).map((lesson) => String(lesson.id));
+    const { data: lessonData } = await supabase
+      .from("lessons")
+      .select("id")
+      .in("course_id", courseIds)
+      .eq("is_published", true);
+    const lessonIds = (lessonData ?? []).map((lesson) => String(lesson.id));
 
-  return { appId, categoryIds, courseIds, lessonIds };
-}
+    return { appId, categoryIds, courseIds, lessonIds };
+  },
+);

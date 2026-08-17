@@ -34,6 +34,13 @@ type AppMetrics = {
   hasError: boolean;
 };
 
+type TenantAppMetricRow = {
+  app_id: string;
+  students: number | string | null;
+  work_items: number | string | null;
+  staff: number | string | null;
+};
+
 const appIconMap = {
   korean: Languages,
   english: BookOpenCheck,
@@ -115,6 +122,42 @@ async function getAppMetrics(
   };
 }
 
+async function getTenantAppMetrics(
+  items: ManagementAppCatalogItem[],
+  tenantId: string,
+  client: Awaited<ReturnType<typeof createClient>>,
+): Promise<AppMetrics[]> {
+  const [aggregateResult, courseResults] = await Promise.all([
+    client.rpc("get_tenant_management_app_metrics", {
+      p_tenant_id: tenantId,
+      p_app_ids: items.map((item) => item.appId),
+    }),
+    Promise.all(
+      items.map((item) =>
+        client
+          .from("courses")
+          .select("id", { count: "exact", head: true })
+          .eq("student_app_id", item.appId)
+          .eq("content_scope", "platform"),
+      ),
+    ),
+  ]);
+  const rows = (aggregateResult.data ?? []) as TenantAppMetricRow[];
+  const metricsByAppId = new Map(rows.map((row) => [row.app_id, row]));
+
+  return items.map((item, index) => {
+    const row = metricsByAppId.get(item.appId);
+    const courseResult = courseResults[index] as CountResult;
+    return {
+      courses: countValue(courseResult),
+      students: aggregateResult.error ? 0 : Number(row?.students ?? 0) || 0,
+      workItems: aggregateResult.error ? 0 : Number(row?.work_items ?? 0) || 0,
+      staff: aggregateResult.error ? 0 : Number(row?.staff ?? 0) || 0,
+      hasError: Boolean(courseResult.error || aggregateResult.error || !row),
+    };
+  });
+}
+
 export async function ManagementApplicationCatalogPage({
   space,
 }: {
@@ -122,9 +165,11 @@ export async function ManagementApplicationCatalogPage({
 }) {
   const access = await requireManagementAppCatalogAccess(space);
   const client = await createClient();
-  const metrics = await Promise.all(
-    access.items.map((item) => getAppMetrics(item, access, client)),
-  );
+  const metrics = access.tenantId
+    ? await getTenantAppMetrics(access.items, access.tenantId, client)
+    : await Promise.all(
+        access.items.map((item) => getAppMetrics(item, access, client)),
+      );
   const totalStudents = metrics.reduce((sum, item) => sum + item.students, 0);
   const totalAssignments = metrics.reduce(
     (sum, item) => sum + item.workItems,
