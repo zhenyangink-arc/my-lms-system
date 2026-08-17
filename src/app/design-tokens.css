@@ -1,0 +1,588 @@
+/*
+ * Yuanzhi LMS design tokens
+ *
+ * Primitive -> semantic -> component. UI code consumes semantic/component
+ * names only; compatibility namespaces are intentionally not exposed.
+ */
+
+/* === Primitive tokens ==================================================== */
+:root {
+  /* Warm neutrals */
+  --color-neutral-0: #ffffff;
+  --color-neutral-50: #fcfbf7;
+  --color-neutral-100: #f6f4ee;
+  --color-neutral-150: #f1efe9;
+  --color-neutral-200: #ebe9e1;
+  --color-neutral-500: #625f58;
+  --color-neutral-700: #33322e;
+  --color-neutral-950: #141413;
+
+  /* Cool neutrals */
+  --color-zinc-50: #f5f5f7;
+  --color-zinc-100: #e5e5e7;
+  --color-zinc-300: #a1a1a6;
+  --color-zinc-500: #646467;
+  --color-zinc-700: #3a3a3c;
+  --color-zinc-800: #252527;
+  --color-zinc-900: #1c1c1e;
+  --color-zinc-950: #111113;
+
+  /* Student slate */
+  --color-slate-50: #f2f5f8;
+  --color-slate-100: #e8edf4;
+  --color-slate-150: #e8edf2;
+  --color-slate-200: #d9e0e8;
+  --color-slate-500: #626a76;
+  --color-slate-700: #34383f;
+  --color-slate-950: #17191d;
+
+  /* Brand and functional palettes */
+  --color-green-500: #63a867;
+  --color-green-600: #4c8250;
+  --color-green-700: #3f7044;
+  --color-green-900: #2f4f32;
+  --color-green-950: #102313;
+  --color-blue-50: #eef6ff;
+  --color-blue-100: #e7f2ff;
+  --color-blue-300: #64b5ff;
+  --color-blue-400: #2997ff;
+  --color-blue-500: #0a84ff;
+  --color-blue-600: #0071e3;
+  --color-blue-700: #0067ce;
+  --color-blue-800: #0057b8;
+  --color-blue-900: #064d92;
+  --color-blue-950: #102a43;
+  --color-red-600: #bc5b47;
+  --color-red-700: #d92d20;
+  --color-red-800: #d70015;
+  --color-success-400: #59c96f;
+  --color-success-700: #207a35;
+  --color-warning-600: #b55d00;
+  --color-warning-700: #9a6700;
+  --color-warning-800: #b25000;
+  --color-violet-300: #a9a7ff;
+  --color-violet-500: #5e5ce6;
+  --color-steel-700: #526f82;
+  --color-gold-500: #d9b45c;
+  --color-gold-950: #2c2c2b;
+  --color-status-inactive-700: #686861;
+  --color-status-suspended-400: #d98a61;
+  --color-status-suspended-700: #95512f;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+
+  --radius-base: 0.625rem;
+  --radius-pill: 999px;
+
+  --shadow-low: 0 1px 2px rgb(0 0 0 / 4%);
+  --shadow-high: 0 18px 48px rgb(0 0 0 / 10%);
+
+  --duration-fast: 120ms;
+  --duration-normal: 160ms;
+  --duration-slow: 240ms;
+  --ease-standard: ease;
+}
+
+/* === Neutral semantic profile ========================================== */
+:root {
+  --background: var(--color-neutral-50);
+  --foreground: var(--color-neutral-950);
+  --card: var(--color-neutral-0);
+  --card-foreground: var(--color-neutral-950);
+  --popover: var(--color-neutral-0);
+  --popover-foreground: var(--color-neutral-950);
+  --primary: var(--color-green-600);
+  --primary-foreground: var(--color-neutral-0);
+  --primary-hover: var(--color-green-700);
+  --secondary: var(--color-neutral-100);
+  --secondary-foreground: var(--color-neutral-700);
+  --muted: var(--color-neutral-100);
+  --muted-foreground: var(--color-neutral-500);
+  --accent: #eef5ee;
+  --accent-foreground: var(--color-green-900);
+  --destructive: var(--color-red-600);
+  --destructive-foreground: var(--color-neutral-0);
+  --border: var(--color-neutral-200);
+  --border-subtle: var(--color-neutral-150);
+  --input: var(--color-neutral-200);
+  --ring: var(--color-green-500);
+  --surface-soft: var(--color-neutral-100);
+  --foreground-secondary: var(--color-neutral-700);
+  --foreground-muted: var(--color-neutral-500);
+  --foreground-subtle: color-mix(in srgb, var(--foreground-muted) 72%, transparent);
+  --surface-highlight: color-mix(in srgb, var(--card) 92%, transparent);
+  --status-success: var(--color-success-700);
+  --status-success-foreground: var(--color-neutral-0);
+  --status-success-surface: #e7f6eb;
+  --status-warning: var(--color-warning-700);
+  --status-warning-foreground: var(--color-neutral-950);
+  --status-warning-surface: #fff4ce;
+  --status-danger: var(--destructive);
+  --status-danger-foreground: var(--destructive-foreground);
+  --status-danger-surface: #fff0f1;
+  --status-inactive: var(--color-status-inactive-700);
+  --status-inactive-foreground: var(--color-neutral-0);
+  --status-suspended: var(--color-status-suspended-700);
+  --status-suspended-foreground: var(--color-neutral-0);
+  --support: var(--color-warning-700);
+  --support-surface: #fff4ce;
+  --chart-1: var(--color-green-500);
+  --chart-2: #b3936a;
+  --chart-3: #d9b45c;
+  --chart-4: #6c8fa4;
+  --chart-5: #8a887f;
+  --radius: var(--radius-base);
+  --sidebar: var(--color-neutral-0);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--secondary-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+.dark {
+  --background: var(--color-zinc-950);
+  --foreground: var(--color-zinc-50);
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: #8fcf96;
+  --primary-foreground: var(--color-green-950);
+  --primary-hover: #a8ddaD;
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-100);
+  --muted: var(--color-zinc-800);
+  --muted-foreground: var(--color-zinc-300);
+  --accent: #263429;
+  --accent-foreground: #e8f4ea;
+  --destructive: #ff6961;
+  --destructive-foreground: #1f0806;
+  --border: rgb(255 255 255 / 13%);
+  --border-subtle: rgb(255 255 255 / 8.5%);
+  --input: rgb(255 255 255 / 15%);
+  --ring: #8fcf96;
+  --surface-soft: var(--color-zinc-800);
+  --foreground-secondary: var(--color-zinc-100);
+  --foreground-muted: var(--color-zinc-300);
+  --status-success: var(--color-success-400);
+  --status-success-foreground: var(--color-green-950);
+  --status-success-surface: #16351f;
+  --status-warning: #ffb340;
+  --status-warning-foreground: #281500;
+  --status-warning-surface: #3c2a10;
+  --status-danger: #ff6961;
+  --status-danger-foreground: #210806;
+  --status-danger-surface: #411a1e;
+  --status-inactive: var(--color-zinc-300);
+  --status-inactive-foreground: var(--color-zinc-950);
+  --status-suspended: var(--color-status-suspended-400);
+  --status-suspended-foreground: #210806;
+  --support: #d7b26d;
+  --support-surface: #362a16;
+  --chart-1: #8fcf96;
+  --chart-2: var(--color-zinc-300);
+  --chart-3: #77777c;
+  --chart-4: var(--color-zinc-500);
+  --chart-5: var(--color-zinc-700);
+  --sidebar: var(--color-zinc-900);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--secondary);
+  --sidebar-accent-foreground: var(--secondary-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+}
+
+/* === Component tokens =================================================== */
+:root {
+  --control-radius: calc(var(--radius-base) * 0.8);
+  --surface-radius: calc(var(--radius-base) * 1.4);
+  --control-height-compact: 2rem;
+  --control-height-standard: 2.5rem;
+  --control-bg: var(--card);
+  --control-border: var(--input);
+  --control-focus: var(--ring);
+  --table-bg: var(--card);
+  --table-border: var(--border);
+  --table-toolbar-bg: var(--surface-soft);
+  --table-muted-fg: var(--muted-foreground);
+  --shadow-surface: var(--shadow-low);
+  --shadow-floating: var(--shadow-high);
+
+  --lesson-start-bg: var(--primary);
+  --lesson-start-text: var(--primary-foreground);
+  --lesson-start-border: var(--primary);
+  --lesson-continue-bg: var(--color-steel-700);
+  --lesson-continue-text: var(--color-neutral-0);
+  --lesson-continue-border: var(--color-steel-700);
+  --lesson-review-bg: var(--color-gold-500);
+  --lesson-review-text: var(--color-gold-950);
+  --lesson-review-border: var(--color-gold-500);
+
+  --status-active-bg: var(--status-success);
+  --status-active-text: var(--status-success-foreground);
+  --status-inactive-bg: var(--status-inactive);
+  --status-inactive-text: var(--status-inactive-foreground);
+  --status-suspended-bg: var(--status-suspended);
+  --status-suspended-text: var(--status-suspended-foreground);
+}
+
+/* === Student semantic profile ========================================== */
+html .app-shell[data-dashboard-ui="student"][data-student-shell="system"] {
+  --background: var(--color-slate-100);
+  --foreground: var(--color-slate-950);
+  --card: var(--color-neutral-0);
+  --card-foreground: var(--color-slate-950);
+  --popover: var(--color-neutral-0);
+  --popover-foreground: var(--color-slate-950);
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-neutral-0);
+  --primary-hover: var(--color-blue-800);
+  --secondary: var(--color-slate-50);
+  --secondary-foreground: var(--color-slate-700);
+  --muted: var(--color-slate-50);
+  --muted-foreground: var(--color-slate-500);
+  --accent: var(--color-blue-100);
+  --accent-foreground: #173f68;
+  --destructive: var(--color-red-700);
+  --destructive-foreground: var(--color-neutral-0);
+  --border: var(--color-slate-200);
+  --border-subtle: var(--color-slate-150);
+  --input: var(--color-slate-200);
+  --ring: var(--color-blue-700);
+  --surface-soft: var(--color-slate-50);
+  --foreground-secondary: var(--color-slate-700);
+  --foreground-muted: var(--color-slate-500);
+  --status-success: var(--color-success-700);
+  --status-success-foreground: var(--color-neutral-0);
+  --status-success-surface: #e8f5eb;
+  --status-warning: var(--color-warning-600);
+  --status-warning-foreground: var(--color-neutral-950);
+  --status-warning-surface: #fff0df;
+  --status-danger: var(--color-red-700);
+  --status-danger-foreground: var(--color-neutral-0);
+  --status-danger-surface: #fff0f1;
+  --support: var(--color-violet-500);
+  --support-surface: #eeedff;
+  --sidebar: rgb(246 249 252 / 78%);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --student-window-glass-opacity: 72%;
+  --student-window-glass-surface: color-mix(in srgb, white var(--student-window-glass-opacity), transparent);
+  --student-dashboard-glass-surface: rgb(255 255 255 / 72%);
+  --student-dashboard-glass-hover: rgb(255 255 255 / 84%);
+  --student-content-surface: var(--card);
+  --student-content-soft-surface: var(--surface-soft);
+  --student-glass-surface: var(--student-dashboard-glass-surface);
+  --student-glass-surface-hover: var(--student-dashboard-glass-hover);
+  --student-card-level-2-surface: var(--student-content-soft-surface);
+  --student-card-level-2-surface-hover: var(--accent);
+  --student-card-level-3-surface: var(--student-content-surface);
+  --student-card-level-3-surface-hover: var(--accent);
+  --student-button-neutral-surface: rgb(255 255 255 / 70%);
+  --student-button-neutral-surface-hover: rgb(255 255 255 / 84%);
+  --student-button-accent-surface: color-mix(in srgb, var(--primary-hover) 70%, transparent);
+  --student-button-accent-surface-hover: color-mix(in srgb, var(--primary-hover) 84%, transparent);
+  --student-button-danger-surface: color-mix(in srgb, var(--destructive) 70%, transparent);
+  --student-menu-surface: rgb(255 255 255 / 80%);
+  --student-settings-popover-surface: var(--popover);
+  --student-primary-button-foreground: var(--primary-foreground);
+}
+
+html .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="night"] {
+  --background: #000000;
+  --foreground: var(--color-zinc-50);
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: var(--color-blue-300);
+  --primary-foreground: #061829;
+  --primary-hover: #8bc8ff;
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: #dedee3;
+  --muted: var(--color-zinc-800);
+  --muted-foreground: #aaaab3;
+  --accent: var(--color-blue-950);
+  --accent-foreground: #dceeff;
+  --destructive: #ff6961;
+  --destructive-foreground: #210806;
+  --border: rgb(255 255 255 / 18%);
+  --border-subtle: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 18%);
+  --ring: var(--color-blue-300);
+  --surface-soft: var(--color-zinc-800);
+  --foreground-secondary: #dedee3;
+  --foreground-muted: #aaaab3;
+  --status-success: var(--color-success-400);
+  --status-success-foreground: var(--color-green-950);
+  --status-success-surface: #16351f;
+  --status-warning: #ffb340;
+  --status-warning-foreground: #281500;
+  --status-warning-surface: #3c2a10;
+  --status-danger: #ff6961;
+  --status-danger-foreground: #210806;
+  --status-danger-surface: #411a1e;
+  --status-inactive: var(--color-zinc-300);
+  --status-inactive-foreground: var(--color-zinc-950);
+  --status-suspended: var(--color-status-suspended-400);
+  --status-suspended-foreground: #210806;
+  --support: var(--color-violet-300);
+  --support-surface: #27254d;
+  --sidebar: rgb(18 18 20 / 78%);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --student-window-glass-surface: rgb(28 28 30 / 78%);
+  --student-dashboard-glass-surface: rgb(44 44 46 / 82%);
+  --student-dashboard-glass-hover: rgb(58 58 60 / 92%);
+  --student-content-surface: var(--card);
+  --student-content-soft-surface: var(--surface-soft);
+  --student-glass-surface: var(--student-dashboard-glass-surface);
+  --student-glass-surface-hover: var(--student-dashboard-glass-hover);
+  --student-card-level-2-surface: var(--student-content-soft-surface);
+  --student-card-level-2-surface-hover: var(--accent);
+  --student-card-level-3-surface: var(--student-content-surface);
+  --student-card-level-3-surface-hover: var(--accent);
+  --student-button-neutral-surface: rgb(58 58 60 / 78%);
+  --student-button-neutral-surface-hover: rgb(72 72 74 / 90%);
+  --student-button-accent-surface: color-mix(in srgb, var(--primary) 72%, transparent);
+  --student-button-accent-surface-hover: color-mix(in srgb, var(--primary) 86%, transparent);
+  --student-button-danger-surface: color-mix(in srgb, var(--destructive) 72%, transparent);
+  --student-menu-surface: rgb(28 28 30 / 88%);
+  --student-settings-popover-surface: var(--popover);
+}
+
+/* Explicit preference mirrors the OS reduced-transparency fallback. */
+html[data-student-transparency="reduced"]
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"] {
+  --student-window-glass-surface: var(--card);
+  --student-dashboard-glass-surface: var(--card);
+  --student-dashboard-glass-hover: var(--surface-soft);
+  --student-button-neutral-surface: var(--card);
+  --student-button-neutral-surface-hover: var(--surface-soft);
+  --student-menu-surface: var(--popover);
+}
+
+/* Portalled student overlays need the same profile as the shell. */
+.student-system-floating-layer {
+  --background: var(--color-slate-100);
+  --foreground: var(--color-slate-950);
+  --card: var(--color-neutral-0);
+  --card-foreground: var(--color-slate-950);
+  --popover: var(--color-neutral-0);
+  --popover-foreground: var(--color-slate-950);
+  --primary: var(--color-blue-700);
+  --primary-foreground: var(--color-neutral-0);
+  --primary-hover: var(--color-blue-800);
+  --secondary: var(--color-slate-50);
+  --secondary-foreground: var(--color-slate-700);
+  --muted: var(--color-slate-50);
+  --muted-foreground: var(--color-slate-500);
+  --accent: var(--color-blue-100);
+  --accent-foreground: #173f68;
+  --destructive: var(--color-red-700);
+  --destructive-foreground: var(--color-neutral-0);
+  --border: var(--color-slate-200);
+  --border-subtle: var(--color-slate-150);
+  --input: var(--color-slate-200);
+  --ring: var(--color-blue-700);
+  --surface-soft: var(--color-slate-50);
+  --foreground-secondary: var(--color-slate-700);
+  --foreground-muted: var(--color-slate-500);
+  --status-success: var(--color-success-700);
+  --status-success-foreground: var(--color-neutral-0);
+  --status-success-surface: #e8f5eb;
+  --status-warning: var(--color-warning-600);
+  --status-warning-foreground: var(--color-neutral-950);
+  --status-warning-surface: #fff0df;
+  --status-danger: var(--color-red-700);
+  --status-danger-foreground: var(--color-neutral-0);
+  --status-danger-surface: #fff0f1;
+  --support: var(--color-violet-500);
+  --support-surface: #eeedff;
+  --student-menu-surface: rgb(255 255 255 / 80%);
+}
+
+html[data-student-background="night"] .student-system-floating-layer {
+  --background: #000000;
+  --foreground: var(--color-zinc-50);
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: var(--color-blue-300);
+  --primary-foreground: #061829;
+  --primary-hover: #8bc8ff;
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: #dedee3;
+  --muted: var(--color-zinc-800);
+  --muted-foreground: #aaaab3;
+  --accent: var(--color-blue-950);
+  --accent-foreground: #dceeff;
+  --destructive: #ff6961;
+  --border: rgb(255 255 255 / 18%);
+  --border-subtle: rgb(255 255 255 / 10%);
+  --input: rgb(255 255 255 / 18%);
+  --ring: var(--color-blue-300);
+  --surface-soft: var(--color-zinc-800);
+  --foreground-secondary: #dedee3;
+  --foreground-muted: #aaaab3;
+  --status-success: var(--color-success-400);
+  --status-success-foreground: var(--color-green-950);
+  --status-success-surface: #16351f;
+  --status-warning: #ffb340;
+  --status-warning-foreground: #281500;
+  --status-warning-surface: #3c2a10;
+  --status-danger: #ff6961;
+  --status-danger-foreground: #210806;
+  --status-danger-surface: #411a1e;
+  --status-inactive: var(--color-zinc-300);
+  --status-inactive-foreground: var(--color-zinc-950);
+  --status-suspended: var(--color-status-suspended-400);
+  --status-suspended-foreground: #210806;
+  --support: var(--color-violet-300);
+  --support-surface: #27254d;
+  --student-menu-surface: rgb(28 28 30 / 88%);
+  color-scheme: dark;
+}
+
+/* === Management semantic profile ======================================= */
+:is(
+  [data-dashboard-ui="management"][data-management-workspace],
+  html[data-management-workspace]
+) {
+  --background: var(--color-zinc-50);
+  --foreground: #1d1d1f;
+  --card: var(--color-neutral-0);
+  --card-foreground: #1d1d1f;
+  --popover: var(--color-neutral-0);
+  --popover-foreground: #1d1d1f;
+  --primary: var(--color-blue-600);
+  --primary-foreground: var(--color-neutral-0);
+  --primary-hover: var(--color-blue-700);
+  --secondary: var(--color-zinc-50);
+  --secondary-foreground: var(--color-zinc-700);
+  --muted: var(--color-zinc-50);
+  --muted-foreground: var(--color-zinc-500);
+  --accent: #eaf4ff;
+  --accent-foreground: var(--color-blue-900);
+  --destructive: var(--color-red-800);
+  --destructive-foreground: var(--color-neutral-0);
+  --border: rgb(29 29 31 / 11%);
+  --border-subtle: rgb(29 29 31 / 7.5%);
+  --input: rgb(29 29 31 / 11%);
+  --ring: var(--color-blue-600);
+  --surface-soft: var(--color-zinc-50);
+  --foreground-secondary: var(--color-zinc-700);
+  --foreground-muted: var(--color-zinc-500);
+  --status-success: var(--color-success-700);
+  --status-success-foreground: var(--color-neutral-0);
+  --status-success-surface: #edf8ef;
+  --status-warning: var(--color-warning-800);
+  --status-warning-foreground: var(--color-neutral-950);
+  --status-warning-surface: #fff4e8;
+  --status-danger: var(--color-red-800);
+  --status-danger-foreground: var(--color-neutral-0);
+  --status-danger-surface: #fff0f1;
+  --support: var(--color-blue-600);
+  --support-surface: #eef6ff;
+  --sidebar: rgb(250 250 252 / 82%);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --management-glass: rgb(250 250 252 / 76%);
+  --management-glass-strong: rgb(255 255 255 / 88%);
+  --management-card-shadow: 0 1px 2px rgb(0 0 0 / 2.5%), 0 10px 32px rgb(0 0 0 / 4.5%);
+  --management-floating-shadow: 0 1px 0 rgb(255 255 255 / 78%) inset, 0 18px 55px rgb(0 0 0 / 10%);
+}
+
+:is(
+  .dark [data-dashboard-ui="management"][data-management-workspace],
+  html.dark[data-management-workspace]
+) {
+  --background: var(--color-zinc-950);
+  --foreground: var(--color-zinc-50);
+  --card: var(--color-zinc-900);
+  --card-foreground: var(--color-zinc-50);
+  --popover: var(--color-zinc-900);
+  --popover-foreground: var(--color-zinc-50);
+  --primary: var(--color-blue-400);
+  --primary-foreground: #061829;
+  --primary-hover: #64b5ff;
+  --secondary: var(--color-zinc-800);
+  --secondary-foreground: var(--color-zinc-100);
+  --muted: var(--color-zinc-800);
+  --muted-foreground: var(--color-zinc-300);
+  --accent: var(--color-blue-950);
+  --accent-foreground: #dceeff;
+  --destructive: #ff6961;
+  --destructive-foreground: #210806;
+  --border: rgb(255 255 255 / 13%);
+  --border-subtle: rgb(255 255 255 / 8.5%);
+  --input: rgb(255 255 255 / 13%);
+  --ring: var(--color-blue-400);
+  --surface-soft: var(--color-zinc-800);
+  --foreground-secondary: var(--color-zinc-100);
+  --foreground-muted: var(--color-zinc-300);
+  --status-success: var(--color-success-400);
+  --status-success-foreground: var(--color-green-950);
+  --status-success-surface: #16351f;
+  --status-warning: #ffb340;
+  --status-warning-foreground: #281500;
+  --status-warning-surface: #3c2a10;
+  --status-danger: #ff6961;
+  --status-danger-foreground: #210806;
+  --status-danger-surface: #411a1e;
+  --status-inactive: var(--color-zinc-300);
+  --status-inactive-foreground: var(--color-zinc-950);
+  --status-suspended: var(--color-status-suspended-400);
+  --status-suspended-foreground: #210806;
+  --support: var(--color-blue-400);
+  --support-surface: var(--color-blue-950);
+  --sidebar: rgb(29 29 31 / 80%);
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--primary);
+  --sidebar-primary-foreground: var(--primary-foreground);
+  --sidebar-accent: var(--accent);
+  --sidebar-accent-foreground: var(--accent-foreground);
+  --sidebar-border: var(--border);
+  --sidebar-ring: var(--ring);
+
+  --management-glass: rgb(29 29 31 / 76%);
+  --management-glass-strong: rgb(35 35 38 / 90%);
+  --management-card-shadow: 0 14px 38px rgb(0 0 0 / 20%);
+  --management-floating-shadow: 0 1px 0 rgb(255 255 255 / 7%) inset, 0 20px 60px rgb(0 0 0 / 34%);
+}
