@@ -34,6 +34,9 @@ type AssignmentRow = {
   due_at: string;
   duration_minutes: number | null;
   allow_resubmission: boolean;
+  unlock_after_chapter_completion: boolean;
+  unlock_test_slug: string | null;
+  due_days_after_unlock: number | null;
 };
 
 type SubmissionRow = {
@@ -74,6 +77,7 @@ type EbookProgressRow = {
   read_pages: number[];
   total_pages: number;
   completion_source: string | null;
+  completed_at: string | null;
 };
 
 function getLatestSubmissions(submissions: SubmissionRow[]) {
@@ -126,7 +130,7 @@ export default async function AssignmentsPage({
         supabase
           .from("learning_assignments")
           .select(
-            "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission"
+            "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission,unlock_after_chapter_completion,unlock_test_slug,due_days_after_unlock"
           )
           .eq("student_app_id", STUDENT_APP_IDS.korean)
           .eq("status", "published")
@@ -135,7 +139,7 @@ export default async function AssignmentsPage({
           supabase
             .from("learning_assignments")
             .select(
-              "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission"
+              "id,title,description,assignment_type,course_id,total_points,starts_at,due_at,duration_minutes,allow_resubmission,unlock_after_chapter_completion,unlock_test_slug,due_days_after_unlock"
             )
             .eq("status", "published")
             .order("due_at", { ascending: true }),
@@ -182,14 +186,14 @@ export default async function AssignmentsPage({
       withStudentAppSchemaFallback(
         admin
           .from("course_ebook_progress")
-          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
+          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source,completed_at")
           .eq("student_id", user.id)
           .eq("tenant_id", tenant?.id ?? "")
           .eq("student_app_id", STUDENT_APP_IDS.korean),
         () =>
           admin
             .from("course_ebook_progress")
-            .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
+            .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source,completed_at")
             .eq("student_id", user.id)
             .eq("tenant_id", tenant?.id ?? ""),
       ),
@@ -369,9 +373,28 @@ export default async function AssignmentsPage({
       ? categoryById.get(subcategory.parent_id)
       : subcategory;
     const latest = latestByAssignment.get(assignment.id);
+    const unlockProgress = assignment.unlock_test_slug
+      ? ebookProgressBySlug.get(assignment.unlock_test_slug)
+      : undefined;
+    const chapterUnlockPending =
+      !isManager &&
+      assignment.unlock_after_chapter_completion &&
+      !unlockProgress?.completed_at;
+    const effectiveDueAt =
+      !isManager &&
+      assignment.unlock_after_chapter_completion &&
+      unlockProgress?.completed_at &&
+      assignment.due_days_after_unlock
+        ? new Date(
+            new Date(unlockProgress.completed_at).getTime() +
+              assignment.due_days_after_unlock * 86_400_000,
+          ).toISOString()
+        : assignment.due_at;
 
     return {
       ...assignment,
+      due_at: effectiveDueAt,
+      chapterUnlockPending,
       courseTitle: course?.title ?? "综合学习任务",
       courseGroup: parent?.title ?? "综合任务",
       courseGroupSlug: parent?.slug ?? "general",

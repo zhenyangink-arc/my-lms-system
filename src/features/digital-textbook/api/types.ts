@@ -100,6 +100,7 @@ export type DigitalTextbookGrammarLibraryItem =
 
 export type DigitalTextbookManagementResult = {
   canManage: boolean;
+  canPublishChapters: boolean;
   courses: DigitalTextbookCourse[];
   vocabularyLibrary: DigitalTextbookVocabularyLibraryItem[];
   grammarLibrary: DigitalTextbookGrammarLibraryItem[];

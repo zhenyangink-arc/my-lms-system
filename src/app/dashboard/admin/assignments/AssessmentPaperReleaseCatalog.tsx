@@ -1,6 +1,6 @@
 "use client";
 
-import { Search, Send, UsersRound, X } from "lucide-react";
+import { CheckCircle2, CircleAlert, Search, Send, UsersRound, X } from "lucide-react";
 import { useActionState, useMemo, useState } from "react";
 
 import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
@@ -19,6 +19,14 @@ export type ReleasePaper = {
   totalPoints: number;
   questionCount: number;
   version: number;
+  quality: {
+    snapshotMatches: boolean;
+    allSkills: boolean;
+    objectiveKeys: boolean;
+    listeningReady: boolean;
+    sourceCountsMatch: boolean;
+    ready: boolean;
+  };
 };
 
 export type ReleasePaperQuestion = {
@@ -44,15 +52,19 @@ export function AssessmentPaperReleaseCatalog({
   questions,
   courses,
   students,
+  canTargetAllStudents,
 }: {
   paperType: "homework" | "exam";
   papers: ReleasePaper[];
   questions: ReleasePaperQuestion[];
   courses: CourseOption[];
   students: StudentOption[];
+  canTargetAllStudents: boolean;
 }) {
   const [selectedPaperId, setSelectedPaperId] = useState("");
-  const [targetScope, setTargetScope] = useState("all_students");
+  const [targetScope, setTargetScope] = useState(
+    canTargetAllStudents ? "all_students" : "selected_students"
+  );
   const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(
     new Set()
   );
@@ -78,6 +90,15 @@ export function AssessmentPaperReleaseCatalog({
   const selectedQuestions = selectedPaper
     ? questionsByPaper.get(selectedPaper.id) ?? []
     : [];
+  const qualityChecks = selectedPaper
+    ? [
+        ["题量与总分快照一致", selectedPaper.quality.snapshotMatches],
+        ["六项学习内容齐全", selectedPaper.quality.allSkills],
+        ["客观题判定答案齐全", selectedPaper.quality.objectiveKeys],
+        ["听力材料配置完整", selectedPaper.quality.listeningReady],
+        ["词汇、语法和六项题量与平台源稿一致", selectedPaper.quality.sourceCountsMatch],
+      ] as const
+    : [];
   const typeLabel = paperType === "homework" ? "作业" : "考试";
   const now = new Date();
   const defaultStart = localDateTimeValue(
@@ -101,7 +122,7 @@ export function AssessmentPaperReleaseCatalog({
 
   function openPaper(paperId: string) {
     setSelectedPaperId(paperId);
-    setTargetScope("all_students");
+    setTargetScope(canTargetAllStudents ? "all_students" : "selected_students");
     setSelectedStudentIds(new Set());
     setStudentQuery("");
   }
@@ -213,10 +234,10 @@ export function AssessmentPaperReleaseCatalog({
                     <button
                       type="button"
                       onClick={() => openPaper(paper.id)}
-                      className="inline-flex items-center gap-1.5 text-[11px] font-bold text-[var(--support)] hover:underline"
+                      className="inline-flex min-h-11 items-center gap-1.5 px-2 text-[11px] font-bold text-[var(--support)] hover:underline"
                     >
-                      <UsersRound size={12} />
-                      指向学生并发布
+                      {paper.quality.ready ? <UsersRound size={12} /> : <CircleAlert size={12} />}
+                      {paper.quality.ready ? "指向学生并发布" : "查看发布问题"}
                     </button>
                   </td>
                 </tr>
@@ -277,6 +298,25 @@ export function AssessmentPaperReleaseCatalog({
             <form action={formAction} className="flex min-h-0 flex-1 flex-col">
               <input type="hidden" name="paper_id" value={selectedPaper.id} />
               <div className="min-h-0 flex-1 overflow-auto">
+                <section className="border-b px-5 py-4 sm:px-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${selectedPaper.quality.ready ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--status-danger-surface)] text-[var(--status-danger)]"}`}>
+                      {selectedPaper.quality.ready ? <CheckCircle2 size={18} aria-hidden="true" /> : <CircleAlert size={18} aria-hidden="true" />}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-semibold">发布前质量检查</h3>
+                      <p className="app-muted-text mt-1 text-xs">全部通过后才能发布，服务端还会在创建任务前再次复核。</p>
+                      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {qualityChecks.map(([label, passed]) => (
+                          <li key={label} className="flex items-center gap-2 text-xs font-semibold">
+                            {passed ? <CheckCircle2 size={15} className="text-[var(--status-success)]" aria-hidden="true" /> : <CircleAlert size={15} className="text-[var(--status-danger)]" aria-hidden="true" />}
+                            <span>{label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </section>
                 <section className="border-b">
                   <table className="w-full border-collapse text-left">
                     <tbody>
@@ -368,6 +408,15 @@ export function AssessmentPaperReleaseCatalog({
                       </tr>
                       <tr>
                         <td colSpan={3} className="px-4 py-3">
+                          {paperType === "homework" && (
+                            <div className="mb-3 grid gap-3 rounded-xl border px-3 py-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+                              <label className="flex min-h-11 items-start gap-3 text-xs font-bold">
+                                <input name="unlock_after_chapter_completion" type="checkbox" defaultChecked className="mt-1" />
+                                <span>完成对应章节后开放<span className="app-muted-text mt-1 block font-normal leading-5">学生完成本章后开始计算自己的提交时间。</span></span>
+                              </label>
+                              <label className="text-[11px] font-bold">完成后提交天数<input name="due_days_after_unlock" type="number" min={1} max={30} step={1} defaultValue={3} className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm" /></label>
+                            </div>
+                          )}
                           <label className="text-[11px] font-bold">
                             机构补充通知
                             <textarea name="institution_note" rows={2} maxLength={2000} placeholder="可填写学习提醒，不会改变平台试卷内容。" className="app-input mt-1.5 w-full resize-y rounded-lg border px-3 py-2.5 text-xs leading-5" />
@@ -381,14 +430,21 @@ export function AssessmentPaperReleaseCatalog({
                 <section>
                   <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
                     <h3 className="text-sm font-semibold">指向学生</h3>
-                    <label className="inline-flex items-center gap-2 text-xs font-bold">
-                      <input type="radio" name="target_scope" value="all_students" checked={targetScope === "all_students"} onChange={() => setTargetScope("all_students")} />
-                      全部在籍学生
-                    </label>
+                    {canTargetAllStudents && (
+                      <label className="inline-flex min-h-11 items-center gap-2 text-xs font-bold">
+                        <input type="radio" name="target_scope" value="all_students" checked={targetScope === "all_students"} onChange={() => setTargetScope("all_students")} />
+                        全部在籍学生
+                      </label>
+                    )}
                     <label className="inline-flex items-center gap-2 text-xs font-bold">
                       <input type="radio" name="target_scope" value="selected_students" checked={targetScope === "selected_students"} onChange={() => setTargetScope("selected_students")} />
                       指定学生
                     </label>
+                    {!canTargetAllStudents && (
+                      <span className="app-muted-text text-[11px]">
+                        老师只能布置给自己负责的学生
+                      </span>
+                    )}
                     {targetScope === "selected_students" && (
                       <>
                         <span className="app-muted-text text-[11px]">已选 {selectedStudentIds.size} 人</span>
@@ -441,9 +497,13 @@ export function AssessmentPaperReleaseCatalog({
                   <button type="button" onClick={() => setSelectedPaperId("")} disabled={pending} className="app-soft-card rounded-lg border px-4 py-2.5 text-xs font-bold disabled:opacity-50">
                     取消
                   </button>
-                  <button type="submit" disabled={pending || (targetScope === "selected_students" && selectedStudentIds.size === 0)} className="inline-flex items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
+                  <button type="submit" disabled={!selectedPaper.quality.ready || pending || (targetScope === "selected_students" && selectedStudentIds.size === 0)} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
                     <Send size={14} />
-                    {pending ? "正在发布…" : `确认发布${typeLabel}`}
+                    {!selectedPaper.quality.ready
+                      ? "质检未通过"
+                      : pending
+                        ? "正在发布…"
+                        : `确认发布${typeLabel}`}
                   </button>
                 </div>
               </div>

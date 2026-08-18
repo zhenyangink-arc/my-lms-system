@@ -59,7 +59,7 @@ function ActionButton({
         type="submit"
         disabled={pending}
         title={state.message || label}
-        className="inline-flex items-center gap-1.5 rounded-lg px-2.5 py-2 text-[10px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 py-2 text-[10px] font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:opacity-50"
         style={colors}
       >
         <Icon size={12} aria-hidden="true" />
@@ -73,10 +73,12 @@ export function AssessmentPaperStatusActions({
   paperId,
   paperType,
   status,
+  canRelease,
 }: {
   paperId: string;
   paperType: "homework" | "exam";
   status: AssessmentPaperStatus;
+  canRelease: boolean;
 }) {
   const duplicateAction = duplicateAssessmentPaperAction.bind(
     null,
@@ -111,7 +113,7 @@ export function AssessmentPaperStatusActions({
   return (
     <div className="flex flex-wrap gap-2">
       <ActionButton action={duplicateAction} label="复制新卷" icon={CopyPlus} />
-      {status === "published" ? (
+      {canRelease && (status === "published" ? (
         <ActionButton
           action={retireAction}
           label="停止提供"
@@ -126,11 +128,11 @@ export function AssessmentPaperStatusActions({
           icon={Send}
           tone="accent"
         />
-      )}
-      {status !== "draft" && (
+      ))}
+      {canRelease && status !== "draft" && (
         <ActionButton action={draftAction} label="转为草稿" icon={FileClock} />
       )}
-      {status !== "archived" && (
+      {canRelease && status !== "archived" && (
         <ActionButton
           action={archiveAction}
           label="归档"

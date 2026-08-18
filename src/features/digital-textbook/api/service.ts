@@ -122,6 +122,8 @@ export async function getDigitalTextbookManagementData(
 ): Promise<DigitalTextbookManagementResult> {
   const auth = await requireActiveUser();
   const { supabase: userSupabase } = auth;
+  const canPublishChapters =
+    auth.platformProfile?.global_role === "platform_owner" && !auth.tenant;
   const { data: canManage } = await userSupabase.rpc(
     "current_user_can_manage_standard_question_bank",
   );
@@ -147,7 +149,9 @@ export async function getDigitalTextbookManagementData(
       "digital_textbook_versions.digital_textbook_chapters.digital_textbook_modules.module_code",
       ["vocabulary", "grammar"],
     );
-  if (!canManage) textbookQuery = textbookQuery.eq("status", "published");
+  if (!canManage && !canPublishChapters) {
+    textbookQuery = textbookQuery.eq("status", "published");
+  }
 
   const [
     textbookResult,
@@ -226,9 +230,12 @@ export async function getDigitalTextbookManagementData(
 
   const lessonById = new Map(lessons.map((lesson) => [lesson.id, lesson]));
   const courseById = new Map(courses.map((course) => [course.id, course]));
-  const chapterByVersionId = new Map(
-    chapters.map((chapter) => [chapter.version_id, chapter]),
-  );
+  const chaptersByVersionId = new Map<string, ChapterRow[]>();
+  for (const chapter of chapters) {
+    const list = chaptersByVersionId.get(chapter.version_id) ?? [];
+    list.push(chapter);
+    chaptersByVersionId.set(chapter.version_id, list);
+  }
   const nodesByModuleId = new Map<string, NodeRow[]>();
   const modulesByChapterId = new Map<string, ModuleRow[]>();
 
@@ -253,8 +260,9 @@ export async function getDigitalTextbookManagementData(
       (version) => version.textbook_id === textbook.id,
     );
     for (const version of textbookVersions) {
-      const chapter = chapterByVersionId.get(version.id);
-      if (chapter) chapterEntries.push({ textbook, chapter, version });
+      for (const chapter of chaptersByVersionId.get(version.id) ?? []) {
+        chapterEntries.push({ textbook, chapter, version });
+      }
     }
   }
 
@@ -419,6 +427,7 @@ export async function getDigitalTextbookManagementData(
 
   return {
     canManage: canManage === true,
+    canPublishChapters,
     courses: courseTree,
     vocabularyLibrary,
     grammarLibrary,

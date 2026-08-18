@@ -4,8 +4,10 @@ import {
   BookOpen,
   ChevronDown,
   Headphones,
+  Languages,
   Mic2,
   PenLine,
+  SpellCheck2,
   Settings2,
   X,
 } from "lucide-react";
@@ -15,6 +17,8 @@ import { initialLearningAssignmentActionState } from "@/app/dashboard/assignment
 import { saveChapterHomeworkPlanAction } from "./homework-plan-actions";
 
 export type HomeworkLanguageSkill =
+  | "vocabulary"
+  | "grammar"
   | "listening"
   | "speaking"
   | "reading"
@@ -58,6 +62,8 @@ export type ChapterHomeworkPlanValue = {
 };
 
 const skillOrder: HomeworkLanguageSkill[] = [
+  "vocabulary",
+  "grammar",
   "listening",
   "speaking",
   "reading",
@@ -65,6 +71,8 @@ const skillOrder: HomeworkLanguageSkill[] = [
 ];
 
 const skillLabels: Record<HomeworkLanguageSkill, string> = {
+  vocabulary: "词汇",
+  grammar: "语法",
   listening: "听力",
   speaking: "口语",
   reading: "阅读",
@@ -100,6 +108,8 @@ function SkillIcon({
   skill: HomeworkLanguageSkill;
   size?: number;
 }) {
+  if (skill === "vocabulary") return <Languages size={size} />;
+  if (skill === "grammar") return <SpellCheck2 size={size} />;
   if (skill === "listening") return <Headphones size={size} />;
   if (skill === "speaking") return <Mic2 size={size} />;
   if (skill === "reading") return <BookOpen size={size} />;
@@ -197,11 +207,15 @@ function HomeworkSkillSection({
 }) {
   const responseMode =
     setting?.responseMode ??
-    (skill === "speaking"
-      ? "audio_recording"
-      : skill === "writing"
-        ? "long_text"
-        : "mixed");
+    (skill === "vocabulary"
+      ? "short_text"
+      : skill === "grammar"
+        ? "mixed"
+        : skill === "speaking"
+          ? "audio_recording"
+          : skill === "writing"
+            ? "long_text"
+            : "mixed");
 
   return (
     <details
@@ -568,9 +582,9 @@ export function ChapterHomeworkPlanEditor({
                         <td className="border-l px-3 py-2.5">
                           <select
                             aria-label="状态"
-                            name="status"
                             defaultValue={plan.status}
-                            className="app-input w-full rounded-md border px-3 py-2.5 text-xs"
+                            disabled
+                            className="app-input w-full cursor-default rounded-md border px-3 py-2.5 text-xs opacity-75"
                           >
                             <option value="draft">草稿</option>
                             <option value="published">已发布</option>

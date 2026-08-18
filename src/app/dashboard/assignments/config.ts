@@ -5,6 +5,7 @@ export const QUESTION_TYPES = [
   "long_text",
   "single_choice",
   "file_link",
+  "audio_recording",
 ] as const;
 export const SUBMISSION_STATUSES = [
   "submitted",
@@ -34,6 +35,7 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   long_text: "长文题",
   single_choice: "单选题",
   file_link: "附件链接",
+  audio_recording: "录音题",
 };
 
 export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {

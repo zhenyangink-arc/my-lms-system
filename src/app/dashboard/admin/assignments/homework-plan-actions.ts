@@ -6,6 +6,8 @@ import type { LearningAssignmentActionState } from "@/app/dashboard/assignments/
 import { requireAssessmentPaperManager } from "@/lib/assessment-papers";
 
 const languageSkills = [
+  "vocabulary",
+  "grammar",
   "listening",
   "speaking",
   "reading",
@@ -43,7 +45,6 @@ export async function saveChapterHomeworkPlanAction(
 
   const durationMinutes = Number(formData.get("duration_minutes"));
   const passingScore = Number(formData.get("passing_score"));
-  const status = String(formData.get("status") ?? "draft");
   const allowResubmission = formData.get("allow_resubmission") === "on";
 
   if (
@@ -56,10 +57,6 @@ export async function saveChapterHomeworkPlanAction(
   if (!Number.isFinite(passingScore) || passingScore < 0 || passingScore > 100) {
     return result("error", "及格线需要填写 0 至 100。");
   }
-  if (!["draft", "published", "archived"].includes(status)) {
-    return result("error", "作业计划状态不正确。");
-  }
-
   const settings = languageSkills.map((skill, index) => {
     const responseMode = String(formData.get(`${skill}_response_mode`) ?? "");
     const targetQuestionCount = Number(
@@ -88,7 +85,7 @@ export async function saveChapterHomeworkPlanAction(
 
   for (const setting of settings) {
     if (!responseModes.has(setting.response_mode)) {
-      return result("error", "听说读写的作答方式不正确。");
+      return result("error", "六项作业的作答方式不正确。");
     }
     if (
       !Number.isInteger(setting.target_question_count) ||
@@ -117,20 +114,35 @@ export async function saveChapterHomeworkPlanAction(
   }
 
   if (settings.some((setting) => !setting.enabled)) {
-    return result("error", "每章必须保留听、说、读、写四项能力。");
+    return result("error", "每章必须保留词汇、语法、听力、口语、阅读、写作六项能力。");
   }
 
   const { supabase } = await requireAssessmentPaperManager();
+  const { data: existingPlan, error: existingPlanError } = await supabase
+    .from("chapter_homework_plans")
+    .select("status")
+    .eq("id", planId)
+    .maybeSingle();
+
+  if (existingPlanError || !existingPlan) {
+    return result("error", "章节作业计划不存在或暂时无法读取。");
+  }
+  if (existingPlan.status !== "draft") {
+    return result(
+      "error",
+      "已发布版本不可直接修改，请由平台负责人先撤回为草稿。"
+    );
+  }
+
   const { data: plan, error: planError } = await supabase
     .from("chapter_homework_plans")
     .update({
       duration_minutes: durationMinutes,
       passing_score: passingScore,
       allow_resubmission: allowResubmission,
-      status,
     })
     .eq("id", planId)
-    .select("id")
+    .select("id,status")
     .maybeSingle();
 
   if (planError || !plan) {
@@ -142,12 +154,12 @@ export async function saveChapterHomeworkPlanAction(
     .upsert(settings, { onConflict: "plan_id,language_skill" });
 
   if (settingsError) {
-    return result("error", "听说读写配置保存失败，请稍后重试。");
+    return result("error", "六项作业配置保存失败，请稍后重试。");
   }
 
   revalidateDashboard("/dashboard/admin/assignments");
   revalidateDashboard("/dashboard/admin/assignments/homework");
-  return result("success", "章节作业与听说读写配置已保存。");
+  return result("success", "章节作业与六项配置已保存。");
 }
 
 export async function setChapterHomeworkPublicationAction(
@@ -160,7 +172,10 @@ export async function setChapterHomeworkPublicationAction(
   void _formData;
   if (!isUuid(planId)) return result("error", "章节作业计划编号不正确。");
 
-  const { supabase } = await requireAssessmentPaperManager();
+  const { supabase, canReleasePapers } = await requireAssessmentPaperManager();
+  if (!canReleasePapers) {
+    return result("error", "只有平台负责人可以发布或撤回章节作业。");
+  }
   if (nextStatus === "published") {
     const { data: settings, error: settingsError } = await supabase
       .from("chapter_homework_skill_settings")
@@ -177,16 +192,14 @@ export async function setChapterHomeworkPublicationAction(
         .map((setting) => setting.language_skill)
     );
     if (!languageSkills.every((skill) => enabledSkills.has(skill))) {
-      return result("error", "听、说、读、写四项配置齐全后才能发布。");
+      return result("error", "词汇、语法、听力、口语、阅读、写作六项配置齐全后才能发布。");
     }
   }
 
-  const { data: plan, error: planError } = await supabase
-    .from("chapter_homework_plans")
-    .update({ status: nextStatus })
-    .eq("id", planId)
-    .select("id")
-    .maybeSingle();
+  const { data: plan, error: planError } = await supabase.rpc(
+    "publish_chapter_homework_plan",
+    { p_plan_id: planId, p_status: nextStatus }
+  );
 
   if (planError || !plan) {
     return result(
@@ -202,7 +215,7 @@ export async function setChapterHomeworkPublicationAction(
   return result(
     "success",
     nextStatus === "published"
-      ? "章节作业已发布。"
-      : "章节作业已撤回并转为草稿。"
+      ? "章节作业已发布，老师端现在可以按章节选择学生并布置。"
+      : "章节作业及对应标准作业卷已撤回并转为草稿。"
   );
 }

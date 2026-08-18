@@ -51,6 +51,7 @@ export type ManagementAppAccess = {
   tenantName: string | null;
   userId: string;
   role: UserRole;
+  globalRole: string | null;
   accessRole: StaffAppAssignmentRow["access_role"] | "platform";
   availability: {
     enabled: boolean;
@@ -295,6 +296,7 @@ export const requireManagementAppAccess = cache(
         tenantName: null,
         userId: auth.user.id,
         role,
+        globalRole: auth.platformProfile?.global_role ?? null,
         accessRole: "platform",
         availability: { enabled: true, status: app.status },
         capabilities: getPlatformCapabilities(
@@ -374,6 +376,7 @@ export const requireManagementAppAccess = cache(
       tenantName: tenant.name,
       userId: auth.user.id,
       role,
+      globalRole: auth.platformProfile?.global_role ?? null,
       accessRole: isExecutive
         ? "administrator"
         : staffAccess!.access_role,

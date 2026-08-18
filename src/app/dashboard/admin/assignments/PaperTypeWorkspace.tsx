@@ -141,7 +141,7 @@ export async function PaperTypeWorkspace({
   embedded?: boolean;
 }) {
   const access = await requireAssessmentPaperWorkspace();
-  const { supabase, canManagePapers, canPublishPapers } = access;
+  const { supabase, canManagePapers, canReleasePapers, canPublishPapers } = access;
   const typeLabel = paperType === "homework" ? "作业" : "考试";
 
   const [paperResult, paperQuestionResult, groupResult] = await Promise.all([
@@ -301,8 +301,43 @@ export async function PaperTypeWorkspace({
     targetsByAssignment.set(target.assignment_id, current);
   });
 
-  const releasePapers: ReleasePaper[] = papers
-    .filter((paper) => paper.status === "published")
+  const publishedPapers = papers.filter((paper) => paper.status === "published");
+  const qualityByPaper = new Map<
+    string,
+    {
+      snapshotMatches: boolean;
+      allSkills: boolean;
+      objectiveKeys: boolean;
+      listeningReady: boolean;
+      sourceCountsMatch: boolean;
+      ready: boolean;
+    }
+  >();
+  if (canPublishPapers) {
+    const qualityResults = await Promise.all(
+      publishedPapers.map(async (paper) => {
+        const { data } = await supabase.rpc(
+          "get_assessment_paper_release_quality",
+          { p_paper_id: paper.id }
+        );
+        return [paper.id, data] as const;
+      })
+    );
+    qualityResults.forEach(([paperId, quality]) => {
+      if (quality && typeof quality === "object" && !Array.isArray(quality)) {
+        qualityByPaper.set(paperId, quality as {
+          snapshotMatches: boolean;
+          allSkills: boolean;
+          objectiveKeys: boolean;
+          listeningReady: boolean;
+          sourceCountsMatch: boolean;
+          ready: boolean;
+        });
+      }
+    });
+  }
+
+  const releasePapers: ReleasePaper[] = publishedPapers
     .map((paper) => {
       const group = groupById.get(paper.source_test_id);
       return {
@@ -319,6 +354,14 @@ export async function PaperTypeWorkspace({
         totalPoints: Number(paper.total_points),
         questionCount: paper.question_count,
         version: paper.version,
+        quality: qualityByPaper.get(paper.id) ?? {
+          snapshotMatches: false,
+          allSkills: false,
+          objectiveKeys: false,
+          listeningReady: false,
+          sourceCountsMatch: false,
+          ready: false,
+        },
       };
     });
   const releaseQuestions: ReleasePaperQuestion[] = paperQuestions.map(
@@ -349,6 +392,7 @@ export async function PaperTypeWorkspace({
             canManagePapers && !paperReadError && !bankQuestionReadError ? (
               <AssessmentPaperComposer
                 paperType={paperType}
+                canPublish={canReleasePapers}
                 groups={groups.map((group) => ({
                   id: group.id,
                   title: group.title,
@@ -508,8 +552,9 @@ export async function PaperTypeWorkspace({
                 </p>
               </div>
               {embedded && !bankQuestionReadError && (
-                <AssessmentPaperComposer
-                  paperType={paperType}
+              <AssessmentPaperComposer
+                paperType={paperType}
+                canPublish={canReleasePapers}
                   groups={groups.map((group) => ({
                     id: group.id,
                     title: group.title,
@@ -614,6 +659,7 @@ export async function PaperTypeWorkspace({
                               paperId={paper.id}
                               paperType={paperType}
                               status={paper.status}
+                              canRelease={canReleasePapers}
                             />
                           </div>
                         </td>
@@ -652,6 +698,7 @@ export async function PaperTypeWorkspace({
                     normalizeMembershipTier(student.membership_tier)
                   ],
               }))}
+              canTargetAllStudents={access.role !== "teacher"}
             />
 
             <section

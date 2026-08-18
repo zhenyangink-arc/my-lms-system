@@ -83,7 +83,11 @@ export default async function DigitalTextbookListing({ studentAppId }: { student
             {result.canManage ? "当前账号可以维护内容。" : "当前账号为只读查看。"}
           </p>
         </div>
-        <DigitalTextbookTable data={rows} canManage={result.canManage} />
+        <DigitalTextbookTable
+          data={rows}
+          canManage={result.canManage}
+          canPublishChapters={result.canPublishChapters}
+        />
       </section>
     </div>
   );

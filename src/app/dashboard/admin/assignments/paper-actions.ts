@@ -72,6 +72,15 @@ export async function createAssessmentPaperAction(
   const allowResubmission = formData.get("allow_resubmission") === "on";
   const publish = String(formData.get("intent") ?? "draft") === "publish";
 
+  if (publish) {
+    const { data: canRelease } = await supabase.rpc(
+      "current_user_can_release_assessment_papers"
+    );
+    if (canRelease !== true) {
+      return result("error", "草稿可以保存，但只有平台负责人可以发布给机构。");
+    }
+  }
+
   if (title.length < 2 || title.length > 120) {
     return result("error", "试卷名称需要填写 2 至 120 个字。");
   }
@@ -176,6 +185,12 @@ export async function changeAssessmentPaperStatusAction(
   void _formData;
   if (!isUuid(paperId)) return result("error", "试卷编号不正确。");
   const { supabase } = await requireAssessmentPaperManager();
+  const { data: canRelease } = await supabase.rpc(
+    "current_user_can_release_assessment_papers"
+  );
+  if (canRelease !== true) {
+    return result("error", "只有平台负责人可以改变试卷的机构可见状态。");
+  }
   const { error } = await supabase.rpc("change_assessment_paper_status", {
     p_paper_id: paperId,
     p_status: nextStatus,
@@ -242,6 +257,12 @@ export async function publishAssessmentPaperAction(
   const institutionNote = String(
     formData.get("institution_note") ?? ""
   ).trim();
+  const unlockAfterChapterCompletion =
+    fixedType === "homework" &&
+    formData.get("unlock_after_chapter_completion") === "on";
+  const dueDaysAfterUnlock = Number(
+    String(formData.get("due_days_after_unlock") ?? "3")
+  );
 
   if (!isUuid(paperId)) return result("error", "请选择有效的标准试卷。");
   if (courseId && !isUuid(courseId)) {
@@ -259,6 +280,14 @@ export async function publishAssessmentPaperAction(
   if (institutionNote.length > 2000) {
     return result("error", "机构通知不能超过 2000 个字。");
   }
+  if (
+    unlockAfterChapterCompletion &&
+    (!Number.isInteger(dueDaysAfterUnlock) ||
+      dueDaysAfterUnlock < 1 ||
+      dueDaysAfterUnlock > 30)
+  ) {
+    return result("error", "完成章节后的提交期限需要填写 1 至 30 天。");
+  }
 
   const { data: paper, error: paperError } = await supabase
     .from("assessment_papers")
@@ -271,7 +300,7 @@ export async function publishAssessmentPaperAction(
   }
 
   const { data, error } = await supabase.rpc(
-    "create_learning_assignment_from_paper",
+    "create_learning_assignment_from_paper_with_unlock",
     {
       p_paper_id: paperId,
       p_course_id: courseId || null,
@@ -280,6 +309,10 @@ export async function publishAssessmentPaperAction(
       p_starts_at: startsAt.toISOString(),
       p_due_at: dueAt.toISOString(),
       p_institution_note: institutionNote,
+      p_unlock_after_chapter_completion: unlockAfterChapterCompletion,
+      p_due_days_after_unlock: unlockAfterChapterCompletion
+        ? dueDaysAfterUnlock
+        : null,
     }
   );
 
@@ -294,7 +327,9 @@ export async function publishAssessmentPaperAction(
   return result(
     "success",
     fixedType === "homework"
-      ? "整套作业卷已经发布给学生。"
+      ? unlockAfterChapterCompletion
+        ? "整套作业卷已经发布，学生完成对应章节后开放。"
+        : "整套作业卷已经发布给学生。"
       : "整套考试卷已经发布给学生。"
   );
 }

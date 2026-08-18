@@ -44,9 +44,11 @@ const COLUMN_LABELS: Record<string, string> = {
 export function DigitalTextbookTable({
   data,
   canManage,
+  canPublishChapters,
 }: {
   data: DigitalTextbookDisplayRow[];
   canManage: boolean;
+  canPublishChapters: boolean;
 }) {
   const [sorting, setSorting] = useState<SortingState>([
     { id: "hierarchy", desc: false },
@@ -57,7 +59,10 @@ export function DigitalTextbookTable({
   const [filters, setFilters] = useState<DigitalTextbookTableFilters>(
     INITIAL_DIGITAL_TEXTBOOK_FILTERS,
   );
-  const columns = useMemo(() => getDigitalTextbookColumns(canManage), [canManage]);
+  const columns = useMemo(
+    () => getDigitalTextbookColumns(canManage, canPublishChapters),
+    [canManage, canPublishChapters],
+  );
 
   const filteredData = useMemo(() => {
     const query = filters.query.trim().toLocaleLowerCase("zh-CN");

@@ -89,6 +89,8 @@ type HomeworkQuestionRow = {
 };
 
 const skillOrder: HomeworkLanguageSkill[] = [
+  "vocabulary",
+  "grammar",
   "listening",
   "speaking",
   "reading",
@@ -168,7 +170,7 @@ export async function HomeworkChapterWorkspace({
 }: {
   embedded?: boolean;
 }) {
-  const { supabase } = await requireAssessmentPaperManager();
+  const { supabase, canReleasePapers } = await requireAssessmentPaperManager();
   const [
     chaptersResult,
     lessonsResult,
@@ -419,13 +421,13 @@ export async function HomeworkChapterWorkspace({
             <div>
               <p className="text-sm font-semibold">课程章节作业树</p>
               <p className="app-muted-text mt-1 text-xs">
-                每个章节固定包含听、说、读、写四项，可分别设置题量、分值、作答方式和时长。
+                每章固定包含词汇、语法、听力、口语、阅读、写作六项；核心词汇全部练一遍，每个语法练两遍。
               </p>
             </div>
             <dl className="flex flex-wrap items-center gap-y-3 text-sm">
               {[
                 ["全部章节", chapters.length],
-                ["四项齐全", completePlanCount],
+                ["六项齐全", completePlanCount],
                 ["已发布", publishedPlans],
                 ["标准作业卷", papers.length],
               ].map(([label, value], index) => (
@@ -496,17 +498,16 @@ export async function HomeworkChapterWorkspace({
                 className="overflow-x-auto border-t"
                 style={{ borderColor: "var(--border)" }}
               >
-                <table className="w-full min-w-[900px] table-fixed border-collapse text-left">
+                <table className="w-full min-w-[1180px] table-fixed border-collapse text-left">
                   <colgroup>
-                    <col className="w-[13%]" />
-                    <col className="w-[17%]" />
-                    <col className="w-[7%]" />
                     <col className="w-[11%]" />
-                    <col className="w-[11%]" />
-                    <col className="w-[11%]" />
-                    <col className="w-[11%]" />
+                    <col className="w-[15%]" />
+                    <col className="w-[6%]" />
+                    {skillOrder.map((skill) => (
+                      <col key={skill} className="w-[9%]" />
+                    ))}
+                    <col className="w-[6%]" />
                     <col className="w-[8%]" />
-                    <col className="w-[11%]" />
                   </colgroup>
                   <thead
                     className="sticky top-0 z-20 backdrop-blur-xl backdrop-saturate-150"
@@ -526,6 +527,8 @@ export async function HomeworkChapterWorkspace({
                       <th className="px-4 py-2.5">课程 / 课时</th>
                       <th className="border-l px-4 py-2.5">章节作业</th>
                       <th className="border-l px-3 py-2.5 text-center">状态</th>
+                      <th className="border-l px-3 py-2.5 text-center">词</th>
+                      <th className="border-l px-3 py-2.5 text-center">语法</th>
                       <th className="border-l px-3 py-2.5 text-center">听</th>
                       <th className="border-l px-3 py-2.5 text-center">说</th>
                       <th className="border-l px-3 py-2.5 text-center">读</th>
@@ -573,7 +576,7 @@ export async function HomeworkChapterWorkspace({
                           </td>
                           <td
                             className="app-muted-text border-l px-4 py-3.5 text-xs"
-                            colSpan={8}
+                            colSpan={10}
                           >
                             暂未建立章节作业
                           </td>
@@ -713,20 +716,27 @@ export async function HomeworkChapterWorkspace({
                               <td className="border-l px-2 py-3 text-right">
                                 {plan ? (
                                   <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
-                                    <ChapterHomeworkPlanEditor
-                                      chapterTitle={chapter.title}
-                                      plan={toPlanValue(
-                                        plan,
-                                        planSettings,
-                                        questionsByPlanId.get(plan.id) ?? []
-                                      )}
-                                    />
+                                    {plan.status === "draft" ? (
+                                      <ChapterHomeworkPlanEditor
+                                        chapterTitle={chapter.title}
+                                        plan={toPlanValue(
+                                          plan,
+                                          planSettings,
+                                          questionsByPlanId.get(plan.id) ?? []
+                                        )}
+                                      />
+                                    ) : (
+                                      <span className="app-muted-text text-[11px]">
+                                        内容已冻结
+                                      </span>
+                                    )}
                                     <span className="app-muted-text">·</span>
                                     <ChapterHomeworkPublishButton
                                       planId={plan.id}
                                       isPublished={
                                         plan.status === "published"
                                       }
+                                      canRelease={canReleasePapers}
                                     />
                                   </div>
                                 ) : (

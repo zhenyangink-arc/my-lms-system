@@ -16,6 +16,7 @@ export type AssessmentPaperStatus =
 export type AssessmentPaperAccess = {
   canView: boolean;
   canManagePapers: boolean;
+  canReleasePapers: boolean;
   canPublishPapers: boolean;
   isPlatformWorkspace: boolean;
   role: UserRole;
@@ -33,16 +34,21 @@ export async function getAssessmentPaperAccess(): Promise<AssessmentPaperAccess>
       : profile?.role;
   const role = isValidRole(roleValue) ? roleValue : "student";
 
-  const { data: manageData, error: manageError } = await supabase.rpc(
-    "current_user_can_manage_assessment_papers"
-  );
+  const [manageResult, releaseResult] = await Promise.all([
+    supabase.rpc("current_user_can_manage_assessment_papers"),
+    supabase.rpc("current_user_can_release_assessment_papers"),
+  ]);
+  const { data: manageData, error: manageError } = manageResult;
   const canManagePapers = !manageError && manageData === true;
+  const canReleasePapers =
+    !releaseResult.error && releaseResult.data === true;
   const canPublishPapers =
     !canManagePapers && Boolean(tenant) && isAssignmentManagerRole(profile?.role);
 
   return {
     canView: canManagePapers || canPublishPapers,
     canManagePapers,
+    canReleasePapers,
     canPublishPapers,
     isPlatformWorkspace: canManagePapers && !tenant,
     role,

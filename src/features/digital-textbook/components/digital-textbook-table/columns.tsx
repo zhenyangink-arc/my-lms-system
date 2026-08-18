@@ -85,6 +85,7 @@ function moduleLabel(code: string) {
 
 export function getDigitalTextbookColumns(
   canManage: boolean,
+  canPublishChapters: boolean,
 ): ColumnDef<DigitalTextbookDisplayRow>[] {
   return [
   {
@@ -195,8 +196,12 @@ export function getDigitalTextbookColumns(
     header: () => <span className="block text-right">操作</span>,
     cell: ({ row }) => (
       <div className="text-right">
-        {canManage ? (
-          <DigitalTextbookCellAction row={row.original} />
+        {canManage || canPublishChapters ? (
+          <DigitalTextbookCellAction
+            row={row.original}
+            canManage={canManage}
+            canPublishChapter={canPublishChapters}
+          />
         ) : (
           <span className="text-[11px] text-[var(--foreground-muted)]">只读</span>
         )}

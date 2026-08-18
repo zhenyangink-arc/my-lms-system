@@ -9,9 +9,11 @@ import { setChapterHomeworkPublicationAction } from "./homework-plan-actions";
 export function ChapterHomeworkPublishButton({
   planId,
   isPublished,
+  canRelease,
 }: {
   planId: string;
   isPublished: boolean;
+  canRelease: boolean;
 }) {
   const nextStatus = isPublished ? "draft" : "published";
   const action = setChapterHomeworkPublicationAction.bind(
@@ -33,6 +35,21 @@ export function ChapterHomeworkPublishButton({
         : "发布章节作业";
   const Icon = isPublished ? RotateCcw : Send;
 
+  if (!canRelease) {
+    return (
+      <span
+        className="text-[11px] font-bold"
+        style={{
+          color: isPublished
+            ? "var(--status-success)"
+            : "var(--foreground-muted)",
+        }}
+      >
+        {isPublished ? "机构可用" : "等待负责人发布"}
+      </span>
+    );
+  }
+
   return (
     <form action={formAction} className="inline-flex items-center">
       <button
@@ -40,7 +57,7 @@ export function ChapterHomeworkPublishButton({
         disabled={pending}
         aria-label={title}
         title={title}
-        className="inline-flex items-center gap-1 whitespace-nowrap text-[11px] font-bold hover:underline disabled:opacity-50"
+        className="inline-flex min-h-11 items-center gap-1 whitespace-nowrap px-2 text-[11px] font-bold hover:underline disabled:opacity-50"
         style={{
           color: isPublished ? "var(--status-success)" : "var(--primary)",
         }}

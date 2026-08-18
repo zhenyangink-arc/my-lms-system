@@ -3,6 +3,7 @@
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireActiveUser } from "@/lib/auth";
+import { requirePlatformOwner } from "@/lib/admin";
 import {
   assertR2ObjectUpload,
   createR2SignedObjectUrl,
@@ -11,6 +12,9 @@ import {
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ActionResult = { ok: boolean; message?: string };
+
+const UUID_PATTERN =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 export type VocabularyWord = {
   ko: string;
@@ -183,6 +187,64 @@ export async function setTextbookStatusAction(
   revalidateDashboard("/dashboard/toolbox/vocabulary");
   revalidateDashboard("/[space]/apps/korean/practice/skills/vocabulary", "page");
   return { ok: true };
+}
+
+/**
+ * 一次发布一个完整章节：教材章节、关联章节测试及其正式题目。
+ * UI 可见性不是权限边界；Server Action 和数据库 RPC 都会重新校验平台负责人。
+ */
+export async function publishTextbookChapterAction(
+  chapterId: string,
+): Promise<ActionResult> {
+  const normalizedChapterId = String(chapterId ?? "").trim();
+  if (!UUID_PATTERN.test(normalizedChapterId)) {
+    return { ok: false, message: "章节编号不正确。" };
+  }
+
+  const { supabase } = await requirePlatformOwner();
+  const { data, error } = await supabase.rpc(
+    "publish_digital_textbook_chapter",
+    { p_chapter_id: normalizedChapterId },
+  );
+
+  if (error) {
+    const safeMessage = [
+      "只有平台负责人可以发布教材章节",
+      "没有找到要发布的教材章节",
+      "当前章节尚未关联章节测试",
+      "当前章节测试还没有可发布题目",
+      "章节测试存在未完成配置的题目",
+    ].find((message) => error.message.includes(message));
+    return {
+      ok: false,
+      message: safeMessage ?? "章节发布失败，请检查章节测试与题目配置后重试。",
+    };
+  }
+
+  const result = data && typeof data === "object"
+    ? (data as Record<string, unknown>)
+    : {};
+  const questionCount = Number(result.publishedQuestions ?? 0);
+
+  revalidateDashboard("/dashboard/admin/digital-textbook");
+  revalidateDashboard("/dashboard/assignments/korean");
+  revalidateDashboard("/dashboard/assignments/korean/[testSlug]", "page");
+  revalidateDashboard(
+    "/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]",
+    "page",
+  );
+  revalidateDashboard("/[space]/apps/korean/assignments/korean", "page");
+  revalidateDashboard(
+    "/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]",
+    "page",
+  );
+
+  return {
+    ok: true,
+    message: questionCount > 0
+      ? `章节、章节测试和 ${questionCount} 道题已发布。`
+      : "章节已发布。",
+  };
 }
 
 /** 给指定词汇节点添加一个单词 */

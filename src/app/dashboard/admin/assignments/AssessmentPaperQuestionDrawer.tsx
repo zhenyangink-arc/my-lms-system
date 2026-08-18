@@ -46,9 +46,9 @@ export function AssessmentPaperQuestionDrawer({
         onClick={() => setIsOpen(true)}
         aria-haspopup="dialog"
         aria-expanded={isOpen}
-        className="inline-flex items-center gap-1 text-[11px] font-bold text-[var(--primary)] hover:underline"
+        className="inline-flex min-h-11 items-center gap-1 px-2 text-[11px] font-bold text-[var(--primary)] hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
       >
-        <Eye size={12} />
+        <Eye size={12} aria-hidden="true" />
         查看题目
       </button>
 

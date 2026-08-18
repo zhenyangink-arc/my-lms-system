@@ -51,6 +51,9 @@ type AssignmentItem = {
   due_at: string;
   duration_minutes: number | null;
   allow_resubmission: boolean;
+  unlock_after_chapter_completion: boolean;
+  due_days_after_unlock: number | null;
+  chapterUnlockPending: boolean;
   courseTitle: string;
   courseGroup: string;
   courseGroupSlug: string;
@@ -199,6 +202,7 @@ function taskMatchesStatus(task: UnifiedTask, filter: StatusFilter) {
 function getAssignmentState(item: AssignmentItem, isManager: boolean, now: number): TaskState {
   if (isManager) return new Date(item.due_at).getTime() < now ? "overdue" : "preview";
   if (item.latestSubmission) return item.latestSubmission.status;
+  if (item.chapterUnlockPending) return "locked";
   if (new Date(item.starts_at).getTime() > now) return "upcoming";
   return new Date(item.due_at).getTime() < now ? "overdue" : "pending";
 }
@@ -433,7 +437,9 @@ export function AssignmentBoard({
       startsAt: item.starts_at,
       dueAt: item.due_at,
       allowResubmission: item.allow_resubmission,
-      unlockRequirement: null,
+      unlockRequirement: item.chapterUnlockPending
+        ? `完成对应章节学习后解锁，解锁后 ${item.due_days_after_unlock ?? 3} 天内提交`
+        : null,
       studyHref: null,
       ebookProgressPercent: null,
     }));

@@ -53,10 +53,12 @@ export function AssessmentPaperComposer({
   paperType,
   groups,
   questions,
+  canPublish,
 }: {
   paperType: "homework" | "exam";
   groups: BankGroup[];
   questions: PaperBankQuestion[];
+  canPublish: boolean;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const boundAction = createAssessmentPaperAction.bind(null, paperType);
@@ -480,17 +482,19 @@ export function AssessmentPaperComposer({
                 <Save size={14} />
                 保存草稿
               </button>
-              <button
-                type="submit"
-                name="intent"
-                value="publish"
-                disabled={pending || selected.length === 0}
-                className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs font-semibold text-white disabled:opacity-50"
-                style={{ backgroundColor: "var(--primary)" }}
-              >
-                <Send size={14} />
-                {pending ? "正在保存…" : "保存并提供给机构"}
-              </button>
+              {canPublish && (
+                <button
+                  type="submit"
+                  name="intent"
+                  value="publish"
+                  disabled={pending || selected.length === 0}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-xs font-semibold text-white disabled:opacity-50"
+                  style={{ backgroundColor: "var(--primary)" }}
+                >
+                  <Send size={14} />
+                  {pending ? "正在保存…" : "保存并提供给机构"}
+                </button>
+              )}
             </div>
           </form>
         </div>

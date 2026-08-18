@@ -3,6 +3,7 @@
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
 import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learning-assignments";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { LearningAssignmentActionState } from "./action-state";
 import {
   ASSIGNMENT_STATUSES,
@@ -40,6 +41,56 @@ function refreshAssignmentPages(assignmentId?: string) {
     revalidateDashboard(`/dashboard/assignments/${assignmentId}`);
     revalidateDashboard(`/dashboard/admin/assignments/${assignmentId}`);
   }
+}
+
+export type AssignmentRemediationState = {
+  status: "idle" | "correct" | "incorrect" | "error";
+  message: string;
+  correctAnswer: string | null;
+  explanation: string | null;
+};
+
+export const initialAssignmentRemediationState: AssignmentRemediationState = {
+  status: "idle",
+  message: "",
+  correctAnswer: null,
+  explanation: null,
+};
+
+export async function submitAssignmentRemediationAction(
+  questionId: string,
+  _previousState: AssignmentRemediationState,
+  formData: FormData
+): Promise<AssignmentRemediationState> {
+  void _previousState;
+  if (!isUuid(questionId)) {
+    return { ...initialAssignmentRemediationState, status: "error", message: "错题编号不正确。" };
+  }
+  const answer = String(formData.get("answer") ?? "").trim();
+  if (!answer || answer.length > 10000) {
+    return { ...initialAssignmentRemediationState, status: "error", message: "请填写有效的重练答案。" };
+  }
+  const { supabase } = await requireAssignmentStudent();
+  const { data, error } = await supabase.rpc(
+    "submit_assignment_remediation_answer",
+    { p_question_id: questionId, p_answer: answer }
+  );
+  if (error || !data || typeof data !== "object" || Array.isArray(data)) {
+    return { ...initialAssignmentRemediationState, status: "error", message: friendlyDatabaseError(error?.message, "错题答案暂时无法判定，请稍后重试。") };
+  }
+  const resultData = data as {
+    correct?: unknown;
+    message?: unknown;
+    correctAnswer?: unknown;
+    explanation?: unknown;
+  };
+  const correct = resultData.correct === true;
+  return {
+    status: correct ? "correct" : "incorrect",
+    message: String(resultData.message ?? (correct ? "回答正确。" : "再检查一次答案。")),
+    correctAnswer: resultData.correctAnswer == null ? null : String(resultData.correctAnswer),
+    explanation: resultData.explanation == null ? null : String(resultData.explanation),
+  };
 }
 
 export async function changeLearningAssignmentStatusAction(
@@ -87,10 +138,10 @@ export async function submitLearningAssignmentAction(
 ): Promise<LearningAssignmentActionState> {
   void _previousState;
   if (!isUuid(assignmentId)) return result("error", "任务编号不正确。");
-  const { supabase } = await requireAssignmentStudent();
+  const { supabase, user, tenant } = await requireAssignmentStudent();
   const { data: questions, error: questionError } = await supabase
     .from("learning_assignment_questions")
-    .select("id")
+    .select("id,question_type")
     .eq("assignment_id", assignmentId)
     .order("sort_order", { ascending: true });
   if (questionError || !questions?.length) return result("error", "任务题目暂时无法读取，请刷新页面重试。");
@@ -102,6 +153,37 @@ export async function submitLearningAssignmentAction(
   const emptyIndex = answers.findIndex((answer) => !answer.answer);
   if (emptyIndex >= 0) return result("error", `请完成第 ${emptyIndex + 1} 题后再提交。`);
   if (answers.some((answer) => answer.answer.length > 10000)) return result("error", "单题答案不能超过 10000 个字。");
+
+  const audioAnswers = answers.filter((answer) =>
+    questions.some(
+      (question) =>
+        question.id === answer.questionId &&
+        question.question_type === "audio_recording"
+    )
+  );
+  if (audioAnswers.length > 0) {
+    if (!tenant || audioAnswers.some((answer) => !isUuid(answer.answer))) {
+      return result("error", "口语录音尚未上传完成，请重新录制后提交。");
+    }
+    const admin = createAdminClient();
+    const { data: evidence } = await admin
+      .from("learning_assignment_recording_evidence")
+      .select("id,question_id")
+      .eq("tenant_id", tenant.id)
+      .eq("student_id", user.id)
+      .eq("assignment_id", assignmentId)
+      .in("id", audioAnswers.map((answer) => answer.answer));
+    const validEvidence = new Map(
+      (evidence ?? []).map((item) => [item.id, item.question_id])
+    );
+    if (
+      audioAnswers.some(
+        (answer) => validEvidence.get(answer.answer) !== answer.questionId
+      )
+    ) {
+      return result("error", "口语录音与本题不匹配，请重新录制后提交。");
+    }
+  }
 
   const { error } = await supabase.rpc("submit_learning_assignment", {
     p_assignment_id: assignmentId,

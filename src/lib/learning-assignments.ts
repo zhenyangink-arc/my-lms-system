@@ -33,7 +33,7 @@ export async function requireAssignmentManager() {
 }
 
 export async function requireAssignmentStudent() {
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
   if (isAssignmentManagerRole(profile?.role)) redirect("/dashboard/admin/assignments");
   if (profile?.role && profile.role !== "student") redirect("/dashboard");
   if (
@@ -46,7 +46,7 @@ export async function requireAssignmentStudent() {
     redirect("/dashboard");
   }
 
-  return { supabase, user };
+  return { supabase, user, tenant };
 }
 
 export async function requireAssignmentViewer() {
