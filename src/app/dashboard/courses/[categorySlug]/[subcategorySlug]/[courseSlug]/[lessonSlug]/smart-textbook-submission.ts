@@ -587,7 +587,10 @@ export async function submitSmartTextbookActivityForContext(
         .select("answer_key,explanation,audio_object_key,audio_status")
         .eq("activity_id", activity.id)
         .maybeSingle(),
-      context.supabase
+      // The learner-facing activity query above is the authorization gate.
+      // Resolve its server-only version relationship with the admin client so
+      // node RLS does not make a valid, visible activity look unconfigured.
+      context.admin
         .from("digital_textbook_nodes")
         .select(
           "id,module_id,digital_textbook_modules!inner(chapter_id,digital_textbook_chapters!inner(version_id))",

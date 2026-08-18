@@ -191,6 +191,7 @@ const ui = {
     scene: "真实场景",
     phrases: "本课可调用表达",
     word: "韩语",
+    pronunciation: "发音",
     meaning: "释义",
     pos: "词性",
     collocation: "搭配提示",
@@ -255,6 +256,7 @@ const ui = {
     scene: "실제 상황",
     phrases: "이번 단원의 핵심 표현",
     word: "한국어",
+    pronunciation: "발음",
     meaning: "뜻",
     pos: "품사",
     collocation: "결합 표현",
@@ -468,8 +470,9 @@ function ContentRenderer({
       {vocabulary.length > 0 && (
         <div className="overflow-x-auto border-y border-slate-200">
           <div className="min-w-[620px]">
-          <div className="grid grid-cols-[1.15fr_.85fr_.55fr_1.5fr] bg-slate-50/80 px-4 py-3 text-xs font-bold tracking-wide text-slate-500">
+          <div className="grid grid-cols-[1.05fr_.8fr_.8fr_.55fr_1.4fr] gap-3 bg-slate-50/80 px-4 py-3 text-xs font-bold tracking-wide text-slate-500">
             <span>{t.word}</span>
+            <span>{t.pronunciation}</span>
             <span>{t.meaning}</span>
             <span>{t.pos}</span>
             <span>{t.collocation}</span>
@@ -477,7 +480,7 @@ function ContentRenderer({
           {vocabulary.map((word, index) => (
             <div
               key={`${String(word.ko)}-${index}`}
-              className="grid grid-cols-[1.15fr_.85fr_.55fr_1.5fr] items-center border-t border-slate-100 px-4 py-4 text-sm"
+              className="grid grid-cols-[1.05fr_.8fr_.8fr_.55fr_1.4fr] items-center gap-3 border-t border-slate-100 px-4 py-4 text-sm"
             >
               <button
                 type="button"
@@ -487,6 +490,9 @@ function ContentRenderer({
                 <Volume2 size={15} className="text-[var(--status-success)] transition group-hover:scale-110" />
                 {String(word.ko)}
               </button>
+              <span className="font-medium text-[var(--status-success)]">
+                [{String(word.transcription || word.ko)}]
+              </span>
               <span className={showChinese ? "text-slate-600" : "text-slate-300"}>
                 {showChinese ? String(word.zh) : "—"}
               </span>
@@ -809,10 +815,12 @@ function Activity({
   locale,
   trackingDisabled,
   onCompleted,
+  round,
 }: {
   activity: SmartTextbookActivity;
   locale: SmartLocale;
   trackingDisabled: boolean;
+  round?: { current: number; total: number };
   onCompleted: (result: {
     nodeId: string | null;
     nodeCompleted: boolean;
@@ -957,6 +965,13 @@ function Activity({
     <section className="mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
+          {round && round.total > 1 && (
+            <p className="mb-2 text-xs font-bold text-[var(--primary)]">
+              {locale === "ko-KR"
+                ? `연습 ${round.current} · 총 ${round.total}회`
+                : `练习 ${round.current} · 共 ${round.total} 轮`}
+            </p>
+          )}
           <h4 className="text-xl font-bold leading-8 text-[var(--foreground)]">{activity.prompt[locale]}</h4>
           <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{activity.instruction[locale]}</p>
         </div>
@@ -1843,8 +1858,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   <h3 className="text-lg font-bold text-[var(--foreground)]">{localize(node.title)}</h3>
                 </div>
                 <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
-                {node.activities.map((activity) => (
-                  <Activity key={activity.id} activity={activity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={recordCompletion} />
+                {node.activities.map((activity, activityIndex) => (
+                  <Activity
+                    key={activity.id}
+                    activity={activity}
+                    locale={locale}
+                    trackingDisabled={trackingDisabled}
+                    onCompleted={recordCompletion}
+                    round={{ current: activityIndex + 1, total: node.activities.length }}
+                  />
                 ))}
               </article>
             ))}
