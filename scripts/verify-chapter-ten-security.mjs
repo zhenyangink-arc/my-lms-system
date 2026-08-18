@@ -1,13 +1,12 @@
 #!/usr/bin/env node
 
 import assert from "node:assert/strict";
+import { randomUUID } from "node:crypto";
 
 import { createClient } from "@supabase/supabase-js";
 
-import {
-  gradeSmartTextbookActivity,
-  submitSmartTextbookActivityForContext,
-} from "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts";
+import { gradeSmartTextbookActivity } from "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts";
+import { createAuthenticatedActionInvoker, createSpeakingEvidence } from "./smart-textbook-security-helpers.mjs";
 
 const LOCAL_API_PORT = "54321";
 const LOCAL_DB_CONTAINER =
@@ -248,7 +247,9 @@ try {
     await mustData(admin.from("chapter_test_attempts").insert({ tenant_id: tenantId, student_id: userId, test_id: prior.id, test_slug: prior.slug, test_version: 1, score: 100, correct_count: 12, total_questions: 12, passed: true, answers: {}, dimension_scores: {} }).select(), `seed ${prior.slug} prerequisite`);
   }
 
-  const context = { supabase: userClient, admin, userId, tenantId, canSubmit: true, preview: false };
+  const invokeAction = await createAuthenticatedActionInvoker({
+    url, anonKey, serviceRoleKey, email, password,
+  });
   const { data: visibleSecrets, error: visibleSecretsError } = await userClient.from("digital_textbook_activity_secrets").select("activity_id,answer_key").in("activity_id", activities.map((item) => item.id));
   assert.ok(visibleSecretsError || (visibleSecrets ?? []).length === 0);
   const { data: visibleMedia, error: visibleMediaError } = await userClient.from("digital_textbook_media_assets").select("object_key").in("node_id", nodes.map((item) => item.id));
@@ -256,18 +257,18 @@ try {
   console.log("PASS: authenticated browser cannot read chapter-ten answer secrets or private object keys");
 
   const firstActivity = activitiesByKey.get("orientation-check");
-  const malformedResult = await submitSmartTextbookActivityForContext({ activityId: firstActivity.id, locale: "zh-CN", response: "0" }, context);
+  const malformedResult = await invokeAction({ activityId: firstActivity.id, locale: "zh-CN", response: "0" });
   assert.equal(malformedResult.ok, false);
   assert.equal(malformedResult.attemptNumber, 0);
   assert.match(malformedResult.explanation, /作答结构无效/);
   assert.equal((await mustData(admin.from("digital_textbook_attempts").select("id").eq("student_id", userId).eq("activity_id", firstActivity.id), "malformed attempts")).length, 0);
-  const wrongResult = await submitSmartTextbookActivityForContext({ activityId: firstActivity.id, locale: "zh-CN", response: 1 }, context);
+  const wrongResult = await invokeAction({ activityId: firstActivity.id, locale: "zh-CN", response: 1 });
   assert.equal(wrongResult.ok, true);
   assert.equal(wrongResult.correct, false);
   assert.equal(wrongResult.attemptNumber, 1);
   console.log("PASS: malformed structure consumes no attempt while a well-formed wrong answer consumes one");
 
-  const pendingListeningResult = await submitSmartTextbookActivityForContext({ activityId: listeningActivity.id, locale: "zh-CN", response: 3 }, context);
+  const pendingListeningResult = await invokeAction({ activityId: listeningActivity.id, locale: "zh-CN", response: 3 });
   assert.equal(pendingListeningResult.ok, false);
   assert.match(pendingListeningResult.explanation, /待录制与核验/);
   assert.equal((await mustData(admin.from("digital_textbook_attempts").select("id").eq("student_id", userId).eq("activity_id", listeningActivity.id), "pending listening attempts")).length, 0);
@@ -279,14 +280,44 @@ try {
   const forgedOpen = await admin.rpc("record_smart_textbook_attempt", { p_tenant_id: tenantId, p_student_id: userId, p_activity_id: speakingActivity.id, p_version_id: version.id, p_response: ACTIVITY_FIXTURES.find((item) => item.key === "speaking-daily-plan").response, p_is_correct: true, p_score: 100, p_meets_completion_requirements: true });
   assert.ok(forgedOpen.error);
   assert.match(forgedOpen.error.message, /OPEN_ACTIVITY_CANNOT_BE_SCORED/);
-  console.log("PASS: browser writes/RPC are denied and service role cannot forge open-activity correctness or score");
+  const forgedBrowserSpeaking = await invokeAction({
+    activityId: speakingActivity.id,
+    locale: "zh-CN",
+    response: ACTIVITY_FIXTURES.find((item) => item.key === "speaking-daily-plan").response,
+  });
+  assert.equal(forgedBrowserSpeaking.ok, false);
+  assert.match(forgedBrowserSpeaking.explanation, /可核验的本人录音/);
+  assert.equal((await mustData(admin.from("digital_textbook_attempts").select("id").eq("student_id", userId).eq("activity_id", speakingActivity.id), "forged speaking attempts")).length, 0);
+  const missingObjectEvidenceId = randomUUID();
+  await mustData(admin.from("digital_textbook_speaking_evidence").insert({
+    id: missingObjectEvidenceId,
+    tenant_id: tenantId,
+    student_id: userId,
+    activity_id: speakingActivity.id,
+    object_key: `${tenantId}/${userId}/${speakingActivity.id}/${missingObjectEvidenceId}.webm`,
+    byte_size: 4096,
+    mime_type: "audio/webm",
+  }).select(), "seed missing-object speaking evidence");
+  const missingObjectSpeaking = await invokeAction({
+    activityId: speakingActivity.id,
+    locale: "zh-CN",
+    response: {
+      ...ACTIVITY_FIXTURES.find((item) => item.key === "speaking-daily-plan").response,
+      recordingEvidenceId: missingObjectEvidenceId,
+    },
+  });
+  assert.equal(missingObjectSpeaking.ok, false);
+  assert.match(missingObjectSpeaking.explanation, /可核验的本人录音/);
+  assert.equal((await mustData(admin.from("digital_textbook_attempts").select("id").eq("student_id", userId).eq("activity_id", speakingActivity.id), "missing-object speaking attempts")).length, 0);
+  await mustData(admin.from("digital_textbook_speaking_evidence").delete().eq("id", missingObjectEvidenceId).select(), "remove missing-object speaking evidence");
+  console.log("PASS: browser writes/RPC are denied, forged or object-less speaking evidence writes no attempt, and open activities cannot forge correctness or score");
 
   const unknownActivity = activitiesByKey.get("dialogue-fact-check");
   const unknownSecret = secrets.find((item) => item.activity_id === unknownActivity.id);
   Object.assign(originalState, { unknownActivityId: unknownActivity.id, unknownAnswer: unknownSecret.answer_key });
   await mustData(admin.from("digital_textbook_activity_secrets").update({ answer_key: { kind: "unknown_answer_type", value: 0 } }).eq("activity_id", unknownActivity.id).select(), "install unknown answer");
   unknownAnswerFixtureInstalled = true;
-  const unknownResult = await submitSmartTextbookActivityForContext({ activityId: unknownActivity.id, locale: "zh-CN", response: 0 }, context);
+  const unknownResult = await invokeAction({ activityId: unknownActivity.id, locale: "zh-CN", response: 0 });
   assert.equal(unknownResult.ok, false);
   assert.match(unknownResult.explanation, /无法识别答案类型/);
   assert.equal((await mustData(admin.from("digital_textbook_attempts").select("id").eq("student_id", userId).eq("activity_id", unknownActivity.id), "unknown attempts")).length, 0);
@@ -297,10 +328,14 @@ try {
   await mustData(admin.from("digital_textbook_activity_secrets").update({ audio_status: "ready" }).eq("activity_id", listeningActivity.id).select(), "mark local listening ready");
   const objectiveFixtures = ACTIVITY_FIXTURES.filter((item) => item.correct !== null);
   const openFixtures = ACTIVITY_FIXTURES.filter((item) => item.correct === null);
+  const speakingFixture = openFixtures.find((item) => item.type === "speaking");
+  const speakingActivityForEvidence = activitiesByKey.get(speakingFixture.key);
+  const speakingEvidence = await createSpeakingEvidence({ admin, tenantId, userId, activityId: speakingActivityForEvidence.id, response: speakingFixture.response });
+  speakingFixture.response = speakingEvidence.response;
   const completionByNode = new Set();
   for (const fixture of objectiveFixtures) {
     const activity = activitiesByKey.get(fixture.key);
-    const result = await submitSmartTextbookActivityForContext({ activityId: activity.id, locale: "zh-CN", response: fixture.response }, context);
+    const result = await invokeAction({ activityId: activity.id, locale: "zh-CN", response: fixture.response });
     assert.equal(result.ok, true, `${fixture.key}: ${result.explanation}`);
     assert.equal(result.correct, true);
     if (result.nodeCompleted) completionByNode.add(result.nodeId);
@@ -308,7 +343,7 @@ try {
   assert.equal(completionByNode.size, 5);
 
   const writingActivity = activitiesByKey.get("write-daily-plan");
-  const weakWriting = await submitSmartTextbookActivityForContext({ activityId: writingActivity.id, locale: "zh-CN", response: { text: "가. 나. 다. 라. 마. 바.", informationKinds: Array(7).fill(true), rubricConfirmed: true } }, context);
+  const weakWriting = await invokeAction({ activityId: writingActivity.id, locale: "zh-CN", response: { text: "가. 나. 다. 라. 마. 바.", informationKinds: Array(7).fill(true), rubricConfirmed: true } });
   assert.equal(weakWriting.ok, true);
   assert.equal(weakWriting.correct, null);
   assert.equal(weakWriting.score, null);
@@ -321,7 +356,7 @@ try {
 
   for (const fixture of openFixtures) {
     const activity = activitiesByKey.get(fixture.key);
-    const result = await submitSmartTextbookActivityForContext({ activityId: activity.id, locale: "zh-CN", response: fixture.response }, context);
+    const result = await invokeAction({ activityId: activity.id, locale: "zh-CN", response: fixture.response });
     assert.equal(result.ok, true, `${fixture.key}: ${result.explanation}`);
     assert.equal(result.correct, null);
     assert.equal(result.score, null);
@@ -331,8 +366,14 @@ try {
   assert.equal(completionByNode.size, 8);
   const openAttempts = await mustData(admin.from("digital_textbook_attempts").select("is_correct,score,meets_completion_requirements").eq("student_id", userId).in("activity_id", openFixtures.map((item) => activitiesByKey.get(item.key).id)), "load open attempts");
   assert.ok(openAttempts.every((item) => item.is_correct === null && item.score === null));
+  const consumedSpeakingEvidence = await mustData(admin.from("digital_textbook_speaking_evidence").select("consumed_at,consumed_attempt_number").eq("id", speakingEvidence.response.recordingEvidenceId).single(), "load consumed speaking evidence");
+  assert.ok(consumedSpeakingEvidence.consumed_at);
+  assert.equal(consumedSpeakingEvidence.consumed_attempt_number, 1);
+  const replayedEvidence = await invokeAction({ activityId: speakingActivity.id, locale: "zh-CN", response: speakingFixture.response });
+  assert.equal(replayedEvidence.ok, false);
+  assert.match(replayedEvidence.explanation, /可核验的本人录音/);
   assert.equal((await mustData(admin.from("digital_textbook_node_progress").select("node_id").eq("student_id", userId).eq("version_id", version.id).in("node_id", nodes.map((item) => item.id)).eq("status", "completed").eq("completion_percent", 100), "load completed nodes")).length, 8);
-  console.log("PASS: speaking, writing and self-check complete nodes while every open attempt remains correct:null, score:null");
+  console.log("PASS: speaking evidence is atomically consumed once; speaking, writing and self-check complete nodes while every open attempt remains correct:null, score:null");
 
   const unlockEvidence = await mustData(admin.from("course_ebook_progress").select("progress_percent,completion_source,reading_seconds").eq("student_id", userId).eq("test_slug", "korean-level-one-10").single(), "load unlock evidence");
   assert.equal(unlockEvidence.progress_percent, 100);

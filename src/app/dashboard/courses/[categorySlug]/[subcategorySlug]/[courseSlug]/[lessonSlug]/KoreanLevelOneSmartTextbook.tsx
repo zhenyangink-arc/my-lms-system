@@ -182,6 +182,8 @@ const ui = {
     stopRecording: "停止录音",
     recorded: "已完成录音，可以回听后提交",
     recordingDenied: "无法使用麦克风，请检查浏览器权限后重试。",
+    recordingUploading: "正在安全上传录音…",
+    recordingUploadFailed: "录音上传失败，请重新录制后再试。",
     speakingPracticeComplete: "录音练习已完成，本次不进行自动发音评分。",
     testUnavailable: "章节测试尚未配置",
     writingCount: "韩文字数",
@@ -244,6 +246,8 @@ const ui = {
     stopRecording: "녹음 중지",
     recorded: "녹음이 끝났습니다. 다시 듣고 제출하세요",
     recordingDenied: "마이크를 사용할 수 없습니다. 브라우저 권한을 확인해 주세요.",
+    recordingUploading: "녹음을 안전하게 업로드하고 있어요…",
+    recordingUploadFailed: "녹음 업로드에 실패했습니다. 다시 녹음해 주세요.",
     speakingPracticeComplete: "녹음 연습을 마쳤습니다. 자동 발음 평가는 제공하지 않습니다.",
     testUnavailable: "단원 평가가 아직 준비되지 않았습니다",
     writingCount: "글자 수",
@@ -669,17 +673,25 @@ function ContentRenderer({
 }
 
 function RecordingControl({
+  activityId,
   locale,
   onReady,
+  onReset,
 }: {
+  activityId: string;
   locale: SmartLocale;
-  onReady: (durationSeconds: number) => void;
+  onReady: (value: {
+    durationSeconds: number;
+    recordingEvidenceId: string;
+  }) => void;
+  onReset: () => void;
 }) {
   const t = ui[locale];
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const startedAtRef = useRef(0);
   const [recording, setRecording] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState("");
 
@@ -702,12 +714,45 @@ function RecordingControl({
       const recorder = new MediaRecorder(stream);
       chunksRef.current = [];
       setRecordingError("");
+      onReset();
+      if (audioUrl) {
+        URL.revokeObjectURL(audioUrl);
+        setAudioUrl(null);
+      }
       recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
-      recorder.onstop = () => {
+      recorder.onstop = async () => {
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((track) => track.stop());
-        onReady(Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000)));
+        const durationSeconds = Math.max(
+          1,
+          Math.round((Date.now() - startedAtRef.current) / 1000),
+        );
+        setUploading(true);
+        try {
+          const formData = new FormData();
+          formData.set("recording", blob, "recording");
+          const response = await fetch(
+            `/api/digital-textbook/recordings/${activityId}`,
+            { method: "POST", body: formData },
+          );
+          const result = (await response.json()) as {
+            evidenceId?: string;
+            message?: string;
+          };
+          if (!response.ok || !result.evidenceId) {
+            throw new Error(result.message ?? "recording upload failed");
+          }
+          onReady({
+            durationSeconds,
+            recordingEvidenceId: result.evidenceId,
+          });
+        } catch {
+          setRecordingError(t.recordingUploadFailed);
+          onReset();
+        } finally {
+          setUploading(false);
+        }
       };
       recorderRef.current = recorder;
       startedAtRef.current = Date.now();
@@ -720,15 +765,43 @@ function RecordingControl({
 
   return (
     <div className="mt-5 flex flex-wrap items-center gap-4 border-y border-slate-200 py-5">
-      <button type="button" onClick={toggleRecording} className={`inline-flex items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white ${recording ? "bg-[var(--status-warning)]" : "bg-[var(--status-success)]"}`}>
+      <button type="button" onClick={toggleRecording} disabled={uploading} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45 ${recording ? "bg-[var(--status-warning)]" : "bg-[var(--status-success)]"}`}>
         {recording ? <Square size={14} /> : <Mic size={15} />}
         {recording ? t.stopRecording : t.startRecording}
       </button>
       {audioUrl && <audio src={audioUrl} controls className="h-9 max-w-full" />}
-      {audioUrl && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
+      {uploading && <span role="status" className="text-xs font-semibold text-[var(--support)]">{t.recordingUploading}</span>}
+      {audioUrl && !uploading && !recordingError && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
       {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
     </div>
   );
+}
+
+function stableIndexOrder(length: number, seed: string, shuffle: boolean) {
+  const order = Array.from({ length }, (_, index) => index);
+  if (!shuffle || length < 2) return order;
+
+  let state = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    state ^= seed.charCodeAt(index);
+    state = Math.imul(state, 16777619);
+  }
+  const random = () => {
+    state += 0x6d2b79f5;
+    let value = state;
+    value = Math.imul(value ^ (value >>> 15), value | 1);
+    value ^= value + Math.imul(value ^ (value >>> 7), value | 61);
+    return ((value ^ (value >>> 14)) >>> 0) / 4294967296;
+  };
+
+  for (let index = length - 1; index > 0; index -= 1) {
+    const target = Math.floor(random() * (index + 1));
+    [order[index], order[target]] = [order[target], order[index]];
+  }
+  if (order.every((value, index) => value === index)) {
+    order.push(order.shift()!);
+  }
+  return order;
 }
 
 function Activity({
@@ -754,9 +827,28 @@ function Activity({
   const groupedSingleChoice =
     activity.type === "single_choice" && configItems.length > 0;
   const requiresConfirmation = Boolean(activity.config.readAloudConfirmation);
+  const optionOrder = stableIndexOrder(
+    activity.options.length,
+    `${activity.id}:options`,
+    activity.config.shuffle === true,
+  );
+  const groupedOptionOrders = configItems.map((item, itemIndex) =>
+    stableIndexOrder(
+      stringArray(item.options).length,
+      `${activity.id}:${String(item.id ?? itemIndex)}:options`,
+      activity.config.shuffle === true ||
+        activity.config.shuffleOptions === true,
+    ),
+  );
   const [answer, setAnswer] = useState<AnswerValue>(() => {
     if (activity.type === "multiple_choice") return [];
-    if (activity.type === "ordering") return activity.options.map((_, index) => index);
+    if (activity.type === "ordering") {
+      return stableIndexOrder(
+        activity.options.length,
+        `${activity.id}:ordering`,
+        true,
+      );
+    }
     if (activity.type === "fill_blank" && configItems.length > 0) {
       return configItems.map(() => "");
     }
@@ -786,7 +878,7 @@ function Activity({
     }
     if (activity.type === "speaking") {
       const response = objectValue(answer);
-      return response.recorded === true && typeof response.durationSeconds === "number" && Number.isFinite(response.durationSeconds) && response.durationSeconds > 0;
+      return response.recorded === true && typeof response.durationSeconds === "number" && Number.isFinite(response.durationSeconds) && response.durationSeconds > 0 && typeof response.recordingEvidenceId === "string";
     }
     if (activity.type === "self_check") {
       const checks = objectValue(answer).checks;
@@ -877,13 +969,14 @@ function Activity({
 
       {(activity.type === "single_choice" || activity.type === "listening") && !groupedSingleChoice && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
-          {activity.options.map((option, index) => {
+          {optionOrder.map((originalIndex, displayIndex) => {
+            const option = activity.options[originalIndex];
             const selected = requiresConfirmation
-              ? Number(objectValue(answer).selection) === index
-              : answer === index;
+              ? Number(objectValue(answer).selection) === originalIndex
+              : answer === originalIndex;
             return (
-            <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(requiresConfirmation ? { ...objectValue(answer), selection: index } : index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
-              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span>
+            <button key={`${originalIndex}-${option}`} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(requiresConfirmation ? { ...objectValue(answer), selection: originalIndex } : originalIndex); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
+              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + displayIndex)}</span>
               <span className="font-medium text-slate-800">{option}</span>
               {selected ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>
@@ -915,16 +1008,18 @@ function Activity({
               <fieldset key={String(item.id ?? itemIndex)} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4">
                 <legend className="px-1 text-sm font-bold leading-6 text-[var(--foreground)]">{itemIndex + 1}. {String(item.question)}</legend>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {options.map((option, optionIndex) => (
-                    <button key={option} type="button" onClick={() => {
+                  {groupedOptionOrders[itemIndex].map((originalOptionIndex, displayOptionIndex) => {
+                    const option = options[originalOptionIndex];
+                    return (
+                    <button key={`${originalOptionIndex}-${option}`} type="button" onClick={() => {
                       const next = [...selectedAnswers];
-                      next[itemIndex] = optionIndex;
+                      next[itemIndex] = originalOptionIndex;
                       setAnswer(next);
                       setFeedback(null);
-                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[itemIndex] === optionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
-                      {String.fromCharCode(65 + optionIndex)}. {option}
+                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[itemIndex] === originalOptionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
+                      {String.fromCharCode(65 + displayOptionIndex)}. {option}
                     </button>
-                  ))}
+                  );})}
                 </div>
               </fieldset>
             );
@@ -951,11 +1046,12 @@ function Activity({
 
       {activity.type === "multiple_choice" && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
-          {activity.options.map((option, index) => {
+          {optionOrder.map((originalIndex, displayIndex) => {
+            const option = activity.options[originalIndex];
             const current = Array.isArray(answer) ? answer.map(Number) : [];
-            const selected = current.includes(index);
-            return <button key={option} type="button" onClick={() => { setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
-              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
+            const selected = current.includes(originalIndex);
+            return <button key={`${originalIndex}-${option}`} type="button" onClick={() => { setAnswer(selected ? current.filter((item) => item !== originalIndex) : [...current, originalIndex]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
+              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + displayIndex)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>;
           })}
         </div>
@@ -1015,7 +1111,12 @@ function Activity({
 
       {activity.type === "speaking" && (
         <div>
-          <RecordingControl locale={locale} onReady={(durationSeconds) => setAnswer({ ...objectValue(answer), recorded: true, durationSeconds })} />
+          <RecordingControl
+            activityId={activity.id}
+            locale={locale}
+            onReset={() => setAnswer({ ...objectValue(answer), recorded: false, durationSeconds: 0, recordingEvidenceId: undefined })}
+            onReady={({ durationSeconds, recordingEvidenceId }) => setAnswer({ ...objectValue(answer), recorded: true, durationSeconds, recordingEvidenceId })}
+          />
           <label className="mt-3 grid max-w-xs gap-2 text-sm font-semibold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "역할이 바뀐 대화 차례 수" : "双角色交替话轮数"}<input type="number" min={0} max={30} value={Number(objectValue(answer).turns ?? 0)} onChange={(event) => setAnswer({ ...objectValue(answer), turns: Number(event.target.value) })} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3" /></label>
           <div className="mt-4 grid gap-2 sm:grid-cols-2">
             {stringArray(activity.config.criteria).map((label, index) => {

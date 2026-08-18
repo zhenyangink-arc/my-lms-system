@@ -58,6 +58,8 @@ const OBJECTIVE_ACTIVITY_TYPES = new Set([
 ]);
 
 const OPEN_ACTIVITY_TYPES = new Set(["speaking", "writing", "self_check"]);
+const SPEAKING_RECORDING_BUCKET = "digital-textbook-student-recordings";
+const MIN_SPEAKING_RECORDING_BYTES = 2_048;
 
 function normalizeText(value: unknown) {
   return String(value ?? "")
@@ -118,6 +120,69 @@ function splitSentences(value: string) {
     .split(/[.!?。！？]+/u)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+async function verifySpeakingRecordingEvidence(
+  context: SubmissionContext,
+  activityId: string,
+  responseValue: unknown,
+) {
+  if (!context.tenantId || !isObject(responseValue)) return null;
+  const evidenceId = responseValue.recordingEvidenceId;
+  if (
+    typeof evidenceId !== "string" ||
+    !z.string().uuid().safeParse(evidenceId).success
+  ) {
+    return null;
+  }
+
+  const { data: evidence, error } = await context.admin
+    .from("digital_textbook_speaking_evidence")
+    .select("id,object_key,byte_size,mime_type,created_at,consumed_at")
+    .eq("id", evidenceId)
+    .eq("tenant_id", context.tenantId)
+    .eq("student_id", context.userId)
+    .eq("activity_id", activityId)
+    .maybeSingle();
+  if (
+    error ||
+    !evidence ||
+    evidence.consumed_at ||
+    Number(evidence.byte_size) < MIN_SPEAKING_RECORDING_BYTES ||
+    Date.parse(String(evidence.created_at)) < Date.now() - 24 * 60 * 60 * 1_000
+  ) {
+    return null;
+  }
+
+  const prefix = `${context.tenantId}/${context.userId}/${activityId}`;
+  const filename = String(evidence.object_key).slice(prefix.length + 1);
+  if (
+    String(evidence.object_key) !== `${prefix}/${filename}` ||
+    !filename.startsWith(`${evidenceId}.`)
+  ) {
+    return null;
+  }
+  const { data: objects, error: metadataError } = await context.admin.storage
+    .from(SPEAKING_RECORDING_BUCKET)
+    .list(prefix, { search: filename, limit: 2 });
+  const storedObject = objects?.find((item) => item.name === filename);
+  const storedSize = Number(storedObject?.metadata?.size ?? 0);
+  const storedMime = String(
+    storedObject?.metadata?.mimetype ??
+      storedObject?.metadata?.contentType ??
+      "",
+  ).split(";", 1)[0];
+  if (
+    metadataError ||
+    !storedObject ||
+    storedSize < MIN_SPEAKING_RECORDING_BYTES ||
+    storedSize !== Number(evidence.byte_size) ||
+    storedMime !== String(evidence.mime_type)
+  ) {
+    return null;
+  }
+
+  return evidenceId;
 }
 
 function gradeWriting(
@@ -553,6 +618,21 @@ export async function submitSmartTextbookActivityForContext(
   );
   if (!result.ok) return failure(result.error, context.preview);
 
+  const speakingEvidenceId =
+    activity.activity_type === "speaking"
+      ? await verifySpeakingRecordingEvidence(
+          context,
+          String(activity.id),
+          parsed.data.response,
+        )
+      : null;
+  if (activity.activity_type === "speaking" && !speakingEvidenceId) {
+    return failure(
+      "未找到可核验的本人录音，请重新录制并等待上传完成后再提交。",
+      context.preview,
+    );
+  }
+
   if (context.preview) {
     return {
       ok: true,
@@ -580,20 +660,28 @@ export async function submitSmartTextbookActivityForContext(
   const versionId = String(nestedChapter.version_id ?? "");
   if (!versionId) return failure("教材版本关系不完整。", false);
 
-  const { data: recordData, error: recordError } = await context.admin.rpc(
-    "record_smart_textbook_attempt",
-    {
-      p_tenant_id: context.tenantId,
-      p_student_id: context.userId,
-      p_activity_id: activity.id,
-      p_version_id: versionId,
-      p_response: parsed.data.response ?? null,
-      p_is_correct: result.correct,
-      p_score: result.score,
-      p_meets_completion_requirements:
-        result.meetsCompletionRequirements ?? null,
-    },
-  );
+  const { data: recordData, error: recordError } =
+    activity.activity_type === "speaking" &&
+    result.meetsCompletionRequirements === true
+      ? await context.admin.rpc("record_smart_textbook_speaking_attempt", {
+          p_tenant_id: context.tenantId,
+          p_student_id: context.userId,
+          p_activity_id: activity.id,
+          p_version_id: versionId,
+          p_response: parsed.data.response ?? null,
+          p_evidence_id: speakingEvidenceId,
+        })
+      : await context.admin.rpc("record_smart_textbook_attempt", {
+          p_tenant_id: context.tenantId,
+          p_student_id: context.userId,
+          p_activity_id: activity.id,
+          p_version_id: versionId,
+          p_response: parsed.data.response ?? null,
+          p_is_correct: result.correct,
+          p_score: result.score,
+          p_meets_completion_requirements:
+            result.meetsCompletionRequirements ?? null,
+        });
   const record = Array.isArray(recordData) ? recordData[0] : recordData;
   if (recordError || !record) {
     const maxAttemptsReached = recordError?.message?.includes(

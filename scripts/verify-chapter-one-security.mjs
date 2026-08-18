@@ -18,6 +18,7 @@ import {
   isServerConfirmedNodeCompletion,
   isSmartTextbookModuleCompleted,
 } from "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-completion.ts";
+import { createSpeakingEvidence } from "./smart-textbook-security-helpers.mjs";
 
 const LOCAL_API_PORT = "54321";
 const LOCAL_DB_CONTAINER =
@@ -442,7 +443,7 @@ try {
   const testRow = await mustData(
     admin
       .from("chapter_tests")
-      .select("id,status")
+      .select("id,status,duration_minutes,passing_score")
       .eq("slug", "korean-level-one-01")
       .single(),
     "load chapter test",
@@ -457,6 +458,8 @@ try {
   );
 
   assert.equal(testRow.status, "draft", "migration must force the test to draft");
+  assert.equal(testRow.duration_minutes, 12, "chapter-one duration must match the master-recorded current value");
+  assert.equal(testRow.passing_score, 60, "chapter-one passing score must match the master-recorded current value");
   assert.equal(questions.length, 12, "migration must leave exactly 12 golden questions");
   assert.deepEqual(questions.map((question) => question.question_key), GOLDEN_QUESTIONS.map((question) => question.key));
   assert.ok(questions.every((question) => question.status === "draft"));
@@ -472,7 +475,7 @@ try {
     GOLDEN_QUESTIONS.map((question) => question.answer),
     "database correct answers must match the independently hard-coded 12-answer vector",
   );
-  console.log("PASS: chapter test is draft with exactly 12 deterministic golden questions and a hard-coded answer vector");
+  console.log("PASS: chapter test is draft, uses duration_minutes=12 and passing_score=60, and has exactly 12 deterministic golden questions with a hard-coded answer vector");
 
   const moduleRows = await mustData(
     admin
@@ -958,11 +961,22 @@ try {
     assert.ok(secret, `secret missing for ${activity.activity_key}`);
     const answerKey =
       activity.id === unknownKindActivity.id ? originalAnswer : secret.answer_key;
+    let response = responseFor(activity, objectValue(answerKey));
+    if (activity.activity_type === "speaking") {
+      const evidence = await createSpeakingEvidence({
+        admin,
+        tenantId,
+        userId,
+        activityId: activity.id,
+        response,
+      });
+      response = evidence.response;
+    }
     const result = await submitSmartTextbookActivityForContext(
       {
         activityId: activity.id,
         locale: "zh-CN",
-        response: responseFor(activity, objectValue(answerKey)),
+        response,
       },
       context,
     );

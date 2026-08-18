@@ -11,6 +11,7 @@ import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 
 import { gradeSmartTextbookActivity } from "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts";
+import { createSpeakingEvidence } from "./smart-textbook-security-helpers.mjs";
 
 const LOCAL_API_PORT = "54321";
 const LOCAL_DB_CONTAINER =
@@ -411,6 +412,10 @@ try {
 
   await mustData(admin.from("digital_textbook_activity_secrets").update({ audio_status: "ready" }).eq("activity_id", listeningActivity.id).select(), "mark local listening ready");
   const openFixtures = ACTIVITY_FIXTURES.filter((item) => item.correct === null);
+  const speakingFixture = openFixtures.find((item) => item.type === "speaking");
+  const speakingActivityForEvidence = activitiesByKey.get(speakingFixture.key);
+  const speakingEvidence = await createSpeakingEvidence({ admin, tenantId, userId, activityId: speakingActivityForEvidence.id, response: speakingFixture.response });
+  speakingFixture.response = speakingEvidence.response;
   const objectiveFixtures = ACTIVITY_FIXTURES.filter((item) => item.correct !== null);
   const completionByNode = new Set();
   for (const fixture of objectiveFixtures) {
