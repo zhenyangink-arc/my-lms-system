@@ -12,7 +12,7 @@ begin
   join public.digital_textbook_versions version on version.id = chapter.version_id
   join public.digital_textbooks textbook on textbook.id = version.textbook_id
   where textbook.slug = 'korean-level-one-smart'
-    and chapter.slug = 'korean-level-one-01'
+    and chapter.chapter_number = 1
     and node.node_code = 'topic-and-copula'
   limit 1;
 

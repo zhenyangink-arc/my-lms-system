@@ -834,6 +834,9 @@ function Activity({
     : [];
   const groupedSingleChoice =
     activity.type === "single_choice" && configItems.length > 0;
+  const usesFlipCards =
+    groupedSingleChoice && activity.config.presentation === "flip_cards";
+  const usesFocusMode = usesFlipCards || activity.config.focusMode === true;
   const requiresConfirmation = Boolean(activity.config.readAloudConfirmation);
   const optionOrder = stableIndexOrder(
     activity.options.length,
@@ -874,11 +877,35 @@ function Activity({
     return "";
   });
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [practiceFocused, setPracticeFocused] = useState(false);
+  const focusModeStartRef = useRef<HTMLButtonElement>(null);
+  const focusModeCloseRef = useRef<HTMLButtonElement>(null);
+  const activityCompleted =
+    activity.completed ||
+    (feedback?.ok === true && feedback.correct !== false);
   const [message, setMessage] = useState("");
   const [needsReload, setNeedsReload] = useState(false);
   const [pending, startTransition] = useTransition();
   const hasPendingAudio =
     activity.type === "listening" && activity.config.audioStatus !== "ready";
+
+  useEffect(() => {
+    if (!practiceFocused) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    focusModeCloseRef.current?.focus();
+
+    function closeOnEscape(event: KeyboardEvent) {
+      if (event.key === "Escape") closePractice();
+    }
+
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [practiceFocused]);
 
   function hasResponse() {
     if (activity.type === "writing") {
@@ -961,8 +988,53 @@ function Activity({
     setFeedback(null);
   }
 
+  function showCard(index: number) {
+    const lastIndex = Math.max(configItems.length - 1, 0);
+    setActiveCardIndex(Math.min(Math.max(index, 0), lastIndex));
+  }
+
+  function closePractice() {
+    setPracticeFocused(false);
+    window.requestAnimationFrame(() => focusModeStartRef.current?.focus());
+  }
+
+  function keepFocusInsidePractice(event: React.KeyboardEvent<HTMLElement>) {
+    if (!practiceFocused || event.key !== "Tab") return;
+    const controls = Array.from(
+      event.currentTarget.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), [href], input:not([disabled]), textarea:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    );
+    if (controls.length === 0) return;
+    const first = controls[0];
+    const last = controls[controls.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
+  }
+
   return (
-    <section className="mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
+    <section
+      role={practiceFocused ? "dialog" : undefined}
+      aria-modal={practiceFocused ? true : undefined}
+      aria-label={practiceFocused
+        ? usesFlipCards
+          ? locale === "ko-KR" ? "핵심 어휘 집중 연습" : "核心词汇专注练习"
+          : locale === "ko-KR" ? "문법 집중 연습" : "语法专注练习"
+        : undefined}
+      onKeyDown={keepFocusInsidePractice}
+      className={practiceFocused
+        ? "fixed inset-0 z-[100] m-0 flex overflow-y-auto rounded-none border-0 bg-[var(--background)] p-4 sm:p-8"
+        : "mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6"}
+    >
+      <div className={practiceFocused
+        ? "m-auto w-full max-w-4xl rounded-[32px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:p-8"
+        : ""}
+      >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div>
           {round && round.total > 1 && (
@@ -975,11 +1047,24 @@ function Activity({
           <h4 className="text-xl font-bold leading-8 text-[var(--foreground)]">{activity.prompt[locale]}</h4>
           <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{activity.instruction[locale]}</p>
         </div>
-        {feedback?.ok && feedback.correct !== false && (
-          <span className="shrink-0 text-xs font-bold text-[var(--status-success)]">
-            {feedback.correct === null ? t.submittedForReview : t.submitted}
-          </span>
-        )}
+        <div className="flex shrink-0 items-center gap-3">
+          {activityCompleted && (
+            <span className="text-xs font-bold text-[var(--status-success)]">
+              {feedback?.correct === null ? t.submittedForReview : t.submitted}
+            </span>
+          )}
+          {practiceFocused && (
+            <button
+              ref={focusModeCloseRef}
+              type="button"
+              onClick={closePractice}
+              className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none"
+            >
+              <X size={17} aria-hidden="true" />
+              {locale === "ko-KR" ? "집중 모드 종료" : "退出专注练习"}
+            </button>
+          )}
+        </div>
       </div>
 
       {(activity.type === "single_choice" || activity.type === "listening") && !groupedSingleChoice && (
@@ -1014,7 +1099,7 @@ function Activity({
         </label>
       )}
 
-      {groupedSingleChoice && (
+      {groupedSingleChoice && !usesFlipCards && (!usesFocusMode || practiceFocused) && (
         <div className="mt-6 space-y-6">
           {configItems.map((item, itemIndex) => {
             const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
@@ -1041,6 +1126,166 @@ function Activity({
           })}
         </div>
       )}
+
+      {usesFocusMode && !practiceFocused && (
+        <div className="mt-6 flex min-h-[260px] flex-col items-center justify-center rounded-[28px] border border-[var(--border-subtle)] bg-[var(--card)] px-6 py-10 text-center shadow-[0_18px_50px_rgba(15,23,42,0.06)]">
+          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">
+            <Maximize2 size={24} aria-hidden="true" />
+          </span>
+          <h5 className="mt-5 text-xl font-bold text-[var(--foreground)]">
+            {usesFlipCards
+              ? locale === "ko-KR" ? "뜻을 가리고 연습해 보세요" : "遮住词汇表再开始练习"
+              : locale === "ko-KR" ? "설명을 가리고 문법을 연습해 보세요" : "遮住语法讲解再开始练习"}
+          </h5>
+          <p className="mt-2 max-w-md text-sm leading-6 text-[var(--foreground-secondary)]">
+            {usesFlipCards
+              ? locale === "ko-KR"
+                ? "집중 모드를 열면 위의 핵심 어휘표가 가려지고 카드만 보입니다."
+                : "进入专注模式后，上面的核心词汇表会被完全遮住，只显示当前练习卡片。"
+              : locale === "ko-KR"
+                ? "집중 모드를 열면 위의 문법 설명이 가려지고 이번 연습만 보입니다."
+                : "进入专注模式后，上面的语法规则和例句会被完全遮住，只显示本轮练习。"}
+          </p>
+          <button
+            ref={focusModeStartRef}
+            type="button"
+            onClick={() => setPracticeFocused(true)}
+            className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 motion-reduce:transition-none"
+          >
+            <Maximize2 size={17} aria-hidden="true" />
+            {locale === "ko-KR" ? "집중 연습 시작" : "开始专注练习"}
+          </button>
+        </div>
+      )}
+
+      {usesFlipCards && practiceFocused && (() => {
+        const item = configItems[activeCardIndex] ?? {};
+        const options = stringArray(item.options);
+        const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
+        const selectedOption = selectedAnswers[activeCardIndex] ?? -1;
+        const answeredCount = selectedAnswers.filter((value) => value >= 0).length;
+        const cardNumber = activeCardIndex + 1;
+        const cardQuestion = String(item.question ?? "");
+
+        return (
+          <div className="mt-6">
+            <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+              <span className="font-bold text-[var(--foreground)]">
+                {locale === "ko-KR"
+                  ? `${cardNumber} / ${configItems.length}번째 단어`
+                  : `第 ${cardNumber} / ${configItems.length} 个词`}
+              </span>
+              <span className="text-[var(--foreground-secondary)]">
+                {locale === "ko-KR"
+                  ? `${answeredCount}개 완료`
+                  : `已作答 ${answeredCount} / ${configItems.length}`}
+              </span>
+            </div>
+
+            <div
+              className="mt-3 h-2 overflow-hidden rounded-full bg-[var(--border-subtle)]"
+              role="progressbar"
+              aria-label={locale === "ko-KR" ? "어휘 연습 진행률" : "词汇练习进度"}
+              aria-valuemin={0}
+              aria-valuemax={configItems.length}
+              aria-valuenow={answeredCount}
+            >
+              <div
+                className="h-full rounded-full bg-[var(--primary)] transition-[width] duration-300 motion-reduce:transition-none"
+                style={{ width: `${(answeredCount / configItems.length) * 100}%` }}
+              />
+            </div>
+
+            <div className="mt-5 overflow-hidden rounded-[28px] border border-[var(--border-subtle)] bg-[var(--card)] shadow-[0_18px_50px_rgba(15,23,42,0.08)]">
+              <div className="border-b border-[var(--border-subtle)] bg-[radial-gradient(circle_at_top,color-mix(in_srgb,var(--primary)_12%,transparent),transparent_62%)] px-6 py-7 text-center sm:py-8">
+                <p className="text-xs font-bold text-[var(--primary)]">
+                  {locale === "ko-KR" ? "알맞은 뜻을 고르세요" : "选择正确释义"}
+                </p>
+                <p lang="ko" className="mt-3 text-4xl font-bold tracking-tight text-[var(--foreground)] sm:text-5xl">
+                  {cardQuestion}
+                </p>
+              </div>
+
+              <fieldset className="p-5 sm:p-6">
+                <legend className="sr-only">
+                  {locale === "ko-KR" ? `${cardQuestion}의 뜻` : `${cardQuestion} 的正确释义`}
+                </legend>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {groupedOptionOrders[activeCardIndex].map((originalOptionIndex, displayOptionIndex) => {
+                    const option = options[originalOptionIndex];
+                    const selected = selectedOption === originalOptionIndex;
+                    return (
+                      <button
+                        key={`${originalOptionIndex}-${option}`}
+                        type="button"
+                        aria-pressed={selected}
+                        onClick={() => {
+                          const next = [...selectedAnswers];
+                          next[activeCardIndex] = originalOptionIndex;
+                          setAnswer(next);
+                          setFeedback(null);
+                        }}
+                        className={`grid min-h-14 grid-cols-[30px_1fr_20px] items-center gap-3 rounded-2xl border px-4 py-3 text-left text-base font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${selected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)] shadow-sm" : "border-[var(--border-subtle)] bg-[var(--surface-soft)] text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:bg-[var(--accent)]/45"}`}
+                      >
+                        <span className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>
+                          {String.fromCharCode(65 + displayOptionIndex)}
+                        </span>
+                        <span>{option}</span>
+                        {selected ? (
+                          <CheckCircle2 size={19} className="text-[var(--primary)]" aria-hidden="true" />
+                        ) : (
+                          <Circle size={19} className="text-[var(--border-subtle)]" aria-hidden="true" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </fieldset>
+            </div>
+
+            <div className="mt-5">
+              <div className="flex flex-wrap justify-center gap-2" aria-label={locale === "ko-KR" ? "단어 카드 목록" : "词汇卡片列表"}>
+                {configItems.map((card, index) => {
+                  const answered = selectedAnswers[index] >= 0;
+                  const current = index === activeCardIndex;
+                  return (
+                    <button
+                      key={String(card.id ?? index)}
+                      type="button"
+                      onClick={() => showCard(index)}
+                      aria-label={locale === "ko-KR" ? `${index + 1}번째 단어` : `第 ${index + 1} 个词`}
+                      aria-current={current ? "step" : undefined}
+                      className={`flex h-8 w-8 items-center justify-center rounded-full border text-xs font-bold transition focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${current ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)]" : answered ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)] hover:border-[var(--primary)]"}`}
+                    >
+                      {answered && !current ? <Check size={14} aria-hidden="true" /> : index + 1}
+                    </button>
+                  );
+                })}
+              </div>
+              <div className="mt-4 flex items-center justify-between gap-3">
+                <button
+                  type="button"
+                  onClick={() => showCard(activeCardIndex - 1)}
+                  disabled={activeCardIndex === 0}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-35 motion-reduce:transition-none"
+                >
+                  <ChevronLeft size={17} aria-hidden="true" />
+                  {locale === "ko-KR" ? "이전" : "上一个"}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => showCard(activeCardIndex + 1)}
+                  disabled={activeCardIndex === configItems.length - 1}
+                  className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-35 motion-reduce:transition-none"
+                >
+                  {locale === "ko-KR" ? "다음" : "下一个"}
+                  <ChevronRight size={17} aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
 
       {activity.type === "listening" && !hasPendingAudio && (
         <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
@@ -1076,20 +1321,41 @@ function Activity({
         <input value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" autoComplete="off" aria-label={activity.prompt[locale]} className="mt-6 w-full border-x-0 border-b-2 border-t-0 border-slate-300 bg-transparent px-1 py-4 text-xl font-semibold text-slate-900 outline-none transition focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 쓰세요" />
       )}
 
-      {activity.type === "fill_blank" && configItems.length > 0 && (
+      {activity.type === "fill_blank" && configItems.length > 0 && (!usesFocusMode || practiceFocused) && (
         <div className="mt-6 grid gap-4">
           {configItems.map((item, index) => {
             const values = Array.isArray(answer) ? answer.map(String) : [];
+            const group = locale === "ko-KR"
+              ? String(item.groupKo ?? item.group ?? "")
+              : String(item.group ?? "");
+            const grammarPoint = locale === "ko-KR"
+              ? String(item.grammarPointKo ?? item.grammarPoint ?? "")
+              : String(item.grammarPoint ?? "");
+            const previousGroup = index > 0
+              ? locale === "ko-KR"
+                ? String(configItems[index - 1]?.groupKo ?? configItems[index - 1]?.group ?? "")
+                : String(configItems[index - 1]?.group ?? "")
+              : "";
             return (
-              <label key={String(item.id ?? index)} className="grid gap-2 text-sm font-semibold text-[var(--foreground-secondary)]">
-                <span>{index + 1}. {String(item.label ?? item.prompt ?? "")}</span>
-                <input value={values[index] ?? ""} onChange={(event) => {
-                  const next = [...values];
-                  next[index] = event.target.value;
-                  setAnswer(next);
-                  setFeedback(null);
-                }} lang="ko" autoComplete="off" className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
-              </label>
+              <div key={String(item.id ?? index)}>
+                {group && group !== previousGroup && (
+                  <div className={`${index > 0 ? "mt-3" : ""} mb-3 flex items-center gap-3`}>
+                    <span className="h-px flex-1 bg-[var(--border-subtle)]" />
+                    <span className="rounded-full bg-[var(--accent)] px-4 py-1.5 text-xs font-bold text-[var(--primary)]">{group}</span>
+                    <span className="h-px flex-1 bg-[var(--border-subtle)]" />
+                  </div>
+                )}
+                <label className="grid gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-sm font-semibold text-[var(--foreground-secondary)]">
+                  {grammarPoint && <span className="text-xs font-bold text-[var(--primary)]">{grammarPoint}</span>}
+                  <span>{index + 1}. {String(item.label ?? item.prompt ?? "")}</span>
+                  <input value={values[index] ?? ""} onChange={(event) => {
+                    const next = [...values];
+                    next[index] = event.target.value;
+                    setAnswer(next);
+                    setFeedback(null);
+                  }} lang="ko" autoComplete="off" className="min-h-12 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
+                </label>
+              </div>
             );
           })}
         </div>
@@ -1160,6 +1426,7 @@ function Activity({
         </div>
       )}
 
+      {(!usesFocusMode || practiceFocused) && (
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
           {message && (
@@ -1188,9 +1455,11 @@ function Activity({
             </div>
           )}
         </div>
-        <button type="button" onClick={submit} disabled={pending || hasPendingAudio} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
-          {pending ? <Pause size={15} /> : <Send size={15} />} {t.submit}
+        <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
+          {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : t.submit}
         </button>
+      </div>
+      )}
       </div>
     </section>
   );

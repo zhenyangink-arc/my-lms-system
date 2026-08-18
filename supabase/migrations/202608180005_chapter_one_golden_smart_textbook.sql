@@ -350,30 +350,21 @@ begin
       },
       {
         "nodeCode":"people-and-greetings","key":"vocabulary-check","type":"single_choice","order":1,"maxAttempts":3,
-        "prompt":{"zh-CN":"句子 저는 학생이에요. 中，저 是什么意思？","ko-KR":"저는 학생이에요.에서 저는 무슨 뜻이에요?"},
-        "instruction":{"zh-CN":"选择词义，再用整句朗读一次。","ko-KR":"뜻을 하나 고른 뒤 문장 전체를 한 번 읽으세요."},
-        "options":["我（谦称）","朋友","老师","名字"],
-        "config":{"shuffle":false,"audioPending":true,"readAloudConfirmation":{"label":"已朗读整句","required":true}},
-        "answer":{"kind":"index_confirmation","value":0},
-        "explanation":{"correct":{"zh-CN":"저 是说话人对自己的谦称，整句意为“我是学生”。","ko-KR":"저는 말하는 사람이 자신을 낮추어 가리키는 말이며 문장은 ‘저는 학생이에요’라는 뜻입니다."},"feedback":[{"zh-CN":"看看 저는 后面是不是在介绍说话人自己。","ko-KR":"저는 뒤에서 말하는 사람 자신을 소개하는지 보세요."},{"zh-CN":"저 是代词，常与话题助词组成 저는。","ko-KR":"저는 대명사이며 주제 조사와 결합해 저는이 됩니다."},{"zh-CN":"正确答案是“我（谦称）”；还需要勾选已朗读整句。","ko-KR":"정답은 ‘저’이며 문장 전체를 읽었다는 확인도 필요합니다."}]}
+        "prompt":{"zh-CN":"完成 12 个核心词的词义练习。","ko-KR":"핵심 어휘 12개의 뜻을 모두 확인하세요."},
+        "instruction":{"zh-CN":"每个单词选择一个正确释义，12 题全部作答后统一提交。","ko-KR":"각 단어에 맞는 뜻을 하나씩 고르고 12문항을 모두 푼 뒤 제출하세요."},
+        "options":[],
+        "config":{"presentation":"flip_cards","shuffle":true,"shuffleOptions":true,"items":[{"id":"word-jeo","question":"저","options":["我（谦称）","名字","朋友","老师"]},{"id":"word-ireum","question":"이름","options":["名字","学生","问候","韩语"]},{"id":"word-haksaeng","question":"학생","options":["老师","学生","朋友","人"]},{"id":"word-seonsaengnim","question":"선생님","options":["朋友","老师","学生","名字"]},{"id":"word-chingu","question":"친구","options":["人","老师","朋友","我（谦称）"]},{"id":"word-saram","question":"사람","options":["学生","人","第一次","见面"]},{"id":"word-mannada","question":"만나다","options":["问候","介绍","见面","学习"]},{"id":"word-insahada","question":"인사하다","options":["学习","介绍","问候","见面"]},{"id":"word-sogaehada","question":"소개하다","options":["介绍","问候","高兴、荣幸","韩语"]},{"id":"word-hangugeo","question":"한국어","options":["中国人","名字","韩语","老师"]},{"id":"word-cheoeum","question":"처음","options":["一起","第一次","朋友","高兴、荣幸"]},{"id":"word-bangapda","question":"반갑다","options":["询问","学习","高兴、荣幸","介绍"]}]},
+        "answer":{"kind":"index_array","value":[0,0,1,1,2,1,2,2,0,2,1,2]},
+        "explanation":{"correct":{"zh-CN":"12 个核心词的词义均已掌握。","ko-KR":"핵심 어휘 12개의 뜻을 모두 바르게 확인했습니다."},"feedback":[{"zh-CN":"先区分人物身份词、动作词和功能表达。","ko-KR":"인물·신분 어휘, 동작 어휘와 기능 표현을 먼저 나누세요."},{"zh-CN":"结合词汇表中的搭配提示逐项回想，不要只凭选项位置作答。","ko-KR":"어휘표의 결합 표현을 떠올리며 각 단어의 뜻을 확인하세요."},{"zh-CN":"返回核心词汇表复习错误词，再完成全部 12 题。","ko-KR":"틀린 단어를 핵심 어휘표에서 복습한 뒤 12문항을 다시 완성하세요."}]}
       },
       {
         "nodeCode":"topic-and-copula","key":"grammar-fill","type":"fill_blank","order":1,"maxAttempts":3,
-        "prompt":{"zh-CN":"连续完成三小题，检查判断词尾、话题助词和确认疑问句。","ko-KR":"서술격 어미, 주제 조사, 확인 의문문을 확인하는 세 문항을 완성하세요."},
-        "instruction":{"zh-CN":"依次填写三个空；第三空须包含问号。","ko-KR":"세 빈칸을 차례로 쓰고 세 번째 답에는 물음표도 쓰세요."},
+        "prompt":{"zh-CN":"连续完成两轮六小题，练习判断词尾、话题助词和确认疑问句。","ko-KR":"두 번의 연습, 여섯 문항으로 서술격 어미, 주제 조사와 확인 의문문을 연습하세요."},
+        "instruction":{"zh-CN":"每个语法点练习两遍；第3、6空须包含问号。","ko-KR":"각 문법 항목을 두 번씩 연습하고 3번과 6번 답에는 물음표도 쓰세요."},
         "options":[],
-        "config":{"normalize":"NFC","items":[{"id":"copula","label":"저는 리나___","placeholder":"이에요/예요"},{"id":"topic","label":"지민 씨___ 학생이에요.","placeholder":"은/는"},{"id":"confirmation","label":"지민 씨는 학생___","placeholder":"이에요?/예요?"}]},
-        "answer":{"kind":"text_array","value":["예요","는","이에요?"]},
-        "explanation":{"correct":{"zh-CN":"三项规范答案依次为 예요、는、이에요?。","ko-KR":"세 답은 차례로 예요, 는, 이에요?입니다."},"feedback":[{"zh-CN":"先判断每空负责说明身份、提出话题还是确认身份。","ko-KR":"각 빈칸이 신분 설명, 화제 제시, 신분 확인 중 어떤 기능인지 먼저 판단하세요."},{"zh-CN":"① 나 无收音；② 씨 后要话题助词；③ 학생 有收音且必须是问句。","ko-KR":"① 나는 받침이 없고 ② 씨 뒤에는 주제 조사가 필요하며 ③ 학생은 받침이 있고 질문이어야 합니다."},{"zh-CN":"完整句是 저는 리나예요.／지민 씨는 학생이에요.／지민 씨는 학생이에요?，请全部正确重做。","ko-KR":"완전한 문장은 저는 리나예요.／지민 씨는 학생이에요.／지민 씨는 학생이에요?입니다. 모두 다시 맞히세요."}]}
-      },
-      {
-        "nodeCode":"topic-and-copula","key":"grammar-transfer","type":"fill_blank","order":2,"maxAttempts":3,
-        "prompt":{"zh-CN":"再完成一轮，换用相反的收音条件练习三个语法点。","ko-KR":"받침 조건을 바꾸어 세 문법 항목을 한 번 더 연습하세요."},
-        "instruction":{"zh-CN":"依次填写三个空；第三空须包含问号。","ko-KR":"세 빈칸을 차례로 쓰고 세 번째 답에는 물음표도 쓰세요."},
-        "options":[],
-        "config":{"normalize":"NFC","items":[{"id":"copula-transfer","label":"저는 왕밍___","placeholder":"이에요/예요"},{"id":"topic-transfer","label":"왕밍 씨___ 학생이에요.","placeholder":"은/는"},{"id":"confirmation-transfer","label":"리나 씨는 의사___","placeholder":"이에요?/예요?"}]},
-        "answer":{"kind":"text_array","value":["이에요","는","예요?"]},
-        "explanation":{"correct":{"zh-CN":"第二轮答案依次为 이에요、는、예요?。","ko-KR":"두 번째 연습의 답은 차례로 이에요, 는, 예요?입니다."},"feedback":[{"zh-CN":"仍然先判断身份说明、话题标记和身份确认三种功能。","ko-KR":"신분 설명, 화제 표시와 신분 확인 기능을 먼저 구별하세요."},{"zh-CN":"① 왕밍 有收音；② 씨 无收音；③ 의사 无收音且是问句。","ko-KR":"① 왕밍은 받침이 있고 ② 씨는 받침이 없으며 ③ 의사는 받침이 없는 질문입니다."},{"zh-CN":"完整句是 저는 왕밍이에요.／왕밍 씨는 학생이에요.／리나 씨는 의사예요?，请全部正确重做。","ko-KR":"완전한 문장은 저는 왕밍이에요.／왕밍 씨는 학생이에요.／리나 씨는 의사예요?입니다. 모두 다시 맞히세요."}]}
+        "config":{"focusMode":true,"normalize":"NFC","items":[{"id":"copula","group":"第一轮","groupKo":"첫 번째 연습","label":"저는 리나___","placeholder":"이에요/예요"},{"id":"topic","group":"第一轮","groupKo":"첫 번째 연습","label":"민준___ 학생이에요.","placeholder":"은/는"},{"id":"confirmation","group":"第一轮","groupKo":"첫 번째 연습","label":"지민 씨는 학생___","placeholder":"이에요?/예요?"},{"id":"copula-transfer","group":"第二轮","groupKo":"두 번째 연습","label":"저는 왕밍___","placeholder":"이에요/예요"},{"id":"topic-transfer","group":"第二轮","groupKo":"두 번째 연습","label":"민지___ 친구예요.","placeholder":"은/는"},{"id":"confirmation-transfer","group":"第二轮","groupKo":"두 번째 연습","label":"리나 씨는 의사___","placeholder":"이에요?/예요?"}]},
+        "answer":{"kind":"text_array","value":["예요","은","이에요?","이에요","는","예요?"]},
+        "explanation":{"correct":{"zh-CN":"两轮六题依次为 예요、은、이에요?、이에요、는、예요?。","ko-KR":"두 번의 연습 답은 차례로 예요, 은, 이에요?, 이에요, 는, 예요?입니다."},"feedback":[{"zh-CN":"先区分身份说明、话题标记和确认提问，再判断有无收音。","ko-KR":"신분 설명, 화제 표시와 확인 질문을 구별한 뒤 받침을 확인하세요."},{"zh-CN":"第一轮使用无收音／有收音条件，第二轮换成相反条件。","ko-KR":"첫 번째와 두 번째 연습은 서로 다른 받침 조건을 사용합니다."},{"zh-CN":"对照两轮的完整句，将六题全部正确重做。","ko-KR":"두 번의 완전한 문장을 확인하고 여섯 문항을 모두 다시 풀어 보세요."}]}
       },
       {
         "nodeCode":"introduce-yourself","key":"pattern-order","type":"ordering","order":1,"maxAttempts":3,
@@ -520,7 +511,7 @@ begin
     and node.module_id = module.id
     and module.chapter_id = chapter_uuid
     and activity.activity_key not in (
-      'orientation-check', 'vocabulary-check', 'grammar-fill', 'grammar-transfer', 'pattern-order',
+      'orientation-check', 'vocabulary-check', 'grammar-fill', 'pattern-order',
       'dialogue-fact-check', 'dialogue-response', 'listening-identity',
       'speaking-introduction', 'reading-profile', 'write-profile',
       'review-multiple', 'self-check'

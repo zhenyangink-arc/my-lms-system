@@ -49,6 +49,163 @@ function invalidAnswerConfig(): GradeResult {
   return { ok: false, error: "活动判定配置不匹配，提交已拒绝。" };
 }
 
+async function recordObjectiveAttemptWithoutRpc({
+  context,
+  activity,
+  versionId,
+  response,
+  result,
+}: {
+  context: SubmissionContext;
+  activity: {
+    id: string;
+    node_id: string;
+    max_attempts: number | null;
+  };
+  versionId: string;
+  response: unknown;
+  result: Extract<GradeResult, { ok: true }>;
+}) {
+  const { data: priorAttempts, error: priorError } = await context.admin
+    .from("digital_textbook_attempts")
+    .select("attempt_number,is_correct")
+    .eq("tenant_id", context.tenantId!)
+    .eq("student_id", context.userId)
+    .eq("activity_id", activity.id)
+    .order("attempt_number", { ascending: false });
+  if (priorError) return { data: null, error: priorError };
+
+  const completedAttempt = priorAttempts?.find(
+    (attempt) => attempt.is_correct === true,
+  );
+  if (completedAttempt) {
+    const { data: progress, error: progressReadError } = await context.admin
+      .from("digital_textbook_node_progress")
+      .select("status,completion_percent,mastery_score,attempt_count")
+      .eq("tenant_id", context.tenantId!)
+      .eq("student_id", context.userId)
+      .eq("node_id", activity.node_id)
+      .eq("version_id", versionId)
+      .maybeSingle();
+    if (progressReadError) return { data: null, error: progressReadError };
+    return {
+      data: {
+        attempt_number: Number(completedAttempt.attempt_number),
+        node_completed: progress?.status === "completed",
+        completion_percent: Number(progress?.completion_percent ?? 100),
+        mastery_score: Number(progress?.mastery_score ?? 100),
+        node_attempt_count: Number(progress?.attempt_count ?? priorAttempts.length),
+      },
+      error: null,
+    };
+  }
+
+  const maxAttempts = Number(activity.max_attempts) || 3;
+  if ((priorAttempts?.length ?? 0) >= maxAttempts) {
+    return {
+      data: null,
+      error: { message: `MAX_ATTEMPTS_REACHED: ${maxAttempts}` },
+    };
+  }
+  const nextAttempt = Number(priorAttempts?.[0]?.attempt_number ?? 0) + 1;
+  const { error: insertError } = await context.admin
+    .from("digital_textbook_attempts")
+    .insert({
+      tenant_id: context.tenantId!,
+      student_id: context.userId,
+      activity_id: activity.id,
+      version_id: versionId,
+      attempt_number: nextAttempt,
+      response: response ?? null,
+      is_correct: result.correct,
+      score: result.score,
+    });
+  if (insertError) return { data: null, error: insertError };
+
+  const { data: nodeActivities, error: activitiesError } = await context.admin
+    .from("digital_textbook_activities")
+    .select("id,activity_type")
+    .eq("node_id", activity.node_id);
+  if (activitiesError) return { data: null, error: activitiesError };
+
+  const requiredIds = (nodeActivities ?? [])
+    .filter((item) => OBJECTIVE_ACTIVITY_TYPES.has(String(item.activity_type)))
+    .map((item) => String(item.id));
+  const { data: nodeAttempts, error: nodeAttemptsError } = requiredIds.length
+    ? await context.admin
+        .from("digital_textbook_attempts")
+        .select("activity_id,is_correct,score")
+        .eq("tenant_id", context.tenantId!)
+        .eq("student_id", context.userId)
+        .eq("version_id", versionId)
+        .in("activity_id", requiredIds)
+    : { data: [], error: null };
+  if (nodeAttemptsError) return { data: null, error: nodeAttemptsError };
+
+  const completedIds = new Set(
+    (nodeAttempts ?? [])
+      .filter((attempt) => attempt.is_correct === true)
+      .map((attempt) => String(attempt.activity_id)),
+  );
+  const bestScores = new Map<string, number>();
+  for (const attempt of nodeAttempts ?? []) {
+    if (attempt.score == null) continue;
+    const id = String(attempt.activity_id);
+    bestScores.set(id, Math.max(bestScores.get(id) ?? 0, Number(attempt.score)));
+  }
+  const totalRequired = requiredIds.length;
+  const completionPercent = totalRequired === 0
+    ? 0
+    : Math.round((100 * completedIds.size) / totalRequired);
+  const masteryScore = totalRequired === 0
+    ? 0
+    : Math.round(
+        requiredIds.reduce((sum, id) => sum + (bestScores.get(id) ?? 0), 0) /
+          totalRequired,
+      );
+
+  const { count: nodeAttemptCount, error: countError } = await context.admin
+    .from("digital_textbook_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("tenant_id", context.tenantId!)
+    .eq("student_id", context.userId)
+    .eq("version_id", versionId)
+    .in("activity_id", requiredIds.length > 0 ? requiredIds : [activity.id]);
+  if (countError) return { data: null, error: countError };
+
+  const nodeCompleted = totalRequired > 0 && completedIds.size === totalRequired;
+  const timestamp = new Date().toISOString();
+  const { error: progressError } = await context.admin
+    .from("digital_textbook_node_progress")
+    .upsert(
+      {
+        tenant_id: context.tenantId!,
+        student_id: context.userId,
+        node_id: activity.node_id,
+        version_id: versionId,
+        status: nodeCompleted ? "completed" : "in_progress",
+        completion_percent: completionPercent,
+        mastery_score: masteryScore,
+        attempt_count: nodeAttemptCount ?? 0,
+        last_activity_at: timestamp,
+        updated_at: timestamp,
+      },
+      { onConflict: "tenant_id,student_id,node_id,version_id" },
+    );
+  if (progressError) return { data: null, error: progressError };
+
+  return {
+    data: {
+      attempt_number: nextAttempt,
+      node_completed: nodeCompleted,
+      completion_percent: completionPercent,
+      mastery_score: masteryScore,
+      node_attempt_count: nodeAttemptCount ?? 0,
+    },
+    error: null,
+  };
+}
+
 const OBJECTIVE_ACTIVITY_TYPES = new Set([
   "single_choice",
   "multiple_choice",
@@ -580,11 +737,15 @@ export async function submitSmartTextbookActivityForContext(
     return failure("找不到这项练习。", context.preview);
   }
 
-  const [{ data: secret, error: secretError }, { data: node, error: nodeError }] =
+  const [{ data: secretData, error: secretError }, { data: node, error: nodeError }] =
     await Promise.all([
       context.admin
         .from("digital_textbook_activity_secrets")
-        .select("answer_key,explanation,audio_object_key,audio_status")
+        .select(
+          activity.activity_type === "listening"
+            ? "answer_key,explanation,audio_object_key,audio_status"
+            : "answer_key,explanation",
+        )
         .eq("activity_id", activity.id)
         .maybeSingle(),
       // The learner-facing activity query above is the authorization gate.
@@ -599,12 +760,21 @@ export async function submitSmartTextbookActivityForContext(
         .maybeSingle(),
     ]);
 
-  if (secretError || nodeError || !secret || !node) {
+  if (secretError || nodeError || !secretData || !node) {
     return failure("练习的判定配置尚未完成。", context.preview);
   }
+  const secret = secretData as unknown as {
+    answer_key: unknown;
+    explanation: unknown;
+    audio_object_key?: string | null;
+    audio_status?: string | null;
+  };
   if (
     activity.activity_type === "listening" &&
-    (!secret.audio_object_key || secret.audio_status !== "ready")
+    (!("audio_object_key" in secret) ||
+      !secret.audio_object_key ||
+      !("audio_status" in secret) ||
+      secret.audio_status !== "ready")
   ) {
     return failure(
       "听力音频仍待录制与核验，当前不能提交本活动。",
@@ -663,7 +833,7 @@ export async function submitSmartTextbookActivityForContext(
   const versionId = String(nestedChapter.version_id ?? "");
   if (!versionId) return failure("教材版本关系不完整。", false);
 
-  const { data: recordData, error: recordError } =
+  let { data: recordData, error: recordError } =
     activity.activity_type === "speaking" &&
     result.meetsCompletionRequirements === true
       ? await context.admin.rpc("record_smart_textbook_speaking_attempt", {
@@ -674,6 +844,18 @@ export async function submitSmartTextbookActivityForContext(
           p_response: parsed.data.response ?? null,
           p_evidence_id: speakingEvidenceId,
         })
+      : result.meetsCompletionRequirements !== undefined
+        ? await context.admin.rpc("record_smart_textbook_attempt", {
+            p_tenant_id: context.tenantId,
+            p_student_id: context.userId,
+            p_activity_id: activity.id,
+            p_version_id: versionId,
+            p_response: parsed.data.response ?? null,
+            p_is_correct: result.correct,
+            p_score: result.score,
+            p_meets_completion_requirements:
+              result.meetsCompletionRequirements,
+          })
       : await context.admin.rpc("record_smart_textbook_attempt", {
           p_tenant_id: context.tenantId,
           p_student_id: context.userId,
@@ -682,9 +864,25 @@ export async function submitSmartTextbookActivityForContext(
           p_response: parsed.data.response ?? null,
           p_is_correct: result.correct,
           p_score: result.score,
-          p_meets_completion_requirements:
-            result.meetsCompletionRequirements ?? null,
         });
+  if (
+    recordError?.code === "PGRST202" &&
+    OBJECTIVE_ACTIVITY_TYPES.has(String(activity.activity_type))
+  ) {
+    const fallback = await recordObjectiveAttemptWithoutRpc({
+      context,
+      activity: {
+        id: String(activity.id),
+        node_id: String(activity.node_id),
+        max_attempts: activity.max_attempts,
+      },
+      versionId,
+      response: parsed.data.response,
+      result,
+    });
+    recordData = fallback.data;
+    recordError = fallback.error as typeof recordError;
+  }
   const record = Array.isArray(recordData) ? recordData[0] : recordData;
   if (recordError || !record) {
     const maxAttemptsReached = recordError?.message?.includes(

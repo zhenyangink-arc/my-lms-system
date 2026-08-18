@@ -40,7 +40,7 @@ values
     'platform',
     '10000000-0000-4000-8000-000000000001'::uuid
   )
-on conflict (id) do update set
+on conflict (slug) where content_scope = 'platform' do update set
   parent_id = excluded.parent_id,
   slug = excluded.slug,
   title = excluded.title,
@@ -85,7 +85,7 @@ values
     null, 'platform', 'immediate', false,
     '10000000-0000-4000-8000-000000000001'::uuid
   )
-on conflict (id) do update set
+on conflict (slug) where content_scope = 'platform' do update set
   category_id = excluded.category_id,
   category = excluded.category,
   slug = excluded.slug,

@@ -21,6 +21,7 @@ export type SmartTextbookActivity = {
   id: string;
   key: string;
   type: SmartActivityType;
+  completed: boolean;
   prompt: LocalizedText;
   instruction: LocalizedText;
   options: string[];
@@ -306,9 +307,15 @@ export async function loadSmartDigitalTextbook(
     supportMode: "bilingual",
   };
   let progress: SmartTextbookProgress[] = [];
+  const completedActivityIds = new Set<string>();
 
   if (!options.trackingDisabled && options.tenantId) {
-    const [{ data: savedPreference }, { data: savedProgress }] = await Promise.all([
+    const activityIds = (activities ?? []).map((activity) => String(activity.id));
+    const [
+      { data: savedPreference },
+      { data: savedProgress },
+      { data: completedAttempts },
+    ] = await Promise.all([
       admin
         .from("digital_textbook_preferences")
         .select("interface_locale,support_mode")
@@ -325,7 +332,21 @@ export async function loadSmartDigitalTextbook(
             .eq("version_id", version.id)
             .in("node_id", nodeIds)
         : Promise.resolve({ data: [] }),
+      activityIds.length
+        ? admin
+            .from("digital_textbook_attempts")
+            .select("activity_id")
+            .eq("tenant_id", options.tenantId)
+            .eq("student_id", options.userId)
+            .eq("version_id", version.id)
+            .eq("is_correct", true)
+            .in("activity_id", activityIds)
+        : Promise.resolve({ data: [] }),
     ]);
+
+    for (const attempt of completedAttempts ?? []) {
+      completedActivityIds.add(String(attempt.activity_id));
+    }
 
     if (savedPreference) {
       preference = {
@@ -387,6 +408,7 @@ export async function loadSmartDigitalTextbook(
             id: String(activity.id),
             key: String(activity.activity_key),
             type: activity.activity_type as SmartActivityType,
+            completed: completedActivityIds.has(String(activity.id)),
             prompt: localized(activity.prompt),
             instruction: localized(activity.instruction),
             options: asStringArray(activity.options),
