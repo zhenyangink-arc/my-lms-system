@@ -5,7 +5,7 @@ import { notFound, redirect } from "next/navigation";
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import {
   getUnlockedKoreanTestSlugs,
-  isKoreanEbookCompleted,
+  isKoreanChapterLearningCompleted,
 } from "@/lib/korean-learning-unlocks";
 import {
   buildPublicKoreanChapterTest,
@@ -56,14 +56,14 @@ export default async function KoreanChapterTestPage({
     withStudentAppSchemaFallback(
       admin
         .from("course_ebook_progress")
-        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
         .eq("student_id", user.id)
         .eq("tenant_id", tenant?.id ?? "")
         .eq("student_app_id", STUDENT_APP_IDS.korean),
       () =>
         admin
           .from("course_ebook_progress")
-          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
           .eq("student_id", user.id)
           .eq("tenant_id", tenant?.id ?? ""),
     ),
@@ -74,13 +74,16 @@ export default async function KoreanChapterTestPage({
       .map((attempt) => String(attempt.test_slug)),
     (ebookProgressData ?? [])
       .filter((progress) =>
-        isKoreanEbookCompleted({
+        isKoreanChapterLearningCompleted({
           progressPercent: Number(progress.progress_percent),
           readingSeconds: Number(progress.reading_seconds),
           readPages: Array.isArray(progress.read_pages)
             ? progress.read_pages.map(Number)
             : [],
           totalPages: Number(progress.total_pages),
+          completionSource: progress.completion_source
+            ? String(progress.completion_source)
+            : null,
         })
       )
       .map((progress) => String(progress.test_slug)),

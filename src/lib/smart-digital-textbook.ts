@@ -27,6 +27,16 @@ export type SmartTextbookActivity = {
   config: Record<string, unknown>;
 };
 
+export type SmartTextbookMediaAsset = {
+  id: string;
+  key: string;
+  type: "image" | "audio";
+  purpose: string;
+  status: "pending" | "ready" | "rejected";
+  altText: LocalizedText;
+  metadata: Record<string, unknown>;
+};
+
 export type SmartTextbookNode = {
   id: string;
   code: string;
@@ -34,6 +44,7 @@ export type SmartTextbookNode = {
   minutes: number;
   title: LocalizedText;
   content: Record<string, unknown>;
+  media: SmartTextbookMediaAsset[];
   activities: SmartTextbookActivity[];
 };
 
@@ -207,22 +218,26 @@ export async function loadSmartDigitalTextbook(
   }
   if (!textbook) return null;
 
-  const { data: version, error: versionError } = await admin
+  let versionQuery = admin
     .from("digital_textbook_versions")
     .select("id")
     .eq("textbook_id", textbook.id)
-    .eq("status", "published")
     .order("version_number", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .limit(1);
+  versionQuery = options.trackingDisabled
+    ? versionQuery.in("status", ["draft", "published"])
+    : versionQuery.eq("status", "published");
+  const { data: version, error: versionError } = await versionQuery.maybeSingle();
   if (versionError) throw new Error(`无法读取教材版本：${versionError.message}`);
   if (!version) return null;
 
   let chapterQuery = admin
     .from("digital_textbook_chapters")
     .select("id,slug,chapter_number,title,scenario,goal,chapter_test_id,chapter_tests(slug)")
-    .eq("version_id", version.id)
-    .eq("status", "published");
+    .eq("version_id", version.id);
+  chapterQuery = options.trackingDisabled
+    ? chapterQuery.in("status", ["draft", "published"])
+    : chapterQuery.eq("status", "published");
   chapterQuery = options.chapterSlug
     ? chapterQuery.eq("slug", options.chapterSlug)
     : chapterQuery.eq("chapter_number", options.chapterNumber ?? 1);
@@ -249,6 +264,16 @@ export async function loadSmartDigitalTextbook(
   if (nodeError) throw new Error(`无法读取学习节点：${nodeError.message}`);
 
   const nodeIds = (nodes ?? []).map((item) => String(item.id));
+  const { data: mediaAssets, error: mediaError } = nodeIds.length
+    ? await admin
+        .from("digital_textbook_media_assets")
+        .select("id,node_id,asset_key,media_type,purpose,production_status,alt_text,metadata")
+        .in("node_id", nodeIds)
+        .order("asset_key")
+    : { data: [], error: null };
+  if (mediaError && mediaError.code !== "42P01" && mediaError.code !== "PGRST205") {
+    throw new Error(`无法读取教材媒体资源：${mediaError.message}`);
+  }
   const { data: activities, error: activityError } = nodeIds.length
     ? await admin
         .from("digital_textbook_activities")
@@ -267,12 +292,12 @@ export async function loadSmartDigitalTextbook(
   const { data: audioSecrets } = listeningActivityIds.length
     ? await admin
         .from("digital_textbook_activity_secrets")
-        .select("activity_id,audio_object_key")
+        .select("activity_id,audio_object_key,audio_status")
         .in("activity_id", listeningActivityIds)
-    : { data: [] as { activity_id: string; audio_object_key: string | null }[] };
+    : { data: [] as { activity_id: string; audio_object_key: string | null; audio_status: string | null }[] };
   const activityIdsWithAudio = new Set(
     (audioSecrets ?? [])
-      .filter((row) => row.audio_object_key)
+      .filter((row) => row.audio_object_key && row.audio_status === "ready")
       .map((row) => String(row.activity_id))
   );
 
@@ -342,6 +367,20 @@ export async function loadSmartDigitalTextbook(
         minutes: Number(node.estimated_minutes),
         title: localized(node.title),
         content: asObject(node.content),
+        media: (mediaAssets ?? [])
+          .filter((asset) => asset.node_id === node.id)
+          .map((asset) => ({
+            id: String(asset.id),
+            key: String(asset.asset_key),
+            type: asset.media_type === "audio" ? "audio" : "image",
+            purpose: String(asset.purpose),
+            status:
+              asset.production_status === "ready" || asset.production_status === "rejected"
+                ? asset.production_status
+                : "pending",
+            altText: localized(asset.alt_text),
+            metadata: asObject(asset.metadata),
+          })),
         activities: (activities ?? [])
           .filter((activity) => activity.node_id === node.id)
           .map((activity) => ({

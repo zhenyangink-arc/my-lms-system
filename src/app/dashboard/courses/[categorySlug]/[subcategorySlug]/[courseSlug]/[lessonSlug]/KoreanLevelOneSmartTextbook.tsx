@@ -31,7 +31,7 @@ import {
   Volume2,
   X,
 } from "lucide-react";
-import { useEffect, useMemo, useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 
@@ -46,6 +46,10 @@ import {
   saveSmartTextbookPreferenceAction,
   submitSmartTextbookActivityAction,
 } from "./smart-textbook-actions";
+import {
+  isServerConfirmedNodeCompletion,
+  isSmartTextbookModuleCompleted,
+} from "./smart-textbook-completion";
 import { KoreanLevelOneCourseOverview } from "./KoreanLevelOneCourseOverview";
 
 export type SmartTextbookShellProps = {
@@ -56,12 +60,15 @@ export type SmartTextbookShellProps = {
   completionLabel?: string;
 };
 
-type AnswerValue = number | number[] | string | boolean;
+type AnswerValue = unknown;
 type Feedback = {
   ok: boolean;
   correct: boolean | null;
   explanation: string;
   preview: boolean;
+  nodeId: string | null;
+  nodeCompleted: boolean;
+  completionPercent: number;
 };
 
 const accentMap = {
@@ -161,6 +168,8 @@ const ui = {
     send: "发送",
     submit: "提交答案",
     submitted: "已完成",
+    submittedForReview: "已提交待复核",
+    submitFailed: "提交失败",
     correct: "回答正确",
     retry: "再想一想",
     preview: "平台预览：结果不会写入学生记录",
@@ -221,6 +230,8 @@ const ui = {
     send: "보내기",
     submit: "정답 제출",
     submitted: "완료",
+    submittedForReview: "제출됨 · 검토 대기",
+    submitFailed: "제출 실패",
     correct: "정답입니다",
     retry: "다시 생각해 보세요",
     preview: "플랫폼 미리보기: 학생 기록에 저장되지 않습니다",
@@ -271,6 +282,10 @@ function stringArray(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
 }
 
+function asBooleanArray(value: unknown) {
+  return Array.isArray(value) ? value.map(Boolean) : [];
+}
+
 function speakKorean(text: string) {
   if (!("speechSynthesis" in window)) return;
   window.speechSynthesis.cancel();
@@ -314,13 +329,20 @@ function ContentRenderer({
   const questions = stringArray(content.questions);
   const substitutions = stringArray(content.substitutions);
   const contrast = stringArray(content.contrast);
+  const grammarCards = Array.isArray(content.grammarCards)
+    ? content.grammarCards.map(objectValue)
+    : [];
+  const dialogueScenes = Array.isArray(content.dialogueScenes)
+    ? content.dialogueScenes.map(objectValue)
+    : [];
+  const imageAssets = node.media.filter((asset) => asset.type === "image");
 
   if (node.code === "mission-map" && targets.length > 0) {
     return (
       <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)]">
         <section className="flex min-h-full flex-col rounded-[22px] bg-[var(--primary)] p-6 text-[var(--primary-foreground)] sm:p-7">
           <CardTitleWithHint
-            title={locale === "ko-KR" ? "30초 안에 자연스럽게 인사해 보세요" : "用 30 秒完成一次自然的初次见面"}
+            title={node.title[locale]}
             description={String(lead[locale] ?? "")}
             headingLevel={4}
             hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
@@ -396,6 +418,20 @@ function ContentRenderer({
 
   return (
     <div className="mt-8 space-y-10">
+      {imageAssets.length > 0 && (
+        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4">
+          {imageAssets.map((asset) => (
+            <div key={asset.id} className="flex items-start gap-3 text-sm leading-6 text-[var(--foreground-secondary)]">
+              <BookOpen size={18} className="mt-0.5 shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
+              <span>
+                <strong className="text-[var(--foreground)]">{asset.purpose}</strong>
+                {` · ${asset.status === "ready" ? "已完成" : "待制作"}`}
+                {String(asset.altText[locale] ?? "") ? ` · ${asset.altText[locale]}` : ""}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
       {String(lead[locale] ?? "") && (
         <p className="max-w-3xl text-[17px] leading-8 text-slate-600">
           {String(lead[locale])}
@@ -477,6 +513,42 @@ function ContentRenderer({
         </div>
       )}
 
+      {grammarCards.length > 0 && (
+        <div className="grid gap-5 xl:grid-cols-3">
+          {grammarCards.map((card, index) => {
+            const examples = Array.isArray(card.examples) ? card.examples.map(objectValue) : [];
+            return (
+              <section key={`${String(card.form)}-${index}`} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-5">
+                <h4 className="text-lg font-bold text-[var(--foreground)]">{String(card.form)}</h4>
+                <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
+                  {String(objectValue(card.function)[locale] ?? "")}
+                </p>
+                <ul className="mt-4 space-y-2 text-sm leading-6 text-[var(--foreground)]">
+                  {stringArray(card.rules).map((rule) => <li key={rule}>· {rule}</li>)}
+                </ul>
+                <div className="mt-4 space-y-3 border-t border-[var(--border-subtle)] pt-4">
+                  {examples.map((example) => (
+                    <div key={String(example.ko)}>
+                      <p className="font-semibold text-[var(--foreground)]">{String(example.ko)}</p>
+                      {showChinese && <p className="text-xs leading-5 text-[var(--foreground-secondary)]">{String(example.zh)}</p>}
+                      <p className="mt-1 text-[11px] font-semibold text-[var(--foreground-muted)]">
+                        {String(example.audioStatus) === "ready" ? "例句音频已完成" : "例句音频待制作"}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-4 rounded-xl bg-[var(--surface-soft)] px-3 py-3 text-xs leading-5 text-[var(--foreground-secondary)]">
+                  {String(objectValue(card.caution)[locale] ?? "")}
+                </p>
+                <p className="mt-3 text-[11px] leading-5 text-[var(--foreground-muted)]">
+                  {String(objectValue(card.source)[locale] ?? "")}
+                </p>
+              </section>
+            );
+          })}
+        </div>
+      )}
+
       {contrast.length > 0 && (
         <div className="flex flex-wrap gap-x-8 gap-y-3 border-y border-slate-200 py-5">
           {contrast.map((item) => (
@@ -513,6 +585,35 @@ function ContentRenderer({
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {dialogueScenes.length > 0 && (
+        <div className="space-y-8">
+          {dialogueScenes.map((scene, sceneIndex) => {
+            const lines = Array.isArray(scene.lines) ? scene.lines.map(objectValue) : [];
+            return (
+              <section key={`${String(scene.title)}-${sceneIndex}`}>
+                <CardTitleWithHint
+                  title={String(scene.title)}
+                  description={String(objectValue(scene.context)[locale] ?? "")}
+                  headingLevel={4}
+                  hintLabel={locale === "ko-KR" ? "장면 설명 보기" : "查看场景说明"}
+                  titleClassName="text-lg font-bold text-[var(--foreground)]"
+                />
+                <div className="mt-3 border-y border-[var(--border-subtle)]">
+                  {lines.map((line, index) => (
+                    <div key={`${String(line.speaker)}-${index}`} className="grid grid-cols-[52px_minmax(0,1fr)] gap-3 border-b border-[var(--border-subtle)] py-4 last:border-b-0 sm:grid-cols-[72px_minmax(0,1fr)_minmax(0,.8fr)]">
+                      <span className="text-xs font-bold text-[var(--support)]">{String(line.speaker)}</span>
+                      <span className="font-medium leading-7 text-[var(--foreground)]">{String(line.ko)}</span>
+                      {showChinese && <span className="col-start-2 text-sm leading-6 text-[var(--foreground-secondary)] sm:col-start-auto">{String(line.zh)}</span>}
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-xs font-semibold text-[var(--foreground-muted)]">整段与逐句音频均待制作</p>
+              </section>
+            );
+          })}
         </div>
       )}
 
@@ -572,11 +673,12 @@ function RecordingControl({
   onReady,
 }: {
   locale: SmartLocale;
-  onReady: () => void;
+  onReady: (durationSeconds: number) => void;
 }) {
   const t = ui[locale];
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
+  const startedAtRef = useRef(0);
   const [recording, setRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState("");
@@ -605,9 +707,10 @@ function RecordingControl({
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
         setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((track) => track.stop());
-        onReady();
+        onReady(Math.max(1, Math.round((Date.now() - startedAtRef.current) / 1000)));
       };
       recorderRef.current = recorder;
+      startedAtRef.current = Date.now();
       recorder.start();
       setRecording(true);
     } catch {
@@ -637,12 +740,39 @@ function Activity({
   activity: SmartTextbookActivity;
   locale: SmartLocale;
   trackingDisabled: boolean;
-  onCompleted: (activityId: string) => void;
+  onCompleted: (result: {
+    nodeId: string | null;
+    nodeCompleted: boolean;
+    completionPercent: number;
+    preview: boolean;
+  }) => void;
 }) {
   const t = ui[locale];
-  const [answer, setAnswer] = useState<AnswerValue>(() =>
-    activity.type === "multiple_choice" ? [] : activity.type === "ordering" ? activity.options.map((_, index) => index) : ""
-  );
+  const configItems = Array.isArray(activity.config.items)
+    ? activity.config.items.map(objectValue)
+    : [];
+  const groupedSingleChoice =
+    activity.type === "single_choice" && configItems.length > 0;
+  const requiresConfirmation = Boolean(activity.config.readAloudConfirmation);
+  const [answer, setAnswer] = useState<AnswerValue>(() => {
+    if (activity.type === "multiple_choice") return [];
+    if (activity.type === "ordering") return activity.options.map((_, index) => index);
+    if (activity.type === "fill_blank" && configItems.length > 0) {
+      return configItems.map(() => "");
+    }
+    if (groupedSingleChoice) return configItems.map(() => -1);
+    if (requiresConfirmation) return { selection: -1, confirmed: false };
+    if (activity.type === "speaking") {
+      return { recorded: false, durationSeconds: 0, turns: 0, criteria: [] };
+    }
+    if (activity.type === "writing") {
+      return { text: "", informationKinds: [], rubricConfirmed: false };
+    }
+    if (activity.type === "self_check") {
+      return { checks: configItems.map(() => ""), returnNodes: [], note: "" };
+    }
+    return "";
+  });
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [message, setMessage] = useState("");
   const [needsReload, setNeedsReload] = useState(false);
@@ -651,12 +781,48 @@ function Activity({
     activity.type === "listening" && activity.config.audioStatus !== "ready";
 
   function hasResponse() {
-    if (typeof answer === "string") return answer.trim().length > 0;
-    if (Array.isArray(answer)) return answer.length > 0;
-    return typeof answer === "number" || answer === true;
+    if (activity.type === "writing") {
+      return typeof objectValue(answer).text === "string" && String(objectValue(answer).text).trim().length > 0;
+    }
+    if (activity.type === "speaking") {
+      const response = objectValue(answer);
+      return response.recorded === true && typeof response.durationSeconds === "number" && Number.isFinite(response.durationSeconds) && response.durationSeconds > 0;
+    }
+    if (activity.type === "self_check") {
+      const checks = objectValue(answer).checks;
+      const returnNodes = objectValue(answer).returnNodes;
+      return Array.isArray(checks) && checks.length === configItems.length && checks.every((item) => item === "can" || item === "review") && Array.isArray(returnNodes) && returnNodes.length > 0;
+    }
+    if (groupedSingleChoice) {
+      return Array.isArray(answer) && answer.length === configItems.length && answer.every((item, index) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < stringArray(configItems[index]?.options).length);
+    }
+    if (requiresConfirmation) {
+      const response = objectValue(answer);
+      return typeof response.selection === "number" && Number.isInteger(response.selection) && response.selection >= 0 && response.selection < activity.options.length && response.confirmed === true;
+    }
+    if (activity.type === "single_choice" || activity.type === "listening") {
+      return typeof answer === "number" && Number.isInteger(answer) && answer >= 0 && answer < activity.options.length;
+    }
+    if (activity.type === "multiple_choice") {
+      return Array.isArray(answer) && answer.length > 0 && answer.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(answer).size === answer.length;
+    }
+    if (activity.type === "fill_blank") {
+      return typeof answer === "string"
+        ? answer.trim().length > 0
+        : Array.isArray(answer) &&
+            answer.length === configItems.length &&
+            answer.every(
+              (item) => typeof item === "string" && item.trim().length > 0,
+            );
+    }
+    if (activity.type === "ordering") {
+      return Array.isArray(answer) && answer.length === activity.options.length && answer.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(answer).size === activity.options.length;
+    }
+    return false;
   }
 
   function submit() {
+    setFeedback(null);
     if (!hasResponse() || hasPendingAudio) {
       setMessage(hasPendingAudio ? t.audioPending : t.noResponse);
       return;
@@ -667,7 +833,14 @@ function Activity({
       try {
         const result = await submitSmartTextbookActivityAction({ activityId: activity.id, response: answer, locale });
         setFeedback(result);
-        if (result.ok && result.correct !== false) onCompleted(activity.id);
+        if (result.ok) {
+          onCompleted({
+            nodeId: result.nodeId,
+            nodeCompleted: result.nodeCompleted,
+            completionPercent: result.completionPercent,
+            preview: result.preview,
+          });
+        }
       } catch (error) {
         const staleAction = isStaleServerActionError(error);
         setNeedsReload(staleAction);
@@ -676,7 +849,9 @@ function Activity({
     });
   }
 
-  const ordered = activity.type === "ordering" && Array.isArray(answer) ? answer : [];
+  const ordered: number[] = activity.type === "ordering" && Array.isArray(answer)
+    ? answer.map(Number)
+    : [];
   function moveOrder(index: number, direction: -1 | 1) {
     const target = index + direction;
     if (target < 0 || target >= ordered.length) return;
@@ -693,18 +868,67 @@ function Activity({
           <h4 className="text-xl font-bold leading-8 text-[var(--foreground)]">{activity.prompt[locale]}</h4>
           <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{activity.instruction[locale]}</p>
         </div>
-        {feedback?.ok && <span className="shrink-0 text-xs font-bold text-[var(--status-success)]">{t.submitted}</span>}
+        {feedback?.ok && feedback.correct !== false && (
+          <span className="shrink-0 text-xs font-bold text-[var(--status-success)]">
+            {feedback.correct === null ? t.submittedForReview : t.submitted}
+          </span>
+        )}
       </div>
 
-      {(activity.type === "single_choice" || activity.type === "listening") && (
+      {(activity.type === "single_choice" || activity.type === "listening") && !groupedSingleChoice && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
-          {activity.options.map((option, index) => (
-            <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${answer === index ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
+          {activity.options.map((option, index) => {
+            const selected = requiresConfirmation
+              ? Number(objectValue(answer).selection) === index
+              : answer === index;
+            return (
+            <button key={option} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(requiresConfirmation ? { ...objectValue(answer), selection: index } : index); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
               <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span>
               <span className="font-medium text-slate-800">{option}</span>
-              {answer === index ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
+              {selected ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>
-          ))}
+          );})}
+        </div>
+      )}
+
+      {requiresConfirmation && (
+        <label className="mt-4 flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-[var(--card)] px-4 py-3 text-sm font-semibold text-[var(--foreground-secondary)]">
+          <input
+            type="checkbox"
+            checked={objectValue(answer).confirmed === true}
+            onChange={(event) => {
+              setAnswer({ ...objectValue(answer), confirmed: event.target.checked });
+              setFeedback(null);
+            }}
+            className="h-4 w-4"
+          />
+          {String(objectValue(activity.config.readAloudConfirmation).label ?? (locale === "ko-KR" ? "문장 전체를 읽었어요" : "已朗读整句"))}
+        </label>
+      )}
+
+      {groupedSingleChoice && (
+        <div className="mt-6 space-y-6">
+          {configItems.map((item, itemIndex) => {
+            const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
+            const options = stringArray(item.options);
+            return (
+              <fieldset key={String(item.id ?? itemIndex)} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4">
+                <legend className="px-1 text-sm font-bold leading-6 text-[var(--foreground)]">{itemIndex + 1}. {String(item.question)}</legend>
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  {options.map((option, optionIndex) => (
+                    <button key={option} type="button" onClick={() => {
+                      const next = [...selectedAnswers];
+                      next[itemIndex] = optionIndex;
+                      setAnswer(next);
+                      setFeedback(null);
+                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[itemIndex] === optionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
+                      {String.fromCharCode(65 + optionIndex)}. {option}
+                    </button>
+                  ))}
+                </div>
+              </fieldset>
+            );
+          })}
         </div>
       )}
 
@@ -728,16 +952,36 @@ function Activity({
       {activity.type === "multiple_choice" && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
           {activity.options.map((option, index) => {
-            const selected = Array.isArray(answer) && answer.includes(index);
-            return <button key={option} type="button" onClick={() => { const current = Array.isArray(answer) ? answer : []; setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
+            const current = Array.isArray(answer) ? answer.map(Number) : [];
+            const selected = current.includes(index);
+            return <button key={option} type="button" onClick={() => { setAnswer(selected ? current.filter((item) => item !== index) : [...current, index]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
               <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + index)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
             </button>;
           })}
         </div>
       )}
 
-      {activity.type === "fill_blank" && (
+      {activity.type === "fill_blank" && configItems.length === 0 && (
         <input value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" autoComplete="off" aria-label={activity.prompt[locale]} className="mt-6 w-full border-x-0 border-b-2 border-t-0 border-slate-300 bg-transparent px-1 py-4 text-xl font-semibold text-slate-900 outline-none transition focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 쓰세요" />
+      )}
+
+      {activity.type === "fill_blank" && configItems.length > 0 && (
+        <div className="mt-6 grid gap-4">
+          {configItems.map((item, index) => {
+            const values = Array.isArray(answer) ? answer.map(String) : [];
+            return (
+              <label key={String(item.id ?? index)} className="grid gap-2 text-sm font-semibold text-[var(--foreground-secondary)]">
+                <span>{index + 1}. {String(item.label ?? item.prompt ?? "")}</span>
+                <input value={values[index] ?? ""} onChange={(event) => {
+                  const next = [...values];
+                  next[index] = event.target.value;
+                  setAnswer(next);
+                  setFeedback(null);
+                }} lang="ko" autoComplete="off" className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
+              </label>
+            );
+          })}
+        </div>
       )}
 
       {activity.type === "ordering" && (
@@ -757,12 +1001,41 @@ function Activity({
 
       {activity.type === "writing" && (
         <div className="mt-6">
-          <textarea value={typeof answer === "string" ? answer : ""} onChange={(event) => { setAnswer(event.target.value); setFeedback(null); }} lang="ko" rows={5} aria-label={activity.prompt[locale]} className="w-full resize-none border-x-0 border-b-2 border-t border-slate-200 bg-slate-50/50 px-4 py-4 text-[16px] leading-8 text-slate-900 outline-none focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 3~5문장을 쓰세요." />
-          <p className="mt-2 text-right text-xs text-slate-400">{t.writingCount} · {typeof answer === "string" ? answer.length : 0}</p>
+          <textarea value={String(objectValue(answer).text ?? "")} onChange={(event) => { setAnswer({ ...objectValue(answer), text: event.target.value }); setFeedback(null); }} lang="ko" rows={5} aria-label={activity.prompt[locale]} className="w-full resize-none border-x-0 border-b-2 border-t border-slate-200 bg-slate-50/50 px-4 py-4 text-[16px] leading-8 text-slate-900 outline-none focus:border-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2" placeholder="한국어로 4~5문장을 쓰세요." />
+          <p className="mt-2 text-right text-xs text-slate-400">{t.writingCount} · {String(objectValue(answer).text ?? "").length}</p>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {stringArray(activity.config.informationChecklist).map((label, index) => {
+              const selected = asBooleanArray(objectValue(answer).informationKinds);
+              return <label key={label} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-[var(--card)] px-3 py-2 text-sm"><input type="checkbox" checked={selected[index] ?? false} onChange={(event) => { const next = [...selected]; next[index] = event.target.checked; setAnswer({ ...objectValue(answer), informationKinds: next }); setFeedback(null); }} />{label}</label>;
+            })}
+          </div>
+          <label className="mt-3 flex min-h-11 cursor-pointer items-center gap-3 text-sm font-semibold"><input type="checkbox" checked={objectValue(answer).rubricConfirmed === true} onChange={(event) => { setAnswer({ ...objectValue(answer), rubricConfirmed: event.target.checked }); setFeedback(null); }} />{String(activity.config.rubricConfirmation ?? "我已按量规完成自查")}</label>
         </div>
       )}
 
-      {activity.type === "speaking" && <RecordingControl locale={locale} onReady={() => setAnswer(true)} />}
+      {activity.type === "speaking" && (
+        <div>
+          <RecordingControl locale={locale} onReady={(durationSeconds) => setAnswer({ ...objectValue(answer), recorded: true, durationSeconds })} />
+          <label className="mt-3 grid max-w-xs gap-2 text-sm font-semibold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "역할이 바뀐 대화 차례 수" : "双角色交替话轮数"}<input type="number" min={0} max={30} value={Number(objectValue(answer).turns ?? 0)} onChange={(event) => setAnswer({ ...objectValue(answer), turns: Number(event.target.value) })} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3" /></label>
+          <div className="mt-4 grid gap-2 sm:grid-cols-2">
+            {stringArray(activity.config.criteria).map((label, index) => {
+              const selected = asBooleanArray(objectValue(answer).criteria);
+              return <label key={label} className="flex min-h-11 cursor-pointer items-center gap-3 rounded-xl bg-[var(--card)] px-3 py-2 text-sm"><input type="checkbox" checked={selected[index] ?? false} onChange={(event) => { const next = [...selected]; next[index] = event.target.checked; setAnswer({ ...objectValue(answer), criteria: next }); setFeedback(null); }} />{label}</label>;
+            })}
+          </div>
+        </div>
+      )}
+
+      {activity.type === "self_check" && (
+        <div className="mt-6 space-y-5">
+          {configItems.map((item, index) => {
+            const current = stringArray(objectValue(answer).checks);
+            return <fieldset key={String(item.id ?? index)}><legend className="text-sm font-bold leading-6">{String(item.label)}</legend><div className="mt-2 flex flex-wrap gap-2">{[["can", "能独立完成／혼자 할 수 있어요"], ["review", "需要复习／복습이 필요해요"]].map(([value, label]) => <button key={value} type="button" onClick={() => { const next = [...current]; next[index] = value; setAnswer({ ...objectValue(answer), checks: next }); setFeedback(null); }} className={`min-h-11 rounded-xl border px-3 py-2 text-sm ${current[index] === value ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)]"}`}>{label}</button>)}</div></fieldset>;
+          })}
+          <fieldset><legend className="text-sm font-bold">{locale === "ko-KR" ? "다음 복습 위치" : "下一步复习位置"}</legend><div className="mt-2 flex flex-wrap gap-2">{(Array.isArray(activity.config.returnNodes) ? activity.config.returnNodes.map(objectValue) : []).map((item) => { const selected = stringArray(objectValue(answer).returnNodes); const value = String(item.value); return <button key={value} type="button" onClick={() => { const next = value === "none" ? ["none"] : selected.includes(value) ? selected.filter((entry) => entry !== value) : [...selected.filter((entry) => entry !== "none"), value]; setAnswer({ ...objectValue(answer), returnNodes: next }); setFeedback(null); }} className={`min-h-11 rounded-xl border px-3 py-2 text-sm ${selected.includes(value) ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)]"}`}>{String(item.label)}</button>; })}</div></fieldset>
+          <label className="grid gap-2 text-sm font-semibold">{locale === "ko-KR" ? "복습 메모 (선택)" : "个人复习备注（可选）"}<textarea rows={2} value={String(objectValue(answer).note ?? "")} onChange={(event) => setAnswer({ ...objectValue(answer), note: event.target.value })} className="rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] p-3" /></label>
+        </div>
+      )}
 
       {hasPendingAudio && (
         <div className="mt-6 flex items-start gap-3 bg-[var(--accent)] px-5 py-4 text-sm leading-6 text-[var(--support)]">
@@ -774,7 +1047,7 @@ function Activity({
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
           {message && (
-            <div className="flex flex-wrap items-center gap-3 text-sm text-[var(--destructive)]">
+            <div role="alert" className="flex flex-wrap items-center gap-3 text-sm text-[var(--destructive)]">
               <span>{message}</span>
               {needsReload && (
                 <button
@@ -788,12 +1061,12 @@ function Activity({
             </div>
           )}
           {feedback && (
-            <div className={`flex items-start gap-2 text-sm leading-6 ${feedback.correct === false ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
-              {feedback.correct === false ? <RotateCcw size={16} className="mt-1 shrink-0" /> : <CheckCircle2 size={16} className="mt-1 shrink-0" />}
+            <div role={!feedback.ok ? "alert" : undefined} className={`flex items-start gap-2 text-sm leading-6 ${!feedback.ok || feedback.correct === false ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+              {!feedback.ok || feedback.correct === false ? <RotateCcw size={16} className="mt-1 shrink-0" aria-hidden="true" /> : <CheckCircle2 size={16} className="mt-1 shrink-0" aria-hidden="true" />}
               <span>
-                <strong>{activity.type === "speaking" ? t.submitted : feedback.correct === false ? t.retry : t.correct}</strong>
+                <strong>{!feedback.ok ? t.submitFailed : feedback.correct === false ? t.retry : feedback.correct === null ? t.submittedForReview : t.correct}</strong>
                 {" · "}
-                {activity.type === "speaking" ? t.speakingPracticeComplete : feedback.explanation}
+                {feedback.explanation}
                 {feedback.preview || trackingDisabled ? ` · ${t.preview}` : ""}
               </span>
             </div>
@@ -816,7 +1089,17 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [pathCollapsed, setPathCollapsed] = useState(false);
   const [assistantCollapsed, setAssistantCollapsed] = useState(true);
   const [mobilePanel, setMobilePanel] = useState<"path" | "assistant" | null>(null);
-  const [completedActivities, setCompletedActivities] = useState<Set<string>>(new Set());
+  const [completedNodeIds, setCompletedNodeIds] = useState<Set<string>>(
+    () =>
+      new Set(
+        textbook.progress
+          .filter(
+            (item) =>
+              item.status === "completed" && item.completionPercent === 100,
+          )
+          .map((item) => item.nodeId),
+      ),
+  );
   const [tutorText, setTutorText] = useState("");
   const [tutorInput, setTutorInput] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -832,15 +1115,22 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     : `第 ${textbook.chapter.number} 章`;
   const sidebarLabel = textbook.chapter.number === 1 ? "章节地图" : "章节概览";
 
-  const completedNodeIds = useMemo(() => new Set(textbook.progress.filter((item) => item.status === "completed").map((item) => item.nodeId)), [textbook.progress]);
+  function recordCompletion(result: {
+    nodeId: string | null;
+    nodeCompleted: boolean;
+    completionPercent: number;
+    preview: boolean;
+  }) {
+    if (isServerConfirmedNodeCompletion(result)) {
+      const completedNodeId = result.nodeId;
+      setCompletedNodeIds((current) => new Set(current).add(completedNodeId));
+    }
+  }
+
   const moduleDone = (moduleIndex: number) => {
-    const currentModule = textbook.modules[moduleIndex];
-    if (!currentModule) return false;
-    return currentModule.nodes.every(
-      (node) =>
-        completedNodeIds.has(node.id) ||
-        (node.activities.length > 0 &&
-          node.activities.every((activity) => completedActivities.has(activity.id))),
+    return isSmartTextbookModuleCompleted(
+      textbook.modules[moduleIndex],
+      completedNodeIds,
     );
   };
   const completeCount = textbook.modules.filter((_, index) => moduleDone(index)).length;
@@ -868,7 +1158,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           locale: nextLocale,
           supportMode: nextSupport,
         });
-        if (!result.ok) setPreferenceError(result.message);
+        if (!result.ok) {
+          setLocale(previousLocale);
+          setSupportMode(previousSupportMode);
+          setPreferenceError(result.message);
+        }
       } catch (error) {
         setLocale(previousLocale);
         setSupportMode(previousSupportMode);
@@ -1079,18 +1373,20 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     </span>
                     <div className={`min-w-0 rounded-xl border px-2.5 py-2.5 transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] bg-[var(--card)]"}`}>
                       <div className="flex items-start justify-between gap-2">
-                        <p className="min-w-0 text-xs font-bold leading-5 text-[var(--foreground)]">
-                          {knowledgeTitle}
-                        </p>
+                        <CardTitleWithHint
+                          title={knowledgeTitle}
+                          description={knowledgeSummary}
+                          headingLevel={3}
+                          titleClassName="min-w-0 text-xs font-bold leading-5 text-[var(--foreground)]"
+                          hintClassName="-mt-1 h-6 w-6"
+                          hintLabel={locale === "ko-KR" ? `${knowledgeTitle} 상세 설명` : `查看${knowledgeTitle}说明`}
+                        />
                         {active && (
                           <span className="shrink-0 rounded-full bg-[var(--card)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--primary)]">
                             {locale === "ko-KR" ? "현재 학습" : "正在学习"}
                           </span>
                         )}
                       </div>
-                      <p className="mt-1 text-[10px] leading-4 text-[var(--foreground-secondary)]">
-                        {knowledgeSummary}
-                      </p>
                     </div>
                   </li>
                 );
@@ -1332,7 +1628,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   <p className="mb-2 text-xs font-bold text-slate-400">{t.interfaceLanguage}</p>
                   <div className="grid grid-cols-2 gap-2">
                     {(["zh-CN", "ko-KR"] as SmartLocale[]).map((item) => (
-                      <button key={item} type="button" onClick={() => savePreference(item, supportMode)} className={`rounded-xl px-3 py-2 text-sm font-bold ${locale === item ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
+                      <button key={item} type="button" disabled={isPending} onClick={() => savePreference(item, supportMode)} className={`rounded-xl px-3 py-2 text-sm font-bold disabled:cursor-not-allowed disabled:opacity-50 ${locale === item ? "bg-slate-900 text-white" : "bg-slate-100 text-slate-600"}`}>
                         {item === "zh-CN" ? "中文" : "한국어"}
                       </button>
                     ))}
@@ -1340,14 +1636,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   <p className="mb-2 mt-5 text-xs font-bold text-slate-400">{t.supportMode}</p>
                   <div className="space-y-1">
                     {(["chinese", "bilingual", "immersion"] as SmartSupportMode[]).map((item) => (
-                      <button key={item} type="button" onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold ${supportMode === item ? "bg-[var(--accent)] text-[var(--primary)]" : "text-slate-600 hover:bg-slate-50"}`}>
+                      <button key={item} type="button" disabled={isPending} onClick={() => savePreference(locale, item)} className={`flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50 ${supportMode === item ? "bg-[var(--accent)] text-[var(--primary)]" : "text-slate-600 hover:bg-slate-50"}`}>
                         <span>{t[item]}</span>{supportMode === item && <Check size={15} />}
                       </button>
                     ))}
                   </div>
                   {isPending && <p className="mt-3 text-xs text-slate-400">{t.saved}…</p>}
                   {preferenceError && (
-                    <div className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[var(--destructive)]/5 px-3 py-2.5 text-xs font-semibold text-[var(--destructive)]">
+                    <div role="alert" className="mt-3 flex items-center justify-between gap-3 rounded-xl bg-[var(--destructive)]/5 px-3 py-2.5 text-xs font-semibold text-[var(--destructive)]">
                       <span>{preferenceError}</span>
                       {preferenceNeedsReload && (
                         <button
@@ -1394,7 +1690,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     activity={activity}
                     locale={locale}
                     trackingDisabled={trackingDisabled}
-                    onCompleted={(id) => setCompletedActivities((current) => new Set(current).add(id))}
+                    onCompleted={recordCompletion}
                   />
                 ))}
               </>
@@ -1425,8 +1721,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
               <div>
                 <p className="text-xs font-bold tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
-                <h2 className="mt-3 text-2xl font-bold tracking-[-.04em] text-[var(--foreground)] sm:text-[34px]">{localize(activeModule.title)}</h2>
-                <p className="mt-3 max-w-2xl text-[15px] leading-7 text-[var(--foreground-secondary)] sm:text-[16px]">{localize(activeModule.description)}</p>
+                <CardTitleWithHint
+                  title={localize(activeModule.title)}
+                  description={localize(activeModule.description)}
+                  headingLevel={2}
+                  className="mt-3"
+                  titleClassName="text-2xl font-bold tracking-[-.04em] text-[var(--foreground)] sm:text-[34px]"
+                  hintClassName="mt-1"
+                  hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
+                />
               </div>
               <div className="flex shrink-0 items-center gap-2 rounded-full bg-[var(--surface-soft)] px-3 py-2 text-xs font-semibold text-[var(--foreground-muted)] sm:pt-2">
                 <Clock3 size={15} /> {activeNodes.reduce((total, node) => total + node.minutes, 0)} {t.minutes}
@@ -1440,7 +1743,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 </div>
                 <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
                 {node.activities.map((activity) => (
-                  <Activity key={activity.id} activity={activity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={(id) => setCompletedActivities((current) => new Set(current).add(id))} />
+                  <Activity key={activity.id} activity={activity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={recordCompletion} />
                 ))}
               </article>
             ))}
@@ -1462,7 +1765,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           </button>
           {renderBottomPathNavigation()}
           {isLastModule ? (
-            chapterTestHref ? (
+            chapterTestHref && progressPercent >= 100 ? (
               <Link href={chapterTestHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
                 {t.chapterTest} <ChevronRight size={18} />
               </Link>
@@ -1472,7 +1775,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               </Link>
             ) : (
               <button type="button" disabled className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-slate-200 px-3.5 py-2.5 text-xs font-bold text-slate-400 sm:px-5 sm:text-sm">
-                {completionHref ? "完成本章后解锁" : t.testUnavailable}
+                {chapterTestHref ? "完成八个学习节点后解锁" : completionHref ? "完成本章后解锁" : t.testUnavailable}
               </button>
             )
           ) : (

@@ -15,7 +15,7 @@ import { isPlatformTenantManagerRole } from "@/lib/admin";
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import {
   getUnlockedKoreanTestSlugs,
-  isKoreanEbookCompleted,
+  isKoreanChapterLearningCompleted,
 } from "@/lib/korean-learning-unlocks";
 import type { CourseTestRow } from "@/lib/korean-chapter-tests";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
@@ -36,6 +36,7 @@ type EbookProgressRow = {
   reading_seconds: number;
   read_pages: number[];
   total_pages: number;
+  completion_source: string | null;
 };
 
 const levelOneUnits = [
@@ -125,7 +126,7 @@ export default async function KoreanAssignmentTestsPage() {
           withStudentAppSchemaFallback(
             admin
               .from("course_ebook_progress")
-              .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+              .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
               .eq("student_id", user.id)
               .eq("tenant_id", tenant?.id ?? "")
               .eq("student_app_id", STUDENT_APP_IDS.korean)
@@ -136,7 +137,7 @@ export default async function KoreanAssignmentTestsPage() {
             () =>
               admin
                 .from("course_ebook_progress")
-                .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+                .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
                 .eq("student_id", user.id)
                 .eq("tenant_id", tenant?.id ?? "")
                 .in(
@@ -172,11 +173,12 @@ export default async function KoreanAssignmentTestsPage() {
     passedAttemptByTestSlug.keys(),
     ((ebookProgressData ?? []) as EbookProgressRow[])
       .filter((progress) =>
-        isKoreanEbookCompleted({
+        isKoreanChapterLearningCompleted({
           progressPercent: progress.progress_percent,
           readingSeconds: progress.reading_seconds,
           readPages: progress.read_pages,
           totalPages: progress.total_pages,
+          completionSource: progress.completion_source,
         })
       )
       .map((progress) => progress.test_slug),

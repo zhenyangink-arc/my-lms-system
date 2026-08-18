@@ -11,7 +11,7 @@ import {
 } from "@/lib/korean-chapter-tests";
 import {
   getUnlockedKoreanTestSlugs,
-  isKoreanEbookCompleted,
+  isKoreanChapterLearningCompleted,
 } from "@/lib/korean-learning-unlocks";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -366,7 +366,7 @@ export async function submitKoreanChapterTestAction(input: {
         .eq("tenant_id", tenant.id),
       admin
         .from("course_ebook_progress")
-        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+        .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
         .eq("student_id", user.id)
         .eq("tenant_id", tenant.id)
         .eq("student_app_id", STUDENT_APP_IDS.korean),
@@ -374,30 +374,33 @@ export async function submitKoreanChapterTestAction(input: {
   const passedSlugs = (attemptData ?? [])
     .filter((attempt) => attempt.passed)
     .map((attempt) => String(attempt.test_slug));
-  const completedEbookSlugs = (ebookProgressData ?? [])
+  const completedLearningSlugs = (ebookProgressData ?? [])
     .filter((progress) =>
-      isKoreanEbookCompleted({
+      isKoreanChapterLearningCompleted({
         progressPercent: Number(progress.progress_percent),
         readingSeconds: Number(progress.reading_seconds),
         readPages: Array.isArray(progress.read_pages)
           ? progress.read_pages.map(Number)
           : [],
         totalPages: Number(progress.total_pages),
+        completionSource: progress.completion_source
+          ? String(progress.completion_source)
+          : null,
       })
     )
     .map((progress) => String(progress.test_slug));
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
     passedSlugs,
-    completedEbookSlugs,
+    completedLearningSlugs,
   );
 
   if (!unlockedTestSlugs.has(testSlug)) {
-    const currentEbookIsComplete = completedEbookSlugs.includes(testSlug);
+    const currentChapterIsComplete = completedLearningSlugs.includes(testSlug);
     return {
       status: "error",
       message:
-        !currentEbookIsComplete
-          ? "请先学完本章电子书，再开始章节测试。"
+        !currentChapterIsComplete
+          ? "请先完成本章电子书或智能教材，再开始章节测试。"
           : "请先通过前面章节的测试，再开始本章测试。",
     };
   }

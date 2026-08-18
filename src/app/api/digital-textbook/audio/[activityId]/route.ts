@@ -91,11 +91,11 @@ export async function GET(
   const admin = createAdminClient();
   const { data: secret } = await admin
     .from("digital_textbook_activity_secrets")
-    .select("audio_object_key")
+    .select("audio_object_key,audio_status")
     .eq("activity_id", activity.id)
     .maybeSingle();
 
-  if (!secret?.audio_object_key) {
+  if (!secret?.audio_object_key || secret.audio_status !== "ready") {
     return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
   }
 

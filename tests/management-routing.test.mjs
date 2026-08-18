@@ -618,10 +618,12 @@ test("精研课程使用独立讲解链接并保留租户内学习入口", () =>
     ),
     true,
   );
+  assert.match(workbenchSource, /\{courseTitle\}/);
   assert.match(
     workbenchSource,
-    /精研课程 · \{courseEyebrow\} · \{courseTitle\}/,
+    /第 \{String\(chapterNumber\)\.padStart\(2, "0"\)\} 章 · \{chapterTitle\}/,
   );
+  assert.doesNotMatch(workbenchSource, /精研课程 ·/);
   assert.match(
     workbenchSource,
     /const \[isFullscreen, setIsFullscreen\] = useState\(false\)/,

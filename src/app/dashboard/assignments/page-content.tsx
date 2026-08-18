@@ -4,7 +4,7 @@ import { ArrowRight } from "lucide-react";
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import {
   getUnlockedKoreanTestSlugs,
-  isKoreanEbookCompleted,
+  isKoreanChapterLearningCompleted,
   KOREAN_TEST_SEQUENCE,
 } from "@/lib/korean-learning-unlocks";
 import type { CourseTestRow } from "@/lib/korean-chapter-tests";
@@ -73,6 +73,7 @@ type EbookProgressRow = {
   reading_seconds: number;
   read_pages: number[];
   total_pages: number;
+  completion_source: string | null;
 };
 
 function getLatestSubmissions(submissions: SubmissionRow[]) {
@@ -181,14 +182,14 @@ export default async function AssignmentsPage({
       withStudentAppSchemaFallback(
         admin
           .from("course_ebook_progress")
-          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+          .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
           .eq("student_id", user.id)
           .eq("tenant_id", tenant?.id ?? "")
           .eq("student_app_id", STUDENT_APP_IDS.korean),
         () =>
           admin
             .from("course_ebook_progress")
-            .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages")
+            .select("test_slug,progress_percent,reading_seconds,read_pages,total_pages,completion_source")
             .eq("student_id", user.id)
             .eq("tenant_id", tenant?.id ?? ""),
       ),
@@ -205,13 +206,14 @@ export default async function AssignmentsPage({
       progress,
     ]),
   );
-  const completedEbookSlugs = [...ebookProgressBySlug.entries()]
+  const completedLearningSlugs = [...ebookProgressBySlug.entries()]
     .filter(([, progress]) =>
-      isKoreanEbookCompleted({
+      isKoreanChapterLearningCompleted({
         progressPercent: progress.progress_percent,
         readingSeconds: progress.reading_seconds,
         readPages: progress.read_pages,
         totalPages: progress.total_pages,
+        completionSource: progress.completion_source,
       })
     )
     .map(([slug]) => slug);
@@ -241,7 +243,7 @@ export default async function AssignmentsPage({
   }
   const unlockedTestSlugs = getUnlockedKoreanTestSlugs(
     passedAttemptBySlug.keys(),
-    completedEbookSlugs,
+    completedLearningSlugs,
   );
   const questionCountByTestId = new Map<string, number>();
   for (const question of chapterQuestionsResult.data ?? []) {
@@ -276,7 +278,7 @@ export default async function AssignmentsPage({
       const prerequisitePassed =
         sequenceIndex <= 0 ||
         passedAttemptBySlug.has(KOREAN_TEST_SEQUENCE[sequenceIndex - 1]);
-      const ebookCompleted = completedEbookSlugs.includes(test.slug);
+      const chapterLearningCompleted = completedLearningSlugs.includes(test.slug);
       const ebookProgressPercent = Math.min(
         100,
         Math.max(
@@ -285,10 +287,10 @@ export default async function AssignmentsPage({
         ),
       );
       const unlockRequirement = !unlocked
-        ? !ebookCompleted && !prerequisitePassed && prerequisite
-          ? `先通过上一章「${prerequisite.title}」的测试，并学完本章电子书后解锁`
-          : !ebookCompleted
-            ? "学完本章电子书后解锁"
+        ? !chapterLearningCompleted && !prerequisitePassed && prerequisite
+          ? `先通过上一章「${prerequisite.title}」的测试，并完成本章电子书或智能教材后解锁`
+          : !chapterLearningCompleted
+            ? "完成本章电子书或智能教材后解锁"
             : prerequisite
               ? `通过上一章「${prerequisite.title}」的章节测试后解锁`
               : "完成本章学习后解锁"
