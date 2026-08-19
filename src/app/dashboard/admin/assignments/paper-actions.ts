@@ -26,8 +26,12 @@ function isUuid(value: string) {
   );
 }
 
-function friendlyDatabaseError(message: string | undefined, fallback: string) {
-  if (message && message.length <= 240 && /[\u3400-\u9fff]/u.test(message)) {
+function friendlyDatabaseError(
+  message: string | undefined,
+  fallback: string,
+  maxLength = 240
+) {
+  if (message && message.length <= maxLength && /[\u3400-\u9fff]/u.test(message)) {
     return message;
   }
   return fallback;
@@ -48,11 +52,54 @@ function refreshPaperPages(type?: string, assignmentId?: string) {
   revalidateDashboard("/dashboard/admin/assignments/homework");
   revalidateDashboard("/dashboard/admin/assignments/exam");
   revalidateDashboard("/dashboard/assignments");
+  revalidateDashboard(
+    "/dashboard/admin/apps/[appSlug]/assessments",
+    "page"
+  );
   if (type) revalidateDashboard(`/dashboard/admin/assignments/${type}`);
   if (assignmentId) {
     revalidateDashboard(`/dashboard/admin/assignments/${assignmentId}`);
     revalidateDashboard(`/dashboard/assignments/${assignmentId}`);
   }
+}
+
+export async function publishAssessmentPaperBatchAction(
+  _previousState: LearningAssignmentActionState,
+  formData: FormData
+): Promise<LearningAssignmentActionState> {
+  void _previousState;
+  const paperIds = formData.getAll("paper_ids").map(String);
+  if (
+    paperIds.length < 1 ||
+    paperIds.length > 100 ||
+    new Set(paperIds).size !== paperIds.length ||
+    paperIds.some((paperId) => !isUuid(paperId))
+  ) {
+    return result("error", "批量发布的试卷清单不正确，请刷新页面后重试。");
+  }
+
+  const { supabase, canReleasePapers } = await requireAssessmentPaperManager();
+  if (!canReleasePapers) {
+    return result("error", "只有平台负责人可以批量发布标准试卷。");
+  }
+
+  const { data, error } = await supabase.rpc(
+    "publish_assessment_paper_batch",
+    { p_paper_ids: paperIds }
+  );
+  if (error || typeof data !== "number") {
+    return result(
+      "error",
+      friendlyDatabaseError(
+        error?.message,
+        "批量发布失败，所有试卷均保持原状态，请检查质检结果后重试。",
+        1000
+      )
+    );
+  }
+
+  refreshPaperPages();
+  return result("success", `已向机构发布 ${data} 套标准试卷。`);
 }
 
 export async function createAssessmentPaperAction(
@@ -254,6 +301,46 @@ export async function publishAssessmentPaperAction(
     String(formData.get("starts_at") ?? "")
   );
   const dueAt = parseKoreanDateTime(String(formData.get("due_at") ?? ""));
+  const allowLateSubmission =
+    fixedType === "exam" && formData.get("allow_late_submission") === "on";
+  const maxAttemptsValue = String(formData.get("max_attempts") ?? "").trim();
+  const maxAttempts =
+    fixedType === "exam" && maxAttemptsValue
+      ? Number(maxAttemptsValue)
+      : null;
+  const shuffleQuestions =
+    fixedType === "exam" && formData.get("shuffle_questions") === "on";
+  const shuffleOptions =
+    fixedType === "exam" && formData.get("shuffle_options") === "on";
+  const gradeReleaseAt =
+    fixedType === "exam"
+      ? parseKoreanDateTime(
+          String(formData.get("grade_release_at") ?? "")
+        )
+      : null;
+  const retakePaperId =
+    fixedType === "exam"
+      ? String(formData.get("retake_paper_id") ?? "").trim()
+      : "";
+  const retakeStudentIds = formData
+    .getAll("retake_student_ids")
+    .map(String);
+  const retakeStartsAt = retakePaperId
+    ? parseKoreanDateTime(String(formData.get("retake_starts_at") ?? ""))
+    : null;
+  const retakeDueAt = retakePaperId
+    ? parseKoreanDateTime(String(formData.get("retake_due_at") ?? ""))
+    : null;
+  const retakeScorePolicy = retakePaperId
+    ? String(formData.get("retake_score_policy") ?? "")
+    : null;
+  const retakeOriginalWeightValue = String(
+    formData.get("retake_original_weight_percent") ?? ""
+  ).trim();
+  const retakeOriginalWeightPercent =
+    retakePaperId && retakeScorePolicy === "weighted"
+      ? Number(retakeOriginalWeightValue)
+      : null;
   const institutionNote = String(
     formData.get("institution_note") ?? ""
   ).trim();
@@ -276,6 +363,59 @@ export async function publishAssessmentPaperAction(
   }
   if (!startsAt || !dueAt || dueAt.getTime() <= startsAt.getTime()) {
     return result("error", "截止时间必须晚于开始时间。");
+  }
+  if (
+    fixedType === "exam" &&
+    (!Number.isInteger(maxAttempts) ||
+      (maxAttempts ?? 0) < 1 ||
+      (maxAttempts ?? 0) > 10)
+  ) {
+    return result("error", "允许提交次数需要填写 1 至 10 次。");
+  }
+  if (
+    fixedType === "exam" &&
+    (!gradeReleaseAt || gradeReleaseAt.getTime() < dueAt.getTime())
+  ) {
+    return result("error", "成绩公开时间不能早于提交截止时间。");
+  }
+  if (retakePaperId && !isUuid(retakePaperId)) {
+    return result("error", "请选择有效的补考卷。");
+  }
+  if (
+    retakeStudentIds.some((studentId) => !isUuid(studentId)) ||
+    new Set(retakeStudentIds).size !== retakeStudentIds.length
+  ) {
+    return result("error", "补考学生名单不正确，请重新选择。");
+  }
+  if (retakePaperId && retakeStudentIds.length === 0) {
+    return result("error", "启用补考时请至少选择一名补考学生。");
+  }
+  if (
+    retakePaperId &&
+    (!retakeStartsAt ||
+      !retakeDueAt ||
+      retakeStartsAt.getTime() < dueAt.getTime() ||
+      retakeDueAt.getTime() <= retakeStartsAt.getTime())
+  ) {
+    return result(
+      "error",
+      "补考开始时间不能早于首次截止时间，且补考截止时间必须晚于开始时间。"
+    );
+  }
+  if (
+    retakePaperId &&
+    !["highest", "latest", "weighted"].includes(retakeScorePolicy ?? "")
+  ) {
+    return result("error", "请选择有效的补考成绩采用规则。");
+  }
+  if (
+    retakePaperId &&
+    retakeScorePolicy === "weighted" &&
+    (!Number.isInteger(retakeOriginalWeightPercent) ||
+      (retakeOriginalWeightPercent ?? 0) < 1 ||
+      (retakeOriginalWeightPercent ?? 0) > 99)
+  ) {
+    return result("error", "首次成绩占比需要填写 1 至 99。");
   }
   if (institutionNote.length > 2000) {
     return result("error", "机构通知不能超过 2000 个字。");
@@ -313,6 +453,17 @@ export async function publishAssessmentPaperAction(
       p_due_days_after_unlock: unlockAfterChapterCompletion
         ? dueDaysAfterUnlock
         : null,
+      p_allow_late_submission: allowLateSubmission,
+      p_max_attempts: maxAttempts,
+      p_shuffle_questions: shuffleQuestions,
+      p_shuffle_options: shuffleOptions,
+      p_grade_release_at: gradeReleaseAt?.toISOString() ?? null,
+      p_retake_paper_id: retakePaperId || null,
+      p_retake_student_ids: retakePaperId ? retakeStudentIds : [],
+      p_retake_starts_at: retakeStartsAt?.toISOString() ?? null,
+      p_retake_due_at: retakeDueAt?.toISOString() ?? null,
+      p_retake_score_policy: retakeScorePolicy,
+      p_retake_original_weight_percent: retakeOriginalWeightPercent,
     }
   );
 

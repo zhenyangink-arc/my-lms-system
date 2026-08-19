@@ -69,6 +69,12 @@ export function AssessmentPaperReleaseCatalog({
     new Set()
   );
   const [studentQuery, setStudentQuery] = useState("");
+  const [retakePaperId, setRetakePaperId] = useState("");
+  const [retakeStudentIds, setRetakeStudentIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [retakeStudentQuery, setRetakeStudentQuery] = useState("");
+  const [retakeScorePolicy, setRetakeScorePolicy] = useState("highest");
   const boundAction = publishAssessmentPaperAction.bind(null, paperType);
   const [state, formAction, pending] = useActionState(
     boundAction,
@@ -110,6 +116,12 @@ export function AssessmentPaperReleaseCatalog({
         (paperType === "homework" ? 7 * 24 * 60 : 3 * 60) * 60 * 1000
     )
   );
+  const defaultRetakeStart = localDateTimeValue(
+    new Date(now.getTime() + 27 * 60 * 60 * 1000)
+  );
+  const defaultRetakeDue = localDateTimeValue(
+    new Date(now.getTime() + 75 * 60 * 60 * 1000)
+  );
   const filteredStudents = students.filter((student) => {
     const keyword = studentQuery.trim().toLowerCase();
     return (
@@ -119,16 +131,45 @@ export function AssessmentPaperReleaseCatalog({
         .includes(keyword)
     );
   });
+  const eligibleRetakeStudents = students.filter(
+    (student) =>
+      targetScope === "all_students" || selectedStudentIds.has(student.id)
+  );
+  const filteredRetakeStudents = eligibleRetakeStudents.filter((student) => {
+    const keyword = retakeStudentQuery.trim().toLowerCase();
+    return (
+      !keyword ||
+      `${student.name} ${student.email} ${student.tier}`
+        .toLowerCase()
+        .includes(keyword)
+    );
+  });
+  const selectedEligibleRetakeCount = eligibleRetakeStudents.filter((student) =>
+    retakeStudentIds.has(student.id)
+  ).length;
 
   function openPaper(paperId: string) {
     setSelectedPaperId(paperId);
     setTargetScope(canTargetAllStudents ? "all_students" : "selected_students");
     setSelectedStudentIds(new Set());
     setStudentQuery("");
+    setRetakePaperId("");
+    setRetakeStudentIds(new Set());
+    setRetakeStudentQuery("");
+    setRetakeScorePolicy("highest");
   }
 
   function toggleStudent(studentId: string) {
     setSelectedStudentIds((current) => {
+      const next = new Set(current);
+      if (next.has(studentId)) next.delete(studentId);
+      else next.add(studentId);
+      return next;
+    });
+  }
+
+  function toggleRetakeStudent(studentId: string) {
+    setRetakeStudentIds((current) => {
       const next = new Set(current);
       if (next.has(studentId)) next.delete(studentId);
       else next.add(studentId);
@@ -427,7 +468,70 @@ export function AssessmentPaperReleaseCatalog({
                   </table>
                 </section>
 
-                <section>
+                {paperType === "exam" && (
+                  <section className="border-b">
+                    <div className="border-b px-5 py-3">
+                      <h3 className="text-sm font-semibold">考试设置</h3>
+                    </div>
+                    <div className="grid gap-4 px-4 py-4 md:grid-cols-2 xl:grid-cols-4">
+                      <label className="text-[11px] font-bold">
+                        允许提交次数
+                        <input
+                          name="max_attempts"
+                          type="number"
+                          min={1}
+                          max={10}
+                          step={1}
+                          required
+                          defaultValue={selectedPaper.allowResubmission ? 2 : 1}
+                          className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm"
+                        />
+                        <span className="app-muted-text mt-1 block font-normal leading-5">
+                          包含首次提交，最多 10 次。
+                        </span>
+                      </label>
+                      <label className="text-[11px] font-bold">
+                        成绩公开时间
+                        <input
+                          name="grade_release_at"
+                          type="datetime-local"
+                          required
+                          defaultValue={defaultDue}
+                          className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                        />
+                        <span className="app-muted-text mt-1 block font-normal leading-5">
+                          可晚于提交截止时间公开。
+                        </span>
+                      </label>
+                      <label className="flex min-h-11 items-start gap-3 rounded-xl border px-3 py-3 text-xs font-bold">
+                        <input
+                          name="allow_late_submission"
+                          type="checkbox"
+                          className="mt-0.5"
+                        />
+                        <span>
+                          允许迟交
+                          <span className="app-muted-text mt-1 block font-normal leading-5">
+                            截止后仍可提交，直到任务关闭。
+                          </span>
+                        </span>
+                      </label>
+                      <fieldset className="grid gap-2 rounded-xl border px-3 py-3">
+                        <legend className="px-1 text-xs font-bold">随机排列</legend>
+                        <label className="flex min-h-8 items-center gap-2 text-xs font-semibold">
+                          <input name="shuffle_questions" type="checkbox" />
+                          随机排列题目
+                        </label>
+                        <label className="flex min-h-8 items-center gap-2 text-xs font-semibold">
+                          <input name="shuffle_options" type="checkbox" />
+                          随机排列选择题选项
+                        </label>
+                      </fieldset>
+                    </div>
+                  </section>
+                )}
+
+                <section className={paperType === "exam" ? "border-b" : undefined}>
                   <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
                     <h3 className="text-sm font-semibold">指向学生</h3>
                     {canTargetAllStudents && (
@@ -485,6 +589,209 @@ export function AssessmentPaperReleaseCatalog({
                     </div>
                   )}
                 </section>
+
+                {paperType === "exam" && (
+                  <section>
+                    <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
+                      <h3 className="text-sm font-semibold">补考规则</h3>
+                      <label className="inline-flex min-h-11 items-center gap-2 text-xs font-bold">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(retakePaperId)}
+                          onChange={(event) => {
+                            setRetakePaperId(
+                              event.target.checked ? selectedPaper.id : ""
+                            );
+                            if (!event.target.checked) {
+                              setRetakeStudentIds(new Set());
+                            }
+                          }}
+                        />
+                        为本任务设置补考
+                      </label>
+                      {!retakePaperId && (
+                        <span className="app-muted-text text-[11px]">
+                          不设置时，本次考试只有常规提交次数。
+                        </span>
+                      )}
+                    </div>
+                    {retakePaperId && (
+                      <div className="space-y-4 px-4 py-4">
+                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                          <label className="text-[11px] font-bold">
+                            补考卷
+                            <select
+                              name="retake_paper_id"
+                              value={retakePaperId}
+                              onChange={(event) =>
+                                setRetakePaperId(event.target.value)
+                              }
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            >
+                              <option value={selectedPaper.id}>
+                                使用原卷 · {selectedPaper.title}
+                              </option>
+                              {papers
+                                .filter((paper) => paper.id !== selectedPaper.id)
+                                .map((paper) => (
+                                  <option key={paper.id} value={paper.id}>
+                                    补考卷 · {paper.title}（版本 {paper.version}）
+                                  </option>
+                                ))}
+                            </select>
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            补考开始时间
+                            <input
+                              name="retake_starts_at"
+                              type="datetime-local"
+                              required
+                              defaultValue={defaultRetakeStart}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            />
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            补考截止时间
+                            <input
+                              name="retake_due_at"
+                              type="datetime-local"
+                              required
+                              defaultValue={defaultRetakeDue}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            />
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            最终成绩采用规则
+                            <select
+                              name="retake_score_policy"
+                              value={retakeScorePolicy}
+                              onChange={(event) =>
+                                setRetakeScorePolicy(event.target.value)
+                              }
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            >
+                              <option value="highest">首次与补考取最高分</option>
+                              <option value="latest">采用补考最新分</option>
+                              <option value="weighted">首次与补考加权</option>
+                            </select>
+                          </label>
+                        </div>
+
+                        {retakeScorePolicy === "weighted" && (
+                          <label className="block max-w-xs text-[11px] font-bold">
+                            首次成绩占比（%）
+                            <input
+                              name="retake_original_weight_percent"
+                              type="number"
+                              min={1}
+                              max={99}
+                              step={1}
+                              required
+                              defaultValue={50}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm"
+                            />
+                            <span className="app-muted-text mt-1 block font-normal">
+                              补考成绩占比为剩余比例。
+                            </span>
+                          </label>
+                        )}
+
+                        <div className="rounded-xl border">
+                          {eligibleRetakeStudents
+                            .filter((student) => retakeStudentIds.has(student.id))
+                            .map((student) => (
+                              <input
+                                key={`retake-target-${student.id}`}
+                                type="hidden"
+                                name="retake_student_ids"
+                                value={student.id}
+                              />
+                            ))}
+                          <div className="flex flex-wrap items-center gap-3 border-b px-4 py-3">
+                            <strong className="text-xs">补考学生名单</strong>
+                            <span className="app-muted-text text-[11px]">
+                              已选 {selectedEligibleRetakeCount} 人
+                            </span>
+                            <label className="app-input ml-auto flex min-h-11 items-center gap-2 rounded-lg border px-3">
+                              <Search
+                                size={13}
+                                className="app-muted-text"
+                                aria-hidden="true"
+                              />
+                              <span className="sr-only">搜索补考学生</span>
+                              <input
+                                value={retakeStudentQuery}
+                                onChange={(event) =>
+                                  setRetakeStudentQuery(event.target.value)
+                                }
+                                placeholder="搜索补考学生"
+                                className="w-48 bg-transparent py-2 text-xs outline-none"
+                              />
+                            </label>
+                          </div>
+                          <div className="max-h-56 overflow-auto">
+                            <table className="w-full border-collapse text-left">
+                              <thead className="sticky top-0 z-10 bg-[var(--card)]">
+                                <tr className="border-b app-muted-text">
+                                  <th className="w-14 px-4 py-2.5 text-center text-[11px] font-bold">
+                                    选择
+                                  </th>
+                                  <th className="border-l px-4 py-2.5 text-[11px] font-bold">
+                                    学生
+                                  </th>
+                                  <th className="w-56 border-l px-4 py-2.5 text-[11px] font-bold">
+                                    邮箱
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {filteredRetakeStudents.map((student) => (
+                                  <tr
+                                    key={student.id}
+                                    className="cursor-pointer border-b last:border-b-0 hover:bg-[var(--surface-soft)]"
+                                    style={{ borderColor: "var(--border-subtle)" }}
+                                    onClick={() => toggleRetakeStudent(student.id)}
+                                  >
+                                    <td className="px-4 py-3 text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={retakeStudentIds.has(student.id)}
+                                        onChange={() =>
+                                          toggleRetakeStudent(student.id)
+                                        }
+                                        onClick={(event) =>
+                                          event.stopPropagation()
+                                        }
+                                      />
+                                    </td>
+                                    <td className="border-l px-4 py-3 text-xs font-bold">
+                                      {student.name}
+                                    </td>
+                                    <td className="app-muted-text border-l px-4 py-3 text-xs">
+                                      {student.email}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {filteredRetakeStudents.length === 0 && (
+                                  <tr>
+                                    <td
+                                      colSpan={3}
+                                      className="app-muted-text px-5 py-8 text-center text-xs"
+                                    >
+                                      {eligibleRetakeStudents.length === 0
+                                        ? "请先在考试名单中选择学生。"
+                                        : "没有匹配的考试学生。"}
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                )}
               </div>
 
               <div className="border-t px-5 py-4 sm:px-6">
@@ -497,7 +804,7 @@ export function AssessmentPaperReleaseCatalog({
                   <button type="button" onClick={() => setSelectedPaperId("")} disabled={pending} className="app-soft-card rounded-lg border px-4 py-2.5 text-xs font-bold disabled:opacity-50">
                     取消
                   </button>
-                  <button type="submit" disabled={!selectedPaper.quality.ready || pending || (targetScope === "selected_students" && selectedStudentIds.size === 0)} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
+                  <button type="submit" disabled={!selectedPaper.quality.ready || pending || (targetScope === "selected_students" && selectedStudentIds.size === 0) || (Boolean(retakePaperId) && selectedEligibleRetakeCount === 0)} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
                     <Send size={14} />
                     {!selectedPaper.quality.ready
                       ? "质检未通过"

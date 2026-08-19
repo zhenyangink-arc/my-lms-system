@@ -72,6 +72,12 @@ type AssignmentRow = {
   source_paper_code: string | null;
   source_paper_version: number | null;
   institution_note: string;
+  allow_late_submission: boolean;
+  max_attempts: number;
+  shuffle_questions: boolean;
+  shuffle_options: boolean;
+  grade_release_at: string | null;
+  retake_paper_id: string | null;
 };
 
 type SubmissionRow = {
@@ -218,7 +224,7 @@ export async function PaperTypeWorkspace({
       supabase
         .from("learning_assignments")
         .select(
-          "id,title,description,course_id,target_scope,total_points,starts_at,due_at,status,source_paper_code,source_paper_version,institution_note"
+          "id,title,description,course_id,target_scope,total_points,starts_at,due_at,status,source_paper_code,source_paper_version,institution_note,allow_late_submission,max_attempts,shuffle_questions,shuffle_options,grade_release_at,retake_paper_id"
         )
         .eq("assignment_type", paperType)
         .order("created_at", { ascending: false }),
@@ -740,9 +746,21 @@ export async function PaperTypeWorkspace({
                   <tbody>
                     {assignments.map((assignment) => {
                       const assignmentSubmissions = submissionsByAssignment.get(assignment.id) ?? [];
-                      const submittedStudents = new Set(assignmentSubmissions.map((submission) => submission.student_id)).size;
+                      const submittedStudentIds = new Set(assignmentSubmissions.map((submission) => submission.student_id));
+                      const submittedStudents = submittedStudentIds.size;
                       const waiting = assignmentSubmissions.filter((submission) => submission.status === "submitted").length;
                       const targets = targetsByAssignment.get(assignment.id) ?? [];
+                      const expectedStudents = assignment.target_scope === "all_students"
+                        ? students
+                        : targets.map((target) => ({
+                            id: target.student_id,
+                            full_name: studentNameById.get(target.student_id) ?? "未知学生",
+                            email: null,
+                            membership_tier: null,
+                          }));
+                      const unsubmittedStudents = expectedStudents.filter(
+                        (student) => !submittedStudentIds.has(student.id)
+                      );
                       const targetLabel =
                         assignment.target_scope === "all_students"
                           ? "全部学生"
@@ -771,7 +789,22 @@ export async function PaperTypeWorkspace({
                             <p className="app-muted-text"><AssignmentDate value={assignment.due_at} /></p>
                           </td>
                           <td className="border-l px-3 py-3.5 text-center font-mono text-xs tabular-nums">
-                            {submittedStudents} / {waiting}
+                            <p>{submittedStudents} / {waiting}</p>
+                            <details className="mt-1 font-sans text-[11px]">
+                              <summary className="cursor-pointer font-bold text-[var(--support)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
+                                未提交 {unsubmittedStudents.length} 人
+                              </summary>
+                              <ul className="mt-2 max-h-32 space-y-1 overflow-auto text-left app-muted-text">
+                                {unsubmittedStudents.map((student) => (
+                                  <li key={student.id}>
+                                    {student.full_name?.trim() || student.email || "未填写姓名"}
+                                  </li>
+                                ))}
+                                {unsubmittedStudents.length === 0 && (
+                                  <li>当前名单已全部提交</li>
+                                )}
+                              </ul>
+                            </details>
                           </td>
                           <td className="border-l px-3 py-3.5 text-center text-[11px] font-bold">
                             {ASSIGNMENT_STATUS_LABELS[assignment.status]}
