@@ -1,14 +1,14 @@
 ﻿"use server";
 
-import { revalidateDashboard } from "@/lib/revalidate-dashboard";
-
-import { requireActiveUser } from "@/lib/auth";
+import { synchronizeChapterPracticeAfterTextbookPublish } from "@/features/chapter-practice/api/management-service";
 import { requirePlatformOwner } from "@/lib/admin";
+import { requireActiveUser } from "@/lib/auth";
 import {
   assertR2ObjectUpload,
   createR2SignedObjectUrl,
   createR2SignedUploadUrl,
 } from "@/lib/r2";
+import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type ActionResult = { ok: boolean; message?: string };
@@ -238,6 +238,23 @@ export async function publishTextbookChapterAction(
     "/[space]/apps/korean/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]",
     "page",
   );
+
+  try {
+    await synchronizeChapterPracticeAfterTextbookPublish(normalizedChapterId);
+  } catch (practiceError) {
+    console.error("Chapter practice synchronization after textbook publish failed", {
+      chapterId: normalizedChapterId,
+      error:
+        practiceError instanceof Error
+          ? practiceError.message
+          : String(practiceError),
+    });
+  }
+  revalidateDashboard(
+    "/[space]/dashboard/admin/apps/[appSlug]/practice-center",
+    "page",
+  );
+  revalidateDashboard("/[space]/apps/korean/practice/course", "page");
 
   return {
     ok: true,

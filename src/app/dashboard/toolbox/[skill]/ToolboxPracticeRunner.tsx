@@ -178,7 +178,7 @@ export function ToolboxPracticeRunner({
         >
           <CheckCircle2 size={30} aria-hidden="true" />
         </span>
-        <p className="mt-5 text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
+        <p className="mt-5 text-xs font-bold" style={{ color: accent }}>
           练习结果已保存
         </p>
         <h2 className="mt-2 text-2xl font-bold">本次得分 {result.percentage.toFixed(1)}%</h2>
@@ -213,7 +213,7 @@ export function ToolboxPracticeRunner({
       <aside className="space-y-4 xl:sticky xl:top-5">
         {exercise.passage && (
           <section className="app-card rounded-[2rem] border p-5 sm:p-6">
-            <p className="text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
+            <p className="text-xs font-bold" style={{ color: accent }}>
               阅读材料
             </p>
             <h2 className="mt-2 text-lg font-bold">{exercise.passageTitle}</h2>
@@ -247,7 +247,7 @@ export function ToolboxPracticeRunner({
             <Clock3 size={14} aria-hidden="true" />
             有效练习 {formatSeconds(elapsedSeconds)}
           </div>
-          <p className="app-muted-text mt-3 text-[10px] font-bold leading-5">
+          <p className="app-muted-text mt-3 text-xs font-bold leading-5">
             时间只用于学习记录，不直接增加能力分。切换到其他标签页时会暂停。
           </p>
         </section>
@@ -256,12 +256,12 @@ export function ToolboxPracticeRunner({
       <section className="app-card rounded-[2rem] border p-5 sm:p-7">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
-            <p className="text-[10px] font-bold tracking-[0.14em]" style={{ color: accent }}>
+            <p className="text-xs font-bold" style={{ color: accent }}>
               第 {currentIndex + 1} 题 · 共 {questions.length} 题
             </p>
             <h2 className="mt-2 text-xl font-bold leading-8">{currentQuestion.prompt}</h2>
           </div>
-          <span className="rounded-full px-3 py-1.5 text-[10px] font-bold" style={{ color: accent, backgroundColor: soft }}>
+          <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: accent, backgroundColor: soft }}>
             {currentQuestion.maxScore} 分
           </span>
         </div>

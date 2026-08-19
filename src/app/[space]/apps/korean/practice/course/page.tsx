@@ -1,7 +1,10 @@
 import { redirect } from "next/navigation";
 
-import { DeepLearningPage } from "@/app/dashboard/progress/page-content";
-import { getStudentAppPath } from "@/lib/student-apps";
+import { requireActiveUser } from "@/lib/auth";
+import { loadStudentReviewCenter } from "@/features/student-review-center/service";
+import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
+import { getStudentAppBasePath, getStudentAppPath, STUDENT_APP_IDS } from "@/lib/student-apps";
+import { CoursePracticeDirectory } from "./course-practice-directory";
 
 export default async function KoreanCoursePracticePage({
   params,
@@ -27,11 +30,24 @@ export default async function KoreanCoursePracticePage({
     );
   }
 
+  const { supabase, user } = await requireActiveUser();
+  const [courses, reviewResult] = await Promise.all([
+    loadCoursePracticeCatalog({ supabase, userId: user.id }),
+    loadStudentReviewCenter({
+      supabase,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+    }),
+  ]);
+
   return (
-    <DeepLearningPage
-      searchParams={Promise.resolve(query)}
-      forcedArea="knowledge"
-      knowledgeChapterBaseHref={coursePracticePath}
+    <CoursePracticeDirectory
+      courses={courses}
+      baseHref={coursePracticePath}
+      appHref={getStudentAppBasePath(space, "korean")}
+      reviewHref={getStudentAppPath(space, "korean", "practice/review")}
+      skillsHref={getStudentAppPath(space, "korean", "practice/skills")}
+      reviewItems={reviewResult.items}
     />
   );
 }

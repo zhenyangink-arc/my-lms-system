@@ -15,6 +15,7 @@ import {
 } from "@/lib/korean-learning-unlocks";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { refreshStudentPracticeProgressForChapterTest } from "@/features/chapter-practice/student/progress-service";
 
 type QuestionResult = {
   id: string;
@@ -424,6 +425,13 @@ export async function submitKoreanChapterTestAction(input: {
       message: "数据库返回的成绩格式不正确，请联系管理员。",
     };
   }
+
+  await refreshStudentPracticeProgressForChapterTest({
+    supabase,
+    tenantId: tenant.id,
+    studentId: user.id,
+    testSlug,
+  });
 
   revalidateDashboard("/dashboard/assignments");
   revalidateDashboard("/dashboard/assignments/korean");

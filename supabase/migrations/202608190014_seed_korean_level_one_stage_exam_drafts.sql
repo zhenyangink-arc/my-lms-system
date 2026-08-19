@@ -1,5 +1,219 @@
 begin;
 
+-- 远程项目曾在本迁移的前置迁移 008/009 还是旧版内容时完成登记：
+-- 008 未创建 audio_status，009 也未创建本迁移复用的集中质检函数。
+-- 在尚未应用的本迁移中前向补齐这两个缺口，避免改写既有迁移历史。
+alter table public.assessment_paper_questions
+  add column if not exists audio_status text not null default 'not_applicable';
+
+alter table public.assessment_paper_questions
+  drop constraint if exists assessment_paper_questions_audio_status_check;
+
+alter table public.assessment_paper_questions
+  add constraint assessment_paper_questions_audio_status_check
+    check (audio_status in ('not_applicable', 'pending', 'temporary', 'formal'));
+
+comment on column public.assessment_paper_questions.audio_status is
+  '听力快照的音频状态；temporary/pending 不得被误认为正式录音。';
+
+-- 与当前 009 中的权威实现保持一致。新环境中这是幂等替换；发生历史漂移的
+-- 远程环境则由此补建，供下面的阶段卷质检直接复用。
+create or replace function private.assessment_paper_release_issues(
+  p_paper_id uuid
+)
+returns text[]
+language plpgsql
+stable
+security definer
+set search_path = ''
+as $$
+declare
+  v_paper public.assessment_papers%rowtype;
+  v_issues text[] := array[]::text[];
+begin
+  select * into v_paper
+  from public.assessment_papers
+  where id = p_paper_id;
+  if not found then
+    return array['标准试卷不存在'];
+  end if;
+
+  if v_paper.question_count < 1 then
+    v_issues := array_append(v_issues, '试卷没有题目');
+  end if;
+  if v_paper.duration_minutes is null then
+    v_issues := array_append(v_issues, '未设置考试时长');
+  end if;
+  if v_paper.passing_score is null then
+    v_issues := array_append(v_issues, '未设置及格分');
+  end if;
+  if v_paper.allow_resubmission is null then
+    v_issues := array_append(v_issues, '未设置重复提交规则');
+  end if;
+  if exists (
+    select 1
+    from public.assessment_paper_questions as question
+    where question.paper_id = p_paper_id
+    group by lower(btrim(question.prompt)), lower(btrim(question.stimulus_text))
+    having count(*) > 1
+  ) then
+    v_issues := array_append(v_issues, '存在重复题干');
+  end if;
+  if exists (
+    select 1
+    from public.assessment_paper_questions as question
+    left join public.assessment_paper_question_keys as answer_key
+      on answer_key.question_id = question.id
+    where question.paper_id = p_paper_id
+      and (
+        nullif(btrim(question.prompt), '') is null
+        or question.points <= 0
+        or answer_key.question_id is null
+        or nullif(btrim(answer_key.explanation), '') is null
+        or question.skill not in (
+          'vocabulary', 'grammar', 'listening', 'speaking', 'reading', 'writing'
+        )
+      )
+  ) then
+    v_issues := array_append(v_issues, '存在题干、解析、分值或能力分类未完成的题目');
+  end if;
+  if (
+    select count(*) from public.assessment_paper_questions as question
+    where question.paper_id = p_paper_id
+  ) <> v_paper.question_count then
+    v_issues := array_append(v_issues, '试卷题量与题目快照不一致');
+  end if;
+  if (
+    select coalesce(sum(question.points), 0)
+    from public.assessment_paper_questions as question
+    where question.paper_id = p_paper_id
+  ) <> v_paper.total_points then
+    v_issues := array_append(v_issues, '试卷总分与题目快照不一致');
+  end if;
+  if exists (
+    select 1
+    from public.assessment_paper_questions as question
+    left join public.assessment_paper_question_keys as answer_key
+      on answer_key.question_id = question.id
+    where question.paper_id = p_paper_id
+      and question.auto_graded
+      and (
+        nullif(btrim(answer_key.correct_answer), '') is null
+        or nullif(btrim(answer_key.explanation), '') is null
+        or jsonb_array_length(question.options) < 2
+        or not question.options @> jsonb_build_array(answer_key.correct_answer)
+      )
+  ) then
+    v_issues := array_append(
+      v_issues, '客观题存在正确答案、选项或解析不完整的情况'
+    );
+  end if;
+
+  if v_paper.paper_type = 'exam'
+    and v_paper.paper_code ~ '^EX-K1-(0[1-9]|1[0-6])-V[0-9]+$' then
+    if v_paper.total_points <> 100 then
+      v_issues := array_append(v_issues, '正式章节考试总分必须等于100分');
+    end if;
+    if (
+      select count(distinct question.skill)
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill in (
+          'vocabulary', 'grammar', 'listening', 'speaking', 'reading', 'writing'
+        )
+    ) <> 6 then
+      v_issues := array_append(v_issues, '单词、语法、听力、口语、阅读、写作六项不齐全');
+    end if;
+    if exists (
+      select required.skill
+      from (values
+        ('vocabulary', 15::numeric), ('grammar', 20::numeric),
+        ('listening', 15::numeric), ('speaking', 15::numeric),
+        ('reading', 20::numeric), ('writing', 15::numeric)
+      ) as required(skill, points)
+      left join (
+        select question.skill, sum(question.points) as points
+        from public.assessment_paper_questions as question
+        where question.paper_id = p_paper_id
+        group by question.skill
+      ) as actual using (skill)
+      where coalesce(actual.points, 0) <> required.points
+    ) then
+      v_issues := array_append(
+        v_issues, '六项分值必须为单词15、语法20、听力15、口语15、阅读20、写作15'
+      );
+    end if;
+    if exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill in ('vocabulary', 'grammar', 'listening', 'reading')
+        and not question.auto_graded
+    ) then
+      v_issues := array_append(v_issues, '单词、语法、听力或阅读客观题未配置自动判分');
+    end if;
+    if exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill in ('speaking', 'writing')
+        and question.auto_graded
+    ) then
+      v_issues := array_append(v_issues, '口语和写作必须配置为人工批改');
+    end if;
+    if exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill = 'speaking'
+        and question.question_type <> 'audio_recording'
+    ) or exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill = 'writing'
+        and question.question_type <> 'long_text'
+    ) then
+      v_issues := array_append(v_issues, '口语录音题或写作长文本题的作答方式不正确');
+    end if;
+    if exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill = 'listening'
+        and (
+          nullif(btrim(question.stimulus_text), '') is null
+          or question.audio_status not in ('pending', 'temporary', 'formal')
+        )
+    ) then
+      v_issues := array_append(v_issues, '听力题缺少听力文本或有效音频状态');
+    end if;
+  elsif v_paper.paper_type = 'homework' then
+    if (
+      select count(distinct question.skill)
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill in (
+          'vocabulary', 'grammar', 'listening', 'speaking', 'reading', 'writing'
+        )
+    ) <> 6 then
+      v_issues := array_append(v_issues, '章节作业的词汇、语法、听说读写六项内容不完整');
+    end if;
+    if exists (
+      select 1
+      from public.assessment_paper_questions as question
+      where question.paper_id = p_paper_id
+        and question.skill = 'listening'
+        and nullif(btrim(question.stimulus_text), '') is null
+    ) then
+      v_issues := array_append(v_issues, '章节作业的听力题缺少韩语听力材料');
+    end if;
+  end if;
+
+  return v_issues;
+end;
+$$;
+
 -- 每四章一套阶段考试。阶段卷只保存为草稿；正式录音和平台人工审核完成前不得发布。
 -- 每套严格采用 12/8/4/2/8/2 的题量和 15/20/15/15/20/15 的六项分值。
 do $migration$

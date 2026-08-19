@@ -15,6 +15,7 @@ import {
   PanelsTopLeft,
   Settings2,
   ShieldCheck,
+  Target,
   UsersRound,
   Wrench,
 } from "lucide-react";
@@ -40,6 +41,9 @@ type WorkspaceModule = {
   description: string;
   icon: typeof Languages;
   capability?: keyof ManagementAppAccess["capabilities"];
+  appSlugs?: StudentAppSlug[];
+  platformOwnerOnly?: boolean;
+  tenantTeacherOnly?: boolean;
 };
 
 const appIconMap = {
@@ -99,6 +103,24 @@ const learningModules: WorkspaceModule[] = [
     description: "维护听说读写、语法和词汇练习。",
     icon: Wrench,
     capability: "manageContent",
+  },
+  {
+    key: "practice-insights",
+    title: "巩固学情",
+    description: "查看负责学生的章节巩固进度、薄弱能力并发送练习推荐。",
+    icon: Target,
+    capability: "viewAnalytics",
+    appSlugs: ["korean"],
+    tenantTeacherOnly: true,
+  },
+  {
+    key: "practice-center",
+    title: "巩固中心管理",
+    description: "按真实课程树查看每章教材、练习、作业、测试与巩固内容覆盖状态。",
+    icon: Target,
+    capability: "manageContent",
+    appSlugs: ["korean"],
+    platformOwnerOnly: true,
   },
   {
     key: "conversation",
@@ -236,7 +258,17 @@ export async function ManagementApplicationWorkspacePage({
       assignmentsQuery,
       recordsQuery,
     ])) as CountResult[];
-  const modules = access.app.kind === "service" ? serviceModules : learningModules;
+  const modules = (
+    access.app.kind === "service" ? serviceModules : learningModules
+  ).filter(
+    (module) =>
+      (!module.appSlugs || module.appSlugs.includes(access.app.slug)) &&
+      (!module.tenantTeacherOnly ||
+        (access.scope === "tenant" && access.role === "teacher")) &&
+      (!module.platformOwnerOnly ||
+        (access.scope === "platform" &&
+          access.globalRole === "platform_owner")),
+  );
   const AppIcon = appIconMap[access.app.slug];
   const metrics = [
     { label: access.app.kind === "service" ? "服务项目" : "课程内容", value: countValue(courseResult) },

@@ -3,6 +3,9 @@ import {
   isActiveProfileStatus,
   requireActiveUser,
 } from "@/lib/auth";
+import { isPlatformOwnerRole } from "@/lib/platform-owner-role";
+
+export { isPlatformOwnerRole } from "@/lib/platform-owner-role";
 
 /*
 
@@ -84,10 +87,6 @@ export function isAdminRole(role: string | null | undefined) {
 
 export function isTenantOwnerRole(role: string | null | undefined) {
   return role === "tenant_super_admin";
-}
-
-export function isPlatformOwnerRole(role: string | null | undefined) {
-  return role === "platform_super_admin";
 }
 
 /*

@@ -67,3 +67,25 @@ test("教材管理数据保留同一版本的全部章节", async () => {
   );
   assert.doesNotMatch(service, /const chapterByVersionId = new Map/);
 });
+
+test("章节发布成功后降级同步巩固状态并刷新管理端和学生端目录", async () => {
+  const action = await source("src/app/dashboard/admin/digital-textbook/actions.ts");
+
+  assert.match(
+    action,
+    /await synchronizeChapterPracticeAfterTextbookPublish\(normalizedChapterId\)/,
+  );
+  assert.match(
+    action,
+    /catch \(practiceError\)[\s\S]*console\.error\([\s\S]*Chapter practice synchronization/,
+  );
+  assert.match(
+    action,
+    /\/\[space\]\/dashboard\/admin\/apps\/\[appSlug\]\/practice-center/,
+  );
+  assert.match(action, /\/\[space\]\/apps\/korean\/practice\/course/);
+  assert.match(
+    action,
+    /synchronizeChapterPracticeAfterTextbookPublish[\s\S]*return \{[\s\S]*ok: true/,
+  );
+});

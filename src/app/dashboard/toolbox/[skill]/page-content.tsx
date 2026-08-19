@@ -13,6 +13,7 @@ import {
   LockKeyhole,
   Mic,
   PenTool,
+  RotateCcw,
   Shapes,
 } from "lucide-react";
 
@@ -260,6 +261,8 @@ export async function ToolboxSkillPage({
     `${exerciseBasePath}/${encodeURIComponent(skill)}`,
     dashboardBasePath,
   );
+  const coursePracticeBaseHref = `${dashboardBasePath}/practice/course`;
+  const reviewHref = `${dashboardBasePath}/practice/review`;
   if (
     !renderExercisePage &&
     selection.course &&
@@ -616,7 +619,7 @@ export async function ToolboxSkillPage({
 
   if (!selectedUnit) {
     return (
-      <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+      <div className="mx-auto w-full max-w-6xl space-y-5 overflow-x-clip px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
         <Link
           href={toolboxHref}
           className="app-muted-text inline-flex min-h-11 items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
@@ -625,6 +628,23 @@ export async function ToolboxSkillPage({
           <ArrowLeft size={14} aria-hidden="true" />
           返回专项训练
         </Link>
+
+        <nav aria-label="巩固板块切换" className="flex flex-wrap gap-2">
+          <Link
+            href={coursePracticeBaseHref}
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          >
+            <Layers3 size={16} aria-hidden="true" />
+            课程巩固
+          </Link>
+          <Link
+            href={reviewHref}
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            错题复习
+          </Link>
+        </nav>
 
         <header className="app-card rounded-3xl border p-5 sm:p-6">
           <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
@@ -642,15 +662,15 @@ export async function ToolboxSkillPage({
                 titleClassName="text-2xl font-bold tracking-tight"
               />
             </div>
-            <div className="grid grid-cols-3 gap-2 lg:shrink-0">
+            <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:grid-cols-3 lg:shrink-0">
               {[
                 [courses.length, "门课程"],
                 [lessons.length, "个课时"],
                 [exercises.length, "章可练"],
-              ].map(([value, label]) => (
-                <span key={label} className="rounded-xl px-3 py-2 text-center" style={{ backgroundColor: "var(--surface-soft)" }}>
+              ].map(([value, label], index) => (
+                <span key={label} className={`rounded-xl px-3 py-2 text-center ${index === 2 ? "col-span-2 sm:col-span-1" : ""}`} style={{ backgroundColor: "var(--surface-soft)" }}>
                   <strong className="block text-lg font-bold tabular-nums">{value}</strong>
-                  <small className="app-muted-text text-[10px] font-bold">{label}</small>
+                  <small className="app-muted-text text-xs font-bold">{label}</small>
                 </span>
               ))}
             </div>
@@ -695,11 +715,11 @@ export async function ToolboxSkillPage({
                     <span className="min-w-0 flex-1">
                       <span className="flex flex-wrap items-center gap-2">
                         <strong className="text-sm font-bold">{course.title}</strong>
-                        <small className="rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+                        <small className="rounded-full px-2 py-0.5 text-xs font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
                           {levelLabel(course.level)}
                         </small>
                       </span>
-                      <small className="app-muted-text mt-1 block text-[11px] font-bold">
+                      <small className="app-muted-text mt-1 block text-xs font-bold">
                         {course.lessons.length} 个课时 · {courseChapterCount} 个训练章节
                       </small>
                     </span>
@@ -717,7 +737,7 @@ export async function ToolboxSkillPage({
                       return (
                         <section key={lesson.id} className="app-card overflow-hidden rounded-2xl border">
                           <header className="flex items-center gap-3 border-b px-4 py-3" style={{ borderColor: "var(--border-subtle)" }}>
-                            <span className="app-muted-text text-[11px] font-bold tabular-nums">
+                            <span className="app-muted-text text-xs font-bold tabular-nums">
                               {String(lessonIndex + 1).padStart(2, "0")}
                             </span>
                             <CardTitleWithHint
@@ -727,7 +747,7 @@ export async function ToolboxSkillPage({
                               headingLevel={3}
                               titleClassName="text-sm font-bold"
                             />
-                            <small className="app-muted-text shrink-0 text-[10px] font-bold">
+                            <small className="app-muted-text shrink-0 text-xs font-bold">
                               {lesson.chapters.length} 章
                             </small>
                           </header>
@@ -754,20 +774,20 @@ export async function ToolboxSkillPage({
                               const content = (
                                 <>
                                   <span
-                                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[11px] font-bold"
+                                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-xs font-bold"
                                     style={{ color: unlocked ? entry.accent : "var(--foreground-muted)", backgroundColor: "var(--surface-soft)" }}
                                   >
                                     {!unlocked ? <LockKeyhole size={15} aria-hidden="true" /> : completed ? <CheckCircle2 size={16} aria-hidden="true" /> : String(displayNumber).padStart(2, "0")}
                                   </span>
                                   <span className="min-w-0 flex-1">
                                     <strong className="block text-sm font-bold">{displayTitle}</strong>
-                                    <small className="app-muted-text mt-0.5 block text-[11px] font-bold">
+                                    <small className="app-muted-text mt-0.5 block text-xs font-bold">
                                       {test?.korean_title || (test ? "正式章节题库" : "与本课正文同步")}
                                     </small>
                                     {focus.length > 0 && (
                                       <span className="mt-2 flex flex-wrap gap-1.5">
                                         {focus.map((item, focusIndex) => (
-                                          <small key={`${focusIndex}-${item}`} className="max-w-full truncate rounded-full px-2 py-0.5 text-[10px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+                                          <small key={`${focusIndex}-${item}`} className="max-w-full truncate rounded-full px-2 py-0.5 text-xs font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
                                             {item}
                                           </small>
                                         ))}
@@ -812,7 +832,7 @@ export async function ToolboxSkillPage({
 
   const selectedNumber = selectedUnit.test?.chapter_number ?? selectedUnit.chapter.sort_order;
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="mx-auto w-full max-w-6xl space-y-5 overflow-x-clip px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       {exercise && questions.length > 0 && <ToolboxStudyTimer skill={skill} />}
       <Link
         href={skillCatalogHref}
@@ -823,6 +843,23 @@ export async function ToolboxSkillPage({
         返回{entry.title}课程目录
       </Link>
 
+      <nav aria-label="本章训练去向" className="flex flex-wrap gap-2">
+        <Link
+          href={`${coursePracticeBaseHref}/${encodeURIComponent(selectedUnit.course.slug)}/${encodeURIComponent(selectedUnit.chapter.slug)}`}
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+        >
+          <Layers3 size={16} aria-hidden="true" />
+          返回本章课程巩固
+        </Link>
+        <Link
+          href={reviewHref}
+          className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 text-sm font-bold focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+        >
+          <RotateCcw size={16} aria-hidden="true" />
+          查看错题复习
+        </Link>
+      </nav>
+
       <header className="app-card rounded-3xl border p-5 sm:p-6">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex min-w-0 items-start gap-4 sm:items-center">
@@ -830,7 +867,7 @@ export async function ToolboxSkillPage({
               <Icon size={26} aria-hidden="true" />
             </span>
             <div>
-              <p className="text-[11px] font-bold tracking-[0.08em]" style={{ color: entry.accent }}>
+              <p className="text-xs font-bold" style={{ color: entry.accent }}>
                 {entry.title} · {selectedUnit.course.title} · {selectedUnit.lesson.title} · 第 {String(selectedNumber).padStart(2, "0")} 章
               </p>
               <CardTitleWithHint
@@ -843,7 +880,7 @@ export async function ToolboxSkillPage({
             </div>
           </div>
           {exercise && (
-            <span className="rounded-full px-3 py-2 text-[11px] font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
+            <span className="rounded-full px-3 py-2 text-xs font-bold" style={{ color: entry.accent, backgroundColor: entry.soft }}>
               {questions.length} 题 · 结果独立记录
             </span>
           )}

@@ -13,6 +13,7 @@ import {
   PanelsTopLeft,
   Settings2,
   ShieldCheck,
+  Target,
   UsersRound,
   Wrench,
 } from "lucide-react";
@@ -78,6 +79,18 @@ const learningSections: Record<string, SectionDefinition> = {
     description: "管理练习入口、课程词汇和语法库。",
     icon: Wrench,
     capability: "manageContent",
+  },
+  "practice-center": {
+    title: "巩固中心管理",
+    description: "按真实课程树查看每章巩固内容覆盖状态。",
+    icon: Target,
+    capability: "manageContent",
+  },
+  "practice-insights": {
+    title: "巩固学情",
+    description: "查看负责学生的真实巩固进度、薄弱章节和薄弱能力。",
+    icon: Target,
+    capability: "viewAnalytics",
   },
   conversation: {
     title: "会话与课堂",

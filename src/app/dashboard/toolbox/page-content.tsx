@@ -7,10 +7,12 @@ import {
   CheckCircle2,
   Ear,
   Headphones,
+  Layers3,
   MessageSquare,
   Mic,
   NotebookPen,
   PenTool,
+  RotateCcw,
   Sparkles,
   Wrench,
 } from "lucide-react";
@@ -89,6 +91,7 @@ export async function ToolboxPage({
   const dashboardBasePath = tenant?.slug
     ? getStudentAppBasePath(tenant.slug, "korean")
     : getDashboardBasePath(null);
+  const showCrossModuleNavigation = Boolean(skillsBasePath);
 
   const [
     { data: rows },
@@ -174,7 +177,7 @@ export async function ToolboxPage({
   );
 
   return (
-    <div className="mx-auto w-full max-w-6xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
+    <div className="mx-auto w-full max-w-6xl space-y-5 overflow-x-clip px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       {/* 旧入口继续自带说明；巩固中心由统一介绍卡承担这一层信息。 */}
       {showHero && <section
         className="relative overflow-hidden rounded-3xl border p-6 sm:p-8"
@@ -219,6 +222,28 @@ export async function ToolboxPage({
           </div>
         </div>
       </section>}
+
+      {showCrossModuleNavigation ? (
+        <nav
+          aria-label="巩固板块切换"
+          className="app-card flex flex-wrap gap-2 rounded-2xl border p-3"
+        >
+          <Link
+            href={`${dashboardBasePath}/practice/course`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] px-4 text-sm font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          >
+            <Layers3 size={16} aria-hidden="true" />
+            课程巩固
+          </Link>
+          <Link
+            href={`${dashboardBasePath}/practice/review`}
+            className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border)] px-4 text-sm font-bold transition-colors hover:bg-[var(--surface-soft)] focus-visible:outline focus-visible:outline-3 focus-visible:outline-offset-2"
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            错题复习
+          </Link>
+        </nav>
+      ) : null}
 
       <SixDimensionRadar
         title="专项训练 · 六维练习能力"
@@ -313,9 +338,10 @@ export async function ToolboxPage({
                       <Icon size={22} aria-hidden="true" />
                     </span>
                     <span
-                      className="rounded-full px-2.5 py-1 text-[10px] font-bold tabular-nums"
+                      className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-bold tabular-nums"
                       style={{ color: tool.accent, backgroundColor: tool.soft }}
                     >
+                      <CheckCircle2 size={14} aria-hidden="true" />
                       {tool.ability == null
                         ? tool.practiceCount
                           ? `${tool.practiceCount} 轮 · 待积累`
@@ -337,7 +363,7 @@ export async function ToolboxPage({
                     {tool.focus.map((focus) => (
                       <li
                         key={focus}
-                        className="rounded-full px-2.5 py-1 text-[11px] font-bold"
+                        className="rounded-full px-2.5 py-1 text-xs font-bold"
                         style={{ color: tool.accent, backgroundColor: tool.soft }}
                       >
                         {focus}

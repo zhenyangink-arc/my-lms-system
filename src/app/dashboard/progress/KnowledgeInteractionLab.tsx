@@ -226,9 +226,12 @@ const classificationRounds = [
 
 export function KnowledgeInteractionLab({
   onMasteryChange,
+  initialMastered = [],
 }: {
   onMasteryChange: (type: KnowledgeInteractionType) => void;
+  initialMastered?: Iterable<KnowledgeInteractionType>;
 }) {
+  const initialMasteredSet = new Set(initialMastered);
   const [type, setType] = useState<KnowledgeInteractionType>("assemble");
   const [indices, setIndices] = useState<Record<KnowledgeInteractionType, number>>({
     assemble: 0,
@@ -239,10 +242,10 @@ export function KnowledgeInteractionLab({
   const [correctCounts, setCorrectCounts] = useState<
     Record<KnowledgeInteractionType, number>
   >({
-    assemble: 0,
-    deconstruct: 0,
-    repair: 0,
-    classify: 0,
+    assemble: initialMasteredSet.has("assemble") ? 3 : 0,
+    deconstruct: initialMasteredSet.has("deconstruct") ? 3 : 0,
+    repair: initialMasteredSet.has("repair") ? 3 : 0,
+    classify: initialMasteredSet.has("classify") ? 3 : 0,
   });
   const [awarded, setAwarded] = useState(false);
   const [result, setResult] = useState<"correct" | "wrong" | null>(null);
