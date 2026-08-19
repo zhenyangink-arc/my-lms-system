@@ -6,13 +6,18 @@ import {
   CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  CircleAlert,
+  Flag,
   Headphones,
   Languages,
   Mic2,
   PenLine,
   Save,
   Send,
+  ShieldCheck,
   SpellCheck2,
+  Timer,
+  WifiOff,
 } from "lucide-react";
 import {
   type FormEvent,
@@ -22,13 +27,37 @@ import {
   useMemo,
   useRef,
   useState,
+  useSyncExternalStore,
 } from "react";
 
 import { submitLearningAssignmentAction } from "./actions";
 import { initialLearningAssignmentActionState } from "./action-state";
-import { QUESTION_TYPE_LABELS, type QuestionType } from "./config";
+import {
+  QUESTION_TYPE_LABELS,
+  SUBMISSION_WORKFLOW_STATE_LABELS,
+  type QuestionType,
+  type SubmissionWorkflowState,
+} from "./config";
+import {
+  formatExamRemainingTime,
+  getExamQuestionStatus,
+  getExamRemainingSeconds,
+  getSubmissionConfirmationStage,
+} from "./assignment-exam-ui";
 import { AssignmentAudioRecorder } from "./AssignmentAudioRecorder";
 import { AssignmentListeningPlayer } from "./AssignmentListeningPlayer";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { LocalDateTime } from "@/components/LocalDateTime";
 
 export type AssignmentLanguageSkill =
   | "vocabulary"
@@ -52,7 +81,50 @@ type DraftPayload = {
   answers: Record<string, string>;
   activeStep: number;
   savedAt: string;
+  reviewQuestionIds?: string[];
 };
+
+export type AssignmentExamConfig = {
+  name: string;
+  startsAt: string;
+  dueAt: string | null;
+  totalPoints: number;
+  passingScore: number | null;
+  maxAttempts: number;
+  attemptsUsed: number;
+  durationMinutes: number;
+  startedAt: string | null;
+  expiresAt: string | null;
+  serverNow: string | null;
+};
+
+type ConfirmationStage = "unanswered" | "final" | null;
+
+const examDateOptions: Intl.DateTimeFormatOptions = {
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+};
+
+function subscribeToOnlineStatus(onStoreChange: () => void) {
+  window.addEventListener("online", onStoreChange);
+  window.addEventListener("offline", onStoreChange);
+  return () => {
+    window.removeEventListener("online", onStoreChange);
+    window.removeEventListener("offline", onStoreChange);
+  };
+}
+
+function getOnlineStatus() {
+  return navigator.onLine;
+}
+
+function getServerOnlineStatus() {
+  return true;
+}
 
 const skillOrder: AssignmentLanguageSkill[] = [
   "vocabulary",
@@ -143,19 +215,26 @@ function QuestionAnswer({
 export function AssignmentSubmissionForm({
   assignmentId,
   studentId,
+  submissionRequestId,
   questions,
   previousAnswers,
   cloudDraft,
+  examConfig,
 }: {
   assignmentId: string;
   studentId: string;
+  submissionRequestId: string;
   questions: Question[];
   previousAnswers: Record<string, string>;
   cloudDraft?: DraftPayload | null;
+  examConfig?: AssignmentExamConfig;
 }) {
   const formRef = useRef<HTMLFormElement>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const saveRequestRef = useRef(0);
+  const confirmedSubmissionRef = useRef(false);
+  const automaticSubmissionRef = useRef(false);
+  const submissionIntentInputRef = useRef<HTMLInputElement>(null);
   const errorSummaryRef = useRef<HTMLDivElement>(null);
   const action = submitLearningAssignmentAction.bind(null, assignmentId);
   const [state, formAction, pending] = useActionState(
@@ -198,11 +277,37 @@ export function AssignmentSubmissionForm({
         .map(([questionId]) => questionId)
     )
   );
+  const [reviewQuestionIds, setReviewQuestionIds] = useState<Set<string>>(
+    new Set(),
+  );
   const [draftStatus, setDraftStatus] = useState<
     "idle" | "saving" | "saved" | "local-only"
   >("idle");
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [localError, setLocalError] = useState("");
+  const [confirmationStage, setConfirmationStage] =
+    useState<ConfirmationStage>(null);
+  const [unansweredCount, setUnansweredCount] = useState(0);
+  const isOnline = useSyncExternalStore(
+    subscribeToOnlineStatus,
+    getOnlineStatus,
+    getServerOnlineStatus,
+  );
+  const [examStarted, setExamStarted] = useState(!examConfig);
+  const [examStartedAt, setExamStartedAt] = useState<string | null>(
+    examConfig?.startedAt ?? null,
+  );
+  const [examExpiresAt, setExamExpiresAt] = useState<string | null>(
+    examConfig?.expiresAt ?? null,
+  );
+  const [serverTimeOffsetMs, setServerTimeOffsetMs] = useState(() =>
+    examConfig?.serverNow
+      ? new Date(examConfig.serverNow).getTime() - Date.now()
+      : 0,
+  );
+  const [startPending, setStartPending] = useState(false);
+  const [startError, setStartError] = useState("");
+  const [remainingSeconds, setRemainingSeconds] = useState<number | null>(null);
   const draftKey = `learning-assignment-draft:${studentId}:${assignmentId}`;
 
   const collectAnswers = useCallback(() => {
@@ -227,11 +332,19 @@ export function AssignmentSubmissionForm({
     );
   }, []);
 
-  const saveDraft = useCallback((step = activeStep) => {
+  const saveDraft = useCallback((
+    step = activeStep,
+    reviewIds = reviewQuestionIds,
+  ) => {
     const answers = collectAnswers();
     updateAnswered(answers);
     const now = new Date().toISOString();
-    const payload: DraftPayload = { answers, activeStep: step, savedAt: now };
+    const payload: DraftPayload = {
+      answers,
+      activeStep: step,
+      savedAt: now,
+      reviewQuestionIds: [...reviewIds],
+    };
     const requestVersion = ++saveRequestRef.current;
     try {
       window.localStorage.setItem(draftKey, JSON.stringify(payload));
@@ -239,11 +352,19 @@ export function AssignmentSubmissionForm({
     } catch {
       // 云端保存仍可继续。
     }
+    if (!navigator.onLine) {
+      setDraftStatus("local-only");
+      return;
+    }
     setDraftStatus("saving");
     void fetch(`/api/assignments/${assignmentId}/draft`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ answers, activeStep: step }),
+      body: JSON.stringify({
+        answers,
+        activeStep: step,
+        requestId: submissionRequestId,
+      }),
     })
       .then(async (response) => {
         const result = (await response.json()) as {
@@ -260,13 +381,14 @@ export function AssignmentSubmissionForm({
           setDraftStatus("local-only");
         }
       });
-  }, [activeStep, assignmentId, collectAnswers, draftKey, updateAnswered]);
+  }, [activeStep, assignmentId, collectAnswers, draftKey, reviewQuestionIds, submissionRequestId, updateAnswered]);
 
   const scheduleDraftSave = useCallback(() => {
+    updateAnswered(collectAnswers());
     setDraftStatus("saving");
     if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
     saveTimerRef.current = setTimeout(saveDraft, 450);
-  }, [saveDraft]);
+  }, [collectAnswers, saveDraft, updateAnswered]);
 
   const handleEvidenceChange = useCallback(() => {
     window.setTimeout(scheduleDraftSave, 0);
@@ -302,6 +424,7 @@ export function AssignmentSubmissionForm({
       });
       queueMicrotask(() => {
         updateAnswered(draft.answers);
+        setReviewQuestionIds(new Set(draft.reviewQuestionIds ?? []));
         setRestoredAnswers(draft.answers);
         setActiveStep(
           Math.min(
@@ -315,7 +438,7 @@ export function AssignmentSubmissionForm({
     } catch {
       window.localStorage.removeItem(draftKey);
     }
-  }, [allGroups.length, cloudDraft, draftKey, questions, updateAnswered]);
+  }, [allGroups.length, cloudDraft, draftKey, examStarted, questions, updateAnswered]);
 
   useEffect(
     () => () => {
@@ -323,6 +446,58 @@ export function AssignmentSubmissionForm({
     },
     []
   );
+
+  useEffect(() => {
+    const handleOffline = () => {
+      setDraftStatus("local-only");
+      saveDraft();
+    };
+    const handleOnline = () => {
+      setDraftStatus("saving");
+      saveDraft();
+    };
+    window.addEventListener("offline", handleOffline);
+    window.addEventListener("online", handleOnline);
+    return () => {
+      window.removeEventListener("offline", handleOffline);
+      window.removeEventListener("online", handleOnline);
+    };
+  }, [saveDraft]);
+
+  useEffect(() => {
+    if (!examConfig || !examStarted || !examStartedAt) return;
+    const updateRemaining = () => {
+      setRemainingSeconds(
+        getExamRemainingSeconds({
+          startedAt: examStartedAt,
+          durationMinutes: examConfig.durationMinutes,
+          now: Date.now() + serverTimeOffsetMs,
+          dueAt: examConfig.dueAt,
+          expiresAt: examExpiresAt,
+        }),
+      );
+    };
+    updateRemaining();
+    const timer = window.setInterval(updateRemaining, 1_000);
+    return () => window.clearInterval(timer);
+  }, [examConfig, examExpiresAt, examStarted, examStartedAt, serverTimeOffsetMs]);
+
+  useEffect(() => {
+    if (
+      !examConfig ||
+      !examStarted ||
+      remainingSeconds !== 0 ||
+      automaticSubmissionRef.current ||
+      state.status === "success"
+    ) return;
+    automaticSubmissionRef.current = true;
+    if (submissionIntentInputRef.current) {
+      submissionIntentInputRef.current.value = "time_expired";
+    }
+    setLocalError("考试时间已结束，系统正在自动提交当前答案。");
+    saveDraft();
+    window.requestAnimationFrame(() => formRef.current?.requestSubmit());
+  }, [examConfig, examStarted, remainingSeconds, saveDraft, state.status]);
 
   useEffect(() => {
     if (state.status === "success") {
@@ -333,6 +508,7 @@ export function AssignmentSubmissionForm({
       });
     }
     if (state.status === "error") {
+      queueMicrotask(() => setLocalError(""));
       errorSummaryRef.current?.focus();
     }
   }, [draftKey, state.status]);
@@ -342,6 +518,21 @@ export function AssignmentSubmissionForm({
   const progressPercent = questions.length
     ? Math.round((completedCount / questions.length) * 100)
     : 0;
+  const questionLocations = useMemo(
+    () =>
+      questions.map((question, questionIndex) => ({
+        question,
+        questionIndex,
+        groupIndex: allGroups.findIndex((group) =>
+          group.questions.some((item) => item.id === question.id),
+        ),
+      })),
+    [allGroups, questions],
+  );
+  const questionNumberById = useMemo(
+    () => new Map(questions.map((question, index) => [question.id, index + 1])),
+    [questions],
+  );
 
   function goToStep(nextStep: number) {
     const boundedStep = Math.min(Math.max(0, nextStep), allGroups.length - 1);
@@ -353,11 +544,85 @@ export function AssignmentSubmissionForm({
     });
   }
 
+  function goToQuestion(questionId: string) {
+    const location = questionLocations.find(
+      (item) => item.question.id === questionId,
+    );
+    if (!location) return;
+    saveDraft(location.groupIndex);
+    setLocalError("");
+    setActiveStep(location.groupIndex);
+    window.setTimeout(() => {
+      const questionElement = document.getElementById(
+        `assignment-question-${questionId}`,
+      );
+      questionElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+      questionElement?.focus({ preventScroll: true });
+    }, 0);
+  }
+
+  function toggleReview(questionId: string) {
+    const next = new Set(reviewQuestionIds);
+    if (next.has(questionId)) next.delete(questionId);
+    else next.add(questionId);
+    setReviewQuestionIds(next);
+    window.setTimeout(() => saveDraft(activeStep, next), 0);
+  }
+
+  async function startExam() {
+    if (!examConfig) return;
+    setStartPending(true);
+    setStartError("");
+    try {
+      const response = await fetch(`/api/assignments/${assignmentId}/start`, {
+        method: "POST",
+      });
+      const payload = (await response.json()) as {
+        startedAt?: unknown;
+        expiresAt?: unknown;
+        serverNow?: unknown;
+        message?: unknown;
+      };
+      if (
+        !response.ok ||
+        typeof payload.startedAt !== "string" ||
+        typeof payload.expiresAt !== "string" ||
+        typeof payload.serverNow !== "string"
+      ) {
+        throw new Error(
+          typeof payload.message === "string"
+            ? payload.message
+            : "考试暂时无法开始，请稍后重试。",
+        );
+      }
+      setExamStartedAt(payload.startedAt);
+      setExamExpiresAt(payload.expiresAt);
+      setServerTimeOffsetMs(new Date(payload.serverNow).getTime() - Date.now());
+      setExamStarted(true);
+    } catch (error) {
+      setStartError(
+        error instanceof Error ? error.message : "考试暂时无法开始，请稍后重试。",
+      );
+    } finally {
+      setStartPending(false);
+    }
+  }
+
+  function submitAfterConfirmation() {
+    confirmedSubmissionRef.current = true;
+    if (submissionIntentInputRef.current) {
+      submissionIntentInputRef.current.value =
+        unansweredCount > 0 ? "confirmed_incomplete" : "complete";
+    }
+    setConfirmationStage(null);
+    window.requestAnimationFrame(() => formRef.current?.requestSubmit());
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     const answers = collectAnswers();
     updateAnswered(answers);
-    const firstMissing = questions.find((question) => !answers[question.id]);
-    if (!firstMissing) {
+    if (confirmedSubmissionRef.current || automaticSubmissionRef.current) {
+      confirmedSubmissionRef.current = false;
       try {
         window.localStorage.setItem(
           draftKey,
@@ -365,6 +630,7 @@ export function AssignmentSubmissionForm({
             answers,
             activeStep,
             savedAt: new Date().toISOString(),
+            reviewQuestionIds: [...reviewQuestionIds],
           })
         );
       } catch {
@@ -373,21 +639,98 @@ export function AssignmentSubmissionForm({
       return;
     }
     event.preventDefault();
-    const missingStep = allGroups.findIndex((group) =>
-      group.questions.some((question) => question.id === firstMissing.id)
-    );
-    setActiveStep(Math.max(0, missingStep));
-    setLocalError("还有题目没有完成，已经为你定位到第一道未作答题。答案仍保存在本机。");
-    window.requestAnimationFrame(() => {
-      errorSummaryRef.current?.focus();
-      document.getElementById(`assignment-question-${firstMissing.id}`)?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    });
+    const missingCount = questions.filter((question) => !answers[question.id]).length;
+    setUnansweredCount(missingCount);
+    setConfirmationStage(getSubmissionConfirmationStage(missingCount));
   }
 
   if (!currentGroup) return null;
+
+  if (examConfig && !examStarted) {
+    return (
+      <section className="app-card rounded-3xl border p-5 sm:p-6">
+        <CardTitleWithHint
+          headingLevel={2}
+          title="考试说明"
+          titleClassName="text-xl font-bold"
+          description="点击开始后立即计时。退出或刷新页面不会重置剩余时间，考试时间结束后系统会自动尝试提交当前答案。"
+        />
+        <h3 className="mt-5 text-lg font-bold">{examConfig.name}</h3>
+        <dl className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          {[
+            ["开始时间", <LocalDateTime key="start" value={examConfig.startsAt} options={examDateOptions} />],
+            ["截止时间", <LocalDateTime key="due" value={examConfig.dueAt} options={examDateOptions} fallback="未设置" />],
+            ["总分", `${examConfig.totalPoints} 分`],
+            ["及格分", examConfig.passingScore == null ? "未设置" : `${examConfig.passingScore} 分`],
+            ["允许作答次数", `${examConfig.maxAttempts} 次`],
+            ["已用次数", `${examConfig.attemptsUsed} 次`],
+            ["考试时长", `${examConfig.durationMinutes} 分钟`],
+          ].map(([label, value]) => (
+            <div key={String(label)} className="app-soft-card rounded-2xl border p-4">
+              <dt className="app-muted-text text-xs font-bold">{label}</dt>
+              <dd className="mt-1 text-sm font-bold">{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <div className="mt-5 flex flex-col gap-3 rounded-2xl bg-[var(--status-warning-surface)] p-4 text-sm sm:flex-row sm:items-center">
+          <CircleAlert className="shrink-0 text-[var(--status-warning)]" size={20} aria-hidden="true" />
+          <p className="min-w-0 flex-1 leading-6">请确认网络稳定，并预留完整考试时间。作答会自动保存，但正式提交后不能撤回。</p>
+          <button
+            type="button"
+            onClick={() => void startExam()}
+            disabled={startPending}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+          >
+            <ShieldCheck size={17} aria-hidden="true" />
+            {startPending ? "正在确认开考…" : examStartedAt ? "继续考试" : "开始考试"}
+          </button>
+        </div>
+        {startError && (
+          <p role="alert" className="mt-3 text-sm font-bold text-[var(--status-danger)]">
+            {startError}
+          </p>
+        )}
+      </section>
+    );
+  }
+
+  if (state.status === "success" && state.submissionState && state.submittedAt) {
+    const workflowState = state.submissionState as SubmissionWorkflowState;
+    return (
+      <section
+        role="status"
+        className="app-card rounded-3xl border p-6 text-center"
+        style={{ backgroundColor: "var(--status-success-surface)" }}
+      >
+        <CheckCircle2
+          className="mx-auto text-[var(--status-success)]"
+          size={34}
+          aria-hidden="true"
+        />
+        <h2 className="mt-3 text-xl font-bold">提交成功</h2>
+        <dl className="mx-auto mt-5 grid max-w-2xl gap-3 text-left sm:grid-cols-3">
+          <div className="app-card rounded-2xl border p-4">
+            <dt className="app-muted-text text-xs font-bold">提交时间</dt>
+            <dd className="mt-1 text-sm font-bold">
+              <LocalDateTime value={state.submittedAt} options={examDateOptions} />
+            </dd>
+          </div>
+          <div className="app-card rounded-2xl border p-4">
+            <dt className="app-muted-text text-xs font-bold">当前状态</dt>
+            <dd className="mt-1 text-sm font-bold text-[var(--status-success)]">
+              {SUBMISSION_WORKFLOW_STATE_LABELS[workflowState] ?? state.message}
+            </dd>
+          </div>
+          <div className="app-card rounded-2xl border p-4">
+            <dt className="app-muted-text text-xs font-bold">作答次数</dt>
+            <dd className="mt-1 text-sm font-bold">
+              第 {state.attemptNumber ?? "—"} 次
+            </dd>
+          </div>
+        </dl>
+      </section>
+    );
+  }
 
   return (
     <form
@@ -399,6 +742,27 @@ export function AssignmentSubmissionForm({
       data-permission="learning_assignments"
       className="scroll-mt-4 space-y-5 pb-4"
     >
+      <input
+        type="hidden"
+        name="submission_request_id"
+        value={submissionRequestId}
+      />
+      <input
+        ref={submissionIntentInputRef}
+        type="hidden"
+        name="submission_intent"
+        defaultValue="complete"
+      />
+      {!isOnline && (
+        <div
+          role="status"
+          aria-live="polite"
+          className="flex items-start gap-3 rounded-2xl bg-[var(--status-warning-surface)] px-4 py-3 text-sm font-bold text-[var(--status-warning)]"
+        >
+          <WifiOff className="mt-0.5 shrink-0" size={18} aria-hidden="true" />
+          <span>网络异常，答案已保存至本机，恢复网络后将自动同步。</span>
+        </div>
+      )}
       <section className="app-card sticky top-3 z-30 overflow-hidden rounded-2xl border shadow-sm">
         <div className="h-1.5 bg-[var(--surface-soft)]">
           <div
@@ -409,6 +773,22 @@ export function AssignmentSubmissionForm({
         <div className="flex flex-col gap-3 p-3 sm:p-4">
           <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
             <strong>作答进度 {completedCount} / {questions.length}</strong>
+            {examConfig && remainingSeconds !== null && (
+              <strong
+                className="inline-flex items-center gap-1.5 font-mono text-sm tabular-nums"
+                style={{
+                  color:
+                    remainingSeconds <= 300
+                      ? "var(--status-danger)"
+                      : "var(--foreground)",
+                }}
+                aria-live={remainingSeconds <= 60 ? "assertive" : "off"}
+                aria-label={`考试剩余时间 ${formatExamRemainingTime(remainingSeconds)}`}
+              >
+                <Timer size={16} aria-hidden="true" />
+                {formatExamRemainingTime(remainingSeconds)}
+              </strong>
+            )}
             <span className="app-muted-text inline-flex items-center gap-1.5" aria-live="polite">
               <Save size={14} aria-hidden="true" />
               {draftStatus === "saving"
@@ -461,6 +841,40 @@ export function AssignmentSubmissionForm({
               );
             })}
           </nav>
+          <div className="border-t pt-3" style={{ borderColor: "var(--border-subtle)" }}>
+            <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+              <strong className="text-xs">题目导航</strong>
+              <span className="app-muted-text text-xs">已答 {completedCount} · 未答 {questions.length - completedCount} · 待检查 {reviewQuestionIds.size}</span>
+            </div>
+            <nav aria-label="题目导航" className="flex flex-wrap gap-2">
+              {questionLocations.map(({ question, questionIndex, groupIndex }) => {
+                const status = getExamQuestionStatus(
+                  answeredIds.has(question.id) ? "answered" : "",
+                  reviewQuestionIds.has(question.id),
+                );
+                const active = groupIndex === activeStep;
+                const statusLabel = status === "review" ? "待检查" : status === "answered" ? "已答" : "未答";
+                return (
+                  <button
+                    key={question.id}
+                    type="button"
+                    onClick={() => goToQuestion(question.id)}
+                    aria-label={`第 ${questionIndex + 1} 题，${statusLabel}`}
+                    aria-current={active ? "location" : undefined}
+                    className="inline-flex min-h-10 min-w-10 items-center justify-center gap-1 rounded-xl border px-2 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                    style={{
+                      color: status === "review" ? "var(--status-warning)" : status === "answered" ? "var(--status-success)" : "var(--foreground-muted)",
+                      backgroundColor: status === "review" ? "var(--status-warning-surface)" : status === "answered" ? "var(--status-success-surface)" : "var(--card)",
+                      borderColor: active ? "var(--primary)" : "var(--border-subtle)",
+                    }}
+                  >
+                    {status === "review" && <Flag size={12} aria-hidden="true" />}
+                    {questionIndex + 1}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
         </div>
       </section>
 
@@ -520,7 +934,7 @@ export function AssignmentSubmissionForm({
               >
                 <div className="flex items-start gap-3">
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">
-                    {index + 1}
+                    {questionNumberById.get(question.id) ?? index + 1}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
@@ -530,6 +944,23 @@ export function AssignmentSubmissionForm({
                       <span className="rounded-full bg-[var(--support-surface)] px-2 py-0.5 text-xs font-bold text-[var(--support)]">
                         {question.points} 分
                       </span>
+                      <button
+                        type="button"
+                        aria-pressed={reviewQuestionIds.has(question.id)}
+                        onClick={() => toggleReview(question.id)}
+                        className="ml-auto inline-flex min-h-10 items-center gap-1.5 rounded-xl border px-3 text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                        style={{
+                          color: reviewQuestionIds.has(question.id)
+                            ? "var(--status-warning)"
+                            : "var(--foreground-muted)",
+                          backgroundColor: reviewQuestionIds.has(question.id)
+                            ? "var(--status-warning-surface)"
+                            : "var(--card)",
+                        }}
+                      >
+                        <Flag size={14} aria-hidden="true" />
+                        {reviewQuestionIds.has(question.id) ? "已标记待检查" : "标记待检查"}
+                      </button>
                     </div>
                     <h3 className="mt-2 whitespace-pre-wrap text-sm font-bold leading-7">
                       {question.prompt}
@@ -596,6 +1027,57 @@ export function AssignmentSubmissionForm({
           </button>
         )}
       </div>
+
+      <AlertDialog
+        open={confirmationStage === "unanswered"}
+        onOpenChange={(open) => {
+          if (!open) setConfirmationStage(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>还有 {unansweredCount} 道题未作答</AlertDialogTitle>
+            <AlertDialogDescription>
+              你可以返回继续作答，也可以进入最终提交确认。未作答题目不会获得分数。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>继续作答</AlertDialogCancel>
+            <AlertDialogAction
+              type="button"
+              onClick={() => setConfirmationStage("final")}
+            >
+              仍要提交
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog
+        open={confirmationStage === "final"}
+        onOpenChange={(open) => {
+          if (!open) setConfirmationStage(null);
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>确认提交全部答案？</AlertDialogTitle>
+            <AlertDialogDescription>
+              提交后本次作答将进入判分流程，不能再修改。请确认已经检查完需要复查的题目。
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>返回检查</AlertDialogCancel>
+            <AlertDialogAction
+              type="button"
+              disabled={pending}
+              onClick={submitAfterConfirmation}
+            >
+              {pending ? "正在提交…" : "确认提交"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </form>
   );
 }

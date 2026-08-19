@@ -12,11 +12,20 @@ export const SUBMISSION_STATUSES = [
   "graded",
   "revision_required",
 ] as const;
+export const SUBMISSION_WORKFLOW_STATES = [
+  "submitted_pending_grading",
+  "objective_graded_pending_manual",
+  "grading_completed",
+  "grade_released",
+  "revision_required",
+] as const;
 
 export type AssignmentType = (typeof ASSIGNMENT_TYPES)[number];
 export type AssignmentStatus = (typeof ASSIGNMENT_STATUSES)[number];
 export type QuestionType = (typeof QUESTION_TYPES)[number];
 export type SubmissionStatus = (typeof SUBMISSION_STATUSES)[number];
+export type SubmissionWorkflowState =
+  (typeof SUBMISSION_WORKFLOW_STATES)[number];
 
 export const ASSIGNMENT_TYPE_LABELS: Record<AssignmentType, string> = {
   homework: "课后作业",
@@ -41,6 +50,17 @@ export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
 export const SUBMISSION_STATUS_LABELS: Record<SubmissionStatus, string> = {
   submitted: "待批改",
   graded: "已批改",
+  revision_required: "退回重做",
+};
+
+export const SUBMISSION_WORKFLOW_STATE_LABELS: Record<
+  SubmissionWorkflowState,
+  string
+> = {
+  submitted_pending_grading: "已提交，等待判分",
+  objective_graded_pending_manual: "客观题已判分，等待人工批改",
+  grading_completed: "已完成批改，等待发布",
+  grade_released: "成绩已发布",
   revision_required: "退回重做",
 };
 

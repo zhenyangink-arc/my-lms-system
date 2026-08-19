@@ -21,7 +21,7 @@ export async function PUT(
     return NextResponse.json({ message: "Invalid assignment." }, { status: 400 });
   }
 
-  let payload: { answers?: unknown; activeStep?: unknown };
+  let payload: { answers?: unknown; activeStep?: unknown; requestId?: unknown };
   try {
     payload = (await request.json()) as typeof payload;
   } catch {
@@ -32,7 +32,9 @@ export async function PUT(
     typeof payload.answers !== "object" ||
     Array.isArray(payload.answers) ||
     typeof payload.activeStep !== "number" ||
-    !Number.isInteger(payload.activeStep)
+    !Number.isInteger(payload.activeStep) ||
+    typeof payload.requestId !== "string" ||
+    !isUuid(payload.requestId)
   ) {
     return NextResponse.json({ message: "草稿格式不正确。" }, { status: 400 });
   }
@@ -41,6 +43,7 @@ export async function PUT(
     p_assignment_id: assignmentId,
     p_answers: payload.answers,
     p_active_step: payload.activeStep,
+    p_request_id: payload.requestId,
   });
   if (error) {
     return NextResponse.json(

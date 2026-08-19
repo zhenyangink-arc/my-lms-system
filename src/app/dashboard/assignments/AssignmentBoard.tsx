@@ -24,7 +24,7 @@ import { Input } from "@/components/ui/input";
 import {
   ASSIGNMENT_DATE_OPTIONS,
   type AssignmentType,
-  type SubmissionStatus,
+  type SubmissionWorkflowState,
 } from "./config";
 
 const assignmentDateFormatter = new Intl.DateTimeFormat(
@@ -58,11 +58,11 @@ type AssignmentItem = {
   courseGroup: string;
   courseGroupSlug: string;
   latestSubmission: {
-    status: SubmissionStatus;
     score: number | null;
     feedback: string | null;
     attemptNumber: number;
   } | null;
+  progressState: SubmissionWorkflowState | "in_progress" | null;
 };
 
 type ChapterTestItem = {
@@ -88,7 +88,11 @@ type TaskKind = "chapter_test" | "homework" | "exam";
 type TaskState =
   | "pending"
   | "revision_required"
-  | "submitted"
+  | "in_progress"
+  | "submitted_pending_grading"
+  | "objective_graded_pending_manual"
+  | "grading_completed"
+  | "grade_released"
   | "graded"
   | "upcoming"
   | "overdue"
@@ -156,7 +160,11 @@ const kindPresentation = {
 const statePresentation: Record<TaskState, { label: string; color: string; soft: string }> = {
   pending: { label: "待完成", color: "var(--primary)", soft: "var(--accent)" },
   revision_required: { label: "需修改", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
-  submitted: { label: "待批改", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  in_progress: { label: "作答中", color: "var(--primary)", soft: "var(--accent)" },
+  submitted_pending_grading: { label: "已提交，等待判分", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  objective_graded_pending_manual: { label: "等待人工批改", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+  grading_completed: { label: "已完成批改，等待发布", color: "var(--support)", soft: "var(--support-surface)" },
+  grade_released: { label: "成绩已发布", color: "var(--status-success)", soft: "var(--status-success-surface)" },
   graded: { label: "已完成", color: "var(--status-success)", soft: "var(--status-success-surface)" },
   upcoming: { label: "未开放", color: "var(--support)", soft: "var(--support-surface)" },
   overdue: { label: "已截止", color: "var(--status-danger)", soft: "var(--status-danger-surface)" },
@@ -191,17 +199,17 @@ const typeStatusFilters: Record<
 function taskMatchesStatus(task: UnifiedTask, filter: StatusFilter) {
   return (
     filter === "all" ||
-    (filter === "todo" && ["pending", "upcoming", "studying"].includes(task.state)) ||
+    (filter === "todo" && ["pending", "in_progress", "upcoming", "studying"].includes(task.state)) ||
     (filter === "revision" && task.state === "revision_required") ||
-    (filter === "submitted" && task.state === "submitted") ||
-    (filter === "completed" && task.state === "graded") ||
+    (filter === "submitted" && ["submitted_pending_grading", "objective_graded_pending_manual", "grading_completed"].includes(task.state)) ||
+    (filter === "completed" && ["graded", "grade_released"].includes(task.state)) ||
     (filter === "locked" && task.state === "locked")
   );
 }
 
 function getAssignmentState(item: AssignmentItem, isManager: boolean, now: number): TaskState {
   if (isManager) return new Date(item.due_at).getTime() < now ? "overdue" : "preview";
-  if (item.latestSubmission) return item.latestSubmission.status;
+  if (item.progressState) return item.progressState;
   if (item.chapterUnlockPending) return "locked";
   if (new Date(item.starts_at).getTime() > now) return "upcoming";
   return new Date(item.due_at).getTime() < now ? "overdue" : "pending";
@@ -231,7 +239,9 @@ function getActionLabel(task: UnifiedTask) {
   if (task.state === "revision_required") return task.kind === "chapter_test" ? "重新测试" : "查看反馈";
   if (task.state === "pending") return task.kind === "chapter_test" ? "开始测试" : "开始作答";
   if (task.state === "upcoming") return "查看安排";
-  if (task.state === "submitted") return "查看提交";
+  if (["submitted_pending_grading", "objective_graded_pending_manual", "grading_completed"].includes(task.state)) return "查看提交";
+  if (task.state === "in_progress") return "继续作答";
+  if (task.state === "grade_released") return "查看成绩";
   if (task.state === "graded") return task.kind === "chapter_test" ? "重新测试" : "查看批改";
   return task.state === "preview" ? "查看预览" : "查看详情";
 }
@@ -240,13 +250,17 @@ function sortTasks(a: UnifiedTask, b: UnifiedTask) {
   const rank: Record<TaskState, number> = {
     revision_required: 0,
     pending: 1,
-    upcoming: 2,
-    studying: 3,
-    submitted: 4,
-    preview: 5,
-    graded: 6,
-    overdue: 7,
-    locked: 8,
+    in_progress: 2,
+    upcoming: 3,
+    studying: 4,
+    submitted_pending_grading: 5,
+    objective_graded_pending_manual: 6,
+    grading_completed: 7,
+    preview: 8,
+    grade_released: 9,
+    graded: 9,
+    overdue: 10,
+    locked: 11,
   };
   const stateDifference = rank[a.state] - rank[b.state];
   if (stateDifference !== 0) return stateDifference;
@@ -272,7 +286,7 @@ function TaskRow({
   const deadlineLabel = getDeadlineLabel(task, currentTime);
   const urgent =
     task.dueAt &&
-    ["pending", "revision_required"].includes(task.state) &&
+    ["pending", "in_progress", "revision_required"].includes(task.state) &&
     new Date(task.dueAt).getTime() - currentTime <= 3 * 86_400_000;
   const testUnavailable = task.state === "locked" || task.state === "studying";
   const statusLabel =
@@ -325,7 +339,7 @@ function TaskRow({
             <span>{deadlineLabel}</span>
           </p>
           {task.dueAt && <p className="app-muted-text mt-1 text-[9px]">{formatAssignmentDate(task.dueAt)}</p>}
-          {task.score !== null && task.state === "graded" && (
+          {task.score !== null && ["graded", "grade_released"].includes(task.state) && (
             <p className="text-base font-bold lg:mt-1" style={{ color: state.color }}>
               {task.score}<span className="ml-0.5 text-[9px] app-muted-text">/ {task.totalPoints}</span>
             </p>
@@ -480,10 +494,10 @@ export function AssignmentBoard({
   }, [chapterTests, currentTime, isManager, items]);
 
   const counts = {
-    todo: tasks.filter((task) => ["pending", "studying"].includes(task.state)).length,
+    todo: tasks.filter((task) => ["pending", "in_progress", "studying"].includes(task.state)).length,
     revision: tasks.filter((task) => task.state === "revision_required").length,
-    submitted: tasks.filter((task) => task.state === "submitted").length,
-    completed: tasks.filter((task) => task.state === "graded").length,
+    submitted: tasks.filter((task) => ["submitted_pending_grading", "objective_graded_pending_manual", "grading_completed"].includes(task.state)).length,
+    completed: tasks.filter((task) => ["graded", "grade_released"].includes(task.state)).length,
   };
 
   const courseGroups = useMemo(

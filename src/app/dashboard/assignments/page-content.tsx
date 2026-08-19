@@ -16,7 +16,7 @@ import {
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import {
   type AssignmentType,
-  type SubmissionStatus,
+  type SubmissionWorkflowState,
 } from "./config";
 import {
   AssignmentBoard,
@@ -43,10 +43,17 @@ type SubmissionRow = {
   id: string;
   assignment_id: string;
   attempt_number: number;
-  status: SubmissionStatus;
+  submission_state: SubmissionWorkflowState;
   score: number | null;
   overall_feedback: string | null;
   submitted_at: string;
+};
+
+type AssignmentProgressRow = {
+  assignment_id: string;
+  progress_state: SubmissionWorkflowState | "in_progress";
+  latest_submission_id: string | null;
+  attempts_used: number;
 };
 
 type CourseRow = {
@@ -110,6 +117,9 @@ export default async function AssignmentsPage({
   const query = searchParams ? await searchParams : {};
   const initialTaskTypeFilter = normalizeTaskTypeFilter(query.type);
   const { supabase, user, tenant, isManager } = await requireAssignmentViewer();
+  if (!isManager) {
+    await supabase.rpc("release_current_user_due_assignment_grades");
+  }
   const admin = createAdminClient();
   const koreanScope = await getStudentAppCourseScope(supabase, "korean");
   // Request-time snapshot keeps all deadline labels consistent for this render.
@@ -124,6 +134,7 @@ export default async function AssignmentsPage({
     chapterTestsResult,
     chapterQuestionsResult,
     ebookProgressResult,
+    assignmentProgressResult,
   ] =
     await Promise.all([
       withStudentAppSchemaFallback(
@@ -149,7 +160,7 @@ export default async function AssignmentsPage({
         : supabase
             .from("learning_submissions")
             .select(
-              "id,assignment_id,attempt_number,status,score,overall_feedback,submitted_at"
+              "id,assignment_id,attempt_number,submission_state,score,overall_feedback,submitted_at"
             )
             .eq("student_id", user.id)
             .order("attempt_number", { ascending: false }),
@@ -197,10 +208,17 @@ export default async function AssignmentsPage({
             .eq("student_id", user.id)
             .eq("tenant_id", tenant?.id ?? ""),
       ),
+      isManager
+        ? Promise.resolve({ data: [] as AssignmentProgressRow[], error: null })
+        : supabase
+            .from("learning_assignment_progress")
+            .select("assignment_id,progress_state,latest_submission_id,attempts_used")
+            .eq("student_id", user.id),
     ]);
 
   const allAssignments = (assignmentsResult.data ?? []) as AssignmentRow[];
   const submissions = (submissionsResult.data ?? []) as SubmissionRow[];
+  const assignmentProgress = (assignmentProgressResult.data ?? []) as AssignmentProgressRow[];
   const courses = (coursesResult.data ?? []) as CourseRow[];
   const categories = (categoriesResult.data ?? []) as CategoryRow[];
   const allChapterTests = (chapterTestsResult.data ?? []) as CourseTestRow[];
@@ -362,6 +380,9 @@ export default async function AssignmentsPage({
   );
 
   const latestByAssignment = getLatestSubmissions(submissions);
+  const progressByAssignment = new Map(
+    assignmentProgress.map((progress) => [progress.assignment_id, progress]),
+  );
   const boardItems = assignments.map((assignment) => {
     const course = assignment.course_id
       ? courseById.get(assignment.course_id)
@@ -373,6 +394,7 @@ export default async function AssignmentsPage({
       ? categoryById.get(subcategory.parent_id)
       : subcategory;
     const latest = latestByAssignment.get(assignment.id);
+    const progress = progressByAssignment.get(assignment.id);
     const unlockProgress = assignment.unlock_test_slug
       ? ebookProgressBySlug.get(assignment.unlock_test_slug)
       : undefined;
@@ -400,12 +422,12 @@ export default async function AssignmentsPage({
       courseGroupSlug: parent?.slug ?? "general",
       latestSubmission: latest
         ? {
-            status: latest.status,
             score: latest.score,
             feedback: latest.overall_feedback,
             attemptNumber: latest.attempt_number,
           }
         : null,
+      progressState: progress?.progress_state ?? latest?.submission_state ?? null,
     };
   });
 
@@ -417,6 +439,7 @@ export default async function AssignmentsPage({
     Boolean(chapterTestsResult.error) ||
     Boolean(chapterQuestionsResult.error) ||
     Boolean(ebookProgressResult.error) ||
+    Boolean(assignmentProgressResult.error) ||
     Boolean(chapterAttemptError);
 
   return (

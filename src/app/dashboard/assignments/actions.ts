@@ -7,7 +7,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { LearningAssignmentActionState } from "./action-state";
 import {
   ASSIGNMENT_STATUSES,
+  SUBMISSION_WORKFLOW_STATES,
+  SUBMISSION_WORKFLOW_STATE_LABELS,
   type AssignmentStatus,
+  type SubmissionWorkflowState,
 } from "./config";
 
 function result(status: "success" | "error", message: string): LearningAssignmentActionState {
@@ -150,11 +153,29 @@ export async function submitLearningAssignmentAction(
     questionId: question.id,
     answer: String(formData.get(`answer_${question.id}`) ?? "").trim(),
   }));
+  const submissionIntent = String(
+    formData.get("submission_intent") ?? "complete"
+  );
+  if (![
+    "complete",
+    "confirmed_incomplete",
+    "time_expired",
+  ].includes(submissionIntent)) {
+    return result("error", "提交方式不正确，请刷新页面后重试。");
+  }
   const emptyIndex = answers.findIndex((answer) => !answer.answer);
-  if (emptyIndex >= 0) return result("error", `请完成第 ${emptyIndex + 1} 题后再提交。`);
+  if (emptyIndex >= 0 && submissionIntent === "complete") {
+    return result("error", `请完成第 ${emptyIndex + 1} 题后再提交。`);
+  }
   if (answers.some((answer) => answer.answer.length > 10000)) return result("error", "单题答案不能超过 10000 个字。");
+  const submissionRequestId = String(
+    formData.get("submission_request_id") ?? ""
+  );
+  if (!isUuid(submissionRequestId)) {
+    return result("error", "提交请求编号不正确，请刷新页面后重试。");
+  }
 
-  const audioAnswers = answers.filter((answer) =>
+  const audioAnswers = answers.filter((answer) => answer.answer &&
     questions.some(
       (question) =>
         question.id === answer.questionId &&
@@ -185,13 +206,52 @@ export async function submitLearningAssignmentAction(
     }
   }
 
-  const { error } = await supabase.rpc("submit_learning_assignment", {
+  const { data, error } = await supabase.rpc("submit_learning_assignment", {
     p_assignment_id: assignmentId,
     p_answers: answers,
+    p_request_id: submissionRequestId,
+    p_submission_intent: submissionIntent,
   });
   if (error) return result("error", friendlyDatabaseError(error.message, "提交失败，请稍后重试。"));
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return result("error", "服务器没有返回有效的提交凭证，请使用原页面重试。");
+  }
+  const submissionResult = data as {
+    submissionId?: unknown;
+    attemptNumber?: unknown;
+    workflowState?: unknown;
+    idempotent?: unknown;
+  };
   refreshAssignmentPages(assignmentId);
-  return result("success", "作答已经提交，老师批改后会在这里显示结果。");
+  const workflowState = String(submissionResult.workflowState ?? "");
+  if (!SUBMISSION_WORKFLOW_STATES.includes(workflowState as SubmissionWorkflowState)) {
+    return result("error", "服务器返回的提交状态无法识别，请刷新页面核对提交记录。");
+  }
+  const submissionId = String(submissionResult.submissionId ?? "");
+  const { data: receipt } = isUuid(submissionId)
+    ? await supabase
+        .from("learning_submissions")
+        .select("submitted_at,attempt_number,submission_state")
+        .eq("id", submissionId)
+        .eq("student_id", user.id)
+        .maybeSingle()
+    : { data: null };
+  const authoritativeState = SUBMISSION_WORKFLOW_STATES.includes(
+    receipt?.submission_state as SubmissionWorkflowState,
+  )
+    ? (receipt?.submission_state as SubmissionWorkflowState)
+    : (workflowState as SubmissionWorkflowState);
+  const retryMessage = submissionResult.idempotent === true
+    ? "系统已确认此前的同一请求提交成功。"
+    : "";
+  return {
+    status: "success",
+    message: `${retryMessage}${SUBMISSION_WORKFLOW_STATE_LABELS[authoritativeState]}。`,
+    submissionState: authoritativeState,
+    submittedAt: receipt?.submitted_at ?? new Date().toISOString(),
+    attemptNumber:
+      Number(receipt?.attempt_number ?? submissionResult.attemptNumber) || undefined,
+  };
 }
 
 export async function gradeLearningSubmissionAction(
@@ -216,11 +276,28 @@ export async function gradeLearningSubmissionAction(
 
   const scores = [];
   for (const [index, answer] of answers.entries()) {
-    const points = Number(String(formData.get(`score_${answer.id}`) ?? ""));
+    const rubricKind = String(formData.get(`rubric_kind_${answer.id}`) ?? "");
+    const rubricKeys = rubricKind === "speaking"
+      ? ["pronunciation_accuracy", "fluency", "grammar_vocabulary", "task_completion"]
+      : rubricKind === "writing"
+        ? ["content_completeness", "grammar_accuracy", "vocabulary_use", "organization_expression", "spelling_format"]
+        : [];
+    const rubricScores = rubricKeys.length > 0
+      ? Object.fromEntries(rubricKeys.map((key) => [
+          key,
+          Number(String(formData.get(`rubric_${answer.id}_${key}`) ?? "")),
+        ]))
+      : null;
+    const points = rubricScores
+      ? Object.values(rubricScores).reduce((total, value) => total + value, 0)
+      : Number(String(formData.get(`score_${answer.id}`) ?? ""));
     const feedback = String(formData.get(`feedback_${answer.id}`) ?? "").trim();
     if (!Number.isFinite(points) || points < 0) return result("error", `第 ${index + 1} 题得分不正确。`);
+    if (rubricScores && Object.values(rubricScores).some((value) => !Number.isFinite(value) || value < 0)) {
+      return result("error", `第 ${index + 1} 题的分项评分不正确。`);
+    }
     if (feedback.length > 2000) return result("error", `第 ${index + 1} 题评语不能超过 2000 个字。`);
-    scores.push({ answerId: answer.id, points, feedback });
+    scores.push({ answerId: answer.id, points, feedback, rubricScores });
   }
 
   const { data: submission } = await supabase
@@ -235,6 +312,49 @@ export async function gradeLearningSubmissionAction(
     p_scores: scores,
   });
   if (error) return result("error", friendlyDatabaseError(error.message, "批改结果保存失败，请稍后重试。"));
+  const { data: gradedSubmission } = await supabase
+    .from("learning_submissions")
+    .select("submission_state")
+    .eq("id", submissionId)
+    .maybeSingle();
   refreshAssignmentPages(submission?.assignment_id ?? undefined);
-  return result("success", decision === "graded" ? "成绩与评语已经发布给学生。" : "任务已退回学生重做。");
+  if (decision === "revision_required") {
+    return result("success", "任务已退回学生重做。");
+  }
+  return result(
+    "success",
+    gradedSubmission?.submission_state === "grading_completed"
+      ? "批改已经保存，请核对暂定总分后确认发布成绩。"
+      : "批改结果已经保存。"
+  );
+}
+
+export async function releaseLearningSubmissionGradeAction(
+  submissionId: string,
+  _previousState: LearningAssignmentActionState,
+  _formData: FormData
+): Promise<LearningAssignmentActionState> {
+  void _previousState;
+  void _formData;
+  if (!isUuid(submissionId)) return result("error", "提交记录编号不正确。");
+  const { supabase } = await requireAssignmentManager();
+  const { data: submission } = await supabase
+    .from("learning_submissions")
+    .select("assignment_id")
+    .eq("id", submissionId)
+    .maybeSingle();
+  const { data, error } = await supabase.rpc("release_learning_submission_grade", {
+    p_submission_id: submissionId,
+  });
+  if (error) return result("error", friendlyDatabaseError(error.message, "成绩发布失败，请稍后重试。"));
+  refreshAssignmentPages(submission?.assignment_id ?? undefined);
+  const releaseResult = data && typeof data === "object" && !Array.isArray(data)
+    ? data as { released?: unknown; scheduled?: unknown }
+    : null;
+  return result(
+    "success",
+    releaseResult?.released === true
+      ? "成绩与评语已经发布给学生。"
+      : "已经确认发布，成绩将在设定的公开时间向学生显示。"
+  );
 }
