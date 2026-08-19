@@ -1,6 +1,7 @@
 "use server";
 
 import { requireActiveUser } from "@/lib/auth";
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { isLessonUnlocked } from "@/lib/course-unlocks";
 import { EBOOK_CHAPTER_TARGET_SECONDS } from "@/lib/korean-ebook-progress";
@@ -244,6 +245,19 @@ export async function recordLessonActivityAction(
   return { status: upsertError ? "error" : "recorded" };
 }
 
+export async function refreshCurrentStudentHomeLearningAction() {
+  const { tenant, user, profile } = await requireActiveUser();
+  if (!tenant?.id || profile?.role !== "student") return;
+
+  refreshStudentHomeLearning({
+    tenantId: tenant.id,
+    studentId: user.id,
+    studentAppId: STUDENT_APP_IDS.korean,
+    appSlug: "korean",
+    space: tenant.slug,
+  });
+}
+
 export type KoreanBookReviewAnswerResult = {
   status: "success" | "error";
   correct: boolean;
@@ -430,6 +444,13 @@ export async function saveKoreanEbookProgressAction(input: {
     } catch {
       // 课时进度联动失败不影响电子书进度保存本身。
     }
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
+    });
   }
 
   return {

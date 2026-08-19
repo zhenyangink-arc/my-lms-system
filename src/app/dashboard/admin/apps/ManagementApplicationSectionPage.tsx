@@ -5,6 +5,7 @@ import {
   ArrowLeft,
   BarChart3,
   BookOpenCheck,
+  CalendarCheck2,
   ClipboardCheck,
   FileCheck2,
   GraduationCap,
@@ -38,6 +39,12 @@ type SectionDefinition = {
 };
 
 const learningSections: Record<string, SectionDefinition> = {
+  "class-today": {
+    title: "班级今日情况",
+    description: "查看教学分配范围内学生今天的任务状态与学习情况。",
+    icon: CalendarCheck2,
+    capability: "viewAnalytics",
+  },
   students: {
     title: "学生与教学分配",
     description: "管理应用授权、负责老师与应用内教学关系。",

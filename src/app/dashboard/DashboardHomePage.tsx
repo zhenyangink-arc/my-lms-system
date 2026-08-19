@@ -7,6 +7,11 @@ import {
   type GrowthWeekActivityDay as WeekActivityDay,
 } from "@/app/dashboard/GrowthHomeView";
 import { SystemGrowthHomeView } from "@/app/dashboard/SystemGrowthHomeView";
+import {
+  loadHomeLearningTasks,
+  selectRequiredTodayTasks,
+} from "@/features/student-home-learning/api/service";
+import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
@@ -142,6 +147,7 @@ function calculateStreak(completedDateStrings: string[]) {
 }
 
 export default async function DashboardHomePage() {
+  const requestNow = new Date();
   const auth = await requireActiveUser();
   const { supabase, user, profile } = auth;
   const userRole = auth.profile?.role ?? "student";
@@ -181,12 +187,36 @@ export default async function DashboardHomePage() {
   let yearLabel = "今年";
   let yearTotalMinutes = 0;
   let courseProgressList: CourseProgressItem[] = [];
+  let dailyLearningTasks: HomeLearningTask[] = [];
+  let dailyLearningLoadFailed = false;
 
   if (user) {
     studentName =
       profile?.full_name || user.user_metadata?.name || user.email || "同学";
 
-    const koreanScope = await getStudentAppCourseScope(supabase, "korean");
+    const dailyLearningTasksPromise = auth.tenant
+      ? loadHomeLearningTasks({
+          supabase,
+          tenantId: auth.tenant.id,
+          studentId: user.id,
+          studentAppId: STUDENT_APP_IDS.korean,
+          appSlug: "korean",
+          appLabel: "韩语学习",
+          space: auth.tenant.slug,
+          now: requestNow,
+        })
+          .then((tasks) => ({ tasks, failed: false }))
+          .catch((error: unknown) => {
+            console.error("[student-home] 今日学习任务读取失败", error);
+            return { tasks: [] as HomeLearningTask[], failed: true };
+          })
+      : Promise.resolve({ tasks: [] as HomeLearningTask[], failed: false });
+    const [koreanScope, dailyLearningResult] = await Promise.all([
+      getStudentAppCourseScope(supabase, "korean"),
+      dailyLearningTasksPromise,
+    ]);
+    dailyLearningTasks = dailyLearningResult.tasks;
+    dailyLearningLoadFailed = dailyLearningResult.failed;
     const weekStart = getWeekStartISOString();
     const seoulTodayString = toSeoulDateString(new Date());
     const [seoulYear, seoulMonth] = seoulTodayString.split("-").map(Number);
@@ -653,6 +683,18 @@ export default async function DashboardHomePage() {
     "/dashboard/records",
     dashboardBasePath
   );
+  const assignmentsHref = scopeDashboardPath(
+    "/dashboard/assignments",
+    dashboardBasePath,
+  );
+  const coursePracticeHref = scopeDashboardPath(
+    "/dashboard/practice/course",
+    dashboardBasePath,
+  );
+  const reviewHref = scopeDashboardPath(
+    "/dashboard/practice/review",
+    dashboardBasePath,
+  );
   const heroHref = hero?.href
     ? scopeDashboardPath(hero.href, dashboardBasePath)
     : null;
@@ -697,6 +739,13 @@ export default async function DashboardHomePage() {
         maxMinutes: YEARLY_MONTH_STUDY_MINUTES_CAP,
         xLabelUnit: "月",
       }}
+      dailyLearningTasks={dailyLearningTasks}
+      requiredTodayTasks={selectRequiredTodayTasks(dailyLearningTasks, requestNow)}
+      dailyLearningLoadFailed={dailyLearningLoadFailed}
+      dailyLearningNowISOString={requestNow.toISOString()}
+      assignmentsHref={assignmentsHref}
+      coursePracticeHref={coursePracticeHref}
+      reviewHref={reviewHref}
     />
   );
 }

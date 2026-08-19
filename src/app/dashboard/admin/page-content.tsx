@@ -25,6 +25,11 @@ import { getStandardQuestionBankAccess } from "@/lib/question-bank";
 import { getLibraryAccess } from "@/lib/resource-library";
 import { getStudentAssignmentAccess } from "@/lib/student-assignments";
 import { getVisaManagementAccess } from "@/lib/visa-management";
+import { loadInstitutionPlatformOverview } from "@/features/institution-platform-overview/api/service";
+import {
+  InstitutionPlatformOverview,
+  InstitutionPlatformOverviewLoadError,
+} from "@/features/institution-platform-overview/components/institution-platform-overview";
 import {
   getAdminRoleLabel,
   getVisibleAdminNavigation,
@@ -159,6 +164,19 @@ export default async function AdminCenterPage() {
   }
 
   const tenantId = auth.tenant?.id ?? null;
+  const learningOverviewPromise =
+    role === "platform_super_admin" ||
+    (role === "tenant_super_admin" && tenantId)
+      ? loadInstitutionPlatformOverview({
+          supabase: auth.supabase,
+          tenantId,
+        })
+          .then((snapshot) => ({ snapshot, failed: false }))
+          .catch((error: unknown) => {
+            console.error("[admin-home] 机构与平台学习概览读取失败", error);
+            return { snapshot: null, failed: true };
+          })
+      : Promise.resolve({ snapshot: null, failed: false });
   const tenantSummaryPromise = tenantId
     ? auth.supabase.rpc("get_tenant_admin_dashboard_summary", {
         p_tenant_id: tenantId,
@@ -176,6 +194,7 @@ export default async function AdminCenterPage() {
     visaAccess,
     studentAssignmentAccess,
     tenantSummaryResult,
+    learningOverviewResult,
   ] = await Promise.all([
     getConversationPracticeAccess(),
     getAnnouncementAccess(),
@@ -188,7 +207,9 @@ export default async function AdminCenterPage() {
     getVisaManagementAccess(),
     getStudentAssignmentAccess(),
     tenantSummaryPromise,
+    learningOverviewPromise,
   ]);
+  const learningOverview = learningOverviewResult.snapshot;
 
   const globalRole = auth.platformProfile?.global_role ?? null;
   const isPlatformOwner = !tenantId && role === "platform_super_admin";
@@ -485,6 +506,14 @@ export default async function AdminCenterPage() {
           );
         })}
       </section>
+
+      {learningOverview ? (
+        <InstitutionPlatformOverview snapshot={learningOverview} />
+      ) : learningOverviewResult.failed ? (
+        <InstitutionPlatformOverviewLoadError
+          retryHref={scopeDashboardPath("/dashboard/admin", dashboardBasePath)}
+        />
+      ) : null}
 
       <div className={`management-home-bento ${isPlatformOwner ? "management-home-bento-owner" : ""}`}>
         <section className="app-card management-focus-card border">

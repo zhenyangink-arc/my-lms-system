@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { requireActiveUser } from "@/lib/auth";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 function isUuid(value: string) {
   return /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(
@@ -12,7 +14,7 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ assignmentId: string }> }
 ) {
-  const { supabase, profile } = await requireActiveUser();
+  const { supabase, profile, tenant, user } = await requireActiveUser();
   if (profile?.role !== "student") {
     return NextResponse.json({ message: "Forbidden." }, { status: 403 });
   }
@@ -50,6 +52,15 @@ export async function PUT(
       { message: "云端保存失败，本机草稿仍然保留。" },
       { status: 400 }
     );
+  }
+  if (tenant?.id) {
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
+    });
   }
   return NextResponse.json({ savedAt: data });
 }

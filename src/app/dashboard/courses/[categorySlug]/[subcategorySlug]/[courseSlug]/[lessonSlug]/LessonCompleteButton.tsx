@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { CheckCircle2 } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
+import { refreshCurrentStudentHomeLearningAction } from "./actions";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
@@ -84,6 +85,7 @@ export function LessonCompleteButton({
 
     setStatus("completed");
     dispatchProgressUpdate(lessonId);
+    await refreshCurrentStudentHomeLearningAction();
     router.refresh();
   }
 

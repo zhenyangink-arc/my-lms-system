@@ -5,6 +5,7 @@ import {
   BarChart3,
   BookOpenCheck,
   Building2,
+  CalendarCheck2,
   Calculator,
   ClipboardCheck,
   FileCheck2,
@@ -55,6 +56,14 @@ const appIconMap = {
 } satisfies Record<StudentAppSlug, typeof Languages>;
 
 const learningModules: WorkspaceModule[] = [
+  {
+    key: "class-today",
+    title: "班级今日情况",
+    description: "查看负责学生今天的学习、必做任务、逾期和待批改情况。",
+    icon: CalendarCheck2,
+    capability: "viewAnalytics",
+    tenantTeacherOnly: true,
+  },
   {
     key: "students",
     title: "学生与教学分配",

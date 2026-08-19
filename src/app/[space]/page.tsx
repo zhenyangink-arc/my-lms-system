@@ -3,16 +3,27 @@ import {
   ArrowRight,
   BookOpen,
   Building2,
+  CalendarClock,
   Calculator,
+  CheckCircle2,
+  CircleAlert,
   Clock3,
   GraduationCap,
   Languages,
+  MessageSquareText,
   PlayCircle,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { ProfileContent } from "@/app/dashboard/profile/page-content";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import {
+  loadPortalHomeLearningSummary,
+  selectPortalHomeLearningSummary,
+  type PortalHomeLearningSummary,
+} from "@/features/student-home-learning/api/service";
+import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
+import { getCourseLearningPath } from "@/features/student-home-learning/routes";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import {
   MEMBERSHIP_TIER_LABELS,
@@ -126,6 +137,28 @@ function getGreeting() {
 
 function getActivityTime(row: ProgressRow) {
   return row.last_viewed_at ?? row.completed_at ?? row.started_at ?? "";
+}
+
+function formatPortalDateTime(value: string): string {
+  const parsed = new Date(value);
+  if (Number.isNaN(parsed.getTime())) return "时间待确认";
+  return new Intl.DateTimeFormat("zh-CN", {
+    timeZone: "Asia/Seoul",
+    month: "numeric",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).format(parsed);
+}
+
+function getTaskTiming(task: HomeLearningTask): string {
+  if (task.dueAt) return `${formatPortalDateTime(task.dueAt)} 截止`;
+  if (task.progressPercent !== null) {
+    return `已完成 ${Math.round(task.progressPercent)}%`;
+  }
+  if (task.startsAt) return `${formatPortalDateTime(task.startsAt)} 开始`;
+  return task.status === "in_progress" ? "可以继续完成" : "现在可以开始";
 }
 
 async function getPortalApps({
@@ -340,15 +373,50 @@ export default async function StudentPortalPage({
   const koreanAppPath = koreanApp
     ? getStudentAppBasePath(space, "korean")
     : portalPath;
-  const currentCourse = koreanApp
-    ? await getCurrentKoreanCourse({ supabase, userId: user.id, space })
-    : null;
+  const portalNow = new Date();
+  let currentCourse: CurrentCourse | null = null;
+  let learningSummaryLoadFailed = false;
+  let learningSummary: PortalHomeLearningSummary =
+    selectPortalHomeLearningSummary([], null, portalNow);
+  if (koreanApp) {
+    const [loadedCurrentCourse, learningSummaryResult] = await Promise.all([
+      getCurrentKoreanCourse({ supabase, userId: user.id, space }),
+      loadPortalHomeLearningSummary({
+        supabase,
+        tenantId: tenant.id,
+        studentId: user.id,
+        studentAppId: STUDENT_APP_IDS.korean,
+        appSlug: "korean",
+        appLabel: koreanApp.portalTitle,
+        space,
+        now: portalNow,
+      })
+        .then((summary) => ({ summary, failed: false }))
+        .catch((error: unknown) => {
+          console.error("[student-portal] 今日学习摘要读取失败", error);
+          return {
+            summary: selectPortalHomeLearningSummary([], null, portalNow),
+            failed: true,
+          };
+        }),
+    ]);
+    currentCourse = loadedCurrentCourse;
+    learningSummary = learningSummaryResult.summary;
+    learningSummaryLoadFailed = learningSummaryResult.failed;
+  }
+  const primaryTask = learningSummary.mostImportant;
+  const emptyStateHref = currentCourse?.continueHref ??
+    (koreanApp
+      ? getCourseLearningPath(space)
+      : primaryApp
+        ? getStudentAppBasePath(space, primaryApp.slug)
+        : portalPath);
 
   return (
     <>
       <a
         href="#tenant-portal-main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-3 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-lg focus:bg-white focus:px-3 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-950 focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
       >
         跳到主要内容
       </a>
@@ -438,6 +506,148 @@ export default async function StudentPortalPage({
             </div>
           </section>
 
+          <section
+            aria-labelledby="portal-learning-summary-title"
+            className="overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl"
+          >
+            <div className="grid lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.85fr)]">
+              <div className="p-6 sm:p-8">
+                <h2
+                  id="portal-learning-summary-title"
+                  className="text-2xl font-black tracking-tight text-slate-950"
+                >
+                  今天最重要
+                </h2>
+
+                {learningSummaryLoadFailed ? (
+                  <div className="mt-6 rounded-3xl border border-amber-200 bg-amber-50/80 p-5 sm:p-6" role="alert">
+                    <span className="inline-flex items-center gap-2 text-sm font-black text-amber-800">
+                      <CircleAlert size={17} aria-hidden="true" />
+                      摘要加载失败
+                    </span>
+                    <CardTitleWithHint
+                      className="mt-3"
+                      headingLevel={3}
+                      title="今日学习摘要暂时无法加载"
+                      titleClassName="text-xl font-black tracking-tight text-slate-950"
+                      description="任务数据读取失败，应用目录和课程入口仍可正常使用。"
+                      hintLabel="查看加载失败说明"
+                    />
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      <a
+                        href={portalPath}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                      >
+                        重新加载
+                      </a>
+                      <Link
+                        href={emptyStateHref}
+                        className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-amber-300 bg-white px-5 text-sm font-black text-slate-800 transition hover:bg-amber-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-700 focus-visible:ring-offset-2"
+                      >
+                        继续学习
+                        <ArrowRight size={16} aria-hidden="true" />
+                      </Link>
+                    </div>
+                  </div>
+                ) : primaryTask ? (
+                  <div className="mt-6">
+                    <p className="text-sm font-black text-emerald-700">
+                      {primaryTask.appLabel}
+                    </p>
+                    <CardTitleWithHint
+                      className="mt-2"
+                      headingLevel={3}
+                      title={primaryTask.title}
+                      titleClassName="text-2xl font-black leading-tight tracking-tight text-slate-950 sm:text-3xl"
+                      description={primaryTask.description}
+                      hintLabel="查看任务说明"
+                    />
+                    <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-slate-600">
+                      <CalendarClock size={17} aria-hidden="true" />
+                      {getTaskTiming(primaryTask)}
+                    </p>
+                    <div className="mt-5 rounded-2xl bg-emerald-50/80 p-4 text-sm leading-6 text-slate-700">
+                      <span className="font-black text-emerald-800">推荐原因：</span>
+                      {primaryTask.reason}
+                    </div>
+                    <Link
+                      href={primaryTask.href}
+                      className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white shadow-lg shadow-slate-950/15 transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                    >
+                      进入任务
+                      <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="mt-6 rounded-3xl border border-dashed border-slate-300 bg-slate-50/70 p-5 sm:p-6">
+                    <CardTitleWithHint
+                      headingLevel={3}
+                      title="今天没有待处理的学习任务"
+                      titleClassName="text-xl font-black tracking-tight text-slate-950"
+                      description="新的必做任务、截止提醒和学习建议会在这里优先显示。"
+                      hintLabel="查看摘要说明"
+                    />
+                    <p className="mt-3 text-sm leading-6 text-slate-600">
+                      可以继续最近的课程，保持今天的学习节奏。
+                    </p>
+                    <Link
+                      href={emptyStateHref}
+                      className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white transition hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                    >
+                      {currentCourse ? "继续课程" : koreanApp ? "进入课程" : "查看应用"}
+                      <ArrowRight size={16} aria-hidden="true" />
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-px bg-slate-200/80 sm:grid-cols-3 lg:grid-cols-1">
+                <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-600">
+                    <CheckCircle2 size={17} className="text-emerald-700" aria-hidden="true" />
+                    今日剩余必做
+                  </div>
+                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                    {learningSummaryLoadFailed ? "—" : learningSummary.requiredTodayCount}
+                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">项</span> : null}
+                  </strong>
+                </div>
+
+                <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-600">
+                    <CalendarClock size={17} className="text-amber-700" aria-hidden="true" />
+                    即将截止
+                  </div>
+                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                    {learningSummaryLoadFailed ? "—" : learningSummary.nearestDeadline ? 1 : 0}
+                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">项</span> : null}
+                  </strong>
+                  {!learningSummaryLoadFailed && learningSummary.nearestDeadline ? (
+                    <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+                      {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)} · {learningSummary.nearestDeadline.title}
+                    </p>
+                  ) : null}
+                </div>
+
+                <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
+                  <div className="flex items-center gap-2 text-sm font-bold text-slate-600">
+                    <MessageSquareText size={17} className="text-sky-700" aria-hidden="true" />
+                    新反馈
+                  </div>
+                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                    {learningSummaryLoadFailed ? "—" : learningSummary.latestFeedback ? 1 : 0}
+                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">条</span> : null}
+                  </strong>
+                  {!learningSummaryLoadFailed && learningSummary.latestFeedback ? (
+                    <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+                      {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section aria-labelledby="student-apps-title">
             <div className="flex flex-wrap items-end justify-between gap-4 px-1">
               <div>
@@ -462,7 +672,12 @@ export default async function StudentPortalPage({
                       <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${accent.icon}`}>
                         <Icon size={23} aria-hidden="true" />
                       </span>
-                      <span className={`rounded-full px-3 py-1.5 text-xs font-black ${accent.badge}`}>
+                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black ${accent.badge}`}>
+                        {active ? (
+                          <CheckCircle2 size={14} aria-hidden="true" />
+                        ) : (
+                          <Clock3 size={14} aria-hidden="true" />
+                        )}
                         {active ? "可进入" : "建设中"}
                       </span>
                     </div>

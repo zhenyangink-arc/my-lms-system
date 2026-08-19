@@ -80,12 +80,19 @@ export function CardTitleWithHint({
         triggerRef.current?.focus();
       }
     };
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (!triggerRef.current?.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
     window.addEventListener("keydown", closeOnEscape);
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
 
     return () => {
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
       window.removeEventListener("keydown", closeOnEscape);
+      document.removeEventListener("pointerdown", closeOnOutsidePointer);
     };
   }, [isOpen, updatePosition]);
 
@@ -109,14 +116,16 @@ export function CardTitleWithHint({
             onMouseLeave={() => setIsOpen(false)}
             onFocus={openHint}
             onBlur={() => setIsOpen(false)}
-            onClick={openHint}
-            className={`flex h-7 w-7 shrink-0 cursor-help items-center justify-center bg-transparent outline-none transition focus-visible:rounded-full focus-visible:ring-2 ${
+            onClick={() => {
+              if (!isOpen) openHint();
+            }}
+            className={`flex h-11 w-11 shrink-0 cursor-help items-center justify-center bg-transparent outline-none transition focus-visible:rounded-full focus-visible:ring-2 ${
               tone === "inverse"
                 ? "text-white/70 hover:text-white focus-visible:ring-white/70"
                 : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] focus-visible:ring-[var(--ring)]"
             } ${hintClassName}`}
           >
-            <CircleAlert size={14} aria-hidden="true" />
+            <CircleAlert size={16} aria-hidden="true" />
           </button>
           {isOpen &&
             position &&

@@ -5,6 +5,7 @@ import type { SyntheticEvent } from "react";
 import { Maximize2, Video } from "lucide-react";
 
 import { createClient } from "@/lib/supabase/client";
+import { refreshCurrentStudentHomeLearningAction } from "./actions";
 
 type LessonProgressStatus = "not_started" | "in_progress" | "completed";
 
@@ -121,6 +122,7 @@ export function LessonVideoPlayer({
 
     if (status === "completed") {
       completedRef.current = true;
+      void refreshCurrentStudentHomeLearningAction();
     }
 
     dispatchProgressUpdate(lessonId, status, progressPercent);

@@ -63,19 +63,19 @@ export function PortalAccountMenu({
 
   return (
     <>
-      <div ref={menuRef} className="relative">
+      <div ref={menuRef} className="relative shrink-0">
         <button
           ref={triggerRef}
           type="button"
           aria-haspopup="menu"
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
-          className="flex h-11 items-center gap-2 rounded-xl px-2 text-left transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          className="flex h-11 items-center gap-2 rounded-xl px-1 text-left transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:px-2"
         >
           <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white shadow-sm">
             {initial}
           </span>
-          <span className="max-w-32 leading-tight">
+          <span className="hidden max-w-32 leading-tight md:block">
             <span className="block truncate text-sm font-semibold text-slate-900">
               {userName}
             </span>
@@ -86,7 +86,7 @@ export function PortalAccountMenu({
           <ChevronDown
             aria-hidden="true"
             size={16}
-            className={`text-slate-400 transition-transform ${isOpen ? "rotate-180" : ""}`}
+            className={`hidden text-slate-400 transition-transform md:block ${isOpen ? "rotate-180" : ""}`}
           />
         </button>
 
@@ -100,7 +100,7 @@ export function PortalAccountMenu({
             type="button"
             role="menuitem"
             onClick={() => openDialog("profile")}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="flex min-h-11 w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
             <UserRound aria-hidden="true" size={16} />
             个人资料
@@ -109,7 +109,7 @@ export function PortalAccountMenu({
             type="button"
             role="menuitem"
             onClick={() => openDialog("settings")}
-            className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            className="flex min-h-11 w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
           >
             <Settings aria-hidden="true" size={16} />
             设置

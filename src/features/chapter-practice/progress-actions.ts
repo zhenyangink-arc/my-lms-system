@@ -2,7 +2,9 @@
 
 import { z } from "zod";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { requireActiveUser } from "@/lib/auth";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { recordStudentChapterPracticeProgress } from "./student/progress-service";
 import type { StudentChapterPracticeProgress } from "./student/types";
 
@@ -65,6 +67,13 @@ export async function updateStudentChapterPracticeProgressAction(
       studentId: user.id,
       practiceUnitId: parsed.data.practiceUnitId,
       mutation: parsed.data,
+    });
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
     });
     return { ok: true, progress };
   } catch (error) {

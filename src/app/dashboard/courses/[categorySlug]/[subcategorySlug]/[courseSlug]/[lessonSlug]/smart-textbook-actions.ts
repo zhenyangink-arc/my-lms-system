@@ -2,12 +2,14 @@
 
 import { z } from "zod";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import {
   canUseStudentFeature,
   normalizeMembershipTier,
 } from "@/lib/student-permissions";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 import {
@@ -74,7 +76,7 @@ export async function submitSmartTextbookActivityAction(
     await requireActiveUser();
   const preview = isPlatformCourseAuditorRole(platformProfile?.role);
 
-  return submitSmartTextbookActivityForContext(input, {
+  const result = await submitSmartTextbookActivityForContext(input, {
     supabase,
     admin: createAdminClient(),
     userId: user.id,
@@ -86,4 +88,14 @@ export async function submitSmartTextbookActivityAction(
     ),
     preview,
   });
+  if (result.ok && !preview && tenant?.id) {
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
+    });
+  }
+  return result;
 }

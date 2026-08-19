@@ -1,6 +1,7 @@
 "use server";
 
 import { requireActiveUser } from "@/lib/auth";
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { recordStudentChapterPracticeProgress } from "./student/progress-service";
@@ -202,6 +203,13 @@ export async function evaluateChapterPracticeListening(input: {
   } catch (reviewError) {
     console.warn("听辨进度已保存，但错题归集失败", reviewError);
   }
+  refreshStudentHomeLearning({
+    tenantId: tenant.id,
+    studentId: user.id,
+    studentAppId: STUDENT_APP_IDS.korean,
+    appSlug: "korean",
+    space: tenant.slug,
+  });
   return {
     ok: true,
     result: {

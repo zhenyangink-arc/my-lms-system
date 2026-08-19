@@ -2,7 +2,9 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learning-assignments";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { LearningAssignmentActionState } from "./action-state";
 import {
@@ -223,6 +225,15 @@ export async function submitLearningAssignmentAction(
     idempotent?: unknown;
   };
   refreshAssignmentPages(assignmentId);
+  if (tenant?.id) {
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
+    });
+  }
   const workflowState = String(submissionResult.workflowState ?? "");
   if (!SUBMISSION_WORKFLOW_STATES.includes(workflowState as SubmissionWorkflowState)) {
     return result("error", "服务器返回的提交状态无法识别，请刷新页面核对提交记录。");

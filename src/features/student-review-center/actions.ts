@@ -2,6 +2,8 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 import { requireActiveUser } from "@/lib/auth";
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
 export type MasterReviewItemActionState = {
   status: "idle" | "success" | "error";
@@ -21,7 +23,7 @@ export async function markStudentReviewItemMasteredAction(
   if (!UUID_PATTERN.test(itemId)) {
     return { status: "error", message: "复习项目编号无效，请刷新后重试。" };
   }
-  const { supabase, user, profile } = await requireActiveUser();
+  const { supabase, user, profile, tenant } = await requireActiveUser();
   if (profile?.role !== "student") {
     return { status: "error", message: "只有学生本人可以更新掌握状态。" };
   }
@@ -42,5 +44,14 @@ export async function markStudentReviewItemMasteredAction(
   }
   revalidateDashboard("/dashboard/progress");
   revalidateDashboard("/[space]/apps/korean/practice/review", "page");
+  if (tenant?.id) {
+    refreshStudentHomeLearning({
+      tenantId: tenant.id,
+      studentId: user.id,
+      studentAppId: STUDENT_APP_IDS.korean,
+      appSlug: "korean",
+      space: tenant.slug,
+    });
+  }
   return { status: "success", message: "已标记为重新掌握。" };
 }

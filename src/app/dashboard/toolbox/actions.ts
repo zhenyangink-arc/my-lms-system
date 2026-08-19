@@ -1,5 +1,6 @@
 "use server";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { requireActiveUser } from "@/lib/auth";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
@@ -97,7 +98,7 @@ export async function submitToolboxPractice(input: {
     return { ok: false, message: "请完成全部题目后再提交。" };
   }
 
-  const { supabase, tenant, profile } = await requireActiveUser();
+  const { supabase, tenant, profile, user } = await requireActiveUser();
   if (!tenant?.id || profile?.role !== "student") {
     return { ok: false, message: "只有当前机构的学生账号可以提交练习。" };
   }
@@ -117,6 +118,13 @@ export async function submitToolboxPractice(input: {
   }
 
   const result = data as Record<string, unknown>;
+  refreshStudentHomeLearning({
+    tenantId: tenant.id,
+    studentId: user.id,
+    studentAppId: STUDENT_APP_IDS.korean,
+    appSlug: "korean",
+    space: tenant.slug,
+  });
   return {
     ok: true,
     result: {

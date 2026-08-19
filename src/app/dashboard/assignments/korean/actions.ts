@@ -2,6 +2,7 @@
 
 import { revalidateDashboard } from "@/lib/revalidate-dashboard";
 
+import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
 import { requireAssignmentViewer } from "@/lib/learning-assignments";
 import {
   parseQuestionOptions,
@@ -438,6 +439,13 @@ export async function submitKoreanChapterTestAction(input: {
   revalidateDashboard("/dashboard/grades");
   revalidateDashboard("/dashboard/progress");
   revalidateDashboard("/[space]/apps/korean/practice", "layout");
+  refreshStudentHomeLearning({
+    tenantId: tenant.id,
+    studentId: user.id,
+    studentAppId: STUDENT_APP_IDS.korean,
+    appSlug: "korean",
+    space: tenant.slug,
+  });
 
   return successResult(payload, true);
 }
