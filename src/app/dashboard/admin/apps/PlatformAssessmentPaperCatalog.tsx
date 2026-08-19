@@ -1,10 +1,12 @@
 "use client";
 
-import { Search } from "lucide-react";
-import { useMemo, useState } from "react";
+import { Search, Send } from "lucide-react";
+import { useActionState, useMemo, useState } from "react";
 
 import { AssessmentPaperQuestionDrawer } from "@/app/dashboard/admin/assignments/AssessmentPaperQuestionDrawer";
 import { AssessmentPaperStatusActions } from "@/app/dashboard/admin/assignments/AssessmentPaperStatusActions";
+import { publishAssessmentPaperBatchAction } from "@/app/dashboard/admin/assignments/paper-actions";
+import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
 import type { AssessmentPaperStatus } from "@/lib/assessment-papers";
 
 export type PlatformAssessmentPaperItem = {
@@ -67,6 +69,17 @@ export function PlatformAssessmentPaperCatalog({
     "all"
   );
   const [status, setStatus] = useState<"all" | AssessmentPaperStatus>("all");
+  const [batchState, batchAction, batchPending] = useActionState(
+    publishAssessmentPaperBatchAction,
+    initialLearningAssignmentActionState
+  );
+  const readyDraftIds = useMemo(
+    () =>
+      papers
+        .filter((paper) => paper.status === "draft" && paper.qualityReady)
+        .map((paper) => paper.id),
+    [papers]
+  );
   const filteredPapers = useMemo(() => {
     const keyword = query.trim().toLowerCase();
     return papers.filter(
@@ -89,7 +102,41 @@ export function PlatformAssessmentPaperCatalog({
             草稿先完成质检，平台负责人发布后机构才能看到并布置。
           </p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {canRelease && readyDraftIds.length > 0 && (
+            <form
+              action={batchAction}
+              onSubmit={(event) => {
+                if (
+                  !window.confirm(
+                    `确认一次发布全部 ${readyDraftIds.length} 套质检合格草稿？发布后机构将立即可以选择。`
+                  )
+                ) {
+                  event.preventDefault();
+                }
+              }}
+            >
+              {readyDraftIds.map((paperId) => (
+                <input
+                  key={paperId}
+                  type="hidden"
+                  name="paper_ids"
+                  value={paperId}
+                />
+              ))}
+              <button
+                type="submit"
+                disabled={batchPending}
+                aria-busy={batchPending}
+                className="inline-flex min-h-11 items-center gap-2 rounded-lg bg-[var(--primary)] px-4 text-xs font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Send size={15} aria-hidden="true" />
+                {batchPending
+                  ? "正在发布…"
+                  : `发布全部合格草稿（${readyDraftIds.length}）`}
+              </button>
+            </form>
+          )}
           <label className="app-input flex min-h-11 min-w-64 items-center gap-2 rounded-lg border px-3">
             <Search size={15} aria-hidden="true" className="app-muted-text" />
             <span className="sr-only">搜索试卷</span>
@@ -128,6 +175,26 @@ export function PlatformAssessmentPaperCatalog({
           </select>
         </div>
       </div>
+
+      {batchState.status !== "idle" && (
+        <p
+          role={batchState.status === "error" ? "alert" : "status"}
+          aria-live="polite"
+          className="border-b px-4 py-3 text-xs font-semibold"
+          style={{
+            color:
+              batchState.status === "error"
+                ? "var(--status-danger)"
+                : "var(--status-success)",
+            backgroundColor:
+              batchState.status === "error"
+                ? "var(--status-danger-surface)"
+                : "var(--status-success-surface)",
+          }}
+        >
+          {batchState.message}
+        </p>
+      )}
 
       <div className="overflow-x-auto">
         <table className="w-full min-w-[1180px] table-fixed border-collapse text-left">
