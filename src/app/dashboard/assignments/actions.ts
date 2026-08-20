@@ -6,7 +6,11 @@ import { refreshStudentHomeLearning } from "@/features/student-home-learning/api
 import { requireAssignmentManager, requireAssignmentStudent } from "@/lib/learning-assignments";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { LearningAssignmentActionState } from "./action-state";
+import {
+  initialAssignmentRemediationState,
+  type AssignmentRemediationState,
+  type LearningAssignmentActionState,
+} from "./action-state";
 import {
   ASSIGNMENT_STATUSES,
   SUBMISSION_WORKFLOW_STATES,
@@ -47,20 +51,6 @@ function refreshAssignmentPages(assignmentId?: string) {
     revalidateDashboard(`/dashboard/admin/assignments/${assignmentId}`);
   }
 }
-
-export type AssignmentRemediationState = {
-  status: "idle" | "correct" | "incorrect" | "error";
-  message: string;
-  correctAnswer: string | null;
-  explanation: string | null;
-};
-
-export const initialAssignmentRemediationState: AssignmentRemediationState = {
-  status: "idle",
-  message: "",
-  correctAnswer: null,
-  explanation: null,
-};
 
 export async function submitAssignmentRemediationAction(
   questionId: string,
@@ -144,11 +134,21 @@ export async function submitLearningAssignmentAction(
   void _previousState;
   if (!isUuid(assignmentId)) return result("error", "任务编号不正确。");
   const { supabase, user, tenant } = await requireAssignmentStudent();
-  const { data: questions, error: questionError } = await supabase
+  const { data: deliveryPaperId, error: deliveryPaperError } = await supabase.rpc(
+    "current_user_assignment_delivery_paper_id",
+    { p_assignment_id: assignmentId },
+  );
+  if (deliveryPaperError) {
+    return result("error", "任务试卷暂时无法确认，请刷新页面重试。");
+  }
+  const questionQuery = supabase
     .from("learning_assignment_questions")
     .select("id,question_type")
     .eq("assignment_id", assignmentId)
     .order("sort_order", { ascending: true });
+  const { data: questions, error: questionError } = typeof deliveryPaperId === "string"
+    ? await questionQuery.eq("delivery_paper_id", deliveryPaperId)
+    : await questionQuery.is("delivery_paper_id", null);
   if (questionError || !questions?.length) return result("error", "任务题目暂时无法读取，请刷新页面重试。");
 
   const answers = questions.map((question) => ({
@@ -241,7 +241,7 @@ export async function submitLearningAssignmentAction(
   const submissionId = String(submissionResult.submissionId ?? "");
   const { data: receipt } = isUuid(submissionId)
     ? await supabase
-        .from("learning_submissions")
+        .from("student_learning_submissions")
         .select("submitted_at,attempt_number,submission_state")
         .eq("id", submissionId)
         .eq("student_id", user.id)

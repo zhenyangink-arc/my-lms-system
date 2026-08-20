@@ -14,6 +14,7 @@ import {
   PanelsTopLeft,
   Settings2,
   ShieldCheck,
+  Stamp,
   Target,
   UsersRound,
   Wrench,
@@ -103,6 +104,12 @@ const learningSections: Record<string, SectionDefinition> = {
     title: "会话与课堂",
     description: "管理会话场景和学生练习记录。",
     icon: MessageSquareText,
+    capability: "manageAssessments",
+  },
+  "completion-review": {
+    title: "结课资格",
+    description: "机构核对资格缺口并管理证书，平台查看按政策版本区分的跨机构趋势。",
+    icon: Stamp,
     capability: "manageAssessments",
   },
   settings: {

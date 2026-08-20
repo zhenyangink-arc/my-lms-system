@@ -18,6 +18,9 @@ export type AssignmentDetailRow = {
   source_paper_code: string | null;
   source_paper_version: number | null;
   source_paper_id: string | null;
+  retake_paper_id: string | null;
+  retake_starts_at: string | null;
+  retake_due_at: string | null;
   unlock_after_chapter_completion: boolean;
   unlock_test_slug: string | null;
   status: "draft" | "published" | "closed";
@@ -40,7 +43,7 @@ export const getAssignmentDetail = cache(
     const result = await supabase
       .from("learning_assignments")
       .select(
-        "id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,max_attempts,allow_resubmission,source_paper_id,source_paper_code,source_paper_version,unlock_after_chapter_completion,unlock_test_slug,status,student_app_id",
+        "id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,max_attempts,allow_resubmission,source_paper_id,source_paper_code,source_paper_version,retake_paper_id,retake_starts_at,retake_due_at,unlock_after_chapter_completion,unlock_test_slug,status,student_app_id",
       )
       .eq("id", assignmentId)
       .eq("student_app_id", studentAppId)

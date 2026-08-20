@@ -68,6 +68,7 @@ type PaperQuestionRow = {
 };
 type PaperQuality = {
   ready?: boolean;
+  issues?: unknown;
 };
 type PaperAdoption = {
   paper_id: string;
@@ -240,6 +241,12 @@ export async function ManagementApplicationAssessmentPage({
     (paper) => {
       const test = testById.get(paper.source_test_id);
       const adoption = adoptionByPaperId.get(paper.id);
+      const quality = qualityByPaperId.get(paper.id);
+      const qualityIssues = Array.isArray(quality?.issues)
+        ? quality.issues.filter(
+            (issue): issue is string => typeof issue === "string"
+          )
+        : ["质检结果读取失败，请刷新后重试。"];
       return {
         id: paper.id,
         paperCode: paper.paper_code,
@@ -253,7 +260,8 @@ export async function ManagementApplicationAssessmentPage({
         totalPoints: Number(paper.total_points),
         version: paper.version,
         updatedAt: paper.updated_at,
-        qualityReady: qualityByPaperId.get(paper.id)?.ready === true,
+        qualityReady: quality?.ready === true,
+        qualityIssues,
         institutionCount: Number(adoption?.institution_count ?? 0),
         assignmentCount: Number(adoption?.assignment_count ?? 0),
         questions: (questionsByPaperId.get(paper.id) ?? []).map((question) => ({

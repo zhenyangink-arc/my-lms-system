@@ -24,7 +24,7 @@ function AssignmentDate({ value }: { value: string | null }) {
 
 
 type AssignmentRow = Omit<AssignmentDetailRow, "status" | "student_app_id"> & { assignment_type: AssignmentType };
-type QuestionRow = { id: string; question_type: QuestionType; language_skill: "vocabulary" | "grammar" | "listening" | "speaking" | "reading" | "writing" | ""; stimulus_text: string; prompt: string; options: unknown; points: number; sort_order: number; auto_graded: boolean };
+type QuestionRow = { id: string; delivery_paper_id: string | null; question_type: QuestionType; language_skill: "vocabulary" | "grammar" | "listening" | "speaking" | "reading" | "writing" | ""; stimulus_text: string; prompt: string; options: unknown; points: number; sort_order: number; auto_graded: boolean };
 type SubmissionRow = { id: string; attempt_number: number; submission_state: SubmissionWorkflowState; score: number | null; overall_feedback: string | null; submitted_at: string; graded_at: string | null };
 type AnswerRow = { id: string; submission_id: string; question_id: string; answer_text: string; awarded_points: number | null; grader_feedback: string | null };
 type DraftRow = { answers: unknown; active_step: number; updated_at: string };
@@ -47,13 +47,13 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
           assignmentId,
         );
       })()
-    : supabase.from("learning_assignments").select("id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,max_attempts,allow_resubmission,source_paper_id,source_paper_code,source_paper_version,unlock_after_chapter_completion,unlock_test_slug").eq("id", assignmentId).eq("status", "published").maybeSingle();
-  const [assignmentResult, questionsResult, submissionsResult, chapterCompletionResult, draftResult, windowResult, canSubmitResult, attemptResult] = await Promise.all([
+    : supabase.from("learning_assignments").select("id,title,description,institution_note,assignment_type,total_points,starts_at,due_at,duration_minutes,max_attempts,allow_resubmission,source_paper_id,source_paper_code,source_paper_version,retake_paper_id,retake_starts_at,retake_due_at,unlock_after_chapter_completion,unlock_test_slug").eq("id", assignmentId).eq("status", "published").maybeSingle();
+  const [assignmentResult, questionsResult, submissionsResult, chapterCompletionResult, draftResult, windowResult, canSubmitResult, attemptResult, deliveryPaperResult] = await Promise.all([
     assignmentPromise,
-    supabase.from("learning_assignment_questions").select("id,question_type,language_skill,stimulus_text,prompt,options,points,sort_order,auto_graded").eq("assignment_id", assignmentId).order("sort_order", { ascending: true }),
+    supabase.from("learning_assignment_questions").select("id,delivery_paper_id,question_type,language_skill,stimulus_text,prompt,options,points,sort_order,auto_graded").eq("assignment_id", assignmentId).order("sort_order", { ascending: true }),
     isManager
       ? Promise.resolve({ data: [] as SubmissionRow[], error: null })
-      : supabase.from("learning_submissions").select("id,attempt_number,submission_state,score,overall_feedback,submitted_at,graded_at").eq("assignment_id", assignmentId).eq("student_id", user.id).order("attempt_number", { ascending: false }),
+      : supabase.from("student_learning_submissions").select("id,attempt_number,submission_state,score,overall_feedback,submitted_at,graded_at").eq("assignment_id", assignmentId).eq("student_id", user.id).order("attempt_number", { ascending: false }),
     supabase.rpc("current_user_completed_assignment_chapter", {
       p_assignment_id: assignmentId,
     }),
@@ -73,6 +73,9 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
       : supabase.rpc("current_user_learning_assignment_attempt", {
           p_assignment_id: assignmentId,
         }),
+    supabase.rpc("current_user_assignment_delivery_paper_id", {
+      p_assignment_id: assignmentId,
+    }),
   ]);
   if (
     !assignmentResult.data ||
@@ -80,34 +83,58 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
     (space && (assignmentResult.data as AssignmentDetailRow).status !== "published")
   ) notFound();
   const assignment = assignmentResult.data as AssignmentRow;
-  const { data: sourcePaper } = assignment.assignment_type === "exam" && assignment.source_paper_id
+  const assignmentWindow = ((windowResult.data ?? [])[0] ?? null) as AssignmentWindowRow | null;
+  const isRetakeWindow = Boolean(
+    assignment.retake_paper_id &&
+      assignment.retake_starts_at &&
+      assignmentWindow?.unlocked_at &&
+      new Date(assignmentWindow.unlocked_at).getTime() === new Date(assignment.retake_starts_at).getTime(),
+  );
+  const effectivePaperId = typeof deliveryPaperResult.data === "string"
+    ? deliveryPaperResult.data
+    : null;
+  if (assignment.assignment_type === "exam" && (
+    deliveryPaperResult.error || !effectivePaperId
+  )) notFound();
+  const { data: sourcePaper } = assignment.assignment_type === "exam" && effectivePaperId
     ? await createAdminClient()
         .from("assessment_papers")
-        .select("passing_score")
-        .eq("id", assignment.source_paper_id)
+        .select("paper_code,version,passing_score")
+        .eq("id", effectivePaperId)
         .maybeSingle()
-    : { data: null as { passing_score: number | null } | null };
+    : { data: null as { paper_code: string; version: number; passing_score: number | null } | null };
   const passingScore = sourcePaper?.passing_score == null
     ? null
     : Number(sourcePaper.passing_score);
-  const questions = (questionsResult.data ?? []) as QuestionRow[];
-  const submissions = (submissionsResult.data ?? []) as SubmissionRow[];
+  const questions = ((questionsResult.data ?? []) as QuestionRow[]).filter((question) =>
+    effectivePaperId
+      ? question.delivery_paper_id === effectivePaperId
+      : question.delivery_paper_id === null,
+  );
+  const submissions = ((submissionsResult.data ?? []) as SubmissionRow[]).filter((submission) =>
+    !isRetakeWindow || (
+      assignment.retake_starts_at !== null &&
+      new Date(submission.submitted_at).getTime() >= new Date(assignment.retake_starts_at).getTime()
+    ),
+  );
   const latest = submissions[0] ?? null;
-  const submissionIds = submissions.map((submission) => submission.id);
-  const { data: answerData } = submissionIds.length ? await supabase.from("learning_submission_answers").select("id,submission_id,question_id,answer_text,awarded_points,grader_feedback").in("submission_id", submissionIds) : { data: [] as AnswerRow[] };
-  const answers = (answerData ?? []) as AnswerRow[];
-  const latestAnswers = answers.filter((answer) => answer.submission_id === latest?.id);
+  const objectiveQuestionIds = questions.filter((question) => question.auto_graded).map((question) => question.id);
+  const { data: answerData } = latest
+    ? await supabase.from("student_learning_submission_answers").select("id,submission_id,question_id,answer_text,awarded_points,grader_feedback").eq("submission_id", latest.id)
+    : { data: [] as AnswerRow[] };
+  const latestAnswers = (answerData ?? []) as AnswerRow[];
   const previousAnswers = Object.fromEntries(latestAnswers.map((answer) => [answer.question_id, answer.answer_text]));
   const answerByQuestion = new Map(latestAnswers.map((answer) => [answer.question_id, answer]));
   const objectiveQuestions = questions.filter((question) => question.auto_graded);
-  const objectiveQuestionIds = new Set(objectiveQuestions.map((question) => question.id));
-  const objectiveAnswers = latestAnswers.filter((answer) => objectiveQuestionIds.has(answer.question_id));
+  const objectiveQuestionIdSet = new Set(objectiveQuestionIds);
+  const objectiveAnswers = latestAnswers.filter((answer) => objectiveQuestionIdSet.has(answer.question_id));
   const objectiveEarned = objectiveAnswers.reduce((total, answer) => total + Number(answer.awarded_points ?? 0), 0);
   const objectiveMaximum = objectiveQuestions.reduce((total, question) => total + Number(question.points), 0);
-  const assignmentWindow = ((windowResult.data ?? [])[0] ?? null) as AssignmentWindowRow | null;
+  const effectiveStartsAt = assignmentWindow?.unlocked_at ?? assignment.starts_at;
   const effectiveDueAt = assignmentWindow?.effective_due_at ?? assignment.due_at;
+  assignment.starts_at = effectiveStartsAt;
   const overdue = Boolean(effectiveDueAt && new Date(effectiveDueAt).getTime() < new Date().getTime());
-  const notStarted = new Date(assignment.starts_at).getTime() > new Date().getTime();
+  const notStarted = new Date(effectiveStartsAt).getTime() > new Date().getTime();
   const chapterCompleted = assignmentWindow?.chapter_completed ?? chapterCompletionResult.data !== false;
   const waitingForChapter = assignment.unlock_after_chapter_completion && !chapterCompleted;
   const activeAttempt = (attemptResult.data ?? null) as AssignmentAttemptRow | null;
@@ -134,7 +161,12 @@ export default async function AssignmentDetailPage({ params }: { params: Promise
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
       <Link href={`/dashboard/assignments?type=${assignment.assignment_type === "exam" ? "exam" : "homework"}`} className="inline-flex items-center gap-2 text-xs font-bold app-muted-text"><ArrowLeft size={14} />返回任务列表</Link>
-      <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--card), var(--accent), var(--accent))" }}><div className="flex flex-col gap-5 lg:flex-row lg:items-end"><div className="min-w-0 flex-1"><div className="flex flex-wrap gap-2"><span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>{ASSIGNMENT_TYPE_LABELS[assignment.assignment_type]}</span>{assignment.source_paper_code && <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>{assignment.source_paper_code} · 版本 {assignment.source_paper_version ?? 1}</span>}{latest && <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: latest.submission_state === "grade_released" ? "var(--status-success)" : latest.submission_state === "revision_required" ? "#c94f45" : "var(--status-warning)", backgroundColor: latest.submission_state === "grade_released" ? "var(--status-success-surface)" : latest.submission_state === "revision_required" ? "#fff0ed" : "var(--status-warning-surface)" }}>{SUBMISSION_WORKFLOW_STATE_LABELS[latest.submission_state]}</span>}</div><h2 className="mt-3 text-2xl font-bold tracking-tight">{assignment.title}</h2><p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{assignment.description || "请按题目要求完成全部作答。"}</p>{assignment.institution_note && <p className="mt-3 rounded-xl px-3 py-2 text-xs leading-5" style={{ backgroundColor: "var(--support-surface)" }}>机构通知：{assignment.institution_note}</p>}<div className="app-muted-text mt-4 flex flex-wrap gap-3 text-xs"><span className="inline-flex items-center gap-1"><Clock3 size={13} />开始 <AssignmentDate value={assignment.starts_at} /></span><span className="inline-flex items-center gap-1"><Clock3 size={13} />{waitingForChapter && assignmentWindow?.due_days_after_unlock ? `完成章节后 ${assignmentWindow.due_days_after_unlock} 天内提交` : <>截止 <AssignmentDate value={effectiveDueAt} /></>}</span>{assignment.duration_minutes && <span className="inline-flex items-center gap-1"><Timer size={13} />{assignment.assignment_type === "exam" ? "考试" : "建议"} {assignment.duration_minutes} 分钟</span>}<span>{notStarted ? "题目将在开始后开放" : `${questions.length} 题 · ${assignment.total_points} 分`}</span></div></div>{latest?.submission_state === "grade_released" && <div className="app-card min-w-[190px] rounded-2xl border p-5 text-center"><Award className="mx-auto" size={24} style={{ color: "var(--status-success)" }} /><p className="mt-2 text-2xl font-bold" style={{ color: "var(--status-success)" }}>{latest.score ?? 0}</p><p className="app-muted-text mt-1 text-xs">满分 {assignment.total_points}</p></div>}</div></section>
+      {isRetakeWindow && (
+        <p role="status" className="rounded-xl bg-[var(--status-warning-surface)] px-4 py-3 text-sm font-semibold text-[var(--status-warning)]">
+          当前为老师布置的补考，开始与截止时间已按补考安排更新。
+        </p>
+      )}
+      <section className="app-card rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--card), var(--accent), var(--accent))" }}><div className="flex flex-col gap-5 lg:flex-row lg:items-end"><div className="min-w-0 flex-1"><div className="flex flex-wrap gap-2"><span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>{ASSIGNMENT_TYPE_LABELS[assignment.assignment_type]}</span>{(sourcePaper?.paper_code ?? assignment.source_paper_code) && <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>{sourcePaper?.paper_code ?? assignment.source_paper_code} · 版本 {sourcePaper?.version ?? assignment.source_paper_version ?? 1}</span>}{latest && <span className="rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: latest.submission_state === "grade_released" ? "var(--status-success)" : latest.submission_state === "revision_required" ? "#c94f45" : "var(--status-warning)", backgroundColor: latest.submission_state === "grade_released" ? "var(--status-success-surface)" : latest.submission_state === "revision_required" ? "#fff0ed" : "var(--status-warning-surface)" }}>{SUBMISSION_WORKFLOW_STATE_LABELS[latest.submission_state]}</span>}</div><h2 className="mt-3 text-2xl font-bold tracking-tight">{assignment.title}</h2><p className="app-muted-text mt-4 whitespace-pre-wrap text-sm leading-6">{assignment.description || "请按题目要求完成全部作答。"}</p>{assignment.institution_note && <p className="mt-3 rounded-xl px-3 py-2 text-xs leading-5" style={{ backgroundColor: "var(--support-surface)" }}>机构通知：{assignment.institution_note}</p>}<div className="app-muted-text mt-4 flex flex-wrap gap-3 text-xs"><span className="inline-flex items-center gap-1"><Clock3 size={13} />开始 <AssignmentDate value={assignment.starts_at} /></span><span className="inline-flex items-center gap-1"><Clock3 size={13} />{waitingForChapter && assignmentWindow?.due_days_after_unlock ? `完成章节后 ${assignmentWindow.due_days_after_unlock} 天内提交` : <>截止 <AssignmentDate value={effectiveDueAt} /></>}</span>{assignment.duration_minutes && <span className="inline-flex items-center gap-1"><Timer size={13} />{assignment.assignment_type === "exam" ? "考试" : "建议"} {assignment.duration_minutes} 分钟</span>}<span>{notStarted ? "题目将在开始后开放" : `${questions.length} 题 · ${assignment.total_points} 分`}</span></div></div>{latest?.submission_state === "grade_released" && <div className="app-card min-w-[190px] rounded-2xl border p-5 text-center"><Award className="mx-auto" size={24} style={{ color: "var(--status-success)" }} /><p className="mt-2 text-2xl font-bold" style={{ color: "var(--status-success)" }}>{latest.score ?? 0}</p><p className="app-muted-text mt-1 text-xs">满分 {assignment.total_points}</p></div>}</div></section>
 
       {isManager && <section className="app-card rounded-2xl border p-5"><div className="flex flex-col gap-4 sm:flex-row sm:items-center"><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><Eye size={19} /></span><div className="min-w-0 flex-1"><DashboardTitleWithHint headingLevel={2} titleClassName="font-bold" title={<>学生端只读预览</>} description={<>这里展示学生看到的已发布题目，不显示参考答案，也不能提交作答。</>} /></div><Link href={`/dashboard/admin/assignments/${assignment.id}`} className="inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={13} /></Link></div></section>}
 

@@ -16,6 +16,7 @@ import {
   PanelsTopLeft,
   Settings2,
   ShieldCheck,
+  Stamp,
   Target,
   UsersRound,
   Wrench,
@@ -45,6 +46,7 @@ type WorkspaceModule = {
   appSlugs?: StudentAppSlug[];
   platformOwnerOnly?: boolean;
   tenantTeacherOnly?: boolean;
+  institutionExecutiveOnly?: boolean;
 };
 
 const appIconMap = {
@@ -130,6 +132,14 @@ const learningModules: WorkspaceModule[] = [
     capability: "manageContent",
     appSlugs: ["korean"],
     platformOwnerOnly: true,
+  },
+  {
+    key: "completion-review",
+    title: "结课资格",
+    description: "机构查看资格与证书统计，平台查看按政策版本区分的跨机构趋势。",
+    icon: Stamp,
+    capability: "manageAssessments",
+    appSlugs: ["korean"],
   },
   {
     key: "conversation",
@@ -274,6 +284,9 @@ export async function ManagementApplicationWorkspacePage({
       (!module.appSlugs || module.appSlugs.includes(access.app.slug)) &&
       (!module.tenantTeacherOnly ||
         (access.scope === "tenant" && access.role === "teacher")) &&
+      (!module.institutionExecutiveOnly ||
+        (access.scope === "tenant" &&
+          (access.role === "tenant_super_admin" || access.role === "ceo"))) &&
       (!module.platformOwnerOnly ||
         (access.scope === "platform" &&
           access.globalRole === "platform_owner")),

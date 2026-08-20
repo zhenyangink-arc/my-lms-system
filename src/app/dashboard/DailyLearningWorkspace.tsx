@@ -171,6 +171,16 @@ function TaskStatus({ status }: { status: HomeLearningTaskStatus }) {
 }
 
 function TaskAction({ task, prominent = false }: { task: HomeLearningTask; prominent?: boolean }) {
+  if (task.status === "pending_grading") {
+    return (
+      <p role="status" className="text-sm font-semibold text-[var(--status-warning)]">
+        已提交，等待老师批改，无需重复提交
+      </p>
+    );
+  }
+  if (task.status === "completed") {
+    return <p role="status" className="text-sm font-semibold text-[var(--status-success)]">已完成</p>;
+  }
   return (
     <Link
       href={task.href}

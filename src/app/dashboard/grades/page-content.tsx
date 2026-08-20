@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { ArrowRight, Eye } from "lucide-react";
+import { ArrowRight, Award, Eye } from "lucide-react";
 
 import {
   ASSIGNMENT_TYPE_LABELS,
@@ -503,6 +503,29 @@ export default async function GradesPage() {
             }}
           >
             部分成绩暂时无法读取，请稍后刷新页面。
+          </section>
+        )}
+
+        {isStudent && (
+          <section className="app-card flex min-w-0 flex-col gap-4 rounded-2xl border p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <div className="flex min-w-0 items-start gap-3">
+              <span className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary)]">
+                <Award size={19} aria-hidden="true" />
+              </span>
+              <div className="min-w-0">
+                <h2 className="text-base font-bold">结课资格与证书</h2>
+                <p className="mt-1 text-sm leading-6 text-[var(--foreground-muted)]">
+                  查看当前结论、待完成要求和已颁发证书。
+                </p>
+              </div>
+            </div>
+            <Link
+              href="grades/completion"
+              className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-semibold text-[var(--foreground)] outline-none transition hover:bg-[var(--accent)] focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2 sm:w-auto"
+            >
+              查看结课详情
+              <ArrowRight size={16} aria-hidden="true" />
+            </Link>
           </section>
         )}
 

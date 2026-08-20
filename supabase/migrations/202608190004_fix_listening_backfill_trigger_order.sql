@@ -19,13 +19,12 @@ begin
   join public.digital_textbook_modules as module on module.id = node.module_id
   join public.digital_textbook_chapters as chapter on chapter.id = module.chapter_id
   join public.digital_textbook_versions as version
-    on version.id = chapter.version_id and version.status = 'published'
+    on version.id = chapter.version_id
   join public.digital_textbooks as textbook
-    on textbook.id = version.textbook_id and textbook.status = 'published'
+    on textbook.id = version.textbook_id
   join public.digital_textbook_activity_secrets as secret
     on secret.activity_id = activity.id
   where chapter.chapter_test_id = p_test_id
-    and chapter.status = 'published'
     and activity.activity_type = 'listening'
     and secret.answer_key ->> 'kind' = 'index'
     and nullif(btrim(coalesce(secret.transcript_ko, '')), '') is not null;
@@ -70,11 +69,11 @@ begin
     row_number() over (order by activity.sort_order, activity.id)::integer
   from public.chapter_homework_plans as plan
   join public.digital_textbook_chapters as chapter
-    on chapter.chapter_test_id = plan.test_id and chapter.status = 'published'
+    on chapter.chapter_test_id = plan.test_id
   join public.digital_textbook_versions as version
-    on version.id = chapter.version_id and version.status = 'published'
+    on version.id = chapter.version_id
   join public.digital_textbooks as textbook
-    on textbook.id = version.textbook_id and textbook.status = 'published'
+    on textbook.id = version.textbook_id
   join public.digital_textbook_modules as module on module.chapter_id = chapter.id
   join public.digital_textbook_nodes as node on node.module_id = module.id
   join public.digital_textbook_activities as activity on activity.node_id = node.id

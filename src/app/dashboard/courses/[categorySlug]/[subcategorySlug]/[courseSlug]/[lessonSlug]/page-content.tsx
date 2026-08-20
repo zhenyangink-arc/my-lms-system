@@ -748,12 +748,13 @@ export default async function LessonDetailPage({
     }
 
     if (isKoreanLevelOne && hasLessonAccess) {
-        const requestedChapterIndex = requestedChapter
-            ? currentChapters.findIndex((chapter) => chapter.slug === requestedChapter)
-            : 0;
+        const requestedChapterNumber = requestedChapter?.match(/-(\d{2})$/)?.[1];
         const smartTextbook = await loadSmartDigitalTextbook({
             textbookSlug: "korean-level-one-smart",
-            chapterNumber: Math.max(0, requestedChapterIndex),
+            chapterNumber: Math.max(
+                0,
+                requestedChapterNumber ? Number(requestedChapterNumber) : 0
+            ),
             userId: user.id,
             tenantId: tenant?.id ?? null,
             trackingDisabled: isPlatformAudit,

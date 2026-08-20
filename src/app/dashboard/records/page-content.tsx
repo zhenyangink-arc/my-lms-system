@@ -179,7 +179,7 @@ export default async function LearningRecordsPage() {
       : Promise.resolve({ data: [] as ProgressRow[], error: null }),
     isStudent && scopedAssignmentIds.length > 0
       ? supabase
-          .from("learning_submissions")
+          .from("student_learning_submissions")
           .select("assignment_id,status,submitted_at,graded_at")
           .eq("student_id", user.id)
           .in("assignment_id", scopedAssignmentIds)

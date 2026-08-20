@@ -4,10 +4,8 @@ import { CheckCircle2, RotateCcw } from "lucide-react";
 import { useActionState } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
-import {
-  initialAssignmentRemediationState,
-  submitAssignmentRemediationAction,
-} from "./actions";
+import { submitAssignmentRemediationAction } from "./actions";
+import { initialAssignmentRemediationState } from "./action-state";
 
 export type RemediationQuestion = {
   id: string;

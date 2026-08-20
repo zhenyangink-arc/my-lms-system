@@ -16,6 +16,7 @@ const SEGMENT_LABELS: Record<string, string> = {
   announcements: "通知公告",
   content: "内容管理",
   conversation: "情景对话",
+  "completion-review": "结课审核",
   courses: "课程管理",
   "digital-textbook": "互动教材",
   documents: "资料审核",

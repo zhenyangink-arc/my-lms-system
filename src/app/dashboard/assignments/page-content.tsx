@@ -158,7 +158,7 @@ export default async function AssignmentsPage({
       isManager
         ? Promise.resolve({ data: [] as SubmissionRow[], error: null })
         : supabase
-            .from("learning_submissions")
+            .from("student_learning_submissions")
             .select(
               "id,assignment_id,attempt_number,submission_state,score,overall_feedback,submitted_at"
             )

@@ -93,6 +93,110 @@
   }
 }
 
+/* 学生结课页的证书打印版与屏幕信息布局完全分离。 */
+.completion-print-root {
+  display: none;
+}
+
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  body:has(.completion-print-root) * {
+    visibility: hidden !important;
+  }
+
+  body:has(.completion-print-root) .completion-print-root,
+  body:has(.completion-print-root) .completion-print-root * {
+    visibility: visible !important;
+  }
+
+  body:has(.completion-print-root) .completion-print-root {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    background: #ffffff;
+    color: #17211c;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .completion-print-certificate {
+    display: flex;
+    min-height: 180mm;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #2f6f54;
+    outline: 1px solid #9bb9aa;
+    outline-offset: -8px;
+    padding: 20mm 24mm;
+    text-align: center;
+  }
+
+  .completion-print-mark {
+    color: #2f6f54;
+  }
+
+  .completion-print-certificate h1 {
+    margin-top: 8mm;
+    font-size: 30pt;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+  }
+
+  .completion-print-lead {
+    margin-top: 12mm;
+    font-size: 12pt;
+  }
+
+  .completion-print-name {
+    margin-top: 5mm;
+    border-bottom: 1px solid #6d8e7e;
+    padding: 0 12mm 3mm;
+    font-size: 24pt;
+    font-weight: 700;
+  }
+
+  .completion-print-copy {
+    max-width: 190mm;
+    margin-top: 9mm;
+    font-size: 13pt;
+    line-height: 2;
+  }
+
+  .completion-print-meta {
+    display: grid;
+    width: 100%;
+    max-width: 210mm;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5mm 14mm;
+    margin-top: 14mm;
+    border-top: 1px solid #c8d7cf;
+    padding-top: 7mm;
+    text-align: left;
+  }
+
+  .completion-print-meta > div:last-child {
+    grid-column: 1 / -1;
+  }
+
+  .completion-print-meta dt {
+    color: #52665d;
+    font-size: 9pt;
+  }
+
+  .completion-print-meta dd {
+    overflow-wrap: anywhere;
+    margin-top: 2mm;
+    font-size: 11pt;
+    font-weight: 600;
+  }
+}
+
 /* Smart textbook panes keep wheel, touch and keyboard scrolling without a
    separate visual scrollbar competing with the reading canvas. */
 .smart-textbook-scroll {

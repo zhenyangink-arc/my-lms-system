@@ -21,6 +21,7 @@ export type PlatformAssessmentPaperItem = {
   version: number;
   updatedAt: string;
   qualityReady: boolean;
+  qualityIssues: string[];
   institutionCount: number;
   assignmentCount: number;
   questions: Array<{
@@ -259,8 +260,9 @@ export function PlatformAssessmentPaperCatalog({
                     {statusLabels[paper.status]}
                   </span>
                 </td>
-                <td className="border-l px-4 py-4 text-center">
-                  <span
+                <td className="border-l px-4 py-4">
+                  <p
+                    role={paper.qualityReady ? undefined : "status"}
                     className="text-xs font-bold"
                     style={{
                       color: paper.qualityReady
@@ -268,8 +270,18 @@ export function PlatformAssessmentPaperCatalog({
                         : "var(--status-danger)",
                     }}
                   >
-                    {paper.qualityReady ? "可以发布" : "待完善"}
-                  </span>
+                    {paper.qualityReady ? "可以发布" : "未通过"}
+                  </p>
+                  {!paper.qualityReady && paper.qualityIssues.length > 0 && (
+                    <ul
+                      aria-label={`${paper.paperCode} 未通过的质检项`}
+                      className="mt-2 list-disc space-y-1 pl-4 text-left text-[11px] leading-4 text-[var(--status-danger)]"
+                    >
+                      {paper.qualityIssues.map((issue) => (
+                        <li key={issue}>{issue}</li>
+                      ))}
+                    </ul>
+                  )}
                 </td>
                 <td className="border-l px-4 py-4 text-center text-xs">
                   <p className="font-bold tabular-nums">

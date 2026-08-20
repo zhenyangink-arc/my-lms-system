@@ -76,6 +76,11 @@ test("homework optimization uses genuine listening, draft recovery, and database
   assert.match(migration, /digital_textbook_activity_secrets/);
   assert.match(migration, /learning_submission_answers_prepare/);
   assert.match(migration, /consumed_submission_id/);
+  assert.doesNotMatch(
+    listeningFix,
+    /(?:chapter|version|textbook)\.status\s*=\s*'published'/,
+    "draft textbook listening activities must remain eligible for backfill"
+  );
   assert.ok(
     listeningFix.indexOf("update public.chapter_homework_skill_settings") <
       listeningFix.indexOf("delete from public.chapter_homework_questions"),

@@ -80,3 +80,36 @@ test("grade release is a separate action available only after grading completes"
   assert.match(form, /客观题暂定成绩/);
   assert.match(form, /待批改主观题/);
 });
+
+test("student grading reads use database-enforced safe projections", async () => {
+  const migration = await source(
+    "supabase/migrations/202608200001_assignment_grade_release_rls.sql"
+  );
+  const page = await source(
+    "src/app/dashboard/assignments/[assignmentId]/page-content.tsx"
+  );
+  const list = await source("src/app/dashboard/assignments/page-content.tsx");
+  const actions = await source("src/app/dashboard/assignments/actions.ts");
+  const records = await source("src/app/dashboard/records/page-content.tsx");
+
+  assert.match(migration, /learning_submissions\.submission_state = 'grade_released'/);
+  assert.match(migration, /submission\.submission_state = 'grade_released'/);
+  assert.match(migration, /create view public\.student_learning_submissions/);
+  assert.match(migration, /create view public\.student_learning_submission_answers/);
+  assert.match(migration, /with \(security_barrier = true\)/);
+  assert.match(migration, /when question\.auto_graded[\s\S]*then answer\.awarded_points/);
+  assert.match(migration, /when submission\.submission_state = 'grade_released'[\s\S]*then answer\.rubric_scores/);
+  assert.match(migration, /when submission\.submission_state = 'grade_released'[\s\S]*then answer\.grader_feedback/);
+  assert.match(migration, /student_review_item_grade_is_released/);
+  assert.match(migration, /submission\.id::text = p_content_snapshot ->> 'sourceSubmissionId'/);
+  assert.match(migration, /drop policy if exists "authorized users read student review items"/);
+  assert.match(migration, /drop policy if exists "students update own review items"/);
+  assert.match(migration, /revoke all on public\.student_learning_submissions from public, anon/);
+  assert.match(migration, /grant select on public\.student_learning_submission_answers to authenticated/);
+
+  assert.match(page, /from\("student_learning_submissions"\)/);
+  assert.match(page, /from\("student_learning_submission_answers"\)/);
+  assert.match(list, /from\("student_learning_submissions"\)/);
+  assert.match(actions, /from\("student_learning_submissions"\)/);
+  assert.match(records, /from\("student_learning_submissions"\)/);
+});

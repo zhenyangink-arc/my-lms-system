@@ -27,6 +27,9 @@ export type AssignmentExamTaskRow = {
   unlock_after_chapter_completion: boolean;
   unlock_test_slug: string | null;
   due_days_after_unlock: number | null;
+  retake_paper_id: string | null;
+  retake_starts_at: string | null;
+  retake_due_at: string | null;
   updated_at: string;
 };
 
@@ -39,6 +42,12 @@ export type AssignmentExamProgressRow = {
 export type AssignmentExamChapterProgressRow = {
   test_slug: string;
   completed_at: string | null;
+};
+
+export type AssignmentExamRetakeSubmissionRow = {
+  assignment_id: string;
+  submission_state: AssignmentExamProgressState;
+  submitted_at: string;
 };
 
 type MapAssignmentExamTaskInput = {
@@ -229,5 +238,64 @@ export function mapAssignmentExamTask({
     courseChapterId: null,
     skill: null,
     updatedAt: progress?.updated_at ?? assignment.updated_at,
+  };
+}
+
+export function mapRetakeExamTask({
+  assignment,
+  submission,
+  studentAppId,
+  appSlug,
+  appLabel,
+  space,
+  now,
+}: {
+  assignment: AssignmentExamTaskRow;
+  submission?: AssignmentExamRetakeSubmissionRow;
+  studentAppId: string;
+  appSlug: string;
+  appLabel: string;
+  space: string;
+  now: Date;
+}): HomeLearningTask | null {
+  if (
+    assignment.assignment_type !== "exam" ||
+    !assignment.retake_paper_id ||
+    !assignment.retake_starts_at ||
+    !assignment.retake_due_at
+  ) return null;
+
+  const progress: AssignmentExamProgressRow | undefined = submission
+    ? {
+        assignment_id: submission.assignment_id,
+        progress_state: submission.submission_state,
+        updated_at: submission.submitted_at,
+      }
+    : undefined;
+  const retakeAssignment: AssignmentExamTaskRow = {
+    ...assignment,
+    id: `${assignment.id}:retake`,
+    title: `${assignment.title}补考`,
+    description: "老师已布置补考，请在开放时间内完成。",
+    starts_at: assignment.retake_starts_at,
+    due_at: assignment.retake_due_at,
+    allow_late_submission: false,
+    unlock_after_chapter_completion: false,
+    unlock_test_slug: null,
+    due_days_after_unlock: null,
+  };
+  const task = mapAssignmentExamTask({
+    assignment: retakeAssignment,
+    progress,
+    studentAppId,
+    appSlug,
+    appLabel,
+    space,
+    now,
+  });
+  return {
+    ...task,
+    sourceId: assignment.id,
+    href: getExamDetailPath(space, assignment.id),
   };
 }
