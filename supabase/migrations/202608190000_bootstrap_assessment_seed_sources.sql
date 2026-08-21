@@ -1,0 +1,27 @@
+-- Bootstrap non-login audit ownership and isolated published source snapshots
+-- for the historical assessment-paper seed migrations. The real Korean Level
+-- One chapter tests and digital textbook chapters remain draft.
+--
+-- RETIRED 2026-08-21: this migration was never actually applied to the
+-- project database in its original form. By the time it was finally pushed,
+-- 202608190009_batch_release_assessment_papers.sql (which sorts AFTER this
+-- file but was applied to remote FIRST, out of order) had already published
+-- the real korean-level-one-01..16 chapter_tests rows for real, and a
+-- platform_owner profile already existed. Both preconditions this migration
+-- worked around ("real chapters are still draft", "no platform owner yet")
+-- no longer held, so:
+--   - the owner-bootstrap DO block was a no-op (owner already exists);
+--   - the "clone 16 draft chapters into a published snapshot" INSERT
+--     matched zero rows (source status is now 'published', not 'draft'),
+--     which tripped its own guard and aborted the whole migration;
+--   - the chapter_tests rename/compatibility-view/deferred-restore-trigger
+--     dance was therefore never needed in the first place: migrations
+--     202608190023, 202608190024 and 202608200002 only ever required a
+--     published real chapter_tests row (already true) and do not read from
+--     the isolated seed-source snapshot at all.
+--
+-- This file is kept as a no-op so the migration history stays contiguous
+-- and this timestamp does not get silently reused. It intentionally does
+-- not perform any of its originally authored steps.
+begin;
+commit;
