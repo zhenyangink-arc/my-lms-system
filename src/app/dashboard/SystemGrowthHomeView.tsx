@@ -18,15 +18,44 @@ import {
 import { LocalDateTime } from "@/components/LocalDateTime";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
-import type {
-  GrowthActivityItem,
-  GrowthCourseProgressItem,
-  GrowthReminderItem,
-  GrowthWeekActivityDay,
-} from "./GrowthHomeView";
 import { DashboardTitleWithHint } from "./DashboardTitleWithHint";
 import { DailyLearningWorkspace } from "./DailyLearningWorkspace";
 import { StudentStudyTrendPanel } from "./StudentStudyTrendPanel";
+
+export type GrowthActivityItem = {
+  lessonId: string;
+  courseId: string;
+  lessonTitle: string;
+  courseTitle: string;
+  status: string;
+  progressPercent: number;
+  lastViewedAt: string;
+  href: string | null;
+};
+
+export type GrowthReminderItem = {
+  id: string;
+  kind: "teacher_reply" | "required_resource";
+  title: string;
+  subtitle: string;
+  href: string | null;
+};
+
+export type GrowthCourseProgressItem = {
+  courseId: string;
+  title: string;
+  teacherName: string | null;
+  completedCount: number;
+  totalCount: number;
+  percent: number;
+  href: string | null;
+};
+
+export type GrowthWeekActivityDay = {
+  dateString: string;
+  minutes: number;
+  completedCount: number;
+};
 
 type StudyRangeData = {
   label: string;

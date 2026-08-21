@@ -1,12 +1,12 @@
 import { redirect } from "next/navigation";
 
 import {
+  SystemGrowthHomeView,
   type GrowthActivityItem as ActivityItem,
   type GrowthCourseProgressItem as CourseProgressItem,
   type GrowthReminderItem as ReminderItem,
   type GrowthWeekActivityDay as WeekActivityDay,
-} from "@/app/dashboard/GrowthHomeView";
-import { SystemGrowthHomeView } from "@/app/dashboard/SystemGrowthHomeView";
+} from "@/app/dashboard/SystemGrowthHomeView";
 import {
   loadHomeLearningTasks,
   selectRequiredTodayTasks,
