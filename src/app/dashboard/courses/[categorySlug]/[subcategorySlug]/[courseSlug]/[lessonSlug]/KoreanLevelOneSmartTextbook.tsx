@@ -1100,7 +1100,7 @@ function ContentRenderer({
               const examples = stringArray(card.examples);
               return (
                 <article key={`${String(card.form)}-${index}`} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5">
-                  <div className="flex items-start justify-between gap-4">
+                  <div>
                     <div className="min-w-0">
                       <p className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</p>
                       <CardTitleWithHint
@@ -1113,9 +1113,6 @@ function ContentRenderer({
                         hintLabel={locale === "ko-KR" ? "문형 기능 보기" : "查看句型用途"}
                       />
                     </div>
-                    <button type="button" onClick={() => speakKorean(String(examples[0] ?? card.form ?? ""))} aria-label={locale === "ko-KR" ? "예문 듣기" : "播放例句"} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
-                      <Volume2 size={17} aria-hidden="true" />
-                    </button>
                   </div>
                   <div className="mt-4 space-y-2">
                     {examples.slice(0, 2).map((example) => <button key={example} type="button" onClick={() => speakKorean(example)} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-xl bg-[var(--card)] px-4 py-2 text-left text-sm font-bold text-[var(--foreground)] ring-1 ring-[var(--border-subtle)] hover:text-[var(--primary)]"><span lang="ko">{example}</span><Volume2 size={13} className="shrink-0 text-[var(--primary)]" aria-hidden="true" /></button>)}

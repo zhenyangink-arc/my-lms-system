@@ -305,6 +305,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /patternPage === 2/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문형 기능 보기" : "查看句型用途"\}/);
   assert.doesNotMatch(source, /<p className="mt-2 text-sm font-semibold leading-6 text-\[var\(--foreground-secondary\)\]">\{String\(objectValue\(card\.function\)\[locale\]/);
+  assert.doesNotMatch(source, /aria-label=\{locale === "ko-KR" \? "예문 듣기" : "播放例句"\}/);
   assert.equal((migration.match(/\"form\":/g) ?? []).length, 4);
   assert.match(migration, /저는 \[이름\]이에요\/예요\./);
   assert.match(migration, /\[이름\] 씨는 \[신분\]이에요\/예요\?/);
