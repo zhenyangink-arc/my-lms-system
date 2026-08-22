@@ -1729,7 +1729,7 @@ function Activity({
 
       {groupedSingleChoice && !usesFlipCards && (!usesFocusMode || practiceFocused) && (
         <div className="mt-4">
-          <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
+          <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 pb-1 pt-4">
           {(groupedChoicePages[Math.min(activeGroupedChoicePage, groupedChoicePages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
             const options = stringArray(item.options);
@@ -1962,7 +1962,7 @@ function Activity({
 
       {activity.type === "fill_blank" && configItems.length > 0 && (!usesFocusMode || practiceFocused) && (
         <div className="mt-4">
-          <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
+          <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 pb-1 pt-4">
           {(fillBlankPages[Math.min(activeFillBlankPage, fillBlankPages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const values = Array.isArray(answer) ? answer.map(String) : [];
             const grammarPoint = locale === "ko-KR"
