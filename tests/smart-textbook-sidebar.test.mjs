@@ -47,6 +47,10 @@ const correctedTaskSceneRatioMigrationUrl = new URL(
   "../supabase/migrations/202608220009_correct_chapter_one_task_scene_aspect_ratio.sql",
   import.meta.url,
 );
+const removeGrammarFocusGateMigrationUrl = new URL(
+  "../supabase/migrations/202608220010_remove_chapter_one_grammar_focus_gate.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -278,6 +282,14 @@ test("语法图片按数据库例句数组逐句播放并在五秒后隐藏", as
   assert.match(source, /\}, 5000\)/);
   assert.match(source, /连续播放语法例句/);
   assert.match(source, /activeScenePlaybackLine/);
+});
+
+test("第一章语法练习直接显示六题，不再要求开始专注练习", async () => {
+  const migration = await readFile(removeGrammarFocusGateMigrationUrl, "utf8");
+
+  assert.match(migration, /public_config.*- 'focusMode'/s);
+  assert.match(migration, /node\.node_code = 'topic-and-copula'/);
+  assert.match(migration, /activity\.activity_key = 'grammar-fill'/);
 });
 
 test("带情景图的共享模块标题显示在图片右上角", async () => {
