@@ -7,6 +7,10 @@ const sourceUrl = new URL(
   import.meta.url,
 );
 const loaderUrl = new URL("../src/lib/smart-digital-textbook.ts", import.meta.url);
+const actionsUrl = new URL(
+  "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-actions.ts",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -93,7 +97,8 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.doesNotMatch(source, /className="mt-6 hidden items-center justify-between border-t/);
   assert.match(source, /"本目标"\} \{missionPage \+ 1\} \/ 2/);
   assert.match(source, /locale === "ko-KR" \? "장면 진단" : "情景诊断"/);
-  assert.match(source, /title=\{activity\.prompt\[locale\]\}[\s\S]*description=\{activity\.instruction\[locale\]\}/);
+  assert.match(source, /title=\{isGrammarPractice \?[\s\S]*: activity\.prompt\[locale\]\}/);
+  assert.match(source, /description=\{activity\.instruction\[locale\]\}/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문제 풀이 안내 보기" : "查看答题说明"\}/);
   assert.doesNotMatch(source, /<p className="mt-1 text-sm text-\[var\(--foreground-secondary\)\]">\{activity\.instruction\[locale\]\}<\/p>/);
   assert.match(source, /font-medium text-\[var\(--foreground\)\]">\{option\}/);
@@ -301,23 +306,31 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
 
   assert.match(source, /const fillBlankPages = configItems\.reduce/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"\}/);
-  assert.match(source, /setActiveFillBlankPage\(\(page\) => Math\.min/);
-  assert.match(source, /activeFillBlankPage \+ 1/);
+  assert.match(source, /setActiveFillBlankPage\(\(page\) => page \+ 1\)/);
+  assert.match(source, /grammarPageOffset \+ activeFillBlankPage \+ 1/);
   assert.match(source, /originalIndex/);
   assert.doesNotMatch(source, />\{group\}<\/span>/);
 });
 
-test("第一章语法练习包含选择判断填空三类且每类六题两页", async () => {
-  const [source, migration] = await Promise.all([
+test("第一章语法练习连续六页并逐页检查与按需查看答案", async () => {
+  const [source, migration, actions] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedGrammarPracticeMigrationUrl, "utf8"),
+    readFile(actionsUrl, "utf8"),
   ]);
 
-  assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 유형" : "语法练习类型"\}/);
-  assert.match(source, /practiceKind === "choice"/);
+  assert.doesNotMatch(source, /"语法练习类型"/);
+  assert.doesNotMatch(source, /locale === "ko-KR" \? "선택" : "选择"/);
+  assert.match(source, /\["choice", "judgment", "fill"\]\.includes/);
   assert.match(source, /practiceKind === "judgment"/);
   assert.match(source, /const groupedChoicePages = configItems\.reduce/);
-  assert.match(source, /setActiveGroupedChoicePage\(\(page\) => Math\.min/);
+  assert.match(source, /grammarPageOffset \+ activeGroupedChoicePage \+ 1/);
+  assert.match(source, /checkSmartTextbookActivityPageAction/);
+  assert.match(source, /"检查答案"/);
+  assert.match(source, /"查看答案"/);
+  assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
+  assert.match(actions, /const pageCheckSchema = z\.object/);
+  assert.match(actions, /digital_textbook_activity_secrets/);
   assert.match(migration, /'grammar-choice'/);
   assert.match(migration, /'grammar-judgment'/);
   assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,0,1\]\}'/);

@@ -44,6 +44,7 @@ import type {
   SmartTextbookNode,
 } from "@/lib/smart-digital-textbook";
 import {
+  checkSmartTextbookActivityPageAction,
   saveSmartTextbookPreferenceAction,
   submitSmartTextbookActivityAction,
 } from "./smart-textbook-actions";
@@ -1325,11 +1326,19 @@ function Activity({
   trackingDisabled,
   onCompleted,
   round,
+  grammarPageOffset = 0,
+  onPreviousGrammarActivity,
+  onNextGrammarActivity,
+  isLastGrammarActivity = false,
 }: {
   activity: SmartTextbookActivity;
   locale: SmartLocale;
   trackingDisabled: boolean;
   round?: { current: number; total: number };
+  grammarPageOffset?: number;
+  onPreviousGrammarActivity?: () => void;
+  onNextGrammarActivity?: () => void;
+  isLastGrammarActivity?: boolean;
   onCompleted: (result: {
     nodeId: string | null;
     nodeCompleted: boolean;
@@ -1412,6 +1421,8 @@ function Activity({
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [activeGroupedChoicePage, setActiveGroupedChoicePage] = useState(0);
   const [activeFillBlankPage, setActiveFillBlankPage] = useState(0);
+  const [pageChecks, setPageChecks] = useState<Record<number, { results: boolean[]; answers: Array<number | string>; revealed: boolean }>>({});
+  const [checkingPage, setCheckingPage] = useState(false);
   const [practiceFocused, setPracticeFocused] = useState(false);
   const focusModeStartRef = useRef<HTMLButtonElement>(null);
   const focusModeCloseRef = useRef<HTMLButtonElement>(null);
@@ -1426,6 +1437,49 @@ function Activity({
   const isLastGrammarPracticePage = activity.type === "fill_blank"
     ? activeFillBlankPage === fillBlankPages.length - 1
     : !groupedSingleChoice || activeGroupedChoicePage === groupedChoicePages.length - 1;
+  const activeGrammarPage = activity.type === "fill_blank" ? activeFillBlankPage : activeGroupedChoicePage;
+  const activeGrammarItems = activity.type === "fill_blank"
+    ? (fillBlankPages[activeFillBlankPage]?.items ?? [])
+    : (groupedChoicePages[activeGroupedChoicePage]?.items ?? []);
+  const activePageCheck = pageChecks[activeGrammarPage];
+  const activePageReady = Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
+
+  async function checkGrammarPage() {
+    const values = Array.isArray(answer) ? answer : [];
+    if (activeGrammarItems.some(({ originalIndex }) => String(values[originalIndex] ?? "").trim() === "" || Number(values[originalIndex]) < 0)) {
+      setMessage(t.noResponse);
+      return;
+    }
+    setCheckingPage(true);
+    setMessage("");
+    const result = await checkSmartTextbookActivityPageAction({
+      activityId: activity.id,
+      itemIndices: activeGrammarItems.map(({ originalIndex }) => originalIndex),
+      response: activeGrammarItems.map(({ originalIndex }) => values[originalIndex]),
+    });
+    setCheckingPage(false);
+    if (!result.ok) {
+      setMessage(result.message);
+      return;
+    }
+    setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...result, revealed: false } }));
+  }
+
+  function revealGrammarAnswers() {
+    if (!activePageCheck) return;
+    const next = Array.isArray(answer) ? [...answer] : [];
+    activeGrammarItems.forEach(({ originalIndex }, index) => { next[originalIndex] = activePageCheck.answers[index]; });
+    setAnswer(next);
+    setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...activePageCheck, revealed: true } }));
+  }
+
+  function clearActivePageCheck() {
+    setPageChecks((current) => {
+      const next = { ...current };
+      delete next[activeGrammarPage];
+      return next;
+    });
+  }
 
   useEffect(() => {
     if (!practiceFocused) return;
@@ -1582,7 +1636,7 @@ function Activity({
             </p>
           )}
           <CardTitleWithHint
-            title={activity.prompt[locale]}
+            title={isGrammarPractice ? (locale === "ko-KR" ? "이번 페이지 연습을 완성하세요" : "完成本页练习") : activity.prompt[locale]}
             description={activity.instruction[locale]}
             headingLevel={4}
             titleClassName={isGrammarPractice ? "text-lg font-bold leading-7 text-[var(--foreground)]" : "text-xl font-bold leading-8 text-[var(--foreground)]"}
@@ -1646,9 +1700,9 @@ function Activity({
         <div className="mt-6">
           {groupedChoicePages.length > 1 && (
             <nav className="mb-3 flex items-center justify-end gap-2 border-b border-[var(--border-subtle)] pb-3" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
-              <button type="button" disabled={activeGroupedChoicePage === 0} onClick={() => setActiveGroupedChoicePage((page) => Math.max(0, page - 1))} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
-              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{activeGroupedChoicePage + 1} / {groupedChoicePages.length}</span>
-              <button type="button" disabled={activeGroupedChoicePage === groupedChoicePages.length - 1} onClick={() => setActiveGroupedChoicePage((page) => Math.min(groupedChoicePages.length - 1, page + 1))} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button>
+              <button type="button" disabled={activeGroupedChoicePage === 0 && !onPreviousGrammarActivity} onClick={() => activeGroupedChoicePage === 0 ? onPreviousGrammarActivity?.() : setActiveGroupedChoicePage((page) => page - 1)} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
+              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeGroupedChoicePage + 1} / 6</span>
+              {!isLastGrammarActivity || activeGroupedChoicePage < groupedChoicePages.length - 1 ? <button type="button" disabled={!activePageReady} onClick={() => { if (activeGroupedChoicePage === groupedChoicePages.length - 1) { submit(); onNextGrammarActivity?.(); } else setActiveGroupedChoicePage((page) => page + 1); }} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button> : null}
             </nav>
           )}
           <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
@@ -1657,7 +1711,10 @@ function Activity({
             const options = stringArray(item.options);
             return (
               <fieldset key={String(item.id ?? originalIndex)} className="py-4">
-                <legend className="text-sm font-bold leading-6 text-[var(--foreground)]">{pageItemIndex + 1}. {String(item.question)}</legend>
+                <legend className="flex items-center gap-2 text-sm font-bold leading-6 text-[var(--foreground)]">
+                  {pageItemIndex + 1}. {String(item.question)}
+                  {activePageCheck && (activePageCheck.results[pageItemIndex] ? <span className="text-xs text-[var(--status-success)]">✓ {locale === "ko-KR" ? "정답" : "正确"}</span> : <span className="text-xs text-[var(--destructive)]">× {locale === "ko-KR" ? "오답" : "错误"}</span>)}
+                </legend>
                 <div className={`mt-2 grid gap-2 ${activity.config.practiceKind === "judgment" ? "sm:grid-cols-2" : "sm:grid-cols-4"}`}>
                   {groupedOptionOrders[originalIndex].map((originalOptionIndex, displayOptionIndex) => {
                     const option = options[originalOptionIndex];
@@ -1672,11 +1729,13 @@ function Activity({
                       next[originalIndex] = originalOptionIndex;
                       setAnswer(next);
                       setFeedback(null);
+                      clearActivePageCheck();
                     }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[originalIndex] === originalOptionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
                       {String.fromCharCode(65 + displayOptionIndex)}. {optionLabel}
                     </button>
                   );})}
                 </div>
+                {activePageCheck?.revealed && !activePageCheck.results[pageItemIndex] && <p className="mt-2 text-xs font-bold text-[var(--support)]">{locale === "ko-KR" ? "정답" : "答案"}：{options[Number(activePageCheck.answers[pageItemIndex])]}</p>}
               </fieldset>
             );
           })}
@@ -1876,9 +1935,9 @@ function Activity({
         <div className="mt-6">
           {fillBlankPages.length > 1 && (
             <nav className="mb-3 flex items-center justify-end gap-2 border-b border-[var(--border-subtle)] pb-3" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
-              <button type="button" disabled={activeFillBlankPage === 0} onClick={() => setActiveFillBlankPage((page) => Math.max(0, page - 1))} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
-              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{activeFillBlankPage + 1} / {fillBlankPages.length}</span>
-              <button type="button" disabled={activeFillBlankPage === fillBlankPages.length - 1} onClick={() => setActiveFillBlankPage((page) => Math.min(fillBlankPages.length - 1, page + 1))} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button>
+              <button type="button" disabled={activeFillBlankPage === 0 && !onPreviousGrammarActivity} onClick={() => activeFillBlankPage === 0 ? onPreviousGrammarActivity?.() : setActiveFillBlankPage((page) => page - 1)} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
+              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeFillBlankPage + 1} / 6</span>
+              {!isLastGrammarActivity || activeFillBlankPage < fillBlankPages.length - 1 ? <button type="button" disabled={!activePageReady} onClick={() => { if (activeFillBlankPage === fillBlankPages.length - 1) { submit(); onNextGrammarActivity?.(); } else setActiveFillBlankPage((page) => page + 1); }} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button> : null}
             </nav>
           )}
           <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
@@ -1897,7 +1956,10 @@ function Activity({
                     next[originalIndex] = event.target.value;
                     setAnswer(next);
                     setFeedback(null);
+                    clearActivePageCheck();
                   }} lang="ko" autoComplete="off" className="min-h-12 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
+                  {activePageCheck && <span className={`text-xs font-bold ${activePageCheck.results[pageItemIndex] ? "text-[var(--status-success)]" : "text-[var(--destructive)]"}`}>{activePageCheck.results[pageItemIndex] ? `✓ ${locale === "ko-KR" ? "정답" : "正确"}` : `× ${locale === "ko-KR" ? "오답" : "错误"}`}</span>}
+                  {activePageCheck?.revealed && !activePageCheck.results[pageItemIndex] && <span className="text-xs font-bold text-[var(--support)]">{locale === "ko-KR" ? "정답" : "答案"}：{String(activePageCheck.answers[pageItemIndex])}</span>}
                 </label>
               </div>
             );
@@ -1971,7 +2033,7 @@ function Activity({
         </div>
       )}
 
-      {(!usesFocusMode || practiceFocused) && (!isGrammarPractice || isLastGrammarPracticePage || Boolean(message) || Boolean(feedback)) && (
+      {(!usesFocusMode || practiceFocused) && (
       <div className="mt-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between sm:gap-5">
         <div className="min-h-10 flex-1">
           {message && (
@@ -2000,7 +2062,9 @@ function Activity({
             </div>
           )}
         </div>
-        {(!isGrammarPractice || isLastGrammarPracticePage) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
+        {isGrammarPractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
+        {isGrammarPractice && activePageCheck && !activePageReady && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
+        {(!isGrammarPractice || (isLastGrammarActivity && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : t.submit}
         </button>}
       </div>
@@ -2623,29 +2687,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   />
                 </div>
                 <div className={`${usesDesktopImagePager && missionPage === 0 ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
-                  {usesGrammarPager && node.activities.length > 1 && (
-                    <nav className="mt-5 flex items-center gap-7 border-b border-[var(--border-subtle)]" aria-label={locale === "ko-KR" ? "문법 연습 유형" : "语法练习类型"}>
-                      {node.activities.map((activity, activityIndex) => {
-                        const practiceKind = String(activity.config.practiceKind ?? "");
-                        const label = practiceKind === "choice"
-                          ? locale === "ko-KR" ? "선택" : "选择"
-                          : practiceKind === "judgment"
-                            ? locale === "ko-KR" ? "판단" : "判断"
-                            : locale === "ko-KR" ? "빈칸" : "填空";
-                        return (
-                          <button
-                            key={activity.id}
-                            type="button"
-                            aria-current={activityIndex === activeGrammarPracticeIndex ? "page" : undefined}
-                            onClick={() => setActiveGrammarPracticeIndex(activityIndex)}
-                            className={`min-h-11 border-b-2 px-1 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activityIndex === activeGrammarPracticeIndex ? "border-[var(--primary)] text-[var(--primary)]" : "border-transparent text-[var(--foreground-secondary)] hover:text-[var(--foreground)]"}`}
-                          >
-                            {label}
-                          </button>
-                        );
-                      })}
-                    </nav>
-                  )}
                   {node.activities.map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
@@ -2654,6 +2695,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         trackingDisabled={trackingDisabled}
                         onCompleted={recordCompletion}
                         round={usesGrammarPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
+                        grammarPageOffset={activityIndex * 2}
+                        onPreviousGrammarActivity={usesGrammarPager && activityIndex > 0 ? () => setActiveGrammarPracticeIndex(activityIndex - 1) : undefined}
+                        onNextGrammarActivity={usesGrammarPager && activityIndex < node.activities.length - 1 ? () => setActiveGrammarPracticeIndex(activityIndex + 1) : undefined}
+                        isLastGrammarActivity={usesGrammarPager && activityIndex === node.activities.length - 1}
                       />
                     </div>
                   ))}

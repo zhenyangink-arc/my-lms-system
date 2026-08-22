@@ -23,6 +23,58 @@ const preferenceSchema = z.object({
   supportMode: z.enum(["chinese", "bilingual", "immersion"]),
 });
 
+const pageCheckSchema = z.object({
+  activityId: z.string().uuid(),
+  itemIndices: z.array(z.number().int().nonnegative()).min(1).max(3),
+  response: z.array(z.union([z.number().int().nonnegative(), z.string()])),
+});
+
+export async function checkSmartTextbookActivityPageAction(input: unknown) {
+  const parsed = pageCheckSchema.safeParse(input);
+  if (!parsed.success || parsed.data.response.length !== parsed.data.itemIndices.length) {
+    return { ok: false as const, message: "本页作答内容无效。" };
+  }
+  const { supabase, profile, platformProfile } = await requireActiveUser();
+  if (
+    !isPlatformCourseAuditorRole(platformProfile?.role) &&
+    !canUseStudentFeature(
+      profile?.role ?? "student",
+      normalizeMembershipTier(profile?.membership_tier),
+      "korean_course",
+    )
+  ) {
+    return { ok: false as const, message: "当前账号没有智能教材学习权限。" };
+  }
+  const { data: activity } = await supabase
+    .from("digital_textbook_activities")
+    .select("id,activity_type")
+    .eq("id", parsed.data.activityId)
+    .maybeSingle();
+  if (!activity) return { ok: false as const, message: "找不到这项练习。" };
+  const { data: secret } = await createAdminClient()
+    .from("digital_textbook_activity_secrets")
+    .select("answer_key")
+    .eq("activity_id", activity.id)
+    .maybeSingle();
+  const answerKey = secret?.answer_key as { kind?: string; value?: unknown } | null;
+  const expected = Array.isArray(answerKey?.value) ? answerKey.value : [];
+  if (
+    !["index_array", "text_array"].includes(String(answerKey?.kind)) ||
+    parsed.data.itemIndices.some((index) => index >= expected.length)
+  ) {
+    return { ok: false as const, message: "练习的判定配置尚未完成。" };
+  }
+  const answers = parsed.data.itemIndices.map((index) => expected[index] as number | string);
+  const normalize = (value: number | string) => typeof value === "string"
+    ? value.normalize("NFC").trim().replace(/\s+/gu, " ")
+    : value;
+  return {
+    ok: true as const,
+    results: parsed.data.response.map((value, index) => normalize(value) === normalize(answers[index])),
+    answers,
+  };
+}
+
 export async function saveSmartTextbookPreferenceAction(input: unknown) {
   const parsed = preferenceSchema.safeParse(input);
   if (!parsed.success) return { ok: false, message: "设置内容无效。" };
