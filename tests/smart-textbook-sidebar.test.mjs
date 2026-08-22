@@ -334,7 +334,10 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /"检查答案"/);
   assert.match(source, /"查看答案"/);
   assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
-  assert.match(source, /const activePageReady = activityCompleted \|\| Boolean/);
+  assert.match(source, /const activePageCompleted = Boolean/);
+  assert.match(source, /const activePageReady = activityCompleted \|\| activePageCompleted/);
+  assert.match(source, /activityCompleted \|\| \(isGrammarPractice && activePageCompleted\)/);
+  assert.match(source, /isLastGrammarActivity && isLastGrammarPracticePage && activityCompleted/);
   assert.match(source, /if \(!activityCompleted\) submit\(\)/);
   assert.match(source, /isLastGrammarActivity && isLastGrammarPracticePage && result\.results\.every\(Boolean\)/);
   assert.match(source, /locale === "ko-KR" \? "전체 완료" : "全部完成"/);

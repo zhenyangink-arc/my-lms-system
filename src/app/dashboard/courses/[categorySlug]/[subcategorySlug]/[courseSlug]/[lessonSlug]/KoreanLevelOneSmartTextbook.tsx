@@ -1443,7 +1443,8 @@ function Activity({
     ? (fillBlankPages[activeFillBlankPage]?.items ?? [])
     : (groupedChoicePages[activeGroupedChoicePage]?.items ?? []);
   const activePageCheck = pageChecks[activeGrammarPage];
-  const activePageReady = activityCompleted || Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
+  const activePageCompleted = Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
+  const activePageReady = activityCompleted || activePageCompleted;
 
   async function checkGrammarPage() {
     const values = Array.isArray(answer) ? answer : [];
@@ -1680,12 +1681,14 @@ function Activity({
               {(!isLastGrammarActivity || !isLastGrammarPracticePage) && <button type="button" disabled={!activePageReady} onClick={nextGrammarPage} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button>}
             </nav>
           )}
-          {activityCompleted && (
+          {(activityCompleted || (isGrammarPractice && activePageCompleted)) && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]" role="status">
               <CheckCircle2 size={14} aria-hidden="true" />
-              {isGrammarPractice && isLastGrammarActivity
+              {isGrammarPractice && isLastGrammarActivity && isLastGrammarPracticePage && activityCompleted
                 ? locale === "ko-KR" ? "전체 완료" : "全部完成"
-                : feedback?.correct === null ? t.submittedForReview : t.submitted}
+                : isGrammarPractice
+                  ? locale === "ko-KR" ? "완료" : "已完成"
+                  : feedback?.correct === null ? t.submittedForReview : t.submitted}
             </span>
           )}
           {practiceFocused && (
