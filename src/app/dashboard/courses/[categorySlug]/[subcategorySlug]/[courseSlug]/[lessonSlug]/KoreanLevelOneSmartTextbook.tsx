@@ -359,6 +359,7 @@ function ContentRenderer({
   const [sceneDialogueStep, setSceneDialogueStep] = useState(0);
   const [sceneDialoguePlaying, setSceneDialoguePlaying] = useState(false);
   const [activeDialogueGroupIndex, setActiveDialogueGroupIndex] = useState(0);
+  const [activeGrammarCardIndex, setActiveGrammarCardIndex] = useState(0);
   const [guidedDialogueIndex, setGuidedDialogueIndex] = useState<number | null>(null);
   const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
   const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
@@ -416,6 +417,15 @@ function ContentRenderer({
   const sceneDialogueLines = activeDialogueGroupLines
     .map((line) => String(line.ko ?? "").trim())
     .filter(Boolean);
+  const grammarExampleLines = grammarCards.flatMap((card) =>
+    Array.isArray(card.examples)
+      ? card.examples.map(objectValue).map((example) => String(example.ko ?? "").trim()).filter(Boolean)
+      : [],
+  );
+  const scenePlaybackLines = grammarExampleLines.length > 0 ? grammarExampleLines : sceneDialogueLines;
+  const activeScenePlaybackLine = sceneDialogueStep > 0
+    ? scenePlaybackLines[sceneDialogueStep - 1] ?? null
+    : null;
   const visibleSceneDialogueLines = sceneDialogueLines.slice(0, sceneDialogueStep);
   const leftSceneDialogue = visibleSceneDialogueLines
     .filter((_, index) => index % 2 === 0)
@@ -506,7 +516,7 @@ function ContentRenderer({
     setSceneDialogueStep(0);
     setSceneDialoguePlaying(true);
     setGuidedDialogueIndex(null);
-    speakKoreanSequence(sceneDialogueLines, {
+    speakKoreanSequence(scenePlaybackLines, {
       isCurrent: () => sceneDialogueRunRef.current === runId,
       onStep: (index) => setSceneDialogueStep(index + 1),
       onComplete: () => {
@@ -816,17 +826,30 @@ function ContentRenderer({
                   </div>
                 )}
                 <span className="absolute inset-x-0 bottom-0 z-[5] h-2/5 bg-gradient-to-t from-black/60 via-black/15 to-transparent" aria-hidden="true" />
-                {dialogueScenes.length > 0 && (
+                {(dialogueScenes.length > 0 || grammarCards.length > 0) && (
                   <button
                     type="button"
                     onClick={playSceneDialogue}
-                    aria-label={locale === "ko-KR" ? "현재 장면 대화 재생" : "播放当前场景对话"}
+                    aria-label={grammarCards.length > 0
+                      ? locale === "ko-KR" ? "문법 예문 연속 재생" : "连续播放语法例句"
+                      : locale === "ko-KR" ? "현재 장면 대화 재생" : "播放当前场景对话"}
                     className="absolute left-5 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:left-7 sm:top-6"
                   >
                     <Volume2 size={18} className={sceneDialoguePlaying ? "animate-pulse motion-reduce:animate-none" : ""} aria-hidden="true" />
                   </button>
                 )}
-                {vocabulary.length === 0 && (
+                {grammarCards.length > 0 && activeScenePlaybackLine && (
+                  <button
+                    type="button"
+                    onClick={() => speakKorean(activeScenePlaybackLine)}
+                    className="absolute bottom-6 left-6 z-20 max-w-[min(80%,42rem)] animate-in rounded-2xl bg-white/95 px-5 py-3 text-left text-xl font-bold leading-8 text-slate-950 shadow-xl fade-in-0 slide-in-from-bottom-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:animate-none sm:bottom-8 sm:left-8"
+                    aria-live="polite"
+                  >
+                    <span lang="ko">{activeScenePlaybackLine}</span>
+                    <Volume2 size={14} className="ml-3 inline text-[var(--primary)]" aria-hidden="true" />
+                  </button>
+                )}
+                {vocabulary.length === 0 && !activeScenePlaybackLine && (
                   <figcaption className="absolute inset-x-0 bottom-0 z-10 max-w-3xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
                     <CardTitleWithHint
                       title={sceneGoal}
@@ -890,7 +913,7 @@ function ContentRenderer({
           ))}
         </div>
       )}
-      {vocabulary.length === 0 && String(lead[locale] ?? "") && (
+      {vocabulary.length === 0 && !sceneImage && String(lead[locale] ?? "") && (
         <p className="max-w-3xl text-[17px] leading-8 text-slate-600">
           {String(lead[locale])}
         </p>
@@ -975,41 +998,75 @@ function ContentRenderer({
         </div>
       )}
 
-      {grammarCards.length > 0 && (
-        <div className="grid gap-5 xl:grid-cols-3">
-          {grammarCards.map((card, index) => {
-            const examples = Array.isArray(card.examples) ? card.examples.map(objectValue) : [];
-            return (
-              <section key={`${String(card.form)}-${index}`} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-5">
-                <h4 className="text-lg font-bold text-[var(--foreground)]">{String(card.form)}</h4>
-                <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
-                  {String(objectValue(card.function)[locale] ?? "")}
-                </p>
-                <ul className="mt-4 space-y-2 text-sm leading-6 text-[var(--foreground)]">
-                  {stringArray(card.rules).map((rule) => <li key={rule}>· {rule}</li>)}
+      {grammarCards.length > 0 && (() => {
+        const cardIndex = Math.min(activeGrammarCardIndex, grammarCards.length - 1);
+        const card = grammarCards[cardIndex];
+        const examples = Array.isArray(card.examples) ? card.examples.map(objectValue) : [];
+        const caution = String(objectValue(card.caution)[locale] ?? "");
+        const source = String(objectValue(card.source)[locale] ?? "");
+        return (
+          <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
+            <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2" role="tablist" aria-label={locale === "ko-KR" ? "문법 항목 선택" : "选择语法点"}>
+              {grammarCards.map((item, index) => (
+                <button
+                  key={`${String(item.form)}-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={index === cardIndex}
+                  onClick={() => setActiveGrammarCardIndex(index)}
+                  className={`min-h-11 shrink-0 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${index === cardIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}
+                >
+                  {String(item.form)}
+                </button>
+              ))}
+            </div>
+            <div className="grid gap-7 p-5 sm:p-7 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
+              <div>
+                <CardTitleWithHint
+                  title={String(card.form)}
+                  description={String(objectValue(card.function)[locale] ?? "")}
+                  headingLevel={4}
+                  titleClassName="text-2xl font-bold text-[var(--foreground)]"
+                  hintLabel={locale === "ko-KR" ? "문법 기능 보기" : "查看语法用途"}
+                />
+                <ul className="mt-5 space-y-3">
+                  {stringArray(card.rules).map((rule, index) => (
+                    <li key={rule} className="flex gap-3 rounded-xl bg-[var(--surface-soft)] px-4 py-3 text-sm font-semibold leading-6 text-[var(--foreground)]">
+                      <span className="text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span>
+                      <span>{rule}</span>
+                    </li>
+                  ))}
                 </ul>
-                <div className="mt-4 space-y-3 border-t border-[var(--border-subtle)] pt-4">
-                  {examples.map((example) => (
-                    <div key={String(example.ko)}>
-                      <p className="font-semibold text-[var(--foreground)]">{String(example.ko)}</p>
-                      {showChinese && <p className="text-xs leading-5 text-[var(--foreground-secondary)]">{String(example.zh)}</p>}
-                      <p className="mt-1 text-[11px] font-semibold text-[var(--foreground-muted)]">
-                        {String(example.audioStatus) === "ready" ? "例句音频已完成" : "例句音频待制作"}
-                      </p>
-                    </div>
+                {(caution || source) && (
+                  <div className="mt-5">
+                    <CardTitleWithHint
+                      title={locale === "ko-KR" ? "주의와 출처" : "易错点与来源"}
+                      description={<span className="space-y-2">{caution && <span className="block">{caution}</span>}{source && <span className="block text-xs opacity-80">{source}</span>}</span>}
+                      headingLevel={4}
+                      titleClassName="text-sm font-bold text-[var(--foreground-secondary)]"
+                      hintLabel={locale === "ko-KR" ? "주의와 출처 보기" : "查看易错点与来源"}
+                    />
+                  </div>
+                )}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "예문을 눌러 들어 보세요" : "点击例句进行点读"}</p>
+                <div className="mt-3 space-y-3">
+                  {examples.map((example, index) => (
+                    <button key={String(example.ko)} type="button" onClick={() => speakKorean(String(example.ko))} className="group flex w-full items-start justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] px-5 py-4 text-left transition hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                      <span>
+                        <span className="block text-lg font-bold leading-7 text-[var(--foreground)]" lang="ko">{String(example.ko)}</span>
+                        {showChinese && <span className="mt-1 block text-sm leading-6 text-[var(--foreground-secondary)]">{String(example.zh)}</span>}
+                      </span>
+                      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-[var(--primary)]"><Volume2 size={15} aria-hidden="true" /></span>
+                    </button>
                   ))}
                 </div>
-                <p className="mt-4 rounded-xl bg-[var(--surface-soft)] px-3 py-3 text-xs leading-5 text-[var(--foreground-secondary)]">
-                  {String(objectValue(card.caution)[locale] ?? "")}
-                </p>
-                <p className="mt-3 text-[11px] leading-5 text-[var(--foreground-muted)]">
-                  {String(objectValue(card.source)[locale] ?? "")}
-                </p>
-              </section>
-            );
-          })}
-        </div>
-      )}
+              </div>
+            </div>
+          </section>
+        );
+      })()}
 
       {contrast.length > 0 && (
         <div className="flex flex-wrap gap-x-8 gap-y-3 border-y border-slate-200 py-5">
@@ -2446,6 +2503,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               const hasReadyImage = node.media.some((asset) => asset.type === "image" && asset.status === "ready" && asset.url);
               const hasIntegratedImageHeader = nodeIndex === 0 && hasReadyImage;
               const usesDesktopImagePager = hasIntegratedImageHeader && node.activities.length > 0;
+              const usesGrammarPager = Array.isArray(node.content.grammarCards) && node.content.grammarCards.length > 0;
               return (
               <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 first:mt-0 sm:mt-10 sm:p-7 sm:first:mt-0">
                 {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -2488,7 +2546,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 0 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
                       >
                         <BookOpen size={17} aria-hidden="true" />
-                        {locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
+                        {usesGrammarPager
+                          ? locale === "ko-KR" ? "문법 이해" : "语法理解"
+                          : locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
                       </button>
                       <button
                         type="button"
@@ -2497,7 +2557,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 1 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
                       >
                         <CheckCircle2 size={17} aria-hidden="true" />
-                        {locale === "ko-KR" ? "장면 진단" : "情景诊断"}
+                        {usesGrammarPager
+                          ? locale === "ko-KR" ? "문법 연습" : "语法练习"
+                          : locale === "ko-KR" ? "장면 진단" : "情景诊断"}
                       </button>
                     </div>
                     <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">

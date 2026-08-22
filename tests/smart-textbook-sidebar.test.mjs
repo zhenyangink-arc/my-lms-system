@@ -136,7 +136,7 @@ test("智能教材共享骨架从私有 R2 加载已就绪的情景图片", asyn
   assert.match(source, /const hasIntegratedImageHeader = nodeIndex === 0 && hasReadyImage/);
   assert.match(source, /!hasIntegratedImageHeader && <div/);
   assert.match(source, /const sceneDialogueLines = activeDialogueGroupLines\s*\.map\(\(line\) => String\(line\.ko/);
-  assert.match(source, /speakKoreanSequence\(sceneDialogueLines/);
+  assert.match(source, /speakKoreanSequence\(scenePlaybackLines/);
   assert.match(source, /left-\[28%\] top-\[5%\]/);
   assert.match(source, /right-\[24%\] top-\[18%\]/);
   assert.match(source, /onClick=\{\(\) => speakKorean\(leftSceneDialogue\)\}/);
@@ -255,6 +255,31 @@ test("任务情景图按生成原图五比二等比导出，禁止纵向拉伸",
   assert.match(migration, /'proportionalScale', true/);
 });
 
+test("语法节点使用理解与练习双页，并逐项切换真实语法卡", async () => {
+  const source = await readFile(sourceUrl, "utf8");
+
+  assert.match(source, /const usesGrammarPager = Array\.isArray\(node\.content\.grammarCards\)/);
+  assert.match(source, /"语法理解"/);
+  assert.match(source, /"语法练习"/);
+  assert.match(source, /activeGrammarCardIndex/);
+  assert.match(source, /role="tablist"/);
+  assert.match(source, /grammarCards\.map\(\(item, index\)/);
+  assert.match(source, /易错点与来源/);
+  assert.doesNotMatch(source, /例句音频待制作/);
+});
+
+test("语法图片按数据库例句数组逐句播放并在五秒后隐藏", async () => {
+  const source = await readFile(sourceUrl, "utf8");
+
+  assert.match(source, /const grammarExampleLines = grammarCards\.flatMap/);
+  assert.match(source, /const scenePlaybackLines = grammarExampleLines\.length > 0/);
+  assert.match(source, /speakKoreanSequence\(scenePlaybackLines/);
+  assert.match(source, /setTimeout\(\(\) => \{/);
+  assert.match(source, /\}, 5000\)/);
+  assert.match(source, /连续播放语法例句/);
+  assert.match(source, /activeScenePlaybackLine/);
+});
+
 test("带情景图的共享模块标题显示在图片右上角", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
@@ -282,7 +307,7 @@ test("核心词汇图片按真实数组逐项朗读并保留无热点回退位�
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "핵심 어휘와 결합 표현 연속 재생" : "连续播放核心词汇与搭配短句"\}/);
   assert.doesNotMatch(source, /vocabularyPlaying \? "scale-\[1\.025\]" : "scale-100"/);
   assert.match(source, /priority=\{Boolean\(moduleHeader\)\}/);
-  assert.match(source, /vocabulary\.length === 0 && String\(lead\[locale\]/);
+  assert.match(source, /vocabulary\.length === 0 && !sceneImage && String\(lead\[locale\]/);
   assert.match(source, /utterance\.onerror = \(\) => window\.setTimeout/);
   assert.match(source, /utteranceIndex === 0 \? 900 : 1400/);
 });
