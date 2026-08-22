@@ -1711,10 +1711,7 @@ function Activity({
             const options = stringArray(item.options);
             return (
               <fieldset key={String(item.id ?? originalIndex)} className="py-4">
-                <legend className="flex items-center gap-2 text-sm font-bold leading-6 text-[var(--foreground)]">
-                  {pageItemIndex + 1}. {String(item.question)}
-                  {activePageCheck && (activePageCheck.results[pageItemIndex] ? <span className="text-xs text-[var(--status-success)]">✓ {locale === "ko-KR" ? "정답" : "正确"}</span> : <span className="text-xs text-[var(--destructive)]">× {locale === "ko-KR" ? "오답" : "错误"}</span>)}
-                </legend>
+                <legend className="text-sm font-bold leading-6 text-[var(--foreground)]">{pageItemIndex + 1}. {String(item.question)}</legend>
                 <div className={`mt-2 grid gap-2 ${activity.config.practiceKind === "judgment" ? "sm:grid-cols-2" : "sm:grid-cols-4"}`}>
                   {groupedOptionOrders[originalIndex].map((originalOptionIndex, displayOptionIndex) => {
                     const option = options[originalOptionIndex];
@@ -1723,6 +1720,15 @@ function Activity({
                         ? originalOptionIndex === 0 ? "맞아요" : "틀려요"
                         : originalOptionIndex === 0 ? "正确" : "错误"
                       : option;
+                    const selected = selectedAnswers[originalIndex] === originalOptionIndex;
+                    const revealedCorrect = activePageCheck?.revealed && Number(activePageCheck.answers[pageItemIndex]) === originalOptionIndex;
+                    const checkedTone = activePageCheck && selected
+                      ? activePageCheck.results[pageItemIndex] || revealedCorrect
+                        ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]"
+                        : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]"
+                      : selected
+                        ? "border-[var(--primary)] bg-[var(--accent)]"
+                        : "border-[var(--border-subtle)] hover:border-[var(--primary)]";
                     return (
                     <button key={`${originalOptionIndex}-${option}`} type="button" onClick={() => {
                       const next = [...selectedAnswers];
@@ -1730,12 +1736,11 @@ function Activity({
                       setAnswer(next);
                       setFeedback(null);
                       clearActivePageCheck();
-                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[originalIndex] === originalOptionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
+                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${checkedTone}`}>
                       {String.fromCharCode(65 + displayOptionIndex)}. {optionLabel}
                     </button>
                   );})}
                 </div>
-                {activePageCheck?.revealed && !activePageCheck.results[pageItemIndex] && <p className="mt-2 text-xs font-bold text-[var(--support)]">{locale === "ko-KR" ? "정답" : "答案"}：{options[Number(activePageCheck.answers[pageItemIndex])]}</p>}
               </fieldset>
             );
           })}
@@ -1957,9 +1962,7 @@ function Activity({
                     setAnswer(next);
                     setFeedback(null);
                     clearActivePageCheck();
-                  }} lang="ko" autoComplete="off" className="min-h-12 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
-                  {activePageCheck && <span className={`text-xs font-bold ${activePageCheck.results[pageItemIndex] ? "text-[var(--status-success)]" : "text-[var(--destructive)]"}`}>{activePageCheck.results[pageItemIndex] ? `✓ ${locale === "ko-KR" ? "정답" : "正确"}` : `× ${locale === "ko-KR" ? "오답" : "错误"}`}</span>}
-                  {activePageCheck?.revealed && !activePageCheck.results[pageItemIndex] && <span className="text-xs font-bold text-[var(--support)]">{locale === "ko-KR" ? "정답" : "答案"}：{String(activePageCheck.answers[pageItemIndex])}</span>}
+                  }} lang="ko" autoComplete="off" className={`min-h-12 rounded-xl border px-4 text-base font-semibold outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activePageCheck ? activePageCheck.results[pageItemIndex] || activePageCheck.revealed ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--surface-soft)] text-[var(--foreground)]"}`} placeholder={String(item.placeholder ?? "")} />
                 </label>
               </div>
             );
