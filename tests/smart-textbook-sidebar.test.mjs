@@ -292,6 +292,17 @@ test("第一章语法练习直接显示六题，不再要求开始专注练习",
   assert.match(migration, /activity\.activity_key = 'grammar-fill'/);
 });
 
+test("语法填空按数据库分组生成练习分页，不再展示轮次分隔标题", async () => {
+  const source = await readFile(sourceUrl, "utf8");
+
+  assert.match(source, /const fillBlankPages = configItems\.reduce/);
+  assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"\}/);
+  assert.match(source, /setActiveFillBlankPage\(pageIndex\)/);
+  assert.match(source, /`练习 \$\{pageIndex \+ 1\}`/);
+  assert.match(source, /originalIndex/);
+  assert.doesNotMatch(source, />\{group\}<\/span>/);
+});
+
 test("带情景图的共享模块标题显示在图片右上角", async () => {
   const source = await readFile(sourceUrl, "utf8");
 

@@ -1341,6 +1341,16 @@ function Activity({
   const configItems = Array.isArray(activity.config.items)
     ? activity.config.items.map(objectValue)
     : [];
+  const fillBlankPages = configItems.reduce<Array<{
+    key: string;
+    items: Array<{ item: Record<string, unknown>; originalIndex: number }>;
+  }>>((pages, item, originalIndex) => {
+    const key = String(item.group ?? item.groupKo ?? "all");
+    const page = pages.find((candidate) => candidate.key === key);
+    if (page) page.items.push({ item, originalIndex });
+    else pages.push({ key, items: [{ item, originalIndex }] });
+    return pages;
+  }, []);
   const groupedSingleChoice =
     activity.type === "single_choice" && configItems.length > 0;
   const usesFlipCards =
@@ -1387,6 +1397,7 @@ function Activity({
   });
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [activeFillBlankPage, setActiveFillBlankPage] = useState(0);
   const [practiceFocused, setPracticeFocused] = useState(false);
   const focusModeStartRef = useRef<HTMLButtonElement>(null);
   const focusModeCloseRef = useRef<HTMLButtonElement>(null);
@@ -1829,35 +1840,41 @@ function Activity({
       )}
 
       {activity.type === "fill_blank" && configItems.length > 0 && (!usesFocusMode || practiceFocused) && (
-        <div className="mt-6 grid gap-4">
-          {configItems.map((item, index) => {
+        <div className="mt-6">
+          {fillBlankPages.length > 1 && (
+            <nav className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1.5" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
+              <div className="flex items-center gap-1.5">
+                {fillBlankPages.map((page, pageIndex) => (
+                  <button
+                    key={page.key}
+                    type="button"
+                    aria-current={pageIndex === activeFillBlankPage ? "page" : undefined}
+                    onClick={() => setActiveFillBlankPage(pageIndex)}
+                    className={`min-h-11 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${pageIndex === activeFillBlankPage ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}
+                  >
+                    {locale === "ko-KR" ? `연습 ${pageIndex + 1}` : `练习 ${pageIndex + 1}`}
+                  </button>
+                ))}
+              </div>
+              <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]">
+                {locale === "ko-KR" ? "페이지" : "第"} {activeFillBlankPage + 1} / {fillBlankPages.length}{locale === "ko-KR" ? "" : " 页"}
+              </span>
+            </nav>
+          )}
+          <div className="grid gap-4">
+          {(fillBlankPages[Math.min(activeFillBlankPage, fillBlankPages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const values = Array.isArray(answer) ? answer.map(String) : [];
-            const group = locale === "ko-KR"
-              ? String(item.groupKo ?? item.group ?? "")
-              : String(item.group ?? "");
             const grammarPoint = locale === "ko-KR"
               ? String(item.grammarPointKo ?? item.grammarPoint ?? "")
               : String(item.grammarPoint ?? "");
-            const previousGroup = index > 0
-              ? locale === "ko-KR"
-                ? String(configItems[index - 1]?.groupKo ?? configItems[index - 1]?.group ?? "")
-                : String(configItems[index - 1]?.group ?? "")
-              : "";
             return (
-              <div key={String(item.id ?? index)}>
-                {group && group !== previousGroup && (
-                  <div className={`${index > 0 ? "mt-3" : ""} mb-3 flex items-center gap-3`}>
-                    <span className="h-px flex-1 bg-[var(--border-subtle)]" />
-                    <span className="rounded-full bg-[var(--accent)] px-4 py-1.5 text-xs font-bold text-[var(--primary)]">{group}</span>
-                    <span className="h-px flex-1 bg-[var(--border-subtle)]" />
-                  </div>
-                )}
+              <div key={String(item.id ?? originalIndex)}>
                 <label className="grid gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-sm font-semibold text-[var(--foreground-secondary)]">
                   {grammarPoint && <span className="text-xs font-bold text-[var(--primary)]">{grammarPoint}</span>}
-                  <span>{index + 1}. {String(item.label ?? item.prompt ?? "")}</span>
-                  <input value={values[index] ?? ""} onChange={(event) => {
+                  <span>{pageItemIndex + 1}. {String(item.label ?? item.prompt ?? "")}</span>
+                  <input value={values[originalIndex] ?? ""} onChange={(event) => {
                     const next = [...values];
-                    next[index] = event.target.value;
+                    next[originalIndex] = event.target.value;
                     setAnswer(next);
                     setFeedback(null);
                   }} lang="ko" autoComplete="off" className="min-h-12 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-4 text-base font-semibold text-[var(--foreground)] outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" placeholder={String(item.placeholder ?? "")} />
@@ -1865,6 +1882,7 @@ function Activity({
               </div>
             );
           })}
+          </div>
         </div>
       )}
 
