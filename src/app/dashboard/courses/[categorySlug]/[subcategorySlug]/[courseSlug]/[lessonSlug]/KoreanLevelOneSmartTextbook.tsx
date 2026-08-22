@@ -1442,7 +1442,7 @@ function Activity({
     ? (fillBlankPages[activeFillBlankPage]?.items ?? [])
     : (groupedChoicePages[activeGroupedChoicePage]?.items ?? []);
   const activePageCheck = pageChecks[activeGrammarPage];
-  const activePageReady = Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
+  const activePageReady = activityCompleted || Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
 
   async function checkGrammarPage() {
     const values = Array.isArray(answer) ? answer : [];
@@ -1494,13 +1494,13 @@ function Activity({
   function nextGrammarPage() {
     if (activity.type === "fill_blank") {
       if (activeFillBlankPage === fillBlankPages.length - 1) {
-        submit();
+        if (!activityCompleted) submit();
         onNextGrammarActivity?.();
       } else setActiveFillBlankPage((page) => page + 1);
       return;
     }
     if (activeGroupedChoicePage === groupedChoicePages.length - 1) {
-      submit();
+      if (!activityCompleted) submit();
       onNextGrammarActivity?.();
     } else setActiveGroupedChoicePage((page) => page + 1);
   }
@@ -2082,8 +2082,8 @@ function Activity({
             </div>
           )}
         </div>
-        {isGrammarPractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
-        {isGrammarPractice && activePageCheck && !activePageReady && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
+        {isGrammarPractice && !activityCompleted && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
+        {isGrammarPractice && !activityCompleted && activePageCheck && !activePageReady && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
         {(!isGrammarPractice || (isLastGrammarActivity && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : t.submit}
         </button>}
