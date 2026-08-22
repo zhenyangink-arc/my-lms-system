@@ -331,6 +331,9 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
   assert.match(source, /const activePageReady = activityCompleted \|\| Boolean/);
   assert.match(source, /if \(!activityCompleted\) submit\(\)/);
+  assert.match(source, /<CheckCircle2 size=\{18\} aria-label=/);
+  assert.match(source, /<XCircle size=\{18\} aria-label=/);
+  assert.match(source, /isGrammarPractice && !activePageCheck/);
   assert.match(actions, /const pageCheckSchema = z\.object/);
   assert.match(actions, /digital_textbook_activity_secrets/);
   assert.match(actions, /refreshStudentHomeLearningData/);

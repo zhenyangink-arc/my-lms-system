@@ -31,6 +31,7 @@ import {
   Square,
   Volume2,
   X,
+  XCircle,
 } from "lucide-react";
 import { useEffect, useRef, useState, useTransition } from "react";
 
@@ -1973,13 +1974,18 @@ function Activity({
                 <label className="grid gap-2 py-4 text-sm font-semibold text-[var(--foreground-secondary)]">
                   {grammarPoint && <span className="text-xs font-bold text-[var(--primary)]">{grammarPoint}</span>}
                   <span>{pageItemIndex + 1}. {String(item.label ?? item.prompt ?? "")}</span>
-                  <input value={values[originalIndex] ?? ""} onChange={(event) => {
-                    const next = [...values];
-                    next[originalIndex] = event.target.value;
-                    setAnswer(next);
-                    setFeedback(null);
-                    clearActivePageCheck();
-                  }} lang="ko" autoComplete="off" className={`min-h-12 rounded-xl border px-4 text-base font-semibold outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activePageCheck ? activePageCheck.results[pageItemIndex] || activePageCheck.revealed ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--surface-soft)] text-[var(--foreground)]"}`} placeholder={String(item.placeholder ?? "")} />
+                  <span className="relative">
+                    <input value={values[originalIndex] ?? ""} onChange={(event) => {
+                      const next = [...values];
+                      next[originalIndex] = event.target.value;
+                      setAnswer(next);
+                      setFeedback(null);
+                      clearActivePageCheck();
+                    }} lang="ko" autoComplete="off" aria-invalid={activePageCheck ? !activePageCheck.results[pageItemIndex] && !activePageCheck.revealed : undefined} className={`min-h-12 w-full rounded-xl border px-4 pr-12 text-base font-semibold outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activePageCheck ? activePageCheck.results[pageItemIndex] || activePageCheck.revealed ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--surface-soft)] text-[var(--foreground)]"}`} placeholder={String(item.placeholder ?? "")} />
+                    {activePageCheck && (activePageCheck.results[pageItemIndex] || activePageCheck.revealed
+                      ? <CheckCircle2 size={18} aria-label={locale === "ko-KR" ? "정답" : "正确"} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--status-success)]" />
+                      : <XCircle size={18} aria-label={locale === "ko-KR" ? "오답" : "错误"} className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[var(--destructive)]" />)}
+                  </span>
                 </label>
               </div>
             );
@@ -2082,8 +2088,8 @@ function Activity({
             </div>
           )}
         </div>
-        {isGrammarPractice && !activityCompleted && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
-        {isGrammarPractice && !activityCompleted && activePageCheck && !activePageReady && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
+        {isGrammarPractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
+        {isGrammarPractice && activePageCheck && !activePageCheck.results.every(Boolean) && !activePageCheck.revealed && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
         {(!isGrammarPractice || (isLastGrammarActivity && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : t.submit}
         </button>}
