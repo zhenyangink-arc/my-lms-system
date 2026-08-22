@@ -1103,8 +1103,15 @@ function ContentRenderer({
                   <div className="flex items-start justify-between gap-4">
                     <div className="min-w-0">
                       <p className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</p>
-                      <h4 className="mt-2 text-xl font-bold leading-8 text-[var(--foreground)]" lang="ko">{String(card.form)}</h4>
-                      <p className="mt-2 text-sm font-semibold leading-6 text-[var(--foreground-secondary)]">{String(objectValue(card.function)[locale] ?? "")}</p>
+                      <CardTitleWithHint
+                        title={<span lang="ko">{String(card.form)}</span>}
+                        description={String(objectValue(card.function)[locale] ?? "")}
+                        headingLevel={4}
+                        className="mt-2 items-start"
+                        titleClassName="text-xl font-bold leading-8 text-[var(--foreground)]"
+                        hintClassName="mt-0.5"
+                        hintLabel={locale === "ko-KR" ? "문형 기능 보기" : "查看句型用途"}
+                      />
                     </div>
                     <button type="button" onClick={() => speakKorean(String(examples[0] ?? card.form ?? ""))} aria-label={locale === "ko-KR" ? "예문 듣기" : "播放例句"} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
                       <Volume2 size={17} aria-hidden="true" />
