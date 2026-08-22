@@ -307,7 +307,7 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
   assert.match(source, /const fillBlankPages = configItems\.reduce/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"\}/);
   assert.match(source, /setActiveFillBlankPage\(\(page\) => page \+ 1\)/);
-  assert.match(source, /grammarPageOffset \+ activeFillBlankPage \+ 1/);
+  assert.match(source, /grammarPageOffset \+ activeGrammarPage \+ 1/);
   assert.match(source, /originalIndex/);
   assert.doesNotMatch(source, />\{group\}<\/span>/);
 });
@@ -324,7 +324,7 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /\["choice", "judgment", "fill"\]\.includes/);
   assert.match(source, /practiceKind === "judgment"/);
   assert.match(source, /const groupedChoicePages = configItems\.reduce/);
-  assert.match(source, /grammarPageOffset \+ activeGroupedChoicePage \+ 1/);
+  assert.match(source, /grammarPageOffset \+ activeGrammarPage \+ 1/);
   assert.match(source, /checkSmartTextbookActivityPageAction/);
   assert.match(source, /"检查答案"/);
   assert.match(source, /"查看答案"/);

@@ -1481,6 +1481,30 @@ function Activity({
     });
   }
 
+  function previousGrammarPage() {
+    if (activity.type === "fill_blank") {
+      if (activeFillBlankPage === 0) onPreviousGrammarActivity?.();
+      else setActiveFillBlankPage((page) => page - 1);
+      return;
+    }
+    if (activeGroupedChoicePage === 0) onPreviousGrammarActivity?.();
+    else setActiveGroupedChoicePage((page) => page - 1);
+  }
+
+  function nextGrammarPage() {
+    if (activity.type === "fill_blank") {
+      if (activeFillBlankPage === fillBlankPages.length - 1) {
+        submit();
+        onNextGrammarActivity?.();
+      } else setActiveFillBlankPage((page) => page + 1);
+      return;
+    }
+    if (activeGroupedChoicePage === groupedChoicePages.length - 1) {
+      submit();
+      onNextGrammarActivity?.();
+    } else setActiveGroupedChoicePage((page) => page + 1);
+  }
+
   useEffect(() => {
     if (!practiceFocused) return;
     const previousOverflow = document.body.style.overflow;
@@ -1619,14 +1643,14 @@ function Activity({
       className={practiceFocused
         ? "fixed inset-0 z-[100] m-0 flex overflow-y-auto rounded-none border-0 bg-[var(--background)] p-4 sm:p-8"
         : isGrammarPractice
-          ? "mt-5 p-0"
+          ? "mt-5 rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6"
           : "mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6"}
     >
       <div className={practiceFocused
         ? "m-auto w-full max-w-4xl rounded-[32px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:p-8"
         : ""}
       >
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
+      <div className={isGrammarPractice ? "flex flex-col gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6" : "flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6"}>
         <div>
           {round && round.total > 1 && (
             <p className="mb-2 text-xs font-bold text-[var(--primary)]">
@@ -1645,6 +1669,13 @@ function Activity({
           />
         </div>
         <div className="flex shrink-0 items-center gap-3">
+          {isGrammarPractice && (
+            <nav className="flex items-center gap-2" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
+              <button type="button" disabled={activeGrammarPage === 0 && !onPreviousGrammarActivity} onClick={previousGrammarPage} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
+              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeGrammarPage + 1} / 6</span>
+              {(!isLastGrammarActivity || !isLastGrammarPracticePage) && <button type="button" disabled={!activePageReady} onClick={nextGrammarPage} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button>}
+            </nav>
+          )}
           {activityCompleted && (
             <span className="text-xs font-bold text-[var(--status-success)]">
               {feedback?.correct === null ? t.submittedForReview : t.submitted}
@@ -1697,14 +1728,7 @@ function Activity({
       )}
 
       {groupedSingleChoice && !usesFlipCards && (!usesFocusMode || practiceFocused) && (
-        <div className="mt-6">
-          {groupedChoicePages.length > 1 && (
-            <nav className="mb-3 flex items-center justify-end gap-2 border-b border-[var(--border-subtle)] pb-3" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
-              <button type="button" disabled={activeGroupedChoicePage === 0 && !onPreviousGrammarActivity} onClick={() => activeGroupedChoicePage === 0 ? onPreviousGrammarActivity?.() : setActiveGroupedChoicePage((page) => page - 1)} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
-              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeGroupedChoicePage + 1} / 6</span>
-              {!isLastGrammarActivity || activeGroupedChoicePage < groupedChoicePages.length - 1 ? <button type="button" disabled={!activePageReady} onClick={() => { if (activeGroupedChoicePage === groupedChoicePages.length - 1) { submit(); onNextGrammarActivity?.(); } else setActiveGroupedChoicePage((page) => page + 1); }} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button> : null}
-            </nav>
-          )}
+        <div className="mt-4">
           <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
           {(groupedChoicePages[Math.min(activeGroupedChoicePage, groupedChoicePages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
@@ -1937,14 +1961,7 @@ function Activity({
       )}
 
       {activity.type === "fill_blank" && configItems.length > 0 && (!usesFocusMode || practiceFocused) && (
-        <div className="mt-6">
-          {fillBlankPages.length > 1 && (
-            <nav className="mb-3 flex items-center justify-end gap-2 border-b border-[var(--border-subtle)] pb-3" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
-              <button type="button" disabled={activeFillBlankPage === 0 && !onPreviousGrammarActivity} onClick={() => activeFillBlankPage === 0 ? onPreviousGrammarActivity?.() : setActiveFillBlankPage((page) => page - 1)} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
-              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeFillBlankPage + 1} / 6</span>
-              {!isLastGrammarActivity || activeFillBlankPage < fillBlankPages.length - 1 ? <button type="button" disabled={!activePageReady} onClick={() => { if (activeFillBlankPage === fillBlankPages.length - 1) { submit(); onNextGrammarActivity?.(); } else setActiveFillBlankPage((page) => page + 1); }} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button> : null}
-            </nav>
-          )}
+        <div className="mt-4">
           <div className="divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5">
           {(fillBlankPages[Math.min(activeFillBlankPage, fillBlankPages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const values = Array.isArray(answer) ? answer.map(String) : [];
