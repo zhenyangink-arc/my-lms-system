@@ -59,6 +59,10 @@ const expandedGrammarPracticeMigrationUrl = new URL(
   "../supabase/migrations/202608220011_add_chapter_one_grammar_choice_and_judgment.sql",
   import.meta.url,
 );
+const grammarPunctuationMigrationUrl = new URL(
+  "../supabase/migrations/202608220012_keep_grammar_punctuation_in_prompts.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -313,9 +317,10 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
 });
 
 test("第一章语法练习连续六页并逐页检查与按需查看答案", async () => {
-  const [source, migration, actions] = await Promise.all([
+  const [source, migration, punctuationMigration, actions] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedGrammarPracticeMigrationUrl, "utf8"),
+    readFile(grammarPunctuationMigrationUrl, "utf8"),
     readFile(actionsUrl, "utf8"),
   ]);
 
@@ -342,6 +347,10 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /input, textarea, select, \[contenteditable='true'\]/);
   assert.match(migration, /'grammar-choice'/);
   assert.match(migration, /'grammar-judgment'/);
+  assert.match(punctuationMigration, /지민 씨는 학생___\?/);
+  assert.match(punctuationMigration, /리나 씨는 의사___\?/);
+  assert.match(punctuationMigration, /"value":\["예요","은","이에요","이에요","는","예요"\]/);
+  assert.doesNotMatch(punctuationMigration, /"value":\["예요","은","이에요\?"/);
   assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,0,1\]\}'/);
   assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,1,0\]\}'/);
   assert.equal((migration.match(/\"id\":\"choice-/g) ?? []).length, 6);
