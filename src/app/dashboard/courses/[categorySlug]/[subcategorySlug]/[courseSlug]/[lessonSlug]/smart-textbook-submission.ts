@@ -645,7 +645,12 @@ export function gradeSmartTextbookActivity(
     if (activityType !== "single_choice") {
       return { ok: false, error: "活动判定配置不匹配，提交已拒绝。" };
     }
-    const items = asArray(asObject(publicConfigValue).items).map(asObject);
+    const config = asObject(publicConfigValue);
+    const directItems = asArray(config.items).map(asObject);
+    const groupedItems = asArray(config.groups).flatMap((group) =>
+      asArray(asObject(group).items).map(asObject),
+    );
+    const items = directItems.length > 0 ? directItems : groupedItems;
     const validIndexArray = (value: unknown): value is number[] =>
       Array.isArray(value) &&
       value.length === items.length &&

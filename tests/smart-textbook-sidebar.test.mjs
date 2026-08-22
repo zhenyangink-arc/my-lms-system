@@ -67,6 +67,10 @@ const expandedPatternCardsMigrationUrl = new URL(
   "../supabase/migrations/202608220013_expand_chapter_one_pattern_cards.sql",
   import.meta.url,
 );
+const patternChoiceGroupsMigrationUrl = new URL(
+  "../supabase/migrations/202608220014_add_chapter_one_pattern_choice_groups.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -290,9 +294,11 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration] = await Promise.all([
+  const [source, migration, choiceMigration, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
+    readFile(patternChoiceGroupsMigrationUrl, "utf8"),
+    readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(source, /const usesPatternPager = Boolean/);
@@ -303,12 +309,18 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /content\.quickResponse/);
   assert.match(source, /content\.personalOutput/);
   assert.match(source, /patternPage === 2/);
+  assert.match(source, /checkPatternChoiceGroup/);
+  assert.match(source, /patternChoiceChecks/);
+  assert.match(source, /activity\.key !== "pattern-choice"/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문형 기능 보기" : "查看句型用途"\}/);
   assert.doesNotMatch(source, /<p className="mt-2 text-sm font-semibold leading-6 text-\[var\(--foreground-secondary\)\]">\{String\(objectValue\(card\.function\)\[locale\]/);
   assert.doesNotMatch(source, /aria-label=\{locale === "ko-KR" \? "예문 듣기" : "播放例句"\}/);
   assert.equal((migration.match(/\"form\":/g) ?? []).length, 4);
   assert.match(migration, /저는 \[이름\]이에요\/예요\./);
   assert.match(migration, /\[이름\] 씨는 \[신분\]이에요\/예요\?/);
+  assert.equal((choiceMigration.match(/\"id\":\"(?:name|identity|confirm)-[123]\"/g) ?? []).length, 9);
+  assert.match(choiceMigration, /"kind":"index_array","value":\[0,1,0,0,1,0,0,1,0\]/);
+  assert.match(submission, /const groupedItems = asArray\(config\.groups\)\.flatMap/);
 });
 
 test("语法图片按数据库例句数组逐句播放并在五秒后隐藏", async () => {

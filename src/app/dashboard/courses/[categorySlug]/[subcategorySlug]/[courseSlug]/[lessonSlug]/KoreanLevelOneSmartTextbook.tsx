@@ -348,6 +348,8 @@ function ContentRenderer({
   supportMode,
   moduleHeader,
   patternPage = 0,
+  trackingDisabled = false,
+  onActivityCompleted,
 }: {
   node: SmartTextbookNode;
   locale: SmartLocale;
@@ -359,6 +361,8 @@ function ContentRenderer({
     minutes: number;
   };
   patternPage?: number;
+  trackingDisabled?: boolean;
+  onActivityCompleted?: (result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean }) => void;
 }) {
   const [sceneDialogueStep, setSceneDialogueStep] = useState(0);
   const [sceneDialoguePlaying, setSceneDialoguePlaying] = useState(false);
@@ -368,7 +372,9 @@ function ContentRenderer({
   const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
   const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
   const [activePatternGroupIndex, setActivePatternGroupIndex] = useState(0);
-  const [activePatternSentenceIndex, setActivePatternSentenceIndex] = useState(0);
+  const [patternChoiceAnswers, setPatternChoiceAnswers] = useState<number[]>(() => Array(9).fill(-1));
+  const [patternChoiceChecks, setPatternChoiceChecks] = useState<Record<number, boolean[]>>({});
+  const [checkingPatternChoices, setCheckingPatternChoices] = useState(false);
   const sceneDialogueRunRef = useRef(0);
   const sceneDialogueHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vocabularyRunRef = useRef(0);
@@ -403,6 +409,35 @@ function ContentRenderer({
     ? content.patternCards.map(objectValue)
     : [];
   const isPatternContent = Boolean(String(content.pattern ?? "")) && substitutionGroups.length > 0;
+  const patternChoiceActivity = node.activities.find((activity) => activity.key === "pattern-choice");
+  const patternChoiceGroups = Array.isArray(patternChoiceActivity?.config.groups)
+    ? patternChoiceActivity.config.groups.map(objectValue)
+    : [];
+  const allPatternChoiceGroupsCompleted = patternChoiceGroups.length > 0
+    && patternChoiceGroups.every((_, index) => patternChoiceChecks[index]?.every(Boolean));
+
+  async function checkPatternChoiceGroup(groupIndex: number) {
+    if (!patternChoiceActivity) return;
+    const group = patternChoiceGroups[groupIndex];
+    const items = Array.isArray(group?.items) ? group.items.map(objectValue) : [];
+    const offset = patternChoiceGroups.slice(0, groupIndex).reduce((total, current) => total + (Array.isArray(current.items) ? current.items.length : 0), 0);
+    const responses = items.map((_, index) => patternChoiceAnswers[offset + index] ?? -1);
+    if (responses.some((value) => value < 0)) return;
+    setCheckingPatternChoices(true);
+    const result = await checkSmartTextbookActivityPageAction({
+      activityId: patternChoiceActivity.id,
+      itemIndices: items.map((_, index) => offset + index),
+      response: responses,
+    });
+    setCheckingPatternChoices(false);
+    if (!result.ok) return;
+    setPatternChoiceChecks((current) => ({ ...current, [groupIndex]: result.results }));
+    const otherGroupsCorrect = patternChoiceGroups.every((_, index) => index === groupIndex || patternChoiceChecks[index]?.every(Boolean));
+    if (result.results.every(Boolean) && otherGroupsCorrect && !patternChoiceActivity.completed && !trackingDisabled) {
+      const submitted = await submitSmartTextbookActivityAction({ activityId: patternChoiceActivity.id, response: patternChoiceAnswers, locale });
+      if (submitted.ok) onActivityCompleted?.({ nodeId: submitted.nodeId, nodeCompleted: submitted.nodeCompleted, completionPercent: submitted.completionPercent, preview: submitted.preview });
+    }
+  }
   const contrast = stringArray(content.contrast);
   const grammarCards = Array.isArray(content.grammarCards)
     ? content.grammarCards.map(objectValue)
@@ -1125,26 +1160,42 @@ function ContentRenderer({
       )}
 
       {isPatternContent && patternPage === 1 && (() => {
-        const groupIndex = Math.min(activePatternGroupIndex, substitutionGroups.length - 1);
-        const group = substitutionGroups[groupIndex] ?? [];
-        const sentenceIndex = Math.min(activePatternSentenceIndex, Math.max(group.length - 1, 0));
-        const sentence = group[sentenceIndex] ?? "";
+        const groupIndex = Math.min(activePatternGroupIndex, Math.max(patternChoiceGroups.length - 1, 0));
+        const group = patternChoiceGroups[groupIndex] ?? {};
+        const items = Array.isArray(group.items) ? group.items.map(objectValue) : [];
+        const offset = patternChoiceGroups.slice(0, groupIndex).reduce((total, current) => total + (Array.isArray(current.items) ? current.items.length : 0), 0);
+        const groupCheck = patternChoiceChecks[groupIndex];
+        const groupCompleted = Boolean(groupCheck?.every(Boolean));
         return (
           <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
             <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2" role="tablist" aria-label={locale === "ko-KR" ? "대치 연습 선택" : "选择替换训练"}>
-              {substitutionGroups.map((_, index) => <button key={index} type="button" role="tab" aria-selected={index === groupIndex} onClick={() => { setActivePatternGroupIndex(index); setActivePatternSentenceIndex(0); }} className={`min-h-11 shrink-0 rounded-xl px-4 text-sm font-bold ${index === groupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}>{locale === "ko-KR" ? `${index + 1}단계` : ["姓名替换", "身份替换", "询问确认"][index] ?? `训练 ${index + 1}`}</button>)}
+              {patternChoiceGroups.map((item, index) => {
+                const completed = patternChoiceActivity?.completed || Boolean(patternChoiceChecks[index]?.every(Boolean));
+                return <button key={index} type="button" role="tab" aria-selected={index === groupIndex} onClick={() => setActivePatternGroupIndex(index)} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold ${index === groupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}>{String(objectValue(item.title)[locale] ?? `训练 ${index + 1}`)}{completed && <CheckCircle2 size={14} className="text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "완료" : "已完成"} />}</button>;
+              })}
             </div>
-            <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(260px,.85fr)]">
-              <div className="flex min-h-[220px] flex-col justify-center rounded-2xl bg-[var(--accent)] p-6 sm:p-8">
-                <p className="text-xs font-bold text-[var(--primary)]">{locale === "ko-KR" ? "완성 문장" : "完整句子"}</p>
-                <button type="button" onClick={() => speakKorean(sentence)} className="mt-4 flex items-center justify-between gap-5 text-left text-2xl font-bold leading-10 text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" lang="ko"><span>{sentence}</span><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-[var(--primary)]"><Volume2 size={17} aria-hidden="true" /></span></button>
+            <div className="p-5 sm:p-7">
+              <div className="flex items-center justify-between gap-4">
+                <CardTitleWithHint title={String(objectValue(group.title)[locale] ?? "替换操练")} description={String(objectValue(group.instruction)[locale] ?? "每题选择一个合适的形式。")} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "연습 방법 보기" : "查看练习方法"} />
+                {groupIndex < patternChoiceGroups.length - 1 && (groupCompleted || patternChoiceActivity?.completed) && <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><CheckCircle2 size={14} aria-hidden="true" />{locale === "ko-KR" ? "완료" : "已完成"}</span>}
+                {(allPatternChoiceGroupsCompleted || patternChoiceActivity?.completed) && groupIndex === patternChoiceGroups.length - 1 && <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><CheckCircle2 size={14} aria-hidden="true" />{locale === "ko-KR" ? "전체 완료" : "全部完成"}</span>}
               </div>
-              <div>
-                <CardTitleWithHint title={locale === "ko-KR" ? "바꾸어 말하기" : "选择替换句"} description={locale === "ko-KR" ? "문장을 골라 듣고 소리 내어 따라 하세요." : "选择句子，点读后完整跟说一遍。"} headingLevel={4} titleClassName="text-sm font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "연습 방법 보기" : "查看练习方法"} />
-                <div className="mt-4 grid gap-2">
-                  {group.map((item, index) => <button key={item} type="button" aria-pressed={index === sentenceIndex} onClick={() => setActivePatternSentenceIndex(index)} className={`min-h-12 rounded-xl border px-4 text-left text-sm font-bold transition ${index === sentenceIndex ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]"}`} lang="ko">{item}</button>)}
-                </div>
+              <div className="mt-5 divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] px-5">
+                {items.map((item, itemIndex) => {
+                  const answerIndex = offset + itemIndex;
+                  const selected = patternChoiceAnswers[answerIndex] ?? -1;
+                  const options = stringArray(item.options);
+                  return <fieldset key={String(item.id ?? answerIndex)} className="py-5"><legend className="text-base font-bold leading-7 text-[var(--foreground)]"><span className="mr-2 text-xs text-[var(--primary)]">{String(itemIndex + 1).padStart(2, "0")}</span><span lang="ko">{String(item.question)}</span></legend><div className="mt-4 grid gap-2 sm:grid-cols-4">{options.map((option, optionIndex) => {
+                    const checked = groupCheck?.[itemIndex];
+                    const isSelected = selected === optionIndex;
+                    const stateClass = groupCheck
+                      ? isSelected ? checked ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"
+                      : isSelected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]";
+                    return <button key={option} type="button" onClick={() => { const next = [...patternChoiceAnswers]; next[answerIndex] = optionIndex; setPatternChoiceAnswers(next); setPatternChoiceChecks((current) => { const updated = { ...current }; delete updated[groupIndex]; return updated; }); }} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 text-sm font-bold transition ${stateClass}`}><span lang="ko">{option}</span>{groupCheck && isSelected && (checked ? <CheckCircle2 size={16} aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</button>;
+                  })}</div></fieldset>;
+                })}
               </div>
+              <div className="mt-5 flex justify-end"><button type="button" onClick={() => checkPatternChoiceGroup(groupIndex)} disabled={checkingPatternChoices || items.some((_, index) => (patternChoiceAnswers[offset + index] ?? -1) < 0)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--primary)] px-5 text-sm font-bold text-[var(--primary-foreground)] disabled:cursor-not-allowed disabled:opacity-40">{checkingPatternChoices ? locale === "ko-KR" ? "확인 중…" : "检查中…" : locale === "ko-KR" ? "정답 확인" : "检查答案"}</button></div>
             </div>
           </section>
         );
@@ -2804,6 +2855,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     locale={locale}
                     supportMode={supportMode}
                     patternPage={usesPatternPager ? patternPage : 0}
+                    trackingDisabled={trackingDisabled}
+                    onActivityCompleted={recordCompletion}
                     moduleHeader={nodeIndex === 0 ? {
                       title: localize(activeModule.title),
                       description: localize(activeModule.description),
@@ -2815,14 +2868,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   />
                 </div>
                 <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
-                  {node.activities.map((activity, activityIndex) => (
+                  {node.activities.filter((activity) => !usesPatternPager || activity.key !== "pattern-choice").map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
                         activity={activity}
                         locale={locale}
                         trackingDisabled={trackingDisabled}
                         onCompleted={recordCompletion}
-                        round={usesGrammarPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
+                        round={usesGrammarPager || usesPatternPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
                         grammarPageOffset={activityIndex * 2}
                         onPreviousGrammarActivity={usesGrammarPager && activityIndex > 0 ? () => setActiveGrammarPracticeIndex(activityIndex - 1) : undefined}
                         onNextGrammarActivity={usesGrammarPager && activityIndex < node.activities.length - 1 ? () => setActiveGrammarPracticeIndex(activityIndex + 1) : undefined}
