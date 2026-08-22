@@ -43,6 +43,10 @@ const vocabularyScene2xMigrationUrl = new URL(
   "../supabase/migrations/202608220007_publish_chapter_one_vocabulary_scene_2x.sql",
   import.meta.url,
 );
+const correctedTaskSceneRatioMigrationUrl = new URL(
+  "../supabase/migrations/202608220009_correct_chapter_one_task_scene_aspect_ratio.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -233,17 +237,22 @@ test("核心词汇源图保留二比一高分辨率媒体", async () => {
 test("核心词汇画框与课前导航统一为桌面五比二", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
-  assert.match(source, /\? "sm:aspect-\[2\/1\]" : "sm:aspect-\[5\/2\]"/);
+  assert.match(source, /aspect-\[4\/3\].*sm:aspect-\[5\/2\]/);
   assert.match(source, /className="h-full w-full object-cover object-center"/);
 });
 
-test("任务情景图按原始二比一画幅铺满并保留完整高度", async () => {
-  const source = await readFile(sourceUrl, "utf8");
+test("任务情景图按生成原图五比二等比导出，禁止纵向拉伸", async () => {
+  const [source, migration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(correctedTaskSceneRatioMigrationUrl, "utf8"),
+  ]);
 
-  assert.match(source, /asset\.metadata\.presentation === "task-scene"/);
-  assert.match(source, /"sm:aspect-\[2\/1\]"/);
+  assert.match(source, /sm:aspect-\[5\/2\]/);
   assert.match(source, /className="h-full w-full object-cover object-center"/);
-  assert.doesNotMatch(source, /opacity-45 blur-xl/);
+  assert.match(migration, /'width', 3600/);
+  assert.match(migration, /'height', 1440/);
+  assert.match(migration, /'aspectRatio', '5:2'/);
+  assert.match(migration, /'proportionalScale', true/);
 });
 
 test("带情景图的共享模块标题显示在图片右上角", async () => {

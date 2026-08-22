@@ -779,7 +779,7 @@ function ContentRenderer({
             asset.status === "ready" && asset.url ? (
               <figure
                 key={asset.id}
-                className={`relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] ${asset.metadata.presentation === "task-scene" ? "sm:aspect-[2/1]" : "sm:aspect-[5/2]"}`}
+                className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] sm:aspect-[5/2]"
               >
                 <Image
                   src={asset.url}
