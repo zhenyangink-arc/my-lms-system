@@ -777,18 +777,10 @@ function ContentRenderer({
         <div className="space-y-4">
           {imageAssets.map((asset) => (
             asset.status === "ready" && asset.url ? (
-              <figure key={asset.id} className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] sm:aspect-[5/2]">
-                {asset.metadata.presentation === "task-scene" && (
-                  <Image
-                    src={asset.url}
-                    alt=""
-                    fill
-                    unoptimized
-                    aria-hidden="true"
-                    sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
-                    className="scale-110 object-cover object-center opacity-45 blur-xl"
-                  />
-                )}
+              <figure
+                key={asset.id}
+                className={`relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] ${asset.metadata.presentation === "task-scene" ? "sm:aspect-[2/1]" : "sm:aspect-[5/2]"}`}
+              >
                 <Image
                   src={asset.url}
                   alt={asset.altText[locale]}
@@ -797,9 +789,7 @@ function ContentRenderer({
                   unoptimized
                   priority={Boolean(moduleHeader)}
                   sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
-                  className={asset.metadata.presentation === "task-scene"
-                    ? "relative z-[1] h-full w-full object-contain object-center"
-                    : "h-full w-full object-cover object-center"}
+                  className="h-full w-full object-cover object-center"
                 />
                 {moduleHeader && (
                   <div className="absolute right-5 top-4 z-10 max-w-[calc(100%-2.5rem)] text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:right-7 sm:top-6">

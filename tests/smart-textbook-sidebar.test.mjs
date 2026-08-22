@@ -121,7 +121,7 @@ test("智能教材共享骨架从私有 R2 加载已就绪的情景图片", asyn
   assert.match(loader, /url: mediaUrls\.get\(String\(asset\.id\)\) \?\? null/);
   assert.match(source, /asset\.status === "ready" && asset\.url/);
   assert.doesNotMatch(source, /max-w-\[860px\]/);
-  assert.match(source, /: "h-full w-full object-cover object-center"/);
+  assert.match(source, /className="h-full w-full object-cover object-center"/);
   assert.doesNotMatch(source, /className="h-auto max-h-\[520px\] w-full object-cover"/);
   assert.match(source, /sceneImage\.altText\[locale\]/);
   assert.match(source, /aspect-\[4\/3\].*sm:aspect-\[5\/2\]/);
@@ -217,7 +217,7 @@ test("旧版核心词汇横图迁移保留且共享骨架统一使用场景画�
   assert.match(migration, /'width', 1600/);
   assert.match(migration, /'height', 900/);
   assert.match(migration, /'aspectRatio', '16:9'/);
-  assert.match(source, /: "h-full w-full object-cover object-center"/);
+  assert.match(source, /className="h-full w-full object-cover object-center"/);
   assert.doesNotMatch(source, /max-w-\[860px\]/);
 });
 
@@ -233,16 +233,17 @@ test("核心词汇源图保留二比一高分辨率媒体", async () => {
 test("核心词汇画框与课前导航统一为桌面五比二", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
-  assert.match(source, /className="relative aspect-\[4\/3\].*sm:aspect-\[5\/2\]"/);
-  assert.match(source, /: "h-full w-full object-cover object-center"/);
+  assert.match(source, /\? "sm:aspect-\[2\/1\]" : "sm:aspect-\[5\/2\]"/);
+  assert.match(source, /className="h-full w-full object-cover object-center"/);
 });
 
-test("任务情景图在统一画框内完整显示而不裁剪人物", async () => {
+test("任务情景图按原始二比一画幅铺满并保留完整高度", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
   assert.match(source, /asset\.metadata\.presentation === "task-scene"/);
-  assert.match(source, /scale-110 object-cover object-center opacity-45 blur-xl/);
-  assert.match(source, /relative z-\[1\] h-full w-full object-contain object-center/);
+  assert.match(source, /"sm:aspect-\[2\/1\]"/);
+  assert.match(source, /className="h-full w-full object-cover object-center"/);
+  assert.doesNotMatch(source, /opacity-45 blur-xl/);
 });
 
 test("带情景图的共享模块标题显示在图片右上角", async () => {
