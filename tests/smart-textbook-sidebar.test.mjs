@@ -336,6 +336,7 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
   assert.match(source, /const activePageReady = activityCompleted \|\| Boolean/);
   assert.match(source, /if \(!activityCompleted\) submit\(\)/);
+  assert.match(source, /isLastGrammarActivity && isLastGrammarPracticePage && result\.results\.every\(Boolean\)/);
   assert.match(source, /locale === "ko-KR" \? "전체 완료" : "全部完成"/);
   assert.match(source, /<CheckCircle2 size=\{18\} aria-label=/);
   assert.match(source, /<XCircle size=\{18\} aria-label=/);

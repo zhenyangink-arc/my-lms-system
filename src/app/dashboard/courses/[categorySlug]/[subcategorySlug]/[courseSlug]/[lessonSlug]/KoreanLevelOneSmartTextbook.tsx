@@ -1464,6 +1464,9 @@ function Activity({
       return;
     }
     setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...result, revealed: false } }));
+    if (isLastGrammarActivity && isLastGrammarPracticePage && result.results.every(Boolean) && !activityCompleted) {
+      submit();
+    }
   }
 
   function revealGrammarAnswers() {
