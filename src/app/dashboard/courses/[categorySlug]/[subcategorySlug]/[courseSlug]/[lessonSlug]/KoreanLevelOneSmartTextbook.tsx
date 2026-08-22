@@ -347,6 +347,7 @@ function ContentRenderer({
   locale,
   supportMode,
   moduleHeader,
+  patternPage = 0,
 }: {
   node: SmartTextbookNode;
   locale: SmartLocale;
@@ -357,6 +358,7 @@ function ContentRenderer({
     stepLabel: string;
     minutes: number;
   };
+  patternPage?: number;
 }) {
   const [sceneDialogueStep, setSceneDialogueStep] = useState(0);
   const [sceneDialoguePlaying, setSceneDialoguePlaying] = useState(false);
@@ -365,6 +367,8 @@ function ContentRenderer({
   const [guidedDialogueIndex, setGuidedDialogueIndex] = useState<number | null>(null);
   const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
   const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
+  const [activePatternGroupIndex, setActivePatternGroupIndex] = useState(0);
+  const [activePatternSentenceIndex, setActivePatternSentenceIndex] = useState(0);
   const sceneDialogueRunRef = useRef(0);
   const sceneDialogueHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vocabularyRunRef = useRef(0);
@@ -390,6 +394,15 @@ function ContentRenderer({
     : [];
   const questions = stringArray(content.questions);
   const substitutions = stringArray(content.substitutions);
+  const substitutionGroups = Array.isArray(content.substitutionGroups)
+    ? content.substitutionGroups.map(stringArray)
+    : [];
+  const quickResponse = stringArray(content.quickResponse);
+  const personalOutput = stringArray(content.personalOutput);
+  const patternCards = Array.isArray(content.patternCards)
+    ? content.patternCards.map(objectValue)
+    : [];
+  const isPatternContent = Boolean(String(content.pattern ?? "")) && substitutionGroups.length > 0;
   const contrast = stringArray(content.contrast);
   const grammarCards = Array.isArray(content.grammarCards)
     ? content.grammarCards.map(objectValue)
@@ -785,7 +798,7 @@ function ContentRenderer({
 
   return (
     <div className="mt-8 space-y-10">
-      {imageAssets.length > 0 && (
+      {imageAssets.length > 0 && (!isPatternContent || patternPage === 0) && (
         <div className="space-y-4">
           {imageAssets.map((asset) => (
             asset.status === "ready" && asset.url ? (
@@ -1080,18 +1093,70 @@ function ContentRenderer({
         </div>
       )}
 
-      {String(content.pattern ?? "") && (
-        <div className="border-y border-slate-200 py-7">
-          <p className="text-xs font-bold tracking-[.16em] text-slate-400">句型</p>
-          <p className="mt-3 text-2xl font-semibold tracking-tight text-slate-900">{String(content.pattern)}</p>
-          {substitutions.length > 0 && (
-            <div className="mt-5 flex flex-wrap gap-2">
-              {substitutions.map((item) => (
-                <span key={item} className="rounded-full bg-[var(--status-warning-surface)] px-3 py-1.5 text-sm font-semibold text-[var(--destructive)]">{item}</span>
-              ))}
+      {isPatternContent && patternPage === 0 && (
+        <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
+          <div className="grid gap-4 p-5 sm:p-6 lg:grid-cols-2">
+            {patternCards.map((card, index) => {
+              const examples = stringArray(card.examples);
+              return (
+                <article key={`${String(card.form)}-${index}`} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="min-w-0">
+                      <p className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</p>
+                      <h4 className="mt-2 text-xl font-bold leading-8 text-[var(--foreground)]" lang="ko">{String(card.form)}</h4>
+                      <p className="mt-2 text-sm font-semibold leading-6 text-[var(--foreground-secondary)]">{String(objectValue(card.function)[locale] ?? "")}</p>
+                    </div>
+                    <button type="button" onClick={() => speakKorean(String(examples[0] ?? card.form ?? ""))} aria-label={locale === "ko-KR" ? "예문 듣기" : "播放例句"} className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                      <Volume2 size={17} aria-hidden="true" />
+                    </button>
+                  </div>
+                  <div className="mt-4 space-y-2">
+                    {examples.slice(0, 2).map((example) => <button key={example} type="button" onClick={() => speakKorean(example)} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-xl bg-[var(--card)] px-4 py-2 text-left text-sm font-bold text-[var(--foreground)] ring-1 ring-[var(--border-subtle)] hover:text-[var(--primary)]"><span lang="ko">{example}</span><Volume2 size={13} className="shrink-0 text-[var(--primary)]" aria-hidden="true" /></button>)}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
+      {isPatternContent && patternPage === 1 && (() => {
+        const groupIndex = Math.min(activePatternGroupIndex, substitutionGroups.length - 1);
+        const group = substitutionGroups[groupIndex] ?? [];
+        const sentenceIndex = Math.min(activePatternSentenceIndex, Math.max(group.length - 1, 0));
+        const sentence = group[sentenceIndex] ?? "";
+        return (
+          <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
+            <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2" role="tablist" aria-label={locale === "ko-KR" ? "대치 연습 선택" : "选择替换训练"}>
+              {substitutionGroups.map((_, index) => <button key={index} type="button" role="tab" aria-selected={index === groupIndex} onClick={() => { setActivePatternGroupIndex(index); setActivePatternSentenceIndex(0); }} className={`min-h-11 shrink-0 rounded-xl px-4 text-sm font-bold ${index === groupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}>{locale === "ko-KR" ? `${index + 1}단계` : ["姓名替换", "身份替换", "询问确认"][index] ?? `训练 ${index + 1}`}</button>)}
             </div>
-          )}
-        </div>
+            <div className="grid gap-6 p-5 sm:p-7 lg:grid-cols-[minmax(0,1.15fr)_minmax(260px,.85fr)]">
+              <div className="flex min-h-[220px] flex-col justify-center rounded-2xl bg-[var(--accent)] p-6 sm:p-8">
+                <p className="text-xs font-bold text-[var(--primary)]">{locale === "ko-KR" ? "완성 문장" : "完整句子"}</p>
+                <button type="button" onClick={() => speakKorean(sentence)} className="mt-4 flex items-center justify-between gap-5 text-left text-2xl font-bold leading-10 text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" lang="ko"><span>{sentence}</span><span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-[var(--primary)]"><Volume2 size={17} aria-hidden="true" /></span></button>
+              </div>
+              <div>
+                <CardTitleWithHint title={locale === "ko-KR" ? "바꾸어 말하기" : "选择替换句"} description={locale === "ko-KR" ? "문장을 골라 듣고 소리 내어 따라 하세요." : "选择句子，点读后完整跟说一遍。"} headingLevel={4} titleClassName="text-sm font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "연습 방법 보기" : "查看练习方法"} />
+                <div className="mt-4 grid gap-2">
+                  {group.map((item, index) => <button key={item} type="button" aria-pressed={index === sentenceIndex} onClick={() => setActivePatternSentenceIndex(index)} className={`min-h-12 rounded-xl border px-4 text-left text-sm font-bold transition ${index === sentenceIndex ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]"}`} lang="ko">{item}</button>)}
+                </div>
+              </div>
+            </div>
+          </section>
+        );
+      })()}
+
+      {isPatternContent && patternPage === 2 && (
+        <section className="grid gap-5 lg:grid-cols-2">
+          <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
+            <CardTitleWithHint title={locale === "ko-KR" ? "빠르게 대답하기" : "快速回应"} description={locale === "ko-KR" ? "긍정하거나 신분을 바로잡는 응답을 듣고 따라 하세요." : "练习肯定身份和礼貌更正身份。"} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "응답 연습 설명 보기" : "查看回应练习说明"} />
+            <div className="mt-4 space-y-3">{quickResponse.map((item, index) => <button key={item} type="button" onClick={() => speakKorean(item)} className="flex min-h-16 w-full items-center gap-4 rounded-2xl border border-[var(--border-subtle)] px-4 text-left hover:border-[var(--primary)] hover:bg-[var(--accent)]"><span className="text-xs font-bold text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span><span className="flex-1 text-lg font-bold text-[var(--foreground)]" lang="ko">{item}</span><Volume2 size={15} className="text-[var(--primary)]" aria-hidden="true" /></button>)}</div>
+          </div>
+          <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
+            <CardTitleWithHint title={locale === "ko-KR" ? "나의 표현 준비" : "准备个人表达"} description={locale === "ko-KR" ? "다음 단계의 실제 대화 전에 세 가지 정보를 준비하세요." : "为下一步实战对话准备三项个人信息；可以使用安全虚构信息。"} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "개인 표현 설명 보기" : "查看个人表达说明"} />
+            <div className="mt-4 space-y-3">{personalOutput.map((item, index) => <div key={item} className="flex min-h-16 items-center gap-4 rounded-2xl bg-[var(--surface-soft)] px-4"><span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">{index + 1}</span><span className="font-bold text-[var(--foreground)]">{item}</span></div>)}</div>
+          </div>
+        </section>
       )}
 
       {dialogue.length > 0 && (
@@ -1179,7 +1244,7 @@ function ContentRenderer({
         </div>
       )}
 
-      {String(coach[locale] ?? "") && (
+      {!isPatternContent && String(coach[locale] ?? "") && (
         <div className="flex gap-3 bg-[var(--background)] px-5 py-4 text-sm leading-6 text-slate-600">
           <Lightbulb size={18} className="mt-0.5 shrink-0 text-[var(--status-warning)]" />
           <span>{String(coach[locale])}</span>
@@ -2113,6 +2178,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const textbookRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [missionPage, setMissionPage] = useState<0 | 1>(0);
+  const [patternPage, setPatternPage] = useState<0 | 1 | 2>(0);
   const [activeGrammarPracticeIndex, setActiveGrammarPracticeIndex] = useState(0);
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
@@ -2179,6 +2245,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function selectModule(index: number) {
     setMissionPage(0);
+    setPatternPage(0);
     setActiveGrammarPracticeIndex(0);
     setActiveIndex(index);
   }
@@ -2648,6 +2715,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               const hasIntegratedImageHeader = nodeIndex === 0 && hasReadyImage;
               const usesDesktopImagePager = hasIntegratedImageHeader && node.activities.length > 0;
               const usesGrammarPager = Array.isArray(node.content.grammarCards) && node.content.grammarCards.length > 0;
+              const usesPatternPager = Boolean(String(node.content.pattern ?? "")) && Array.isArray(node.content.substitutionGroups);
               return (
               <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 first:mt-0 sm:mt-10 sm:p-7 sm:first:mt-0">
                 {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -2685,37 +2753,53 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <div className="flex items-center gap-1.5">
                       <button
                         type="button"
-                        aria-current={missionPage === 0 ? "page" : undefined}
-                        onClick={() => setMissionPage(0)}
-                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 0 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                        aria-current={(usesPatternPager ? patternPage === 0 : missionPage === 0) ? "page" : undefined}
+                        onClick={() => usesPatternPager ? setPatternPage(0) : setMissionPage(0)}
+                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${(usesPatternPager ? patternPage === 0 : missionPage === 0) ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
                       >
                         <BookOpen size={17} aria-hidden="true" />
                         {usesGrammarPager
                           ? locale === "ko-KR" ? "문법 이해" : "语法理解"
+                          : usesPatternPager
+                            ? locale === "ko-KR" ? "문형 모음" : "句型库"
                           : locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
                       </button>
                       <button
                         type="button"
-                        aria-current={missionPage === 1 ? "page" : undefined}
-                        onClick={() => setMissionPage(1)}
-                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 1 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                        aria-current={(usesPatternPager ? patternPage === 1 : missionPage === 1) ? "page" : undefined}
+                        onClick={() => usesPatternPager ? setPatternPage(1) : setMissionPage(1)}
+                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${(usesPatternPager ? patternPage === 1 : missionPage === 1) ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
                       >
                         <CheckCircle2 size={17} aria-hidden="true" />
                         {usesGrammarPager
                           ? locale === "ko-KR" ? "문법 연습" : "语法练习"
+                          : usesPatternPager
+                            ? locale === "ko-KR" ? "대치 연습" : "替换操练"
                           : locale === "ko-KR" ? "장면 진단" : "情景诊断"}
                       </button>
+                      {usesPatternPager && (
+                        <button
+                          type="button"
+                          aria-current={patternPage === 2 ? "page" : undefined}
+                          onClick={() => setPatternPage(2)}
+                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${patternPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                        >
+                          <Sparkles size={17} aria-hidden="true" />
+                          {locale === "ko-KR" ? "조합과 출력" : "组合输出"}
+                        </button>
+                      )}
                     </div>
                     <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
-                      {locale === "ko-KR" ? "이 목표" : "本目标"} {missionPage + 1} / 2
+                      {locale === "ko-KR" ? "이 목표" : "本目标"} {usesPatternPager ? patternPage + 1 : missionPage + 1} / {usesPatternPager ? 3 : 2}
                     </span>
                   </nav>
                 )}
-                <div className={usesDesktopImagePager && missionPage === 1 ? "lg:hidden" : ""}>
+                <div className={usesDesktopImagePager && !usesPatternPager && missionPage === 1 ? "lg:hidden" : ""}>
                   <ContentRenderer
                     node={node}
                     locale={locale}
                     supportMode={supportMode}
+                    patternPage={usesPatternPager ? patternPage : 0}
                     moduleHeader={nodeIndex === 0 ? {
                       title: localize(activeModule.title),
                       description: localize(activeModule.description),
@@ -2726,7 +2810,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     } : undefined}
                   />
                 </div>
-                <div className={`${usesDesktopImagePager && missionPage === 0 ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
+                <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
                   {node.activities.map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity

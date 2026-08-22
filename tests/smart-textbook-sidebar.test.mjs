@@ -63,6 +63,10 @@ const grammarPunctuationMigrationUrl = new URL(
   "../supabase/migrations/202608220012_keep_grammar_punctuation_in_prompts.sql",
   import.meta.url,
 );
+const expandedPatternCardsMigrationUrl = new URL(
+  "../supabase/migrations/202608220013_expand_chapter_one_pattern_cards.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -92,14 +96,14 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.doesNotMatch(source, /renderBottomPathNavigation/);
   assert.match(source, /const \[missionPage, setMissionPage\] = useState<0 \| 1>\(0\)/);
   assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
-  assert.match(source, /missionPage === 1 \? "lg:hidden"/);
-  assert.match(source, /missionPage === 0 \? "lg:hidden"/);
+  assert.match(source, /!usesPatternPager && missionPage === 1 \? "lg:hidden"/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : missionPage === 0/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "학습 목표 페이지" : "学习目标分页"\}/);
   assert.match(source, /className="mb-6 hidden items-center justify-between gap-4 rounded-2xl/);
-  assert.match(source, /aria-current=\{missionPage === 0 \? "page" : undefined\}/);
-  assert.match(source, /aria-current=\{missionPage === 1 \? "page" : undefined\}/);
+  assert.match(source, /usesPatternPager \? patternPage === 0 : missionPage === 0/);
+  assert.match(source, /usesPatternPager \? patternPage === 1 : missionPage === 1/);
   assert.doesNotMatch(source, /className="mt-6 hidden items-center justify-between border-t/);
-  assert.match(source, /"本目标"\} \{missionPage \+ 1\} \/ 2/);
+  assert.match(source, /usesPatternPager \? patternPage \+ 1 : missionPage \+ 1/);
   assert.match(source, /locale === "ko-KR" \? "장면 진단" : "情景诊断"/);
   assert.match(source, /title=\{isGrammarPractice \?[\s\S]*: activity\.prompt\[locale\]\}/);
   assert.match(source, /description=\{activity\.instruction\[locale\]\}/);
@@ -115,8 +119,8 @@ test("核心词汇等带图模块复用情景与表达双页导航", async () =>
 
   assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
   assert.match(source, /\{usesDesktopImagePager && \(/);
-  assert.match(source, /usesDesktopImagePager && missionPage === 1 \? "lg:hidden"/);
-  assert.match(source, /usesDesktopImagePager && missionPage === 0 \? "lg:hidden"/);
+  assert.match(source, /usesDesktopImagePager && !usesPatternPager && missionPage === 1/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : missionPage === 0/);
   assert.match(source, /locale === "ko-KR" \? "장면과 표현" : "情景与表达"/);
   assert.match(source, /locale === "ko-KR" \? "이 목표" : "本目标"/);
 });
@@ -283,6 +287,25 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
   assert.match(source, /grammarCards\.map\(\(item, index\)/);
   assert.match(source, /易错点与来源/);
   assert.doesNotMatch(source, /例句音频待制作/);
+});
+
+test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
+  const [source, migration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(expandedPatternCardsMigrationUrl, "utf8"),
+  ]);
+
+  assert.match(source, /const usesPatternPager = Boolean/);
+  assert.match(source, /"句型库"/);
+  assert.match(source, /"替换操练"/);
+  assert.match(source, /"组合输出"/);
+  assert.match(source, /content\.substitutionGroups/);
+  assert.match(source, /content\.quickResponse/);
+  assert.match(source, /content\.personalOutput/);
+  assert.match(source, /patternPage === 2/);
+  assert.equal((migration.match(/\"form\":/g) ?? []).length, 4);
+  assert.match(migration, /저는 \[이름\]이에요\/예요\./);
+  assert.match(migration, /\[이름\] 씨는 \[신분\]이에요\/예요\?/);
 });
 
 test("语法图片按数据库例句数组逐句播放并在五秒后隐藏", async () => {
