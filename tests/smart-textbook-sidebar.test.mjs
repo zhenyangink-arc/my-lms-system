@@ -51,6 +51,10 @@ const removeGrammarFocusGateMigrationUrl = new URL(
   "../supabase/migrations/202608220010_remove_chapter_one_grammar_focus_gate.sql",
   import.meta.url,
 );
+const expandedGrammarPracticeMigrationUrl = new URL(
+  "../supabase/migrations/202608220011_add_chapter_one_grammar_choice_and_judgment.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -301,6 +305,26 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
   assert.match(source, /`练习 \$\{pageIndex \+ 1\}`/);
   assert.match(source, /originalIndex/);
   assert.doesNotMatch(source, />\{group\}<\/span>/);
+});
+
+test("第一章语法练习包含选择判断填空三类且每类六题两页", async () => {
+  const [source, migration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(expandedGrammarPracticeMigrationUrl, "utf8"),
+  ]);
+
+  assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 유형" : "语法练习类型"\}/);
+  assert.match(source, /practiceKind === "choice"/);
+  assert.match(source, /practiceKind === "judgment"/);
+  assert.match(source, /const groupedChoicePages = configItems\.reduce/);
+  assert.match(source, /setActiveGroupedChoicePage\(pageIndex\)/);
+  assert.match(migration, /'grammar-choice'/);
+  assert.match(migration, /'grammar-judgment'/);
+  assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,0,1\]\}'/);
+  assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,1,0\]\}'/);
+  assert.equal((migration.match(/\"id\":\"choice-/g) ?? []).length, 6);
+  assert.equal((migration.match(/\"id\":\"judgment-/g) ?? []).length, 6);
+  assert.match(migration, /set sort_order = 3/);
 });
 
 test("带情景图的共享模块标题显示在图片右上角", async () => {

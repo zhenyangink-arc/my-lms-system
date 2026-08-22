@@ -1351,6 +1351,16 @@ function Activity({
     else pages.push({ key, items: [{ item, originalIndex }] });
     return pages;
   }, []);
+  const groupedChoicePages = configItems.reduce<Array<{
+    key: string;
+    items: Array<{ item: Record<string, unknown>; originalIndex: number }>;
+  }>>((pages, item, originalIndex) => {
+    const key = String(item.group ?? item.groupKo ?? "all");
+    const page = pages.find((candidate) => candidate.key === key);
+    if (page) page.items.push({ item, originalIndex });
+    else pages.push({ key, items: [{ item, originalIndex }] });
+    return pages;
+  }, []);
   const groupedSingleChoice =
     activity.type === "single_choice" && configItems.length > 0;
   const usesFlipCards =
@@ -1397,6 +1407,7 @@ function Activity({
   });
   const [feedback, setFeedback] = useState<Feedback | null>(null);
   const [activeCardIndex, setActiveCardIndex] = useState(0);
+  const [activeGroupedChoicePage, setActiveGroupedChoicePage] = useState(0);
   const [activeFillBlankPage, setActiveFillBlankPage] = useState(0);
   const [practiceFocused, setPracticeFocused] = useState(false);
   const focusModeStartRef = useRef<HTMLButtonElement>(null);
@@ -1624,30 +1635,57 @@ function Activity({
       )}
 
       {groupedSingleChoice && !usesFlipCards && (!usesFocusMode || practiceFocused) && (
-        <div className="mt-6 space-y-6">
-          {configItems.map((item, itemIndex) => {
+        <div className="mt-6">
+          {groupedChoicePages.length > 1 && (
+            <nav className="mb-5 flex items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1.5" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
+              <div className="flex items-center gap-1.5">
+                {groupedChoicePages.map((page, pageIndex) => (
+                  <button
+                    key={page.key}
+                    type="button"
+                    aria-current={pageIndex === activeGroupedChoicePage ? "page" : undefined}
+                    onClick={() => setActiveGroupedChoicePage(pageIndex)}
+                    className={`min-h-11 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${pageIndex === activeGroupedChoicePage ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}
+                  >
+                    {locale === "ko-KR" ? `연습 ${pageIndex + 1}` : `练习 ${pageIndex + 1}`}
+                  </button>
+                ))}
+              </div>
+              <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]">
+                {locale === "ko-KR" ? "페이지" : "第"} {activeGroupedChoicePage + 1} / {groupedChoicePages.length}{locale === "ko-KR" ? "" : " 页"}
+              </span>
+            </nav>
+          )}
+          <div className="space-y-4">
+          {(groupedChoicePages[Math.min(activeGroupedChoicePage, groupedChoicePages.length - 1)]?.items ?? []).map(({ item, originalIndex }, pageItemIndex) => {
             const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
             const options = stringArray(item.options);
             return (
-              <fieldset key={String(item.id ?? itemIndex)} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4">
-                <legend className="px-1 text-sm font-bold leading-6 text-[var(--foreground)]">{itemIndex + 1}. {String(item.question)}</legend>
+              <fieldset key={String(item.id ?? originalIndex)} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4">
+                <legend className="px-1 text-sm font-bold leading-6 text-[var(--foreground)]">{pageItemIndex + 1}. {String(item.question)}</legend>
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
-                  {groupedOptionOrders[itemIndex].map((originalOptionIndex, displayOptionIndex) => {
+                  {groupedOptionOrders[originalIndex].map((originalOptionIndex, displayOptionIndex) => {
                     const option = options[originalOptionIndex];
+                    const optionLabel = activity.config.practiceKind === "judgment"
+                      ? locale === "ko-KR"
+                        ? originalOptionIndex === 0 ? "맞아요" : "틀려요"
+                        : originalOptionIndex === 0 ? "正确" : "错误"
+                      : option;
                     return (
                     <button key={`${originalOptionIndex}-${option}`} type="button" onClick={() => {
                       const next = [...selectedAnswers];
-                      next[itemIndex] = originalOptionIndex;
+                      next[originalIndex] = originalOptionIndex;
                       setAnswer(next);
                       setFeedback(null);
-                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[itemIndex] === originalOptionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
-                      {String.fromCharCode(65 + displayOptionIndex)}. {option}
+                    }} className={`min-h-11 rounded-xl border px-3 py-2 text-left text-sm ${selectedAnswers[originalIndex] === originalOptionIndex ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] hover:border-[var(--primary)]"}`}>
+                      {String.fromCharCode(65 + displayOptionIndex)}. {optionLabel}
                     </button>
                   );})}
                 </div>
               </fieldset>
             );
           })}
+          </div>
         </div>
       )}
 
@@ -1994,6 +2032,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const textbookRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [missionPage, setMissionPage] = useState<0 | 1>(0);
+  const [activeGrammarPracticeIndex, setActiveGrammarPracticeIndex] = useState(0);
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -2059,6 +2098,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function selectModule(index: number) {
     setMissionPage(0);
+    setActiveGrammarPracticeIndex(0);
     setActiveIndex(index);
   }
 
@@ -2601,15 +2641,39 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   />
                 </div>
                 <div className={`${usesDesktopImagePager && missionPage === 0 ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
+                  {usesGrammarPager && node.activities.length > 1 && (
+                    <nav className="mt-5 flex items-center gap-1.5 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1.5" aria-label={locale === "ko-KR" ? "문법 연습 유형" : "语法练习类型"}>
+                      {node.activities.map((activity, activityIndex) => {
+                        const practiceKind = String(activity.config.practiceKind ?? "");
+                        const label = practiceKind === "choice"
+                          ? locale === "ko-KR" ? "선택" : "选择"
+                          : practiceKind === "judgment"
+                            ? locale === "ko-KR" ? "판단" : "判断"
+                            : locale === "ko-KR" ? "빈칸" : "填空";
+                        return (
+                          <button
+                            key={activity.id}
+                            type="button"
+                            aria-current={activityIndex === activeGrammarPracticeIndex ? "page" : undefined}
+                            onClick={() => setActiveGrammarPracticeIndex(activityIndex)}
+                            className={`min-h-11 rounded-xl px-5 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activityIndex === activeGrammarPracticeIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}
+                          >
+                            {label}
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  )}
                   {node.activities.map((activity, activityIndex) => (
-                    <Activity
-                      key={activity.id}
-                      activity={activity}
-                      locale={locale}
-                      trackingDisabled={trackingDisabled}
-                      onCompleted={recordCompletion}
-                      round={{ current: activityIndex + 1, total: node.activities.length }}
-                    />
+                    <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
+                      <Activity
+                        activity={activity}
+                        locale={locale}
+                        trackingDisabled={trackingDisabled}
+                        onCompleted={recordCompletion}
+                        round={usesGrammarPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
+                      />
+                    </div>
                   ))}
                 </div>
               </article>
