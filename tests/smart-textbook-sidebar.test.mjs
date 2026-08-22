@@ -331,6 +331,10 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
   assert.match(actions, /const pageCheckSchema = z\.object/);
   assert.match(actions, /digital_textbook_activity_secrets/);
+  assert.match(actions, /refreshStudentHomeLearningData/);
+  assert.doesNotMatch(actions, /refreshStudentHomeLearning\(\{/);
+  assert.match(source, /event\.isComposing/);
+  assert.match(source, /input, textarea, select, \[contenteditable='true'\]/);
   assert.match(migration, /'grammar-choice'/);
   assert.match(migration, /'grammar-judgment'/);
   assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,0,1\]\}'/);

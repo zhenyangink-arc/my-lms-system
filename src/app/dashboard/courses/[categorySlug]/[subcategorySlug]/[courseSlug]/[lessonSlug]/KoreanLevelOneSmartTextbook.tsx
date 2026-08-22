@@ -2222,6 +2222,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      const target = event.target instanceof HTMLElement ? event.target : null;
+      if (
+        event.isComposing ||
+        target?.matches("input, textarea, select, [contenteditable='true']")
+      ) return;
       if (event.altKey && event.key === "ArrowLeft") {
         setMissionPage(0);
         setActiveIndex((value) => Math.max(0, value - 1));

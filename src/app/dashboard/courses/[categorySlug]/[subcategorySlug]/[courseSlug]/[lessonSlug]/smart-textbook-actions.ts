@@ -2,7 +2,7 @@
 
 import { z } from "zod";
 
-import { refreshStudentHomeLearning } from "@/features/student-home-learning/api/refresh";
+import { refreshStudentHomeLearningData } from "@/features/student-home-learning/api/refresh";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import {
@@ -141,12 +141,10 @@ export async function submitSmartTextbookActivityAction(
     preview,
   });
   if (result.ok && !preview && tenant?.id) {
-    refreshStudentHomeLearning({
+    refreshStudentHomeLearningData({
       tenantId: tenant.id,
       studentId: user.id,
       studentAppId: STUDENT_APP_IDS.korean,
-      appSlug: "korean",
-      space: tenant.slug,
     });
   }
   return result;

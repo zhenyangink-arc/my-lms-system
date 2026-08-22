@@ -58,7 +58,8 @@ test("course, consolidation, training, and review completions refresh home", asy
   ]);
 
   assert.match(courseActions, /record_ebook_progress[\s\S]*refreshStudentHomeLearning/);
-  assert.match(smartTextbookActions, /submitSmartTextbookActivityForContext[\s\S]*refreshStudentHomeLearning/);
+  assert.match(smartTextbookActions, /submitSmartTextbookActivityForContext[\s\S]*refreshStudentHomeLearningData/);
+  assert.doesNotMatch(smartTextbookActions, /refreshStudentHomeLearning\(\{/);
   assert.match(videoPlayer, /status === "completed"[\s\S]*refreshCurrentStudentHomeLearningAction/);
   assert.match(chapterProgress, /recordStudentChapterPracticeProgress[\s\S]*refreshStudentHomeLearning/);
   assert.match(chapterListening, /recordStudentChapterPracticeProgress[\s\S]*refreshStudentHomeLearning/);
