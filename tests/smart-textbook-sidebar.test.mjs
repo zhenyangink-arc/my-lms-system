@@ -301,8 +301,8 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
 
   assert.match(source, /const fillBlankPages = configItems\.reduce/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"\}/);
-  assert.match(source, /setActiveFillBlankPage\(pageIndex\)/);
-  assert.match(source, /`练习 \$\{pageIndex \+ 1\}`/);
+  assert.match(source, /setActiveFillBlankPage\(\(page\) => Math\.min/);
+  assert.match(source, /activeFillBlankPage \+ 1/);
   assert.match(source, /originalIndex/);
   assert.doesNotMatch(source, />\{group\}<\/span>/);
 });
@@ -317,7 +317,7 @@ test("第一章语法练习包含选择判断填空三类且每类六题两页",
   assert.match(source, /practiceKind === "choice"/);
   assert.match(source, /practiceKind === "judgment"/);
   assert.match(source, /const groupedChoicePages = configItems\.reduce/);
-  assert.match(source, /setActiveGroupedChoicePage\(pageIndex\)/);
+  assert.match(source, /setActiveGroupedChoicePage\(\(page\) => Math\.min/);
   assert.match(migration, /'grammar-choice'/);
   assert.match(migration, /'grammar-judgment'/);
   assert.match(migration, /'\{"kind":"index_array","value":\[0,1,0,1,0,1\]\}'/);
