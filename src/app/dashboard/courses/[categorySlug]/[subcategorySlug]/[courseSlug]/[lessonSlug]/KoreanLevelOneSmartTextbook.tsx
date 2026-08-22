@@ -1678,8 +1678,11 @@ function Activity({
             </nav>
           )}
           {activityCompleted && (
-            <span className="text-xs font-bold text-[var(--status-success)]">
-              {feedback?.correct === null ? t.submittedForReview : t.submitted}
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]" role="status">
+              <CheckCircle2 size={14} aria-hidden="true" />
+              {isGrammarPractice && isLastGrammarActivity
+                ? locale === "ko-KR" ? "전체 완료" : "全部完成"
+                : feedback?.correct === null ? t.submittedForReview : t.submitted}
             </span>
           )}
           {practiceFocused && (
