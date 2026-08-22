@@ -2,6 +2,19 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   ...(process.env.NEXT_DIST_DIR ? { distDir: process.env.NEXT_DIST_DIR } : {}),
+  ...(process.env.R2_ACCOUNT_ID
+    ? {
+        images: {
+          remotePatterns: [
+            {
+              protocol: "https" as const,
+              hostname: `${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+              pathname: "/**",
+            },
+          ],
+        },
+      }
+    : {}),
   allowedDevOrigins: [
     "127.0.0.1",
     "127.0.0.2",

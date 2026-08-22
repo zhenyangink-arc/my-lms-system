@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -301,27 +302,79 @@ function speakKorean(text: string) {
   window.speechSynthesis.speak(utterance);
 }
 
-function StepStatus({ done, active }: { done: boolean; active: boolean }) {
-  if (done) return <CheckCircle2 size={17} className="text-[var(--status-success)]" />;
-  if (active) return <Circle size={17} className="fill-current text-current" />;
-  return <Circle size={17} className="text-slate-300" />;
+function speakKoreanSequence(
+  texts: string[],
+  options: {
+    isCurrent: () => boolean;
+    onStep: (index: number) => void;
+    onComplete: () => void;
+  },
+) {
+  if (!("speechSynthesis" in window)) {
+    options.onComplete();
+    return;
+  }
+  const sequence = texts.filter(Boolean);
+  if (sequence.length === 0) {
+    options.onComplete();
+    return;
+  }
+  window.speechSynthesis.cancel();
+
+  const speakNext = (index: number) => {
+    if (!options.isCurrent()) return;
+    const text = sequence[index];
+    if (!text) {
+      options.onComplete();
+      return;
+    }
+    options.onStep(index);
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ko-KR";
+    utterance.rate = 0.82;
+    utterance.onend = () => speakNext(index + 1);
+    utterance.onerror = () => speakNext(index + 1);
+    window.speechSynthesis.speak(utterance);
+  };
+
+  speakNext(0);
 }
 
 function ContentRenderer({
   node,
   locale,
   supportMode,
+  moduleHeader,
 }: {
   node: SmartTextbookNode;
   locale: SmartLocale;
   supportMode: SmartSupportMode;
+  moduleHeader?: {
+    title: string;
+    description: string;
+    stepLabel: string;
+    minutes: number;
+  };
 }) {
+  const [sceneDialogueStep, setSceneDialogueStep] = useState(0);
+  const [sceneDialoguePlaying, setSceneDialoguePlaying] = useState(false);
+  const [activeDialogueGroupIndex, setActiveDialogueGroupIndex] = useState(0);
+  const [guidedDialogueIndex, setGuidedDialogueIndex] = useState<number | null>(null);
+  const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
+  const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
+  const sceneDialogueRunRef = useRef(0);
+  const sceneDialogueHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const vocabularyRunRef = useRef(0);
+  const vocabularyHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const t = ui[locale];
   const content = node.content;
   const showChinese = supportMode !== "immersion";
   const lead = objectValue(content.lead);
   const coach = objectValue(content.coach);
   const targets = Array.isArray(content.targets) ? content.targets.map(objectValue) : [];
+  const configuredDialogueGroups = Array.isArray(content.dialogueGroups)
+    ? content.dialogueGroups.map(objectValue)
+    : [];
   const vocabulary = Array.isArray(content.vocabulary)
     ? content.vocabulary.map(objectValue)
     : [];
@@ -342,80 +395,376 @@ function ContentRenderer({
     ? content.dialogueScenes.map(objectValue)
     : [];
   const imageAssets = node.media.filter((asset) => asset.type === "image");
+  const sceneImage = imageAssets.find((asset) => asset.status === "ready" && asset.url);
+  const dialogueGroups = configuredDialogueGroups.length > 0
+    ? configuredDialogueGroups
+    : dialogueScenes.length > 0
+      ? dialogueScenes.map((scene, index) => ({
+          id: `scene-${index + 1}`,
+          title: { "zh-CN": String(scene.title ?? `场景 ${index + 1}`), "ko-KR": String(scene.title ?? `장면 ${index + 1}`) },
+          lines: Array.isArray(scene.lines) ? scene.lines : [],
+        }))
+    : [{
+        id: "expressions",
+        title: { "zh-CN": "核心表达", "ko-KR": "핵심 표현" },
+        lines: targets,
+      }];
+  const activeDialogueGroup = dialogueGroups[Math.min(activeDialogueGroupIndex, dialogueGroups.length - 1)];
+  const activeDialogueGroupLines = Array.isArray(activeDialogueGroup?.lines)
+    ? activeDialogueGroup.lines.map(objectValue)
+    : [];
+  const sceneDialogueLines = activeDialogueGroupLines
+    .map((line) => String(line.ko ?? "").trim())
+    .filter(Boolean);
+  const visibleSceneDialogueLines = sceneDialogueLines.slice(0, sceneDialogueStep);
+  const leftSceneDialogue = visibleSceneDialogueLines
+    .filter((_, index) => index % 2 === 0)
+    .at(-1);
+  const rightSceneDialogue = visibleSceneDialogueLines
+    .filter((_, index) => index % 2 === 1)
+    .at(-1);
+  const activeVocabulary = vocabularyPlaybackIndex === null
+    ? null
+    : vocabulary[vocabularyPlaybackIndex] ?? null;
+  const vocabularyHotspots = objectValue(sceneImage?.metadata.wordHotspots);
+  const activeVocabularyHotspot = objectValue(
+    vocabularyHotspots[String(activeVocabulary?.ko ?? "")],
+  );
+  const activeVocabularyHotspotLeft = Number(activeVocabularyHotspot.left);
+  const activeVocabularyHotspotTop = Number(activeVocabularyHotspot.top);
+  const hasActiveVocabularyHotspot = Number.isFinite(activeVocabularyHotspotLeft)
+    && Number.isFinite(activeVocabularyHotspotTop);
+  const sceneGoal = locale === "ko-KR"
+    ? String(sceneImage?.metadata.goalKo ?? node.title[locale])
+    : String(sceneImage?.metadata.goalZh ?? node.title[locale]);
+
+  const playVocabularySequence = () => {
+    const playableWords = vocabulary.filter((word) => String(word.ko ?? "").trim());
+    if (playableWords.length === 0) return;
+
+    const runId = vocabularyRunRef.current + 1;
+    vocabularyRunRef.current = runId;
+    if (vocabularyHideTimerRef.current) clearTimeout(vocabularyHideTimerRef.current);
+    vocabularyHideTimerRef.current = null;
+    window.speechSynthesis?.cancel();
+    setVocabularyPlaybackIndex(null);
+    setVocabularyPlaying(true);
+
+    const finish = () => {
+      if (vocabularyRunRef.current !== runId) return;
+      setVocabularyPlaying(false);
+      vocabularyHideTimerRef.current = setTimeout(() => {
+        if (vocabularyRunRef.current === runId) setVocabularyPlaybackIndex(null);
+      }, 5000);
+    };
+
+    if (!("speechSynthesis" in window)) {
+      setVocabularyPlaybackIndex(0);
+      finish();
+      return;
+    }
+
+    const speakWord = (wordIndex: number) => {
+      if (vocabularyRunRef.current !== runId) return;
+      const word = playableWords[wordIndex];
+      if (!word) {
+        finish();
+        return;
+      }
+      setVocabularyPlaybackIndex(vocabulary.indexOf(word));
+      const utterances = [String(word.ko), String(word.collocation ?? "")].filter(Boolean);
+      const speakUtterance = (utteranceIndex: number) => {
+        if (vocabularyRunRef.current !== runId) return;
+        const text = utterances[utteranceIndex];
+        if (!text) {
+          speakWord(wordIndex + 1);
+          return;
+        }
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "ko-KR";
+        utterance.rate = utteranceIndex === 0 ? 0.72 : 0.8;
+        utterance.onend = () => speakUtterance(utteranceIndex + 1);
+        utterance.onerror = () => window.setTimeout(
+          () => speakUtterance(utteranceIndex + 1),
+          utteranceIndex === 0 ? 900 : 1400,
+        );
+        window.speechSynthesis.speak(utterance);
+      };
+      speakUtterance(0);
+    };
+
+    speakWord(0);
+  };
+
+  const playSceneDialogue = () => {
+    const runId = sceneDialogueRunRef.current + 1;
+    sceneDialogueRunRef.current = runId;
+    if (sceneDialogueHideTimerRef.current) {
+      clearTimeout(sceneDialogueHideTimerRef.current);
+      sceneDialogueHideTimerRef.current = null;
+    }
+    setSceneDialogueStep(0);
+    setSceneDialoguePlaying(true);
+    setGuidedDialogueIndex(null);
+    speakKoreanSequence(sceneDialogueLines, {
+      isCurrent: () => sceneDialogueRunRef.current === runId,
+      onStep: (index) => setSceneDialogueStep(index + 1),
+      onComplete: () => {
+        setSceneDialoguePlaying(false);
+        sceneDialogueHideTimerRef.current = setTimeout(() => {
+          if (sceneDialogueRunRef.current === runId) setSceneDialogueStep(0);
+        }, 5000);
+      },
+    });
+  };
+
+  const playGuidedDialogueLine = (index: number) => {
+    const nextIndex = Math.min(Math.max(index, 0), Math.max(sceneDialogueLines.length - 1, 0));
+    const text = sceneDialogueLines[nextIndex];
+    if (!text) return;
+
+    const runId = sceneDialogueRunRef.current + 1;
+    sceneDialogueRunRef.current = runId;
+    if (sceneDialogueHideTimerRef.current) clearTimeout(sceneDialogueHideTimerRef.current);
+    sceneDialogueHideTimerRef.current = null;
+    window.speechSynthesis?.cancel();
+    setGuidedDialogueIndex(nextIndex);
+    setSceneDialogueStep(nextIndex + 1);
+    setSceneDialoguePlaying(true);
+
+    if (!("speechSynthesis" in window)) {
+      setSceneDialoguePlaying(false);
+      return;
+    }
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ko-KR";
+    utterance.rate = 0.78;
+    const finish = () => {
+      if (sceneDialogueRunRef.current === runId) setSceneDialoguePlaying(false);
+    };
+    utterance.onend = finish;
+    utterance.onerror = finish;
+    window.speechSynthesis.speak(utterance);
+  };
+
+  useEffect(() => () => {
+    sceneDialogueRunRef.current += 1;
+    vocabularyRunRef.current += 1;
+    if (sceneDialogueHideTimerRef.current) clearTimeout(sceneDialogueHideTimerRef.current);
+    if (vocabularyHideTimerRef.current) clearTimeout(vocabularyHideTimerRef.current);
+    window.speechSynthesis?.cancel();
+  }, []);
 
   if (node.code === "mission-map" && targets.length > 0) {
     return (
-      <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)]">
-        <section className="flex min-h-full flex-col rounded-[22px] bg-[var(--primary)] p-6 text-[var(--primary-foreground)] sm:p-7">
-          <CardTitleWithHint
-            title={node.title[locale]}
-            description={String(lead[locale] ?? "")}
-            headingLevel={4}
-            hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
-            tone="inverse"
-            titleClassName="text-2xl font-bold leading-9 tracking-tight sm:text-[28px]"
-          />
-
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-4">
-              <p className="text-2xl font-bold tabular-nums">30 <span className="text-sm">{locale === "ko-KR" ? "초" : "秒"}</span></p>
-              <p className="mt-1 text-xs font-semibold text-white/70">{locale === "ko-KR" ? "연속 말하기" : "连续表达"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/15 bg-white/10 px-4 py-4">
-              <p className="text-2xl font-bold tabular-nums">{targets.length} <span className="text-sm">{locale === "ko-KR" ? "가지" : "项"}</span></p>
-              <p className="mt-1 text-xs font-semibold text-white/70">{locale === "ko-KR" ? "의사소통 기능" : "交流功能"}</p>
-            </div>
-          </div>
-
-          {String(coach[locale] ?? "") && (
-            <div className="mt-auto flex gap-3 border-t border-white/15 pt-5 text-sm leading-6 text-white/85">
-              <Lightbulb size={18} className="mt-0.5 shrink-0" aria-hidden="true" />
-              <span>{String(coach[locale])}</span>
-            </div>
-          )}
-        </section>
-
+      <div className={sceneImage ? "" : "mt-6"}>
+        {sceneImage?.url && (
+          <figure className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] sm:aspect-[5/2]">
+            <Image
+              src={sceneImage.url}
+              alt={sceneImage.altText[locale]}
+              fill
+              unoptimized
+              priority
+              sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
+              className={`object-cover transition-transform duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none ${
+                sceneDialoguePlaying
+                  ? sceneDialogueStep % 2 === 1
+                    ? "translate-x-[1%] scale-[1.03]"
+                    : "-translate-x-[1%] scale-[1.03]"
+                  : "translate-x-0 scale-100"
+              }`}
+            />
+            <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
+            {moduleHeader && (
+              <div className="absolute right-5 top-4 z-10 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:right-7 sm:top-6">
+                <CardTitleWithHint
+                  title={(
+                    <>
+                      <span>{moduleHeader.title}</span>
+                      <span className="text-[11px] font-medium tabular-nums text-white/90">
+                        {moduleHeader.stepLabel}
+                        <span className="mx-1" aria-hidden="true">·</span>
+                        {locale === "ko-KR" ? "예상" : "预计"} {moduleHeader.minutes} {t.minutes}
+                      </span>
+                    </>
+                  )}
+                  description={moduleHeader.description}
+                  headingLevel={1}
+                  tone="inverse"
+                  className="items-center"
+                  titleClassName="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-lg font-bold"
+                  hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
+                />
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={playSceneDialogue}
+              aria-label={locale === "ko-KR" ? "장면 대화 재생" : "播放情景对话"}
+              title={locale === "ko-KR" ? "장면 대화 재생" : "播放情景对话"}
+              className="absolute left-5 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:left-7 sm:top-6"
+            >
+              <Volume2
+                size={18}
+                className={sceneDialoguePlaying ? "animate-pulse motion-reduce:animate-none" : ""}
+                aria-hidden="true"
+              />
+            </button>
+            {sceneDialogueStep > 0 && (
+              <div className="absolute inset-x-4 top-[30%] z-20 space-y-2 sm:hidden" aria-live="polite">
+                {leftSceneDialogue && (
+                  <p className="w-fit animate-in rounded-2xl bg-white/95 px-3 py-2 text-sm font-bold text-slate-900 shadow-lg duration-300 fade-in-0 zoom-in-95 motion-reduce:animate-none">
+                    {leftSceneDialogue}
+                  </p>
+                )}
+                {rightSceneDialogue && (
+                  <p className="ml-auto w-fit animate-in rounded-2xl bg-white/95 px-3 py-2 text-sm font-bold text-slate-900 shadow-lg duration-300 fade-in-0 zoom-in-95 motion-reduce:animate-none">
+                    {rightSceneDialogue}
+                  </p>
+                )}
+              </div>
+            )}
+            {leftSceneDialogue && (
+              <button
+                type="button"
+                onClick={() => speakKorean(leftSceneDialogue)}
+                aria-label={`${leftSceneDialogue}，${t.playWord}`}
+                className="absolute left-[28%] top-[5%] z-20 hidden min-h-11 animate-in items-center gap-2 rounded-2xl bg-white/95 px-4 py-2.5 text-sm font-bold text-slate-900 shadow-lg duration-300 fade-in-0 zoom-in-95 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:animate-none sm:flex"
+              >
+                <span>{leftSceneDialogue}</span>
+                <Volume2 size={13} className="text-[var(--primary)]" aria-hidden="true" />
+                <span className="absolute -bottom-1 left-7 h-3 w-3 rotate-45 bg-white/95" />
+              </button>
+            )}
+            {rightSceneDialogue && (
+              <button
+                type="button"
+                onClick={() => speakKorean(rightSceneDialogue)}
+                aria-label={`${rightSceneDialogue}，${t.playWord}`}
+                className="absolute right-[24%] top-[18%] z-20 hidden min-h-11 animate-in items-center gap-2 rounded-2xl bg-white/95 px-4 py-2.5 text-sm font-bold text-slate-900 shadow-lg duration-300 fade-in-0 zoom-in-95 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:animate-none sm:flex"
+              >
+                <span>{rightSceneDialogue}</span>
+                <Volume2 size={13} className="text-[var(--primary)]" aria-hidden="true" />
+                <span className="absolute -bottom-1 right-7 h-3 w-3 rotate-45 bg-white/95" />
+              </button>
+            )}
+            <figcaption className="absolute inset-x-0 bottom-0 z-10 max-w-2xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
+              <CardTitleWithHint
+                title={node.title[locale]}
+                description={(
+                  <span className="space-y-2">
+                    {String(lead[locale] ?? "") && <span className="block">{String(lead[locale])}</span>}
+                    {String(coach[locale] ?? "") && <span className="block">{String(coach[locale])}</span>}
+                  </span>
+                )}
+                headingLevel={4}
+                hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
+                tone="inverse"
+                titleClassName="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]"
+              />
+              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-white/90">
+                <span>30 {locale === "ko-KR" ? "초 연속 말하기" : "秒连续表达"}</span>
+                <span aria-hidden="true">·</span>
+                <span>{targets.length} {locale === "ko-KR" ? "가지 의사소통 기능" : "项交流功能"}</span>
+              </p>
+            </figcaption>
+          </figure>
+        )}
         <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
           <div className="flex items-start justify-between gap-4">
-            <div>
-              <p className="text-xs font-bold tracking-[.16em] text-[var(--primary)]">
-                {t.phrases.toUpperCase()}
-              </p>
-              <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">
-                {locale === "ko-KR" ? "카드를 누르면 한국어 발음을 들을 수 있어요." : "点击表达卡片，可以听韩语发音。"}
-              </p>
+            <CardTitleWithHint
+              title={t.phrases}
+              description={locale === "ko-KR" ? "대화 묶음을 고르고 한 문장 또는 전체 대화를 들어 보세요." : "选择一组对话，可以播放单句或整组对话。"}
+              headingLevel={4}
+              titleClassName="text-sm font-bold text-[var(--foreground)]"
+              hintClassName="-ml-1"
+              hintLabel={locale === "ko-KR" ? "대화 재생 방법 보기" : "查看对话播放说明"}
+            />
+            <div className="flex shrink-0 items-center gap-2">
+              <button
+                type="button"
+                onClick={() => playGuidedDialogueLine(guidedDialogueIndex === null || guidedDialogueIndex >= sceneDialogueLines.length - 1 ? 0 : guidedDialogueIndex + 1)}
+                className="hidden min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none sm:flex"
+              >
+                <Mic size={17} aria-hidden="true" />
+                <span>
+                  {guidedDialogueIndex === null
+                    ? locale === "ko-KR" ? "한 문장씩 따라 하기" : "逐句跟读"
+                    : guidedDialogueIndex >= sceneDialogueLines.length - 1
+                      ? locale === "ko-KR" ? "다시 따라 하기" : "重新跟读"
+                      : locale === "ko-KR" ? "다음 문장" : "下一句"}
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={playSceneDialogue}
+                className="flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-xs font-bold text-[var(--primary)] transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none"
+                aria-label={locale === "ko-KR" ? "현재 대화 전체 재생" : "播放当前整组对话"}
+              >
+                <Volume2 size={18} aria-hidden="true" />
+                <span>{locale === "ko-KR" ? "전체 듣기" : "整组播放"}</span>
+              </button>
             </div>
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--accent)] text-[var(--primary)]">
-              <Volume2 size={18} aria-hidden="true" />
-            </span>
           </div>
 
-          <div className="mt-5 grid gap-3 sm:grid-cols-2">
-            {targets.map((target, index) => (
+          <div className="mt-5 flex gap-2 overflow-x-auto pb-1" role="group" aria-label={locale === "ko-KR" ? "대화 묶음 선택" : "选择对话组"}>
+            {dialogueGroups.map((group, index) => {
+              const active = index === activeDialogueGroupIndex;
+              const groupTitle = String(objectValue(group.title)[locale] ?? `${locale === "ko-KR" ? "대화" : "对话"} ${index + 1}`);
+              return (
+                <button
+                  key={String(group.id ?? index)}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => {
+                    sceneDialogueRunRef.current += 1;
+                    window.speechSynthesis?.cancel();
+                    if (sceneDialogueHideTimerRef.current) clearTimeout(sceneDialogueHideTimerRef.current);
+                    sceneDialogueHideTimerRef.current = null;
+                    setSceneDialoguePlaying(false);
+                    setSceneDialogueStep(0);
+                    setGuidedDialogueIndex(null);
+                    setActiveDialogueGroupIndex(index);
+                  }}
+                  className={`min-h-11 shrink-0 rounded-xl border px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${active ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)]"}`}
+                >
+                  {groupTitle}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {activeDialogueGroupLines.map((line, index) => {
+              const activeLine = guidedDialogueIndex === index
+                || (sceneDialoguePlaying && sceneDialogueStep - 1 === index);
+              return (
               <button
-                key={`${String(target.ko)}-${index}`}
+                key={`${String(line.ko)}-${index}`}
                 type="button"
-                onClick={() => speakKorean(String(target.ko))}
-                className="group min-h-[112px] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-left transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)]"
+                onClick={() => speakKorean(String(line.ko))}
+                aria-current={activeLine ? "true" : undefined}
+                className={`group min-h-[104px] rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4 text-left transition-colors hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activeLine ? "sm:border-[var(--primary)] sm:bg-[var(--accent)] sm:shadow-sm" : ""}`}
                 title={t.playWord}
-                aria-label={`${String(target.ko)}${showChinese ? `，${String(target.zh)}` : ""}，${t.playWord}`}
+                aria-label={`${String(line.ko)}${showChinese ? `，${String(line.zh)}` : ""}，${t.playWord}`}
               >
                 <span className="flex items-center justify-between gap-3">
-                  <span className="text-[10px] font-bold tracking-[.14em] text-[var(--foreground-muted)]">
-                    {String(index + 1).padStart(2, "0")}
+                  <span className="text-xs font-bold text-[var(--foreground-muted)]">
+                    {String(line.speaker ?? (index % 2 === 0 ? "A" : "B"))}
                   </span>
                   <Volume2 size={14} className="text-[var(--primary)] transition-transform group-hover:scale-110" aria-hidden="true" />
                 </span>
                 <span className="mt-3 block text-[18px] font-bold leading-7 text-[var(--foreground)]">
-                  {String(target.ko)}
+                  {String(line.ko)}
                 </span>
                 {showChinese && (
                   <span className="mt-1 block text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
-                    {String(target.zh)}
+                    {String(line.zh)}
                   </span>
                 )}
               </button>
-            ))}
+            );})}
           </div>
         </section>
       </div>
@@ -425,20 +774,133 @@ function ContentRenderer({
   return (
     <div className="mt-8 space-y-10">
       {imageAssets.length > 0 && (
-        <div className="rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4">
+        <div className="space-y-4">
           {imageAssets.map((asset) => (
-            <div key={asset.id} className="flex items-start gap-3 text-sm leading-6 text-[var(--foreground-secondary)]">
-              <BookOpen size={18} className="mt-0.5 shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
-              <span>
-                <strong className="text-[var(--foreground)]">{asset.purpose}</strong>
-                {` · ${asset.status === "ready" ? "已完成" : "待制作"}`}
-                {String(asset.altText[locale] ?? "") ? ` · ${asset.altText[locale]}` : ""}
-              </span>
-            </div>
+            asset.status === "ready" && asset.url ? (
+              <figure key={asset.id} className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] sm:aspect-[5/2]">
+                {asset.metadata.presentation === "task-scene" && (
+                  <Image
+                    src={asset.url}
+                    alt=""
+                    fill
+                    unoptimized
+                    aria-hidden="true"
+                    sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
+                    className="scale-110 object-cover object-center opacity-45 blur-xl"
+                  />
+                )}
+                <Image
+                  src={asset.url}
+                  alt={asset.altText[locale]}
+                  width={Number(asset.metadata.width) || 1600}
+                  height={Number(asset.metadata.height) || 900}
+                  unoptimized
+                  priority={Boolean(moduleHeader)}
+                  sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
+                  className={asset.metadata.presentation === "task-scene"
+                    ? "relative z-[1] h-full w-full object-contain object-center"
+                    : "h-full w-full object-cover object-center"}
+                />
+                {moduleHeader && (
+                  <div className="absolute right-5 top-4 z-10 max-w-[calc(100%-2.5rem)] text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:right-7 sm:top-6">
+                    <CardTitleWithHint
+                      title={(
+                        <>
+                          <span>{moduleHeader.title}</span>
+                          <span className="text-[11px] font-medium tabular-nums text-white/90">
+                            {moduleHeader.stepLabel}
+                            <span className="mx-1" aria-hidden="true">·</span>
+                            {locale === "ko-KR" ? "예상" : "预计"} {moduleHeader.minutes} {t.minutes}
+                          </span>
+                        </>
+                      )}
+                      description={vocabulary.length > 0 && String(lead[locale] ?? "")
+                        ? `${moduleHeader.description} ${String(lead[locale])}`
+                        : moduleHeader.description}
+                      headingLevel={1}
+                      tone="inverse"
+                      className="items-center"
+                      titleClassName="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-lg font-bold"
+                      hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
+                    />
+                  </div>
+                )}
+                <span className="absolute inset-x-0 bottom-0 z-[5] h-2/5 bg-gradient-to-t from-black/60 via-black/15 to-transparent" aria-hidden="true" />
+                {dialogueScenes.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={playSceneDialogue}
+                    aria-label={locale === "ko-KR" ? "현재 장면 대화 재생" : "播放当前场景对话"}
+                    className="absolute left-5 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:left-7 sm:top-6"
+                  >
+                    <Volume2 size={18} className={sceneDialoguePlaying ? "animate-pulse motion-reduce:animate-none" : ""} aria-hidden="true" />
+                  </button>
+                )}
+                {vocabulary.length === 0 && (
+                  <figcaption className="absolute inset-x-0 bottom-0 z-10 max-w-3xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
+                    <CardTitleWithHint
+                      title={sceneGoal}
+                      description={String(lead[locale] ?? "")}
+                      headingLevel={4}
+                      tone="inverse"
+                      titleClassName="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]"
+                      hintLabel={locale === "ko-KR" ? "학습 목표 설명 보기" : "查看学习目标说明"}
+                    />
+                  </figcaption>
+                )}
+                {vocabulary.length > 0 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={playVocabularySequence}
+                      aria-label={locale === "ko-KR" ? "핵심 어휘와 결합 표현 연속 재생" : "连续播放核心词汇与搭配短句"}
+                      title={locale === "ko-KR" ? "핵심 어휘 재생" : "播放核心词汇"}
+                      className="absolute left-5 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[var(--status-success)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:left-6 sm:top-5"
+                    >
+                      <Volume2 size={18} className={vocabularyPlaying ? "animate-pulse motion-reduce:animate-none" : ""} aria-hidden="true" />
+                    </button>
+                    {!activeVocabulary && (
+                      <div className="absolute inset-x-0 bottom-0 z-10 max-w-2xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
+                        <p className="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]">
+                          {locale === "ko-KR"
+                            ? "이 단어들을 익혀 첫 만남의 자기소개 대화를 완성해 보세요."
+                            : "认识这些词，用韩语完成初次见面的自我介绍。"}
+                        </p>
+                      </div>
+                    )}
+                    {activeVocabulary && (
+                      <div
+                        className={`absolute z-10 max-w-[min(72%,22rem)] animate-in rounded-xl border border-white/70 bg-white/92 px-4 py-3 text-slate-950 shadow-lg backdrop-blur-sm duration-300 fade-in-0 motion-reduce:animate-none ${hasActiveVocabularyHotspot ? "-translate-x-1/2 -translate-y-full slide-in-from-bottom-2" : "bottom-4 left-5 slide-in-from-bottom-2 sm:bottom-5 sm:left-6"}`}
+                        style={hasActiveVocabularyHotspot ? {
+                          left: `${Math.min(Math.max(activeVocabularyHotspotLeft, 16), 84)}%`,
+                          top: `${Math.min(Math.max(activeVocabularyHotspotTop, 28), 92)}%`,
+                        } : undefined}
+                        aria-live="polite"
+                      >
+                        <p className="text-xl font-bold leading-7" lang="ko">{String(activeVocabulary.ko)}</p>
+                        {showChinese && <p className="mt-0.5 text-xs font-semibold text-slate-600">{String(activeVocabulary.zh)}</p>}
+                        {String(activeVocabulary.collocation ?? "") && (
+                          <p className="mt-1 text-sm font-semibold leading-6 text-slate-800" lang="ko">{String(activeVocabulary.collocation)}</p>
+                        )}
+                      </div>
+                    )}
+                  </>
+                )}
+              </figure>
+            ) : (
+              <div key={asset.id} className="flex items-start gap-3 rounded-2xl border border-dashed border-[var(--border)] bg-[var(--surface-soft)] px-5 py-4 text-sm leading-6 text-[var(--foreground-secondary)]">
+                <BookOpen size={18} className="mt-0.5 shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
+                <span>
+                  <strong className="text-[var(--foreground)]">{asset.purpose}</strong>
+                  {` · ${asset.status === "rejected" ? "需重新制作" : "待制作"}`}
+                  {String(asset.altText[locale] ?? "") ? ` · ${asset.altText[locale]}` : ""}
+                </span>
+              </div>
+            )
           ))}
         </div>
       )}
-      {String(lead[locale] ?? "") && (
+      {vocabulary.length === 0 && String(lead[locale] ?? "") && (
         <p className="max-w-3xl text-[17px] leading-8 text-slate-600">
           {String(lead[locale])}
         </p>
@@ -836,7 +1298,7 @@ function Activity({
     activity.type === "single_choice" && configItems.length > 0;
   const usesFlipCards =
     groupedSingleChoice && activity.config.presentation === "flip_cards";
-  const usesFocusMode = usesFlipCards || activity.config.focusMode === true;
+  const usesFocusMode = activity.config.focusMode === true && !usesFlipCards;
   const requiresConfirmation = Boolean(activity.config.readAloudConfirmation);
   const optionOrder = stableIndexOrder(
     activity.options.length,
@@ -1022,9 +1484,7 @@ function Activity({
       role={practiceFocused ? "dialog" : undefined}
       aria-modal={practiceFocused ? true : undefined}
       aria-label={practiceFocused
-        ? usesFlipCards
-          ? locale === "ko-KR" ? "핵심 어휘 집중 연습" : "核心词汇专注练习"
-          : locale === "ko-KR" ? "문법 집중 연습" : "语法专注练习"
+        ? locale === "ko-KR" ? "문법 집중 연습" : "语法专注练习"
         : undefined}
       onKeyDown={keepFocusInsidePractice}
       className={practiceFocused
@@ -1044,8 +1504,14 @@ function Activity({
                 : `练习 ${round.current} · 共 ${round.total} 轮`}
             </p>
           )}
-          <h4 className="text-xl font-bold leading-8 text-[var(--foreground)]">{activity.prompt[locale]}</h4>
-          <p className="mt-1 text-sm text-[var(--foreground-secondary)]">{activity.instruction[locale]}</p>
+          <CardTitleWithHint
+            title={activity.prompt[locale]}
+            description={activity.instruction[locale]}
+            headingLevel={4}
+            titleClassName="text-xl font-bold leading-8 text-[var(--foreground)]"
+            hintClassName="-ml-1"
+            hintLabel={locale === "ko-KR" ? "문제 풀이 안내 보기" : "查看答题说明"}
+          />
         </div>
         <div className="flex shrink-0 items-center gap-3">
           {activityCompleted && (
@@ -1076,9 +1542,9 @@ function Activity({
               : answer === originalIndex;
             return (
             <button key={`${originalIndex}-${option}`} type="button" disabled={hasPendingAudio} onClick={() => { setAnswer(requiresConfirmation ? { ...objectValue(answer), selection: originalIndex } : originalIndex); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"} disabled:cursor-not-allowed disabled:opacity-45`}>
-              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + displayIndex)}</span>
-              <span className="font-medium text-slate-800">{option}</span>
-              {selected ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-slate-200" />}
+              <span className="font-mono text-xs text-[var(--foreground-muted)]">{String.fromCharCode(65 + displayIndex)}</span>
+              <span className="font-medium text-[var(--foreground)]">{option}</span>
+              {selected ? <CheckCircle2 size={17} className="text-[var(--support)]" /> : <Circle size={17} className="text-[var(--foreground-muted)]" />}
             </button>
           );})}
         </div>
@@ -1133,18 +1599,12 @@ function Activity({
             <Maximize2 size={24} aria-hidden="true" />
           </span>
           <h5 className="mt-5 text-xl font-bold text-[var(--foreground)]">
-            {usesFlipCards
-              ? locale === "ko-KR" ? "뜻을 가리고 연습해 보세요" : "遮住词汇表再开始练习"
-              : locale === "ko-KR" ? "설명을 가리고 문법을 연습해 보세요" : "遮住语法讲解再开始练习"}
+            {locale === "ko-KR" ? "설명을 가리고 문법을 연습해 보세요" : "遮住语法讲解再开始练习"}
           </h5>
           <p className="mt-2 max-w-md text-sm leading-6 text-[var(--foreground-secondary)]">
-            {usesFlipCards
-              ? locale === "ko-KR"
-                ? "집중 모드를 열면 위의 핵심 어휘표가 가려지고 카드만 보입니다."
-                : "进入专注模式后，上面的核心词汇表会被完全遮住，只显示当前练习卡片。"
-              : locale === "ko-KR"
-                ? "집중 모드를 열면 위의 문법 설명이 가려지고 이번 연습만 보입니다."
-                : "进入专注模式后，上面的语法规则和例句会被完全遮住，只显示本轮练习。"}
+            {locale === "ko-KR"
+              ? "집중 모드를 열면 위의 문법 설명이 가려지고 이번 연습만 보입니다."
+              : "进入专注模式后，上面的语法规则和例句会被完全遮住，只显示本轮练习。"}
           </p>
           <button
             ref={focusModeStartRef}
@@ -1158,7 +1618,7 @@ function Activity({
         </div>
       )}
 
-      {usesFlipCards && practiceFocused && (() => {
+      {usesFlipCards && (!usesFocusMode || practiceFocused) && (() => {
         const item = configItems[activeCardIndex] ?? {};
         const options = stringArray(item.options);
         const selectedAnswers = Array.isArray(answer) ? answer.map(Number) : [];
@@ -1311,7 +1771,7 @@ function Activity({
             const current = Array.isArray(answer) ? answer.map(Number) : [];
             const selected = current.includes(originalIndex);
             return <button key={`${originalIndex}-${option}`} type="button" onClick={() => { setAnswer(selected ? current.filter((item) => item !== originalIndex) : [...current, originalIndex]); setFeedback(null); }} className={`grid w-full grid-cols-[36px_1fr_24px] items-center border-b border-[var(--border-subtle)] px-4 py-4 text-left last:border-b-0 ${selected ? "bg-[var(--accent)]" : "hover:bg-[var(--surface-soft)]"}`}>
-              <span className="font-mono text-xs text-slate-400">{String.fromCharCode(65 + displayIndex)}</span><span className="font-medium text-slate-800">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-slate-200" />}
+              <span className="font-mono text-xs text-[var(--foreground-muted)]">{String.fromCharCode(65 + displayIndex)}</span><span className="font-medium text-[var(--foreground)]">{option}</span>{selected ? <CheckCircle2 size={17} className="text-[var(--primary)]" /> : <Circle size={17} className="text-[var(--foreground-muted)]" />}
             </button>;
           })}
         </div>
@@ -1468,6 +1928,7 @@ function Activity({
 export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel }: SmartTextbookShellProps) {
   const textbookRef = useRef<HTMLDivElement>(null);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [missionPage, setMissionPage] = useState<0 | 1>(0);
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -1498,7 +1959,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const chapterLabel = locale === "ko-KR"
     ? `제${textbook.chapter.number}장`
     : `第 ${textbook.chapter.number} 章`;
-  const sidebarLabel = textbook.chapter.number === 1 ? "章节地图" : "章节概览";
+  const sidebarLabel = locale === "ko-KR"
+    ? textbook.chapter.number === 0 ? "과정 학습 경로" : "장 학습 경로"
+    : textbook.chapter.number === 0 ? "课程导航" : "章节导航";
 
   function recordCompletion(result: {
     nodeId: string | null;
@@ -1527,6 +1990,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function localize(value: { "zh-CN": string; "ko-KR": string }) {
     return value[locale];
+  }
+
+  function selectModule(index: number) {
+    setMissionPage(0);
+    setActiveIndex(index);
   }
 
   function savePreference(nextLocale: SmartLocale, nextSupport: SmartSupportMode) {
@@ -1583,8 +2051,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
-      if (event.altKey && event.key === "ArrowLeft") setActiveIndex((value) => Math.max(0, value - 1));
-      if (event.altKey && event.key === "ArrowRight") setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1));
+      if (event.altKey && event.key === "ArrowLeft") {
+        setMissionPage(0);
+        setActiveIndex((value) => Math.max(0, value - 1));
+      }
+      if (event.altKey && event.key === "ArrowRight") {
+        setMissionPage(0);
+        setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1));
+      }
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -1626,229 +2100,116 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   function renderChapterSidebar(compact = false) {
     if (compact) {
       return (
-        <div className="mt-5 flex flex-col items-center gap-3" aria-label={sidebarLabel}>
-          {textbook.chapter.number === 1 ? (
-            <Map size={18} className="text-[var(--primary)]" aria-hidden="true" />
-          ) : (
-            <BookOpen size={18} className="text-[var(--primary)]" aria-hidden="true" />
-          )}
-          <span className="text-[10px] font-bold text-[var(--foreground-muted)] [writing-mode:vertical-rl]">
+        <div className="mt-4 flex flex-col items-center gap-2" aria-label={sidebarLabel}>
+          <span className="mb-1 text-[9px] font-bold text-[var(--foreground-muted)]">
             {chapterLabel}
           </span>
+          {textbook.modules.map((module, index) => {
+            const active = index === activeIndex;
+            const done = moduleDone(index);
+            return (
+              <button
+                key={module.id}
+                type="button"
+                onClick={() => {
+                  selectModule(index);
+                  setMobilePanel(null);
+                }}
+                aria-current={active ? "step" : undefined}
+                aria-label={`${t.learnerPath} ${index + 1}: ${localize(module.title)}`}
+                title={localize(module.title)}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl border text-[10px] font-bold tabular-nums transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-muted)] hover:border-[var(--primary)] hover:text-[var(--primary)]"}`}
+              >
+                {done ? <Check size={14} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}
+              </button>
+            );
+          })}
         </div>
       );
     }
 
-    if (textbook.chapter.number === 0) {
-      return (
-        <div className="mt-4 px-2" aria-label={sidebarLabel}>
-          <div className="rounded-2xl bg-[var(--surface-soft)] p-3.5">
-            <div className="flex items-center justify-between gap-2 text-[var(--primary)]">
-              <div className="flex items-center gap-2">
-                <BookOpen size={17} aria-hidden="true" />
-                <span className="text-[10px] font-bold">
-                  {locale === "ko-KR" ? "제00장 개요" : "第 00 章概览"}
-                </span>
-              </div>
-              <span className="shrink-0 rounded-full bg-[var(--card)] px-2 py-1 text-[8px] font-bold text-[var(--foreground-muted)]">
-                {locale === "ko-KR" ? "4부분" : "4 个部分"}
-              </span>
-            </div>
-            <p className="mt-2 text-xs font-bold leading-5 text-[var(--foreground)]">
-              {localize(textbook.chapter.title)}
-            </p>
-            <div className="mt-3 flex items-center gap-2">
-              <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-[var(--card)]">
-                <div className="h-full rounded-full bg-[var(--status-success)] transition-all duration-500" style={{ width: `${progressPercent}%` }} />
-              </div>
-              <span className="text-[9px] font-bold tabular-nums text-[var(--foreground-muted)]">{progressPercent}%</span>
-            </div>
+    return (
+      <div className="mt-4 px-2" aria-label={sidebarLabel}>
+        <div className="rounded-2xl bg-[var(--surface-soft)] p-3.5">
+          <div className="flex items-start justify-between gap-3">
+            <CardTitleWithHint
+              title={`${chapterLabel} · ${localize(textbook.chapter.title)}`}
+              description={localize(textbook.chapter.goal)}
+              headingLevel={2}
+              titleClassName="break-keep text-xs font-bold leading-5 text-[var(--foreground)]"
+              hintClassName="-my-2 -mr-2"
+              hintLabel={locale === "ko-KR" ? "이 장의 목표 보기" : "查看本章目标"}
+            />
+            <span className="shrink-0 pt-0.5 text-[10px] font-bold tabular-nums text-[var(--foreground-muted)]">
+              {activeIndex + 1} / {textbook.modules.length}
+            </span>
           </div>
+          <div
+            className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--card)]"
+            role="progressbar"
+            aria-label={locale === "ko-KR" ? "이 장의 학습 진도" : "本章学习进度"}
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={progressPercent}
+          >
+            <div
+              className="h-full rounded-full bg-[var(--status-success)] transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
 
-          <ol className="mt-3 space-y-2.5" aria-label={locale === "ko-KR" ? "과정 안내 읽기 순서" : "课程总览阅读顺序"}>
+        <div className="relative mt-3">
+          <span className="absolute bottom-5 left-[15px] top-5 w-px bg-[var(--border-subtle)]" aria-hidden="true" />
+          <ol className="space-y-2" aria-label={locale === "ko-KR" ? "학습 단계" : "学习步骤"}>
             {textbook.modules.map((module, index) => {
               const active = index === activeIndex;
               const done = moduleDone(index);
-              const outline = chapterZeroOutline[module.code as keyof typeof chapterZeroOutline];
-              const OutlineIcon = outline?.icon ?? BookOpen;
-              const minutes = module.nodes.reduce((total, node) => total + node.minutes, 0);
+              const chapterOneKnowledge = chapterOneKnowledgeMap[module.code as keyof typeof chapterOneKnowledgeMap];
+              const chapterZeroModule = chapterZeroOutline[module.code as keyof typeof chapterZeroOutline];
+              const NavigationIcon = chapterZeroModule?.icon ?? chapterOneKnowledge?.icon ?? BookOpen;
+              const navigationTitle = textbook.chapter.number === 1
+                ? chapterOneKnowledge?.title[locale] ?? localize(module.title)
+                : localize(module.title);
+              const navigationSummary = textbook.chapter.number === 1
+                ? chapterOneKnowledge?.summary[locale] ?? localize(module.description)
+                : localize(module.description);
               return (
-                <li key={module.id}>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setActiveIndex(index);
-                      setMobilePanel(null);
-                    }}
-                    aria-current={active ? "step" : undefined}
-                    className={`w-full rounded-2xl border p-3 text-left transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)] shadow-sm" : "border-[var(--border-subtle)] bg-[var(--card)] hover:border-[var(--primary)]"}`}
-                  >
-                    <span className="flex items-start gap-2.5">
-                      <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-xl ${active ? "bg-[var(--card)] text-[var(--primary)]" : "bg-[var(--surface-soft)] text-[var(--foreground-muted)]"}`}>
-                        <OutlineIcon size={15} aria-hidden="true" />
-                      </span>
-                      <span className="min-w-0 flex-1">
-                        <span className="flex items-start justify-between gap-2">
-                          <span className="text-xs font-bold leading-5 text-[var(--foreground)]">
-                            {String(index + 1).padStart(2, "0")} · {localize(module.title)}
-                          </span>
-                          <span className="mt-1 shrink-0"><StepStatus done={done} active={active} /></span>
-                        </span>
-                        <span className="mt-0.5 block text-[9px] font-semibold text-[var(--primary)]">
-                          {outline?.meta[locale] ?? `${minutes} ${t.minutes}`}
-                        </span>
-                        {active && (
-                          <span className="mt-1.5 block text-[10px] leading-4 text-[var(--foreground-secondary)]">
-                            {localize(module.description)}
-                          </span>
-                        )}
-                      </span>
-                    </span>
-                    {active && (
-                      <span className="mt-2.5 flex items-center justify-between border-t border-[var(--border-subtle)] pt-2.5 text-[8px] font-semibold text-[var(--foreground-muted)]">
-                        <span>{locale === "ko-KR" ? "예상 학습 시간" : "预计学习时间"}</span>
-                        <span>{minutes} {t.minutes}</span>
-                      </span>
-                    )}
-                  </button>
+                <li key={module.id} className="relative grid grid-cols-[32px_minmax(0,1fr)] items-start gap-2.5">
+                  <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 bg-[var(--card)] ${active ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm" : done ? "border-[var(--status-success)] text-[var(--status-success)]" : "border-[var(--border)] text-[var(--foreground-muted)]"}`}>
+                    {done ? <Check size={14} aria-hidden="true" /> : <NavigationIcon size={14} aria-hidden="true" />}
+                  </span>
+                  <div className={`relative min-h-14 min-w-0 rounded-xl border px-2.5 py-2 transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] bg-[var(--card)] hover:border-[var(--primary)]"}`}>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        selectModule(index);
+                        setMobilePanel(null);
+                      }}
+                      aria-current={active ? "step" : undefined}
+                      aria-label={`${t.learnerPath} ${index + 1}: ${navigationTitle}`}
+                      className="absolute inset-0 rounded-xl text-left focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                    >
+                      <span className="sr-only">{navigationTitle}</span>
+                    </button>
+                    <div className="pointer-events-none relative z-10 flex min-h-10 items-center">
+                      <CardTitleWithHint
+                        title={navigationTitle}
+                        description={navigationSummary}
+                        headingLevel={3}
+                        className="!w-full"
+                        titleClassName="min-w-0 flex-1 break-keep text-xs font-bold leading-5 text-[var(--foreground)]"
+                        hintClassName="pointer-events-auto -my-2 -mr-2"
+                        hintLabel={locale === "ko-KR" ? `${navigationTitle} 상세 설명` : `查看${navigationTitle}说明`}
+                      />
+                    </div>
+                  </div>
                 </li>
               );
             })}
           </ol>
         </div>
-      );
-    }
-
-    if (textbook.chapter.number === 1) {
-      return (
-        <div className="mt-4 px-2" aria-label={sidebarLabel}>
-          <div className="rounded-2xl bg-[var(--surface-soft)] p-3.5">
-            <div className="flex items-center justify-between gap-2 text-[var(--primary)]">
-              <div className="flex items-center gap-2">
-                <Map size={17} aria-hidden="true" />
-                <span className="text-[10px] font-bold tracking-[.14em]">
-                  {locale === "ko-KR" ? "제01장 지식 지도" : "第 01 章知识地图"}
-                </span>
-              </div>
-              <span className="shrink-0 rounded-full bg-[var(--card)] px-2 py-1 text-[8px] font-bold tracking-wide text-[var(--foreground-muted)]">
-                {locale === "ko-KR" ? "8단계 연동" : "同步八步"}
-              </span>
-            </div>
-            <p className="mt-2 text-[10px] font-bold text-[var(--foreground-muted)]">
-              {locale === "ko-KR" ? "이 장의 목표" : "本章目标"}
-            </p>
-            <p className="mt-1 text-xs font-bold leading-5 text-[var(--foreground)]">
-              {localize(textbook.chapter.goal)}
-            </p>
-          </div>
-
-          <div className="relative mt-4">
-            <span className="absolute bottom-5 left-[15px] top-5 w-px bg-[var(--border-subtle)]" aria-hidden="true" />
-            <ol className="space-y-2.5" aria-label="本章知识结构">
-              {textbook.modules.map((module, index) => {
-                const active = index === activeIndex;
-                const knowledge = chapterOneKnowledgeMap[module.code as keyof typeof chapterOneKnowledgeMap];
-                const KnowledgeIcon = knowledge?.icon ?? BookOpen;
-                const knowledgeTitle = knowledge?.title[locale] ?? localize(module.title);
-                const knowledgeSummary = knowledge?.summary[locale] ?? localize(module.description);
-                return (
-                  <li key={module.id} className="relative grid grid-cols-[32px_minmax(0,1fr)] items-start gap-2.5">
-                    <span className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 bg-[var(--card)] ${active ? "border-[var(--primary)] text-[var(--primary)] shadow-sm" : "border-[var(--border)] text-[var(--foreground-muted)]"}`}>
-                      <KnowledgeIcon size={14} aria-hidden="true" />
-                    </span>
-                    <div className={`min-w-0 rounded-xl border px-2.5 py-2.5 transition-colors ${active ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)] bg-[var(--card)]"}`}>
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitleWithHint
-                          title={knowledgeTitle}
-                          description={knowledgeSummary}
-                          headingLevel={3}
-                          titleClassName="min-w-0 text-xs font-bold leading-5 text-[var(--foreground)]"
-                          hintClassName="-mt-1 h-6 w-6"
-                          hintLabel={locale === "ko-KR" ? `${knowledgeTitle} 상세 설명` : `查看${knowledgeTitle}说明`}
-                        />
-                        {active && (
-                          <span className="shrink-0 rounded-full bg-[var(--card)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--primary)]">
-                            {locale === "ko-KR" ? "현재 학습" : "正在学习"}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="mt-5 space-y-4 px-3" aria-label={sidebarLabel}>
-        <div className="rounded-2xl bg-[var(--surface-soft)] p-4">
-          <div className="flex items-center gap-2 text-[var(--primary)]">
-            <BookOpen size={17} aria-hidden="true" />
-            <span className="text-[11px] font-bold tracking-[.16em]">{chapterLabel}</span>
-          </div>
-          <p className="mt-3 text-sm font-bold leading-6 text-[var(--foreground)]">
-            {localize(textbook.chapter.title)}
-          </p>
-          <p className="mt-2 text-xs leading-5 text-[var(--foreground-muted)]">
-            {localize(textbook.chapter.goal)}
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border-subtle)] p-4">
-          <p className="text-[10px] font-bold tracking-[.16em] text-[var(--foreground-muted)]">当前步骤</p>
-          <p className="mt-2 text-sm font-bold text-[var(--foreground)]">
-            {String(activeIndex + 1).padStart(2, "0")} · {localize(activeModule.title)}
-          </p>
-          <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[var(--surface-soft)]">
-            <div className="h-full rounded-full bg-[var(--status-success)] transition-all duration-500" style={{ width: `${progressPercent}%` }} />
-          </div>
-          <p className="mt-2 text-right text-[10px] font-bold text-[var(--foreground-muted)]">{progressPercent}%</p>
-        </div>
       </div>
-    );
-  }
-
-  function renderBottomPathNavigation() {
-    return (
-      <nav className="min-w-0 flex-1 overflow-x-auto overscroll-x-contain py-1" aria-label={t.learnerPath}>
-        <div className="flex min-w-max items-center justify-center gap-1 px-1.5">
-        {textbook.modules.map((module, index) => {
-          const active = index === activeIndex;
-          const done = moduleDone(index);
-          const moduleAccent = accentMap[module.accent];
-          return (
-            <button
-              key={module.id}
-              type="button"
-              onClick={() => {
-                setActiveIndex(index);
-                setMobilePanel(null);
-              }}
-              aria-current={active ? "step" : undefined}
-              aria-label={`${t.learnerPath} ${index + 1}: ${localize(module.title)}`}
-              title={localize(module.title)}
-              className="group flex h-11 max-w-[152px] items-center rounded-xl p-1 text-left focus-visible:outline-none"
-            >
-              <span className={`flex h-8 min-w-0 items-center gap-1.5 rounded-lg border px-2 transition group-hover:bg-[var(--surface-soft)] group-focus-visible:ring-2 group-focus-visible:ring-[var(--ring)] group-focus-visible:ring-offset-1 ${active ? "border-[var(--primary)] bg-[var(--accent)] shadow-sm" : "border-[var(--border-subtle)] bg-[var(--card)]"}`}>
-                <span className="shrink-0" style={{ color: active ? moduleAccent.solid : undefined }}>
-                  <StepStatus done={done} active={active} />
-                </span>
-                <span className="min-w-0">
-                  <span className="block text-[9px] font-bold leading-none tracking-wider text-[var(--foreground-muted)]">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span className={`hidden max-w-24 truncate text-[11px] font-bold leading-4 md:block ${active ? "text-[var(--foreground)]" : "text-[var(--foreground-secondary)]"}`}>
-                    {localize(module.title)}
-                  </span>
-                </span>
-              </span>
-            </button>
-          );
-        })}
-        </div>
-      </nav>
     );
   }
 
@@ -1949,27 +2310,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               <ArrowLeft size={17} />
               <span className="hidden sm:inline">{t.back}</span>
             </Link>
-            <span className="hidden h-5 w-px bg-[var(--border-subtle)] sm:block" />
-            <div className="min-w-0">
-              <div className="hidden items-center gap-2 sm:flex">
-                <span className="text-xs font-bold tracking-[.18em] text-[var(--primary)]">{textbook.levelCode}</span>
-                <span className="text-xs text-[var(--foreground-muted)]">/</span>
-                <span className="text-xs font-semibold text-[var(--foreground-muted)]">{chapterLabel}</span>
-              </div>
-              <h1 className="truncate text-sm font-bold tracking-tight text-[var(--foreground)] sm:mt-0.5 sm:text-lg">
-                {localize(textbook.chapter.title)}
-              </h1>
-            </div>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-6">
-            <div className="hidden w-36 md:block lg:w-48">
-              <div className="mb-1.5 flex justify-between text-[11px] font-bold text-[var(--foreground-muted)]">
-                <span>{t.progress}</span><span>{progressPercent}%</span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-[var(--border-subtle)]">
-                <div className="h-full rounded-full transition-all duration-500" style={{ width: `${progressPercent}%`, backgroundColor: "var(--status-success)" }} />
-              </div>
-            </div>
             <button
               type="button"
               onClick={toggleTutorPanel}
@@ -2049,10 +2391,17 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       </header>
 
       <div className="flex min-h-0 flex-1 gap-3 p-3 lg:gap-4 lg:p-4">
-        <aside className={`smart-textbook-scroll hidden shrink-0 overflow-y-auto rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-5 shadow-sm transition-[width] duration-200 lg:block ${pathCollapsed ? "w-16" : "w-60"}`}>
+        <aside className={`smart-textbook-scroll hidden shrink-0 overflow-y-auto rounded-[26px] border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-5 shadow-sm transition-[width] duration-200 lg:block ${pathCollapsed ? "w-16" : "w-64"}`}>
           <div className={`flex items-center ${pathCollapsed ? "justify-center" : "justify-between px-3"}`}>
             {!pathCollapsed && <p className="text-[11px] font-bold tracking-[.2em] text-slate-400">{sidebarLabel}</p>}
-            <button type="button" onClick={() => setPathCollapsed((value) => !value)} className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800" aria-label={pathCollapsed ? `展开${sidebarLabel}` : `收起${sidebarLabel}`}>
+            <button
+              type="button"
+              onClick={() => setPathCollapsed((value) => !value)}
+              className="rounded-lg p-2 text-slate-400 hover:bg-white/60 hover:text-slate-800"
+              aria-label={locale === "ko-KR"
+                ? pathCollapsed ? `${sidebarLabel} 펼치기` : `${sidebarLabel} 접기`
+                : pathCollapsed ? `展开${sidebarLabel}` : `收起${sidebarLabel}`}
+            >
               {pathCollapsed ? <PanelLeftOpen size={17} /> : <PanelLeftClose size={17} />}
             </button>
           </div>
@@ -2103,42 +2452,99 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 </div>
               </section>
             )}
-            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <div>
-                <p className="text-xs font-bold tracking-[.08em]" style={{ color: accent.solid }}>第 {String(activeIndex + 1).padStart(2, "0")} 步</p>
-                <CardTitleWithHint
-                  title={localize(activeModule.title)}
-                  description={localize(activeModule.description)}
-                  headingLevel={2}
-                  className="mt-3"
-                  titleClassName="text-2xl font-bold tracking-[-.04em] text-[var(--foreground)] sm:text-[34px]"
-                  hintClassName="mt-1"
-                  hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
-                />
-              </div>
-              <div className="flex shrink-0 items-center gap-2 rounded-full bg-[var(--surface-soft)] px-3 py-2 text-xs font-semibold text-[var(--foreground-muted)] sm:pt-2">
-                <Clock3 size={15} /> {activeNodes.reduce((total, node) => total + node.minutes, 0)} {t.minutes}
-              </div>
-            </div>
-            {activeNodes.map((node) => (
-              <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 sm:mt-10 sm:p-7">
-                <div className="flex items-center gap-3">
+            {activeNodes.map((node, nodeIndex) => {
+              const hasReadyImage = node.media.some((asset) => asset.type === "image" && asset.status === "ready" && asset.url);
+              const hasIntegratedImageHeader = nodeIndex === 0 && hasReadyImage;
+              const usesDesktopImagePager = hasIntegratedImageHeader && node.activities.length > 0;
+              return (
+              <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 first:mt-0 sm:mt-10 sm:p-7 sm:first:mt-0">
+                {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+                  <div className="flex min-w-0 items-center gap-3">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} />
-                  <h3 className="text-lg font-bold text-[var(--foreground)]">{localize(node.title)}</h3>
-                </div>
-                <ContentRenderer node={node} locale={locale} supportMode={supportMode} />
-                {node.activities.map((activity, activityIndex) => (
-                  <Activity
-                    key={activity.id}
-                    activity={activity}
+                    {nodeIndex === 0 ? (
+                      <CardTitleWithHint
+                        title={(
+                          <>
+                            <span>{localize(activeModule.title)}</span>
+                            <span className="text-[11px] font-medium tabular-nums text-[var(--foreground-muted)]">
+                              {locale === "ko-KR" ? `제 ${String(activeIndex + 1).padStart(2, "0")} 단계` : `第 ${String(activeIndex + 1).padStart(2, "0")} 步`}
+                              <span className="mx-1" aria-hidden="true">·</span>
+                              {locale === "ko-KR" ? "예상" : "预计"} {activeNodes.reduce((total, currentNode) => total + currentNode.minutes, 0)} {t.minutes}
+                            </span>
+                          </>
+                        )}
+                        description={localize(activeModule.description)}
+                        headingLevel={1}
+                        className="items-center"
+                        titleClassName="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-lg font-bold text-[var(--foreground)]"
+                        hintClassName="-ml-1"
+                        hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
+                      />
+                    ) : (
+                      <h2 className="text-lg font-bold text-[var(--foreground)]">{localize(node.title)}</h2>
+                    )}
+                  </div>
+                </div>}
+                {usesDesktopImagePager && (
+                  <nav
+                    className="mb-6 hidden items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1.5 lg:flex"
+                    aria-label={locale === "ko-KR" ? "학습 목표 페이지" : "学习目标分页"}
+                  >
+                    <div className="flex items-center gap-1.5">
+                      <button
+                        type="button"
+                        aria-current={missionPage === 0 ? "page" : undefined}
+                        onClick={() => setMissionPage(0)}
+                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 0 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                      >
+                        <BookOpen size={17} aria-hidden="true" />
+                        {locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
+                      </button>
+                      <button
+                        type="button"
+                        aria-current={missionPage === 1 ? "page" : undefined}
+                        onClick={() => setMissionPage(1)}
+                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 1 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                      >
+                        <CheckCircle2 size={17} aria-hidden="true" />
+                        {locale === "ko-KR" ? "장면 진단" : "情景诊断"}
+                      </button>
+                    </div>
+                    <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
+                      {locale === "ko-KR" ? "이 목표" : "本目标"} {missionPage + 1} / 2
+                    </span>
+                  </nav>
+                )}
+                <div className={usesDesktopImagePager && missionPage === 1 ? "lg:hidden" : ""}>
+                  <ContentRenderer
+                    node={node}
                     locale={locale}
-                    trackingDisabled={trackingDisabled}
-                    onCompleted={recordCompletion}
-                    round={{ current: activityIndex + 1, total: node.activities.length }}
+                    supportMode={supportMode}
+                    moduleHeader={nodeIndex === 0 ? {
+                      title: localize(activeModule.title),
+                      description: localize(activeModule.description),
+                      stepLabel: locale === "ko-KR"
+                        ? `제 ${String(activeIndex + 1).padStart(2, "0")} 단계`
+                        : `第 ${String(activeIndex + 1).padStart(2, "0")} 步`,
+                      minutes: activeNodes.reduce((total, currentNode) => total + currentNode.minutes, 0),
+                    } : undefined}
                   />
-                ))}
+                </div>
+                <div className={`${usesDesktopImagePager && missionPage === 0 ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
+                  {node.activities.map((activity, activityIndex) => (
+                    <Activity
+                      key={activity.id}
+                      activity={activity}
+                      locale={locale}
+                      trackingDisabled={trackingDisabled}
+                      onCompleted={recordCompletion}
+                      round={{ current: activityIndex + 1, total: node.activities.length }}
+                    />
+                  ))}
+                </div>
               </article>
-            ))}
+              );
+            })}
               </>
             )}
             <div className="h-12" />
@@ -2152,10 +2558,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
       <footer className="relative z-30 h-[72px] shrink-0 border-t border-[var(--border-subtle)] bg-[var(--card)] px-3 sm:px-5 lg:h-[76px] lg:px-7">
         <div className="flex h-full items-center justify-between gap-3">
-          <button type="button" disabled={activeIndex === 0} onClick={() => setActiveIndex((value) => Math.max(0, value - 1))} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-xl px-1 text-xs font-bold text-slate-500 hover:bg-[var(--surface-soft)] hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:px-2 sm:text-sm">
+          <button type="button" disabled={activeIndex === 0} onClick={() => selectModule(Math.max(0, activeIndex - 1))} className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-xl px-1 text-xs font-bold text-slate-500 hover:bg-[var(--surface-soft)] hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:px-2 sm:text-sm">
             <ChevronLeft size={18} /> <span className="hidden min-[360px]:inline">{t.previous}</span>
           </button>
-          {renderBottomPathNavigation()}
+          <p className="hidden text-xs font-bold tabular-nums text-[var(--foreground-muted)] sm:block" aria-live="polite">
+            {activeIndex + 1} / {textbook.modules.length}
+          </p>
           {isLastModule ? (
             chapterTestHref && progressPercent >= 100 ? (
               <Link href={chapterTestHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
@@ -2171,7 +2579,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               </button>
             )
           ) : (
-            <button type="button" onClick={() => setActiveIndex((value) => Math.min(textbook.modules.length - 1, value + 1))} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
+            <button type="button" onClick={() => selectModule(Math.min(textbook.modules.length - 1, activeIndex + 1))} className="inline-flex shrink-0 items-center gap-1.5 rounded-xl bg-[var(--primary)] px-3.5 py-2.5 text-xs font-bold text-[var(--primary-foreground)] hover:opacity-90 sm:gap-2 sm:px-5 sm:text-sm">
               {t.next} <ChevronRight size={18} />
             </button>
           )}

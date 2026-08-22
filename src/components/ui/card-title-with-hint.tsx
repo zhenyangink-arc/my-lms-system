@@ -119,13 +119,13 @@ export function CardTitleWithHint({
             onClick={() => {
               if (!isOpen) openHint();
             }}
-            className={`flex h-11 w-11 shrink-0 cursor-help items-center justify-center bg-transparent outline-none transition focus-visible:rounded-full focus-visible:ring-2 ${
+            className={`flex h-11 w-11 shrink-0 cursor-help items-start justify-center bg-transparent pt-1 outline-none transition focus-visible:rounded-full focus-visible:ring-2 ${
               tone === "inverse"
                 ? "text-white/70 hover:text-white focus-visible:ring-white/70"
                 : "text-[var(--foreground-muted)] hover:text-[var(--foreground)] focus-visible:ring-[var(--ring)]"
             } ${hintClassName}`}
           >
-            <CircleAlert size={16} aria-hidden="true" />
+            <CircleAlert size={10} aria-hidden="true" />
           </button>
           {isOpen &&
             position &&

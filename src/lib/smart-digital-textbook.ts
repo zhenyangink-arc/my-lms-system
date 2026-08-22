@@ -1,5 +1,6 @@
 import "server-only";
 
+import { createR2SignedObjectUrl } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export type SmartLocale = "zh-CN" | "ko-KR";
@@ -34,6 +35,7 @@ export type SmartTextbookMediaAsset = {
   type: "image" | "audio";
   purpose: string;
   status: "pending" | "ready" | "rejected";
+  url: string | null;
   altText: LocalizedText;
   metadata: Record<string, unknown>;
 };
@@ -266,15 +268,29 @@ export async function loadSmartDigitalTextbook(
 
   const nodeIds = (nodes ?? []).map((item) => String(item.id));
   const { data: mediaAssets, error: mediaError } = nodeIds.length
-    ? await admin
+      ? await admin
         .from("digital_textbook_media_assets")
-        .select("id,node_id,asset_key,media_type,purpose,production_status,alt_text,metadata")
+        .select("id,node_id,asset_key,media_type,purpose,object_key,production_status,alt_text,metadata")
         .in("node_id", nodeIds)
         .order("asset_key")
     : { data: [], error: null };
   if (mediaError && mediaError.code !== "42P01" && mediaError.code !== "PGRST205") {
     throw new Error(`无法读取教材媒体资源：${mediaError.message}`);
   }
+  const mediaUrls = new Map(
+    await Promise.all(
+      (mediaAssets ?? []).map(async (asset) => {
+        if (asset.production_status !== "ready" || !asset.object_key) {
+          return [String(asset.id), null] as const;
+        }
+        try {
+          return [String(asset.id), await createR2SignedObjectUrl(String(asset.object_key))] as const;
+        } catch {
+          return [String(asset.id), null] as const;
+        }
+      }),
+    ),
+  );
   const { data: activities, error: activityError } = nodeIds.length
     ? await admin
         .from("digital_textbook_activities")
@@ -399,6 +415,7 @@ export async function loadSmartDigitalTextbook(
               asset.production_status === "ready" || asset.production_status === "rejected"
                 ? asset.production_status
                 : "pending",
+            url: mediaUrls.get(String(asset.id)) ?? null,
             altText: localized(asset.alt_text),
             metadata: asObject(asset.metadata),
           })),
