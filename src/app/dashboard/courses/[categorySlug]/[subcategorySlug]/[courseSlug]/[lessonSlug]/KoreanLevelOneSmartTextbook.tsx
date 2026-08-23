@@ -13,6 +13,7 @@ import {
   ChevronUp,
   Circle,
   Clock3,
+  Download,
   Headphones,
   Languages,
   Lightbulb,
@@ -25,10 +26,12 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   Pause,
+  Play,
   RotateCcw,
   Send,
   Sparkles,
   Square,
+  Trash2,
   Volume2,
   X,
   XCircle,
@@ -47,6 +50,7 @@ import type {
 } from "@/lib/smart-digital-textbook";
 import {
   checkSmartTextbookActivityPageAction,
+  completeDialogueRoleplayAction,
   saveSmartTextbookPreferenceAction,
   submitSmartTextbookActivityAction,
 } from "./smart-textbook-actions";
@@ -186,7 +190,7 @@ const ui = {
     stopRecording: "停止录音",
     recorded: "已完成录音，可以回听后提交",
     recordingDenied: "无法使用麦克风，请检查浏览器权限后重试。",
-    recordingUploading: "正在安全上传录音…",
+    recordingUploading: "正在保存录音…",
     recordingUploadFailed: "录音上传失败，请重新录制后再试。",
     speakingPracticeComplete: "录音练习已完成，本次不进行自动发音评分。",
     testUnavailable: "章节测试尚未配置",
@@ -251,7 +255,7 @@ const ui = {
     stopRecording: "녹음 중지",
     recorded: "녹음이 끝났습니다. 다시 듣고 제출하세요",
     recordingDenied: "마이크를 사용할 수 없습니다. 브라우저 권한을 확인해 주세요.",
-    recordingUploading: "녹음을 안전하게 업로드하고 있어요…",
+    recordingUploading: "녹음을 저장하고 있어요…",
     recordingUploadFailed: "녹음 업로드에 실패했습니다. 다시 녹음해 주세요.",
     speakingPracticeComplete: "녹음 연습을 마쳤습니다. 자동 발음 평가는 제공하지 않습니다.",
     testUnavailable: "단원 평가가 아직 준비되지 않았습니다",
@@ -290,6 +294,20 @@ function objectValue(value: unknown): Record<string, unknown> {
 
 function stringArray(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
+}
+
+function microphonePrerequisiteError(locale: SmartLocale) {
+  if (!window.isSecureContext) {
+    return locale === "ko-KR"
+      ? "현재 페이지가 HTTP로 열려 있어 브라우저가 마이크를 차단했습니다. HTTPS 주소로 다시 열어 주세요. 같은 컴퓨터에서 개발 중이라면 localhost를 사용할 수 있습니다."
+      : "当前页面使用 HTTP，浏览器已阻止麦克风。请改用 HTTPS 地址；如果是在同一台电脑上开发，也可以使用 localhost。";
+  }
+  if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+    return locale === "ko-KR"
+      ? "현재 브라우저는 녹음 기능을 지원하지 않습니다. 최신 Chrome, Edge 또는 Safari에서 다시 시도해 주세요."
+      : "当前浏览器不支持录音功能，请使用最新版 Chrome、Edge 或 Safari。";
+  }
+  return null;
 }
 
 function TypewriterText({ text, speed = 52, onProgress, onComplete }: { text: string; speed?: number; onProgress?: () => void; onComplete?: () => void }) {
@@ -421,7 +439,7 @@ function PatternConversationPractice({ activity, audioAssets, locale, trackingDi
         if (kind === "choice" && !line) return null;
         const side = step.side === "right" ? "right" : "left";
         const speaker = String(objectValue(step.speaker)[locale] ?? step.speaker ?? "");
-        return <div key={String(step.id ?? index)} className={`flex items-end gap-3 ${side === "right" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] ${side === "right" ? "order-1 text-right" : "order-2"}`}><div className="mb-1 text-xs font-bold text-[var(--foreground-secondary)]">{speaker}</div><div className={`rounded-[20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${side === "right" ? "rounded-br-md border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)]" : "rounded-bl-md border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{isCurrent ? <TypewriterText text={line} speed={Number(step.typingSpeedMs) || 52} onProgress={scrollConversationToLatest} onComplete={() => window.setTimeout(advance, Number(step.afterMs) || 360)} /> : line}</div></div><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-black shadow-sm ${side === "right" ? "order-2 bg-[var(--primary)] text-[var(--primary-foreground)]" : "order-1 bg-[var(--card)] text-[var(--primary)]"}`}>{speaker.slice(0, 1)}</div></div>;
+        return <div key={String(step.id ?? index)} className={`flex items-end gap-3 ${side === "right" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] ${side === "right" ? "order-1 text-right" : "order-2"}`}><div className="mb-1 text-xs font-bold text-[var(--foreground-secondary)]">{speaker}</div><div className={`rounded-[20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${side === "right" ? "rounded-br-md border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)]" : "rounded-bl-md border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{isCurrent ? <TypewriterText text={line} speed={Number(step.typingSpeedMs) || 52} onProgress={scrollConversationToLatest} onComplete={() => window.setTimeout(advance, Number(step.afterMs) || 360)} /> : line}</div></div><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold shadow-sm ${side === "right" ? "order-2 bg-[var(--primary)] text-[var(--primary-foreground)]" : "order-1 bg-[var(--card)] text-[var(--primary)]"}`}>{speaker.slice(0, 1)}</div></div>;
       })}</div></div>
       <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5">{completed ? <div className="flex min-h-[300px] flex-col items-center justify-center text-center"><CheckCircle2 size={30} className="text-[var(--status-success)]" /><p className="mt-3 text-lg font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "대화를 완성했어요" : "本段对话已完成"}</p><button type="button" onClick={() => { setForceReplay(true); setCursor(0); setAnswers([]); setResult(null); }} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold"><RotateCcw size={16} />{locale === "ko-KR" ? "다시 연습" : "重新练习"}</button></div> : currentKind === "choice" && !currentAnswer ? <fieldset><legend className="text-sm font-bold text-[var(--foreground)]">{String(objectValue(current.prompt)[locale] ?? (locale === "ko-KR" ? "알맞은 말을 고르세요" : "选择合适的回答"))}</legend><div className="mt-4 grid gap-3">{currentOptions.map((option, optionIndex) => { const selectedResult = result?.choiceIndex === currentChoiceIndex && result.optionIndex === optionIndex ? result : null; return <button key={option} type="button" disabled={checking} onClick={() => choose(optionIndex)} className={`min-h-14 rounded-xl border px-4 py-3 text-left text-sm font-bold leading-6 transition ${selectedResult?.correct === false ? "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--accent)]"}`}><span lang="ko">{option}</span>{selectedResult?.correct === false && <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />}</button>; })}</div></fieldset> : <div className="flex min-h-[300px] items-center justify-center text-center text-sm font-semibold text-[var(--foreground-muted)]">{currentAnswer ? locale === "ko-KR" ? "대답이 대화에 나타나고 있어요…" : "回答正在逐字加入对话…" : locale === "ko-KR" ? "상대방의 말을 듣고 있어요…" : "对方正在说话…"}</div>}</div>
     </div>
@@ -497,8 +515,8 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
     <div className="mt-5 grid items-stretch gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(380px,.95fr)]">
       <div ref={dialogueRef} className="max-h-[520px] min-h-[420px] overflow-y-auto scroll-smooth rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6" aria-live="polite">
         <div className="space-y-5">
-          {visibleSteps.map((step, index) => <div key={String(step.id ?? index)} className="space-y-3"><div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-black text-[var(--primary)]">{String(objectValue(step.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{String(step.prompt ?? "")}</p></div><div className="flex justify-end"><p className="max-w-[78%] rounded-[20px] rounded-br-md border border-[var(--primary)] bg-[var(--accent)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{answers[index]}</p></div></div>)}
-          {!complete && current && <div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-black text-[var(--primary)]">{String(objectValue(current.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko"><TypewriterText text={String(current.prompt ?? "")} speed={45} /></p></div>}
+          {visibleSteps.map((step, index) => <div key={String(step.id ?? index)} className="space-y-3"><div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-bold text-[var(--primary)]">{String(objectValue(step.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{String(step.prompt ?? "")}</p></div><div className="flex justify-end"><p className="max-w-[78%] rounded-[20px] rounded-br-md border border-[var(--primary)] bg-[var(--accent)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{answers[index]}</p></div></div>)}
+          {!complete && current && <div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-bold text-[var(--primary)]">{String(objectValue(current.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko"><TypewriterText text={String(current.prompt ?? "")} speed={45} /></p></div>}
         </div>
       </div>
       <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
@@ -563,11 +581,88 @@ function speakKoreanSequence(
   speakNext(0);
 }
 
+function ListenSpeakLearningPanel({
+  node,
+  locale,
+  supportMode,
+  page,
+  moduleHeader,
+}: {
+  node: SmartTextbookNode;
+  locale: SmartLocale;
+  supportMode: SmartSupportMode;
+  page: number;
+  moduleHeader?: { title: string; stepLabel: string; minutes: number };
+}) {
+  const content = node.content;
+  const context = objectValue(content.listeningContext);
+  const focus = Array.isArray(content.listeningFocus) ? content.listeningFocus.map(objectValue) : [];
+  const repeatLines = Array.isArray(content.repeatLines) ? content.repeatLines.map(objectValue) : [];
+  const outputChecklist = stringArray(content.outputChecklist);
+  const sceneImage = node.media.find((asset) => asset.type === "image" && asset.status === "ready" && asset.url);
+  const showChinese = supportMode !== "immersion";
+
+  if (page === 1 || page === 3) return null;
+
+  if (page === 2) {
+    return (
+      <section className="rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6" aria-label={locale === "ko-KR" ? "문장별 따라 말하기" : "逐句跟读"}>
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <CardTitleWithHint
+            title={locale === "ko-KR" ? "문장별 듣고 따라 하기" : "逐句听读，再完整复现"}
+            description={locale === "ko-KR" ? "각 문장의 의미와 리듬을 확인한 뒤 순서대로 연결해 말하세요." : "先听清每句的意义与节奏，再按原顺序连起来表达。"}
+            headingLevel={3}
+            titleClassName="text-lg font-bold text-[var(--foreground)]"
+            hintLabel={locale === "ko-KR" ? "연습 방법 보기" : "查看练习方法"}
+          />
+          <span className="rounded-full bg-[var(--status-warning-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-warning)]">
+            {locale === "ko-KR" ? "정식 음원 제작 대기" : "正式音频待制作"}
+          </span>
+        </div>
+        <ol className="mt-6 grid gap-3 sm:grid-cols-2">
+          {repeatLines.map((line, index) => (
+            <li key={`${String(line.ko)}-${index}`} className="flex min-h-24 items-center gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4">
+              <span className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span>
+              <div className="min-w-0 flex-1">
+                <p className="text-base font-bold text-[var(--foreground)]" lang="ko">{String(line.ko ?? "")}</p>
+                {showChinese && <p className="mt-1 text-sm text-[var(--foreground-muted)]">{String(line.zh ?? "")}</p>}
+              </div>
+              <button type="button" onClick={() => speakKorean(String(line.ko ?? ""))} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transform-none" aria-label={`${locale === "ko-KR" ? "기기 시범 음성 재생" : "播放设备示范音"}：${String(line.ko ?? "")}`}><Volume2 size={17} aria-hidden="true" /></button>
+            </li>
+          ))}
+        </ol>
+        <p className="mt-4 flex items-center gap-2 text-xs font-semibold text-[var(--foreground-muted)]"><Headphones size={15} aria-hidden="true" />{locale === "ko-KR" ? "현재 버튼은 기기 시범 음성입니다. 정식 음원이 준비되면 같은 위치에서 자동으로 교체됩니다." : "当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。"}</p>
+      </section>
+    );
+  }
+
+  return (
+    <section className="space-y-5" aria-label={locale === "ko-KR" ? "듣기 전 준비" : "听前准备"}>
+      {sceneImage?.url && (
+        <div className="relative aspect-[5/2] min-h-[270px] overflow-hidden rounded-[22px] bg-[var(--surface-soft)]">
+          <Image src={sceneImage.url} alt="" fill sizes="(min-width: 1024px) 1100px, 100vw" className="object-cover" priority />
+          <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent" aria-hidden="true" />
+          {moduleHeader && <div className="absolute right-6 top-5 flex items-baseline gap-2 text-white drop-shadow"><span className="text-base font-bold">{moduleHeader.title}</span><span className="text-xs font-semibold">{moduleHeader.stepLabel} · {locale === "ko-KR" ? "예상" : "预计"} {moduleHeader.minutes} {locale === "ko-KR" ? "분" : "分钟"}</span></div>}
+          <p className="absolute bottom-6 left-6 right-6 max-w-3xl text-lg font-bold leading-8 text-white drop-shadow sm:text-xl">{String(context[locale] ?? "")}</p>
+        </div>
+      )}
+      <div className="rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6">
+        <CardTitleWithHint title={locale === "ko-KR" ? "무엇을 들어야 할까요?" : "先确定要听什么"} description={locale === "ko-KR" ? "전체 원고를 미리 읽지 말고 핵심 정보 네 가지를 먼저 확인하세요." : "不提前展示完整原文，只先建立四个信息目标。"} headingLevel={3} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "듣기 방법 보기" : "查看听辨方法"} />
+        <ol className="relative mt-6 grid gap-3 sm:grid-cols-4">
+          {focus.map((item, index) => <li key={index} className="relative rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-4"><span className="text-xs font-bold text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span><p className="mt-3 text-sm font-bold leading-6 text-[var(--foreground)]">{String(item[locale] ?? "")}</p></li>)}
+        </ol>
+      </div>
+      {outputChecklist.length > 0 && <p className="sr-only">{outputChecklist.join("、")}</p>}
+    </section>
+  );
+}
+
 function ContentRenderer({
   node,
   locale,
   supportMode,
   moduleHeader,
+  contentPage = 0,
   patternPage = 0,
   trackingDisabled = false,
   onActivityCompleted,
@@ -581,6 +676,7 @@ function ContentRenderer({
     stepLabel: string;
     minutes: number;
   };
+  contentPage?: number;
   patternPage?: number;
   trackingDisabled?: boolean;
   onActivityCompleted?: (result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean }) => void;
@@ -592,6 +688,8 @@ function ContentRenderer({
   const [guidedDialogueIndex, setGuidedDialogueIndex] = useState<number | null>(null);
   const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
   const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
+  const [activePatternCardIndex, setActivePatternCardIndex] = useState(0);
+  const [visitedPatternCardIndices, setVisitedPatternCardIndices] = useState<Set<number>>(() => new Set([0]));
   const [activePatternGroupIndex, setActivePatternGroupIndex] = useState(0);
   const [activePatternQuestionIndex, setActivePatternQuestionIndex] = useState(0);
   const [patternChoiceAnswers, setPatternChoiceAnswers] = useState<number[]>(() => Array(9).fill(-1));
@@ -679,6 +777,9 @@ function ContentRenderer({
     : [];
   const dialogueScenes = Array.isArray(content.dialogueScenes)
     ? content.dialogueScenes.map(objectValue)
+    : [];
+  const dialogueFlow = Array.isArray(content.dialogueFlow)
+    ? content.dialogueFlow.map(objectValue)
     : [];
   const imageAssets = node.media.filter((asset) => asset.type === "image");
   const sceneImage = imageAssets.find((asset) => asset.status === "ready" && asset.url);
@@ -1066,6 +1167,169 @@ function ContentRenderer({
     );
   }
 
+  if (dialogueScenes.length > 0) {
+    const currentScene = dialogueScenes[Math.min(activeDialogueGroupIndex, dialogueScenes.length - 1)] ?? {};
+    const currentSceneTitleValue = currentScene.title;
+    const currentSceneTitle = String(objectValue(currentSceneTitleValue)[locale] ?? currentSceneTitleValue ?? `${locale === "ko-KR" ? "장면" : "场景"} ${activeDialogueGroupIndex + 1}`);
+    const currentSceneContext = String(objectValue(currentScene.context)[locale] ?? "");
+    const currentSceneCoverage = stringArray(currentScene.coverage);
+    const effectiveDialogueFlow = dialogueFlow.length > 0
+      ? dialogueFlow
+      : dialogueScenes.map((scene, index) => ({
+          title: scene.title,
+          description: scene.context,
+          words: Array.isArray(scene.coverage) ? scene.coverage : [],
+          order: index + 1,
+        }));
+    const coveredWords = Array.from(new Set(effectiveDialogueFlow.flatMap((item) => stringArray(item.words))));
+    const renderDialogueSceneImage = () => sceneImage?.url ? (
+      <figure className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] sm:aspect-[5/2]">
+        <Image
+          src={sceneImage.url}
+          alt={sceneImage.altText[locale]}
+          fill
+          unoptimized
+          priority={Boolean(moduleHeader)}
+          sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
+          className="object-cover object-center"
+        />
+        <span className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" aria-hidden="true" />
+        {moduleHeader && (
+          <div className="absolute right-5 top-4 z-10 max-w-[calc(100%-2.5rem)] text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:right-7 sm:top-6">
+            <CardTitleWithHint
+              title={(
+                <>
+                  <span>{moduleHeader.title}</span>
+                  <span className="text-[11px] font-medium tabular-nums text-white/90">
+                    {moduleHeader.stepLabel}<span className="mx-1" aria-hidden="true">·</span>{locale === "ko-KR" ? "예상" : "预计"} {moduleHeader.minutes} {t.minutes}
+                  </span>
+                </>
+              )}
+              description={moduleHeader.description}
+              headingLevel={1}
+              tone="inverse"
+              className="items-center"
+              titleClassName="flex flex-wrap items-baseline gap-x-3 gap-y-1 text-lg font-bold"
+              hintLabel={locale === "ko-KR" ? "학습 단계 설명 보기" : "查看学习步骤说明"}
+            />
+          </div>
+        )}
+        <figcaption className="absolute inset-x-0 bottom-0 z-10 max-w-3xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
+          <CardTitleWithHint
+            title={contentPage === 0 ? node.title[locale] : currentSceneTitle}
+            description={contentPage === 0 ? String(lead[locale] ?? "") : currentSceneContext}
+            headingLevel={4}
+            tone="inverse"
+            titleClassName="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]"
+            hintLabel={locale === "ko-KR" ? "장면 설명 보기" : "查看场景说明"}
+          />
+        </figcaption>
+      </figure>
+    ) : null;
+
+    return contentPage === 0 ? (
+      <div className="mt-8 space-y-7">
+        {renderDialogueSceneImage()}
+        <section className="rounded-[22px] bg-[var(--surface-soft)] px-5 py-6 sm:px-7 sm:py-8">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <CardTitleWithHint
+              title={locale === "ko-KR" ? "대화가 이어지는 순서" : "真实对话如何展开"}
+              description={locale === "ko-KR" ? "핵심 어휘가 실제 대화에서 어떤 기능을 하는지 순서대로 확인하세요." : "按照真实交流顺序，理解本章核心词在对话中承担的功能。"}
+              headingLevel={4}
+              titleClassName="text-lg font-bold text-[var(--foreground)]"
+              hintLabel={locale === "ko-KR" ? "대화 순서 설명 보기" : "查看对话路径说明"}
+            />
+            {coveredWords.length > 0 && <span className="rounded-full bg-[var(--card)] px-3 py-1.5 text-xs font-bold tabular-nums text-[var(--primary)] ring-1 ring-[var(--border-subtle)]">{locale === "ko-KR" ? "핵심 어휘" : "核心词"} {coveredWords.length}</span>}
+          </div>
+          <div className="relative mt-7">
+            <div className="absolute bottom-6 left-[19px] top-6 w-0.5 bg-[var(--primary)]/30" aria-hidden="true" />
+            <ol className="space-y-7">
+              {effectiveDialogueFlow.map((item, index) => {
+                const titleValue = item.title;
+                const itemTitle = String(objectValue(titleValue)[locale] ?? titleValue ?? `${locale === "ko-KR" ? "단계" : "步骤"} ${index + 1}`);
+                const itemDescription = String(objectValue(item.description)[locale] ?? "");
+                const words = stringArray(item.words);
+                return (
+                  <li key={`${itemTitle}-${index}`} className="relative grid grid-cols-[40px_minmax(0,1fr)] gap-4">
+                    <span className="relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-[var(--primary)] bg-[var(--card)] text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span>
+                    <div className="min-w-0 pt-1">
+                      <CardTitleWithHint title={itemTitle} description={itemDescription} headingLevel={4} titleClassName="text-base font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "이 단계 설명 보기" : "查看此阶段说明"} />
+                      {words.length > 0 && <div className="mt-3 flex flex-wrap gap-2">{words.map((word) => <span key={word} lang="ko" className="rounded-lg bg-[var(--card)] px-3 py-1.5 text-sm font-bold text-[var(--foreground-secondary)] ring-1 ring-[var(--border-subtle)]">{word}</span>)}</div>}
+                    </div>
+                  </li>
+                );
+              })}
+            </ol>
+          </div>
+        </section>
+      </div>
+    ) : (
+      <div className="mt-8 space-y-6">
+        <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
+          <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2" role="tablist" aria-label={locale === "ko-KR" ? "대화 장면 선택" : "选择对话场景"}>
+            {dialogueScenes.map((scene, index) => {
+              const titleValue = scene.title;
+              const title = String(objectValue(titleValue)[locale] ?? titleValue ?? `${locale === "ko-KR" ? "장면" : "场景"} ${index + 1}`);
+              return (
+                <button
+                  key={`${title}-${index}`}
+                  type="button"
+                  role="tab"
+                  aria-selected={index === activeDialogueGroupIndex}
+                  onClick={() => {
+                    sceneDialogueRunRef.current += 1;
+                    window.speechSynthesis?.cancel();
+                    setSceneDialoguePlaying(false);
+                    setSceneDialogueStep(0);
+                    setGuidedDialogueIndex(null);
+                    setActiveDialogueGroupIndex(index);
+                  }}
+                  className={`min-h-11 shrink-0 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${index === activeDialogueGroupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}
+                >
+                  {title}
+                </button>
+              );
+            })}
+          </div>
+          <div className="p-5 sm:p-7">
+            <div className="flex flex-wrap items-start justify-between gap-4">
+              <CardTitleWithHint title={currentSceneTitle} description={currentSceneContext} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "장면 설명 보기" : "查看场景说明"} />
+              <div className="flex shrink-0 items-center gap-2">
+                <button type="button" onClick={() => playGuidedDialogueLine(guidedDialogueIndex === null || guidedDialogueIndex >= sceneDialogueLines.length - 1 ? 0 : guidedDialogueIndex + 1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Mic size={16} aria-hidden="true" />{guidedDialogueIndex === null ? locale === "ko-KR" ? "한 문장씩" : "逐句跟读" : guidedDialogueIndex >= sceneDialogueLines.length - 1 ? locale === "ko-KR" ? "다시" : "重新跟读" : locale === "ko-KR" ? "다음 문장" : "下一句"}</button>
+                <button type="button" onClick={playSceneDialogue} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-xs font-bold text-[var(--primary)] hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Volume2 size={17} aria-hidden="true" />{locale === "ko-KR" ? "전체 듣기" : "整段播放"}</button>
+                <span className="rounded-full bg-[var(--surface-soft)] px-3 py-1.5 text-xs font-bold tabular-nums text-[var(--foreground-secondary)]">{Math.max(guidedDialogueIndex ?? 0, 0) + 1} / {activeDialogueGroupLines.length}</span>
+              </div>
+            </div>
+            {currentSceneCoverage.length > 0 && <div className="mt-4 flex flex-wrap items-center gap-2"><span className="text-xs font-bold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "이 장면의 핵심 어휘" : "本场核心词"}</span>{currentSceneCoverage.map((word) => <span key={word} lang="ko" className="rounded-lg bg-[var(--surface-soft)] px-2.5 py-1 text-xs font-bold text-[var(--foreground-secondary)]">{word}</span>)}</div>}
+            <div className="mt-6 space-y-4" aria-live="polite">
+              {activeDialogueGroupLines.map((line, index) => {
+                const isLeft = index % 2 === 0;
+                const activeLine = guidedDialogueIndex === index || (sceneDialoguePlaying && sceneDialogueStep - 1 === index);
+                return (
+                  <div key={`${String(line.speaker)}-${index}`} className={`flex ${isLeft ? "justify-start" : "justify-end"}`}>
+                    <div className={`max-w-[82%] ${isLeft ? "text-left" : "text-right"}`}>
+                      <span className="mb-1.5 block text-xs font-bold text-[var(--foreground-muted)]">{String(line.speaker)}</span>
+                      <div className={`rounded-2xl px-4 py-3 shadow-sm ring-1 transition-colors ${activeLine ? "bg-[var(--accent)] ring-[var(--primary)]" : isLeft ? "bg-[var(--surface-soft)] ring-[var(--border-subtle)]" : "bg-[var(--primary)] text-[var(--primary-foreground)] ring-[var(--primary)]"}`}>
+                        <CardTitleWithHint
+                          title={<button type="button" lang="ko" onClick={() => { setGuidedDialogueIndex(index); speakKorean(String(line.ko)); }} className="rounded text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current">{String(line.ko)}</button>}
+                          description={showChinese ? String(line.zh) : undefined}
+                          headingLevel={4}
+                          tone={!isLeft && !activeLine ? "inverse" : "default"}
+                          titleClassName="text-base font-bold leading-7"
+                          hintLabel={locale === "ko-KR" ? "문장 뜻 보기" : "查看句意"}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
   return (
     <div className="mt-8 space-y-10">
       {imageAssets.length > 0 && (!isPatternContent || patternPage === 0) && (
@@ -1364,32 +1628,75 @@ function ContentRenderer({
       )}
 
       {isPatternContent && patternPage === 0 && (
-        <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
-          <div className="grid gap-4 p-5 sm:p-6 lg:grid-cols-2">
+        <section>
+          <div className="px-1 py-3 sm:px-3 sm:py-5">
+            <div className="relative mx-auto max-w-5xl">
+              <div className="absolute bottom-6 left-[23px] top-6 w-0.5 bg-[var(--primary)]/35" aria-hidden="true" />
             {patternCards.map((card, index) => {
               const examples = stringArray(card.examples);
+              const isActive = index === Math.min(activePatternCardIndex, Math.max(patternCards.length - 1, 0));
+              const hasVisited = visitedPatternCardIndices.has(index);
+              const selectPatternCard = () => {
+                setActivePatternCardIndex(index);
+                setVisitedPatternCardIndices((current) => {
+                  const next = new Set(current);
+                  for (let visitedIndex = 0; visitedIndex <= index; visitedIndex += 1) {
+                    next.add(visitedIndex);
+                  }
+                  return next;
+                });
+              };
               return (
-                <article key={`${String(card.form)}-${index}`} className="rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5">
-                  <div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</p>
+                <article key={`${String(card.form)}-${index}`} className="relative grid grid-cols-[48px_minmax(0,1fr)] gap-5 pb-8 last:pb-0 sm:gap-6 sm:pb-10">
+                  <div className="relative z-10 flex h-12 w-12 items-center justify-center">
+                    <span className={`flex h-12 w-12 items-center justify-center rounded-full border-2 bg-[var(--card)] text-xs font-bold tabular-nums transition-colors motion-reduce:transition-none ${isActive ? "border-[var(--primary)] text-[var(--primary)] ring-4 ring-[var(--accent)]" : "border-[var(--border-strong)] text-[var(--foreground-muted)]"}`}>
+                      {String(index + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="min-w-0">
+                    <div className="flex min-h-12 w-full items-start gap-3 py-1">
+                      <span className="flex min-w-0 flex-1 items-start gap-2">
                       <CardTitleWithHint
-                        title={<span lang="ko">{String(card.form)}</span>}
+                        title={(
+                          <button
+                            type="button"
+                            lang="ko"
+                            aria-expanded={isActive}
+                            onClick={selectPatternCard}
+                            className="rounded-md text-left hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                          >
+                            {String(card.form)}
+                          </button>
+                        )}
                         description={String(objectValue(card.function)[locale] ?? "")}
                         headingLevel={4}
-                        className="mt-2 items-start"
-                        titleClassName="text-xl font-bold leading-8 text-[var(--foreground)]"
-                        hintClassName="mt-0.5"
+                        className="items-start"
+                        titleClassName="text-lg font-bold leading-7 text-[var(--foreground)] sm:text-xl sm:leading-8"
+                        hintClassName="mt-0.5 shrink-0"
                         hintLabel={locale === "ko-KR" ? "문형 기능 보기" : "查看句型用途"}
                       />
+                      {hasVisited && <CheckCircle2 size={16} className="mt-1.5 shrink-0 text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "확인함" : "已查看"} />}
+                      </span>
+                      <button
+                        type="button"
+                        aria-expanded={isActive}
+                        aria-label={locale === "ko-KR" ? `${index + 1}번 문형 ${isActive ? "현재 열림" : "펼치기"}` : `${isActive ? "当前已展开" : "展开"}第 ${index + 1} 个句型`}
+                        onClick={selectPatternCard}
+                        className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                      >
+                        <ChevronRight size={17} aria-hidden="true" className={`transition-transform motion-reduce:transition-none ${isActive ? "rotate-90 text-[var(--primary)]" : ""}`} />
+                      </button>
                     </div>
-                  </div>
-                  <div className="mt-4 space-y-2">
-                    {examples.slice(0, 2).map((example) => <button key={example} type="button" onClick={() => speakKorean(example)} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-xl bg-[var(--card)] px-4 py-2 text-left text-sm font-bold text-[var(--foreground)] ring-1 ring-[var(--border-subtle)] hover:text-[var(--primary)]"><span lang="ko">{example}</span><Volume2 size={13} className="shrink-0 text-[var(--primary)]" aria-hidden="true" /></button>)}
+                    {isActive && (
+                      <div className="mt-3 divide-y divide-[var(--border-subtle)] rounded-2xl bg-[var(--surface-soft)] px-5 py-2 shadow-sm ring-1 ring-[var(--border-subtle)]">
+                        {examples.slice(0, 2).map((example) => <button key={example} type="button" onClick={() => speakKorean(example)} className="flex min-h-14 w-full items-center justify-between gap-3 py-3 text-left text-sm font-bold text-[var(--foreground)] transition-colors hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"><span lang="ko">{example}</span><Volume2 size={15} className="shrink-0 text-[var(--primary)]" aria-hidden="true" /></button>)}
+                      </div>
+                    )}
                   </div>
                 </article>
               );
             })}
+            </div>
           </div>
         </section>
       )}
@@ -1444,7 +1751,7 @@ function ContentRenderer({
                 </div>
                 <div className="mx-auto mt-6 max-w-4xl space-y-5" aria-live="polite">
                   <div className="flex items-end gap-3">
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-sm font-black text-[var(--primary)] shadow-sm">{renderParticipant(left, locale === "ko-KR" ? "상대" : "对方").slice(0, 1)}</div>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-sm font-bold text-[var(--primary)] shadow-sm">{renderParticipant(left, locale === "ko-KR" ? "상대" : "对方").slice(0, 1)}</div>
                     <div className="max-w-[72%]">
                       <div className="mb-1 flex items-center gap-2 text-xs font-bold text-[var(--foreground-secondary)]"><span>{renderParticipant(left, locale === "ko-KR" ? "상대" : "对方")}</span>{renderParticipantMeta(left) && <span className="font-medium text-[var(--foreground-muted)]">{renderParticipantMeta(left)}</span>}</div>
                       <div className={`rounded-[20px_20px_20px_6px] border px-5 py-3.5 text-base font-bold leading-7 shadow-sm ${answerSide === "left" ? answerBubbleClass : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{answerSide === "left" ? selectedAnswer || (locale === "ko-KR" ? "아래에서 질문을 고르세요" : "从下方选择一句话") : renderParticipantLine(left)}{answerSide === "left" && groupCheck && (checked ? <CheckCircle2 size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</div>
@@ -1455,7 +1762,7 @@ function ContentRenderer({
                       <div className="mb-1 flex items-center justify-end gap-2 text-xs font-bold text-[var(--foreground-secondary)]">{renderParticipantMeta(right) && <span className="font-medium text-[var(--foreground-muted)]">{renderParticipantMeta(right)}</span>}<span>{renderParticipant(right, locale === "ko-KR" ? "나" : "我")}</span></div>
                       <div className={`rounded-[20px_20px_6px_20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${answerSide === "right" ? answerBubbleClass : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{answerSide === "right" ? selectedAnswer || (locale === "ko-KR" ? "아래에서 대답을 고르세요" : "从下方选择一句话") : renderParticipantLine(right)}{answerSide === "right" && groupCheck && (checked ? <CheckCircle2 size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</div>
                     </div>
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-sm font-black text-[var(--primary-foreground)] shadow-sm">{renderParticipant(right, locale === "ko-KR" ? "나" : "我").slice(0, 1)}</div>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-sm font-bold text-[var(--primary-foreground)] shadow-sm">{renderParticipant(right, locale === "ko-KR" ? "나" : "我").slice(0, 1)}</div>
                   </div>
                 </div>
               </div>
@@ -1632,8 +1939,9 @@ function RecordingControl({
       setRecording(false);
       return;
     }
-    if (!navigator.mediaDevices?.getUserMedia) {
-      setRecordingError(t.recordingDenied);
+    const prerequisiteError = microphonePrerequisiteError(locale);
+    if (prerequisiteError) {
+      setRecordingError(prerequisiteError);
       return;
     }
     try {
@@ -1701,6 +2009,443 @@ function RecordingControl({
       {audioUrl && !uploading && !recordingError && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
       {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
     </div>
+  );
+}
+
+type BrowserSpeechRecognition = {
+  lang: string;
+  interimResults: boolean;
+  continuous: boolean;
+  start: () => void;
+  stop: () => void;
+  onresult: ((event: { results: ArrayLike<{ 0: { transcript: string } }> }) => void) | null;
+  onerror: ((event: { error?: string }) => void) | null;
+  onend: (() => void) | null;
+};
+
+function normalizeSpeechText(value: string) {
+  return value.normalize("NFC").replace(/[^\p{Script=Hangul}\p{L}\p{N}]/gu, "");
+}
+
+function speechContentMatch(expected: string, actual: string) {
+  const target = normalizeSpeechText(expected);
+  const response = normalizeSpeechText(actual);
+  if (!target || !response) return null;
+  const previous = Array.from({ length: response.length + 1 }, (_, index) => index);
+  for (let row = 1; row <= target.length; row += 1) {
+    let diagonal = previous[0];
+    previous[0] = row;
+    for (let column = 1; column <= response.length; column += 1) {
+      const above = previous[column];
+      previous[column] = target[row - 1] === response[column - 1]
+        ? diagonal
+        : Math.min(diagonal, above, previous[column - 1]) + 1;
+      diagonal = above;
+    }
+  }
+  return Math.max(0, Math.round((1 - previous[response.length] / Math.max(target.length, response.length)) * 100));
+}
+
+function formatRecordingTime(value: number) {
+  if (!Number.isFinite(value) || value < 0) return "0:00";
+  const seconds = Math.floor(value);
+  return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+}
+
+function RoleplayRecordingPlayer({ activityId, recording, locale, onDeleted, onError }: {
+  activityId: string;
+  recording: { audioUrl: string; evidenceId: string; transcript: string };
+  locale: SmartLocale;
+  onDeleted: () => void;
+  onError: (message: string) => void;
+}) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [deleting, setDeleting] = useState(false);
+
+  useEffect(() => {
+    setPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+  }, [recording.audioUrl]);
+
+  async function togglePlayback() {
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      await audio.play();
+      setPlaying(true);
+    } else {
+      audio.pause();
+      setPlaying(false);
+    }
+  }
+
+  async function deleteRecording() {
+    if (!window.confirm(locale === "ko-KR" ? "이 녹음을 삭제할까요?" : "确定删除本轮录音吗？")) return;
+    setDeleting(true);
+    const response = await fetch(`/api/digital-textbook/recordings/${activityId}?evidenceId=${encodeURIComponent(recording.evidenceId)}`, { method: "DELETE" });
+    setDeleting(false);
+    if (!response.ok) {
+      onError(locale === "ko-KR" ? "녹음을 삭제하지 못했습니다. 다시 시도하세요." : "录音删除失败，请重试。");
+      return;
+    }
+    onDeleted();
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-3">
+      <audio ref={audioRef} src={recording.audioUrl} preload="metadata" onLoadedMetadata={(event) => setDuration(event.currentTarget.duration)} onDurationChange={(event) => setDuration(event.currentTarget.duration)} onTimeUpdate={(event) => setCurrentTime(event.currentTarget.currentTime)} onEnded={() => setPlaying(false)} />
+      <div className="flex items-center gap-3">
+        <button type="button" onClick={togglePlayback} className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-[var(--foreground)] ring-1 ring-[var(--border-subtle)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" aria-label={playing ? locale === "ko-KR" ? "일시 정지" : "暂停录音" : locale === "ko-KR" ? "녹음 재생" : "播放录音"}>{playing ? <Pause size={17} aria-hidden="true" /> : <Play size={17} aria-hidden="true" />}</button>
+        <span className="shrink-0 text-xs font-bold tabular-nums text-[var(--foreground-secondary)]">{formatRecordingTime(currentTime)} / {formatRecordingTime(duration)}</span>
+        <input type="range" min={0} max={Math.max(duration, 0)} step={0.1} value={Math.min(currentTime, duration || 0)} onChange={(event) => { const audio = audioRef.current; if (!audio) return; audio.currentTime = Number(event.target.value); setCurrentTime(audio.currentTime); }} className="min-w-0 flex-1 accent-[var(--primary)]" aria-label={locale === "ko-KR" ? "녹음 재생 위치" : "录音播放进度"} />
+        <a href={recording.audioUrl} download={`dialogue-recording-${recording.evidenceId}.webm`} className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Download size={16} aria-hidden="true" />{locale === "ko-KR" ? "다운로드" : "下载"}</a>
+        <button type="button" disabled={deleting} onClick={deleteRecording} className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-3 text-xs font-bold text-[var(--status-danger)] hover:bg-[var(--status-danger-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-45"><Trash2 size={16} aria-hidden="true" />{deleting ? locale === "ko-KR" ? "삭제 중…" : "删除中…" : locale === "ko-KR" ? "삭제" : "删除"}</button>
+      </div>
+    </div>
+  );
+}
+
+function DialogueRoleplayPractice({ activity, scenes, locale, onActivityCompleted }: {
+  activity: SmartTextbookActivity;
+  scenes: Array<Record<string, unknown>>;
+  locale: SmartLocale;
+  onActivityCompleted?: (result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean }) => void;
+}) {
+  const [sceneIndex, setSceneIndex] = useState(0);
+  const [roleSide, setRoleSide] = useState<0 | 1>(0);
+  const [learnerTurn, setLearnerTurn] = useState(0);
+  const [dialogueStarted, setDialogueStarted] = useState(false);
+  const [recording, setRecording] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState("");
+  const [transcript, setTranscript] = useState("");
+  const [recordings, setRecordings] = useState<Record<number, { audioUrl: string; evidenceId: string; transcript: string }>>({});
+  const [completionSaved, setCompletionSaved] = useState(activity.completed);
+  const [completionPending, startCompletionTransition] = useTransition();
+  const [opponentTextReady, setOpponentTextReady] = useState(false);
+  const [opponentAudioReady, setOpponentAudioReady] = useState(false);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const recognitionRef = useRef<BrowserSpeechRecognition | null>(null);
+  const transcriptRef = useRef("");
+  const cancelRecordingRef = useRef(false);
+  const recordingPlaybackRef = useRef<HTMLAudioElement | null>(null);
+  const recordingsRef = useRef(recordings);
+  const completionSyncKeysRef = useRef(new Set<string>());
+  const scene = scenes[Math.min(sceneIndex, scenes.length - 1)] ?? {};
+  const lines = Array.isArray(scene.lines) ? scene.lines.map(objectValue) : [];
+  const learnerLineIndices = lines.map((_, index) => index).filter((index) => index % 2 === roleSide);
+  const currentLineIndex = learnerLineIndices[Math.min(learnerTurn, Math.max(learnerLineIndices.length - 1, 0))] ?? 0;
+  const precedingOpponentIndex = currentLineIndex > 0 && (currentLineIndex - 1) % 2 !== roleSide
+    ? currentLineIndex - 1
+    : null;
+  const dialogueTurnReady = dialogueStarted && (precedingOpponentIndex === null || (opponentTextReady && opponentAudioReady));
+  const complete = learnerLineIndices.length > 0 && learnerLineIndices.every((index) => recordings[index]);
+  const scoredTurns = learnerLineIndices.map((index) => speechContentMatch(String(lines[index]?.ko ?? ""), recordings[index]?.transcript ?? "")).filter((score): score is number => score !== null);
+  const contentScore = scoredTurns.length === learnerLineIndices.length && scoredTurns.length > 0
+    ? Math.round(scoredTurns.reduce((total, score) => total + score, 0) / scoredTurns.length)
+    : null;
+
+  useEffect(() => { recordingsRef.current = recordings; }, [recordings]);
+
+  useEffect(() => () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    recordingPlaybackRef.current?.pause();
+    Object.values(recordingsRef.current).forEach((item) => URL.revokeObjectURL(item.audioUrl));
+  }, []);
+
+  useEffect(() => {
+    recordingPlaybackRef.current?.pause();
+    recordingPlaybackRef.current = null;
+    if (!dialogueStarted) {
+      setOpponentTextReady(false);
+      setOpponentAudioReady(false);
+      window.speechSynthesis?.cancel();
+      return;
+    }
+    setOpponentTextReady(precedingOpponentIndex === null);
+    setOpponentAudioReady(precedingOpponentIndex === null);
+
+    if (precedingOpponentIndex === null) return;
+    const text = String(lines[precedingOpponentIndex]?.ko ?? "").trim();
+    if (!text || !("speechSynthesis" in window)) {
+      setOpponentAudioReady(true);
+      return;
+    }
+
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "ko-KR";
+    utterance.rate = 0.82;
+    const voices = window.speechSynthesis.getVoices();
+    utterance.voice = voices.find((voice) => voice.lang.toLowerCase().startsWith("ko")) ?? null;
+    utterance.onend = () => setOpponentAudioReady(true);
+    utterance.onerror = () => setOpponentAudioReady(true);
+    window.speechSynthesis.speak(utterance);
+
+    return () => {
+      utterance.onend = null;
+      utterance.onerror = null;
+      window.speechSynthesis.cancel();
+    };
+  }, [currentLineIndex, dialogueStarted, precedingOpponentIndex, roleSide, sceneIndex]);
+
+  useEffect(() => {
+    if (completionSaved || !scene.id) return;
+    const syncKey = `${activity.id}:${String(scene.id)}:${roleSide}`;
+    if (completionSyncKeysRef.current.has(syncKey)) return;
+    completionSyncKeysRef.current.add(syncKey);
+    let cancelled = false;
+    startCompletionTransition(async () => {
+      const completion = await completeDialogueRoleplayAction({
+        activityId: activity.id,
+        sceneId: String(scene.id),
+        roleSide: roleSide === 0 ? "left" : "right",
+      });
+      if (cancelled || !completion.ok || completion.preview) return;
+      setCompletionSaved(true);
+      onActivityCompleted?.({
+        nodeId: completion.nodeId,
+        nodeCompleted: completion.nodeCompleted,
+        completionPercent: completion.completionPercent,
+        preview: completion.preview,
+      });
+    });
+    return () => { cancelled = true; };
+  }, [activity.id, completionSaved, roleSide, scene.id]);
+
+  const resetPractice = (nextScene = sceneIndex, nextRole = roleSide) => {
+    recordingPlaybackRef.current?.pause();
+    recordingPlaybackRef.current = null;
+    Object.values(recordings).forEach((item) => URL.revokeObjectURL(item.audioUrl));
+    setRecordings({});
+    setTranscript("");
+    setLearnerTurn(0);
+    setDialogueStarted(false);
+    setError("");
+    setSceneIndex(nextScene);
+    setRoleSide(nextRole);
+  };
+
+  const playDialogueLine = (lineIndex: number) => {
+    window.speechSynthesis?.cancel();
+    recordingPlaybackRef.current?.pause();
+    recordingPlaybackRef.current = null;
+    const learnerRecording = lineIndex % 2 === roleSide ? recordings[lineIndex] : undefined;
+    if (!learnerRecording) {
+      speakKorean(String(lines[lineIndex]?.ko ?? ""));
+      return;
+    }
+    const audio = new Audio(learnerRecording.audioUrl);
+    recordingPlaybackRef.current = audio;
+    audio.onended = () => { if (recordingPlaybackRef.current === audio) recordingPlaybackRef.current = null; };
+    audio.play().catch(() => setError(locale === "ko-KR" ? "녹음을 재생하지 못했습니다. 다시 시도해 주세요." : "录音播放失败，请重新尝试。"));
+  };
+
+  const stopRecording = () => {
+    cancelRecordingRef.current = false;
+    recognitionRef.current?.stop();
+    recorderRef.current?.stop();
+    setRecording(false);
+  };
+
+  const cancelRecording = () => {
+    cancelRecordingRef.current = true;
+    recognitionRef.current?.stop();
+    recorderRef.current?.stop();
+    setRecording(false);
+    setTranscript("");
+    setError("");
+  };
+
+  const startRecording = async () => {
+    if (!dialogueStarted) return;
+    window.speechSynthesis?.cancel();
+    recordingPlaybackRef.current?.pause();
+    recordingPlaybackRef.current = null;
+    const prerequisiteError = microphonePrerequisiteError(locale);
+    if (prerequisiteError) {
+      setError(prerequisiteError);
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      streamRef.current = stream;
+      recorderRef.current = recorder;
+      chunksRef.current = [];
+      transcriptRef.current = "";
+      cancelRecordingRef.current = false;
+      setTranscript("");
+      setError("");
+      let recognitionStarted = false;
+      let settleRecognition: () => void = () => undefined;
+      const recognitionSettled = new Promise<void>((resolve) => {
+        settleRecognition = resolve;
+      });
+      recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
+      recorder.onstop = async () => {
+        if (cancelRecordingRef.current) {
+          stream.getTracks().forEach((track) => track.stop());
+          chunksRef.current = [];
+          cancelRecordingRef.current = false;
+          return;
+        }
+        if (recognitionStarted) {
+          await Promise.race([
+            recognitionSettled,
+            new Promise<void>((resolve) => window.setTimeout(resolve, 2_500)),
+          ]);
+        }
+        const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
+        stream.getTracks().forEach((track) => track.stop());
+        setUploading(true);
+        try {
+          const formData = new FormData();
+          formData.set("recording", blob, "recording");
+          formData.set("sceneId", String(scene.id ?? sceneIndex));
+          formData.set("roleSide", roleSide === 0 ? "left" : "right");
+          formData.set("turnIndex", String(currentLineIndex));
+          formData.set("transcript", transcriptRef.current);
+          const response = await fetch(`/api/digital-textbook/recordings/${activity.id}`, { method: "POST", body: formData });
+          const result = (await response.json()) as { evidenceId?: string; message?: string };
+          if (!response.ok || !result.evidenceId) throw new Error(result.message ?? "upload failed");
+          const nextRecording = { audioUrl: URL.createObjectURL(blob), evidenceId: result.evidenceId, transcript: transcriptRef.current };
+          const previous = recordings[currentLineIndex];
+          if (previous) URL.revokeObjectURL(previous.audioUrl);
+          const nextRecordings = { ...recordings, [currentLineIndex]: nextRecording };
+          setRecordings(nextRecordings);
+          if (!completionSaved && learnerLineIndices.every((index) => nextRecordings[index])) {
+            startCompletionTransition(async () => {
+              const completion = await completeDialogueRoleplayAction({
+                activityId: activity.id,
+                sceneId: String(scene.id ?? sceneIndex),
+                roleSide: roleSide === 0 ? "left" : "right",
+              });
+              if (!completion.ok) {
+                setError(completion.message);
+                return;
+              }
+              setCompletionSaved(true);
+              onActivityCompleted?.({
+                nodeId: completion.nodeId,
+                nodeCompleted: completion.nodeCompleted,
+                completionPercent: completion.completionPercent,
+                preview: completion.preview,
+              });
+            });
+          }
+        } catch {
+          setError(locale === "ko-KR" ? "녹음을 저장하지 못했습니다. 다시 시도하세요." : "录音保存失败，请重新录制。");
+        } finally {
+          setUploading(false);
+        }
+      };
+      const speechWindow = window as unknown as {
+        SpeechRecognition?: new () => BrowserSpeechRecognition;
+        webkitSpeechRecognition?: new () => BrowserSpeechRecognition;
+      };
+      const Recognition = speechWindow.SpeechRecognition ?? speechWindow.webkitSpeechRecognition;
+      if (Recognition) {
+        const recognition = new Recognition();
+        recognition.lang = "ko-KR";
+        recognition.interimResults = false;
+        recognition.continuous = true;
+        recognition.onresult = (event) => {
+          const values = Array.from(event.results).map((result) => result[0]?.transcript ?? "").join(" ").trim();
+          if (values) {
+            transcriptRef.current = values;
+            setTranscript(values);
+          }
+        };
+        recognition.onerror = () => settleRecognition();
+        recognition.onend = () => settleRecognition();
+        recognitionRef.current = recognition;
+        try {
+          recognition.start();
+          recognitionStarted = true;
+        } catch {
+          settleRecognition();
+        }
+      } else {
+        settleRecognition();
+      }
+      recorder.start();
+      setRecording(true);
+    } catch {
+      setError(locale === "ko-KR" ? "마이크 권한을 확인하세요." : "请检查浏览器的麦克风权限。");
+    }
+  };
+
+  return (
+    <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-4 sm:p-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <CardTitleWithHint title={activity.prompt[locale]} description={activity.instruction[locale]} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "역할 연습 설명 보기" : "查看角色练习说明"} />
+        <span className="rounded-full bg-[var(--card)] px-3 py-1.5 text-xs font-bold tabular-nums text-[var(--foreground-secondary)] ring-1 ring-[var(--border-subtle)]">{Object.keys(recordings).length} / {learnerLineIndices.length}</span>
+      </div>
+      <div className="mt-5 flex flex-wrap gap-2">
+        {scenes.map((item, index) => <button key={String(item.id ?? index)} type="button" onClick={() => resetPractice(index, 0)} className={`min-h-11 rounded-xl px-4 text-sm font-bold ${index === sceneIndex ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--card)] text-[var(--foreground-secondary)] ring-1 ring-[var(--border-subtle)]"}`}>{String(objectValue(item.title)[locale] ?? `${locale === "ko-KR" ? "장면" : "场景"} ${index + 1}`)}</button>)}
+      </div>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {[0, 1].map((side) => {
+          const firstLine = lines.find((_, index) => index % 2 === side);
+          return <button key={side} type="button" onClick={() => resetPractice(sceneIndex, side as 0 | 1)} className={`min-h-11 rounded-xl px-4 text-sm font-bold ${roleSide === side ? "bg-[var(--accent)] text-[var(--primary)] ring-1 ring-[var(--primary)]" : "bg-[var(--card)] text-[var(--foreground-secondary)] ring-1 ring-[var(--border-subtle)]"}`}>{locale === "ko-KR" ? "내 역할" : "扮演"}：{String(firstLine?.speaker ?? (side === 0 ? "A" : "B"))}</button>;
+        })}
+      </div>
+      {!complete ? (
+        <div className="mt-6 grid gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(320px,.85fr)]">
+          <div className="rounded-[22px] bg-[var(--card)] p-5 ring-1 ring-[var(--border-subtle)]">
+            {!dialogueStarted ? <div className="flex min-h-[300px] flex-col items-center justify-center px-6 text-center"><span className="flex size-12 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]"><MessageCircle size={21} aria-hidden="true" /></span><p className="mt-4 text-base font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "준비되면 대화를 시작하세요" : "准备好后开始对话"}</p><p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "상대방의 대사가 글자와 음성으로 함께 시작됩니다." : "点击后，对方台词将逐字显示并同步朗读。"}</p><button type="button" onClick={() => setDialogueStarted(true)} className="mt-6 inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-6 text-sm font-bold text-[var(--primary-foreground)] transition hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Play size={16} fill="currentColor" aria-hidden="true" />{locale === "ko-KR" ? "대화 시작" : "开始对话"}</button></div> : <div className="space-y-3">
+              {lines.slice(0, currentLineIndex + 1).map((line, index) => {
+                if (index === currentLineIndex && !dialogueTurnReady) return null;
+                const text = index === currentLineIndex && !recordings[index]
+                  ? locale === "ko-KR" ? "내 차례예요" : "轮到你说"
+                  : String(line.ko);
+                const shouldType = index === precedingOpponentIndex || index === currentLineIndex;
+                const hasPlayableLine = index !== currentLineIndex || Boolean(recordings[index]);
+                return <div key={`${sceneIndex}-${roleSide}-${currentLineIndex}-${index}`} className={`flex ${index % 2 === 0 ? "justify-start" : "justify-end"}`}><div className={`max-w-[82%] rounded-2xl px-4 py-3 text-sm font-bold leading-6 ${index === currentLineIndex ? "bg-[var(--accent)] text-[var(--primary)] ring-1 ring-[var(--primary)]" : index % 2 === 0 ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "bg-[var(--primary)] text-[var(--primary-foreground)]"}`}><span className="mb-1 block text-[10px] opacity-70">{String(line.speaker)}</span><span lang={hasPlayableLine ? "ko" : undefined}>{shouldType ? <TypewriterText text={text} speed={48} onComplete={index === precedingOpponentIndex ? () => setOpponentTextReady(true) : undefined} /> : text}</span>{hasPlayableLine && <button type="button" onClick={() => playDialogueLine(index)} className="ml-1.5 inline-flex size-6 translate-y-0.5 items-center justify-center rounded-md opacity-65 transition hover:bg-black/5 hover:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-current" aria-label={index % 2 === roleSide && recordings[index] ? locale === "ko-KR" ? "내 녹음 다시 듣기" : "回听我的录音" : locale === "ko-KR" ? `${String(line.ko ?? "")} 다시 재생` : `重复播放：${String(line.ko ?? "")}`}><Volume2 size={12} aria-hidden="true" /></button>}</div></div>;
+              })}
+            </div>}
+          </div>
+          <div className="rounded-[22px] bg-[var(--card)] p-5 ring-1 ring-[var(--border-subtle)]">
+            <p className="text-xs font-bold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "목표 문장" : "本轮目标句"}</p>
+            <p className="mt-3 text-lg font-bold leading-8 text-[var(--foreground)]" lang="ko"><span>{String(lines[currentLineIndex]?.ko ?? "")}</span><button type="button" onClick={() => playDialogueLine(currentLineIndex)} className="ml-2 inline-flex size-7 translate-y-1 items-center justify-center rounded-md text-[var(--foreground-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]" aria-label={recordings[currentLineIndex] ? locale === "ko-KR" ? "내 녹음 다시 듣기" : "回听我的录音" : locale === "ko-KR" ? "목표 문장 다시 재생" : "重复播放本轮目标句"}><Volume2 size={13} aria-hidden="true" /></button></p>
+            <div className="mt-5">
+              {recording ? (
+                <div className="space-y-3">
+                  <div role="status" aria-live="polite" className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning-surface)] px-4 text-sm font-bold text-[var(--status-warning)]">
+                    <Mic size={17} className="animate-pulse motion-reduce:animate-none" aria-hidden="true" />
+                    {locale === "ko-KR" ? "말하는 중…" : "正在说话…"}
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button type="button" onClick={cancelRecording} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><X size={16} aria-hidden="true" />{locale === "ko-KR" ? "취소" : "取消"}</button>
+                    <button type="button" onClick={stopRecording} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning)] px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Square size={15} aria-hidden="true" />{locale === "ko-KR" ? "녹음 끝내기" : "结束录音"}</button>
+                  </div>
+                </div>
+              ) : (
+                <button type="button" disabled={uploading || !dialogueStarted} onClick={startRecording} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--status-success)] text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"><Mic size={17} aria-hidden="true" />{!dialogueStarted ? locale === "ko-KR" ? "먼저 대화를 시작하세요" : "请先开始对话" : recordings[currentLineIndex] ? locale === "ko-KR" ? "다시 녹음" : "重新录制" : locale === "ko-KR" ? "말하기 시작" : "开始说话"}</button>
+              )}
+            </div>
+            {uploading && <p role="status" className="mt-3 text-xs font-semibold text-[var(--support)]">{locale === "ko-KR" ? "녹음을 저장하고 있어요…" : "正在保存录音…"}</p>}
+            {recordings[currentLineIndex] && !uploading && <><RoleplayRecordingPlayer activityId={activity.id} recording={recordings[currentLineIndex]} locale={locale} onError={setError} onDeleted={() => { const removed = recordings[currentLineIndex]; URL.revokeObjectURL(removed.audioUrl); setRecordings((current) => { const next = { ...current }; delete next[currentLineIndex]; return next; }); }} />{recordings[currentLineIndex].transcript && <p className="mt-3 rounded-xl bg-[var(--surface-soft)] p-3 text-sm font-semibold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "인식 결과" : "识别结果"}：<span lang="ko">{recordings[currentLineIndex].transcript}</span></p>}<button type="button" onClick={() => setLearnerTurn((current) => Math.min(learnerLineIndices.length - 1, current + 1))} className="mt-4 inline-flex min-h-11 w-full items-center justify-center rounded-xl bg-[var(--primary)] px-4 text-sm font-bold text-[var(--primary-foreground)]">{learnerTurn === learnerLineIndices.length - 1 ? locale === "ko-KR" ? "결과 보기" : "查看结果" : locale === "ko-KR" ? "다음 차례" : "下一话轮"}</button></>}
+            {error && <p role="alert" className="mt-3 text-xs font-semibold text-[var(--destructive)]">{error}</p>}
+          </div>
+        </div>
+      ) : (
+        <div className="mt-6 rounded-[22px] bg-[var(--card)] p-6 text-center ring-1 ring-[var(--border-subtle)] sm:p-8">
+          <CheckCircle2 size={34} className="mx-auto text-[var(--status-success)]" />
+          <p className="mt-3 text-xl font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "역할 대화를 완성했어요" : "角色对话已完成"}</p>
+          <p role="status" className="mt-2 text-sm font-semibold text-[var(--foreground-secondary)]">{completionPending ? locale === "ko-KR" ? "완료 상태를 저장하고 있어요…" : "正在保存完成状态…" : completionSaved ? locale === "ko-KR" ? "필수 녹음이 모두 저장되었습니다." : "必需录音已全部保存。" : locale === "ko-KR" ? "완료 상태를 다시 저장해 주세요." : "完成状态尚未保存，请重试。"}</p>
+          {contentScore === null ? <p className="mt-3 text-sm text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "현재 브라우저에서 한국어 인식 결과를 받지 못해 내용 점수를 만들지 않았습니다. 녹음은 정상적으로 저장되었습니다." : "当前浏览器未返回韩语识别结果，因此不生成内容分；录音已经正常保存。"}</p> : <><p className="mt-5 text-4xl font-bold tabular-nums text-[var(--primary)]">{contentScore}</p><p className="mt-2 text-sm font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "대화 내용 일치도 · 발음 점수 아님" : "对话内容匹配度 · 不代表发音分数"}</p></>}
+          <button type="button" onClick={() => resetPractice()} className="mt-6 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold text-[var(--foreground)]"><RotateCcw size={16} />{locale === "ko-KR" ? "다시 연습" : "重新练习"}</button>
+        </div>
+      )}
+    </section>
   );
 }
 
@@ -2553,8 +3298,9 @@ function Activity({
 
 export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel }: SmartTextbookShellProps) {
   const textbookRef = useRef<HTMLDivElement>(null);
+  const textbookViewStateKey = `smart-textbook-view:${textbook.id}`;
   const [activeIndex, setActiveIndex] = useState(0);
-  const [missionPage, setMissionPage] = useState<0 | 1>(0);
+  const [missionPage, setMissionPage] = useState<0 | 1 | 2 | 3>(0);
   const [patternPage, setPatternPage] = useState<0 | 1 | 2>(0);
   const [activeGrammarPracticeIndex, setActiveGrammarPracticeIndex] = useState(0);
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
@@ -2574,11 +3320,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           .map((item) => item.nodeId),
       ),
   );
+  const [nodeProgressById, setNodeProgressById] = useState<Record<string, number>>(
+    () => Object.fromEntries(textbook.progress.map((item) => [item.nodeId, item.completionPercent])),
+  );
   const [tutorText, setTutorText] = useState("");
   const [tutorInput, setTutorInput] = useState("");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [preferenceError, setPreferenceError] = useState("");
   const [preferenceNeedsReload, setPreferenceNeedsReload] = useState(false);
+  const [viewStateReady, setViewStateReady] = useState(false);
   const [isPending, startTransition] = useTransition();
   const activeModule = textbook.modules[activeIndex];
   const activeNodes = activeModule?.nodes ?? [];
@@ -2597,6 +3347,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     completionPercent: number;
     preview: boolean;
   }) {
+    if (!result.preview && result.nodeId) {
+      setNodeProgressById((current) => ({
+        ...current,
+        [result.nodeId as string]: Math.max(0, Math.min(100, result.completionPercent)),
+      }));
+    }
     if (isServerConfirmedNodeCompletion(result)) {
       const completedNodeId = result.nodeId;
       setCompletedNodeIds((current) => new Set(current).add(completedNodeId));
@@ -2615,6 +3371,25 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     ? `/dashboard/assignments/korean/${encodeURIComponent(textbook.chapter.chapterTestSlug)}`
     : null;
   const isLastModule = activeIndex === textbook.modules.length - 1;
+
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(window.sessionStorage.getItem(textbookViewStateKey) ?? "null") as { activeIndex?: number; missionPage?: number; patternPage?: number } | null;
+      if (saved && Number.isInteger(saved.activeIndex) && Number(saved.activeIndex) >= 0 && Number(saved.activeIndex) < textbook.modules.length) {
+        setActiveIndex(Number(saved.activeIndex));
+        if ([0, 1, 2, 3].includes(Number(saved.missionPage))) setMissionPage(Number(saved.missionPage) as 0 | 1 | 2 | 3);
+        if ([0, 1, 2].includes(Number(saved.patternPage))) setPatternPage(Number(saved.patternPage) as 0 | 1 | 2);
+      }
+    } catch {
+      window.sessionStorage.removeItem(textbookViewStateKey);
+    }
+    setViewStateReady(true);
+  }, [textbook.modules.length, textbookViewStateKey]);
+
+  useEffect(() => {
+    if (!viewStateReady) return;
+    window.sessionStorage.setItem(textbookViewStateKey, JSON.stringify({ activeIndex, missionPage, patternPage }));
+  }, [activeIndex, missionPage, patternPage, textbookViewStateKey, viewStateReady]);
 
   function localize(value: { "zh-CN": string; "ko-KR": string }) {
     return value[locale];
@@ -3093,6 +3868,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               const usesDesktopImagePager = hasIntegratedImageHeader && node.activities.length > 0;
               const usesGrammarPager = Array.isArray(node.content.grammarCards) && node.content.grammarCards.length > 0;
               const usesPatternPager = Boolean(String(node.content.pattern ?? "")) && Array.isArray(node.content.substitutionGroups);
+              const usesDialoguePager = Array.isArray(node.content.dialogueScenes) && node.content.dialogueScenes.length > 0;
+              const usesListenSpeakPager = Array.isArray(node.content.listenSpeakPages) && node.content.listenSpeakPages.length === 4;
+              const dialogueRoleplayActivity = node.activities.find((activity) => activity.key === "dialogue-roleplay");
+              const targetPageCurrent = usesPatternPager ? patternPage + 1 : missionPage + 1;
+              const targetPageTotal = usesPatternPager ? 3 : usesListenSpeakPager ? 4 : usesDialoguePager && dialogueRoleplayActivity ? 4 : usesDialoguePager ? 3 : 2;
+              const targetCompletionPercent = completedNodeIds.has(node.id) ? 100 : Math.max(0, Math.min(100, nodeProgressById[node.id] ?? 0));
               return (
               <article key={node.id} className="mt-8 rounded-[24px] border border-[var(--border-subtle)] p-5 first:mt-0 sm:mt-10 sm:p-7 sm:first:mt-0">
                 {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -3139,6 +3920,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                           ? locale === "ko-KR" ? "문법 이해" : "语法理解"
                           : usesPatternPager
                             ? locale === "ko-KR" ? "문형 모음" : "句型库"
+                          : usesDialoguePager
+                            ? locale === "ko-KR" ? "대화 안내" : "对话说明"
+                          : usesListenSpeakPager
+                            ? locale === "ko-KR" ? "듣기 준비" : "听前准备"
                           : locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
                       </button>
                       <button
@@ -3147,13 +3932,45 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         onClick={() => usesPatternPager ? setPatternPage(1) : setMissionPage(1)}
                         className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${(usesPatternPager ? patternPage === 1 : missionPage === 1) ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
                       >
-                        <CheckCircle2 size={17} aria-hidden="true" />
+                        {usesDialoguePager || usesListenSpeakPager ? <Headphones size={17} aria-hidden="true" /> : <CheckCircle2 size={17} aria-hidden="true" />}
                         {usesGrammarPager
                           ? locale === "ko-KR" ? "문법 연습" : "语法练习"
                           : usesPatternPager
                             ? locale === "ko-KR" ? "대치 연습" : "替换操练"
+                          : usesDialoguePager
+                            ? locale === "ko-KR" ? "장면 대화" : "场景切换"
+                          : usesListenSpeakPager
+                            ? locale === "ko-KR" ? "정보 듣기" : "听辨信息"
                           : locale === "ko-KR" ? "장면 진단" : "情景诊断"}
                       </button>
+                      {usesListenSpeakPager && (
+                        <>
+                          <button type="button" aria-current={missionPage === 2 ? "page" : undefined} onClick={() => setMissionPage(2)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Volume2 size={17} aria-hidden="true" />{locale === "ko-KR" ? "따라 말하기" : "跟读复现"}</button>
+                          <button type="button" aria-current={missionPage === 3 ? "page" : undefined} onClick={() => setMissionPage(3)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 3 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Mic size={17} aria-hidden="true" />{locale === "ko-KR" ? "독립 말하기" : "独立表达"}</button>
+                        </>
+                      )}
+                      {usesDialoguePager && (
+                        <button
+                          type="button"
+                          aria-current={missionPage === 2 ? "page" : undefined}
+                          onClick={() => setMissionPage(2)}
+                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                        >
+                          <CheckCircle2 size={17} aria-hidden="true" />
+                          {locale === "ko-KR" ? "이해와 응답" : "理解与回应"}
+                        </button>
+                      )}
+                      {usesDialoguePager && dialogueRoleplayActivity && (
+                        <button
+                          type="button"
+                          aria-current={missionPage === 3 ? "page" : undefined}
+                          onClick={() => setMissionPage(3)}
+                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 3 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
+                        >
+                          <Mic size={17} aria-hidden="true" />
+                          {locale === "ko-KR" ? "역할 실전" : "角色实战"}
+                        </button>
+                      )}
                       {usesPatternPager && (
                         <button
                           type="button"
@@ -3166,16 +3983,22 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         </button>
                       )}
                     </div>
-                    <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
-                      {locale === "ko-KR" ? "이 목표" : "本目标"} {usesPatternPager ? patternPage + 1 : missionPage + 1} / {usesPatternPager ? 3 : 2}
-                    </span>
+                    <div className="flex items-center gap-2.5 pr-3">
+                      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--border-subtle)]" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={targetCompletionPercent}><div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${targetCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${targetCompletionPercent}%` }} /></div>
+                      <span className={`min-w-8 text-right text-[11px] font-bold tabular-nums ${targetCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{targetCompletionPercent}%</span>
+                      <span className="text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
+                        {locale === "ko-KR" ? "이 목표" : "本目标"} {targetPageCurrent} / {targetPageTotal}
+                      </span>
+                    </div>
                   </nav>
                 )}
-                <div className={usesDesktopImagePager && !usesPatternPager && missionPage === 1 ? "lg:hidden" : ""}>
+                {usesListenSpeakPager && <ListenSpeakLearningPanel node={node} locale={locale} supportMode={supportMode} page={missionPage} moduleHeader={nodeIndex === 0 ? { title: localize(activeModule.title), stepLabel: locale === "ko-KR" ? `제 ${String(activeIndex + 1).padStart(2, "0")} 단계` : `第 ${String(activeIndex + 1).padStart(2, "0")} 步`, minutes: activeNodes.reduce((total, currentNode) => total + currentNode.minutes, 0) } : undefined} />}
+                <div className={usesListenSpeakPager ? "hidden" : usesDesktopImagePager && ((!usesPatternPager && !usesDialoguePager && missionPage === 1) || (usesDialoguePager && missionPage >= 2)) ? "lg:hidden" : ""}>
                   <ContentRenderer
                     node={node}
                     locale={locale}
                     supportMode={supportMode}
+                    contentPage={usesDialoguePager ? missionPage : 0}
                     patternPage={usesPatternPager ? patternPage : 0}
                     trackingDisabled={trackingDisabled}
                     onActivityCompleted={recordCompletion}
@@ -3189,15 +4012,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     } : undefined}
                   />
                 </div>
-                <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
-                  {node.activities.filter((activity) => !usesPatternPager || !["pattern-choice", "pattern-order", "pattern-compose"].includes(activity.key)).map((activity, activityIndex) => (
+                <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : usesDialoguePager ? missionPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
+                  {node.activities.filter((activity) => activity.key !== "dialogue-roleplay" && (!usesPatternPager || !["pattern-choice", "pattern-order", "pattern-compose"].includes(activity.key)) && (!usesListenSpeakPager || (missionPage === 1 && activity.key === "listening-identity") || (missionPage === 3 && activity.key === "speaking-introduction"))).map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
                         activity={activity}
                         locale={locale}
                         trackingDisabled={trackingDisabled}
                         onCompleted={recordCompletion}
-                        round={usesGrammarPager || usesPatternPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
+                        round={usesGrammarPager || usesPatternPager || usesDialoguePager || usesListenSpeakPager ? undefined : { current: activityIndex + 1, total: node.activities.length }}
                         grammarPageOffset={activityIndex * 2}
                         onPreviousGrammarActivity={usesGrammarPager && activityIndex > 0 ? () => setActiveGrammarPracticeIndex(activityIndex - 1) : undefined}
                         onNextGrammarActivity={usesGrammarPager && activityIndex < node.activities.length - 1 ? () => setActiveGrammarPracticeIndex(activityIndex + 1) : undefined}
@@ -3206,6 +4029,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     </div>
                   ))}
                 </div>
+                {usesDialoguePager && dialogueRoleplayActivity && missionPage === 3 && (
+                  <DialogueRoleplayPractice
+                    activity={dialogueRoleplayActivity}
+                    scenes={(node.content.dialogueScenes as unknown[]).map(objectValue)}
+                    locale={locale}
+                    onActivityCompleted={recordCompletion}
+                  />
+                )}
               </article>
               );
             })}

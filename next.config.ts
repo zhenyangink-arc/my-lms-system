@@ -20,6 +20,7 @@ const nextConfig: NextConfig = {
     "127.0.0.2",
     "127.0.0.3",
     "100.125.173.55",
+    "kmgwak-system-product-name.taila18cd5.ts.net",
   ],
   async headers() {
     return [

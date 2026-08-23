@@ -11,6 +11,14 @@ const actionsUrl = new URL(
   "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-actions.ts",
   import.meta.url,
 );
+const recordingRouteUrl = new URL(
+  "../src/app/api/digital-textbook/recordings/[activityId]/route.ts",
+  import.meta.url,
+);
+const listenSpeakFlowMigrationUrl = new URL(
+  "../supabase/migrations/202608240001_design_chapter_one_listen_speak_flow.sql",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -87,6 +95,22 @@ const guidedConversationAudioMigrationUrl = new URL(
   "../supabase/migrations/202608230004_add_guided_conversation_audio_manifest.sql",
   import.meta.url,
 );
+const redesignedDialoguePagesMigrationUrl = new URL(
+  "../supabase/migrations/202608230009_apply_chapter_one_dialogue_pages_to_smart_textbook.sql",
+  import.meta.url,
+);
+const dialogueRoleplayMigrationUrl = new URL(
+  "../supabase/migrations/202608230010_add_chapter_one_dialogue_roleplay.sql",
+  import.meta.url,
+);
+const requiredDialogueRoleplayMigrationUrl = new URL(
+  "../supabase/migrations/202608230011_require_chapter_one_dialogue_roleplay.sql",
+  import.meta.url,
+);
+const recalculatedDialogueProgressMigrationUrl = new URL(
+  "../supabase/migrations/202608230012_recalculate_dialogue_progress_after_roleplay_requirement.sql",
+  import.meta.url,
+);
 const patternCompositionMigrationUrl = new URL(
   "../supabase/migrations/202608230005_add_chapter_one_pattern_composition.sql",
   import.meta.url,
@@ -126,10 +150,17 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.doesNotMatch(source, /当前步骤|현재 단계/);
   assert.doesNotMatch(source, /<span>\{t\.progress\}<\/span><span>\{progressPercent\}%<\/span>/);
   assert.doesNotMatch(source, /renderBottomPathNavigation/);
-  assert.match(source, /const \[missionPage, setMissionPage\] = useState<0 \| 1>\(0\)/);
+  assert.match(source, /const \[missionPage, setMissionPage\] = useState<0 \| 1 \| 2 \| 3>\(0\)/);
+  assert.match(source, /const textbookViewStateKey = `smart-textbook-view:\$\{textbook\.id\}`/);
+  assert.match(source, /window\.sessionStorage\.setItem\(textbookViewStateKey, JSON\.stringify\(\{ activeIndex, missionPage, patternPage \}\)\)/);
   assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
-  assert.match(source, /!usesPatternPager && missionPage === 1 \? "lg:hidden"/);
-  assert.match(source, /usesPatternPager \? patternPage !== 2 : missionPage === 0/);
+  assert.match(source, /usesDialoguePager && missionPage >= 2/);
+  assert.match(source, /const \[nodeProgressById, setNodeProgressById\] = useState<Record<string, number>>/);
+  assert.match(source, /const targetCompletionPercent = completedNodeIds\.has\(node\.id\) \? 100/);
+  assert.match(source, /aria-label=\{locale === "ko-KR" \? "현재 목표 실제 완료율" : "当前目标实际完成度"\}/);
+  assert.match(source, /\{targetCompletionPercent\}%<\/span>/);
+  assert.match(source, /h-1\.5 w-20/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : missionPage === 0/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "학습 목표 페이지" : "学习目标分页"\}/);
   assert.match(source, /className="mb-6 hidden items-center justify-between gap-4 rounded-2xl/);
   assert.match(source, /usesPatternPager \? patternPage === 0 : missionPage === 0/);
@@ -151,8 +182,8 @@ test("核心词汇等带图模块复用情景与表达双页导航", async () =>
 
   assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
   assert.match(source, /\{usesDesktopImagePager && \(/);
-  assert.match(source, /usesDesktopImagePager && !usesPatternPager && missionPage === 1/);
-  assert.match(source, /usesPatternPager \? patternPage !== 2 : missionPage === 0/);
+  assert.match(source, /!usesPatternPager && !usesDialoguePager && missionPage === 1/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : missionPage === 0/);
   assert.match(source, /locale === "ko-KR" \? "장면과 표현" : "情景与表达"/);
   assert.match(source, /locale === "ko-KR" \? "이 목표" : "本目标"/);
 });
@@ -234,6 +265,116 @@ test("本课可调用表达由真实对话组驱动并保留共享骨架回退",
   assert.match(migration, /"title": \{"zh-CN": "完整对话"/);
   assert.equal((migration.match(/"speaker":/g) ?? []).length, 14);
   assert.match(migration, /"ko": "네, 저도 만나서 반가워요\."/);
+});
+
+test("实战对话使用四页角色练习并覆盖第一章十二个核心词", async () => {
+  const [source, actions, migration, roleplayMigration, requiredRoleplayMigration, recalculatedProgressMigration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(actionsUrl, "utf8"),
+    readFile(redesignedDialoguePagesMigrationUrl, "utf8"),
+    readFile(dialogueRoleplayMigrationUrl, "utf8"),
+    readFile(requiredDialogueRoleplayMigrationUrl, "utf8"),
+    readFile(recalculatedDialogueProgressMigrationUrl, "utf8"),
+  ]);
+
+  assert.match(source, /const usesDialoguePager = Array\.isArray\(node\.content\.dialogueScenes\)/);
+  assert.match(source, /round=\{usesGrammarPager \|\| usesPatternPager \|\| usesDialoguePager \|\| usesListenSpeakPager \? undefined/);
+  assert.match(source, /if \(!window\.isSecureContext\)/);
+  assert.match(source, /当前页面使用 HTTP，浏览器已阻止麦克风/);
+  assert.doesNotMatch(source, /正在安全保存到 Cloudflare R2/);
+  assert.match(source, /正在保存录音…/);
+  assert.match(source, /正在说话…/);
+  assert.match(source, /<Mic size=\{17\} className="animate-pulse motion-reduce:animate-none"/);
+  assert.match(source, /结束录音/);
+  assert.match(source, /const cancelRecording = \(\) =>/);
+  assert.match(source, /cancelRecordingRef\.current = true/);
+  assert.match(source, /function RoleplayRecordingPlayer/);
+  assert.match(source, /dialogue-recording-\$\{recording\.evidenceId\}\.webm/);
+  assert.match(source, /确定删除本轮录音吗/);
+  assert.doesNotMatch(source, /<audio src=\{recordings\[currentLineIndex\]\.audioUrl\} controls/);
+  assert.match(source, /"对话说明"/);
+  assert.match(source, /"场景切换"/);
+  assert.match(source, /"理解与回应"/);
+  assert.match(source, /onClick=\{\(\) => setMissionPage\(2\)\}/);
+  assert.match(source, /"角色实战"/);
+  assert.match(source, /onClick=\{\(\) => setMissionPage\(3\)\}/);
+  assert.match(source, /DialogueRoleplayPractice/);
+  assert.match(source, /const \[roleSide, setRoleSide\] = useState<0 \| 1>\(0\)/);
+  assert.match(source, /onClick=\{\(\) => resetPractice\(index, 0\)\}/);
+  assert.match(source, /speechContentMatch/);
+  assert.match(source, /对话内容匹配度 · 不代表发音分数/);
+  assert.match(source, /completeDialogueRoleplayAction/);
+  assert.match(source, /if \(completionSaved \|\| !scene\.id\) return/);
+  assert.match(source, /completionSyncKeysRef\.current\.has\(syncKey\)/);
+  assert.match(source, /sceneId: String\(scene\.id\)/);
+  assert.match(source, /必需录音已全部保存/);
+  assert.match(source, /const \[opponentTextReady, setOpponentTextReady\] = useState\(false\)/);
+  assert.match(source, /const \[opponentAudioReady, setOpponentAudioReady\] = useState\(false\)/);
+  assert.match(source, /const \[dialogueStarted, setDialogueStarted\] = useState\(false\)/);
+  assert.match(source, /const dialogueTurnReady = dialogueStarted && \(precedingOpponentIndex === null \|\| \(opponentTextReady && opponentAudioReady\)\)/);
+  assert.match(source, /准备好后开始对话/);
+  assert.match(source, /点击后，对方台词将逐字显示并同步朗读/);
+  assert.match(source, /onClick=\{\(\) => setDialogueStarted\(true\)\}/);
+  assert.match(source, /setDialogueStarted\(false\)/);
+  assert.match(source, /if \(!dialogueStarted\) return/);
+  assert.match(source, /disabled=\{uploading \|\| !dialogueStarted\}/);
+  assert.match(source, /请先开始对话/);
+  assert.match(source, /const utterance = new SpeechSynthesisUtterance\(text\)/);
+  assert.match(source, /utterance\.lang = "ko-KR"/);
+  assert.match(source, /window\.speechSynthesis\.speak\(utterance\)/);
+  assert.match(source, /重复播放：\$\{String\(line\.ko/);
+  assert.match(source, /重复播放本轮目标句/);
+  assert.match(source, /const playDialogueLine = \(lineIndex: number\) =>/);
+  assert.match(source, /const learnerRecording = lineIndex % 2 === roleSide \? recordings\[lineIndex\] : undefined/);
+  assert.match(source, /const audio = new Audio\(learnerRecording\.audioUrl\)/);
+  assert.match(source, /回听我的录音/);
+  assert.match(source, /speechWindow\.SpeechRecognition \?\? speechWindow\.webkitSpeechRecognition/);
+  assert.match(source, /const recognitionSettled = new Promise<void>/);
+  assert.match(source, /await Promise\.race\(\[/);
+  assert.match(source, /window\.setTimeout\(resolve, 2_500\)/);
+  assert.match(source, /recognition\.onend = \(\) => settleRecognition\(\)/);
+  assert.match(source, /<TypewriterText text=\{text\} speed=\{48\}/);
+  assert.match(source, /onComplete=\{index === precedingOpponentIndex \? \(\) => setOpponentTextReady\(true\)/);
+  assert.match(source, /const dialogueFlow = Array\.isArray\(content\.dialogueFlow\)/);
+  assert.match(source, /contentPage === 0/);
+  assert.match(source, /\{renderDialogueSceneImage\(\)\}/);
+  assert.doesNotMatch(source, /renderDialogueSceneImage\(true\)/);
+  assert.match(source, /role="tablist" aria-label=\{locale === "ko-KR" \? "대화 장면 선택" : "选择对话场景"\}/);
+  assert.match(source, /currentSceneCoverage\.map/);
+  assert.match(source, /activeDialogueGroupLines\.map/);
+  assert.match(migration, /"words":\["처음","만나다","인사하다"\]/);
+  assert.match(migration, /"words":\["저","이름","소개하다","한국어"\]/);
+  assert.match(migration, /"words":\["학생","선생님","친구","사람"\]/);
+  assert.match(migration, /"words":\["반갑다"\]/);
+  assert.match(migration, /chapter-01-dialogue-main-line-01/);
+  assert.match(migration, /chapter-01-dialogue-alt-line-06/);
+  assert.match(migration, /production_status = 'pending'/);
+  assert.match(roleplayMigration, /'dialogue-roleplay'/);
+  assert.match(roleplayMigration, /"storage":"cloudflare_r2"/);
+  assert.match(roleplayMigration, /"pronunciationScore":false/);
+  assert.match(roleplayMigration, /counts_toward_completion/);
+  assert.match(actions, /requiredTurns\.every\(\(turn\) => recordedTurns\.has\(turn\)\)/);
+  assert.match(actions, /p_meets_completion_requirements: true/);
+  assert.match(actions, /p_is_correct: null/);
+  assert.match(actions, /\.eq\("meets_completion_requirements", true\)/);
+  assert.match(actions, /if \(existingAttempt\)/);
+  assert.match(requiredRoleplayMigration, /counts_toward_completion = true/);
+  assert.match(requiredRoleplayMigration, /'completionRequirement', 'all_role_turns_recorded'/);
+  assert.match(requiredRoleplayMigration, /'scoreRequired', false/);
+  assert.match(recalculatedProgressMigration, /attempt\.is_correct is true/);
+  assert.match(recalculatedProgressMigration, /then 'completed'\s+else 'in_progress'/);
+});
+
+test("角色实战重录替换同一话轮的旧 R2 录音", async () => {
+  const route = await readFile(recordingRouteUrl, "utf8");
+
+  assert.match(route, /\.contains\("metadata", \{ sceneId, roleSide, turnIndex \}\)/);
+  assert.match(route, /await deleteR2Object\(previous\.object_key\)/);
+  assert.match(route, /\.delete\(\)\s*\.in\("id", removedEvidenceIds\)/);
+  assert.match(route, /Keep the database row when object deletion fails/);
+  assert.match(route, /export async function DELETE/);
+  assert.match(route, /Completed practice recordings cannot be deleted/);
+  assert.match(route, /await deleteR2Object\(evidence\.object_key\)/);
 });
 
 test("第一章情景诊断以三道题区分明确信息和未提及信息", async () => {
@@ -347,6 +488,14 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /checkPatternChoiceGroup/);
   assert.match(source, /patternChoiceChecks/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문형 기능 보기" : "查看句型用途"\}/);
+  assert.match(source, /activePatternCardIndex/);
+  assert.match(source, /visitedPatternCardIndices/);
+  assert.match(source, /const selectPatternCard = \(\) =>/);
+  assert.match(source, /visitedIndex <= index/);
+  assert.match(source, /onClick=\{selectPatternCard\}/);
+  assert.match(source, /hasVisited && <CheckCircle2/);
+  assert.match(source, /aria-expanded=\{isActive\}/);
+  assert.match(source, /grid-cols-\[48px_minmax\(0,1fr\)\]/);
   assert.doesNotMatch(source, /<p className="mt-2 text-sm font-semibold leading-6 text-\[var\(--foreground-secondary\)\]">\{String\(objectValue\(card\.function\)\[locale\]/);
   assert.doesNotMatch(source, /aria-label=\{locale === "ko-KR" \? "예문 듣기" : "播放例句"\}/);
   assert.equal((migration.match(/\"form\":/g) ?? []).length, 4);
@@ -588,4 +737,24 @@ test("核心词汇根据图片媒体热点显示在对应场景附近", async ()
   for (const word of ["저", "이름", "학생", "선생님", "친구", "사람", "만나다", "인사하다", "소개하다", "한국어", "처음", "반갑다"]) {
     assert.match(migration, new RegExp(`'${word}'`));
   }
+});
+
+test("听说任务使用四页共享流程并预留正式音频位置", async () => {
+  const [source, migration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(listenSpeakFlowMigrationUrl, "utf8"),
+  ]);
+
+  assert.match(source, /const usesListenSpeakPager = Array\.isArray\(node\.content\.listenSpeakPages\)/);
+  assert.match(source, /听前准备/);
+  assert.match(source, /听辨信息/);
+  assert.match(source, /跟读复现/);
+  assert.match(source, /独立表达/);
+  assert.match(source, /activity\.key === "listening-identity"/);
+  assert.match(source, /activity\.key === "speaking-introduction"/);
+  assert.match(source, /当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。/);
+  assert.match(migration, /"listenSpeakPages"/);
+  assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
+  assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
+  assert.match(migration, /production_status/);
 });

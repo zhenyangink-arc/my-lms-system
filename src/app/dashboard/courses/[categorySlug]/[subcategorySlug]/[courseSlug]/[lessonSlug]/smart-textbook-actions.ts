@@ -29,6 +29,119 @@ const pageCheckSchema = z.object({
   response: z.array(z.union([z.number().int().nonnegative(), z.string()])),
 });
 
+const dialogueRoleplayCompletionSchema = z.object({
+  activityId: z.string().uuid(),
+  sceneId: z.string().min(1).max(80),
+  roleSide: z.enum(["left", "right"]),
+});
+
+export async function completeDialogueRoleplayAction(input: unknown) {
+  const parsed = dialogueRoleplayCompletionSchema.safeParse(input);
+  if (!parsed.success) return { ok: false as const, message: "角色实战信息无效。" };
+  const { supabase, user, tenant, profile, platformProfile } = await requireActiveUser();
+  const preview = isPlatformCourseAuditorRole(platformProfile?.role);
+  if (!tenant || (!preview && !canUseStudentFeature(
+    profile?.role ?? "student",
+    normalizeMembershipTier(profile?.membership_tier),
+    "korean_course",
+  ))) return { ok: false as const, message: "当前账号没有智能教材学习权限。" };
+
+  const { data: activity } = await supabase
+    .from("digital_textbook_activities")
+    .select("id,node_id,public_config")
+    .eq("id", parsed.data.activityId)
+    .maybeSingle();
+  if (!activity || activity.public_config?.practiceKind !== "dialogue_roleplay") {
+    return { ok: false as const, message: "找不到角色实战活动。" };
+  }
+
+  const admin = createAdminClient();
+  const { data: node } = await admin
+    .from("digital_textbook_nodes")
+    .select("id,content,digital_textbook_modules!inner(digital_textbook_chapters!inner(version_id))")
+    .eq("id", activity.node_id)
+    .maybeSingle();
+  const content = node?.content && typeof node.content === "object" && !Array.isArray(node.content)
+    ? node.content as Record<string, unknown>
+    : {};
+  const scenes = Array.isArray(content.dialogueScenes) ? content.dialogueScenes : [];
+  const scene = scenes.find((item) => item && typeof item === "object" && String((item as Record<string, unknown>).id) === parsed.data.sceneId) as Record<string, unknown> | undefined;
+  const lines = Array.isArray(scene?.lines) ? scene.lines : [];
+  const roleParity = parsed.data.roleSide === "left" ? 0 : 1;
+  const requiredTurns = lines.map((_, index) => index).filter((index) => index % 2 === roleParity);
+  if (requiredTurns.length === 0) return { ok: false as const, message: "当前角色没有可录制的话轮。" };
+
+  const { data: evidence } = await admin
+    .from("digital_textbook_speaking_evidence")
+    .select("id,metadata")
+    .eq("tenant_id", tenant.id)
+    .eq("student_id", user.id)
+    .eq("activity_id", activity.id)
+    .contains("metadata", { sceneId: parsed.data.sceneId, roleSide: parsed.data.roleSide });
+  const recordedTurns = new Set((evidence ?? []).map((item) => Number(item.metadata?.turnIndex)));
+  if (!requiredTurns.every((turn) => recordedTurns.has(turn))) {
+    return { ok: false as const, message: "请完成当前角色的全部录音话轮。" };
+  }
+  if (preview) return { ok: true as const, preview: true, nodeId: String(activity.node_id), nodeCompleted: false, completionPercent: 0 };
+
+  const moduleRelation = node?.digital_textbook_modules as unknown as { digital_textbook_chapters?: { version_id?: string } } | null;
+  const versionId = String(moduleRelation?.digital_textbook_chapters?.version_id ?? "");
+  if (!versionId) return { ok: false as const, message: "教材版本关系不完整。" };
+  const { data: existingAttempt } = await admin
+    .from("digital_textbook_attempts")
+    .select("attempt_number")
+    .eq("tenant_id", tenant.id)
+    .eq("student_id", user.id)
+    .eq("activity_id", activity.id)
+    .eq("version_id", versionId)
+    .eq("meets_completion_requirements", true)
+    .order("attempt_number", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (existingAttempt) {
+    const { data: progress } = await admin
+      .from("digital_textbook_node_progress")
+      .select("status,completion_percent")
+      .eq("tenant_id", tenant.id)
+      .eq("student_id", user.id)
+      .eq("node_id", activity.node_id)
+      .eq("version_id", versionId)
+      .maybeSingle();
+    return {
+      ok: true as const,
+      preview: false,
+      nodeId: String(activity.node_id),
+      nodeCompleted: progress?.status === "completed" || Number(progress?.completion_percent) === 100,
+      completionPercent: Math.max(0, Math.min(100, Number(progress?.completion_percent) || 0)),
+    };
+  }
+  const { data: recordData, error } = await admin.rpc("record_smart_textbook_attempt", {
+    p_tenant_id: tenant.id,
+    p_student_id: user.id,
+    p_activity_id: activity.id,
+    p_version_id: versionId,
+    p_response: { sceneId: parsed.data.sceneId, roleSide: parsed.data.roleSide, recordedTurns: requiredTurns },
+    // Open speaking evidence completes the activity without inventing correctness or a score.
+    p_is_correct: null,
+    p_score: null,
+    p_meets_completion_requirements: true,
+  });
+  const record = Array.isArray(recordData) ? recordData[0] : recordData;
+  if (error || !record) return { ok: false as const, message: "角色实战进度暂时没有保存，请重试。" };
+  await admin
+    .from("digital_textbook_speaking_evidence")
+    .update({ consumed_at: new Date().toISOString(), consumed_attempt_number: Number(record.attempt_number) })
+    .in("id", (evidence ?? []).filter((item) => requiredTurns.includes(Number(item.metadata?.turnIndex))).map((item) => item.id));
+  refreshStudentHomeLearningData({ tenantId: tenant.id, studentId: user.id, studentAppId: STUDENT_APP_IDS.korean });
+  return {
+    ok: true as const,
+    preview: false,
+    nodeId: String(activity.node_id),
+    nodeCompleted: record.node_completed === true,
+    completionPercent: Math.max(0, Math.min(100, Number(record.completion_percent) || 0)),
+  };
+}
+
 export async function checkSmartTextbookActivityPageAction(input: unknown) {
   const parsed = pageCheckSchema.safeParse(input);
   if (!parsed.success || parsed.data.response.length !== parsed.data.itemIndices.length) {
