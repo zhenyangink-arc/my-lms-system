@@ -343,6 +343,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const [result, setResult] = useState<{ choiceIndex: number; optionIndex: number; correct: boolean } | null>(null);
   const [checking, setChecking] = useState(false);
   const [forceReplay, setForceReplay] = useState(false);
+  const [voiceReadingEnabled, setVoiceReadingEnabled] = useState(false);
   const conversationScrollRef = useRef<HTMLDivElement>(null);
   const completed = cursor >= steps.length || (activity.completed && !forceReplay);
   const current = steps[cursor];
@@ -353,6 +354,15 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const visibleSteps = steps.slice(0, Math.min(cursor + 1, steps.length));
   const title = String(objectValue(conversation.title)[locale] ?? (locale === "ko-KR" ? "첫 만남 대화 완성" : "完成初次见面对话"));
   const instruction = String(objectValue(conversation.instruction)[locale] ?? (locale === "ko-KR" ? "알맞은 대답을 골라 대화를 이어 가세요." : "选择合适的回答，让对话继续。"));
+  const activeSpokenLine = currentKind === "choice" ? currentAnswer : String(current?.line ?? "");
+  useEffect(() => {
+    if (!voiceReadingEnabled) {
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      return;
+    }
+    if (activeSpokenLine) speakKorean(activeSpokenLine);
+  }, [activeSpokenLine, voiceReadingEnabled]);
+  useEffect(() => () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }, []);
   const scrollConversationToLatest = () => {
     const container = conversationScrollRef.current;
     if (container) container.scrollTop = container.scrollHeight;
@@ -382,7 +392,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   }
 
   return <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-7">
-    <div className="flex items-center justify-between gap-4"><CardTitleWithHint title={title} description={instruction} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "대화 방법 보기" : "查看对话方法"} /><span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${completed ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--surface-soft)] text-[var(--foreground-secondary)]"}`}>{completed && <CheckCircle2 size={14} aria-hidden="true" />}{completed ? locale === "ko-KR" ? "대화 완료" : "对话完成" : `${cursor + 1} / ${steps.length}`}</span></div>
+    <div className="flex items-center justify-between gap-4"><CardTitleWithHint title={title} description={instruction} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "대화 방법 보기" : "查看对话方法"} /><div className="flex shrink-0 items-center gap-2"><button type="button" role="switch" aria-checked={voiceReadingEnabled} onClick={() => setVoiceReadingEnabled((enabled) => !enabled)} className={`inline-flex min-h-9 items-center gap-2 rounded-full px-3 text-xs font-bold transition ${voiceReadingEnabled ? "bg-[var(--accent)] text-[var(--primary)]" : "bg-[var(--surface-soft)] text-[var(--foreground-secondary)]"}`}><Volume2 size={14} aria-hidden="true" /><span>{locale === "ko-KR" ? "음성 읽기" : "语音朗读"}</span><span className={`relative h-4 w-7 rounded-full transition ${voiceReadingEnabled ? "bg-[var(--primary)]" : "bg-[var(--border-strong)]"}`} aria-hidden="true"><span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform ${voiceReadingEnabled ? "translate-x-3.5" : "translate-x-0.5"}`} /></span></button><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${completed ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--surface-soft)] text-[var(--foreground-secondary)]"}`}>{completed && <CheckCircle2 size={14} aria-hidden="true" />}{completed ? locale === "ko-KR" ? "대화 완료" : "对话完成" : `${cursor + 1} / ${steps.length}`}</span></div></div>
     <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,.85fr)]">
       <div ref={conversationScrollRef} className="max-h-[520px] min-h-[380px] overflow-y-auto scroll-smooth rounded-[22px] bg-[var(--surface-soft)] p-4 sm:p-6"><div className="space-y-5" aria-live="polite">{visibleSteps.map((step, index) => {
         const kind = String(step.kind ?? "line");
