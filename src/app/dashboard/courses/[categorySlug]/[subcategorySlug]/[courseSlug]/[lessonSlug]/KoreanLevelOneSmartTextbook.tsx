@@ -2527,7 +2527,8 @@ function Activity({
     return pages;
   }, []);
   const groupedSingleChoice =
-    activity.type === "single_choice" && configItems.length > 0;
+    (activity.type === "single_choice" || activity.type === "listening") && configItems.length > 0;
+  const isListeningQuiz = activity.type === "listening" && groupedSingleChoice;
   const usesFlipCards =
     groupedSingleChoice && activity.config.presentation === "flip_cards";
   const usesExpressionPath =
@@ -2535,6 +2536,7 @@ function Activity({
   const isGrammarPractice = ["choice", "judgment", "fill"].includes(
     String(activity.config.practiceKind ?? ""),
   );
+  const isPagedChoicePractice = isGrammarPractice || isListeningQuiz;
   const usesFocusMode = activity.config.focusMode === true && !usesFlipCards;
   const requiresConfirmation = Boolean(activity.config.readAloudConfirmation);
   const optionOrder = stableIndexOrder(
@@ -2626,7 +2628,7 @@ function Activity({
       return;
     }
     setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...result, revealed: false } }));
-    if (isLastGrammarActivity && isLastGrammarPracticePage && result.results.every(Boolean) && !activityCompleted) {
+    if ((isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && result.results.every(Boolean) && !activityCompleted) {
       submit();
     }
   }
@@ -2839,19 +2841,19 @@ function Activity({
           />
         </div>
         <div className="flex shrink-0 items-center gap-3">
-          {isGrammarPractice && (
-            <nav className="flex items-center gap-2" aria-label={locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页"}>
+          {isPagedChoicePractice && (
+            <nav className="flex items-center gap-2" aria-label={isListeningQuiz ? (locale === "ko-KR" ? "듣기 문제 페이지" : "听辨题分页") : (locale === "ko-KR" ? "문법 연습 페이지" : "语法练习分页")}>
               <button type="button" disabled={activeGrammarPage === 0 && !onPreviousGrammarActivity} onClick={previousGrammarPage} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] disabled:opacity-30">{locale === "ko-KR" ? "이전" : "上一页"}</button>
-              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{grammarPageOffset + activeGrammarPage + 1} / 6</span>
+              <span className="min-w-12 text-center text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{isListeningQuiz ? activeGrammarPage + 1 : grammarPageOffset + activeGrammarPage + 1} / {isListeningQuiz ? groupedChoicePages.length : 6}</span>
               {(!isLastGrammarActivity || !isLastGrammarPracticePage) && <button type="button" disabled={!activePageReady} onClick={nextGrammarPage} className="min-h-9 rounded-lg px-3 text-sm font-bold text-[var(--primary)] hover:bg-[var(--accent)] disabled:opacity-30">{locale === "ko-KR" ? "다음" : "下一页"}</button>}
             </nav>
           )}
-          {(activityCompleted || (isGrammarPractice && activePageCompleted)) && (
+          {(activityCompleted || (isPagedChoicePractice && activePageCompleted)) && (
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]" role="status">
               <CheckCircle2 size={14} aria-hidden="true" />
-              {isGrammarPractice && isLastGrammarActivity && isLastGrammarPracticePage && activityCompleted
+              {isPagedChoicePractice && (isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && activityCompleted
                 ? locale === "ko-KR" ? "전체 완료" : "全部完成"
-                : isGrammarPractice
+                : isPagedChoicePractice
                   ? locale === "ko-KR" ? "완료" : "已完成"
                   : feedback?.correct === null ? t.submittedForReview : t.submitted}
             </span>
@@ -2910,7 +2912,7 @@ function Activity({
             const options = stringArray(item.options);
             return (
               <fieldset key={String(item.id ?? originalIndex)} className="py-4">
-                <legend className="text-sm font-bold leading-6 text-[var(--foreground)]">{pageItemIndex + 1}. {String(item.question)}</legend>
+                <legend className="text-sm font-bold leading-6 text-[var(--foreground)]">{pageItemIndex + 1}. {String(objectValue(item.question)[locale] ?? item.question ?? "")}</legend>
                 <div className={`mt-2 grid gap-2 ${activity.config.practiceKind === "judgment" ? "sm:grid-cols-2" : "sm:grid-cols-4"}`}>
                   {groupedOptionOrders[originalIndex].map((originalOptionIndex, displayOptionIndex) => {
                     const option = options[originalOptionIndex];
@@ -3284,9 +3286,9 @@ function Activity({
             </div>
           )}
         </div>
-        {isGrammarPractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
-        {isGrammarPractice && activePageCheck && !activePageCheck.results.every(Boolean) && !activePageCheck.revealed && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
-        {(!isGrammarPractice || (isLastGrammarActivity && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
+        {isPagedChoicePractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
+        {isPagedChoicePractice && activePageCheck && !activePageCheck.results.every(Boolean) && !activePageCheck.revealed && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
+        {(!isPagedChoicePractice || ((isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : usesExpressionPath ? locale === "ko-KR" ? "순서 확인" : "检查顺序" : t.submit}
         </button>}
       </div>

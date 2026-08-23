@@ -19,6 +19,10 @@ const listenSpeakFlowMigrationUrl = new URL(
   "../supabase/migrations/202608240001_design_chapter_one_listen_speak_flow.sql",
   import.meta.url,
 );
+const listeningDiagnosticsMigrationUrl = new URL(
+  "../supabase/migrations/202608240002_expand_chapter_one_listening_diagnostics.sql",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -595,7 +599,7 @@ test("语法填空按数据库分组生成练习分页，不再展示轮次分�
   const source = await readFile(sourceUrl, "utf8");
 
   assert.match(source, /const fillBlankPages = configItems\.reduce/);
-  assert.match(source, /aria-label=\{locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"\}/);
+  assert.match(source, /locale === "ko-KR" \? "문법 연습 페이지" : "语法练习分页"/);
   assert.match(source, /setActiveFillBlankPage\(\(page\) => page \+ 1\)/);
   assert.match(source, /grammarPageOffset \+ activeGrammarPage \+ 1/);
   assert.match(source, /originalIndex/);
@@ -622,14 +626,14 @@ test("第一章语法练习连续六页并逐页检查与按需查看答案", as
   assert.match(source, /activePageCheck\.results\.every\(Boolean\)/);
   assert.match(source, /const activePageCompleted = Boolean/);
   assert.match(source, /const activePageReady = activityCompleted \|\| activePageCompleted/);
-  assert.match(source, /activityCompleted \|\| \(isGrammarPractice && activePageCompleted\)/);
-  assert.match(source, /isLastGrammarActivity && isLastGrammarPracticePage && activityCompleted/);
+  assert.match(source, /activityCompleted \|\| \(isPagedChoicePractice && activePageCompleted\)/);
+  assert.match(source, /isPagedChoicePractice && \(isListeningQuiz \|\| isLastGrammarActivity\) && isLastGrammarPracticePage && activityCompleted/);
   assert.match(source, /if \(!activityCompleted\) submit\(\)/);
-  assert.match(source, /isLastGrammarActivity && isLastGrammarPracticePage && result\.results\.every\(Boolean\)/);
+  assert.match(source, /\(isListeningQuiz \|\| isLastGrammarActivity\) && isLastGrammarPracticePage && result\.results\.every\(Boolean\)/);
   assert.match(source, /locale === "ko-KR" \? "전체 완료" : "全部完成"/);
   assert.match(source, /<CheckCircle2 size=\{18\} aria-label=/);
   assert.match(source, /<XCircle size=\{18\} aria-label=/);
-  assert.match(source, /isGrammarPractice && !activePageCheck/);
+  assert.match(source, /isPagedChoicePractice && !activePageCheck/);
   assert.match(actions, /const pageCheckSchema = z\.object/);
   assert.match(actions, /digital_textbook_activity_secrets/);
   assert.match(actions, /refreshStudentHomeLearningData/);
@@ -757,4 +761,21 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
   assert.match(migration, /production_status/);
+});
+
+test("听辨信息使用两页六题并从数据库答案数组逐页检查", async () => {
+  const [source, migration] = await Promise.all([
+    readFile(sourceUrl, "utf8"),
+    readFile(listeningDiagnosticsMigrationUrl, "utf8"),
+  ]);
+
+  assert.match(source, /const isListeningQuiz = activity\.type === "listening" && groupedSingleChoice/);
+  assert.match(source, /const isPagedChoicePractice = isGrammarPractice \|\| isListeningQuiz/);
+  assert.match(source, /isListeningQuiz \? groupedChoicePages\.length : 6/);
+  assert.match(source, /objectValue\(item\.question\)\[locale\]/);
+  assert.equal((migration.match(/"id":"listen-/g) ?? []).length, 6);
+  assert.match(migration, /"group":"key-information"/);
+  assert.match(migration, /"group":"expression-details"/);
+  assert.match(migration, /"kind":"index_array","value":\[0,0,0,0,0,3\]/);
+  assert.match(migration, /年龄／나이/);
 });
