@@ -91,6 +91,10 @@ const patternCompositionMigrationUrl = new URL(
   "../supabase/migrations/202608230005_add_chapter_one_pattern_composition.sql",
   import.meta.url,
 );
+const twoWayPatternCompositionMigrationUrl = new URL(
+  "../supabase/migrations/202608230006_expand_pattern_composition_to_two_way_dialogue.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -313,7 +317,7 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, submission] = await Promise.all([
+  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, twoWayComposition, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
@@ -322,6 +326,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
     readFile(guidedPatternConversationMigrationUrl, "utf8"),
     readFile(guidedConversationAudioMigrationUrl, "utf8"),
     readFile(patternCompositionMigrationUrl, "utf8"),
+    readFile(twoWayPatternCompositionMigrationUrl, "utf8"),
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
@@ -388,6 +393,9 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(composition, /'pattern-compose'/);
   assert.match(composition, /"kind":"text_array"/);
   assert.equal((composition.match(/"id":"(?:greeting-name|identity-answer|ask-back|closing)"/g) ?? []).length, 4);
+  assert.equal((twoWayComposition.match(/"id":"(?:greeting-name|ask-name|ask-identity|answer-identity|ask-nationality|closing)"/g) ?? []).length, 6);
+  assert.match(twoWayComposition, /不仅回答对方，也要主动询问姓名、身份和国籍／地区/);
+  assert.match(twoWayComposition, /delete from public\.digital_textbook_attempts/);
   assert.match(submission, /const conversationItems = asArray\(asObject\(config\.conversation\)\.steps\)/);
 });
 
