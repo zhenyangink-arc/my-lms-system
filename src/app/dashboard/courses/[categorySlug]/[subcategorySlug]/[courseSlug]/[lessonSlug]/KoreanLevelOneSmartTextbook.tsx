@@ -1185,13 +1185,15 @@ function ContentRenderer({
                   const answerIndex = offset + itemIndex;
                   const selected = patternChoiceAnswers[answerIndex] ?? -1;
                   const options = stringArray(item.options);
-                  return <fieldset key={String(item.id ?? answerIndex)} className="py-5"><legend className="text-base font-bold leading-7 text-[var(--foreground)]"><span className="mr-2 text-xs text-[var(--primary)]">{String(itemIndex + 1).padStart(2, "0")}</span><span lang="ko">{String(item.question)}</span></legend><div className="mt-4 grid gap-2 sm:grid-cols-4">{options.map((option, optionIndex) => {
+                  const localizedQuestion = objectValue(item.question);
+                  const question = String(localizedQuestion[locale] ?? item.question ?? "");
+                  return <fieldset key={String(item.id ?? answerIndex)} className="py-5"><legend className="text-base font-bold leading-7 text-[var(--foreground)]"><span className="mr-2 text-xs text-[var(--primary)]">{String(itemIndex + 1).padStart(2, "0")}</span><span>{question}</span></legend><div className="mt-4 grid gap-2 lg:grid-cols-2">{options.map((option, optionIndex) => {
                     const checked = groupCheck?.[itemIndex];
                     const isSelected = selected === optionIndex;
                     const stateClass = groupCheck
                       ? isSelected ? checked ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"
                       : isSelected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]";
-                    return <button key={option} type="button" onClick={() => { const next = [...patternChoiceAnswers]; next[answerIndex] = optionIndex; setPatternChoiceAnswers(next); setPatternChoiceChecks((current) => { const updated = { ...current }; delete updated[groupIndex]; return updated; }); }} className={`flex min-h-12 items-center justify-between rounded-xl border px-4 text-sm font-bold transition ${stateClass}`}><span lang="ko">{option}</span>{groupCheck && isSelected && (checked ? <CheckCircle2 size={16} aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</button>;
+                    return <button key={option} type="button" onClick={() => { const next = [...patternChoiceAnswers]; next[answerIndex] = optionIndex; setPatternChoiceAnswers(next); setPatternChoiceChecks((current) => { const updated = { ...current }; delete updated[groupIndex]; return updated; }); }} className={`flex min-h-14 items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm font-bold leading-6 transition ${stateClass}`}><span lang="ko">{option}</span>{groupCheck && isSelected && (checked ? <CheckCircle2 size={16} className="shrink-0" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="shrink-0" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</button>;
                   })}</div></fieldset>;
                 })}
               </div>
