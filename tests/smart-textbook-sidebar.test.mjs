@@ -23,6 +23,10 @@ const listeningDiagnosticsMigrationUrl = new URL(
   "../supabase/migrations/202608240002_expand_chapter_one_listening_diagnostics.sql",
   import.meta.url,
 );
+const listeningMasterMigrationUrl = new URL(
+  "../supabase/migrations/202608240003_finalize_chapter_one_listening_master.sql",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -779,4 +783,19 @@ test("听辨信息使用两页六题并从数据库答案数组逐页检查", as
   assert.match(migration, /"group":"expression-details"/);
   assert.match(migration, /"kind":"index_array","value":\[0,0,0,0,0,3\]/);
   assert.match(migration, /年龄／나이/);
+});
+
+test("听力母稿保持私有并为正常与慢速音频预留 R2 制作配置", async () => {
+  const migration = await readFile(listeningMasterMigrationUrl, "utf8");
+
+  assert.match(migration, /transcript_ko = '안녕하세요\? 저는 수진이에요\./);
+  assert.match(migration, /요즘 한국어를 배워요\./);
+  assert.match(migration, /처음 만나서 반가워요\./);
+  assert.match(migration, /chapter-01-listening-v1/);
+  assert.match(migration, /chapter-01-listening-identity-normal\.mp3/);
+  assert.match(migration, /chapter-01-listening-identity-slow/);
+  assert.match(migration, /'scriptVisibility', 'private'/);
+  assert.match(migration, /'speakingRate'.*0\.78.*0\.92/s);
+  assert.match(migration, /production_status = 'pending'/);
+  assert.doesNotMatch(migration, /public_config[\s\S]{0,400}transcript_ko/);
 });
