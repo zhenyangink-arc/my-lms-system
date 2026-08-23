@@ -75,6 +75,10 @@ const redesignedPatternChoicesMigrationUrl = new URL(
   "../supabase/migrations/202608230001_redesign_chapter_one_pattern_choice_content.sql",
   import.meta.url,
 );
+const conversationalPatternChoicesMigrationUrl = new URL(
+  "../supabase/migrations/202608230002_add_conversation_scenes_to_pattern_choices.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -298,11 +302,12 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, submission] = await Promise.all([
+  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
     readFile(redesignedPatternChoicesMigrationUrl, "utf8"),
+    readFile(conversationalPatternChoicesMigrationUrl, "utf8"),
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
@@ -331,6 +336,13 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(redesignedChoices, /지민 씨는 학생이에요\?/);
   assert.doesNotMatch(redesignedChoices, /"options":\["이에요","예요","은","는"\]/);
   assert.match(source, /localizedQuestion/);
+  assert.match(source, /activePatternQuestionIndex/);
+  assert.match(source, /选择一句放入对话气泡/);
+  assert.match(source, /answerSide === "left"/);
+  assert.match(conversationScenes, /"zh-CN":"介绍姓名"/);
+  assert.match(conversationScenes, /"zh-CN":"介绍身份"/);
+  assert.match(conversationScenes, /"zh-CN":"询问对方"/);
+  assert.equal((conversationScenes.match(/"answerSide":/g) ?? []).length, 9);
   assert.match(submission, /const groupedItems = asArray\(config\.groups\)\.flatMap/);
 });
 

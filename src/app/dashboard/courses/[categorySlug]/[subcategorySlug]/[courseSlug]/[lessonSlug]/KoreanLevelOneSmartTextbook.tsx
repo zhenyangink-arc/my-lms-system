@@ -372,6 +372,7 @@ function ContentRenderer({
   const [vocabularyPlaybackIndex, setVocabularyPlaybackIndex] = useState<number | null>(null);
   const [vocabularyPlaying, setVocabularyPlaying] = useState(false);
   const [activePatternGroupIndex, setActivePatternGroupIndex] = useState(0);
+  const [activePatternQuestionIndex, setActivePatternQuestionIndex] = useState(0);
   const [patternChoiceAnswers, setPatternChoiceAnswers] = useState<number[]>(() => Array(9).fill(-1));
   const [patternChoiceChecks, setPatternChoiceChecks] = useState<Record<number, boolean[]>>({});
   const [checkingPatternChoices, setCheckingPatternChoices] = useState(false);
@@ -1166,12 +1167,31 @@ function ContentRenderer({
         const offset = patternChoiceGroups.slice(0, groupIndex).reduce((total, current) => total + (Array.isArray(current.items) ? current.items.length : 0), 0);
         const groupCheck = patternChoiceChecks[groupIndex];
         const groupCompleted = Boolean(groupCheck?.every(Boolean));
+        const itemIndex = Math.min(activePatternQuestionIndex, Math.max(items.length - 1, 0));
+        const item = items[itemIndex] ?? {};
+        const answerIndex = offset + itemIndex;
+        const selected = patternChoiceAnswers[answerIndex] ?? -1;
+        const options = stringArray(item.options);
+        const scene = objectValue(item.scene);
+        const left = objectValue(scene.left);
+        const right = objectValue(scene.right);
+        const answerSide = scene.answerSide === "left" ? "left" : "right";
+        const localizedQuestion = objectValue(item.question);
+        const question = String(localizedQuestion[locale] ?? item.question ?? "");
+        const selectedAnswer = selected >= 0 ? options[selected] : "";
+        const checked = groupCheck?.[itemIndex];
+        const answerBubbleClass = groupCheck
+          ? checked ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]"
+          : selected >= 0 ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)]" : "border-dashed border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground-muted)]";
+        const renderParticipant = (participant: Record<string, unknown>, fallback: string) => String(objectValue(participant.name)[locale] ?? participant.name ?? fallback);
+        const renderParticipantMeta = (participant: Record<string, unknown>) => String(objectValue(participant.meta)[locale] ?? participant.meta ?? "");
+        const renderParticipantLine = (participant: Record<string, unknown>) => String(objectValue(participant.line)[locale] ?? participant.line ?? "");
         return (
           <section className="overflow-hidden rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)]">
             <div className="flex gap-2 overflow-x-auto border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2" role="tablist" aria-label={locale === "ko-KR" ? "대치 연습 선택" : "选择替换训练"}>
               {patternChoiceGroups.map((item, index) => {
                 const completed = patternChoiceActivity?.completed || Boolean(patternChoiceChecks[index]?.every(Boolean));
-                return <button key={index} type="button" role="tab" aria-selected={index === groupIndex} onClick={() => setActivePatternGroupIndex(index)} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold ${index === groupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}>{String(objectValue(item.title)[locale] ?? `训练 ${index + 1}`)}{completed && <CheckCircle2 size={14} className="text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "완료" : "已完成"} />}</button>;
+                return <button key={index} type="button" role="tab" aria-selected={index === groupIndex} onClick={() => { setActivePatternGroupIndex(index); setActivePatternQuestionIndex(0); }} className={`inline-flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-4 text-sm font-bold ${index === groupIndex ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]"}`}>{String(objectValue(item.title)[locale] ?? `训练 ${index + 1}`)}{completed && <CheckCircle2 size={14} className="text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "완료" : "已完成"} />}</button>;
               })}
             </div>
             <div className="p-5 sm:p-7">
@@ -1180,24 +1200,36 @@ function ContentRenderer({
                 {groupIndex < patternChoiceGroups.length - 1 && (groupCompleted || patternChoiceActivity?.completed) && <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><CheckCircle2 size={14} aria-hidden="true" />{locale === "ko-KR" ? "완료" : "已完成"}</span>}
                 {(allPatternChoiceGroupsCompleted || patternChoiceActivity?.completed) && groupIndex === patternChoiceGroups.length - 1 && <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--status-success-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-success)]"><CheckCircle2 size={14} aria-hidden="true" />{locale === "ko-KR" ? "전체 완료" : "全部完成"}</span>}
               </div>
-              <div className="mt-5 divide-y divide-[var(--border-subtle)] rounded-2xl border border-[var(--border-subtle)] px-5">
-                {items.map((item, itemIndex) => {
-                  const answerIndex = offset + itemIndex;
-                  const selected = patternChoiceAnswers[answerIndex] ?? -1;
-                  const options = stringArray(item.options);
-                  const localizedQuestion = objectValue(item.question);
-                  const question = String(localizedQuestion[locale] ?? item.question ?? "");
-                  return <fieldset key={String(item.id ?? answerIndex)} className="py-5"><legend className="text-base font-bold leading-7 text-[var(--foreground)]"><span className="mr-2 text-xs text-[var(--primary)]">{String(itemIndex + 1).padStart(2, "0")}</span><span>{question}</span></legend><div className="mt-4 grid gap-2 lg:grid-cols-2">{options.map((option, optionIndex) => {
-                    const checked = groupCheck?.[itemIndex];
-                    const isSelected = selected === optionIndex;
-                    const stateClass = groupCheck
-                      ? isSelected ? checked ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"
-                      : isSelected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]";
-                    return <button key={option} type="button" onClick={() => { const next = [...patternChoiceAnswers]; next[answerIndex] = optionIndex; setPatternChoiceAnswers(next); setPatternChoiceChecks((current) => { const updated = { ...current }; delete updated[groupIndex]; return updated; }); }} className={`flex min-h-14 items-center justify-between gap-3 rounded-xl border px-4 py-3 text-left text-sm font-bold leading-6 transition ${stateClass}`}><span lang="ko">{option}</span>{groupCheck && isSelected && (checked ? <CheckCircle2 size={16} className="shrink-0" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="shrink-0" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</button>;
-                  })}</div></fieldset>;
-                })}
+              <div className="mt-5 rounded-[22px] bg-[var(--surface-soft)] p-4 sm:p-6">
+                <div className="flex items-center justify-between gap-4">
+                  <p className="text-sm font-semibold text-[var(--foreground-secondary)]">{question}</p>
+                  <span className="shrink-0 text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{itemIndex + 1} / {items.length}</span>
+                </div>
+                <div className="mx-auto mt-6 max-w-4xl space-y-5" aria-live="polite">
+                  <div className="flex items-end gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--card)] text-sm font-black text-[var(--primary)] shadow-sm">{renderParticipant(left, locale === "ko-KR" ? "상대" : "对方").slice(0, 1)}</div>
+                    <div className="max-w-[72%]">
+                      <div className="mb-1 flex items-center gap-2 text-xs font-bold text-[var(--foreground-secondary)]"><span>{renderParticipant(left, locale === "ko-KR" ? "상대" : "对方")}</span>{renderParticipantMeta(left) && <span className="font-medium text-[var(--foreground-muted)]">{renderParticipantMeta(left)}</span>}</div>
+                      <div className={`rounded-[20px_20px_20px_6px] border px-5 py-3.5 text-base font-bold leading-7 shadow-sm ${answerSide === "left" ? answerBubbleClass : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{answerSide === "left" ? selectedAnswer || (locale === "ko-KR" ? "아래에서 질문을 고르세요" : "从下方选择一句话") : renderParticipantLine(left)}{answerSide === "left" && groupCheck && (checked ? <CheckCircle2 size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</div>
+                    </div>
+                  </div>
+                  <div className="flex items-end justify-end gap-3">
+                    <div className="max-w-[72%] text-right">
+                      <div className="mb-1 flex items-center justify-end gap-2 text-xs font-bold text-[var(--foreground-secondary)]">{renderParticipantMeta(right) && <span className="font-medium text-[var(--foreground-muted)]">{renderParticipantMeta(right)}</span>}<span>{renderParticipant(right, locale === "ko-KR" ? "나" : "我")}</span></div>
+                      <div className={`rounded-[20px_20px_6px_20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${answerSide === "right" ? answerBubbleClass : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{answerSide === "right" ? selectedAnswer || (locale === "ko-KR" ? "아래에서 대답을 고르세요" : "从下方选择一句话") : renderParticipantLine(right)}{answerSide === "right" && groupCheck && (checked ? <CheckCircle2 size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />)}</div>
+                    </div>
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--primary)] text-sm font-black text-[var(--primary-foreground)] shadow-sm">{renderParticipant(right, locale === "ko-KR" ? "나" : "我").slice(0, 1)}</div>
+                  </div>
+                </div>
               </div>
-              <div className="mt-5 flex justify-end"><button type="button" onClick={() => checkPatternChoiceGroup(groupIndex)} disabled={checkingPatternChoices || items.some((_, index) => (patternChoiceAnswers[offset + index] ?? -1) < 0)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--primary)] px-5 text-sm font-bold text-[var(--primary-foreground)] disabled:cursor-not-allowed disabled:opacity-40">{checkingPatternChoices ? locale === "ko-KR" ? "확인 중…" : "检查中…" : locale === "ko-KR" ? "정답 확인" : "检查答案"}</button></div>
+              <fieldset className="mt-5"><legend className="text-sm font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "말풍선에 넣을 문장을 고르세요" : "选择一句放入对话气泡"}</legend><div className="mt-3 grid gap-2 lg:grid-cols-2">{options.map((option, optionIndex) => {
+                const isSelected = selected === optionIndex;
+                return <button key={option} type="button" aria-pressed={isSelected} onClick={() => { const next = [...patternChoiceAnswers]; next[answerIndex] = optionIndex; setPatternChoiceAnswers(next); setPatternChoiceChecks((current) => { const updated = { ...current }; delete updated[groupIndex]; return updated; }); }} className={`min-h-14 rounded-xl border px-4 py-3 text-left text-sm font-bold leading-6 transition ${isSelected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)]"}`}><span lang="ko">{option}</span></button>;
+              })}</div></fieldset>
+              <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-5">
+                <div className="flex items-center gap-2"><button type="button" aria-label={locale === "ko-KR" ? "이전 문제" : "上一题"} onClick={() => setActivePatternQuestionIndex((current) => Math.max(0, current - 1))} disabled={itemIndex === 0} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] disabled:opacity-35"><ChevronLeft size={18} /></button><div className="flex gap-1.5" aria-label={locale === "ko-KR" ? "문제 진행" : "答题进度"}>{items.map((_, index) => { const answered = (patternChoiceAnswers[offset + index] ?? -1) >= 0; const result = groupCheck?.[index]; return <span key={index} className={`h-2.5 w-2.5 rounded-full ${result === true ? "bg-[var(--status-success)]" : result === false ? "bg-[var(--destructive)]" : answered ? "bg-[var(--primary)]" : "bg-[var(--border-strong)]"}`} />; })}</div><button type="button" aria-label={locale === "ko-KR" ? "다음 문제" : "下一题"} onClick={() => setActivePatternQuestionIndex((current) => Math.min(items.length - 1, current + 1))} disabled={itemIndex === items.length - 1} className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] disabled:opacity-35"><ChevronRight size={18} /></button></div>
+                <button type="button" onClick={() => checkPatternChoiceGroup(groupIndex)} disabled={checkingPatternChoices || items.some((_, index) => (patternChoiceAnswers[offset + index] ?? -1) < 0)} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--primary)] px-5 text-sm font-bold text-[var(--primary-foreground)] disabled:cursor-not-allowed disabled:opacity-40">{checkingPatternChoices ? locale === "ko-KR" ? "확인 중…" : "检查中…" : locale === "ko-KR" ? "정답 확인" : "检查答案"}</button>
+              </div>
             </div>
           </section>
         );
