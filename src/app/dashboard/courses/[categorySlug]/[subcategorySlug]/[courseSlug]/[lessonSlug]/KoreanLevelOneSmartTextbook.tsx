@@ -3152,7 +3152,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   />
                 </div>
                 <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
-                  {node.activities.filter((activity) => !usesPatternPager || activity.key !== "pattern-choice").map((activity, activityIndex) => (
+                  {node.activities.filter((activity) => !usesPatternPager || !["pattern-choice", "pattern-compose"].includes(activity.key)).map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
                         activity={activity}

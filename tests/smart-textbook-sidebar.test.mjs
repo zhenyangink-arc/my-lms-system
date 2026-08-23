@@ -345,7 +345,6 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /patternPage === 2/);
   assert.match(source, /checkPatternChoiceGroup/);
   assert.match(source, /patternChoiceChecks/);
-  assert.match(source, /activity\.key !== "pattern-choice"/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문형 기능 보기" : "查看句型用途"\}/);
   assert.doesNotMatch(source, /<p className="mt-2 text-sm font-semibold leading-6 text-\[var\(--foreground-secondary\)\]">\{String\(objectValue\(card\.function\)\[locale\]/);
   assert.doesNotMatch(source, /aria-label=\{locale === "ko-KR" \? "예문 듣기" : "播放例句"\}/);
@@ -392,6 +391,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(guidedAudio, /'audioAssetKey'/);
   assert.match(source, /function PatternCompositionPractice/);
   assert.match(source, /activity\.key === "pattern-compose"/);
+  assert.match(source, /!\["pattern-choice", "pattern-compose"\]\.includes\(activity\.key\)/);
   assert.match(source, /if \(voiceReadingEnabled\) speakKorean\(assembled\)/);
   assert.ok((source.match(/role="switch" aria-checked=\{voiceReadingEnabled\}/g) ?? []).length >= 2);
   assert.match(source, /语块顺序还不自然/);
