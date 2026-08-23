@@ -90,8 +90,12 @@ export async function POST(
   const roleSide = String(formData.get("roleSide") ?? "").slice(0, 16);
   const turnIndex = Number(formData.get("turnIndex"));
   const transcript = String(formData.get("transcript") ?? "").normalize("NFC").slice(0, 500);
+  const practiceKey = String(formData.get("practiceKey") ?? "").slice(0, 32);
+  const trackIndex = Number(formData.get("trackIndex"));
+  const segmentIndex = Number(formData.get("segmentIndex"));
   const filename = `${evidenceId}.${extensionForMimeType(mimeType)}`;
   const isDialogueRoleplay = activity.public_config?.practiceKind === "dialogue_roleplay";
+  const isGuidedRepeat = practiceKey === "repeat-line" || practiceKey === "full-recall";
   const hasValidRoleplayTurn = Boolean(sceneId)
     && (roleSide === "left" || roleSide === "right")
     && Number.isInteger(turnIndex)
@@ -99,14 +103,17 @@ export async function POST(
   if (isDialogueRoleplay && !hasValidRoleplayTurn) {
     return NextResponse.json({ message: "Invalid dialogue turn." }, { status: 400 });
   }
-  const prefix = isDialogueRoleplay
+  if (isGuidedRepeat && (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex > 8 || !Number.isInteger(segmentIndex) || segmentIndex < 0 || segmentIndex > 100)) {
+    return NextResponse.json({ message: "Invalid guided repeat segment." }, { status: 400 });
+  }
+  const prefix = isDialogueRoleplay || isGuidedRepeat
     ? `student-recordings/${tenant.id}/${user.id}/${activity.id}`
     : `${tenant.id}/${user.id}/${activity.id}`;
   const objectKey = `${prefix}/${filename}`;
   const admin = createAdminClient();
   const bytes = await recording.arrayBuffer();
   let storedSize = recording.size;
-  if (isDialogueRoleplay) {
+  if (isDialogueRoleplay || isGuidedRepeat) {
     try {
       const uploadUrl = await createR2SignedUploadUrl(objectKey, mimeType, recording.size);
       const uploadResponse = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": mimeType }, body: bytes });
@@ -162,10 +169,14 @@ export async function POST(
         turnIndex: Number.isInteger(turnIndex) && turnIndex >= 0 ? turnIndex : null,
         transcript: transcript || null,
         transcriptSource: transcript ? "browser_speech_recognition" : null,
+      } : isGuidedRepeat ? {
+        practiceKey,
+        trackIndex,
+        segmentIndex,
       } : {},
     });
   if (evidenceError) {
-    if (isDialogueRoleplay) await deleteR2Object(objectKey);
+    if (isDialogueRoleplay || isGuidedRepeat) await deleteR2Object(objectKey);
     else await admin.storage.from(RECORDING_BUCKET).remove([objectKey]);
     return NextResponse.json(
       { message: "Recording evidence could not be saved." },
@@ -173,15 +184,17 @@ export async function POST(
     );
   }
 
-  if (isDialogueRoleplay) {
-    const { data: previousEvidence } = await admin
+  if (isDialogueRoleplay || isGuidedRepeat) {
+    const previousEvidenceQuery = admin
       .from("digital_textbook_speaking_evidence")
       .select("id,object_key")
       .eq("tenant_id", tenant.id)
       .eq("student_id", user.id)
       .eq("activity_id", activity.id)
-      .neq("id", evidenceId)
-      .contains("metadata", { sceneId, roleSide, turnIndex });
+      .neq("id", evidenceId);
+    const { data: previousEvidence } = isDialogueRoleplay
+      ? await previousEvidenceQuery.contains("metadata", { sceneId, roleSide, turnIndex })
+      : await previousEvidenceQuery.contains("metadata", { practiceKey, trackIndex, segmentIndex });
 
     const removedEvidenceIds: string[] = [];
     for (const previous of previousEvidence ?? []) {

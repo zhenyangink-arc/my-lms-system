@@ -24,6 +24,13 @@ export type SmartTextbookActivity = {
   type: SmartActivityType;
   completed: boolean;
   response: unknown | null;
+  pageProgress: Array<{
+    pageIndex: number;
+    itemIndices: number[];
+    response: Array<number | string>;
+    results: boolean[];
+    answers: Array<number | string>;
+  }>;
   prompt: LocalizedText;
   instruction: LocalizedText;
   options: string[];
@@ -326,6 +333,7 @@ export async function loadSmartDigitalTextbook(
   let progress: SmartTextbookProgress[] = [];
   const completedActivityIds = new Set<string>();
   const completedActivityResponses = new Map<string, unknown>();
+  const activityPageProgress = new Map<string, SmartTextbookActivity["pageProgress"]>();
 
   if (!options.trackingDisabled && options.tenantId) {
     const activityIds = (activities ?? []).map((activity) => String(activity.id));
@@ -333,6 +341,7 @@ export async function loadSmartDigitalTextbook(
       { data: savedPreference },
       { data: savedProgress },
       { data: completedAttempts },
+      { data: savedPageProgress },
     ] = await Promise.all([
       admin
         .from("digital_textbook_preferences")
@@ -361,11 +370,34 @@ export async function loadSmartDigitalTextbook(
             .in("activity_id", activityIds)
             .order("created_at", { ascending: true })
         : Promise.resolve({ data: [] }),
+      activityIds.length
+        ? admin
+            .from("digital_textbook_activity_page_progress")
+            .select("activity_id,page_index,item_indices,response,results,answers")
+            .eq("tenant_id", options.tenantId)
+            .eq("student_id", options.userId)
+            .eq("version_id", version.id)
+            .in("activity_id", activityIds)
+            .order("page_index")
+        : Promise.resolve({ data: [] }),
     ]);
 
     for (const attempt of completedAttempts ?? []) {
       completedActivityIds.add(String(attempt.activity_id));
       completedActivityResponses.set(String(attempt.activity_id), attempt.response ?? null);
+    }
+
+    for (const row of savedPageProgress ?? []) {
+      const activityId = String(row.activity_id);
+      const pages = activityPageProgress.get(activityId) ?? [];
+      pages.push({
+        pageIndex: Number(row.page_index),
+        itemIndices: Array.isArray(row.item_indices) ? row.item_indices.map(Number) : [],
+        response: Array.isArray(row.response) ? row.response as Array<number | string> : [],
+        results: Array.isArray(row.results) ? row.results.map(Boolean) : [],
+        answers: Array.isArray(row.answers) ? row.answers as Array<number | string> : [],
+      });
+      activityPageProgress.set(activityId, pages);
     }
 
     if (savedPreference) {
@@ -431,6 +463,7 @@ export async function loadSmartDigitalTextbook(
             type: activity.activity_type as SmartActivityType,
             completed: completedActivityIds.has(String(activity.id)),
             response: completedActivityResponses.get(String(activity.id)) ?? null,
+            pageProgress: activityPageProgress.get(String(activity.id)) ?? [],
             prompt: localized(activity.prompt),
             instruction: localized(activity.instruction),
             options: asStringArray(activity.options),

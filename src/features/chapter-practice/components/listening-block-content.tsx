@@ -211,6 +211,7 @@ export function ListeningBlockContent({
           <audio
             className="mt-3 w-full"
             controls
+            controlsList="nodownload"
             preload="metadata"
             src={material.audioUrl}
             onPlay={() => {
@@ -241,6 +242,7 @@ export function ListeningBlockContent({
                 {question.audioUrl ? (
                   <audio
                     controls
+                    controlsList="nodownload"
                     preload="metadata"
                     src={question.audioUrl}
                     onPlay={() => {

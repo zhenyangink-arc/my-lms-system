@@ -376,6 +376,17 @@ assertInvalid("index array strict container", { kind: "index_array", value: [0, 
 assertInvalid("index array rejects sentinel", { kind: "index_array", value: [0, 0] }, [-1, 0], "single_choice", { items: [{ options: ["A", "B"] }, { options: ["C", "D"] }] }, []);
 assertInvalid("index array strict members", { kind: "index_array", value: [0, 0] }, ["0", 0], "single_choice", { items: [{ options: ["A", "B"] }, { options: ["C", "D"] }] }, []);
 assertInvalid("index array rejects missing item", { kind: "index_array", value: [0, 0] }, [0], "single_choice", { items: [{ options: ["A", "B"] }, { options: ["C", "D"] }] }, []);
+assert.equal(
+  gradeSmartTextbookActivity(
+    { kind: "index_array", value: [1, 2, 1, 3, 1, 1, 2, 3] },
+    [1, 2, 1, 3, 1, 1, 2, 3],
+    "listening",
+    { items: Array.from({ length: 8 }, () => ({ options: ["A", "B", "C", "D"] })) },
+    [],
+  ).correct,
+  true,
+  "paged listening accepts a strict index_array response",
+);
 assertInvalid("index confirmation strict object", { kind: "index_confirmation", value: 0 }, null, "single_choice", {}, ["A", "B"]);
 for (const selection of [null, false, "0", []]) {
   assertInvalid("index confirmation strict selection", { kind: "index_confirmation", value: 0 }, { selection, confirmed: true }, "single_choice", {}, ["A", "B"]);

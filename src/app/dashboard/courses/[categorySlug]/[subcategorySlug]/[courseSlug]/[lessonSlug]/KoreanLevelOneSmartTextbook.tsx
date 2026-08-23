@@ -599,39 +599,56 @@ function ListenSpeakLearningPanel({
   const focus = Array.isArray(content.listeningFocus) ? content.listeningFocus.map(objectValue) : [];
   const repeatLines = Array.isArray(content.repeatLines) ? content.repeatLines.map(objectValue) : [];
   const outputChecklist = stringArray(content.outputChecklist);
+  const repeatTracks = Array.isArray(content.repeatTracks) ? content.repeatTracks.map(objectValue) : [];
+  const repeatRecordingActivity = node.activities.find((activity) => activity.key === "speaking-introduction");
+  const listeningActivity = node.activities.find((activity) => activity.key === "listening-identity");
+  const [repeatTask, setRepeatTask] = useState<0 | 1>(0);
+  const [repeatTrackIndex, setRepeatTrackIndex] = useState(0);
+  const [repeatLineIndex, setRepeatLineIndex] = useState(0);
+  const [showRepeatTranscript, setShowRepeatTranscript] = useState(false);
+  const [completedRepeatSegments, setCompletedRepeatSegments] = useState<Set<string>>(() => new Set());
   const sceneImage = node.media.find((asset) => asset.type === "image" && asset.status === "ready" && asset.url);
   const showChinese = supportMode !== "immersion";
 
   if (page === 1 || page === 3) return null;
 
   if (page === 2) {
+    const track = repeatTracks[repeatTrackIndex] ?? {};
+    const lines = Array.isArray(track.lines) ? track.lines.map(objectValue) : repeatLines;
+    const line = lines[Math.min(repeatLineIndex, Math.max(0, lines.length - 1))] ?? {};
+    const segmentKey = `${repeatTask}:${repeatTrackIndex}:${repeatTask === 0 ? repeatLineIndex : 0}`;
+    const trackCompleted = repeatTask === 0
+      ? lines.length > 0 && lines.every((_, index) => completedRepeatSegments.has(`0:${repeatTrackIndex}:${index}`))
+      : completedRepeatSegments.has(`1:${repeatTrackIndex}:0`);
     return (
-      <section className="rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6" aria-label={locale === "ko-KR" ? "문장별 따라 말하기" : "逐句跟读"}>
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <CardTitleWithHint
-            title={locale === "ko-KR" ? "문장별 듣고 따라 하기" : "逐句听读，再完整复现"}
-            description={locale === "ko-KR" ? "각 문장의 의미와 리듬을 확인한 뒤 순서대로 연결해 말하세요." : "先听清每句的意义与节奏，再按原顺序连起来表达。"}
-            headingLevel={3}
-            titleClassName="text-lg font-bold text-[var(--foreground)]"
-            hintLabel={locale === "ko-KR" ? "연습 방법 보기" : "查看练习方法"}
-          />
-          <span className="rounded-full bg-[var(--status-warning-surface)] px-3 py-1.5 text-xs font-bold text-[var(--status-warning)]">
-            {locale === "ko-KR" ? "정식 음원 제작 대기" : "正式音频待制作"}
-          </span>
+      <section className="rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6" aria-label={locale === "ko-KR" ? "듣고 따라 말하기" : "跟读复现"}>
+        <p className="sr-only">当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。</p>
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[var(--card)] p-2">
+          <div className="flex items-center gap-2" role="tablist" aria-label={locale === "ko-KR" ? "따라 말하기 과제" : "跟读复现任务"}>
+            {[locale === "ko-KR" ? "문장별 따라 말하기" : "逐句跟读", locale === "ko-KR" ? "전체 재현" : "整段复现"].map((label, index) => <button key={label} type="button" role="tab" aria-selected={repeatTask === index} onClick={() => { setRepeatTask(index as 0 | 1); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-11 rounded-xl px-4 text-sm font-bold ${repeatTask === index ? "bg-[var(--accent)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}>{label}</button>)}
+          </div>
+          <span className="pr-3 text-xs font-bold text-[var(--foreground-muted)]">{repeatTask + 1} / 2</span>
         </div>
-        <ol className="mt-6 grid gap-3 sm:grid-cols-2">
-          {repeatLines.map((line, index) => (
-            <li key={`${String(line.ko)}-${index}`} className="flex min-h-24 items-center gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4">
-              <span className="text-xs font-bold tabular-nums text-[var(--primary)]">{String(index + 1).padStart(2, "0")}</span>
-              <div className="min-w-0 flex-1">
-                <p className="text-base font-bold text-[var(--foreground)]" lang="ko">{String(line.ko ?? "")}</p>
-                {showChinese && <p className="mt-1 text-sm text-[var(--foreground-muted)]">{String(line.zh ?? "")}</p>}
-              </div>
-              <button type="button" onClick={() => speakKorean(String(line.ko ?? ""))} className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)] transition hover:scale-105 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transform-none" aria-label={`${locale === "ko-KR" ? "기기 시범 음성 재생" : "播放设备示范音"}：${String(line.ko ?? "")}`}><Volume2 size={17} aria-hidden="true" /></button>
-            </li>
-          ))}
-        </ol>
-        <p className="mt-4 flex items-center gap-2 text-xs font-semibold text-[var(--foreground-muted)]"><Headphones size={15} aria-hidden="true" />{locale === "ko-KR" ? "현재 버튼은 기기 시범 음성입니다. 정식 음원이 준비되면 같은 위치에서 자동으로 교체됩니다." : "当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。"}</p>
+        <div className="mt-4 flex flex-wrap gap-2">{repeatTracks.map((item, index) => <button key={String(item.id ?? index)} type="button" onClick={() => { setRepeatTrackIndex(index); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${repeatTrackIndex === index ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.title)[locale] ?? `听力 ${index + 1}`)}</button>)}</div>
+
+        {repeatTask === 0 ? <div className="mt-5 grid gap-5 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div className="rounded-[22px] bg-[var(--card)] p-6">
+            <div className="flex items-center justify-between gap-4"><span className="text-xs font-bold text-[var(--primary)]">{String(repeatLineIndex + 1).padStart(2, "0")} / {lines.length}</span></div>
+            <p className="mt-6 text-2xl font-bold leading-10 text-[var(--foreground)]" lang="ko">{String(line.ko ?? "")}</p>
+            {showChinese && <p className="mt-2 text-sm text-[var(--foreground-muted)]">{String(line.zh ?? "")}</p>}
+            <button type="button" onClick={() => speakKorean(String(line.ko ?? ""))} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold text-[var(--primary)]"><Volume2 size={16} />{locale === "ko-KR" ? "시범 음성" : "播放示范"}</button>
+            <div className="mt-4 flex justify-between"><button type="button" disabled={repeatLineIndex === 0} onClick={() => setRepeatLineIndex((value) => Math.max(0, value - 1))} className="min-h-10 rounded-xl px-3 text-sm font-bold disabled:opacity-30">{locale === "ko-KR" ? "이전 문장" : "上一句"}</button><button type="button" disabled={repeatLineIndex >= lines.length - 1} onClick={() => setRepeatLineIndex((value) => Math.min(lines.length - 1, value + 1))} className="min-h-10 rounded-xl bg-[var(--primary)] px-4 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-30">{locale === "ko-KR" ? "다음 문장" : "下一句"}</button></div>
+          </div>
+          <ol className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-4">{lines.map((item, index) => <li key={index}><button type="button" onClick={() => setRepeatLineIndex(index)} className={`flex min-h-12 w-full items-center gap-3 rounded-xl px-3 text-left text-sm font-bold ${repeatLineIndex === index ? "bg-[var(--accent)] text-[var(--primary)]" : "text-[var(--foreground-secondary)]"}`}><span>{String(index + 1).padStart(2, "0")}</span><span className="min-w-0 flex-1 truncate" lang="ko">{String(item.ko ?? "")}</span></button></li>)}</ol>
+        </div> : <div className="mt-5 rounded-[22px] bg-[var(--card)] p-6">
+          <CardTitleWithHint title={locale === "ko-KR" ? "키워드로 전체 내용을 재현하세요" : "根据关键词复现整段内容"} description={locale === "ko-KR" ? "전체 원고를 보지 않고 핵심어를 연결해 말하세요." : "不查看完整母稿，只根据关键词按原顺序复现。"} headingLevel={3} titleClassName="text-lg font-bold" hintLabel={locale === "ko-KR" ? "재현 방법 보기" : "查看复现方法"} />
+          <div className="mt-5 flex flex-wrap gap-2">{stringArray(track.keywords).map((keyword) => <span key={keyword} className="rounded-full bg-[var(--accent)] px-3 py-1.5 text-sm font-bold text-[var(--primary)]" lang="ko">{keyword}</span>)}</div>
+          {listeningActivity && <audio controls controlsList="nodownload" preload="none" src={`/api/digital-textbook/audio/${listeningActivity.id}?page=${repeatTrackIndex}`} className="mt-6 h-10 w-full" />}
+          {repeatRecordingActivity && <RecordingControl activityId={repeatRecordingActivity.id} locale={locale} uploadMetadata={{ practiceKey: "full-recall", trackIndex: repeatTrackIndex, segmentIndex: 0 }} onReset={() => setCompletedRepeatSegments((current) => { const next = new Set(current); next.delete(segmentKey); return next; })} onReady={() => setCompletedRepeatSegments((current) => new Set(current).add(segmentKey))} />}
+          <button type="button" aria-expanded={showRepeatTranscript} onClick={() => setShowRepeatTranscript((visible) => !visible)} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)]">{showRepeatTranscript ? <ChevronUp size={16} /> : <ChevronDown size={16} />}{showRepeatTranscript ? locale === "ko-KR" ? "원고 닫기" : "收起原稿" : locale === "ko-KR" ? "원고 보기" : "查看原稿"}</button>
+          {showRepeatTranscript && <p className="mt-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 font-bold leading-8 text-[var(--foreground)]" lang="ko">{lines.map((item) => String(item.ko ?? "")).filter(Boolean).join(" ")}</p>}
+          {trackCompleted && <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[var(--status-success)]"><CheckCircle2 size={16} />{locale === "ko-KR" ? "현재 음원 과제를 완료했습니다" : "当前音轨任务已完成"}</p>}
+        </div>}
       </section>
     );
   }
@@ -1911,6 +1928,7 @@ function RecordingControl({
   locale,
   onReady,
   onReset,
+  uploadMetadata,
 }: {
   activityId: string;
   locale: SmartLocale;
@@ -1919,6 +1937,7 @@ function RecordingControl({
     recordingEvidenceId: string;
   }) => void;
   onReset: () => void;
+  uploadMetadata?: { practiceKey: "repeat-line" | "full-recall"; trackIndex: number; segmentIndex: number };
 }) {
   const t = ui[locale];
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -1967,6 +1986,11 @@ function RecordingControl({
         try {
           const formData = new FormData();
           formData.set("recording", blob, "recording");
+          if (uploadMetadata) {
+            formData.set("practiceKey", uploadMetadata.practiceKey);
+            formData.set("trackIndex", String(uploadMetadata.trackIndex));
+            formData.set("segmentIndex", String(uploadMetadata.segmentIndex));
+          }
           const response = await fetch(
             `/api/digital-textbook/recordings/${activityId}`,
             { method: "POST", body: formData },
@@ -2568,7 +2592,19 @@ function Activity({
     if (activity.type === "fill_blank" && configItems.length > 0) {
       return configItems.map(() => "");
     }
-    if (groupedSingleChoice) return configItems.map(() => -1);
+    if (groupedSingleChoice) {
+      if (activity.completed && Array.isArray(activity.response)) {
+        const savedResponse = activity.response as unknown[];
+        return configItems.map((_, index) => Number(savedResponse[index] ?? -1));
+      }
+      const restored = configItems.map(() => -1);
+      for (const page of activity.pageProgress) {
+        page.itemIndices.forEach((originalIndex, index) => {
+          restored[originalIndex] = Number(page.response[index] ?? -1);
+        });
+      }
+      return restored;
+    }
     if (requiresConfirmation) return { selection: -1, confirmed: false };
     if (activity.type === "speaking") {
       return { recorded: false, durationSeconds: 0, turns: 0, criteria: [] };
@@ -2585,9 +2621,34 @@ function Activity({
   const [activeCardIndex, setActiveCardIndex] = useState(0);
   const [activeGroupedChoicePage, setActiveGroupedChoicePage] = useState(0);
   const [activeFillBlankPage, setActiveFillBlankPage] = useState(0);
-  const [pageChecks, setPageChecks] = useState<Record<number, { results: boolean[]; answers: Array<number | string>; revealed: boolean }>>({});
+  const [pageChecks, setPageChecks] = useState<Record<number, { results: boolean[]; answers: Array<number | string>; revealed: boolean }>>(() => {
+    if (!groupedSingleChoice) return {};
+    if (!activity.completed) {
+      return Object.fromEntries(activity.pageProgress.map((page) => [
+        page.pageIndex,
+        { results: page.results, answers: page.answers, revealed: page.results.every(Boolean) },
+      ]));
+    }
+    if (!Array.isArray(activity.response)) return {};
+    const savedResponse = activity.response as unknown[];
+    return Object.fromEntries(
+      groupedChoicePages.map((page, pageIndex) => [
+        pageIndex,
+        {
+          results: page.items.map(() => true),
+          answers: page.items.map(({ originalIndex }) => Number(savedResponse[originalIndex] ?? -1)),
+          revealed: false,
+        },
+      ]),
+    );
+  });
   const [checkingPage, setCheckingPage] = useState(false);
   const [practiceFocused, setPracticeFocused] = useState(false);
+  const [listeningTranscripts, setListeningTranscripts] = useState<Record<number, string>>({});
+  const [transcriptVisible, setTranscriptVisible] = useState(false);
+  const [transcriptLoading, setTranscriptLoading] = useState(false);
+  const [speakingReferenceVisible, setSpeakingReferenceVisible] = useState(false);
+  const [speakingOutlineIndex, setSpeakingOutlineIndex] = useState(0);
   const focusModeStartRef = useRef<HTMLButtonElement>(null);
   const focusModeCloseRef = useRef<HTMLButtonElement>(null);
   const activityCompleted =
@@ -2608,6 +2669,10 @@ function Activity({
   const activePageCheck = pageChecks[activeGrammarPage];
   const activePageCompleted = Boolean(activePageCheck && (activePageCheck.revealed || activePageCheck.results.every(Boolean)));
   const activePageReady = activityCompleted || activePageCompleted;
+  const canViewListeningTranscript = activity.type === "listening" && (
+    isListeningQuiz ? Boolean(pageChecks[activeGrammarPage]) : activityCompleted
+  );
+  const listeningTranscript = listeningTranscripts[activeGrammarPage] ?? null;
 
   async function checkGrammarPage() {
     const values = Array.isArray(answer) ? answer : [];
@@ -2619,6 +2684,7 @@ function Activity({
     setMessage("");
     const result = await checkSmartTextbookActivityPageAction({
       activityId: activity.id,
+      pageIndex: activeGrammarPage,
       itemIndices: activeGrammarItems.map(({ originalIndex }) => originalIndex),
       response: activeGrammarItems.map(({ originalIndex }) => values[originalIndex]),
     });
@@ -2627,8 +2693,14 @@ function Activity({
       setMessage(result.message);
       return;
     }
-    setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...result, revealed: false } }));
-    if ((isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && result.results.every(Boolean) && !activityCompleted) {
+    const checkedPage = { ...result, revealed: false };
+    setPageChecks((current) => ({ ...current, [activeGrammarPage]: checkedPage }));
+    const allListeningPagesCompleted = isListeningQuiz && groupedChoicePages.every((_, pageIndex) => {
+      const check = pageIndex === activeGrammarPage ? checkedPage : pageChecks[pageIndex];
+      return Boolean(check && (check.revealed || check.results.every(Boolean)));
+    });
+    const finalCorrectPageCompleted = (isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && result.results.every(Boolean);
+    if ((allListeningPagesCompleted || finalCorrectPageCompleted) && !activityCompleted) {
       submit();
     }
   }
@@ -2638,7 +2710,21 @@ function Activity({
     const next = Array.isArray(answer) ? [...answer] : [];
     activeGrammarItems.forEach(({ originalIndex }, index) => { next[originalIndex] = activePageCheck.answers[index]; });
     setAnswer(next);
-    setPageChecks((current) => ({ ...current, [activeGrammarPage]: { ...activePageCheck, revealed: true } }));
+    const revealedPage = { ...activePageCheck, revealed: true };
+    setPageChecks((current) => ({ ...current, [activeGrammarPage]: revealedPage }));
+    const allListeningPagesCompleted = isListeningQuiz && groupedChoicePages.every((_, pageIndex) => {
+      const check = pageIndex === activeGrammarPage ? revealedPage : pageChecks[pageIndex];
+      return Boolean(check && (check.revealed || check.results.every(Boolean)));
+    });
+    if (allListeningPagesCompleted && !activityCompleted) submit(next);
+    if (isListeningQuiz) {
+      void checkSmartTextbookActivityPageAction({
+        activityId: activity.id,
+        pageIndex: activeGrammarPage,
+        itemIndices: activeGrammarItems.map(({ originalIndex }) => originalIndex),
+        response: activeGrammarItems.map(({ originalIndex }) => next[originalIndex]),
+      });
+    }
   }
 
   function clearActivePageCheck() {
@@ -2647,6 +2733,36 @@ function Activity({
       delete next[activeGrammarPage];
       return next;
     });
+  }
+
+  async function toggleListeningTranscript() {
+    if (transcriptVisible) {
+      setTranscriptVisible(false);
+      return;
+    }
+    if (listeningTranscript) {
+      setTranscriptVisible(true);
+      return;
+    }
+
+    setTranscriptLoading(true);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/digital-textbook/transcript/${activity.id}?page=${activeGrammarPage}`, {
+        cache: "no-store",
+      });
+      const payload = await response.json() as { transcript?: string; message?: string };
+      if (!response.ok || !payload.transcript) {
+        setMessage(locale === "ko-KR" ? "원고를 불러오지 못했습니다." : "暂时无法读取音频母稿。");
+        return;
+      }
+      setListeningTranscripts((current) => ({ ...current, [activeGrammarPage]: payload.transcript! }));
+      setTranscriptVisible(true);
+    } catch {
+      setMessage(locale === "ko-KR" ? "원고를 불러오지 못했습니다." : "暂时无法读取音频母稿。");
+    } finally {
+      setTranscriptLoading(false);
+    }
   }
 
   function previousGrammarPage() {
@@ -2690,6 +2806,10 @@ function Activity({
     };
   }, [practiceFocused]);
 
+  useEffect(() => {
+    setTranscriptVisible(false);
+  }, [activeGrammarPage]);
+
   function hasResponse() {
     if (activity.type === "writing") {
       return typeof objectValue(answer).text === "string" && String(objectValue(answer).text).trim().length > 0;
@@ -2731,9 +2851,13 @@ function Activity({
     return false;
   }
 
-  function submit() {
+  function submit(responseOverride?: AnswerValue) {
+    const responseToSubmit = responseOverride === undefined ? answer : responseOverride;
     setFeedback(null);
-    if (!hasResponse() || hasPendingAudio) {
+    const overrideHasResponse = responseOverride !== undefined && groupedSingleChoice
+      ? Array.isArray(responseToSubmit) && responseToSubmit.length === configItems.length && responseToSubmit.every((item, index) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < stringArray(configItems[index]?.options).length)
+      : hasResponse();
+    if (!overrideHasResponse || hasPendingAudio) {
       setMessage(hasPendingAudio ? t.audioPending : t.noResponse);
       return;
     }
@@ -2741,7 +2865,7 @@ function Activity({
     setNeedsReload(false);
     startTransition(async () => {
       try {
-        const result = await submitSmartTextbookActivityAction({ activityId: activity.id, response: answer, locale });
+        const result = await submitSmartTextbookActivityAction({ activityId: activity.id, response: responseToSubmit, locale });
         setFeedback(result);
         if (result.ok) {
           onCompleted({
@@ -2873,19 +2997,48 @@ function Activity({
       </div>
 
       {activity.type === "listening" && !hasPendingAudio && (
-        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--support)] shadow-sm">
-            <Headphones size={19} />
-          </span>
-          <audio
-            controls
-            preload="none"
-            src={`/api/digital-textbook/audio/${activity.id}`}
-            className="h-10 w-full"
-          />
-          <span className="shrink-0 text-xs font-bold text-[var(--support)]">
-            {t.listenPrivate}
-          </span>
+        <div className="mt-6 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:px-5">
+          <div className="flex flex-col items-stretch gap-4 sm:flex-row sm:items-center">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--support)] shadow-sm">
+              <Headphones size={19} />
+            </span>
+            <audio
+              controls
+              controlsList="nodownload"
+              preload="none"
+              src={`/api/digital-textbook/audio/${activity.id}?page=${activeGrammarPage}`}
+              className="h-10 w-full"
+            />
+            <span className="shrink-0 text-xs font-bold text-[var(--support)]">
+              {t.listenPrivate}
+            </span>
+          </div>
+          {canViewListeningTranscript && (
+            <div className="mt-4 border-t border-[var(--border-subtle)] pt-4">
+              <button
+                type="button"
+                aria-expanded={transcriptVisible}
+                disabled={transcriptLoading}
+                onClick={toggleListeningTranscript}
+                className="inline-flex min-h-10 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-50"
+              >
+                <BookOpen size={16} aria-hidden="true" />
+                {transcriptLoading
+                  ? locale === "ko-KR" ? "불러오는 중" : "正在读取"
+                  : transcriptVisible
+                    ? locale === "ko-KR" ? "원고 접기" : "收起音频母稿"
+                    : locale === "ko-KR" ? "오디오 원고 보기" : "查看音频母稿"}
+                {transcriptVisible ? <ChevronUp size={15} aria-hidden="true" /> : <ChevronDown size={15} aria-hidden="true" />}
+              </button>
+              {transcriptVisible && listeningTranscript && (
+                <div className="mt-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4" lang="ko">
+                  <p className="whitespace-pre-wrap text-base font-semibold leading-8 text-[var(--foreground)]">
+                    {listeningTranscript}
+                  </p>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -3228,7 +3381,41 @@ function Activity({
         </div>
       )}
 
-      {activity.type === "speaking" && (
+      {activity.type === "speaking" && activity.config.presentation === "independent_output" && (() => {
+        const outlineItems = Array.isArray(activity.config.outlineItems) ? activity.config.outlineItems.map(objectValue) : [];
+        const response = objectValue(answer);
+        const outlineSelections = Array.isArray(response.outlineSelections)
+          ? response.outlineSelections.map((item) =>
+              typeof item === "string" && item !== "undefined" && item !== "null"
+                ? item
+                : "",
+            )
+          : [];
+        const recorded = response.recorded === true;
+        const durationSeconds = Number(response.durationSeconds ?? 0);
+        const minimumSeconds = Number(activity.config.minimumSeconds ?? 15);
+        const selectedCount = outlineSelections.filter(Boolean).length;
+        const minimumOutlineItems = Number(activity.config.minimumOutlineItems ?? 4);
+        const activeOutlineItem = outlineItems[Math.min(speakingOutlineIndex, Math.max(0, outlineItems.length - 1))] ?? {};
+        const activeChoices = stringArray(activeOutlineItem.choices);
+        const readyToComplete = recorded && durationSeconds >= minimumSeconds && selectedCount >= minimumOutlineItems;
+        return <section className="mt-6 overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--card)]">
+          <div className="border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-5 sm:px-7">
+            <div className="flex flex-wrap items-center justify-between gap-3"><CardTitleWithHint title={locale === "ko-KR" ? "표현 흐름 만들기" : "组织表达"} description={locale === "ko-KR" ? "다섯 단계에서 말할 표현을 고른 뒤 원고 없이 녹음하세요." : "依次选择五个表达节点，再脱离完整原稿进行录音。"} headingLevel={4} titleClassName="text-lg font-bold" hintLabel={locale === "ko-KR" ? "준비 방법 보기" : "查看准备方法"} /><span className="text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{locale === "ko-KR" ? "선택" : "已选"} {selectedCount} / {outlineItems.length}</span></div>
+            <div className="relative mt-5 grid grid-cols-5" role="tablist" aria-label={locale === "ko-KR" ? "표현 단계" : "表达步骤"}><span className="absolute left-[10%] right-[10%] top-5 h-px bg-[var(--border-strong)]" aria-hidden="true" />{outlineItems.map((item, index) => { const selected = Boolean(outlineSelections[index]); const active = speakingOutlineIndex === index; return <button key={String(item.id ?? index)} type="button" role="tab" aria-selected={active} onClick={() => setSpeakingOutlineIndex(index)} className="relative z-[1] flex min-h-16 flex-col items-center gap-2 px-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><span className={`flex size-10 items-center justify-center rounded-full border-2 text-xs font-bold tabular-nums transition ${active ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm" : selected ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground-muted)]"}`}>{selected && !active ? <Check size={15} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}</span><span className={`text-xs font-bold ${active ? "text-[var(--primary)]" : "text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.label)[locale] ?? "")}</span></button>; })}</div>
+            <fieldset className="mt-5 rounded-2xl bg-[var(--card)] px-4 py-4 ring-1 ring-[var(--border-subtle)]"><legend className="px-2 text-xs font-bold text-[var(--foreground-muted)]">{String(objectValue(activeOutlineItem.label)[locale] ?? "")}</legend><div className="flex flex-wrap gap-2">{activeChoices.map((choice) => { const selected = outlineSelections[speakingOutlineIndex] === choice; return <button key={choice} type="button" aria-pressed={selected} onClick={() => { const next = [...outlineSelections]; next[speakingOutlineIndex] = selected ? "" : choice; const criteria = next.filter(Boolean).map(() => true); setAnswer({ ...response, outlineSelections: next, criteria, turns: 0 }); setFeedback(null); }} className={`min-h-11 rounded-xl px-4 py-2.5 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--accent)]"}`} lang="ko">{choice}</button>; })}</div></fieldset>
+          </div>
+
+          <div className="grid lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)]">
+            <div className="border-b border-[var(--border-subtle)] p-6 lg:border-b-0 lg:border-r sm:p-7"><CardTitleWithHint title={locale === "ko-KR" ? "나의 표현 개요" : "我的表达提纲"} description={locale === "ko-KR" ? "고른 표현을 순서대로 확인하세요." : "按顺序查看已经选择的表达。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "개요 설명 보기" : "查看提纲说明"} /><div className="mt-5 min-h-52 rounded-2xl bg-[var(--surface-soft)] px-5 py-4">{outlineSelections.filter(Boolean).length > 0 ? <p className="text-lg font-bold leading-10 text-[var(--foreground)]" lang="ko">{outlineSelections.filter(Boolean).join(" ")}</p> : <div className="flex min-h-44 items-center justify-center text-center text-sm font-semibold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "위 단계에서 말할 표현을 고르세요." : "请在上方选择准备表达的内容。"}</div>}</div></div>
+            <div className="flex flex-col justify-between bg-[var(--surface-soft)]/60 p-6 sm:p-7"><div><CardTitleWithHint title={locale === "ko-KR" ? "독립 녹음" : "独立录音"} description={locale === "ko-KR" ? "개요만 보고 자신의 말로 소개하세요." : "只看提纲，用自己的话完成介绍。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "녹음 방법 보기" : "查看录音方法"} /><div className="mt-6 flex justify-center"><div className={`flex size-24 items-center justify-center rounded-full ${recorded ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--accent)] text-[var(--primary)]"}`}><Mic size={34} aria-hidden="true" /></div></div><p className="mt-4 text-center text-sm font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? `최소 ${minimumSeconds}초` : `至少 ${minimumSeconds} 秒`} · {locale === "ko-KR" ? "현재" : "当前"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</p></div><RecordingControl activityId={activity.id} locale={locale} onReset={() => { setAnswer({ ...objectValue(answer), recorded: false, durationSeconds: 0, recordingEvidenceId: undefined }); setSpeakingReferenceVisible(false); }} onReady={({ durationSeconds: nextDuration, recordingEvidenceId }) => setAnswer({ ...objectValue(answer), recorded: true, durationSeconds: nextDuration, recordingEvidenceId })} /></div>
+          </div>
+
+          <div className="border-t border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-4 sm:px-7"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-bold"><span className={selectedCount >= minimumOutlineItems ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{selectedCount >= minimumOutlineItems && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "표현 항목" : "表达节点"} {selectedCount}/{outlineItems.length}</span><span className={durationSeconds >= minimumSeconds ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{durationSeconds >= minimumSeconds && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "녹음" : "录音"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</span><span className={readyToComplete ? "text-[var(--status-success)]" : "text-[var(--foreground-muted)]"}>{readyToComplete ? locale === "ko-KR" ? "완료 가능" : "可以完成" : locale === "ko-KR" ? "준비 중" : "尚未达到要求"}</span></div>{recorded && <button type="button" aria-expanded={speakingReferenceVisible} onClick={() => setSpeakingReferenceVisible((visible) => !visible)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--primary)]">{speakingReferenceVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}{speakingReferenceVisible ? locale === "ko-KR" ? "참고 표현 닫기" : "收起参考表达" : locale === "ko-KR" ? "참고 표현 보기" : "查看参考表达"}</button>}</div>{speakingReferenceVisible && <p className="mt-4 rounded-2xl bg-[var(--card)] p-5 font-bold leading-8 text-[var(--foreground)] ring-1 ring-[var(--border-subtle)]" lang="ko">{String(activity.config.referenceText ?? "")}</p>}</div>
+        </section>;
+      })()}
+
+      {activity.type === "speaking" && activity.config.presentation !== "independent_output" && (
         <div>
           <RecordingControl
             activityId={activity.id}
@@ -3288,7 +3475,7 @@ function Activity({
         </div>
         {isPagedChoicePractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
         {isPagedChoicePractice && activePageCheck && !activePageCheck.results.every(Boolean) && !activePageCheck.revealed && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
-        {(!isPagedChoicePractice || ((isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
+        {(!isPagedChoicePractice || ((isListeningQuiz || isLastGrammarActivity) && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={() => submit()} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
           {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : usesExpressionPath ? locale === "ko-KR" ? "순서 확인" : "检查顺序" : t.submit}
         </button>}
       </div>

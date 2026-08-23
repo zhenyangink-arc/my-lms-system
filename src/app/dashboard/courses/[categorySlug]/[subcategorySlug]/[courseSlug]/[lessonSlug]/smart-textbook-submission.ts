@@ -470,7 +470,7 @@ function gradeOpenActivity(
         Number.isInteger(response.turns) &&
         response.turns >= minimumTurns &&
         Array.isArray(response.criteria) &&
-        response.criteria.length === requiredCriteria &&
+        response.criteria.length >= requiredCriteria &&
         response.criteria.every((item) => item === true));
     return {
       ok: true,
@@ -642,7 +642,7 @@ export function gradeSmartTextbookActivity(
     return { ok: true, correct, score: correct ? 100 : 0 };
   }
   if (kind === "index_array") {
-    if (activityType !== "single_choice") {
+    if (activityType !== "single_choice" && activityType !== "listening") {
       return { ok: false, error: "活动判定配置不匹配，提交已拒绝。" };
     }
     const config = asObject(publicConfigValue);

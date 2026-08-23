@@ -25,7 +25,8 @@ const preferenceSchema = z.object({
 
 const pageCheckSchema = z.object({
   activityId: z.string().uuid(),
-  itemIndices: z.array(z.number().int().nonnegative()).min(1).max(3),
+  pageIndex: z.number().int().nonnegative().optional(),
+  itemIndices: z.array(z.number().int().nonnegative()).min(1).max(4),
   response: z.array(z.union([z.number().int().nonnegative(), z.string()])),
 });
 
@@ -147,9 +148,10 @@ export async function checkSmartTextbookActivityPageAction(input: unknown) {
   if (!parsed.success || parsed.data.response.length !== parsed.data.itemIndices.length) {
     return { ok: false as const, message: "本页作答内容无效。" };
   }
-  const { supabase, profile, platformProfile } = await requireActiveUser();
+  const { supabase, user, tenant, profile, platformProfile } = await requireActiveUser();
+  const preview = isPlatformCourseAuditorRole(platformProfile?.role);
   if (
-    !isPlatformCourseAuditorRole(platformProfile?.role) &&
+    !preview &&
     !canUseStudentFeature(
       profile?.role ?? "student",
       normalizeMembershipTier(profile?.membership_tier),
@@ -160,11 +162,12 @@ export async function checkSmartTextbookActivityPageAction(input: unknown) {
   }
   const { data: activity } = await supabase
     .from("digital_textbook_activities")
-    .select("id,activity_type")
+    .select("id,node_id,activity_type")
     .eq("id", parsed.data.activityId)
     .maybeSingle();
   if (!activity) return { ok: false as const, message: "找不到这项练习。" };
-  const { data: secret } = await createAdminClient()
+  const admin = createAdminClient();
+  const { data: secret } = await admin
     .from("digital_textbook_activity_secrets")
     .select("answer_key")
     .eq("activity_id", activity.id)
@@ -181,9 +184,39 @@ export async function checkSmartTextbookActivityPageAction(input: unknown) {
   const normalize = (value: number | string) => typeof value === "string"
     ? value.normalize("NFC").trim().replace(/\s+/gu, " ")
     : value;
+  const results = parsed.data.response.map((value, index) => normalize(value) === normalize(answers[index]));
+
+  if (!preview && tenant && parsed.data.pageIndex !== undefined) {
+    const { data: node } = await admin
+      .from("digital_textbook_nodes")
+      .select("digital_textbook_modules!inner(digital_textbook_chapters!inner(version_id))")
+      .eq("id", activity.node_id)
+      .maybeSingle();
+    const moduleRelation = node?.digital_textbook_modules as unknown as {
+      digital_textbook_chapters?: { version_id?: string };
+    } | null;
+    const versionId = String(moduleRelation?.digital_textbook_chapters?.version_id ?? "");
+    if (!versionId) return { ok: false as const, message: "教材版本关系不完整。" };
+    const { error } = await admin
+      .from("digital_textbook_activity_page_progress")
+      .upsert({
+        tenant_id: tenant.id,
+        student_id: user.id,
+        activity_id: activity.id,
+        version_id: versionId,
+        page_index: parsed.data.pageIndex,
+        item_indices: parsed.data.itemIndices,
+        response: parsed.data.response,
+        results,
+        answers,
+        updated_at: new Date().toISOString(),
+      }, { onConflict: "tenant_id,student_id,activity_id,version_id,page_index" });
+    if (error) return { ok: false as const, message: "本页状态暂时没有保存，请重试。" };
+  }
+
   return {
     ok: true as const,
-    results: parsed.data.response.map((value, index) => normalize(value) === normalize(answers[index])),
+    results,
     answers,
   };
 }
