@@ -87,6 +87,10 @@ const guidedConversationAudioMigrationUrl = new URL(
   "../supabase/migrations/202608230004_add_guided_conversation_audio_manifest.sql",
   import.meta.url,
 );
+const patternCompositionMigrationUrl = new URL(
+  "../supabase/migrations/202608230005_add_chapter_one_pattern_composition.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -309,7 +313,7 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, submission] = await Promise.all([
+  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
@@ -317,6 +321,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
     readFile(conversationalPatternChoicesMigrationUrl, "utf8"),
     readFile(guidedPatternConversationMigrationUrl, "utf8"),
     readFile(guidedConversationAudioMigrationUrl, "utf8"),
+    readFile(patternCompositionMigrationUrl, "utf8"),
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
@@ -375,6 +380,12 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(guidedAudio, /'korean-level-one\/chapter-01\/patterns\/guided-dialogue\/'/);
   assert.match(guidedAudio, /'storage', 'cloudflare-r2'/);
   assert.match(guidedAudio, /'audioAssetKey'/);
+  assert.match(source, /function PatternCompositionPractice/);
+  assert.match(source, /activity\.key === "pattern-compose"/);
+  assert.match(source, /语块顺序还不自然/);
+  assert.match(composition, /'pattern-compose'/);
+  assert.match(composition, /"kind":"text_array"/);
+  assert.equal((composition.match(/"id":"(?:greeting-name|identity-answer|ask-back|closing)"/g) ?? []).length, 4);
   assert.match(submission, /const conversationItems = asArray\(asObject\(config\.conversation\)\.steps\)/);
 });
 

@@ -427,6 +427,80 @@ function PatternConversationPractice({ activity, audioAssets, locale, trackingDi
   </section>;
 }
 
+function PatternCompositionPractice({ activity, locale, trackingDisabled, onActivityCompleted }: {
+  activity: SmartTextbookActivity;
+  locale: SmartLocale;
+  trackingDisabled: boolean;
+  onActivityCompleted?: (result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean }) => void;
+}) {
+  const composition = objectValue(activity.config.composition);
+  const steps = Array.isArray(composition.steps) ? composition.steps.map(objectValue) : [];
+  const [cursor, setCursor] = useState(activity.completed ? steps.length : 0);
+  const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<string[]>([]);
+  const [checking, setChecking] = useState(false);
+  const [incorrect, setIncorrect] = useState(false);
+  const dialogueRef = useRef<HTMLDivElement>(null);
+  const current = steps[cursor];
+  const complete = cursor >= steps.length;
+  const assembled = selectedTokens.join(" ").replace(/\s+([?.!,])/g, "$1");
+  const visibleSteps = steps.slice(0, cursor);
+  const title = String(objectValue(composition.title)[locale] ?? (locale === "ko-KR" ? "대화 조합하기" : "组合一段完整对话"));
+  const instruction = String(objectValue(composition.instruction)[locale] ?? (locale === "ko-KR" ? "말덩이를 골라 대답을 완성하세요." : "按自然顺序选择语块，组成完整回答。"));
+
+  useEffect(() => {
+    const container = dialogueRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
+  }, [cursor]);
+
+  async function checkAnswer() {
+    if (!assembled || checking) return;
+    setChecking(true);
+    const checked = await checkSmartTextbookActivityPageAction({ activityId: activity.id, itemIndices: [cursor], response: [assembled] });
+    setChecking(false);
+    if (!checked.ok || !checked.results[0]) {
+      setIncorrect(true);
+      return;
+    }
+    const nextAnswers = [...answers];
+    nextAnswers[cursor] = assembled;
+    setAnswers(nextAnswers);
+    setIncorrect(false);
+    speakKorean(assembled);
+    window.setTimeout(async () => {
+      const nextCursor = cursor + 1;
+      setCursor(nextCursor);
+      setSelectedTokens([]);
+      if (nextCursor < steps.length || activity.completed || trackingDisabled) return;
+      const submitted = await submitSmartTextbookActivityAction({ activityId: activity.id, response: nextAnswers, locale });
+      if (submitted.ok) onActivityCompleted?.({ nodeId: submitted.nodeId, nodeCompleted: submitted.nodeCompleted, completionPercent: submitted.completionPercent, preview: submitted.preview });
+    }, 520);
+  }
+
+  return <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-7">
+    <div className="flex flex-wrap items-center justify-between gap-4">
+      <CardTitleWithHint title={title} description={instruction} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "조합 방법 보기" : "查看组合方法"} />
+      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${complete ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{complete && <CheckCircle2 size={14} aria-hidden="true" />}{complete ? locale === "ko-KR" ? "완성" : "全部完成" : `${cursor + 1} / ${steps.length}`}</span>
+    </div>
+    <div className="mt-5 grid items-stretch gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(380px,.95fr)]">
+      <div ref={dialogueRef} className="max-h-[520px] min-h-[420px] overflow-y-auto scroll-smooth rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6" aria-live="polite">
+        <div className="space-y-5">
+          {visibleSteps.map((step, index) => <div key={String(step.id ?? index)} className="space-y-3"><div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-black text-[var(--primary)]">{String(objectValue(step.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{String(step.prompt ?? "")}</p></div><div className="flex justify-end"><p className="max-w-[78%] rounded-[20px] rounded-br-md border border-[var(--primary)] bg-[var(--accent)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko">{answers[index]}</p></div></div>)}
+          {!complete && current && <div className="flex items-end gap-3"><span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[var(--surface-soft)] text-xs font-black text-[var(--primary)]">{String(objectValue(current.speaker)[locale] ?? "").slice(0, 1)}</span><p className="max-w-[78%] rounded-[20px] rounded-bl-md border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-3 text-sm font-bold leading-6 text-[var(--foreground)]" lang="ko"><TypewriterText text={String(current.prompt ?? "")} speed={45} /></p></div>}
+          {complete && <div className="flex min-h-36 flex-col items-center justify-center text-center"><CheckCircle2 size={32} className="text-[var(--status-success)]" /><p className="mt-3 text-lg font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "첫 만남 대화를 완성했어요" : "你已经组合完成初次见面对话"}</p><button type="button" onClick={() => { setCursor(0); setAnswers([]); setSelectedTokens([]); }} className="mt-4 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground)]"><RotateCcw size={16} aria-hidden="true" />{locale === "ko-KR" ? "다시 조합하기" : "重新组合"}</button></div>}
+        </div>
+      </div>
+      <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
+        {!complete && current && <><CardTitleWithHint title={String(objectValue(current.task)[locale] ?? (locale === "ko-KR" ? "대답을 완성하세요" : "组成你的回答"))} description={String(objectValue(current.hint)[locale] ?? "")} headingLevel={4} titleClassName="text-base font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "힌트 보기" : "查看提示"} />
+          <div className={`mt-5 min-h-20 rounded-2xl border-2 border-dashed p-4 ${incorrect ? "border-[var(--destructive)] bg-[var(--destructive)]/5" : selectedTokens.length ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-strong)] bg-[var(--surface-soft)]"}`}><p className="text-xs font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "나의 대답" : "我的回答"}</p><div className="mt-2 flex min-h-8 flex-wrap items-center gap-2" lang="ko">{selectedTokens.length ? selectedTokens.map((token, index) => <button key={`${token}-${index}`} type="button" onClick={() => { setSelectedTokens((tokens) => tokens.filter((_, tokenIndex) => tokenIndex !== index)); setIncorrect(false); }} className="min-h-9 rounded-lg bg-[var(--card)] px-3 text-sm font-bold text-[var(--foreground)] shadow-sm" aria-label={`${token}，${locale === "ko-KR" ? "제거" : "移除"}`}>{token}</button>) : <span className="text-sm font-semibold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "아래 말덩이를 순서대로 고르세요" : "从下方依次选择语块"}</span>}</div></div>
+          <div className="mt-5 flex flex-wrap gap-2">{stringArray(current.tokens).map((token, index) => <button key={`${token}-${index}`} type="button" onClick={() => { setSelectedTokens((tokens) => [...tokens, token]); setIncorrect(false); }} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground)] transition hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">{token}</button>)}</div>
+          <div className="mt-6 flex items-center justify-between gap-3 border-t border-[var(--border-subtle)] pt-5"><button type="button" onClick={() => { setSelectedTokens([]); setIncorrect(false); }} disabled={!selectedTokens.length} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold text-[var(--foreground-secondary)] disabled:opacity-35"><RotateCcw size={16} aria-hidden="true" />{locale === "ko-KR" ? "다시 놓기" : "重新排列"}</button><button type="button" onClick={checkAnswer} disabled={!selectedTokens.length || checking} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-[var(--primary)] px-5 text-sm font-bold text-[var(--primary-foreground)] disabled:cursor-not-allowed disabled:opacity-40">{checking ? locale === "ko-KR" ? "확인 중…" : "检查中…" : locale === "ko-KR" ? "대화에 넣기" : "加入对话"}</button></div>
+          {incorrect && <p className="mt-3 flex items-center gap-2 text-sm font-bold text-[var(--destructive)]" role="status"><XCircle size={16} aria-hidden="true" />{locale === "ko-KR" ? "말덩이 순서를 다시 확인하세요." : "语块顺序还不自然，请重新调整。"}</p>}</>}
+      </div>
+    </div>
+  </section>;
+}
+
 function asBooleanArray(value: unknown) {
   return Array.isArray(value) ? value.map(Boolean) : [];
 }
@@ -1370,7 +1444,9 @@ function ContentRenderer({
         );
       })()}
 
-      {isPatternContent && patternPage === 2 && (
+      {isPatternContent && patternPage === 2 && node.activities.find((activity) => activity.key === "pattern-compose") ? (
+        <PatternCompositionPractice activity={node.activities.find((activity) => activity.key === "pattern-compose")!} locale={locale} trackingDisabled={trackingDisabled} onActivityCompleted={onActivityCompleted} />
+      ) : isPatternContent && patternPage === 2 && (
         <section className="grid gap-5 lg:grid-cols-2">
           <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
             <CardTitleWithHint title={locale === "ko-KR" ? "빠르게 대답하기" : "快速回应"} description={locale === "ko-KR" ? "긍정하거나 신분을 바로잡는 응답을 듣고 따라 하세요." : "练习肯定身份和礼貌更正身份。"} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "응답 연습 설명 보기" : "查看回应练习说明"} />
