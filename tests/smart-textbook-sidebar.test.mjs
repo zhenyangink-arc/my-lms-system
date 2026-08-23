@@ -391,7 +391,13 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(guidedAudio, /'audioAssetKey'/);
   assert.match(source, /function PatternCompositionPractice/);
   assert.match(source, /activity\.key === "pattern-compose"/);
-  assert.match(source, /!\["pattern-choice", "pattern-compose"\]\.includes\(activity\.key\)/);
+  assert.match(source, /!\["pattern-choice", "pattern-order", "pattern-compose"\]\.includes\(activity\.key\)/);
+  assert.match(source, /patternOutputTask/);
+  assert.match(source, /role="tablist" aria-label=\{locale === "ko-KR" \? "조합 출력 과제" : "组合输出任务"\}/);
+  assert.match(source, /自我介绍顺序/);
+  assert.match(source, /双向对话组合/);
+  assert.match(source, /hidden=\{patternOutputTask !== 0\}/);
+  assert.match(source, /hidden=\{patternOutputTask !== 1\}/);
   assert.match(source, /if \(voiceReadingEnabled\) speakKorean\(assembled\)/);
   assert.ok((source.match(/role="switch" aria-checked=\{voiceReadingEnabled\}/g) ?? []).length >= 2);
   assert.match(source, /语块顺序还不自然/);

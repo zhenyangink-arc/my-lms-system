@@ -596,6 +596,12 @@ function ContentRenderer({
   const [patternChoiceAnswers, setPatternChoiceAnswers] = useState<number[]>(() => Array(9).fill(-1));
   const [patternChoiceChecks, setPatternChoiceChecks] = useState<Record<number, boolean[]>>({});
   const [checkingPatternChoices, setCheckingPatternChoices] = useState(false);
+  const [patternOutputTask, setPatternOutputTask] = useState<0 | 1>(() =>
+    node.activities.find((activity) => activity.key === "pattern-order")?.completed ? 1 : 0,
+  );
+  const [completedPatternOutputTasks, setCompletedPatternOutputTasks] = useState<Set<string>>(() =>
+    new Set(node.activities.filter((activity) => activity.completed).map((activity) => activity.key)),
+  );
   const sceneDialogueRunRef = useRef(0);
   const sceneDialogueHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const vocabularyRunRef = useRef(0);
@@ -631,10 +637,22 @@ function ContentRenderer({
     : [];
   const isPatternContent = Boolean(String(content.pattern ?? "")) && substitutionGroups.length > 0;
   const patternChoiceActivity = node.activities.find((activity) => activity.key === "pattern-choice");
+  const patternOrderActivity = node.activities.find((activity) => activity.key === "pattern-order");
+  const patternComposeActivity = node.activities.find((activity) => activity.key === "pattern-compose");
   const patternConversation = objectValue(patternChoiceActivity?.config.conversation);
   const patternConversationSteps = Array.isArray(patternConversation.steps) ? patternConversation.steps.map(objectValue) : [];
   const patternChoiceGroups = Array.isArray(patternChoiceActivity?.config.groups) ? patternChoiceActivity.config.groups.map(objectValue) : [];
   const allPatternChoiceGroupsCompleted = patternChoiceGroups.length > 0 && patternChoiceGroups.every((_, index) => patternChoiceChecks[index]?.every(Boolean));
+
+  function completePatternOutputTask(
+    activityKey: string,
+    result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean },
+  ) {
+    if (!result.preview && !trackingDisabled) {
+      setCompletedPatternOutputTasks((current) => new Set(current).add(activityKey));
+    }
+    onActivityCompleted?.(result);
+  }
 
   async function checkPatternChoiceGroup(groupIndex: number) {
     if (!patternChoiceActivity) return;
@@ -1454,8 +1472,24 @@ function ContentRenderer({
         );
       })()}
 
-      {isPatternContent && patternPage === 2 && node.activities.find((activity) => activity.key === "pattern-compose") ? (
-        <PatternCompositionPractice activity={node.activities.find((activity) => activity.key === "pattern-compose")!} locale={locale} trackingDisabled={trackingDisabled} onActivityCompleted={onActivityCompleted} />
+      {isPatternContent && patternPage === 2 && patternOrderActivity && patternComposeActivity ? (
+        <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-4 sm:p-5">
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl bg-[var(--card)] p-2">
+            <div className="flex flex-wrap items-center gap-2" role="tablist" aria-label={locale === "ko-KR" ? "조합 출력 과제" : "组合输出任务"}>
+              {[
+                { key: "pattern-order", label: locale === "ko-KR" ? "자기소개 순서" : "自我介绍顺序", icon: BookOpen },
+                { key: "pattern-compose", label: locale === "ko-KR" ? "쌍방향 대화" : "双向对话组合", icon: MessageCircle },
+              ].map((task, index) => { const active = patternOutputTask === index; const completed = completedPatternOutputTasks.has(task.key); const Icon = task.icon; return <button key={task.key} type="button" role="tab" aria-selected={active} aria-controls={`pattern-output-panel-${index + 1}`} onClick={() => setPatternOutputTask(index as 0 | 1)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${active ? "bg-[var(--accent)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"}`}><Icon size={16} aria-hidden="true" /><span>{task.label}</span>{completed && <CheckCircle2 size={15} className="text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "완료" : "已完成"} />}</button>; })}
+            </div>
+            <span className="pr-3 text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">{locale === "ko-KR" ? "과제" : "任务"} {patternOutputTask + 1} / 2</span>
+          </div>
+          <div id="pattern-output-panel-1" role="tabpanel" aria-label={locale === "ko-KR" ? "자기소개 순서" : "自我介绍顺序"} hidden={patternOutputTask !== 0}>
+            <Activity activity={patternOrderActivity} locale={locale} trackingDisabled={trackingDisabled} onCompleted={(result) => completePatternOutputTask("pattern-order", result)} />
+          </div>
+          <div id="pattern-output-panel-2" role="tabpanel" aria-label={locale === "ko-KR" ? "쌍방향 대화" : "双向对话组合"} hidden={patternOutputTask !== 1}>
+            <PatternCompositionPractice activity={patternComposeActivity} locale={locale} trackingDisabled={trackingDisabled} onActivityCompleted={(result) => completePatternOutputTask("pattern-compose", result)} />
+          </div>
+        </section>
       ) : isPatternContent && patternPage === 2 && (
         <section className="grid gap-5 lg:grid-cols-2">
           <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
@@ -3152,7 +3186,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   />
                 </div>
                 <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
-                  {node.activities.filter((activity) => !usesPatternPager || !["pattern-choice", "pattern-compose"].includes(activity.key)).map((activity, activityIndex) => (
+                  {node.activities.filter((activity) => !usesPatternPager || !["pattern-choice", "pattern-order", "pattern-compose"].includes(activity.key)).map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
                         activity={activity}
