@@ -340,8 +340,9 @@ function PatternConversationPractice({ activity, audioAssets, locale, trackingDi
 }) {
   const conversation = objectValue(activity.config.conversation);
   const steps = Array.isArray(conversation.steps) ? conversation.steps.map(objectValue) : [];
-  const [cursor, setCursor] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
+  const savedAnswers = Array.isArray(activity.response) ? activity.response.map(Number) : [];
+  const [cursor, setCursor] = useState(activity.completed && savedAnswers.length > 0 ? steps.length : 0);
+  const [answers, setAnswers] = useState<number[]>(savedAnswers);
   const [result, setResult] = useState<{ choiceIndex: number; optionIndex: number; correct: boolean } | null>(null);
   const [checking, setChecking] = useState(false);
   const [forceReplay, setForceReplay] = useState(false);
@@ -435,9 +436,10 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
 }) {
   const composition = objectValue(activity.config.composition);
   const steps = Array.isArray(composition.steps) ? composition.steps.map(objectValue) : [];
-  const [cursor, setCursor] = useState(activity.completed ? steps.length : 0);
+  const savedAnswers = stringArray(activity.response);
+  const [cursor, setCursor] = useState(activity.completed && savedAnswers.length === steps.length ? steps.length : 0);
   const [selectedTokens, setSelectedTokens] = useState<string[]>([]);
-  const [answers, setAnswers] = useState<string[]>([]);
+  const [answers, setAnswers] = useState<string[]>(savedAnswers);
   const [checking, setChecking] = useState(false);
   const [incorrect, setIncorrect] = useState(false);
   const [voiceReadingEnabled, setVoiceReadingEnabled] = useState(false);
@@ -1807,6 +1809,9 @@ function Activity({
   const [answer, setAnswer] = useState<AnswerValue>(() => {
     if (activity.type === "multiple_choice") return [];
     if (activity.type === "ordering") {
+      if (activity.completed && Array.isArray(activity.response)) {
+        return activity.response.map(Number);
+      }
       if (usesExpressionPath) return [];
       return stableIndexOrder(
         activity.options.length,

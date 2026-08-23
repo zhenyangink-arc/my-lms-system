@@ -321,8 +321,9 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, twoWayComposition, expressionPath, submission] = await Promise.all([
+  const [source, loader, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, twoWayComposition, expressionPath, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
+    readFile(loaderUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
     readFile(redesignedPatternChoicesMigrationUrl, "utf8"),
@@ -398,6 +399,10 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /双向对话组合/);
   assert.match(source, /hidden=\{patternOutputTask !== 0\}/);
   assert.match(source, /hidden=\{patternOutputTask !== 1\}/);
+  assert.match(loader, /\.select\("activity_id,response,created_at"\)/);
+  assert.match(loader, /completedActivityResponses/);
+  assert.match(source, /const savedAnswers = stringArray\(activity\.response\)/);
+  assert.match(source, /activity\.completed && savedAnswers\.length === steps\.length/);
   assert.match(source, /if \(voiceReadingEnabled\) speakKorean\(assembled\)/);
   assert.ok((source.match(/role="switch" aria-checked=\{voiceReadingEnabled\}/g) ?? []).length >= 2);
   assert.match(source, /语块顺序还不自然/);

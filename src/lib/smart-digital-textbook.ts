@@ -23,6 +23,7 @@ export type SmartTextbookActivity = {
   key: string;
   type: SmartActivityType;
   completed: boolean;
+  response: unknown | null;
   prompt: LocalizedText;
   instruction: LocalizedText;
   options: string[];
@@ -324,6 +325,7 @@ export async function loadSmartDigitalTextbook(
   };
   let progress: SmartTextbookProgress[] = [];
   const completedActivityIds = new Set<string>();
+  const completedActivityResponses = new Map<string, unknown>();
 
   if (!options.trackingDisabled && options.tenantId) {
     const activityIds = (activities ?? []).map((activity) => String(activity.id));
@@ -351,17 +353,19 @@ export async function loadSmartDigitalTextbook(
       activityIds.length
         ? admin
             .from("digital_textbook_attempts")
-            .select("activity_id")
+            .select("activity_id,response,created_at")
             .eq("tenant_id", options.tenantId)
             .eq("student_id", options.userId)
             .eq("version_id", version.id)
             .eq("is_correct", true)
             .in("activity_id", activityIds)
+            .order("created_at", { ascending: true })
         : Promise.resolve({ data: [] }),
     ]);
 
     for (const attempt of completedAttempts ?? []) {
       completedActivityIds.add(String(attempt.activity_id));
+      completedActivityResponses.set(String(attempt.activity_id), attempt.response ?? null);
     }
 
     if (savedPreference) {
@@ -426,6 +430,7 @@ export async function loadSmartDigitalTextbook(
             key: String(activity.activity_key),
             type: activity.activity_type as SmartActivityType,
             completed: completedActivityIds.has(String(activity.id)),
+            response: completedActivityResponses.get(String(activity.id)) ?? null,
             prompt: localized(activity.prompt),
             instruction: localized(activity.instruction),
             options: asStringArray(activity.options),
