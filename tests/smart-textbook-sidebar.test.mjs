@@ -27,6 +27,10 @@ const listeningMasterMigrationUrl = new URL(
   "../supabase/migrations/202608240003_finalize_chapter_one_listening_master.sql",
   import.meta.url,
 );
+const temporaryListeningAudioMigrationUrl = new URL(
+  "../supabase/migrations/202608240004_publish_chapter_one_temporary_listening_audio.sql",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -798,4 +802,16 @@ test("听力母稿保持私有并为正常与慢速音频预留 R2 制作配置"
   assert.match(migration, /'speakingRate'.*0\.78.*0\.92/s);
   assert.match(migration, /production_status = 'pending'/);
   assert.doesNotMatch(migration, /public_config[\s\S]{0,400}transcript_ko/);
+});
+
+test("临时韩语示范音发布为可替换的 R2 音频版本", async () => {
+  const migration = await readFile(temporaryListeningAudioMigrationUrl, "utf8");
+
+  assert.match(migration, /audio_status = 'ready'/);
+  assert.match(migration, /production_status = 'ready'/);
+  assert.match(migration, /"audioEdition":"temporary_tts"/);
+  assert.match(migration, /ko-KR-SunHiNeural/);
+  assert.match(migration, /'sampleRateHz', 24000/);
+  assert.match(migration, /17\.328.*14\.136/s);
+  assert.match(migration, /'replaceableByHumanRecording', true/);
 });
