@@ -2872,6 +2872,30 @@ function Activity({
         </div>
       </div>
 
+      {activity.type === "listening" && !hasPendingAudio && (
+        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--support)] shadow-sm">
+            <Headphones size={19} />
+          </span>
+          <audio
+            controls
+            preload="none"
+            src={`/api/digital-textbook/audio/${activity.id}`}
+            className="h-10 w-full"
+          />
+          <span className="shrink-0 text-xs font-bold text-[var(--support)]">
+            {t.listenPrivate}
+          </span>
+        </div>
+      )}
+
+      {hasPendingAudio && (
+        <div className="mt-6 flex items-start gap-3 bg-[var(--accent)] px-5 py-4 text-sm leading-6 text-[var(--support)]">
+          <Headphones size={19} className="mt-0.5 shrink-0" />
+          <span><strong>{t.listenPrivate}</strong><br />{t.audioPending}</span>
+        </div>
+      )}
+
       {(activity.type === "single_choice" || activity.type === "listening") && !groupedSingleChoice && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
           {optionOrder.map((originalIndex, displayIndex) => {
@@ -3103,23 +3127,6 @@ function Activity({
         );
       })()}
 
-      {activity.type === "listening" && !hasPendingAudio && (
-        <div className="mt-6 flex flex-col items-stretch gap-4 border-y border-slate-200 bg-[var(--accent)]/55 px-4 py-5 sm:flex-row sm:items-center sm:px-5">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[var(--support)] shadow-sm">
-            <Headphones size={19} />
-          </span>
-          <audio
-            controls
-            preload="none"
-            src={`/api/digital-textbook/audio/${activity.id}`}
-            className="h-10 w-full"
-          />
-          <span className="shrink-0 text-xs font-bold text-[var(--support)]">
-            {t.listenPrivate}
-          </span>
-        </div>
-      )}
-
       {activity.type === "multiple_choice" && (
         <div className="mt-6 overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)]">
           {optionOrder.map((originalIndex, displayIndex) => {
@@ -3247,13 +3254,6 @@ function Activity({
           })}
           <fieldset><legend className="text-sm font-bold">{locale === "ko-KR" ? "다음 복습 위치" : "下一步复习位置"}</legend><div className="mt-2 flex flex-wrap gap-2">{(Array.isArray(activity.config.returnNodes) ? activity.config.returnNodes.map(objectValue) : []).map((item) => { const selected = stringArray(objectValue(answer).returnNodes); const value = String(item.value); return <button key={value} type="button" onClick={() => { const next = value === "none" ? ["none"] : selected.includes(value) ? selected.filter((entry) => entry !== value) : [...selected.filter((entry) => entry !== "none"), value]; setAnswer({ ...objectValue(answer), returnNodes: next }); setFeedback(null); }} className={`min-h-11 rounded-xl border px-3 py-2 text-sm ${selected.includes(value) ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border-subtle)]"}`}>{String(item.label)}</button>; })}</div></fieldset>
           <label className="grid gap-2 text-sm font-semibold">{locale === "ko-KR" ? "복습 메모 (선택)" : "个人复习备注（可选）"}<textarea rows={2} value={String(objectValue(answer).note ?? "")} onChange={(event) => setAnswer({ ...objectValue(answer), note: event.target.value })} className="rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] p-3" /></label>
-        </div>
-      )}
-
-      {hasPendingAudio && (
-        <div className="mt-6 flex items-start gap-3 bg-[var(--accent)] px-5 py-4 text-sm leading-6 text-[var(--support)]">
-          <Headphones size={19} className="mt-0.5 shrink-0" />
-          <span><strong>{t.listenPrivate}</strong><br />{t.audioPending}</span>
         </div>
       )}
 

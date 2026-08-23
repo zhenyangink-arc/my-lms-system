@@ -773,6 +773,7 @@ test("听辨信息使用两页六题并从数据库答案数组逐页检查", as
   assert.match(source, /const isPagedChoicePractice = isGrammarPractice \|\| isListeningQuiz/);
   assert.match(source, /isListeningQuiz \? groupedChoicePages\.length : 6/);
   assert.match(source, /objectValue\(item\.question\)\[locale\]/);
+  assert.ok(source.indexOf("{hasPendingAudio && (") < source.indexOf("{groupedSingleChoice && !usesFlipCards"));
   assert.equal((migration.match(/"id":"listen-/g) ?? []).length, 6);
   assert.match(migration, /"group":"key-information"/);
   assert.match(migration, /"group":"expression-details"/);
