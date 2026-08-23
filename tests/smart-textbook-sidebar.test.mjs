@@ -403,6 +403,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(loader, /completedActivityResponses/);
   assert.match(source, /const savedAnswers = stringArray\(activity\.response\)/);
   assert.match(source, /activity\.completed && savedAnswers\.length === steps\.length/);
+  assert.match(source, /complete \? <div className="flex min-h-\[370px\] flex-col items-center justify-center text-center"/);
   assert.match(source, /if \(voiceReadingEnabled\) speakKorean\(assembled\)/);
   assert.ok((source.match(/role="switch" aria-checked=\{voiceReadingEnabled\}/g) ?? []).length >= 2);
   assert.match(source, /语块顺序还不自然/);
