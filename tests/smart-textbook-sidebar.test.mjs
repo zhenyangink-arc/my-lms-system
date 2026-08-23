@@ -350,6 +350,9 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.equal((conversationScenes.match(/"answerSide":/g) ?? []).length, 9);
   assert.match(submission, /const groupedItems = asArray\(config\.groups\)\.flatMap/);
   assert.match(source, /function TypewriterText/);
+  assert.match(source, /conversationScrollRef/);
+  assert.match(source, /container\.scrollTop = container\.scrollHeight/);
+  assert.match(source, /onProgress=\{scrollConversationToLatest\}/);
   assert.match(source, /function PatternConversationPractice/);
   assert.match(source, /checkSmartTextbookActivityPageAction\(\{ activityId: activity\.id, itemIndices: \[currentChoiceIndex\]/);
   assert.match(source, /patternConversationSteps\.length > 0/);

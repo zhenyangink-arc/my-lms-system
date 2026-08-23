@@ -291,16 +291,19 @@ function stringArray(value: unknown) {
   return Array.isArray(value) ? value.map(String) : [];
 }
 
-function TypewriterText({ text, speed = 52, onComplete }: { text: string; speed?: number; onComplete?: () => void }) {
+function TypewriterText({ text, speed = 52, onProgress, onComplete }: { text: string; speed?: number; onProgress?: () => void; onComplete?: () => void }) {
   const [visibleLength, setVisibleLength] = useState(0);
   const onCompleteRef = useRef(onComplete);
+  const onProgressRef = useRef(onProgress);
   const finishedRef = useRef(false);
   useEffect(() => { onCompleteRef.current = onComplete; }, [onComplete]);
+  useEffect(() => { onProgressRef.current = onProgress; }, [onProgress]);
   useEffect(() => {
     finishedRef.current = false;
     const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (reducedMotion || speed <= 0) {
       setVisibleLength(text.length);
+      onProgressRef.current?.();
       finishedRef.current = true;
       const timer = window.setTimeout(() => onCompleteRef.current?.(), 0);
       return () => window.clearTimeout(timer);
@@ -311,6 +314,7 @@ function TypewriterText({ text, speed = 52, onComplete }: { text: string; speed?
     const revealNext = () => {
       index += 1;
       setVisibleLength(index);
+      onProgressRef.current?.();
       if (index >= text.length) {
         finishedRef.current = true;
         onCompleteRef.current?.();
@@ -339,6 +343,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const [result, setResult] = useState<{ choiceIndex: number; optionIndex: number; correct: boolean } | null>(null);
   const [checking, setChecking] = useState(false);
   const [forceReplay, setForceReplay] = useState(false);
+  const conversationScrollRef = useRef<HTMLDivElement>(null);
   const completed = cursor >= steps.length || (activity.completed && !forceReplay);
   const current = steps[cursor];
   const currentKind = String(current?.kind ?? "line");
@@ -348,6 +353,10 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const visibleSteps = steps.slice(0, Math.min(cursor + 1, steps.length));
   const title = String(objectValue(conversation.title)[locale] ?? (locale === "ko-KR" ? "첫 만남 대화 완성" : "完成初次见面对话"));
   const instruction = String(objectValue(conversation.instruction)[locale] ?? (locale === "ko-KR" ? "알맞은 대답을 골라 대화를 이어 가세요." : "选择合适的回答，让对话继续。"));
+  const scrollConversationToLatest = () => {
+    const container = conversationScrollRef.current;
+    if (container) container.scrollTop = container.scrollHeight;
+  };
 
   async function advance() {
     const next = cursor + 1;
@@ -375,7 +384,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   return <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-7">
     <div className="flex items-center justify-between gap-4"><CardTitleWithHint title={title} description={instruction} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "대화 방법 보기" : "查看对话方法"} /><span className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${completed ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--surface-soft)] text-[var(--foreground-secondary)]"}`}>{completed && <CheckCircle2 size={14} aria-hidden="true" />}{completed ? locale === "ko-KR" ? "대화 완료" : "对话完成" : `${cursor + 1} / ${steps.length}`}</span></div>
     <div className="mt-5 grid items-start gap-5 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,.85fr)]">
-      <div className="max-h-[520px] min-h-[380px] overflow-y-auto rounded-[22px] bg-[var(--surface-soft)] p-4 sm:p-6"><div className="space-y-5" aria-live="polite">{visibleSteps.map((step, index) => {
+      <div ref={conversationScrollRef} className="max-h-[520px] min-h-[380px] overflow-y-auto scroll-smooth rounded-[22px] bg-[var(--surface-soft)] p-4 sm:p-6"><div className="space-y-5" aria-live="polite">{visibleSteps.map((step, index) => {
         const kind = String(step.kind ?? "line");
         const isCurrent = index === cursor;
         const choiceIndex = Number(step.choiceIndex);
@@ -384,7 +393,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
         if (kind === "choice" && !line) return null;
         const side = step.side === "right" ? "right" : "left";
         const speaker = String(objectValue(step.speaker)[locale] ?? step.speaker ?? "");
-        return <div key={String(step.id ?? index)} className={`flex items-end gap-3 ${side === "right" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] ${side === "right" ? "order-1 text-right" : "order-2"}`}><div className="mb-1 text-xs font-bold text-[var(--foreground-secondary)]">{speaker}</div><div className={`rounded-[20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${side === "right" ? "rounded-br-md border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)]" : "rounded-bl-md border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{isCurrent ? <TypewriterText text={line} speed={Number(step.typingSpeedMs) || 52} onComplete={() => window.setTimeout(advance, Number(step.afterMs) || 360)} /> : line}</div></div><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-black shadow-sm ${side === "right" ? "order-2 bg-[var(--primary)] text-[var(--primary-foreground)]" : "order-1 bg-[var(--card)] text-[var(--primary)]"}`}>{speaker.slice(0, 1)}</div></div>;
+        return <div key={String(step.id ?? index)} className={`flex items-end gap-3 ${side === "right" ? "justify-end" : "justify-start"}`}><div className={`max-w-[78%] ${side === "right" ? "order-1 text-right" : "order-2"}`}><div className="mb-1 text-xs font-bold text-[var(--foreground-secondary)]">{speaker}</div><div className={`rounded-[20px] border px-5 py-3.5 text-left text-base font-bold leading-7 shadow-sm ${side === "right" ? "rounded-br-md border-[var(--primary)] bg-[var(--accent)] text-[var(--foreground)]" : "rounded-bl-md border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)]"}`} lang="ko">{isCurrent ? <TypewriterText text={line} speed={Number(step.typingSpeedMs) || 52} onProgress={scrollConversationToLatest} onComplete={() => window.setTimeout(advance, Number(step.afterMs) || 360)} /> : line}</div></div><div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-black shadow-sm ${side === "right" ? "order-2 bg-[var(--primary)] text-[var(--primary-foreground)]" : "order-1 bg-[var(--card)] text-[var(--primary)]"}`}>{speaker.slice(0, 1)}</div></div>;
       })}</div></div>
       <div className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5">{completed ? <div className="flex min-h-[300px] flex-col items-center justify-center text-center"><CheckCircle2 size={30} className="text-[var(--status-success)]" /><p className="mt-3 text-lg font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "대화를 완성했어요" : "本段对话已完成"}</p><button type="button" onClick={() => { setForceReplay(true); setCursor(0); setAnswers([]); setResult(null); }} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold"><RotateCcw size={16} />{locale === "ko-KR" ? "다시 연습" : "重新练习"}</button></div> : currentKind === "choice" && !currentAnswer ? <fieldset><legend className="text-sm font-bold text-[var(--foreground)]">{String(objectValue(current.prompt)[locale] ?? (locale === "ko-KR" ? "알맞은 말을 고르세요" : "选择合适的回答"))}</legend><div className="mt-4 grid gap-3">{currentOptions.map((option, optionIndex) => { const selectedResult = result?.choiceIndex === currentChoiceIndex && result.optionIndex === optionIndex ? result : null; return <button key={option} type="button" disabled={checking} onClick={() => choose(optionIndex)} className={`min-h-14 rounded-xl border px-4 py-3 text-left text-sm font-bold leading-6 transition ${selectedResult?.correct === false ? "border-[var(--destructive)] bg-[var(--destructive)]/10 text-[var(--destructive)]" : "border-[var(--border-subtle)] text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--accent)]"}`}><span lang="ko">{option}</span>{selectedResult?.correct === false && <XCircle size={16} className="ml-2 inline" aria-label={locale === "ko-KR" ? "오답" : "错误"} />}</button>; })}</div></fieldset> : <div className="flex min-h-[300px] items-center justify-center text-center text-sm font-semibold text-[var(--foreground-muted)]">{currentAnswer ? locale === "ko-KR" ? "대답이 대화에 나타나고 있어요…" : "回答正在逐字加入对话…" : locale === "ko-KR" ? "상대방의 말을 듣고 있어요…" : "对方正在说话…"}</div>}</div>
     </div>
