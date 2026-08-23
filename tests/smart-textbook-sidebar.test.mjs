@@ -382,6 +382,8 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(guidedAudio, /'audioAssetKey'/);
   assert.match(source, /function PatternCompositionPractice/);
   assert.match(source, /activity\.key === "pattern-compose"/);
+  assert.match(source, /if \(voiceReadingEnabled\) speakKorean\(assembled\)/);
+  assert.ok((source.match(/role="switch" aria-checked=\{voiceReadingEnabled\}/g) ?? []).length >= 2);
   assert.match(source, /语块顺序还不自然/);
   assert.match(composition, /'pattern-compose'/);
   assert.match(composition, /"kind":"text_array"/);

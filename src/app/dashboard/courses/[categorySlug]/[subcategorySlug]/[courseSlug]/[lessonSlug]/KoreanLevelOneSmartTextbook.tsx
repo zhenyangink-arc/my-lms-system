@@ -440,8 +440,10 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
   const [answers, setAnswers] = useState<string[]>([]);
   const [checking, setChecking] = useState(false);
   const [incorrect, setIncorrect] = useState(false);
+  const [voiceReadingEnabled, setVoiceReadingEnabled] = useState(false);
   const dialogueRef = useRef<HTMLDivElement>(null);
   const current = steps[cursor];
+  const currentPrompt = String(current?.prompt ?? "");
   const complete = cursor >= steps.length;
   const assembled = selectedTokens.join(" ").replace(/\s+([?.!,])/g, "$1");
   const visibleSteps = steps.slice(0, cursor);
@@ -452,6 +454,14 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
     const container = dialogueRef.current;
     if (container) container.scrollTop = container.scrollHeight;
   }, [cursor]);
+  useEffect(() => {
+    if (!voiceReadingEnabled) {
+      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+      return;
+    }
+    if (currentPrompt) speakKorean(currentPrompt);
+  }, [currentPrompt, voiceReadingEnabled]);
+  useEffect(() => () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }, []);
 
   async function checkAnswer() {
     if (!assembled || checking) return;
@@ -466,7 +476,7 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
     nextAnswers[cursor] = assembled;
     setAnswers(nextAnswers);
     setIncorrect(false);
-    speakKorean(assembled);
+    if (voiceReadingEnabled) speakKorean(assembled);
     window.setTimeout(async () => {
       const nextCursor = cursor + 1;
       setCursor(nextCursor);
@@ -480,7 +490,7 @@ function PatternCompositionPractice({ activity, locale, trackingDisabled, onActi
   return <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-7">
     <div className="flex flex-wrap items-center justify-between gap-4">
       <CardTitleWithHint title={title} description={instruction} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "조합 방법 보기" : "查看组合方法"} />
-      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${complete ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{complete && <CheckCircle2 size={14} aria-hidden="true" />}{complete ? locale === "ko-KR" ? "완성" : "全部完成" : `${cursor + 1} / ${steps.length}`}</span>
+      <div className="flex shrink-0 items-center gap-2"><button type="button" role="switch" aria-checked={voiceReadingEnabled} onClick={() => setVoiceReadingEnabled((enabled) => !enabled)} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${voiceReadingEnabled ? "bg-[var(--accent)] text-[var(--primary)]" : "bg-[var(--card)] text-[var(--foreground-secondary)]"}`}><Volume2 size={14} aria-hidden="true" /><span>{locale === "ko-KR" ? "음성 읽기" : "语音朗读"}</span><span className={`relative h-4 w-7 rounded-full transition ${voiceReadingEnabled ? "bg-[var(--primary)]" : "bg-[var(--border-strong)]"}`} aria-hidden="true"><span className={`absolute top-0.5 h-3 w-3 rounded-full bg-white shadow-sm transition-transform ${voiceReadingEnabled ? "translate-x-3.5" : "translate-x-0.5"}`} /></span></button><span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${complete ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{complete && <CheckCircle2 size={14} aria-hidden="true" />}{complete ? locale === "ko-KR" ? "완성" : "全部完成" : `${cursor + 1} / ${steps.length}`}</span></div>
     </div>
     <div className="mt-5 grid items-stretch gap-5 xl:grid-cols-[minmax(0,1.05fr)_minmax(380px,.95fr)]">
       <div ref={dialogueRef} className="max-h-[520px] min-h-[420px] overflow-y-auto scroll-smooth rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6" aria-live="polite">
