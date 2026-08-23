@@ -1750,6 +1750,8 @@ function Activity({
     activity.type === "single_choice" && configItems.length > 0;
   const usesFlipCards =
     groupedSingleChoice && activity.config.presentation === "flip_cards";
+  const usesExpressionPath =
+    activity.type === "ordering" && activity.config.presentation === "expression_path";
   const isGrammarPractice = ["choice", "judgment", "fill"].includes(
     String(activity.config.practiceKind ?? ""),
   );
@@ -1771,6 +1773,7 @@ function Activity({
   const [answer, setAnswer] = useState<AnswerValue>(() => {
     if (activity.type === "multiple_choice") return [];
     if (activity.type === "ordering") {
+      if (usesExpressionPath) return [];
       return stableIndexOrder(
         activity.options.length,
         `${activity.id}:ordering`,
@@ -1980,6 +1983,10 @@ function Activity({
     const next = [...ordered];
     [next[index], next[target]] = [next[target], next[index]];
     setAnswer(next);
+    setFeedback(null);
+  }
+  function removeExpressionPathItem(index: number) {
+    setAnswer(ordered.filter((_, itemIndex) => itemIndex !== index));
     setFeedback(null);
   }
 
@@ -2378,7 +2385,29 @@ function Activity({
         </div>
       )}
 
-      {activity.type === "ordering" && (
+      {activity.type === "ordering" && usesExpressionPath && (
+        <div className="mt-6 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "자기소개 흐름" : "自我介绍顺序"}</p>
+            <span className="rounded-full bg-[var(--surface-soft)] px-3 py-1.5 text-xs font-bold tabular-nums text-[var(--foreground-secondary)]">{ordered.length} / {activity.options.length}</span>
+          </div>
+          <div className="mt-5 grid gap-3 lg:grid-cols-4 lg:gap-8" aria-label={locale === "ko-KR" ? "자기소개 표현 순서" : "自我介绍表达路径"}>
+            {(Array.isArray(activity.config.pathLabels) ? activity.config.pathLabels.map(objectValue) : []).map((label, index) => {
+              const optionIndex = ordered[index];
+              const filled = Number.isInteger(optionIndex);
+              const checkedTone = feedback?.correct === true ? "border-[var(--status-success)] bg-[var(--status-success-surface)]" : feedback?.correct === false ? "border-[var(--destructive)] bg-[var(--destructive)]/5" : filled ? "border-[var(--primary)] bg-[var(--accent)]" : "border-dashed border-[var(--border-strong)] bg-[var(--surface-soft)]";
+              return <div key={String(label.id ?? index)} className="relative min-w-0"><button type="button" disabled={!filled} onClick={() => removeExpressionPathItem(index)} className={`flex min-h-28 w-full flex-col items-start rounded-2xl border-2 p-4 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${checkedTone}`} aria-label={filled ? `${activity.options[optionIndex]}，${locale === "ko-KR" ? "경로에서 빼기" : "从路径中移除"}` : undefined}><span className="text-xs font-bold text-[var(--primary)]">{String(label[locale] ?? index + 1)}</span><span className={`mt-3 text-base font-bold leading-6 ${filled ? "text-[var(--foreground)]" : "text-[var(--foreground-muted)]"}`} lang={filled ? "ko" : undefined}>{filled ? activity.options[optionIndex] : locale === "ko-KR" ? "표현을 고르세요" : "选择一句表达"}</span>{feedback && filled && <span className="mt-auto pt-2">{feedback.correct ? <CheckCircle2 size={16} className="text-[var(--status-success)]" aria-label={locale === "ko-KR" ? "정답" : "正确"} /> : <XCircle size={16} className="text-[var(--destructive)]" aria-label={locale === "ko-KR" ? "순서 오류" : "顺序错误"} />}</span>}</button>{index < activity.options.length - 1 && <ChevronRight size={18} className="absolute -right-6 top-1/2 z-10 hidden -translate-y-1/2 text-[var(--foreground-muted)] lg:block" aria-hidden="true" />}</div>;
+            })}
+          </div>
+          <div className="mt-6 border-t border-[var(--border-subtle)] pt-5">
+            <p className="text-xs font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? "아래 문장을 순서대로 고르세요" : "依次选择下面的句子"}</p>
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">{activity.options.map((option, optionIndex) => { const used = ordered.includes(optionIndex); return <button key={option} type="button" disabled={used || ordered.length >= activity.options.length} onClick={() => { setAnswer([...ordered, optionIndex]); setFeedback(null); }} className="min-h-12 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 py-3 text-left text-sm font-bold text-[var(--foreground)] transition hover:border-[var(--primary)] hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-35" lang="ko">{option}</button>; })}</div>
+            <div className="mt-4 flex justify-end"><button type="button" disabled={ordered.length !== activity.options.length} onClick={() => speakKorean(ordered.map((index) => activity.options[index]).join(" "))} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-35"><Volume2 size={16} aria-hidden="true" />{locale === "ko-KR" ? "전체 듣기" : "整段朗读"}</button></div>
+          </div>
+        </div>
+      )}
+
+      {activity.type === "ordering" && !usesExpressionPath && (
         <div className="mt-6 border-y border-slate-200">
           {ordered.map((optionIndex, index) => (
             <div key={`${optionIndex}-${index}`} className="grid grid-cols-[40px_1fr_72px] items-center border-b border-slate-100 py-3 last:border-b-0">
@@ -2475,7 +2504,7 @@ function Activity({
         {isGrammarPractice && !activePageCheck && <button type="button" onClick={checkGrammarPage} disabled={checkingPage} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] disabled:opacity-40">{checkingPage ? (locale === "ko-KR" ? "확인 중…" : "检查中…") : (locale === "ko-KR" ? "정답 확인" : "检查答案")}</button>}
         {isGrammarPractice && activePageCheck && !activePageCheck.results.every(Boolean) && !activePageCheck.revealed && <button type="button" onClick={revealGrammarAnswers} className="inline-flex shrink-0 items-center justify-center rounded-xl border border-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary)]">{locale === "ko-KR" ? "정답 보기" : "查看答案"}</button>}
         {(!isGrammarPractice || (isLastGrammarActivity && isLastGrammarPracticePage && activePageReady)) && <button type="button" onClick={submit} disabled={pending || hasPendingAudio || activityCompleted} className="inline-flex shrink-0 items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-5 py-2.5 text-sm font-bold text-[var(--primary-foreground)] transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
-          {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : t.submit}
+          {pending ? <Pause size={15} /> : activityCompleted ? <CheckCircle2 size={15} /> : <Send size={15} />} {activityCompleted ? t.submitted : usesExpressionPath ? locale === "ko-KR" ? "순서 확인" : "检查顺序" : t.submit}
         </button>}
       </div>
       )}
