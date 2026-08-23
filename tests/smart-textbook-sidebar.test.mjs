@@ -83,6 +83,10 @@ const guidedPatternConversationMigrationUrl = new URL(
   "../supabase/migrations/202608230003_convert_pattern_choices_to_guided_conversation.sql",
   import.meta.url,
 );
+const guidedConversationAudioMigrationUrl = new URL(
+  "../supabase/migrations/202608230004_add_guided_conversation_audio_manifest.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -305,13 +309,14 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, submission] = await Promise.all([
+  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
     readFile(redesignedPatternChoicesMigrationUrl, "utf8"),
     readFile(conversationalPatternChoicesMigrationUrl, "utf8"),
     readFile(guidedPatternConversationMigrationUrl, "utf8"),
+    readFile(guidedConversationAudioMigrationUrl, "utf8"),
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
@@ -357,6 +362,8 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /role="switch" aria-checked=\{voiceReadingEnabled\}/);
   assert.match(source, /activeSpokenLine/);
   assert.match(source, /speakKorean\(activeSpokenLine\)/);
+  assert.match(source, /new Audio\(activeAudioUrl\)/);
+  assert.match(source, /asset\.purpose === "guided-conversation-line"/);
   assert.match(source, /function PatternConversationPractice/);
   assert.match(source, /checkSmartTextbookActivityPageAction\(\{ activityId: activity\.id, itemIndices: \[currentChoiceIndex\]/);
   assert.match(source, /patternConversationSteps\.length > 0/);
@@ -364,6 +371,10 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.equal((guidedConversation.match(/"kind":"line"/g) ?? []).length, 4);
   assert.match(guidedConversation, /"kind":"index_array","value":\[0,1,2,3\]/);
   assert.doesNotMatch(guidedConversation, /"groups"/);
+  assert.match(guidedAudio, /'guided-conversation-line'/);
+  assert.match(guidedAudio, /'korean-level-one\/chapter-01\/patterns\/guided-dialogue\/'/);
+  assert.match(guidedAudio, /'storage', 'cloudflare-r2'/);
+  assert.match(guidedAudio, /'audioAssetKey'/);
   assert.match(submission, /const conversationItems = asArray\(asObject\(config\.conversation\)\.steps\)/);
 });
 

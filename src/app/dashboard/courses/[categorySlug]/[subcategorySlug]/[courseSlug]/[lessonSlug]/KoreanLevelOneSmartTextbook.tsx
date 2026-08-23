@@ -42,6 +42,7 @@ import type {
   SmartSupportMode,
   SmartTextbookActivity,
   SmartTextbookData,
+  SmartTextbookMediaAsset,
   SmartTextbookNode,
 } from "@/lib/smart-digital-textbook";
 import {
@@ -330,8 +331,9 @@ function TypewriterText({ text, speed = 52, onProgress, onComplete }: { text: st
   return <span>{text.slice(0, visibleLength)}{visibleLength < text.length && <span className="ml-0.5 inline-block h-4 w-px animate-pulse bg-current align-middle" aria-hidden="true" />}</span>;
 }
 
-function PatternConversationPractice({ activity, locale, trackingDisabled, onActivityCompleted }: {
+function PatternConversationPractice({ activity, audioAssets, locale, trackingDisabled, onActivityCompleted }: {
   activity: SmartTextbookActivity;
+  audioAssets: SmartTextbookMediaAsset[];
   locale: SmartLocale;
   trackingDisabled: boolean;
   onActivityCompleted?: (result: { nodeId: string | null; nodeCompleted: boolean; completionPercent: number; preview: boolean }) => void;
@@ -345,6 +347,7 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const [forceReplay, setForceReplay] = useState(false);
   const [voiceReadingEnabled, setVoiceReadingEnabled] = useState(false);
   const conversationScrollRef = useRef<HTMLDivElement>(null);
+  const activeAudioRef = useRef<HTMLAudioElement | null>(null);
   const completed = cursor >= steps.length || (activity.completed && !forceReplay);
   const current = steps[cursor];
   const currentKind = String(current?.kind ?? "line");
@@ -355,14 +358,28 @@ function PatternConversationPractice({ activity, locale, trackingDisabled, onAct
   const title = String(objectValue(conversation.title)[locale] ?? (locale === "ko-KR" ? "첫 만남 대화 완성" : "完成初次见面对话"));
   const instruction = String(objectValue(conversation.instruction)[locale] ?? (locale === "ko-KR" ? "알맞은 대답을 골라 대화를 이어 가세요." : "选择合适的回答，让对话继续。"));
   const activeSpokenLine = currentKind === "choice" ? currentAnswer : String(current?.line ?? "");
+  const activeAudioKey = String(current?.audioAssetKey ?? "");
+  const activeAudioUrl = audioAssets.find((asset) => asset.key === activeAudioKey && asset.status === "ready")?.url ?? null;
   useEffect(() => {
+    activeAudioRef.current?.pause();
+    activeAudioRef.current = null;
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
     if (!voiceReadingEnabled) {
-      if ("speechSynthesis" in window) window.speechSynthesis.cancel();
       return;
     }
-    if (activeSpokenLine) speakKorean(activeSpokenLine);
-  }, [activeSpokenLine, voiceReadingEnabled]);
-  useEffect(() => () => { if ("speechSynthesis" in window) window.speechSynthesis.cancel(); }, []);
+    if (!activeSpokenLine) return;
+    if (activeAudioUrl) {
+      const audio = new Audio(activeAudioUrl);
+      activeAudioRef.current = audio;
+      void audio.play().catch(() => speakKorean(activeSpokenLine));
+      return;
+    }
+    speakKorean(activeSpokenLine);
+  }, [activeAudioUrl, activeSpokenLine, voiceReadingEnabled]);
+  useEffect(() => () => {
+    activeAudioRef.current?.pause();
+    if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+  }, []);
   const scrollConversationToLatest = () => {
     const container = conversationScrollRef.current;
     if (container) container.scrollTop = container.scrollHeight;
@@ -1274,7 +1291,7 @@ function ContentRenderer({
         </section>
       )}
 
-      {isPatternContent && patternPage === 1 && patternChoiceActivity && patternConversationSteps.length > 0 && <PatternConversationPractice activity={patternChoiceActivity} locale={locale} trackingDisabled={trackingDisabled} onActivityCompleted={onActivityCompleted} />}
+      {isPatternContent && patternPage === 1 && patternChoiceActivity && patternConversationSteps.length > 0 && <PatternConversationPractice activity={patternChoiceActivity} audioAssets={node.media.filter((asset) => asset.type === "audio" && asset.purpose === "guided-conversation-line")} locale={locale} trackingDisabled={trackingDisabled} onActivityCompleted={onActivityCompleted} />}
 
       {isPatternContent && patternPage === 1 && patternConversationSteps.length === 0 && (() => {
         const groupIndex = Math.min(activePatternGroupIndex, Math.max(patternChoiceGroups.length - 1, 0));
