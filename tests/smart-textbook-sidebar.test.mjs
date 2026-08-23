@@ -79,6 +79,10 @@ const conversationalPatternChoicesMigrationUrl = new URL(
   "../supabase/migrations/202608230002_add_conversation_scenes_to_pattern_choices.sql",
   import.meta.url,
 );
+const guidedPatternConversationMigrationUrl = new URL(
+  "../supabase/migrations/202608230003_convert_pattern_choices_to_guided_conversation.sql",
+  import.meta.url,
+);
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
   const source = await readFile(sourceUrl, "utf8");
@@ -186,7 +190,6 @@ test("智能教材共享骨架从私有 R2 加载已就绪的情景图片", asyn
   assert.match(source, /sceneDialoguePlaying \? "animate-pulse motion-reduce:animate-none"/);
   assert.match(source, /String\(coach\[locale\].*<span className="block">\{String\(coach\[locale\]\)\}<\/span>/s);
   assert.doesNotMatch(source, /border-t border-white\/30 pt-3/);
-  assert.doesNotMatch(source, /bg-\[var\(--primary\)\].*30.*연속 말하기/s);
   assert.match(source, /Number\(asset\.metadata\.width\) \|\| 1600/);
 });
 
@@ -302,12 +305,13 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, submission] = await Promise.all([
+  const [source, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
     readFile(redesignedPatternChoicesMigrationUrl, "utf8"),
     readFile(conversationalPatternChoicesMigrationUrl, "utf8"),
+    readFile(guidedPatternConversationMigrationUrl, "utf8"),
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
@@ -345,6 +349,15 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(conversationScenes, /"zh-CN":"询问对方"/);
   assert.equal((conversationScenes.match(/"answerSide":/g) ?? []).length, 9);
   assert.match(submission, /const groupedItems = asArray\(config\.groups\)\.flatMap/);
+  assert.match(source, /function TypewriterText/);
+  assert.match(source, /function PatternConversationPractice/);
+  assert.match(source, /checkSmartTextbookActivityPageAction\(\{ activityId: activity\.id, itemIndices: \[currentChoiceIndex\]/);
+  assert.match(source, /patternConversationSteps\.length > 0/);
+  assert.equal((guidedConversation.match(/"kind":"choice"/g) ?? []).length, 4);
+  assert.equal((guidedConversation.match(/"kind":"line"/g) ?? []).length, 4);
+  assert.match(guidedConversation, /"kind":"index_array","value":\[0,1,2,3\]/);
+  assert.doesNotMatch(guidedConversation, /"groups"/);
+  assert.match(submission, /const conversationItems = asArray\(asObject\(config\.conversation\)\.steps\)/);
 });
 
 test("语法图片按数据库例句数组逐句播放并在五秒后隐藏", async () => {

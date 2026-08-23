@@ -650,7 +650,10 @@ export function gradeSmartTextbookActivity(
     const groupedItems = asArray(config.groups).flatMap((group) =>
       asArray(asObject(group).items).map(asObject),
     );
-    const items = directItems.length > 0 ? directItems : groupedItems;
+    const conversationItems = asArray(asObject(config.conversation).steps)
+      .map(asObject)
+      .filter((step) => step.kind === "choice");
+    const items = directItems.length > 0 ? directItems : groupedItems.length > 0 ? groupedItems : conversationItems;
     const validIndexArray = (value: unknown): value is number[] =>
       Array.isArray(value) &&
       value.length === items.length &&
