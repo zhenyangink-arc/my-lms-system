@@ -338,6 +338,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /localizedQuestion/);
   assert.match(source, /activePatternQuestionIndex/);
   assert.match(source, /选择一句放入对话气泡/);
+  assert.match(source, /xl:grid-cols-\[minmax\(0,1\.15fr\)_minmax\(360px,\.85fr\)\]/);
   assert.match(source, /answerSide === "left"/);
   assert.match(conversationScenes, /"zh-CN":"介绍姓名"/);
   assert.match(conversationScenes, /"zh-CN":"介绍身份"/);
