@@ -2034,23 +2034,37 @@ function RecordingControl({
 }) {
   const t = ui[locale];
   const recorderRef = useRef<MediaRecorder | null>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const startedAtRef = useRef(0);
+  const cancelRecordingRef = useRef(false);
   const [recording, setRecording] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
+  const [recordingEvidenceId, setRecordingEvidenceId] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState("");
 
+  const audioUrlRef = useRef(audioUrl);
+  useEffect(() => { audioUrlRef.current = audioUrl; }, [audioUrl]);
   useEffect(() => () => {
-    if (audioUrl) URL.revokeObjectURL(audioUrl);
-  }, [audioUrl]);
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+  }, []);
 
-  async function toggleRecording() {
-    if (recording) {
-      recorderRef.current?.stop();
-      setRecording(false);
-      return;
-    }
+  function stopRecording() {
+    cancelRecordingRef.current = false;
+    recorderRef.current?.stop();
+    setRecording(false);
+  }
+
+  function cancelRecording() {
+    cancelRecordingRef.current = true;
+    recorderRef.current?.stop();
+    setRecording(false);
+    setRecordingError("");
+  }
+
+  async function startRecording() {
     const prerequisiteError = microphonePrerequisiteError(locale);
     if (prerequisiteError) {
       setRecordingError(prerequisiteError);
@@ -2059,18 +2073,22 @@ function RecordingControl({
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
+      streamRef.current = stream;
       chunksRef.current = [];
+      cancelRecordingRef.current = false;
       setRecordingError("");
-      onReset();
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-        setAudioUrl(null);
-      }
       recorder.ondataavailable = (event) => chunksRef.current.push(event.data);
       recorder.onstop = async () => {
+        if (cancelRecordingRef.current) {
+          stream.getTracks().forEach((track) => track.stop());
+          streamRef.current = null;
+          chunksRef.current = [];
+          cancelRecordingRef.current = false;
+          return;
+        }
         const blob = new Blob(chunksRef.current, { type: recorder.mimeType });
-        setAudioUrl(URL.createObjectURL(blob));
         stream.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
         const durationSeconds = Math.max(
           1,
           Math.round((Date.now() - startedAtRef.current) / 1000),
@@ -2095,13 +2113,16 @@ function RecordingControl({
           if (!response.ok || !result.evidenceId) {
             throw new Error(result.message ?? "recording upload failed");
           }
+          const nextAudioUrl = URL.createObjectURL(blob);
+          if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+          setAudioUrl(nextAudioUrl);
+          setRecordingEvidenceId(result.evidenceId);
           onReady({
             durationSeconds,
             recordingEvidenceId: result.evidenceId,
           });
         } catch {
           setRecordingError(t.recordingUploadFailed);
-          onReset();
         } finally {
           setUploading(false);
         }
@@ -2116,14 +2137,10 @@ function RecordingControl({
   }
 
   return (
-    <div className="mt-5 flex flex-wrap items-center gap-4 border-y border-slate-200 py-5">
-      <button type="button" onClick={toggleRecording} disabled={uploading} className={`inline-flex min-h-11 items-center gap-2 rounded-full px-4 py-2.5 text-sm font-bold text-white disabled:cursor-not-allowed disabled:opacity-45 ${recording ? "bg-[var(--status-warning)]" : "bg-[var(--status-success)]"}`}>
-        {recording ? <Square size={14} /> : <Mic size={15} />}
-        {recording ? t.stopRecording : t.startRecording}
-      </button>
-      {audioUrl && <div className="flex min-w-0 flex-1 flex-col gap-2">{playbackLabel && <span className="text-xs font-bold text-[var(--foreground-muted)]">{playbackLabel}</span>}<audio src={audioUrl} controls className="h-9 max-w-full" /></div>}
-      {uploading && <span role="status" className="text-xs font-semibold text-[var(--support)]">{t.recordingUploading}</span>}
-      {audioUrl && !uploading && !recordingError && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
+    <div className="mt-5 border-y border-[var(--border-subtle)] py-5">
+      {recording ? <div className="space-y-3"><div role="status" aria-live="polite" className="flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning-surface)] px-4 text-sm font-bold text-[var(--status-warning)]"><Mic size={17} className="animate-pulse motion-reduce:animate-none" aria-hidden="true" />{locale === "ko-KR" ? "말하는 중…" : "正在说话…"}</div><div className="grid grid-cols-2 gap-3"><button type="button" onClick={cancelRecording} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><X size={16} aria-hidden="true" />{locale === "ko-KR" ? "취소" : "取消"}</button><button type="button" onClick={stopRecording} className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning)] px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Square size={15} aria-hidden="true" />{locale === "ko-KR" ? "녹음 끝내기" : "结束录音"}</button></div></div> : <button type="button" onClick={startRecording} disabled={uploading} className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--status-success)] px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"><Mic size={17} aria-hidden="true" />{audioUrl ? locale === "ko-KR" ? "다시 녹음" : "重新录制" : t.startRecording}</button>}
+      {uploading && <p role="status" className="mt-3 text-xs font-semibold text-[var(--support)]">{t.recordingUploading}</p>}
+      {audioUrl && recordingEvidenceId && !uploading && <div className="mt-4">{playbackLabel && <p className="text-xs font-bold text-[var(--foreground-muted)]">{playbackLabel}</p>}<RoleplayRecordingPlayer activityId={activityId} recording={{ audioUrl, evidenceId: recordingEvidenceId, transcript: "" }} locale={locale} onError={setRecordingError} onDeleted={() => { URL.revokeObjectURL(audioUrl); setAudioUrl(null); setRecordingEvidenceId(null); onReset(); }} /></div>}
       {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
     </div>
   );

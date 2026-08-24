@@ -756,6 +756,10 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
     readFile(sourceUrl, "utf8"),
     readFile(listenSpeakFlowMigrationUrl, "utf8"),
   ]);
+  const recordingControl = source.slice(
+    source.indexOf("function RecordingControl"),
+    source.indexOf("type BrowserSpeechRecognition"),
+  );
 
   assert.match(source, /const usesListenSpeakPager = activeModule\.code === "listen_speak"/);
   assert.match(source, /听前准备/);
@@ -775,6 +779,11 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(source, /locale === "ko-KR" \? "원음과 비교" : "对照原音"/);
   assert.match(source, /ref=\{repeatReferenceAudioRef\}/);
   assert.match(source, /onEnded=\{\(\) => setRepeatReferencePlaying\(false\)\} hidden/);
+  assert.match(recordingControl, /cancelRecordingRef\.current = true/);
+  assert.match(recordingControl, /正在说话…/);
+  assert.match(recordingControl, /结束录音/);
+  assert.match(recordingControl, /RoleplayRecordingPlayer/);
+  assert.match(recordingControl, /audioUrl \? locale === "ko-KR" \? "다시 녹음" : "重新录制"/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
