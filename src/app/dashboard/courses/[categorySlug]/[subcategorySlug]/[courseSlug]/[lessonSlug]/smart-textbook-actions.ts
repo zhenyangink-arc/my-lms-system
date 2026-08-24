@@ -36,6 +36,51 @@ const dialogueRoleplayCompletionSchema = z.object({
   roleSide: z.enum(["left", "right"]),
 });
 
+const guidedRepeatProgressSchema = z.object({
+  activityId: z.string().uuid(),
+  practiceKey: z.literal("repeat-line"),
+  trackIndex: z.number().int().min(0).max(8),
+  segmentIndex: z.number().int().min(0).max(100),
+});
+
+export async function saveGuidedRepeatProgressAction(input: unknown) {
+  const parsed = guidedRepeatProgressSchema.safeParse(input);
+  if (!parsed.success) return { ok: false as const, message: "逐句跟读进度无效。" };
+  const { supabase, user, tenant, profile, platformProfile } = await requireActiveUser();
+  const preview = isPlatformCourseAuditorRole(platformProfile?.role);
+  if (!tenant || (!preview && !canUseStudentFeature(
+    profile?.role ?? "student",
+    normalizeMembershipTier(profile?.membership_tier),
+    "korean_course",
+  ))) return { ok: false as const, message: "当前账号没有智能教材学习权限。" };
+
+  const { data: activity } = await supabase
+    .from("digital_textbook_activities")
+    .select("id,activity_type")
+    .eq("id", parsed.data.activityId)
+    .maybeSingle();
+  if (!activity || activity.activity_type !== "speaking") {
+    return { ok: false as const, message: "找不到逐句跟读活动。" };
+  }
+  if (preview) return { ok: true as const, preview: true };
+
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("digital_textbook_guided_repeat_progress")
+    .upsert({
+      tenant_id: tenant.id,
+      student_id: user.id,
+      activity_id: activity.id,
+      practice_key: parsed.data.practiceKey,
+      track_index: parsed.data.trackIndex,
+      segment_index: parsed.data.segmentIndex,
+      completed_at: new Date().toISOString(),
+      updated_at: new Date().toISOString(),
+    }, { onConflict: "tenant_id,student_id,activity_id,practice_key,track_index,segment_index" });
+  if (error) return { ok: false as const, message: "逐句跟读进度暂时没有保存，请重试。" };
+  return { ok: true as const, preview: false };
+}
+
 export async function completeDialogueRoleplayAction(input: unknown) {
   const parsed = dialogueRoleplayCompletionSchema.safeParse(input);
   if (!parsed.success) return { ok: false as const, message: "角色实战信息无效。" };

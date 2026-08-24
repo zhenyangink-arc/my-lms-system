@@ -31,6 +31,11 @@ export type SmartTextbookActivity = {
     results: boolean[];
     answers: Array<number | string>;
   }>;
+  guidedRepeatProgress: Array<{
+    practiceKey: "repeat-line";
+    trackIndex: number;
+    segmentIndex: number;
+  }>;
   prompt: LocalizedText;
   instruction: LocalizedText;
   options: string[];
@@ -334,6 +339,7 @@ export async function loadSmartDigitalTextbook(
   const completedActivityIds = new Set<string>();
   const completedActivityResponses = new Map<string, unknown>();
   const activityPageProgress = new Map<string, SmartTextbookActivity["pageProgress"]>();
+  const guidedRepeatProgress = new Map<string, SmartTextbookActivity["guidedRepeatProgress"]>();
 
   if (!options.trackingDisabled && options.tenantId) {
     const activityIds = (activities ?? []).map((activity) => String(activity.id));
@@ -342,6 +348,7 @@ export async function loadSmartDigitalTextbook(
       { data: savedProgress },
       { data: completedAttempts },
       { data: savedPageProgress },
+      { data: savedGuidedRepeatProgress },
     ] = await Promise.all([
       admin
         .from("digital_textbook_preferences")
@@ -380,6 +387,16 @@ export async function loadSmartDigitalTextbook(
             .in("activity_id", activityIds)
             .order("page_index")
         : Promise.resolve({ data: [] }),
+      activityIds.length
+        ? admin
+            .from("digital_textbook_guided_repeat_progress")
+            .select("activity_id,practice_key,track_index,segment_index")
+            .eq("tenant_id", options.tenantId)
+            .eq("student_id", options.userId)
+            .in("activity_id", activityIds)
+            .order("track_index")
+            .order("segment_index")
+        : Promise.resolve({ data: [] }),
     ]);
 
     for (const attempt of completedAttempts ?? []) {
@@ -398,6 +415,18 @@ export async function loadSmartDigitalTextbook(
         answers: Array.isArray(row.answers) ? row.answers as Array<number | string> : [],
       });
       activityPageProgress.set(activityId, pages);
+    }
+
+    for (const row of savedGuidedRepeatProgress ?? []) {
+      if (row.practice_key !== "repeat-line") continue;
+      const activityId = String(row.activity_id);
+      const segments = guidedRepeatProgress.get(activityId) ?? [];
+      segments.push({
+        practiceKey: "repeat-line",
+        trackIndex: Number(row.track_index),
+        segmentIndex: Number(row.segment_index),
+      });
+      guidedRepeatProgress.set(activityId, segments);
     }
 
     if (savedPreference) {
@@ -464,6 +493,7 @@ export async function loadSmartDigitalTextbook(
             completed: completedActivityIds.has(String(activity.id)),
             response: completedActivityResponses.get(String(activity.id)) ?? null,
             pageProgress: activityPageProgress.get(String(activity.id)) ?? [],
+            guidedRepeatProgress: guidedRepeatProgress.get(String(activity.id)) ?? [],
             prompt: localized(activity.prompt),
             instruction: localized(activity.instruction),
             options: asStringArray(activity.options),

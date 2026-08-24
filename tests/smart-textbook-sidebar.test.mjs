@@ -31,6 +31,10 @@ const temporaryListeningAudioMigrationUrl = new URL(
   "../supabase/migrations/202608240004_publish_chapter_one_temporary_listening_audio.sql",
   import.meta.url,
 );
+const guidedRepeatProgressMigrationUrl = new URL(
+  "../supabase/migrations/202608240030_persist_guided_repeat_progress.sql",
+  import.meta.url,
+);
 const dialogueGroupsMigrationUrl = new URL(
   "../supabase/migrations/202608210002_add_chapter_one_orientation_dialogue_groups.sql",
   import.meta.url,
@@ -752,10 +756,13 @@ test("核心词汇根据图片媒体热点显示在对应场景附近", async ()
 });
 
 test("听说任务使用四页共享流程并预留正式音频位置", async () => {
-  const [source, migration, recordingRoute] = await Promise.all([
+  const [source, migration, recordingRoute, actions, loader, guidedRepeatMigration] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(listenSpeakFlowMigrationUrl, "utf8"),
     readFile(recordingRouteUrl, "utf8"),
+    readFile(actionsUrl, "utf8"),
+    readFile(loaderUrl, "utf8"),
+    readFile(guidedRepeatProgressMigrationUrl, "utf8"),
   ]);
   const recordingControl = source.slice(
     source.indexOf("function RecordingControl"),
@@ -797,6 +804,12 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(recordingRoute, /createR2SignedObjectUrl\(evidence\.object_key\)/);
   assert.match(recordingRoute, /\.contains\("metadata", \{ practiceKey, trackIndex, segmentIndex \}\)/);
   assert.match(recordingRoute, /isGuidedRepeatMetadata\(evidence\.metadata\)/);
+  assert.match(source, /saveGuidedRepeatProgressAction/);
+  assert.match(source, /逐句跟读已完成/);
+  assert.match(source, /completedRepeatSegments\.has\(`0:\$\{repeatTrackIndex\}:\$\{index\}`\)/);
+  assert.match(actions, /digital_textbook_guided_repeat_progress/);
+  assert.match(loader, /guidedRepeatProgress: guidedRepeatProgress\.get/);
+  assert.match(guidedRepeatMigration, /primary key \(tenant_id, student_id, activity_id, practice_key, track_index, segment_index\)/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
