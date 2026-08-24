@@ -20,8 +20,21 @@ for (const chapterNumber of chapters) {
 
   const sql = await readFile(path.join(migrationDirectory, fileName), "utf8");
   const modulesMatch = sql.match(/\$modules\$\s*(\[[\s\S]*?\])\s*\$modules\$::jsonb/);
-  if (!modulesMatch) throw new Error(`Missing module seed in ${fileName}`);
-  const modules = JSON.parse(modulesMatch[1]);
+  const chapterSeedMatch = sql.match(/\$chapter_seed\$\s*(\{[\s\S]*?\})\s*\$chapter_seed\$::jsonb/);
+  const chapterSeed = chapterSeedMatch ? JSON.parse(chapterSeedMatch[1]) : null;
+  const modules = modulesMatch
+    ? JSON.parse(modulesMatch[1])
+    : (chapterSeed?.modules.map((module) => {
+        const node = chapterSeed.nodes?.find((item) => item.module_code === module.module_code);
+        return {
+          ...module,
+          code: module.module_code,
+          nodeCode: node?.node_code,
+          nodeTitle: node?.title,
+          content: node?.content,
+        };
+      }) ?? null);
+  if (!modules) throw new Error(`Missing module seed in ${fileName}`);
   const summary = modules.map((module) => ({
     code: module.code,
     nodeCode: module.nodeCode,
