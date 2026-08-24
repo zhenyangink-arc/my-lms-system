@@ -786,6 +786,8 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(recordingControl, /audioUrl \? locale === "ko-KR" \? "다시 녹음" : "重新录制"/);
   assert.match(recordingControl, /className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-\[var\(--status-success\)\] px-5/);
   assert.doesNotMatch(recordingControl, /min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-\[var\(--status-success\)\]/);
+  assert.match(recordingControl, /recording \? <div className="flex flex-wrap items-center gap-2">/);
+  assert.doesNotMatch(recordingControl, /recording \? <div className="space-y-3">/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
