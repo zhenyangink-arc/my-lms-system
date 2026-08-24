@@ -5,6 +5,7 @@ import {
   canUseStudentFeature,
   normalizeMembershipTier,
 } from "@/lib/student-permissions";
+import { createR2SignedObjectUrl } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export async function GET(
@@ -115,11 +116,10 @@ export async function GET(
     return NextResponse.json({ message: "Audio is not ready." }, { status: 404 });
   }
 
-  const { data, error } = await admin.storage
-    .from("digital-textbook-audio")
-    .createSignedUrl(audioObjectKey, 60 * 10);
-
-  if (error || !data?.signedUrl) {
+  let signedUrl: string;
+  try {
+    signedUrl = await createR2SignedObjectUrl(audioObjectKey);
+  } catch {
     return NextResponse.json({ message: "Audio is temporarily unavailable." }, { status: 503 });
   }
 
@@ -127,7 +127,7 @@ export async function GET(
   // authorized learners can stream the lesson while the signed origin remains
   // server-side. Range requests are forwarded for seeking and playback speed.
   const range = request.headers.get("range");
-  const upstream = await fetch(data.signedUrl, {
+  const upstream = await fetch(signedUrl, {
     headers: range ? { Range: range } : undefined,
     cache: "no-store",
     signal: request.signal,

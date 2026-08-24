@@ -165,16 +165,16 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(source, /const \[missionPage, setMissionPage\] = useState<0 \| 1 \| 2 \| 3>\(0\)/);
   assert.match(source, /const textbookViewStateKey = `smart-textbook-view:\$\{textbook\.id\}`/);
   assert.match(source, /window\.sessionStorage\.setItem\(textbookViewStateKey, JSON\.stringify\(\{ activeIndex, missionPage, patternPage \}\)\)/);
-  assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
+  assert.match(source, /const usesDesktopImagePager = nodeIndex === 0 && node\.activities\.length > 0 && Boolean\(sharedModuleSkeleton\)/);
   assert.match(source, /usesDialoguePager && missionPage >= 2/);
   assert.match(source, /const \[nodeProgressById, setNodeProgressById\] = useState<Record<string, number>>/);
   assert.match(source, /const targetCompletionPercent = completedNodeIds\.has\(node\.id\) \? 100/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "현재 목표 실제 완료율" : "当前目标实际完成度"\}/);
   assert.match(source, /\{targetCompletionPercent\}%<\/span>/);
   assert.match(source, /h-1\.5 w-20/);
-  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : missionPage === 0/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : usesReadWritePager/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "학습 목표 페이지" : "学习目标分页"\}/);
-  assert.match(source, /className="mb-6 hidden items-center justify-between gap-4 rounded-2xl/);
+  assert.match(source, /className="mb-6 mt-6 hidden items-center justify-between gap-4 rounded-2xl/);
   assert.match(source, /usesPatternPager \? patternPage === 0 : missionPage === 0/);
   assert.match(source, /usesPatternPager \? patternPage === 1 : missionPage === 1/);
   assert.doesNotMatch(source, /className="mt-6 hidden items-center justify-between border-t/);
@@ -192,10 +192,10 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
 test("核心词汇等带图模块复用情景与表达双页导航", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
-  assert.match(source, /const usesDesktopImagePager = hasIntegratedImageHeader && node\.activities\.length > 0/);
+  assert.match(source, /const usesDesktopImagePager = nodeIndex === 0 && node\.activities\.length > 0 && Boolean\(sharedModuleSkeleton\)/);
   assert.match(source, /\{usesDesktopImagePager && \(/);
   assert.match(source, /!usesPatternPager && !usesDialoguePager && missionPage === 1/);
-  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : missionPage === 0/);
+  assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : usesReadWritePager/);
   assert.match(source, /locale === "ko-KR" \? "장면과 표현" : "情景与表达"/);
   assert.match(source, /locale === "ko-KR" \? "이 목표" : "本目标"/);
 });
@@ -290,7 +290,7 @@ test("实战对话使用四页角色练习并覆盖第一章十二个核心词",
   ]);
 
   assert.match(source, /const usesDialoguePager = Array\.isArray\(node\.content\.dialogueScenes\)/);
-  assert.match(source, /round=\{usesGrammarPager \|\| usesPatternPager \|\| usesDialoguePager \|\| usesListenSpeakPager \? undefined/);
+  assert.match(source, /round=\{usesGrammarPager \|\| usesPatternPager \|\| usesDialoguePager \|\| usesListenSpeakPager \|\| usesReadWritePager \|\| usesReviewPager \? undefined/);
   assert.match(source, /if \(!window\.isSecureContext\)/);
   assert.match(source, /当前页面使用 HTTP，浏览器已阻止麦克风/);
   assert.doesNotMatch(source, /正在安全保存到 Cloudflare R2/);
@@ -489,7 +489,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
     readFile(new URL("../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-submission.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(source, /const usesPatternPager = Boolean/);
+  assert.match(source, /const usesPatternPager = activeModule\.code === "patterns" && node\.activities\.some\(\(activity\) => activity\.type === "ordering"\)/);
   assert.match(source, /"句型库"/);
   assert.match(source, /"替换操练"/);
   assert.match(source, /"组合输出"/);
@@ -757,13 +757,13 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
     readFile(listenSpeakFlowMigrationUrl, "utf8"),
   ]);
 
-  assert.match(source, /const usesListenSpeakPager = Array\.isArray\(node\.content\.listenSpeakPages\)/);
+  assert.match(source, /const usesListenSpeakPager = activeModule\.code === "listen_speak"/);
   assert.match(source, /听前准备/);
   assert.match(source, /听辨信息/);
   assert.match(source, /跟读复现/);
   assert.match(source, /独立表达/);
-  assert.match(source, /activity\.key === "listening-identity"/);
-  assert.match(source, /activity\.key === "speaking-introduction"/);
+  assert.match(source, /activity\.type === "listening"/);
+  assert.match(source, /activity\.type === "speaking"/);
   assert.match(source, /当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
