@@ -373,7 +373,7 @@ export async function loadSmartDigitalTextbook(
             .eq("tenant_id", options.tenantId)
             .eq("student_id", options.userId)
             .eq("version_id", version.id)
-            .eq("is_correct", true)
+            .or("is_correct.eq.true,meets_completion_requirements.eq.true")
             .in("activity_id", activityIds)
             .order("created_at", { ascending: true })
         : Promise.resolve({ data: [] }),

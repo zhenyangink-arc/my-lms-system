@@ -566,6 +566,7 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   assert.match(source, /hidden=\{patternOutputTask !== 1\}/);
   assert.match(loader, /\.select\("activity_id,response,created_at"\)/);
   assert.match(loader, /completedActivityResponses/);
+  assert.match(loader, /\.or\("is_correct\.eq\.true,meets_completion_requirements\.eq\.true"\)/);
   assert.match(source, /const savedAnswers = stringArray\(activity\.response\)/);
   assert.match(source, /activity\.completed && savedAnswers\.length === steps\.length/);
   assert.match(source, /complete \? <div className="flex min-h-\[370px\] flex-col items-center justify-center text-center"/);
