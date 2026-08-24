@@ -765,6 +765,11 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(source, /activity\.type === "listening"/);
   assert.match(source, /activity\.type === "speaking"/);
   assert.match(source, /当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。/);
+  assert.match(source, /const \[repeatLinePlaybackStarted, setRepeatLinePlaybackStarted\] = useState\(false\)/);
+  assert.match(source, /locale === "ko-KR" \? "재생 시작" : "开始播放"/);
+  assert.match(source, /setRepeatLinePlaybackStarted\(true\); playRepeatLine\(0\)/);
+  assert.match(source, /if \(repeatLinePlaybackStarted\) playRepeatLine\(nextIndex\)/);
+  assert.match(source, /if \(repeatLinePlaybackStarted\) playRepeatLine\(index\)/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);
