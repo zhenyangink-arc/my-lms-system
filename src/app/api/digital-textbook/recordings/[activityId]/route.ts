@@ -7,6 +7,7 @@ import {
 } from "@/lib/student-permissions";
 import {
   assertR2ObjectUpload,
+  createR2SignedObjectUrl,
   createR2SignedUploadUrl,
   deleteR2Object,
 } from "@/lib/r2";
@@ -27,6 +28,111 @@ function extensionForMimeType(mimeType: string) {
   if (mimeType === "audio/mp4") return "m4a";
   if (mimeType === "audio/mpeg") return "mp3";
   return "webm";
+}
+
+function isGuidedRepeatMetadata(metadata: unknown) {
+  if (!metadata || typeof metadata !== "object" || Array.isArray(metadata)) return false;
+  const practiceKey = String((metadata as Record<string, unknown>).practiceKey ?? "");
+  return practiceKey === "repeat-line" || practiceKey === "full-recall";
+}
+
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ activityId: string }> },
+) {
+  const { supabase, user, tenant, profile } = await requireActiveUser();
+  if (!tenant || !canUseStudentFeature(
+    profile?.role ?? "student",
+    normalizeMembershipTier(profile?.membership_tier),
+    "korean_course",
+  )) return NextResponse.json({ message: "Forbidden." }, { status: 403 });
+
+  const { activityId } = await params;
+  if (!/^[0-9a-f-]{36}$/i.test(activityId)) {
+    return NextResponse.json({ message: "Invalid recording." }, { status: 400 });
+  }
+  const { data: activity } = await supabase
+    .from("digital_textbook_activities")
+    .select("id,activity_type")
+    .eq("id", activityId)
+    .maybeSingle();
+  if (!activity || activity.activity_type !== "speaking") {
+    return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
+  }
+
+  const url = new URL(request.url);
+  const evidenceId = url.searchParams.get("evidenceId") ?? "";
+  const practiceKey = url.searchParams.get("practiceKey") ?? "";
+  const trackIndex = Number(url.searchParams.get("trackIndex"));
+  const segmentIndex = Number(url.searchParams.get("segmentIndex"));
+  const admin = createAdminClient();
+
+  if (evidenceId) {
+    if (!/^[0-9a-f-]{36}$/i.test(evidenceId)) {
+      return NextResponse.json({ message: "Invalid recording." }, { status: 400 });
+    }
+    const { data: evidence } = await admin
+      .from("digital_textbook_speaking_evidence")
+      .select("id,object_key,mime_type,metadata")
+      .eq("id", evidenceId)
+      .eq("tenant_id", tenant.id)
+      .eq("student_id", user.id)
+      .eq("activity_id", activity.id)
+      .maybeSingle();
+    if (!evidence || !isGuidedRepeatMetadata(evidence.metadata)) {
+      return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
+    }
+    let signedUrl: string;
+    try {
+      signedUrl = await createR2SignedObjectUrl(evidence.object_key);
+    } catch {
+      return NextResponse.json({ message: "Recording is temporarily unavailable." }, { status: 503 });
+    }
+    const range = request.headers.get("range");
+    const upstream = await fetch(signedUrl, {
+      headers: range ? { Range: range } : undefined,
+      cache: "no-store",
+      signal: request.signal,
+    });
+    if (!upstream.ok && upstream.status !== 206) {
+      return NextResponse.json({ message: "Recording is temporarily unavailable." }, { status: 503 });
+    }
+    const headers = new Headers({
+      "Cache-Control": "private, no-store, max-age=0",
+      "Content-Disposition": 'inline; filename="student-recording"',
+      "Cross-Origin-Resource-Policy": "same-origin",
+      "X-Content-Type-Options": "nosniff",
+    });
+    for (const name of ["accept-ranges", "content-length", "content-range", "content-type"]) {
+      const value = upstream.headers.get(name);
+      if (value) headers.set(name, value);
+    }
+    if (!headers.has("content-type")) headers.set("Content-Type", evidence.mime_type);
+    return new Response(upstream.body, { status: upstream.status, headers });
+  }
+
+  if ((practiceKey !== "repeat-line" && practiceKey !== "full-recall") || !Number.isInteger(trackIndex) || trackIndex < 0 || !Number.isInteger(segmentIndex) || segmentIndex < 0) {
+    return NextResponse.json({ message: "Invalid recording lookup." }, { status: 400 });
+  }
+  const { data: evidence } = await admin
+    .from("digital_textbook_speaking_evidence")
+    .select("id,byte_size,mime_type,metadata,created_at")
+    .eq("tenant_id", tenant.id)
+    .eq("student_id", user.id)
+    .eq("activity_id", activity.id)
+    .contains("metadata", { practiceKey, trackIndex, segmentIndex })
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (!evidence) return NextResponse.json({ recording: null }, { headers: { "Cache-Control": "private, no-store" } });
+  return NextResponse.json({
+    recording: {
+      evidenceId: evidence.id,
+      byteSize: evidence.byte_size,
+      mimeType: evidence.mime_type,
+      playbackUrl: `/api/digital-textbook/recordings/${activity.id}?evidenceId=${encodeURIComponent(evidence.id)}`,
+    },
+  }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
 export async function POST(
@@ -238,23 +344,27 @@ export async function DELETE(
   }
   const { data: activity } = await supabase
     .from("digital_textbook_activities")
-    .select("id,public_config")
+    .select("id,activity_type,public_config")
     .eq("id", activityId)
     .maybeSingle();
-  if (!activity || activity.public_config?.practiceKind !== "dialogue_roleplay") {
+  if (!activity || activity.activity_type !== "speaking") {
     return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
   }
 
   const admin = createAdminClient();
   const { data: evidence } = await admin
     .from("digital_textbook_speaking_evidence")
-    .select("id,object_key,consumed_at")
+    .select("id,object_key,consumed_at,metadata")
     .eq("id", evidenceId)
     .eq("tenant_id", tenant.id)
     .eq("student_id", user.id)
     .eq("activity_id", activity.id)
     .maybeSingle();
   if (!evidence) return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
+  const isDialogueRoleplay = activity.public_config?.practiceKind === "dialogue_roleplay";
+  if (!isDialogueRoleplay && !isGuidedRepeatMetadata(evidence.metadata)) {
+    return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
+  }
   if (evidence.consumed_at) {
     return NextResponse.json({ message: "Completed practice recordings cannot be deleted." }, { status: 409 });
   }

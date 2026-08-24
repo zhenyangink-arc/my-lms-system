@@ -752,9 +752,10 @@ test("核心词汇根据图片媒体热点显示在对应场景附近", async ()
 });
 
 test("听说任务使用四页共享流程并预留正式音频位置", async () => {
-  const [source, migration] = await Promise.all([
+  const [source, migration, recordingRoute] = await Promise.all([
     readFile(sourceUrl, "utf8"),
     readFile(listenSpeakFlowMigrationUrl, "utf8"),
+    readFile(recordingRouteUrl, "utf8"),
   ]);
   const recordingControl = source.slice(
     source.indexOf("function RecordingControl"),
@@ -790,6 +791,12 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.doesNotMatch(recordingControl, /recording \? <div className="space-y-3">/);
   assert.match(recordingControl, /mt-4 grid gap-4 lg:grid-cols-2 lg:items-end/);
   assert.match(recordingControl, /\{afterPlaybackActions\}<\/div>/);
+  assert.match(recordingControl, /正在恢复已保存的录音…/);
+  assert.match(recordingControl, /fetch\(`\/api\/digital-textbook\/recordings\/\$\{activityId\}\?\$\{search\.toString\(\)\}`/);
+  assert.match(recordingRoute, /export async function GET/);
+  assert.match(recordingRoute, /createR2SignedObjectUrl\(evidence\.object_key\)/);
+  assert.match(recordingRoute, /\.contains\("metadata", \{ practiceKey, trackIndex, segmentIndex \}\)/);
+  assert.match(recordingRoute, /isGuidedRepeatMetadata\(evidence\.metadata\)/);
   assert.match(migration, /"listenSpeakPages"/);
   assert.equal((migration.match(/"audioAssetKey":"chapter-01-listening-repeat-/g) ?? []).length, 6);
   assert.equal((migration.match(/korean-level-one\/chapter-01\/listen-speak\/repeat-\d\d\.mp3/g) ?? []).length, 6);

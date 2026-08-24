@@ -2044,13 +2044,49 @@ function RecordingControl({
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [recordingEvidenceId, setRecordingEvidenceId] = useState<string | null>(null);
   const [recordingError, setRecordingError] = useState("");
+  const [restoringRecording, setRestoringRecording] = useState(Boolean(uploadMetadata));
 
   const audioUrlRef = useRef(audioUrl);
+  const onReadyRef = useRef(onReady);
   useEffect(() => { audioUrlRef.current = audioUrl; }, [audioUrl]);
+  useEffect(() => { onReadyRef.current = onReady; }, [onReady]);
   useEffect(() => () => {
     streamRef.current?.getTracks().forEach((track) => track.stop());
-    if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+    if (audioUrlRef.current?.startsWith("blob:")) URL.revokeObjectURL(audioUrlRef.current);
   }, []);
+  useEffect(() => {
+    if (!uploadMetadata) {
+      setRestoringRecording(false);
+      return;
+    }
+    let cancelled = false;
+    setRestoringRecording(true);
+    setRecordingError("");
+    if (audioUrlRef.current?.startsWith("blob:")) URL.revokeObjectURL(audioUrlRef.current);
+    setAudioUrl(null);
+    setRecordingEvidenceId(null);
+    const search = new URLSearchParams({
+      practiceKey: uploadMetadata.practiceKey,
+      trackIndex: String(uploadMetadata.trackIndex),
+      segmentIndex: String(uploadMetadata.segmentIndex),
+    });
+    void fetch(`/api/digital-textbook/recordings/${activityId}?${search.toString()}`, { cache: "no-store" })
+      .then(async (response) => {
+        if (!response.ok) throw new Error("recording lookup failed");
+        return response.json() as Promise<{ recording?: { evidenceId: string; playbackUrl: string } | null }>;
+      })
+      .then((result) => {
+        if (cancelled || !result.recording) return;
+        setAudioUrl(result.recording.playbackUrl);
+        setRecordingEvidenceId(result.recording.evidenceId);
+        onReadyRef.current({ durationSeconds: 1, recordingEvidenceId: result.recording.evidenceId });
+      })
+      .catch(() => {
+        if (!cancelled) setRecordingError(locale === "ko-KR" ? "저장된 녹음을 불러오지 못했습니다. 다시 시도해 주세요." : "已保存的录音读取失败，请刷新后重试。");
+      })
+      .finally(() => { if (!cancelled) setRestoringRecording(false); });
+    return () => { cancelled = true; };
+  }, [activityId, locale, uploadMetadata?.practiceKey, uploadMetadata?.segmentIndex, uploadMetadata?.trackIndex]);
 
   function stopRecording() {
     cancelRecordingRef.current = false;
@@ -2115,7 +2151,7 @@ function RecordingControl({
             throw new Error(result.message ?? "recording upload failed");
           }
           const nextAudioUrl = URL.createObjectURL(blob);
-          if (audioUrlRef.current) URL.revokeObjectURL(audioUrlRef.current);
+          if (audioUrlRef.current?.startsWith("blob:")) URL.revokeObjectURL(audioUrlRef.current);
           setAudioUrl(nextAudioUrl);
           setRecordingEvidenceId(result.evidenceId);
           onReady({
@@ -2139,9 +2175,9 @@ function RecordingControl({
 
   return (
     <div className="mt-5 border-y border-[var(--border-subtle)] py-5">
-      {recording ? <div className="flex flex-wrap items-center gap-2"><div role="status" aria-live="polite" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--status-warning-surface)] px-4 text-sm font-bold text-[var(--status-warning)]"><Mic size={16} className="animate-pulse motion-reduce:animate-none" aria-hidden="true" />{locale === "ko-KR" ? "말하는 중…" : "正在说话…"}</div><button type="button" onClick={cancelRecording} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><X size={15} aria-hidden="true" />{locale === "ko-KR" ? "취소" : "取消"}</button><button type="button" onClick={stopRecording} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning)] px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Square size={14} aria-hidden="true" />{locale === "ko-KR" ? "녹음 끝내기" : "结束录音"}</button></div> : <button type="button" onClick={startRecording} disabled={uploading} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--status-success)] px-5 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"><Mic size={16} aria-hidden="true" />{audioUrl ? locale === "ko-KR" ? "다시 녹음" : "重新录制" : t.startRecording}</button>}
+      {restoringRecording ? <p role="status" className="text-xs font-semibold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "저장된 녹음을 불러오고 있어요…" : "正在恢复已保存的录音…"}</p> : recording ? <div className="flex flex-wrap items-center gap-2"><div role="status" aria-live="polite" className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--status-warning-surface)] px-4 text-sm font-bold text-[var(--status-warning)]"><Mic size={16} className="animate-pulse motion-reduce:animate-none" aria-hidden="true" />{locale === "ko-KR" ? "말하는 중…" : "正在说话…"}</div><button type="button" onClick={cancelRecording} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><X size={15} aria-hidden="true" />{locale === "ko-KR" ? "취소" : "取消"}</button><button type="button" onClick={stopRecording} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--status-warning)] px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Square size={14} aria-hidden="true" />{locale === "ko-KR" ? "녹음 끝내기" : "结束录音"}</button></div> : <button type="button" onClick={startRecording} disabled={uploading} className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[var(--status-success)] px-5 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"><Mic size={16} aria-hidden="true" />{audioUrl ? locale === "ko-KR" ? "다시 녹음" : "重新录制" : t.startRecording}</button>}
       {uploading && <p role="status" className="mt-3 text-xs font-semibold text-[var(--support)]">{t.recordingUploading}</p>}
-      {audioUrl && recordingEvidenceId && !uploading && <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:items-end"><div className="min-w-0">{playbackLabel && <p className="text-xs font-bold text-[var(--foreground-muted)]">{playbackLabel}</p>}<RoleplayRecordingPlayer activityId={activityId} recording={{ audioUrl, evidenceId: recordingEvidenceId, transcript: "" }} locale={locale} onError={setRecordingError} onDeleted={() => { URL.revokeObjectURL(audioUrl); setAudioUrl(null); setRecordingEvidenceId(null); onReset(); }} /></div>{afterPlaybackActions}</div>}
+      {audioUrl && recordingEvidenceId && !uploading && !restoringRecording && <div className="mt-4 grid gap-4 lg:grid-cols-2 lg:items-end"><div className="min-w-0">{playbackLabel && <p className="text-xs font-bold text-[var(--foreground-muted)]">{playbackLabel}</p>}<RoleplayRecordingPlayer activityId={activityId} recording={{ audioUrl, evidenceId: recordingEvidenceId, transcript: "" }} locale={locale} onError={setRecordingError} onDeleted={() => { if (audioUrl.startsWith("blob:")) URL.revokeObjectURL(audioUrl); setAudioUrl(null); setRecordingEvidenceId(null); onReset(); }} /></div>{afterPlaybackActions}</div>}
       {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
     </div>
   );
