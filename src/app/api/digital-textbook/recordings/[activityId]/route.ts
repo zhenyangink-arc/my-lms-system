@@ -199,9 +199,18 @@ export async function POST(
   const practiceKey = String(formData.get("practiceKey") ?? "").slice(0, 32);
   const trackIndex = Number(formData.get("trackIndex"));
   const segmentIndex = Number(formData.get("segmentIndex"));
+  const durationSeconds = Number(formData.get("durationSeconds"));
   const filename = `${evidenceId}.${extensionForMimeType(mimeType)}`;
   const isDialogueRoleplay = activity.public_config?.practiceKind === "dialogue_roleplay";
   const isGuidedRepeat = practiceKey === "repeat-line" || practiceKey === "full-recall";
+  const isIndependentOutput = activity.public_config?.presentation === "independent_output";
+  const minimumDurationSeconds = Number(activity.public_config?.minimumSeconds ?? 1);
+  if (isIndependentOutput && (!Number.isFinite(durationSeconds) || durationSeconds < minimumDurationSeconds)) {
+    return NextResponse.json(
+      { message: `Recording must be at least ${minimumDurationSeconds} seconds.` },
+      { status: 422 },
+    );
+  }
   const hasValidRoleplayTurn = Boolean(sceneId)
     && (roleSide === "left" || roleSide === "right")
     && Number.isInteger(turnIndex)
@@ -212,14 +221,15 @@ export async function POST(
   if (isGuidedRepeat && (!Number.isInteger(trackIndex) || trackIndex < 0 || trackIndex > 8 || !Number.isInteger(segmentIndex) || segmentIndex < 0 || segmentIndex > 100)) {
     return NextResponse.json({ message: "Invalid guided repeat segment." }, { status: 400 });
   }
-  const prefix = isDialogueRoleplay || isGuidedRepeat
+  const usesR2 = isDialogueRoleplay || isGuidedRepeat || isIndependentOutput;
+  const prefix = usesR2
     ? `student-recordings/${tenant.id}/${user.id}/${activity.id}`
     : `${tenant.id}/${user.id}/${activity.id}`;
   const objectKey = `${prefix}/${filename}`;
   const admin = createAdminClient();
   const bytes = await recording.arrayBuffer();
   let storedSize = recording.size;
-  if (isDialogueRoleplay || isGuidedRepeat) {
+  if (usesR2) {
     try {
       const uploadUrl = await createR2SignedUploadUrl(objectKey, mimeType, recording.size);
       const uploadResponse = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": mimeType }, body: bytes });
@@ -279,10 +289,13 @@ export async function POST(
         practiceKey,
         trackIndex,
         segmentIndex,
+      } : isIndependentOutput ? {
+        durationSeconds,
+        storage: "r2",
       } : {},
     });
   if (evidenceError) {
-    if (isDialogueRoleplay || isGuidedRepeat) await deleteR2Object(objectKey);
+    if (usesR2) await deleteR2Object(objectKey);
     else await admin.storage.from(RECORDING_BUCKET).remove([objectKey]);
     return NextResponse.json(
       { message: "Recording evidence could not be saved." },
@@ -290,22 +303,29 @@ export async function POST(
     );
   }
 
-  if (isDialogueRoleplay || isGuidedRepeat) {
+  if (isDialogueRoleplay || isGuidedRepeat || isIndependentOutput) {
     const previousEvidenceQuery = admin
       .from("digital_textbook_speaking_evidence")
-      .select("id,object_key")
+      .select("id,object_key,consumed_at,metadata")
       .eq("tenant_id", tenant.id)
       .eq("student_id", user.id)
       .eq("activity_id", activity.id)
       .neq("id", evidenceId);
     const { data: previousEvidence } = isDialogueRoleplay
       ? await previousEvidenceQuery.contains("metadata", { sceneId, roleSide, turnIndex })
-      : await previousEvidenceQuery.contains("metadata", { practiceKey, trackIndex, segmentIndex });
+      : isGuidedRepeat
+        ? await previousEvidenceQuery.contains("metadata", { practiceKey, trackIndex, segmentIndex })
+        : await previousEvidenceQuery.is("consumed_at", null);
 
     const removedEvidenceIds: string[] = [];
     for (const previous of previousEvidence ?? []) {
       try {
-        await deleteR2Object(previous.object_key);
+        if ((previous.metadata as Record<string, unknown> | null)?.storage === "r2") {
+          await deleteR2Object(previous.object_key);
+        } else {
+          const { error: removeError } = await admin.storage.from(RECORDING_BUCKET).remove([previous.object_key]);
+          if (removeError) throw removeError;
+        }
         removedEvidenceIds.push(previous.id);
       } catch {
         // Keep the database row when object deletion fails so the orphan can be retried safely.
@@ -362,7 +382,8 @@ export async function DELETE(
     .maybeSingle();
   if (!evidence) return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
   const isDialogueRoleplay = activity.public_config?.practiceKind === "dialogue_roleplay";
-  if (!isDialogueRoleplay && !isGuidedRepeatMetadata(evidence.metadata)) {
+  const isIndependentOutput = activity.public_config?.presentation === "independent_output";
+  if (!isDialogueRoleplay && !isIndependentOutput && !isGuidedRepeatMetadata(evidence.metadata)) {
     return NextResponse.json({ message: "Recording was not found." }, { status: 404 });
   }
   if (evidence.consumed_at) {
@@ -370,7 +391,12 @@ export async function DELETE(
   }
 
   try {
-    await deleteR2Object(evidence.object_key);
+    if ((evidence.metadata as Record<string, unknown> | null)?.storage === "r2") {
+      await deleteR2Object(evidence.object_key);
+    } else {
+      const { error: removeError } = await admin.storage.from(RECORDING_BUCKET).remove([evidence.object_key]);
+      if (removeError) throw removeError;
+    }
   } catch {
     return NextResponse.json({ message: "Recording could not be deleted." }, { status: 503 });
   }

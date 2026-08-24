@@ -795,6 +795,8 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(source, /ref=\{repeatReferenceAudioRef\}/);
   assert.match(source, /onEnded=\{\(\) => setRepeatReferencePlaying\(false\)\} hidden/);
   assert.match(recordingControl, /cancelRecordingRef\.current = true/);
+  assert.match(recordingControl, /minimumDurationSeconds && durationSeconds < minimumDurationSeconds/);
+  assert.match(recordingControl, /短录音未保存/);
   assert.match(recordingControl, /正在说话…/);
   assert.match(recordingControl, /结束录音/);
   assert.match(recordingControl, /RoleplayRecordingPlayer/);
@@ -809,6 +811,10 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(recordingControl, /fetch\(`\/api\/digital-textbook\/recordings\/\$\{activityId\}\?\$\{search\.toString\(\)\}`/);
   assert.match(recordingRoute, /export async function GET/);
   assert.match(recordingRoute, /createR2SignedObjectUrl\(evidence\.object_key\)/);
+  assert.match(recordingRoute, /const isIndependentOutput = activity\.public_config\?\.presentation === "independent_output"/);
+  assert.match(recordingRoute, /const usesR2 = isDialogueRoleplay \|\| isGuidedRepeat \|\| isIndependentOutput/);
+  assert.match(recordingRoute, /Recording must be at least \$\{minimumDurationSeconds\} seconds/);
+  assert.match(recordingRoute, /storage: "r2"/);
   assert.match(recordingRoute, /\.contains\("metadata", \{ practiceKey, trackIndex, segmentIndex \}\)/);
   assert.match(recordingRoute, /isGuidedRepeatMetadata\(evidence\.metadata\)/);
   assert.match(source, /saveGuidedRepeatProgressAction/);
