@@ -778,6 +778,8 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(source, /if \(nextDuration >= minimumSeconds && selectedCount >= minimumOutlineItems\) submit\(nextAnswer\)/);
   assert.match(source, /max-w-full whitespace-normal text-lg font-bold leading-10[^\n]+\[overflow-wrap:anywhere\]/);
   assert.match(source, /正在自动提交/);
+  assert.match(source, /<fieldset aria-label=\{String\(objectValue\(activeOutlineItem\.label\)\[locale\]/);
+  assert.doesNotMatch(source, /<legend[^>]*>\{String\(objectValue\(activeOutlineItem\.label\)\[locale\]/);
   assert.match(source, /activity\.type === "listening"/);
   assert.match(source, /activity\.type === "speaking"/);
   assert.match(source, /当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。/);
