@@ -802,7 +802,7 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.doesNotMatch(recordingControl, /min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-\[var\(--status-success\)\]/);
   assert.match(recordingControl, /recording \? <div className="flex flex-wrap items-center gap-2">/);
   assert.doesNotMatch(recordingControl, /recording \? <div className="space-y-3">/);
-  assert.match(recordingControl, /mt-4 grid gap-4 lg:grid-cols-2 lg:items-end/);
+  assert.match(recordingControl, /afterPlaybackActions \? "mt-4 grid gap-4 lg:grid-cols-2 lg:items-end" : "mt-4 min-w-0"/);
   assert.match(recordingControl, /\{afterPlaybackActions\}<\/div>/);
   assert.match(recordingControl, /正在恢复已保存的录音…/);
   assert.match(recordingControl, /fetch\(`\/api\/digital-textbook\/recordings\/\$\{activityId\}\?\$\{search\.toString\(\)\}`/);
