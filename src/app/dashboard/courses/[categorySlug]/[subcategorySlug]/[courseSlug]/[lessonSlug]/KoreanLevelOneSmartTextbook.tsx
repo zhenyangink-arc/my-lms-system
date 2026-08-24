@@ -2996,6 +2996,9 @@ function Activity({
     }
     if (requiresConfirmation) return { selection: -1, confirmed: false };
     if (activity.type === "speaking") {
+      if (activity.completed && activity.response && typeof activity.response === "object" && !Array.isArray(activity.response)) {
+        return activity.response;
+      }
       return { recorded: false, durationSeconds: 0, turns: 0, criteria: [] };
     }
     if (activity.type === "writing") {
@@ -3205,43 +3208,43 @@ function Activity({
     setTranscriptVisible(false);
   }, [activeGrammarPage]);
 
-  function hasResponse() {
+  function hasResponse(responseValue: AnswerValue = answer) {
     if (activity.type === "writing") {
-      return typeof objectValue(answer).text === "string" && String(objectValue(answer).text).trim().length > 0;
+      return typeof objectValue(responseValue).text === "string" && String(objectValue(responseValue).text).trim().length > 0;
     }
     if (activity.type === "speaking") {
-      const response = objectValue(answer);
+      const response = objectValue(responseValue);
       return response.recorded === true && typeof response.durationSeconds === "number" && Number.isFinite(response.durationSeconds) && response.durationSeconds > 0 && typeof response.recordingEvidenceId === "string";
     }
     if (activity.type === "self_check") {
-      const checks = objectValue(answer).checks;
-      const returnNodes = objectValue(answer).returnNodes;
+      const checks = objectValue(responseValue).checks;
+      const returnNodes = objectValue(responseValue).returnNodes;
       return Array.isArray(checks) && checks.length === configItems.length && checks.every((item) => item === "can" || item === "review") && Array.isArray(returnNodes) && returnNodes.length > 0;
     }
     if (groupedSingleChoice) {
-      return Array.isArray(answer) && answer.length === configItems.length && answer.every((item, index) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < stringArray(configItems[index]?.options).length);
+      return Array.isArray(responseValue) && responseValue.length === configItems.length && responseValue.every((item, index) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < stringArray(configItems[index]?.options).length);
     }
     if (requiresConfirmation) {
-      const response = objectValue(answer);
+      const response = objectValue(responseValue);
       return typeof response.selection === "number" && Number.isInteger(response.selection) && response.selection >= 0 && response.selection < activity.options.length && response.confirmed === true;
     }
     if (activity.type === "single_choice" || activity.type === "listening") {
-      return typeof answer === "number" && Number.isInteger(answer) && answer >= 0 && answer < activity.options.length;
+      return typeof responseValue === "number" && Number.isInteger(responseValue) && responseValue >= 0 && responseValue < activity.options.length;
     }
     if (activity.type === "multiple_choice") {
-      return Array.isArray(answer) && answer.length > 0 && answer.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(answer).size === answer.length;
+      return Array.isArray(responseValue) && responseValue.length > 0 && responseValue.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(responseValue).size === responseValue.length;
     }
     if (activity.type === "fill_blank") {
-      return typeof answer === "string"
-        ? answer.trim().length > 0
-        : Array.isArray(answer) &&
-            answer.length === configItems.length &&
-            answer.every(
+      return typeof responseValue === "string"
+        ? responseValue.trim().length > 0
+        : Array.isArray(responseValue) &&
+            responseValue.length === configItems.length &&
+            responseValue.every(
               (item) => typeof item === "string" && item.trim().length > 0,
             );
     }
     if (activity.type === "ordering") {
-      return Array.isArray(answer) && answer.length === activity.options.length && answer.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(answer).size === activity.options.length;
+      return Array.isArray(responseValue) && responseValue.length === activity.options.length && responseValue.every((item) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < activity.options.length) && new Set(responseValue).size === activity.options.length;
     }
     return false;
   }
@@ -3249,9 +3252,7 @@ function Activity({
   function submit(responseOverride?: AnswerValue) {
     const responseToSubmit = responseOverride === undefined ? answer : responseOverride;
     setFeedback(null);
-    const overrideHasResponse = responseOverride !== undefined && groupedSingleChoice
-      ? Array.isArray(responseToSubmit) && responseToSubmit.length === configItems.length && responseToSubmit.every((item, index) => typeof item === "number" && Number.isInteger(item) && item >= 0 && item < stringArray(configItems[index]?.options).length)
-      : hasResponse();
+    const overrideHasResponse = hasResponse(responseToSubmit);
     if (!overrideHasResponse || hasPendingAudio) {
       setMessage(hasPendingAudio ? t.audioPending : t.noResponse);
       return;
@@ -3333,18 +3334,18 @@ function Activity({
         ? locale === "ko-KR" ? "문법 집중 연습" : "语法专注练习"
         : undefined}
       onKeyDown={keepFocusInsidePractice}
-      className={practiceFocused
+      className={`min-w-0 max-w-full ${practiceFocused
         ? "fixed inset-0 z-[100] m-0 flex overflow-y-auto rounded-none border-0 bg-[var(--background)] p-4 sm:p-8"
         : isGrammarPractice
           ? "mt-5 rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6"
-          : "mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6"}
+          : "mt-10 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6"}`}
     >
       <div className={practiceFocused
         ? "m-auto w-full max-w-4xl rounded-[32px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 shadow-[0_24px_80px_rgba(15,23,42,0.14)] sm:p-8"
-        : ""}
+        : "min-w-0 max-w-full"}
       >
       <div className={isGrammarPractice ? "flex flex-col gap-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6" : "flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6"}>
-        <div>
+        <div className="min-w-0">
           {round && round.total > 1 && (
             <p className="mb-2 text-xs font-bold text-[var(--primary)]">
               {locale === "ko-KR"
@@ -3805,19 +3806,19 @@ function Activity({
         const activeOutlineItem = outlineItems[Math.min(speakingOutlineIndex, Math.max(0, outlineItems.length - 1))] ?? {};
         const activeChoices = stringArray(activeOutlineItem.choices);
         const readyToComplete = recorded && durationSeconds >= minimumSeconds && selectedCount >= minimumOutlineItems;
-        return <section className="mt-6 overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--card)]">
+        return <section className="mt-6 min-w-0 max-w-full overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--card)]">
           <div className="border-b border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-5 sm:px-7">
             <div className="flex flex-wrap items-center justify-between gap-3"><CardTitleWithHint title={locale === "ko-KR" ? "표현 흐름 만들기" : "组织表达"} description={locale === "ko-KR" ? "다섯 단계에서 말할 표현을 고른 뒤 원고 없이 녹음하세요." : "依次选择五个表达节点，再脱离完整原稿进行录音。"} headingLevel={4} titleClassName="text-lg font-bold" hintLabel={locale === "ko-KR" ? "준비 방법 보기" : "查看准备方法"} /><span className="text-xs font-bold tabular-nums text-[var(--foreground-muted)]">{locale === "ko-KR" ? "선택" : "已选"} {selectedCount} / {outlineItems.length}</span></div>
-            <div className="relative mt-5 grid grid-cols-5" role="tablist" aria-label={locale === "ko-KR" ? "표현 단계" : "表达步骤"}><span className="absolute left-[10%] right-[10%] top-5 h-px bg-[var(--border-strong)]" aria-hidden="true" />{outlineItems.map((item, index) => { const selected = Boolean(outlineSelections[index]); const active = speakingOutlineIndex === index; return <button key={String(item.id ?? index)} type="button" role="tab" aria-selected={active} onClick={() => setSpeakingOutlineIndex(index)} className="relative z-[1] flex min-h-16 flex-col items-center gap-2 px-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><span className={`flex size-10 items-center justify-center rounded-full border-2 text-xs font-bold tabular-nums transition ${active ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm" : selected ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground-muted)]"}`}>{selected && !active ? <Check size={15} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}</span><span className={`text-xs font-bold ${active ? "text-[var(--primary)]" : "text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.label)[locale] ?? "")}</span></button>; })}</div>
-            <fieldset className="mt-5 rounded-2xl bg-[var(--card)] px-4 py-4 ring-1 ring-[var(--border-subtle)]"><legend className="px-2 text-xs font-bold text-[var(--foreground-muted)]">{String(objectValue(activeOutlineItem.label)[locale] ?? "")}</legend><div className="flex flex-wrap gap-2">{activeChoices.map((choice) => { const selected = outlineSelections[speakingOutlineIndex] === choice; return <button key={choice} type="button" aria-pressed={selected} onClick={() => { const next = [...outlineSelections]; next[speakingOutlineIndex] = selected ? "" : choice; const criteria = next.filter(Boolean).map(() => true); setAnswer({ ...response, outlineSelections: next, criteria, turns: 0 }); setFeedback(null); }} className={`min-h-11 rounded-xl px-4 py-2.5 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--accent)]"}`} lang="ko">{choice}</button>; })}</div></fieldset>
+            <div className="relative mt-5 grid min-w-0 grid-cols-5" role="tablist" aria-label={locale === "ko-KR" ? "표현 단계" : "表达步骤"}><span className="absolute left-[10%] right-[10%] top-5 h-px bg-[var(--border-strong)]" aria-hidden="true" />{outlineItems.map((item, index) => { const selected = Boolean(outlineSelections[index]); const active = speakingOutlineIndex === index; return <button key={String(item.id ?? index)} type="button" role="tab" aria-selected={active} onClick={() => setSpeakingOutlineIndex(index)} className="relative z-[1] flex min-h-16 min-w-0 flex-col items-center gap-2 px-1 text-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><span className={`flex size-10 shrink-0 items-center justify-center rounded-full border-2 text-xs font-bold tabular-nums transition ${active ? "border-[var(--primary)] bg-[var(--primary)] text-[var(--primary-foreground)] shadow-sm" : selected ? "border-[var(--status-success)] bg-[var(--status-success-surface)] text-[var(--status-success)]" : "border-[var(--border-strong)] bg-[var(--card)] text-[var(--foreground-muted)]"}`}>{selected && !active ? <Check size={15} aria-hidden="true" /> : String(index + 1).padStart(2, "0")}</span><span className={`max-w-full whitespace-normal [overflow-wrap:anywhere] text-xs font-bold ${active ? "text-[var(--primary)]" : "text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.label)[locale] ?? "")}</span></button>; })}</div>
+            <fieldset className="mt-5 min-w-0 rounded-2xl bg-[var(--card)] px-4 py-4 ring-1 ring-[var(--border-subtle)]"><legend className="max-w-full px-2 text-xs font-bold text-[var(--foreground-muted)]">{String(objectValue(activeOutlineItem.label)[locale] ?? "")}</legend><div className="flex min-w-0 flex-wrap gap-2">{activeChoices.map((choice) => { const selected = outlineSelections[speakingOutlineIndex] === choice; return <button key={choice} type="button" aria-pressed={selected} onClick={() => { const next = [...outlineSelections]; next[speakingOutlineIndex] = selected ? "" : choice; const criteria = next.filter(Boolean).map(() => true); setAnswer({ ...response, outlineSelections: next, criteria, turns: 0 }); setFeedback(null); }} className={`min-h-11 max-w-full whitespace-normal rounded-xl px-4 py-2.5 text-left text-sm font-bold [overflow-wrap:anywhere] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground)] hover:border-[var(--primary)] hover:bg-[var(--accent)]"}`} lang="ko">{choice}</button>; })}</div></fieldset>
           </div>
 
           <div className="grid lg:grid-cols-[minmax(0,1.05fr)_minmax(360px,.95fr)]">
-            <div className="border-b border-[var(--border-subtle)] p-6 lg:border-b-0 lg:border-r sm:p-7"><CardTitleWithHint title={locale === "ko-KR" ? "나의 표현 개요" : "我的表达提纲"} description={locale === "ko-KR" ? "고른 표현을 순서대로 확인하세요." : "按顺序查看已经选择的表达。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "개요 설명 보기" : "查看提纲说明"} /><div className="mt-5 min-h-52 rounded-2xl bg-[var(--surface-soft)] px-5 py-4">{outlineSelections.filter(Boolean).length > 0 ? <p className="text-lg font-bold leading-10 text-[var(--foreground)]" lang="ko">{outlineSelections.filter(Boolean).join(" ")}</p> : <div className="flex min-h-44 items-center justify-center text-center text-sm font-semibold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "위 단계에서 말할 표현을 고르세요." : "请在上方选择准备表达的内容。"}</div>}</div></div>
-            <div className="flex flex-col justify-between bg-[var(--surface-soft)]/60 p-6 sm:p-7"><div><CardTitleWithHint title={locale === "ko-KR" ? "독립 녹음" : "独立录音"} description={locale === "ko-KR" ? "개요만 보고 자신의 말로 소개하세요." : "只看提纲，用自己的话完成介绍。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "녹음 방법 보기" : "查看录音方法"} /><div className="mt-6 flex justify-center"><div className={`flex size-24 items-center justify-center rounded-full ${recorded ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--accent)] text-[var(--primary)]"}`}><Mic size={34} aria-hidden="true" /></div></div><p className="mt-4 text-center text-sm font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? `최소 ${minimumSeconds}초` : `至少 ${minimumSeconds} 秒`} · {locale === "ko-KR" ? "현재" : "当前"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</p></div><RecordingControl activityId={activity.id} locale={locale} onReset={() => { setAnswer({ ...objectValue(answer), recorded: false, durationSeconds: 0, recordingEvidenceId: undefined }); setSpeakingReferenceVisible(false); }} onReady={({ durationSeconds: nextDuration, recordingEvidenceId }) => setAnswer({ ...objectValue(answer), recorded: true, durationSeconds: nextDuration, recordingEvidenceId })} /></div>
+            <div className="min-w-0 border-b border-[var(--border-subtle)] p-6 lg:border-b-0 lg:border-r sm:p-7"><CardTitleWithHint title={locale === "ko-KR" ? "나의 표현 개요" : "我的表达提纲"} description={locale === "ko-KR" ? "고른 표현을 순서대로 확인하세요." : "按顺序查看已经选择的表达。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "개요 설명 보기" : "查看提纲说明"} /><div className="mt-5 min-h-52 min-w-0 rounded-2xl bg-[var(--surface-soft)] px-5 py-4">{outlineSelections.filter(Boolean).length > 0 ? <p className="max-w-full whitespace-normal text-lg font-bold leading-10 text-[var(--foreground)] [overflow-wrap:anywhere]" lang="ko">{outlineSelections.filter(Boolean).join(" ")}</p> : <div className="flex min-h-44 items-center justify-center text-center text-sm font-semibold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "위 단계에서 말할 표현을 고르세요." : "请在上方选择准备表达的内容。"}</div>}</div></div>
+            <div className="flex min-w-0 flex-col justify-between bg-[var(--surface-soft)]/60 p-6 sm:p-7"><div className="min-w-0"><CardTitleWithHint title={locale === "ko-KR" ? "독립 녹음" : "独立录音"} description={locale === "ko-KR" ? "개요만 보고 자신의 말로 소개하세요." : "只看提纲，用自己的话完成介绍。"} headingLevel={4} titleClassName="text-base font-bold" hintLabel={locale === "ko-KR" ? "녹음 방법 보기" : "查看录音方法"} /><div className="mt-6 flex justify-center"><div className={`flex size-24 items-center justify-center rounded-full ${recorded ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--accent)] text-[var(--primary)]"}`}><Mic size={34} aria-hidden="true" /></div></div><p className="mt-4 text-center text-sm font-bold text-[var(--foreground-secondary)]">{locale === "ko-KR" ? `최소 ${minimumSeconds}초` : `至少 ${minimumSeconds} 秒`} · {locale === "ko-KR" ? "현재" : "当前"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</p></div><RecordingControl activityId={activity.id} locale={locale} onReset={() => { setAnswer({ ...objectValue(answer), recorded: false, durationSeconds: 0, recordingEvidenceId: undefined }); setSpeakingReferenceVisible(false); }} onReady={({ durationSeconds: nextDuration, recordingEvidenceId }) => { const nextAnswer = { ...objectValue(answer), recorded: true, durationSeconds: nextDuration, recordingEvidenceId }; setAnswer(nextAnswer); if (nextDuration >= minimumSeconds && selectedCount >= minimumOutlineItems) submit(nextAnswer); }} /></div>
           </div>
 
-          <div className="border-t border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-4 sm:px-7"><div className="flex flex-wrap items-center justify-between gap-4"><div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-bold"><span className={selectedCount >= minimumOutlineItems ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{selectedCount >= minimumOutlineItems && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "표현 항목" : "表达节点"} {selectedCount}/{outlineItems.length}</span><span className={durationSeconds >= minimumSeconds ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{durationSeconds >= minimumSeconds && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "녹음" : "录音"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</span><span className={readyToComplete ? "text-[var(--status-success)]" : "text-[var(--foreground-muted)]"}>{readyToComplete ? locale === "ko-KR" ? "완료 가능" : "可以完成" : locale === "ko-KR" ? "준비 중" : "尚未达到要求"}</span></div>{recorded && <button type="button" aria-expanded={speakingReferenceVisible} onClick={() => setSpeakingReferenceVisible((visible) => !visible)} className="inline-flex min-h-11 items-center gap-2 rounded-xl px-3 text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--primary)]">{speakingReferenceVisible ? <ChevronUp size={16} /> : <ChevronDown size={16} />}{speakingReferenceVisible ? locale === "ko-KR" ? "참고 표현 닫기" : "收起参考表达" : locale === "ko-KR" ? "참고 표현 보기" : "查看参考表达"}</button>}</div>{speakingReferenceVisible && <p className="mt-4 rounded-2xl bg-[var(--card)] p-5 font-bold leading-8 text-[var(--foreground)] ring-1 ring-[var(--border-subtle)]" lang="ko">{String(activity.config.referenceText ?? "")}</p>}</div>
+          <div className="min-w-0 border-t border-[var(--border-subtle)] bg-[var(--surface-soft)] px-5 py-4 sm:px-7"><div className="flex min-w-0 flex-wrap items-center justify-between gap-4"><div className="flex min-w-0 flex-wrap items-center gap-x-6 gap-y-2 text-sm font-bold"><span className={selectedCount >= minimumOutlineItems ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{selectedCount >= minimumOutlineItems && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "표현 항목" : "表达节点"} {selectedCount}/{outlineItems.length}</span><span className={durationSeconds >= minimumSeconds ? "text-[var(--status-success)]" : "text-[var(--foreground-secondary)]"}>{durationSeconds >= minimumSeconds && <CheckCircle2 size={15} className="mr-1.5 inline" aria-hidden="true" />}{locale === "ko-KR" ? "녹음" : "录音"} {durationSeconds}{locale === "ko-KR" ? "초" : " 秒"}</span><span className={readyToComplete ? "text-[var(--status-success)]" : "text-[var(--foreground-muted)]"}>{activityCompleted ? locale === "ko-KR" ? "완료" : "已完成" : readyToComplete ? locale === "ko-KR" ? "자동 제출 중" : "正在自动提交" : locale === "ko-KR" ? "준비 중" : "尚未达到要求"}</span></div>{recorded && <button type="button" aria-expanded={speakingReferenceVisible} onClick={() => setSpeakingReferenceVisible((visible) => !visible)} className="inline-flex min-h-11 max-w-full items-center gap-2 whitespace-normal rounded-xl px-3 text-left text-sm font-bold text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--primary)]">{speakingReferenceVisible ? <ChevronUp size={16} className="shrink-0" /> : <ChevronDown size={16} className="shrink-0" />}{speakingReferenceVisible ? locale === "ko-KR" ? "참고 표현 닫기" : "收起参考表达" : locale === "ko-KR" ? "참고 표현 보기" : "查看参考表达"}</button>}</div>{speakingReferenceVisible && <p className="mt-4 max-w-full whitespace-normal rounded-2xl bg-[var(--card)] p-5 font-bold leading-8 text-[var(--foreground)] [overflow-wrap:anywhere] ring-1 ring-[var(--border-subtle)]" lang="ko">{String(activity.config.referenceText ?? "")}</p>}</div>
         </section>;
       })()}
 

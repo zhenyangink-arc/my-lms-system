@@ -774,6 +774,10 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   assert.match(source, /听辨信息/);
   assert.match(source, /跟读复现/);
   assert.match(source, /独立表达/);
+  assert.match(source, /if \(activity\.completed && activity\.response && typeof activity\.response === "object"/);
+  assert.match(source, /if \(nextDuration >= minimumSeconds && selectedCount >= minimumOutlineItems\) submit\(nextAnswer\)/);
+  assert.match(source, /max-w-full whitespace-normal text-lg font-bold leading-10[^\n]+\[overflow-wrap:anywhere\]/);
+  assert.match(source, /正在自动提交/);
   assert.match(source, /activity\.type === "listening"/);
   assert.match(source, /activity\.type === "speaking"/);
   assert.match(source, /当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。/);
