@@ -623,6 +623,8 @@ function ListenSpeakLearningPanel({
   const [repeatLinePlaybackStarted, setRepeatLinePlaybackStarted] = useState(false);
   const [showRepeatTranscript, setShowRepeatTranscript] = useState(false);
   const [completedRepeatSegments, setCompletedRepeatSegments] = useState<Set<string>>(() => new Set());
+  const repeatReferenceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [repeatReferencePlaying, setRepeatReferencePlaying] = useState(false);
   const sceneImage = node.media.find((asset) => asset.type === "image" && asset.status === "ready" && asset.url);
   const showChinese = supportMode !== "immersion";
 
@@ -645,16 +647,30 @@ function ListenSpeakLearningPanel({
       setRepeatLineIndex(nextIndex);
       speakKorean(String(lines[nextIndex]?.ko ?? ""));
     };
+    const stopRepeatReference = () => {
+      const audio = repeatReferenceAudioRef.current;
+      if (audio) {
+        audio.pause();
+        audio.currentTime = 0;
+      }
+      setRepeatReferencePlaying(false);
+    };
+    const playRepeatReference = () => {
+      const audio = repeatReferenceAudioRef.current;
+      if (!audio) return;
+      audio.currentTime = 0;
+      void audio.play();
+    };
     return (
       <section className="rounded-[22px] bg-[var(--surface-soft)] p-5 sm:p-6" aria-label={locale === "ko-KR" ? "듣고 따라 말하기" : "跟读复现"}>
         <p className="sr-only">当前按钮播放设备示范音；正式音频上传后会在同一位置自动替换。</p>
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-[var(--card)] p-2">
           <div className="flex items-center gap-2" role="tablist" aria-label={locale === "ko-KR" ? "따라 말하기 과제" : "跟读复现任务"}>
-            {[locale === "ko-KR" ? "문장별 따라 말하기" : "逐句跟读", locale === "ko-KR" ? "전체 재현" : "整段复现"].map((label, index) => <button key={label} type="button" role="tab" aria-selected={repeatTask === index} onClick={() => { resetRepeatLinePlayback(); setRepeatTask(index as 0 | 1); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-11 rounded-xl px-4 text-sm font-bold ${repeatTask === index ? "bg-[var(--accent)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}>{label}</button>)}
+            {[locale === "ko-KR" ? "문장별 따라 말하기" : "逐句跟读", locale === "ko-KR" ? "전체 재현" : "整段复现"].map((label, index) => <button key={label} type="button" role="tab" aria-selected={repeatTask === index} onClick={() => { resetRepeatLinePlayback(); stopRepeatReference(); setRepeatTask(index as 0 | 1); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-11 rounded-xl px-4 text-sm font-bold ${repeatTask === index ? "bg-[var(--accent)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}>{label}</button>)}
           </div>
           <span className="pr-3 text-xs font-bold text-[var(--foreground-muted)]">{repeatTask + 1} / 2</span>
         </div>
-        {repeatTracks.length > 1 && <div className="mt-4 flex flex-wrap gap-2">{repeatTracks.map((item, index) => <button key={String(item.id ?? index)} type="button" onClick={() => { resetRepeatLinePlayback(); setRepeatTrackIndex(index); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${repeatTrackIndex === index ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.title)[locale] ?? `听力 ${index + 1}`)}</button>)}</div>}
+        {repeatTracks.length > 1 && <div className="mt-4 flex flex-wrap gap-2">{repeatTracks.map((item, index) => <button key={String(item.id ?? index)} type="button" onClick={() => { resetRepeatLinePlayback(); stopRepeatReference(); setRepeatTrackIndex(index); setRepeatLineIndex(0); setShowRepeatTranscript(false); }} className={`min-h-10 rounded-xl border px-4 text-sm font-bold ${repeatTrackIndex === index ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border-subtle)] bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{String(objectValue(item.title)[locale] ?? `听力 ${index + 1}`)}</button>)}</div>}
 
         {repeatTask === 0 ? <>{!repeatLinePlaybackStarted ? <div className="mt-5 flex min-h-24 items-center justify-between gap-4 rounded-[22px] border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-4 sm:px-6">
           <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "문장별 따라 말하기를 시작하세요" : "开始逐句跟读"}</p><p className="mt-1 text-xs text-[var(--foreground-muted)]">{locale === "ko-KR" ? "시작하면 첫 문장이 자동으로 재생됩니다." : "点击后将自动播放第一句。"}</p></div>
@@ -671,9 +687,9 @@ function ListenSpeakLearningPanel({
         </div>}</> : <div className="mt-5 rounded-[22px] bg-[var(--card)] p-6">
           <CardTitleWithHint title={locale === "ko-KR" ? "키워드로 전체 내용을 재현하세요" : "根据关键词复现整段内容"} description={locale === "ko-KR" ? "전체 원고를 보지 않고 핵심어를 연결해 말하세요." : "不查看完整母稿，只根据关键词按原顺序复现。"} headingLevel={3} titleClassName="text-lg font-bold" hintLabel={locale === "ko-KR" ? "재현 방법 보기" : "查看复现方法"} />
           <div className="mt-5 flex flex-wrap gap-2">{stringArray(track.keywords).map((keyword) => <span key={keyword} className="rounded-full bg-[var(--accent)] px-3 py-1.5 text-sm font-bold text-[var(--primary)]" lang="ko">{keyword}</span>)}</div>
-          {listeningActivity && <audio controls controlsList="nodownload" preload="none" src={`/api/digital-textbook/audio/${listeningActivity.id}?page=${repeatTrackIndex}`} className="mt-6 h-10 w-full" />}
-          {repeatRecordingActivity && <RecordingControl activityId={repeatRecordingActivity.id} locale={locale} uploadMetadata={{ practiceKey: "full-recall", trackIndex: repeatTrackIndex, segmentIndex: 0 }} onReset={() => setCompletedRepeatSegments((current) => { const next = new Set(current); next.delete(segmentKey); return next; })} onReady={() => setCompletedRepeatSegments((current) => new Set(current).add(segmentKey))} />}
-          <button type="button" aria-expanded={showRepeatTranscript} onClick={() => setShowRepeatTranscript((visible) => !visible)} className="mt-5 inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-4 text-sm font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)]">{showRepeatTranscript ? <ChevronUp size={16} /> : <ChevronDown size={16} />}{showRepeatTranscript ? locale === "ko-KR" ? "원고 닫기" : "收起原稿" : locale === "ko-KR" ? "원고 보기" : "查看原稿"}</button>
+          {repeatRecordingActivity && <RecordingControl activityId={repeatRecordingActivity.id} locale={locale} playbackLabel={locale === "ko-KR" ? "나의 재현" : "我的复现"} uploadMetadata={{ practiceKey: "full-recall", trackIndex: repeatTrackIndex, segmentIndex: 0 }} onReset={() => { stopRepeatReference(); setShowRepeatTranscript(false); setCompletedRepeatSegments((current) => { const next = new Set(current); next.delete(segmentKey); return next; }); }} onReady={() => setCompletedRepeatSegments((current) => new Set(current).add(segmentKey))} />}
+          {listeningActivity && <audio ref={repeatReferenceAudioRef} preload="none" src={`/api/digital-textbook/audio/${listeningActivity.id}?page=${repeatTrackIndex}`} onPlay={() => setRepeatReferencePlaying(true)} onPause={() => setRepeatReferencePlaying(false)} onEnded={() => setRepeatReferencePlaying(false)} hidden />}
+          {trackCompleted && <div className="mt-5 rounded-2xl bg-[var(--surface-soft)] p-4"><p className="text-xs font-bold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "녹음 후 비교" : "完成后对照"}</p><div className="mt-2 flex flex-wrap gap-2"><button type="button" onClick={playRepeatReference} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Volume2 size={16} aria-hidden="true" />{repeatReferencePlaying ? locale === "ko-KR" ? "원음 재생 중" : "正在播放原音" : locale === "ko-KR" ? "원음과 비교" : "对照原音"}</button><button type="button" aria-expanded={showRepeatTranscript} onClick={() => setShowRepeatTranscript((visible) => !visible)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-sm font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">{showRepeatTranscript ? <ChevronUp size={16} aria-hidden="true" /> : <ChevronDown size={16} aria-hidden="true" />}{showRepeatTranscript ? locale === "ko-KR" ? "원고 닫기" : "收起原稿" : locale === "ko-KR" ? "원고 보기" : "查看原稿"}</button></div></div>}
           {showRepeatTranscript && <p className="mt-3 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 font-bold leading-8 text-[var(--foreground)]" lang="ko">{lines.map((item) => String(item.ko ?? "")).filter(Boolean).join(" ")}</p>}
           {trackCompleted && <p className="mt-3 inline-flex items-center gap-2 text-sm font-bold text-[var(--status-success)]"><CheckCircle2 size={16} />{locale === "ko-KR" ? "현재 음원 과제를 완료했습니다" : "当前音轨任务已完成"}</p>}
         </div>}
@@ -2004,6 +2020,7 @@ function RecordingControl({
   onReady,
   onReset,
   uploadMetadata,
+  playbackLabel,
 }: {
   activityId: string;
   locale: SmartLocale;
@@ -2013,6 +2030,7 @@ function RecordingControl({
   }) => void;
   onReset: () => void;
   uploadMetadata?: { practiceKey: "repeat-line" | "full-recall"; trackIndex: number; segmentIndex: number };
+  playbackLabel?: string;
 }) {
   const t = ui[locale];
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -2103,7 +2121,7 @@ function RecordingControl({
         {recording ? <Square size={14} /> : <Mic size={15} />}
         {recording ? t.stopRecording : t.startRecording}
       </button>
-      {audioUrl && <audio src={audioUrl} controls className="h-9 max-w-full" />}
+      {audioUrl && <div className="flex min-w-0 flex-1 flex-col gap-2">{playbackLabel && <span className="text-xs font-bold text-[var(--foreground-muted)]">{playbackLabel}</span>}<audio src={audioUrl} controls className="h-9 max-w-full" /></div>}
       {uploading && <span role="status" className="text-xs font-semibold text-[var(--support)]">{t.recordingUploading}</span>}
       {audioUrl && !uploading && !recordingError && <span className="text-xs font-semibold text-[var(--status-success)]">{t.recorded}</span>}
       {recordingError && <p className="w-full text-xs font-semibold text-[var(--destructive)]">{recordingError}</p>}
