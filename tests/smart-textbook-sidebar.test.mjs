@@ -178,7 +178,9 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(source, /h-1\.5 w-20/);
   assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : usesReadWritePager/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "학습 목표 페이지" : "学习目标分页"\}/);
-  assert.match(source, /className="mb-6 mt-6 hidden items-center justify-between gap-4 rounded-2xl/);
+  assert.match(source, /className="mb-6 hidden items-center justify-between gap-4 rounded-2xl/);
+  assert.match(source, /locale === "ko-KR" \? "학습 단계 시간선" : "学习小节时间轴"/);
+  assert.match(source, /textbook\.modules\.map\(\(module, index\) =>/);
   assert.match(source, /usesPatternPager \? patternPage === 0 : missionPage === 0/);
   assert.match(source, /usesPatternPager \? patternPage === 1 : missionPage === 1/);
   assert.doesNotMatch(source, /className="mt-6 hidden items-center justify-between border-t/);

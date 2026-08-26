@@ -87,6 +87,13 @@ export type SmartTextbookData = {
   versionId: string;
   levelCode: string;
   title: LocalizedText;
+  agent: {
+    id: string;
+    code: string;
+    subjectCode: string;
+    displayName: LocalizedText;
+    description: LocalizedText;
+  } | null;
   chapter: {
     id: string;
     slug: string;
@@ -221,7 +228,7 @@ export async function loadSmartDigitalTextbook(
 
   const { data: textbook, error: textbookError } = await admin
     .from("digital_textbooks")
-    .select("id,level_code,title")
+    .select("id,level_code,title,agent_profile_id")
     .eq("slug", options.textbookSlug)
     .eq("status", "published")
     .maybeSingle();
@@ -233,6 +240,18 @@ export async function loadSmartDigitalTextbook(
     throw new Error(`无法读取智能教材：${textbookError.message}`);
   }
   if (!textbook) return null;
+
+  const { data: agentProfile, error: agentProfileError } = textbook.agent_profile_id
+    ? await admin
+        .from("learning_agent_profiles")
+        .select("id,agent_code,subject_code,display_name,description,status")
+        .eq("id", textbook.agent_profile_id)
+        .eq("status", "published")
+        .maybeSingle()
+    : { data: null, error: null };
+  if (agentProfileError && agentProfileError.code !== "42P01" && agentProfileError.code !== "PGRST205") {
+    throw new Error(`无法读取课程学习 Agent：${agentProfileError.message}`);
+  }
 
   let versionQuery = admin
     .from("digital_textbook_versions")
@@ -515,6 +534,15 @@ export async function loadSmartDigitalTextbook(
     versionId: String(version.id),
     levelCode: String(textbook.level_code),
     title: localized(textbook.title),
+    agent: agentProfile
+      ? {
+          id: String(agentProfile.id),
+          code: String(agentProfile.agent_code),
+          subjectCode: String(agentProfile.subject_code),
+          displayName: localized(agentProfile.display_name),
+          description: localized(agentProfile.description),
+        }
+      : null,
     chapter: {
       id: String(chapter.id),
       slug: String(chapter.slug),
