@@ -2897,68 +2897,6 @@ function stableIndexOrder(length: number, seed: string, shuffle: boolean) {
   return order;
 }
 
-function GrammarClassroomBoard({ node, locale, supportMode }: {
-  node: SmartTextbookNode;
-  locale: SmartLocale;
-  supportMode: SmartSupportMode;
-}) {
-  const cards = Array.isArray(node.content.grammarCards)
-    ? node.content.grammarCards.map(objectValue)
-    : [];
-  const [activeIndex, setActiveIndex] = useState(0);
-  const activeCard = cards[Math.min(activeIndex, Math.max(0, cards.length - 1))] ?? {};
-  const examples = Array.isArray(activeCard.examples) ? activeCard.examples.map(objectValue) : [];
-  const activeExample = examples[0] ?? {};
-  const showChinese = supportMode !== "immersion";
-
-  if (cards.length === 0) return null;
-
-  return (
-    <aside className="min-w-0 overflow-hidden rounded-[24px] bg-emerald-950 text-emerald-50 shadow-[0_18px_45px_rgba(6,78,59,0.18)] xl:sticky xl:top-4 xl:self-start" aria-label={locale === "ko-KR" ? "문법 수업 칠판" : "语法课堂黑板"}>
-      <div className="border-b border-white/15 px-5 py-4 sm:px-6">
-        <div className="flex items-center justify-between gap-3">
-          <div>
-            <p className="text-xs font-bold text-emerald-200">{locale === "ko-KR" ? "지금 배우는 내용" : "现在讲到这里"}</p>
-            <h3 className="mt-1 text-lg font-bold">{locale === "ko-KR" ? "문법 수업 칠판" : "语法课堂黑板"}</h3>
-          </div>
-          <span className="rounded-full border border-white/20 px-3 py-1 text-xs font-bold tabular-nums text-emerald-100">{activeIndex + 1} / {cards.length}</span>
-        </div>
-        <div className="mt-4 flex flex-wrap gap-2" role="tablist" aria-label={locale === "ko-KR" ? "칠판 문법 항목" : "黑板语法点"}>
-          {cards.map((card, index) => (
-            <button key={`${String(card.form)}-${index}`} type="button" role="tab" aria-selected={activeIndex === index} onClick={() => setActiveIndex(index)} className={`min-h-10 rounded-xl px-3 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 ${activeIndex === index ? "bg-white text-emerald-950" : "bg-white/10 text-emerald-50 hover:bg-white/15"}`}>{String(card.form)}</button>
-          ))}
-        </div>
-      </div>
-      <div className="px-5 py-6 sm:px-6">
-        <p className="text-xs font-bold text-emerald-200">{locale === "ko-KR" ? "핵심 문형" : "核心句型"}</p>
-        <p className="mt-3 whitespace-normal text-3xl font-bold leading-tight text-white [overflow-wrap:anywhere]" lang="ko">{String(activeCard.form)}</p>
-        <p className="mt-3 text-sm font-semibold leading-6 text-emerald-100">{String(objectValue(activeCard.function)[locale] ?? "")}</p>
-
-        <div className="my-6 h-px bg-white/15" aria-hidden="true" />
-        <ol className="space-y-3">
-          {stringArray(activeCard.rules).map((rule, index) => (
-            <li key={rule} className="grid grid-cols-[28px_minmax(0,1fr)] items-start gap-3 text-sm font-semibold leading-6">
-              <span className="flex size-7 items-center justify-center rounded-full border border-amber-200/60 text-[11px] font-bold text-amber-200">{index + 1}</span>
-              <span className="pt-0.5 text-emerald-50">{rule}</span>
-            </li>
-          ))}
-        </ol>
-
-        {String(activeExample.ko ?? "") && (
-          <button type="button" onClick={() => speakKorean(String(activeExample.ko))} className="mt-7 flex min-h-24 w-full items-center justify-between gap-4 rounded-2xl border border-white/15 bg-black/15 px-5 py-4 text-left transition hover:bg-black/25 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300">
-            <span className="min-w-0">
-              <span className="block text-xs font-bold text-amber-200">{locale === "ko-KR" ? "칠판 예문" : "黑板例句"}</span>
-              <span className="mt-2 block whitespace-normal text-lg font-bold leading-7 text-white [overflow-wrap:anywhere]" lang="ko">{String(activeExample.ko)}</span>
-              {showChinese && <span className="mt-1 block text-sm leading-6 text-emerald-100">{String(activeExample.zh ?? "")}</span>}
-            </span>
-            <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-emerald-50"><Volume2 size={17} aria-hidden="true" /></span>
-          </button>
-        )}
-      </div>
-    </aside>
-  );
-}
-
 function Activity({
   activity,
   locale,
@@ -4721,9 +4659,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     } : undefined}
                   />
                 </div>
-                <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : usesDialoguePager ? missionPage !== 2 : usesReadWritePager ? ![1, 3].includes(missionPage) : usesReviewPager ? ![0, 1].includes(missionPage) : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""} ${usesGrammarPager && missionPage === 1 ? "mt-6 grid min-w-0 gap-6 xl:grid-cols-[minmax(340px,.4fr)_minmax(0,.6fr)] xl:items-start" : ""}`}>
-                  {usesGrammarPager && missionPage === 1 && <GrammarClassroomBoard node={node} locale={locale} supportMode={supportMode} />}
-                  <div className={usesGrammarPager && missionPage === 1 ? "min-w-0" : "contents"}>
+                <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : usesDialoguePager ? missionPage !== 2 : usesReadWritePager ? ![1, 3].includes(missionPage) : usesReviewPager ? ![0, 1].includes(missionPage) : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
                   {node.activities.filter((activity) => activity.key !== "dialogue-roleplay" && (!usesPatternPager || !["pattern-choice", "pattern-order", "pattern-compose"].includes(activity.key)) && (!usesListenSpeakPager || (missionPage === 1 && activity.type === "listening") || (missionPage === 3 && activity.type === "speaking")) && (!usesReadWritePager || (missionPage === 1 && activity.id === readingActivity?.id) || (missionPage === 3 && activity.id === writingActivity?.id)) && (!usesReviewPager || (missionPage === 0 && activity.id === reviewActivity?.id) || (missionPage === 1 && activity.id === selfCheckActivity?.id))).map((activity, activityIndex) => (
                     <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
                       <Activity
@@ -4744,7 +4680,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       />
                     </div>
                   ))}
-                  </div>
                 </div>
                 {usesDialoguePager && dialogueRoleplayActivity && missionPage === 3 && (
                   <DialogueRoleplayPractice
