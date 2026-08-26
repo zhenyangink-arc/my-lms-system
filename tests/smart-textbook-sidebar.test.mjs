@@ -469,6 +469,10 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 
   assert.match(source, /const usesGrammarPager = Array\.isArray\(node\.content\.grammarCards\)/);
   assert.match(source, /"语法理解"/);
+  assert.match(source, /function GrammarClassroomBoard/);
+  assert.match(source, /语法课堂黑板/);
+  assert.match(source, /xl:grid-cols-\[minmax\(340px,\.4fr\)_minmax\(0,\.6fr\)\]/);
+  assert.match(source, /usesGrammarPager && missionPage === 1 && <GrammarClassroomBoard/);
   assert.match(source, /"语法练习"/);
   assert.match(source, /activeGrammarCardIndex/);
   assert.match(source, /role="tablist"/);
