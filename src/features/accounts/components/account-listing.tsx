@@ -69,6 +69,11 @@ export default async function AccountListing({
         </>
       }
     >
+      {result.hasError && (
+        <ManagementNotice tone="danger">
+          部分账号或审计记录暂时无法读取，请稍后刷新重试。
+        </ManagementNotice>
+      )}
       {result.deletedStatus && (
         <ManagementNotice
           tone={result.deletedStatus === "success" ? "success" : "warning"}

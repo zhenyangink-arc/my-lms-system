@@ -162,15 +162,13 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
       .order("created_at"),
   ]);
 
-  if (
+  let hasError = Boolean(
     tenantResult.error ||
-    grantResult.error ||
-    auditResult.error ||
-    platformCandidateResult.error ||
-    tenantAdminResult.error
-  ) {
-    throw new Error("无法读取统一权限中心数据，请稍后重试。");
-  }
+      grantResult.error ||
+      auditResult.error ||
+      platformCandidateResult.error ||
+      tenantAdminResult.error,
+  );
 
   const grantRows = (grantResult.data ?? []) as PermissionGrantRow[];
   const auditRows = (auditResult.data ?? []) as PermissionAuditRow[];
@@ -202,7 +200,7 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
     : { data: [] as ProfileRow[], error: null };
 
   if (profileResult.error) {
-    throw new Error("无法读取权限账号资料，请稍后重试。");
+    hasError = true;
   }
 
   const identities = new Map(
@@ -262,5 +260,6 @@ export async function getPermissionCenterData(): Promise<PermissionCenterData> {
     tenantGrantCandidates,
     activeGrants,
     auditLogs,
+    hasError,
   };
 }

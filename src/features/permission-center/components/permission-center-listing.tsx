@@ -52,6 +52,11 @@ export default async function PermissionCenterListing({
           {error}
         </ManagementNotice>
       )}
+      {result.hasError && (
+        <ManagementNotice tone="danger">
+          部分权限或审计数据暂时无法读取，请稍后刷新重试。
+        </ManagementNotice>
+      )}
       <ManagementMetricStrip
         label="权限中心概况"
         items={[

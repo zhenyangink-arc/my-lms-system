@@ -93,4 +93,5 @@ export type PermissionCenterData = {
   tenantGrantCandidates: TenantPermissionGrantCandidate[];
   activeGrants: ActivePermissionGrant[];
   auditLogs: PermissionGrantAuditEntry[];
+  hasError: boolean;
 };

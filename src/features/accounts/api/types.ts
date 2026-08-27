@@ -98,6 +98,7 @@ export type AccountListResult = {
   filters: AccountFilters;
   hasFilters: boolean;
   deletedStatus: "cleanup" | "success" | null;
+  hasError: boolean;
 };
 
 export type AccountDetailResult = {

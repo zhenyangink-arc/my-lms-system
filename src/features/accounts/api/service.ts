@@ -128,12 +128,9 @@ export async function getAccountList(
       : Promise.resolve({ data: [], error: null }),
   ]);
 
-  if (profilesResult.error) {
-    throw new Error("账号列表加载失败，请稍后重试。");
-  }
-  if (auditResult.error || deletionAuditResult.error) {
-    throw new Error("账号审计记录加载失败，请稍后重试。");
-  }
+  const hasError = Boolean(
+    profilesResult.error || auditResult.error || deletionAuditResult.error,
+  );
 
   const visibleProfiles =
     (profilesResult.data as AccountListProfileWithMemberships[] | null) ?? [];
@@ -249,6 +246,7 @@ export async function getAccountList(
     },
     hasFilters,
     deletedStatus,
+    hasError,
   };
 }
 
