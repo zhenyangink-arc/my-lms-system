@@ -9,8 +9,6 @@ import {
   Headphones,
   KeyRound,
   LayoutGrid,
-  ListChecks,
-  MessageSquareText,
   NotebookTabs,
   PanelsTopLeft,
   Library,
@@ -53,9 +51,6 @@ const courseInspectorRoles: UserRole[] = ["platform_course_inspector"];
 // 机构自行管理学生的业务（成绩/学习记录/资料审核/签证），跨应用汇总视图；平台负责人只看分应用汇总，不进入本入口。
 const institutionOperationsRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin"];
 const studentAssignmentManagerRoles: UserRole[] = ["tenant_super_admin"];
-// 场景内容由平台负责人编辑，机构角色可进入浏览但不能新建/修改。
-const conversationPracticeRoles: UserRole[] = ["teacher", "admin", "ceo", "tenant_super_admin", "platform_super_admin"];
-const platformOwnerOnlyRoles: UserRole[] = ["platform_super_admin"];
 
 export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
   {
@@ -194,28 +189,6 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     color: "var(--support)",
     softColor: "var(--support-surface)",
     requiresStudentAssignmentAccess: true,
-  },
-  {
-    label: "对话陪练管理",
-    description: "管理韩语应用的会话陪练场景，查看学生练习记录。",
-    href: "/dashboard/admin/conversation-practice",
-    icon: MessageSquareText,
-    group: "content",
-    roles: conversationPracticeRoles,
-    color: "var(--status-success)",
-    softColor: "var(--status-success-surface)",
-    requiresConversationPracticeAccess: true,
-  },
-  {
-    label: "标准题库",
-    description: "维护韩语应用的标准化题目，供组卷使用。",
-    href: "/dashboard/admin/question-bank",
-    icon: ListChecks,
-    group: "content",
-    roles: platformOwnerOnlyRoles,
-    color: "var(--status-success)",
-    softColor: "var(--status-success-surface)",
-    requiresQuestionBankAccess: true,
   },
   {
     label: "资料审核",
