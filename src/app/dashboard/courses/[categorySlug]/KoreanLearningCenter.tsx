@@ -380,6 +380,38 @@ export function KoreanLearningCenter({
       ? "留学服务总进度"
       : "韩语总进度";
 
+  const getLessonLaunchHref = ({
+    lessonHref,
+    lessonChapters,
+    lessonStatus,
+    unlockedChapterSlugs,
+  }: {
+    lessonHref: string;
+    lessonChapters: CourseChapter[];
+    lessonStatus: LessonProgressStatus;
+    unlockedChapterSlugs: Set<string>;
+  }) => {
+    const isCompleted = (chapter: CourseChapter) =>
+      lessonStatus === "completed" || completedChapterSlugSet.has(chapter.slug);
+    const isAccessible = (chapter: CourseChapter) =>
+      isCompleted(chapter) ||
+      (chapterProgressBySlug.get(chapter.slug) ?? 0) > 0 ||
+      unlockedChapterSlugs.has(chapter.slug);
+    const launchChapter =
+      lessonChapters.find((chapter) => {
+        const progress = chapterProgressBySlug.get(chapter.slug) ?? 0;
+        return isAccessible(chapter) && !isCompleted(chapter) && progress > 0 && progress < 100;
+      }) ??
+      lessonChapters.find(
+        (chapter) => isAccessible(chapter) && !isCompleted(chapter),
+      ) ??
+      (lessonStatus === "completed" ? lessonChapters[0] : undefined);
+
+    return launchChapter
+      ? `${lessonHref}?chapter=${encodeURIComponent(launchChapter.slug)}`
+      : lessonHref;
+  };
+
   return (
     <div className="mx-auto w-full max-w-[1440px] space-y-5 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <AnchorDetailsOpener />
@@ -448,6 +480,12 @@ export function KoreanLearningCenter({
                         passedChapterSlugs: passedChapterSlugSet,
                         completedChapterSlugs: completedChapterSlugSet,
                       });
+                  const lessonLaunchHref = getLessonLaunchHref({
+                    lessonHref,
+                    lessonChapters,
+                    lessonStatus: status,
+                    unlockedChapterSlugs,
+                  });
 
                   if (item.lesson.cover_object_key) {
                     return (
@@ -525,7 +563,7 @@ export function KoreanLearningCenter({
                             />
                           </div>
                           <HangulLessonLaunchLink
-                            href={lessonHref}
+                            href={lessonLaunchHref}
                             shouldEnterFullscreen={
                               !isService &&
                               (item.lesson.slug === "hangul-introduction" ||
@@ -747,7 +785,7 @@ export function KoreanLearningCenter({
 
                       <div className="mt-auto pt-5">
                         <HangulLessonLaunchLink
-                          href={lessonHref}
+                          href={lessonLaunchHref}
                           shouldEnterFullscreen={
                             !isService &&
                             (item.lesson.slug === "hangul-introduction" ||
@@ -995,6 +1033,12 @@ export function KoreanLearningCenter({
                                     passedChapterSlugs: passedChapterSlugSet,
                                     completedChapterSlugs: completedChapterSlugSet,
                                   });
+                              const lessonLaunchHref = getLessonLaunchHref({
+                                lessonHref,
+                                lessonChapters,
+                                lessonStatus: status,
+                                unlockedChapterSlugs,
+                              });
 
                               if (lessonChapters.length > 0) {
                                 return (
@@ -1043,7 +1087,7 @@ export function KoreanLearningCenter({
                                       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                                         <p className="text-xs font-bold app-muted-text">章节学习目录</p>
                                         <HangulLessonLaunchLink
-                                          href={lessonHref}
+                                          href={lessonLaunchHref}
                                           shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
                                           locked={!item.unlocked}
                                           className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-bold transition hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
@@ -1190,7 +1234,7 @@ export function KoreanLearningCenter({
                                     </p>
                                   </div>
                                   <HangulLessonLaunchLink
-                                    href={lessonHref}
+                                    href={lessonLaunchHref}
                                     shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
                                     locked={!item.unlocked}
                                     className="col-span-2 inline-flex shrink-0 items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-bold transition hover:opacity-90 sm:col-span-1"
