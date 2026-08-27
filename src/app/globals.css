@@ -1437,10 +1437,14 @@
 }
 
 .management-module-icon {
-  border-color: color-mix(in srgb, var(--primary) 18%, var(--border));
+  border-color: color-mix(
+    in srgb,
+    var(--management-app-tone, var(--primary)) 18%,
+    var(--border)
+  );
   border-radius: 5px;
-  background: var(--accent);
-  color: var(--primary-hover);
+  background: var(--management-app-tone-soft, var(--accent));
+  color: var(--management-app-tone, var(--primary-hover));
 }
 
 [data-dashboard-ui="management"] .management-overview-header,

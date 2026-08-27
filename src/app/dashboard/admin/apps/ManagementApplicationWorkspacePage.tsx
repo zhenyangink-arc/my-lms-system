@@ -60,6 +60,15 @@ const MODULE_GROUP_ORDER = [
   "数据与设置",
 ];
 
+const MODULE_GROUP_TONE: Record<string, string> = {
+  课程内容: "emerald",
+  教学与考核: "sky",
+  学情与设置: "violet",
+  服务与课程: "amber",
+  申请与签证: "rose",
+  数据与设置: "sky",
+};
+
 const learningModules: WorkspaceModule[] = [
   {
     key: "class-today",
@@ -382,7 +391,7 @@ export async function ManagementApplicationWorkspacePage({
       <section aria-labelledby="application-operations-title" className="space-y-6">
         <h2 id="application-operations-title" className="text-sm font-semibold">运营模块</h2>
         {moduleGroups.map(({ group, items }) => (
-          <div key={group}>
+          <div key={group} className={`management-app-tone-${MODULE_GROUP_TONE[group] ?? "sky"}`}>
             <p className="app-muted-text mb-2 text-xs font-semibold">{group}</p>
             <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
               {items.map((module) => {
@@ -393,7 +402,7 @@ export async function ManagementApplicationWorkspacePage({
                     <span className="management-module-icon flex size-7 items-center justify-center border">
                       <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
                     </span>
-                    <h3 className="mt-2.5 text-xs font-semibold leading-tight">{module.title}</h3>
+                    <h3 className="mt-2.5 text-base font-semibold leading-tight">{module.title}</h3>
                     <span className="mt-auto flex items-center justify-between pt-2 text-[11px] font-medium">
                       <span className={enabled ? "text-[var(--primary-hover)]" : "app-muted-text"}>
                         {enabled ? "进入" : "无权限"}
