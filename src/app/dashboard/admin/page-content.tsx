@@ -457,7 +457,7 @@ export default async function AdminCenterPage() {
   return (
     <div
       data-admin-overview
-      className="management-home mx-auto w-full max-w-[1500px] px-4 pb-10 pt-7 sm:px-6 lg:px-8"
+      className="management-home mx-auto w-full px-4 pb-10 pt-7 sm:px-6 lg:px-8"
     >
       <header className="management-home-hero">
         <h1>{isPlatformOwner ? "平台总览" : "管理工作台"}</h1>

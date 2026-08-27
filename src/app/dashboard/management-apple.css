@@ -282,7 +282,7 @@
 [data-dashboard-ui="management"][data-management-workspace]
   .management-page-shell {
   box-sizing: border-box;
-  width: min(100%, 1500px);
+  width: 100%;
   margin-inline: auto;
   padding: 30px 24px 40px;
 }
@@ -885,10 +885,10 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-hero {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   gap: 20px;
-  padding: 4px 0 18px;
+  padding: 8px 0 20px;
   border-bottom: 1px solid var(--border);
   margin-bottom: 22px;
   flex-wrap: wrap;
@@ -896,10 +896,10 @@ html[data-management-workspace]
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-hero h1 {
-  font-size: 19px;
-  line-height: 1.2;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-size: clamp(1.9rem, 2.5vw, 2.4rem);
+  line-height: 1.08;
+  font-weight: 720;
+  letter-spacing: -0.048em;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1013,11 +1013,26 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-card-heading h2,
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-section-heading h2 {
+  .management-section-heading h2,
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-secondary-heading {
   font-size: 13px;
   line-height: 1.3;
   font-weight: 700;
   letter-spacing: -0.005em;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .card-title-with-hint {
+  align-items: center;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .card-title-with-hint button {
+  height: 18px;
+  width: 18px;
+  padding-top: 0;
+  align-items: center;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
