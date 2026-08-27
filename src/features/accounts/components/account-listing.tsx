@@ -1,5 +1,3 @@
-import { UsersRound } from "lucide-react";
-
 import { AccountCreator } from "@/app/dashboard/admin/accounts/AccountCreator";
 import { PlatformAccountCreator } from "@/app/dashboard/admin/accounts/PlatformAccountCreator";
 import {
@@ -28,18 +26,11 @@ export default async function AccountListing({
 
   return (
     <ManagementPage
-      eyebrow="组织与账号"
       title="账号管理"
       description={
         result.scope === "platform"
           ? "管理直属平台账号，查看账号状态，并创建符合平台角色边界的新成员。"
           : "管理本机构成员账号、状态与操作记录，所有变更限定在当前机构。"
-      }
-      icon={UsersRound}
-      meta={
-        <span>
-          {result.scope === "platform" ? "直属平台账号" : "当前机构账号"}
-        </span>
       }
       action={
         <>

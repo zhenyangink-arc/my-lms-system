@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Building2 } from "lucide-react";
 
 import {
   ManagementMetricStrip,
@@ -23,11 +22,8 @@ export default async function TenantManagementListing() {
 
   return (
     <ManagementPage
-      eyebrow="平台治理"
       title="机构管理"
       description={`${viewerLabel}可查看平台全部机构、负责人和成员关系，并按权限执行机构生命周期操作。`}
-      icon={Building2}
-      meta={<span>{viewerLabel} · 全部机构</span>}
       action={
         <>
           <Link

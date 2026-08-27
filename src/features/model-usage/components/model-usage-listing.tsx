@@ -1,5 +1,3 @@
-import { Activity } from "lucide-react";
-
 import {
   ManagementNotice,
   ManagementPage,
@@ -14,19 +12,11 @@ export default async function ModelUsageListing() {
 
   return (
     <ManagementPage
-      eyebrow="平台运营"
       title="模型用量"
       description={
         result.canViewAllTenants
           ? "分别查看 Qwen、DeepSeek 及其他模型在平台与各机构的调用规模、输入输出构成和最近趋势。"
           : "查看当前机构的模型调用总量、输入输出构成和最近趋势。"
-      }
-      icon={Activity}
-      meta={
-        <>
-          <span>{rows.length} 个用量主体</span>
-          <span>最近 {result.queryLimit.toLocaleString("zh-CN")} 条调用</span>
-        </>
       }
     >
       {result.hasQueryError && (

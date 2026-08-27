@@ -1,5 +1,3 @@
-import { LibraryBig } from "lucide-react";
-
 import {
   ManagementMetricStrip,
   ManagementNotice,
@@ -63,15 +61,12 @@ export default async function LibraryListing() {
 
   return (
     <ManagementPage
-      eyebrow="内容运营"
       title="资料库管理"
       description={
         result.scope === "platform"
           ? "维护平台标准资料，按课程和课节归档，并跟踪发布状态与下载情况。"
           : "查看机构可用资料，并按当前权限维护课程与课节资源。"
       }
-      icon={LibraryBig}
-      meta={<span>{result.scope === "platform" ? "平台资料库" : "机构资料库"}</span>}
       action={
         result.canCurate ? (
           <UploadLibraryResourceDialog courses={result.courses} />

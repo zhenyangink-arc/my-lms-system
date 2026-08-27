@@ -143,21 +143,9 @@ export default async function VisaManagementStudentViewPage({
 
   return (
     <ManagementPage
-      eyebrow="签证管理"
       title={displayName}
       description="查看学生的签证案件、入境安排和任务审核状态，并在当前管理范围内进行跟进。"
-      icon={ShieldCheck}
-      meta={
-        <>
-          <span>{student.email || `账号 …${studentId.slice(-8)}`}</span>
-          <span>
-            {getVisaCaseStatusLabel(
-              visaCase.application_channel,
-              visaCase.case_status,
-            )}
-          </span>
-        </>
-      }
+      meta={<span>{student.email || `账号 …${studentId.slice(-8)}`}</span>}
       action={
         <Link
           href={scopeDashboardPath(

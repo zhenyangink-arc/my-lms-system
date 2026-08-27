@@ -184,14 +184,12 @@ export async function ManagementApplicationCatalogPage({
 
   return (
     <ManagementPage
-      eyebrow={access.scope === "platform" ? "平台应用" : "机构应用"}
       title="应用中心"
       description={
         access.scope === "platform"
           ? "维护标准应用和平台内容，查看各应用在机构中的运行范围。"
           : `在${access.tenantName ?? "当前机构"}内按应用处理学生、教学、考核和服务数据。`
       }
-      icon={LayoutGrid}
       meta={
         <>
           <span>{getAdminRoleLabel(access.role)}</span>

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { MessageSquareText } from "lucide-react";
 
 import {
   HELP_DATE_TIME_OPTIONS,
@@ -25,10 +24,8 @@ export default async function HelpTicketViewPage({ ticketId }: { ticketId: strin
 
   return (
     <ManagementPage
-      eyebrow="帮助中心工单"
       title={ticket.subject}
       description="查看学生问题、调整处理状态、回复消息并保留完整服务记录。"
-      icon={MessageSquareText}
       meta={<span>工单 {ticket.id.slice(0, 8).toUpperCase()}</span>}
       action={
         <Link

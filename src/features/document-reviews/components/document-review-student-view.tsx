@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Files } from "lucide-react";
 
 import { createApplicationChecklistItemAction } from "@/app/dashboard/admin/documents/actions";
 import { AdminApplicationStageControl } from "@/app/dashboard/admin/documents/AdminApplicationStageControl";
@@ -62,21 +61,16 @@ export default async function DocumentReviewStudentView({
 
   return (
     <ManagementPage
-      eyebrow="资料审核"
       title={name}
       description="查看学生的申请单、资料准备进度与审核状态，并在当前管理范围内进行处理。"
-      icon={Files}
       meta={
-        <>
-          <span>{result.student.email || `账号 …${studentId.slice(-8)}`}</span>
-          <span>
-            最近更新：
-            <LocalDateTime
-              value={latestUpdatedAt ?? null}
-              options={DATE_TIME_OPTIONS}
-            />
-          </span>
-        </>
+        <span>
+          最近更新：
+          <LocalDateTime
+            value={latestUpdatedAt ?? null}
+            options={DATE_TIME_OPTIONS}
+          />
+        </span>
       }
       action={
         <Link

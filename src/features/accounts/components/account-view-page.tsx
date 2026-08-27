@@ -1,6 +1,5 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { UserRound } from "lucide-react";
 
 import { AccountManagementActions } from "@/app/dashboard/admin/accounts/AccountCard";
 import { LocalDateTime } from "@/components/LocalDateTime";
@@ -50,16 +49,8 @@ export default async function AccountViewPage({ profileId }: { profileId: string
 
   return (
     <ManagementPage
-      eyebrow="账号详情"
       title={result.displayName}
       description="查看账号基础资料、教育与能力信息、状态时间线，以及当前管理范围内的操作记录。"
-      icon={UserRound}
-      meta={
-        <>
-          <span>{roleLabel}</span>
-          <span>{statusLabel}</span>
-        </>
-      }
       action={
         <Link
           href={scopeDashboardPath("/dashboard/admin/accounts", dashboardBasePath)}

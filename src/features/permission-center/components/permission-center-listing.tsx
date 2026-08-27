@@ -1,5 +1,3 @@
-import { ShieldCheck } from "lucide-react";
-
 import {
   ManagementMetricStrip,
   ManagementNotice,
@@ -31,16 +29,8 @@ export default async function PermissionCenterListing({
 
   return (
     <ManagementPage
-      eyebrow="安全与治理"
       title="权限中心"
       description="查看角色固定能力和正式权限键，管理账号例外授权，并审计平台与机构范围的每次变更。"
-      icon={ShieldCheck}
-      meta={
-        <>
-          <span>平台与机构分域</span>
-          <span>数据库二次校验</span>
-        </>
-      }
     >
       {updated && (
         <ManagementNotice tone="success">

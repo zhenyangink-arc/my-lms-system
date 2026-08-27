@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Building2 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import {
@@ -23,16 +22,9 @@ export default async function TenantManagementDetailView({ tenantId }: { tenantI
 
   return (
     <ManagementPage
-      eyebrow="机构详情"
       title={result.tenant.name}
       description="查看机构标识、服务状态、负责人和成员关系，并在当前权限范围内执行生命周期操作。"
-      icon={Building2}
-      meta={
-        <>
-          <span>{STATUS_LABELS[result.tenant.status]}</span>
-          <span>更新于 <LocalDateTime value={result.tenant.updatedAt} options={DATE_OPTIONS} /></span>
-        </>
-      }
+      meta={<span>更新于 <LocalDateTime value={result.tenant.updatedAt} options={DATE_OPTIONS} /></span>}
       action={
         <Link
           href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}

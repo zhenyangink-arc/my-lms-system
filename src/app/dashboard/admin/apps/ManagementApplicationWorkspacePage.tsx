@@ -50,14 +50,6 @@ type WorkspaceModule = {
   institutionExecutiveOnly?: boolean;
 };
 
-const appIconMap = {
-  korean: Languages,
-  english: BookOpenCheck,
-  math: Calculator,
-  university: GraduationCap,
-  "study-abroad": Building2,
-} satisfies Record<StudentAppSlug, typeof Languages>;
-
 const learningModules: WorkspaceModule[] = [
   {
     key: "class-today",
@@ -301,7 +293,6 @@ export async function ManagementApplicationWorkspacePage({
         (access.scope === "platform" &&
           access.globalRole === "platform_owner")),
   );
-  const AppIcon = appIconMap[access.app.slug];
   const metrics = [
     { label: access.app.kind === "service" ? "服务项目" : "课程内容", value: countValue(courseResult) },
     { label: "已授权学生", value: countValue(studentResult) },
@@ -317,10 +308,8 @@ export async function ManagementApplicationWorkspacePage({
 
   return (
     <ManagementPage
-      eyebrow={access.app.kind === "service" ? "服务运营空间" : "教学运营空间"}
       title={access.appTitle}
       description={access.app.description}
-      icon={AppIcon}
       className={`management-app-workspace management-app-tone-${access.app.accent}`}
       meta={
         <>

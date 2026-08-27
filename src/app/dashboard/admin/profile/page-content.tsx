@@ -1,5 +1,4 @@
 import { redirect } from "next/navigation";
-import { UserRound } from "lucide-react";
 
 import {
   ManagementMetricStrip,
@@ -45,10 +44,8 @@ export default async function AdminProfilePage() {
     console.error("后台个人信息读取失败：", error?.message ?? "资料行不存在");
     return (
       <ManagementPage
-        eyebrow="账号设置"
         title="个人信息"
         description="维护你的姓名、头像与登录密码；账号角色和状态仍由对应负责人管理。"
-        icon={UserRound}
       >
         <ManagementNotice tone="danger">
           <strong className="block text-sm">个人信息暂时读取失败</strong>
@@ -78,11 +75,8 @@ export default async function AdminProfilePage() {
 
   return (
     <ManagementPage
-      eyebrow="账号设置"
       title="个人信息"
       description="维护你的姓名、头像与登录密码；账号角色和状态仍由对应负责人管理。"
-      icon={UserRound}
-      meta={<span>{roleLabel}</span>}
       className="management-page-narrow"
     >
       <ManagementMetricStrip

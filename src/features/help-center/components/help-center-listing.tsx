@@ -1,5 +1,3 @@
-import { CircleHelp } from "lucide-react";
-
 import {
   ManagementMetricStrip,
   ManagementNotice,
@@ -30,10 +28,8 @@ export default async function HelpCenterListing() {
   if (ticketResult.scope === "platform") {
     return (
       <ManagementPage
-        eyebrow="支持与服务"
         title="帮助中心管理"
         description="以机构级汇总视角巡检工单规模、响应时效和解决率，不读取学生问题正文与消息记录。"
-        icon={CircleHelp}
         meta={<span>{ticketResult.overview.length} 个机构</span>}
       >
         <PlatformHelpOverview
@@ -54,10 +50,8 @@ export default async function HelpCenterListing() {
 
   return (
     <ManagementPage
-      eyebrow="支持与服务"
       title="帮助中心管理"
       description="处理本机构学生工单，维护帮助文章，并持续跟踪待回复、处理中和已解决事项。"
-      icon={CircleHelp}
       meta={<span>{ticketResult.tenantName} · {ROLE_LABELS[access.role] ?? "帮助中心"}</span>}
     >
       {(ticketResult.hasError || articleResult.hasError) && (

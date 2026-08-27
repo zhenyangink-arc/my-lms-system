@@ -207,14 +207,10 @@ export function ManagementApplicationSectionFrame({
   definition: SectionDefinition;
   children: ReactNode;
 }) {
-  const Icon = definition.icon;
-
   return (
     <ManagementPage
-      eyebrow={access.appTitle}
       title={definition.title}
       description={definition.description}
-      icon={Icon}
       className={`management-app-tone-${access.app.accent}`}
       meta={
         <span>

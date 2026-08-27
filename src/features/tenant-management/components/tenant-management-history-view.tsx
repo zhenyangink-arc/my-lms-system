@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { History } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
 import {
@@ -20,11 +19,8 @@ export default async function TenantManagementHistoryView() {
 
   return (
     <ManagementPage
-      eyebrow="平台治理"
       title="机构历史记录"
       description="查看停用或归档机构，以及机构生命周期和成员关系的历史审计记录。"
-      icon={History}
-      meta={<span>只读审计视图</span>}
       action={
         <Link
           href={scopeDashboardPath("/dashboard/admin/tenants", dashboardBasePath)}

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Megaphone } from "lucide-react";
 
 import {
   ManagementMetricStrip,
@@ -36,15 +35,12 @@ export default async function AnnouncementListing() {
 
   return (
     <ManagementPage
-      eyebrow="内容运营"
       title="通知公告管理"
       description={
         result.scope === "platform"
           ? "维护平台公告，并以机构汇总视角巡检各机构公告的发布状态与阅读情况。"
           : "维护本机构公告，跟踪发布状态和成员阅读情况。"
       }
-      icon={Megaphone}
-      meta={<span>{result.scope === "platform" ? "平台范围" : "本机构范围"}</span>}
       action={
         <>
           <Link
