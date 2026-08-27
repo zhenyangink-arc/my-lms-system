@@ -81,7 +81,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
     href: "/dashboard/admin",
     icon: LayoutGrid,
     group: "overview",
-    roles: allStaffRoles,
+    roles: applicationCenterRoles,
     color: "var(--primary)",
     softColor: "var(--accent)",
   },
