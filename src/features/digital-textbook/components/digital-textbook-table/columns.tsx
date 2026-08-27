@@ -77,6 +77,40 @@ function StatusBadge({ status }: { status: string }) {
   );
 }
 
+function PublishingSummary({ row }: { row: DigitalTextbookDisplayRow }) {
+  return (
+    <dl className="grid min-w-44 grid-cols-[44px_minmax(0,1fr)] items-center gap-x-2 gap-y-1.5">
+      <dt className="text-[10px] text-[var(--foreground-muted)]">教材</dt>
+      <dd><StatusBadge status={row.textbookStatus} /></dd>
+      <dt className="text-[10px] text-[var(--foreground-muted)]">版本</dt>
+      <dd><StatusBadge status={row.versionStatus} /></dd>
+      <dt className="text-[10px] text-[var(--foreground-muted)]">本章</dt>
+      <dd><StatusBadge status={row.chapterStatus} /></dd>
+    </dl>
+  );
+}
+
+function ContentSummary({ row }: { row: DigitalTextbookDisplayRow }) {
+  return (
+    <div className="min-w-52">
+      <div className="flex flex-wrap gap-1">
+        {row.moduleCodes.length > 0 ? (
+          row.moduleCodes.map((code) => (
+            <span key={`${row.id}:${code}`} className="bg-[var(--surface-soft)] px-2 py-1 text-[10px] font-medium text-[var(--foreground-secondary)]">
+              {moduleLabel(code)}
+            </span>
+          ))
+        ) : (
+          <span className="text-[var(--foreground-muted)]">暂无模块</span>
+        )}
+      </div>
+      <p className="mt-2 text-[10px] text-[var(--foreground-muted)]">
+        {row.moduleCount} 个模块 · {row.nodeCount} 个节点 · {row.vocabularyCount} 个词汇 · {row.grammarCount} 个语法点
+      </p>
+    </div>
+  );
+}
+
 function moduleLabel(code: string) {
   if (code === "vocabulary") return "词汇模块";
   if (code === "grammar") return "语法模块";
@@ -92,7 +126,7 @@ export function getDigitalTextbookColumns(
     id: "hierarchy",
     accessorFn: (row) =>
       `${row.courseTitle} ${row.lessonTitle} ${row.textbookTitle}`,
-    header: sortableHeader("课程与教材"),
+    header: sortableHeader("教材位置"),
     cell: ({ row }) => (
       <div className="min-w-72 max-w-md">
         <p className="text-[10px] font-medium text-[var(--foreground-muted)]">
@@ -109,21 +143,18 @@ export function getDigitalTextbookColumns(
   },
   {
     accessorKey: "versionNumber",
-    header: sortableHeader("版本"),
+    header: sortableHeader("当前版本"),
     cell: ({ row }) => (
       <div className="min-w-20">
         <p className="font-semibold tabular-nums text-[var(--foreground-secondary)]">
           第 {row.original.versionNumber} 版
         </p>
-        <div className="mt-1">
-          <StatusBadge status={row.original.versionStatus} />
-        </div>
       </div>
     ),
   },
   {
     accessorKey: "chapterNumber",
-    header: sortableHeader("章节"),
+    header: sortableHeader("教材章节"),
     cell: ({ row }) => (
       <div className="min-w-28">
         <p className="font-semibold tabular-nums text-[var(--foreground-secondary)]">
@@ -136,58 +167,16 @@ export function getDigitalTextbookColumns(
     ),
   },
   {
-    id: "modules",
-    accessorFn: (row) => row.moduleCount,
-    header: sortableHeader("内容模块"),
-    cell: ({ row }) => (
-      <div className="flex min-w-40 flex-wrap gap-1">
-        {row.original.moduleCodes.length > 0 ? (
-          row.original.moduleCodes.map((code) => (
-            <span
-              key={`${row.original.id}:${code}`}
-              className="bg-[var(--surface-soft)] px-2 py-1 text-[10px] font-medium text-[var(--foreground-secondary)]"
-            >
-              {moduleLabel(code)}
-            </span>
-          ))
-        ) : (
-          <span className="text-[var(--foreground-muted)]">暂无模块</span>
-        )}
-      </div>
-    ),
+    id: "contentSummary",
+    accessorFn: (row) => row.moduleCount + row.nodeCount + row.vocabularyCount + row.grammarCount,
+    header: sortableHeader("内容概况"),
+    cell: ({ row }) => <ContentSummary row={row.original} />,
   },
   {
-    accessorKey: "nodeCount",
-    header: sortableHeader("节点"),
-    cell: ({ row }) => (
-      <span className="font-mono tabular-nums">{row.original.nodeCount}</span>
-    ),
-  },
-  {
-    accessorKey: "vocabularyCount",
-    header: sortableHeader("词汇"),
-    cell: ({ row }) => (
-      <span className="font-mono tabular-nums">
-        {row.original.vocabularyCount}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "grammarCount",
-    header: sortableHeader("语法"),
-    cell: ({ row }) => (
-      <span className="font-mono tabular-nums">{row.original.grammarCount}</span>
-    ),
-  },
-  {
-    accessorKey: "textbookStatus",
-    header: sortableHeader("教材状态"),
-    cell: ({ row }) => <StatusBadge status={row.original.textbookStatus} />,
-  },
-  {
-    accessorKey: "chapterStatus",
-    header: sortableHeader("章节状态"),
-    cell: ({ row }) => <StatusBadge status={row.original.chapterStatus} />,
+    id: "publishing",
+    accessorFn: (row) => `${row.textbookStatus} ${row.versionStatus} ${row.chapterStatus}`,
+    header: sortableHeader("发布状态"),
+    cell: ({ row }) => <PublishingSummary row={row.original} />,
   },
   {
     id: "actions",

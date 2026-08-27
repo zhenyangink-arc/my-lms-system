@@ -1,8 +1,21 @@
 export type ModelUsageScope = "platform" | "tenant";
+export type ModelUsageProvider = "qwen" | "deepseek" | "self_hosted" | "unknown";
+
+export type LearningAgentModelConfig = {
+  agentCode: string;
+  displayName: string;
+  subjectCode: string;
+  provider: "qwen" | "deepseek";
+  model: string;
+};
 
 export type ModelUsageRecord = {
   tenant_id: string;
   user_id: string | null;
+  provider: ModelUsageProvider;
+  model: string;
+  feature_code: string;
+  agent_code: string | null;
   input_tokens: number;
   output_tokens: number;
   total_tokens: number;
@@ -17,6 +30,10 @@ export type ModelUsageTenant = {
 
 export type ModelUsageLog = {
   createdAt: string;
+  provider: ModelUsageProvider;
+  model: string;
+  featureCode: string;
+  agentCode: string | null;
   inputTokens: number;
   outputTokens: number;
   totalTokens: number;
@@ -30,6 +47,8 @@ export type ModelUsageTableRow = {
   slug: string;
   kind: ModelUsageSubjectKind;
   isCurrent: boolean;
+  provider: ModelUsageProvider;
+  model: string;
   totalTokens: number;
   inputTokens: number;
   outputTokens: number;
@@ -54,6 +73,7 @@ export type ModelUsageResult = {
   canViewAllTenants: boolean;
   queryLimit: number;
   hasQueryError: boolean;
+  agentModelConfigs: LearningAgentModelConfig[];
   totals: ModelUsageTotals;
   platformRows: ModelUsageTableRow[];
   organizationRows: ModelUsageTableRow[];

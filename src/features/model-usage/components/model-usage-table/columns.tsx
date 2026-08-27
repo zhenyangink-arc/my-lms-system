@@ -45,6 +45,13 @@ function TokenNumber({ value, strong = false }: { value: number; strong?: boolea
   );
 }
 
+const PROVIDER_LABELS = {
+  qwen: "Qwen",
+  deepseek: "DeepSeek",
+  self_hosted: "其他 / 自托管",
+  unknown: "来源待确认",
+} as const;
+
 function TrendCell({ row }: { row: ModelUsageTableRow }) {
   const max = Math.max(...row.trend, 1);
   const color = row.kind === "platform" ? "var(--primary)" : "var(--support)";
@@ -70,7 +77,33 @@ function TrendCell({ row }: { row: ModelUsageTableRow }) {
   );
 }
 
-export const modelUsageColumns: ColumnDef<ModelUsageTableRow>[] = [
+export function createModelUsageColumns(
+  showProviderDetails: boolean,
+): ColumnDef<ModelUsageTableRow>[] {
+  const providerColumns: ColumnDef<ModelUsageTableRow>[] = showProviderDetails
+    ? [
+        {
+          accessorKey: "provider",
+          header: sortableHeader("供应商"),
+          cell: ({ row }) => (
+            <span className="inline-flex whitespace-nowrap rounded-full border border-[var(--border)] bg-[var(--surface-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--foreground-secondary)]">
+              {PROVIDER_LABELS[row.original.provider]}
+            </span>
+          ),
+        },
+        {
+          accessorKey: "model",
+          header: sortableHeader("模型"),
+          cell: ({ row }) => (
+            <span className="whitespace-nowrap font-mono text-[11px]">
+              {row.original.model}
+            </span>
+          ),
+        },
+      ]
+    : [];
+
+  return [
   {
     accessorKey: "name",
     header: sortableHeader("用量主体"),
@@ -89,6 +122,7 @@ export const modelUsageColumns: ColumnDef<ModelUsageTableRow>[] = [
     header: sortableHeader("范围"),
     cell: ({ row }) => (row.original.kind === "platform" ? "平台" : "机构"),
   },
+  ...providerColumns,
   {
     accessorKey: "totalTokens",
     header: sortableHeader("累计用量"),
@@ -133,6 +167,12 @@ export const modelUsageColumns: ColumnDef<ModelUsageTableRow>[] = [
     enableHiding: false,
     enableSorting: false,
     header: () => <span className="sr-only">调用明细</span>,
-    cell: ({ row }) => <ModelUsageActivityDialog row={row.original} />,
+    cell: ({ row }) => (
+      <ModelUsageActivityDialog
+        row={row.original}
+        showProviderDetails={showProviderDetails}
+      />
+    ),
   },
-];
+  ];
+}

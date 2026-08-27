@@ -222,7 +222,9 @@ export async function POST(request: Request) {
     const { error: usageInsertError } = await admin.from("ai_token_usage").insert({
       tenant_id: tenantId,
       user_id: userId,
+      provider: "self_hosted",
       model: USAGE_MODEL_LABEL,
+      feature_code: "ai_conversation_experience",
       input_tokens: message.length,
       output_tokens: reply.length,
       total_tokens: message.length + reply.length,

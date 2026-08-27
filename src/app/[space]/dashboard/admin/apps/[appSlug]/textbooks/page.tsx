@@ -18,7 +18,10 @@ export default async function ManagementAppTextbooksRoute({
 
   return (
     <ManagementApplicationSectionFrame {...context}>
-      <DigitalTextbookAdminPage studentAppId={context.access.appId} />
+      <DigitalTextbookAdminPage
+        studentAppId={context.access.appId}
+        courseStructureRoute={`${context.access.appPath}/content`}
+      />
     </ManagementApplicationSectionFrame>
   );
 }

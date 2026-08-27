@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   ManagementMetricStrip,
   ManagementNotice,
@@ -6,7 +8,13 @@ import { getDigitalTextbookManagementData } from "../api/service";
 import { DigitalTextbookTable } from "./digital-textbook-table";
 import type { DigitalTextbookDisplayRow } from "./digital-textbook-table/columns";
 
-export default async function DigitalTextbookListing({ studentAppId }: { studentAppId: string }) {
+export default async function DigitalTextbookListing({
+  studentAppId,
+  courseStructureRoute,
+}: {
+  studentAppId: string;
+  courseStructureRoute?: string;
+}) {
   const result = await getDigitalTextbookManagementData(studentAppId);
   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) =>
@@ -62,7 +70,7 @@ export default async function DigitalTextbookListing({ studentAppId }: { student
       )}
 
       <ManagementMetricStrip
-        label="互动教材概况"
+        label="教材制作概况"
         items={[
           { label: "教材", value: textbookCount },
           { label: "版本", value: versionCount },
@@ -74,14 +82,21 @@ export default async function DigitalTextbookListing({ studentAppId }: { student
       />
 
       <section className="space-y-3">
-        <div>
-          <h2 className="text-base font-semibold text-[var(--foreground)]">
-            教材内容层级
-          </h2>
-          <p className="mt-1 text-xs text-[var(--foreground-muted)]">
-            按课程、课时、教材、版本和章节查看词汇与语法模块；
-            {result.canManage ? "当前账号可以维护内容。" : "当前账号为只读查看。"}
-          </p>
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-[var(--foreground)]">
+              教材章节
+            </h2>
+            <p className="mt-1 text-xs text-[var(--foreground-muted)]">
+              每一行对应课程结构中的一个教学位置；在这里维护教材版本、内容模块并发布教材。
+              {!result.canManage && " 当前账号为只读查看。"}
+            </p>
+          </div>
+          {courseStructureRoute && (
+            <Link href={courseStructureRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
+              返回课程结构
+            </Link>
+          )}
         </div>
         <DigitalTextbookTable
           data={rows}

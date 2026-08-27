@@ -21,10 +21,19 @@ const LOG_TIME_OPTIONS: Intl.DateTimeFormatOptions = {
   hour12: false,
 };
 
+const PROVIDER_LABELS = {
+  qwen: "Qwen",
+  deepseek: "DeepSeek",
+  self_hosted: "其他 / 自托管",
+  unknown: "来源待确认",
+} as const;
+
 export function ModelUsageActivityDialog({
   row,
+  showProviderDetails,
 }: {
   row: ModelUsageTableRow;
+  showProviderDetails: boolean;
 }) {
   if (row.logCount === 0) {
     return <span className="text-xs text-[var(--foreground-muted)]">暂无调用</span>;
@@ -46,10 +55,14 @@ export function ModelUsageActivityDialog({
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-[60vh] overflow-auto border border-[var(--border)]">
-          <table className="w-full min-w-[620px] border-collapse text-left text-xs">
+          <table className={`w-full border-collapse text-left text-xs ${showProviderDetails ? "min-w-[620px]" : "min-w-[500px]"}`}>
             <thead className="sticky top-0 bg-[var(--surface-soft)] text-[var(--foreground-muted)]">
               <tr>
                 <th className="px-3 py-2.5 font-medium">调用时间</th>
+                {showProviderDetails && (
+                  <th className="px-3 py-2.5 font-medium">供应商 / 模型</th>
+                )}
+                <th className="px-3 py-2.5 font-medium">使用场景</th>
                 <th className="px-3 py-2.5 text-right font-medium">输入</th>
                 <th className="px-3 py-2.5 text-right font-medium">输出</th>
                 <th className="px-3 py-2.5 text-right font-medium">合计</th>
@@ -67,6 +80,16 @@ export function ModelUsageActivityDialog({
                       options={LOG_TIME_OPTIONS}
                       fallback="时间待确认"
                     />
+                  </td>
+                  {showProviderDetails && (
+                    <td className="px-3 py-2.5">
+                      <p className="font-semibold text-[var(--foreground)]">{PROVIDER_LABELS[log.provider]}</p>
+                      <p className="mt-0.5 font-mono text-[11px] text-[var(--foreground-muted)]">{log.model}</p>
+                    </td>
+                  )}
+                  <td className="px-3 py-2.5 text-[var(--foreground-secondary)]">
+                    <p>{log.featureCode === "learning_agent" ? "课程学习 Agent" : log.featureCode === "guide_agent" ? "UPLY 导航助手" : log.featureCode === "ai_conversation_experience" ? "AI 口语陪练" : "其他功能"}</p>
+                    {log.agentCode && <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">{log.agentCode}</p>}
                   </td>
                   <td className="px-3 py-2.5 text-right font-mono tabular-nums">
                     {log.inputTokens.toLocaleString("zh-CN")}

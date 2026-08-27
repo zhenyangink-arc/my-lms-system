@@ -42,13 +42,13 @@ export function DigitalTextbookTableToolbar({
           className="size-3.5 shrink-0 text-[var(--foreground-muted)]"
           aria-hidden="true"
         />
-        <span className="sr-only">搜索互动教材</span>
+        <span className="sr-only">搜索教材制作内容</span>
         <input
           value={filters.query}
           onChange={(event) =>
             onFiltersChange({ ...filters, query: event.target.value })
           }
-          placeholder="搜索课程、课时、教材或章节"
+          placeholder="搜索课程、课时或教材章节"
           className="min-w-0 flex-1 bg-transparent text-xs outline-none"
         />
       </label>

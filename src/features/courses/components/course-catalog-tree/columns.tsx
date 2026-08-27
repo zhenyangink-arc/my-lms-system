@@ -70,8 +70,8 @@ function NodeIcon({ kind }: { kind: CourseCatalogNodeKind }) {
 function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
   return (
     <div
-      className="flex min-w-72 items-center gap-2"
-      style={{ paddingLeft: `${row.depth * 20}px` }}
+      className="flex min-w-72 items-center gap-2.5"
+      style={{ paddingLeft: `${row.depth * 24}px` }}
     >
       {row.getCanExpand() ? (
         <button
@@ -79,7 +79,7 @@ function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
           aria-label={row.getIsExpanded() ? "收起下级内容" : "展开下级内容"}
           aria-expanded={row.getIsExpanded()}
           onClick={row.getToggleExpandedHandler()}
-          className="flex h-7 w-7 shrink-0 items-center justify-center text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
         >
           <ChevronRight
             size={13}
@@ -87,19 +87,49 @@ function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
           />
         </button>
       ) : (
-        <span className="h-7 w-7 shrink-0" />
+        <span className="h-8 w-8 shrink-0" />
       )}
       <span className="shrink-0 text-[var(--foreground-muted)]">
         <NodeIcon kind={row.original.kind} />
       </span>
-      <span className="min-w-0">
-        <span className="block truncate font-semibold text-[var(--foreground)]">
-          {row.original.title}
+      <span className="min-w-0 flex-1">
+        <span className="flex min-w-0 items-center gap-2">
+          <span className="truncate font-semibold text-[var(--foreground)]">
+            {row.original.title}
+          </span>
+          <span className="shrink-0 rounded-sm bg-[var(--surface-soft)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--foreground-muted)]">
+            {row.original.kindLabel}
+          </span>
         </span>
         <span className="mt-0.5 block truncate font-mono text-[10px] text-[var(--foreground-muted)]">
           {row.original.slug}
         </span>
       </span>
+    </div>
+  );
+}
+
+function StructureHealthCell({ row }: { row: CourseCatalogTreeRow }) {
+  return (
+    <div className="min-w-44">
+      <p className="text-[11px] font-medium text-[var(--foreground-secondary)]">{row.contentLabel}</p>
+      <div className="mt-2 flex items-center gap-2">
+        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--surface-soft)]">
+          <span
+            className="block h-full rounded-full"
+            style={{
+              width: `${row.completeness}%`,
+              backgroundColor: row.completeness === 100 ? "var(--status-success)" : "var(--status-warning)",
+            }}
+          />
+        </span>
+        <span className="font-mono text-[10px] tabular-nums text-[var(--foreground-muted)]">{row.completeness}%</span>
+      </div>
+      {row.missingItems.length > 0 && (
+        <p className="mt-1.5 max-w-52 truncate text-[9px] text-[var(--foreground-muted)]" title={row.missingItems.join("、")}>
+          待补：{row.missingItems.join("、")}
+        </p>
+      )}
     </div>
   );
 }
@@ -114,12 +144,25 @@ function StatusBadge({ row }: { row: CourseCatalogTreeRow }) {
   }
   return row.isPublished ? (
     <span className="inline-flex bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
-      已发布
+      已上架
     </span>
   ) : (
     <span className="inline-flex bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
-      草稿
+      未上架
     </span>
+  );
+}
+
+function PublicationCell({ row }: { row: CourseCatalogTreeRow }) {
+  return (
+    <div className="min-w-36 space-y-1.5">
+      <StatusBadge row={row} />
+      <p className="truncate text-[10px] text-[var(--foreground-muted)]" title={row.unlockMode}>
+        {row.unlockMode}
+        <span className="mx-1.5" aria-hidden="true">·</span>
+        排序 {row.sortOrder}
+      </p>
+    </div>
   );
 }
 
@@ -138,89 +181,20 @@ export function getCourseCatalogTreeColumns({
   {
     id: "structure",
     accessorFn: (row) => `${row.title} ${row.slug}`,
-    header: sortableHeader("课程结构"),
+    header: sortableHeader("目录结构"),
     cell: ({ row }) => <StructureCell row={row} />,
   },
   {
-    accessorKey: "kindLabel",
-    header: sortableHeader("类型"),
-    cell: ({ row }) => (
-      <span className="text-[var(--foreground-secondary)]">{row.original.kindLabel}</span>
-    ),
-  },
-  {
-    accessorKey: "parentTitle",
-    header: sortableHeader("所属上级"),
-    cell: ({ row }) => (
-      <span className="block max-w-48 truncate text-[var(--foreground-muted)]">
-        {row.original.parentTitle}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "contentLabel",
-    header: sortableHeader("下级内容"),
-    cell: ({ row }) => (
-      <span className="text-[var(--foreground-secondary)]">{row.original.contentLabel}</span>
-    ),
-  },
-  {
     accessorKey: "completeness",
-    header: sortableHeader("完整度"),
-    cell: ({ row }) => (
-      <div className="min-w-28">
-        <div className="flex items-center gap-2">
-          <span className="h-1 w-16 overflow-hidden bg-[var(--surface-soft)]">
-            <span
-              className="block h-full"
-              style={{
-                width: `${row.original.completeness}%`,
-                backgroundColor:
-                  row.original.completeness === 100
-                    ? "var(--status-success)"
-                    : "var(--status-warning)",
-              }}
-            />
-          </span>
-          <span className="font-mono text-[10px] tabular-nums">
-            {row.original.completeness}%
-          </span>
-        </div>
-        {row.original.missingItems.length > 0 && (
-          <p
-            className="mt-1 max-w-32 truncate text-[9px] text-[var(--foreground-muted)]"
-            title={row.original.missingItems.join("、")}
-          >
-            缺少：{row.original.missingItems.join("、")}
-          </p>
-        )}
-      </div>
-    ),
-  },
-  {
-    accessorKey: "unlockMode",
-    header: sortableHeader("开放方式"),
-    cell: ({ row }) => (
-      <span className="block max-w-44 truncate text-[var(--foreground-muted)]">
-        {row.original.unlockMode}
-      </span>
-    ),
+    header: sortableHeader("结构情况"),
+    cell: ({ row }) => <StructureHealthCell row={row.original} />,
   },
   {
     id: "status",
     accessorFn: (row) =>
       row.isLocked ? "locked" : row.isPublished ? "published" : "draft",
-    header: sortableHeader("状态"),
-    cell: ({ row }) => <StatusBadge row={row.original} />,
-  },
-  {
-    accessorKey: "sortOrder",
-    header: sortableHeader("排序"),
-    cell: ({ row }) => (
-      <span className="font-mono tabular-nums text-[var(--foreground-muted)]">
-        {row.original.sortOrder}
-      </span>
-    ),
+    header: sortableHeader("上架与开放"),
+    cell: ({ row }) => <PublicationCell row={row.original} />,
   },
   ];
 
@@ -243,7 +217,7 @@ export function getCourseCatalogTreeColumns({
             }
             className="inline-flex h-8 items-center border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"
           >
-            查看内容
+            查看结构
           </Link>
           {canManage && (
             <>

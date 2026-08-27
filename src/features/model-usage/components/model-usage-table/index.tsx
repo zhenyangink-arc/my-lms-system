@@ -21,7 +21,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { ModelUsageLog, ModelUsageTableRow } from "../../api/types";
-import { modelUsageColumns } from "./columns";
+import { createModelUsageColumns } from "./columns";
 import {
   ModelUsageTableToolbar,
   type ModelUsageFilters,
@@ -33,6 +33,8 @@ const TREND_BUCKET_IN_MILLISECONDS = 14_400_000;
 const COLUMN_LABELS: Record<string, string> = {
   name: "用量主体",
   kind: "范围",
+  provider: "供应商",
+  model: "模型",
   totalTokens: "累计用量",
   inputTokens: "输入用量",
   outputTokens: "输出用量",
@@ -44,6 +46,8 @@ const COLUMN_LABELS: Record<string, string> = {
 const INITIAL_FILTERS: ModelUsageFilters = {
   query: "",
   kind: "all",
+  provider: "all",
+  model: "",
   from: "",
   to: "",
 };
@@ -110,7 +114,7 @@ export function ModelUsageTable({
   const from = startOfLocalDay(filters.from);
   const to = endOfLocalDay(filters.to);
   const invalidDateRange = from !== null && to !== null && from > to;
-  const filteredData = useMemo(() => {
+  const baseFilteredData = useMemo(() => {
     if (invalidDateRange) return [];
     const normalizedQuery = filters.query.trim().toLocaleLowerCase("zh-CN");
     const now = Date.now();
@@ -122,12 +126,30 @@ export function ModelUsageTable({
       )
       .filter((row) => {
         if (!normalizedQuery) return true;
-        return `${row.name} ${row.slug}`
+        const searchableText = canViewAllTenants
+          ? `${row.name} ${row.slug} ${row.provider} ${row.model}`
+          : `${row.name} ${row.slug}`;
+        return searchableText
           .toLocaleLowerCase("zh-CN")
           .includes(normalizedQuery);
       })
       .map((row) => applyDateRange(row, from, to, now));
-  }, [data, filters.kind, filters.query, from, invalidDateRange, to]);
+  }, [canViewAllTenants, data, filters.kind, filters.query, from, invalidDateRange, to]);
+  const filteredData = useMemo(
+    () => canViewAllTenants
+      ? baseFilteredData.filter((row) =>
+          (filters.provider === "all" || row.provider === filters.provider) &&
+          (!filters.model || row.model === filters.model),
+        )
+      : baseFilteredData,
+    [baseFilteredData, canViewAllTenants, filters.model, filters.provider],
+  );
+  const modelOptions = useMemo(
+    () => Array.from(new Set(data
+      .filter((row) => filters.provider === "all" || row.provider === filters.provider)
+      .map((row) => row.model))).sort((a, b) => a.localeCompare(b)),
+    [data, filters.provider],
+  );
   const totals = useMemo(
     () => ({
       totalTokens: filteredData.reduce((sum, row) => sum + row.totalTokens, 0),
@@ -138,11 +160,43 @@ export function ModelUsageTable({
     }),
     [filteredData],
   );
+  const providerTotals = useMemo(() => {
+    const empty = () => ({
+      totalTokens: 0,
+      inputTokens: 0,
+      outputTokens: 0,
+      logCount: 0,
+      models: new Map<string, { totalTokens: number; logCount: number }>(),
+    });
+    const result: Record<"qwen" | "deepseek", ReturnType<typeof empty>> = {
+      qwen: empty(),
+      deepseek: empty(),
+    };
+    for (const row of baseFilteredData) {
+      if (row.provider !== "qwen" && row.provider !== "deepseek") continue;
+      result[row.provider].totalTokens += row.totalTokens;
+      result[row.provider].inputTokens += row.inputTokens;
+      result[row.provider].outputTokens += row.outputTokens;
+      result[row.provider].logCount += row.logCount;
+      const model = result[row.provider].models.get(row.model) ?? {
+        totalTokens: 0,
+        logCount: 0,
+      };
+      model.totalTokens += row.totalTokens;
+      model.logCount += row.logCount;
+      result[row.provider].models.set(row.model, model);
+    }
+    return result;
+  }, [baseFilteredData]);
+  const columns = useMemo(
+    () => createModelUsageColumns(canViewAllTenants),
+    [canViewAllTenants],
+  );
   // TanStack Table intentionally exposes mutable methods inside a client boundary.
   // eslint-disable-next-line react-hooks/incompatible-library
   const table = useReactTable({
     data: filteredData,
-    columns: modelUsageColumns,
+    columns,
     state: { sorting, columnVisibility },
     onSortingChange: setSorting,
     onColumnVisibilityChange: setColumnVisibility,
@@ -162,6 +216,56 @@ export function ModelUsageTable({
 
   return (
     <div className="space-y-4">
+      {canViewAllTenants && (
+      <section className="grid gap-3 lg:grid-cols-2" aria-label="Qwen 与 DeepSeek 用量对比">
+        {(["qwen", "deepseek"] as const).map((provider) => {
+          const item = providerTotals[provider];
+          const label = provider === "qwen" ? "Qwen" : "DeepSeek";
+          return (
+            <article key={provider} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+              <div className="flex items-center justify-between gap-3">
+                <h2 className="text-sm font-bold text-[var(--foreground)]">{label}</h2>
+                <span className="rounded-full bg-[var(--surface-soft)] px-2.5 py-1 text-[11px] font-semibold text-[var(--foreground-secondary)]">
+                  {item.logCount.toLocaleString("zh-CN")} 次调用
+                </span>
+              </div>
+              <p className="mt-3 font-mono text-2xl font-bold tabular-nums text-[var(--foreground)]">
+                {item.totalTokens.toLocaleString("zh-CN")}
+                <span className="ml-1.5 text-xs font-medium text-[var(--foreground-muted)]">Token</span>
+              </p>
+              <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-[var(--border-subtle)] pt-3 text-xs">
+                <div><dt className="text-[var(--foreground-muted)]">输入</dt><dd className="mt-1 font-mono font-semibold tabular-nums">{item.inputTokens.toLocaleString("zh-CN")}</dd></div>
+                <div><dt className="text-[var(--foreground-muted)]">输出</dt><dd className="mt-1 font-mono font-semibold tabular-nums">{item.outputTokens.toLocaleString("zh-CN")}</dd></div>
+              </dl>
+              <div className="mt-3 border-t border-[var(--border-subtle)] pt-3">
+                <p className="text-xs font-semibold text-[var(--foreground-secondary)]">分模型统计</p>
+                {item.models.size > 0 ? (
+                  <ul className="mt-2 divide-y divide-[var(--border-subtle)] rounded-lg bg-[var(--surface-soft)] px-3">
+                    {Array.from(item.models.entries())
+                      .sort(([, left], [, right]) => right.totalTokens - left.totalTokens)
+                      .map(([model, modelUsage]) => (
+                        <li key={model} className="flex flex-wrap items-center justify-between gap-x-4 gap-y-1 py-2 text-xs">
+                          <span className="font-mono font-semibold text-[var(--foreground)]">{model}</span>
+                          <span className="flex items-center gap-3 text-[var(--foreground-muted)]">
+                            <span>{modelUsage.logCount.toLocaleString("zh-CN")} 次</span>
+                            <span className="font-mono font-semibold tabular-nums text-[var(--foreground-secondary)]">
+                              {modelUsage.totalTokens.toLocaleString("zh-CN")} Token
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                  </ul>
+                ) : (
+                  <p className="mt-2 rounded-lg bg-[var(--surface-soft)] px-3 py-2 text-xs text-[var(--foreground-muted)]">
+                    暂无模型调用
+                  </p>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </section>
+      )}
       <ManagementMetricStrip
         label="当前筛选模型用量概况"
         items={[
@@ -180,6 +284,7 @@ export function ModelUsageTable({
             canViewAllTenants={canViewAllTenants}
             invalidDateRange={invalidDateRange}
             viewOptions={viewOptions}
+            modelOptions={modelOptions}
           />
         }
         isEmpty={filteredData.length === 0}
@@ -190,7 +295,7 @@ export function ModelUsageTable({
           </p>
         }
       >
-        <Table className="min-w-[1280px]">
+        <Table className={canViewAllTenants ? "min-w-[1280px]" : "min-w-[960px]"}>
           <TableHeader className="bg-[var(--surface-soft)]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>

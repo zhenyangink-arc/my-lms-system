@@ -136,7 +136,7 @@ export function DigitalTextbookCellAction({
             <details className="group relative inline-block text-left">
               <summary
                 className="flex size-8 cursor-pointer list-none items-center justify-center rounded-md text-[var(--foreground-muted)] transition-colors hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
-                aria-label="打开互动教材操作"
+                aria-label="打开教材制作操作"
               >
                 <Icons.more className="size-4" aria-hidden="true" />
               </summary>

@@ -30,15 +30,11 @@ import {
 } from "./digital-textbook-table-toolbar";
 
 const COLUMN_LABELS: Record<string, string> = {
-  hierarchy: "课程与教材",
-  versionNumber: "版本",
-  chapterNumber: "章节",
-  modules: "内容模块",
-  nodeCount: "节点",
-  vocabularyCount: "词汇",
-  grammarCount: "语法",
-  textbookStatus: "教材状态",
-  chapterStatus: "章节状态",
+  hierarchy: "教材位置",
+  versionNumber: "当前版本",
+  chapterNumber: "教材章节",
+  contentSummary: "内容概况",
+  publishing: "发布状态",
 };
 
 export function DigitalTextbookTable({
@@ -124,14 +120,14 @@ export function DigitalTextbookTable({
         />
       }
       isEmpty={filteredData.length === 0}
-      emptyContent="没有符合筛选条件的互动教材章节"
+      emptyContent="没有符合筛选条件的教材章节"
       footer={
         <p className="text-xs text-[var(--foreground-muted)]">
           当前显示 {filteredData.length} 个章节，共 {data.length} 个章节
         </p>
       }
     >
-      <Table className="min-w-[1320px]">
+      <Table className="min-w-[1060px]">
         <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

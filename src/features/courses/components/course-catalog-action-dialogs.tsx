@@ -1,7 +1,7 @@
 "use client";
 
 import { PencilLine, Plus } from "lucide-react";
-import { useState } from "react";
+import { useId, useState } from "react";
 
 import {
   createCatalogCourseAction,
@@ -38,8 +38,8 @@ export type CourseCatalogActionOptions = {
 };
 
 const INPUT_CLASS =
-  "app-input mt-1.5 w-full rounded-md border px-3 py-2.5 text-xs outline-none";
-const LABEL_CLASS = "block text-[11px] font-medium text-[var(--foreground-secondary)]";
+  "app-input mt-1.5 min-h-10 w-full min-w-0 rounded-md border px-3 py-2.5 text-xs outline-none";
+const LABEL_CLASS = "block min-w-0 text-[11px] font-medium text-[var(--foreground-secondary)]";
 const SECTION_CLASS = "space-y-4 border-t border-[var(--border)] pt-5";
 
 const UNLOCK_LABELS: Record<string, string> = {
@@ -113,7 +113,7 @@ function CommonFields({ node }: { node: CourseCatalogNode }) {
       </div>
       <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-secondary)]">
         <input name="is_published" type="checkbox" defaultChecked={node.is_published} />
-        对学生端发布
+        学生端上架
       </label>
     </>
   );
@@ -128,7 +128,7 @@ function CreateFields({ sortOrder }: { sortOrder: number }) {
       </div>
       <label className={LABEL_CLASS}>简介<textarea name="description" rows={3} maxLength={500} className={`${INPUT_CLASS} resize-y`} /></label>
       <label className={LABEL_CLASS}>排序<input name="sort_order" type="number" min={0} max={100000} defaultValue={sortOrder} className={INPUT_CLASS} /></label>
-      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-secondary)]"><input name="is_published" type="checkbox" />创建后发布</label>
+      <label className="flex items-center gap-2 text-[11px] font-medium text-[var(--foreground-secondary)]"><input name="is_published" type="checkbox" />创建后上架</label>
     </>
   );
 }
@@ -166,29 +166,41 @@ function CourseEditor({ node, options }: { node: CourseCatalogCourse; options: C
   );
 }
 
-function TextAreaField({ name, label, value, rows = 4 }: { name: string; label: string; value: string | null; rows?: number }) {
-  return <label className={LABEL_CLASS}>{label}<textarea name={name} rows={rows} defaultValue={value ?? ""} className={`${INPUT_CLASS} resize-y leading-5`} /></label>;
-}
-
 function LessonEditor({ node, options }: { node: CourseCatalogLesson; options: CourseCatalogActionOptions }) {
+  const [activeSection, setActiveSection] = useState<"basic" | "rules">("basic");
+  const editorId = useId();
+  const sections = [
+    { key: "basic", label: "基本信息" },
+    { key: "rules", label: "开放规则" },
+  ] as const;
+
   return (
-    <div className="space-y-7">
-      <form action={updateCatalogLessonAction} className="space-y-5">
+    <div>
+      <div role="tablist" aria-label="课时编辑区域" className="-mx-6 -mt-6 mb-6 flex min-h-12 items-end gap-1 border-b border-[var(--border)] bg-[var(--surface-soft)] px-6 pt-2">
+        {sections.map((section) => (
+          <button
+            key={section.key}
+            id={`${editorId}-${section.key}-tab`}
+            type="button"
+            role="tab"
+            aria-selected={activeSection === section.key}
+            aria-controls={`${editorId}-${section.key}-panel`}
+            onClick={() => setActiveSection(section.key)}
+            className={`min-h-10 border-b-2 px-4 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${activeSection === section.key ? "border-[var(--primary)] text-[var(--primary)]" : "border-transparent text-[var(--foreground-muted)] hover:text-[var(--foreground)]"}`}
+          >
+            {section.label}
+          </button>
+        ))}
+      </div>
+
+      <form id={`${editorId}-basic-panel`} role="tabpanel" aria-labelledby={`${editorId}-basic-tab`} hidden={activeSection !== "basic"} action={updateCatalogLessonAction} className="space-y-5">
         <input type="hidden" name="id" value={node.id} /><input type="hidden" name="editor_section" value="basic" />
         <h3 className="text-xs font-semibold">基本信息、封面与视频</h3>
         <div className="grid gap-5 lg:grid-cols-[240px_minmax(0,1fr)]"><CourseCoverUploadField kind="lesson" entityId={node.id} currentObjectKey={node.cover_object_key} alt={node.cover_alt ?? node.title} /><div className="space-y-4"><CommonFields node={node} /><div className="grid gap-4 sm:grid-cols-2"><label className={LABEL_CLASS}>内容类型<select name="lesson_type" defaultValue={node.lesson_type ?? "video"} className={INPUT_CLASS}><option value="video">视频课</option><option value="reading">图文课</option><option value="practice">练习课</option><option value="live">直播课</option></select></label><label className={LABEL_CLASS}>预计时长（分钟）<input name="duration_minutes" type="number" min={1} max={600} defaultValue={node.duration_minutes ?? 30} className={INPUT_CLASS} /></label></div><label className="flex items-center gap-2 text-[11px] font-medium"><input name="is_free_preview" type="checkbox" defaultChecked={node.is_free_preview} />允许免费试看</label></div></div>
         <div className="grid gap-4 md:grid-cols-2"><label className={LABEL_CLASS}>视频存储方式<select name="video_provider" defaultValue={node.video_provider ?? "r2"} className={INPUT_CLASS}><option value="r2">对象存储</option><option value="external">外部地址</option></select></label><label className={LABEL_CLASS}>媒体类型<input name="video_mime_type" defaultValue={node.video_mime_type ?? "video/mp4"} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>视频对象键<input name="video_object_key" defaultValue={node.video_object_key ?? ""} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>外部视频链接<input name="video_url" type="url" defaultValue={node.video_url ?? ""} className={INPUT_CLASS} /></label></div>
         <SaveButton label="保存基本信息" />
       </form>
-      <form action={updateCatalogLessonAction} className={SECTION_CLASS}>
-        <input type="hidden" name="id" value={node.id} /><input type="hidden" name="editor_section" value="content" />
-        <h3 className="text-xs font-semibold">课时内容</h3>
-        <div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="learning_objectives" label="学习目标" value={node.learning_objectives} /><TextAreaField name="lesson_tasks" label="学习任务" value={node.lesson_tasks} /><TextAreaField name="teacher_note" label="教师提示" value={node.teacher_note} /></div>
-        <TextAreaField name="content_text" label="课程正文" value={node.content_text} rows={9} />
-        <div className="grid gap-4 lg:grid-cols-3"><TextAreaField name="key_points" label="重点内容" value={node.key_points} /><TextAreaField name="case_study" label="案例" value={node.case_study} /><TextAreaField name="common_mistakes" label="易错点" value={node.common_mistakes} /><TextAreaField name="summary_text" label="课时总结" value={node.summary_text} /><TextAreaField name="reflection_questions" label="思考问题" value={node.reflection_questions} /><TextAreaField name="extra_note" label="补充说明" value={node.extra_note} /></div>
-        <SaveButton label="保存课时内容" />
-      </form>
-      <form action={updateCatalogLessonAction} className={SECTION_CLASS}>
+      <form id={`${editorId}-rules-panel`} role="tabpanel" aria-labelledby={`${editorId}-rules-tab`} hidden={activeSection !== "rules"} action={updateCatalogLessonAction} className="space-y-5">
         <input type="hidden" name="id" value={node.id} /><input type="hidden" name="editor_section" value="rules" />
         <h3 className="text-xs font-semibold">开放规则</h3>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4"><label className={LABEL_CLASS}>开放方式<select name="unlock_mode" defaultValue={node.unlock_mode} className={INPUT_CLASS}>{Object.entries(UNLOCK_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label><label className={LABEL_CLASS}>前置课时<select name="prerequisite_lesson_id" defaultValue={node.prerequisite_lesson_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.lessons.filter((item) => item.id !== node.id && item.course_id === node.course_id).map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>前置章节<select name="prerequisite_chapter_id" defaultValue={node.prerequisite_chapter_id ?? ""} className={INPUT_CLASS}><option value="">无</option>{options.chapters.map((item) => <option key={item.id} value={item.id}>{item.title}</option>)}</select></label><label className={LABEL_CLASS}>要求分数<input name="required_score" type="number" min={0} max={100} defaultValue={node.required_score ?? 80} className={INPUT_CLASS} /></label><label className={LABEL_CLASS}>开放时间<input name="available_from" type="datetime-local" defaultValue={datetimeLocalValue(node.available_from)} className={INPUT_CLASS} /></label></div>
@@ -221,9 +233,9 @@ export function CourseCatalogEditDialog({ node, options }: { node: CourseCatalog
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <button type="button" onClick={() => setOpen(true)} className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"><PencilLine size={12} />编辑</button>
-      <DialogContent className="max-h-[92vh] max-w-[min(1100px,calc(100vw-32px))] overflow-y-auto p-0">
-        <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left"><DialogTitle>编辑“{node.title}”</DialogTitle><DialogDescription>发布状态随当前完整表单一并保存，不使用额外的快捷发布操作。</DialogDescription></DialogHeader>
-        <div className="p-5"><EditContent node={node} options={options} /></div>
+      <DialogContent className="grid max-h-[92vh] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden p-0 sm:max-w-[1100px]">
+        <DialogHeader className="border-b border-[var(--border)] px-6 py-4 pr-14 text-left"><DialogTitle>编辑“{node.title}”</DialogTitle><DialogDescription>这里只维护课程结构、基础资料与开放规则；具体教学内容请前往教材制作。</DialogDescription></DialogHeader>
+        <div className="min-h-0 overflow-y-auto p-6"><EditContent node={node} options={options} /></div>
       </DialogContent>
     </Dialog>
   );
@@ -240,10 +252,16 @@ function CreateForm({ target, studentAppId }: { target: CreateTarget; studentApp
 
 export function CourseCatalogCreateDialog({ target, primary = false, studentAppId }: { target: CreateTarget; primary?: boolean; studentAppId?: string }) {
   const [open, setOpen] = useState(false);
+  const compactTriggerLabel = {
+    category: "新建分类",
+    course: "新建课程",
+    lesson: "新建课时",
+    chapter: "新建章节",
+  }[target.kind];
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <button type="button" onClick={() => setOpen(true)} className={primary ? "inline-flex h-9 items-center gap-1.5 bg-[var(--primary)] px-4 text-xs font-semibold text-white hover:opacity-90" : "inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"}><Plus size={13} />{target.title}</button>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto p-0"><DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>使用现有课程管理 Action 创建平台内容。</DialogDescription></DialogHeader><div className="p-5"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
+      <button type="button" onClick={() => setOpen(true)} className={primary ? "inline-flex h-9 items-center gap-1.5 bg-[var(--primary)] px-4 text-xs font-semibold text-white hover:opacity-90" : "inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"}><Plus size={13} aria-hidden="true" />{primary ? target.title : compactTriggerLabel}</button>
+      <DialogContent className="grid max-h-[90vh] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden p-0 sm:max-w-2xl"><DialogHeader className="border-b border-[var(--border)] px-6 py-4 pr-14 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>填写必要信息后创建目录节点。</DialogDescription></DialogHeader><div className="min-h-0 overflow-y-auto p-6"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
     </Dialog>
   );
 }

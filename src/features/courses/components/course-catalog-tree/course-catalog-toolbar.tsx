@@ -82,10 +82,10 @@ export function CourseCatalogToolbar({
         className="app-input border px-3 py-2 text-xs outline-none"
       >
         <option value="all">全部状态</option>
-        <option value="published">已发布</option>
-        <option value="draft">草稿</option>
+        <option value="published">已上架</option>
+        <option value="draft">未上架</option>
         <option value="locked">已锁定</option>
-        <option value="incomplete">内容待完善</option>
+        <option value="incomplete">结构待完善</option>
       </select>
 
       <div className="flex items-center border border-[var(--border)]">

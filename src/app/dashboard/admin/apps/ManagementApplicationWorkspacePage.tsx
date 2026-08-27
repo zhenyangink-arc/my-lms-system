@@ -20,6 +20,7 @@ import {
   Target,
   UsersRound,
   Wrench,
+  Workflow,
 } from "lucide-react";
 
 import {
@@ -75,8 +76,8 @@ const learningModules: WorkspaceModule[] = [
   },
   {
     key: "content",
-    title: "课程与内容",
-    description: "维护课程树、课时、资源和发布状态。",
+    title: "课程结构",
+    description: "建立分类、课程、课时和章节，配置顺序、开放规则与学生端上架。",
     icon: BookOpenCheck,
     capability: "manageContent",
   },
@@ -89,10 +90,19 @@ const learningModules: WorkspaceModule[] = [
   },
   {
     key: "textbooks",
-    title: "互动教材",
-    description: "按应用查看教材、版本、章节、词汇和语法内容。",
+    title: "教材制作",
+    description: "制作各章节的教材模块、词汇、语法与互动内容，并发布教材版本。",
     icon: PanelsTopLeft,
     capability: "manageContent",
+  },
+  {
+    key: "teaching-scripts",
+    title: "教学脚本",
+    description: "编排教学 Agent 的分段讲解、理解检查、补救路径和发布版本。",
+    icon: Workflow,
+    capability: "manageContent",
+    appSlugs: ["korean"],
+    platformOwnerOnly: true,
   },
   {
     key: "grades",

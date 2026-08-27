@@ -101,7 +101,13 @@ function getUserId(request: Request) {
   }
 }
 
-function recordUsage(userId: string | undefined, provider: Provider, model: string, usage: Record<string, unknown>) {
+function recordUsage(
+  userId: string | undefined,
+  provider: Provider,
+  model: string,
+  agentCode: string,
+  usage: Record<string, unknown>,
+) {
   const url = Deno.env.get("SUPABASE_URL");
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return;
@@ -115,7 +121,10 @@ function recordUsage(userId: string | undefined, provider: Provider, model: stri
     },
     body: JSON.stringify({
       user_id: userId ?? null,
-      model: `${provider}:${model}`,
+      provider,
+      model,
+      feature_code: "learning_agent",
+      agent_code: agentCode,
       input_tokens: Number(usage.prompt_tokens ?? 0),
       output_tokens: Number(usage.completion_tokens ?? 0),
       total_tokens: Number(usage.total_tokens ?? 0),
@@ -123,7 +132,13 @@ function recordUsage(userId: string | undefined, provider: Provider, model: stri
   });
 }
 
-function streamText(upstream: Response, config: { provider: Provider; model: string }, userId: string | undefined, maxOutputCharacters: number) {
+function streamText(
+  upstream: Response,
+  config: { provider: Provider; model: string },
+  userId: string | undefined,
+  agentCode: string,
+  maxOutputCharacters: number,
+) {
   const encoder = new TextEncoder();
   const decoder = new TextDecoder();
   let buffer = "";
@@ -149,7 +164,7 @@ function streamText(upstream: Response, config: { provider: Provider; model: str
               choices?: Array<{ delta?: { content?: unknown } }>;
               usage?: Record<string, unknown>;
             };
-            if (payload.usage) recordUsage(userId, config.provider, config.model, payload.usage);
+            if (payload.usage) recordUsage(userId, config.provider, config.model, agentCode, payload.usage);
             const delta = payload.choices?.[0]?.delta?.content;
             if (typeof delta !== "string") continue;
             const remaining = maxOutputCharacters - emitted;
@@ -237,7 +252,7 @@ Deno.serve(async (request) => {
       return Response.json({ error: `${localizedName(profile, locale)}暂时没有响应。` }, { status: 502 });
     }
 
-    return new Response(streamText(upstream, config, getUserId(request), maxOutputCharacters), {
+    return new Response(streamText(upstream, config, getUserId(request), profile.agent_code, maxOutputCharacters), {
       headers: {
         "Content-Type": "text/plain; charset=utf-8",
         "Cache-Control": "no-store",

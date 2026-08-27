@@ -18,6 +18,7 @@ import {
   Target,
   UsersRound,
   Wrench,
+  Workflow,
 } from "lucide-react";
 
 import { ManagementPage } from "@/components/layout/management-page";
@@ -53,8 +54,8 @@ const learningSections: Record<string, SectionDefinition> = {
     capability: "manageStudents",
   },
   content: {
-    title: "课程与内容",
-    description: "管理分类、课程、课时和章节。",
+    title: "课程结构",
+    description: "管理分类、课程、课时、章节顺序以及学生端开放规则。",
     icon: BookOpenCheck,
     capability: "manageContent",
   },
@@ -65,9 +66,15 @@ const learningSections: Record<string, SectionDefinition> = {
     capability: "manageAssessments",
   },
   textbooks: {
-    title: "互动教材",
-    description: "管理教材、版本、章节、词汇和语法。",
+    title: "教材制作",
+    description: "按课程章节制作教材内容、维护版本并发布给学生。",
     icon: PanelsTopLeft,
+    capability: "manageContent",
+  },
+  "teaching-scripts": {
+    title: "教学脚本",
+    description: "按节点编排教学 Agent 的讲解、提问、反馈和发布版本。",
+    icon: Workflow,
     capability: "manageContent",
   },
   grades: {

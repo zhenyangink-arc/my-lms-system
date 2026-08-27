@@ -64,14 +64,8 @@ function catalogCompleteness(
     checks.push(
       [Boolean(lesson.description), "简介"],
       [Boolean(lesson.cover_object_key), "配图"],
-      [
-        Boolean(
-          lesson.video_object_key || lesson.video_url || lesson.content_text,
-        ),
-        "主体内容",
-      ],
-      [Boolean(lesson.learning_objectives), "学习目标"],
-      [Boolean(lesson.summary_text), "课时小结"],
+      [Number(lesson.duration_minutes) > 0, "时长"],
+      [childCount > 0, "章节"],
     );
   } else {
     const chapter = node as CourseCatalogChapter;
@@ -288,10 +282,12 @@ export default async function CourseCatalogListing({
   searchParams,
   studentAppId,
   routeBasePath,
+  textbookRoute,
 }: {
   searchParams: Promise<{ node?: string; id?: string }>;
   studentAppId?: string;
   routeBasePath?: string;
+  textbookRoute?: string;
 }) {
   const selection = await searchParams;
   const result = await getCourseManagementData(selection, studentAppId);
@@ -328,7 +324,7 @@ export default async function CourseCatalogListing({
         </ManagementNotice>
       )}
       <ManagementMetricStrip
-        label="课程目录概况"
+        label="课程结构概况"
         items={[
           {
             label: "顶级分类",
@@ -343,26 +339,33 @@ export default async function CourseCatalogListing({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="text-base font-semibold text-[var(--foreground)]">
-              课程目录结构
+              课程结构
             </h2>
             <p className="mt-1 text-xs text-[var(--foreground-muted)]">
-              按分类、课程、课时和章节查看并维护平台课程层级。
+              先建立课程层级与开放规则，再进入教材制作填写学生真正学习的内容。
             </p>
           </div>
-          {result.canManage && (
-            <CourseCatalogCreateDialog
-              primary
-              studentAppId={studentAppId}
-              target={{
-                kind: "category",
-                title: "新建顶级分类",
-                sortOrder:
-                  result.categories.filter((item) => !item.parent_id).length *
-                    10 +
-                  10,
-              }}
-            />
-          )}
+          <div className="flex items-center gap-2">
+            {textbookRoute && (
+              <Link href={textbookRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
+                进入教材制作
+              </Link>
+            )}
+            {result.canManage && (
+              <CourseCatalogCreateDialog
+                primary
+                studentAppId={studentAppId}
+                target={{
+                  kind: "category",
+                  title: "新建顶级分类",
+                  sortOrder:
+                    result.categories.filter((item) => !item.parent_id).length *
+                      10 +
+                    10,
+                }}
+              />
+            )}
+          </div>
         </div>
         <CourseCatalogTreeTable
           data={rows}
@@ -382,10 +385,10 @@ export default async function CourseCatalogListing({
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h2 className="text-base font-semibold text-[var(--foreground)]">
-                内容与资料详情
+                结构与资料详情
               </h2>
               <p className="mt-1 text-xs text-[var(--foreground-muted)]">
-                查看当前节点的封面、正文、教学信息和课时资料。
+                查看当前节点的基础资料、顺序、开放状态和关联资源。
               </p>
             </div>
             <Link
@@ -407,6 +410,7 @@ export default async function CourseCatalogListing({
               resourceErrorMessage={result.resourceErrorMessage}
               canManage={result.canManage}
               canPermanentlyDeleteResources={result.canPermanentlyDeleteResources}
+              textbookHref={textbookRoute}
             />
           ) : (
             <CourseCatalogNodeView kind="chapter" node={selectedNode as CourseCatalogChapter} />

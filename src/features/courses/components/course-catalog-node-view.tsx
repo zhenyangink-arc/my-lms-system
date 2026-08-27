@@ -30,6 +30,7 @@ type CourseCatalogNodeViewProps =
       resourceErrorMessage?: string | null;
       canManage: boolean;
       canPermanentlyDeleteResources: boolean;
+      textbookHref?: string;
     }
   | {
       kind: "chapter";
@@ -99,6 +100,7 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
         resourceErrorMessage={props.resourceErrorMessage}
         canManage={props.canManage}
         canPermanentlyDeleteResources={props.canPermanentlyDeleteResources}
+        textbookHref={props.textbookHref}
       />
     );
   }
@@ -147,9 +149,9 @@ export function CourseCatalogNodeView(props: CourseCatalogNodeViewProps) {
               <dd className="mt-1 text-xs font-semibold">{NODE_LABELS[kind]}</dd>
             </div>
             <div className="bg-[var(--card)] px-3 py-2">
-              <dt className="text-[10px] text-[var(--foreground-muted)]">发布状态</dt>
+              <dt className="text-[10px] text-[var(--foreground-muted)]">学生端状态</dt>
               <dd className="mt-1 text-xs font-semibold">
-                {node.is_published ? "已发布" : "草稿"}
+                {node.is_published ? "已上架" : "未上架"}
               </dd>
             </div>
             <div className="bg-[var(--card)] px-3 py-2">

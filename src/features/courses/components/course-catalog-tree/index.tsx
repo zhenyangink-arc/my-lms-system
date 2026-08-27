@@ -142,7 +142,7 @@ export function CourseCatalogTreeTable({
         </p>
       }
     >
-      <Table className="min-w-[1040px]">
+      <Table className="min-w-[860px]">
         <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
@@ -161,7 +161,7 @@ export function CourseCatalogTreeTable({
         </TableHeader>
         <TableBody>
           {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id}>
+            <TableRow key={row.id} className={row.depth === 0 ? "bg-[color-mix(in_srgb,var(--surface-soft)_55%,var(--card))]" : undefined}>
               {row.getVisibleCells().map((cell) => (
                 <TableCell key={cell.id} className="px-4 py-3 text-xs">
                   {flexRender(cell.column.columnDef.cell, cell.getContext())}

@@ -5,10 +5,13 @@ import {
   DataTableViewOptions,
   type DataTableViewOption,
 } from "@/components/ui/table/data-table-view-options";
+import type { ModelUsageProvider } from "../../api/types";
 
 export type ModelUsageFilters = {
   query: string;
   kind: "all" | "platform" | "organization";
+  provider: "all" | ModelUsageProvider;
+  model: string;
   from: string;
   to: string;
 };
@@ -19,15 +22,19 @@ export function ModelUsageTableToolbar({
   canViewAllTenants,
   invalidDateRange,
   viewOptions,
+  modelOptions,
 }: {
   filters: ModelUsageFilters;
   onFiltersChange: (filters: ModelUsageFilters) => void;
   canViewAllTenants: boolean;
   invalidDateRange: boolean;
   viewOptions: DataTableViewOption[];
+  modelOptions: string[];
 }) {
   const hasFilters =
-    Boolean(filters.query || filters.from || filters.to) || filters.kind !== "all";
+    Boolean(filters.query || filters.from || filters.to) ||
+    filters.kind !== "all" ||
+    (canViewAllTenants && Boolean(filters.model || filters.provider !== "all"));
 
   return (
     <div className="space-y-2">
@@ -61,6 +68,41 @@ export function ModelUsageTableToolbar({
             </select>
           </label>
         )}
+        {canViewAllTenants && (
+          <>
+            <label>
+              <span className="sr-only">模型供应商</span>
+              <select
+                value={filters.provider}
+                onChange={(event) =>
+                  onFiltersChange({
+                    ...filters,
+                    provider: event.target.value as ModelUsageFilters["provider"],
+                    model: "",
+                  })
+                }
+                className="h-9 min-w-32 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
+              >
+                <option value="all">全部供应商</option>
+                <option value="qwen">Qwen</option>
+                <option value="deepseek">DeepSeek</option>
+                <option value="self_hosted">其他 / 自托管</option>
+                <option value="unknown">来源待确认</option>
+              </select>
+            </label>
+            <label>
+              <span className="sr-only">具体模型</span>
+              <select
+                value={filters.model}
+                onChange={(event) => onFiltersChange({ ...filters, model: event.target.value })}
+                className="h-9 min-w-40 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs font-medium"
+              >
+                <option value="">全部模型</option>
+                {modelOptions.map((model) => <option key={model} value={model}>{model}</option>)}
+              </select>
+            </label>
+          </>
+        )}
         <label className="flex h-9 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-2.5 text-xs">
           <span className="whitespace-nowrap text-[var(--foreground-muted)]">开始日期</span>
           <input
@@ -83,7 +125,7 @@ export function ModelUsageTableToolbar({
           {hasFilters && (
             <button
               type="button"
-              onClick={() => onFiltersChange({ query: "", kind: "all", from: "", to: "" })}
+              onClick={() => onFiltersChange({ query: "", kind: "all", provider: "all", model: "", from: "", to: "" })}
               className="h-9 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)]"
             >
               清除筛选

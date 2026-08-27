@@ -4,6 +4,7 @@ import { requireExecutive } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   ModelUsageLog,
+  LearningAgentModelConfig,
   ModelUsageRecord,
   ModelUsageResult,
   ModelUsageTableRow,
@@ -27,6 +28,10 @@ function total(
 function toUsageLog(row: ModelUsageRecord): ModelUsageLog {
   return {
     createdAt: row.created_at,
+    provider: row.provider,
+    model: row.model,
+    featureCode: row.feature_code,
+    agentCode: row.agent_code,
     inputTokens: row.input_tokens,
     outputTokens: row.output_tokens,
     totalTokens: row.total_tokens,
@@ -39,6 +44,8 @@ function createModelUsageTableRow({
   slug,
   kind,
   isCurrent,
+  provider,
+  model,
   rows,
   now,
 }: {
@@ -47,6 +54,8 @@ function createModelUsageTableRow({
   slug: string;
   kind: ModelUsageTableRow["kind"];
   isCurrent: boolean;
+  provider: ModelUsageRecord["provider"];
+  model: string;
   rows: ModelUsageRecord[];
   now: number;
 }): ModelUsageTableRow {
@@ -67,6 +76,8 @@ function createModelUsageTableRow({
     slug,
     kind,
     isCurrent,
+    provider,
+    model,
     totalTokens: total(rows, "total_tokens"),
     inputTokens: total(rows, "input_tokens"),
     outputTokens: total(rows, "output_tokens"),
@@ -78,6 +89,17 @@ function createModelUsageTableRow({
   };
 }
 
+function groupByProviderAndModel(rows: ModelUsageRecord[]) {
+  const groups = new Map<string, ModelUsageRecord[]>();
+  for (const row of rows) {
+    const key = `${row.provider}\u0000${row.model}`;
+    const current = groups.get(key) ?? [];
+    current.push(row);
+    groups.set(key, current);
+  }
+  return Array.from(groups.values());
+}
+
 export async function getModelUsageData(): Promise<ModelUsageResult> {
   const { supabase, role, tenant } = await requireExecutive();
   const canViewAllTenants = role === "platform_super_admin";
@@ -87,7 +109,7 @@ export async function getModelUsageData(): Promise<ModelUsageResult> {
     dataClient
       .from("ai_token_usage")
       .select(
-        "tenant_id,user_id,input_tokens,output_tokens,total_tokens,created_at",
+        "tenant_id,user_id,provider,model,feature_code,agent_code,input_tokens,output_tokens,total_tokens,created_at",
       )
       .order("created_at", { ascending: false })
       .limit(MODEL_USAGE_QUERY_LIMIT),
@@ -101,8 +123,45 @@ export async function getModelUsageData(): Promise<ModelUsageResult> {
         }),
   ]);
 
+  const [agentProfilesResult, agentSecretsResult] = canViewAllTenants
+    ? await Promise.all([
+        dataClient
+          .from("learning_agent_profiles")
+          .select("id,agent_code,subject_code,display_name")
+          .eq("status", "published")
+          .order("created_at"),
+        dataClient
+          .from("learning_agent_profile_secrets")
+          .select("agent_profile_id,provider,model"),
+      ])
+    : [
+        { data: [], error: null },
+        { data: [], error: null },
+      ];
+
   const rows = (data ?? []) as ModelUsageRecord[];
   const tenants = (tenantsResult.data ?? []) as ModelUsageTenant[];
+  const secretByProfileId = new Map(
+    (agentSecretsResult.data ?? []).map((item) => [String(item.agent_profile_id), item]),
+  );
+  const agentModelConfigs: LearningAgentModelConfig[] = canViewAllTenants
+    ? (agentProfilesResult.data ?? []).flatMap((profile) => {
+        const secret = secretByProfileId.get(String(profile.id));
+        if (!secret || (secret.provider !== "qwen" && secret.provider !== "deepseek")) {
+          return [];
+        }
+        const displayName = profile.display_name && typeof profile.display_name === "object"
+          ? String((profile.display_name as Record<string, unknown>)["zh-CN"] ?? profile.agent_code)
+          : String(profile.agent_code);
+        return [{
+          agentCode: String(profile.agent_code),
+          displayName,
+          subjectCode: String(profile.subject_code),
+          provider: secret.provider,
+          model: String(secret.model),
+        }];
+      })
+    : [];
   const usageUserIds = Array.from(
     new Set(
       rows
@@ -150,28 +209,43 @@ export async function getModelUsageData(): Promise<ModelUsageResult> {
     (row) => now - new Date(row.created_at).getTime() < DAY_IN_MILLISECONDS,
   );
   const platformTableRows: ModelUsageTableRow[] = canViewAllTenants
-    ? [
-        createModelUsageTableRow({
-          id: "platform",
+    ? groupByProviderAndModel(platformRows).map((providerRows) => {
+        const first = providerRows[0];
+        return createModelUsageTableRow({
+          id: `platform-${first.provider}-${first.model}`,
           name: "平台负责人",
           slug: "platform",
           kind: "platform",
           isCurrent: false,
-          rows: platformRows,
+          provider: first.provider,
+          model: first.model,
+          rows: providerRows,
           now,
-        }),
-      ]
+        });
+      })
     : [];
-  const organizationRows = visibleTenantIds.map((tenantId) => {
+  const organizationRows = visibleTenantIds.flatMap((tenantId) => {
     const item = tenantById.get(tenantId);
-    return createModelUsageTableRow({
-      id: `tenant-${tenantId}`,
-      name: item?.name ?? "未识别机构",
-      slug: item?.slug ?? tenantId,
-      kind: "organization",
-      isCurrent: tenantId === tenant?.id,
-      rows: rowsByTenant.get(tenantId) ?? [],
-      now,
+    const tenantUsageRows = rowsByTenant.get(tenantId) ?? [];
+    const groups = canViewAllTenants
+      ? groupByProviderAndModel(tenantUsageRows)
+      : [tenantUsageRows];
+
+    return groups.map((providerRows) => {
+      const first = providerRows[0];
+      return createModelUsageTableRow({
+        id: canViewAllTenants
+          ? `tenant-${tenantId}-${first.provider}-${first.model}`
+          : `tenant-${tenantId}`,
+        name: item?.name ?? "未识别机构",
+        slug: item?.slug ?? tenantId,
+        kind: "organization",
+        isCurrent: tenantId === tenant?.id,
+        provider: canViewAllTenants ? first.provider : "unknown",
+        model: canViewAllTenants ? first.model : "全部模型",
+        rows: providerRows,
+        now,
+      });
     });
   });
 
@@ -182,8 +256,13 @@ export async function getModelUsageData(): Promise<ModelUsageResult> {
     canViewAllTenants,
     queryLimit: MODEL_USAGE_QUERY_LIMIT,
     hasQueryError: Boolean(
-      error || tenantsResult.error || platformProfilesResult.error,
+      error ||
+      tenantsResult.error ||
+      platformProfilesResult.error ||
+      agentProfilesResult.error ||
+      agentSecretsResult.error,
     ),
+    agentModelConfigs,
     totals: {
       totalTokens: total(rows, "total_tokens"),
       inputTokens: total(rows, "input_tokens"),

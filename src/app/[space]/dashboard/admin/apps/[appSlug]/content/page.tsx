@@ -28,6 +28,7 @@ export default async function ManagementAppContentRoute({
         })}
         studentAppId={context.access.appId}
         routeBasePath={`${context.access.appPath}/content`}
+        textbookRoute={`${context.access.appPath}/textbooks`}
       />
     </ManagementApplicationSectionFrame>
   );

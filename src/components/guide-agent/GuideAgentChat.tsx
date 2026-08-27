@@ -372,12 +372,12 @@ export function GuideAgentChat({
         throw new Error(
           typeof errorMessage === "string"
             ? errorMessage
-            : "Guide Agent request failed",
+            : "导航助手请求失败",
         );
       }
 
       if (!response.body) {
-        throw new Error("Guide Agent returned an empty response stream");
+        throw new Error("导航助手没有返回内容");
       }
 
       const reader = response.body.getReader();
@@ -390,7 +390,7 @@ export function GuideAgentChat({
 
         const frame = parseAgentChatStreamFrame(line);
         if (!frame) {
-          throw new Error("Guide Agent returned an invalid stream frame");
+          throw new Error("导航助手返回的数据格式不正确");
         }
 
         if (frame.type === "error") {
@@ -401,7 +401,7 @@ export function GuideAgentChat({
 
         if (frame.type === "done") {
           if (!frame.answer.trim() || !frame.conversation_id.trim()) {
-            throw new Error("Guide Agent returned an incomplete response");
+            throw new Error("导航助手回复不完整");
           }
 
           setConversationId(frame.conversation_id);
@@ -431,7 +431,7 @@ export function GuideAgentChat({
       }
 
       if (!streamCompleted) {
-        throw new Error("Guide Agent response stream ended unexpectedly");
+        throw new Error("导航助手回复意外中断");
       }
     } catch (error) {
       console.error("[GuideAgentChat] Unable to send message", error);
@@ -586,7 +586,7 @@ export function GuideAgentChat({
       ) : (
         <button
           type="button"
-          aria-label={isOpen ? "收起智能辅助" : "打开智能辅助"}
+          aria-label={isOpen ? "收起 UPLY 导航助手" : "打开 UPLY 导航助手"}
           aria-expanded={isOpen}
           aria-controls="guide-agent-chat-panel"
           onClick={() => {
@@ -609,7 +609,7 @@ export function GuideAgentChat({
               }}
             />
           </span>
-          <span>智能辅助</span>
+          <span>导航助手</span>
         </button>
       )}
 
@@ -617,7 +617,7 @@ export function GuideAgentChat({
         <section
           id="guide-agent-chat-panel"
           role="dialog"
-          aria-label="智能学习助手对话"
+          aria-label="UPLY 导航助手对话"
           className={`${triggerVariant === "dashboard" ? "student-system-floating-layer " : ""}fixed inset-x-3 bottom-36 z-[90] flex h-[min(620px,calc(100dvh-10rem))] flex-col overflow-hidden rounded-[20px] border shadow-[0_24px_70px_rgba(15,23,42,0.22)] backdrop-blur-xl animate-in fade-in slide-in-from-bottom-3 sm:inset-x-auto sm:right-6 sm:w-[390px] md:bottom-24`}
           style={{
             color: "var(--foreground)",
@@ -650,7 +650,7 @@ export function GuideAgentChat({
               </span>
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5 text-sm font-black">
-                  Guide Agent
+                  UPLY 导航助手
                   <Sparkles
                     size={14}
                     style={{ color: "var(--status-warning)" }}
@@ -667,7 +667,7 @@ export function GuideAgentChat({
               </span>
               <button
                 type="button"
-                aria-label="关闭智能学习助手"
+                aria-label="关闭 UPLY 导航助手"
                 onClick={() => setIsOpen(false)}
                 className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl transition hover:scale-105"
                 style={{
