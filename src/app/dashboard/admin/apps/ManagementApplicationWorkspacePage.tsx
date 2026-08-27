@@ -384,24 +384,24 @@ export async function ManagementApplicationWorkspacePage({
         {moduleGroups.map(({ group, items }) => (
           <div key={group}>
             <p className="app-muted-text mb-2 text-xs font-semibold">{group}</p>
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <div className="grid gap-2 sm:grid-cols-3 xl:grid-cols-6">
               {items.map((module) => {
                 const Icon = module.icon;
                 const enabled = !module.capability || access.capabilities[module.capability];
                 const content = (
                   <>
-                    <span className="management-module-icon flex size-9 items-center justify-center border">
-                      <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
+                    <span className="management-module-icon flex size-7 items-center justify-center border">
+                      <Icon size={14} strokeWidth={1.8} aria-hidden="true" />
                     </span>
-                    <h3 className="mt-4 text-sm font-semibold">{module.title}</h3>
-                    <span className="mt-auto flex items-center justify-between pt-4 text-xs font-medium">
+                    <h3 className="mt-2.5 text-xs font-semibold leading-tight">{module.title}</h3>
+                    <span className="mt-auto flex items-center justify-between pt-2 text-[11px] font-medium">
                       <span className={enabled ? "text-[var(--primary-hover)]" : "app-muted-text"}>
-                        {enabled ? "进入模块" : "当前账号无权限"}
+                        {enabled ? "进入" : "无权限"}
                       </span>
                       {enabled && (
-                        <span className="inline-flex items-center gap-1.5">
+                        <span className="inline-flex items-center gap-1">
                           <RouteLinkStatus />
-                          <ArrowRight size={14} aria-hidden="true" />
+                          <ArrowRight size={12} aria-hidden="true" />
                         </span>
                       )}
                     </span>
@@ -413,12 +413,12 @@ export async function ManagementApplicationWorkspacePage({
                     key={module.key}
                     href={`${access.appPath}/${module.key}`}
                     aria-label={`进入${module.title}模块`}
-                    className="management-module-card flex min-h-28 flex-col border p-4 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+                    className="management-module-card flex min-h-20 flex-col border p-3 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
                   >
                     {content}
                   </Link>
                 ) : (
-                  <div key={module.key} className="management-module-card flex min-h-28 flex-col border p-4 opacity-55" aria-disabled="true">
+                  <div key={module.key} className="management-module-card flex min-h-20 flex-col border p-3 opacity-55" aria-disabled="true">
                     {content}
                   </div>
                 );
