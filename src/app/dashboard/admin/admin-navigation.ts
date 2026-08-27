@@ -197,7 +197,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
   },
   {
     label: "对话陪练管理",
-    description: "管理会话陪练场景，查看学生练习记录。",
+    description: "管理韩语应用的会话陪练场景，查看学生练习记录。",
     href: "/dashboard/admin/conversation-practice",
     icon: MessageSquareText,
     group: "content",
@@ -208,7 +208,7 @@ export const ADMIN_NAVIGATION: AdminNavigationItem[] = [
   },
   {
     label: "标准题库",
-    description: "维护平台标准化题目，供各应用组卷使用。",
+    description: "维护韩语应用的标准化题目，供组卷使用。",
     href: "/dashboard/admin/question-bank",
     icon: ListChecks,
     group: "content",
