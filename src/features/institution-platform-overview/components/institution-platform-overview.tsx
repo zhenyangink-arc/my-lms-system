@@ -209,6 +209,7 @@ function PlatformInstitutionComparison({ institutions }: { institutions: Institu
           title="机构学习使用对比"
           description="平台负责人当前是全局角色，因此这里汇总全部正常运行机构，只返回机构级匿名统计，不返回学生身份或明细。"
           headingLevel={2}
+          titleClassName="management-secondary-heading"
           hintLabel="查看平台汇总范围"
         />
       </div>
@@ -285,6 +286,7 @@ function PlatformRuleDefaults() {
         title="当前平台学习规则"
         description="第一版使用集中代码默认值，暂不提供编辑入口；任务优先级继续复用学生首页的确定性排序。"
         headingLevel={2}
+        titleClassName="management-secondary-heading"
         hintLabel="查看平台规则来源"
       />
       <dl className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
@@ -317,7 +319,7 @@ export function InstitutionPlatformOverview({
   if (snapshot.scope === "platform") {
     return (
       <section className="space-y-4" aria-labelledby="learning-overview-title">
-        <h2 id="learning-overview-title" className="text-lg font-semibold">学习使用概览</h2>
+        <h2 id="learning-overview-title" className="management-secondary-heading">学习使用概览</h2>
         <PlatformInstitutionComparison institutions={snapshot.institutions} />
         <PlatformRuleDefaults />
       </section>
@@ -327,7 +329,7 @@ export function InstitutionPlatformOverview({
   const institution = snapshot.institutions[0];
   return (
     <section className="space-y-4" aria-labelledby="learning-overview-title">
-      <h2 id="learning-overview-title" className="text-lg font-semibold">机构学习概览</h2>
+      <h2 id="learning-overview-title" className="management-secondary-heading">机构学习概览</h2>
       {institution ? (
         <>
           <InstitutionMetrics institution={institution} />

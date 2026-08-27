@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 
 export type ManagementPageHeaderProps = {
   title: string;
@@ -25,27 +26,24 @@ type ManagementPageProps = ManagementPageHeaderProps & {
 export function ManagementPageHeader({
   title,
   description,
-  eyebrow = "管理工作台",
-  icon: Icon,
   action,
   meta,
   className,
 }: ManagementPageHeaderProps) {
   return (
-    <header
-      className={cn("management-page-hero", className)}
-      data-has-icon={Icon ? "true" : "false"}
-    >
+    <header className={cn("management-page-hero", className)}>
       <div className="management-page-heading">
-        {Icon && (
-          <span className="management-page-icon" aria-hidden="true">
-            <Icon size={20} strokeWidth={1.8} />
-          </span>
-        )}
         <div className="min-w-0">
-          <p className="management-page-eyebrow">{eyebrow}</p>
-          <h1>{title}</h1>
-          {description && <p className="management-page-lead">{description}</p>}
+          {description ? (
+            <CardTitleWithHint
+              headingLevel={1}
+              titleClassName=""
+              title={title}
+              description={description}
+            />
+          ) : (
+            <h1>{title}</h1>
+          )}
         </div>
       </div>
 
