@@ -22,6 +22,7 @@ import {
   type ManagementAppCatalogItem,
 } from "@/lib/management-apps";
 import type { StudentAppSlug } from "@/lib/student-apps";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { createClient } from "@/lib/supabase/server";
 
 type CountResult = { count: number | null; error: unknown };
@@ -79,11 +80,13 @@ async function getAppMetrics(
     .select("student_id", { count: "exact", head: true })
     .eq("app_id", item.appId)
     .eq("status", "active");
+  // learning_assignments 的 RLS 只认当前租户，平台负责人没有租户上下文会恒为 0，
+  // 这里用 admin client 单独绕过该表的这一处读取；其余表的平台负责人豁免已在 RLS 里处理。
   let workItemQuery = item.app.kind === "service"
     ? client
         .from("student_university_targets")
         .select("id", { count: "exact", head: true })
-    : client
+    : (access.tenantId ? client : createAdminClient())
         .from("learning_assignments")
         .select("id", { count: "exact", head: true })
         .eq("student_app_id", item.appId);
