@@ -453,19 +453,20 @@ export function KoreanLearningCenter({
                     return (
                       <article
                         key={item.lesson.id}
-                        className="group relative aspect-video overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transform-none"
+                        className="app-card group overflow-hidden rounded-[24px] border border-[var(--border-subtle)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transform-none"
                       >
-                        <Image
-                          src={`/api/course-assets/lesson/${item.lesson.id}`}
-                          alt={item.lesson.cover_alt || `${item.lesson.title}封面`}
-                          fill
-                          sizes="(min-width: 1280px) 22vw, (min-width: 768px) 40vw, 100vw"
-                          unoptimized
-                          className="object-cover transition-transform duration-500 group-hover:scale-[1.018] motion-reduce:transition-none"
-                          style={{
-                            objectPosition: item.lesson.cover_focal_point || "50% 50%",
-                          }}
-                        />
+                        <div className="relative aspect-video overflow-hidden bg-[var(--surface-soft)]">
+                          <Image
+                            src={`/api/course-assets/lesson/${item.lesson.id}`}
+                            alt={item.lesson.cover_alt || `${item.lesson.title}封面`}
+                            fill
+                            sizes="(min-width: 1280px) 22vw, (min-width: 768px) 40vw, 100vw"
+                            unoptimized
+                            className="object-cover transition-transform duration-500 group-hover:scale-[1.018] motion-reduce:transition-none"
+                            style={{
+                              objectPosition: item.lesson.cover_focal_point || "50% 50%",
+                            }}
+                          />
 
                         <div
                           className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/10"
@@ -550,6 +551,111 @@ export function KoreanLearningCenter({
                                   : "开始学习"}
                           </HangulLessonLaunchLink>
                         </div>
+
+                        </div>
+
+                        {lessonChapters.length > 0 ? (
+                          <details
+                            open={status === "in_progress"}
+                            className="group/cover-chapters border-t border-[var(--border-subtle)]"
+                          >
+                            <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 px-3.5 py-2 text-xs font-bold outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+                              <span>
+                                章节目录 · {completedChapterCount}/{lessonChapters.length}
+                              </span>
+                              <span className="inline-flex items-center gap-1.5 app-muted-text">
+                                查看章节
+                                <ChevronDown
+                                  size={15}
+                                  className="transition-transform group-open/cover-chapters:rotate-180"
+                                  aria-hidden="true"
+                                />
+                              </span>
+                            </summary>
+
+                            <ol className="space-y-1 border-t border-[var(--border-subtle)] bg-[var(--surface-soft)] p-2">
+                              {lessonChapters.map((chapter, chapterIndex) => {
+                                const chapterCompleted =
+                                  status === "completed" ||
+                                  completedChapterSlugSet.has(chapter.slug);
+                                const chapterProgress = chapterCompleted
+                                  ? 100
+                                  : (chapterProgressBySlug.get(chapter.slug) ?? 0);
+                                const chapterUnlocked =
+                                  chapterCompleted ||
+                                  chapterProgress > 0 ||
+                                  (item.unlocked && unlockedChapterSlugs.has(chapter.slug));
+                                const chapterStatusLabel = chapterCompleted
+                                  ? "已完成"
+                                  : chapterProgress > 0
+                                    ? `学习中 ${chapterProgress}%`
+                                    : chapterUnlocked
+                                      ? "可学习"
+                                      : "待解锁";
+                                const chapterContent = (
+                                  <>
+                                    <span
+                                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-[11px] font-bold"
+                                      style={{
+                                        color: chapterCompleted
+                                          ? "var(--status-success)"
+                                          : chapterUnlocked
+                                            ? centerColor
+                                            : "var(--foreground-muted)",
+                                        backgroundColor: "var(--card)",
+                                      }}
+                                    >
+                                      {chapterCompleted ? (
+                                        <CheckCircle2 size={15} aria-hidden="true" />
+                                      ) : (
+                                        getChapterSequenceLabel(lessonChapters, chapterIndex)
+                                      )}
+                                    </span>
+                                    <span className="min-w-0 flex-1 text-xs font-bold">
+                                      {chapter.title}
+                                    </span>
+                                    <span className="shrink-0 text-[10px] font-bold app-muted-text">
+                                      {chapterStatusLabel}
+                                    </span>
+                                    {chapterUnlocked ? (
+                                      <LockOpen
+                                        size={16}
+                                        className={
+                                          chapterCompleted
+                                            ? "shrink-0 -scale-x-100 text-[var(--status-success)]"
+                                            : "shrink-0 -scale-x-100 text-[var(--support)]"
+                                        }
+                                        aria-label={chapterCompleted ? "已完成，已解锁" : "已解锁"}
+                                      />
+                                    ) : (
+                                      <LockKeyhole size={13} aria-label="待解锁" />
+                                    )}
+                                  </>
+                                );
+
+                                return (
+                                  <li key={chapter.id}>
+                                    {chapterUnlocked ? (
+                                      <Link
+                                        href={`${lessonHref}?chapter=${encodeURIComponent(chapter.slug)}`}
+                                        className="flex min-h-10 items-center gap-2 rounded-lg border border-transparent px-2.5 py-1.5 transition hover:border-[var(--border)] hover:bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                                      >
+                                        {chapterContent}
+                                      </Link>
+                                    ) : (
+                                      <div
+                                        className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 py-1.5 opacity-60"
+                                        aria-label={`${chapter.title}，${chapterStatusLabel}`}
+                                      >
+                                        {chapterContent}
+                                      </div>
+                                    )}
+                                  </li>
+                                );
+                              })}
+                            </ol>
+                          </details>
+                        ) : null}
                       </article>
                     );
                   }
