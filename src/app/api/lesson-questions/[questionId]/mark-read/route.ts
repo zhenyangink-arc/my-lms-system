@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { getAuthContext } from "@/lib/auth";
+import { getStudentAppBasePath } from "@/lib/student-apps";
 
 
 /*
@@ -13,7 +14,7 @@ import { getAuthContext } from "@/lib/auth";
 
   安全考虑：
   1. .eq("student_id", user.id) 确保只能标记自己的提问，不能改别人的
-  2. redirect 目标做了白名单校验，只允许跳到 /dashboard/courses/ 开头的路径，
+  2. redirect 目标做了白名单校验，只允许跳到正式租户应用的课程路径，
      防止被构造成任意跳转到外部地址（open redirect）
 */
 export async function POST(
@@ -32,7 +33,7 @@ export async function POST(
     return NextResponse.redirect(new URL("/account-disabled", request.url), 303);
   }
 
-  const { supabase, user } = auth;
+  const { supabase, user, tenant } = auth;
 
   const { searchParams } = new URL(request.url);
   const redirectTo = searchParams.get("to");
@@ -53,10 +54,13 @@ export async function POST(
     return NextResponse.json({ error: "Question not found" }, { status: 404 });
   }
 
+  const tenantCoursePathPattern = /^\/[^/]+\/apps\/(?:korean|study-abroad)\/courses(?:[/?#]|$)/;
   const safeRedirectPath =
-    redirectTo && redirectTo.startsWith("/dashboard/courses/")
+    redirectTo && tenantCoursePathPattern.test(redirectTo)
       ? redirectTo
-      : "/dashboard";
+      : tenant?.slug
+        ? getStudentAppBasePath(tenant.slug, "korean")
+        : "/login";
 
   return NextResponse.redirect(new URL(safeRedirectPath, request.url), 303);
 }

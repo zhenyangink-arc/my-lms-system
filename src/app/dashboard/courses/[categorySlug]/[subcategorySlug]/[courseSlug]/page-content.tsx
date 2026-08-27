@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
 import {
   ArrowLeft,
@@ -15,6 +16,7 @@ import {
 
 import { requireActiveUser } from "@/lib/auth";
 import { isPlatformCourseAuditorRole } from "@/lib/admin";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
   getCourseLevelLabel,
   getLessonTypeLabel,
@@ -66,6 +68,9 @@ type Lesson = {
   prerequisite_chapter_id: string | null;
   available_from: string | null;
   is_manually_locked: boolean | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
 };
 
 type LessonProgress = {
@@ -124,12 +129,14 @@ function getLessonLockLabel(unlockMode: string | null) {
 
 export default async function CourseDetailPage({
   params,
+  courseBasePath,
 }: {
   params: Promise<{
     categorySlug: string;
     subcategorySlug: string;
     courseSlug: string;
   }>;
+  courseBasePath: string;
 }) {
   const { categorySlug, subcategorySlug, courseSlug } = await params;
 
@@ -203,7 +210,7 @@ export default async function CourseDetailPage({
   const course = courseData as Course;
 
   if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
-    redirect(`/dashboard/courses/${parentCategory.slug}#course-${course.slug}`);
+    redirect(`${courseBasePath}/${parentCategory.slug}#course-${course.slug}`);
   }
 
   if (!bypassLearningSequence) {
@@ -259,7 +266,7 @@ export default async function CourseDetailPage({
       completedCourseIds,
     });
     if (!courseUnlocked) {
-      redirect(`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`);
+      redirect(`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}`);
     }
   }
 
@@ -269,7 +276,7 @@ export default async function CourseDetailPage({
   const { data: lessonData, error: lessonError } = await supabase
     .from("lessons")
     .select(
-      "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked"
+      "id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked, cover_object_key, cover_alt, cover_focal_point"
     )
     .eq("course_id", course.id)
     .eq("is_published", true)
@@ -382,7 +389,7 @@ export default async function CourseDetailPage({
         {/* 返回路径 */}
         <nav className="flex flex-wrap items-center gap-3" aria-label="课程上下文导航">
           <Link
-            href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
+            href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}`}
             className="inline-flex items-center gap-2 rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             <ArrowLeft size={16} />
@@ -392,7 +399,7 @@ export default async function CourseDetailPage({
           <span className="text-sm text-gray-300">/</span>
 
           <Link
-            href={`/dashboard/courses/${parentCategory.slug}`}
+            href={`${courseBasePath}/${parentCategory.slug}`}
             className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             {parentCategory.title}
@@ -401,7 +408,7 @@ export default async function CourseDetailPage({
           <span className="text-sm text-gray-300">/</span>
 
           <Link
-            href="/dashboard/courses"
+            href={courseBasePath}
             className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
           >
             我的课程
@@ -549,7 +556,13 @@ export default async function CourseDetailPage({
           </div>
 
           {lessons.length > 0 ? (
-            <div className="space-y-4">
+            <div
+              className={
+                isKoreanBeginner
+                  ? "grid gap-5 lg:grid-cols-2 xl:grid-cols-3"
+                  : "space-y-4"
+              }
+            >
               {lessons.map((lesson, index) => {
                 const progress = progressMap.get(lesson.id);
                 const curatedLesson = isKoreanBeginner
@@ -576,13 +589,121 @@ export default async function CourseDetailPage({
                 const isInProgress = status === "in_progress";
                 const statusAccent = getStatusAccent(status);
 
+                if (lesson.cover_object_key) {
+                  return (
+                    <article
+                      key={lesson.id}
+                      className="group relative aspect-video overflow-hidden rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transform-none"
+                    >
+                      <Image
+                        src={`/api/course-assets/lesson/${lesson.id}`}
+                        alt={lesson.cover_alt || `${lesson.title}封面`}
+                        fill
+                        sizes="(min-width: 1280px) 30vw, (min-width: 1024px) 45vw, 100vw"
+                        unoptimized
+                        className="object-cover transition-transform duration-500 group-hover:scale-[1.018] motion-reduce:transition-none"
+                        style={{
+                          objectPosition: lesson.cover_focal_point || "50% 50%",
+                        }}
+                      />
+
+                      <div
+                        className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/10"
+                        aria-hidden="true"
+                      />
+
+                      <div className="absolute left-4 right-4 top-4 flex items-start justify-end gap-1.5">
+                        <CardTitleWithHint
+                          title={curatedLesson?.title ?? lesson.title}
+                          description={
+                            <span>
+                              {(curatedLesson?.description ?? lesson.description) || "暂无课时简介"}
+                              {curatedLesson ? ` 学习重点：${curatedLesson.focus}` : ""}
+                            </span>
+                          }
+                          headingLevel={4}
+                          titleClassName="sr-only"
+                          className="drop-shadow-sm"
+                          hintClassName="!h-8 !w-8 !pt-1 text-slate-700"
+                          hintLabel={`查看${lesson.title}课程说明`}
+                        />
+                        <span
+                          className="inline-flex min-h-8 items-center gap-1.5 rounded-full border border-white/60 bg-white/90 px-3 text-xs font-bold shadow-sm backdrop-blur-sm"
+                          style={{ color: statusAccent }}
+                        >
+                          {isCompleted ? <CheckCircle2 size={13} /> : null}
+                          {statusLabel}
+                        </span>
+                      </div>
+
+                      <div className="absolute inset-x-0 bottom-0 p-4 text-white">
+                        <div className="mb-2 flex items-center justify-between gap-3 text-xs font-semibold">
+                          <span className="inline-flex items-center gap-1.5">
+                            <Clock size={13} />
+                            {lesson.duration_minutes} 分钟
+                          </span>
+                          <span className="tabular-nums">{progressPercent}%</span>
+                        </div>
+
+                        <div className="h-1.5 overflow-hidden rounded-full bg-white/30">
+                          <div
+                            className="h-full rounded-full bg-white transition-all"
+                            style={{ width: `${progressPercent}%` }}
+                          />
+                        </div>
+
+                        <HangulLessonLaunchLink
+                          href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`}
+                          shouldEnterFullscreen={
+                            lesson.slug === "hangul-introduction" ||
+                            lesson.slug === "basic-pronunciation"
+                          }
+                          locked={lessonLocked}
+                          className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border border-white/45 bg-white/90 px-4 py-2 text-sm font-bold text-slate-900 shadow-sm backdrop-blur-sm transition hover:bg-white"
+                          style={{}}
+                        >
+                          {lessonLocked ? <Lock size={15} /> : <PlayCircle size={15} />}
+                          {lessonLocked
+                            ? getLessonLockLabel(lesson.unlock_mode)
+                            : isCompleted
+                              ? "复习课时"
+                              : isInProgress
+                                ? "继续学习"
+                                : "开始学习"}
+                        </HangulLessonLaunchLink>
+                      </div>
+                    </article>
+                  );
+                }
+
                 return (
                   <div
                     key={lesson.id}
                     className="app-card rounded-2xl border p-4 shadow-sm transition hover:shadow-md"
                   >
-                    <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                      <div className="flex gap-4">
+                    <div
+                      className={
+                        lesson.cover_object_key
+                          ? "grid gap-5 xl:grid-cols-[320px_minmax(0,1fr)] xl:items-center"
+                          : ""
+                      }
+                    >
+                      {lesson.cover_object_key ? (
+                        <div className="overflow-hidden rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)]">
+                          <Image
+                            src={`/api/course-assets/lesson/${lesson.id}`}
+                            alt={lesson.cover_alt || `${lesson.title}封面`}
+                            width={640}
+                            height={360}
+                            unoptimized
+                            className="aspect-video w-full object-cover transition-transform duration-300 hover:scale-[1.015] motion-reduce:transition-none"
+                            style={{ objectPosition: lesson.cover_focal_point || "50% 50%" }}
+                          />
+                        </div>
+                      ) : null}
+
+                      <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                        <div className="flex gap-4">
                         <div
                           className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border text-sm font-bold"
                           style={{
@@ -653,7 +774,7 @@ export default async function CourseDetailPage({
                             </span>
                           </div>
 
-                          <h4 className="font-bold text-gray-900">
+                          <h4 className={lesson.cover_object_key ? "sr-only" : "font-bold text-gray-900"}>
                             {curatedLesson?.title ?? lesson.title}
                           </h4>
 
@@ -666,9 +787,9 @@ export default async function CourseDetailPage({
                             </p>
                           )}
                         </div>
-                      </div>
+                        </div>
 
-                      <div className="w-full shrink-0 lg:w-56">
+                        <div className="w-full shrink-0 lg:w-56">
                         <div className="mb-2 flex items-center justify-between text-xs text-gray-500">
                           <span>学习进度</span>
                           <span>{progressPercent}%</span>
@@ -690,7 +811,7 @@ export default async function CourseDetailPage({
                         </div>
 
                         <HangulLessonLaunchLink
-                          href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`}
+                          href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`}
                           shouldEnterFullscreen={lesson.slug === "hangul-introduction" || lesson.slug === "basic-pronunciation"}
                           locked={lessonLocked}
                           className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
@@ -725,6 +846,7 @@ export default async function CourseDetailPage({
                               ? "继续学习"
                               : "开始学习"}
                         </HangulLessonLaunchLink>
+                        </div>
                       </div>
                     </div>
                   </div>

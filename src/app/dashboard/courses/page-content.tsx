@@ -20,6 +20,7 @@ import { isPlatformCourseAuditorRole } from "@/lib/admin";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import {
   STUDENT_APP_IDS,
+  getStudentAppCoursesPath,
   getStudentAppPath,
   type StudentAppSlug,
 } from "@/lib/student-apps";
@@ -46,6 +47,9 @@ type CourseCategory = {
   description: string | null;
   icon_name: string | null;
   accent_color: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   sort_order: number;
 };
 
@@ -55,6 +59,10 @@ type Course = {
   slug: string;
   title: string;
   description: string | null;
+  level: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   sort_order: number;
 };
 
@@ -230,6 +238,10 @@ function KoreanDirectCourseCatalog({
           sequence: index + 1,
           title: course.title,
           description: course.description,
+          level: course.level,
+          coverObjectKey: course.cover_object_key,
+          coverAlt: course.cover_alt,
+          coverFocalPoint: course.cover_focal_point,
           totalLessons,
           completedLessons,
           progressPercent,
@@ -245,6 +257,9 @@ function KoreanDirectCourseCatalog({
         slug: subcategory.slug,
         title: subcategory.title,
         description: subcategory.description,
+        coverObjectKey: subcategory.cover_object_key,
+        coverAlt: subcategory.cover_alt,
+        coverFocalPoint: subcategory.cover_focal_point,
         lessonCount: catalogCourses.reduce(
           (total, course) => total + course.totalLessons,
           0,
@@ -345,6 +360,10 @@ export async function CourseCatalog({
   space?: string;
 }) {
   const { supabase, user, platformProfile } = await requireActiveUser();
+  const courseBasePath =
+    studentAppSlug && space
+      ? getStudentAppCoursesPath(space, studentAppSlug)
+      : null;
   const isPlatformAudit = isPlatformCourseAuditorRole(platformProfile?.role);
   let catalogReadError = false;
 
@@ -359,7 +378,7 @@ export async function CourseCatalog({
       supabase
         .from("course_categories")
         .select(
-          "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+          "id, parent_id, slug, title, description, icon_name, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order"
         )
         .is("parent_id", null)
         .eq("student_app_id", STUDENT_APP_IDS[studentAppSlug])
@@ -369,7 +388,7 @@ export async function CourseCatalog({
         supabase
           .from("course_categories")
           .select(
-            "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+            "id, parent_id, slug, title, description, icon_name, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order"
           )
           .is("parent_id", null)
           .eq("slug", categorySlug)
@@ -382,7 +401,7 @@ export async function CourseCatalog({
     const result = await supabase
       .from("course_categories")
       .select(
-        "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+        "id, parent_id, slug, title, description, icon_name, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order"
       )
       .is("parent_id", null)
       .eq("is_published", true)
@@ -404,7 +423,7 @@ export async function CourseCatalog({
     let subcategoryQuery = supabase
       .from("course_categories")
       .select(
-        "id, parent_id, slug, title, description, icon_name, accent_color, sort_order"
+        "id, parent_id, slug, title, description, icon_name, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order"
       )
       .in("parent_id", categoryIds)
       .eq("is_published", true);
@@ -433,7 +452,7 @@ export async function CourseCatalog({
   if (subcategoryIds.length > 0) {
     let courseQuery = supabase
       .from("courses")
-      .select("id, category_id, slug, title, description, sort_order")
+      .select("id, category_id, slug, title, description, level, cover_object_key, cover_alt, cover_focal_point, sort_order")
       .in("category_id", subcategoryIds)
       .eq("is_published", true);
 
@@ -724,7 +743,7 @@ export async function CourseCatalog({
                         </div>
 
                         <Link
-                          href={`/dashboard/courses/${category.slug}`}
+                          href={courseBasePath ? `${courseBasePath}/${category.slug}` : "/"}
                           className="mt-5 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold text-white shadow-sm transition hover:opacity-90"
                           style={{ backgroundColor: accent }}
                         >

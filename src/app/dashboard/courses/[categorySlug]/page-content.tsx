@@ -33,6 +33,9 @@ type CourseCategory = {
   title: string;
   description: string | null;
   accent_color: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   sort_order: number;
 };
 
@@ -44,6 +47,9 @@ type Course = {
   description: string | null;
   sort_order: number;
   level: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   unlock_mode: string | null;
   prerequisite_course_id: string | null;
   available_from: string | null;
@@ -65,6 +71,9 @@ type Lesson = {
   prerequisite_chapter_id: string | null;
   available_from: string | null;
   is_manually_locked: boolean | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
 };
 
 type LessonProgress = {
@@ -128,11 +137,13 @@ function resolveLearningStatus({
 export default async function CategoryPage({
   params,
   searchParams,
+  courseBasePath,
 }: {
   params: Promise<{
     categorySlug: string;
   }>;
   searchParams?: Promise<Record<string, string | string[] | undefined>>;
+  courseBasePath: string;
 }) {
   const { categorySlug } = await params;
   const query = searchParams ? await searchParams : {};
@@ -149,7 +160,7 @@ export default async function CategoryPage({
    */
   const { data: parentCategoryData } = await supabase
     .from("course_categories")
-    .select("id, parent_id, slug, title, description, accent_color, sort_order")
+    .select("id, parent_id, slug, title, description, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order")
     .eq("slug", categorySlug)
     .is("parent_id", null)
     .eq("is_published", true)
@@ -166,7 +177,7 @@ export default async function CategoryPage({
    */
   const { data: subcategoryData } = await supabase
     .from("course_categories")
-    .select("id, parent_id, slug, title, description, accent_color, sort_order")
+    .select("id, parent_id, slug, title, description, accent_color, cover_object_key, cover_alt, cover_focal_point, sort_order")
     .eq("parent_id", parentCategory.id)
     .eq("is_published", true)
     .order("sort_order", { ascending: true });
@@ -183,7 +194,7 @@ export default async function CategoryPage({
   if (subcategoryIds.length > 0) {
     const { data: courseData } = await supabase
       .from("courses")
-      .select("id, category_id, slug, title, description, sort_order, level, unlock_mode, prerequisite_course_id, available_from, is_manually_locked")
+      .select("id, category_id, slug, title, description, sort_order, level, cover_object_key, cover_alt, cover_focal_point, unlock_mode, prerequisite_course_id, available_from, is_manually_locked")
       .in("category_id", subcategoryIds)
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
@@ -201,7 +212,7 @@ export default async function CategoryPage({
   if (courseIds.length > 0) {
     const { data: lessonData } = await supabase
       .from("lessons")
-      .select("id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked")
+      .select("id, course_id, slug, title, description, lesson_type, duration_minutes, is_free_preview, sort_order, unlock_mode, prerequisite_lesson_id, prerequisite_chapter_id, available_from, is_manually_locked, cover_object_key, cover_alt, cover_focal_point")
       .in("course_id", courseIds)
       .eq("is_published", true)
       .order("sort_order", { ascending: true });
@@ -410,6 +421,7 @@ export default async function CategoryPage({
         readingProgressEntries={Array.from(readingProgressByLessonId.entries())}
         bypassLearningSequence={bypassLearningSequence}
         selectedCourseSlug={selectedCourseSlug}
+        courseBasePath={courseBasePath}
       />
     );
   }
@@ -428,7 +440,7 @@ export default async function CategoryPage({
       <>
         <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
           <Link
-            href="/dashboard/courses"
+            href={courseBasePath}
             className="inline-flex items-center gap-2 text-sm font-bold app-muted-text transition hover:opacity-75"
           >
             <ArrowLeft size={16} aria-hidden="true" />
@@ -534,7 +546,7 @@ export default async function CategoryPage({
                   return (
                     <Link
                       key={subcategory.id}
-                      href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
+                      href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}`}
                       className="app-card group rounded-3xl border p-5 transition hover:-translate-y-1"
                     >
                       <div className="flex items-start gap-4">
@@ -584,7 +596,7 @@ export default async function CategoryPage({
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            href="/dashboard/courses"
+            href={courseBasePath}
             className="inline-flex items-center gap-2 text-sm font-medium text-gray-500 transition hover:text-gray-900"
           >
             <ArrowLeft size={16} />
@@ -808,7 +820,7 @@ export default async function CategoryPage({
 
                       {/* 右侧：按钮 */}
                       <Link
-                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`}
+                        href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}`}
                         className={`inline-flex w-full items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition lg:w-auto ${isCompleted
                           ? "bg-yellow-100 text-yellow-700 hover:bg-yellow-200"
                           : isInProgress

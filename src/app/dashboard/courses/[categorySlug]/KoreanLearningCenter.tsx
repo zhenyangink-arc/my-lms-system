@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowLeft,
   CheckCircle2,
@@ -26,6 +27,9 @@ type Category = {
   slug: string;
   title: string;
   description: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   sort_order: number;
 };
 
@@ -37,6 +41,9 @@ type Course = {
   description: string | null;
   sort_order: number;
   level: string | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
   unlock_mode: string | null;
   prerequisite_course_id: string | null;
   available_from: string | null;
@@ -58,6 +65,9 @@ type Lesson = {
   prerequisite_chapter_id: string | null;
   available_from: string | null;
   is_manually_locked: boolean | null;
+  cover_object_key: string | null;
+  cover_alt: string | null;
+  cover_focal_point: string | null;
 };
 
 type LessonProgress = {
@@ -124,6 +134,7 @@ export function KoreanLearningCenter({
   readingProgressEntries,
   bypassLearningSequence,
   selectedCourseSlug,
+  courseBasePath,
 }: {
   variant?: "korean" | "service";
   parentCategory: Category;
@@ -139,6 +150,7 @@ export function KoreanLearningCenter({
   readingProgressEntries: Array<[string, number]>;
   bypassLearningSequence: boolean;
   selectedCourseSlug?: string;
+  courseBasePath: string;
 }) {
   const isService = variant === "service";
   const progressMap = new Map(progressList.map((progress) => [progress.lesson_id, progress]));
@@ -269,7 +281,7 @@ export function KoreanLearningCenter({
       )
     : 0;
   const recommendedLessonHref = recommendedLesson
-    ? `/dashboard/courses/${parentCategory.slug}/${recommendedLesson.subcategory.slug}/${recommendedLesson.course.slug}/${recommendedLesson.lesson.slug}`
+    ? `${courseBasePath}/${parentCategory.slug}/${recommendedLesson.subcategory.slug}/${recommendedLesson.course.slug}/${recommendedLesson.lesson.slug}`
     : null;
   const recommendedLessonTitle = recommendedLesson
     ? (isService ? null : getKoreanBeginnerLesson(recommendedLesson.lesson.slug)?.title) ?? recommendedLesson.lesson.title
@@ -372,7 +384,7 @@ export function KoreanLearningCenter({
     <div className="mx-auto w-full max-w-[1440px] space-y-5 px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <AnchorDetailsOpener />
       <Link
-        href="/dashboard/courses"
+        href={courseBasePath}
         className="inline-flex items-center gap-2 text-sm font-bold app-muted-text transition hover:opacity-75"
       >
         <ArrowLeft size={16} aria-hidden="true" />
@@ -418,7 +430,7 @@ export function KoreanLearningCenter({
                     : getKoreanBeginnerLesson(item.lesson.slug);
                   const lessonTitle = curatedLesson?.title ?? item.lesson.title;
                   const status = item.progress?.status ?? "not_started";
-                  const lessonHref = `/dashboard/courses/${parentCategory.slug}/${item.subcategory.slug}/${item.course.slug}/${item.lesson.slug}`;
+                  const lessonHref = `${courseBasePath}/${parentCategory.slug}/${item.subcategory.slug}/${item.course.slug}/${item.lesson.slug}`;
                   const lessonChapters = chaptersByLessonId.get(item.lesson.id) ?? [];
                   const completedChapterCount = status === "completed"
                     ? lessonChapters.length
@@ -436,6 +448,111 @@ export function KoreanLearningCenter({
                         passedChapterSlugs: passedChapterSlugSet,
                         completedChapterSlugs: completedChapterSlugSet,
                       });
+
+                  if (item.lesson.cover_object_key) {
+                    return (
+                      <article
+                        key={item.lesson.id}
+                        className="group relative aspect-video overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg motion-reduce:transform-none"
+                      >
+                        <Image
+                          src={`/api/course-assets/lesson/${item.lesson.id}`}
+                          alt={item.lesson.cover_alt || `${item.lesson.title}封面`}
+                          fill
+                          sizes="(min-width: 1280px) 22vw, (min-width: 768px) 40vw, 100vw"
+                          unoptimized
+                          className="object-cover transition-transform duration-500 group-hover:scale-[1.018] motion-reduce:transition-none"
+                          style={{
+                            objectPosition: item.lesson.cover_focal_point || "50% 50%",
+                          }}
+                        />
+
+                        <div
+                          className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/80 via-black/5 to-black/10"
+                          aria-hidden="true"
+                        />
+
+                        <div className="absolute left-3 right-3 top-3 flex items-start justify-end gap-1">
+                          <CardTitleWithHint
+                            title={lessonTitle}
+                            description={
+                              <span>
+                                {item.lesson.description || "完成本课学习内容与练习。"}
+                                {curatedLesson ? ` 学习重点：${curatedLesson.focus}` : ""}
+                              </span>
+                            }
+                            headingLevel={4}
+                            titleClassName="sr-only"
+                            className="drop-shadow-sm"
+                            hintClassName="!h-8 !w-8 !pt-1 text-slate-700"
+                            hintLabel={`查看${item.lesson.title}课程说明`}
+                          />
+                          <span
+                            className="inline-flex min-h-7 items-center gap-1 rounded-full border border-white/60 bg-white/90 px-2.5 text-[10px] font-bold shadow-sm backdrop-blur-sm"
+                            style={{
+                              color:
+                                status === "completed"
+                                  ? "var(--status-success)"
+                                  : status === "in_progress"
+                                    ? "var(--primary-hover)"
+                                    : item.unlocked
+                                      ? centerColor
+                                      : "var(--foreground-muted)",
+                            }}
+                          >
+                            {status === "completed" ? (
+                              <CheckCircle2 size={12} aria-hidden="true" />
+                            ) : null}
+                            {!item.unlocked ? "待解锁" : getStatusLabel(status)}
+                          </span>
+                        </div>
+
+                        <div className="absolute inset-x-0 bottom-0 p-3 text-white">
+                          <div className="mb-1.5 flex items-center justify-between gap-2 text-[11px] font-bold">
+                            <span className="inline-flex items-center gap-1">
+                              <Clock3 size={12} aria-hidden="true" />
+                              {lessonChapters.length > 0
+                                ? `${lessonChapters.length} 小时`
+                                : `${item.lesson.duration_minutes} 分钟`}
+                            </span>
+                            <span className="tabular-nums">{lessonProgressPercent}%</span>
+                          </div>
+                          <div className="h-1 overflow-hidden rounded-full bg-white/30">
+                            <div
+                              className="h-full rounded-full bg-white"
+                              style={{ width: `${lessonProgressPercent}%` }}
+                            />
+                          </div>
+                          <HangulLessonLaunchLink
+                            href={lessonHref}
+                            shouldEnterFullscreen={
+                              !isService &&
+                              (item.lesson.slug === "hangul-introduction" ||
+                                item.lesson.slug === "basic-pronunciation")
+                            }
+                            locked={!item.unlocked}
+                            className="mt-2 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl border border-white/45 bg-white/90 px-3 py-1.5 text-xs font-bold text-slate-900 shadow-sm backdrop-blur-sm transition hover:bg-white"
+                            style={{}}
+                          >
+                            {!item.unlocked ? (
+                              <LockKeyhole size={13} aria-hidden="true" />
+                            ) : status === "completed" ? (
+                              <RotateCcw size={14} aria-hidden="true" />
+                            ) : (
+                              <PlayCircle size={14} aria-hidden="true" />
+                            )}
+                            {!item.unlocked
+                              ? "完成前置内容后进入"
+                              : status === "completed"
+                                ? "复习课时"
+                                : status === "in_progress"
+                                  ? "继续学习"
+                                  : "开始学习"}
+                          </HangulLessonLaunchLink>
+                        </div>
+                      </article>
+                    );
+                  }
 
                   return (
                     <article
@@ -652,6 +769,14 @@ export function KoreanLearningCenter({
                     >
                       {String(subcategoryIndex + 1).padStart(2, "0")}
                     </span>
+                    {subcategory.cover_object_key && (
+                      <img
+                        src={`/api/course-assets/category/${subcategory.id}`}
+                        alt={subcategory.cover_alt || `${subcategory.title}封面`}
+                        className="hidden aspect-video w-24 shrink-0 rounded-lg border border-[var(--border-subtle)] object-cover sm:block"
+                        style={{ objectPosition: subcategory.cover_focal_point || "50% 50%" }}
+                      />
+                    )}
                     <div className="min-w-0 flex-1">
                       <CardTitleWithHint
                         headingLevel={4}
@@ -704,6 +829,14 @@ export function KoreanLearningCenter({
                             <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl" style={{ color: courseUnlocked ? "var(--primary-hover)" : "var(--foreground-muted)", backgroundColor: "var(--card)" }}>
                               {courseUnlocked ? <GraduationCap size={18} aria-hidden="true" /> : <LockKeyhole size={16} aria-hidden="true" />}
                             </span>
+                            {course.cover_object_key && (
+                              <img
+                                src={`/api/course-assets/course/${course.id}`}
+                                alt={course.cover_alt || `${course.title}封面`}
+                                className="aspect-video w-28 shrink-0 rounded-xl border border-[var(--border-subtle)] object-cover shadow-sm"
+                                style={{ objectPosition: course.cover_focal_point || "50% 50%" }}
+                              />
+                            )}
                             <div className="min-w-0 flex-1">
                               <div className="flex flex-wrap items-center gap-2">
                                 <h5 className="font-bold">{course.title}</h5>
@@ -741,7 +874,7 @@ export function KoreanLearningCenter({
                               const curatedLesson = isService ? undefined : getKoreanBeginnerLesson(item.lesson.slug);
                               const lessonTitle = curatedLesson?.title ?? item.lesson.title;
                               const status = item.progress?.status ?? "not_started";
-                              const lessonHref = `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${item.lesson.slug}`;
+                              const lessonHref = `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${item.lesson.slug}`;
 
                               const lessonChapters = chaptersByLessonId.get(item.lesson.id) ?? [];
                               const completedChapterCount = status === "completed"

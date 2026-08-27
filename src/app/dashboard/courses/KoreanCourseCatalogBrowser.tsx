@@ -2,6 +2,7 @@
 
 import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   ArrowRight,
   BookOpen,
@@ -30,6 +31,10 @@ export type KoreanCourseCatalogItem = {
   sequence: number;
   title: string;
   description: string | null;
+  level: string | null;
+  coverObjectKey: string | null;
+  coverAlt: string | null;
+  coverFocalPoint: string | null;
   totalLessons: number;
   completedLessons: number;
   progressPercent: number;
@@ -42,6 +47,9 @@ export type KoreanCourseCatalogSection = {
   slug: string;
   title: string;
   description: string | null;
+  coverObjectKey: string | null;
+  coverAlt: string | null;
+  coverFocalPoint: string | null;
   lessonCount: number;
   courses: KoreanCourseCatalogItem[];
 };
@@ -87,6 +95,19 @@ const STATUS_PRESENTATION: Record<
     soft: "var(--status-success-surface)",
   },
 };
+
+const COURSE_LEVEL_PRESENTATION = {
+  beginner: { label: "入门基础", sequenceLabel: "初级" },
+  intermediate: { label: "能力进阶", sequenceLabel: "中级" },
+  advanced: { label: "综合提升", sequenceLabel: "高级" },
+} as const;
+
+type CourseLevelKey = keyof typeof COURSE_LEVEL_PRESENTATION;
+
+function resolveCourseLevel(level: string | null): CourseLevelKey {
+  if (level === "intermediate" || level === "advanced") return level;
+  return "beginner";
+}
 
 function progressColor(progressPercent: number) {
   if (progressPercent >= 100) return "var(--status-success)";
@@ -231,9 +252,21 @@ export function KoreanCourseCatalogBrowser({
                 />
                 <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div className="flex min-w-0 items-start gap-3">
+                    {section.coverObjectKey ? (
+                      <Image
+                        src={`/api/course-assets/category/${section.id}`}
+                        alt={section.coverAlt || `${section.title}封面`}
+                        width={640}
+                        height={360}
+                        unoptimized
+                        className="aspect-video w-24 shrink-0 rounded-xl border border-[var(--border-subtle)] object-cover shadow-sm sm:w-32"
+                        style={{ objectPosition: section.coverFocalPoint || "50% 50%" }}
+                      />
+                    ) : (
                     <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[var(--accent)] text-[var(--primary-hover)]">
                       <CategoryIcon size={21} aria-hidden="true" />
                     </span>
+                    )}
                     <div className="min-w-0">
                       <CardTitleWithHint
                         title={<span id={sectionTitleId}>{section.title}</span>}
@@ -252,7 +285,11 @@ export function KoreanCourseCatalogBrowser({
               <div className="grid auto-rows-fr gap-4 md:grid-cols-2 xl:grid-cols-3">
                 {section.courses.map((course) => {
                   const presentation = STATUS_PRESENTATION[course.learningStatus];
-                  const progressTone = progressColor(course.progressPercent);
+                  const levelKey = resolveCourseLevel(course.level);
+                  const levelPresentation = COURSE_LEVEL_PRESENTATION[levelKey];
+                  const progressTone = course.progressPercent >= 100
+                    ? progressColor(course.progressPercent)
+                    : "var(--course-level-color)";
                   const buttonLabel =
                     course.learningStatus === "preparing"
                       ? "查看课程介绍"
@@ -265,12 +302,28 @@ export function KoreanCourseCatalogBrowser({
                   return (
                     <article
                       key={course.id}
-                      className="app-card group flex h-full min-h-[348px] flex-col overflow-hidden rounded-2xl border p-5 transition-[border-color,box-shadow] hover:border-[var(--primary)] hover:shadow-md"
+                      data-course-level={levelKey}
+                      className="korean-level-card group relative flex h-full min-h-[370px] flex-col overflow-hidden rounded-2xl border transition-[border-color,box-shadow] hover:shadow-md"
                     >
-                      <div className="flex items-start justify-between gap-3">
-                        <span className="inline-flex min-h-8 items-center rounded-full bg-[var(--surface-soft)] px-3 text-xs font-semibold tabular-nums text-[var(--foreground-secondary)]">
-                          第 {course.sequence} 课
-                        </span>
+                      <span className="course-level-rail" aria-hidden="true" />
+                      <div className="flex items-start justify-between gap-3 px-5 pb-4 pt-5">
+                        <div className="flex items-start gap-1">
+                          <span className="course-level-badge inline-flex min-h-8 items-center gap-2 rounded-full px-3 text-xs font-bold">
+                            <span className="tabular-nums">{String(course.sequence).padStart(2, "0")}</span>
+                            <span aria-hidden="true">·</span>
+                            {levelPresentation.sequenceLabel}
+                          </span>
+                          {course.coverObjectKey ? (
+                            <CardTitleWithHint
+                              title={course.title}
+                              description={course.description}
+                              headingLevel={3}
+                              titleClassName="sr-only"
+                              hintClassName="!h-8 !w-8 !pt-1"
+                              hintLabel={`查看${course.title}课程说明`}
+                            />
+                          ) : null}
+                        </div>
                         <span
                           className="inline-flex min-h-8 items-center gap-1.5 rounded-full px-3 text-xs font-semibold"
                           style={{ color: presentation.color, backgroundColor: presentation.soft }}
@@ -284,57 +337,77 @@ export function KoreanCourseCatalogBrowser({
                         </span>
                       </div>
 
-                      <div className="mt-5 min-w-0">
-                        <CardTitleWithHint
-                          title={course.title}
-                          description={course.description}
-                          headingLevel={3}
-                          titleClassName="line-clamp-2 min-h-14 text-xl font-bold leading-7 tracking-tight"
-                        />
-                      </div>
+                      {course.coverObjectKey && (
+                        <div className="course-level-cover relative overflow-hidden border-y border-[var(--border-subtle)] bg-[var(--surface-soft)]">
+                          <Image
+                            src={`/api/course-assets/course/${course.id}`}
+                            alt={course.coverAlt || `${course.title}封面`}
+                            loading="lazy"
+                            width={640}
+                            height={360}
+                            unoptimized
+                            className="aspect-video w-full object-cover transition-transform duration-300 group-hover:scale-[1.015] motion-reduce:transition-none"
+                            style={{ objectPosition: course.coverFocalPoint || "50% 50%" }}
+                          />
+                        </div>
+                      )}
 
-                      <div className="mt-auto pt-5">
-                        {course.learningStatus === "preparing" ? (
-                          <div className="rounded-xl border border-dashed border-[var(--status-warning)] bg-[var(--status-warning-surface)] p-3">
-                            <p className="text-xs font-semibold text-[var(--status-warning)]">尚未发布可学习课时</p>
-                            <p className="app-muted-text mt-1 text-xs font-medium">课程介绍可以查看，正式内容发布后即可开始。</p>
+                      <div className="flex flex-1 flex-col p-5">
+                        {!course.coverObjectKey ? (
+                          <div className="min-w-0">
+                            <p className="course-level-kicker mb-1 text-xs font-bold">{levelPresentation.label}</p>
+                          <CardTitleWithHint
+                            title={course.title}
+                            description={course.description}
+                            headingLevel={3}
+                            titleClassName="line-clamp-2 text-xl font-bold leading-7 tracking-tight"
+                          />
                           </div>
-                        ) : (
-                          <>
-                            <div className="flex items-center justify-between gap-3 text-xs">
-                              <span className="app-muted-text font-medium">{course.totalLessons} 个课时</span>
-                              <strong className="tabular-nums" style={{ color: progressTone }}>
-                                {course.progressPercent}%
-                              </strong>
-                            </div>
-                            <div
-                              className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--surface-soft)]"
-                              role="progressbar"
-                              aria-label={`${course.title}学习进度`}
-                              aria-valuemin={0}
-                              aria-valuemax={100}
-                              aria-valuenow={course.progressPercent}
-                            >
-                              <div
-                                className="h-full rounded-full transition-[width] motion-reduce:transition-none"
-                                style={{ width: `${course.progressPercent}%`, backgroundColor: progressTone }}
-                              />
-                            </div>
-                            <p className="app-muted-text mt-2 text-xs font-medium tabular-nums">
-                              已完成 {course.completedLessons} / {course.totalLessons} 个课时
-                            </p>
-                          </>
-                        )}
+                        ) : null}
 
-                        <Link
-                          href={course.href}
-                          className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[var(--primary)] px-4 py-3 text-sm font-semibold text-white shadow-sm transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
-                          aria-label={`${buttonLabel}：${course.title}`}
-                        >
-                          <PlayCircle size={17} aria-hidden="true" />
-                          {buttonLabel}
-                          <ArrowRight size={15} aria-hidden="true" />
-                        </Link>
+                        <div className="mt-auto">
+                          {course.learningStatus === "preparing" ? (
+                            <div className="rounded-xl border border-dashed border-[var(--status-warning)] bg-[var(--status-warning-surface)] p-3">
+                              <p className="text-xs font-semibold text-[var(--status-warning)]">尚未发布可学习课时</p>
+                              <p className="app-muted-text mt-1 text-xs font-medium">课程介绍可以查看，正式内容发布后即可开始。</p>
+                            </div>
+                          ) : (
+                            <>
+                              <div className="flex items-center justify-between gap-3 text-xs">
+                                <span className="app-muted-text font-medium">{course.totalLessons} 个课时</span>
+                                <strong className="tabular-nums" style={{ color: progressTone }}>
+                                  {course.progressPercent}%
+                                </strong>
+                              </div>
+                              <div
+                                className="mt-2 h-2 overflow-hidden rounded-full bg-[var(--surface-soft)]"
+                                role="progressbar"
+                                aria-label={`${course.title}学习进度`}
+                                aria-valuemin={0}
+                                aria-valuemax={100}
+                                aria-valuenow={course.progressPercent}
+                              >
+                                <div
+                                  className="h-full rounded-full transition-[width] motion-reduce:transition-none"
+                                  style={{ width: `${course.progressPercent}%`, backgroundColor: progressTone }}
+                                />
+                              </div>
+                              <p className="app-muted-text mt-2 text-xs font-medium tabular-nums">
+                                已完成 {course.completedLessons} / {course.totalLessons} 个课时
+                              </p>
+                            </>
+                          )}
+
+                          <Link
+                            href={course.href}
+                            className="course-level-action mt-4 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl px-4 py-3 text-sm font-bold shadow-sm transition-[filter,box-shadow] hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--course-level-color)] focus-visible:ring-offset-2"
+                            aria-label={`${buttonLabel}：${course.title}`}
+                          >
+                            <PlayCircle size={17} aria-hidden="true" />
+                            {buttonLabel}
+                            <ArrowRight size={15} aria-hidden="true" />
+                          </Link>
+                        </div>
                       </div>
                     </article>
                   );

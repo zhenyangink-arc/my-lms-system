@@ -264,6 +264,7 @@ function WorkspaceSectionTitle({
 export default async function LessonDetailPage({
     params,
     searchParams,
+    courseBasePath,
 }: {
     params: Promise<{
         categorySlug: string;
@@ -274,6 +275,7 @@ export default async function LessonDetailPage({
     searchParams: Promise<{
         chapter?: string | string[];
     }>;
+    courseBasePath: string;
 }) {
     const { categorySlug, subcategorySlug, courseSlug, lessonSlug } =
         await params;
@@ -364,11 +366,11 @@ export default async function LessonDetailPage({
     const lesson = lessonData as Lesson;
     const usesLearningCenter = parentCategory.slug === "korean" || parentCategory.slug === "service";
     const courseDirectoryHref = usesLearningCenter
-        ? `/dashboard/courses/${parentCategory.slug}?course=${encodeURIComponent(course.slug)}`
-        : `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`;
+        ? `${courseBasePath}/${parentCategory.slug}?course=${encodeURIComponent(course.slug)}`
+        : `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}`;
     const stageDirectoryHref = usesLearningCenter
-        ? `/dashboard/courses/${parentCategory.slug}#stage-${subcategory.slug}`
-        : `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}`;
+        ? `${courseBasePath}/${parentCategory.slug}#stage-${subcategory.slug}`
+        : `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}`;
     const curatedLesson =
         parentCategory.slug === "korean" &&
         subcategory.slug === "korean-basic" &&
@@ -539,7 +541,7 @@ export default async function LessonDetailPage({
             ? prerequisiteChapterTitleById.get(currentRule.prerequisite_chapter_id)
             : null;
         const prerequisiteHref = prerequisiteLesson
-            ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${prerequisiteLesson.slug}${prerequisiteChapterSlug ? `?chapter=${encodeURIComponent(prerequisiteChapterSlug)}` : ""}`
+            ? `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${prerequisiteLesson.slug}${prerequisiteChapterSlug ? `?chapter=${encodeURIComponent(prerequisiteChapterSlug)}` : ""}`
             : courseDirectoryHref;
 
         return (
@@ -607,7 +609,7 @@ export default async function LessonDetailPage({
             unlockedChapterSlugs.has(chapter.slug)
         );
         redirect(
-            `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}${firstUnlockedChapter ? `?chapter=${encodeURIComponent(firstUnlockedChapter.slug)}` : ""}`
+            `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}${firstUnlockedChapter ? `?chapter=${encodeURIComponent(firstUnlockedChapter.slug)}` : ""}`
         );
     }
     let resolvedVideoUrl = hasLessonAccess ? lesson.video_url : null;
@@ -790,7 +792,7 @@ export default async function LessonDetailPage({
                     textbook={smartTextbook}
                     trackingDisabled={isPlatformAudit}
                     completionHref={smartTextbook.chapter.number === 0 && currentChapters[1]
-                        ? `/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}?chapter=${encodeURIComponent(currentChapters[1].slug)}`
+                        ? `${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}?chapter=${encodeURIComponent(currentChapters[1].slug)}`
                         : undefined}
                     completionLabel={smartTextbook.chapter.number === 0 ? "开始第 1 章" : undefined}
                 />
@@ -830,7 +832,7 @@ export default async function LessonDetailPage({
                     <span className="text-sm text-gray-300">/</span>
 
                     <Link
-                        href="/dashboard/courses"
+                        href={courseBasePath}
                         className="rounded-md text-sm font-medium text-gray-500 transition hover:text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
                     >
                         我的课程
@@ -909,7 +911,7 @@ export default async function LessonDetailPage({
                             <div className="flex items-center justify-center gap-2">
                                 {previousLesson ? (
                                     <Link
-                                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
+                                        href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
                                         className="app-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
                                     >
                                         <span className="text-xs">◀</span>
@@ -924,7 +926,7 @@ export default async function LessonDetailPage({
 
                                 {nextLesson ? (
                                     <Link
-                                        href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
+                                        href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
                                         className="app-card inline-flex items-center justify-center gap-1.5 rounded-xl border px-3 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90"
                                     >
                                         下一课
@@ -1261,7 +1263,7 @@ export default async function LessonDetailPage({
                     <div className="grid gap-4 md:grid-cols-2">
                         {previousLesson ? (
                             <Link
-                                href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
+                                href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${previousLesson.slug}`}
                                 className="app-card rounded-2xl border p-4 transition hover:opacity-90"
                             >
                                 <p className="text-sm text-gray-500">上一课</p>
@@ -1280,7 +1282,7 @@ export default async function LessonDetailPage({
 
                         {nextLesson ? (
                             <Link
-                                href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
+                                href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}/${nextLesson.slug}`}
                                 className="app-card rounded-2xl border p-4 text-right transition hover:opacity-90"
                             >
                                 <p className="text-sm text-gray-500">下一课</p>

@@ -1,10 +1,9 @@
 import { revalidatePath } from "next/cache";
 
 /**
- * 真实路由是 `/[space]/dashboard/**`，`/dashboard/**` 只是共享实现 + legacy 重定向
- * （见 AGENTS.md）。过去所有 action 只 revalidatePath("/dashboard/x")，命中的是
- * legacy 路由本身，多租户下学生实际访问的 `/[tenantSlug]/dashboard/x` 页面缓存并不会
- * 刷新，一直靠各页面的 force-dynamic 兜底掩盖。
+ * 管理工作区使用 `/[space]/dashboard/**`，学生应用使用
+ * `/[space]/apps/[app]/**`。`/dashboard/**` 只作为共享实现使用的逻辑路径，
+ * 不能被当成学生端可访问 URL。
  *
  * `/[space]` 是动态段，revalidatePath 支持用路由模式一次性覆盖所有租户，不需要在
  * 每个 action 里额外查当前租户 slug：
@@ -16,8 +15,14 @@ export function revalidateDashboard(path: string, type?: "page" | "layout") {
     return;
   }
 
-  // path 自己也可能带一段动态段（如 korean/[testSlug]），原样透传 type；
-  // 拼上 /[space] 的那份必须有 type，未显式指定时按 "page" 处理。
+  if (path === "/dashboard/courses" || path.startsWith("/dashboard/courses/")) {
+    const courseSuffix = path.slice("/dashboard/courses".length);
+    revalidatePath(`/[space]/apps/korean/courses${courseSuffix}`, type ?? "page");
+    revalidatePath(`/[space]/apps/study-abroad/courses${courseSuffix}`, type ?? "page");
+    return;
+  }
+
+  // 其余管理路径仍按租户管理工作区刷新。
   revalidatePath(path, type);
   revalidatePath(`/[space]${path}`, type ?? "page");
 }

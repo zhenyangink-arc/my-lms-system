@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import {
@@ -25,6 +24,7 @@ import { getStandardQuestionBankAccess } from "@/lib/question-bank";
 import { getLibraryAccess } from "@/lib/resource-library";
 import { getStudentAssignmentAccess } from "@/lib/student-assignments";
 import { getVisaManagementAccess } from "@/lib/visa-management";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { loadInstitutionPlatformOverview } from "@/features/institution-platform-overview/api/service";
 import {
   InstitutionPlatformOverview,
@@ -90,13 +90,6 @@ const institutionSeries = [
   { key: "documentReviews", label: "资料", color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
   { key: "visaTasks", label: "签证", color: "var(--support)", soft: "var(--surface-soft)" },
   { key: "helpTickets", label: "工单", color: "var(--status-success)", soft: "var(--status-success-surface)" },
-] as const;
-
-const metricToneStyles = [
-  { solid: "var(--primary)", soft: "var(--surface-soft)" },
-  { solid: "var(--support)", soft: "var(--surface-soft)" },
-  { solid: "var(--status-success)", soft: "var(--surface-soft)" },
-  { solid: "var(--status-warning)", soft: "var(--surface-soft)" },
 ] as const;
 
 function emptyCount(): Promise<CountResult> {
@@ -464,19 +457,17 @@ export default async function AdminCenterPage() {
   return (
     <div
       data-admin-overview
-      className="management-home mx-auto w-full max-w-[1500px] space-y-6 px-4 pb-10 pt-7 sm:px-6 lg:px-8"
+      className="management-home mx-auto w-full max-w-[1500px] px-4 pb-10 pt-7 sm:px-6 lg:px-8"
     >
       <header className="management-home-hero">
-        <div className="min-w-0">
-          <h1>{isPlatformOwner ? "平台总览" : "管理工作台"}</h1>
-        </div>
+        <h1>{isPlatformOwner ? "平台总览" : "管理工作台"}</h1>
 
         <div className="management-home-actions">
           {isPlatformOwner && (
             <RecentPermissionActionsDialog actions={recentPermissionActions} />
           )}
           <span className="management-home-chip">
-            <ShieldCheck size={15} aria-hidden="true" />
+            <ShieldCheck size={13} aria-hidden="true" />
             {getAdminRoleLabel(role)}
           </span>
           <span className="management-home-chip management-home-chip-muted">
@@ -490,54 +481,49 @@ export default async function AdminCenterPage() {
       </header>
 
       <section className="management-home-metrics" aria-label="平台核心指标">
-        {coreMetrics.map(([label, value, description], index) => {
-          const tone = metricToneStyles[index % metricToneStyles.length];
-          return (
-            <article
-              key={String(label)}
-              className="app-card management-home-metric border"
-              style={{ "--metric-color": tone.solid } as CSSProperties}
-            >
-              <span className="management-home-metric-dot" aria-hidden="true" />
-              <p>{label}</p>
-              <strong>{value}</strong>
-              <small>{description}</small>
-            </article>
-          );
-        })}
+        {coreMetrics.map(([label, value, description]) => (
+          <article key={String(label)} className="management-home-metric">
+            <p>{label}</p>
+            <strong>{value}</strong>
+            <small>{description}</small>
+          </article>
+        ))}
       </section>
 
-      {learningOverview ? (
-        <InstitutionPlatformOverview snapshot={learningOverview} />
-      ) : learningOverviewResult.failed ? (
-        <InstitutionPlatformOverviewLoadError
-          retryHref={scopeDashboardPath("/dashboard/admin", dashboardBasePath)}
-        />
-      ) : null}
+      {(learningOverview || learningOverviewResult.failed) && (
+        <div className="mb-6">
+          {learningOverview ? (
+            <InstitutionPlatformOverview snapshot={learningOverview} />
+          ) : (
+            <InstitutionPlatformOverviewLoadError
+              retryHref={scopeDashboardPath("/dashboard/admin", dashboardBasePath)}
+            />
+          )}
+        </div>
+      )}
 
       <div className={`management-home-bento ${isPlatformOwner ? "management-home-bento-owner" : ""}`}>
-        <section className="app-card management-focus-card border">
+        <section className="management-focus-card">
           <div className="management-card-heading">
-            <div>
-              <h2>需要你处理</h2>
-            </div>
+            <CardTitleWithHint
+              headingLevel={2}
+              titleClassName=""
+              title="需要你处理"
+              description="按待处理数量从高到低排列，点击任意一行跳转到对应模块处理。"
+            />
             <span className={workloadTotal > 0 ? "is-warning" : "is-success"}>
               {workloadTotal > 0 ? (
-                <Clock3 size={15} aria-hidden="true" />
+                <Clock3 size={13} aria-hidden="true" />
               ) : (
-                <CheckCircle2 size={15} aria-hidden="true" />
+                <CheckCircle2 size={13} aria-hidden="true" />
               )}
               {workloadTotal > 0 ? `${pendingCategoryCount} 类待处理` : "队列已清空"}
             </span>
           </div>
 
-          <div className="management-focus-summary">
-            <strong>{workloadTotal}</strong>
-            <span>
-              <b>项待处理</b>
-              <small>{clearedCategoryCount} 类工作当前无积压</small>
-            </span>
-          </div>
+          <p className="management-focus-summary">
+            共 <strong>{workloadTotal}</strong> 项待处理，{clearedCategoryCount} 类工作当前无积压
+          </p>
 
           <div className="management-focus-list">
             {visualWorkItems.map((item) => {
@@ -563,13 +549,13 @@ export default async function AdminCenterPage() {
                   <b style={{ color: item.count > 0 ? tone.solid : "var(--foreground-muted)" }}>
                     {item.count}
                   </b>
-                  <ArrowRight size={16} aria-hidden="true" />
+                  <ArrowRight size={14} aria-hidden="true" />
                 </Link>
               );
             })}
             {workItems.length === 0 && (
               <div className="management-empty-state">
-                <Sparkles size={20} aria-hidden="true" />
+                <Sparkles size={16} aria-hidden="true" />
                 当前身份没有需要处理的工作队列
               </div>
             )}
@@ -577,16 +563,19 @@ export default async function AdminCenterPage() {
         </section>
 
         {isPlatformOwner && (
-          <section className="app-card management-institution-card border">
+          <section className="management-institution-card">
             <div className="management-card-heading">
-              <div>
-                <h2>需关注机构</h2>
-              </div>
+              <CardTitleWithHint
+                headingLevel={2}
+                titleClassName=""
+                title="需关注机构"
+                description="按待处理事项总数从高到低排序，点击任意一行进入该机构详情。"
+              />
               <span className={attentionInstitutionCount > 0 ? "is-warning" : "is-success"}>
                 {attentionInstitutionCount > 0 ? (
-                  <CircleAlert size={15} aria-hidden="true" />
+                  <CircleAlert size={13} aria-hidden="true" />
                 ) : (
-                  <CheckCircle2 size={15} aria-hidden="true" />
+                  <CheckCircle2 size={13} aria-hidden="true" />
                 )}
                 {attentionInstitutionCount > 0
                   ? `${attentionInstitutionCount} 个需关注`
@@ -594,11 +583,9 @@ export default async function AdminCenterPage() {
               </span>
             </div>
 
-            <div className="management-institution-summary">
-              <span><strong>{institutionRows.length}</strong><small>机构总数</small></span>
-              <span><strong>{healthyInstitutionCount}</strong><small>运行正常</small></span>
-              <span><strong>{attentionInstitutionCount}</strong><small>需要关注</small></span>
-            </div>
+            <p className="management-institution-summary">
+              共 <strong>{institutionRows.length}</strong> 个机构，<strong>{healthyInstitutionCount}</strong> 个运行正常
+            </p>
 
             <div className="management-institution-list">
               {institutionChartRows.map((row) => {
@@ -640,7 +627,7 @@ export default async function AdminCenterPage() {
               className="management-card-link"
             >
               查看全部机构
-              <ArrowRight size={16} aria-hidden="true" />
+              <ArrowRight size={14} aria-hidden="true" />
             </Link>
           </section>
         )}
@@ -648,10 +635,12 @@ export default async function AdminCenterPage() {
 
       <section className="management-quick-section">
         <div className="management-section-heading">
-          <div>
-            <h2>常用工作区</h2>
-            <p>有待办的模块自动排在前面，减少在导航中来回查找。</p>
-          </div>
+          <CardTitleWithHint
+            headingLevel={2}
+            titleClassName=""
+            title="常用工作区"
+            description="有待办的模块自动排在前面，减少在导航中来回查找。"
+          />
           <span>{visibleItems.length} 个可用模块</span>
         </div>
 
@@ -663,17 +652,17 @@ export default async function AdminCenterPage() {
               <Link
                 key={item.href}
                 href={scopeDashboardPath(item.href, dashboardBasePath)}
-                className="app-card management-quick-card border"
+                className="management-quick-card"
               >
                 <span className="management-quick-icon">
-                  <Icon size={20} aria-hidden="true" />
+                  <Icon size={18} aria-hidden="true" />
                 </span>
                 <span className="management-quick-copy">
                   <strong>{item.label}</strong>
                   <small>{item.description}</small>
                 </span>
                 {pending > 0 && <b>{pending} 项</b>}
-                <ArrowRight size={17} aria-hidden="true" />
+                <ArrowRight size={14} aria-hidden="true" />
               </Link>
             );
           })}

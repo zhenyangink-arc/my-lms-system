@@ -93,6 +93,88 @@
   }
 }
 
+/* 韩语课程阶段卡：颜色表达阶段，文字标签保证不依赖颜色识别。 */
+.korean-level-card {
+  --course-level-color: #b45309;
+  --course-level-on-color: #ffffff;
+  --course-level-surface: #fff7e6;
+  --course-level-border: #e8bd79;
+  color: var(--foreground);
+  border-color: color-mix(in srgb, var(--course-level-border) 72%, var(--border));
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--course-level-surface) 52%, var(--card)) 0%,
+    var(--card) 34%
+  );
+  box-shadow: var(--shadow-surface);
+}
+
+.korean-level-card[data-course-level="intermediate"] {
+  --course-level-color: #0f766e;
+  --course-level-on-color: #ffffff;
+  --course-level-surface: #ecfdf8;
+  --course-level-border: #75cfc4;
+}
+
+.korean-level-card[data-course-level="advanced"] {
+  --course-level-color: #6d28d9;
+  --course-level-on-color: #ffffff;
+  --course-level-surface: #f5f0ff;
+  --course-level-border: #bea6ed;
+}
+
+.korean-level-card:hover {
+  border-color: var(--course-level-color);
+}
+
+.course-level-rail {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 1;
+  height: 4px;
+  background: var(--course-level-color);
+}
+
+.course-level-badge {
+  color: var(--course-level-color);
+  background: var(--course-level-surface);
+  border: 1px solid color-mix(in srgb, var(--course-level-border) 72%, transparent);
+}
+
+.course-level-cover {
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--course-level-color) 12%, transparent);
+}
+
+.course-level-kicker {
+  color: var(--course-level-color);
+}
+
+.course-level-action {
+  color: var(--course-level-on-color);
+  background: var(--course-level-color);
+}
+
+.dark .korean-level-card {
+  --course-level-color: #fbbf24;
+  --course-level-on-color: #3b2502;
+  --course-level-surface: #352812;
+  --course-level-border: #7a5b19;
+}
+
+.dark .korean-level-card[data-course-level="intermediate"] {
+  --course-level-color: #2dd4bf;
+  --course-level-on-color: #042f2e;
+  --course-level-surface: #123a36;
+  --course-level-border: #236e67;
+}
+
+.dark .korean-level-card[data-course-level="advanced"] {
+  --course-level-color: #a78bfa;
+  --course-level-on-color: #25104f;
+  --course-level-surface: #302253;
+  --course-level-border: #5c4790;
+}
+
 /* 学生结课页的证书打印版与屏幕信息布局完全分离。 */
 .completion-print-root {
   display: none;

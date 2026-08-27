@@ -138,11 +138,13 @@ function getStatusAccent({
 
 export default async function SubcategoryCoursesPage({
   params,
+  courseBasePath,
 }: {
   params: Promise<{
     categorySlug: string;
     subcategorySlug: string;
   }>;
+  courseBasePath: string;
 }) {
   const { categorySlug, subcategorySlug } = await params;
 
@@ -185,7 +187,7 @@ export default async function SubcategoryCoursesPage({
   const subcategory = subcategoryData as CourseCategory;
 
   if (parentCategory.slug === "korean" || parentCategory.slug === "service") {
-    redirect(`/dashboard/courses/${parentCategory.slug}#stage-${subcategory.slug}`);
+    redirect(`${courseBasePath}/${parentCategory.slug}#stage-${subcategory.slug}`);
   }
 
   /**
@@ -312,7 +314,7 @@ export default async function SubcategoryCoursesPage({
         {/* 返回路径 */}
         <div className="flex flex-wrap items-center gap-3">
           <Link
-            href={`/dashboard/courses/${parentCategory.slug}`}
+            href={`${courseBasePath}/${parentCategory.slug}`}
             className="inline-flex items-center gap-2 text-sm font-medium transition"
             style={{ color: "var(--foreground-muted)" }}
           >
@@ -325,7 +327,7 @@ export default async function SubcategoryCoursesPage({
           </span>
 
           <Link
-            href="/dashboard/courses"
+            href={courseBasePath}
             className="text-sm font-medium transition"
             style={{ color: "var(--foreground-muted)" }}
           >
@@ -616,7 +618,7 @@ export default async function SubcategoryCoursesPage({
                         </span>
                       ) : (
                         <Link
-                          href={`/dashboard/courses/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
+                          href={`${courseBasePath}/${parentCategory.slug}/${subcategory.slug}/${course.slug}`}
                           className="inline-flex w-full items-center justify-center gap-2 rounded-xl border px-4 py-2.5 text-sm font-semibold shadow-sm transition hover:opacity-90 lg:w-auto"
                           style={{
                             backgroundColor: isCompleted

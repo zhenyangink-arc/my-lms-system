@@ -876,7 +876,7 @@ html[data-management-workspace]
   box-shadow: 0 28px 90px rgba(0, 0, 0, 0.22);
 }
 
-/* Shared management home: editorial hierarchy with operational density below. */
+/* Management home: dense, hairline-bordered operational surface (no glass/blobs). */
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home {
   color: var(--foreground);
@@ -885,83 +885,44 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-hero {
   display: flex;
-  min-height: 154px;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 28px;
-  padding: 18px 4px 10px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-home-kicker,
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-section-kicker {
-  display: flex;
   align-items: center;
-  gap: 7px;
-  color: var(--primary-hover);
-  font-size: 11px;
-  font-weight: 680;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 0 18px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 22px;
+  flex-wrap: wrap;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-hero h1 {
-  margin-top: 12px;
-  font-size: clamp(2.4rem, 4vw, 4.25rem);
-  line-height: 0.98;
-  font-weight: 720;
-  letter-spacing: -0.062em;
-  text-wrap: balance;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-home-intro {
-  max-width: 660px;
-  margin-top: 16px;
-  color: var(--foreground-muted);
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 19px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-actions {
   display: flex;
-  max-width: 560px;
+  align-items: center;
   flex-wrap: wrap;
-  justify-content: flex-end;
   gap: 8px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-home-actions > :is(button, span) {
+  .management-home-actions > .management-home-chip {
   display: inline-flex;
-  min-height: 40px;
+  height: 28px;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 8px 13px;
-  background: rgba(255, 255, 255, 0.72);
+  border-radius: 6px;
+  padding: 0 10px;
+  background: var(--card);
   color: var(--foreground-secondary);
   font-size: 12px;
-  font-weight: 620;
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.62) inset;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-}
-
-.dark [data-dashboard-ui="management"][data-management-workspace]
-  .management-home-actions > :is(button, span) {
-  background: rgba(44, 44, 46, 0.72);
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-home-actions > button:hover {
-  border-color: color-mix(in srgb, var(--primary) 26%, var(--border));
-  background: var(--accent);
-  color: var(--primary-hover);
+  font-weight: 600;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -973,113 +934,102 @@ html[data-management-workspace]
   .management-home-metrics {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 14px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
+  margin-bottom: 24px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-metric {
-  position: relative;
-  min-height: 168px;
-  overflow: hidden;
-  padding: 22px;
+  padding: 13px 16px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-home-metric::after {
-  position: absolute;
-  inset: auto -36px -58px auto;
-  width: 136px;
-  height: 136px;
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--metric-color) 9%, transparent);
-  content: "";
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-home-metric-dot {
-  display: block;
-  width: 9px;
-  height: 9px;
-  border-radius: 999px;
-  background: var(--metric-color);
-  box-shadow: 0 0 0 5px color-mix(in srgb, var(--metric-color) 11%, transparent);
+  .management-home-metric:not(:last-child) {
+  border-right: 1px solid var(--border);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-metric p {
-  margin-top: 19px;
   color: var(--foreground-muted);
-  font-size: 13px;
-  font-weight: 580;
+  font-size: 11.5px;
+  font-weight: 600;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-metric strong {
   display: block;
-  margin-top: 6px;
+  margin-top: 7px;
   color: var(--foreground);
-  font-size: 2.15rem;
+  font-size: 22px;
   line-height: 1;
   font-weight: 700;
-  letter-spacing: -0.045em;
+  letter-spacing: -0.01em;
   font-variant-numeric: tabular-nums;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-metric small {
   display: block;
-  margin-top: 10px;
-  color: var(--foreground-muted);
-  font-size: 12px;
+  margin-top: 5px;
+  color: var(--foreground-subtle);
+  font-size: 11px;
   line-height: 1.4;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-bento {
   display: grid;
-  gap: 16px;
+  gap: 20px;
+  margin-bottom: 24px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-home-bento-owner {
-  grid-template-columns: minmax(0, 1.15fr) minmax(420px, 0.85fr);
+  grid-template-columns: minmax(0, 1.3fr) minmax(360px, 1fr);
+  align-items: start;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   :is(.management-focus-card, .management-institution-card) {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
   overflow: hidden;
-  padding: 22px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-card-heading {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: 18px;
+  gap: 14px;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-card-heading h2,
 [data-dashboard-ui="management"][data-management-workspace]
   .management-section-heading h2 {
-  margin-top: 7px;
-  font-size: 21px;
-  line-height: 1.15;
-  font-weight: 680;
-  letter-spacing: -0.035em;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 700;
+  letter-spacing: -0.005em;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-card-heading > span {
   display: inline-flex;
-  min-height: 34px;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
+  flex-shrink: 0;
   border-radius: 999px;
-  padding: 7px 10px;
+  padding: 3px 9px;
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 700;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1095,63 +1045,36 @@ html[data-management-workspace]
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-summary {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 26px;
-  padding-bottom: 22px;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-summary > strong {
-  font-size: clamp(3.2rem, 5.2vw, 5rem);
-  line-height: 0.9;
-  font-weight: 720;
-  letter-spacing: -0.065em;
+  :is(.management-focus-summary, .management-institution-summary) {
+  margin: 0;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground-muted);
+  font-size: 12px;
   font-variant-numeric: tabular-nums;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-summary > span {
-  display: grid;
-  gap: 3px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-summary b {
-  font-size: 14px;
-  font-weight: 650;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-summary small {
-  color: var(--foreground-muted);
-  font-size: 12px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-focus-list,
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-institution-list {
-  display: grid;
-  margin-top: 10px;
+  :is(.management-focus-summary, .management-institution-summary) strong {
+  color: var(--foreground);
+  font-weight: 700;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-row {
   display: grid;
-  min-height: 64px;
-  grid-template-columns: minmax(130px, 0.72fr) minmax(90px, 1fr) 34px 16px;
+  grid-template-columns: minmax(120px, 0.72fr) minmax(90px, 1fr) 34px 14px;
   align-items: center;
   gap: 14px;
-  border-radius: 13px;
-  padding: 8px 10px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
   color: var(--foreground-secondary);
-  transition:
-    background-color 160ms ease,
-    color 160ms ease;
+  transition: background-color 140ms ease;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-focus-row:first-child {
+  border-top: none;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1174,8 +1097,8 @@ html[data-management-workspace]
   display: block;
   overflow: hidden;
   color: var(--foreground);
-  font-size: 13px;
-  font-weight: 630;
+  font-size: 12.5px;
+  font-weight: 600;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
@@ -1184,7 +1107,7 @@ html[data-management-workspace]
   :is(.management-focus-copy, .management-institution-copy) small {
   display: block;
   overflow: hidden;
-  margin-top: 3px;
+  margin-top: 2px;
   color: var(--foreground-muted);
   font-size: 11px;
   text-overflow: ellipsis;
@@ -1195,9 +1118,9 @@ html[data-management-workspace]
   .management-focus-track,
 [data-dashboard-ui="management"][data-management-workspace]
   .management-institution-track {
-  height: 6px;
+  height: 4px;
   overflow: hidden;
-  border-radius: 999px;
+  border-radius: 2px;
   background: var(--surface-soft);
 }
 
@@ -1211,59 +1134,37 @@ html[data-management-workspace]
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-row > b {
   text-align: right;
-  font-size: 13px;
-  font-weight: 680;
+  font-size: 12.5px;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-focus-row > svg {
   color: var(--foreground-subtle);
+  opacity: 0;
+  transition: opacity 140ms ease;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-institution-summary {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  margin-top: 24px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-institution-summary > span {
-  display: grid;
-  min-width: 0;
-  gap: 4px;
-  border-radius: 15px;
-  padding: 13px;
-  background: var(--surface-soft);
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-institution-summary strong {
-  font-size: 21px;
-  line-height: 1;
-  font-weight: 680;
-  letter-spacing: -0.035em;
-  font-variant-numeric: tabular-nums;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-institution-summary small {
-  color: var(--foreground-muted);
-  font-size: 11px;
+  .management-focus-row:hover > svg {
+  opacity: 1;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-institution-row {
   display: grid;
-  min-height: 61px;
-  grid-template-columns: minmax(130px, 0.9fr) minmax(74px, 0.75fr) 62px;
+  grid-template-columns: minmax(120px, 0.9fr) minmax(64px, 0.75fr) 58px;
   align-items: center;
   gap: 12px;
-  border-radius: 13px;
-  padding: 8px 10px;
-  transition: background-color 160ms ease;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
+  transition: background-color 140ms ease;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-institution-row:first-child {
+  border-top: none;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
@@ -1280,164 +1181,148 @@ html[data-management-workspace]
   .management-institution-row > b {
   justify-self: end;
   border-radius: 999px;
-  padding: 5px 8px;
+  padding: 3px 8px;
   font-size: 11px;
-  font-weight: 650;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-card-link {
   display: flex;
-  min-height: 44px;
+  height: 36px;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 7px;
-  margin-top: 12px;
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  padding: 0 16px;
   color: var(--primary-hover);
-  font-size: 13px;
-  font-weight: 630;
+  font-size: 12px;
+  font-weight: 600;
+  transition: background-color 140ms ease;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-card-link:hover {
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-empty-state {
   display: flex;
-  min-height: 150px;
+  min-height: 80px;
   align-items: center;
   justify-content: center;
-  gap: 9px;
+  gap: 8px;
+  padding: 0 16px;
   color: var(--foreground-muted);
-  font-size: 13px;
+  font-size: 12.5px;
   text-align: center;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-quick-section {
-  padding-top: 6px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-section-heading {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: space-between;
-  gap: 20px;
-  margin-bottom: 16px;
-  padding-inline: 4px;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-section-heading p:not(.management-section-kicker) {
-  margin-top: 7px;
-  color: var(--foreground-muted);
-  font-size: 13px;
-  line-height: 1.5;
+  gap: 16px;
+  margin-bottom: 10px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-section-heading > span {
   color: var(--foreground-muted);
-  font-size: 12px;
+  font-size: 11.5px;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--card);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card {
   display: grid;
-  min-height: 142px;
-  grid-template-columns: 44px minmax(0, 1fr) auto 18px;
-  align-items: start;
-  gap: 13px;
-  padding: 19px;
+  grid-template-columns: 18px minmax(0, 1fr) auto 14px;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-top: 1px solid var(--border);
   color: var(--foreground-secondary);
-  transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    background-color 180ms ease;
+  transition: background-color 140ms ease;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-quick-card:nth-child(odd) {
+  border-right: 1px solid var(--border);
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
+  .management-quick-card:nth-child(-n + 2) {
+  border-top: none;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card:hover {
-  border-color: color-mix(in srgb, var(--primary) 24%, var(--border));
-  background: color-mix(in srgb, var(--accent) 18%, var(--card));
-  box-shadow:
-    0 1px 2px rgba(0, 0, 0, 0.025),
-    0 17px 38px rgba(0, 0, 0, 0.075);
+  background: var(--surface-soft);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-icon {
   display: flex;
-  width: 44px;
-  height: 44px;
+  width: 18px;
+  height: 18px;
   align-items: center;
   justify-content: center;
-  border-radius: 13px;
-  background: var(--accent);
-  color: var(--primary-hover);
+  color: var(--foreground-muted);
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-copy strong {
   display: block;
   color: var(--foreground);
-  font-size: 14px;
-  font-weight: 650;
+  font-size: 12.5px;
+  font-weight: 600;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-copy small {
-  display: -webkit-box;
+  display: block;
   overflow: hidden;
-  margin-top: 7px;
+  margin-top: 2px;
   color: var(--foreground-muted);
-  font-size: 12px;
-  line-height: 1.55;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
+  font-size: 11px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card > b {
   border-radius: 999px;
-  padding: 5px 8px;
+  padding: 3px 7px;
   background: var(--status-warning-surface);
   color: var(--status-warning);
-  font-size: 11px;
-  font-weight: 660;
+  font-size: 10.5px;
+  font-weight: 700;
   white-space: nowrap;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
   .management-quick-card > svg {
-  margin-top: 4px;
   color: var(--foreground-subtle);
+  opacity: 0;
+  transition: opacity 140ms ease;
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
-  .management-home-footer {
-  display: flex;
-  align-items: flex-start;
-  gap: 9px;
-  border-top: 1px solid var(--border-subtle);
-  padding: 18px 4px 0;
-  color: var(--foreground-muted);
-  font-size: 12px;
-  line-height: 1.55;
-}
-
-[data-dashboard-ui="management"][data-management-workspace]
-  .management-home-footer svg {
-  flex: 0 0 auto;
-  margin-top: 2px;
+  .management-quick-card:hover > svg {
+  opacity: 1;
 }
 
 @media (max-width: 1199px) {
@@ -1445,30 +1330,50 @@ html[data-management-workspace]
     .management-home-bento-owner {
     grid-template-columns: 1fr;
   }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
 }
 
 @media (max-width: 899px) {
   [data-dashboard-ui="management"][data-management-workspace]
     .management-home-hero {
-    min-height: auto;
     align-items: flex-start;
     flex-direction: column;
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-actions {
-    max-width: none;
-    justify-content: flex-start;
+    .management-home-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-metrics {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    .management-home-metric:nth-child(2n) {
+    border-right: none;
+  }
+
+  [data-dashboard-ui="management"][data-management-workspace]
+    .management-home-metric:nth-child(-n + 2) {
+    border-bottom: 1px solid var(--border);
+  }
+}
+
+@media (max-width: 640px) {
+  [data-dashboard-ui="management"][data-management-workspace]
+    .management-quick-grid {
+    grid-template-columns: 1fr;
+  }
+
+  [data-dashboard-ui="management"][data-management-workspace]
+    .management-quick-card:nth-child(odd) {
+    border-right: none;
+  }
+
+  [data-dashboard-ui="management"][data-management-workspace]
+    .management-quick-card:nth-child(-n + 2) {
+    border-top: 1px solid var(--border);
+  }
+
+  [data-dashboard-ui="management"][data-management-workspace]
+    .management-quick-card:first-child {
+    border-top: none;
   }
 }
 
@@ -1616,103 +1521,8 @@ html[data-management-workspace]
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-home {
-    gap: 18px;
-    padding: 20px 16px 30px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
     .management-home-hero {
-    gap: 20px;
-    padding: 10px 0 4px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-hero h1 {
-    font-size: 2.55rem;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-intro {
-    font-size: 14px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-actions > :is(button, span) {
-    min-height: 44px;
-    padding-inline: 12px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-metrics {
-    grid-template-columns: 1fr 1fr;
-    gap: 10px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-metric {
-    min-height: 142px;
-    padding: 17px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-metric strong {
-    font-size: 1.8rem;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    :is(.management-focus-card, .management-institution-card) {
-    padding: 18px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-card-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 10px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-focus-row {
-    min-height: 72px;
-    grid-template-columns: minmax(0, 1fr) 36px 16px;
-    gap: 10px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-focus-track {
-    display: none;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-institution-row {
-    min-height: 70px;
-    grid-template-columns: minmax(0, 1fr) 62px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-institution-track {
-    display: none;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-section-heading {
-    align-items: flex-start;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-grid {
-    grid-template-columns: 1fr;
-    gap: 10px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-card {
-    min-height: 126px;
-    grid-template-columns: 44px minmax(0, 1fr) auto 18px;
-    padding: 17px;
+    gap: 14px;
   }
 }
 
@@ -1748,31 +1558,19 @@ html[data-management-workspace]
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-hero h1 {
-    font-size: 2.2rem;
+    .management-home-metrics {
+    grid-template-columns: 1fr;
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-home-metric {
-    min-height: 132px;
-    padding: 15px;
+    .management-home-metric:nth-child(2n) {
+    border-right: none;
   }
 
   [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-card {
-    grid-template-columns: 44px minmax(0, 1fr) 18px;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-card > b {
-    grid-column: 2;
-    width: max-content;
-  }
-
-  [data-dashboard-ui="management"][data-management-workspace]
-    .management-quick-card > svg {
-    grid-column: 3;
-    grid-row: 1;
+    .management-home-metric:not(:last-child) {
+    border-right: none;
+    border-bottom: 1px solid var(--border);
   }
 }
 
