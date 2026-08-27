@@ -10,11 +10,12 @@ const [
   series = "UPLY 韩语课程",
   variant = "default",
   subtitle = "",
+  volumeOverride = "",
 ] = process.argv.slice(2);
 
 if (!inputPath || !outputPath || !title) {
   throw new Error(
-    "Usage: node scripts/render-course-cover.mjs <input> <output> <title> [series] [variant] [subtitle]",
+    "Usage: node scripts/render-course-cover.mjs <input> <output> <title> [series] [variant] [subtitle] [volume]",
   );
 }
 
@@ -32,8 +33,9 @@ const coverStyles = {
   default: { accent: "#303633", accentSoft: "#718d7b", volume: "" },
 };
 const style = coverStyles[variant] ?? coverStyles.default;
-const volumeMarkup = style.volume
-  ? `<text x="126" y="350" font-family="Noto Sans CJK SC, sans-serif" font-size="88" font-weight="300" letter-spacing="2" fill="${style.accent}">${style.volume}</text>
+const volume = volumeOverride || style.volume;
+const volumeMarkup = volume
+  ? `<text x="126" y="350" font-family="Noto Sans CJK SC, sans-serif" font-size="88" font-weight="300" letter-spacing="2" fill="${style.accent}">${escapeXml(volume)}</text>
      <line x1="126" y1="382" x2="226" y2="382" stroke="${style.accentSoft}" stroke-width="9"/>`
   : `<rect x="126" y="312" width="48" height="9" fill="#2f82b7"/>
      <rect x="184" y="312" width="48" height="9" fill="#177f78"/>
