@@ -261,7 +261,6 @@ export async function ManagementApplicationCatalogPage({
                     </span>
                   </div>
                   <h3 className="mt-5 text-base font-semibold">{item.appTitle}</h3>
-                  <p className="app-muted-text mt-1.5 min-h-10 text-xs leading-5">{item.app.description}</p>
                   <dl className="mt-5 grid grid-cols-4 gap-2 border-y py-3">
                     {[
                       ["课程", itemMetrics.courses],

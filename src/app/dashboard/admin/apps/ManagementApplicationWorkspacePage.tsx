@@ -355,7 +355,6 @@ export async function ManagementApplicationWorkspacePage({
                   <Icon size={17} strokeWidth={1.8} aria-hidden="true" />
                 </span>
                 <h3 className="mt-4 text-sm font-semibold">{module.title}</h3>
-                <p className="app-muted-text mt-1.5 min-h-10 text-xs leading-5">{module.description}</p>
                 <span className="mt-auto flex items-center justify-between pt-4 text-xs font-medium">
                   <span className={enabled ? "text-[var(--primary-hover)]" : "app-muted-text"}>
                     {enabled ? "进入模块" : "当前账号无权限"}
@@ -375,12 +374,12 @@ export async function ManagementApplicationWorkspacePage({
                 key={module.key}
                 href={`${access.appPath}/${module.key}`}
                 aria-label={`进入${module.title}模块`}
-                className="management-module-card flex min-h-48 flex-col border p-4 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
+                className="management-module-card flex min-h-28 flex-col border p-4 focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
               >
                 {content}
               </Link>
             ) : (
-              <div key={module.key} className="management-module-card flex min-h-48 flex-col border p-4 opacity-55" aria-disabled="true">
+              <div key={module.key} className="management-module-card flex min-h-28 flex-col border p-4 opacity-55" aria-disabled="true">
                 {content}
               </div>
             );
