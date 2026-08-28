@@ -108,6 +108,21 @@ type TutorVisualCue = {
   durationMs?: number;
 };
 
+type TutorCharacter = {
+  kind?: "uply-teacher";
+  pose?: "greeting" | "explaining" | "encouraging";
+  position?: "left" | "right";
+  voiceEnabled?: boolean;
+  voiceLanguage?: "auto" | SmartLocale;
+  voiceRate?: number;
+};
+
+const tutorCharacterImages: Record<NonNullable<TutorCharacter["pose"]>, string> = {
+  greeting: "/api/learning-agent/characters/greeting",
+  explaining: "/api/learning-agent/characters/explaining",
+  encouraging: "/api/learning-agent/characters/encouraging",
+};
+
 type TutorInteraction = {
   kind?: "single_choice";
   prompt?: Partial<Record<SmartLocale, string>>;
@@ -581,6 +596,28 @@ function speakKorean(text: string, onComplete?: () => void) {
   utterance.lang = "ko-KR";
   utterance.rate = 0.82;
   utterance.onend = () => onComplete?.();
+  window.speechSynthesis.speak(utterance);
+}
+
+function speakTutorCharacterLine(text: string, character: TutorCharacter | null) {
+  if (!text.trim() || character?.voiceEnabled === false || !("speechSynthesis" in window)) return;
+  const koreanCharacterCount = text.match(/[가-힣]/g)?.length ?? 0;
+  const chineseCharacterCount = text.match(/[\u3400-\u9fff]/g)?.length ?? 0;
+  const detectedLanguage: SmartLocale = koreanCharacterCount > chineseCharacterCount ? "ko-KR" : "zh-CN";
+  const language = character?.voiceLanguage && character.voiceLanguage !== "auto"
+    ? character.voiceLanguage
+    : detectedLanguage;
+  const voices = window.speechSynthesis.getVoices();
+  const languageVoices = voices.filter((voice) => voice.lang.toLowerCase().startsWith(language.slice(0, 2).toLowerCase()));
+  const preferredFemaleVoice = languageVoices.find((voice) =>
+    /sunhi|xiaoxiao|xiaoyi|female|samantha|zira|tingting|meijia/i.test(voice.name),
+  );
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = language;
+  utterance.rate = Math.max(0.75, Math.min(1.25, Number(character?.voiceRate) || 1));
+  utterance.pitch = 1.04;
+  utterance.voice = preferredFemaleVoice ?? languageVoices[0] ?? null;
+  window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
 }
 
@@ -3994,6 +4031,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorText, setTutorText] = useState("");
   const [tutorDisplay, setTutorDisplay] = useState<TutorDisplay | null>(null);
   const [tutorTask, setTutorTask] = useState<TutorTask | null>(null);
+  const [tutorCharacter, setTutorCharacter] = useState<TutorCharacter | null>();
   const [tutorTaskCompleted, setTutorTaskCompleted] = useState(false);
   const [tutorInput, setTutorInput] = useState("");
   const [tutorSessionId, setTutorSessionId] = useState<string>();
@@ -4014,7 +4052,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const activeModule = textbook.modules[activeIndex];
   const activeNodes = activeModule?.nodes ?? [];
   const t = ui[locale];
-  const agentName = textbook.agent?.displayName[locale] || t.tutor;
+  const agentName = textbook.agent?.displayName[locale]
+    || textbook.agent?.displayName["zh-CN"]
+    || t.tutor;
   const agentDescription = textbook.agent?.description[locale] || t.grounded;
   const accent = accentMap[activeModule?.accent ?? "sky"];
   const chapterLabel = locale === "ko-KR"
@@ -4079,6 +4119,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorText("");
     setTutorDisplay(null);
     setTutorTask(null);
+    setTutorCharacter(undefined);
     setTutorTaskCompleted(false);
     setTutorInput("");
     setTutorSessionId(undefined);
@@ -4168,6 +4209,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
     setTutorStatus("thinking");
     setTutorText("");
+    window.speechSynthesis?.cancel();
     if (intent !== "answer") {
       setTutorSelectedAnswer("");
       setTutorAnswerCorrect(null);
@@ -4203,6 +4245,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       const encodedTask = response.headers.get("X-Learning-Agent-Task");
       const encodedVisualCue = response.headers.get("X-Learning-Agent-Visual-Cue");
       const encodedInteraction = response.headers.get("X-Learning-Agent-Interaction");
+      const encodedCharacter = response.headers.get("X-Learning-Agent-Character");
+      let nextCharacter: TutorCharacter | null = null;
       let nextOptions: string[] = [];
       try {
         const decoded = encodedOptions ? JSON.parse(decodeURIComponent(encodedOptions)) : [];
@@ -4232,6 +4276,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         setTutorTask(null);
       }
       try {
+        const decodedCharacter = encodedCharacter ? JSON.parse(decodeURIComponent(encodedCharacter)) : null;
+        nextCharacter = decodedCharacter && typeof decodedCharacter === "object" && !Array.isArray(decodedCharacter)
+          ? decodedCharacter as TutorCharacter
+          : null;
+        setTutorCharacter(nextCharacter);
+      } catch {
+        setTutorCharacter(null);
+      }
+      try {
         const decodedVisualCue = encodedVisualCue ? JSON.parse(decodeURIComponent(encodedVisualCue)) : null;
         runTutorVisualCue(decodedVisualCue && typeof decodedVisualCue === "object" && !Array.isArray(decodedVisualCue)
           ? decodedVisualCue as TutorVisualCue
@@ -4248,17 +4301,25 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       setTutorContinueLabel(encodedContinueLabel ? decodeURIComponent(encodedContinueLabel) : "");
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
+      let completeTutorText = "";
       setTutorStatus("streaming");
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
-        if (chunk) setTutorText((current) => current + chunk);
+        if (chunk) {
+          completeTutorText += chunk;
+          setTutorText((current) => current + chunk);
+        }
       }
       const finalChunk = decoder.decode();
-      if (finalChunk) setTutorText((current) => current + finalChunk);
+      if (finalChunk) {
+        completeTutorText += finalChunk;
+        setTutorText((current) => current + finalChunk);
+      }
       setTutorStatus("idle");
       setTutorAwaitingAnswer(nextTutorAwaitingAnswer);
+      if (nextCharacter?.kind === "uply-teacher") speakTutorCharacterLine(completeTutorText, nextCharacter);
 
       if (action === "focus_activity" && targetActivityId) {
         const activity = document.querySelector<HTMLElement>(`[data-smart-textbook-activity-id="${CSS.escape(targetActivityId)}"]`);
@@ -4561,6 +4622,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     );
   }
 
+  const teachingAreaCharacter: TutorCharacter | null = tutorCharacter === undefined
+    ? { kind: "uply-teacher", pose: "greeting", position: "right", voiceEnabled: true, voiceLanguage: "auto", voiceRate: 1 }
+    : tutorCharacter;
+
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
       <div className={`flex h-full flex-col overflow-hidden rounded-[26px] border border-[var(--border-subtle)] shadow-sm ${floating ? "bg-[color-mix(in_srgb,var(--card)_92%,transparent)]" : "bg-[var(--card)]"}`}>
@@ -4820,36 +4885,53 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               </section>
 
               <section className="mt-5 min-h-36 flex-1 border-t border-[color-mix(in_srgb,var(--status-warning)_8%,var(--border-subtle))] pt-5" aria-label={agentName}>
-                <div className="flex min-w-0 items-center gap-3">
-                  <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
-                    <Sparkles size={17} aria-hidden="true" />
-                    <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-[var(--card)] bg-[var(--status-success)]" aria-hidden="true" />
-                  </span>
+                <div className={`grid items-end gap-4 ${teachingAreaCharacter?.kind === "uply-teacher" ? teachingAreaCharacter.position === "left" ? "grid-cols-[8.5rem_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)_8.5rem]" : "grid-cols-1"}`}>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-bold text-[var(--foreground)]">{agentName}</p>
-                    <p className={`mt-0.5 text-[10px] font-bold ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
-                      {!tutorStarted
-                        ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
-                        : tutorStatus === "thinking" || tutorStatus === "streaming"
-                          ? (locale === "ko-KR" ? "설명 중" : "讲解中")
-                          : tutorStatus === "error"
-                            ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
-                            : (locale === "ko-KR" ? "수업 중" : "教学中")}
-                    </p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
+                        <Sparkles size={17} aria-hidden="true" />
+                        <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-[var(--card)] bg-[var(--status-success)]" aria-hidden="true" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-bold text-[var(--foreground)]">{agentName}</p>
+                        <p className={`mt-0.5 text-[10px] font-bold ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                          {!tutorStarted
+                            ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
+                            : tutorStatus === "thinking" || tutorStatus === "streaming"
+                              ? (locale === "ko-KR" ? "설명 중" : "讲解中")
+                              : tutorStatus === "error"
+                                ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
+                                : (locale === "ko-KR" ? "수업 중" : "教学中")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-[var(--foreground-muted)]">
+                      <MessageCircle size={14} aria-hidden="true" />
+                      <span>{locale === "ko-KR" ? "선생님 설명" : "老师讲解"}</span>
+                    </div>
+                    <div className="mt-3 border-l-2 border-[color-mix(in_srgb,var(--status-warning)_45%,var(--border-subtle))] pl-4">
+                      <p className="whitespace-pre-line text-sm leading-7 text-[var(--foreground-secondary)]" aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
+                        {tutorStatus === "thinking"
+                          ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
+                          : tutorText || (locale === "ko-KR"
+                          ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
+                          : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-[var(--foreground-muted)]">
-                  <MessageCircle size={14} aria-hidden="true" />
-                  <span>{locale === "ko-KR" ? "선생님 설명" : "老师讲解"}</span>
-                </div>
-                <div className="mt-3 border-l-2 border-[color-mix(in_srgb,var(--status-warning)_45%,var(--border-subtle))] pl-4">
-                  <p className="whitespace-pre-line text-sm leading-7 text-[var(--foreground-secondary)]" aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
-                    {tutorStatus === "thinking"
-                      ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
-                      : tutorText || (locale === "ko-KR"
-                      ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
-                      : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
-                  </p>
+                  {teachingAreaCharacter?.kind === "uply-teacher" && (
+                    <div className={`flex min-h-[11.7rem] items-end justify-center px-1 ${teachingAreaCharacter.position === "left" ? "order-first" : ""}`} aria-hidden="true">
+                      <Image
+                        src={tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]}
+                        alt=""
+                        width={512}
+                        height={1024}
+                        unoptimized
+                        loading="eager"
+                        className="kim-teacher-breathe h-[11.7rem] w-auto max-w-full object-contain drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none"
+                      />
+                    </div>
+                  )}
                 </div>
                 {tutorStarted && tutorTask && (
                   <div className={`mt-4 rounded-xl border p-3.5 ${tutorTaskCompleted ? "border-[var(--status-success)] bg-[var(--status-success-surface)]" : "border-[var(--status-warning)] bg-[var(--status-warning-surface)]"}`}>

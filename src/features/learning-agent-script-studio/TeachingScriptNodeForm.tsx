@@ -1,6 +1,7 @@
 "use client";
 
 import { type FormEvent, useActionState, useEffect, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { BookOpenText, MessageCircleQuestion, Plus, Route, ScrollText, Trash2 } from "lucide-react";
 
@@ -89,6 +90,40 @@ type NodePreview = {
   interactionOptions: string[];
   nextNodeKey: string;
   terminal: boolean;
+  characterKind: string;
+  characterPosition: string;
+};
+
+type ScriptPerformance = {
+  pose: "greeting" | "explaining" | "encouraging";
+  voiceEnabled: boolean;
+  voiceLanguage: "auto" | "zh-CN" | "ko-KR";
+  voiceRate: number;
+};
+
+function scriptPerformanceConfiguration(value: unknown, fallback: Record<string, unknown>): ScriptPerformance {
+  const performance = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : fallback;
+  const pose = performance.pose === "greeting" || performance.pose === "encouraging"
+    ? performance.pose
+    : "explaining";
+  const voiceLanguage = performance.voiceLanguage === "zh-CN" || performance.voiceLanguage === "ko-KR"
+    ? performance.voiceLanguage
+    : "auto";
+  const voiceRate = Number(performance.voiceRate);
+  return {
+    pose,
+    voiceEnabled: performance.voiceEnabled !== false,
+    voiceLanguage,
+    voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
+  };
+}
+
+const characterImages: Record<string, string> = {
+  greeting: "/api/learning-agent/characters/greeting",
+  explaining: "/api/learning-agent/characters/explaining",
+  encouraging: "/api/learning-agent/characters/encouraging",
 };
 
 const editorSteps: Array<{
@@ -125,6 +160,7 @@ export function TeachingScriptNodeForm({
   const display = objectConfiguration(node, "display");
   const studentTask = objectConfiguration(node, "studentTask");
   const visualCue = objectConfiguration(node, "visualCue");
+  const virtualCharacter = objectConfiguration(node, "virtualCharacter");
   const interaction = objectConfiguration(node, "interaction");
   const interactionOptions = Array.isArray(interaction.options)
     ? interaction.options.filter((item): item is string => typeof item === "string").join("\n")
@@ -133,6 +169,15 @@ export function TeachingScriptNodeForm({
     const lines = node.script["zh-CN"].split(/\n\s*\n/);
     return lines.length > 0 ? lines : [""];
   });
+  const storedScriptPerformances = Array.isArray(node.configuration.scriptPerformances)
+    ? node.configuration.scriptPerformances
+    : [];
+  const [scriptPerformances, setScriptPerformances] = useState<ScriptPerformance[]>(() =>
+    scriptLines.map((_, index) => scriptPerformanceConfiguration(storedScriptPerformances[index], {
+      ...virtualCharacter,
+      pose: virtualCharacter.pose ?? (index === 0 ? "greeting" : "explaining"),
+    })),
+  );
   const [editorSection, setEditorSection] = useState<EditorSection>("script");
   const [previewScriptIndex, setPreviewScriptIndex] = useState(0);
   const [preview, setPreview] = useState<NodePreview>({
@@ -146,6 +191,8 @@ export function TeachingScriptNodeForm({
     interactionOptions: interactionOptions.split("\n").filter(Boolean),
     nextNodeKey: node.nextNodeKey ?? "",
     terminal: node.configuration.terminal === true,
+    characterKind: String(virtualCharacter.kind ?? "none"),
+    characterPosition: String(virtualCharacter.position ?? "right"),
   });
 
   useEffect(() => {
@@ -165,6 +212,8 @@ export function TeachingScriptNodeForm({
       interactionOptions: String(values.get("interaction_options") ?? "").split("\n").map((item) => item.trim()).filter(Boolean),
       nextNodeKey: String(values.get("next_node_key") ?? ""),
       terminal: values.get("terminal") === "on",
+      characterKind: String(values.get("virtual_character_kind") ?? "none"),
+      characterPosition: String(values.get("virtual_character_position") ?? "right"),
     });
   }
 
@@ -229,12 +278,70 @@ export function TeachingScriptNodeForm({
                       maxLength={1600}
                       className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
                     />
+                    <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                      <label className="space-y-1.5 text-xs font-medium">
+                        <span className="block text-[var(--muted-foreground)]">人物动作</span>
+                        <select
+                          name="script_pose"
+                          value={scriptPerformances[index]?.pose ?? "explaining"}
+                          onChange={(event) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, pose: event.target.value as ScriptPerformance["pose"] } : item))}
+                          disabled={!editable}
+                          className={inputClass}
+                        >
+                          <option value="greeting">问候</option>
+                          <option value="explaining">讲解</option>
+                          <option value="encouraging">鼓励</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1.5 text-xs font-medium">
+                        <span className="block text-[var(--muted-foreground)]">语音</span>
+                        <select
+                          name="script_voice"
+                          value={scriptPerformances[index]?.voiceEnabled === false ? "off" : "on"}
+                          onChange={(event) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, voiceEnabled: event.target.value === "on" } : item))}
+                          disabled={!editable}
+                          className={inputClass}
+                        >
+                          <option value="on">朗读这句台词</option>
+                          <option value="off">只显示文字</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1.5 text-xs font-medium">
+                        <span className="block text-[var(--muted-foreground)]">朗读语言</span>
+                        <select
+                          name="script_voice_language"
+                          value={scriptPerformances[index]?.voiceLanguage ?? "auto"}
+                          onChange={(event) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, voiceLanguage: event.target.value as ScriptPerformance["voiceLanguage"] } : item))}
+                          disabled={!editable}
+                          className={inputClass}
+                        >
+                          <option value="auto">自动判断</option>
+                          <option value="zh-CN">中文</option>
+                          <option value="ko-KR">韩语</option>
+                        </select>
+                      </label>
+                      <label className="space-y-1.5 text-xs font-medium">
+                        <span className="block text-[var(--muted-foreground)]">语速</span>
+                        <select
+                          name="script_voice_rate"
+                          value={String(scriptPerformances[index]?.voiceRate ?? 1)}
+                          onChange={(event) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, voiceRate: Number(event.target.value) } : item))}
+                          disabled={!editable}
+                          className={inputClass}
+                        >
+                          <option value="0.85">慢速</option>
+                          <option value="1">标准</option>
+                          <option value="1.15">稍快</option>
+                        </select>
+                      </label>
+                    </div>
                     {editable && scriptLines.length > 1 && (
                       <button
                         type="button"
                         onClick={() => {
                           const nextLines = scriptLines.filter((_, lineIndex) => lineIndex !== index);
                           setScriptLines(nextLines);
+                          setScriptPerformances((current) => current.filter((_, performanceIndex) => performanceIndex !== index));
                           setPreview((current) => ({ ...current, scriptLines: nextLines }));
                           setPreviewScriptIndex((current) => Math.min(current, Math.max(0, nextLines.length - 1)));
                         }}
@@ -251,7 +358,13 @@ export function TeachingScriptNodeForm({
                 <div className="px-4 py-4 md:pl-[11.5rem]">
                   <button
                     type="button"
-                    onClick={() => setScriptLines((current) => [...current, ""])}
+                    onClick={() => {
+                      setScriptLines((current) => [...current, ""]);
+                      setScriptPerformances((current) => [...current, scriptPerformanceConfiguration(null, {
+                        ...virtualCharacter,
+                        pose: virtualCharacter.pose ?? "explaining",
+                      })]);
+                    }}
                     className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                   >
                     <Plus size={16} aria-hidden="true" />增加台词
@@ -286,6 +399,13 @@ export function TeachingScriptNodeForm({
             <label className={fieldClass}><span className="pt-3">展示要点</span><span><textarea name="display_items_zh" defaultValue={displayLocalizedItems(display)} disabled={!editable} rows={5} maxLength={1000} placeholder="每行填写一个要点" className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs">每行一个要点，顺序就是学生看到的顺序。</span></span></label>
             <label className={fieldClass}><span className="pt-3">韩语内容</span><textarea name="display_korean" defaultValue={String(display.korean ?? "")} disabled={!editable} rows={4} maxLength={1000} className={`${inputClass} resize-y py-3 text-base leading-7`} /></label>
             <label className={fieldClass}><span className="pt-3">中文释义</span><textarea name="display_translation_zh" defaultValue={displayLocalizedText(display, "translation")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
+
+            <div className="px-4 py-4">
+              <h4 className="text-sm font-bold">虚拟人物</h4>
+              <p className="app-muted-text mt-1 text-xs leading-5">这里决定金老师是否出现；每句台词的动作和语音在“老师台词”中设置。</p>
+            </div>
+            <label className={fieldClass}><span className="pt-3">显示人物</span><select name="virtual_character_kind" defaultValue={String(virtualCharacter.kind ?? "none")} disabled={!editable} className={inputClass}><option value="none">不显示虚拟人物</option><option value="uply-teacher">韩语金老师</option></select></label>
+            <label className={fieldClass}><span className="pt-3">出现位置</span><select name="virtual_character_position" defaultValue={String(virtualCharacter.position ?? "right")} disabled={!editable} className={inputClass}><option value="right">学习区右侧</option><option value="left">学习区左侧</option></select></label>
 
             <div className="px-4 py-4">
               <h4 className="text-sm font-bold">学习区联动</h4>
@@ -351,12 +471,24 @@ export function TeachingScriptNodeForm({
           </div>
           <div className="p-4">
             <p className="text-xs font-semibold text-[var(--muted-foreground)]">教学内容</p>
+            {preview.characterKind === "uply-teacher" && (
+              <div className={`mt-2 flex ${preview.characterPosition === "left" ? "justify-start" : "justify-end"}`}>
+                <Image
+                  src={characterImages[scriptPerformances[previewScriptIndex]?.pose ?? "explaining"] ?? characterImages.explaining}
+                  alt={`韩语金老师，${scriptPerformances[previewScriptIndex]?.pose === "greeting" ? "问候" : scriptPerformances[previewScriptIndex]?.pose === "encouraging" ? "鼓励" : "讲解"}状态`}
+                  width={512}
+                  height={1024}
+                  unoptimized
+                  className="h-40 w-auto object-contain"
+                />
+              </div>
+            )}
             <p className="mt-2 text-base font-bold">{preview.title || "当前没有额外展示"}</p>
             {preview.items.length > 0 && <ol className="mt-3 space-y-2">{preview.items.map((item, index) => <li key={`${item}-${index}`} className="flex items-start gap-2 text-sm leading-6"><span className="font-bold text-[var(--primary)]">{index + 1}</span><span>{item}</span></li>)}</ol>}
             {preview.korean && <div className="mt-4 border-l-2 border-[var(--primary)] pl-3"><p lang="ko" className="whitespace-pre-line text-base font-bold leading-7">{preview.korean}</p>{preview.translation && <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{preview.translation}</p>}</div>}
           </div>
           <div className="border-t border-[var(--border)] p-4">
-            <p className="text-xs font-semibold text-[var(--muted-foreground)]">UPLY 韩语老师</p>
+            <p className="text-xs font-semibold text-[var(--muted-foreground)]">韩语金老师</p>
             <TypewriterPreview key={`${previewScriptIndex}-${preview.scriptLines[previewScriptIndex] ?? ""}`} text={preview.scriptLines[previewScriptIndex] ?? ""} />
           </div>
           {preview.interactionKind === "single_choice" && (

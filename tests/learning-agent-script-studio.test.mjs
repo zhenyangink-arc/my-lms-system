@@ -25,6 +25,26 @@ test("节点式教学脚本具备草稿、发布、作答记录与第一章课�
   assert.match(migration, /activity\.activity_key = 'orientation-check'/);
   assert.match(migration, /'ready-for-practice', 'summary'/);
   assert.match(migration, /'answer'/);
+  const teacherIdentityMigration = await readFile(
+    new URL("supabase/migrations/202608280002_rename_korean_agent_to_teacher_kim.sql", root),
+    "utf8",
+  );
+  assert.match(teacherIdentityMigration, /韩语金老师/);
+  assert.match(teacherIdentityMigration, /专业女性教师/);
+  assert.match(teacherIdentityMigration, /김 선생님/);
+  const teacherVisibilityMigration = await readFile(
+    new URL("supabase/migrations/202608280003_show_teacher_kim_in_chapter_one_teaching_area.sql", root),
+    "utf8",
+  );
+  assert.match(teacherVisibilityMigration, /\{virtualCharacter\}/);
+  assert.match(teacherVisibilityMigration, /'uply-teacher'/);
+  assert.match(teacherVisibilityMigration, /version\.status in \('published', 'draft'\)/);
+  const teacherDisplayNameMigration = await readFile(
+    new URL("supabase/migrations/202608280004_update_teacher_kim_display_name.sql", root),
+    "utf8",
+  );
+  assert.match(teacherDisplayNameMigration, /UPLY 韩语-金老师/);
+  assert.match(teacherDisplayNameMigration, /learning_agent_profiles/);
 });
 
 test("平台负责人脚本工作台支持定位、编辑、排序和发布", async () => {
@@ -46,6 +66,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   );
   const respondRoute = await readFile(
     new URL("src/app/api/learning-agent/respond/route.ts", root),
+    "utf8",
+  );
+  const characterRoute = await readFile(
+    new URL("src/app/api/learning-agent/characters/[pose]/route.ts", root),
     "utf8",
   );
   assert.match(service, /requirePlatformOwner\(\)/);
@@ -88,6 +112,17 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /display_items_zh/);
   assert.match(editor, /student_task_target_key/);
   assert.match(editor, /完整听完指定表达音频/);
+  assert.match(editor, /韩语金老师/);
+  assert.match(editor, /script_pose/);
+  assert.match(editor, /朗读这句台词/);
+  assert.match(actions, /configuration\.virtualCharacter/);
+  assert.match(actions, /configuration\.scriptPerformances/);
+  assert.match(respondRoute, /X-Learning-Agent-Character/);
+  assert.match(respondRoute, /virtualCharacterForScriptSegment/);
+  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v1\/greeting\.png/);
+  assert.match(characterRoute, /createR2SignedObjectUrl/);
+  assert.match(editor, /\/api\/learning-agent\/characters\/greeting/);
+  assert.doesNotMatch(editor, /\/images\/virtual-characters/);
   assert.match(editor, /保存当前小节/);
   assert.match(editor, /老师讲解指向/);
   assert.match(editor, /visual_cue_target_key/);
@@ -147,6 +182,13 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /data-learning-agent-answer-overlay/);
   assert.match(shell, /showTutorAnswerDialog/);
   assert.match(shell, /aria-modal="true"/);
+  assert.match(shell, /speakTutorCharacterLine/);
+  assert.match(shell, /textbook\.agent\?\.displayName\[locale\]/);
+  assert.doesNotMatch(shell, /UPLY 韩语-金老师/);
+  assert.match(shell, /X-Learning-Agent-Character/);
+  assert.match(shell, /kim-teacher-breathe/);
+  assert.match(shell, /data-smart-textbook-teaching-area/);
+  assert.ok(shell.indexOf("kim-teacher-breathe") < shell.indexOf('id="korean-textbook-content"'));
   assert.match(shell, /setTutorStatus\("idle"\);\s+setTutorAwaitingAnswer\(nextTutorAwaitingAnswer\)/);
 });
 

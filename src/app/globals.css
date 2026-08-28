@@ -93,6 +93,20 @@
   }
 }
 
+@keyframes kim-teacher-breathe {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.005); }
+}
+
+.kim-teacher-breathe {
+  animation: kim-teacher-breathe 3.6s ease-in-out infinite;
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kim-teacher-breathe { animation: none; }
+}
+
 /* 韩语课程阶段卡：颜色表达阶段，文字标签保证不依赖颜色识别。 */
 .korean-level-card {
   --course-level-color: #b45309;

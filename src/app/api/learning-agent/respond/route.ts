@@ -74,6 +74,48 @@ function visualCue(configuration: Record<string, unknown> | null) {
     : null;
 }
 
+function virtualCharacter(configuration: Record<string, unknown> | null) {
+  const value = configuration?.virtualCharacter;
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
+function virtualCharacterForScriptSegment(
+  configuration: Record<string, unknown> | null,
+  segmentIndex: number,
+) {
+  const character = virtualCharacter(configuration);
+  if (!character || character.kind !== "uply-teacher") return null;
+  const performances = Array.isArray(configuration?.scriptPerformances)
+    ? configuration.scriptPerformances
+    : [];
+  const value = performances[segmentIndex];
+  const performance = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const pose = performance.pose === "greeting" || performance.pose === "encouraging"
+    ? performance.pose
+    : character.pose === "greeting" || character.pose === "encouraging"
+      ? character.pose
+      : "explaining";
+  const position = character.position === "left" ? "left" : "right";
+  const voiceLanguage = performance.voiceLanguage === "zh-CN" || performance.voiceLanguage === "ko-KR"
+    ? performance.voiceLanguage
+    : character.voiceLanguage === "zh-CN" || character.voiceLanguage === "ko-KR"
+      ? character.voiceLanguage
+      : "auto";
+  const voiceRate = Number(performance.voiceRate ?? character.voiceRate);
+  return {
+    kind: "uply-teacher",
+    pose,
+    position,
+    voiceEnabled: (performance.voiceEnabled ?? character.voiceEnabled) !== false,
+    voiceLanguage,
+    voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
+  };
+}
+
 function nodeInteraction(configuration: Record<string, unknown> | null) {
   const value = configuration?.interaction;
   if (!value || typeof value !== "object" || Array.isArray(value)) return null;
@@ -661,6 +703,10 @@ export async function POST(request: Request) {
       headerJson(selectedScriptNode.configuration?.display ?? null),
     );
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
+    headers.set(
+      "X-Learning-Agent-Character",
+      headerJson(virtualCharacterForScriptSegment(selectedScriptNode.configuration, selectedScriptSegmentIndex)),
+    );
     headers.set("X-Learning-Agent-Interaction", headerJson(responseInteraction));
     headers.set(
       "X-Learning-Agent-Visual-Cue",

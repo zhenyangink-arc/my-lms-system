@@ -26,6 +26,14 @@ const nodeSchema = z.object({
   displayItemsZh: z.string().trim().max(1000, "教学展示要点不能超过1000个字。"),
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
+  virtualCharacterKind: z.enum(["none", "uply-teacher"]),
+  virtualCharacterPosition: z.enum(["left", "right"]),
+  scriptPerformances: z.array(z.object({
+    pose: z.enum(["greeting", "explaining", "encouraging"]),
+    voiceEnabled: z.boolean(),
+    voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
+    voiceRate: z.coerce.number().min(0.75).max(1.25),
+  })).max(50),
   studentTaskKind: z.enum(["none", "play_expression_audio"]),
   studentTaskInstructionZh: z.string().trim().max(300, "学生任务说明不能超过300个字。"),
   studentTaskTargetLabelZh: z.string().trim().max(100, "目标名称不能超过100个字。"),
@@ -187,19 +195,33 @@ export async function saveTeachingScriptNodeAction(
 ): Promise<TeachingScriptActionState> {
   try {
     const { user } = await requirePlatformOwner();
+    const scriptRows = formData.getAll("script_zh").map(String);
+    const scriptPoses = formData.getAll("script_pose").map(String);
+    const scriptVoices = formData.getAll("script_voice").map(String);
+    const scriptVoiceLanguages = formData.getAll("script_voice_language").map(String);
+    const scriptVoiceRates = formData.getAll("script_voice_rate").map(String);
+    const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
     const parsed = nodeSchema.safeParse({
       nodeId: String(formData.get("node_id") ?? ""),
       nodeKey: String(formData.get("node_key") ?? ""),
       nodeType: String(formData.get("node_type") ?? ""),
       titleZh: String(formData.get("title_zh") ?? ""),
       titleKo: String(formData.get("title_ko") ?? ""),
-      scriptZh: formData.getAll("script_zh").map(String).filter((line) => line.trim()).join("\n\n"),
+      scriptZh: nonEmptyScriptIndexes.map((index) => scriptRows[index]).join("\n\n"),
       scriptKo: String(formData.get("script_ko") ?? ""),
       displayKind: String(formData.get("display_kind") ?? "overview"),
       displayTitleZh: String(formData.get("display_title_zh") ?? ""),
       displayItemsZh: String(formData.get("display_items_zh") ?? ""),
       displayKorean: String(formData.get("display_korean") ?? ""),
       displayTranslationZh: String(formData.get("display_translation_zh") ?? ""),
+      virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "none"),
+      virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
+      scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
+        pose: scriptPoses[index] ?? "explaining",
+        voiceEnabled: (scriptVoices[index] ?? "on") === "on",
+        voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
+        voiceRate: scriptVoiceRates[index] ?? "1",
+      })),
       studentTaskKind: String(formData.get("student_task_kind") ?? "none"),
       studentTaskInstructionZh: String(formData.get("student_task_instruction_zh") ?? ""),
       studentTaskTargetLabelZh: String(formData.get("student_task_target_label_zh") ?? ""),
@@ -278,6 +300,16 @@ export async function saveTeachingScriptNodeAction(
       };
     } else {
       Reflect.deleteProperty(configuration, "studentTask");
+    }
+    if (input.virtualCharacterKind === "uply-teacher") {
+      configuration.virtualCharacter = {
+        kind: input.virtualCharacterKind,
+        position: input.virtualCharacterPosition,
+      };
+      configuration.scriptPerformances = input.scriptPerformances;
+    } else {
+      Reflect.deleteProperty(configuration, "virtualCharacter");
+      Reflect.deleteProperty(configuration, "scriptPerformances");
     }
     if (input.visualCueTargetKey) {
       configuration.visualCue = {
