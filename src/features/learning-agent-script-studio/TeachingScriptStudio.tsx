@@ -112,8 +112,8 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
         </div>
       </section>
 
-      <div className="grid min-h-[760px] border bg-[var(--card)] lg:grid-cols-[15rem_minmax(0,1fr)] xl:grid-cols-[15rem_19rem_minmax(0,1fr)]">
-        <nav className="border-b bg-[var(--muted)]/35 lg:border-r xl:border-b-0" aria-label="章节与学习步骤">
+      <div className="grid min-h-[760px] border bg-[var(--card)] lg:grid-cols-[15rem_minmax(0,1fr)] 2xl:grid-cols-[15rem_19rem_minmax(0,1fr)]">
+        <nav className="border-b bg-[var(--muted)]/35 lg:border-r 2xl:border-b-0" aria-label="章节与学习步骤">
           <div className="border-b px-4 py-3">
             <h2 className="text-sm font-bold">章节与学习步骤</h2>
             <p className="app-muted-text mt-1 text-xs">每章包含 8 个教材步骤</p>
@@ -139,7 +139,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           </div>
         </nav>
 
-        <section className="border-b lg:border-b-0 xl:border-r" aria-labelledby="teaching-flow-title">
+        <section className="border-b lg:border-b-0 2xl:border-r" aria-labelledby="teaching-flow-title">
           <div className="flex min-h-16 items-center justify-between gap-3 border-b px-4 py-3">
             <div><h2 id="teaching-flow-title" className="text-sm font-bold">自定义教学流程</h2><p className="app-muted-text mt-1 text-xs">按你的课堂节奏安排小节</p></div>
             {editable && selectedVersion && <form action={addTeachingScriptNodeAction}><input type="hidden" name="version_id" value={selectedVersion.id} /><input type="hidden" name="return_to" value={returnTo} /><button type="submit" className="inline-flex min-h-11 items-center gap-1.5 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Plus size={15} aria-hidden="true" />新增小节</button></form>}
@@ -167,7 +167,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           )}
         </section>
 
-        <section className="min-w-0 border-t lg:col-span-2 xl:col-span-1 xl:border-t-0" aria-labelledby="subsection-editor-title">
+        <section className="min-w-0 border-t lg:col-span-2 2xl:col-span-1 2xl:border-t-0" aria-labelledby="subsection-editor-title">
           {selectedNode && selectedVersion ? (
             <>
               <header className="flex min-h-16 items-center justify-between gap-4 border-b px-5 py-3">

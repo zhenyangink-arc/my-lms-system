@@ -54,6 +54,12 @@ function configuredText(configuration: Record<string, unknown> | null, key: stri
   return localized(configuration?.[key], locale);
 }
 
+function teacherScriptSegments(node: ScriptNodeRow, locale: "zh-CN" | "ko-KR") {
+  const content = localized(node.teacher_script, locale);
+  const segments = content.split(/\n\s*\n/).map((segment) => segment.trim()).filter(Boolean);
+  return segments.length > 0 ? segments : [content];
+}
+
 function studentTask(configuration: Record<string, unknown> | null) {
   const value = configuration?.studentTask;
   return value && typeof value === "object" && !Array.isArray(value)
@@ -354,6 +360,9 @@ export async function POST(request: Request) {
   let awaitingAnswer = false;
   let answerCorrect: boolean | null = null;
   let nextTeachingState = teachingState;
+  let selectedScriptSegmentIndex = 0;
+  let selectedScriptSegmentCount = 1;
+  let responseInteraction: ReturnType<typeof nodeInteraction> = null;
   let pendingNodeAttempt: { nodeId: string; answer: string; isCorrect: boolean } | null = null;
 
   if (scriptNodes.length && input.intent !== "ask") {
@@ -368,6 +377,20 @@ export async function POST(request: Request) {
     } else if (input.intent === "answer") {
       selectedScriptNode = currentScriptNode;
     } else if (currentScriptNode) {
+      const currentSegments = teacherScriptSegments(currentScriptNode, input.locale);
+      const currentSegmentIndex = teachingState.scriptSegmentNodeId === currentScriptNode.id
+        ? Math.max(0, Math.min(currentSegments.length - 1, Number(teachingState.scriptSegmentIndex) || 0))
+        : 0;
+      if (input.intent === "ready" && currentSegmentIndex < currentSegments.length - 1) {
+        selectedScriptNode = currentScriptNode;
+        selectedScriptSegmentIndex = currentSegmentIndex + 1;
+        selectedScriptSegmentCount = currentSegments.length;
+        nextTeachingState = {
+          ...teachingState,
+          scriptSegmentNodeId: currentScriptNode.id,
+          scriptSegmentIndex: selectedScriptSegmentIndex,
+        };
+      } else {
       const currentAnswered = teachingState.answeredNodeId === currentScriptNode.id;
       const currentStudentTask = studentTask(currentScriptNode.configuration);
       const currentInteraction = nodeInteraction(currentScriptNode.configuration);
@@ -386,8 +409,22 @@ export async function POST(request: Request) {
           ? nodeByKey.get(currentScriptNode.next_node_key) ?? null
           : scriptNodes.find((node) => node.sort_order > currentScriptNode.sort_order) ?? currentScriptNode;
       }
+      }
     } else {
       selectedScriptNode = scriptNodes[0] ?? null;
+    }
+
+    if (selectedScriptNode) {
+      const selectedSegments = teacherScriptSegments(selectedScriptNode, input.locale);
+      selectedScriptSegmentCount = selectedSegments.length;
+      const segmentStateMatches = nextTeachingState.scriptSegmentNodeId === selectedScriptNode.id;
+      selectedScriptSegmentIndex = segmentStateMatches
+        ? Math.max(0, Math.min(selectedSegments.length - 1, Number(nextTeachingState.scriptSegmentIndex) || 0))
+        : selectedScriptSegmentIndex;
+      if (!segmentStateMatches) {
+        selectedScriptSegmentIndex = 0;
+        nextTeachingState = { ...nextTeachingState, scriptSegmentNodeId: selectedScriptNode.id, scriptSegmentIndex: 0 };
+      }
     }
 
     if (
@@ -396,7 +433,7 @@ export async function POST(request: Request) {
       && input.intent !== "hint"
       && input.intent !== "example"
     ) {
-      scriptedContent = localized(selectedScriptNode.teacher_script, input.locale);
+      scriptedContent = teacherScriptSegments(selectedScriptNode, input.locale)[selectedScriptSegmentIndex] ?? "";
     }
 
     if (selectedScriptNode && !scriptedContent && input.intent === "hint") {
@@ -411,7 +448,10 @@ export async function POST(request: Request) {
         : "这个教学节点暂时没有补充例子，请继续完成当前学习步骤。";
     }
 
-    const selectedInteraction = nodeInteraction(selectedScriptNode?.configuration ?? null);
+    const selectedInteraction = selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
+      ? nodeInteraction(selectedScriptNode?.configuration ?? null)
+      : null;
+    responseInteraction = selectedInteraction;
     if (selectedScriptNode && selectedInteraction) {
       questionOptions = selectedInteraction.options;
       if (input.intent === "answer") {
@@ -621,7 +661,7 @@ export async function POST(request: Request) {
       headerJson(selectedScriptNode.configuration?.display ?? null),
     );
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
-    headers.set("X-Learning-Agent-Interaction", headerJson(nodeInteraction(selectedScriptNode.configuration)));
+    headers.set("X-Learning-Agent-Interaction", headerJson(responseInteraction));
     headers.set(
       "X-Learning-Agent-Visual-Cue",
       headerJson(input.intent === "start" || input.intent === "ready"
@@ -636,11 +676,13 @@ export async function POST(request: Request) {
     }
     headers.set(
       "X-Learning-Agent-Terminal",
-      selectedScriptNode.configuration?.terminal === true ? "true" : "false",
+      selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1 && selectedScriptNode.configuration?.terminal === true ? "true" : "false",
     );
     headers.set(
       "X-Learning-Agent-Continue-Label",
-      encodeURIComponent(configuredText(selectedScriptNode.configuration, "continueLabel", input.locale)),
+      encodeURIComponent(selectedScriptSegmentIndex < selectedScriptSegmentCount - 1
+        ? (input.locale === "ko-KR" ? "다음 대사" : "继续下一句")
+        : configuredText(selectedScriptNode.configuration, "continueLabel", input.locale)),
     );
   }
 

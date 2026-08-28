@@ -2,7 +2,7 @@
 
 import { type FormEvent, useActionState, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { BookOpenText, MessageCircleQuestion, Route, ScrollText } from "lucide-react";
+import { BookOpenText, MessageCircleQuestion, Plus, Route, ScrollText, Trash2 } from "lucide-react";
 
 import {
   saveTeachingScriptNodeAction,
@@ -49,15 +49,41 @@ function FieldError({ errors }: { errors?: string[] }) {
   return <span className="text-xs text-[var(--status-danger)] md:col-start-2" role="alert">{errors[0]}</span>;
 }
 
+function TypewriterPreview({ text }: { text: string }) {
+  const characters = Array.from(text || "请填写老师台词");
+  const [visibleLength, setVisibleLength] = useState(0);
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      const timer = window.setTimeout(() => setVisibleLength(characters.length), 0);
+      return () => window.clearTimeout(timer);
+    }
+    let length = 0;
+    const timer = window.setInterval(() => {
+      length += 1;
+      setVisibleLength(length);
+      if (length >= characters.length) window.clearInterval(timer);
+    }, 35);
+    return () => window.clearInterval(timer);
+  }, [characters.length]);
+
+  const fullText = characters.join("");
+  return (
+    <p className="mt-2 min-h-7 whitespace-pre-line text-sm leading-7 text-[var(--foreground-secondary)]">
+      <span aria-hidden="true">{characters.slice(0, visibleLength).join("")}</span>
+      <span className="sr-only">{fullText}</span>
+    </p>
+  );
+}
+
 type EditorSection = "script" | "content" | "interaction" | "flow";
 
 type NodePreview = {
   title: string;
-  body: string;
   items: string[];
   korean: string;
   translation: string;
-  script: string;
+  scriptLines: string[];
   interactionKind: string;
   interactionPrompt: string;
   interactionOptions: string[];
@@ -103,14 +129,18 @@ export function TeachingScriptNodeForm({
   const interactionOptions = Array.isArray(interaction.options)
     ? interaction.options.filter((item): item is string => typeof item === "string").join("\n")
     : "";
+  const [scriptLines, setScriptLines] = useState(() => {
+    const lines = node.script["zh-CN"].split(/\n\s*\n/);
+    return lines.length > 0 ? lines : [""];
+  });
   const [editorSection, setEditorSection] = useState<EditorSection>("script");
+  const [previewScriptIndex, setPreviewScriptIndex] = useState(0);
   const [preview, setPreview] = useState<NodePreview>({
     title: displayLocalizedText(display, "title"),
-    body: displayLocalizedText(display, "body"),
     items: displayLocalizedItems(display).split("\n").filter(Boolean),
     korean: String(display.korean ?? ""),
     translation: displayLocalizedText(display, "translation"),
-    script: node.script["zh-CN"],
+    scriptLines,
     interactionKind: String(interaction.kind ?? "none"),
     interactionPrompt: localizedConfigurationText(interaction, "prompt"),
     interactionOptions: interactionOptions.split("\n").filter(Boolean),
@@ -126,11 +156,10 @@ export function TeachingScriptNodeForm({
     const values = new FormData(event.currentTarget);
     setPreview({
       title: String(values.get("display_title_zh") ?? ""),
-      body: String(values.get("display_body_zh") ?? ""),
       items: String(values.get("display_items_zh") ?? "").split("\n").map((item) => item.trim()).filter(Boolean),
       korean: String(values.get("display_korean") ?? ""),
       translation: String(values.get("display_translation_zh") ?? ""),
-      script: String(values.get("script_zh") ?? ""),
+      scriptLines: values.getAll("script_zh").map(String),
       interactionKind: String(values.get("interaction_kind") ?? "none"),
       interactionPrompt: String(values.get("interaction_prompt_zh") ?? ""),
       interactionOptions: String(values.get("interaction_options") ?? "").split("\n").map((item) => item.trim()).filter(Boolean),
@@ -145,6 +174,7 @@ export function TeachingScriptNodeForm({
     <form action={action} onInput={updatePreview} className="space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
+      <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
 
       <div className="grid gap-2 border-b border-[var(--border)] pb-4 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
         {editorSteps.map((step, index) => {
@@ -171,7 +201,7 @@ export function TeachingScriptNodeForm({
         })}
       </div>
 
-      <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid items-start gap-4 2xl:grid-cols-[minmax(28rem,1fr)_minmax(26rem,30rem)]">
         <div className="min-w-0">
           <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" className={panelClass}>
             <div className="px-4 py-4">
@@ -183,11 +213,53 @@ export function TeachingScriptNodeForm({
               <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} className={inputClass} />
               <FieldError errors={state.fieldErrors?.titleZh} />
             </label>
-            <label className={fieldClass}>
-              <span className="pt-3">老师台词</span>
-              <textarea name="script_zh" defaultValue={node.script["zh-CN"]} disabled={!editable} rows={10} maxLength={1600} className={`${inputClass} resize-y py-3 text-sm leading-7`} />
-              <FieldError errors={state.fieldErrors?.scriptZh} />
-            </label>
+            <div className="divide-y divide-[var(--border)]">
+              {scriptLines.map((line, index) => (
+                <div key={index} className={fieldClass}>
+                  <label htmlFor={`script-line-${index}`} className="pt-3">台词 {index + 1}</label>
+                  <div>
+                    <textarea
+                      id={`script-line-${index}`}
+                      name="script_zh"
+                      value={line}
+                      onChange={(event) => setScriptLines((current) => current.map((item, lineIndex) => lineIndex === index ? event.target.value : item))}
+                      onFocus={() => setPreviewScriptIndex(index)}
+                      disabled={!editable}
+                      rows={2}
+                      maxLength={1600}
+                      className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
+                    />
+                    {editable && scriptLines.length > 1 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const nextLines = scriptLines.filter((_, lineIndex) => lineIndex !== index);
+                          setScriptLines(nextLines);
+                          setPreview((current) => ({ ...current, scriptLines: nextLines }));
+                          setPreviewScriptIndex((current) => Math.min(current, Math.max(0, nextLines.length - 1)));
+                        }}
+                        aria-label={`删除台词 ${index + 1}`}
+                        className="mt-2 inline-flex min-h-11 items-center gap-1.5 px-3 text-sm font-semibold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)]"
+                      >
+                        <Trash2 size={15} aria-hidden="true" />删除
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {editable && (
+                <div className="px-4 py-4 md:pl-[11.5rem]">
+                  <button
+                    type="button"
+                    onClick={() => setScriptLines((current) => [...current, ""])}
+                    className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                  >
+                    <Plus size={16} aria-hidden="true" />增加台词
+                  </button>
+                </div>
+              )}
+              {state.fieldErrors?.scriptZh?.length ? <div className="px-4 pb-4 text-xs text-[var(--status-danger)] md:pl-[11.5rem]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
+            </div>
             <label className={fieldClass}>
               <span className="pt-3">没听懂时的提示</span>
               <textarea name="hint_zh" defaultValue={configuredText(node, "hint")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
@@ -210,9 +282,7 @@ export function TeachingScriptNodeForm({
               <h3 className="text-sm font-bold">安排学生此时看到和操作的内容</h3>
               <p className="app-muted-text mt-1 text-xs leading-5">没有额外展示时可以全部留空；老师台词仍会正常出现。</p>
             </div>
-            <label className={fieldClass}><span className="pt-3">展示方式</span><select name="display_kind" defaultValue={String(display.kind ?? "overview")} disabled={!editable} className={inputClass}><option value="overview">目标概览</option><option value="scene">情景观察</option><option value="sequence">步骤或顺序</option><option value="expression">表达与例句</option><option value="question">理解检查</option><option value="task">学习任务</option><option value="summary">课堂总结</option></select></label>
             <label className={fieldClass}><span className="pt-3">展示标题</span><input name="display_title_zh" defaultValue={displayLocalizedText(display, "title")} disabled={!editable} maxLength={80} className={inputClass} /></label>
-            <label className={fieldClass}><span className="pt-3">展示说明</span><textarea name="display_body_zh" defaultValue={displayLocalizedText(display, "body")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
             <label className={fieldClass}><span className="pt-3">展示要点</span><span><textarea name="display_items_zh" defaultValue={displayLocalizedItems(display)} disabled={!editable} rows={5} maxLength={1000} placeholder="每行填写一个要点" className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs">每行一个要点，顺序就是学生看到的顺序。</span></span></label>
             <label className={fieldClass}><span className="pt-3">韩语内容</span><textarea name="display_korean" defaultValue={String(display.korean ?? "")} disabled={!editable} rows={4} maxLength={1000} className={`${inputClass} resize-y py-3 text-base leading-7`} /></label>
             <label className={fieldClass}><span className="pt-3">中文释义</span><textarea name="display_translation_zh" defaultValue={displayLocalizedText(display, "translation")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
@@ -274,7 +344,7 @@ export function TeachingScriptNodeForm({
           </div>
         </div>
 
-        <aside aria-label="学生端实时预览" className="border border-[var(--border)] bg-[var(--card)] xl:sticky xl:top-4">
+        <aside aria-label="学生端实时预览" className="mx-auto w-full max-w-3xl border border-[var(--border)] bg-[var(--card)] 2xl:sticky 2xl:top-4 2xl:max-w-none">
           <div className="border-b border-[var(--border)] px-4 py-3">
             <h3 className="text-sm font-bold">学生端预览</h3>
             <p className="app-muted-text mt-1 text-xs">输入内容时自动更新</p>
@@ -282,13 +352,12 @@ export function TeachingScriptNodeForm({
           <div className="p-4">
             <p className="text-xs font-semibold text-[var(--muted-foreground)]">教学内容</p>
             <p className="mt-2 text-base font-bold">{preview.title || "当前没有额外展示"}</p>
-            {preview.body && <p className="mt-2 text-sm leading-6 text-[var(--foreground-secondary)]">{preview.body}</p>}
             {preview.items.length > 0 && <ol className="mt-3 space-y-2">{preview.items.map((item, index) => <li key={`${item}-${index}`} className="flex items-start gap-2 text-sm leading-6"><span className="font-bold text-[var(--primary)]">{index + 1}</span><span>{item}</span></li>)}</ol>}
             {preview.korean && <div className="mt-4 border-l-2 border-[var(--primary)] pl-3"><p lang="ko" className="whitespace-pre-line text-base font-bold leading-7">{preview.korean}</p>{preview.translation && <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">{preview.translation}</p>}</div>}
           </div>
           <div className="border-t border-[var(--border)] p-4">
             <p className="text-xs font-semibold text-[var(--muted-foreground)]">UPLY 韩语老师</p>
-            <p className="mt-2 whitespace-pre-line text-sm leading-7 text-[var(--foreground-secondary)]">{preview.script || "请填写老师台词"}</p>
+            <TypewriterPreview key={`${previewScriptIndex}-${preview.scriptLines[previewScriptIndex] ?? ""}`} text={preview.scriptLines[previewScriptIndex] ?? ""} />
           </div>
           {preview.interactionKind === "single_choice" && (
             <div className="border-t border-[var(--border)] p-4">

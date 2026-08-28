@@ -4796,9 +4796,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 <h3 id="teaching-display-title" className="mt-1.5 text-base font-bold leading-6 text-[var(--foreground)]">
                   {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                 </h3>
-                {(tutorDisplay?.body?.[locale] || !tutorStarted) && (
+                {!tutorStarted && (
                   <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">
-                    {tutorDisplay?.body?.[locale] || localize(activeModule.description)}
+                    {localize(activeModule.description)}
                   </p>
                 )}
                 {(tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (

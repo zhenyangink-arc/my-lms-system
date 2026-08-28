@@ -23,7 +23,6 @@ const nodeSchema = z.object({
   scriptKo: z.string().trim().max(1600, "韩文台词不能超过1600个字。"),
   displayKind: z.enum(["overview", "scene", "sequence", "expression", "question", "task", "summary"]),
   displayTitleZh: z.string().trim().max(80, "教学展示标题不能超过80个字。"),
-  displayBodyZh: z.string().trim().max(600, "教学展示说明不能超过600个字。"),
   displayItemsZh: z.string().trim().max(1000, "教学展示要点不能超过1000个字。"),
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
@@ -194,11 +193,10 @@ export async function saveTeachingScriptNodeAction(
       nodeType: String(formData.get("node_type") ?? ""),
       titleZh: String(formData.get("title_zh") ?? ""),
       titleKo: String(formData.get("title_ko") ?? ""),
-      scriptZh: String(formData.get("script_zh") ?? ""),
+      scriptZh: formData.getAll("script_zh").map(String).filter((line) => line.trim()).join("\n\n"),
       scriptKo: String(formData.get("script_ko") ?? ""),
       displayKind: String(formData.get("display_kind") ?? "overview"),
       displayTitleZh: String(formData.get("display_title_zh") ?? ""),
-      displayBodyZh: String(formData.get("display_body_zh") ?? ""),
       displayItemsZh: String(formData.get("display_items_zh") ?? ""),
       displayKorean: String(formData.get("display_korean") ?? ""),
       displayTranslationZh: String(formData.get("display_translation_zh") ?? ""),
@@ -258,11 +256,10 @@ export async function saveTeachingScriptNodeAction(
       .split("\n")
       .map((item) => item.trim())
       .filter(Boolean);
-    if (input.displayTitleZh || input.displayBodyZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
+    if (input.displayTitleZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
       configuration.display = {
         kind: input.displayKind,
         title: { "zh-CN": input.displayTitleZh },
-        body: { "zh-CN": input.displayBodyZh },
         items: { "zh-CN": displayItems },
         korean: input.displayKorean,
         translation: { "zh-CN": input.displayTranslationZh },

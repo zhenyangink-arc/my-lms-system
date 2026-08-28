@@ -44,6 +44,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
     new URL("src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx", root),
     "utf8",
   );
+  const respondRoute = await readFile(
+    new URL("src/app/api/learning-agent/respond/route.ts", root),
+    "utf8",
+  );
   assert.match(service, /requirePlatformOwner\(\)/);
   assert.match(service, /learning_agent_script_versions/);
   assert.match(service, /learning_agent_script_nodes/);
@@ -63,7 +67,21 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /moveTeachingScriptNodeAction/);
   assert.match(actions, /publishTeachingScriptAction/);
   assert.match(editor, /老师台词/);
+  assert.match(editor, /增加台词/);
+  assert.match(editor, /scriptLines\.map/);
+  assert.match(editor, /TypewriterPreview/);
+  assert.match(editor, /onFocus=\{\(\) => setPreviewScriptIndex\(index\)\}/);
+  assert.doesNotMatch(editor, />上一句</);
+  assert.doesNotMatch(editor, />下一句</);
+  assert.match(actions, /getAll\("script_zh"\)/);
+  assert.match(respondRoute, /teacherScriptSegments/);
+  assert.match(respondRoute, /scriptSegmentIndex/);
+  assert.match(respondRoute, /继续下一句/);
   assert.match(editor, /教学内容/);
+  assert.ok(editor.indexOf('id: "script"') < editor.indexOf('id: "content"'));
+  assert.match(editor, /useState<EditorSection>\("script"\)/);
+  assert.doesNotMatch(editor, /展示方式/);
+  assert.doesNotMatch(editor, /展示说明/);
   assert.match(editor, /互动设置/);
   assert.match(editor, /流程设置/);
   assert.match(editor, /学生端预览/);
