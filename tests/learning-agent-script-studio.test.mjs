@@ -90,6 +90,13 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
     "utf8",
   );
   assert.match(route, /const scriptVersionId = currentPublishedScript\?\.id \?\? existingSession\?\.script_version_id/);
+  assert.match(route, /const sessionStatus = scriptNodes\.length === 0/);
+  assert.doesNotMatch(route, /status: input\.intent === "ready" && completionPercent === 100 \? "completed" : "active"/);
+  const explicitSessionLookup = route.slice(
+    route.indexOf("if (input.sessionId)"),
+    route.indexOf("} else {", route.indexOf("if (input.sessionId)")),
+  );
+  assert.doesNotMatch(explicitSessionLookup, /\.eq\("status", "active"\)/);
   assert.match(route, /input\.intent !== "hint"/);
   assert.match(route, /input\.intent !== "example"/);
   assert.match(route, /learning_agent_script_versions/);

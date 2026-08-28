@@ -287,7 +287,6 @@ export async function POST(request: Request) {
       .eq("student_id", auth.user.id)
       .eq("lesson_id", lesson.id)
       .eq("agent_profile_id", agentProfile.id)
-      .eq("status", "active")
       .maybeSingle();
     existingSession = data as ExistingSession | null;
   } else {
@@ -515,6 +514,14 @@ export async function POST(request: Request) {
   }
 
   const actionTargetActivityId = selectedScriptNode?.reference_activity_id ?? targetActivity?.id ?? null;
+  // Textbook completion and scripted teaching completion are separate
+  // lifecycles. A previously completed module may still have several teaching
+  // nodes left, so module progress must not close the scripted session.
+  const sessionStatus = scriptNodes.length === 0
+    && input.intent === "ready"
+    && completionPercent === 100
+    ? "completed"
+    : "active";
   let sessionId = existingSession?.id;
   if (!sessionId) {
     const { data: createdSession, error: sessionError } = await admin
@@ -531,7 +538,7 @@ export async function POST(request: Request) {
         script_version_id: scriptVersionId,
         current_node_id: selectedScriptNode?.id ?? null,
         teaching_state: nextTeachingState,
-        status: input.intent === "ready" && completionPercent === 100 ? "completed" : "active",
+        status: sessionStatus,
       })
       .select("id")
       .single();
@@ -550,7 +557,7 @@ export async function POST(request: Request) {
         script_version_id: scriptVersionId,
         current_node_id: selectedScriptNode?.id ?? existingSession?.current_node_id ?? null,
         teaching_state: nextTeachingState,
-        status: input.intent === "ready" && completionPercent === 100 ? "completed" : "active",
+        status: sessionStatus,
       })
       .eq("id", sessionId);
   }
