@@ -15,11 +15,11 @@ export type TeachingScriptActionState = {
 const uuid = z.uuid("数据编号不正确。");
 const nodeSchema = z.object({
   nodeId: z.uuid(),
-  nodeKey: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "节点标识只能使用小写字母、数字和连字符。"),
+  nodeKey: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "小节标识只能使用小写字母、数字和连字符。"),
   nodeType: z.enum(["opening", "explanation", "example", "question", "instruction", "summary"]),
-  titleZh: z.string().trim().min(1, "请填写节点标题。").max(80, "节点标题不能超过80个字。"),
+  titleZh: z.string().trim().min(1, "请填写小节名称。").max(80, "小节名称不能超过80个字。"),
   titleKo: z.string().trim().max(80, "韩文标题不能超过80个字。"),
-  scriptZh: z.string().trim().min(1, "请填写中文老师台词。").max(1600, "单个节点台词不能超过1600个字。"),
+  scriptZh: z.string().trim().min(1, "请填写中文老师台词。").max(1600, "单个小节台词不能超过1600个字。"),
   scriptKo: z.string().trim().max(1600, "韩文台词不能超过1600个字。"),
   displayKind: z.enum(["overview", "scene", "sequence", "expression", "question", "task", "summary"]),
   displayTitleZh: z.string().trim().max(80, "教学展示标题不能超过80个字。"),
@@ -165,13 +165,13 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
     node_key: nodeKey,
     node_type: "explanation",
     sort_order: nextOrder,
-    title: { "zh-CN": "新教学节点", "ko-KR": "새 수업 단계" },
-    teacher_script: { "zh-CN": "请在右侧填写老师台词。", "ko-KR": "선생님 대사를 입력하세요." },
+    title: { "zh-CN": "新教学小节", "ko-KR": "새 수업 단계" },
+    teacher_script: { "zh-CN": "请填写这一小节的老师台词。", "ko-KR": "선생님 대사를 입력하세요." },
     configuration: {},
     action_type: "none",
     is_required: true,
   });
-  if (error) throw new Error("新增教学节点失败，请检查节点数量后重试。");
+  if (error) throw new Error("新增教学小节失败，请检查小节数量后重试。");
   await admin.from("learning_agent_publish_logs").insert({
     lesson_id: version.lesson_id,
     script_version_id: versionId,
@@ -231,7 +231,7 @@ export async function saveTeachingScriptNodeAction(
     if (!parsed.success) {
       return {
         status: "error",
-        message: "请检查标出的教学节点字段。",
+        message: "请检查标出的教学小节字段。",
         fieldErrors: parsed.error.flatten().fieldErrors,
       };
     }
@@ -247,7 +247,7 @@ export async function saveTeachingScriptNodeAction(
       ? current.learning_agent_script_versions[0]
       : current?.learning_agent_script_versions;
     if (!current || !joinedVersion || joinedVersion.status !== "draft") {
-      return { status: "error", message: "只有草稿节点可以修改。" };
+      return { status: "error", message: "只有草稿中的教学小节可以修改。" };
     }
 
     const existingConfiguration = current.configuration && typeof current.configuration === "object"
@@ -333,7 +333,7 @@ export async function saveTeachingScriptNodeAction(
     if (error) {
       return {
         status: "error",
-        message: error.code === "23505" ? "节点标识已经存在，请换一个标识。" : "教学节点保存失败，请稍后重试。",
+        message: error.code === "23505" ? "小节标识已经存在，请换一个标识。" : "教学小节保存失败，请稍后重试。",
       };
     }
 
@@ -363,9 +363,9 @@ export async function saveTeachingScriptNodeAction(
     });
 
     refreshStudio(returnPath(formData));
-    return { status: "success", message: "教学节点已保存到草稿。" };
+    return { status: "success", message: "教学小节已保存到草稿。" };
   } catch (error) {
-    return { status: "error", message: error instanceof Error ? error.message : "教学节点保存失败。" };
+    return { status: "error", message: error instanceof Error ? error.message : "教学小节保存失败。" };
   }
 }
 
@@ -377,7 +377,7 @@ export async function moveTeachingScriptNodeAction(formData: FormData) {
     p_node_id: nodeId,
     p_direction: direction,
   });
-  if (error) throw new Error("调整节点顺序失败。");
+  if (error) throw new Error("调整教学小节顺序失败。");
   refreshStudio(returnPath(formData));
 }
 
@@ -394,12 +394,12 @@ export async function deleteTeachingScriptNodeAction(formData: FormData) {
   const version = Array.isArray(node?.learning_agent_script_versions)
     ? node.learning_agent_script_versions[0]
     : node?.learning_agent_script_versions;
-  if (!node || !version || version.status !== "draft") throw new Error("只有草稿节点可以删除。");
+  if (!node || !version || version.status !== "draft") throw new Error("只有草稿中的教学小节可以删除。");
   const { count } = await admin
     .from("learning_agent_script_nodes")
     .select("id", { count: "exact", head: true })
     .eq("script_version_id", node.script_version_id);
-  if (Number(count ?? 0) <= 1) throw new Error("教学脚本至少需要保留一个节点。");
+  if (Number(count ?? 0) <= 1) throw new Error("每个学习步骤至少需要保留一个教学小节。");
   await admin.from("learning_agent_script_nodes").delete().eq("id", nodeId);
   await admin.from("learning_agent_publish_logs").insert({
     lesson_id: String(version.lesson_id),
