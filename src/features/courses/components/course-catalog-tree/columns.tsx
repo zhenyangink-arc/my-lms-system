@@ -1,122 +1,99 @@
-"use client";
-
 import Link from "next/link";
-import type { ColumnDef, Row } from "@tanstack/react-table";
-import {
-  BookOpen,
-  ChevronRight,
-  FileText,
-  Folder,
-  Layers3,
-} from "lucide-react";
+import { ChevronRight } from "lucide-react";
 
-import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
-import type { CourseCatalogNode, CourseCatalogNodeKind } from "../../api/types";
+import { scopeDashboardPath } from "@/lib/dashboard-path";
+import { cn } from "@/lib/utils";
 import {
-  CourseCatalogCreateDialog,
   CourseCatalogEditDialog,
-  getCreateChildTarget,
   type CourseCatalogActionOptions,
 } from "../course-catalog-action-dialogs";
-import { scopeDashboardPath } from "@/lib/dashboard-path";
+import {
+  ICON_NAME_MAP,
+  KIND_DEFAULT_ICON,
+  STATUS_TONE_VAR,
+  getStatusInfo,
+  resolveAccent,
+  resolveCoverObjectKey,
+  type CourseCatalogFolderRow,
+} from "./course-catalog-visuals";
 
-export type CourseCatalogTreeRow = {
-  key: string;
-  id: string;
-  kind: CourseCatalogNodeKind;
-  kindLabel: string;
-  title: string;
-  slug: string;
-  parentTitle: string;
-  contentLabel: string;
-  unlockMode: string;
-  isPublished: boolean;
-  isLocked: boolean;
-  sortOrder: number;
-  completeness: number;
-  missingItems: string[];
-  node: CourseCatalogNode;
-  children: CourseCatalogTreeRow[];
-};
+export type { CourseCatalogFolderRow } from "./course-catalog-visuals";
 
-function sortableHeader(title: string) {
-  return function SortableHeader({
-    column,
-  }: {
-    column: {
-      getIsSorted: () => false | "asc" | "desc";
-      toggleSorting: (descending?: boolean) => void;
-    };
-  }) {
-    const direction = column.getIsSorted();
-    return (
-      <DataTableColumnHeader
-        title={title}
-        sortable
-        direction={direction}
-        onClick={() => column.toggleSorting(direction === "asc")}
-      />
-    );
-  };
+function detailHref({
+  row,
+  dashboardBasePath,
+  routeBasePath,
+  folderParam,
+}: {
+  row: CourseCatalogFolderRow;
+  dashboardBasePath: string;
+  routeBasePath?: string;
+  folderParam?: string;
+}) {
+  const folderQuery = folderParam ? `&folder=${folderParam}` : "";
+  return routeBasePath
+    ? `${routeBasePath}?node=${row.kind}&id=${row.id}${folderQuery}#course-content`
+    : scopeDashboardPath(
+        `/dashboard/admin/courses?node=${row.kind}&id=${row.id}${folderQuery}#course-content`,
+        dashboardBasePath,
+      );
 }
 
-function NodeIcon({ kind }: { kind: CourseCatalogNodeKind }) {
-  if (kind === "category") return <Folder size={14} strokeWidth={1.7} />;
-  if (kind === "course") return <BookOpen size={14} strokeWidth={1.7} />;
-  if (kind === "lesson") return <Layers3 size={14} strokeWidth={1.7} />;
-  return <FileText size={14} strokeWidth={1.7} />;
+function openHref(catalogRoute: string, row: CourseCatalogFolderRow) {
+  return `${catalogRoute}?folder=${row.kind}:${row.id}`;
 }
 
-function StructureCell({ row }: { row: Row<CourseCatalogTreeRow> }) {
-  return (
-    <div
-      className="flex min-w-72 items-center gap-2.5"
-      style={{ paddingLeft: `${row.depth * 24}px` }}
-    >
-      {row.getCanExpand() ? (
-        <button
-          type="button"
-          aria-label={row.getIsExpanded() ? "收起下级内容" : "展开下级内容"}
-          aria-expanded={row.getIsExpanded()}
-          onClick={row.getToggleExpandedHandler()}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
-        >
-          <ChevronRight
-            size={13}
-            className={row.getIsExpanded() ? "rotate-90 transition-transform" : "transition-transform"}
-          />
-        </button>
-      ) : (
-        <span className="h-8 w-8 shrink-0" />
-      )}
+export function FolderTitleCell({
+  row,
+  catalogRoute,
+}: {
+  row: CourseCatalogFolderRow;
+  catalogRoute: string;
+}) {
+  const iconName = "icon_name" in row.node ? row.node.icon_name : null;
+  const Icon = (iconName && ICON_NAME_MAP[iconName]) || KIND_DEFAULT_ICON[row.kind];
+  const content = (
+    <span className="flex min-w-0 items-center gap-2.5">
       <span className="shrink-0 text-[var(--foreground-muted)]">
-        <NodeIcon kind={row.original.kind} />
+        <Icon size={14} strokeWidth={1.7} />
       </span>
       <span className="min-w-0 flex-1">
-        <span className="flex min-w-0 items-center gap-2">
-          <span className="truncate font-semibold text-[var(--foreground)]">
-            {row.original.title}
-          </span>
-          <span className="shrink-0 rounded-sm bg-[var(--surface-soft)] px-1.5 py-0.5 text-[9px] font-medium text-[var(--foreground-muted)]">
-            {row.original.kindLabel}
-          </span>
+        <span className="flex min-w-0 items-baseline gap-2">
+          <span className="truncate font-medium text-[var(--foreground)]">{row.title}</span>
+          <span className="shrink-0 text-[10px] text-[var(--foreground-muted)]">{row.kindLabel}</span>
         </span>
         <span className="mt-0.5 block truncate font-mono text-[10px] text-[var(--foreground-muted)]">
-          {row.original.slug}
+          {row.slug}
         </span>
       </span>
-    </div>
+      {row.canOpen && (
+        <ChevronRight size={14} className="shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
+      )}
+    </span>
+  );
+
+  if (!row.canOpen) {
+    return <div className="min-w-72">{content}</div>;
+  }
+
+  return (
+    <Link
+      href={openHref(catalogRoute, row)}
+      className="block min-w-72 rounded-sm py-0.5 hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+    >
+      {content}
+    </Link>
   );
 }
 
-function StructureHealthCell({ row }: { row: CourseCatalogTreeRow }) {
+export function StructureHealthCell({ row }: { row: CourseCatalogFolderRow }) {
   return (
     <div className="min-w-44">
       <p className="text-[11px] font-medium text-[var(--foreground-secondary)]">{row.contentLabel}</p>
       <div className="mt-2 flex items-center gap-2">
-        <span className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--surface-soft)]">
+        <span className="flex h-[2px] w-20 bg-[var(--border-subtle)]">
           <span
-            className="block h-full rounded-full"
+            className="h-full"
             style={{
               width: `${row.completeness}%`,
               backgroundColor: row.completeness === 100 ? "var(--status-success)" : "var(--status-warning)",
@@ -134,26 +111,21 @@ function StructureHealthCell({ row }: { row: CourseCatalogTreeRow }) {
   );
 }
 
-function StatusBadge({ row }: { row: CourseCatalogTreeRow }) {
-  if (row.isLocked) {
-    return (
-      <span className="inline-flex bg-zinc-100 px-2 py-1 text-[11px] font-semibold text-zinc-600">
-        已锁定
-      </span>
-    );
-  }
-  return row.isPublished ? (
-    <span className="inline-flex bg-emerald-50 px-2 py-1 text-[11px] font-semibold text-emerald-700">
-      已上架
-    </span>
-  ) : (
-    <span className="inline-flex bg-amber-50 px-2 py-1 text-[11px] font-semibold text-amber-700">
-      未上架
+function StatusBadge({ row }: { row: CourseCatalogFolderRow }) {
+  const status = getStatusInfo(row);
+  return (
+    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--foreground-secondary)]">
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
+        style={{ backgroundColor: STATUS_TONE_VAR[status.tone] }}
+        aria-hidden="true"
+      />
+      {status.label}
     </span>
   );
 }
 
-function PublicationCell({ row }: { row: CourseCatalogTreeRow }) {
+export function PublicationCell({ row }: { row: CourseCatalogFolderRow }) {
   return (
     <div className="min-w-36 space-y-1.5">
       <StatusBadge row={row} />
@@ -166,69 +138,143 @@ function PublicationCell({ row }: { row: CourseCatalogTreeRow }) {
   );
 }
 
-export function getCourseCatalogTreeColumns({
+export function RowActionsCell({
+  row,
   canManage,
   options,
   dashboardBasePath,
   routeBasePath,
+  folderParam,
 }: {
+  row: CourseCatalogFolderRow;
   canManage: boolean;
   options: CourseCatalogActionOptions;
   dashboardBasePath: string;
   routeBasePath?: string;
-}): ColumnDef<CourseCatalogTreeRow>[] {
-  const columns: ColumnDef<CourseCatalogTreeRow>[] = [
-  {
-    id: "structure",
-    accessorFn: (row) => `${row.title} ${row.slug}`,
-    header: sortableHeader("目录结构"),
-    cell: ({ row }) => <StructureCell row={row} />,
-  },
-  {
-    accessorKey: "completeness",
-    header: sortableHeader("结构情况"),
-    cell: ({ row }) => <StructureHealthCell row={row.original} />,
-  },
-  {
-    id: "status",
-    accessorFn: (row) =>
-      row.isLocked ? "locked" : row.isPublished ? "published" : "draft",
-    header: sortableHeader("上架与开放"),
-    cell: ({ row }) => <PublicationCell row={row.original} />,
-  },
-  ];
+  folderParam?: string;
+}) {
+  return (
+    <div className="flex min-w-max justify-end gap-1.5">
+      <Link
+        href={detailHref({ row, dashboardBasePath, routeBasePath, folderParam })}
+        className="inline-flex h-7 items-center px-2 text-[11px] font-medium text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+      >
+        查看详情
+      </Link>
+      {canManage && <CourseCatalogEditDialog node={row.node} options={options} />}
+    </div>
+  );
+}
 
-  columns.push({
-    id: "actions",
-    enableSorting: false,
-    header: () => <span className="block text-right">操作</span>,
-    cell: ({ row }) => {
-      const target = getCreateChildTarget(row.original.node, options);
-      return (
-        <div className="flex min-w-max justify-end gap-1.5">
-          <Link
-            href={
-              routeBasePath
-                ? `${routeBasePath}?node=${row.original.kind}&id=${row.original.id}#course-content`
-                : scopeDashboardPath(
-                    `/dashboard/admin/courses?node=${row.original.kind}&id=${row.original.id}#course-content`,
-                    dashboardBasePath,
-                  )
-            }
-            className="inline-flex h-8 items-center border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"
+export function FolderCard({
+  row,
+  canManage,
+  options,
+  catalogRoute,
+  dashboardBasePath,
+  routeBasePath,
+  folderParam,
+}: {
+  row: CourseCatalogFolderRow;
+  canManage: boolean;
+  options: CourseCatalogActionOptions;
+  catalogRoute: string;
+  dashboardBasePath: string;
+  routeBasePath?: string;
+  folderParam?: string;
+}) {
+  const iconName = "icon_name" in row.node ? row.node.icon_name : null;
+  const Icon = (iconName && ICON_NAME_MAP[iconName]) || KIND_DEFAULT_ICON[row.kind];
+  const accent = resolveAccent(row);
+  const coverObjectKey = resolveCoverObjectKey(row);
+  const status = getStatusInfo(row);
+  const primaryHref = row.canOpen
+    ? openHref(catalogRoute, row)
+    : detailHref({ row, dashboardBasePath, routeBasePath, folderParam });
+  const primaryLabel = row.canOpen ? `打开${row.title}` : `查看${row.title}详情`;
+
+  return (
+    <div className="group relative flex flex-col overflow-hidden border border-[var(--border)] bg-[var(--card)] transition-colors hover:border-[var(--border)] hover:bg-[var(--surface-soft)]">
+      <Link
+        href={primaryHref}
+        aria-label={primaryLabel}
+        className="absolute inset-0 z-0 rounded-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
+      />
+
+      <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--surface-soft)]">
+        {coverObjectKey ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={`/api/course-assets/${row.kind}/${row.id}`}
+            alt=""
+            className="h-full w-full object-cover"
+          />
+        ) : (
+          <div className={cn("flex h-full w-full items-center justify-center", accent.iconBox)}>
+            <Icon size={28} strokeWidth={1.6} className={accent.iconText} />
+          </div>
+        )}
+        {row.canOpen && (
+          <span
+            className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-[var(--card)] text-[var(--foreground-muted)] shadow-sm"
+            aria-hidden="true"
           >
-            查看结构
-          </Link>
-          {canManage && (
-            <>
-            <CourseCatalogEditDialog node={row.original.node} options={options} />
-            {target && <CourseCatalogCreateDialog target={target} studentAppId={options.studentAppId} />}
-            </>
-          )}
-        </div>
-      );
-    },
-  });
+            <ChevronRight size={14} />
+          </span>
+        )}
+      </div>
 
-  return columns;
+      <div className="flex flex-1 flex-col gap-2 p-3">
+        <div className="min-w-0">
+          <div className="flex items-center justify-between gap-2">
+            <span className="truncate text-sm font-medium text-[var(--foreground)]">{row.title}</span>
+            <span
+              className="h-1.5 w-1.5 shrink-0 rounded-full"
+              style={{ backgroundColor: STATUS_TONE_VAR[status.tone] }}
+              aria-hidden="true"
+              title={status.label}
+            />
+          </div>
+          <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]">{row.slug}</p>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <span className="flex h-[2px] flex-1 bg-[var(--border-subtle)]">
+            <span
+              className="h-full"
+              style={{
+                width: `${row.completeness}%`,
+                backgroundColor: row.completeness === 100 ? "var(--status-success)" : "var(--status-warning)",
+              }}
+            />
+          </span>
+          <span className="shrink-0 font-mono text-[10px] tabular-nums text-[var(--foreground-muted)]">
+            {row.completeness}%
+          </span>
+        </div>
+        <p className="truncate text-[11px] text-[var(--foreground-muted)]">{row.contentLabel}</p>
+
+        <div className="relative z-10 mt-auto flex items-center justify-between gap-2 border-t border-[var(--border-subtle)] pt-2">
+          <span className="truncate text-[10px] text-[var(--foreground-muted)]" title={row.unlockMode}>
+            {row.unlockMode}
+            <span className="mx-1" aria-hidden="true">·</span>
+            排序 {row.sortOrder}
+          </span>
+          <div className="flex shrink-0 items-center gap-1">
+            {row.canOpen && (
+              <Link
+                href={detailHref({ row, dashboardBasePath, routeBasePath, folderParam })}
+                className="inline-flex h-6 items-center px-1.5 text-[10px] font-medium text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+              >
+                详情
+              </Link>
+            )}
+            {canManage && (
+              <CourseCatalogEditDialog node={row.node} options={options} compact />
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }

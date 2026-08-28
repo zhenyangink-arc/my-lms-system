@@ -1,15 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import {
-  flexRender,
-  getCoreRowModel,
-  getExpandedRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ExpandedState,
-  type SortingState,
-} from "@tanstack/react-table";
 
 import { DataTable } from "@/components/ui/table/data-table";
 import {
@@ -20,109 +11,62 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type {
-  CourseCatalogChapter,
-  CourseCatalogCourse,
-  CourseCatalogLesson,
-  CourseCategory,
-} from "../../api/types";
-import { getCourseCatalogTreeColumns, type CourseCatalogTreeRow } from "./columns";
+import type { CourseCatalogActionOptions } from "../course-catalog-action-dialogs";
+import {
+  FolderCard,
+  FolderTitleCell,
+  PublicationCell,
+  RowActionsCell,
+  StructureHealthCell,
+  type CourseCatalogFolderRow,
+} from "./columns";
 import {
   CourseCatalogToolbar,
   INITIAL_COURSE_CATALOG_FILTERS,
   type CourseCatalogFilters,
 } from "./course-catalog-toolbar";
 
-function filterTree(
-  rows: CourseCatalogTreeRow[],
+function filterRows(
+  rows: CourseCatalogFolderRow[],
   filters: CourseCatalogFilters,
-): CourseCatalogTreeRow[] {
+): CourseCatalogFolderRow[] {
   const query = filters.query.trim().toLocaleLowerCase("zh-CN");
-
-  return rows.flatMap((row) => {
-    const children = filterTree(row.children, filters);
+  return rows.filter((row) => {
     const matchesQuery =
       !query ||
-      `${row.title} ${row.slug} ${row.parentTitle}`
-        .toLocaleLowerCase("zh-CN")
-        .includes(query);
-    const matchesKind = filters.kind === "all" || row.kind === filters.kind;
+      `${row.title} ${row.slug}`.toLocaleLowerCase("zh-CN").includes(query);
     const matchesStatus =
       filters.status === "all" ||
       (filters.status === "published" && row.isPublished && !row.isLocked) ||
       (filters.status === "draft" && !row.isPublished) ||
       (filters.status === "locked" && row.isLocked) ||
       (filters.status === "incomplete" && row.completeness < 100);
-
-    if ((matchesQuery && matchesKind && matchesStatus) || children.length > 0) {
-      return [{ ...row, children }];
-    }
-    return [];
+    return matchesQuery && matchesStatus;
   });
 }
 
-function countRows(rows: CourseCatalogTreeRow[]): number {
-  return rows.reduce((total, row) => total + 1 + countRows(row.children), 0);
-}
-
-export function CourseCatalogTreeTable({
-  data,
+export function CourseCatalogFolderTable({
+  rows,
   canManage,
-  categories,
-  courses,
-  lessons,
-  chapters,
-  studentAppId,
+  options,
   dashboardBasePath,
   routeBasePath,
+  catalogRoute,
+  folderParam,
 }: {
-  data: CourseCatalogTreeRow[];
+  rows: CourseCatalogFolderRow[];
   canManage: boolean;
-  categories: CourseCategory[];
-  courses: CourseCatalogCourse[];
-  lessons: CourseCatalogLesson[];
-  chapters: CourseCatalogChapter[];
-  studentAppId?: string;
+  options: CourseCatalogActionOptions;
   dashboardBasePath: string;
   routeBasePath?: string;
+  catalogRoute: string;
+  folderParam?: string;
 }) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [expanded, setExpanded] = useState<ExpandedState>({});
   const [filters, setFilters] = useState<CourseCatalogFilters>(
     INITIAL_COURSE_CATALOG_FILTERS,
   );
-  const filteredData = useMemo(() => filterTree(data, filters), [data, filters]);
-  const hasFilters =
-    Boolean(filters.query.trim()) ||
-    filters.kind !== "all" ||
-    filters.status !== "all";
-  const columns = useMemo(
-    () =>
-      getCourseCatalogTreeColumns({
-        canManage,
-        options: { categories, courses, lessons, chapters, studentAppId },
-        dashboardBasePath,
-        routeBasePath,
-      }),
-    [canManage, categories, courses, lessons, chapters, studentAppId, dashboardBasePath, routeBasePath],
-  );
-
-  // TanStack Table 在客户端表格边界中提供可变状态方法。
-  // eslint-disable-next-line react-hooks/incompatible-library
-  const table = useReactTable({
-    data: filteredData,
-    columns,
-    state: { sorting, expanded: hasFilters ? true : expanded },
-    onSortingChange: setSorting,
-    onExpandedChange: setExpanded,
-    getSubRows: (row) => row.children,
-    getRowId: (row) => row.key,
-    getCoreRowModel: getCoreRowModel(),
-    getSortedRowModel: getSortedRowModel(),
-    getExpandedRowModel: getExpandedRowModel(),
-  });
-  const visibleCount = countRows(filteredData);
-  const totalCount = countRows(data);
+  const [view, setView] = useState<"grid" | "list">("grid");
+  const filteredRows = useMemo(() => filterRows(rows, filters), [rows, filters]);
 
   return (
     <DataTable
@@ -130,47 +74,72 @@ export function CourseCatalogTreeTable({
         <CourseCatalogToolbar
           filters={filters}
           onFiltersChange={setFilters}
-          onExpandAll={() => setExpanded(true)}
-          onCollapseAll={() => setExpanded({})}
+          view={view}
+          onViewChange={setView}
         />
       }
-      isEmpty={filteredData.length === 0}
-      emptyContent="没有符合当前条件的课程结构"
+      isEmpty={filteredRows.length === 0}
+      emptyContent={
+        rows.length === 0 ? "这一层还没有内容" : "没有符合当前条件的内容"
+      }
       footer={
-        <p className="text-xs text-[var(--foreground-muted)]">
-          当前范围 {visibleCount} 项，共 {totalCount} 项课程结构
+        <p className="text-xs text-[var(--foreground-muted)] tabular-nums">
+          当前范围 {filteredRows.length} 项，共 {rows.length} 项
         </p>
       }
     >
-      <Table className="min-w-[860px]">
-        <TableHeader className="bg-[var(--surface-soft)]">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id} sortDirection={header.column.getCanSort() ? header.column.getIsSorted() : undefined} className="px-4 text-xs">
-                  {header.isPlaceholder
-                    ? null
-                    : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      )}
-                </TableHead>
-              ))}
-            </TableRow>
+      {view === "grid" ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 p-4">
+          {filteredRows.map((row) => (
+            <FolderCard
+              key={row.key}
+              row={row}
+              canManage={canManage}
+              options={options}
+              catalogRoute={catalogRoute}
+              dashboardBasePath={dashboardBasePath}
+              routeBasePath={routeBasePath}
+              folderParam={folderParam}
+            />
           ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.id} className={row.depth === 0 ? "bg-[color-mix(in_srgb,var(--surface-soft)_55%,var(--card))]" : undefined}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="px-4 py-3 text-xs">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
+        </div>
+      ) : (
+        <Table className="min-w-[860px]">
+          <TableHeader className="bg-[var(--surface-soft)]">
+            <TableRow>
+              <TableHead className="px-4 text-xs">目录结构</TableHead>
+              <TableHead className="px-4 text-xs">结构情况</TableHead>
+              <TableHead className="px-4 text-xs">上架与开放</TableHead>
+              <TableHead className="px-4 text-right text-xs">操作</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {filteredRows.map((row) => (
+              <TableRow key={row.key}>
+                <TableCell className="px-4 py-3 text-xs">
+                  <FolderTitleCell row={row} catalogRoute={catalogRoute} />
                 </TableCell>
-              ))}
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
+                <TableCell className="px-4 py-3 text-xs">
+                  <StructureHealthCell row={row} />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-xs">
+                  <PublicationCell row={row} />
+                </TableCell>
+                <TableCell className="px-4 py-3 text-xs">
+                  <RowActionsCell
+                    row={row}
+                    canManage={canManage}
+                    options={options}
+                    dashboardBasePath={dashboardBasePath}
+                    routeBasePath={routeBasePath}
+                    folderParam={folderParam}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      )}
     </DataTable>
   );
 }

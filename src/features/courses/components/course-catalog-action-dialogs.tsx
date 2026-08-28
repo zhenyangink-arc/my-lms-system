@@ -28,14 +28,12 @@ import type {
   CourseCatalogNode,
   CourseCategory,
 } from "../api/types";
+import type {
+  CourseCatalogActionOptions,
+  CreateTarget,
+} from "./course-catalog-create-target";
 
-export type CourseCatalogActionOptions = {
-  categories: CourseCategory[];
-  courses: CourseCatalogCourse[];
-  lessons: CourseCatalogLesson[];
-  chapters: CourseCatalogChapter[];
-  studentAppId?: string;
-};
+export type { CourseCatalogActionOptions } from "./course-catalog-create-target";
 
 const INPUT_CLASS =
   "app-input mt-1.5 min-h-10 w-full min-w-0 rounded-md border px-3 py-2.5 text-xs outline-none";
@@ -228,11 +226,15 @@ function EditContent({ node, options }: { node: CourseCatalogNode; options: Cour
   return <ChapterEditor node={node} options={options} />;
 }
 
-export function CourseCatalogEditDialog({ node, options }: { node: CourseCatalogNode; options: CourseCatalogActionOptions }) {
+export function CourseCatalogEditDialog({ node, options, compact = false }: { node: CourseCatalogNode; options: CourseCatalogActionOptions; compact?: boolean }) {
   const [open, setOpen] = useState(false);
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <button type="button" onClick={() => setOpen(true)} className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"><PencilLine size={12} />编辑</button>
+      {compact ? (
+        <button type="button" onClick={() => setOpen(true)} aria-label={`编辑"${node.title}"`} className="relative z-10 inline-flex h-6 w-6 items-center justify-center text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"><PencilLine size={13} /></button>
+      ) : (
+        <button type="button" onClick={() => setOpen(true)} className="inline-flex h-8 items-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-[11px] font-semibold hover:bg-[var(--surface-soft)]"><PencilLine size={12} />编辑</button>
+      )}
       <DialogContent className="grid max-h-[92vh] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden p-0 sm:max-w-[1100px]">
         <DialogHeader className="border-b border-[var(--border)] px-6 py-4 pr-14 text-left"><DialogTitle>编辑“{node.title}”</DialogTitle><DialogDescription>这里只维护课程结构、基础资料与开放规则；具体教学内容请前往教材制作。</DialogDescription></DialogHeader>
         <div className="min-h-0 overflow-y-auto p-6"><EditContent node={node} options={options} /></div>
@@ -240,8 +242,6 @@ export function CourseCatalogEditDialog({ node, options }: { node: CourseCatalog
     </Dialog>
   );
 }
-
-type CreateTarget = { kind: "category"; parentId?: string; title: string; sortOrder: number } | { kind: "course"; categoryId: string; title: string; sortOrder: number } | { kind: "lesson"; courseId: string; title: string; sortOrder: number } | { kind: "chapter"; lessonId: string; title: string; sortOrder: number };
 
 function CreateForm({ target, studentAppId }: { target: CreateTarget; studentAppId?: string }) {
   if (target.kind === "category") return <form action={createCourseCategoryAction} className="space-y-4">{target.parentId && <input type="hidden" name="parent_id" value={target.parentId} />}{!target.parentId && studentAppId && <input type="hidden" name="student_app_id" value={studentAppId} />}<CreateFields sortOrder={target.sortOrder} /><SaveButton label="创建分类" /></form>;
@@ -264,14 +264,4 @@ export function CourseCatalogCreateDialog({ target, primary = false, studentAppI
       <DialogContent className="grid max-h-[90vh] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden p-0 sm:max-w-2xl"><DialogHeader className="border-b border-[var(--border)] px-6 py-4 pr-14 text-left"><DialogTitle>{target.title}</DialogTitle><DialogDescription>填写必要信息后创建目录节点。</DialogDescription></DialogHeader><div className="min-h-0 overflow-y-auto p-6"><CreateForm target={target} studentAppId={studentAppId} /></div></DialogContent>
     </Dialog>
   );
-}
-
-export function getCreateChildTarget(node: CourseCatalogNode, options: CourseCatalogActionOptions): CreateTarget | null {
-  if ("parent_id" in node) {
-    if (!node.parent_id) return { kind: "category", parentId: node.id, title: `在“${node.title}”中新建分类`, sortOrder: options.categories.filter((item) => item.parent_id === node.id).length * 10 + 10 };
-    return { kind: "course", categoryId: node.id, title: `在“${node.title}”中新建课程`, sortOrder: options.courses.filter((item) => item.category_id === node.id).length * 10 + 10 };
-  }
-  if ("category_id" in node) return { kind: "lesson", courseId: node.id, title: `在“${node.title}”中新建课时`, sortOrder: options.lessons.filter((item) => item.course_id === node.id).length * 10 + 10 };
-  if ("course_id" in node) return { kind: "chapter", lessonId: node.id, title: `在“${node.title}”中新建章节`, sortOrder: options.chapters.filter((item) => item.lesson_id === node.id).length * 10 + 10 };
-  return null;
 }

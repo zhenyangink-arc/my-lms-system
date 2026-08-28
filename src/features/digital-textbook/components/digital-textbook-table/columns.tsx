@@ -63,15 +63,20 @@ function statusLabel(status: string) {
   return "其他状态";
 }
 
-function StatusBadge({ status }: { status: string }) {
-  const className =
-    status === "published"
-      ? "bg-emerald-50 text-emerald-700"
-      : status === "draft"
-        ? "bg-amber-50 text-amber-700"
-        : "bg-zinc-100 text-zinc-600";
+const STATUS_TONE_VAR: Record<string, string> = {
+  published: "var(--status-success)",
+  draft: "var(--status-warning)",
+  archived: "var(--status-inactive)",
+};
+
+function StatusDot({ status }: { status: string }) {
   return (
-    <span className={`inline-flex px-2 py-1 text-[11px] font-semibold ${className}`}>
+    <span className="inline-flex items-center gap-1.5 text-[11px] font-medium text-[var(--foreground-secondary)]">
+      <span
+        className="h-1.5 w-1.5 shrink-0 rounded-full"
+        style={{ backgroundColor: STATUS_TONE_VAR[status] ?? "var(--status-inactive)" }}
+        aria-hidden="true"
+      />
       {statusLabel(status)}
     </span>
   );
@@ -81,33 +86,12 @@ function PublishingSummary({ row }: { row: DigitalTextbookDisplayRow }) {
   return (
     <dl className="grid min-w-44 grid-cols-[44px_minmax(0,1fr)] items-center gap-x-2 gap-y-1.5">
       <dt className="text-[10px] text-[var(--foreground-muted)]">教材</dt>
-      <dd><StatusBadge status={row.textbookStatus} /></dd>
+      <dd><StatusDot status={row.textbookStatus} /></dd>
       <dt className="text-[10px] text-[var(--foreground-muted)]">版本</dt>
-      <dd><StatusBadge status={row.versionStatus} /></dd>
+      <dd><StatusDot status={row.versionStatus} /></dd>
       <dt className="text-[10px] text-[var(--foreground-muted)]">本章</dt>
-      <dd><StatusBadge status={row.chapterStatus} /></dd>
+      <dd><StatusDot status={row.chapterStatus} /></dd>
     </dl>
-  );
-}
-
-function ContentSummary({ row }: { row: DigitalTextbookDisplayRow }) {
-  return (
-    <div className="min-w-52">
-      <div className="flex flex-wrap gap-1">
-        {row.moduleCodes.length > 0 ? (
-          row.moduleCodes.map((code) => (
-            <span key={`${row.id}:${code}`} className="bg-[var(--surface-soft)] px-2 py-1 text-[10px] font-medium text-[var(--foreground-secondary)]">
-              {moduleLabel(code)}
-            </span>
-          ))
-        ) : (
-          <span className="text-[var(--foreground-muted)]">暂无模块</span>
-        )}
-      </div>
-      <p className="mt-2 text-[10px] text-[var(--foreground-muted)]">
-        {row.moduleCount} 个模块 · {row.nodeCount} 个节点 · {row.vocabularyCount} 个词汇 · {row.grammarCount} 个语法点
-      </p>
-    </div>
   );
 }
 
@@ -115,6 +99,46 @@ function moduleLabel(code: string) {
   if (code === "vocabulary") return "词汇模块";
   if (code === "grammar") return "语法模块";
   return "其他模块";
+}
+
+function ContentSummary({ row }: { row: DigitalTextbookDisplayRow }) {
+  return (
+    <div className="min-w-52">
+      <p className="text-[10px] font-medium text-[var(--foreground-secondary)]">
+        {row.moduleCodes.length > 0
+          ? row.moduleCodes.map((code) => moduleLabel(code)).join(" · ")
+          : "暂无模块"}
+      </p>
+      <p className="mt-1 text-[10px] text-[var(--foreground-muted)]">
+        {row.moduleCount} 个模块 · {row.nodeCount} 个节点 · {row.vocabularyCount} 个词汇 · {row.grammarCount} 个语法点
+      </p>
+    </div>
+  );
+}
+
+function HierarchyCell({
+  row,
+  isContinuation,
+}: {
+  row: DigitalTextbookDisplayRow;
+  isContinuation: boolean;
+}) {
+  if (isContinuation) {
+    return <div className="min-w-72 max-w-md" />;
+  }
+  return (
+    <div className="min-w-72 max-w-md">
+      <p className="text-[10px] font-medium text-[var(--foreground-muted)]">
+        {row.courseTitle}　›　{row.lessonTitle}
+      </p>
+      <p className="mt-1 truncate font-semibold text-[var(--foreground)]">
+        {row.textbookTitle}
+      </p>
+      <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]">
+        {row.textbookSlug}
+      </p>
+    </div>
+  );
 }
 
 export function getDigitalTextbookColumns(
@@ -127,18 +151,14 @@ export function getDigitalTextbookColumns(
     accessorFn: (row) =>
       `${row.courseTitle} ${row.lessonTitle} ${row.textbookTitle}`,
     header: sortableHeader("教材位置"),
-    cell: ({ row }) => (
-      <div className="min-w-72 max-w-md">
-        <p className="text-[10px] font-medium text-[var(--foreground-muted)]">
-          {row.original.courseTitle}　›　{row.original.lessonTitle}
-        </p>
-        <p className="mt-1 truncate font-semibold text-[var(--foreground)]">
-          {row.original.textbookTitle}
-        </p>
-        <p className="mt-0.5 truncate font-mono text-[10px] text-[var(--foreground-muted)]">
-          {row.original.textbookSlug}
-        </p>
-      </div>
+    cell: ({ row, table }) => (
+      <HierarchyCell
+        row={row.original}
+        isContinuation={
+          table.getRowModel().rows[row.index - 1]?.original.textbookId ===
+          row.original.textbookId
+        }
+      />
     ),
   },
   {

@@ -25,6 +25,7 @@ export default async function ManagementAppContentRoute({
         searchParams={Promise.resolve({
           node: firstSectionParam(query.node),
           id: firstSectionParam(query.id),
+          folder: firstSectionParam(query.folder),
         })}
         studentAppId={context.access.appId}
         routeBasePath={`${context.access.appPath}/content`}

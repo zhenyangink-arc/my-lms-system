@@ -145,15 +145,28 @@ export function DigitalTextbookTable({
           ))}
         </TableHeader>
         <TableBody>
-          {table.getRowModel().rows.map((row) => (
-            <TableRow key={row.original.id}>
-              {row.getVisibleCells().map((cell) => (
-                <TableCell key={cell.id} className="px-4 py-3 text-xs">
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </TableCell>
-              ))}
-            </TableRow>
-          ))}
+          {table.getRowModel().rows.map((row, index) => {
+            const previousRow = table.getRowModel().rows[index - 1];
+            const isHierarchyContinuation =
+              previousRow?.original.textbookId === row.original.textbookId;
+            return (
+              <TableRow key={row.original.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell
+                    key={cell.id}
+                    className="px-4 py-3 text-xs"
+                    style={
+                      cell.column.id === "hierarchy" && isHierarchyContinuation
+                        ? { borderLeft: "2px solid var(--border)" }
+                        : undefined
+                    }
+                  >
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            );
+          })}
         </TableBody>
       </Table>
     </DataTable>

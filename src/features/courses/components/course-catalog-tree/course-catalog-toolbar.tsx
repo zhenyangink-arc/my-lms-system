@@ -1,31 +1,27 @@
 "use client";
 
-import { Search, X } from "lucide-react";
-
-import type { CourseCatalogNodeKind } from "../../api/types";
+import { LayoutGrid, List, Search, X } from "lucide-react";
 
 export type CourseCatalogFilters = {
   query: string;
-  kind: "all" | CourseCatalogNodeKind;
   status: "all" | "published" | "draft" | "locked" | "incomplete";
 };
 
 export const INITIAL_COURSE_CATALOG_FILTERS: CourseCatalogFilters = {
   query: "",
-  kind: "all",
   status: "all",
 };
 
 export function CourseCatalogToolbar({
   filters,
   onFiltersChange,
-  onExpandAll,
-  onCollapseAll,
+  view,
+  onViewChange,
 }: {
   filters: CourseCatalogFilters;
   onFiltersChange: (filters: CourseCatalogFilters) => void;
-  onExpandAll: () => void;
-  onCollapseAll: () => void;
+  view: "grid" | "list";
+  onViewChange: (view: "grid" | "list") => void;
 }) {
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -39,7 +35,7 @@ export function CourseCatalogToolbar({
           onChange={(event) =>
             onFiltersChange({ ...filters, query: event.target.value })
           }
-          placeholder="搜索名称、路径标识或所属上级"
+          placeholder="搜索当前层级的名称或路径标识"
           className="app-input w-full border py-2 pl-9 pr-9 text-xs outline-none"
         />
         {filters.query && (
@@ -53,23 +49,6 @@ export function CourseCatalogToolbar({
           </button>
         )}
       </label>
-
-      <select
-        value={filters.kind}
-        onChange={(event) =>
-          onFiltersChange({
-            ...filters,
-            kind: event.target.value as CourseCatalogFilters["kind"],
-          })
-        }
-        className="app-input border px-3 py-2 text-xs outline-none"
-      >
-        <option value="all">全部类型</option>
-        <option value="category">分类</option>
-        <option value="course">课程</option>
-        <option value="lesson">课时</option>
-        <option value="chapter">章节</option>
-      </select>
 
       <select
         value={filters.status}
@@ -88,20 +67,24 @@ export function CourseCatalogToolbar({
         <option value="incomplete">结构待完善</option>
       </select>
 
-      <div className="flex items-center border border-[var(--border)]">
+      <div className="ml-auto flex items-center border border-[var(--border)]">
         <button
           type="button"
-          onClick={onExpandAll}
-          className="px-3 py-2 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+          aria-label="网格视图"
+          aria-pressed={view === "grid"}
+          onClick={() => onViewChange("grid")}
+          className={`flex h-9 w-9 items-center justify-center ${view === "grid" ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"}`}
         >
-          全部展开
+          <LayoutGrid size={14} />
         </button>
         <button
           type="button"
-          onClick={onCollapseAll}
-          className="border-l border-[var(--border)] px-3 py-2 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"
+          aria-label="列表视图"
+          aria-pressed={view === "list"}
+          onClick={() => onViewChange("list")}
+          className={`flex h-9 w-9 items-center justify-center border-l border-[var(--border)] ${view === "list" ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"}`}
         >
-          全部收起
+          <List size={14} />
         </button>
       </div>
     </div>
