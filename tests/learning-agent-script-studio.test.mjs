@@ -136,6 +136,18 @@ test("教学节点互动答案保存在私有表并只写入第一章草稿", as
   assert.match(migration, /correct_option_index/);
 });
 
+test("第一章观察情景先完成讲解和示范，再进入学生回答", async () => {
+  const migration = await readFile(
+    new URL("supabase/migrations/202608280001_defer_chapter_one_orientation_answer.sql", root),
+    "utf8",
+  );
+  assert.match(migration, /node\.node_key = 'observe-scene'/);
+  assert.match(migration, /configuration = coalesce\(node\.configuration, '\{\}'::jsonb\) - 'interaction'/);
+  assert.match(migration, /通常要先用一句礼貌的问候建立交流。/);
+  assert.doesNotMatch(migration, /那第一次见面要说什么啊/);
+  assert.match(migration, /version\.status = 'published'/);
+});
+
 test("第一章课前导航的每个节点都有同步教学展示", async () => {
   const migration = await readFile(
     new URL("supabase/migrations/202608260007_chapter_one_orientation_teaching_displays.sql", root),
