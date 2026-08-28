@@ -26,6 +26,8 @@ import {
   Minimize2,
   PanelLeftClose,
   PanelLeftOpen,
+  PanelRightClose,
+  PanelRightOpen,
   Pause,
   Play,
   Presentation,
@@ -38,7 +40,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import { type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
+import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 
@@ -61,7 +63,12 @@ import {
   isServerConfirmedNodeCompletion,
   isSmartTextbookModuleCompleted,
 } from "./smart-textbook-completion";
-import { getSmartTextbookSkeletonModule } from "@/lib/smart-textbook-skeleton";
+import {
+  getSmartTextbookSkeletonModule,
+  getSmartTextbookSkeletonPageLabels,
+  shouldUseSmartTextbookTeachingFocusMode,
+  SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
+} from "@/lib/smart-textbook-skeleton";
 import { KoreanLevelOneCourseOverview } from "./KoreanLevelOneCourseOverview";
 
 export type SmartTextbookShellProps = {
@@ -86,7 +93,6 @@ type Feedback = {
 type TutorDisplay = {
   kind?: "overview" | "scene" | "sequence" | "expression" | "question" | "task" | "summary";
   title?: Partial<Record<SmartLocale, string>>;
-  body?: Partial<Record<SmartLocale, string>>;
   items?: Partial<Record<SmartLocale, string[]>>;
   korean?: string;
   translation?: Partial<Record<SmartLocale, string>>;
@@ -4044,6 +4050,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorAnswerCorrect, setTutorAnswerCorrect] = useState<boolean | null>(null);
   const [tutorContinueLabel, setTutorContinueLabel] = useState("");
   const [tutorTerminal, setTutorTerminal] = useState(false);
+  const [tutorAction, setTutorAction] = useState<string | null>(null);
+  const [learningAreaManuallyHidden, setLearningAreaManuallyHidden] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [preferenceError, setPreferenceError] = useState("");
   const [preferenceNeedsReload, setPreferenceNeedsReload] = useState(false);
@@ -4095,6 +4103,34 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     : null;
   const isLastModule = activeIndex === textbook.modules.length - 1;
   const showTutorAnswerDialog = tutorStarted && tutorAwaitingAnswer && tutorQuestionOptions.length > 0;
+  const tutorFocusMode = shouldUseSmartTextbookTeachingFocusMode({
+    tutorStarted,
+    answerRequired: showTutorAnswerDialog,
+    action: tutorAction,
+    hasPendingLearningTask: Boolean(tutorTask && !tutorTaskCompleted),
+  });
+  const learningAreaHidden = tutorFocusMode || learningAreaManuallyHidden;
+  const teachingAreaExpanded = learningAreaHidden;
+  const learningHeaderNode = activeNodes[0];
+  const learningHeaderSkeleton = activeModule ? getSmartTextbookSkeletonModule(activeModule.code) : null;
+  const learningHeaderUsesPatterns = Boolean(learningHeaderNode && activeModule?.code === "patterns" && learningHeaderNode.activities.some((activity) => activity.type === "ordering"));
+  const learningHeaderHasDialogueRoleplay = Boolean(learningHeaderNode?.activities.some((activity) => activity.key === "dialogue-roleplay"));
+  const learningHeaderHasPager = Boolean(learningHeaderNode
+    && learningHeaderNode.activities.length > 0
+    && learningHeaderSkeleton);
+  const learningHeaderSkeletonTargets = learningHeaderHasPager
+    ? getSmartTextbookSkeletonPageLabels(activeModule.code, locale)
+    : [];
+  const learningHeaderTargets = activeModule.code === "dialogue" && !learningHeaderHasDialogueRoleplay
+    ? learningHeaderSkeletonTargets.slice(0, -1)
+    : learningHeaderSkeletonTargets;
+  const learningHeaderTargetIndex = learningHeaderUsesPatterns ? patternPage : missionPage;
+  const learningHeaderCurrentTargetIndex = Math.max(0, Math.min(learningHeaderTargetIndex, Math.max(learningHeaderTargets.length - 1, 0)));
+  const learningHeaderCompletionPercent = learningHeaderNode
+    ? completedNodeIds.has(learningHeaderNode.id)
+      ? 100
+      : Math.max(0, Math.min(100, nodeProgressById[learningHeaderNode.id] ?? 0))
+    : 0;
 
   useEffect(() => {
     try {
@@ -4132,6 +4168,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
     setTutorTerminal(false);
+    setTutorAction(null);
+    setLearningAreaManuallyHidden(false);
   }, [activeModule?.id]);
 
   useEffect(() => {
@@ -4239,6 +4277,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       const nextSessionId = response.headers.get("X-Learning-Agent-Session");
       if (nextSessionId) setTutorSessionId(nextSessionId);
       const action = response.headers.get("X-Learning-Agent-Action");
+      setTutorAction(action);
       const targetActivityId = response.headers.get("X-Learning-Agent-Target-Activity");
       const encodedOptions = response.headers.get("X-Learning-Agent-Question-Options");
       const encodedDisplay = response.headers.get("X-Learning-Agent-Display");
@@ -4292,8 +4331,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       } catch {
         // A malformed optional cue must never block the teacher response.
       }
-      setTutorTaskCompleted(response.headers.get("X-Learning-Agent-Task-Completed") === "true");
+      const nextTutorTaskCompleted = response.headers.get("X-Learning-Agent-Task-Completed") === "true";
+      setTutorTaskCompleted(nextTutorTaskCompleted);
       const nextTutorAwaitingAnswer = response.headers.get("X-Learning-Agent-Awaiting-Answer") === "true";
+      if (action === SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction
+        || nextTutorAwaitingAnswer
+        || Boolean(encodedTask && !nextTutorTaskCompleted)) {
+        setLearningAreaManuallyHidden(false);
+      }
       const answerResult = response.headers.get("X-Learning-Agent-Answer-Correct");
       setTutorAnswerCorrect(answerResult === null ? null : answerResult === "true");
       setTutorTerminal(response.headers.get("X-Learning-Agent-Terminal") === "true");
@@ -4336,6 +4381,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function startTutorLesson() {
     if (tutorStatus === "thinking" || tutorStatus === "streaming") return;
+    setTeachingAreaCollapsed(false);
+    setTutorAction(null);
+    setLearningAreaManuallyHidden(false);
     setTutorStarted(true);
     void tutorReply("explain");
   }
@@ -4818,16 +4866,33 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         <div className="flex min-w-0 flex-1 overflow-hidden border-x border-[var(--border-subtle)] bg-[var(--card)]">
         <aside
           aria-label={locale === "ko-KR" ? "수업 영역" : "教学区"}
-          className={`hidden shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none xl:flex xl:flex-col ${teachingAreaCollapsed ? "w-16" : "w-[520px]"}`}
+          data-learning-agent-focus-mode={tutorFocusMode || undefined}
+          data-learning-agent-expanded={teachingAreaExpanded || undefined}
+          className="hidden shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none xl:flex xl:flex-col"
+          style={{ width: teachingAreaExpanded
+            ? "100%"
+            : teachingAreaCollapsed
+              ? `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.collapsedWidthPx}px`
+              : `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent}%` }}
         >
-          <div className="relative flex h-14 shrink-0 items-center justify-center border-b border-[color-mix(in_srgb,var(--status-warning)_4%,var(--border-subtle))] px-2">
-            {!teachingAreaCollapsed && (
+          <div className="relative flex shrink-0 items-center justify-center border-b border-[color-mix(in_srgb,var(--status-warning)_4%,var(--border-subtle))] px-2" style={{ height: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.heightPx }}>
+            {(!teachingAreaCollapsed || teachingAreaExpanded) && (
               <div className="flex min-w-0 items-center justify-center gap-2.5 px-12">
                 <Presentation size={19} className="shrink-0 text-[var(--status-warning)]" aria-hidden="true" />
                 <h2 className="truncate text-base font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "수업 영역" : "教学区"}</h2>
               </div>
             )}
-            <button
+            {learningAreaManuallyHidden && !tutorFocusMode ? (
+              <button
+                type="button"
+                onClick={() => setLearningAreaManuallyHidden(false)}
+                className="absolute right-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+                aria-label={locale === "ko-KR" ? "학습 영역 표시" : "显示学习区"}
+              >
+                <PanelRightOpen size={17} aria-hidden="true" />
+                <span>{locale === "ko-KR" ? "학습 영역 표시" : "显示学习区"}</span>
+              </button>
+            ) : !teachingAreaExpanded ? <button
               type="button"
               onClick={() => setTeachingAreaCollapsed((value) => !value)}
               className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[var(--foreground-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] ${teachingAreaCollapsed ? "" : "absolute right-2"}`}
@@ -4837,10 +4902,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               aria-expanded={!teachingAreaCollapsed}
             >
               {teachingAreaCollapsed ? <PanelLeftOpen size={17} aria-hidden="true" /> : <PanelLeftClose size={17} aria-hidden="true" />}
-            </button>
+            </button> : null}
           </div>
-          {!teachingAreaCollapsed && (
-            <div className="smart-textbook-scroll flex min-h-0 flex-1 flex-col overflow-y-auto px-6 pb-6 pt-5" data-smart-textbook-teaching-area>
+          {(!teachingAreaCollapsed || teachingAreaExpanded) && (
+            <div
+              className={`smart-textbook-scroll flex min-h-0 flex-1 flex-col overflow-y-auto pb-6 pt-5 ${teachingAreaExpanded ? "mx-auto w-full px-10" : "px-6"}`}
+              style={teachingAreaExpanded ? { maxWidth: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx } : undefined}
+              data-smart-textbook-teaching-area
+            >
               <div className="flex min-w-0 items-center gap-2.5">
                 <span className="shrink-0 text-[10px] font-bold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "현재 수업" : "当前教学"}</span>
                 <span className="shrink-0 text-[12px] font-semibold text-[var(--foreground-secondary)]">{chapterLabel} · {localize(textbook.chapter.title)}</span>
@@ -4856,83 +4925,73 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 />
               </div>
 
-              <section className="mt-4 min-h-[340px] rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_14%,var(--border-subtle))] bg-[var(--card)] p-5 shadow-sm" aria-labelledby="teaching-display-title">
-                <p className="text-[10px] font-bold tracking-wide text-[var(--status-warning)]">{locale === "ko-KR" ? "현재 수업 자료" : "当前教学展示"}</p>
-                <h3 id="teaching-display-title" className="mt-1.5 text-base font-bold leading-6 text-[var(--foreground)]">
-                  {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
-                </h3>
-                {!tutorStarted && (
-                  <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">
-                    {localize(activeModule.description)}
-                  </p>
-                )}
-                {(tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
-                  <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
-                    {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
-                      <li key={`${item}-${itemIndex}`} className="flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
-                        <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[9px] font-bold text-[var(--status-warning)]">{itemIndex + 1}</span>
-                        <span>{item}</span>
-                      </li>
-                    ))}
-                  </ol>
-                )}
-                {tutorDisplay?.korean && (
-                  <div className="mt-3 border-l-2 border-[var(--status-warning)] pl-3">
-                    <p lang="ko" className="whitespace-pre-line text-sm font-bold leading-6 text-[var(--foreground)]">{tutorDisplay.korean}</p>
-                    {tutorDisplay.translation?.[locale] && <p className="mt-1 text-[11px] leading-5 text-[var(--foreground-muted)]">{tutorDisplay.translation[locale]}</p>}
-                  </div>
-                )}
-              </section>
-
-              <section className="mt-5 min-h-36 flex-1 border-t border-[color-mix(in_srgb,var(--status-warning)_8%,var(--border-subtle))] pt-5" aria-label={agentName}>
-                <div className={`grid items-end gap-4 ${teachingAreaCharacter?.kind === "uply-teacher" ? teachingAreaCharacter.position === "left" ? "grid-cols-[8.5rem_minmax(0,1fr)]" : "grid-cols-[minmax(0,1fr)_8.5rem]" : "grid-cols-1"}`}>
-                  <div className="min-w-0">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <span className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-[var(--status-warning-surface)] text-[var(--status-warning)]">
-                        <Sparkles size={17} aria-hidden="true" />
-                        <span className="absolute -right-0.5 -top-0.5 h-3 w-3 rounded-full border-2 border-[var(--card)] bg-[var(--status-success)]" aria-hidden="true" />
-                      </span>
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-bold text-[var(--foreground)]">{agentName}</p>
-                        <p className={`mt-0.5 text-[10px] font-bold ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
-                          {!tutorStarted
-                            ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
-                            : tutorStatus === "thinking" || tutorStatus === "streaming"
-                              ? (locale === "ko-KR" ? "설명 중" : "讲解中")
-                              : tutorStatus === "error"
-                                ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
-                                : (locale === "ko-KR" ? "수업 중" : "教学中")}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2 text-[11px] font-bold text-[var(--foreground-muted)]">
-                      <MessageCircle size={14} aria-hidden="true" />
-                      <span>{locale === "ko-KR" ? "선생님 설명" : "老师讲解"}</span>
-                    </div>
-                    <div className="mt-3 border-l-2 border-[color-mix(in_srgb,var(--status-warning)_45%,var(--border-subtle))] pl-4">
-                      <p className="whitespace-pre-line text-sm leading-7 text-[var(--foreground-secondary)]" aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
-                        {tutorStatus === "thinking"
-                          ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
-                          : tutorText || (locale === "ko-KR"
-                          ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
-                          : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
-                      </p>
-                    </div>
-                  </div>
-                  {teachingAreaCharacter?.kind === "uply-teacher" && (
-                    <div className={`flex min-h-[11.7rem] items-end justify-center px-1 ${teachingAreaCharacter.position === "left" ? "order-first" : ""}`} aria-hidden="true">
-                      <Image
-                        src={tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]}
-                        alt=""
-                        width={512}
-                        height={1024}
-                        unoptimized
-                        loading="eager"
-                        className="kim-teacher-breathe h-[11.7rem] w-auto max-w-full object-contain drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none"
-                      />
+              <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
+                <section className="rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm" style={{ minHeight: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx }} aria-labelledby="teaching-blackboard-title">
+                  <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-xl leading-8" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
+                    {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
+                  </h3>
+                  {tutorStarted && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
+                    <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
+                      {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
+                        <li key={`${item}-${itemIndex}`} className={`flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 font-semibold text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-base leading-7" : "text-xs leading-5"}`}>
+                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[9px] font-bold text-[var(--status-warning)]">{itemIndex + 1}</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                  {tutorStarted && tutorDisplay?.korean && (
+                    <div className="mt-3 border-l-2 border-[var(--status-warning)] pl-3">
+                      <p lang="ko" className={`whitespace-pre-line font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-xl leading-9" : "text-sm leading-6"}`}>{tutorDisplay.korean}</p>
+                      {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}
                     </div>
                   )}
+                </section>
+              </div>
+
+              <section className={`relative mt-4 border-b border-[color-mix(in_srgb,var(--status-warning)_10%,var(--border-subtle))] pb-4 ${teachingAreaExpanded ? "min-h-[18rem]" : "min-h-[13rem]"}`} aria-label={agentName}>
+                {teachingAreaCharacter?.kind === "uply-teacher" && (
+                  <div className={`absolute bottom-0 z-0 flex items-end justify-center ${teachingAreaExpanded ? "w-[12rem]" : "w-[8.5rem]"} ${teachingAreaCharacter.position === "left" ? "left-0" : "right-0"}`} aria-hidden="true">
+                    <Image
+                      src={tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]}
+                      alt=""
+                      width={512}
+                      height={1024}
+                      unoptimized
+                      loading="eager"
+                      className={`kim-teacher-breathe w-auto max-w-full object-contain drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[16rem]" : "h-[11.7rem]"}`}
+                    />
+                  </div>
+                )}
+                <div className={`relative z-10 pt-2 ${teachingAreaCharacter?.kind === "uply-teacher" ? teachingAreaCharacter.position === "left" ? teachingAreaExpanded ? "ml-[11rem]" : "ml-[7.5rem]" : teachingAreaExpanded ? "mr-[11rem]" : "mr-[7.5rem]" : ""}`}>
+                  <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-6" : "p-4"}`}>
+                    {teachingAreaCharacter?.kind === "uply-teacher" && (
+                      <span className={`absolute top-12 h-3 w-3 rotate-45 bg-[var(--card)] ${teachingAreaCharacter.position === "left" ? "-left-1.5 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))]" : "-right-1.5 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))]"}`} aria-hidden="true" />
+                    )}
+                    <div className="flex min-w-0 items-center justify-between gap-3">
+                      <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>
+                      <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                        {!tutorStarted
+                          ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
+                          : tutorStatus === "thinking" || tutorStatus === "streaming"
+                            ? (locale === "ko-KR" ? "설명 중" : "讲解中")
+                            : tutorStatus === "error"
+                              ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
+                              : (locale === "ko-KR" ? "수업 중" : "教学中")}
+                      </p>
+                    </div>
+                    <p className={`mt-3 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-lg leading-9" : "text-sm leading-7"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
+                      {tutorStatus === "thinking"
+                        ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
+                        : tutorText || (locale === "ko-KR"
+                        ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
+                        : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
+                    </p>
+                  </div>
                 </div>
+              </section>
+
+              <section className="mt-4 min-h-20 flex-1" aria-label={locale === "ko-KR" ? "수업 진행" : "教学操作"}>
                 {tutorStarted && tutorTask && (
                   <div className={`mt-4 rounded-xl border p-3.5 ${tutorTaskCompleted ? "border-[var(--status-success)] bg-[var(--status-success-surface)]" : "border-[var(--status-warning)] bg-[var(--status-warning-surface)]"}`}>
                     <div className="flex items-start justify-between gap-3">
@@ -4994,7 +5053,53 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           )}
         </aside>
 
-        <div className="relative min-h-0 min-w-0 flex-1 overflow-hidden">
+        <div className={`relative min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${learningAreaHidden ? "xl:hidden" : ""}`} data-learning-area-hidden={learningAreaHidden || undefined}>
+        <div
+          className="relative hidden shrink-0 items-center gap-3 bg-[var(--card)] after:absolute after:bottom-0 after:left-[var(--learning-header-inset)] after:right-[var(--learning-header-inset)] after:h-px after:bg-[var(--border-subtle)] after:content-[''] xl:flex"
+          style={{
+            height: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.heightPx,
+            paddingInline: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.contentInsetPx,
+            "--learning-header-inset": `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.contentInsetPx}px`,
+          } as CSSProperties}
+        >
+          <button
+            type="button"
+            onClick={() => setLearningAreaManuallyHidden(true)}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+            aria-label={locale === "ko-KR" ? "학습 영역 숨기기" : "隐藏学习区"}
+          >
+            <PanelRightClose size={17} aria-hidden="true" />
+            <span>{locale === "ko-KR" ? "학습 영역 숨기기" : "隐藏学习区"}</span>
+          </button>
+          {learningHeaderTargets.length > 0 && (
+            <nav className="flex min-w-0 flex-1 items-center justify-center gap-1" aria-label={locale === "ko-KR" ? "학습 목표 페이지" : "学习目标分页"}>
+              {learningHeaderTargets.map((target, targetIndex) => (
+                <button
+                  key={target}
+                  type="button"
+                  aria-current={learningHeaderCurrentTargetIndex === targetIndex ? "page" : undefined}
+                  onClick={() => learningHeaderUsesPatterns
+                    ? setPatternPage(targetIndex as 0 | 1 | 2)
+                    : setMissionPage(targetIndex as 0 | 1 | 2 | 3)}
+                  className={`inline-flex min-h-11 min-w-0 items-center justify-center rounded-xl px-2.5 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${learningHeaderCurrentTargetIndex === targetIndex ? "bg-[var(--surface-soft)] text-[var(--primary)] ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"}`}
+                >
+                  <span className="truncate">{target}</span>
+                </button>
+              ))}
+            </nav>
+          )}
+          {learningHeaderTargets.length > 0 && (
+            <div className="flex shrink-0 items-center gap-2" aria-label={locale === "ko-KR" ? "현재 목표 진행률" : "当前目标进度"}>
+              <div className="hidden h-1.5 w-14 overflow-hidden rounded-full bg-[var(--border-subtle)] 2xl:block" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={learningHeaderCompletionPercent}>
+                <div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${learningHeaderCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${learningHeaderCompletionPercent}%` }} />
+              </div>
+              <span className={`text-[11px] font-bold tabular-nums ${learningHeaderCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{learningHeaderCompletionPercent}%</span>
+              <span className="whitespace-nowrap text-[11px] font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
+                {locale === "ko-KR" ? "목표" : "目标"} {learningHeaderCurrentTargetIndex + 1} / {learningHeaderTargets.length}
+              </span>
+            </div>
+          )}
+        </div>
         {showTutorAnswerDialog && (
           <div
             className="absolute inset-0 z-40 flex items-start justify-center overflow-y-auto bg-[color-mix(in_srgb,var(--card)_72%,transparent)] px-6 py-[clamp(2rem,10vh,6rem)] backdrop-blur-[2px]"
@@ -5084,7 +5189,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           aria-hidden={showTutorAnswerDialog || undefined}
           inert={showTutorAnswerDialog || undefined}
           aria-label={locale === "ko-KR" ? "교재 본문, 방향키와 페이지 키로 스크롤할 수 있습니다" : "教材正文，可使用方向键或翻页键滚动阅读"}
-          className="smart-textbook-scroll h-full min-w-0 overflow-y-auto overscroll-contain bg-[var(--card)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
+          className="smart-textbook-scroll min-h-0 min-w-0 flex-1 overflow-y-auto overscroll-contain bg-[var(--card)] focus:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
         >
           <div className="w-full px-5 pb-8 pt-4 sm:px-8 sm:pb-10 sm:pt-5 lg:px-10 xl:px-12">
             {textbook.chapter.number === 0 ? (
@@ -5142,11 +5247,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 && node.activities.some((activity) => activity.type === "listening")
                 && node.activities.some((activity) => activity.type === "speaking");
               const dialogueRoleplayActivity = node.activities.find((activity) => activity.key === "dialogue-roleplay");
-              const targetPageCurrent = usesPatternPager ? patternPage + 1 : missionPage + 1;
-              const targetPageTotal = usesReadWritePager || usesReviewPager
-                ? sharedModuleSkeleton?.pages.length ?? (usesReviewPager ? 3 : 4)
-                : usesPatternPager ? 3 : usesListenSpeakPager ? 4 : usesDialoguePager && dialogueRoleplayActivity ? 4 : usesDialoguePager ? 3 : 2;
-              const targetCompletionPercent = completedNodeIds.has(node.id) ? 100 : Math.max(0, Math.min(100, nodeProgressById[node.id] ?? 0));
               return (
               <article key={node.id} className="mt-8 first:mt-0 sm:mt-10 sm:first:mt-0">
                 {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
@@ -5176,112 +5276,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     )}
                   </div>
                 </div>}
-                {usesDesktopImagePager && (
-                  <nav
-                    className="mb-6 hidden items-center justify-between gap-4 rounded-2xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1.5 lg:flex"
-                    aria-label={locale === "ko-KR" ? "학습 목표 페이지" : "学习目标分页"}
-                  >
-                    <div className="flex items-center gap-1.5">
-                      <button
-                        type="button"
-                        aria-current={(usesPatternPager ? patternPage === 0 : missionPage === 0) ? "page" : undefined}
-                        onClick={() => usesPatternPager ? setPatternPage(0) : setMissionPage(0)}
-                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${(usesPatternPager ? patternPage === 0 : missionPage === 0) ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
-                      >
-                        <BookOpen size={17} aria-hidden="true" />
-                        {usesGrammarPager
-                          ? locale === "ko-KR" ? "문법 이해" : "语法理解"
-                          : usesPatternPager
-                            ? locale === "ko-KR" ? "문형 모음" : "句型库"
-                          : usesDialoguePager
-                            ? locale === "ko-KR" ? "대화 안내" : "对话说明"
-                          : usesListenSpeakPager
-                            ? locale === "ko-KR" ? "듣기 준비" : "听前准备"
-                          : usesReadWritePager
-                            ? locale === "ko-KR" ? "읽기 자료" : "阅读资料"
-                          : usesReviewPager
-                            ? locale === "ko-KR" ? "종합 점검" : "综合自测"
-                          : locale === "ko-KR" ? "장면과 표현" : "情景与表达"}
-                      </button>
-                      <button
-                        type="button"
-                        aria-current={(usesPatternPager ? patternPage === 1 : missionPage === 1) ? "page" : undefined}
-                        onClick={() => usesPatternPager ? setPatternPage(1) : setMissionPage(1)}
-                        className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${(usesPatternPager ? patternPage === 1 : missionPage === 1) ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
-                      >
-                        {usesDialoguePager || usesListenSpeakPager ? <Headphones size={17} aria-hidden="true" /> : <CheckCircle2 size={17} aria-hidden="true" />}
-                        {usesGrammarPager
-                          ? locale === "ko-KR" ? "문법 연습" : "语法练习"
-                          : usesPatternPager
-                            ? locale === "ko-KR" ? "대치 연습" : "替换操练"
-                          : usesDialoguePager
-                            ? locale === "ko-KR" ? "장면 대화" : "场景切换"
-                          : usesListenSpeakPager
-                            ? locale === "ko-KR" ? "정보 듣기" : "听辨信息"
-                          : usesReadWritePager
-                            ? locale === "ko-KR" ? "정보 이해" : "信息理解"
-                          : usesReviewPager
-                            ? locale === "ko-KR" ? "능력 점검" : "能力自查"
-                          : locale === "ko-KR" ? "장면 진단" : "情景诊断"}
-                      </button>
-                      {usesReviewPager && (
-                        <button type="button" aria-current={missionPage === 2 ? "page" : undefined} onClick={() => setMissionPage(2)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Map size={17} aria-hidden="true" />{locale === "ko-KR" ? "복습 결과" : "复盘结果"}</button>
-                      )}
-                      {usesReadWritePager && (
-                        <>
-                          <button type="button" aria-current={missionPage === 2 ? "page" : undefined} onClick={() => setMissionPage(2)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Sparkles size={17} aria-hidden="true" />{locale === "ko-KR" ? "쓰기 구성" : "写作搭建"}</button>
-                          <button type="button" aria-current={missionPage === 3 ? "page" : undefined} onClick={() => setMissionPage(3)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 3 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Send size={17} aria-hidden="true" />{locale === "ko-KR" ? "독립 쓰기" : "独立写作"}</button>
-                        </>
-                      )}
-                      {usesListenSpeakPager && (
-                        <>
-                          <button type="button" aria-current={missionPage === 2 ? "page" : undefined} onClick={() => setMissionPage(2)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Volume2 size={17} aria-hidden="true" />{locale === "ko-KR" ? "따라 말하기" : "跟读复现"}</button>
-                          <button type="button" aria-current={missionPage === 3 ? "page" : undefined} onClick={() => setMissionPage(3)} className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 3 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}><Mic size={17} aria-hidden="true" />{locale === "ko-KR" ? "독립 말하기" : "独立表达"}</button>
-                        </>
-                      )}
-                      {usesDialoguePager && (
-                        <button
-                          type="button"
-                          aria-current={missionPage === 2 ? "page" : undefined}
-                          onClick={() => setMissionPage(2)}
-                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
-                        >
-                          <CheckCircle2 size={17} aria-hidden="true" />
-                          {locale === "ko-KR" ? "이해와 응답" : "理解与回应"}
-                        </button>
-                      )}
-                      {usesDialoguePager && dialogueRoleplayActivity && (
-                        <button
-                          type="button"
-                          aria-current={missionPage === 3 ? "page" : undefined}
-                          onClick={() => setMissionPage(3)}
-                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${missionPage === 3 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
-                        >
-                          <Mic size={17} aria-hidden="true" />
-                          {locale === "ko-KR" ? "역할 실전" : "角色实战"}
-                        </button>
-                      )}
-                      {usesPatternPager && (
-                        <button
-                          type="button"
-                          aria-current={patternPage === 2 ? "page" : undefined}
-                          onClick={() => setPatternPage(2)}
-                          className={`inline-flex min-h-11 items-center gap-2 rounded-xl px-4 text-sm font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none ${patternPage === 2 ? "bg-[var(--card)] text-[var(--primary)] shadow-sm ring-1 ring-[var(--border-subtle)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)] hover:text-[var(--foreground)]"}`}
-                        >
-                          <Sparkles size={17} aria-hidden="true" />
-                          {locale === "ko-KR" ? "조합과 출력" : "组合输出"}
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex items-center gap-2.5 pr-3">
-                      <div className="h-1.5 w-20 overflow-hidden rounded-full bg-[var(--border-subtle)]" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={targetCompletionPercent}><div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${targetCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${targetCompletionPercent}%` }} /></div>
-                      <span className={`min-w-8 text-right text-[11px] font-bold tabular-nums ${targetCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{targetCompletionPercent}%</span>
-                      <span className="text-xs font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
-                        {locale === "ko-KR" ? "이 목표" : "本目标"} {targetPageCurrent} / {targetPageTotal}
-                      </span>
-                    </div>
-                  </nav>
-                )}
                 {usesListenSpeakPager && <ListenSpeakLearningPanel node={node} locale={locale} supportMode={supportMode} page={missionPage} moduleHeader={nodeIndex === 0 ? { title: localize(activeModule.title), stepLabel: locale === "ko-KR" ? `제 ${String(activeIndex + 1).padStart(2, "0")} 단계` : `第 ${String(activeIndex + 1).padStart(2, "0")} 步`, minutes: activeNodes.reduce((total, currentNode) => total + currentNode.minutes, 0) } : undefined} />}
                 {usesReadWritePager && <ReadWriteLearningPanel node={node} locale={locale} page={missionPage} />}
                 {usesReviewPager && missionPage === 2 && <ReviewResultPanel node={node} locale={locale} savedResponses={savedActivityResponses} />}

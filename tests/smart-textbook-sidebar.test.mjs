@@ -2,10 +2,18 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+import {
+  getSmartTextbookSkeletonPageLabels,
+  shouldUseSmartTextbookTeachingFocusMode,
+  SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
+  SMART_TEXTBOOK_SHARED_SKELETON,
+} from "../src/lib/smart-textbook-skeleton.ts";
+
 const sourceUrl = new URL(
   "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx",
   import.meta.url,
 );
+const skeletonUrl = new URL("../src/lib/smart-textbook-skeleton.ts", import.meta.url);
 const loaderUrl = new URL("../src/lib/smart-digital-textbook.ts", import.meta.url);
 const actionsUrl = new URL(
   "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-actions.ts",
@@ -140,8 +148,34 @@ const patternExpressionPathMigrationUrl = new URL(
   import.meta.url,
 );
 
+test("第 1—16 章共用完整的模块分页和教学区状态规则", () => {
+  const modules = Object.entries(SMART_TEXTBOOK_SHARED_SKELETON);
+
+  assert.equal(modules.length, 8);
+  for (const [moduleCode, module] of modules) {
+    assert.equal(module.pages.length, module.pageLabels.length, `${moduleCode} 的分页与标题数量必须一致`);
+    assert.equal(getSmartTextbookSkeletonPageLabels(moduleCode, "zh-CN").length, module.pages.length);
+    assert.equal(getSmartTextbookSkeletonPageLabels(moduleCode, "ko-KR").length, module.pages.length);
+  }
+
+  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent, 30);
+  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx, 300);
+  assert.equal(shouldUseSmartTextbookTeachingFocusMode({
+    tutorStarted: true,
+    answerRequired: false,
+    action: null,
+    hasPendingLearningTask: false,
+  }), true);
+  assert.equal(shouldUseSmartTextbookTeachingFocusMode({
+    tutorStarted: true,
+    answerRequired: false,
+    action: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction,
+    hasPendingLearningTask: false,
+  }), false);
+});
+
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
-  const source = await readFile(sourceUrl, "utf8");
+  const [source, skeleton] = await Promise.all([readFile(sourceUrl, "utf8"), readFile(skeletonUrl, "utf8")]);
 
   assert.match(source, /aria-current=\{active \? "step" : undefined\}/);
   assert.match(source, /selectModule\(index\);\s*setMobilePanel\(null\);/);
@@ -172,20 +206,25 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(source, /const usesDesktopImagePager = nodeIndex === 0 && node\.activities\.length > 0 && Boolean\(sharedModuleSkeleton\)/);
   assert.match(source, /usesDialoguePager && missionPage >= 2/);
   assert.match(source, /const \[nodeProgressById, setNodeProgressById\] = useState<Record<string, number>>/);
-  assert.match(source, /const targetCompletionPercent = completedNodeIds\.has\(node\.id\) \? 100/);
+  assert.match(source, /const learningHeaderCompletionPercent = learningHeaderNode/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "현재 목표 실제 완료율" : "当前目标实际完成度"\}/);
-  assert.match(source, /\{targetCompletionPercent\}%<\/span>/);
-  assert.match(source, /h-1\.5 w-20/);
+  assert.match(source, /\{learningHeaderCompletionPercent\}%<\/span>/);
+  assert.match(source, /h-1\.5 w-14/);
   assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : usesReadWritePager/);
   assert.match(source, /aria-label=\{locale === "ko-KR" \? "학습 목표 페이지" : "学习目标分页"\}/);
-  assert.match(source, /className="mb-6 hidden items-center justify-between gap-4 rounded-2xl/);
+  assert.match(source, /learningHeaderTargets\.map/);
   assert.match(source, /locale === "ko-KR" \? "학습 단계 시간선" : "学习小节时间轴"/);
   assert.match(source, /textbook\.modules\.map\(\(module, index\) =>/);
-  assert.match(source, /usesPatternPager \? patternPage === 0 : missionPage === 0/);
-  assert.match(source, /usesPatternPager \? patternPage === 1 : missionPage === 1/);
+  assert.match(source, /learningHeaderUsesPatterns \? patternPage : missionPage/);
   assert.doesNotMatch(source, /className="mt-6 hidden items-center justify-between border-t/);
-  assert.match(source, /usesPatternPager \? patternPage \+ 1 : missionPage \+ 1/);
-  assert.match(source, /locale === "ko-KR" \? "장면 진단" : "情景诊断"/);
+  assert.match(source, /learningHeaderCurrentTargetIndex \+ 1/);
+  assert.match(skeleton, /"zh-CN": "情景诊断", "ko-KR": "장면 진단"/);
+  assert.match(skeleton, /defaultWidthPercent: 30/);
+  assert.match(skeleton, /collapsedWidthPx: 64/);
+  assert.match(skeleton, /minimumHeightPx: 300/);
+  assert.match(skeleton, /contentInsetPx: 48/);
+  assert.match(source, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
+  assert.match(source, /shouldUseSmartTextbookTeachingFocusMode/);
   assert.match(source, /title=\{isGrammarPractice \?[\s\S]*: activity\.prompt\[locale\]\}/);
   assert.match(source, /description=\{activity\.instruction\[locale\]\}/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문제 풀이 안내 보기" : "查看答题说明"\}/);
@@ -196,14 +235,14 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
 });
 
 test("核心词汇等带图模块复用情景与表达双页导航", async () => {
-  const source = await readFile(sourceUrl, "utf8");
+  const [source, skeleton] = await Promise.all([readFile(sourceUrl, "utf8"), readFile(skeletonUrl, "utf8")]);
 
   assert.match(source, /const usesDesktopImagePager = nodeIndex === 0 && node\.activities\.length > 0 && Boolean\(sharedModuleSkeleton\)/);
-  assert.match(source, /\{usesDesktopImagePager && \(/);
   assert.match(source, /!usesPatternPager && !usesDialoguePager && missionPage === 1/);
   assert.match(source, /usesPatternPager \? patternPage !== 2 : usesDialoguePager \? missionPage !== 2 : usesReadWritePager/);
-  assert.match(source, /locale === "ko-KR" \? "장면과 표현" : "情景与表达"/);
-  assert.match(source, /locale === "ko-KR" \? "이 목표" : "本目标"/);
+  assert.match(source, /getSmartTextbookSkeletonPageLabels\(activeModule\.code, locale\)/);
+  assert.match(skeleton, /"zh-CN": "情景与表达", "ko-KR": "장면과 표현"/);
+  assert.match(source, /locale === "ko-KR" \? "목표" : "目标"/);
 });
 
 test("核心词汇情景诊断直接显示卡片并取消专注模式门槛", async () => {
@@ -286,8 +325,9 @@ test("本课可调用表达由真实对话组驱动并保留共享骨架回退",
 });
 
 test("实战对话使用四页角色练习并覆盖第一章十二个核心词", async () => {
-  const [source, actions, migration, roleplayMigration, requiredRoleplayMigration, recalculatedProgressMigration] = await Promise.all([
+  const [source, skeleton, actions, migration, roleplayMigration, requiredRoleplayMigration, recalculatedProgressMigration] = await Promise.all([
     readFile(sourceUrl, "utf8"),
+    readFile(skeletonUrl, "utf8"),
     readFile(actionsUrl, "utf8"),
     readFile(redesignedDialoguePagesMigrationUrl, "utf8"),
     readFile(dialogueRoleplayMigrationUrl, "utf8"),
@@ -310,12 +350,11 @@ test("实战对话使用四页角色练习并覆盖第一章十二个核心词",
   assert.match(source, /dialogue-recording-\$\{recording\.evidenceId\}\.webm/);
   assert.match(source, /确定删除本轮录音吗/);
   assert.doesNotMatch(source, /<audio src=\{recordings\[currentLineIndex\]\.audioUrl\} controls/);
-  assert.match(source, /"对话说明"/);
-  assert.match(source, /"场景切换"/);
-  assert.match(source, /"理解与回应"/);
-  assert.match(source, /onClick=\{\(\) => setMissionPage\(2\)\}/);
-  assert.match(source, /"角色实战"/);
-  assert.match(source, /onClick=\{\(\) => setMissionPage\(3\)\}/);
+  assert.match(skeleton, /"zh-CN": "对话说明"/);
+  assert.match(skeleton, /"zh-CN": "场景切换"/);
+  assert.match(skeleton, /"zh-CN": "理解与回应"/);
+  assert.match(skeleton, /"zh-CN": "角色实战"/);
+  assert.match(source, /setMissionPage\(targetIndex as 0 \| 1 \| 2 \| 3\)/);
   assert.match(source, /DialogueRoleplayPractice/);
   assert.match(source, /const \[roleSide, setRoleSide\] = useState<0 \| 1>\(0\)/);
   assert.match(source, /onClick=\{\(\) => resetPractice\(index, 0\)\}/);
@@ -467,11 +506,11 @@ test("任务情景图按生成原图五比二等比导出，禁止纵向拉伸",
 });
 
 test("语法节点使用理解与练习双页，并逐项切换真实语法卡", async () => {
-  const source = await readFile(sourceUrl, "utf8");
+  const [source, skeleton] = await Promise.all([readFile(sourceUrl, "utf8"), readFile(skeletonUrl, "utf8")]);
 
   assert.match(source, /const usesGrammarPager = Array\.isArray\(node\.content\.grammarCards\)/);
-  assert.match(source, /"语法理解"/);
-  assert.match(source, /"语法练习"/);
+  assert.match(skeleton, /"zh-CN": "语法理解"/);
+  assert.match(skeleton, /"zh-CN": "语法练习"/);
   assert.match(source, /activeGrammarCardIndex/);
   assert.match(source, /role="tablist"/);
   assert.match(source, /grammarCards\.map\(\(item, index\)/);
@@ -480,8 +519,9 @@ test("语法节点使用理解与练习双页，并逐项切换真实语法卡",
 });
 
 test("句型操练使用句型库、替换操练与组合输出三页共享骨架", async () => {
-  const [source, loader, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, twoWayComposition, expressionPath, submission] = await Promise.all([
+  const [source, skeleton, loader, migration, choiceMigration, redesignedChoices, conversationScenes, guidedConversation, guidedAudio, composition, twoWayComposition, expressionPath, submission] = await Promise.all([
     readFile(sourceUrl, "utf8"),
+    readFile(skeletonUrl, "utf8"),
     readFile(loaderUrl, "utf8"),
     readFile(expandedPatternCardsMigrationUrl, "utf8"),
     readFile(patternChoiceGroupsMigrationUrl, "utf8"),
@@ -496,9 +536,9 @@ test("句型操练使用句型库、替换操练与组合输出三页共享骨�
   ]);
 
   assert.match(source, /const usesPatternPager = activeModule\.code === "patterns" && node\.activities\.some\(\(activity\) => activity\.type === "ordering"\)/);
-  assert.match(source, /"句型库"/);
-  assert.match(source, /"替换操练"/);
-  assert.match(source, /"组合输出"/);
+  assert.match(skeleton, /"zh-CN": "句型库"/);
+  assert.match(skeleton, /"zh-CN": "替换操练"/);
+  assert.match(skeleton, /"zh-CN": "组合输出"/);
   assert.match(source, /content\.substitutionGroups/);
   assert.match(source, /content\.quickResponse/);
   assert.match(source, /content\.personalOutput/);
@@ -759,8 +799,9 @@ test("核心词汇根据图片媒体热点显示在对应场景附近", async ()
 });
 
 test("听说任务使用四页共享流程并预留正式音频位置", async () => {
-  const [source, migration, recordingRoute, actions, loader, guidedRepeatMigration] = await Promise.all([
+  const [source, skeleton, migration, recordingRoute, actions, loader, guidedRepeatMigration] = await Promise.all([
     readFile(sourceUrl, "utf8"),
+    readFile(skeletonUrl, "utf8"),
     readFile(listenSpeakFlowMigrationUrl, "utf8"),
     readFile(recordingRouteUrl, "utf8"),
     readFile(actionsUrl, "utf8"),
@@ -773,10 +814,10 @@ test("听说任务使用四页共享流程并预留正式音频位置", async ()
   );
 
   assert.match(source, /const usesListenSpeakPager = activeModule\.code === "listen_speak"/);
-  assert.match(source, /听前准备/);
-  assert.match(source, /听辨信息/);
-  assert.match(source, /跟读复现/);
-  assert.match(source, /独立表达/);
+  assert.match(skeleton, /"zh-CN": "听前准备"/);
+  assert.match(skeleton, /"zh-CN": "听辨信息"/);
+  assert.match(skeleton, /"zh-CN": "跟读复现"/);
+  assert.match(skeleton, /"zh-CN": "独立表达"/);
   assert.match(source, /if \(activity\.completed && activity\.response && typeof activity\.response === "object"/);
   assert.match(source, /if \(nextDuration >= minimumSeconds && selectedCount >= minimumOutlineItems\) submit\(nextAnswer\)/);
   assert.match(source, /max-w-full whitespace-normal text-lg font-bold leading-10[^\n]+\[overflow-wrap:anywhere\]/);

@@ -136,14 +136,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
 });
 
 test("学生教学区逐节点讲解并用真实活动答案完成理解检查", async () => {
-  const route = await readFile(
-    new URL("src/app/api/learning-agent/respond/route.ts", root),
-    "utf8",
-  );
-  const shell = await readFile(
-    new URL("src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx", root),
-    "utf8",
-  );
+  const [route, shell, skeleton, cleanupMigration] = await Promise.all([
+    readFile(new URL("src/app/api/learning-agent/respond/route.ts", root), "utf8"),
+    readFile(new URL("src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx", root), "utf8"),
+    readFile(new URL("src/lib/smart-textbook-skeleton.ts", root), "utf8"),
+    readFile(new URL("supabase/migrations/202608280005_remove_learning_agent_display_body.sql", root), "utf8"),
+  ]);
   assert.match(route, /const scriptVersionId = currentPublishedScript\?\.id \?\? existingSession\?\.script_version_id/);
   assert.match(route, /const sessionStatus = scriptNodes\.length === 0/);
   assert.doesNotMatch(route, /status: input\.intent === "ready" && completionPercent === 100 \? "completed" : "active"/);
@@ -172,7 +170,13 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /请先选择回答/);
   assert.match(shell, /本节讲解已完成/);
   assert.match(shell, /tutorDisplay/);
-  assert.match(shell, /当前教学展示/);
+  assert.match(shell, /data-learning-agent-blackboard/);
+  assert.match(shell, /sticky top-0 z-20/);
+  assert.match(skeleton, /minimumHeightPx: 300/);
+  assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);
+  assert.match(cleanupMigration, /\(configuration -> 'display'\) - 'body'/);
+  assert.doesNotMatch(shell, /当前教学展示/);
+  assert.match(shell, /teachingAreaCharacter\.position === "left" \? teachingAreaExpanded \? "ml-\[11rem\]" : "ml-\[7\.5rem\]"/);
   assert.match(shell, /去学习区听音频/);
   assert.match(shell, /recordTutorLearningEvent/);
   assert.match(shell, /data-learning-target="scene:image"/);
@@ -188,6 +192,24 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /X-Learning-Agent-Character/);
   assert.match(shell, /kim-teacher-breathe/);
   assert.match(shell, /data-smart-textbook-teaching-area/);
+  assert.match(shell, /shouldUseSmartTextbookTeachingFocusMode/);
+  assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.focusMode\.revealForActivityAction/);
+  assert.match(shell, /const learningAreaHidden = tutorFocusMode \|\| learningAreaManuallyHidden/);
+  assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
+  assert.match(shell, /data-learning-area-hidden/);
+  assert.match(shell, /learningAreaHidden \? "xl:hidden"/);
+  assert.match(shell, /teachingAreaExpanded \? "text-lg leading-9" : "text-sm leading-7"/);
+  assert.match(shell, /setLearningAreaManuallyHidden\(true\)/);
+  assert.match(shell, /setLearningAreaManuallyHidden\(false\)/);
+  assert.match(shell, /隐藏学习区/);
+  assert.match(shell, /显示学习区/);
+  assert.doesNotMatch(shell, /互动学习区|상호작용 학습 영역/);
+  assert.match(shell, /after:left-\[var\(--learning-header-inset\)\] after:right-\[var\(--learning-header-inset\)\]/);
+  assert.match(shell, /learningHeaderTargets\.map/);
+  assert.match(shell, /getSmartTextbookSkeletonPageLabels/);
+  assert.match(shell, /learningHeaderCompletionPercent/);
+  assert.doesNotMatch(shell, /targetPageCurrent|targetCompletionPercent/);
+  assert.ok(shell.indexOf("data-learning-agent-blackboard") < shell.indexOf("kim-teacher-breathe"));
   assert.ok(shell.indexOf("kim-teacher-breathe") < shell.indexOf('id="korean-textbook-content"'));
   assert.match(shell, /setTutorStatus\("idle"\);\s+setTutorAwaitingAnswer\(nextTutorAwaitingAnswer\)/);
 });
