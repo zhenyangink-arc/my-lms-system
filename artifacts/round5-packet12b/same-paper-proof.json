@@ -1,0 +1,28 @@
+{
+  "answers": [
+    {
+      "answer": "验收正确项",
+      "expected": "验收正确项",
+      "awardedPoints": 60
+    },
+    {
+      "answer": "这是同卷场景的真实浏览器答案。",
+      "expected": null,
+      "awardedPoints": null
+    }
+  ],
+  "computedScore": null,
+  "deliveryPaperId": "3ef415a9-4b50-474e-9bb1-e70e763fd1e1",
+  "answerQuestionIds": [
+    "6dbb37ac-92aa-42fb-aeff-822466225362",
+    "69f7c05c-a308-4ee5-a86e-5d84f8449112"
+  ],
+  "motherQuestionIds": [
+    "0529f243-d0ea-41c1-853f-976674cbc799",
+    "bfa7a045-678f-4a1b-bf2b-dd2246628261"
+  ],
+  "snapshotMotherQuestionIds": [
+    "0529f243-d0ea-41c1-853f-976674cbc799",
+    "bfa7a045-678f-4a1b-bf2b-dd2246628261"
+  ]
+}

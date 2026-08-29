@@ -1,0 +1,19 @@
+{
+  "prompts": [
+    "Packet12b 新卷题目一：请选择验收答案。",
+    "Packet12b 新卷题目二：请写一句验收说明。"
+  ],
+  "motherPaperId": "3ef415a9-4b50-474e-9bb1-e70e763fd1e1",
+  "motherQuestionIds": [
+    "0529f243-d0ea-41c1-853f-976674cbc799",
+    "bfa7a045-678f-4a1b-bf2b-dd2246628261"
+  ],
+  "snapshotQuestionIds": [
+    "63c0ee2b-35ae-4483-99cd-2987688604bb",
+    "4fd7c517-898e-42df-92f2-cd43777b3396"
+  ],
+  "snapshotMotherQuestionIds": [
+    "0529f243-d0ea-41c1-853f-976674cbc799",
+    "bfa7a045-678f-4a1b-bf2b-dd2246628261"
+  ]
+}
