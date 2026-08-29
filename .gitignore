@@ -52,3 +52,10 @@ next-env.d.ts
 .ai/cezar/runs/
 .ai/cezar/ui-state.json
 .ai/cezar/worktrees/
+
+# procurement / compliance reference docs (not project docs)
+docs/*server*-2026.pdf
+docs/*server*-2026.html
+docs/*深度学习服务器*.pdf
+docs/*采购*.pdf
+/reports/
