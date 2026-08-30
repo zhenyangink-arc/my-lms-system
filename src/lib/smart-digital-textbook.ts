@@ -71,6 +71,11 @@ export type SmartTextbookModule = {
   accent: SmartAccent;
   title: LocalizedText;
   description: LocalizedText;
+  /** The teaching script's own first-node "过渡台词" (buffer line), surfaced
+   * ahead of time so the student sees/hears something before ever clicking
+   * "开始学习" — at that point no `/respond` call has happened yet, so this
+   * is the only buffer line that can exist without waiting on a request. */
+  openingBufferLine: LocalizedText;
   nodes: SmartTextbookNode[];
 };
 
@@ -292,6 +297,53 @@ export async function loadSmartDigitalTextbook(
   if (moduleError) throw new Error(`无法读取教材模块：${moduleError.message}`);
 
   const moduleIds = (modules ?? []).map((item) => String(item.id));
+
+  // Node 1's own "过渡台词" doubles as the opening line: it's authored the
+  // same as any other node's buffer line, but read here — at page load,
+  // before the student has clicked "开始学习" — so it can appear before that
+  // very first click, when no /respond call has happened yet to fetch it.
+  const { data: openingLessons } = agentProfile && moduleIds.length
+    ? await admin
+        .from("learning_agent_lessons")
+        .select("id,module_id")
+        .eq("agent_profile_id", agentProfile.id)
+        .in("module_id", moduleIds)
+    : { data: [] as { id: string; module_id: string }[] };
+  const openingLessonIds = (openingLessons ?? []).map((lesson) => String(lesson.id));
+  const { data: openingScriptVersions } = openingLessonIds.length
+    ? await admin
+        .from("learning_agent_script_versions")
+        .select("id,lesson_id")
+        .in("lesson_id", openingLessonIds)
+        .eq("status", "published")
+    : { data: [] as { id: string; lesson_id: string }[] };
+  const openingVersionIds = (openingScriptVersions ?? []).map((version) => String(version.id));
+  const { data: openingFirstNodes } = openingVersionIds.length
+    ? await admin
+        .from("learning_agent_script_nodes")
+        .select("script_version_id,sort_order,configuration")
+        .in("script_version_id", openingVersionIds)
+        .order("sort_order")
+    : { data: [] as { script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
+  const openingBufferLineByVersionId = new Map<string, unknown>();
+  for (const node of openingFirstNodes ?? []) {
+    const versionId = String(node.script_version_id);
+    if (!openingBufferLineByVersionId.has(versionId)) {
+      openingBufferLineByVersionId.set(versionId, node.configuration?.bufferLine ?? null);
+    }
+  }
+  const openingLessonModuleById = new Map((openingLessons ?? []).map((lesson) => [
+    String(lesson.id),
+    String(lesson.module_id),
+  ]));
+  const openingBufferLineByModuleId = new Map<string, unknown>();
+  for (const version of openingScriptVersions ?? []) {
+    const moduleId = openingLessonModuleById.get(String(version.lesson_id));
+    if (moduleId) {
+      openingBufferLineByModuleId.set(moduleId, openingBufferLineByVersionId.get(String(version.id)) ?? null);
+    }
+  }
+
   const { data: nodes, error: nodeError } = moduleIds.length
     ? await admin
         .from("digital_textbook_nodes")
@@ -512,6 +564,7 @@ export async function loadSmartDigitalTextbook(
     accent: module.accent_role as SmartAccent,
     title: localized(module.title),
     description: localized(module.description),
+    openingBufferLine: localized(openingBufferLineByModuleId.get(String(module.id)) ?? null),
     nodes: (nodes ?? [])
       .filter((node) => node.module_id === module.id)
       .map((node) => ({

@@ -2,7 +2,9 @@ import { requireActiveUser } from "@/lib/auth";
 import { createR2SignedObjectUrl } from "@/lib/r2";
 
 const companionObjectKeys = {
-  "xiao-mo-pointing": "learning-agent/companions/xiao-mo/v1/pointing.png",
+  "a-han-pointing": "learning-agent/companions/a-han/v2/runtime/poses/pointing.webp",
+  "a-han-seated-combing-loop": "learning-agent/companions/a-han/v2/runtime/animations/seated-combing-loop.webp",
+  "a-han-seated-combing-poster": "learning-agent/companions/a-han/v2/runtime/posters/seated-combing.webp",
 } as const;
 
 export async function GET(

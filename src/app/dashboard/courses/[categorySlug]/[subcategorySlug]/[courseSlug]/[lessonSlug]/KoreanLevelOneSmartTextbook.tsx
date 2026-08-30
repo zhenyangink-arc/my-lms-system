@@ -45,6 +45,7 @@ import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactN
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
+import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 
 import type {
   SmartLocale,
@@ -137,7 +138,7 @@ type TutorCompanionPosition = {
 
 type TutorCharacter = {
   kind?: "uply-teacher";
-  pose?: "greeting" | "explaining" | "encouraging";
+  pose?: TeacherKimPose;
   position?: "left" | "right";
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
@@ -178,9 +179,32 @@ const tutorCharacterImages: Record<NonNullable<TutorCharacter["pose"]>, { idle: 
     speaking: "/api/learning-agent/characters/encouraging-speaking",
     blink: "/api/learning-agent/characters/encouraging-blink",
   },
+  "pointing-left": {
+    idle: "/api/learning-agent/characters/pointing-left-idle",
+    speaking: "/api/learning-agent/characters/pointing-left-speaking",
+    blink: "/api/learning-agent/characters/pointing-left-blink",
+  },
+  "repeat-after-me": {
+    idle: "/api/learning-agent/characters/repeat-after-me-idle",
+    speaking: "/api/learning-agent/characters/repeat-after-me-speaking",
+    blink: "/api/learning-agent/characters/repeat-after-me-blink",
+  },
+  listening: {
+    idle: "/api/learning-agent/characters/listening-idle",
+    speaking: "/api/learning-agent/characters/listening-speaking",
+    blink: "/api/learning-agent/characters/listening-blink",
+  },
+  "gentle-correction": {
+    idle: "/api/learning-agent/characters/gentle-correction-idle",
+    speaking: "/api/learning-agent/characters/gentle-correction-speaking",
+    blink: "/api/learning-agent/characters/gentle-correction-blink",
+  },
 };
 
-const tutorCompanionImage = "/api/learning-agent/companions/xiao-mo-pointing";
+const tutorCompanionImages = {
+  pointing: "/api/learning-agent/companions/a-han-pointing",
+  seatedCombingPoster: "/api/learning-agent/companions/a-han-seated-combing-poster",
+} as const;
 
 function tutorCompanionTargetPosition(target: HTMLElement, targetKey: string): TutorCompanionPosition {
   const rect = target.getBoundingClientRect();
@@ -721,9 +745,23 @@ function speakKorean(text: string, onComplete?: () => void) {
   window.speechSynthesis.speak(utterance);
 }
 
-function speakTutorCharacterLine(text: string, character: TutorCharacter | null, onStatusChange?: (status: "playing" | "ended" | "error") => void) {
+function commaChunkedRevealBreakpoints(text: string) {
+  const breakpoints = [...text.matchAll(/[，,、。！？!?；;]/g)]
+    .map((match) => (match.index ?? 0) + 1)
+    .filter((index) => index < text.length);
+  breakpoints.push(text.length);
+  return breakpoints;
+}
+
+function speakTutorCharacterLine(
+  text: string,
+  character: TutorCharacter | null,
+  onStatusChange?: (status: "playing" | "ended" | "error") => void,
+  onTextProgress?: (revealedText: string) => void,
+) {
   if (!text.trim() || character?.voiceEnabled === false || !("speechSynthesis" in window)) {
     onStatusChange?.("ended");
+    onTextProgress?.(text);
     return;
   }
   const koreanCharacterCount = text.match(/[가-힣]/g)?.length ?? 0;
@@ -737,14 +775,28 @@ function speakTutorCharacterLine(text: string, character: TutorCharacter | null,
   const preferredFemaleVoice = languageVoices.find((voice) =>
     /sunhi|xiaoxiao|xiaoyi|female|samantha|zira|tingting|meijia/i.test(voice.name),
   );
+  const breakpoints = commaChunkedRevealBreakpoints(text);
   const utterance = new SpeechSynthesisUtterance(text);
   utterance.lang = language;
   utterance.rate = Math.max(0.75, Math.min(1.25, Number(character?.voiceRate) || 1));
   utterance.pitch = 1.04;
   utterance.voice = preferredFemaleVoice ?? languageVoices[0] ?? null;
+  let boundaryFired = false;
+  utterance.onboundary = (event) => {
+    boundaryFired = true;
+    const breakpoint = breakpoints.find((index) => index > event.charIndex) ?? text.length;
+    const segmentStart = breakpoints.filter((index) => index <= event.charIndex).pop() ?? 0;
+    onTextProgress?.(text.slice(segmentStart, breakpoint));
+  };
   utterance.onstart = () => onStatusChange?.("playing");
-  utterance.onend = () => onStatusChange?.("ended");
-  utterance.onerror = () => onStatusChange?.("error");
+  utterance.onend = () => {
+    if (!boundaryFired) onTextProgress?.(text);
+    onStatusChange?.("ended");
+  };
+  utterance.onerror = () => {
+    if (!boundaryFired) onTextProgress?.(text);
+    onStatusChange?.("error");
+  };
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
 }
@@ -4234,13 +4286,17 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorSelectedAnswer, setTutorSelectedAnswer] = useState("");
   const [tutorAnswerCorrect, setTutorAnswerCorrect] = useState<boolean | null>(null);
   const [tutorContinueLabel, setTutorContinueLabel] = useState("");
+  const [tutorNextBufferLine, setTutorNextBufferLine] = useState("");
   const [tutorAutoContinue, setTutorAutoContinue] = useState(false);
   const tutorAutoContinuingRef = useRef(false);
   const [tutorTerminal, setTutorTerminal] = useState(false);
   const [tutorAction, setTutorAction] = useState<string | null>(null);
   const [tutorSpeechStatus, setTutorSpeechStatus] = useState<TutorSpeechStatus>("idle");
   const [tutorSpeechMuted, setTutorSpeechMuted] = useState(false);
+  const [tutorBubbleVisible, setTutorBubbleVisible] = useState(false);
+  const tutorBubbleHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [tutorCompanion, setTutorCompanion] = useState<TutorCompanionPosition | null>(null);
+  const [ahanIdleVisible, setAhanIdleVisible] = useState(false);
   const [learningAreaManuallyHidden, setLearningAreaManuallyHidden] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [preferenceError, setPreferenceError] = useState("");
@@ -4308,6 +4364,31 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     tutorAutoContinuingRef.current = true;
     void tutorReply("ready");
   }, [isPreviewMode, tutorAutoContinue, tutorContinueReady]);
+  const tutorIsSpeakingNow = tutorStatus === "thinking"
+    || tutorStatus === "streaming"
+    || tutorSpeechStatus === "loading"
+    || tutorSpeechStatus === "playing";
+  useEffect(() => {
+    if (tutorIsSpeakingNow) {
+      if (tutorBubbleHideTimerRef.current) {
+        clearTimeout(tutorBubbleHideTimerRef.current);
+        tutorBubbleHideTimerRef.current = null;
+      }
+      setTutorBubbleVisible(true);
+      return;
+    }
+    if (tutorSpeechStatus === "paused" || !tutorBubbleVisible) return;
+    tutorBubbleHideTimerRef.current = setTimeout(() => {
+      setTutorBubbleVisible(false);
+      tutorBubbleHideTimerRef.current = null;
+    }, 3000);
+    return () => {
+      if (tutorBubbleHideTimerRef.current) {
+        clearTimeout(tutorBubbleHideTimerRef.current);
+        tutorBubbleHideTimerRef.current = null;
+      }
+    };
+  }, [tutorIsSpeakingNow, tutorSpeechStatus, tutorBubbleVisible]);
   const showTutorAnswerDialog = tutorStarted
     && !tutorPaused
     && tutorAwaitingAnswer
@@ -4392,6 +4473,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorSelectedAnswer("");
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
+    setTutorNextBufferLine(activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || "");
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -4568,6 +4650,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorSelectedAnswer("");
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
+    setTutorNextBufferLine(activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || "");
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -4609,6 +4692,29 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     const requestAbortController = new AbortController();
     tutorRequestAbortRef.current?.abort();
     tutorRequestAbortRef.current = requestAbortController;
+    let bufferSpeechDone: Promise<void> = Promise.resolve();
+    let bufferSpeechActive = false;
+    if (teachingAreaCharacter?.kind === "uply-teacher" && !tutorPausedRef.current) {
+      const bufferLine = tutorNextBufferLine || (locale === "ko-KR" ? "잠시만요, 이 부분을 한번 볼게요…" : "稍等一下，我看看这里怎么讲…");
+      bufferSpeechActive = true;
+      setTutorSpeechStatus("loading");
+      bufferSpeechDone = new Promise((resolve) => {
+        const finish = () => {
+          bufferSpeechActive = false;
+          resolve();
+        };
+        requestAbortController.signal.addEventListener("abort", finish, { once: true });
+        speakTutorCharacterLine(
+          bufferLine,
+          teachingAreaCharacter,
+          (status) => {
+            setTutorSpeechStatus(status === "playing" ? "playing" : "idle");
+            if (status !== "playing") finish();
+          },
+          (revealedText) => setTutorText(revealedText),
+        );
+      });
+    }
     try {
       const response = isPreviewMode
         ? await fetch("/api/learning-agent/preview-respond", {
@@ -4719,7 +4825,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       // narration (spoken later, once completeTutorText is known) ever
       // started. speakTutorCharacterLine() below corrects this to "ended"
       // immediately if it turns out there's nothing to say after all.
-      if (nextCharacter?.kind === "uply-teacher" && nextCharacter?.voiceEnabled !== false) {
+      if (nextCharacter?.kind === "uply-teacher" && nextCharacter?.voiceEnabled !== false && !bufferSpeechActive) {
         setTutorSpeechStatus("loading");
       }
       if (nextCharacter?.speechAssetId) {
@@ -4753,6 +4859,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       setTutorTerminal(response.headers.get("X-Learning-Agent-Terminal") === "true");
       const encodedContinueLabel = response.headers.get("X-Learning-Agent-Continue-Label");
       setTutorContinueLabel(encodedContinueLabel ? decodeURIComponent(encodedContinueLabel) : "");
+      const encodedBufferLine = response.headers.get("X-Learning-Agent-Buffer-Line");
+      setTutorNextBufferLine(encodedBufferLine ? decodeURIComponent(encodedBufferLine) : "");
       tutorAutoContinuingRef.current = false;
       setTutorAutoContinue(isPreviewMode && response.headers.get("X-Learning-Agent-Auto-Continue") === "true");
       const reader = response.body.getReader();
@@ -4765,24 +4873,40 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         const chunk = decoder.decode(value, { stream: true });
         if (chunk) {
           completeTutorText += chunk;
-          if (!speechManifestPromise) setTutorText((current) => current + chunk);
+          if (!speechManifestPromise && nextCharacter?.kind !== "uply-teacher") setTutorText((current) => current + chunk);
         }
       }
       const finalChunk = decoder.decode();
       if (finalChunk) {
         completeTutorText += finalChunk;
-        if (!speechManifestPromise) setTutorText((current) => current + finalChunk);
+        if (!speechManifestPromise && nextCharacter?.kind !== "uply-teacher") setTutorText((current) => current + finalChunk);
       }
-      setTutorStatus("idle");
       setTutorAwaitingAnswer(nextTutorAwaitingAnswer);
       const speechManifest = await speechManifestPromise;
+      await bufferSpeechDone;
+      if (requestAbortController.signal.aborted) return;
+      // Re-arm "loading" right before flipping tutorStatus idle: the buffer
+      // line's own onend handler already reset tutorSpeechStatus to "idle"
+      // once it finished, so without this the same gap the comment above
+      // describes reopens right here for every reply that plays a buffer line.
+      if (speechManifest || (nextCharacter?.kind === "uply-teacher" && nextCharacter?.voiceEnabled !== false)) {
+        setTutorSpeechStatus("loading");
+      }
+      setTutorStatus("idle");
       if (speechManifest) {
         playTutorSpeech(completeTutorText, speechManifest);
       } else {
-        setTutorText(completeTutorText);
         if (nextCharacter?.speechAssetId) setTutorSpeechStatus("error");
         if (nextCharacter?.kind === "uply-teacher" && !tutorPausedRef.current) {
-          speakTutorCharacterLine(completeTutorText, nextCharacter, (status) => setTutorSpeechStatus(status));
+          setTutorText("");
+          speakTutorCharacterLine(
+            completeTutorText,
+            nextCharacter,
+            (status) => setTutorSpeechStatus(status),
+            (revealedText) => setTutorText(revealedText),
+          );
+        } else {
+          setTutorText(completeTutorText);
         }
       }
 
@@ -5022,6 +5146,42 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       }
     };
   }, [tutorCompanion?.targetKey]);
+
+  useEffect(() => {
+    setAhanIdleVisible(false);
+    const canRunIdle = tutorStarted
+      && !tutorPaused
+      && !tutorCompanion
+      && tutorStatus === "idle"
+      && tutorSpeechStatus !== "loading"
+      && tutorSpeechStatus !== "playing"
+      && !tutorAwaitingAnswer
+      && !showTutorAnswerDialog;
+    if (!canRunIdle) return;
+
+    let hideTimer: number | null = null;
+    const showIdle = () => {
+      setAhanIdleVisible(true);
+      if (hideTimer !== null) window.clearTimeout(hideTimer);
+      hideTimer = window.setTimeout(() => setAhanIdleVisible(false), 9000);
+    };
+    const firstShowTimer = window.setTimeout(showIdle, 12000);
+    const repeatTimer = window.setInterval(showIdle, 45000);
+    return () => {
+      window.clearTimeout(firstShowTimer);
+      window.clearInterval(repeatTimer);
+      if (hideTimer !== null) window.clearTimeout(hideTimer);
+    };
+  }, [
+    activeModule?.id,
+    showTutorAnswerDialog,
+    tutorAwaitingAnswer,
+    tutorCompanion,
+    tutorPaused,
+    tutorSpeechStatus,
+    tutorStarted,
+    tutorStatus,
+  ]);
 
   useEffect(() => {
     if (!tutorTaskCompleted) return;
@@ -5436,14 +5596,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       </a>
       {tutorCompanion && !learningAreaHidden && !showTutorAnswerDialog && (
         <div
-          className="xiao-mo-companion pointer-events-none fixed z-[45] w-[76px] sm:w-[104px]"
+          className="a-han-companion pointer-events-none fixed z-[45] w-[76px] sm:w-[104px]"
           data-phase={tutorCompanion.phase}
           style={{ left: tutorCompanion.x, top: tutorCompanion.y }}
           role="status"
-          aria-label={locale === "ko-KR" ? "수업 도우미 샤오모가 학습 위치를 가리키고 있어요" : "课堂陪伴宠物小默正在提示学习位置"}
+          aria-label={locale === "ko-KR" ? "수업 도우미 아한이가 학습 위치를 가리키고 있어요" : "课堂陪伴宠物阿韩正在提示学习位置"}
         >
           <Image
-            src={tutorCompanionImage}
+            src={tutorCompanionImages.pointing}
             alt=""
             width={1312}
             height={1199}
@@ -5599,7 +5759,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           aria-label={locale === "ko-KR" ? "수업 영역" : "教学区"}
           data-learning-agent-focus-mode={tutorFocusMode || undefined}
           data-learning-agent-expanded={teachingAreaExpanded || undefined}
-          className="hidden shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none xl:flex xl:flex-col"
+          className="relative hidden shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none xl:flex xl:flex-col"
           style={{ width: teachingAreaExpanded
             ? "100%"
             : teachingAreaCollapsed
@@ -5657,7 +5817,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               </div>
 
               <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
-                <section className="rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm" style={{ minHeight: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx }} aria-labelledby="teaching-blackboard-title">
+                <section className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm" style={{ minHeight: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx }} aria-labelledby="teaching-blackboard-title">
                   <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-xl leading-8" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
                     {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
@@ -5677,93 +5837,177 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}
                     </div>
                   )}
-                </section>
-              </div>
-
-              <section className={`relative mt-4 border-b border-[color-mix(in_srgb,var(--status-warning)_10%,var(--border-subtle))] pb-4 ${teachingAreaExpanded ? "min-h-[18rem]" : "min-h-[13rem]"}`} aria-label={agentName}>
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
-                  <div className={`absolute bottom-0 z-0 flex items-end justify-center ${teachingAreaExpanded ? "w-[12rem]" : "w-[8.5rem]"} ${teachingAreaCharacter.position === "left" ? "left-0" : "right-0"}`} aria-hidden="true">
-                    <div
-                      className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[16rem]" : "h-[11.7rem]"}`}
-                      data-speaking={tutorSpeechStatus === "playing" || undefined}
-                    >
-                      {teachingAreaCharacterFrames && ([
-                        ["idle", teachingAreaCharacterFrames.idle, ""],
-                        ["speaking", teachingAreaCharacterFrames.speaking, "kim-teacher-speaking-frame"],
-                        ["blink", teachingAreaCharacterFrames.blink, "kim-teacher-blink-frame"],
-                      ] as const).map(([frame, source, frameClass]) => (
-                        <Image
-                          key={frame}
-                          src={source}
-                          alt=""
-                          width={512}
-                          height={1024}
-                          unoptimized
-                          loading="eager"
-                          className={`absolute inset-0 h-full w-full object-contain ${frameClass}`}
-                        />
-                      ))}
-                    </div>
-                  </div>
-                )}
-                <div className={`relative z-10 pt-2 ${teachingAreaCharacter?.kind === "uply-teacher" ? teachingAreaCharacter.position === "left" ? teachingAreaExpanded ? "ml-[11rem]" : "ml-[7.5rem]" : teachingAreaExpanded ? "mr-[11rem]" : "mr-[7.5rem]" : ""}`}>
-                  <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-6" : "p-4"}`}>
-                    {teachingAreaCharacter?.kind === "uply-teacher" && (
-                      <span className={`absolute top-12 h-3 w-3 rotate-45 bg-[var(--card)] ${teachingAreaCharacter.position === "left" ? "-left-1.5 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))]" : "-right-1.5 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))]"}`} aria-hidden="true" />
-                    )}
-                    <div className="flex min-w-0 items-center justify-between gap-3">
-                      <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>
-                      <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
-                        {!tutorStarted
-                          ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
-                          : tutorPaused
-                            ? (locale === "ko-KR" ? "학습 일시 정지" : "学习已暂停")
-                          : tutorSpeechStatus === "loading"
-                            ? (locale === "ko-KR" ? "음성 준비 중" : "语音准备中")
-                          : tutorSpeechStatus === "playing"
-                            ? (locale === "ko-KR" ? "설명 중" : "正在讲课")
-                          : tutorSpeechStatus === "paused"
-                            ? (locale === "ko-KR" ? "일시 정지" : "讲解已暂停")
-                          : tutorStatus === "thinking" || tutorStatus === "streaming"
-                            ? (locale === "ko-KR" ? "설명 중" : "讲解中")
-                            : tutorStatus === "error"
-                              ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
-                              : (locale === "ko-KR" ? "수업 중" : "教学中")}
-                      </p>
-                    </div>
-                    <p className={`mt-3 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-lg leading-9" : "text-sm leading-7"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
-                      {tutorStatus === "thinking"
-                        ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
-                        : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : (tutorSpeechInProgress
-                          ? "\u00a0"
-                          : locale === "ko-KR"
-                        ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
-                        : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
-                    </p>
-                    {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
-                      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
-                        <button
-                          type="button"
-                          onClick={toggleTutorSpeech}
-                          disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
-                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
-                        >
-                          {tutorSpeechStatus === "playing" ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
-                          {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
-                        </button>
-                        <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
-                          <RotateCcw size={14} aria-hidden="true" />
-                          {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
-                        </button>
-                        <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
-                          {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
-                          {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
-                        </button>
+                  <div
+                    className={`pointer-events-none fixed bottom-[300px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-10" : "left-0 px-6"}`}
+                    style={{
+                      width: teachingAreaExpanded
+                        ? "100%"
+                        : teachingAreaCollapsed
+                          ? `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.collapsedWidthPx}px`
+                          : `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent}%`,
+                      maxWidth: teachingAreaExpanded ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx : undefined,
+                    }}
+                  >
+                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[32rem]" : "w-[24rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : "right-0 translate-x-[310px]"}`} aria-hidden="true">
+                      <div
+                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[46rem]" : "h-[34rem]"}`}
+                        data-speaking={tutorSpeechStatus === "playing" || undefined}
+                      >
+                        {teachingAreaCharacterFrames && ([
+                          ["idle", teachingAreaCharacterFrames.idle, ""],
+                          ["speaking", teachingAreaCharacterFrames.speaking, "kim-teacher-speaking-frame"],
+                          ["blink", teachingAreaCharacterFrames.blink, "kim-teacher-blink-frame"],
+                        ] as const).map(([frame, source, frameClass]) => (
+                          <Image
+                            key={frame}
+                            src={source}
+                            alt=""
+                            width={512}
+                            height={1024}
+                            unoptimized
+                            loading="eager"
+                            className={`absolute inset-0 h-full w-full object-contain ${frameClass}`}
+                          />
+                        ))}
+                        {tutorBubbleVisible && (
+                          <div
+                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[34rem] max-w-sm" : "bottom-[24rem] max-w-xs"}`}
+                          >
+                        <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-4" : "p-3"}`}>
+                          {teachingAreaCharacter?.kind === "uply-teacher" && (
+                            <span className="absolute bottom-4 -left-1.5 h-3 w-3 rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                          )}
+                          <div className="flex min-w-0 items-center justify-between gap-3">
+                            <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>
+                            <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                              {!tutorStarted
+                                ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
+                                : tutorPaused
+                                  ? (locale === "ko-KR" ? "학습 일시 정지" : "学习已暂停")
+                                : tutorSpeechStatus === "loading"
+                                  ? (locale === "ko-KR" ? "음성 준비 중" : "语音准备中")
+                                : tutorSpeechStatus === "playing"
+                                  ? (locale === "ko-KR" ? "설명 중" : "正在讲课")
+                                : tutorSpeechStatus === "paused"
+                                  ? (locale === "ko-KR" ? "일시 정지" : "讲解已暂停")
+                                : tutorStatus === "thinking" || tutorStatus === "streaming"
+                                  ? (locale === "ko-KR" ? "설명 중" : "讲解中")
+                                  : tutorStatus === "error"
+                                    ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
+                                    : (locale === "ko-KR" ? "수업 중" : "教学中")}
+                            </p>
+                          </div>
+                          <p className={`mt-2 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
+                            {tutorStatus === "thinking"
+                              ? (tutorNextBufferLine || (locale === "ko-KR" ? "잠시만요, 이 부분을 한번 볼게요…" : "稍等一下，我看看这里怎么讲…"))
+                              : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : (tutorSpeechInProgress
+                                ? "\u00a0"
+                                : locale === "ko-KR"
+                              ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
+                              : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
+                          </p>
+                          {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
+                            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+                              <button
+                                type="button"
+                                onClick={toggleTutorSpeech}
+                                disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
+                                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
+                              >
+                                {tutorSpeechStatus === "playing" ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
+                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
+                              </button>
+                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
+                              </button>
+                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
+                                {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
+                                {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
                       </div>
                     )}
                   </div>
-                </div>
-              </section>
+                  {ahanIdleVisible && !tutorCompanion && (
+                    <div className={`a-han-idle-companion absolute bottom-3 z-30 ${teachingAreaExpanded ? "w-[9rem]" : "w-[7rem]"} left-0`}>
+                      <Image
+                        src={tutorCompanionImages.seatedCombingPoster}
+                        alt=""
+                        width={320}
+                        height={320}
+                        unoptimized
+                        className="a-han-idle-poster h-auto w-full drop-shadow-[0_8px_12px_rgba(15,23,42,0.14)]"
+                      />
+                    </div>
+                  )}
+                  </div>
+                  </div>
+                )}
+                {teachingAreaCharacter?.kind !== "uply-teacher" && (
+                  <div className="relative z-10 pt-2">
+                        <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-4" : "p-3"}`}>
+                          {teachingAreaCharacter?.kind === "uply-teacher" && (
+                            <span className="absolute bottom-4 -right-1.5 h-3 w-3 rotate-45 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                          )}
+                          <div className="flex min-w-0 items-center justify-between gap-3">
+                            <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>
+                            <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                              {!tutorStarted
+                                ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
+                                : tutorPaused
+                                  ? (locale === "ko-KR" ? "학습 일시 정지" : "学习已暂停")
+                                : tutorSpeechStatus === "loading"
+                                  ? (locale === "ko-KR" ? "음성 준비 중" : "语音准备中")
+                                : tutorSpeechStatus === "playing"
+                                  ? (locale === "ko-KR" ? "설명 중" : "正在讲课")
+                                : tutorSpeechStatus === "paused"
+                                  ? (locale === "ko-KR" ? "일시 정지" : "讲解已暂停")
+                                : tutorStatus === "thinking" || tutorStatus === "streaming"
+                                  ? (locale === "ko-KR" ? "설명 중" : "讲解中")
+                                  : tutorStatus === "error"
+                                    ? (locale === "ko-KR" ? "다시 시도해 주세요" : "请重试")
+                                    : (locale === "ko-KR" ? "수업 중" : "教学中")}
+                            </p>
+                          </div>
+                          <p className={`mt-2 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
+                            {tutorStatus === "thinking"
+                              ? (tutorNextBufferLine || (locale === "ko-KR" ? "잠시만요, 이 부분을 한번 볼게요…" : "稍等一下，我看看这里怎么讲…"))
+                              : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : (tutorSpeechInProgress
+                                ? "\u00a0"
+                                : locale === "ko-KR"
+                              ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
+                              : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
+                          </p>
+                          {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
+                            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+                              <button
+                                type="button"
+                                onClick={toggleTutorSpeech}
+                                disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
+                                className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
+                              >
+                                {tutorSpeechStatus === "playing" ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
+                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
+                              </button>
+                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
+                                <RotateCcw size={14} aria-hidden="true" />
+                                {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
+                              </button>
+                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
+                                {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
+                                {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
+                              </button>
+                            </div>
+                          )}
+                        </div>
+                  </div>
+                )}
+                </section>
+              </div>
 
               <section className="mt-4 min-h-20 flex-1" aria-label={locale === "ko-KR" ? "수업 진행" : "教学操作"}>
                 {tutorPaused && (
@@ -5822,31 +6066,36 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 )}
               </section>
 
-              {tutorStarted && !tutorTerminal && <div className="mt-6 grid grid-cols-2 gap-2 border-t border-[var(--border-subtle)] pt-5">
-                <button type="button" onClick={() => tutorReply("hint")} disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
+            </div>
+          )}
+          {tutorContinueReady && (
+            <div
+              className="fixed bottom-[116px] z-[60] flex justify-center px-4"
+              style={{
+                left: 0,
+                width: teachingAreaExpanded
+                  ? "100%"
+                  : teachingAreaCollapsed
+                    ? `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.collapsedWidthPx}px`
+                    : `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent}%`,
+              }}
+            >
+              <div className="grid w-full max-w-sm grid-cols-2 gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] p-3 shadow-[0_12px_30px_rgba(15,23,42,0.18)] motion-safe:animate-[smart-textbook-float-in_180ms_ease-out]">
+                <button type="button" onClick={() => tutorReply("hint")} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)]">
                   {locale === "ko-KR" ? "잘 모르겠어요" : "没听懂"}
                 </button>
-                <button type="button" onClick={() => tutorReply("example")} disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
+                <button type="button" onClick={() => tutorReply("example")} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)]">
                   {locale === "ko-KR" ? "예문 하나 더" : "再举一个例子"}
                 </button>
                 <button
                   ref={tutorContinueButtonRef}
                   type="button"
                   onClick={() => tutorReply("ready")}
-                  disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer || Boolean(tutorTask?.required && !tutorTaskCompleted)}
-                  className="col-span-2 min-h-11 rounded-xl border border-[color-mix(in_srgb,var(--status-warning)_42%,var(--border-subtle))] bg-[var(--status-warning-surface)] px-3 py-2 text-xs font-bold text-[var(--status-warning)] transition hover:border-[var(--status-warning)] disabled:cursor-wait disabled:opacity-50"
+                  className="col-span-2 min-h-11 rounded-xl border border-[color-mix(in_srgb,var(--status-warning)_42%,var(--border-subtle))] bg-[var(--status-warning-surface)] px-3 py-2 text-xs font-bold text-[var(--status-warning)] transition hover:border-[var(--status-warning)]"
                 >
-                  {tutorSpeechStatus === "loading"
-                    ? (locale === "ko-KR" ? "선생님 음성을 준비하고 있어요" : "正在准备老师语音")
-                    : tutorSpeechStatus === "playing" || tutorSpeechStatus === "paused"
-                      ? (locale === "ko-KR" ? "설명을 끝까지 들은 뒤 계속하세요" : "请听完讲解后继续")
-                    : tutorAwaitingAnswer
-                    ? (locale === "ko-KR" ? "먼저 답을 고르세요" : "请先选择回答")
-                    : tutorTask?.required && !tutorTaskCompleted
-                      ? (locale === "ko-KR" ? "학습 영역 과제를 먼저 완료하세요" : "请先完成学习区任务")
-                    : tutorContinueLabel || (locale === "ko-KR" ? "다음 단계로 갈게요" : "继续下一步")}
+                  {tutorContinueLabel || (locale === "ko-KR" ? "다음 단계로 갈게요" : "继续下一步")}
                 </button>
-              </div>}
+              </div>
             </div>
           )}
         </aside>

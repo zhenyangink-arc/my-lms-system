@@ -160,7 +160,7 @@ test("第 1—16 章共用完整的模块分页和教学区状态规则", () => 
   }
 
   assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent, 30);
-  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx, 300);
+  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx, 960);
   assert.equal(shouldUseSmartTextbookTeachingFocusMode({
     tutorStarted: true,
     answerRequired: false,
@@ -222,7 +222,7 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(skeleton, /"zh-CN": "情景诊断", "ko-KR": "장면 진단"/);
   assert.match(skeleton, /defaultWidthPercent: 30/);
   assert.match(skeleton, /collapsedWidthPx: 64/);
-  assert.match(skeleton, /minimumHeightPx: 300/);
+  assert.match(skeleton, /minimumHeightPx: 960/);
   assert.match(skeleton, /contentInsetPx: 48/);
   assert.match(source, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(source, /shouldUseSmartTextbookTeachingFocusMode/);
@@ -971,15 +971,21 @@ test("第一章课前导航提供页面、区域和具体对象三级讲解目�
   assert.ok(targets.some((item) => item.key.startsWith("activity:") && item.pageLabel.includes("情景诊断")));
 });
 
-test("老师讲解指向由小默移动到学习目标旁提示", async () => {
+test("老师讲解指向由阿韩移动到学习目标旁提示，空闲时使用稳定底图自然呼吸", async () => {
   const source = await readFile(sourceUrl, "utf8");
   const styles = await readFile(new URL("../src/app/globals.css", import.meta.url), "utf8");
 
   assert.match(source, /tutorCompanionTargetPosition/);
-  assert.match(source, /\/api\/learning-agent\/companions\/xiao-mo-pointing/);
-  assert.match(source, /课堂陪伴宠物小默正在提示学习位置/);
+  assert.match(source, /\/api\/learning-agent\/companions\/a-han-pointing/);
+  assert.match(source, /\/api\/learning-agent\/companions\/a-han-seated-combing-poster/);
+  assert.doesNotMatch(source, /tutorCompanionImages\.seatedCombingLoop/);
+  assert.match(source, /课堂陪伴宠物阿韩正在提示学习位置/);
+  assert.match(source, /setAhanIdleVisible\(true\)/);
+  assert.match(source, /window\.setTimeout\(showIdle, 12000\)/);
   assert.match(source, /data-phase=\{tutorCompanion\.phase\}/);
   assert.match(source, /prefers-reduced-motion: reduce/);
-  assert.match(styles, /\.xiao-mo-companion/);
-  assert.match(styles, /xiao-mo-completed/);
+  assert.match(styles, /\.a-han-companion/);
+  assert.match(styles, /a-han-completed/);
+  assert.match(styles, /a-han-idle-breathe/);
+  assert.match(styles, /\.a-han-idle-companion/);
 });

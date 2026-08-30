@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
 
 export type TeachingScriptActionState = {
   status: "idle" | "success" | "error";
@@ -29,7 +30,7 @@ const nodeSchema = z.object({
   virtualCharacterKind: z.literal("uply-teacher"),
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
-    pose: z.enum(["greeting", "explaining", "encouraging"]),
+    pose: z.enum(TEACHER_KIM_POSES),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
     voiceRate: z.coerce.number().min(0.75).max(1.25),
@@ -58,6 +59,7 @@ const nodeSchema = z.object({
   interactionRequired: z.boolean(),
   hintZh: z.string().trim().max(600, "提示不能超过600个字。"),
   exampleZh: z.string().trim().max(600, "补充示例不能超过600个字。"),
+  bufferLineZh: z.string().trim().max(200, "过渡台词不能超过200个字。"),
   referenceActivityId: z.union([z.literal(""), z.uuid()]),
   flowMode: z.enum(["sequence", "jump", "end"]),
   nextNodeKey: z.string().trim().max(100),
@@ -283,6 +285,7 @@ export async function saveTeachingScriptNodeAction(
       interactionRequired: true,
       hintZh: String(formData.get("hint_zh") ?? ""),
       exampleZh: String(formData.get("example_zh") ?? ""),
+      bufferLineZh: String(formData.get("buffer_line_zh") ?? ""),
       referenceActivityId: String(formData.get("reference_activity_id") ?? ""),
       flowMode: String(formData.get("flow_mode") ?? "sequence"),
       nextNodeKey: String(formData.get("next_node_key") ?? ""),
@@ -376,6 +379,8 @@ export async function saveTeachingScriptNodeAction(
     else Reflect.deleteProperty(configuration, "hint");
     if (input.exampleZh) configuration.example = { "zh-CN": input.exampleZh };
     else Reflect.deleteProperty(configuration, "example");
+    if (input.bufferLineZh) configuration.bufferLine = { "zh-CN": input.bufferLineZh };
+    else Reflect.deleteProperty(configuration, "bufferLine");
     if (input.flowMode !== "end" && input.continueLabelZh) configuration.continueLabel = { "zh-CN": input.continueLabelZh };
     else Reflect.deleteProperty(configuration, "continueLabel");
     configuration.terminal = input.flowMode === "end";

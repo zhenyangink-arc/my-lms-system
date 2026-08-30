@@ -166,6 +166,10 @@ export async function POST(request: Request) {
       "X-Learning-Agent-Auto-Continue",
       hasNextSegment && scriptSegmentAutoContinues(node.configuration, resolved.selectedScriptSegmentIndex) ? "true" : "false",
     );
+    headers.set(
+      "X-Learning-Agent-Buffer-Line",
+      encodeURIComponent(configuredText(node.configuration, "bufferLine", input.locale)),
+    );
   }
 
   const fallback = resolved.scriptedContent

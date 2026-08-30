@@ -13,9 +13,9 @@ function objectUrl(accountId, bucketName, objectKey) {
   return `https://${accountId}.r2.cloudflarestorage.com/${encodeURIComponent(bucketName)}/${encodedKey}`;
 }
 
-const [filePath, objectKey, contentType = "application/octet-stream"] = process.argv.slice(2);
+const [filePath, objectKey, contentType = "application/octet-stream", cacheControl] = process.argv.slice(2);
 if (!filePath || !objectKey) {
-  throw new Error("Usage: node scripts/publish-r2-object.mjs <file> <object-key> [content-type]");
+  throw new Error("Usage: node scripts/publish-r2-object.mjs <file> <object-key> [content-type] [cache-control]");
 }
 
 const fileInfo = await stat(filePath);
@@ -29,9 +29,11 @@ const signer = new AwsClient({
 });
 const url = objectUrl(requiredEnv("R2_ACCOUNT_ID"), requiredEnv("R2_BUCKET_NAME"), objectKey);
 const body = await readFile(filePath);
+const headers = { "Content-Type": contentType };
+if (cacheControl) headers["Cache-Control"] = cacheControl;
 const putRequest = await signer.sign(new Request(url, {
   method: "PUT",
-  headers: { "Content-Type": contentType },
+  headers,
   body,
 }));
 const putResponse = await fetch(putRequest);
@@ -44,5 +46,8 @@ const uploadedSize = Number(headResponse.headers.get("content-length"));
 if (uploadedSize !== fileInfo.size) {
   throw new Error(`R2 size mismatch: expected ${fileInfo.size}, received ${uploadedSize}`);
 }
+if (cacheControl && headResponse.headers.get("cache-control") !== cacheControl) {
+  throw new Error("R2 cache-control validation failed");
+}
 
-console.log(JSON.stringify({ objectKey, size: uploadedSize, contentType }));
+console.log(JSON.stringify({ objectKey, size: uploadedSize, contentType, cacheControl }));

@@ -2,6 +2,7 @@ import "server-only";
 
 import { parseRichText, richCharsToPlainText, stripRichText, type RichChar } from "@/lib/rich-teaching-text";
 import type { createAdminClient } from "@/lib/supabase/admin";
+import { isTeacherKimPose } from "@/lib/teacher-kim-character";
 
 type AdminClient = ReturnType<typeof createAdminClient>;
 
@@ -75,9 +76,9 @@ export function virtualCharacterForScriptSegment(
   const performance = value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
     : {};
-  const pose = performance.pose === "greeting" || performance.pose === "encouraging"
+  const pose = isTeacherKimPose(performance.pose)
     ? performance.pose
-    : character.pose === "greeting" || character.pose === "encouraging"
+    : isTeacherKimPose(character.pose)
       ? character.pose
       : "explaining";
   const position = character.position === "left" ? "left" : "right";

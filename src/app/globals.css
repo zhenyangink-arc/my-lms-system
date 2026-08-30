@@ -152,6 +152,12 @@
   [data-speaking="true"] .kim-teacher-speaking-frame { opacity: 1; }
 }
 
+/* 没听懂/再举一个例子/继续下一步：轮到学生该做点什么时才浮现的操作卡。 */
+@keyframes smart-textbook-float-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /* 韩语课程阶段卡：颜色表达阶段，文字标签保证不依赖颜色识别。 */
 .korean-level-card {
   --course-level-color: #b45309;
@@ -1789,7 +1795,7 @@
   }
 }
 
-.xiao-mo-companion {
+.a-han-companion {
   transition:
     left 520ms cubic-bezier(.22, .61, .36, 1),
     top 520ms cubic-bezier(.22, .61, .36, 1),
@@ -1797,29 +1803,46 @@
   transform-origin: 50% 100%;
 }
 
-.xiao-mo-companion[data-phase="waiting"] {
-  animation: xiao-mo-waiting 2.8s ease-in-out infinite;
+.a-han-companion[data-phase="waiting"] {
+  animation: a-han-waiting 2.8s ease-in-out infinite;
 }
 
-.xiao-mo-companion[data-phase="completed"] {
-  animation: xiao-mo-completed 560ms ease-in-out 1;
+.a-han-companion[data-phase="completed"] {
+  animation: a-han-completed 560ms ease-in-out 1;
 }
 
-@keyframes xiao-mo-waiting {
+.a-han-idle-companion {
+  animation: a-han-idle-breathe 5.8s cubic-bezier(.45, 0, .55, 1) infinite;
+  transform-origin: 50% 100%;
+  will-change: transform;
+}
+
+@keyframes a-han-waiting {
   0%, 100% { transform: translateY(0) rotate(0deg); }
   45% { transform: translateY(-2px) rotate(-1deg); }
   55% { transform: translateY(-2px) rotate(1deg); }
 }
 
-@keyframes xiao-mo-completed {
+@keyframes a-han-completed {
   0%, 100% { transform: translateY(0) scale(1); }
   45% { transform: translateY(-7px) scale(1.04); }
 }
 
+@keyframes a-han-idle-breathe {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+  22% { transform: translate3d(-.35px, -.8px, 0) rotate(-.18deg) scale(1.001); }
+  48% { transform: translate3d(.45px, -1.5px, 0) rotate(.28deg) scaleX(1.003) scaleY(.998); }
+  72% { transform: translate3d(-.2px, -.7px, 0) rotate(-.1deg) scale(1.001); }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .xiao-mo-companion {
+  .a-han-companion {
     animation: none !important;
     transition: opacity 120ms ease;
+  }
+
+  .a-han-idle-companion {
+    animation: none !important;
   }
 }
 

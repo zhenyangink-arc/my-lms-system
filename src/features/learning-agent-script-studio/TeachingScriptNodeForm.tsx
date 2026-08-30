@@ -19,6 +19,12 @@ import {
   stripRichText,
   type RichTextColor,
 } from "@/lib/rich-teaching-text";
+import {
+  isTeacherKimPose,
+  TEACHER_KIM_POSES,
+  TEACHER_KIM_POSE_LABELS,
+  type TeacherKimPose,
+} from "@/lib/teacher-kim-character";
 import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
 
 const initialState: TeachingScriptActionState = { status: "idle" };
@@ -407,7 +413,7 @@ type EditorSection = "script" | "content" | "interaction" | "flow";
 type FlowMode = "sequence" | "jump" | "end";
 
 type ScriptPerformance = {
-  pose: "greeting" | "explaining" | "encouraging";
+  pose: TeacherKimPose;
   voiceEnabled: boolean;
   voiceLanguage: "auto" | "zh-CN" | "ko-KR";
   voiceRate: number;
@@ -424,9 +430,7 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
   const performance = value && typeof value === "object" && !Array.isArray(value)
     ? value as Record<string, unknown>
     : fallback;
-  const pose = performance.pose === "greeting" || performance.pose === "encouraging"
-    ? performance.pose
-    : "explaining";
+  const pose = isTeacherKimPose(performance.pose) ? performance.pose : "explaining";
   const voiceLanguage = performance.voiceLanguage === "zh-CN" || performance.voiceLanguage === "ko-KR"
     ? performance.voiceLanguage
     : "auto";
@@ -857,9 +861,9 @@ export function TeachingScriptNodeForm({
                           disabled={!editable}
                           className={inputClass}
                         >
-                          <option value="greeting">问候</option>
-                          <option value="explaining">讲解</option>
-                          <option value="encouraging">鼓励</option>
+                          {TEACHER_KIM_POSES.map((pose) => (
+                            <option key={pose} value={pose}>{TEACHER_KIM_POSE_LABELS[pose]}</option>
+                          ))}
                         </select>
                       </label>
                       <label className="space-y-1.5 text-xs font-medium">
@@ -983,6 +987,16 @@ export function TeachingScriptNodeForm({
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>再举一个例子</span>
               <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+            </label>
+            <CardTitleWithHint
+              title={<span className={formFieldLabelClass}>过渡台词</span>}
+              description="点击“继续下一步”后，在下一句真正的内容加载出来之前，老师立刻先说的这句话。用来填补网络等待的空白，不需要很长，一两句自然的过渡语就够了。"
+              headingLevel={3}
+              className="px-4 pt-4"
+              hintLabel="查看过渡台词说明"
+            />
+            <label className={fieldClass}>
+              <FormattableTextarea name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} disabled={!editable} rows={2} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" className={`${inputClass} resize-y py-3 text-sm leading-6`} />
             </label>
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>

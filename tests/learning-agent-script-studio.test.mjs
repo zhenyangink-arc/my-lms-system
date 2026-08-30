@@ -136,6 +136,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(scriptRuntime, /teacherScriptSegments/);
   assert.match(scriptRuntime, /scriptSegmentIndex/);
   assert.match(respondRoute, /继续下一句/);
+  assert.match(respondRoute, /X-Learning-Agent-Buffer-Line/);
+  assert.match(actions, /bufferLineZh: String\(formData\.get\("buffer_line_zh"\) \?\? ""\)/);
+  assert.match(actions, /configuration\.bufferLine = \{ "zh-CN": input\.bufferLineZh \}/);
+  assert.match(editor, /过渡台词/);
+  assert.match(editor, /buffer_line_zh/);
+  assert.match(respondRoute, /configuredText\(selectedScriptNode\.configuration, "bufferLine", input\.locale\)/);
   assert.match(editor, /教学内容/);
   assert.match(editor, /学生展示内容/);
   assert.match(editor, /formSectionClass/);
@@ -181,9 +187,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(editor, /不显示虚拟人物/);
   assert.match(respondRoute, /X-Learning-Agent-Character/);
   assert.match(scriptRuntime, /virtualCharacterForScriptSegment/);
-  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v3\/greeting-idle\.png/);
+  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v4\/greeting-idle\.png/);
   assert.match(characterRoute, /createR2SignedObjectUrl/);
-  assert.match(companionRoute, /learning-agent\/companions\/xiao-mo\/v1\/pointing\.png/);
+  assert.match(companionRoute, /learning-agent\/companions\/a-han\/v2\/runtime\/poses\/pointing\.webp/);
+  assert.match(companionRoute, /learning-agent\/companions\/a-han\/v2\/runtime\/animations\/seated-combing-loop\.webp/);
+  assert.match(companionRoute, /learning-agent\/companions\/a-han\/v2\/runtime\/posters\/seated-combing\.webp/);
   assert.match(companionRoute, /createR2SignedObjectUrl/);
   assert.doesNotMatch(editor, /\/images\/virtual-characters/);
   assert.match(editor, /保存当前小节/);
@@ -320,7 +328,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(route, /plainTextStream\(scriptedContent\)/);
   assert.match(shell, /tutorQuestionOptions\.map/);
   assert.match(shell, /tutorReply\("answer", option\)/);
-  assert.match(shell, /请先选择回答/);
+  assert.match(shell, /tutorContinueReady = tutorStarted/);
+  assert.match(shell, /&& !tutorAwaitingAnswer/);
   assert.match(shell, /本节讲解已完成/);
   assert.match(shell, /function pauseTutorLesson\(\)/);
   assert.match(shell, /function resumeTutorLesson\(\)/);
@@ -341,6 +350,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /autoFocus onClick=\{\(\) => setMobilePanel\(null\)\}/);
   assert.match(textbookLoader, /activeTeachingSessions/);
   assert.match(textbookLoader, /\.eq\("status", "active"\)/);
+  assert.match(textbookLoader, /openingBufferLine: LocalizedText/);
+  assert.match(textbookLoader, /openingBufferLineByModuleId\.get\(String\(module\.id\)\) \?\? null\)/);
+  assert.match(textbookLoader, /node\.configuration\?\.bufferLine \?\? null/);
   assert.match(route, /if \(input\.restart && existingSession\)/);
   assert.match(route, /\.update\(\{ status: "abandoned" \}\)/);
   assert.match(route, /scriptedSessionCompleted/);
@@ -348,11 +360,21 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /tutorDisplay/);
   assert.match(shell, /data-learning-agent-blackboard/);
   assert.match(shell, /sticky top-0 z-20/);
-  assert.match(skeleton, /minimumHeightPx: 300/);
+  assert.match(skeleton, /minimumHeightPx: 960/);
   assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);
   assert.match(cleanupMigration, /\(configuration -> 'display'\) - 'body'/);
   assert.doesNotMatch(shell, /当前教学展示/);
-  assert.match(shell, /teachingAreaCharacter\.position === "left" \? teachingAreaExpanded \? "ml-\[11rem\]" : "ml-\[7\.5rem\]"/);
+  assert.match(shell, /pointer-events-none fixed bottom-\[300px\] z-40/);
+  assert.match(shell, /X-Learning-Agent-Buffer-Line/);
+  assert.match(shell, /const bufferLine = tutorNextBufferLine \|\|/);
+  assert.match(shell, /setTutorNextBufferLine\(activeModule\?\.openingBufferLine\[locale\] \|\| activeModule\?\.openingBufferLine\["zh-CN"\] \|\| ""\)/);
+  assert.match(shell, /!tutorStarted \? "left-1\/2 -translate-x-1\/2" : "right-0 translate-x-\[310px\]"/);
+  assert.match(shell, /pointer-events-auto absolute left-full z-10 ml-2 w-fit/);
+  assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);
+  assert.match(shell, /tutorIsSpeakingNow = tutorStatus === "thinking"/);
+  assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
+  assert.match(shell, /requestAbortController\.signal\.addEventListener\("abort", finish, \{ once: true \}\)/);
+  assert.match(shell, /稍等一下，我看看这里怎么讲/);
   assert.match(shell, /去学习区听音频/);
   assert.match(shell, /recordTutorLearningEvent/);
   assert.match(shell, /data-learning-target="scene:image"/);
@@ -374,7 +396,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(shell, /data-learning-area-hidden/);
   assert.match(shell, /learningAreaHidden \? "xl:hidden"/);
-  assert.match(shell, /teachingAreaExpanded \? "text-lg leading-9" : "text-sm leading-7"/);
+  assert.match(shell, /teachingAreaExpanded \? "text-sm leading-6" : "text-\[11px\] leading-5"/);
   assert.match(shell, /setLearningAreaManuallyHidden\(true\)/);
   assert.match(shell, /setLearningAreaManuallyHidden\(false\)/);
   assert.match(shell, /隐藏学习区/);
@@ -387,7 +409,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /targetPageCurrent|targetCompletionPercent/);
   assert.ok(shell.indexOf("data-learning-agent-blackboard") < shell.indexOf("kim-teacher-breathe"));
   assert.ok(shell.indexOf("kim-teacher-breathe") < shell.indexOf('id="korean-textbook-content"'));
-  assert.match(shell, /setTutorStatus\("idle"\);\s+setTutorAwaitingAnswer\(nextTutorAwaitingAnswer\)/);
+  assert.match(shell, /await bufferSpeechDone;\s+if \(requestAbortController\.signal\.aborted\) return;\s+\/\/ Re-arm "loading"[\s\S]*?setTutorStatus\("idle"\);/);
 });
 
 test("金老师正式语音与台词哈希、时间轴及二维口型保持同步", async () => {
@@ -418,7 +440,6 @@ test("金老师正式语音与台词哈希、时间轴及二维口型保持同�
   assert.match(provisioner, /contentHash\.slice\(0, 16\)/);
   assert.match(shell, /parseTutorSpeechManifest/);
   assert.match(shell, /activeCue\?\.charEnd/);
-  assert.match(shell, /请听完讲解后继续/);
   assert.match(shell, /tutorSpeechInProgress/);
   assert.match(shell, /greeting-speaking/);
   assert.match(styles, /kim-teacher-speaking-frame/);
@@ -426,13 +447,13 @@ test("金老师正式语音与台词哈希、时间轴及二维口型保持同�
   assert.match(frameBuilder, /cv2\.inpaint/);
 });
 
-test("金老师品牌胸针逐帧复用并从私有 R2 v3 加载", async () => {
+test("金老师品牌胸针逐帧复用并从私有 R2 v4 加载", async () => {
   const [characterRoute, brandFrameBuilder] = await Promise.all([
     readFile(new URL("src/app/api/learning-agent/characters/[pose]/route.ts", root), "utf8"),
     readFile(new URL("scripts/build-teacher-kim-brand-frames.mjs", root), "utf8"),
   ]);
-  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v3\/greeting-idle\.png/);
-  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v3\/encouraging-blink\.png/);
+  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v4\/greeting-idle\.png/);
+  assert.match(characterRoute, /learning-agent\/characters\/uply-teacher\/v4\/encouraging-blink\.png/);
   assert.match(brandFrameBuilder, /#26386f/);
   assert.match(brandFrameBuilder, /#d9b45c/);
   assert.match(brandFrameBuilder, /metadata\.width !== 512/);
