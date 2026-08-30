@@ -10,6 +10,17 @@ export type TeachingScriptActivity = {
   prompt: LocalizedText;
 };
 
+export type TeachingScriptSpeechAsset = {
+  id: string;
+  locale: "zh-CN" | "ko-KR";
+  segmentIndex: number;
+  contentHash: string;
+  durationMs: number;
+  voiceManifest: Record<string, unknown>;
+  productionStatus: "pending" | "ready" | "failed";
+  updatedAt: string;
+};
+
 export type TeachingScriptNode = {
   id: string;
   versionId: string;
@@ -24,6 +35,8 @@ export type TeachingScriptNode = {
   nextNodeKey: string | null;
   remediationNodeKey: string | null;
   required: boolean;
+  speechAssets: TeachingScriptSpeechAsset[];
+  speechAssetsFromPublishedVersion: boolean;
   interactionSecret: {
     correctOptionIndex: number;
     correctFeedback: LocalizedText;
@@ -54,6 +67,7 @@ export type TeachingScriptModule = {
   textbookTitle: LocalizedText;
   lessonId: string | null;
   activities: TeachingScriptActivity[];
+  learningTargets: SmartTextbookLearningTarget[];
   versions: TeachingScriptVersion[];
 };
 
@@ -61,3 +75,4 @@ export type TeachingScriptStudioData = {
   appId: string;
   modules: TeachingScriptModule[];
 };
+import type { SmartTextbookLearningTarget } from "@/lib/smart-textbook-learning-targets";

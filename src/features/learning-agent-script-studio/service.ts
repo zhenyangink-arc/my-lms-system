@@ -3,12 +3,14 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { buildOrientationLearningTargets } from "@/lib/smart-textbook-learning-targets";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type {
   LocalizedText,
   TeachingScriptActivity,
   TeachingScriptModule,
   TeachingScriptNode,
+  TeachingScriptSpeechAsset,
   TeachingScriptStudioData,
   TeachingScriptVersion,
 } from "./types";
@@ -92,8 +94,9 @@ export async function getTeachingScriptStudioData(
       .in("module_id", moduleIds),
     admin
       .from("digital_textbook_nodes")
-      .select("id,module_id")
-      .in("module_id", moduleIds),
+      .select("id,module_id,node_code,sort_order,content")
+      .in("module_id", moduleIds)
+      .order("sort_order"),
   ]);
   const lessonRows = (lessons ?? []) as Row[];
   const contentNodeRows = (contentNodes ?? []) as Row[];
@@ -127,15 +130,52 @@ export async function getTeachingScriptStudioData(
     : { data: [] };
   const scriptNodeRows = (scriptNodes ?? []) as Row[];
   const scriptNodeIds = ids(scriptNodeRows);
-  const { data: interactionSecrets } = scriptNodeIds.length
-    ? await admin
-        .from("learning_agent_node_interaction_secrets")
-        .select("node_id,correct_option_index,correct_feedback,incorrect_feedback")
-        .in("node_id", scriptNodeIds)
-    : { data: [] };
+  const [{ data: interactionSecrets }, { data: speechAssets }] = scriptNodeIds.length
+    ? await Promise.all([
+        admin
+          .from("learning_agent_node_interaction_secrets")
+          .select("node_id,correct_option_index,correct_feedback,incorrect_feedback")
+          .in("node_id", scriptNodeIds),
+        admin
+          .from("learning_agent_script_audio_assets")
+          .select("id,script_node_id,locale,segment_index,content_hash,duration_ms,voice_manifest,production_status,updated_at")
+          .in("script_node_id", scriptNodeIds),
+      ])
+    : [{ data: [] }, { data: [] }];
   const interactionSecretByNode = new Map(
     ((interactionSecrets ?? []) as Row[]).map((row) => [String(row.node_id), row]),
   );
+  const speechAssetsByNode = new Map<string, TeachingScriptSpeechAsset[]>();
+  for (const row of (speechAssets ?? []) as Row[]) {
+    const nodeId = String(row.script_node_id);
+    const items = speechAssetsByNode.get(nodeId) ?? [];
+    items.push({
+      id: String(row.id),
+      locale: row.locale === "ko-KR" ? "ko-KR" : "zh-CN",
+      segmentIndex: Number(row.segment_index),
+      contentHash: String(row.content_hash),
+      durationMs: Number(row.duration_ms),
+      voiceManifest: row.voice_manifest && typeof row.voice_manifest === "object" && !Array.isArray(row.voice_manifest)
+        ? row.voice_manifest as Record<string, unknown>
+        : {},
+      productionStatus: row.production_status === "failed" || row.production_status === "pending"
+        ? row.production_status
+        : "ready",
+      updatedAt: String(row.updated_at ?? ""),
+    });
+    speechAssetsByNode.set(nodeId, items);
+  }
+
+  const scriptVersionById = new Map(scriptVersionRows.map((row) => [String(row.id), row]));
+  const publishedSpeechAssetsByLessonAndKey = new Map<string, TeachingScriptSpeechAsset[]>();
+  for (const row of scriptNodeRows) {
+    const version = scriptVersionById.get(String(row.script_version_id));
+    if (version?.status !== "published") continue;
+    publishedSpeechAssetsByLessonAndKey.set(
+      `${String(version.lesson_id)}:${String(row.node_key)}`,
+      speechAssetsByNode.get(String(row.id)) ?? [],
+    );
+  }
 
   const textbookByVersion = new Map(
     textbookVersionRows.map((row) => [String(row.id), String(row.textbook_id)]),
@@ -146,6 +186,13 @@ export async function getTeachingScriptStudioData(
   const contentNodeModule = new Map(
     contentNodeRows.map((row) => [String(row.id), String(row.module_id)]),
   );
+  const contentNodesByModule = new Map<string, Row[]>();
+  for (const row of contentNodeRows) {
+    const moduleId = String(row.module_id);
+    const items = contentNodesByModule.get(moduleId) ?? [];
+    items.push(row);
+    contentNodesByModule.set(moduleId, items);
+  }
 
   const activitiesByModule = new Map<string, TeachingScriptActivity[]>();
   for (const row of (activities ?? []) as Row[]) {
@@ -166,6 +213,11 @@ export async function getTeachingScriptStudioData(
     const versionId = String(row.script_version_id);
     const items = nodesByVersion.get(versionId) ?? [];
     const interactionSecret = interactionSecretByNode.get(String(row.id));
+    const version = scriptVersionById.get(versionId);
+    const directSpeechAssets = speechAssetsByNode.get(String(row.id)) ?? [];
+    const publishedSpeechAssets = version
+      ? publishedSpeechAssetsByLessonAndKey.get(`${String(version.lesson_id)}:${String(row.node_key)}`) ?? []
+      : [];
     items.push({
       id: String(row.id),
       versionId,
@@ -182,6 +234,8 @@ export async function getTeachingScriptStudioData(
       nextNodeKey: row.next_node_key ? String(row.next_node_key) : null,
       remediationNodeKey: row.remediation_node_key ? String(row.remediation_node_key) : null,
       required: row.is_required !== false,
+      speechAssets: directSpeechAssets.length ? directSpeechAssets : publishedSpeechAssets,
+      speechAssetsFromPublishedVersion: directSpeechAssets.length === 0 && publishedSpeechAssets.length > 0,
       interactionSecret: interactionSecret ? {
         correctOptionIndex: Number(interactionSecret.correct_option_index),
         correctFeedback: localized(interactionSecret.correct_feedback),
@@ -228,6 +282,12 @@ export async function getTeachingScriptStudioData(
       textbookTitle: localized(textbook.title),
       lessonId,
       activities: activitiesByModule.get(String(module.id)) ?? [],
+      learningTargets: String(module.module_code) === "orientation" && Number(chapter.chapter_number) === 1
+        ? buildOrientationLearningTargets({
+            content: (contentNodesByModule.get(String(module.id))?.[0]?.content ?? {}) as Record<string, unknown>,
+            activities: activitiesByModule.get(String(module.id)) ?? [],
+          })
+        : [],
       versions: lessonId ? versionsByLesson.get(lessonId) ?? [] : [],
     }];
   });

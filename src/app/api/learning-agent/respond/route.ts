@@ -3,6 +3,20 @@ import { z } from "zod";
 
 import { getAuthContext } from "@/lib/auth";
 import {
+  configuredText,
+  headerJson,
+  isTerminalScriptNode,
+  localized,
+  resolveScriptCharacter,
+  resolveScriptStep,
+  ScriptStepValidationError,
+  studentTask,
+  taskEventKey,
+  visualCue,
+  type ScriptNodeRow,
+} from "@/lib/learning-agent-script-runtime";
+import type { RichChar } from "@/lib/rich-teaching-text";
+import {
   canUseStudentFeature,
   normalizeMembershipTier,
   type StudentFeature,
@@ -14,6 +28,7 @@ const requestSchema = z.object({
   moduleId: z.uuid(),
   agentCode: z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/),
   sessionId: z.uuid().optional(),
+  restart: z.boolean().optional(),
   intent: z.enum(["start", "hint", "example", "ready", "ask", "answer"]),
   locale: z.enum(["zh-CN", "ko-KR"]),
   supportMode: z.enum(["chinese", "bilingual", "immersion"]),
@@ -21,21 +36,7 @@ const requestSchema = z.object({
   answer: z.string().trim().max(300).optional(),
 });
 
-type Localized = Record<string, unknown>;
 type AgentAction = "none" | "focus_activity" | "play_expression" | "advance_module";
-type ScriptNodeRow = {
-  id: string;
-  script_version_id: string;
-  node_key: string;
-  node_type: string;
-  sort_order: number;
-  teacher_script: unknown;
-  configuration: Record<string, unknown> | null;
-  reference_activity_id: string | null;
-  action_type: string;
-  next_node_key: string | null;
-  remediation_node_key: string | null;
-};
 
 const studentFeatures = new Set<StudentFeature>([
   "dashboard_section", "message_services", "learning_assignments", "korean_course",
@@ -43,112 +44,6 @@ const studentFeatures = new Set<StudentFeature>([
   "university_comparison", "application_documents", "visa_tasks", "course_preview",
   "restricted_operation",
 ]);
-
-function localized(value: unknown, locale: "zh-CN" | "ko-KR") {
-  if (!value || typeof value !== "object" || Array.isArray(value)) return "";
-  const record = value as Localized;
-  return String(record[locale] ?? record["zh-CN"] ?? "").trim();
-}
-
-function configuredText(configuration: Record<string, unknown> | null, key: string, locale: "zh-CN" | "ko-KR") {
-  return localized(configuration?.[key], locale);
-}
-
-function teacherScriptSegments(node: ScriptNodeRow, locale: "zh-CN" | "ko-KR") {
-  const content = localized(node.teacher_script, locale);
-  const segments = content.split(/\n\s*\n/).map((segment) => segment.trim()).filter(Boolean);
-  return segments.length > 0 ? segments : [content];
-}
-
-function studentTask(configuration: Record<string, unknown> | null) {
-  const value = configuration?.studentTask;
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
-function visualCue(configuration: Record<string, unknown> | null) {
-  const value = configuration?.visualCue;
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
-function virtualCharacter(configuration: Record<string, unknown> | null) {
-  const value = configuration?.virtualCharacter;
-  return value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : null;
-}
-
-function virtualCharacterForScriptSegment(
-  configuration: Record<string, unknown> | null,
-  segmentIndex: number,
-) {
-  const character = virtualCharacter(configuration);
-  if (!character || character.kind !== "uply-teacher") return null;
-  const performances = Array.isArray(configuration?.scriptPerformances)
-    ? configuration.scriptPerformances
-    : [];
-  const value = performances[segmentIndex];
-  const performance = value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
-  const pose = performance.pose === "greeting" || performance.pose === "encouraging"
-    ? performance.pose
-    : character.pose === "greeting" || character.pose === "encouraging"
-      ? character.pose
-      : "explaining";
-  const position = character.position === "left" ? "left" : "right";
-  const voiceLanguage = performance.voiceLanguage === "zh-CN" || performance.voiceLanguage === "ko-KR"
-    ? performance.voiceLanguage
-    : character.voiceLanguage === "zh-CN" || character.voiceLanguage === "ko-KR"
-      ? character.voiceLanguage
-      : "auto";
-  const voiceRate = Number(performance.voiceRate ?? character.voiceRate);
-  return {
-    kind: "uply-teacher",
-    pose,
-    position,
-    voiceEnabled: (performance.voiceEnabled ?? character.voiceEnabled) !== false,
-    voiceLanguage,
-    voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
-  };
-}
-
-function nodeInteraction(configuration: Record<string, unknown> | null) {
-  const value = configuration?.interaction;
-  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
-  const interaction = value as Record<string, unknown>;
-  const options = Array.isArray(interaction.options)
-    ? interaction.options.filter((option): option is string => typeof option === "string" && Boolean(option.trim()))
-    : [];
-  if (interaction.kind !== "single_choice" || options.length < 2) return null;
-  return {
-    kind: "single_choice" as const,
-    prompt: interaction.prompt,
-    options,
-    required: interaction.required !== false,
-    maxAttempts: Math.max(1, Math.min(5, Number(interaction.maxAttempts) || 3)),
-  };
-}
-
-function taskEventKey(nodeId: string, task: Record<string, unknown>) {
-  return `${nodeId}:${String(task.eventType ?? "")}:${String(task.targetKey ?? "")}`;
-}
-
-function interactionAttempts(state: Record<string, unknown>) {
-  const value = state.interactionAttempts;
-  if (!value || typeof value !== "object" || Array.isArray(value)) return {} as Record<string, number>;
-  return Object.fromEntries(Object.entries(value as Record<string, unknown>).map(([key, count]) => [
-    key,
-    Math.max(0, Number(count) || 0),
-  ]));
-}
-
-function headerJson(value: unknown) {
-  return encodeURIComponent(JSON.stringify(value));
-}
 
 function plainTextStream(content: string) {
   const encoder = new TextEncoder();
@@ -352,6 +247,16 @@ export async function POST(request: Request) {
     existingSession = data as ExistingSession | null;
   }
 
+  if (input.restart && existingSession) {
+    await admin
+      .from("learning_agent_sessions")
+      .update({ status: "abandoned" })
+      .eq("id", existingSession.id)
+      .eq("tenant_id", auth.tenant.id)
+      .eq("student_id", auth.user.id);
+    existingSession = null;
+  }
+
   // Published teaching content is authoritative for students. An active session
   // must not remain pinned to an older script after a new version is published.
   const scriptVersionId = currentPublishedScript?.id ?? existingSession?.script_version_id ?? null;
@@ -396,214 +301,68 @@ export async function POST(request: Request) {
   const completedTaskEvents = new Set((taskEventRows ?? []).map((event) =>
     `${String(event.node_id)}:${String(event.event_type)}:${String(event.target_key)}`,
   ));
+
   let selectedScriptNode: ScriptNodeRow | null = null;
   let scriptedContent = "";
+  let scriptedContentRich: RichChar[] = [];
   let questionOptions: string[] = [];
   let awaitingAnswer = false;
   let answerCorrect: boolean | null = null;
   let nextTeachingState = teachingState;
   let selectedScriptSegmentIndex = 0;
   let selectedScriptSegmentCount = 1;
-  let responseInteraction: ReturnType<typeof nodeInteraction> = null;
+  let responseInteraction: Awaited<ReturnType<typeof resolveScriptStep>>["responseInteraction"] = null;
   let pendingNodeAttempt: { nodeId: string; answer: string; isCorrect: boolean } | null = null;
+  let scriptedSessionCompleted = false;
 
   if (scriptNodes.length && input.intent !== "ask") {
-    if (input.intent === "start") {
-      selectedScriptNode = currentScriptNode ?? scriptNodes[0] ?? null;
-    } else if (input.intent === "hint") {
-      selectedScriptNode = currentScriptNode ?? scriptNodes[0] ?? null;
-      scriptedContent = configuredText(selectedScriptNode?.configuration ?? null, "hint", input.locale);
-    } else if (input.intent === "example") {
-      selectedScriptNode = currentScriptNode ?? scriptNodes[0] ?? null;
-      scriptedContent = configuredText(selectedScriptNode?.configuration ?? null, "example", input.locale);
-    } else if (input.intent === "answer") {
-      selectedScriptNode = currentScriptNode;
-    } else if (currentScriptNode) {
-      const currentSegments = teacherScriptSegments(currentScriptNode, input.locale);
-      const currentSegmentIndex = teachingState.scriptSegmentNodeId === currentScriptNode.id
-        ? Math.max(0, Math.min(currentSegments.length - 1, Number(teachingState.scriptSegmentIndex) || 0))
-        : 0;
-      if (input.intent === "ready" && currentSegmentIndex < currentSegments.length - 1) {
-        selectedScriptNode = currentScriptNode;
-        selectedScriptSegmentIndex = currentSegmentIndex + 1;
-        selectedScriptSegmentCount = currentSegments.length;
-        nextTeachingState = {
-          ...teachingState,
-          scriptSegmentNodeId: currentScriptNode.id,
-          scriptSegmentIndex: selectedScriptSegmentIndex,
-        };
-      } else {
-      const currentAnswered = teachingState.answeredNodeId === currentScriptNode.id;
-      const currentStudentTask = studentTask(currentScriptNode.configuration);
-      const currentInteraction = nodeInteraction(currentScriptNode.configuration);
-      const requiredTaskPending = currentStudentTask?.required === true
-        && !completedTaskEvents.has(taskEventKey(currentScriptNode.id, currentStudentTask));
-      if ((currentInteraction?.required === true || currentScriptNode.node_type === "question") && !currentAnswered) {
-        selectedScriptNode = currentScriptNode;
-      } else if (input.intent === "ready" && requiredTaskPending) {
-        selectedScriptNode = currentScriptNode;
-        scriptedContent = configuredText(currentScriptNode.configuration, "taskReminder", input.locale)
-          || (input.locale === "ko-KR" ? "오른쪽 학습 영역의 과제를 먼저 완료해 주세요." : "请先完成右侧学习区中的操作任务，完成后我会带你继续。 ");
-      } else if (currentScriptNode.configuration?.terminal === true) {
-        selectedScriptNode = currentScriptNode;
-      } else {
-        selectedScriptNode = currentScriptNode.next_node_key
-          ? nodeByKey.get(currentScriptNode.next_node_key) ?? null
-          : scriptNodes.find((node) => node.sort_order > currentScriptNode.sort_order) ?? currentScriptNode;
+    try {
+      const resolved = await resolveScriptStep({
+        admin,
+        scriptNodes,
+        nodeByKey,
+        currentScriptNode,
+        teachingState,
+        completedTaskEvents,
+        intent: input.intent,
+        locale: input.locale,
+        answer: input.answer,
+      });
+      selectedScriptNode = resolved.selectedScriptNode;
+      scriptedContent = resolved.scriptedContent;
+      scriptedContentRich = resolved.scriptedContentRich;
+      questionOptions = resolved.questionOptions;
+      awaitingAnswer = resolved.awaitingAnswer;
+      answerCorrect = resolved.answerCorrect;
+      nextTeachingState = resolved.nextTeachingState;
+      selectedScriptSegmentIndex = resolved.selectedScriptSegmentIndex;
+      selectedScriptSegmentCount = resolved.selectedScriptSegmentCount;
+      responseInteraction = resolved.responseInteraction;
+      pendingNodeAttempt = resolved.pendingNodeAttempt;
+      action = resolved.action;
+      scriptedSessionCompleted = resolved.isFinalStep
+        && (!studentTask(selectedScriptNode?.configuration ?? null)?.required
+          || completedTaskEvents.has(taskEventKey(
+            selectedScriptNode?.id ?? "",
+            studentTask(selectedScriptNode?.configuration ?? null) ?? {},
+          )));
+    } catch (error) {
+      if (error instanceof ScriptStepValidationError) {
+        return NextResponse.json({ error: error.message }, { status: error.message.includes("联系课程管理员") ? 409 : 400 });
       }
-      }
-    } else {
-      selectedScriptNode = scriptNodes[0] ?? null;
+      throw error;
     }
-
-    if (selectedScriptNode) {
-      const selectedSegments = teacherScriptSegments(selectedScriptNode, input.locale);
-      selectedScriptSegmentCount = selectedSegments.length;
-      const segmentStateMatches = nextTeachingState.scriptSegmentNodeId === selectedScriptNode.id;
-      selectedScriptSegmentIndex = segmentStateMatches
-        ? Math.max(0, Math.min(selectedSegments.length - 1, Number(nextTeachingState.scriptSegmentIndex) || 0))
-        : selectedScriptSegmentIndex;
-      if (!segmentStateMatches) {
-        selectedScriptSegmentIndex = 0;
-        nextTeachingState = { ...nextTeachingState, scriptSegmentNodeId: selectedScriptNode.id, scriptSegmentIndex: 0 };
-      }
-    }
-
-    if (
-      selectedScriptNode
-      && !scriptedContent
-      && input.intent !== "hint"
-      && input.intent !== "example"
-    ) {
-      scriptedContent = teacherScriptSegments(selectedScriptNode, input.locale)[selectedScriptSegmentIndex] ?? "";
-    }
-
-    if (selectedScriptNode && !scriptedContent && input.intent === "hint") {
-      scriptedContent = input.locale === "ko-KR"
-        ? "이 단계에는 아직 추가 힌트가 없어요. 현재 설명을 다시 확인해 주세요."
-        : "这个教学节点暂时没有补充提示，请先回看当前讲解。";
-    }
-
-    if (selectedScriptNode && !scriptedContent && input.intent === "example") {
-      scriptedContent = input.locale === "ko-KR"
-        ? "이 단계에는 아직 추가 예문이 없어요. 다음 학습 단계로 넘어가 주세요."
-        : "这个教学节点暂时没有补充例子，请继续完成当前学习步骤。";
-    }
-
-    const selectedInteraction = selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
-      ? nodeInteraction(selectedScriptNode?.configuration ?? null)
-      : null;
-    responseInteraction = selectedInteraction;
-    if (selectedScriptNode && selectedInteraction) {
-      questionOptions = selectedInteraction.options;
-      if (input.intent === "answer") {
-        if (!input.answer || !questionOptions.includes(input.answer)) {
-          return NextResponse.json({ error: "请选择一个有效回答。" }, { status: 400 });
-        }
-        const { data: interactionSecret } = await admin
-          .from("learning_agent_node_interaction_secrets")
-          .select("correct_option_index,correct_feedback,incorrect_feedback")
-          .eq("node_id", selectedScriptNode.id)
-          .maybeSingle();
-        if (!interactionSecret) {
-          return NextResponse.json({ error: "当前互动尚未配置答案，请联系课程管理员。" }, { status: 409 });
-        }
-        const selectedIndex = questionOptions.indexOf(input.answer);
-        answerCorrect = selectedIndex === Number(interactionSecret.correct_option_index);
-        const previousAttemptCounts = interactionAttempts(teachingState);
-        const attemptCount = (previousAttemptCounts[selectedScriptNode.id] ?? 0) + 1;
-        const nextAttemptCounts = { ...previousAttemptCounts, [selectedScriptNode.id]: attemptCount };
-        if (answerCorrect) {
-          scriptedContent = localized(interactionSecret.correct_feedback, input.locale)
-            || (input.locale === "ko-KR" ? "맞아요. 다음 단계로 가 볼까요?" : "回答得很好，我们继续下一步。 ");
-          nextTeachingState = { ...teachingState, answeredNodeId: selectedScriptNode.id, answerCorrect: true, interactionAttempts: nextAttemptCounts };
-        } else {
-          const baseFeedback = localized(interactionSecret.incorrect_feedback, input.locale)
-            || configuredText(selectedScriptNode.configuration, "hint", input.locale)
-            || (input.locale === "ko-KR" ? "다시 생각해서 골라 보세요." : "再想一想，然后重新选择。 ");
-          const reachedAttemptLimit = attemptCount >= selectedInteraction.maxAttempts;
-          if (reachedAttemptLimit) {
-            const correctOption = questionOptions[Number(interactionSecret.correct_option_index)] ?? "";
-            scriptedContent = `${baseFeedback}${input.locale === "ko-KR" ? ` 정답은 ${correctOption}예요. 선생님과 확인했으니 다음 단계로 가 볼게요.` : ` 正确回答是 ${correctOption}。老师已经带你确认过了，我们继续下一步。`}`;
-            nextTeachingState = { ...teachingState, answeredNodeId: selectedScriptNode.id, answerCorrect: false, interactionAttempts: nextAttemptCounts };
-            awaitingAnswer = false;
-          } else {
-            scriptedContent = baseFeedback;
-            nextTeachingState = { ...teachingState, answeredNodeId: null, answerCorrect: false, interactionAttempts: nextAttemptCounts };
-            awaitingAnswer = selectedInteraction.required;
-          }
-        }
-        pendingNodeAttempt = { nodeId: selectedScriptNode.id, answer: input.answer, isCorrect: answerCorrect };
-      } else {
-        awaitingAnswer = teachingState.answeredNodeId !== selectedScriptNode.id && selectedInteraction.required;
-      }
-    } else if (selectedScriptNode?.node_type === "question" && selectedScriptNode.reference_activity_id) {
-      const [{ data: referencedActivity }, { data: activitySecret }] = await Promise.all([
-        admin
-          .from("digital_textbook_activities")
-          .select("id,options")
-          .eq("id", selectedScriptNode.reference_activity_id)
-          .maybeSingle(),
-        admin
-          .from("digital_textbook_activity_secrets")
-          .select("answer_key,explanation")
-          .eq("activity_id", selectedScriptNode.reference_activity_id)
-          .maybeSingle(),
-      ]);
-      questionOptions = Array.isArray(referencedActivity?.options)
-        ? referencedActivity.options.map((option) =>
-            typeof option === "string" ? option : localized(option, input.locale),
-          ).filter(Boolean)
-        : [];
-      if (input.intent === "answer") {
-        if (!input.answer) {
-          return NextResponse.json({ error: "请选择一个回答。" }, { status: 400 });
-        }
-        const answerKey = activitySecret?.answer_key && typeof activitySecret.answer_key === "object"
-          ? activitySecret.answer_key as Record<string, unknown>
-          : {};
-        const correctIndex = answerKey.kind === "index" ? Number(answerKey.value) : -1;
-        const selectedIndex = questionOptions.indexOf(input.answer);
-        answerCorrect = correctIndex >= 0 && selectedIndex === correctIndex;
-        const explanation = activitySecret?.explanation && typeof activitySecret.explanation === "object"
-          ? activitySecret.explanation as Record<string, unknown>
-          : {};
-        if (answerCorrect) {
-          scriptedContent = localized(explanation.correct, input.locale)
-            || (input.locale === "ko-KR" ? "맞았어요. 다음 단계로 가 볼까요?" : "回答正确。我们继续下一步。 ");
-          nextTeachingState = { ...teachingState, answeredNodeId: selectedScriptNode.id, answerCorrect: true };
-        } else {
-          const feedback = Array.isArray(explanation.feedback) ? explanation.feedback : [];
-          const remediationNode = selectedScriptNode.remediation_node_key
-            ? nodeByKey.get(selectedScriptNode.remediation_node_key) ?? null
-            : null;
-          scriptedContent = localized(remediationNode?.teacher_script, input.locale)
-            || localized(feedback[0], input.locale)
-            || configuredText(selectedScriptNode.configuration, "hint", input.locale)
-            || (input.locale === "ko-KR" ? "첫 번째 인사를 다시 떠올려 보세요." : "再回想一下对话的第一句。");
-          nextTeachingState = { ...teachingState, answeredNodeId: null, answerCorrect: false };
-          awaitingAnswer = true;
-        }
-        pendingNodeAttempt = { nodeId: selectedScriptNode.id, answer: input.answer, isCorrect: answerCorrect };
-      } else {
-        awaitingAnswer = teachingState.answeredNodeId !== selectedScriptNode.id;
-      }
-    }
-
-    if (selectedScriptNode?.action_type === "focus_activity") action = "focus_activity";
-    else if (selectedScriptNode?.action_type === "play_expression") action = "play_expression";
-    else action = "none";
   }
 
   const actionTargetActivityId = selectedScriptNode?.reference_activity_id ?? targetActivity?.id ?? null;
   // Textbook completion and scripted teaching completion are separate
   // lifecycles. A previously completed module may still have several teaching
   // nodes left, so module progress must not close the scripted session.
-  const sessionStatus = scriptNodes.length === 0
-    && input.intent === "ready"
-    && completionPercent === 100
-    ? "completed"
-    : "active";
+  const sessionStatus = scriptNodes.length > 0
+    ? scriptedSessionCompleted ? "completed" : "active"
+    : input.intent === "ready" && completionPercent === 100
+      ? "completed"
+      : "active";
   let sessionId = existingSession?.id;
   if (!sessionId) {
     const { data: createdSession, error: sessionError } = await admin
@@ -683,6 +442,10 @@ export async function POST(request: Request) {
     content: String(message.content),
   }));
 
+  const selectedCharacter = selectedScriptNode
+    ? await resolveScriptCharacter(admin, selectedScriptNode, selectedScriptSegmentIndex, scriptedContent, input.locale)
+    : null;
+
   const headers = new Headers({
     "Content-Type": "text/plain; charset=utf-8",
     "Cache-Control": "private, no-store, max-age=0",
@@ -705,7 +468,7 @@ export async function POST(request: Request) {
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
     headers.set(
       "X-Learning-Agent-Character",
-      headerJson(virtualCharacterForScriptSegment(selectedScriptNode.configuration, selectedScriptSegmentIndex)),
+      headerJson(selectedCharacter),
     );
     headers.set("X-Learning-Agent-Interaction", headerJson(responseInteraction));
     headers.set(
@@ -716,13 +479,18 @@ export async function POST(request: Request) {
     );
     headers.set("X-Learning-Agent-Task-Completed", selectedTaskCompleted ? "true" : "false");
     headers.set("X-Learning-Agent-Question-Options", headerJson(questionOptions));
+    headers.set("X-Learning-Agent-Script-Rich", headerJson(scriptedContentRich));
     headers.set("X-Learning-Agent-Awaiting-Answer", awaitingAnswer ? "true" : "false");
     if (answerCorrect !== null) {
       headers.set("X-Learning-Agent-Answer-Correct", answerCorrect ? "true" : "false");
     }
     headers.set(
       "X-Learning-Agent-Terminal",
-      selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1 && selectedScriptNode.configuration?.terminal === true ? "true" : "false",
+      selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
+        && isTerminalScriptNode(selectedScriptNode, scriptNodes)
+        && !awaitingAnswer
+        ? "true"
+        : "false",
     );
     headers.set(
       "X-Learning-Agent-Continue-Label",

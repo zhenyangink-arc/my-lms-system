@@ -26,25 +26,31 @@ const nodeSchema = z.object({
   displayItemsZh: z.string().trim().max(1000, "教学展示要点不能超过1000个字。"),
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
-  virtualCharacterKind: z.enum(["none", "uply-teacher"]),
+  virtualCharacterKind: z.literal("uply-teacher"),
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
     pose: z.enum(["greeting", "explaining", "encouraging"]),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
     voiceRate: z.coerce.number().min(0.75).max(1.25),
+    autoContinueToNext: z.boolean(),
   })).max(50),
   studentTaskKind: z.enum(["none", "play_expression_audio"]),
+  studentTaskFollowVisualCue: z.boolean(),
   studentTaskInstructionZh: z.string().trim().max(300, "学生任务说明不能超过300个字。"),
   studentTaskTargetLabelZh: z.string().trim().max(100, "目标名称不能超过100个字。"),
   studentTaskTargetKey: z.string().trim().max(200, "目标位置不能超过200个字符。"),
-  visualCueTargetKey: z.enum(["", "scene:image"]),
+  visualCueTargetKey: z.string().trim().max(200, "讲解指向不能超过200个字符。")
+    .regex(/^[a-zA-Z0-9:_-]*$/, "讲解指向格式不正确。"),
   visualCueEffect: z.enum(["pulse"]),
   visualCuePulseCount: z.coerce.number().int().min(1).max(4),
   visualCueDurationMs: z.coerce.number().int().min(400).max(2500),
-  interactionKind: z.enum(["none", "single_choice"]),
+  interactionKind: z.enum(["none", "single_choice", "referenced_activity"]),
   interactionPromptZh: z.string().trim().max(300, "互动问题不能超过300个字。"),
-  interactionOptions: z.string().trim().max(800, "互动选项不能超过800个字。"),
+  interactionOptions: z.array(
+    z.string().trim().max(300, "单个互动选项不能超过300个字。"),
+  ).max(6, "最多只能填写6个选项。")
+    .refine((options) => options.join("\n").length <= 800, "互动选项合计不能超过800个字。"),
   interactionCorrectOption: z.coerce.number().int().min(1).max(6),
   interactionCorrectFeedbackZh: z.string().trim().max(600, "正确反馈不能超过600个字。"),
   interactionIncorrectFeedbackZh: z.string().trim().max(600, "错误反馈不能超过600个字。"),
@@ -53,29 +59,49 @@ const nodeSchema = z.object({
   hintZh: z.string().trim().max(600, "提示不能超过600个字。"),
   exampleZh: z.string().trim().max(600, "补充示例不能超过600个字。"),
   referenceActivityId: z.union([z.literal(""), z.uuid()]),
-  actionType: z.enum(["none", "focus_activity", "play_expression", "complete_lesson"]),
+  flowMode: z.enum(["sequence", "jump", "end"]),
   nextNodeKey: z.string().trim().max(100),
   remediationNodeKey: z.string().trim().max(100),
   continueLabelZh: z.string().trim().max(40),
   terminal: z.boolean(),
   required: z.boolean(),
 }).superRefine((input, context) => {
-  if (input.interactionKind !== "single_choice") return;
-  const options = input.interactionOptions.split("\n").map((item) => item.trim()).filter(Boolean);
-  if (!input.interactionPromptZh) {
-    context.addIssue({ code: "custom", path: ["interactionPromptZh"], message: "请填写老师向学生提出的问题。" });
+  if (input.studentTaskKind === "play_expression_audio" && !input.studentTaskTargetKey) {
+    context.addIssue({
+      code: "custom",
+      path: ["studentTaskTargetKey"],
+      message: "请选择学生需要完成的按钮或表达。",
+    });
   }
-  if (options.length < 2 || options.length > 6) {
-    context.addIssue({ code: "custom", path: ["interactionOptions"], message: "请填写2—6个选项，每行一个。" });
+  if (input.interactionKind === "single_choice") {
+    const options = input.interactionOptions;
+    if (!input.interactionPromptZh) {
+      context.addIssue({ code: "custom", path: ["interactionPromptZh"], message: "请填写老师向学生提出的问题。" });
+    }
+    if (options.length < 2 || options.some((option) => !option)) {
+      context.addIssue({ code: "custom", path: ["interactionOptions"], message: "请完整填写2—6个选项。" });
+    }
+    if (new Set(options).size !== options.length) {
+      context.addIssue({ code: "custom", path: ["interactionOptions"], message: "互动选项不能重复。" });
+    }
+    if (input.interactionCorrectOption > options.length) {
+      context.addIssue({ code: "custom", path: ["interactionCorrectOption"], message: "正确答案序号超出了选项数量。" });
+    }
+    if (!input.interactionCorrectFeedbackZh) {
+      context.addIssue({ code: "custom", path: ["interactionCorrectFeedbackZh"], message: "请填写答对后的老师反馈。" });
+    }
+    if (!input.interactionIncorrectFeedbackZh) {
+      context.addIssue({ code: "custom", path: ["interactionIncorrectFeedbackZh"], message: "请填写答错后的老师提示。" });
+    }
   }
-  if (new Set(options).size !== options.length) {
-    context.addIssue({ code: "custom", path: ["interactionOptions"], message: "互动选项不能重复。" });
+  if (input.interactionKind === "referenced_activity" && !input.referenceActivityId) {
+    context.addIssue({ code: "custom", path: ["referenceActivityId"], message: "请选择要使用的教材活动。" });
   }
-  if (input.interactionCorrectOption > options.length) {
-    context.addIssue({ code: "custom", path: ["interactionCorrectOption"], message: "正确答案序号超出了选项数量。" });
+  if (input.flowMode === "jump" && !input.nextNodeKey) {
+    context.addIssue({ code: "custom", path: ["nextNodeKey"], message: "请选择要跳转到的小节。" });
   }
-  if (!input.interactionCorrectFeedbackZh || !input.interactionIncorrectFeedbackZh) {
-    context.addIssue({ code: "custom", path: ["interactionCorrectFeedbackZh"], message: "请填写答对和答错后的老师反馈。" });
+  if (input.flowMode === "jump" && input.nextNodeKey === input.nodeKey) {
+    context.addIssue({ code: "custom", path: ["nextNodeKey"], message: "不能跳转回当前小节。" });
   }
 });
 
@@ -174,7 +200,18 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
     sort_order: nextOrder,
     title: { "zh-CN": "新教学小节", "ko-KR": "새 수업 단계" },
     teacher_script: { "zh-CN": "请填写这一小节的老师台词。", "ko-KR": "선생님 대사를 입력하세요." },
-    configuration: {},
+    configuration: {
+      virtualCharacter: {
+        kind: "uply-teacher",
+        position: "right",
+      },
+      scriptPerformances: [{
+        pose: "explaining",
+        voiceEnabled: true,
+        voiceLanguage: "auto",
+        voiceRate: 1,
+      }],
+    },
     action_type: "none",
     is_required: true,
   });
@@ -200,7 +237,9 @@ export async function saveTeachingScriptNodeAction(
     const scriptVoices = formData.getAll("script_voice").map(String);
     const scriptVoiceLanguages = formData.getAll("script_voice_language").map(String);
     const scriptVoiceRates = formData.getAll("script_voice_rate").map(String);
+    const scriptAutoContinues = formData.getAll("script_auto_continue").map(String);
     const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
+    const interactionOptionRows = formData.getAll("interaction_option").map(String);
     const parsed = nodeSchema.safeParse({
       nodeId: String(formData.get("node_id") ?? ""),
       nodeKey: String(formData.get("node_key") ?? ""),
@@ -214,15 +253,17 @@ export async function saveTeachingScriptNodeAction(
       displayItemsZh: String(formData.get("display_items_zh") ?? ""),
       displayKorean: String(formData.get("display_korean") ?? ""),
       displayTranslationZh: String(formData.get("display_translation_zh") ?? ""),
-      virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "none"),
+      virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "uply-teacher"),
       virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
       scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
         pose: scriptPoses[index] ?? "explaining",
         voiceEnabled: (scriptVoices[index] ?? "on") === "on",
         voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
         voiceRate: scriptVoiceRates[index] ?? "1",
+        autoContinueToNext: (scriptAutoContinues[index] ?? "off") === "on",
       })),
       studentTaskKind: String(formData.get("student_task_kind") ?? "none"),
+      studentTaskFollowVisualCue: formData.get("student_task_follow_visual_cue") === "on",
       studentTaskInstructionZh: String(formData.get("student_task_instruction_zh") ?? ""),
       studentTaskTargetLabelZh: String(formData.get("student_task_target_label_zh") ?? ""),
       studentTaskTargetKey: String(formData.get("student_task_target_key") ?? ""),
@@ -232,21 +273,23 @@ export async function saveTeachingScriptNodeAction(
       visualCueDurationMs: String(formData.get("visual_cue_duration_ms") ?? "1000"),
       interactionKind: String(formData.get("interaction_kind") ?? "none"),
       interactionPromptZh: String(formData.get("interaction_prompt_zh") ?? ""),
-      interactionOptions: String(formData.get("interaction_options") ?? ""),
+      interactionOptions: interactionOptionRows.length
+        ? interactionOptionRows
+        : String(formData.get("interaction_options") ?? "").split("\n"),
       interactionCorrectOption: String(formData.get("interaction_correct_option") ?? "1"),
       interactionCorrectFeedbackZh: String(formData.get("interaction_correct_feedback_zh") ?? ""),
       interactionIncorrectFeedbackZh: String(formData.get("interaction_incorrect_feedback_zh") ?? ""),
       interactionMaxAttempts: String(formData.get("interaction_max_attempts") ?? "3"),
-      interactionRequired: formData.get("interaction_required") === "on",
+      interactionRequired: true,
       hintZh: String(formData.get("hint_zh") ?? ""),
       exampleZh: String(formData.get("example_zh") ?? ""),
       referenceActivityId: String(formData.get("reference_activity_id") ?? ""),
-      actionType: String(formData.get("action_type") ?? "none"),
+      flowMode: String(formData.get("flow_mode") ?? "sequence"),
       nextNodeKey: String(formData.get("next_node_key") ?? ""),
       remediationNodeKey: String(formData.get("remediation_node_key") ?? ""),
       continueLabelZh: String(formData.get("continue_label_zh") ?? ""),
-      terminal: formData.get("terminal") === "on",
-      required: formData.get("required") === "on",
+      terminal: formData.get("flow_mode") === "end",
+      required: true,
     });
     if (!parsed.success) {
       return {
@@ -295,22 +338,18 @@ export async function saveTeachingScriptNodeAction(
         instruction: { "zh-CN": input.studentTaskInstructionZh },
         targetLabel: { "zh-CN": input.studentTaskTargetLabelZh },
         targetKey: input.studentTaskTargetKey,
+        followVisualCue: input.studentTaskFollowVisualCue,
         eventType: "audio_completed",
         required: true,
       };
     } else {
       Reflect.deleteProperty(configuration, "studentTask");
     }
-    if (input.virtualCharacterKind === "uply-teacher") {
-      configuration.virtualCharacter = {
-        kind: input.virtualCharacterKind,
-        position: input.virtualCharacterPosition,
-      };
-      configuration.scriptPerformances = input.scriptPerformances;
-    } else {
-      Reflect.deleteProperty(configuration, "virtualCharacter");
-      Reflect.deleteProperty(configuration, "scriptPerformances");
-    }
+    configuration.virtualCharacter = {
+      kind: "uply-teacher",
+      position: input.virtualCharacterPosition,
+    };
+    configuration.scriptPerformances = input.scriptPerformances;
     if (input.visualCueTargetKey) {
       configuration.visualCue = {
         targetKey: input.visualCueTargetKey,
@@ -321,10 +360,7 @@ export async function saveTeachingScriptNodeAction(
     } else {
       Reflect.deleteProperty(configuration, "visualCue");
     }
-    const interactionOptions = input.interactionOptions
-      .split("\n")
-      .map((item) => item.trim())
-      .filter(Boolean);
+    const interactionOptions = input.interactionOptions;
     if (input.interactionKind === "single_choice") {
       configuration.interaction = {
         kind: "single_choice",
@@ -340,23 +376,35 @@ export async function saveTeachingScriptNodeAction(
     else Reflect.deleteProperty(configuration, "hint");
     if (input.exampleZh) configuration.example = { "zh-CN": input.exampleZh };
     else Reflect.deleteProperty(configuration, "example");
-    if (input.continueLabelZh) configuration.continueLabel = { "zh-CN": input.continueLabelZh };
+    if (input.flowMode !== "end" && input.continueLabelZh) configuration.continueLabel = { "zh-CN": input.continueLabelZh };
     else Reflect.deleteProperty(configuration, "continueLabel");
-    configuration.terminal = input.terminal;
+    configuration.terminal = input.flowMode === "end";
+
+    const referenceActivityId = input.interactionKind === "referenced_activity"
+      ? input.referenceActivityId
+      : null;
+    const effectiveNodeType = input.interactionKind === "none"
+      ? input.nodeType === "question" ? "explanation" : input.nodeType
+      : "question";
+    const effectiveActionType = input.studentTaskKind === "play_expression_audio"
+      ? "play_expression"
+      : input.interactionKind === "referenced_activity"
+        ? "focus_activity"
+        : "none";
 
     const { error } = await admin
       .from("learning_agent_script_nodes")
       .update({
         node_key: input.nodeKey,
-        node_type: input.nodeType,
+        node_type: effectiveNodeType,
         title: { "zh-CN": input.titleZh, "ko-KR": input.titleKo },
         teacher_script: { "zh-CN": input.scriptZh, "ko-KR": input.scriptKo },
         configuration,
-        reference_activity_id: input.referenceActivityId || null,
-        action_type: input.studentTaskKind === "play_expression_audio" ? "play_expression" : input.actionType,
-        next_node_key: input.nextNodeKey || null,
-        remediation_node_key: input.remediationNodeKey || null,
-        is_required: input.required,
+        reference_activity_id: referenceActivityId,
+        action_type: effectiveActionType,
+        next_node_key: input.flowMode === "jump" ? input.nextNodeKey : null,
+        remediation_node_key: input.interactionKind === "referenced_activity" ? input.remediationNodeKey || null : null,
+        is_required: true,
       })
       .eq("id", input.nodeId);
     if (error) {
@@ -437,6 +485,28 @@ export async function deleteTeachingScriptNodeAction(formData: FormData) {
     actor_id: user.id,
     details: { nodeId, nodeKey: node.node_key },
   });
+  refreshStudio(path);
+}
+
+export async function deleteTeachingScriptVersionAction(formData: FormData) {
+  await requirePlatformOwner();
+  const versionId = uuid.parse(String(formData.get("version_id") ?? ""));
+  const path = returnPath(formData);
+  const admin = createAdminClient();
+  const { data: version } = await admin
+    .from("learning_agent_script_versions")
+    .select("id,status")
+    .eq("id", versionId)
+    .maybeSingle();
+  if (!version) throw new Error("没有找到要删除的版本。");
+  if (version.status !== "archived") throw new Error("只有已归档的历史版本可以删除，草稿和已发布版本不能删除。");
+  const { count: attemptCount } = await admin
+    .from("learning_agent_node_attempts")
+    .select("id", { count: "exact", head: true })
+    .eq("script_version_id", versionId);
+  if (Number(attemptCount ?? 0) > 0) throw new Error("这个版本还留有学生的作答记录，无法删除，以免丢失学习数据。");
+  const { error } = await admin.from("learning_agent_script_versions").delete().eq("id", versionId);
+  if (error) throw new Error("删除版本失败，请稍后重试。");
   refreshStudio(path);
 }
 

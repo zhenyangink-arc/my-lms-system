@@ -3,15 +3,17 @@
 import { useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { usePathname } from "next/navigation";
-import { ArrowDown, ArrowUp, FilePenLine, Plus, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ExternalLink, FilePenLine, PanelLeftClose, PanelLeftOpen, Plus, Trash2 } from "lucide-react";
 
 import {
   addTeachingScriptNodeAction,
   createTeachingScriptDraftAction,
   deleteTeachingScriptNodeAction,
+  deleteTeachingScriptVersionAction,
   moveTeachingScriptNodeAction,
   publishTeachingScriptAction,
 } from "@/app/dashboard/admin/teaching-scripts/actions";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { TeachingScriptNodeForm } from "./TeachingScriptNodeForm";
 import type { TeachingScriptModule, TeachingScriptStudioData } from "./types";
 
@@ -38,12 +40,18 @@ function preferredVersion(lessonModule?: TeachingScriptModule) {
     ?? lessonModule?.versions[0];
 }
 
-function CreateDraftButton() {
+function CreateDraftButton({
+  idleLabel = "编辑已发布版本",
+  pendingLabel = "正在准备草稿…",
+}: {
+  idleLabel?: string;
+  pendingLabel?: string;
+}) {
   const { pending } = useFormStatus();
   return (
     <button type="submit" disabled={pending} className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">
       <FilePenLine size={16} aria-hidden="true" />
-      {pending ? "正在准备草稿…" : "编辑已发布版本"}
+      {pending ? pendingLabel : idleLabel}
     </button>
   );
 }
@@ -58,6 +66,23 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const selectedVersion = selectedModule?.versions.find((item) => item.id === versionId) ?? preferred;
   const [nodeId, setNodeId] = useState(selectedVersion?.nodes[0]?.id ?? "");
   const selectedNode = selectedVersion?.nodes.find((item) => item.id === nodeId) ?? selectedVersion?.nodes[0];
+  const previewLessonSupported = selectedModule?.chapterNumber === 1;
+  const previewModuleIndex = selectedModule ? selectedModule.order - 1 : 0;
+  const previewUrl = previewLessonSupported && selectedVersion
+    ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&moduleIndex=${previewModuleIndex}`
+    : "";
+  const [showChapterNav, setShowChapterNav] = useState(true);
+  const [showStepList, setShowStepList] = useState(true);
+  // Tailwind needs each arbitrary-value class to appear literally in the
+  // source to generate it, so the four collapse states are spelled out as
+  // full static strings instead of being built from template literals.
+  const columnsGridClass = showChapterNav
+    ? (showStepList
+      ? "lg:grid-cols-[15rem_minmax(0,1fr)] 2xl:grid-cols-[15rem_19rem_minmax(0,1fr)]"
+      : "lg:grid-cols-[15rem_minmax(0,1fr)] 2xl:grid-cols-[15rem_3rem_minmax(0,1fr)]")
+    : (showStepList
+      ? "lg:grid-cols-[3rem_minmax(0,1fr)] 2xl:grid-cols-[3rem_19rem_minmax(0,1fr)]"
+      : "lg:grid-cols-[3rem_minmax(0,1fr)] 2xl:grid-cols-[3rem_3rem_minmax(0,1fr)]");
 
   const chapters = useMemo(() => {
     const grouped = new Map<number, TeachingScriptModule[]>();
@@ -95,13 +120,20 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
     <div className="space-y-4">
       <section className="flex flex-wrap items-center justify-between gap-4 border bg-[var(--card)] px-4 py-3" aria-label="教学脚本版本工具栏">
         <div className="min-w-0">
-          <div className="flex flex-wrap items-center gap-2 text-sm">
-            <strong>{selectedModule.textbookTitle["zh-CN"]}</strong>
-            <span className="app-muted-text">第 {selectedModule.chapterNumber} 章</span>
-            <span>{moduleLabels[selectedModule.code] ?? selectedModule.title["zh-CN"]}</span>
-            {selectedVersion && <span className="border px-2 py-1 text-xs font-medium">版本 {selectedVersion.number} · {versionLabel(selectedVersion.status)}</span>}
-          </div>
-          <p className="app-muted-text mt-1 text-xs leading-5">每个学习步骤的教学小节、老师台词、展示内容和互动顺序都由你自行编排。</p>
+          <CardTitleWithHint
+            title={
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                <strong>{selectedModule.textbookTitle["zh-CN"]}</strong>
+                <span className="app-muted-text">第 {selectedModule.chapterNumber} 章</span>
+                <span>{moduleLabels[selectedModule.code] ?? selectedModule.title["zh-CN"]}</span>
+                {selectedVersion && <span className="border px-2 py-1 text-xs font-medium">版本 {selectedVersion.number} · {versionLabel(selectedVersion.status)}</span>}
+              </div>
+            }
+            description="每个学习步骤的教学小节、老师台词、展示内容和互动顺序都由你自行编排。"
+            headingLevel={2}
+            titleClassName="min-w-0"
+            hintLabel="查看教学脚本编排说明"
+          />
         </div>
         <div className="flex flex-wrap items-center gap-2">
           {selectedModule.versions.length > 1 && (
@@ -109,15 +141,62 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           )}
           {selectedVersion?.status === "published" && draft && <button type="button" onClick={() => { setVersionId(draft.id); setNodeId(draft.nodes[0]?.id ?? ""); }} className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><FilePenLine size={16} aria-hidden="true" />继续编辑草稿</button>}
           {selectedVersion?.status === "published" && !draft && selectedModule.lessonId && <form action={createTeachingScriptDraftAction}><input type="hidden" name="lesson_id" value={selectedModule.lessonId} /><input type="hidden" name="return_to" value={returnTo} /><CreateDraftButton /></form>}
+          {!selectedVersion && selectedModule.lessonId && <form action={createTeachingScriptDraftAction}><input type="hidden" name="lesson_id" value={selectedModule.lessonId} /><input type="hidden" name="return_to" value={returnTo} /><CreateDraftButton idleLabel="新建教学脚本" pendingLabel="正在新建…" /></form>}
+          {selectedVersion?.status === "archived" && (
+            <form
+              action={deleteTeachingScriptVersionAction}
+              onSubmit={(event) => {
+                if (!window.confirm(`确定删除“版本 ${selectedVersion.number}”吗？这个操作无法撤销。`)) event.preventDefault();
+              }}
+            >
+              <input type="hidden" name="version_id" value={selectedVersion.id} />
+              <input type="hidden" name="return_to" value={returnTo} />
+              <button type="submit" className="inline-flex min-h-11 items-center gap-2 border border-[var(--destructive)] px-3 text-sm font-semibold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)]">
+                <Trash2 size={15} aria-hidden="true" />删除这个历史版本
+              </button>
+            </form>
+          )}
+          {selectedVersion && (
+            previewLessonSupported ? (
+              <a
+                href={previewUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-3 text-sm font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+              >
+                <ExternalLink size={15} aria-hidden="true" />预览完整流程
+              </a>
+            ) : (
+              <span
+                title="目前只有第 1 章接了真实学生页面，其他章节暂时无法预览完整流程"
+                className="inline-flex min-h-11 cursor-not-allowed items-center gap-2 border border-[var(--border)] px-3 text-sm font-semibold text-[var(--muted-foreground)] opacity-60"
+              >
+                <ExternalLink size={15} aria-hidden="true" />预览完整流程
+              </span>
+            )
+          )}
         </div>
       </section>
 
-      <div className="grid min-h-[760px] border bg-[var(--card)] lg:grid-cols-[15rem_minmax(0,1fr)] 2xl:grid-cols-[15rem_19rem_minmax(0,1fr)]">
-        <nav className="border-b bg-[var(--muted)]/35 lg:border-r 2xl:border-b-0" aria-label="章节与学习步骤">
-          <div className="border-b px-4 py-3">
-            <h2 className="text-sm font-bold">章节与学习步骤</h2>
-            <p className="app-muted-text mt-1 text-xs">每章包含 8 个教材步骤</p>
+      <div className={`grid min-h-[760px] border bg-[var(--card)] ${columnsGridClass}`}>
+        <nav className="border-b bg-[var(--muted)]/35 lg:border-r-2 lg:border-r-[var(--border)] 2xl:border-b-0" aria-label="章节与学习步骤">
+          <div className="flex min-h-16 items-center justify-between gap-2 border-b px-4 py-3">
+            {showChapterNav && (
+              <div className="min-w-0">
+                <h2 className="text-sm font-bold">章节与学习步骤</h2>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={() => setShowChapterNav((current) => !current)}
+              aria-label={showChapterNav ? "隐藏章节与学习步骤" : "显示章节与学习步骤"}
+              aria-expanded={showChapterNav}
+              className="flex size-9 shrink-0 items-center justify-center border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+            >
+              {showChapterNav ? <PanelLeftClose size={15} aria-hidden="true" /> : <PanelLeftOpen size={15} aria-hidden="true" />}
+            </button>
           </div>
+          {showChapterNav && (
           <div className="max-h-[720px] overflow-y-auto p-2">
             {chapters.map(([chapterNumber, modules]) => (
               <section key={chapterNumber} className="mb-4">
@@ -126,9 +205,10 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   {modules.map((lessonModule) => {
                     const version = preferredVersion(lessonModule);
                     const selected = lessonModule.id === selectedModule.id;
+                    const stepLabel = moduleLabels[lessonModule.code] ?? lessonModule.title["zh-CN"];
                     return (
-                      <button key={lessonModule.id} type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} className={`flex min-h-12 w-full items-center justify-between gap-3 border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
-                        <span className="min-w-0"><span className="block truncate">{moduleLabels[lessonModule.code] ?? lessonModule.title["zh-CN"]}</span><span className="mt-0.5 block text-xs font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
+                      <button key={lessonModule.id} type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节`} className={`flex min-h-12 w-full items-center justify-between gap-3 border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
+                        <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-0.5 block text-xs font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
                         <span className="shrink-0 tabular-nums text-xs text-[var(--muted-foreground)]">{lessonModule.order}</span>
                       </button>
                     );
@@ -137,14 +217,28 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
               </section>
             ))}
           </div>
+          )}
         </nav>
 
-        <section className="border-b lg:border-b-0 2xl:border-r" aria-labelledby="teaching-flow-title">
-          <div className="flex min-h-16 items-center justify-between gap-3 border-b px-4 py-3">
-            <div><h2 id="teaching-flow-title" className="text-sm font-bold">自定义教学流程</h2><p className="app-muted-text mt-1 text-xs">按你的课堂节奏安排小节</p></div>
-            {editable && selectedVersion && <form action={addTeachingScriptNodeAction}><input type="hidden" name="version_id" value={selectedVersion.id} /><input type="hidden" name="return_to" value={returnTo} /><button type="submit" className="inline-flex min-h-11 items-center gap-1.5 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Plus size={15} aria-hidden="true" />新增小节</button></form>}
+        <section className="border-b bg-[var(--background)] lg:border-b-0 2xl:border-r" aria-labelledby="teaching-flow-title">
+          <div className="flex min-h-16 items-center justify-between gap-2 border-b px-4 py-3">
+            {showStepList && (
+              <div className="min-w-0"><h2 id="teaching-flow-title" className="text-sm font-bold">自定义教学流程</h2></div>
+            )}
+            <div className="flex shrink-0 items-center gap-2">
+              {showStepList && editable && selectedVersion && <form action={addTeachingScriptNodeAction}><input type="hidden" name="version_id" value={selectedVersion.id} /><input type="hidden" name="return_to" value={returnTo} /><button type="submit" className="inline-flex min-h-11 items-center gap-1.5 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Plus size={15} aria-hidden="true" />新增小节</button></form>}
+              <button
+                type="button"
+                onClick={() => setShowStepList((current) => !current)}
+                aria-label={showStepList ? "隐藏自定义教学流程" : "显示自定义教学流程"}
+                aria-expanded={showStepList}
+                className="flex size-9 shrink-0 items-center justify-center border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+              >
+                {showStepList ? <PanelLeftClose size={15} aria-hidden="true" /> : <PanelLeftOpen size={15} aria-hidden="true" />}
+              </button>
+            </div>
           </div>
-          {!selectedVersion ? (
+          {showStepList && (!selectedVersion ? (
             <div className="p-8 text-center text-sm text-[var(--muted-foreground)]">当前学习步骤还没有教学脚本。</div>
           ) : (
             <ol className="max-h-[696px] overflow-y-auto p-3">
@@ -155,7 +249,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                 return (
                   <li key={node.id} className="relative flex gap-2 pb-3 last:pb-0">
                     {index < selectedVersion.nodes.length - 1 && <span className="absolute left-[17px] top-10 h-[calc(100%-1.25rem)] w-px bg-[var(--border)]" aria-hidden="true" />}
-                    <button type="button" onClick={() => setNodeId(node.id)} aria-current={selected ? "step" : undefined} className={`relative z-10 flex min-h-16 min-w-0 flex-1 items-start gap-3 border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "bg-[var(--card)] hover:bg-[var(--muted)]/45"}`}>
+                    <button type="button" onClick={() => setNodeId(node.id)} aria-current={selected ? "step" : undefined} aria-label={`第 ${index + 1} 小节：${node.title["zh-CN"]}，${hasInteraction ? "包含学生互动" : "老师讲解"}${node.configuration.terminal === true ? "，本步骤结束" : ""}`} className={`relative z-10 flex min-h-16 min-w-0 flex-1 items-start gap-3 border px-3 py-3 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "bg-[var(--card)] hover:bg-[var(--muted)]/45"}`}>
                       <span className="flex size-8 shrink-0 items-center justify-center rounded-full border bg-[var(--card)] text-xs font-bold tabular-nums">{index + 1}</span>
                       <span className="min-w-0 flex-1"><span className="block text-sm font-semibold leading-5">{node.title["zh-CN"]}</span><span className="mt-1 block text-xs leading-5 text-[var(--muted-foreground)]">{hasInteraction ? "包含学生互动" : "老师讲解"}{node.configuration.terminal === true ? " · 本步骤结束" : ""}</span></span>
                     </button>
@@ -164,17 +258,30 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                 );
               })}
             </ol>
-          )}
+          ))}
         </section>
 
         <section className="min-w-0 border-t lg:col-span-2 2xl:col-span-1 2xl:border-t-0" aria-labelledby="subsection-editor-title">
           {selectedNode && selectedVersion ? (
             <>
               <header className="flex min-h-16 items-center justify-between gap-4 border-b px-5 py-3">
-                <div className="min-w-0"><div className="flex flex-wrap items-center gap-2"><h2 id="subsection-editor-title" className="text-base font-bold">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节 · {selectedNode.title["zh-CN"]}</h2><span className={`border px-2 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span></div><p className="app-muted-text mt-1 text-xs">按老师台词、教学内容、互动和流程一步一步设置</p></div>
+                <div className="min-w-0">
+                  <CardTitleWithHint
+                    title={
+                      <span className="flex flex-wrap items-center gap-2">
+                        <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节 · {selectedNode.title["zh-CN"]}</span>
+                        <span className={`border px-2 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
+                      </span>
+                    }
+                    description="按老师台词、教学内容、互动和流程一步一步设置"
+                    headingLevel={2}
+                    titleClassName="text-base font-bold"
+                    hintLabel="查看教学小节编辑说明"
+                  />
+                </div>
                 {editable && selectedVersion.nodes.length > 1 && <form action={deleteTeachingScriptNodeAction} onSubmit={(event) => { if (!window.confirm(`确定删除“${selectedNode.title["zh-CN"]}”吗？`)) event.preventDefault(); }}><input type="hidden" name="node_id" value={selectedNode.id} /><input type="hidden" name="return_to" value={returnTo} /><button type="submit" className="inline-flex min-h-11 items-center gap-2 border border-[var(--destructive)] px-3 text-sm font-semibold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)]"><Trash2 size={15} aria-hidden="true" />删除小节</button></form>}
               </header>
-              <div className="p-4 lg:p-5"><TeachingScriptNodeForm key={selectedNode.id} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} returnTo={returnTo} editable={editable} /></div>
+              <div className="p-4 lg:p-5"><TeachingScriptNodeForm key={selectedNode.id} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} chapterNumber={selectedModule.chapterNumber} returnTo={returnTo} editable={editable} livePreviewUrl={previewLessonSupported ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&startNodeKey=${encodeURIComponent(selectedNode.key)}&moduleIndex=${previewModuleIndex}` : undefined} /></div>
             </>
           ) : <div className="flex min-h-80 items-center justify-center p-8 text-center text-sm text-[var(--muted-foreground)]">请先选择一个教学小节。</div>}
         </section>

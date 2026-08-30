@@ -110,6 +110,9 @@ export type SmartTextbookData = {
     supportMode: SmartSupportMode;
   };
   progress: SmartTextbookProgress[];
+  activeTeachingSessions: Record<string, {
+    id: string;
+  }>;
 };
 
 type JsonObject = Record<string, unknown>;
@@ -359,8 +362,38 @@ export async function loadSmartDigitalTextbook(
   const completedActivityResponses = new Map<string, unknown>();
   const activityPageProgress = new Map<string, SmartTextbookActivity["pageProgress"]>();
   const guidedRepeatProgress = new Map<string, SmartTextbookActivity["guidedRepeatProgress"]>();
+  const activeTeachingSessions: SmartTextbookData["activeTeachingSessions"] = {};
 
   if (!options.trackingDisabled && options.tenantId) {
+    const { data: teachingLessons } = agentProfile && moduleIds.length
+      ? await admin
+          .from("learning_agent_lessons")
+          .select("id,module_id")
+          .eq("agent_profile_id", agentProfile.id)
+          .in("module_id", moduleIds)
+      : { data: [] as { id: string; module_id: string }[] };
+    const lessonModuleById = new Map((teachingLessons ?? []).map((lesson) => [
+      String(lesson.id),
+      String(lesson.module_id),
+    ]));
+    const teachingLessonIds = [...lessonModuleById.keys()];
+    const { data: activeSessionRows } = teachingLessonIds.length
+      ? await admin
+          .from("learning_agent_sessions")
+          .select("id,lesson_id,updated_at")
+          .eq("tenant_id", options.tenantId)
+          .eq("student_id", options.userId)
+          .eq("status", "active")
+          .in("lesson_id", teachingLessonIds)
+          .order("updated_at", { ascending: false })
+      : { data: [] as { id: string; lesson_id: string; updated_at: string }[] };
+    for (const session of activeSessionRows ?? []) {
+      const moduleId = lessonModuleById.get(String(session.lesson_id));
+      if (moduleId && !activeTeachingSessions[moduleId]) {
+        activeTeachingSessions[moduleId] = { id: String(session.id) };
+      }
+    }
+
     const activityIds = (activities ?? []).map((activity) => String(activity.id));
     const [
       { data: savedPreference },
@@ -556,6 +589,7 @@ export async function loadSmartDigitalTextbook(
     modules: mappedModules,
     preference,
     progress,
+    activeTeachingSessions,
   };
 }
 

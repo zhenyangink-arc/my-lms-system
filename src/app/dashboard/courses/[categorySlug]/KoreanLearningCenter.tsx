@@ -674,12 +674,14 @@ export function KoreanLearningCenter({
                                 return (
                                   <li key={chapter.id}>
                                     {chapterUnlocked ? (
-                                      <Link
+                                      <HangulLessonLaunchLink
                                         href={`${lessonHref}?chapter=${encodeURIComponent(chapter.slug)}`}
-                                        className="flex min-h-10 items-center gap-2 rounded-lg border border-transparent px-2.5 py-1.5 transition hover:border-[var(--border)] hover:bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                                        shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
+                                        locked={false}
+                                        className="flex min-h-11 items-center gap-2 rounded-lg border border-transparent px-2.5 py-1.5 transition hover:border-[var(--border)] hover:bg-[var(--card)]"
                                       >
                                         {chapterContent}
-                                      </Link>
+                                      </HangulLessonLaunchLink>
                                     ) : (
                                       <div
                                         className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 py-1.5 opacity-60"
@@ -858,9 +860,11 @@ export function KoreanLearningCenter({
                                 return (
                                   <li key={chapter.id}>
                                     {chapterUnlocked ? (
-                                      <Link
+                                      <HangulLessonLaunchLink
                                         href={`${lessonHref}?chapter=${encodeURIComponent(chapter.slug)}`}
-                                        className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold transition hover:bg-[var(--accent)]"
+                                        shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
+                                        locked={false}
+                                        className="flex min-h-11 items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold transition hover:bg-[var(--accent)]"
                                       >
                                         <span className="app-muted-text">
                                           {getChapterSequenceLabel(lessonChapters, chapterIndex)}
@@ -871,7 +875,7 @@ export function KoreanLearningCenter({
                                           className={chapterCompleted ? "shrink-0 -scale-x-100 text-[var(--status-success)]" : "shrink-0 -scale-x-100 text-[var(--support)]"}
                                           aria-label={chapterCompleted ? "已完成，已解锁" : "已解锁"}
                                         />
-                                      </Link>
+                                      </HangulLessonLaunchLink>
                                     ) : (
                                       <div className="flex min-h-10 items-center gap-2 rounded-lg px-2.5 py-2 text-xs font-bold opacity-55">
                                         <span>{getChapterSequenceLabel(lessonChapters, chapterIndex)}</span>
@@ -1176,13 +1180,15 @@ export function KoreanLearningCenter({
                                           return (
                                             <li key={chapter.id}>
                                               {chapterUnlocked ? (
-                                                <Link
+                                                <HangulLessonLaunchLink
                                                   href={`${lessonHref}?chapter=${encodeURIComponent(chapter.slug)}`}
+                                                  shouldEnterFullscreen={!isService && (item.lesson.slug === "hangul-introduction" || item.lesson.slug === "basic-pronunciation")}
+                                                  locked={false}
                                                   className="flex min-h-11 items-center gap-3 rounded-lg border p-2.5 transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
                                                   style={{ borderColor: "var(--border)", backgroundColor: "var(--surface-soft)" }}
                                                 >
                                                   {chapterContent}
-                                                </Link>
+                                                </HangulLessonLaunchLink>
                                               ) : (
                                                 <div
                                                   className="flex min-h-11 items-center gap-3 rounded-lg border p-2.5 opacity-70"

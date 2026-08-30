@@ -8,6 +8,7 @@ import {
   SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
   SMART_TEXTBOOK_SHARED_SKELETON,
 } from "../src/lib/smart-textbook-skeleton.ts";
+import { buildOrientationLearningTargets } from "../src/lib/smart-textbook-learning-targets.ts";
 
 const sourceUrl = new URL(
   "../src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx",
@@ -310,7 +311,7 @@ test("本课可调用表达由真实对话组驱动并保留共享骨架回退",
   assert.match(source, /aria-pressed=\{active\}/);
   assert.match(source, /playSceneDialogue/);
   assert.match(source, /const \[guidedDialogueIndex, setGuidedDialogueIndex\] = useState<number \| null>\(null\)/);
-  assert.match(source, /const playGuidedDialogueLine = \(index: number\) =>/);
+  assert.match(source, /const playGuidedDialogueLine = \(index: number, completionTargetKey\?: string\) =>/);
   assert.match(source, /hidden min-h-11 items-center gap-2[\s\S]*sm:flex/);
   assert.match(source, /locale === "ko-KR" \? "한 문장씩 따라 하기" : "逐句跟读"/);
   assert.match(source, /aria-current=\{activeLine \? "true" : undefined\}/);
@@ -916,4 +917,69 @@ test("临时韩语示范音发布为可替换的 R2 音频版本", async () => {
   assert.match(migration, /'sampleRateHz', 24000/);
   assert.match(migration, /17\.328.*14\.136/s);
   assert.match(migration, /'replaceableByHumanRecording', true/);
+});
+
+test("教学脚本可以定位当前步骤正文和数据库互动活动", async () => {
+  const source = await readFile(sourceUrl, "utf8");
+
+  assert.match(source, /missionPage === 0 \? "orientation:page:scene" : "orientation:page:diagnosis"/);
+  assert.match(source, /data-learning-target=\{`activity:\$\{activity\.id\}`\}/);
+  assert.match(source, /data-learning-target="scene:image"/);
+  assert.match(source, /data-learning-target="orientation:scene"/);
+  assert.match(source, /data-learning-target="orientation:phrases:play-all"/);
+  assert.match(source, /playSceneDialogue\("orientation:scene:audio"\)/);
+  assert.match(source, /playSceneDialogue\("orientation:phrases:play-all"\)/);
+  assert.match(source, /"orientation:phrases:follow"/);
+  assert.match(source, /onPlaybackComplete/);
+  assert.match(source, /eventType: "audio_completed"/);
+  assert.match(source, /utterance\.onend = \(\) => finish\(true\)/);
+  assert.match(source, /utterance\.onerror = \(\) => finish\(false\)/);
+  assert.match(source, /orientation:header:tab:/);
+  assert.match(source, /function visibleLearningTarget/);
+  assert.match(source, /getBoundingClientRect\(\)/);
+  assert.match(source, /requestAnimationFrame\(\(\) => window\.requestAnimationFrame/);
+  assert.match(source, /attempt < 6/);
+  assert.match(source, /function prepareLearningTarget/);
+  assert.match(source, /activeModule\.code === "listen_speak"/);
+  assert.match(source, /activeModule\.code === "read_write"/);
+  assert.match(source, /activeModule\.code === "review"/);
+  assert.match(source, /activeModule\.code === "patterns"/);
+  assert.match(source, /data-learning-target=\{`activity:\$\{dialogueRoleplayActivity\.id\}`\}/);
+});
+
+test("第一章课前导航提供页面、区域和具体对象三级讲解目标", () => {
+  const targets = buildOrientationLearningTargets({
+    content: {
+      dialogueGroups: [{
+        id: "greeting",
+        title: { "zh-CN": "问候" },
+        lines: [{ speaker: "王明", ko: "안녕하세요?" }],
+      }],
+    },
+    activities: [{
+      id: "11111111-1111-4111-8111-111111111111",
+      type: "single_choice",
+      prompt: { "zh-CN": "第一次见面应该说什么？" },
+    }],
+  });
+
+  assert.ok(targets.some((item) => item.key === "orientation:header" && item.scope === "region"));
+  assert.ok(targets.some((item) => item.key === "orientation:header:progress" && item.label.includes("学习完成度")));
+  assert.ok(targets.some((item) => item.key === "scene:image" && item.pageLabel.includes("情景与表达")));
+  assert.ok(targets.some((item) => item.key === "orientation:phrases:play-all" && item.supportsStudentAction));
+  assert.ok(targets.some((item) => item.key === "dialogue:greeting:0" && item.label.includes("안녕하세요?")));
+  assert.ok(targets.some((item) => item.key.startsWith("activity:") && item.pageLabel.includes("情景诊断")));
+});
+
+test("老师讲解指向由小默移动到学习目标旁提示", async () => {
+  const source = await readFile(sourceUrl, "utf8");
+  const styles = await readFile(new URL("../src/app/globals.css", import.meta.url), "utf8");
+
+  assert.match(source, /tutorCompanionTargetPosition/);
+  assert.match(source, /\/api\/learning-agent\/companions\/xiao-mo-pointing/);
+  assert.match(source, /课堂陪伴宠物小默正在提示学习位置/);
+  assert.match(source, /data-phase=\{tutorCompanion\.phase\}/);
+  assert.match(source, /prefers-reduced-motion: reduce/);
+  assert.match(styles, /\.xiao-mo-companion/);
+  assert.match(styles, /xiao-mo-completed/);
 });

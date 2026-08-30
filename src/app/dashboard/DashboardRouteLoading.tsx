@@ -74,3 +74,33 @@ export function StudentRouteLoading() {
     </div>
   );
 }
+
+export function StudentCourseRouteLoading() {
+  return (
+    <div
+      className="route-loading-shell fixed inset-0 z-50 flex min-h-[100dvh] items-center justify-center bg-[var(--background)] px-5 py-8 text-[var(--foreground)]"
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+    >
+      <div className="app-card w-full max-w-md rounded-[28px] border p-6 shadow-xl sm:p-8">
+        <p className="text-center text-lg font-bold">正在加载课程数据</p>
+        <p className="mt-2 text-center text-sm leading-6 text-[var(--foreground-secondary)]">
+          教材、教学脚本和学习进度准备完成后，会自动显示学习界面。
+        </p>
+        <div
+          className="mt-6 h-2 overflow-hidden rounded-full bg-[var(--border-subtle)]"
+          role="progressbar"
+          aria-label="课程数据加载进度"
+        >
+          <span className="route-loading-progress block h-full w-2/5 rounded-full bg-[var(--support)]" />
+        </div>
+        <div className="mt-5 grid grid-cols-3 gap-2 text-center text-xs font-semibold text-[var(--foreground-muted)]">
+          <span>读取章节</span>
+          <span>载入学习记录</span>
+          <span>准备界面</span>
+        </div>
+      </div>
+    </div>
+  );
+}

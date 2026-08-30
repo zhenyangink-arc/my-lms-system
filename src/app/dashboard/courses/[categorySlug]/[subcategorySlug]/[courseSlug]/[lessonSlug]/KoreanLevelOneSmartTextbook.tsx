@@ -37,12 +37,14 @@ import {
   Square,
   Trash2,
   Volume2,
+  VolumeX,
   X,
   XCircle,
 } from "lucide-react";
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
 
 import type {
   SmartLocale,
@@ -77,6 +79,17 @@ export type SmartTextbookShellProps = {
   trackingDisabled: boolean;
   completionHref?: string;
   completionLabel?: string;
+  /**
+   * Course-admin preview mode: walks the scripted teaching flow for this
+   * (possibly unpublished) script version instead of the published one, via
+   * /api/learning-agent/preview-respond. Nothing is persisted — no session,
+   * message, or attempt rows are written for these requests.
+   */
+  previewScriptVersionId?: string;
+  /** Jump a fresh preview session straight to this node instead of node 1. */
+  previewStartNodeKey?: string;
+  /** Open the 学习区 on this module instead of the first one, so it matches whichever module's script is being previewed. */
+  previewStartModuleIndex?: number;
 };
 
 type AnswerValue = unknown;
@@ -114,6 +127,14 @@ type TutorVisualCue = {
   durationMs?: number;
 };
 
+type TutorCompanionPosition = {
+  x: number;
+  y: number;
+  facing: "left" | "right";
+  targetKey: string;
+  phase: "travelling" | "waiting" | "completed";
+};
+
 type TutorCharacter = {
   kind?: "uply-teacher";
   pose?: "greeting" | "explaining" | "encouraging";
@@ -121,13 +142,73 @@ type TutorCharacter = {
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
   voiceRate?: number;
+  speechAssetId?: string;
 };
 
-const tutorCharacterImages: Record<NonNullable<TutorCharacter["pose"]>, string> = {
-  greeting: "/api/learning-agent/characters/greeting",
-  explaining: "/api/learning-agent/characters/explaining",
-  encouraging: "/api/learning-agent/characters/encouraging",
+type TutorSpeechCue = {
+  startMs: number;
+  endMs: number;
+  charStart: number;
+  charEnd: number;
+  text: string;
 };
+
+type TutorSpeechManifest = {
+  audioUrl: string;
+  durationMs: number;
+  cues: TutorSpeechCue[];
+  voiceManifest: Record<string, unknown>;
+};
+
+type TutorSpeechStatus = "idle" | "loading" | "playing" | "paused" | "ended" | "error";
+
+const tutorCharacterImages: Record<NonNullable<TutorCharacter["pose"]>, { idle: string; speaking: string; blink: string }> = {
+  greeting: {
+    idle: "/api/learning-agent/characters/greeting-idle",
+    speaking: "/api/learning-agent/characters/greeting-speaking",
+    blink: "/api/learning-agent/characters/greeting-blink",
+  },
+  explaining: {
+    idle: "/api/learning-agent/characters/explaining-idle",
+    speaking: "/api/learning-agent/characters/explaining-speaking",
+    blink: "/api/learning-agent/characters/explaining-blink",
+  },
+  encouraging: {
+    idle: "/api/learning-agent/characters/encouraging-idle",
+    speaking: "/api/learning-agent/characters/encouraging-speaking",
+    blink: "/api/learning-agent/characters/encouraging-blink",
+  },
+};
+
+const tutorCompanionImage = "/api/learning-agent/companions/xiao-mo-pointing";
+
+function tutorCompanionTargetPosition(target: HTMLElement, targetKey: string): TutorCompanionPosition {
+  const rect = target.getBoundingClientRect();
+  const learningArea = target.closest<HTMLElement>("[data-learning-area-hidden]");
+  const bounds = learningArea?.getBoundingClientRect() ?? {
+    left: 0,
+    right: window.innerWidth,
+    top: 0,
+    bottom: window.innerHeight,
+  };
+  const compact = window.innerWidth < 640;
+  const width = compact ? 76 : 104;
+  const height = compact ? 78 : 106;
+  const gap = 8;
+  const canStandLeft = rect.left - bounds.left >= width + gap;
+  const x = canStandLeft
+    ? rect.left - width - gap
+    : Math.min(bounds.right - width - gap, Math.max(bounds.left + gap, rect.right + gap));
+  const targetCenterY = rect.top + Math.min(rect.height / 2, 72);
+  const y = Math.max(bounds.top + gap, Math.min(bounds.bottom - height - gap, targetCenterY - height / 2));
+  return {
+    x: Math.round(x),
+    y: Math.round(y),
+    facing: canStandLeft ? "right" : "left",
+    targetKey,
+    phase: "waiting",
+  };
+}
 
 type TutorInteraction = {
   kind?: "single_choice";
@@ -407,6 +488,41 @@ function TypewriterText({ text, speed = 52, onProgress, onComplete }: { text: st
   return <span>{text.slice(0, visibleLength)}{visibleLength < text.length && <span className="ml-0.5 inline-block h-4 w-px animate-pulse bg-current align-middle" aria-hidden="true" />}</span>;
 }
 
+/**
+ * Renders the currently-revealed prefix of the tutor's scripted line with its
+ * bold/underline/color formatting attached per character, so the existing
+ * character-by-character reveal keeps its exact timing while formatting
+ * appears progressively along with the text. Falls back to the plain string
+ * whenever the rich buffer is missing or its prefix doesn't reconstruct the
+ * same text (e.g. a non-scripted status message reusing the same state).
+ */
+function renderRichTutorText(visibleText: string, rich: RichChar[] | null): ReactNode {
+  if (!visibleText) return visibleText;
+  if (!rich || rich.length < visibleText.length) return visibleText;
+  const visible = rich.slice(0, visibleText.length);
+  if (visible.map((item) => item.char).join("") !== visibleText) return visibleText;
+  const runs: Array<{ text: string; bold: boolean; underline: boolean; color: RichChar["color"] }> = [];
+  for (const item of visible) {
+    const last = runs[runs.length - 1];
+    if (last && last.bold === item.bold && last.underline === item.underline && last.color === item.color) {
+      last.text += item.char;
+    } else {
+      runs.push({ text: item.char, bold: item.bold, underline: item.underline, color: item.color });
+    }
+  }
+  return runs.map((run, index) => (!run.bold && !run.underline && !run.color)
+    ? run.text
+    : (
+      <span
+        key={index}
+        className={`${run.bold ? "font-bold" : ""} ${run.underline ? "underline" : ""}`}
+        style={run.color ? { color: RICH_TEXT_COLOR_VALUES[run.color] } : undefined}
+      >
+        {run.text}
+      </span>
+    ));
+}
+
 function PatternConversationPractice({ activity, audioAssets, locale, trackingDisabled, onActivityCompleted }: {
   activity: SmartTextbookActivity;
   audioAssets: SmartTextbookMediaAsset[];
@@ -605,8 +721,11 @@ function speakKorean(text: string, onComplete?: () => void) {
   window.speechSynthesis.speak(utterance);
 }
 
-function speakTutorCharacterLine(text: string, character: TutorCharacter | null) {
-  if (!text.trim() || character?.voiceEnabled === false || !("speechSynthesis" in window)) return;
+function speakTutorCharacterLine(text: string, character: TutorCharacter | null, onStatusChange?: (status: "playing" | "ended" | "error") => void) {
+  if (!text.trim() || character?.voiceEnabled === false || !("speechSynthesis" in window)) {
+    onStatusChange?.("ended");
+    return;
+  }
   const koreanCharacterCount = text.match(/[가-힣]/g)?.length ?? 0;
   const chineseCharacterCount = text.match(/[\u3400-\u9fff]/g)?.length ?? 0;
   const detectedLanguage: SmartLocale = koreanCharacterCount > chineseCharacterCount ? "ko-KR" : "zh-CN";
@@ -623,8 +742,35 @@ function speakTutorCharacterLine(text: string, character: TutorCharacter | null)
   utterance.rate = Math.max(0.75, Math.min(1.25, Number(character?.voiceRate) || 1));
   utterance.pitch = 1.04;
   utterance.voice = preferredFemaleVoice ?? languageVoices[0] ?? null;
+  utterance.onstart = () => onStatusChange?.("playing");
+  utterance.onend = () => onStatusChange?.("ended");
+  utterance.onerror = () => onStatusChange?.("error");
   window.speechSynthesis.cancel();
   window.speechSynthesis.speak(utterance);
+}
+
+function parseTutorSpeechManifest(value: unknown): TutorSpeechManifest | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  if (typeof record.audioUrl !== "string" || !record.audioUrl || !Array.isArray(record.cues)) return null;
+  const cues = record.cues.flatMap((cue) => {
+    if (!cue || typeof cue !== "object" || Array.isArray(cue)) return [];
+    const item = cue as Record<string, unknown>;
+    const startMs = Number(item.startMs);
+    const endMs = Number(item.endMs);
+    const charStart = Number(item.charStart);
+    const charEnd = Number(item.charEnd);
+    if (![startMs, endMs, charStart, charEnd].every(Number.isFinite)) return [];
+    return [{ startMs, endMs, charStart, charEnd, text: String(item.text ?? "") }];
+  });
+  return {
+    audioUrl: record.audioUrl,
+    durationMs: Math.max(1, Number(record.durationMs) || 1),
+    cues,
+    voiceManifest: record.voiceManifest && typeof record.voiceManifest === "object" && !Array.isArray(record.voiceManifest)
+      ? record.voiceManifest as Record<string, unknown>
+      : {},
+  };
 }
 
 function speakKoreanSequence(
@@ -633,6 +779,7 @@ function speakKoreanSequence(
     isCurrent: () => boolean;
     onStep: (index: number) => void;
     onComplete: () => void;
+    onPlaybackComplete?: () => void;
   },
 ) {
   if (!("speechSynthesis" in window)) {
@@ -645,12 +792,14 @@ function speakKoreanSequence(
     return;
   }
   window.speechSynthesis.cancel();
+  let playbackFailed = false;
 
   const speakNext = (index: number) => {
     if (!options.isCurrent()) return;
     const text = sequence[index];
     if (!text) {
       options.onComplete();
+      if (!playbackFailed) options.onPlaybackComplete?.();
       return;
     }
     options.onStep(index);
@@ -658,7 +807,10 @@ function speakKoreanSequence(
     utterance.lang = "ko-KR";
     utterance.rate = 0.82;
     utterance.onend = () => speakNext(index + 1);
-    utterance.onerror = () => speakNext(index + 1);
+    utterance.onerror = () => {
+      playbackFailed = true;
+      speakNext(index + 1);
+    };
     window.speechSynthesis.speak(utterance);
   };
 
@@ -795,7 +947,7 @@ function ListenSpeakLearningPanel({
   return (
     <section className="space-y-5" aria-label={locale === "ko-KR" ? "듣기 전 준비" : "听前准备"}>
       {sceneImage?.url && (
-        <div className="relative aspect-[5/2] min-h-[270px] overflow-hidden rounded-[22px] bg-[var(--surface-soft)]">
+        <div data-learning-target="scene:image" tabIndex={-1} className="relative aspect-[5/2] min-h-[270px] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] outline-none">
           <Image src={sceneImage.url} alt="" fill sizes="(min-width: 1024px) 1100px, 100vw" className="object-cover" priority />
           <div className="absolute inset-x-0 bottom-0 h-2/5 bg-gradient-to-t from-black/75 to-transparent" aria-hidden="true" />
           {moduleHeader && <div className="absolute right-6 top-5 flex items-baseline gap-2 text-white drop-shadow"><span className="text-base font-bold">{moduleHeader.title}</span><span className="text-xs font-semibold">{moduleHeader.stepLabel} · {locale === "ko-KR" ? "예상" : "预计"} {moduleHeader.minutes} {locale === "ko-KR" ? "분" : "分钟"}</span></div>}
@@ -1070,7 +1222,7 @@ function ContentRenderer({
     speakWord(0);
   };
 
-  const playSceneDialogue = () => {
+  const playSceneDialogue = (completionTargetKey?: string) => {
     const runId = sceneDialogueRunRef.current + 1;
     sceneDialogueRunRef.current = runId;
     if (sceneDialogueHideTimerRef.current) {
@@ -1089,10 +1241,13 @@ function ContentRenderer({
           if (sceneDialogueRunRef.current === runId) setSceneDialogueStep(0);
         }, 5000);
       },
+      onPlaybackComplete: completionTargetKey
+        ? () => onLearningEvent?.({ eventType: "audio_completed", targetKey: completionTargetKey })
+        : undefined,
     });
   };
 
-  const playGuidedDialogueLine = (index: number) => {
+  const playGuidedDialogueLine = (index: number, completionTargetKey?: string) => {
     const nextIndex = Math.min(Math.max(index, 0), Math.max(sceneDialogueLines.length - 1, 0));
     const text = sceneDialogueLines[nextIndex];
     if (!text) return;
@@ -1113,11 +1268,14 @@ function ContentRenderer({
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = "ko-KR";
     utterance.rate = 0.78;
-    const finish = () => {
+    const finish = (completed: boolean) => {
       if (sceneDialogueRunRef.current === runId) setSceneDialoguePlaying(false);
+      if (completed && completionTargetKey) {
+        onLearningEvent?.({ eventType: "audio_completed", targetKey: completionTargetKey });
+      }
     };
-    utterance.onend = finish;
-    utterance.onerror = finish;
+    utterance.onend = () => finish(true);
+    utterance.onerror = () => finish(false);
     window.speechSynthesis.speak(utterance);
   };
 
@@ -1133,23 +1291,25 @@ function ContentRenderer({
     return (
       <div className={sceneImage ? "" : "mt-6"}>
         {sceneImage?.url && (
-          <figure data-learning-target="scene:image" tabIndex={-1} className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] outline-none sm:aspect-[5/2]">
-            <Image
-              src={sceneImage.url}
-              alt={sceneImage.altText[locale]}
-              fill
-              unoptimized
-              priority
-              sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
-              className={`object-cover transition-transform duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none ${
-                sceneDialoguePlaying
-                  ? sceneDialogueStep % 2 === 1
-                    ? "translate-x-[1%] scale-[1.03]"
-                    : "-translate-x-[1%] scale-[1.03]"
-                  : "translate-x-0 scale-100"
-              }`}
-            />
-            <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
+          <figure data-learning-target="orientation:scene" tabIndex={-1} className="relative mb-5 aspect-[4/3] overflow-hidden rounded-[22px] bg-[var(--surface-soft)] outline-none sm:aspect-[5/2]">
+            <div data-learning-target="scene:image" tabIndex={-1} className="absolute inset-0 outline-none">
+              <Image
+                src={sceneImage.url}
+                alt={sceneImage.altText[locale]}
+                fill
+                unoptimized
+                priority
+                sizes="(min-width: 1280px) 70vw, (min-width: 1024px) 75vw, 100vw"
+                className={`object-cover transition-transform duration-700 ease-out motion-reduce:transform-none motion-reduce:transition-none ${
+                  sceneDialoguePlaying
+                    ? sceneDialogueStep % 2 === 1
+                      ? "translate-x-[1%] scale-[1.03]"
+                      : "-translate-x-[1%] scale-[1.03]"
+                    : "translate-x-0 scale-100"
+                }`}
+              />
+              <span className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/10 to-transparent" aria-hidden="true" />
+            </div>
             {moduleHeader && (
               <div className="absolute right-5 top-4 z-10 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:right-7 sm:top-6">
                 <CardTitleWithHint
@@ -1174,7 +1334,8 @@ function ContentRenderer({
             )}
             <button
               type="button"
-              onClick={playSceneDialogue}
+              data-learning-target="orientation:scene:audio"
+              onClick={() => playSceneDialogue("orientation:scene:audio")}
               aria-label={locale === "ko-KR" ? "장면 대화 재생" : "播放情景对话"}
               title={locale === "ko-KR" ? "장면 대화 재생" : "播放情景对话"}
               className="absolute left-5 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-white/95 text-[var(--primary)] shadow-lg transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] sm:left-7 sm:top-6"
@@ -1224,20 +1385,22 @@ function ContentRenderer({
               </button>
             )}
             <figcaption className="absolute inset-x-0 bottom-0 z-10 max-w-2xl p-5 text-white [text-shadow:0_1px_3px_rgb(0_0_0_/_0.9)] sm:p-7 lg:p-8">
-              <CardTitleWithHint
-                title={node.title[locale]}
-                description={(
-                  <span className="space-y-2">
-                    {String(lead[locale] ?? "") && <span className="block">{String(lead[locale])}</span>}
-                    {String(coach[locale] ?? "") && <span className="block">{String(coach[locale])}</span>}
-                  </span>
-                )}
-                headingLevel={4}
-                hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
-                tone="inverse"
-                titleClassName="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]"
-              />
-              <p className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-white/90">
+              <div data-learning-target="orientation:scene:title" tabIndex={-1} className="w-fit outline-none">
+                <CardTitleWithHint
+                  title={node.title[locale]}
+                  description={(
+                    <span className="space-y-2">
+                      {String(lead[locale] ?? "") && <span className="block">{String(lead[locale])}</span>}
+                      {String(coach[locale] ?? "") && <span className="block">{String(coach[locale])}</span>}
+                    </span>
+                  )}
+                  headingLevel={4}
+                  hintLabel={locale === "ko-KR" ? "상세 설명 보기" : "查看详细说明"}
+                  tone="inverse"
+                  titleClassName="text-2xl font-bold leading-tight tracking-tight sm:text-[28px]"
+                />
+              </div>
+              <p data-learning-target="orientation:scene:meta" tabIndex={-1} className="mt-3 flex w-fit flex-wrap items-center gap-x-3 gap-y-1 text-sm font-semibold text-white/90 outline-none">
                 <span>30 {locale === "ko-KR" ? "초 연속 말하기" : "秒连续表达"}</span>
                 <span aria-hidden="true">·</span>
                 <span>{targets.length} {locale === "ko-KR" ? "가지 의사소통 기능" : "项交流功能"}</span>
@@ -1245,7 +1408,7 @@ function ContentRenderer({
             </figcaption>
           </figure>
         )}
-        <section className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 sm:p-6">
+        <section data-learning-target="orientation:phrases" tabIndex={-1} className="rounded-[22px] border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-5 outline-none sm:p-6">
           <div className="flex items-start justify-between gap-4">
             <CardTitleWithHint
               title={t.phrases}
@@ -1258,7 +1421,8 @@ function ContentRenderer({
             <div className="flex shrink-0 items-center gap-2">
               <button
                 type="button"
-                onClick={() => playGuidedDialogueLine(guidedDialogueIndex === null || guidedDialogueIndex >= sceneDialogueLines.length - 1 ? 0 : guidedDialogueIndex + 1)}
+                data-learning-target="orientation:phrases:follow"
+                onClick={() => playGuidedDialogueLine(guidedDialogueIndex === null || guidedDialogueIndex >= sceneDialogueLines.length - 1 ? 0 : guidedDialogueIndex + 1, "orientation:phrases:follow")}
                 className="hidden min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none sm:flex"
               >
                 <Mic size={17} aria-hidden="true" />
@@ -1272,7 +1436,8 @@ function ContentRenderer({
               </button>
               <button
                 type="button"
-                onClick={playSceneDialogue}
+                data-learning-target="orientation:phrases:play-all"
+                onClick={() => playSceneDialogue("orientation:phrases:play-all")}
                 className="flex min-h-11 shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-xs font-bold text-[var(--primary)] transition hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] motion-reduce:transition-none"
                 aria-label={locale === "ko-KR" ? "현재 대화 전체 재생" : "播放当前整组对话"}
               >
@@ -1290,6 +1455,7 @@ function ContentRenderer({
                 <button
                   key={String(group.id ?? index)}
                   type="button"
+                  data-learning-target={`orientation:phrases:group:${String(group.id ?? index)}`}
                   aria-pressed={active}
                   onClick={() => {
                     sceneDialogueRunRef.current += 1;
@@ -1481,7 +1647,7 @@ function ContentRenderer({
               <CardTitleWithHint title={currentSceneTitle} description={currentSceneContext} headingLevel={4} titleClassName="text-lg font-bold text-[var(--foreground)]" hintLabel={locale === "ko-KR" ? "장면 설명 보기" : "查看场景说明"} />
               <div className="flex shrink-0 items-center gap-2">
                 <button type="button" onClick={() => playGuidedDialogueLine(guidedDialogueIndex === null || guidedDialogueIndex >= sceneDialogueLines.length - 1 ? 0 : guidedDialogueIndex + 1)} className="inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Mic size={16} aria-hidden="true" />{guidedDialogueIndex === null ? locale === "ko-KR" ? "한 문장씩" : "逐句跟读" : guidedDialogueIndex >= sceneDialogueLines.length - 1 ? locale === "ko-KR" ? "다시" : "重新跟读" : locale === "ko-KR" ? "다음 문장" : "下一句"}</button>
-                <button type="button" onClick={playSceneDialogue} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-xs font-bold text-[var(--primary)] hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Volume2 size={17} aria-hidden="true" />{locale === "ko-KR" ? "전체 듣기" : "整段播放"}</button>
+                <button type="button" onClick={() => playSceneDialogue()} className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-[var(--accent)] px-3 text-xs font-bold text-[var(--primary)] hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"><Volume2 size={17} aria-hidden="true" />{locale === "ko-KR" ? "전체 듣기" : "整段播放"}</button>
                 <span className="rounded-full bg-[var(--surface-soft)] px-3 py-1.5 text-xs font-bold tabular-nums text-[var(--foreground-secondary)]">{Math.max(guidedDialogueIndex ?? 0, 0) + 1} / {activeDialogueGroupLines.length}</span>
               </div>
             </div>
@@ -1563,7 +1729,7 @@ function ContentRenderer({
                 {(dialogueScenes.length > 0 || grammarCards.length > 0) && (
                   <button
                     type="button"
-                    onClick={playSceneDialogue}
+                    onClick={() => playSceneDialogue()}
                     aria-label={grammarCards.length > 0
                       ? locale === "ko-KR" ? "문법 예문 연속 재생" : "连续播放语法例句"
                       : locale === "ko-KR" ? "현재 장면 대화 재생" : "播放当前场景对话"}
@@ -2778,7 +2944,7 @@ function ReadWriteLearningPanel({
     return (
       <section className="mt-6 overflow-hidden rounded-[24px] border border-[var(--border-subtle)] bg-[var(--surface-soft)]">
         <div className="grid min-h-[520px] lg:grid-cols-[minmax(280px,.78fr)_minmax(0,1.22fr)]">
-          <div className="relative min-h-[320px] overflow-hidden bg-[color-mix(in_srgb,var(--primary)_8%,var(--surface-soft))] lg:min-h-full">
+          <div data-learning-target="scene:image" tabIndex={-1} className="relative min-h-[320px] overflow-hidden bg-[color-mix(in_srgb,var(--primary)_8%,var(--surface-soft))] outline-none lg:min-h-full">
             {sceneImage?.url ? (
               <Image
                 src={sceneImage.url}
@@ -3998,15 +4164,27 @@ function Activity({
   );
 }
 
-export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel }: SmartTextbookShellProps) {
+export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex }: SmartTextbookShellProps) {
+  const isPreviewMode = Boolean(previewScriptVersionId);
   const textbookRef = useRef<HTMLDivElement>(null);
   const tutorWindowRef = useRef<HTMLDivElement>(null);
   const tutorAnswerDialogRef = useRef<HTMLElement>(null);
   const tutorContinueButtonRef = useRef<HTMLButtonElement>(null);
   const tutorAnswerWasOpenRef = useRef(false);
   const tutorDragRef = useRef<{ pointerId: number; offsetX: number; offsetY: number } | null>(null);
+  const tutorAudioRef = useRef<HTMLAudioElement | null>(null);
+  const tutorSpeechPlaybackRef = useRef<{ text: string; manifest: TutorSpeechManifest } | null>(null);
+  const tutorRequestAbortRef = useRef<AbortController | null>(null);
+  const tutorPausedRef = useRef(false);
+  const tutorSessionIdsByModuleRef = useRef<Record<string, string>>(
+    Object.fromEntries(Object.entries(textbook.activeTeachingSessions).map(([moduleId, session]) => [moduleId, session.id])),
+  );
+  const tutorVisitedModuleIdsRef = useRef(new Set(Object.keys(textbook.activeTeachingSessions)));
+  const tutorCompanionTrackingFrameRef = useRef<number | null>(null);
   const textbookViewStateKey = `smart-textbook-view:${textbook.id}`;
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(() => (isPreviewMode && typeof previewStartModuleIndex === "number"
+    ? Math.max(0, Math.min(textbook.modules.length - 1, previewStartModuleIndex))
+    : 0));
   const [missionPage, setMissionPage] = useState<0 | 1 | 2 | 3>(0);
   const [patternPage, setPatternPage] = useState<0 | 1 | 2>(0);
   const [activeGrammarPracticeIndex, setActiveGrammarPracticeIndex] = useState(0);
@@ -4035,13 +4213,20 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     Object.fromEntries(textbook.modules.flatMap((module) => module.nodes).flatMap((node) => node.activities).filter((activity) => activity.completed && activity.response !== null).map((activity) => [activity.id, activity.response])),
   );
   const [tutorText, setTutorText] = useState("");
+  const [tutorTextRich, setTutorTextRich] = useState<RichChar[] | null>(null);
   const [tutorDisplay, setTutorDisplay] = useState<TutorDisplay | null>(null);
   const [tutorTask, setTutorTask] = useState<TutorTask | null>(null);
   const [tutorCharacter, setTutorCharacter] = useState<TutorCharacter | null>();
   const [tutorTaskCompleted, setTutorTaskCompleted] = useState(false);
   const [tutorInput, setTutorInput] = useState("");
-  const [tutorSessionId, setTutorSessionId] = useState<string>();
+  const [tutorSessionId, setTutorSessionId] = useState<string | undefined>(
+    () => tutorSessionIdsByModuleRef.current[textbook.modules[0]?.id ?? ""],
+  );
+  const [tutorHasPreviousSession, setTutorHasPreviousSession] = useState(
+    () => tutorVisitedModuleIdsRef.current.has(textbook.modules[0]?.id ?? ""),
+  );
   const [tutorStarted, setTutorStarted] = useState(false);
+  const [tutorPaused, setTutorPaused] = useState(false);
   const [tutorStatus, setTutorStatus] = useState<"idle" | "thinking" | "streaming" | "error">("idle");
   const [tutorQuestionOptions, setTutorQuestionOptions] = useState<string[]>([]);
   const [tutorInteraction, setTutorInteraction] = useState<TutorInteraction | null>(null);
@@ -4049,8 +4234,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorSelectedAnswer, setTutorSelectedAnswer] = useState("");
   const [tutorAnswerCorrect, setTutorAnswerCorrect] = useState<boolean | null>(null);
   const [tutorContinueLabel, setTutorContinueLabel] = useState("");
+  const [tutorAutoContinue, setTutorAutoContinue] = useState(false);
+  const tutorAutoContinuingRef = useRef(false);
   const [tutorTerminal, setTutorTerminal] = useState(false);
   const [tutorAction, setTutorAction] = useState<string | null>(null);
+  const [tutorSpeechStatus, setTutorSpeechStatus] = useState<TutorSpeechStatus>("idle");
+  const [tutorSpeechMuted, setTutorSpeechMuted] = useState(false);
+  const [tutorCompanion, setTutorCompanion] = useState<TutorCompanionPosition | null>(null);
   const [learningAreaManuallyHidden, setLearningAreaManuallyHidden] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [preferenceError, setPreferenceError] = useState("");
@@ -4102,7 +4292,27 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     ? `/dashboard/assignments/korean/${encodeURIComponent(textbook.chapter.chapterTestSlug)}`
     : null;
   const isLastModule = activeIndex === textbook.modules.length - 1;
-  const showTutorAnswerDialog = tutorStarted && tutorAwaitingAnswer && tutorQuestionOptions.length > 0;
+  const tutorSpeechInProgress = tutorSpeechStatus === "loading"
+    || tutorSpeechStatus === "playing"
+    || tutorSpeechStatus === "paused";
+  const tutorContinueReady = tutorStarted
+    && !tutorTerminal
+    && !tutorPaused
+    && tutorStatus !== "thinking"
+    && tutorStatus !== "streaming"
+    && !tutorSpeechInProgress
+    && !tutorAwaitingAnswer
+    && !(tutorTask?.required && !tutorTaskCompleted);
+  useEffect(() => {
+    if (!isPreviewMode || !tutorAutoContinue || !tutorContinueReady || tutorAutoContinuingRef.current) return;
+    tutorAutoContinuingRef.current = true;
+    void tutorReply("ready");
+  }, [isPreviewMode, tutorAutoContinue, tutorContinueReady]);
+  const showTutorAnswerDialog = tutorStarted
+    && !tutorPaused
+    && tutorAwaitingAnswer
+    && tutorQuestionOptions.length > 0
+    && !tutorSpeechInProgress;
   const tutorFocusMode = shouldUseSmartTextbookTeachingFocusMode({
     tutorStarted,
     answerRequired: showTutorAnswerDialog,
@@ -4133,6 +4343,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     : 0;
 
   useEffect(() => {
+    if (isPreviewMode) {
+      setViewStateReady(true);
+      return;
+    }
     try {
       const saved = JSON.parse(window.sessionStorage.getItem(textbookViewStateKey) ?? "null") as { activeIndex?: number; missionPage?: number; patternPage?: number } | null;
       if (saved && Number.isInteger(saved.activeIndex) && Number(saved.activeIndex) >= 0 && Number(saved.activeIndex) < textbook.modules.length) {
@@ -4144,22 +4358,33 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       window.sessionStorage.removeItem(textbookViewStateKey);
     }
     setViewStateReady(true);
-  }, [textbook.modules.length, textbookViewStateKey]);
+  }, [isPreviewMode, textbook.modules.length, textbookViewStateKey]);
 
   useEffect(() => {
-    if (!viewStateReady) return;
+    if (!viewStateReady || isPreviewMode) return;
     window.sessionStorage.setItem(textbookViewStateKey, JSON.stringify({ activeIndex, missionPage, patternPage }));
-  }, [activeIndex, missionPage, patternPage, textbookViewStateKey, viewStateReady]);
+  }, [activeIndex, isPreviewMode, missionPage, patternPage, textbookViewStateKey, viewStateReady]);
 
   useEffect(() => {
+    tutorRequestAbortRef.current?.abort();
+    tutorRequestAbortRef.current = null;
+    tutorPausedRef.current = false;
+    tutorAudioRef.current?.pause();
+    tutorAudioRef.current = null;
+    tutorSpeechPlaybackRef.current = null;
+    setTutorSpeechStatus("idle");
     setTutorText("");
+    setTutorTextRich(null);
     setTutorDisplay(null);
     setTutorTask(null);
     setTutorCharacter(undefined);
     setTutorTaskCompleted(false);
     setTutorInput("");
-    setTutorSessionId(undefined);
+    const savedTutorSessionId = tutorSessionIdsByModuleRef.current[activeModule?.id ?? ""];
+    setTutorSessionId(savedTutorSessionId);
+    setTutorHasPreviousSession(tutorVisitedModuleIdsRef.current.has(activeModule?.id ?? ""));
     setTutorStarted(false);
+    setTutorPaused(false);
     setTutorStatus("idle");
     setTutorQuestionOptions([]);
     setTutorInteraction(null);
@@ -4171,6 +4396,16 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
   }, [activeModule?.id]);
+
+  useEffect(() => {
+    if (tutorAudioRef.current) tutorAudioRef.current.muted = tutorSpeechMuted;
+  }, [tutorSpeechMuted]);
+
+  useEffect(() => () => {
+    tutorRequestAbortRef.current?.abort();
+    tutorAudioRef.current?.pause();
+    window.speechSynthesis?.cancel();
+  }, []);
 
   useEffect(() => {
     if (!showTutorAnswerDialog) {
@@ -4228,15 +4463,130 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     });
   }
 
+  function stopTutorSpeech(nextStatus: TutorSpeechStatus = "idle") {
+    const audio = tutorAudioRef.current;
+    if (audio) {
+      audio.onpause = null;
+      audio.onplaying = null;
+      audio.ontimeupdate = null;
+      audio.onended = null;
+      audio.onerror = null;
+      audio.pause();
+    }
+    tutorAudioRef.current = null;
+    setTutorSpeechStatus(nextStatus);
+  }
+
+  function playTutorSpeech(text: string, manifest: TutorSpeechManifest) {
+    stopTutorSpeech("loading");
+    tutorSpeechPlaybackRef.current = { text, manifest };
+    const audio = new Audio(manifest.audioUrl);
+    audio.preload = "auto";
+    audio.muted = tutorSpeechMuted;
+    tutorAudioRef.current = audio;
+    audio.ontimeupdate = () => {
+      const currentMs = audio.currentTime * 1000;
+      const activeCue = manifest.cues.findLast((cue) => cue.startMs <= currentMs);
+      const linearCharacterEnd = Math.round((currentMs / Math.max(manifest.durationMs, 1)) * text.length);
+      const characterEnd = activeCue?.charEnd ?? linearCharacterEnd;
+      setTutorText(text.slice(0, Math.max(0, Math.min(text.length, characterEnd))));
+    };
+    audio.onplaying = () => setTutorSpeechStatus("playing");
+    audio.onpause = () => {
+      if (!audio.ended) setTutorSpeechStatus("paused");
+    };
+    audio.onended = () => {
+      setTutorText(text);
+      setTutorSpeechStatus("ended");
+    };
+    audio.onerror = () => {
+      setTutorText(text);
+      setTutorSpeechStatus("error");
+    };
+    if (tutorPausedRef.current) {
+      setTutorText(text);
+      setTutorSpeechStatus("paused");
+    } else {
+      void audio.play().catch(() => setTutorSpeechStatus("paused"));
+    }
+  }
+
+  function toggleTutorSpeech() {
+    const audio = tutorAudioRef.current;
+    if (!audio) return;
+    if (audio.paused) void audio.play().catch(() => setTutorSpeechStatus("paused"));
+    else audio.pause();
+  }
+
+  function replayTutorSpeech() {
+    const playback = tutorSpeechPlaybackRef.current;
+    if (!playback) return;
+    setTutorText("");
+    setTutorTextRich(null);
+    playTutorSpeech(playback.text, playback.manifest);
+  }
+
+  function pauseTutorLesson() {
+    if (!tutorStarted || tutorPaused) return;
+    tutorPausedRef.current = true;
+    setTutorPaused(true);
+    if (tutorAudioRef.current && !tutorAudioRef.current.paused) tutorAudioRef.current.pause();
+    window.speechSynthesis?.pause();
+  }
+
+  function resumeTutorLesson() {
+    if (!tutorStarted || !tutorPaused) return;
+    tutorPausedRef.current = false;
+    setTutorPaused(false);
+    const audio = tutorAudioRef.current;
+    if (audio?.paused && !audio.ended) {
+      void audio.play().catch(() => setTutorSpeechStatus("paused"));
+    }
+    window.speechSynthesis?.resume();
+  }
+
+  function exitTutorLesson() {
+    tutorRequestAbortRef.current?.abort();
+    tutorRequestAbortRef.current = null;
+    tutorPausedRef.current = false;
+    stopTutorSpeech("idle");
+    tutorSpeechPlaybackRef.current = null;
+    window.speechSynthesis?.cancel();
+    setTutorText("");
+    setTutorTextRich(null);
+    setTutorDisplay(null);
+    setTutorTask(null);
+    setTutorCharacter(undefined);
+    setTutorTaskCompleted(false);
+    setTutorInput("");
+    setTutorStarted(false);
+    setTutorPaused(false);
+    setTutorStatus("idle");
+    setTutorQuestionOptions([]);
+    setTutorInteraction(null);
+    setTutorAwaitingAnswer(false);
+    setTutorSelectedAnswer("");
+    setTutorAnswerCorrect(null);
+    setTutorContinueLabel("");
+    setTutorTerminal(false);
+    setTutorAction(null);
+    setLearningAreaManuallyHidden(false);
+  }
+
   async function tutorReply(
     intent: "explain" | "hint" | "example" | "roleplay" | "ask" | "ready" | "answer",
     answer?: string,
+    restart = false,
   ) {
-    if (tutorStatus === "thinking" || tutorStatus === "streaming") return;
+    if (tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming") return;
     const requestIntent = intent === "explain" ? "start" : intent === "roleplay" ? "example" : intent;
     if (!textbook.agent) {
       setTutorStatus("error");
       setTutorText(locale === "ko-KR" ? "이 교재에 연결된 과정 선생님이 아직 없습니다." : "本教材尚未绑定课程老师。");
+      return;
+    }
+    if (isPreviewMode && intent === "ask") {
+      setTutorText(locale === "ko-KR" ? "미리보기 모드에서는 자유 질문을 지원하지 않습니다." : "预览模式不支持自由提问，仅用于走查已编排的教学流程。");
       return;
     }
     const message = intent === "ask" ? tutorInput.trim() : undefined;
@@ -4247,35 +4597,63 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
     setTutorStatus("thinking");
     setTutorText("");
+    setTutorTextRich(null);
+    stopTutorSpeech("idle");
+    tutorSpeechPlaybackRef.current = null;
     window.speechSynthesis?.cancel();
     if (intent !== "answer") {
       setTutorSelectedAnswer("");
       setTutorAnswerCorrect(null);
     }
     if (intent === "ask") setTutorInput("");
+    const requestAbortController = new AbortController();
+    tutorRequestAbortRef.current?.abort();
+    tutorRequestAbortRef.current = requestAbortController;
     try {
-      const response = await fetch("/api/learning-agent/respond", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          textbookId: textbook.id,
-          moduleId: activeModule.id,
-          agentCode: textbook.agent.code,
-          sessionId: tutorSessionId,
-          intent: requestIntent,
-          locale,
-          supportMode,
-          message,
-          answer,
-        }),
-      });
+      const response = isPreviewMode
+        ? await fetch("/api/learning-agent/preview-respond", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: requestAbortController.signal,
+            body: JSON.stringify({
+              scriptVersionId: previewScriptVersionId,
+              sessionToken: tutorSessionId,
+              restart,
+              intent: requestIntent,
+              locale,
+              answer,
+              startNodeKey: previewStartNodeKey,
+            }),
+          })
+        : await fetch("/api/learning-agent/respond", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            signal: requestAbortController.signal,
+            body: JSON.stringify({
+              textbookId: textbook.id,
+              moduleId: activeModule.id,
+              agentCode: textbook.agent.code,
+              sessionId: tutorSessionId,
+              restart,
+              intent: requestIntent,
+              locale,
+              supportMode,
+              message,
+              answer,
+            }),
+          });
       if (!response.ok || !response.body) {
         const payload = await response.json().catch(() => null) as { error?: unknown } | null;
         throw new Error(typeof payload?.error === "string" ? payload.error : (locale === "ko-KR" ? `${agentName}이 응답하지 않았습니다.` : `${agentName}暂时没有响应。`));
       }
 
       const nextSessionId = response.headers.get("X-Learning-Agent-Session");
-      if (nextSessionId) setTutorSessionId(nextSessionId);
+      if (nextSessionId) {
+        tutorSessionIdsByModuleRef.current[activeModule.id] = nextSessionId;
+        tutorVisitedModuleIdsRef.current.add(activeModule.id);
+        setTutorSessionId(nextSessionId);
+        setTutorHasPreviousSession(true);
+      }
       const action = response.headers.get("X-Learning-Agent-Action");
       setTutorAction(action);
       const targetActivityId = response.headers.get("X-Learning-Agent-Target-Activity");
@@ -4285,7 +4663,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       const encodedVisualCue = response.headers.get("X-Learning-Agent-Visual-Cue");
       const encodedInteraction = response.headers.get("X-Learning-Agent-Interaction");
       const encodedCharacter = response.headers.get("X-Learning-Agent-Character");
+      const encodedScriptRich = response.headers.get("X-Learning-Agent-Script-Rich");
+      try {
+        const decodedScriptRich = encodedScriptRich ? JSON.parse(decodeURIComponent(encodedScriptRich)) : null;
+        setTutorTextRich(Array.isArray(decodedScriptRich) ? decodedScriptRich as RichChar[] : null);
+      } catch {
+        setTutorTextRich(null);
+      }
       let nextCharacter: TutorCharacter | null = null;
+      let speechManifestPromise: Promise<TutorSpeechManifest | null> | null = null;
       let nextOptions: string[] = [];
       try {
         const decoded = encodedOptions ? JSON.parse(decodeURIComponent(encodedOptions)) : [];
@@ -4323,6 +4709,29 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       } catch {
         setTutorCharacter(null);
       }
+      // Mark speech as pending as soon as we know this character might speak
+      // at all — before the stream-reading loop below has any chance to flip
+      // tutorStatus to "idle". Setting this only inside the speechAssetId
+      // branch left a gap for lines with no cached audio yet: tutorStatus
+      // would go idle while tutorSpeechStatus was still stuck on "idle" (its
+      // resting state), so the auto-continue preview toggle read that as
+      // "nothing is playing" and advanced before the browser's fallback
+      // narration (spoken later, once completeTutorText is known) ever
+      // started. speakTutorCharacterLine() below corrects this to "ended"
+      // immediately if it turns out there's nothing to say after all.
+      if (nextCharacter?.kind === "uply-teacher" && nextCharacter?.voiceEnabled !== false) {
+        setTutorSpeechStatus("loading");
+      }
+      if (nextCharacter?.speechAssetId) {
+        speechManifestPromise = fetch(`/api/learning-agent/speech/${encodeURIComponent(nextCharacter.speechAssetId)}`, {
+          cache: "no-store",
+          signal: requestAbortController.signal,
+        })
+          .then(async (speechResponse) => speechResponse.ok
+            ? parseTutorSpeechManifest(await speechResponse.json())
+            : null)
+          .catch(() => null);
+      }
       try {
         const decodedVisualCue = encodedVisualCue ? JSON.parse(decodeURIComponent(encodedVisualCue)) : null;
         runTutorVisualCue(decodedVisualCue && typeof decodedVisualCue === "object" && !Array.isArray(decodedVisualCue)
@@ -4344,6 +4753,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       setTutorTerminal(response.headers.get("X-Learning-Agent-Terminal") === "true");
       const encodedContinueLabel = response.headers.get("X-Learning-Agent-Continue-Label");
       setTutorContinueLabel(encodedContinueLabel ? decodeURIComponent(encodedContinueLabel) : "");
+      tutorAutoContinuingRef.current = false;
+      setTutorAutoContinue(isPreviewMode && response.headers.get("X-Learning-Agent-Auto-Continue") === "true");
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let completeTutorText = "";
@@ -4354,17 +4765,26 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         const chunk = decoder.decode(value, { stream: true });
         if (chunk) {
           completeTutorText += chunk;
-          setTutorText((current) => current + chunk);
+          if (!speechManifestPromise) setTutorText((current) => current + chunk);
         }
       }
       const finalChunk = decoder.decode();
       if (finalChunk) {
         completeTutorText += finalChunk;
-        setTutorText((current) => current + finalChunk);
+        if (!speechManifestPromise) setTutorText((current) => current + finalChunk);
       }
       setTutorStatus("idle");
       setTutorAwaitingAnswer(nextTutorAwaitingAnswer);
-      if (nextCharacter?.kind === "uply-teacher") speakTutorCharacterLine(completeTutorText, nextCharacter);
+      const speechManifest = await speechManifestPromise;
+      if (speechManifest) {
+        playTutorSpeech(completeTutorText, speechManifest);
+      } else {
+        setTutorText(completeTutorText);
+        if (nextCharacter?.speechAssetId) setTutorSpeechStatus("error");
+        if (nextCharacter?.kind === "uply-teacher" && !tutorPausedRef.current) {
+          speakTutorCharacterLine(completeTutorText, nextCharacter, (status) => setTutorSpeechStatus(status));
+        }
+      }
 
       if (action === "focus_activity" && targetActivityId) {
         const activity = document.querySelector<HTMLElement>(`[data-smart-textbook-activity-id="${CSS.escape(targetActivityId)}"]`);
@@ -4374,60 +4794,196 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         selectModule(activeIndex + 1);
       }
     } catch (error) {
+      if (requestAbortController.signal.aborted) return;
       setTutorStatus("error");
       setTutorText(error instanceof Error ? error.message : (locale === "ko-KR" ? "잠시 후 다시 시도해 주세요." : "请稍后重试。"));
+    } finally {
+      if (tutorRequestAbortRef.current === requestAbortController) tutorRequestAbortRef.current = null;
     }
   }
 
-  function startTutorLesson() {
+  function startTutorLesson(restart = false) {
     if (tutorStatus === "thinking" || tutorStatus === "streaming") return;
+    tutorVisitedModuleIdsRef.current.add(activeModule.id);
+    setTutorHasPreviousSession(true);
     setTeachingAreaCollapsed(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
+    tutorPausedRef.current = false;
+    setTutorPaused(false);
     setTutorStarted(true);
-    void tutorReply("explain");
+    void tutorReply("explain", undefined, restart);
   }
 
-  function focusTutorTask() {
+  function restartTutorLesson() {
+    const confirmed = window.confirm(locale === "ko-KR"
+      ? "현재 선생님 설명 진행을 지우고 처음부터 다시 시작할까요? 완료한 교재 활동 기록은 유지됩니다."
+      : "确定从头重新开始老师讲解吗？当前讲解位置会重置，但已完成的教材活动记录会保留。");
+    if (confirmed) startTutorLesson(true);
+  }
+
+  function visibleLearningTarget(targetKey: string) {
+    const targets = Array.from(document.querySelectorAll<HTMLElement>(
+      `[data-learning-target="${CSS.escape(targetKey)}"]`,
+    ));
+    return targets.find((target) => {
+      const rect = target.getBoundingClientRect();
+      const style = window.getComputedStyle(target);
+      return rect.width > 0
+        && rect.height > 0
+        && style.display !== "none"
+        && style.visibility !== "hidden";
+    }) ?? null;
+  }
+
+  function prepareLearningTarget(targetKey: string) {
+    if (targetKey.startsWith("orientation:")) {
+      if (targetKey === "orientation:page:diagnosis" || targetKey.startsWith("orientation:diagnosis")) {
+        setMissionPage(1);
+      } else if (!targetKey.startsWith("orientation:header")) {
+        setMissionPage(0);
+      }
+      return;
+    }
+    if (targetKey.startsWith("dialogue:") && activeModule.code === "orientation") {
+      setMissionPage(0);
+      return;
+    }
+    if (targetKey === "scene:image") {
+      if (activeModule.code === "patterns") setPatternPage(0);
+      else setMissionPage(0);
+      return;
+    }
+    if (!targetKey.startsWith("activity:")) return;
+    const activityId = targetKey.slice("activity:".length);
+    const activity = activeNodes.flatMap((node) => node.activities).find((item) => item.id === activityId);
+    if (!activity) return;
+    if (activeModule.code === "orientation") {
+      setMissionPage(1);
+      return;
+    }
+    if (activeModule.code === "grammar") {
+      const activityIndex = activeNodes.flatMap((node) => node.activities).findIndex((item) => item.id === activityId);
+      if (activityIndex >= 0) setActiveGrammarPracticeIndex(activityIndex);
+      return;
+    }
+    if (activeModule.code === "patterns") {
+      if (activity.key === "pattern-choice") setPatternPage(0);
+      else if (activity.key === "pattern-compose") setPatternPage(2);
+      else setPatternPage(1);
+      return;
+    }
+    if (activeModule.code === "dialogue" && activity.key === "dialogue-roleplay") {
+      setMissionPage(3);
+      return;
+    }
+    if (activeModule.code === "listen_speak") {
+      setMissionPage(activity.type === "speaking" ? 3 : 1);
+      return;
+    }
+    if (activeModule.code === "read_write") {
+      setMissionPage(activity.type === "writing" ? 3 : 1);
+      return;
+    }
+    if (activeModule.code === "review") {
+      setMissionPage(activity.type === "self_check" ? 1 : 0);
+    }
+  }
+
+  function focusTutorTask(attempt = 0) {
     if (!tutorTask?.targetKey) return;
-    const target = document.querySelector<HTMLElement>(`[data-learning-target="${CSS.escape(tutorTask.targetKey)}"]`);
+    const target = visibleLearningTarget(tutorTask.targetKey);
+    if (!target) {
+      if (attempt === 0) prepareLearningTarget(tutorTask.targetKey);
+      if (attempt < 6) window.setTimeout(() => focusTutorTask(attempt + 1), 120);
+      return;
+    }
     target?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
     window.setTimeout(() => target?.focus({ preventScroll: true }), 350);
   }
 
   function runTutorVisualCue(cue: TutorVisualCue | null) {
-    if (!cue?.targetKey) return;
-    const target = document.querySelector<HTMLElement>(`[data-learning-target="${CSS.escape(cue.targetKey)}"]`);
-    if (!target) return;
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
-    window.setTimeout(() => {
-      target.focus({ preventScroll: true });
-      if (reduceMotion || typeof target.animate !== "function") {
-        target.style.outline = "3px solid #f59e0b";
-        target.style.outlineOffset = "4px";
-        window.setTimeout(() => {
-          target.style.removeProperty("outline");
-          target.style.removeProperty("outline-offset");
-        }, 1200);
+    if (!cue?.targetKey) {
+      setTutorCompanion(null);
+      return;
+    }
+    const revealTarget = (attempt: number) => {
+      const target = visibleLearningTarget(cue.targetKey!);
+      if (!target) {
+        if (attempt === 0) prepareLearningTarget(cue.targetKey!);
+        if (attempt < 6) window.setTimeout(() => revealTarget(attempt + 1), 120);
         return;
       }
-      target.animate([
-        { offset: 0, boxShadow: "0 0 0 0 rgba(245, 158, 11, 0)", outline: "0 solid rgba(245, 158, 11, 0)" },
-        { offset: 0.38, boxShadow: "0 0 0 10px rgba(245, 158, 11, .18)", outline: "3px solid rgba(245, 158, 11, .9)" },
-        { offset: 0.62, boxShadow: "0 0 0 10px rgba(245, 158, 11, .18)", outline: "3px solid rgba(245, 158, 11, .9)" },
-        { offset: 1, boxShadow: "0 0 0 16px rgba(245, 158, 11, 0)", outline: "0 solid rgba(245, 158, 11, 0)" },
-      ], {
-        duration: Math.max(400, Math.min(2500, Number(cue.durationMs) || 1000)),
-        iterations: Math.max(1, Math.min(4, Number(cue.pulseCount) || 2)),
-        easing: "cubic-bezier(.22, .61, .36, 1)",
-      });
-    }, reduceMotion ? 0 : 360);
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+      window.setTimeout(() => {
+        target.focus({ preventScroll: true });
+        const destination = tutorCompanionTargetPosition(target, cue.targetKey!);
+        if (reduceMotion) {
+          setTutorCompanion(destination);
+        } else {
+          setTutorCompanion((current) => {
+            if (current) return { ...destination, phase: "travelling" };
+            const teachingArea = document.querySelector<HTMLElement>("[data-smart-textbook-teaching-area]");
+            const teachingBounds = teachingArea?.getBoundingClientRect();
+            return {
+              x: Math.round(Math.max(8, (teachingBounds?.right ?? 112) - 104)),
+              y: Math.round(Math.max(8, (teachingBounds?.bottom ?? window.innerHeight) - 116)),
+              facing: "right",
+              targetKey: cue.targetKey!,
+              phase: "travelling",
+            };
+          });
+          window.setTimeout(() => {
+            setTutorCompanion((current) => current?.targetKey === cue.targetKey
+              ? { ...destination, phase: "travelling" }
+              : current);
+          }, 40);
+          window.setTimeout(() => {
+            setTutorCompanion((current) => current && current.targetKey === cue.targetKey
+              ? { ...current, phase: "waiting" }
+              : current);
+          }, 600);
+        }
+        if (reduceMotion || typeof target.animate !== "function") {
+          target.style.outline = "3px solid #f59e0b";
+          target.style.outlineOffset = "4px";
+          window.setTimeout(() => {
+            target.style.removeProperty("outline");
+            target.style.removeProperty("outline-offset");
+          }, 1200);
+          return;
+        }
+        target.animate([
+          { offset: 0, boxShadow: "0 0 0 0 rgba(245, 158, 11, 0)", outline: "0 solid rgba(245, 158, 11, 0)" },
+          { offset: 0.38, boxShadow: "0 0 0 10px rgba(245, 158, 11, .18)", outline: "3px solid rgba(245, 158, 11, .9)" },
+          { offset: 0.62, boxShadow: "0 0 0 10px rgba(245, 158, 11, .18)", outline: "3px solid rgba(245, 158, 11, .9)" },
+          { offset: 1, boxShadow: "0 0 0 16px rgba(245, 158, 11, 0)", outline: "0 solid rgba(245, 158, 11, 0)" },
+        ], {
+          duration: Math.max(400, Math.min(2500, Number(cue.durationMs) || 1000)),
+          iterations: Math.max(1, Math.min(4, Number(cue.pulseCount) || 2)),
+          easing: "cubic-bezier(.22, .61, .36, 1)",
+        });
+      }, reduceMotion ? 0 : 360);
+    };
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => revealTarget(0)));
   }
 
   async function recordTutorLearningEvent(event: { eventType: "audio_completed"; targetKey: string }) {
     if (!tutorSessionId || !tutorTask || tutorTaskCompleted
       || tutorTask.eventType !== event.eventType || tutorTask.targetKey !== event.targetKey) return;
+    if (isPreviewMode) {
+      const response = await fetch("/api/learning-agent/preview-event", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ scriptVersionId: previewScriptVersionId, sessionToken: tutorSessionId, ...event }),
+      });
+      if (!response.ok) return;
+      const payload = await response.json().catch(() => null) as { sessionToken?: unknown } | null;
+      if (typeof payload?.sessionToken === "string") setTutorSessionId(payload.sessionToken);
+      setTutorTaskCompleted(true);
+      return;
+    }
     const response = await fetch("/api/learning-agent/events", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -4435,6 +4991,61 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     });
     if (response.ok) setTutorTaskCompleted(true);
   }
+
+  useEffect(() => {
+    const targetKey = tutorCompanion?.targetKey;
+    if (!targetKey) return;
+    const syncPosition = () => {
+      if (tutorCompanionTrackingFrameRef.current !== null) {
+        window.cancelAnimationFrame(tutorCompanionTrackingFrameRef.current);
+      }
+      tutorCompanionTrackingFrameRef.current = window.requestAnimationFrame(() => {
+        const target = visibleLearningTarget(targetKey);
+        if (!target) {
+          setTutorCompanion(null);
+          return;
+        }
+        const next = tutorCompanionTargetPosition(target, targetKey);
+        setTutorCompanion((current) => current?.targetKey === targetKey
+          ? { ...next, phase: current.phase }
+          : current);
+      });
+    };
+    window.addEventListener("resize", syncPosition);
+    document.addEventListener("scroll", syncPosition, true);
+    return () => {
+      window.removeEventListener("resize", syncPosition);
+      document.removeEventListener("scroll", syncPosition, true);
+      if (tutorCompanionTrackingFrameRef.current !== null) {
+        window.cancelAnimationFrame(tutorCompanionTrackingFrameRef.current);
+        tutorCompanionTrackingFrameRef.current = null;
+      }
+    };
+  }, [tutorCompanion?.targetKey]);
+
+  useEffect(() => {
+    if (!tutorTaskCompleted) return;
+    setTutorCompanion((current) => current ? { ...current, phase: "completed" } : current);
+    const returnTimer = window.setTimeout(() => {
+      setTutorCompanion((current) => {
+        if (!current) return null;
+        const teachingArea = document.querySelector<HTMLElement>("[data-smart-textbook-teaching-area]");
+        const teachingBounds = teachingArea?.getBoundingClientRect();
+        return {
+          x: Math.round(Math.max(8, (teachingBounds?.right ?? 112) - 104)),
+          y: Math.round(Math.max(8, (teachingBounds?.bottom ?? window.innerHeight) - 116)),
+          facing: "left",
+          targetKey: "",
+          phase: "travelling",
+        };
+      });
+    }, 520);
+    const hideTimer = window.setTimeout(() => setTutorCompanion(null), 1120);
+    return () => {
+      window.clearTimeout(returnTimer);
+      window.clearTimeout(hideTimer);
+    };
+  }, [tutorTaskCompleted]);
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -4458,12 +5069,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   useEffect(() => {
     function closeTutorWithEscape(event: KeyboardEvent) {
-      if (event.key === "Escape" && !assistantCollapsed) setAssistantCollapsed(true);
+      if (event.key !== "Escape") return;
+      if (mobilePanel) setMobilePanel(null);
+      if (!assistantCollapsed) setAssistantCollapsed(true);
     }
 
     window.addEventListener("keydown", closeTutorWithEscape);
     return () => window.removeEventListener("keydown", closeTutorWithEscape);
-  }, [assistantCollapsed]);
+  }, [assistantCollapsed, mobilePanel]);
 
   useEffect(() => {
     function keepTutorWindowInView() {
@@ -4673,6 +5286,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const teachingAreaCharacter: TutorCharacter | null = tutorCharacter === undefined
     ? { kind: "uply-teacher", pose: "greeting", position: "right", voiceEnabled: true, voiceLanguage: "auto", voiceRate: 1 }
     : tutorCharacter;
+  const teachingAreaCharacterFrames = teachingAreaCharacter?.kind === "uply-teacher"
+    ? tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]
+    : null;
 
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
@@ -4691,44 +5307,105 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         <div className="smart-textbook-scroll flex-1 overflow-y-auto p-5">
           <div className="text-xs font-bold tracking-wide text-[var(--foreground-muted)]">{t.currentMission}</div>
           <p className="mt-2 text-sm font-bold leading-6 text-[var(--foreground)]">{localize(activeModule.title)}</p>
-          <div className="mt-5 grid grid-cols-2 gap-2">
-            {([['explain', t.explain], ['hint', t.hint], ['example', t.example], ['roleplay', t.roleplay]] as const).map(([intent, label]) => (
+          {!tutorStarted ? (
+            <div className="mt-5 grid gap-2">
+              <button
+                type="button"
+                onClick={() => startTutorLesson(false)}
+                disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[var(--status-warning)] px-4 text-sm font-bold text-white shadow-sm transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <Play size={16} fill="currentColor" aria-hidden="true" />
+                {tutorHasPreviousSession
+                  ? (locale === "ko-KR" ? "이어서 학습" : "继续学习")
+                  : (locale === "ko-KR" ? "준비됐어요. 수업 시작" : "我准备好了，开始学习")}
+              </button>
+              {tutorHasPreviousSession && (
+                <button
+                  type="button"
+                  onClick={restartTutorLesson}
+                  disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                  className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <RotateCcw size={15} aria-hidden="true" />
+                  {locale === "ko-KR" ? "처음부터 다시 시작" : "重新开始"}
+                </button>
+              )}
+            </div>
+          ) : (
+            <>
+              <div className="sticky top-0 z-10 mt-5 grid grid-cols-2 gap-2 bg-[var(--card)] py-2" role="group" aria-label={locale === "ko-KR" ? "학습 제어" : "学习控制"}>
+                <button
+                  type="button"
+                  onClick={tutorPaused ? resumeTutorLesson : pauseTutorLesson}
+                  disabled={tutorTerminal}
+                  aria-pressed={tutorPaused}
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {tutorPaused ? <Play size={15} fill="currentColor" aria-hidden="true" /> : <Pause size={15} aria-hidden="true" />}
+                  {tutorTerminal
+                    ? (locale === "ko-KR" ? "학습 완료" : "学习已完成")
+                    : tutorPaused
+                      ? (locale === "ko-KR" ? "학습 계속" : "继续学习")
+                      : (locale === "ko-KR" ? "일시 정지" : "暂停学习")}
+                </button>
+                <button
+                  type="button"
+                  onClick={exitTutorLesson}
+                  className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--destructive)_30%,var(--border-subtle))] bg-[var(--card)] px-3 text-xs font-bold text-[var(--destructive)] transition hover:border-[var(--destructive)]"
+                >
+                  <X size={15} aria-hidden="true" />
+                  {locale === "ko-KR" ? "학습 종료" : "退出学习"}
+                </button>
+              </div>
+              {tutorPaused && (
+                <p className="mt-3 rounded-xl bg-[var(--surface-soft)] px-3 py-2.5 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]" role="status">
+                  {locale === "ko-KR" ? "현재 위치에서 학습을 일시 정지했어요." : "已在当前位置暂停，教材学习进度会保留。"}
+                </p>
+              )}
+            </>
+          )}
+          {tutorStarted && !tutorTerminal && (
+            <div className="mt-5 grid grid-cols-2 gap-2">
+              {([['explain', t.explain], ['hint', t.hint], ['example', t.example], ['roleplay', t.roleplay]] as const).map(([intent, label]) => (
               <button
                 key={intent}
                 type="button"
                 onClick={() => tutorReply(intent)}
-                disabled={tutorStatus === "thinking" || tutorStatus === "streaming"}
+                disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming"}
                 className="min-h-14 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-left text-xs font-semibold leading-5 text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:cursor-wait disabled:opacity-50"
               >
                 {label}
               </button>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
           {tutorText && (
             <div className="mt-5 whitespace-pre-line rounded-xl bg-[var(--accent)] px-4 py-4 text-sm leading-6 text-[var(--foreground-secondary)]">
               <Sparkles size={15} className="mb-2 text-[var(--primary)]" />
-              {tutorText}
+              {renderRichTutorText(tutorText, tutorTextRich)}
             </div>
           )}
         </div>
-        <div className="border-t border-[var(--border-subtle)] p-4">
+        {tutorStarted && !isPreviewMode && <div className="border-t border-[var(--border-subtle)] p-4">
           <textarea
             value={tutorInput}
             onChange={(event) => setTutorInput(event.target.value)}
+            disabled={tutorPaused}
             rows={2}
             aria-label={t.ask}
             placeholder={t.ask}
-            className="w-full resize-none rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-sm leading-5 text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+            className="w-full resize-none rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-3 py-2 text-sm leading-5 text-[var(--foreground)] outline-none placeholder:text-[var(--foreground-muted)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
           />
           <button
             type="button"
             onClick={() => tutorReply('ask')}
-            disabled={tutorStatus === "thinking" || tutorStatus === "streaming"}
+            disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming"}
             className="mt-2 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--primary)] px-4 py-2.5 text-sm font-bold text-white disabled:cursor-wait disabled:opacity-50"
           >
             <Send size={14} /> {t.send}
           </button>
-        </div>
+        </div>}
       </div>
     );
   }
@@ -4757,6 +5434,26 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       <a href="#korean-textbook-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--card)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold">
         跳到教材正文
       </a>
+      {tutorCompanion && !learningAreaHidden && !showTutorAnswerDialog && (
+        <div
+          className="xiao-mo-companion pointer-events-none fixed z-[45] w-[76px] sm:w-[104px]"
+          data-phase={tutorCompanion.phase}
+          style={{ left: tutorCompanion.x, top: tutorCompanion.y }}
+          role="status"
+          aria-label={locale === "ko-KR" ? "수업 도우미 샤오모가 학습 위치를 가리키고 있어요" : "课堂陪伴宠物小默正在提示学习位置"}
+        >
+          <Image
+            src={tutorCompanionImage}
+            alt=""
+            width={1312}
+            height={1199}
+            unoptimized
+            priority
+            className="h-auto w-full drop-shadow-[0_8px_12px_rgba(15,23,42,0.16)]"
+            style={{ transform: tutorCompanion.facing === "right" ? "none" : "scaleX(-1)" }}
+          />
+        </div>
+      )}
       <header className="relative z-30 h-[70px] shrink-0 border-b border-[var(--border-subtle)] bg-[var(--card)] px-3 shadow-sm sm:px-5 lg:h-[78px] lg:px-7">
         <div className="flex h-full items-center justify-start gap-3">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
@@ -4784,6 +5481,40 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
             </span>
           </div>
           <div className="flex shrink-0 items-center gap-2 sm:gap-4 lg:gap-5">
+            {tutorStarted && (
+              <>
+                <button
+                  type="button"
+                  onClick={tutorPaused ? resumeTutorLesson : pauseTutorLesson}
+                  disabled={tutorTerminal}
+                  aria-pressed={tutorPaused}
+                  title={tutorTerminal
+                    ? (locale === "ko-KR" ? "학습 완료" : "学习已完成")
+                    : tutorPaused
+                      ? (locale === "ko-KR" ? "학습 계속" : "继续学习")
+                      : (locale === "ko-KR" ? "학습 일시 정지" : "暂停学习")}
+                  className="inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-2.5 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50 sm:px-3"
+                >
+                  {tutorPaused ? <Play size={17} fill="currentColor" aria-hidden="true" /> : <Pause size={17} aria-hidden="true" />}
+                  <span className="hidden xl:inline">
+                    {tutorTerminal
+                      ? (locale === "ko-KR" ? "학습 완료" : "学习已完成")
+                      : tutorPaused
+                        ? (locale === "ko-KR" ? "학습 계속" : "继续学习")
+                        : (locale === "ko-KR" ? "학습 일시 정지" : "暂停学习")}
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={exitTutorLesson}
+                  title={locale === "ko-KR" ? "학습 종료" : "退出学习"}
+                  className="inline-flex h-10 min-w-10 items-center justify-center gap-2 rounded-xl border border-[color-mix(in_srgb,var(--destructive)_30%,var(--border-subtle))] bg-[var(--surface-soft)] px-2.5 text-sm font-bold text-[var(--destructive)] transition hover:border-[var(--destructive)] hover:bg-[color-mix(in_srgb,var(--destructive)_5%,var(--surface-soft))] sm:px-3"
+                >
+                  <X size={17} aria-hidden="true" />
+                  <span className="hidden xl:inline">{locale === "ko-KR" ? "학습 종료" : "退出学习"}</span>
+                </button>
+              </>
+            )}
             <button
               type="button"
               onClick={toggleTutorPanel}
@@ -4952,15 +5683,27 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               <section className={`relative mt-4 border-b border-[color-mix(in_srgb,var(--status-warning)_10%,var(--border-subtle))] pb-4 ${teachingAreaExpanded ? "min-h-[18rem]" : "min-h-[13rem]"}`} aria-label={agentName}>
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
                   <div className={`absolute bottom-0 z-0 flex items-end justify-center ${teachingAreaExpanded ? "w-[12rem]" : "w-[8.5rem]"} ${teachingAreaCharacter.position === "left" ? "left-0" : "right-0"}`} aria-hidden="true">
-                    <Image
-                      src={tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]}
-                      alt=""
-                      width={512}
-                      height={1024}
-                      unoptimized
-                      loading="eager"
-                      className={`kim-teacher-breathe w-auto max-w-full object-contain drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[16rem]" : "h-[11.7rem]"}`}
-                    />
+                    <div
+                      className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[16rem]" : "h-[11.7rem]"}`}
+                      data-speaking={tutorSpeechStatus === "playing" || undefined}
+                    >
+                      {teachingAreaCharacterFrames && ([
+                        ["idle", teachingAreaCharacterFrames.idle, ""],
+                        ["speaking", teachingAreaCharacterFrames.speaking, "kim-teacher-speaking-frame"],
+                        ["blink", teachingAreaCharacterFrames.blink, "kim-teacher-blink-frame"],
+                      ] as const).map(([frame, source, frameClass]) => (
+                        <Image
+                          key={frame}
+                          src={source}
+                          alt=""
+                          width={512}
+                          height={1024}
+                          unoptimized
+                          loading="eager"
+                          className={`absolute inset-0 h-full w-full object-contain ${frameClass}`}
+                        />
+                      ))}
+                    </div>
                   </div>
                 )}
                 <div className={`relative z-10 pt-2 ${teachingAreaCharacter?.kind === "uply-teacher" ? teachingAreaCharacter.position === "left" ? teachingAreaExpanded ? "ml-[11rem]" : "ml-[7.5rem]" : teachingAreaExpanded ? "mr-[11rem]" : "mr-[7.5rem]" : ""}`}>
@@ -4973,6 +5716,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
                         {!tutorStarted
                           ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
+                          : tutorPaused
+                            ? (locale === "ko-KR" ? "학습 일시 정지" : "学习已暂停")
+                          : tutorSpeechStatus === "loading"
+                            ? (locale === "ko-KR" ? "음성 준비 중" : "语音准备中")
+                          : tutorSpeechStatus === "playing"
+                            ? (locale === "ko-KR" ? "설명 중" : "正在讲课")
+                          : tutorSpeechStatus === "paused"
+                            ? (locale === "ko-KR" ? "일시 정지" : "讲解已暂停")
                           : tutorStatus === "thinking" || tutorStatus === "streaming"
                             ? (locale === "ko-KR" ? "설명 중" : "讲解中")
                             : tutorStatus === "error"
@@ -4983,15 +5734,43 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <p className={`mt-3 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-lg leading-9" : "text-sm leading-7"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
                       {tutorStatus === "thinking"
                         ? (locale === "ko-KR" ? "이 단원의 진도를 확인하고 있어요…" : "正在读取本节内容和学习进度…")
-                        : tutorText || (locale === "ko-KR"
+                        : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : (tutorSpeechInProgress
+                          ? "\u00a0"
+                          : locale === "ko-KR"
                         ? "오른쪽 학습 영역의 장면을 먼저 살펴보세요. 준비가 되면 핵심 표현을 듣고 현재 활동을 완성해 보세요."
                         : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
                     </p>
+                    {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
+                      <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+                        <button
+                          type="button"
+                          onClick={toggleTutorSpeech}
+                          disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
+                          className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
+                        >
+                          {tutorSpeechStatus === "playing" ? <Pause size={14} aria-hidden="true" /> : <Play size={14} aria-hidden="true" />}
+                          {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
+                        </button>
+                        <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
+                          <RotateCcw size={14} aria-hidden="true" />
+                          {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
+                        </button>
+                        <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
+                          {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
+                          {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </section>
 
               <section className="mt-4 min-h-20 flex-1" aria-label={locale === "ko-KR" ? "수업 진행" : "教学操作"}>
+                {tutorPaused && (
+                  <p className="mt-4 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] px-4 py-3 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]" role="status">
+                    {locale === "ko-KR" ? "학습을 일시 정지했어요. 위의 ‘학습 계속’을 누르면 현재 위치에서 이어집니다." : "学习已暂停。点击上方“继续学习”即可从当前位置接着学习，已完成的教材进度不会丢失。"}
+                  </p>
+                )}
                 {tutorStarted && tutorTask && (
                   <div className={`mt-4 rounded-xl border p-3.5 ${tutorTaskCompleted ? "border-[var(--status-success)] bg-[var(--status-success-surface)]" : "border-[var(--status-warning)] bg-[var(--status-warning-surface)]"}`}>
                     <div className="flex items-start justify-between gap-3">
@@ -5002,47 +5781,66 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       {tutorTaskCompleted && <CheckCircle2 size={18} className="shrink-0 text-[var(--status-success)]" aria-hidden="true" />}
                     </div>
                     {!tutorTaskCompleted && (
-                      <button type="button" onClick={focusTutorTask} className="mt-3 inline-flex min-h-10 w-full items-center justify-center gap-2 rounded-lg bg-[var(--status-warning)] px-3 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+                      <button type="button" onClick={() => focusTutorTask()} disabled={tutorPaused} className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg bg-[var(--status-warning)] px-3 text-xs font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50">
                         <Volume2 size={15} aria-hidden="true" />
                         {locale === "ko-KR" ? "학습 영역에서 음성 듣기" : "去学习区听音频"}
                       </button>
                     )}
                   </div>
                 )}
-                {tutorTerminal && tutorStatus === "idle" && (
+                {tutorTerminal && tutorStatus === "idle" && (!tutorTask?.required || tutorTaskCompleted) && (
                   <p className="mt-4 inline-flex items-center gap-1.5 text-xs font-bold text-[var(--status-success)]" role="status">
                     <CheckCircle2 size={14} aria-hidden="true" />
                     {locale === "ko-KR" ? "설명을 마쳤어요" : "本节讲解已完成"}
                   </p>
                 )}
                 {!tutorStarted && (
-                  <button
-                    type="button"
-                    onClick={startTutorLesson}
-                    disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
-                    className="mt-5 inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--status-warning)] px-5 py-3.5 text-sm font-bold text-white shadow-[0_8px_22px_color-mix(in_srgb,var(--status-warning)_22%,transparent)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_26px_color-mix(in_srgb,var(--status-warning)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none"
-                  >
-                    <Play size={16} fill="currentColor" aria-hidden="true" />
-                    {locale === "ko-KR" ? "준비됐어요. 수업 시작" : "我准备好了，开始学习"}
-                  </button>
+                  <div className="mt-5 grid gap-2 sm:grid-cols-2">
+                    <button
+                      type="button"
+                      onClick={() => startTutorLesson(false)}
+                      disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                      className={`${tutorHasPreviousSession ? "" : "sm:col-span-2"} inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--status-warning)] px-5 py-3.5 text-sm font-bold text-white shadow-[0_8px_22px_color-mix(in_srgb,var(--status-warning)_22%,transparent)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_26px_color-mix(in_srgb,var(--status-warning)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none`}
+                    >
+                      <Play size={16} fill="currentColor" aria-hidden="true" />
+                      {tutorHasPreviousSession
+                        ? (locale === "ko-KR" ? "이어서 학습" : "继续学习")
+                        : (locale === "ko-KR" ? "준비됐어요. 수업 시작" : "我准备好了，开始学习")}
+                    </button>
+                    {tutorHasPreviousSession && (
+                      <button
+                        type="button"
+                        onClick={restartTutorLesson}
+                        disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                        className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-3.5 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
+                      >
+                        <RotateCcw size={16} aria-hidden="true" />
+                        {locale === "ko-KR" ? "처음부터 다시 시작" : "重新开始"}
+                      </button>
+                    )}
+                  </div>
                 )}
               </section>
 
-              {tutorStarted && <div className="mt-6 grid grid-cols-2 gap-2 border-t border-[var(--border-subtle)] pt-5">
-                <button type="button" onClick={() => tutorReply("hint")} disabled={tutorStatus === "thinking" || tutorStatus === "streaming" || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
+              {tutorStarted && !tutorTerminal && <div className="mt-6 grid grid-cols-2 gap-2 border-t border-[var(--border-subtle)] pt-5">
+                <button type="button" onClick={() => tutorReply("hint")} disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
                   {locale === "ko-KR" ? "잘 모르겠어요" : "没听懂"}
                 </button>
-                <button type="button" onClick={() => tutorReply("example")} disabled={tutorStatus === "thinking" || tutorStatus === "streaming" || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
+                <button type="button" onClick={() => tutorReply("example")} disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer} className="min-h-11 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 py-2 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-wait disabled:opacity-50">
                   {locale === "ko-KR" ? "예문 하나 더" : "再举一个例子"}
                 </button>
                 <button
                   ref={tutorContinueButtonRef}
                   type="button"
                   onClick={() => tutorReply("ready")}
-                  disabled={tutorStatus === "thinking" || tutorStatus === "streaming" || tutorAwaitingAnswer || Boolean(tutorTask?.required && !tutorTaskCompleted)}
+                  disabled={tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming" || tutorSpeechInProgress || tutorAwaitingAnswer || Boolean(tutorTask?.required && !tutorTaskCompleted)}
                   className="col-span-2 min-h-11 rounded-xl border border-[color-mix(in_srgb,var(--status-warning)_42%,var(--border-subtle))] bg-[var(--status-warning-surface)] px-3 py-2 text-xs font-bold text-[var(--status-warning)] transition hover:border-[var(--status-warning)] disabled:cursor-wait disabled:opacity-50"
                 >
-                  {tutorAwaitingAnswer
+                  {tutorSpeechStatus === "loading"
+                    ? (locale === "ko-KR" ? "선생님 음성을 준비하고 있어요" : "正在准备老师语音")
+                    : tutorSpeechStatus === "playing" || tutorSpeechStatus === "paused"
+                      ? (locale === "ko-KR" ? "설명을 끝까지 들은 뒤 계속하세요" : "请听完讲解后继续")
+                    : tutorAwaitingAnswer
                     ? (locale === "ko-KR" ? "먼저 답을 고르세요" : "请先选择回答")
                     : tutorTask?.required && !tutorTaskCompleted
                       ? (locale === "ko-KR" ? "학습 영역 과제를 먼저 완료하세요" : "请先完成学习区任务")
@@ -5055,6 +5853,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
         <div className={`relative min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${learningAreaHidden ? "xl:hidden" : ""}`} data-learning-area-hidden={learningAreaHidden || undefined}>
         <div
+          data-learning-target={activeModule.code === "orientation" ? "orientation:header" : undefined}
+          tabIndex={activeModule.code === "orientation" ? -1 : undefined}
           className="relative hidden shrink-0 items-center gap-3 bg-[var(--card)] after:absolute after:bottom-0 after:left-[var(--learning-header-inset)] after:right-[var(--learning-header-inset)] after:h-px after:bg-[var(--border-subtle)] after:content-[''] xl:flex"
           style={{
             height: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.heightPx,
@@ -5064,6 +5864,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         >
           <button
             type="button"
+            data-learning-target={activeModule.code === "orientation" ? "orientation:header:hide" : undefined}
             onClick={() => setLearningAreaManuallyHidden(true)}
             className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
             aria-label={locale === "ko-KR" ? "학습 영역 숨기기" : "隐藏学习区"}
@@ -5077,6 +5878,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 <button
                   key={target}
                   type="button"
+                  data-learning-target={activeModule.code === "orientation"
+                    ? `orientation:header:tab:${targetIndex === 0 ? "scene" : "diagnosis"}`
+                    : undefined}
                   aria-current={learningHeaderCurrentTargetIndex === targetIndex ? "page" : undefined}
                   onClick={() => learningHeaderUsesPatterns
                     ? setPatternPage(targetIndex as 0 | 1 | 2)
@@ -5090,11 +5894,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           )}
           {learningHeaderTargets.length > 0 && (
             <div className="flex shrink-0 items-center gap-2" aria-label={locale === "ko-KR" ? "현재 목표 진행률" : "当前目标进度"}>
-              <div className="hidden h-1.5 w-14 overflow-hidden rounded-full bg-[var(--border-subtle)] 2xl:block" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={learningHeaderCompletionPercent}>
-                <div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${learningHeaderCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${learningHeaderCompletionPercent}%` }} />
+              <div data-learning-target={activeModule.code === "orientation" ? "orientation:header:progress" : undefined} tabIndex={activeModule.code === "orientation" ? -1 : undefined} className="flex items-center gap-2 outline-none">
+                <div className="hidden h-1.5 w-14 overflow-hidden rounded-full bg-[var(--border-subtle)] 2xl:block" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={learningHeaderCompletionPercent}>
+                  <div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${learningHeaderCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${learningHeaderCompletionPercent}%` }} />
+                </div>
+                <span className={`text-[11px] font-bold tabular-nums ${learningHeaderCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{learningHeaderCompletionPercent}%</span>
               </div>
-              <span className={`text-[11px] font-bold tabular-nums ${learningHeaderCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{learningHeaderCompletionPercent}%</span>
-              <span className="whitespace-nowrap text-[11px] font-bold tabular-nums text-[var(--foreground-muted)]" aria-live="polite">
+              <span data-learning-target={activeModule.code === "orientation" ? "orientation:header:goal" : undefined} tabIndex={activeModule.code === "orientation" ? -1 : undefined} className="whitespace-nowrap text-[11px] font-bold tabular-nums text-[var(--foreground-muted)] outline-none" aria-live="polite">
                 {locale === "ko-KR" ? "목표" : "目标"} {learningHeaderCurrentTargetIndex + 1} / {learningHeaderTargets.length}
               </span>
             </div>
@@ -5129,9 +5935,29 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               className="w-full max-w-2xl overflow-hidden rounded-[24px] border border-[color-mix(in_srgb,var(--status-warning)_30%,var(--border-subtle))] bg-[var(--card)] shadow-[0_24px_70px_rgba(15,23,42,0.18)] outline-none"
             >
               <div className="border-b border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--status-warning)_6%,var(--card))] px-6 py-5 sm:px-7">
-                <div className="flex items-center gap-2 text-[11px] font-bold text-[var(--status-warning)]">
-                  <MessageCircle size={14} aria-hidden="true" />
-                  <span>{locale === "ko-KR" ? "이제 학생 차례예요" : "现在轮到你回答"}</span>
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex min-h-11 items-center gap-2 text-[11px] font-bold text-[var(--status-warning)]">
+                    <MessageCircle size={14} aria-hidden="true" />
+                    <span>{locale === "ko-KR" ? "이제 학생 차례예요" : "现在轮到你回答"}</span>
+                  </div>
+                  <div className="flex shrink-0 items-center gap-2" role="group" aria-label={locale === "ko-KR" ? "학습 제어" : "学习控制"}>
+                    <button
+                      type="button"
+                      onClick={pauseTutorLesson}
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)]"
+                    >
+                      <Pause size={15} aria-hidden="true" />
+                      {locale === "ko-KR" ? "일시 정지" : "暂停"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={exitTutorLesson}
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-xl border border-[color-mix(in_srgb,var(--destructive)_30%,var(--border-subtle))] bg-[var(--card)] px-3 text-xs font-bold text-[var(--destructive)] transition hover:border-[var(--destructive)] hover:bg-[color-mix(in_srgb,var(--destructive)_5%,var(--card))]"
+                    >
+                      <X size={15} aria-hidden="true" />
+                      {locale === "ko-KR" ? "종료" : "退出"}
+                    </button>
+                  </div>
                 </div>
                 <h2 id="tutor-answer-dialog-title" className="mt-2 text-lg font-bold leading-7 text-[var(--foreground)] sm:text-xl">
                   {tutorInteraction?.prompt?.[locale] || (locale === "ko-KR" ? "알맞은 답을 고르세요." : "请选择你的回答。")}
@@ -5175,7 +6001,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <p className="text-[var(--foreground-muted)]">{locale === "ko-KR" ? "선생님이 답을 확인하고 있어요…" : "老师正在确认你的回答…"}</p>
                   )}
                   {tutorStatus === "idle" && tutorAnswerCorrect === false && tutorText && (
-                    <p role="alert" className="font-semibold text-[var(--destructive)]">{tutorText}</p>
+                    <p role="alert" className="font-semibold text-[var(--destructive)]">{renderRichTutorText(tutorText, tutorTextRich)}</p>
                   )}
                 </div>
               </div>
@@ -5242,13 +6068,25 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               const usesDesktopImagePager = nodeIndex === 0 && node.activities.length > 0 && Boolean(sharedModuleSkeleton);
               const usesGrammarPager = Array.isArray(node.content.grammarCards) && node.content.grammarCards.length > 0;
               const usesPatternPager = activeModule.code === "patterns" && node.activities.some((activity) => activity.type === "ordering");
+              const patternChoiceActivity = node.activities.find((activity) => activity.key === "pattern-choice");
+              const patternOrderActivity = node.activities.find((activity) => activity.type === "ordering");
+              const patternComposeActivity = node.activities.find((activity) => activity.key === "pattern-compose");
               const usesDialoguePager = Array.isArray(node.content.dialogueScenes) && node.content.dialogueScenes.length > 0;
               const usesListenSpeakPager = activeModule.code === "listen_speak"
                 && node.activities.some((activity) => activity.type === "listening")
                 && node.activities.some((activity) => activity.type === "speaking");
               const dialogueRoleplayActivity = node.activities.find((activity) => activity.key === "dialogue-roleplay");
               return (
-              <article key={node.id} className="mt-8 first:mt-0 sm:mt-10 sm:first:mt-0">
+              <article
+                key={node.id}
+                data-learning-target={nodeIndex === 0
+                  ? activeModule.code === "orientation"
+                    ? missionPage === 0 ? "orientation:page:scene" : "orientation:page:diagnosis"
+                    : "content:current"
+                  : undefined}
+                tabIndex={nodeIndex === 0 ? -1 : undefined}
+                className="mt-8 outline-none first:mt-0 sm:mt-10 sm:first:mt-0"
+              >
                 {!hasIntegratedImageHeader && <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
                   <div className="flex min-w-0 items-center gap-3">
                   <span className="h-2 w-2 rounded-full" style={{ backgroundColor: accent.solid }} />
@@ -5279,7 +6117,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 {usesListenSpeakPager && <ListenSpeakLearningPanel node={node} locale={locale} supportMode={supportMode} page={missionPage} moduleHeader={nodeIndex === 0 ? { title: localize(activeModule.title), stepLabel: locale === "ko-KR" ? `제 ${String(activeIndex + 1).padStart(2, "0")} 단계` : `第 ${String(activeIndex + 1).padStart(2, "0")} 步`, minutes: activeNodes.reduce((total, currentNode) => total + currentNode.minutes, 0) } : undefined} />}
                 {usesReadWritePager && <ReadWriteLearningPanel node={node} locale={locale} page={missionPage} />}
                 {usesReviewPager && missionPage === 2 && <ReviewResultPanel node={node} locale={locale} savedResponses={savedActivityResponses} />}
-                <div className={usesListenSpeakPager || usesReadWritePager || usesReviewPager ? "hidden" : usesDesktopImagePager && ((!usesPatternPager && !usesDialoguePager && missionPage === 1) || (usesDialoguePager && missionPage >= 2)) ? "lg:hidden" : ""}>
+                <div
+                  data-learning-target={usesPatternPager
+                    ? `activity:${(patternPage === 0 ? patternChoiceActivity : patternPage === 2 ? patternComposeActivity : patternOrderActivity)?.id ?? ""}`
+                    : undefined}
+                  tabIndex={usesPatternPager ? -1 : undefined}
+                  className={`${usesListenSpeakPager || usesReadWritePager || usesReviewPager ? "hidden" : usesDesktopImagePager && ((!usesPatternPager && !usesDialoguePager && missionPage === 1) || (usesDialoguePager && missionPage >= 2)) ? "lg:hidden" : ""} ${usesPatternPager ? "outline-none" : ""}`}
+                >
                   <ContentRenderer
                     node={node}
                     locale={locale}
@@ -5301,7 +6145,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 </div>
                 <div className={`${usesDesktopImagePager && (usesPatternPager ? patternPage !== 2 : usesDialoguePager ? missionPage !== 2 : usesReadWritePager ? ![1, 3].includes(missionPage) : usesReviewPager ? ![0, 1].includes(missionPage) : missionPage === 0) ? "lg:hidden" : ""} ${usesDesktopImagePager ? "lg:[&>section:first-child]:mt-0" : ""}`}>
                   {node.activities.filter((activity) => activity.key !== "dialogue-roleplay" && (!usesPatternPager || !["pattern-choice", "pattern-order", "pattern-compose"].includes(activity.key)) && (!usesListenSpeakPager || (missionPage === 1 && activity.type === "listening") || (missionPage === 3 && activity.type === "speaking")) && (!usesReadWritePager || (missionPage === 1 && activity.id === readingActivity?.id) || (missionPage === 3 && activity.id === writingActivity?.id)) && (!usesReviewPager || (missionPage === 0 && activity.id === reviewActivity?.id) || (missionPage === 1 && activity.id === selfCheckActivity?.id))).map((activity, activityIndex) => (
-                    <div key={activity.id} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex}>
+                    <div key={activity.id} data-learning-target={`activity:${activity.id}`} tabIndex={-1} hidden={usesGrammarPager && activityIndex !== activeGrammarPracticeIndex} className="outline-none">
                       <Activity
                         activity={activity}
                         locale={locale}
@@ -5322,12 +6166,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   ))}
                 </div>
                 {usesDialoguePager && dialogueRoleplayActivity && missionPage === 3 && (
-                  <DialogueRoleplayPractice
-                    activity={dialogueRoleplayActivity}
-                    scenes={(node.content.dialogueScenes as unknown[]).map(objectValue)}
-                    locale={locale}
-                    onActivityCompleted={recordCompletion}
-                  />
+                  <div data-learning-target={`activity:${dialogueRoleplayActivity.id}`} tabIndex={-1} className="outline-none">
+                    <DialogueRoleplayPractice
+                      activity={dialogueRoleplayActivity}
+                      scenes={(node.content.dialogueScenes as unknown[]).map(objectValue)}
+                      locale={locale}
+                      onActivityCompleted={recordCompletion}
+                    />
+                  </div>
                 )}
               </article>
               );
@@ -5450,11 +6296,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 {mobilePanel === "path" ? <BookOpen size={18} className="text-[var(--status-success)]" /> : <MessageCircle size={18} className="text-[var(--primary)]" />}
                 {mobilePanel === "path" ? sidebarLabel : t.tutor}
               </div>
-              <button type="button" onClick={() => setMobilePanel(null)} className="rounded-full bg-white p-2 text-slate-500" aria-label="关闭">
+              <button type="button" autoFocus onClick={() => setMobilePanel(null)} className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-[var(--card)] text-[var(--foreground-muted)]" aria-label={locale === "ko-KR" ? "닫기" : "关闭"}>
                 <X size={17} />
               </button>
             </div>
-            <div className="smart-textbook-scroll h-[calc(100%-3.25rem)] overflow-y-auto">
+            <div className="smart-textbook-scroll h-[calc(100%_-_3.25rem)] overflow-y-auto">
               {mobilePanel === "path" ? renderChapterSidebar(false) : renderTutorPanel(false)}
             </div>
           </aside>

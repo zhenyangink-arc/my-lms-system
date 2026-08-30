@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { data: session } = await admin
     .from("learning_agent_sessions")
-    .select("id,script_version_id,current_node_id")
+    .select("id,script_version_id,current_node_id,teaching_state")
     .eq("id", parsed.data.sessionId)
     .eq("tenant_id", auth.tenant.id)
     .eq("student_id", auth.user.id)
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
   const { data: node } = await admin
     .from("learning_agent_script_nodes")
-    .select("id,configuration")
+    .select("id,node_type,configuration,reference_activity_id")
     .eq("id", session.current_node_id)
     .eq("script_version_id", session.script_version_id)
     .maybeSingle();
@@ -66,6 +66,28 @@ export async function POST(request: Request) {
   }, { onConflict: "session_id,node_id,event_type,target_key", ignoreDuplicates: true });
   if (error) {
     return NextResponse.json({ error: "学习任务完成记录保存失败。" }, { status: 500 });
+  }
+  const interaction = node.configuration?.interaction;
+  const hasRequiredCustomInteraction = Boolean(
+    interaction
+      && typeof interaction === "object"
+      && !Array.isArray(interaction)
+      && (interaction as Record<string, unknown>).kind === "single_choice",
+  );
+  const requiresAnswer = hasRequiredCustomInteraction
+    || (node.node_type === "question" && Boolean(node.reference_activity_id));
+  const teachingState = session.teaching_state
+    && typeof session.teaching_state === "object"
+    && !Array.isArray(session.teaching_state)
+    ? session.teaching_state as Record<string, unknown>
+    : {};
+  if (node.configuration?.terminal === true
+    && (!requiresAnswer || teachingState.answeredNodeId === node.id)) {
+    await admin
+      .from("learning_agent_sessions")
+      .update({ status: "completed" })
+      .eq("id", session.id)
+      .eq("status", "active");
   }
   return NextResponse.json({ ok: true, completed: true });
 }

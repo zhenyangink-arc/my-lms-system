@@ -34,23 +34,25 @@ export function ManagementPageHeader({
     <header className={cn("management-page-hero", className)}>
       <div className="management-page-heading">
         <div className="min-w-0">
-          {description ? (
-            <CardTitleWithHint
-              headingLevel={1}
-              titleClassName=""
-              title={title}
-              description={description}
-            />
-          ) : (
-            <h1>{title}</h1>
-          )}
+          <div className="management-page-title-row">
+            {description ? (
+              <CardTitleWithHint
+                headingLevel={1}
+                titleClassName=""
+                title={title}
+                description={description}
+              />
+            ) : (
+              <h1>{title}</h1>
+            )}
+            {meta && <div className="management-page-meta">{meta}</div>}
+          </div>
         </div>
       </div>
 
-      {(meta || action) && (
+      {action && (
         <div className="management-page-tools">
-          {meta && <div className="management-page-meta">{meta}</div>}
-          {action && <div className="management-page-actions">{action}</div>}
+          <div className="management-page-actions">{action}</div>
         </div>
       )}
     </header>

@@ -7,6 +7,8 @@ import { join } from "node:path";
 import { createClient } from "@supabase/supabase-js";
 import { AwsClient } from "aws4fetch";
 
+import { stripRichText } from "../src/lib/rich-teaching-text.ts";
+
 const VOICES = {
   "zh-CN": "zh-CN-XiaoxiaoNeural",
   "ko-KR": "ko-KR-SunHiNeural",
@@ -239,7 +241,11 @@ async function main() {
     for (const node of nodes ?? []) {
       for (const locale of LOCALES) {
         const segments = teacherScriptSegments(node.teacher_script, locale);
-        for (const [segmentIndex, text] of segments.entries()) {
+        for (const [segmentIndex, rawText] of segments.entries()) {
+          // Voice generation and its cache hash must never see [b]/[u]/[color]
+          // markup: TTS would read the tags aloud, and formatting-only edits
+          // must not invalidate already-generated audio.
+          const text = stripRichText(rawText);
           const performance = scriptPerformance(node.configuration, segmentIndex);
           if (performance.voiceEnabled === false) continue;
           const contentHash = createHash("sha256").update(text, "utf8").digest("hex");

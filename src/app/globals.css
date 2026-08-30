@@ -27,6 +27,11 @@
   animation: route-loading-shimmer 1.25s ease-in-out infinite;
 }
 
+.route-loading-progress {
+  animation: route-loading-progress 1.35s ease-in-out infinite;
+  transform-origin: left center;
+}
+
 .route-link-status {
   position: relative;
   display: inline-block;
@@ -64,6 +69,18 @@
   }
 }
 
+@keyframes route-loading-progress {
+  0% {
+    transform: translateX(-110%) scaleX(0.65);
+  }
+  55% {
+    transform: translateX(95%) scaleX(1.15);
+  }
+  100% {
+    transform: translateX(250%) scaleX(0.65);
+  }
+}
+
 @keyframes route-link-reveal {
   to {
     opacity: 0.62;
@@ -83,6 +100,7 @@
   }
 
   .route-loading-block,
+  .route-loading-progress,
   .route-link-status::after,
   .route-link-status[data-pending="true"] {
     animation: none;
@@ -103,8 +121,35 @@
   transform-origin: center bottom;
 }
 
+@keyframes kim-teacher-speaking-frame {
+  0%, 44%, 100% { opacity: 0; }
+  45%, 88% { opacity: 1; }
+}
+
+@keyframes kim-teacher-blink-frame {
+  0%, 92%, 95%, 100% { opacity: 0; }
+  93%, 94% { opacity: 1; }
+}
+
+.kim-teacher-speaking-frame,
+.kim-teacher-blink-frame {
+  opacity: 0;
+  pointer-events: none;
+}
+
+[data-speaking="true"] .kim-teacher-speaking-frame {
+  animation: kim-teacher-speaking-frame 360ms steps(1, end) infinite;
+}
+
+.kim-teacher-blink-frame {
+  animation: kim-teacher-blink-frame 4.8s steps(1, end) infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .kim-teacher-breathe { animation: none; }
+  .kim-teacher-speaking-frame,
+  .kim-teacher-blink-frame { animation: none; }
+  [data-speaking="true"] .kim-teacher-speaking-frame { opacity: 1; }
 }
 
 /* 韩语课程阶段卡：颜色表达阶段，文字标签保证不依赖颜色识别。 */
@@ -1741,6 +1786,40 @@
     box-shadow:
       0 0 0 4px color-mix(in srgb, var(--primary) 95%, transparent),
       0 0 0 18px color-mix(in srgb, var(--primary) 5%, transparent);
+  }
+}
+
+.xiao-mo-companion {
+  transition:
+    left 520ms cubic-bezier(.22, .61, .36, 1),
+    top 520ms cubic-bezier(.22, .61, .36, 1),
+    opacity 180ms ease;
+  transform-origin: 50% 100%;
+}
+
+.xiao-mo-companion[data-phase="waiting"] {
+  animation: xiao-mo-waiting 2.8s ease-in-out infinite;
+}
+
+.xiao-mo-companion[data-phase="completed"] {
+  animation: xiao-mo-completed 560ms ease-in-out 1;
+}
+
+@keyframes xiao-mo-waiting {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  45% { transform: translateY(-2px) rotate(-1deg); }
+  55% { transform: translateY(-2px) rotate(1deg); }
+}
+
+@keyframes xiao-mo-completed {
+  0%, 100% { transform: translateY(0) scale(1); }
+  45% { transform: translateY(-7px) scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .xiao-mo-companion {
+    animation: none !important;
+    transition: opacity 120ms ease;
   }
 }
 

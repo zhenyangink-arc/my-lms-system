@@ -1,1 +1,1 @@
-export { StudentRouteLoading as default } from "@/app/dashboard/DashboardRouteLoading";
+export { StudentCourseRouteLoading as default } from "@/app/dashboard/DashboardRouteLoading";

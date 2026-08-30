@@ -319,6 +319,15 @@
 }
 
 [data-dashboard-ui="management"][data-management-workspace]
+  .management-page-title-row {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+[data-dashboard-ui="management"][data-management-workspace]
   .management-page-icon {
   display: flex;
   width: 44px;
