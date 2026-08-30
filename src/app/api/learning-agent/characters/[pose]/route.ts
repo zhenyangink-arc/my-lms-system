@@ -2,9 +2,18 @@ import { requireActiveUser } from "@/lib/auth";
 import { createR2SignedObjectUrl } from "@/lib/r2";
 
 const characterObjectKeys = {
-  greeting: "learning-agent/characters/uply-teacher/v1/greeting.png",
-  explaining: "learning-agent/characters/uply-teacher/v1/explaining.png",
-  encouraging: "learning-agent/characters/uply-teacher/v1/encouraging.png",
+  greeting: "learning-agent/characters/uply-teacher/v3/greeting-idle.png",
+  explaining: "learning-agent/characters/uply-teacher/v3/explaining-idle.png",
+  encouraging: "learning-agent/characters/uply-teacher/v3/encouraging-idle.png",
+  "greeting-idle": "learning-agent/characters/uply-teacher/v3/greeting-idle.png",
+  "greeting-speaking": "learning-agent/characters/uply-teacher/v3/greeting-speaking.png",
+  "greeting-blink": "learning-agent/characters/uply-teacher/v3/greeting-blink.png",
+  "explaining-idle": "learning-agent/characters/uply-teacher/v3/explaining-idle.png",
+  "explaining-speaking": "learning-agent/characters/uply-teacher/v3/explaining-speaking.png",
+  "explaining-blink": "learning-agent/characters/uply-teacher/v3/explaining-blink.png",
+  "encouraging-idle": "learning-agent/characters/uply-teacher/v3/encouraging-idle.png",
+  "encouraging-speaking": "learning-agent/characters/uply-teacher/v3/encouraging-speaking.png",
+  "encouraging-blink": "learning-agent/characters/uply-teacher/v3/encouraging-blink.png",
 } as const;
 
 export async function GET(
