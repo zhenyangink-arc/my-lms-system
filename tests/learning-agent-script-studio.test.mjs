@@ -209,9 +209,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /blackboardY: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardScale: z\.coerce\.number\(\)/);
   assert.match(actions, /placement: blackboardPlacement/);
-  assert.match(characterStage, /name="blackboard_x" value=\{String\(boundedBlackboardPlacement\.x\)\}/);
-  assert.match(characterStage, /name="blackboard_y" value=\{String\(boundedBlackboardPlacement\.y\)\}/);
-  assert.match(characterStage, /name="blackboard_scale" value=\{String\(boundedBlackboardPlacement\.scale\)\}/);
+  assert.match(characterStage, /name="blackboard_x" value=\{String\(blackboardPlacement\.x\)\}/);
+  assert.match(characterStage, /name="blackboard_y" value=\{String\(blackboardPlacement\.y\)\}/);
+  assert.match(characterStage, /name="blackboard_scale" value=\{String\(blackboardPlacement\.scale\)\}/);
+  assert.match(characterStage, /min=\{Math\.min\(TEACHING_VIRTUAL_CHARACTER_STAGE\.blackboard\.minimumScale, blackboardBounds\.maximumScale\) \* 100\}/);
+  assert.match(characterStage, /max=\{blackboardBounds\.maximumScale \* 100\}/);
+  assert.match(actions, /mode: "slides",\s+placement: blackboardPlacement,\s+slides: \[\]/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
@@ -514,7 +517,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /const learningAreaHidden = tutorFocusMode \|\| learningAreaManuallyHidden/);
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(shell, /data-learning-area-hidden/);
-  assert.match(shell, /learningAreaHidden \? "xl:hidden"/);
+  assert.match(shell, /learningAreaHidden \? "hidden" : "flex"/);
+  assert.match(shell, /teachingAreaExpanded \? "flex flex-col" : "hidden xl:flex xl:flex-col"/);
   assert.match(shell, /teachingAreaExpanded \? "text-sm leading-6" : "text-\[11px\] leading-5"/);
   assert.match(shell, /setLearningAreaManuallyHidden\(true\)/);
   assert.match(shell, /setLearningAreaManuallyHidden\(false\)/);

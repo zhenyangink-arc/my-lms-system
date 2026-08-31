@@ -436,7 +436,11 @@ export async function saveTeachingScriptNodeAction(
         translation: { "zh-CN": input.displayTranslationZh },
       };
     } else {
-      Reflect.deleteProperty(configuration, "display");
+      configuration.display = {
+        mode: "slides",
+        placement: blackboardPlacement,
+        slides: [],
+      };
     }
     if (input.studentTaskKind === "play_expression_audio" && input.studentTaskTargetKey) {
       configuration.studentTask = {

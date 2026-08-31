@@ -15,6 +15,7 @@ export type TeachingBlackboardPlacementBounds = {
   maximumXPercent: number;
   minimumTopPercent: number;
   maximumTopPercent: number;
+  maximumScale: number;
 };
 
 export type TeachingVirtualCharacterPreviewGeometry = {
@@ -176,13 +177,21 @@ export function teachingBlackboardPlacementBounds(
     320,
     4320,
   );
-  const safeScale = finiteNumber(
+  const geometry = teachingVirtualCharacterPreviewGeometry(width, height);
+  const blackboardWidthPx = width * geometry.blackboardWidthPercent / 100;
+  const blackboardHeightPx = blackboardWidthPx * 9 / 16;
+  const maximumScale = Math.max(0.1, Math.floor(Math.min(
+    TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale,
+    width / blackboardWidthPx,
+    height / blackboardHeightPx,
+  ) * 100) / 100);
+  const requestedScale = finiteNumber(
     scale,
     1,
-    TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale,
+    0.1,
     TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale,
   );
-  const geometry = teachingVirtualCharacterPreviewGeometry(width, height);
+  const safeScale = Math.min(requestedScale, maximumScale);
   const scaledWidthPercent = geometry.blackboardWidthPercent * safeScale;
   const scaledHeightPercent = (
     width * geometry.blackboardWidthPercent / 100 * 9 / 16 * safeScale
@@ -205,6 +214,7 @@ export function teachingBlackboardPlacementBounds(
         100 - scaledHeightPercent,
       ),
     ),
+    maximumScale,
   };
 }
 
@@ -223,6 +233,6 @@ export function constrainTeachingBlackboardPlacementToViewport(
       bounds.minimumTopPercent,
       bounds.maximumTopPercent,
     ),
-    scale: placement.scale,
+    scale: Math.min(placement.scale, bounds.maximumScale),
   };
 }

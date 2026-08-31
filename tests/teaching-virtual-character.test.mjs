@@ -40,6 +40,36 @@ test("blackboard stays fully visible after scaling on a laptop viewport", () => 
   assert.equal(placement.scale, 1.25);
 });
 
+test("blackboard scale is reduced when a short viewport cannot contain it", () => {
+  const bounds = teachingBlackboardPlacementBounds(768, 320, 1.25);
+  const placement = constrainTeachingBlackboardPlacementToViewport(
+    { x: 90, y: 70, scale: 1.25 },
+    768,
+    320,
+  );
+
+  assert.equal(bounds.maximumScale, 0.8);
+  assert.equal(placement.scale, 0.8);
+  assert.equal(placement.x, bounds.maximumXPercent);
+  assert.equal(placement.y, bounds.maximumTopPercent);
+});
+
+test("blackboard can adapt below the authoring minimum on an extremely short viewport", () => {
+  const bounds = teachingBlackboardPlacementBounds(1366, 320, 1);
+  const placement = constrainTeachingBlackboardPlacementToViewport(
+    { x: 50, y: 11, scale: 1 },
+    1366,
+    320,
+  );
+
+  assert.ok(bounds.maximumScale < TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale);
+  assert.equal(placement.scale, bounds.maximumScale);
+  assert.ok(placement.y + (
+    1366 * teachingVirtualCharacterPreviewGeometry(1366, 320).blackboardWidthPercent / 100
+    * 9 / 16 * placement.scale / 320 * 100
+  ) <= 100);
+});
+
 test("legacy left and right positions become usable stage coordinates", () => {
   assert.deepEqual(defaultTeachingVirtualCharacterPlacement("left"), { x: 25, y: 0, scale: 1 });
   assert.deepEqual(defaultTeachingVirtualCharacterPlacement("right"), { x: 75, y: 0, scale: 1 });

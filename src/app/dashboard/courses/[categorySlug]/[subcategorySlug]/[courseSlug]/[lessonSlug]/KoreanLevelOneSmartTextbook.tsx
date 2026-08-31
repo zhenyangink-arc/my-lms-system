@@ -5974,7 +5974,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           aria-label={locale === "ko-KR" ? "수업 영역" : "教学区"}
           data-learning-agent-focus-mode={tutorFocusMode || undefined}
           data-learning-agent-expanded={teachingAreaExpanded || undefined}
-          className="relative hidden shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none xl:flex xl:flex-col"
+          className={`relative shrink-0 overflow-hidden border-r border-[color-mix(in_srgb,var(--status-warning)_5%,var(--border-subtle))] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] transition-[width] duration-200 motion-reduce:transition-none ${teachingAreaExpanded ? "flex flex-col" : "hidden xl:flex xl:flex-col"}`}
           style={{ width: teachingAreaExpanded
             ? "100%"
             : teachingAreaCollapsed
@@ -6374,7 +6374,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           )}
         </aside>
 
-        <div className={`relative min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${learningAreaHidden ? "xl:hidden" : ""}`} data-learning-area-hidden={learningAreaHidden || undefined}>
+        <div className={`relative min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${learningAreaHidden ? "hidden" : "flex"}`} data-learning-area-hidden={learningAreaHidden || undefined}>
         <div
           data-learning-target={activeModule.code === "orientation" ? "orientation:header" : undefined}
           tabIndex={activeModule.code === "orientation" ? -1 : undefined}

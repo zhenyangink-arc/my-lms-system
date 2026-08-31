@@ -215,9 +215,9 @@ export function VirtualCharacterStageEditor({
 
   return (
     <>
-      <input type="hidden" name="blackboard_x" value={String(boundedBlackboardPlacement.x)} />
-      <input type="hidden" name="blackboard_y" value={String(boundedBlackboardPlacement.y)} />
-      <input type="hidden" name="blackboard_scale" value={String(boundedBlackboardPlacement.scale)} />
+      <input type="hidden" name="blackboard_x" value={String(blackboardPlacement.x)} />
+      <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
+      <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
       <div className="space-y-4 px-4 py-4">
       <div className="min-w-0 space-y-2">
         <div
@@ -366,7 +366,7 @@ export function VirtualCharacterStageEditor({
           </div>
           <label className="block space-y-1.5 text-sm font-medium xl:col-span-2">
             <span className="flex items-center justify-between gap-2 font-semibold text-[var(--foreground)]"><span>黑板大小</span><span className="tabular-nums text-[var(--foreground-muted)]">{Math.round(boundedBlackboardPlacement.scale * 100)}%</span></span>
-            <input type="range" min={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale * 100} max={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale * 100} step={5} value={Math.round(boundedBlackboardPlacement.scale * 100)} onChange={(event) => { updateBlackboardPlacement({ scale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
+            <input type="range" min={Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale, blackboardBounds.maximumScale) * 100} max={blackboardBounds.maximumScale * 100} step={1} value={Math.round(boundedBlackboardPlacement.scale * 100)} onChange={(event) => { updateBlackboardPlacement({ scale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
           </label>
           <button type="button" onClick={() => { onBlackboardPlacementChange(defaultTeachingBlackboardPlacement()); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复黑板默认位置</button>
         </div>
