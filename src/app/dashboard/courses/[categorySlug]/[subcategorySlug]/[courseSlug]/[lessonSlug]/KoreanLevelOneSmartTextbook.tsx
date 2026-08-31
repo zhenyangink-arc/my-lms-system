@@ -6022,7 +6022,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                                 className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
                               >
                                 {tutorSpeechStatus === "playing" ? <Pause size={10} aria-hidden="true" /> : <Play size={10} aria-hidden="true" />}
-                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
+                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续")}
                               </button>
                               <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
                                 <RotateCcw size={10} aria-hidden="true" />
@@ -6101,7 +6101,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                                 className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
                               >
                                 {tutorSpeechStatus === "playing" ? <Pause size={10} aria-hidden="true" /> : <Play size={10} aria-hidden="true" />}
-                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
+                                {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续")}
                               </button>
                               <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
                                 <RotateCcw size={10} aria-hidden="true" />
