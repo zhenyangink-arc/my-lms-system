@@ -13,6 +13,8 @@ import {
   studentTask,
   taskEventKey,
   upcomingScriptNodeBufferLine,
+  upcomingScriptNode,
+  resolveBufferLineSpeechAssetId,
   visualCue,
   type ScriptNodeRow,
 } from "@/lib/learning-agent-script-runtime";
@@ -509,6 +511,15 @@ export async function POST(request: Request) {
     });
     if (upcomingBufferLine !== null) {
       headers.set("X-Learning-Agent-Buffer-Line", encodeURIComponent(upcomingBufferLine));
+      const nextNode = upcomingScriptNode({
+        selectedNode: selectedScriptNode,
+        scriptNodes,
+        nodeByKey,
+        segmentIndex: selectedScriptSegmentIndex,
+        segmentCount: selectedScriptSegmentCount,
+      });
+      const bufferSpeechAssetId = await resolveBufferLineSpeechAssetId(admin, nextNode, input.locale, upcomingBufferLine);
+      if (bufferSpeechAssetId) headers.set("X-Learning-Agent-Buffer-Speech-Asset", bufferSpeechAssetId);
     }
   }
 

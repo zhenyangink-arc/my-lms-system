@@ -44,6 +44,7 @@ import {
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { bufferLineForRequest, bufferSpeechAssetForRequest } from "@/lib/learning-agent-buffer-state";
 import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
 import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 
@@ -4288,10 +4289,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorSelectedAnswer, setTutorSelectedAnswer] = useState("");
   const [tutorAnswerCorrect, setTutorAnswerCorrect] = useState<boolean | null>(null);
   const [tutorContinueLabel, setTutorContinueLabel] = useState("");
-  const [tutorNextBufferLine, setTutorNextBufferLine] = useState<string | null>(() => previewScriptVersionId
-    ? previewOpeningBufferLine?.["zh-CN"] ?? ""
-    : textbook.modules[previewStartModuleIndex ?? 0]?.openingBufferLine["zh-CN"] ?? "");
+  const [tutorNextBufferLine, setTutorNextBufferLine] = useState<string | null>(() => {
+    if (previewScriptVersionId) return previewOpeningBufferLine?.["zh-CN"] ?? "";
+    const initialModule = textbook.modules[previewStartModuleIndex ?? 0];
+    const resumedBufferLine = textbook.activeTeachingSessions[initialModule?.id ?? ""]?.bufferLine;
+    return resumedBufferLine?.["zh-CN"] ?? initialModule?.openingBufferLine["zh-CN"] ?? "";
+  });
   const [tutorActiveBufferLine, setTutorActiveBufferLine] = useState<string | null>(null);
+  const [tutorNextBufferSpeechAssetId, setTutorNextBufferSpeechAssetId] = useState<string | null>(null);
   const [tutorAutoContinue, setTutorAutoContinue] = useState(false);
   const tutorAutoContinuingRef = useRef(false);
   const [tutorTerminal, setTutorTerminal] = useState(false);
@@ -4309,9 +4314,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [viewStateReady, setViewStateReady] = useState(false);
   const [isPending, startTransition] = useTransition();
   const activeModule = textbook.modules[activeIndex];
+  const activeSessionBufferLine = textbook.activeTeachingSessions[activeModule?.id ?? ""]?.bufferLine;
   const activeOpeningBufferLine = isPreviewMode
     ? previewOpeningBufferLine?.[locale] || previewOpeningBufferLine?.["zh-CN"] || ""
-    : activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || "";
+    : activeSessionBufferLine?.[locale]
+      || activeSessionBufferLine?.["zh-CN"]
+      || activeModule?.openingBufferLine[locale]
+      || activeModule?.openingBufferLine["zh-CN"]
+      || "";
   const activeNodes = activeModule?.nodes ?? [];
   const t = ui[locale];
   const agentName = textbook.agent?.displayName[locale]
@@ -4482,6 +4492,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
     setTutorNextBufferLine(activeOpeningBufferLine);
+    setTutorNextBufferSpeechAssetId(null);
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -4601,6 +4612,30 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     }
   }
 
+  function playTutorBufferSpeech(text: string, manifest: TutorSpeechManifest) {
+    return new Promise<void>((resolve) => {
+      stopTutorSpeech("loading");
+      const audio = new Audio(manifest.audioUrl);
+      audio.preload = "auto";
+      audio.muted = tutorSpeechMuted;
+      tutorAudioRef.current = audio;
+      const finish = (status: TutorSpeechStatus) => {
+        setTutorText(text);
+        setTutorSpeechStatus(status);
+        resolve();
+      };
+      audio.ontimeupdate = () => {
+        const currentMs = audio.currentTime * 1000;
+        const activeCue = manifest.cues.findLast((cue) => cue.startMs <= currentMs);
+        setTutorText(text.slice(0, activeCue?.charEnd ?? text.length));
+      };
+      audio.onplaying = () => setTutorSpeechStatus("playing");
+      audio.onended = () => finish("ended");
+      audio.onerror = () => finish("error");
+      void audio.play().catch(() => finish("error"));
+    });
+  }
+
   function toggleTutorSpeech() {
     const audio = tutorAudioRef.current;
     if (!audio) return;
@@ -4659,6 +4694,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
     setTutorNextBufferLine(activeOpeningBufferLine);
+    setTutorNextBufferSpeechAssetId(null);
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -4668,6 +4704,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     intent: "explain" | "hint" | "example" | "roleplay" | "ask" | "ready" | "answer",
     answer?: string,
     restart = false,
+    bufferLineOverride?: string,
+    bufferSpeechAssetOverride?: string | null,
   ) {
     if (tutorPaused || tutorStatus === "thinking" || tutorStatus === "streaming") return;
     const requestIntent = intent === "explain" ? "start" : intent === "roleplay" ? "example" : intent;
@@ -4700,9 +4738,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     const requestAbortController = new AbortController();
     tutorRequestAbortRef.current?.abort();
     tutorRequestAbortRef.current = requestAbortController;
-    const shouldPlayBuffer = (requestIntent === "start" || intent === "ready") && tutorNextBufferLine !== null;
-    const activeBufferLine = shouldPlayBuffer
-      ? tutorNextBufferLine || (locale === "ko-KR" ? "잠시만요, 이 부분을 한번 볼게요…" : "稍等一下，我看看这里怎么讲…")
+    const requestedBufferSpeechAssetId = bufferSpeechAssetForRequest(
+      bufferSpeechAssetOverride,
+      tutorNextBufferSpeechAssetId,
+    );
+    const activeBufferLine = requestIntent === "start" || intent === "ready"
+      ? bufferLineForRequest(bufferLineOverride, tutorNextBufferLine, locale)
       : null;
     setTutorActiveBufferLine(activeBufferLine);
     let bufferSpeechDone: Promise<void> = Promise.resolve();
@@ -4710,7 +4751,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     if (activeBufferLine && teachingAreaCharacter?.kind === "uply-teacher" && !tutorPausedRef.current) {
       bufferSpeechActive = true;
       setTutorSpeechStatus("loading");
-      bufferSpeechDone = new Promise((resolve) => {
+      const browserSpeechFallback = () => new Promise<void>((resolve) => {
         const finish = () => {
           bufferSpeechActive = false;
           resolve();
@@ -4726,6 +4767,18 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           (revealedText) => setTutorText(revealedText),
         );
       });
+      bufferSpeechDone = requestedBufferSpeechAssetId
+        ? fetch(`/api/learning-agent/speech/${encodeURIComponent(requestedBufferSpeechAssetId)}`, {
+            signal: requestAbortController.signal,
+          })
+            .then(async (speechResponse) => {
+              if (!speechResponse.ok) throw new Error("buffer speech unavailable");
+              const manifest = await speechResponse.json() as TutorSpeechManifest;
+              await playTutorBufferSpeech(activeBufferLine, manifest);
+            })
+            .catch(() => requestAbortController.signal.aborted ? undefined : browserSpeechFallback())
+            .then(() => { bufferSpeechActive = false; })
+        : browserSpeechFallback();
     }
     try {
       const response = isPreviewMode
@@ -4874,6 +4927,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       const encodedBufferLine = response.headers.get("X-Learning-Agent-Buffer-Line");
       if (requestIntent === "start" || intent === "ready") {
         setTutorNextBufferLine(encodedBufferLine === null ? null : decodeURIComponent(encodedBufferLine));
+        setTutorNextBufferSpeechAssetId(response.headers.get("X-Learning-Agent-Buffer-Speech-Asset"));
       }
       tutorAutoContinuingRef.current = false;
       setTutorAutoContinue(isPreviewMode && response.headers.get("X-Learning-Agent-Auto-Continue") === "true");
@@ -4934,6 +4988,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       }
     } catch (error) {
       if (requestAbortController.signal.aborted) return;
+      window.speechSynthesis?.cancel();
+      tutorSpeechPlaybackRef.current = null;
+      setTutorSpeechStatus("idle");
       setTutorActiveBufferLine(null);
       setTutorStatus("error");
       setTutorText(error instanceof Error ? error.message : (locale === "ko-KR" ? "잠시 후 다시 시도해 주세요." : "请稍后重试。"));
@@ -4952,7 +5009,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     tutorPausedRef.current = false;
     setTutorPaused(false);
     setTutorStarted(true);
-    void tutorReply("explain", undefined, restart);
+    const restartBufferLine = restart
+      ? activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || ""
+      : undefined;
+    void tutorReply("explain", undefined, restart, restartBufferLine, restart ? null : undefined);
   }
 
   function restartTutorLesson() {

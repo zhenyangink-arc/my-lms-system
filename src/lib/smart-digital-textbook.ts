@@ -117,6 +117,7 @@ export type SmartTextbookData = {
   progress: SmartTextbookProgress[];
   activeTeachingSessions: Record<string, {
     id: string;
+    bufferLine: LocalizedText;
   }>;
 };
 
@@ -432,17 +433,35 @@ export async function loadSmartDigitalTextbook(
     const { data: activeSessionRows } = teachingLessonIds.length
       ? await admin
           .from("learning_agent_sessions")
-          .select("id,lesson_id,updated_at")
+          .select("id,lesson_id,current_node_id,updated_at")
           .eq("tenant_id", options.tenantId)
           .eq("student_id", options.userId)
           .eq("status", "active")
           .in("lesson_id", teachingLessonIds)
           .order("updated_at", { ascending: false })
-      : { data: [] as { id: string; lesson_id: string; updated_at: string }[] };
+      : { data: [] as { id: string; lesson_id: string; current_node_id: string | null; updated_at: string }[] };
+    const activeSessionNodeIds = [...new Set((activeSessionRows ?? [])
+      .map((session) => session.current_node_id ? String(session.current_node_id) : "")
+      .filter(Boolean))];
+    const { data: activeSessionNodes } = activeSessionNodeIds.length
+      ? await admin
+          .from("learning_agent_script_nodes")
+          .select("id,configuration")
+          .in("id", activeSessionNodeIds)
+      : { data: [] as { id: string; configuration: unknown }[] };
+    const activeSessionBufferLineByNodeId = new Map((activeSessionNodes ?? []).map((node) => [
+      String(node.id),
+      asObject(node.configuration).bufferLine ?? null,
+    ]));
     for (const session of activeSessionRows ?? []) {
       const moduleId = lessonModuleById.get(String(session.lesson_id));
       if (moduleId && !activeTeachingSessions[moduleId]) {
-        activeTeachingSessions[moduleId] = { id: String(session.id) };
+        activeTeachingSessions[moduleId] = {
+          id: String(session.id),
+          bufferLine: localized(session.current_node_id
+            ? activeSessionBufferLineByNodeId.get(String(session.current_node_id)) ?? null
+            : null),
+        };
       }
     }
 

@@ -7,6 +7,11 @@ import { isTeacherKimPose } from "@/lib/teacher-kim-character";
 type AdminClient = ReturnType<typeof createAdminClient>;
 
 export type Locale = "zh-CN" | "ko-KR";
+export const BUFFER_LINE_SEGMENT_INDEX = 199;
+export const DEFAULT_BUFFER_LINES: Record<Locale, string> = {
+  "zh-CN": "稍等一下，我看看这里怎么讲…",
+  "ko-KR": "잠시만요, 이 부분을 한번 볼게요…",
+};
 
 type Localized = Record<string, unknown>;
 
@@ -174,6 +179,42 @@ export function upcomingScriptNodeBufferLine(input: {
     : scriptNodes.find((node) => node.sort_order > selectedNode.sort_order) ?? null;
   if (!nextNode || nextNode.id === selectedNode.id) return null;
   return configuredText(nextNode.configuration, "bufferLine", locale);
+}
+
+export function upcomingScriptNode(input: {
+  selectedNode: ScriptNodeRow;
+  scriptNodes: ScriptNodeRow[];
+  nodeByKey: Map<string, ScriptNodeRow>;
+  segmentIndex: number;
+  segmentCount: number;
+}) {
+  const { selectedNode, scriptNodes, nodeByKey, segmentIndex, segmentCount } = input;
+  if (segmentIndex < segmentCount - 1 || isTerminalScriptNode(selectedNode, scriptNodes)) return null;
+  const nextNode = selectedNode.next_node_key
+    ? nodeByKey.get(selectedNode.next_node_key) ?? null
+    : scriptNodes.find((node) => node.sort_order > selectedNode.sort_order) ?? null;
+  return nextNode && nextNode.id !== selectedNode.id ? nextNode : null;
+}
+
+export async function resolveBufferLineSpeechAssetId(
+  admin: AdminClient,
+  node: ScriptNodeRow | null,
+  locale: Locale,
+  bufferLine: string,
+) {
+  if (!node) return null;
+  const effectiveLine = bufferLine || DEFAULT_BUFFER_LINES[locale];
+  const contentHash = await sha256Text(effectiveLine);
+  const { data } = await admin
+    .from("learning_agent_script_audio_assets")
+    .select("id")
+    .eq("script_node_id", node.id)
+    .eq("locale", locale)
+    .eq("segment_index", BUFFER_LINE_SEGMENT_INDEX)
+    .eq("content_hash", contentHash)
+    .eq("production_status", "ready")
+    .maybeSingle();
+  return data?.id ? String(data.id) : null;
 }
 
 export function taskEventKey(nodeId: string, task: Record<string, unknown>) {

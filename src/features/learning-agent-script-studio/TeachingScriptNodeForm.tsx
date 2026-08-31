@@ -29,10 +29,10 @@ import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAs
 
 const initialState: TeachingScriptActionState = { status: "idle" };
 
-function configuredText(node: TeachingScriptNode, key: string) {
+function configuredText(node: TeachingScriptNode, key: string, locale: "zh-CN" | "ko-KR" = "zh-CN") {
   const value = node.configuration[key];
   if (!value || typeof value !== "object" || Array.isArray(value)) return "";
-  return String((value as Record<string, unknown>)["zh-CN"] ?? "");
+  return String((value as Record<string, unknown>)[locale] ?? "");
 }
 
 function objectConfiguration(node: TeachingScriptNode, key: string) {
@@ -1113,6 +1113,7 @@ export function TeachingScriptNodeForm({
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
               <div className="mt-4 grid gap-4">
                 <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文小节名称</span><input name="title_ko" defaultValue={node.title["ko-KR"]} disabled={!editable} maxLength={80} className={inputClass} /></label>
+                <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文过渡台词</span><textarea name="buffer_line_ko" defaultValue={configuredText(node, "bufferLine", "ko-KR")} disabled={!editable} rows={3} maxLength={200} placeholder="例如：잠시만요, 이 부분을 한번 볼게요…" className={`${inputClass} min-h-24 resize-y py-3 leading-6`} /></label>
                 <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文老师台词</span><textarea name="script_ko" defaultValue={node.script["ko-KR"]} disabled={!editable} rows={5} maxLength={1600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
               </div>
             </details>

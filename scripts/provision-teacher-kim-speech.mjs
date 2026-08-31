@@ -14,6 +14,11 @@ const VOICES = {
   "ko-KR": "ko-KR-SunHiNeural",
 };
 const LOCALES = ["zh-CN", "ko-KR"];
+const BUFFER_LINE_SEGMENT_INDEX = 199;
+const DEFAULT_BUFFER_LINES = {
+  "zh-CN": "稍等一下，我看看这里怎么讲…",
+  "ko-KR": "잠시만요, 이 부분을 한번 볼게요…",
+};
 
 function requiredEnv(name) {
   const value = process.env[name];
@@ -38,6 +43,11 @@ function run(command, args, options = {}) {
 function localized(value, locale) {
   if (!value || typeof value !== "object" || Array.isArray(value)) return "";
   return String(value[locale] ?? value["zh-CN"] ?? "").trim();
+}
+
+function localizedExact(value, locale) {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return "";
+  return String(value[locale] ?? "").trim();
 }
 
 function teacherScriptSegments(value, locale) {
@@ -110,7 +120,10 @@ async function durationMs(filePath) {
 }
 
 async function generateSegment({ workDir, node, locale, segmentIndex, text }) {
-  const performance = scriptPerformance(node.configuration, segmentIndex);
+  const performance = scriptPerformance(
+    node.configuration,
+    segmentIndex === BUFFER_LINE_SEGMENT_INDEX ? 0 : segmentIndex,
+  );
   const chunks = splitBySpokenLanguage(text, locale);
   const rate = edgeRate(performance.voiceRate);
   const generated = [];
@@ -241,13 +254,22 @@ async function main() {
     for (const node of nodes ?? []) {
       for (const locale of LOCALES) {
         const segments = teacherScriptSegments(node.teacher_script, locale);
-        for (const [segmentIndex, rawText] of segments.entries()) {
+        const speechJobs = segments.map((rawText, segmentIndex) => ({ segmentIndex, rawText, kind: "script" }));
+        speechJobs.push({
+          segmentIndex: BUFFER_LINE_SEGMENT_INDEX,
+          rawText: localizedExact(node.configuration?.bufferLine, locale) || DEFAULT_BUFFER_LINES[locale],
+          kind: "buffer-line",
+        });
+        for (const { segmentIndex, rawText, kind } of speechJobs) {
           // Voice generation and its cache hash must never see [b]/[u]/[color]
           // markup: TTS would read the tags aloud, and formatting-only edits
           // must not invalidate already-generated audio.
           const text = stripRichText(rawText);
-          const performance = scriptPerformance(node.configuration, segmentIndex);
-          if (performance.voiceEnabled === false) continue;
+          const performance = scriptPerformance(
+            node.configuration,
+            segmentIndex === BUFFER_LINE_SEGMENT_INDEX ? 0 : segmentIndex,
+          );
+          if (kind === "script" && performance.voiceEnabled === false) continue;
           const contentHash = createHash("sha256").update(text, "utf8").digest("hex");
           const rate = edgeRate(performance.voiceRate);
           const slotKey = `${node.id}:${locale}:${segmentIndex}`;

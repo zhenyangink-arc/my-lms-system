@@ -150,9 +150,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(scriptRuntime, /upcomingScriptNodeBufferLine/);
   assert.match(scriptRuntime, /segmentIndex < segmentCount - 1/);
   assert.match(actions, /bufferLineZh: String\(formData\.get\("buffer_line_zh"\) \?\? ""\)/);
-  assert.match(actions, /configuration\.bufferLine = \{ "zh-CN": input\.bufferLineZh \}/);
+  assert.match(actions, /bufferLineKo: String\(formData\.get\("buffer_line_ko"\) \?\? ""\)/);
+  assert.match(actions, /"ko-KR": input\.bufferLineKo/);
   assert.match(editor, /过渡台词/);
   assert.match(editor, /buffer_line_zh/);
+  assert.match(editor, /buffer_line_ko/);
   assert.match(editor, /ariaLabelledBy="buffer-line-label"/);
   assert.match(editor, /min-h-24 resize-y/);
   assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
@@ -394,7 +396,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /当前教学展示/);
   assert.match(shell, /pointer-events-none fixed bottom-\[300px\] z-40/);
   assert.match(shell, /X-Learning-Agent-Buffer-Line/);
-  assert.match(shell, /const shouldPlayBuffer = \(requestIntent === "start" \|\| intent === "ready"\) && tutorNextBufferLine !== null/);
+  assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine, locale\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
   assert.match(shell, /!tutorStarted \? "left-1\/2 -translate-x-1\/2" : "right-0 translate-x-\[310px\]"/);
@@ -403,7 +405,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /tutorIsSpeakingNow = tutorStatus === "thinking"/);
   assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
   assert.match(shell, /requestAbortController\.signal\.addEventListener\("abort", finish, \{ once: true \}\)/);
-  assert.match(shell, /稍等一下，我看看这里怎么讲/);
+  assert.match(shell, /X-Learning-Agent-Buffer-Speech-Asset/);
   assert.match(shell, /去学习区听音频/);
   assert.match(shell, /recordTutorLearningEvent/);
   assert.match(shell, /data-learning-target="scene:image"/);
