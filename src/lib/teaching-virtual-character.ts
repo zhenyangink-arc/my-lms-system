@@ -7,8 +7,8 @@ export type TeachingVirtualCharacterPlacement = {
 export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
   characterHeightPercent: 48,
   maximumBottomPercent: 80,
-  viewportTopPx: 64,
-  viewportBottomPx: 64,
+  viewportTopPx: 0,
+  viewportBottomPx: 0,
   preview: {
     aspectRatio: "16 / 9",
     headerHeightPercent: 5.25,

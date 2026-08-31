@@ -37,6 +37,8 @@ test("invalid placement values fall back without propagating NaN", () => {
 
 test("admin preview uses the same wide teaching-stage geometry as the learner view", () => {
   assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.aspectRatio, "16 / 9");
+  assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.viewportTopPx, 0);
+  assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.viewportBottomPx, 0);
   assert.ok(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent < 50);
   assert.equal(
     TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardLeftPercent * 2

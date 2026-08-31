@@ -404,6 +404,13 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /tutorHasPreviousSession/);
   assert.match(shell, /function restartTutorLesson\(\)/);
   assert.match(shell, /setTutorDisplay\(activeModule\.openingTeachingDisplay as TutorDisplay \| null\)/);
+  assert.match(shell, /textbookElement\?\.requestFullscreen/);
+  assert.match(shell, /document\.exitFullscreen\(\)\.catch/);
+  assert.match(shell, /immersiveChromeVisible/);
+  assert.match(shell, /setTimeout\(\(\) => setImmersiveChromeVisible\(false\), 1800\)/);
+  assert.match(shell, /onPointerEnter=\{keepImmersiveChromeVisible\}/);
+  assert.match(shell, /-translate-y-full/);
+  assert.match(shell, /translate-y-full/);
   assert.match(shell, /if \(confirmed\) startTutorLesson\(true\)/);
   assert.match(shell, /退出学习/);
   assert.match(shell, /mt-3 grid grid-cols-2 gap-1 border-t/);

@@ -4339,6 +4339,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [ahanIdleVisible, setAhanIdleVisible] = useState(false);
   const [learningAreaManuallyHidden, setLearningAreaManuallyHidden] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [immersiveChromeVisible, setImmersiveChromeVisible] = useState(true);
+  const immersiveChromeHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [preferenceError, setPreferenceError] = useState("");
   const [preferenceNeedsReload, setPreferenceNeedsReload] = useState(false);
   const [viewStateReady, setViewStateReady] = useState(false);
@@ -4737,6 +4739,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
+    if (document.fullscreenElement === textbookRef.current) {
+      void document.exitFullscreen().catch(() => undefined);
+    }
   }
 
   async function tutorReply(
@@ -5040,6 +5045,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function startTutorLesson(restart = false) {
     if (tutorStatus === "thinking" || tutorStatus === "streaming") return;
+    const textbookElement = textbookRef.current;
+    if (!isPreviewMode && !document.fullscreenElement && textbookElement?.requestFullscreen) {
+      void textbookElement.requestFullscreen().catch(() => undefined);
+    }
     tutorVisitedModuleIdsRef.current.add(activeModule.id);
     setTutorHasPreviousSession(true);
     setTeachingAreaCollapsed(false);
@@ -5378,6 +5387,19 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   }, []);
 
   useEffect(() => {
+    if (immersiveChromeHideTimerRef.current) clearTimeout(immersiveChromeHideTimerRef.current);
+    if (!tutorStarted) {
+      setImmersiveChromeVisible(true);
+      return;
+    }
+    setImmersiveChromeVisible(true);
+    immersiveChromeHideTimerRef.current = setTimeout(() => setImmersiveChromeVisible(false), 1800);
+    return () => {
+      if (immersiveChromeHideTimerRef.current) clearTimeout(immersiveChromeHideTimerRef.current);
+    };
+  }, [tutorStarted]);
+
+  useEffect(() => {
     function syncFullscreenState() {
       setIsFullscreen(document.fullscreenElement === textbookRef.current);
     }
@@ -5399,6 +5421,18 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     } catch {
       // 浏览器拒绝全屏时保留当前教材界面，不中断学习。
     }
+  }
+
+  function keepImmersiveChromeVisible() {
+    if (!tutorStarted) return;
+    if (immersiveChromeHideTimerRef.current) clearTimeout(immersiveChromeHideTimerRef.current);
+    setImmersiveChromeVisible(true);
+  }
+
+  function scheduleImmersiveChromeHide(delay = 900) {
+    if (!tutorStarted) return;
+    if (immersiveChromeHideTimerRef.current) clearTimeout(immersiveChromeHideTimerRef.current);
+    immersiveChromeHideTimerRef.current = setTimeout(() => setImmersiveChromeVisible(false), delay);
   }
 
   function toggleTutorPanel() {
@@ -5719,6 +5753,22 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       <a href="#korean-textbook-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--card)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold">
         跳到教材正文
       </a>
+      {tutorStarted && (
+        <>
+          <div
+            className="absolute inset-x-0 top-0 z-[70] h-4"
+            onPointerEnter={keepImmersiveChromeVisible}
+            onPointerDown={keepImmersiveChromeVisible}
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-x-0 bottom-0 z-[70] h-4"
+            onPointerEnter={keepImmersiveChromeVisible}
+            onPointerDown={keepImmersiveChromeVisible}
+            aria-hidden="true"
+          />
+        </>
+      )}
       {tutorCompanion && !learningAreaHidden && !showTutorAnswerDialog && (
         <div
           className="a-han-companion pointer-events-none fixed z-[45] w-[76px] sm:w-[104px]"
@@ -5739,7 +5789,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           />
         </div>
       )}
-      <header className="relative z-30 h-[70px] shrink-0 border-b border-[var(--border-subtle)] bg-[var(--card)] px-3 shadow-sm sm:px-5 lg:h-[78px] lg:px-7">
+      <header
+        className={`${tutorStarted ? `absolute inset-x-0 top-0 z-[80] transition-transform duration-200 ease-out motion-reduce:transition-none ${immersiveChromeVisible ? "translate-y-0" : "-translate-y-full"}` : "relative z-30 shrink-0"} h-[70px] border-b border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--card)_96%,transparent)] px-3 shadow-sm backdrop-blur-lg sm:px-5 lg:h-[78px] lg:px-7`}
+        onPointerEnter={keepImmersiveChromeVisible}
+        onPointerLeave={() => scheduleImmersiveChromeHide()}
+        onFocusCapture={keepImmersiveChromeVisible}
+        onBlurCapture={() => scheduleImmersiveChromeHide()}
+      >
         <div className="flex h-full items-center justify-start gap-3">
           <div className="flex min-w-0 items-center gap-3 sm:gap-5">
             <button
@@ -6611,7 +6667,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         </aside>
       )}
 
-      <footer className="relative z-30 h-[68px] shrink-0 border-t-4 border-double border-[var(--border-subtle)] bg-[var(--card)] px-3 sm:px-5 lg:h-[72px] lg:px-7">
+      <footer
+        className={`${tutorStarted ? `absolute inset-x-0 bottom-0 z-[80] transition-transform duration-200 ease-out motion-reduce:transition-none ${immersiveChromeVisible ? "translate-y-0" : "translate-y-full"}` : "relative z-30 shrink-0"} h-[68px] border-t-4 border-double border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--card)_96%,transparent)] px-3 shadow-[0_-8px_24px_rgba(15,23,42,0.08)] backdrop-blur-lg sm:px-5 lg:h-[72px] lg:px-7`}
+        onPointerEnter={keepImmersiveChromeVisible}
+        onPointerLeave={() => scheduleImmersiveChromeHide()}
+        onFocusCapture={keepImmersiveChromeVisible}
+        onBlurCapture={() => scheduleImmersiveChromeHide()}
+      >
         <div className="flex h-full items-center justify-between gap-3">
           <button type="button" disabled={activeIndex === 0} onClick={() => selectModule(Math.max(0, activeIndex - 1))} className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl px-1 text-[11px] font-bold text-slate-500 hover:bg-[var(--surface-soft)] hover:text-slate-900 disabled:opacity-25 sm:gap-2 sm:px-2">
             <ChevronLeft size={16} /> <span className="hidden min-[360px]:inline">{t.previous}</span>
