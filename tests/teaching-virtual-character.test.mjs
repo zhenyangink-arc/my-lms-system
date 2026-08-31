@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   defaultTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
+  TEACHING_VIRTUAL_CHARACTER_STAGE,
 } from "../src/lib/teaching-virtual-character.ts";
 
 test("legacy left and right positions become usable stage coordinates", () => {
@@ -20,6 +21,10 @@ test("per-line virtual character placement is normalized to the editable stage",
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: 999, characterY: -20, characterScale: 0.2 }),
     { x: 90, y: 0, scale: 0.75 },
+  );
+  assert.deepEqual(
+    normalizeTeachingVirtualCharacterPlacement({ characterX: 50, characterY: 999, characterScale: 1 }),
+    { x: 50, y: TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, scale: 1 },
   );
 });
 

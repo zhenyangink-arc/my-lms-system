@@ -11,6 +11,7 @@ import {
 } from "@/lib/teacher-kim-character";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
+import { TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
 
 export type VirtualCharacterStagePerformance = {
   pose: TeacherKimPose;
@@ -64,7 +65,7 @@ export function VirtualCharacterStageEditor({
     if (!rect) return;
     const x = Math.max(10, Math.min(90, ((event.clientX - rect.left) / rect.width) * 100));
     const pointerY = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
-    const y = Math.max(0, Math.min(30, (100 - pointerY) * 0.45));
+    const y = Math.max(0, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, 100 - pointerY));
     onPerformanceChange(safeIndex, { characterX: x, characterY: y });
   }
 
@@ -93,7 +94,7 @@ export function VirtualCharacterStageEditor({
       : event.key === "ArrowRight"
         ? { characterX: Math.min(90, performance.characterX + step) }
         : event.key === "ArrowUp"
-          ? { characterY: Math.min(30, performance.characterY + step) }
+          ? { characterY: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, performance.characterY + step) }
           : event.key === "ArrowDown"
             ? { characterY: Math.max(0, performance.characterY - step) }
             : null;
@@ -108,14 +109,26 @@ export function VirtualCharacterStageEditor({
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
-          className="relative aspect-video w-full border border-[var(--border)] bg-[linear-gradient(180deg,var(--surface-soft),var(--card))] shadow-sm"
+          className="relative aspect-[2/1] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm"
           style={{ containerType: "inline-size" }}
         >
-          {activeBlackboardSlide ? (
-            <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
-          )}
+          <div className="absolute inset-x-0 top-0 flex h-[12%] items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]">
+            <span className="text-[clamp(0.6rem,1.7cqw,0.85rem)] font-bold text-[var(--foreground)]">教学区</span>
+          </div>
+          <div className="absolute left-[12%] top-[16%] flex max-w-[76%] items-center gap-[1.2cqw] text-[clamp(0.42rem,1.1cqw,0.65rem)] text-[var(--foreground-secondary)]">
+            <span className="font-bold text-[var(--foreground-muted)]">当前教学</span>
+            <span className="font-semibold">第 1 章 · 你好？</span>
+            <span className="h-[1.6cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
+            <span className="font-bold text-[var(--foreground)]">课前导航</span>
+          </div>
+          <div className="absolute left-[12%] top-[23%] w-[76%] overflow-hidden rounded-[1.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.6cqw_4cqw_rgba(15,23,42,0.08)]" style={{ aspectRatio: "16 / 9" }}>
+            {activeBlackboardSlide ? (
+              <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
+            ) : (
+              <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
+            )}
+          </div>
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[8%] border-t border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)]" aria-hidden="true" />
           <button
             type="button"
             disabled={disabled}
@@ -128,7 +141,7 @@ export function VirtualCharacterStageEditor({
             style={{
               left: `${performance.characterX}%`,
               bottom: `${performance.characterY}%`,
-              height: "76%",
+              height: `${TEACHING_VIRTUAL_CHARACTER_STAGE.characterHeightPercent}%`,
               aspectRatio: "1 / 2",
               transform: `translateX(-50%) scale(${performance.characterScale})`,
               transformOrigin: "bottom center",
@@ -158,7 +171,7 @@ export function VirtualCharacterStageEditor({
             <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
           </button>
         </div>
-        <p className="text-xs leading-5 text-[var(--foreground-muted)]">拖动金老师调整位置，也可以聚焦人物后使用方向键。人物位置和动作会随当前台词切换。</p>
+        <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。拖动金老师调整位置，也可以聚焦人物后使用方向键；人物位置和动作会随当前台词切换。</p>
       </div>
 
       <div className="space-y-3">
@@ -176,7 +189,7 @@ export function VirtualCharacterStageEditor({
         </label>
         <div className="grid grid-cols-2 gap-2">
           <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" inputMode="numeric" min={10} max={90} value={Math.round(performance.characterX)} onChange={(event) => { onPerformanceChange(safeIndex, { characterX: Math.max(10, Math.min(90, Number(event.target.value) || 10)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
-          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">离底位置 %</span><input type="number" inputMode="numeric" min={0} max={30} value={Math.round(performance.characterY)} onChange={(event) => { onPerformanceChange(safeIndex, { characterY: Math.max(0, Math.min(30, Number(event.target.value) || 0)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">离教学区底部 %</span><input type="number" inputMode="numeric" min={0} max={TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent} value={Math.round(performance.characterY)} onChange={(event) => { onPerformanceChange(safeIndex, { characterY: Math.max(0, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, Number(event.target.value) || 0)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
         </div>
         <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center justify-between gap-2 font-semibold text-[var(--foreground)]"><span>人物大小</span><span className="tabular-nums text-[var(--foreground-muted)]">{Math.round(performance.characterScale * 100)}%</span></span>

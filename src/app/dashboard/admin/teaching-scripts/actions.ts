@@ -13,6 +13,7 @@ import {
   teachingBlackboardSlideFitsHeader,
 } from "@/lib/teaching-blackboard";
 import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
+import { TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
 
 export type TeachingScriptActionState = {
   status: "idle" | "success" | "error";
@@ -40,7 +41,7 @@ const nodeSchema = z.object({
   scriptPerformances: z.array(z.object({
     pose: z.enum(TEACHER_KIM_POSES),
     characterX: z.coerce.number().min(10).max(90),
-    characterY: z.coerce.number().min(0).max(30),
+    characterY: z.coerce.number().min(0).max(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
     characterScale: z.coerce.number().min(0.75).max(1.25),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
