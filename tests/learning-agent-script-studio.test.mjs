@@ -151,6 +151,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /configuration\.bufferLine = \{ "zh-CN": input\.bufferLineZh \}/);
   assert.match(editor, /过渡台词/);
   assert.match(editor, /buffer_line_zh/);
+  assert.match(editor, /ariaLabelledBy="buffer-line-label"/);
+  assert.match(editor, /min-h-24 resize-y/);
   assert.match(respondRoute, /configuredText\(selectedScriptNode\.configuration, "bufferLine", input\.locale\)/);
   assert.match(editor, /教学内容/);
   assert.match(editor, /学生展示内容/);
