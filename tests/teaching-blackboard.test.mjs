@@ -36,6 +36,18 @@ test("blackboard uses the latest slide linked at or before the current teacher l
   assert.equal(teachingBlackboardDisplayForSegment(display, 2).activeSlide.id, "third");
 });
 
+test("blackboard stage placement is included with the active slide", () => {
+  const display = {
+    mode: "slides",
+    placement: { x: 63, y: 18, scale: 0.9 },
+    slides: [
+      { id: "first", name: "开场", segmentIndex: 0, background: "plain", elements: [element("a", "欢迎")] },
+    ],
+  };
+
+  assert.deepEqual(teachingBlackboardDisplayForSegment(display, 0).placement, { x: 63, y: 18, scale: 0.9 });
+});
+
 test("legacy display fields become one editable slide without copying teacher script", () => {
   const slides = teachingBlackboardSlidesFromDisplay({
     title: { "zh-CN": "本节重点" },

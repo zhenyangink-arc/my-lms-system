@@ -4,6 +4,12 @@ export type TeachingVirtualCharacterPlacement = {
   scale: number;
 };
 
+export type TeachingBlackboardPlacement = {
+  x: number;
+  y: number;
+  scale: number;
+};
+
 export type TeachingVirtualCharacterPreviewGeometry = {
   aspectRatio: string;
   headerHeightPercent: number;
@@ -20,6 +26,16 @@ export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
   maximumBottomPercent: 80,
   viewportTopPx: 0,
   viewportBottomPx: 0,
+  blackboard: {
+    defaultXPercent: 50,
+    defaultTopPercent: 11,
+    minimumXPercent: 10,
+    maximumXPercent: 90,
+    minimumTopPercent: 0,
+    maximumTopPercent: 70,
+    minimumScale: 0.75,
+    maximumScale: 1.25,
+  },
   preview: {
     fallbackViewportWidthPx: 1920,
     fallbackViewportHeightPx: 1080,
@@ -98,5 +114,40 @@ export function normalizeTeachingVirtualCharacterPlacement(
     x: finiteNumber(source.characterX, fallback.x, 10, 90),
     y: finiteNumber(source.characterY, fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
     scale: finiteNumber(source.characterScale, fallback.scale, 0.75, 1.25),
+  };
+}
+
+export function defaultTeachingBlackboardPlacement(): TeachingBlackboardPlacement {
+  return {
+    x: TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultXPercent,
+    y: TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultTopPercent,
+    scale: 1,
+  };
+}
+
+export function normalizeTeachingBlackboardPlacement(value: unknown): TeachingBlackboardPlacement {
+  const source = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const fallback = defaultTeachingBlackboardPlacement();
+  return {
+    x: finiteNumber(
+      source.x,
+      fallback.x,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent,
+    ),
+    y: finiteNumber(
+      source.y,
+      fallback.y,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent,
+    ),
+    scale: finiteNumber(
+      source.scale,
+      fallback.scale,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale,
+    ),
   };
 }

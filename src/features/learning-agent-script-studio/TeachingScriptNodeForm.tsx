@@ -26,7 +26,11 @@ import {
   type TeacherKimPose,
 } from "@/lib/teacher-kim-character";
 import { teachingBlackboardSlidesFromDisplay, type TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
-import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
+import {
+  normalizeTeachingBlackboardPlacement,
+  normalizeTeachingVirtualCharacterPlacement,
+  type TeachingBlackboardPlacement,
+} from "@/lib/teaching-virtual-character";
 import { TeachingBlackboardEditor } from "./TeachingBlackboardEditor";
 import { VirtualCharacterStageEditor } from "./VirtualCharacterStageEditor";
 import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
@@ -627,6 +631,9 @@ export function TeachingScriptNodeForm({
   const [blackboardSlides, setBlackboardSlides] = useState<TeachingBlackboardSlide[]>(() =>
     teachingBlackboardSlidesFromDisplay(display),
   );
+  const [blackboardPlacement, setBlackboardPlacement] = useState<TeachingBlackboardPlacement>(() =>
+    normalizeTeachingBlackboardPlacement(display.placement),
+  );
   const [dirty, setDirty] = useState(false);
   const [visualCueTargetKey, setVisualCueTargetKey] = useState(storedVisualCueTargetKey);
   const [visualCuePageKey, setVisualCuePageKey] = useState(
@@ -1161,13 +1168,18 @@ export function TeachingScriptNodeForm({
             </div>
             <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
             <input type="hidden" name="virtual_character_position" value={(scriptPerformances[0]?.characterX ?? 75) < 50 ? "left" : "right"} />
+            <input type="hidden" name="blackboard_x" value={String(blackboardPlacement.x)} />
+            <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
+            <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
             <VirtualCharacterStageEditor
               scriptLines={scriptLines}
               performances={scriptPerformances}
               blackboardSlides={blackboardSlides}
+              blackboardPlacement={blackboardPlacement}
               selectedIndex={selectedCharacterLineIndex}
               onSelectedIndexChange={setSelectedCharacterLineIndex}
               onPerformanceChange={(index, patch) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, ...patch } : item))}
+              onBlackboardPlacementChange={(patch) => setBlackboardPlacement((current) => ({ ...current, ...patch }))}
               disabled={!editable}
               onDirty={markDirty}
             />

@@ -13,7 +13,10 @@ import {
   teachingBlackboardSlideFitsHeader,
 } from "@/lib/teaching-blackboard";
 import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
-import { TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
+import {
+  normalizeTeachingBlackboardPlacement,
+  TEACHING_VIRTUAL_CHARACTER_STAGE,
+} from "@/lib/teaching-virtual-character";
 
 export type TeachingScriptActionState = {
   status: "idle" | "success" | "error";
@@ -36,6 +39,15 @@ const nodeSchema = z.object({
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
   displaySlidesJson: z.string().max(MAX_TEACHING_BLACKBOARD_JSON_LENGTH, "黑板画面内容过多，请减少画面或文字。"),
+  blackboardX: z.coerce.number()
+    .min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent)
+    .max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent),
+  blackboardY: z.coerce.number()
+    .min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent)
+    .max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent),
+  blackboardScale: z.coerce.number()
+    .min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale)
+    .max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale),
   virtualCharacterKind: z.literal("uply-teacher"),
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
@@ -275,6 +287,9 @@ export async function saveTeachingScriptNodeAction(
       displayKorean: String(formData.get("display_korean") ?? ""),
       displayTranslationZh: String(formData.get("display_translation_zh") ?? ""),
       displaySlidesJson: String(formData.get("display_slides_json") ?? ""),
+      blackboardX: String(formData.get("blackboard_x") ?? TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultXPercent),
+      blackboardY: String(formData.get("blackboard_y") ?? TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultTopPercent),
+      blackboardScale: String(formData.get("blackboard_scale") ?? "1"),
       virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "uply-teacher"),
       virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
       scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
@@ -390,6 +405,11 @@ export async function saveTeachingScriptNodeAction(
       elements: slide.elements.filter((element) => element.content.trim() || element.translation?.trim()),
     }));
     const hasMeaningfulSlide = normalizedSlides.some((slide) => slide.elements.length > 0);
+    const blackboardPlacement = normalizeTeachingBlackboardPlacement({
+      x: input.blackboardX,
+      y: input.blackboardY,
+      scale: input.blackboardScale,
+    });
     const oversizedSlide = normalizedSlides.find((slide) => !teachingBlackboardSlideFitsHeader(slide));
     if (oversizedSlide) {
       return {
@@ -401,6 +421,7 @@ export async function saveTeachingScriptNodeAction(
     if (hasMeaningfulSlide) {
       configuration.display = {
         mode: "slides",
+        placement: blackboardPlacement,
         // Preserve intentionally empty slides after the first authored slide;
         // they let the teacher clear the blackboard for a later script line.
         slides: normalizedSlides,
@@ -408,6 +429,7 @@ export async function saveTeachingScriptNodeAction(
     } else if (input.displayTitleZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
       configuration.display = {
         kind: input.displayKind,
+        placement: blackboardPlacement,
         title: { "zh-CN": input.displayTitleZh },
         items: { "zh-CN": displayItems },
         korean: input.displayKorean,

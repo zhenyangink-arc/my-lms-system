@@ -49,7 +49,12 @@ import { bufferLineForRequest, bufferSpeechAssetForRequest } from "@/lib/learnin
 import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import type { TeacherKimPose } from "@/lib/teacher-kim-character";
-import { normalizeTeachingVirtualCharacterPlacement, TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
+import {
+  normalizeTeachingBlackboardPlacement,
+  normalizeTeachingVirtualCharacterPlacement,
+  TEACHING_VIRTUAL_CHARACTER_STAGE,
+  type TeachingBlackboardPlacement,
+} from "@/lib/teaching-virtual-character";
 
 import type {
   SmartLocale,
@@ -119,6 +124,7 @@ type TutorDisplay = {
   translation?: Partial<Record<SmartLocale, string>>;
   mode?: "slides";
   activeSlide?: TeachingBlackboardSlide | null;
+  placement?: TeachingBlackboardPlacement;
 };
 
 type TutorTask = {
@@ -5623,6 +5629,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     teachingAreaCharacter,
     teachingAreaCharacter?.position,
   );
+  const teachingAreaBlackboardPlacement = normalizeTeachingBlackboardPlacement(tutorDisplay?.placement);
+  const immersiveBlackboardPositioned = tutorStarted && teachingAreaExpanded;
+  const immersiveBlackboardWidthPx = TEACHING_VIRTUAL_CHARACTER_STAGE.preview.focusedContentMaxWidthPx
+    - TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentInsetPx * 2;
 
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
@@ -5988,7 +5998,19 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 />
               </div>
 
-              <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
+              <div
+                className={immersiveBlackboardPositioned
+                  ? "pointer-events-none fixed z-20 transition-[left,top,transform] duration-300 motion-reduce:transition-none"
+                  : "sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3"}
+                style={immersiveBlackboardPositioned ? {
+                  left: `${teachingAreaBlackboardPlacement.x}%`,
+                  top: `${teachingAreaBlackboardPlacement.y}%`,
+                  width: `min(calc(100vw - ${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentInsetPx * 2}px), ${immersiveBlackboardWidthPx}px)`,
+                  transform: `translateX(-50%) scale(${teachingAreaBlackboardPlacement.scale})`,
+                  transformOrigin: "top center",
+                } : undefined}
+                data-learning-agent-blackboard
+              >
                 <section
                   className={`relative border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_18px_48px_rgba(15,23,42,0.08)] ${tutorStarted ? "rounded-[1.25rem]" : `flex-1 rounded-2xl ${teachingAreaExpanded ? "p-3" : "p-4"}`}`}
                   style={tutorStarted ? { aspectRatio: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.aspectRatio } : undefined}

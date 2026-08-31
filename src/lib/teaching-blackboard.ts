@@ -1,3 +1,8 @@
+import {
+  normalizeTeachingBlackboardPlacement,
+  type TeachingBlackboardPlacement,
+} from "./teaching-virtual-character.ts";
+
 export const TEACHING_BLACKBOARD_ELEMENT_TYPES = ["text", "bullets", "expression"] as const;
 export const TEACHING_BLACKBOARD_BACKGROUNDS = ["plain", "warm", "grid"] as const;
 export const TEACHING_BLACKBOARD_TONES = ["default", "primary", "highlight", "muted"] as const;
@@ -37,6 +42,7 @@ export type TeachingBlackboardDisplay = {
   mode: "slides";
   slides: TeachingBlackboardSlide[];
   activeSlide?: TeachingBlackboardSlide | null;
+  placement?: TeachingBlackboardPlacement;
 };
 
 function record(value: unknown): Record<string, unknown> | null {
@@ -186,13 +192,14 @@ export function teachingBlackboardSlideFitsHeader(slide: TeachingBlackboardSlide
 export function teachingBlackboardDisplayForSegment(value: unknown, segmentIndex: number) {
   const source = record(value);
   if (!source) return value;
+  const placement = normalizeTeachingBlackboardPlacement(source.placement);
   const slides = source.mode === "slides"
     ? normalizeTeachingBlackboardSlides(source.slides)
     : teachingBlackboardSlidesFromDisplay(source);
-  if (!slides.length) return { ...source, slides, activeSlide: null };
+  if (!slides.length) return { ...source, slides, activeSlide: null, placement };
   const ordered = [...slides].sort((left, right) => left.segmentIndex - right.segmentIndex);
   const activeSlide = ordered.filter((slide) => slide.segmentIndex <= segmentIndex).at(-1) ?? ordered[0];
   // Only the active canvas crosses the response header boundary. Keeping all
   // slides in the database while returning one avoids oversized HTTP headers.
-  return { mode: "slides", activeSlide };
+  return { mode: "slides", activeSlide, placement };
 }

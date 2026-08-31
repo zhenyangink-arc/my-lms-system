@@ -11,7 +11,12 @@ import {
 } from "@/lib/teacher-kim-character";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
-import { teachingVirtualCharacterPreviewGeometry, TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
+import {
+  defaultTeachingBlackboardPlacement,
+  teachingVirtualCharacterPreviewGeometry,
+  TEACHING_VIRTUAL_CHARACTER_STAGE,
+  type TeachingBlackboardPlacement,
+} from "@/lib/teaching-virtual-character";
 
 export type VirtualCharacterStagePerformance = {
   pose: TeacherKimPose;
@@ -35,23 +40,29 @@ export function VirtualCharacterStageEditor({
   scriptLines,
   performances,
   blackboardSlides,
+  blackboardPlacement,
   selectedIndex,
   onSelectedIndexChange,
   onPerformanceChange,
+  onBlackboardPlacementChange,
   disabled,
   onDirty,
 }: {
   scriptLines: string[];
   performances: VirtualCharacterStagePerformance[];
   blackboardSlides: TeachingBlackboardSlide[];
+  blackboardPlacement: TeachingBlackboardPlacement;
   selectedIndex: number;
   onSelectedIndexChange: (index: number) => void;
   onPerformanceChange: (index: number, patch: Partial<VirtualCharacterStagePerformance>) => void;
+  onBlackboardPlacementChange: (patch: Partial<TeachingBlackboardPlacement>) => void;
   disabled?: boolean;
   onDirty: () => void;
 }) {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
+  const blackboardDraggingRef = useRef(false);
+  const blackboardDragOffsetRef = useRef({ x: 0, y: 0 });
   const [previewViewport, setPreviewViewport] = useState<{ width: number; height: number }>(() => ({
     width: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
     height: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
@@ -122,6 +133,63 @@ export function VirtualCharacterStageEditor({
     onDirty();
   }
 
+  function moveBlackboardToPointer(event: ReactPointerEvent<HTMLButtonElement>) {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = ((event.clientX - rect.left - blackboardDragOffsetRef.current.x) / rect.width) * 100;
+    const y = ((event.clientY - rect.top - blackboardDragOffsetRef.current.y) / rect.height) * 100;
+    onBlackboardPlacementChange({
+      x: Math.max(
+        TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent,
+        Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent, x),
+      ),
+      y: Math.max(
+        TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent,
+        Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent, y),
+      ),
+    });
+  }
+
+  function handleBlackboardPointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (disabled) return;
+    const stageRect = stageRef.current?.getBoundingClientRect();
+    if (!stageRect) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    blackboardDraggingRef.current = true;
+    blackboardDragOffsetRef.current = {
+      x: event.clientX - (stageRect.left + stageRect.width * blackboardPlacement.x / 100),
+      y: event.clientY - (stageRect.top + stageRect.height * blackboardPlacement.y / 100),
+    };
+  }
+
+  function handleBlackboardPointerMove(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!blackboardDraggingRef.current || disabled) return;
+    moveBlackboardToPointer(event);
+  }
+
+  function handleBlackboardPointerEnd() {
+    if (blackboardDraggingRef.current) onDirty();
+    blackboardDraggingRef.current = false;
+  }
+
+  function handleBlackboardKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (disabled) return;
+    const step = event.shiftKey ? 5 : 1;
+    const patch = event.key === "ArrowLeft"
+      ? { x: Math.max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent, blackboardPlacement.x - step) }
+      : event.key === "ArrowRight"
+        ? { x: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent, blackboardPlacement.x + step) }
+        : event.key === "ArrowUp"
+          ? { y: Math.max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent, blackboardPlacement.y - step) }
+          : event.key === "ArrowDown"
+            ? { y: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent, blackboardPlacement.y + step) }
+            : null;
+    if (!patch) return;
+    event.preventDefault();
+    onBlackboardPlacementChange(patch);
+    onDirty();
+  }
+
   return (
     <div className="space-y-4 px-4 py-4">
       <div className="min-w-0 space-y-2">
@@ -154,12 +222,14 @@ export function VirtualCharacterStageEditor({
             <span className="ml-auto shrink-0 font-semibold text-[var(--primary)]">预览台词 {safeIndex + 1} / {scriptLines.length}</span>
           </div>
           <div
-            className="absolute overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
+            className="pointer-events-none absolute z-[5] overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
             style={{
-              left: `${previewGeometry.blackboardLeftPercent}%`,
-              top: `${previewGeometry.blackboardTopPercent}%`,
+              left: `${blackboardPlacement.x}%`,
+              top: `${blackboardPlacement.y}%`,
               width: `${previewGeometry.blackboardWidthPercent}%`,
               aspectRatio: "16 / 9",
+              transform: `translateX(-50%) scale(${blackboardPlacement.scale})`,
+              transformOrigin: "top center",
             }}
           >
             {activeBlackboardSlide ? (
@@ -168,6 +238,27 @@ export function VirtualCharacterStageEditor({
               <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
             )}
           </div>
+          <button
+            type="button"
+            disabled={disabled}
+            onPointerDown={handleBlackboardPointerDown}
+            onPointerMove={handleBlackboardPointerMove}
+            onPointerUp={handleBlackboardPointerEnd}
+            onPointerCancel={handleBlackboardPointerEnd}
+            onKeyDown={handleBlackboardKeyDown}
+            className="group absolute z-10 touch-none select-none rounded-[1.1cqw] border border-transparent bg-transparent cursor-move focus-visible:border-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed"
+            style={{
+              left: `${blackboardPlacement.x}%`,
+              top: `${blackboardPlacement.y}%`,
+              width: `${previewGeometry.blackboardWidthPercent}%`,
+              aspectRatio: "16 / 9",
+              transform: `translateX(-50%) scale(${blackboardPlacement.scale})`,
+              transformOrigin: "top center",
+            }}
+            aria-label="黑板。拖动或使用方向键调整位置，按住 Shift 可一次移动 5%。"
+          >
+            <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_90%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
+          </button>
           <button
             type="button"
             disabled={disabled}
@@ -213,7 +304,7 @@ export function VirtualCharacterStageEditor({
             <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
           </button>
         </div>
-        <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。拖动金老师调整位置，也可以聚焦人物后使用方向键；人物位置和动作会随当前台词切换。</p>
+        <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。可以拖动黑板或拖动金老师调整位置，也可以聚焦后使用方向键；按住 Shift 可一次移动 5%。人物位置和动作会随当前台词切换，黑板位置用于当前教学小节。</p>
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
@@ -238,6 +329,20 @@ export function VirtualCharacterStageEditor({
           <input type="range" min={75} max={125} step={5} value={Math.round(performance.characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, { characterScale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
         </label>
         <button type="button" onClick={() => { onPerformanceChange(safeIndex, { characterX: 75, characterY: 0, characterScale: 1 }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复默认位置</button>
+      </div>
+      <div className="border-t border-[var(--border-subtle)] pt-4">
+        <p className="mb-3 text-sm font-semibold text-[var(--foreground)]">黑板位置</p>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="grid grid-cols-2 gap-2">
+            <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" inputMode="numeric" min={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent} max={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent} value={Math.round(blackboardPlacement.x)} onChange={(event) => { onBlackboardPlacementChange({ x: Math.max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent, Number(event.target.value) || TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+            <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">距顶部 %</span><input type="number" inputMode="numeric" min={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent} max={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent} value={Math.round(blackboardPlacement.y)} onChange={(event) => { onBlackboardPlacementChange({ y: Math.max(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent, Number(event.target.value) || 0)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          </div>
+          <label className="block space-y-1.5 text-sm font-medium xl:col-span-2">
+            <span className="flex items-center justify-between gap-2 font-semibold text-[var(--foreground)]"><span>黑板大小</span><span className="tabular-nums text-[var(--foreground-muted)]">{Math.round(blackboardPlacement.scale * 100)}%</span></span>
+            <input type="range" min={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale * 100} max={TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale * 100} step={5} value={Math.round(blackboardPlacement.scale * 100)} onChange={(event) => { onBlackboardPlacementChange({ scale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
+          </label>
+          <button type="button" onClick={() => { onBlackboardPlacementChange(defaultTeachingBlackboardPlacement()); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复黑板默认位置</button>
+        </div>
       </div>
     </div>
   );
