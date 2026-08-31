@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, useRef, useState } from "react";
+import { type KeyboardEvent as ReactKeyboardEvent, useActionState, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowDown, ArrowUp, BookOpenText, CheckCircle2, Link2, LoaderCircle, MessageCircleQuestion, Pause, Play, Plus, RotateCcw, Route, ScrollText, Trash2, VolumeX } from "lucide-react";
 
@@ -61,9 +61,9 @@ function displayLocalizedItems(display: Record<string, unknown>) {
     : "";
 }
 
-function FieldError({ errors }: { errors?: string[] }) {
+function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
   if (!errors?.length) return null;
-  return <span className="text-xs text-[var(--status-danger)] md:col-start-2" role="alert">{errors[0]}</span>;
+  return <span id={id} className="text-xs text-[var(--status-danger)] md:col-start-2" role="alert">{errors[0]}</span>;
 }
 
 function speechRate(value: number) {
@@ -108,6 +108,9 @@ function FormattableTextarea({
   maxLength,
   placeholder,
   className,
+  onDirty,
+  ariaDescribedBy,
+  ariaInvalid,
 }: {
   id?: string;
   name?: string;
@@ -119,6 +122,9 @@ function FormattableTextarea({
   maxLength?: number;
   placeholder?: string;
   className?: string;
+  onDirty?: () => void;
+  ariaDescribedBy?: string;
+  ariaInvalid?: boolean;
 }) {
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = useState(value ?? defaultValue ?? "");
@@ -135,6 +141,7 @@ function FormattableTextarea({
   function commitValue(nextValue: string, nextSelection?: { start: number; end: number }) {
     if (!isControlled) setInternalValue(nextValue);
     onChange?.(nextValue);
+    onDirty?.();
     if (nextSelection) {
       setSelection(nextSelection);
       requestAnimationFrame(() => {
@@ -186,8 +193,8 @@ function FormattableTextarea({
     <div ref={wrapperRef} className="space-y-1.5">
       {hasSelection && (
         <div role="toolbar" aria-label="文字格式工具栏" className="flex flex-wrap items-center gap-1 border border-[var(--border)] bg-[var(--card)] p-1.5">
-          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => wrapSelection("[b]", "[/b]")} aria-label="加粗" className="inline-flex h-8 min-w-8 items-center justify-center px-2 text-xs font-bold hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">B</button>
-          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => wrapSelection("[u]", "[/u]")} aria-label="下划线" className="inline-flex h-8 min-w-8 items-center justify-center px-2 text-xs font-semibold underline hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">U</button>
+          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => wrapSelection("[b]", "[/b]")} aria-label="加粗" className="inline-flex h-11 min-w-11 items-center justify-center px-2 text-xs font-bold hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">B</button>
+          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={() => wrapSelection("[u]", "[/u]")} aria-label="下划线" className="inline-flex h-11 min-w-11 items-center justify-center px-2 text-xs font-semibold underline hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">U</button>
           <span aria-hidden="true" className="mx-1 h-5 w-px bg-[var(--border)]" />
           {RICH_TEXT_COLORS.map((color) => (
             <button
@@ -196,13 +203,13 @@ function FormattableTextarea({
               onMouseDown={(event) => event.preventDefault()}
               onClick={() => wrapSelection(`[color=${color}]`, "[/color]")}
               aria-label={`文字颜色：${RICH_TEXT_COLOR_LABELS[color]}`}
-              className="inline-flex h-8 w-8 items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+              className="inline-flex h-11 w-11 items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
             >
               <span aria-hidden="true" className="block h-4 w-4 rounded-full border border-[var(--border)]" style={{ backgroundColor: RICH_TEXT_COLOR_VALUES[color] }} />
             </button>
           ))}
           <span aria-hidden="true" className="mx-1 h-5 w-px bg-[var(--border)]" />
-          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={clearFormatting} className="inline-flex h-8 items-center px-2 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">清除格式</button>
+          <button type="button" onMouseDown={(event) => event.preventDefault()} onClick={clearFormatting} className="inline-flex min-h-11 items-center px-3 text-xs font-medium text-[var(--foreground-secondary)] hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">清除格式</button>
         </div>
       )}
       <textarea
@@ -223,6 +230,8 @@ function FormattableTextarea({
         rows={rows}
         maxLength={maxLength}
         placeholder={placeholder}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid || undefined}
         className={className}
       />
     </div>
@@ -410,6 +419,40 @@ function ScriptSpeechReview({
 
 type EditorSection = "script" | "content" | "interaction" | "flow";
 
+const errorSectionByField: Partial<Record<string, EditorSection>> = {
+  nodeKey: "flow",
+  nodeType: "flow",
+  titleZh: "script",
+  titleKo: "script",
+  scriptZh: "script",
+  scriptKo: "script",
+  hintZh: "script",
+  exampleZh: "script",
+  bufferLineZh: "script",
+  scriptPerformances: "script",
+  displayKind: "content",
+  displayTitleZh: "content",
+  displayItemsZh: "content",
+  displayKorean: "content",
+  displayTranslationZh: "content",
+  virtualCharacterKind: "content",
+  virtualCharacterPosition: "content",
+  studentTaskKind: "content",
+  studentTaskTargetKey: "content",
+  visualCueTargetKey: "content",
+  interactionKind: "interaction",
+  interactionPromptZh: "interaction",
+  interactionOptions: "interaction",
+  interactionCorrectOption: "interaction",
+  interactionCorrectFeedbackZh: "interaction",
+  interactionIncorrectFeedbackZh: "interaction",
+  referenceActivityId: "interaction",
+  remediationNodeKey: "interaction",
+  flowMode: "flow",
+  nextNodeKey: "flow",
+  continueLabelZh: "flow",
+};
+
 type FlowMode = "sequence" | "jump" | "end";
 
 type ScriptPerformance = {
@@ -497,6 +540,7 @@ export function TeachingScriptNodeForm({
   returnTo,
   editable,
   livePreviewUrl,
+  onDirtyChange,
 }: {
   node: TeachingScriptNode;
   allNodes: TeachingScriptNode[];
@@ -509,9 +553,13 @@ export function TeachingScriptNodeForm({
   editable: boolean;
   /** Real student-page preview for this exact node, jumped straight to it. */
   livePreviewUrl?: string;
+  onDirtyChange: (dirty: boolean) => void;
 }) {
   const router = useRouter();
   const [state, action, pending] = useActionState(saveTeachingScriptNodeAction, initialState);
+  const formRef = useRef<HTMLFormElement | null>(null);
+  const errorSummaryRef = useRef<HTMLDivElement | null>(null);
+  const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const display = objectConfiguration(node, "display");
   const studentTask = objectConfiguration(node, "studentTask");
   const visualCue = objectConfiguration(node, "visualCue");
@@ -571,6 +619,7 @@ export function TeachingScriptNodeForm({
     rate: scriptPerformanceConfiguration(storedScriptPerformances[0], virtualCharacter).voiceRate,
   }));
   const [editorSection, setEditorSection] = useState<EditorSection>("script");
+  const [dirty, setDirty] = useState(false);
   const [visualCueTargetKey, setVisualCueTargetKey] = useState(storedVisualCueTargetKey);
   const [visualCuePageKey, setVisualCuePageKey] = useState(
     storedLearningTarget?.pageKey ?? (storedVisualCueTargetKey ? "legacy" : ""),
@@ -644,7 +693,26 @@ export function TeachingScriptNodeForm({
         .join(" → ")
     : "";
 
+  function markDirty() {
+    if (!editable) return;
+    setDirty(true);
+    onDirtyChange(true);
+  }
+
+  function handleEditorTabKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
+    let nextIndex: number | null = null;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % editorSteps.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + editorSteps.length) % editorSteps.length;
+    if (event.key === "Home") nextIndex = 0;
+    if (event.key === "End") nextIndex = editorSteps.length - 1;
+    if (nextIndex === null) return;
+    event.preventDefault();
+    setEditorSection(editorSteps[nextIndex].id);
+    tabRefs.current[nextIndex]?.focus();
+  }
+
   function selectLearningTargetPage(pageKey: string) {
+    markDirty();
     setVisualCuePageKey(pageKey);
     if (!pageKey) {
       setVisualCueRegionKey("");
@@ -660,6 +728,7 @@ export function TeachingScriptNodeForm({
   }
 
   function selectLearningTargetRegion(regionKey: string) {
+    markDirty();
     setVisualCueRegionKey(regionKey);
     const regionTargets = availableLearningTargets.filter((item) =>
       item.pageKey === visualCuePageKey && item.regionKey === regionKey,
@@ -670,6 +739,7 @@ export function TeachingScriptNodeForm({
   }
 
   function selectStudentTaskPage(pageKey: string) {
+    markDirty();
     setStudentTaskPageKey(pageKey);
     if (!pageKey) {
       setStudentTaskRegionKey("");
@@ -683,6 +753,7 @@ export function TeachingScriptNodeForm({
   }
 
   function selectStudentTaskRegion(regionKey: string) {
+    markDirty();
     setStudentTaskRegionKey(regionKey);
     const nextTarget = actionableLearningTargets.find((item) =>
       item.pageKey === studentTaskPageKey && item.regionKey === regionKey,
@@ -697,12 +768,14 @@ export function TeachingScriptNodeForm({
   }
 
   function addInteractionOption() {
+    markDirty();
     setInteractionOptionRows((current) => current.length >= 6
       ? current
       : [...current, { id: crypto.randomUUID(), value: "" }]);
   }
 
   function removeInteractionOption(index: number) {
+    markDirty();
     setInteractionOptionRows((current) => current.length <= 2
       ? current
       : current.filter((_, optionIndex) => optionIndex !== index));
@@ -715,6 +788,7 @@ export function TeachingScriptNodeForm({
   function moveInteractionOption(index: number, direction: -1 | 1) {
     const targetIndex = index + direction;
     if (targetIndex < 0 || targetIndex >= interactionOptionRows.length) return;
+    markDirty();
     setInteractionOptionRows((current) => {
       const next = [...current];
       [next[index], next[targetIndex]] = [next[targetIndex], next[index]];
@@ -730,20 +804,31 @@ export function TeachingScriptNodeForm({
   const [livePreviewNonce, setLivePreviewNonce] = useState(0);
   useEffect(() => {
     if (state.status === "success") {
+      setDirty(false);
+      onDirtyChange(false);
       router.refresh();
       setLivePreviewNonce((current) => current + 1);
     }
-  }, [router, state.status]);
+  }, [onDirtyChange, router, state.status]);
+
+  const formErrorMessages = Object.values(state.fieldErrors ?? {}).flat();
+  useEffect(() => {
+    if (state.status !== "error" || !state.fieldErrors) return;
+    const firstInvalidField = Object.keys(state.fieldErrors).find((key) => state.fieldErrors?.[key]?.length);
+    const section = firstInvalidField ? errorSectionByField[firstInvalidField] : undefined;
+    if (section) setEditorSection(section);
+    window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
+  }, [state.fieldErrors, state.status]);
 
   const nextNode = allNodes.find((item) => item.key === nextNodeKey);
 
   return (
-    <form action={action} className="space-y-4" key={node.id}>
+    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
 
-      <div className="grid gap-2 border-b border-[var(--border)] pb-4 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
+      <div className="grid grid-cols-2 gap-2 border-b border-[var(--border)] pb-4 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
         {editorSteps.map((step, index) => {
           const Icon = step.icon;
           const selected = editorSection === step.id;
@@ -753,12 +838,16 @@ export function TeachingScriptNodeForm({
               className={`relative min-h-14 border transition ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)] bg-[var(--card)]"}`}
             >
               <button
+                ref={(element) => { tabRefs.current[index] = element; }}
+                id={`teaching-${step.id}-tab`}
                 type="button"
                 role="tab"
                 aria-controls={`teaching-${step.id}-panel`}
                 aria-selected={selected}
                 aria-label={`第 ${index + 1} 步：${step.label}`}
+                tabIndex={selected ? 0 : -1}
                 onClick={() => setEditorSection(step.id)}
+                onKeyDown={(event) => handleEditorTabKeyDown(event, index)}
                 className="flex min-h-14 w-full min-w-0 items-center gap-2 whitespace-nowrap px-3 py-3 pr-12 text-left text-xs font-bold transition hover:bg-[var(--muted)]/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
               >
                 <span className="tabular-nums text-[var(--muted-foreground)]">{index + 1}</span>
@@ -778,17 +867,26 @@ export function TeachingScriptNodeForm({
         })}
       </div>
 
-      <div className="grid items-start gap-4 2xl:grid-cols-[minmax(0,4fr)_minmax(0,6fr)]">
+      {state.status === "error" && formErrorMessages.length > 0 && (
+        <div ref={errorSummaryRef} tabIndex={-1} role="alert" className="border border-[var(--status-danger)] bg-[var(--status-danger-surface)] px-4 py-3 text-sm text-[var(--status-danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--status-danger)]">
+          <p className="font-semibold">当前小节有 {formErrorMessages.length} 项需要修改，已打开第一个错误所在的设置。</p>
+          <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5">
+            {formErrorMessages.map((message, index) => <li key={`${message}-${index}`}>{message}</li>)}
+          </ul>
+        </div>
+      )}
+
+      <div className="grid items-start gap-4">
         <div className="min-w-0">
-          <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" className={panelClass}>
+          <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" aria-labelledby="teaching-script-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="script-group-title">
             <div className={formSectionClass}>
               <CardTitleWithHint title={<span id="script-group-title">小节讲解</span>} description="小节名称和老师台词由你决定。提示与补充例子只在学生主动需要时出现。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看小节讲解说明" />
             </div>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>小节名称</span>
-              <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} className={inputClass} />
-              <FieldError errors={state.fieldErrors?.titleZh} />
+              <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} aria-invalid={Boolean(state.fieldErrors?.titleZh?.length) || undefined} aria-describedby={state.fieldErrors?.titleZh?.length ? "title-zh-error" : undefined} className={inputClass} />
+              <FieldError id="title-zh-error" errors={state.fieldErrors?.titleZh} />
             </label>
             <div className={fieldClass}>
               <CardTitleWithHint
@@ -829,7 +927,10 @@ export function TeachingScriptNodeForm({
                 <button
                   type="button"
                   disabled={!editable}
-                  onClick={() => setScriptPerformances((current) => current.map((item) => ({ ...item, voiceEnabled: true, voiceLanguage: sectionDefaultVoice.language, voiceRate: sectionDefaultVoice.rate })))}
+                  onClick={() => {
+                    markDirty();
+                    setScriptPerformances((current) => current.map((item) => ({ ...item, voiceEnabled: true, voiceLanguage: sectionDefaultVoice.language, voiceRate: sectionDefaultVoice.rate })));
+                  }}
                   className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"
                 >
                   应用到全部台词
@@ -846,6 +947,9 @@ export function TeachingScriptNodeForm({
                       name="script_zh"
                       value={line}
                       onChange={(nextValue) => setScriptLines((current) => current.map((item, lineIndex) => lineIndex === index ? nextValue : item))}
+                      onDirty={markDirty}
+                      ariaInvalid={Boolean(state.fieldErrors?.scriptZh?.length)}
+                      ariaDescribedBy={state.fieldErrors?.scriptZh?.length ? "script-zh-error" : undefined}
                       disabled={!editable}
                       rows={2}
                       maxLength={1600}
@@ -930,7 +1034,10 @@ export function TeachingScriptNodeForm({
                         <button
                           type="button"
                           disabled={!editable}
-                          onClick={() => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, autoContinueToNext: !item.autoContinueToNext } : item))}
+                          onClick={() => {
+                            markDirty();
+                            setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, autoContinueToNext: !item.autoContinueToNext } : item));
+                          }}
                           aria-pressed={scriptPerformances[index]?.autoContinueToNext ?? false}
                           aria-label={`连接台词 ${index + 1} 和台词 ${index + 2}，预览时自动连续播放，不用点“继续”`}
                           title="仅在真实学生端预览里生效：连接后这两句会自动连续播放，不用中途点“继续”；真实学生不受影响。"
@@ -944,6 +1051,7 @@ export function TeachingScriptNodeForm({
                         <button
                           type="button"
                           onClick={() => {
+                            markDirty();
                             const nextLines = scriptLines.filter((_, lineIndex) => lineIndex !== index);
                             setScriptLines(nextLines);
                             setScriptPerformances((current) => current.filter((_, performanceIndex) => performanceIndex !== index));
@@ -963,6 +1071,7 @@ export function TeachingScriptNodeForm({
                   <button
                     type="button"
                     onClick={() => {
+                      markDirty();
                       setScriptLines((current) => [...current, ""]);
                       setScriptPerformances((current) => [...current, scriptPerformanceConfiguration(null, {
                         ...virtualCharacter,
@@ -978,15 +1087,15 @@ export function TeachingScriptNodeForm({
                   </button>
                 </div>
               )}
-              {state.fieldErrors?.scriptZh?.length ? <div className="px-4 pb-4 text-xs text-[var(--status-danger)] md:pl-[11.5rem]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
+              {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="px-4 pb-4 text-xs text-[var(--status-danger)] md:pl-[11.5rem]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
             </div>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>没听懂时的提示</span>
-              <FormattableTextarea name="hint_zh" defaultValue={configuredText(node, "hint")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+              <FormattableTextarea name="hint_zh" defaultValue={configuredText(node, "hint")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
             </label>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>再举一个例子</span>
-              <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+              <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
             </label>
             <CardTitleWithHint
               title={<span className={formFieldLabelClass}>过渡台词</span>}
@@ -996,7 +1105,7 @@ export function TeachingScriptNodeForm({
               hintLabel="查看过渡台词说明"
             />
             <label className={fieldClass}>
-              <FormattableTextarea name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} disabled={!editable} rows={2} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+              <FormattableTextarea name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} onDirty={markDirty} disabled={!editable} rows={2} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" className={`${inputClass} resize-y py-3 text-sm leading-6`} />
             </label>
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
@@ -1008,15 +1117,15 @@ export function TeachingScriptNodeForm({
             </section>
           </div>
 
-          <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" className={panelClass}>
+          <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="display-content-group-title">
             <div className={formSectionClass}>
               <CardTitleWithHint title={<span id="display-content-group-title">学生展示内容</span>} description="安排学生此时看到和操作的内容；没有额外展示时可以全部留空，老师台词仍会正常出现。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看学生展示内容说明" />
             </div>
             <label className={fieldClass}><span className={formFieldLabelClass}>展示标题</span><input name="display_title_zh" defaultValue={displayLocalizedText(display, "title")} disabled={!editable} maxLength={80} className={inputClass} /></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>展示要点</span><span><FormattableTextarea name="display_items_zh" defaultValue={displayLocalizedItems(display)} disabled={!editable} rows={5} maxLength={1000} placeholder="每行填写一个要点" className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs">每行一个要点，顺序就是学生看到的顺序。</span></span></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>韩语内容</span><FormattableTextarea name="display_korean" defaultValue={String(display.korean ?? "")} disabled={!editable} rows={4} maxLength={1000} className={`${inputClass} resize-y py-3 text-base leading-7`} /></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>中文释义</span><FormattableTextarea name="display_translation_zh" defaultValue={displayLocalizedText(display, "translation")} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>展示要点</span><span><FormattableTextarea name="display_items_zh" defaultValue={displayLocalizedItems(display)} onDirty={markDirty} disabled={!editable} rows={5} maxLength={1000} placeholder="每行填写一个要点" className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs">每行一个要点，顺序就是学生看到的顺序。</span></span></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>韩语内容</span><FormattableTextarea name="display_korean" defaultValue={String(display.korean ?? "")} onDirty={markDirty} disabled={!editable} rows={4} maxLength={1000} className={`${inputClass} resize-y py-3 text-base leading-7`} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>中文释义</span><FormattableTextarea name="display_translation_zh" defaultValue={displayLocalizedText(display, "translation")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
             </section>
 
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
@@ -1090,6 +1199,7 @@ export function TeachingScriptNodeForm({
                       onInput={(event) => event.stopPropagation()}
                       onChange={(event) => {
                         event.stopPropagation();
+                        markDirty();
                         setVisualCueTargetKey(event.target.value);
                       }}
                       disabled={!editable || !visualCueRegionKey}
@@ -1187,7 +1297,7 @@ export function TeachingScriptNodeForm({
                           <div className="mt-3 grid gap-3 lg:grid-cols-3">
                             <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span><select value={studentTaskPageKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectStudentTaskPage(event.target.value); }} disabled={!editable} className={inputClass}><option value="">请选择页面</option>{studentTaskPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}{studentTaskPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}</select></label>
                             <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span><select value={studentTaskRegionKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectStudentTaskRegion(event.target.value); }} disabled={!editable || !studentTaskPageKey || studentTaskPageKey === "legacy"} className={inputClass}>{!studentTaskRegionKey && <option value="">请先选择页面</option>}{studentTaskRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}</select></label>
-                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span><select value={selectedStudentTaskTarget?.key ?? ""} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); setStudentTaskTargetKey(event.target.value); }} disabled={!editable || !studentTaskRegionKey} className={inputClass}>{!selectedStudentTaskTarget && <option value="">请先选择区域</option>}{studentTaskObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
+                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span><select value={selectedStudentTaskTarget?.key ?? ""} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); markDirty(); setStudentTaskTargetKey(event.target.value); }} disabled={!editable || !studentTaskRegionKey} aria-invalid={Boolean(state.fieldErrors?.studentTaskTargetKey?.length) || undefined} aria-describedby={state.fieldErrors?.studentTaskTargetKey?.length ? "student-task-target-error" : undefined} className={inputClass}>{!selectedStudentTaskTarget && <option value="">请先选择区域</option>}{studentTaskObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
                           </div>
                           {selectedStudentTaskPath && <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">当前操作目标：{selectedStudentTaskPath}</p>}
                           {studentTaskPageKey === "legacy" && <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]">这条小节保存的是旧目标，请重新选择学生要操作的按钮或表达。</p>}
@@ -1195,7 +1305,7 @@ export function TeachingScriptNodeForm({
                       )}
                       <input type="hidden" name="student_task_target_key" value={effectiveStudentTaskTarget?.key ?? ""} />
                       <input type="hidden" name="student_task_target_label_zh" value={(effectiveStudentTaskTarget?.label ?? "").slice(0, 100)} />
-                      <FieldError errors={state.fieldErrors?.studentTaskTargetKey} />
+                      <FieldError id="student-task-target-error" errors={state.fieldErrors?.studentTaskTargetKey} />
                     </div>
                   </div>
                 </fieldset>
@@ -1204,7 +1314,7 @@ export function TeachingScriptNodeForm({
             </section>
           </div>
 
-          <div id="teaching-interaction-panel" hidden={editorSection !== "interaction"} role="tabpanel" className={panelClass}>
+          <div id="teaching-interaction-panel" hidden={editorSection !== "interaction"} role="tabpanel" aria-labelledby="teaching-interaction-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="interaction-group-title">
             <div className={formSectionClass}>
               <CardTitleWithHint title={<span id="interaction-group-title">学生互动</span>} description="可以新建单选理解检查，也可以直接使用教材中已有的活动；学生完成回答后才能继续。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看学生互动说明" />
@@ -1214,10 +1324,10 @@ export function TeachingScriptNodeForm({
               <p className="app-muted-text px-4 pb-4 text-xs leading-5">这个小节暂不需要学生互动，学生看完老师讲解后可以直接继续下一步。如果想检查学生是否听懂，可以改选“新建必答单选检查”或“使用教材已有活动”。</p>
             )}
             <div id="custom-interaction-settings" hidden={interactionKind !== "single_choice"} className="divide-y divide-[var(--border)]">
-            <label className={fieldClass}><span className={formFieldLabelClass}>老师提出的问题</span><textarea name="interaction_prompt_zh" defaultValue={localizedConfigurationText(interaction, "prompt")} disabled={!editable} rows={3} maxLength={300} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError errors={state.fieldErrors?.interactionPromptZh} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>老师提出的问题</span><textarea name="interaction_prompt_zh" defaultValue={localizedConfigurationText(interaction, "prompt")} disabled={!editable} rows={3} maxLength={300} aria-invalid={Boolean(state.fieldErrors?.interactionPromptZh?.length) || undefined} aria-describedby={state.fieldErrors?.interactionPromptZh?.length ? "interaction-prompt-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError id="interaction-prompt-error" errors={state.fieldErrors?.interactionPromptZh} /></label>
             <div className={fieldClass}>
               <span id="interaction-options-label" className={formFieldLabelClass}>学生可选回答</span>
-              <fieldset aria-labelledby="interaction-options-label" className="min-w-0 space-y-2">
+              <fieldset aria-labelledby="interaction-options-label" aria-describedby={state.fieldErrors?.interactionOptions?.length ? "interaction-options-error" : undefined} className="min-w-0 space-y-2">
                 <legend className="sr-only">学生可选回答与正确答案</legend>
                 {interactionOptionRows.map((option, index) => (
                   <div key={option.id} className={`grid min-w-0 gap-2 border p-2 sm:grid-cols-[7.5rem_minmax(0,1fr)_auto] ${interactionCorrectOptionIndex === index ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)]"}`}>
@@ -1238,7 +1348,7 @@ export function TeachingScriptNodeForm({
                 ))}
                 <button type="button" onClick={addInteractionOption} disabled={!editable || interactionOptionRows.length >= 6} className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"><Plus size={15} aria-hidden="true" />新增选项</button>
                 <p className="app-muted-text text-xs leading-5">支持 2—6 个选项。直接勾选正确答案；移动或删除选项时，正确答案会跟随调整。</p>
-                <FieldError errors={state.fieldErrors?.interactionOptions} />
+                <FieldError id="interaction-options-error" errors={state.fieldErrors?.interactionOptions} />
               </fieldset>
               <input type="hidden" name="interaction_options" value={interactionOptionRows.map((option) => option.value).join("\n")} />
               <input type="hidden" name="interaction_required" value="on" />
@@ -1246,24 +1356,24 @@ export function TeachingScriptNodeForm({
             <div className="px-4 py-4">
               <label className="block max-w-sm space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">最多尝试次数</span><input name="interaction_max_attempts" type="number" min={1} max={5} defaultValue={Number(interaction.maxAttempts ?? 3)} disabled={!editable} className={`${inputClass} tabular-nums`} /><span className="app-muted-text block text-xs leading-5">答错后可以重新选择；次数用完后公布正确答案并继续。</span></label>
             </div>
-            <label className={fieldClass}><span className={formFieldLabelClass}>答对后的老师反馈</span><textarea name="interaction_correct_feedback_zh" defaultValue={node.interactionSecret?.correctFeedback["zh-CN"] ?? ""} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError errors={state.fieldErrors?.interactionCorrectFeedbackZh} /></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>答错后的老师提示</span><textarea name="interaction_incorrect_feedback_zh" defaultValue={node.interactionSecret?.incorrectFeedback["zh-CN"] ?? ""} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError errors={state.fieldErrors?.interactionIncorrectFeedbackZh} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>答对后的老师反馈</span><textarea name="interaction_correct_feedback_zh" defaultValue={node.interactionSecret?.correctFeedback["zh-CN"] ?? ""} disabled={!editable} rows={3} maxLength={600} aria-invalid={Boolean(state.fieldErrors?.interactionCorrectFeedbackZh?.length) || undefined} aria-describedby={state.fieldErrors?.interactionCorrectFeedbackZh?.length ? "interaction-correct-feedback-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError id="interaction-correct-feedback-error" errors={state.fieldErrors?.interactionCorrectFeedbackZh} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>答错后的老师提示</span><textarea name="interaction_incorrect_feedback_zh" defaultValue={node.interactionSecret?.incorrectFeedback["zh-CN"] ?? ""} disabled={!editable} rows={3} maxLength={600} aria-invalid={Boolean(state.fieldErrors?.interactionIncorrectFeedbackZh?.length) || undefined} aria-describedby={state.fieldErrors?.interactionIncorrectFeedbackZh?.length ? "interaction-incorrect-feedback-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError id="interaction-incorrect-feedback-error" errors={state.fieldErrors?.interactionIncorrectFeedbackZh} /></label>
             </div>
             <div id="referenced-interaction-settings" hidden={interactionKind !== "referenced_activity"} className="divide-y divide-[var(--border)]">
-              <label className={fieldClass}><span className={formFieldLabelClass}>教材活动</span><span><select name="reference_activity_id" value={referenceActivityId} onChange={(event) => setReferenceActivityId(event.target.value)} disabled={!editable} className={inputClass}><option value="">请选择教材活动</option>{activities.map((activity) => <option key={activity.id} value={activity.id}>{activity.prompt["zh-CN"] || activity.key}</option>)}</select><FieldError errors={state.fieldErrors?.referenceActivityId} /></span></label>
+              <label className={fieldClass}><span className={formFieldLabelClass}>教材活动</span><span><select name="reference_activity_id" value={referenceActivityId} onChange={(event) => setReferenceActivityId(event.target.value)} disabled={!editable} aria-invalid={Boolean(state.fieldErrors?.referenceActivityId?.length) || undefined} aria-describedby={state.fieldErrors?.referenceActivityId?.length ? "reference-activity-error" : undefined} className={inputClass}><option value="">请选择教材活动</option>{activities.map((activity) => <option key={activity.id} value={activity.id}>{activity.prompt["zh-CN"] || activity.key}</option>)}</select><FieldError id="reference-activity-error" errors={state.fieldErrors?.referenceActivityId} /></span></label>
               <label className={fieldClass}><span className={formFieldLabelClass}>答错后的补充讲解</span><span><select name="remediation_node_key" defaultValue={node.remediationNodeKey ?? ""} disabled={!editable} className={inputClass}><option value="">使用活动自带提示</option>{allNodes.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.key}>使用第 {item.order} 小节台词：{item.title["zh-CN"]}</option>)}</select><span className="app-muted-text mt-1 block text-xs leading-5">答错时引用所选小节的老师台词作为提示，不改变后续教学顺序。</span></span></label>
             </div>
             </section>
           </div>
 
-          <div id="teaching-flow-panel" hidden={editorSection !== "flow"} role="tabpanel" className={panelClass}>
+          <div id="teaching-flow-panel" hidden={editorSection !== "flow"} role="tabpanel" aria-labelledby="teaching-flow-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="flow-group-title">
             <div className={formSectionClass}>
               <CardTitleWithHint title={<span id="flow-group-title">完成后的流程</span>} description="三种方式互斥：按左侧顺序继续、跳转到指定小节，或者结束当前学习步骤。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看完成后的流程说明" />
             </div>
             <label className={fieldClass}><span className={formFieldLabelClass}>完成后</span><select name="flow_mode" value={flowMode} onChange={(event) => setFlowMode(event.target.value as FlowMode)} disabled={!editable} className={inputClass}><option value="sequence">按左侧顺序进入下一小节</option><option value="jump">跳转到指定小节</option><option value="end">结束当前学习步骤</option></select></label>
             {flowMode === "jump" ? (
-              <label className={fieldClass}><span className={formFieldLabelClass}>跳转到</span><select name="next_node_key" value={nextNodeKey} onChange={(event) => setNextNodeKey(event.target.value)} disabled={!editable} className={inputClass}><option value="">请选择目标小节</option>{allNodes.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.key}>{item.order}. {item.title["zh-CN"]}</option>)}</select><FieldError errors={state.fieldErrors?.nextNodeKey} /></label>
+              <label className={fieldClass}><span className={formFieldLabelClass}>跳转到</span><select name="next_node_key" value={nextNodeKey} onChange={(event) => setNextNodeKey(event.target.value)} disabled={!editable} aria-invalid={Boolean(state.fieldErrors?.nextNodeKey?.length) || undefined} aria-describedby={state.fieldErrors?.nextNodeKey?.length ? "next-node-error" : undefined} className={inputClass}><option value="">请选择目标小节</option>{allNodes.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.key}>{item.order}. {item.title["zh-CN"]}</option>)}</select><FieldError id="next-node-error" errors={state.fieldErrors?.nextNodeKey} /></label>
             ) : <input type="hidden" name="next_node_key" value="" />}
             <input type="hidden" name="terminal" value={flowMode === "end" ? "on" : ""} />
             <input type="hidden" name="required" value="on" />
@@ -1273,7 +1383,7 @@ export function TeachingScriptNodeForm({
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">系统信息</summary>
               <div className="mt-4 grid gap-4 md:grid-cols-2">
-                <label className="space-y-2 text-sm font-medium"><span className="block">小节类型</span><select name="node_type" defaultValue={node.type} disabled={!editable} className={inputClass}><option value="opening">课堂开场</option><option value="instruction">观察或操作引导</option><option value="explanation">知识讲解</option><option value="example">例句示范</option><option value="question">理解检查</option><option value="summary">课堂总结</option></select><FieldError errors={state.fieldErrors?.nodeType} /></label>
+                <label className="space-y-2 text-sm font-medium"><span className="block">小节类型</span><select name="node_type" defaultValue={node.type} disabled={!editable} aria-invalid={Boolean(state.fieldErrors?.nodeType?.length) || undefined} aria-describedby={state.fieldErrors?.nodeType?.length ? "node-type-error" : undefined} className={inputClass}><option value="opening">课堂开场</option><option value="instruction">观察或操作引导</option><option value="explanation">知识讲解</option><option value="example">例句示范</option><option value="question">理解检查</option><option value="summary">课堂总结</option></select><FieldError id="node-type-error" errors={state.fieldErrors?.nodeType} /></label>
                 <label className="space-y-2 text-sm font-medium"><span className="block">系统标识</span><input name="node_key" defaultValue={node.key} readOnly className={`${inputClass} font-mono text-xs opacity-75`} /></label>
               </div>
             </details>
@@ -1282,7 +1392,7 @@ export function TeachingScriptNodeForm({
         </div>
 
         {livePreviewUrl && (
-          <aside aria-label="真实学生端预览" className="w-full border border-[var(--border)] bg-[var(--card)] 2xl:sticky 2xl:top-4">
+          <aside aria-label="真实学生端预览" className="w-full border border-[var(--border)] bg-[var(--card)]">
             <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] px-4 py-3">
               <CardTitleWithHint
                 title="真实学生端预览"
@@ -1295,7 +1405,7 @@ export function TeachingScriptNodeForm({
               <button
                 type="button"
                 onClick={() => setLivePreviewNonce((current) => current + 1)}
-                className="inline-flex min-h-9 shrink-0 items-center gap-1.5 border border-[var(--border)] px-3 text-xs font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
+                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 border border-[var(--border)] px-3 text-xs font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
               >
                 <RotateCcw size={13} aria-hidden="true" />刷新
               </button>
@@ -1315,7 +1425,7 @@ export function TeachingScriptNodeForm({
 
       {editable && (
         <div className="sticky bottom-0 z-10 flex min-h-16 items-center justify-between gap-4 border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-[0_-8px_20px_color-mix(in_srgb,var(--background)_78%,transparent)]">
-          <p className={state.status === "error" ? "text-sm text-[var(--status-danger)]" : "text-sm text-[var(--status-success)]"} role={state.status === "error" ? "alert" : "status"} aria-live="polite">{state.message || "修改会先保存到草稿，不会立即影响学生。"}</p>
+          <p className={state.status === "error" ? "text-sm text-[var(--status-danger)]" : dirty ? "text-sm font-medium text-[var(--status-warning)]" : state.status === "success" ? "text-sm text-[var(--status-success)]" : "text-sm text-[var(--muted-foreground)]"} role={state.status === "error" ? "alert" : "status"} aria-live="polite">{dirty ? "有未保存的修改。保存后才会写入草稿。" : state.message || "修改会先保存到草稿，不会立即影响学生。"}</p>
           <button type="submit" disabled={pending} className="inline-flex min-h-11 shrink-0 items-center justify-center bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">{pending ? "正在保存…" : "保存当前小节"}</button>
         </div>
       )}
