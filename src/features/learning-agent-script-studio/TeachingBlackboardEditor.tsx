@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { AlignCenter, AlignLeft, AlignRight, Copy, Languages, List, Plus, Trash2, Type } from "lucide-react";
 
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
@@ -53,11 +53,13 @@ export function TeachingBlackboardEditor({
   scriptLines,
   disabled,
   onDirty,
+  onSlidesChange,
 }: {
   display: Record<string, unknown>;
   scriptLines: string[];
   disabled?: boolean;
   onDirty: () => void;
+  onSlidesChange?: (slides: TeachingBlackboardSlide[]) => void;
 }) {
   const [slides, setSlides] = useState<TeachingBlackboardSlide[]>(() => {
     const saved = teachingBlackboardSlidesFromDisplay(display);
@@ -83,6 +85,10 @@ export function TeachingBlackboardEditor({
   const oversizedSlideNames = useMemo(() => slidesForSave
     .filter((slide) => !teachingBlackboardSlideFitsHeader(slide))
     .map((slide) => slide.name), [slidesForSave]);
+
+  useEffect(() => {
+    onSlidesChange?.(slidesForSave);
+  }, [onSlidesChange, slidesForSave]);
 
   function commit(updater: (current: TeachingBlackboardSlide[]) => TeachingBlackboardSlide[]) {
     setSlides(updater);

@@ -9,6 +9,8 @@ import {
   TEACHER_KIM_POSE_LABELS,
   type TeacherKimPose,
 } from "@/lib/teacher-kim-character";
+import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
+import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 
 export type VirtualCharacterStagePerformance = {
   pose: TeacherKimPose;
@@ -27,6 +29,7 @@ function lineLabel(line: string, index: number) {
 export function VirtualCharacterStageEditor({
   scriptLines,
   performances,
+  blackboardSlides,
   selectedIndex,
   onSelectedIndexChange,
   onPerformanceChange,
@@ -35,6 +38,7 @@ export function VirtualCharacterStageEditor({
 }: {
   scriptLines: string[];
   performances: VirtualCharacterStagePerformance[];
+  blackboardSlides: TeachingBlackboardSlide[];
   selectedIndex: number;
   onSelectedIndexChange: (index: number) => void;
   onPerformanceChange: (index: number, patch: Partial<VirtualCharacterStagePerformance>) => void;
@@ -46,6 +50,10 @@ export function VirtualCharacterStageEditor({
   const safeIndex = Math.max(0, Math.min(performances.length - 1, selectedIndex));
   const performance = performances[safeIndex];
   if (!performance) return null;
+  const activeBlackboardSlide = [...blackboardSlides]
+    .sort((left, right) => left.segmentIndex - right.segmentIndex)
+    .filter((slide) => slide.segmentIndex <= safeIndex)
+    .at(-1) ?? blackboardSlides[0] ?? null;
 
   function moveToPointer(event: ReactPointerEvent<HTMLButtonElement>) {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -98,8 +106,12 @@ export function VirtualCharacterStageEditor({
           ref={stageRef}
           className="relative aspect-video w-full overflow-hidden border border-[var(--border)] bg-[linear-gradient(180deg,var(--surface-soft),var(--card))] shadow-sm"
         >
-          <div className="absolute inset-x-0 bottom-0 h-px bg-[var(--border)]" aria-hidden="true" />
-          <div className="absolute left-3 top-3 max-w-[70%] border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)] shadow-sm">
+          {activeBlackboardSlide ? (
+            <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
+          )}
+          <div className="pointer-events-none absolute left-3 top-3 z-10 max-w-[70%] border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)] shadow-sm backdrop-blur-sm">
             {lineLabel(scriptLines[safeIndex] ?? "", safeIndex)}
           </div>
           <button
@@ -110,7 +122,7 @@ export function VirtualCharacterStageEditor({
             onPointerUp={handlePointerEnd}
             onPointerCancel={handlePointerEnd}
             onKeyDown={handleKeyDown}
-            className="group absolute bottom-0 touch-none select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed"
+            className="group absolute bottom-0 z-20 touch-none select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed"
             style={{
               left: `${performance.characterX}%`,
               bottom: `${performance.characterY}%`,

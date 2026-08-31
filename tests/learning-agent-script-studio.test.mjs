@@ -177,6 +177,9 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /VirtualCharacterStageEditor/);
   assert.match(characterStage, /拖动金老师调整位置/);
   assert.match(characterStage, /人物动作/);
+  assert.match(characterStage, /TeachingBlackboardSlideView/);
+  assert.match(characterStage, /activeBlackboardSlide/);
+  assert.match(editor, /onSlidesChange=\{setBlackboardSlides\}/);
   assert.match(actions, /characterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);

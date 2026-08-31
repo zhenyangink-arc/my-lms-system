@@ -25,6 +25,7 @@ import {
   TEACHER_KIM_POSE_LABELS,
   type TeacherKimPose,
 } from "@/lib/teacher-kim-character";
+import { teachingBlackboardSlidesFromDisplay, type TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
 import { TeachingBlackboardEditor } from "./TeachingBlackboardEditor";
 import { VirtualCharacterStageEditor } from "./VirtualCharacterStageEditor";
@@ -623,6 +624,9 @@ export function TeachingScriptNodeForm({
   }));
   const [editorSection, setEditorSection] = useState<EditorSection>("script");
   const [selectedCharacterLineIndex, setSelectedCharacterLineIndex] = useState(0);
+  const [blackboardSlides, setBlackboardSlides] = useState<TeachingBlackboardSlide[]>(() =>
+    teachingBlackboardSlidesFromDisplay(display),
+  );
   const [dirty, setDirty] = useState(false);
   const [visualCueTargetKey, setVisualCueTargetKey] = useState(storedVisualCueTargetKey);
   const [visualCuePageKey, setVisualCuePageKey] = useState(
@@ -1147,7 +1151,7 @@ export function TeachingScriptNodeForm({
               <CardTitleWithHint title={<span id="display-content-group-title">黑板内容</span>} description="这是学生展示内容：像编辑演示文稿一样安排学生看到的重点。黑板只放标题、要点和例句，老师的详细讲解仍在“老师台词”里编辑。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看黑板内容说明" />
             </div>
             <input type="hidden" name="display_items_zh" value="" />
-            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} />
+            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} onSlidesChange={setBlackboardSlides} />
             <FieldError errors={state.fieldErrors?.displaySlidesJson} />
             </section>
 
@@ -1160,6 +1164,7 @@ export function TeachingScriptNodeForm({
             <VirtualCharacterStageEditor
               scriptLines={scriptLines}
               performances={scriptPerformances}
+              blackboardSlides={blackboardSlides}
               selectedIndex={selectedCharacterLineIndex}
               onSelectedIndexChange={setSelectedCharacterLineIndex}
               onPerformanceChange={(index, patch) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, ...patch } : item))}
