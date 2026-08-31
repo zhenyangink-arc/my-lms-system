@@ -608,6 +608,8 @@ export function TeachingScriptNodeForm({
     const lines = node.script["zh-CN"].split(/\n\s*\n/);
     return lines.length > 0 ? lines : [""];
   });
+  const [bufferLineZh, setBufferLineZh] = useState(() => configuredText(node, "bufferLine", "zh-CN"));
+  const [bufferLineKo, setBufferLineKo] = useState(() => configuredText(node, "bufferLine", "ko-KR"));
   const storedScriptPerformances = Array.isArray(node.configuration.scriptPerformances)
     ? node.configuration.scriptPerformances
     : [];
@@ -947,7 +949,13 @@ export function TeachingScriptNodeForm({
                 headingLevel={3}
                 hintLabel="查看过渡台词说明"
               />
-              <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+              <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+              <ScriptSpeechReview
+                text={bufferLineZh}
+                performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})}
+                asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === 199)}
+                fromPublishedVersion={node.speechAssetsFromPublishedVersion}
+              />
             </div>
             <div className="divide-y divide-[var(--border)]">
               {scriptLines.map((line, index) => (
@@ -1113,7 +1121,16 @@ export function TeachingScriptNodeForm({
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
               <div className="mt-4 grid gap-4">
                 <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文小节名称</span><input name="title_ko" defaultValue={node.title["ko-KR"]} disabled={!editable} maxLength={80} className={inputClass} /></label>
-                <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文过渡台词</span><textarea name="buffer_line_ko" defaultValue={configuredText(node, "bufferLine", "ko-KR")} disabled={!editable} rows={3} maxLength={200} placeholder="例如：잠시만요, 이 부분을 한번 볼게요…" className={`${inputClass} min-h-24 resize-y py-3 leading-6`} /></label>
+                <div className="space-y-2 text-sm">
+                  <label htmlFor="buffer-line-ko" className="block font-semibold text-[var(--foreground)]">韩文过渡台词</label>
+                  <textarea id="buffer-line-ko" name="buffer_line_ko" value={bufferLineKo} onChange={(event) => { setBufferLineKo(event.target.value); markDirty(); }} disabled={!editable} rows={3} maxLength={200} placeholder="例如：잠시만요, 이 부분을 한번 볼게요…" className={`${inputClass} min-h-24 resize-y py-3 leading-6`} />
+                  <ScriptSpeechReview
+                    text={bufferLineKo}
+                    performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})}
+                    asset={node.speechAssets.find((item) => item.locale === "ko-KR" && item.segmentIndex === 199)}
+                    fromPublishedVersion={node.speechAssetsFromPublishedVersion}
+                  />
+                </div>
                 <label className="space-y-2 text-sm"><span className="block font-semibold text-[var(--foreground)]">韩文老师台词</span><textarea name="script_ko" defaultValue={node.script["ko-KR"]} disabled={!editable} rows={5} maxLength={1600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
               </div>
             </details>
