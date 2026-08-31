@@ -5907,7 +5907,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           </div>
           {(!teachingAreaCollapsed || teachingAreaExpanded) && (
             <div
-              className={`smart-textbook-scroll flex min-h-0 flex-1 flex-col pb-6 pt-5 ${tutorStarted ? "overflow-y-auto" : "overflow-hidden"} ${teachingAreaExpanded ? "mx-auto w-full px-10" : "px-6"}`}
+              className={`smart-textbook-scroll flex min-h-0 flex-1 flex-col pb-6 pt-5 ${tutorStarted ? "overflow-y-auto" : "overflow-hidden"} ${teachingAreaExpanded ? "mx-auto w-full px-8" : "px-6"}`}
               style={teachingAreaExpanded ? { maxWidth: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx } : undefined}
               data-smart-textbook-teaching-area
             >
@@ -5928,11 +5928,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
               <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
                 <section
-                  className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm ${tutorStarted ? "" : "flex-1"}`}
+                  className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-3" : "p-4"} ${tutorStarted ? "" : "flex-1"}`}
                   style={{ minHeight: tutorStarted ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx : 0 }}
                   aria-labelledby="teaching-blackboard-title"
                 >
-                  <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-xl leading-8" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
+                  <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
                     {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
                   {!tutorStarted && (
@@ -5964,7 +5964,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   {tutorStarted && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
                     <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
                       {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
-                        <li key={`${item}-${itemIndex}`} className={`flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 font-semibold text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-base leading-7" : "text-xs leading-5"}`}>
+                        <li key={`${item}-${itemIndex}`} className={`flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 font-semibold text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-xs leading-5"}`}>
                           <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[9px] font-bold text-[var(--status-warning)]">{itemIndex + 1}</span>
                           <span>{item}</span>
                         </li>
@@ -5973,13 +5973,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   )}
                   {tutorStarted && tutorDisplay?.korean && (
                     <div className="mt-3 border-l-2 border-[var(--status-warning)] pl-3">
-                      <p lang="ko" className={`whitespace-pre-line font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-xl leading-9" : "text-sm leading-6"}`}>{tutorDisplay.korean}</p>
-                      {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}
+                      <p lang="ko" className={`whitespace-pre-line font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"}`}>{tutorDisplay.korean}</p>
+                      {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-xs leading-5" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}
                     </div>
                   )}
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
                   <div
-                    className={`pointer-events-none fixed bottom-[300px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-10" : "left-0 px-6"}`}
+                    className={`pointer-events-none fixed z-40 ${teachingAreaExpanded ? "inset-x-0 bottom-[240px] mx-auto px-8" : "bottom-[300px] left-0 px-6"}`}
                     style={{
                       width: teachingAreaExpanded
                         ? "100%"
@@ -5989,9 +5989,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       maxWidth: teachingAreaExpanded ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx : undefined,
                     }}
                   >
-                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[20rem]" : "w-[18rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : "right-0 translate-x-[clamp(3rem,8vw,10rem)]"}`}>
+                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : teachingAreaExpanded ? "right-0 translate-x-[clamp(2.5rem,6.4vw,8rem)]" : "right-0 translate-x-[clamp(3rem,8vw,10rem)]"}`}>
                       <div
-                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[clamp(30rem,60vh,40rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
+                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[clamp(24rem,48vh,32rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
                         data-speaking={tutorSpeechStatus === "playing" || undefined}
                       >
                         {teachingAreaCharacterFrames && ([
@@ -6012,15 +6012,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute right-full z-10 mr-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(22rem,42vh,30rem)] max-w-sm" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
+                            className={`pointer-events-auto absolute right-full z-10 mr-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
                           >
-                        <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-4" : "p-3"}`}>
+                        <div className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
                           {teachingAreaCharacter?.kind === "uply-teacher" && (
                             <span className="absolute bottom-4 -right-1.5 h-3 w-3 rotate-45 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
                           )}
                           <div className="flex min-w-0 items-center justify-between gap-3">
-                            <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>
-                            <p className={`shrink-0 font-bold ${teachingAreaExpanded ? "text-xs" : "text-[10px]"} ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                            <p className="truncate text-xs font-bold text-[var(--foreground)]">{agentName}</p>
+                            <p className={`shrink-0 text-[10px] font-bold ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
                               {!tutorStarted
                                 ? (locale === "ko-KR" ? "시작 대기" : "等待开始")
                                 : tutorPaused
@@ -6038,7 +6038,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                                     : (locale === "ko-KR" ? "수업 중" : "教学中")}
                             </p>
                           </div>
-                          <p className={`mt-2 whitespace-pre-line text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-[11px] leading-5"}`} aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
+                          <p className="mt-2 whitespace-pre-line text-[11px] leading-5 text-[var(--foreground-secondary)]" aria-live="polite" aria-busy={tutorStatus === "thinking" || tutorStatus === "streaming"}>
                             {tutorStatus === "thinking"
                               ? (tutorActiveBufferLine || (locale === "ko-KR" ? "다음 내용을 준비하고 있어요…" : "正在准备接下来的内容…"))
                               : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : (tutorSpeechInProgress
@@ -6073,7 +6073,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     )}
                   </div>
                   {ahanIdleVisible && !tutorCompanion && (
-                    <div className={`a-han-idle-companion absolute bottom-3 z-30 ${teachingAreaExpanded ? "w-[9rem]" : "w-[7rem]"} left-0`}>
+                    <div className="a-han-idle-companion absolute bottom-3 left-0 z-30 w-[7rem]">
                       <Image
                         src={tutorCompanionImages.seatedCombingPoster}
                         alt=""

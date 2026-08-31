@@ -160,7 +160,7 @@ test("第 1—16 章共用完整的模块分页和教学区状态规则", () => 
   }
 
   assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent, 30);
-  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx, 960);
+  assert.equal(SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx, 768);
   assert.equal(shouldUseSmartTextbookTeachingFocusMode({
     tutorStarted: true,
     answerRequired: false,
@@ -222,7 +222,7 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(skeleton, /"zh-CN": "情景诊断", "ko-KR": "장면 진단"/);
   assert.match(skeleton, /defaultWidthPercent: 30/);
   assert.match(skeleton, /collapsedWidthPx: 64/);
-  assert.match(skeleton, /minimumHeightPx: 960/);
+  assert.match(skeleton, /minimumHeightPx: 768/);
   assert.match(skeleton, /contentInsetPx: 48/);
   assert.match(source, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(source, /shouldUseSmartTextbookTeachingFocusMode/);

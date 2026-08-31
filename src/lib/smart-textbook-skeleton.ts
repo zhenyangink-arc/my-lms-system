@@ -65,10 +65,10 @@ export const SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT = {
   teachingArea: {
     defaultWidthPercent: 30,
     collapsedWidthPx: 64,
-    focusedContentMaxWidthPx: 1152,
+    focusedContentMaxWidthPx: 920,
   },
   blackboard: {
-    minimumHeightPx: 960,
+    minimumHeightPx: 768,
   },
   learningHeader: {
     heightPx: 56,
