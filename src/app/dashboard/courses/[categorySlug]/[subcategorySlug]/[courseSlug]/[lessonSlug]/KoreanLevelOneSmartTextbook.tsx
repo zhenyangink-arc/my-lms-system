@@ -41,7 +41,7 @@ import {
   X,
   XCircle,
 } from "lucide-react";
-import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
+import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
@@ -50,6 +50,7 @@ import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text"
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 import {
+  constrainTeachingBlackboardPlacementToViewport,
   normalizeTeachingBlackboardPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
@@ -82,6 +83,29 @@ import {
   SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
 } from "@/lib/smart-textbook-skeleton";
 import { KoreanLevelOneCourseOverview } from "./KoreanLevelOneCourseOverview";
+
+const TEACHING_VIEWPORT_FALLBACK = `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx}x${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx}`;
+
+function currentTeachingViewportSnapshot() {
+  return `${Math.round(window.innerWidth)}x${Math.round(window.innerHeight)}`;
+}
+
+function subscribeToTeachingViewport(onStoreChange: () => void) {
+  window.addEventListener("resize", onStoreChange);
+  document.addEventListener("fullscreenchange", onStoreChange);
+  return () => {
+    window.removeEventListener("resize", onStoreChange);
+    document.removeEventListener("fullscreenchange", onStoreChange);
+  };
+}
+
+function teachingViewportFromSnapshot(snapshot: string) {
+  const [width, height] = snapshot.split("x").map(Number);
+  return {
+    width: Number.isFinite(width) ? width : TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
+    height: Number.isFinite(height) ? height : TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
+  };
+}
 
 export type SmartTextbookShellProps = {
   backHref: string;
@@ -5629,7 +5653,16 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     teachingAreaCharacter,
     teachingAreaCharacter?.position,
   );
-  const teachingAreaBlackboardPlacement = normalizeTeachingBlackboardPlacement(tutorDisplay?.placement);
+  const teachingViewport = teachingViewportFromSnapshot(useSyncExternalStore(
+    subscribeToTeachingViewport,
+    currentTeachingViewportSnapshot,
+    () => TEACHING_VIEWPORT_FALLBACK,
+  ));
+  const teachingAreaBlackboardPlacement = constrainTeachingBlackboardPlacementToViewport(
+    normalizeTeachingBlackboardPlacement(tutorDisplay?.placement),
+    teachingViewport.width,
+    teachingViewport.height,
+  );
   const immersiveBlackboardPositioned = tutorStarted && teachingAreaExpanded;
   const immersiveBlackboardWidthPx = TEACHING_VIRTUAL_CHARACTER_STAGE.preview.focusedContentMaxWidthPx
     - TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentInsetPx * 2;

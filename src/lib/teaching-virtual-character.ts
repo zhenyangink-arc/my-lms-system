@@ -10,6 +10,13 @@ export type TeachingBlackboardPlacement = {
   scale: number;
 };
 
+export type TeachingBlackboardPlacementBounds = {
+  minimumXPercent: number;
+  maximumXPercent: number;
+  minimumTopPercent: number;
+  maximumTopPercent: number;
+};
+
 export type TeachingVirtualCharacterPreviewGeometry = {
   aspectRatio: string;
   headerHeightPercent: number;
@@ -149,5 +156,73 @@ export function normalizeTeachingBlackboardPlacement(value: unknown): TeachingBl
       TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale,
       TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale,
     ),
+  };
+}
+
+export function teachingBlackboardPlacementBounds(
+  viewportWidth: unknown,
+  viewportHeight: unknown,
+  scale: unknown,
+): TeachingBlackboardPlacementBounds {
+  const width = finiteNumber(
+    viewportWidth,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
+    320,
+    7680,
+  );
+  const height = finiteNumber(
+    viewportHeight,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
+    320,
+    4320,
+  );
+  const safeScale = finiteNumber(
+    scale,
+    1,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale,
+  );
+  const geometry = teachingVirtualCharacterPreviewGeometry(width, height);
+  const scaledWidthPercent = geometry.blackboardWidthPercent * safeScale;
+  const scaledHeightPercent = (
+    width * geometry.blackboardWidthPercent / 100 * 9 / 16 * safeScale
+  ) / height * 100;
+  const halfWidthPercent = Math.min(50, scaledWidthPercent / 2);
+  return {
+    minimumXPercent: Math.max(
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumXPercent,
+      halfWidthPercent,
+    ),
+    maximumXPercent: Math.min(
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumXPercent,
+      100 - halfWidthPercent,
+    ),
+    minimumTopPercent: TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent,
+    maximumTopPercent: Math.max(
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumTopPercent,
+      Math.min(
+        TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumTopPercent,
+        100 - scaledHeightPercent,
+      ),
+    ),
+  };
+}
+
+export function constrainTeachingBlackboardPlacementToViewport(
+  value: unknown,
+  viewportWidth: unknown,
+  viewportHeight: unknown,
+): TeachingBlackboardPlacement {
+  const placement = normalizeTeachingBlackboardPlacement(value);
+  const bounds = teachingBlackboardPlacementBounds(viewportWidth, viewportHeight, placement.scale);
+  return {
+    x: finiteNumber(placement.x, 50, bounds.minimumXPercent, bounds.maximumXPercent),
+    y: finiteNumber(
+      placement.y,
+      TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultTopPercent,
+      bounds.minimumTopPercent,
+      bounds.maximumTopPercent,
+    ),
+    scale: placement.scale,
   };
 }

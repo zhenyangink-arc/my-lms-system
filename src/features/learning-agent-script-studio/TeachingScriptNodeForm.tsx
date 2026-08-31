@@ -1168,9 +1168,6 @@ export function TeachingScriptNodeForm({
             </div>
             <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
             <input type="hidden" name="virtual_character_position" value={(scriptPerformances[0]?.characterX ?? 75) < 50 ? "left" : "right"} />
-            <input type="hidden" name="blackboard_x" value={String(blackboardPlacement.x)} />
-            <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
-            <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
             <VirtualCharacterStageEditor
               scriptLines={scriptLines}
               performances={scriptPerformances}

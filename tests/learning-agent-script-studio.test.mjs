@@ -187,8 +187,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /离教学区底部/);
   assert.match(characterStage, /teachingVirtualCharacterPreviewGeometry/);
   assert.match(characterStage, /previewGeometry\.aspectRatio/);
-  assert.match(characterStage, /left: `\$\{blackboardPlacement\.x\}%`/);
+  assert.match(characterStage, /left: `\$\{boundedBlackboardPlacement\.x\}%`/);
   assert.match(characterStage, /previewGeometry\.blackboardWidthPercent/);
+  assert.match(characterStage, /constrainTeachingBlackboardPlacementToViewport/);
+  assert.match(characterStage, /teachingBlackboardPlacementBounds/);
+  assert.match(characterStage, /window\.innerWidth/);
   assert.match(characterStage, /handleBlackboardPointerDown/);
   assert.match(characterStage, /handleBlackboardKeyDown/);
   assert.match(characterStage, /恢复黑板默认位置/);
@@ -206,9 +209,9 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /blackboardY: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardScale: z\.coerce\.number\(\)/);
   assert.match(actions, /placement: blackboardPlacement/);
-  assert.match(editor, /name="blackboard_x"/);
-  assert.match(editor, /name="blackboard_y"/);
-  assert.match(editor, /name="blackboard_scale"/);
+  assert.match(characterStage, /name="blackboard_x" value=\{String\(boundedBlackboardPlacement\.x\)\}/);
+  assert.match(characterStage, /name="blackboard_y" value=\{String\(boundedBlackboardPlacement\.y\)\}/);
+  assert.match(characterStage, /name="blackboard_scale" value=\{String\(boundedBlackboardPlacement\.scale\)\}/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
@@ -455,6 +458,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /tutorDisplay/);
   assert.match(shell, /data-learning-agent-blackboard/);
   assert.match(shell, /normalizeTeachingBlackboardPlacement\(tutorDisplay\?\.placement\)/);
+  assert.match(shell, /constrainTeachingBlackboardPlacementToViewport/);
+  assert.match(shell, /subscribeToTeachingViewport/);
   assert.match(shell, /immersiveBlackboardPositioned/);
   assert.match(shell, /translateX\(-50%\) scale\(\$\{teachingAreaBlackboardPlacement\.scale\}\)/);
   assert.match(shell, /tutorStarted \? "overflow-y-auto" : "overflow-hidden"/);

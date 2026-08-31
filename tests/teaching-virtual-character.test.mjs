@@ -2,10 +2,12 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
+  constrainTeachingBlackboardPlacementToViewport,
   defaultTeachingBlackboardPlacement,
   defaultTeachingVirtualCharacterPlacement,
   normalizeTeachingBlackboardPlacement,
   normalizeTeachingVirtualCharacterPlacement,
+  teachingBlackboardPlacementBounds,
   teachingVirtualCharacterPreviewGeometry,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
 } from "../src/lib/teaching-virtual-character.ts";
@@ -20,6 +22,22 @@ test("blackboard placement uses the same bounded stage coordinates as the editor
     normalizeTeachingBlackboardPlacement({ x: 999, y: -10, scale: 0.2 }),
     { x: 90, y: 0, scale: 0.75 },
   );
+});
+
+test("blackboard stays fully visible after scaling on a laptop viewport", () => {
+  const bounds = teachingBlackboardPlacementBounds(1366, 768, 1.25);
+  const placement = constrainTeachingBlackboardPlacementToViewport(
+    { x: 90, y: 70, scale: 1.25 },
+    1366,
+    768,
+  );
+
+  assert.ok(bounds.minimumXPercent > 39 && bounds.minimumXPercent < 40);
+  assert.ok(bounds.maximumXPercent > 60 && bounds.maximumXPercent < 61);
+  assert.ok(bounds.maximumTopPercent > 21 && bounds.maximumTopPercent < 22);
+  assert.equal(placement.x, bounds.maximumXPercent);
+  assert.equal(placement.y, bounds.maximumTopPercent);
+  assert.equal(placement.scale, 1.25);
 });
 
 test("legacy left and right positions become usable stage coordinates", () => {
