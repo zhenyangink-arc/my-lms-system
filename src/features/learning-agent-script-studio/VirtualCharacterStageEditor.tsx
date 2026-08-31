@@ -109,19 +109,40 @@ export function VirtualCharacterStageEditor({
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
-          className="relative aspect-[2/1] w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm"
-          style={{ containerType: "inline-size" }}
+          className="relative w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm"
+          style={{
+            aspectRatio: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.aspectRatio,
+            containerType: "inline-size",
+          }}
         >
-          <div className="absolute inset-x-0 top-0 flex h-[12%] items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]">
+          <div
+            className="absolute inset-x-0 top-0 flex items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]"
+            style={{ height: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.headerHeightPercent}%` }}
+          >
             <span className="text-[clamp(0.6rem,1.7cqw,0.85rem)] font-bold text-[var(--foreground)]">教学区</span>
           </div>
-          <div className="absolute left-[18%] top-[16%] flex max-w-[64%] items-center gap-[1.2cqw] text-[clamp(0.42rem,1.1cqw,0.65rem)] text-[var(--foreground-secondary)]">
+          <div
+            className="absolute flex items-center gap-[0.7cqw] text-[clamp(0.35rem,0.68cqw,0.58rem)] text-[var(--foreground-secondary)]"
+            style={{
+              left: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.metadataLeftPercent}%`,
+              top: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.metadataTopPercent}%`,
+              maxWidth: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent}%`,
+            }}
+          >
             <span className="font-bold text-[var(--foreground-muted)]">当前教学</span>
             <span className="font-semibold">第 1 章 · 你好？</span>
-            <span className="h-[1.6cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
+            <span className="h-[0.8cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
             <span className="font-bold text-[var(--foreground)]">课前导航</span>
           </div>
-          <div className="absolute left-[18%] top-[23%] w-[64%] overflow-hidden rounded-[1.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.6cqw_4cqw_rgba(15,23,42,0.08)]" style={{ aspectRatio: "16 / 9" }}>
+          <div
+            className="absolute overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
+            style={{
+              left: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardLeftPercent}%`,
+              top: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardTopPercent}%`,
+              width: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent}%`,
+              aspectRatio: "16 / 9",
+            }}
+          >
             {activeBlackboardSlide ? (
               <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
             ) : (
@@ -155,14 +176,17 @@ export function VirtualCharacterStageEditor({
               unoptimized
               className="pointer-events-none object-contain drop-shadow-[0_12px_18px_rgba(15,23,42,0.16)]"
             />
-            <span className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-[0.8cqw] block w-max max-w-[15cqw] text-left">
-              <span className="relative block rounded-[1.2cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[1.1cqw] shadow-sm">
+            <span
+              className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-[0.55cqw] block w-max text-left"
+              style={{ maxWidth: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.bubbleWidthPercent}cqw` }}
+            >
+              <span className="relative block rounded-[0.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[0.65cqw] shadow-sm">
                 <span className="absolute bottom-[1.5cqw] left-[-0.55cqw] h-[1.1cqw] w-[1.1cqw] rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
-                <span className="flex min-w-0 items-center justify-between gap-[0.9cqw]">
-                  <span className="truncate text-[1.15cqw] font-bold leading-none text-[var(--foreground)]">UPLY 韩语-金老师</span>
-                  <span className="shrink-0 text-[0.9cqw] font-bold leading-none text-[var(--status-success)]">台词预览</span>
+                <span className="flex min-w-0 items-center justify-between gap-[0.45cqw]">
+                  <span className="truncate text-[0.66cqw] font-bold leading-none text-[var(--foreground)]">UPLY 韩语-金老师</span>
+                  <span className="shrink-0 text-[0.54cqw] font-bold leading-none text-[var(--status-success)]">台词预览</span>
                 </span>
-                <span className="mt-[0.8cqw] block whitespace-pre-line text-[1.05cqw] font-normal leading-[1.55] text-[var(--foreground-secondary)]">
+                <span className="mt-[0.5cqw] block whitespace-pre-line text-[0.62cqw] font-normal leading-[1.55] text-[var(--foreground-secondary)]">
                   {plainScriptLine(scriptLines[safeIndex] ?? "") || "这句台词还没有内容"}
                 </span>
               </span>

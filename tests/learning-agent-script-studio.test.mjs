@@ -185,12 +185,13 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /transformOrigin: "bottom center"/);
   assert.match(characterStage, /画布对应学生端完整教学区/);
   assert.match(characterStage, /离教学区底部/);
-  assert.match(characterStage, /aspect-\[2\/1\]/);
-  assert.match(characterStage, /left-\[18%\] top-\[23%\] w-\[64%\]/);
+  assert.match(characterStage, /TEACHING_VIRTUAL_CHARACTER_STAGE\.preview\.aspectRatio/);
+  assert.match(characterStage, /TEACHING_VIRTUAL_CHARACTER_STAGE\.preview\.blackboardLeftPercent/);
+  assert.match(characterStage, /TEACHING_VIRTUAL_CHARACTER_STAGE\.preview\.blackboardWidthPercent/);
   assert.doesNotMatch(characterStage, /inset-x-0 bottom-0 h-\[8%\]/);
   assert.match(characterStage, /space-y-4 px-4 py-4/);
   assert.match(characterStage, /md:grid-cols-2 xl:grid-cols-5/);
-  assert.match(characterStage, /max-w-\[15cqw\]/);
+  assert.match(characterStage, /TEACHING_VIRTUAL_CHARACTER_STAGE\.preview\.bubbleWidthPercent/);
   assert.doesNotMatch(characterStage, /absolute left-3 top-3/);
   assert.match(editor, /onSlidesChange=\{setBlackboardSlides\}/);
   assert.match(actions, /characterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);

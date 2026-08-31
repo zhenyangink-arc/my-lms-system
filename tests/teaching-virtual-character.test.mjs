@@ -34,3 +34,13 @@ test("invalid placement values fall back without propagating NaN", () => {
     { x: 75, y: 0, scale: 1 },
   );
 });
+
+test("admin preview uses the same wide teaching-stage geometry as the learner view", () => {
+  assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.aspectRatio, "16 / 9");
+  assert.ok(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent < 50);
+  assert.equal(
+    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardLeftPercent * 2
+      + TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent,
+    100,
+  );
+});

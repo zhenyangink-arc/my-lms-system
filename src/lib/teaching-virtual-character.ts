@@ -9,6 +9,16 @@ export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
   maximumBottomPercent: 80,
   viewportTopPx: 64,
   viewportBottomPx: 64,
+  preview: {
+    aspectRatio: "16 / 9",
+    headerHeightPercent: 5.25,
+    metadataLeftPercent: 27.7,
+    metadataTopPercent: 7.25,
+    blackboardLeftPercent: 27.7,
+    blackboardTopPercent: 11,
+    blackboardWidthPercent: 44.6,
+    bubbleWidthPercent: 10,
+  },
 } as const;
 
 function finiteNumber(value: unknown, fallback: number, minimum: number, maximum: number) {
