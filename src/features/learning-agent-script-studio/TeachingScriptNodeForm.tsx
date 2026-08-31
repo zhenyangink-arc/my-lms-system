@@ -940,6 +940,15 @@ export function TeachingScriptNodeForm({
                 </button>
               </div>
             </div>
+            <div className={fieldClass}>
+              <CardTitleWithHint
+                title={<span id="buffer-line-label" className={formFieldLabelClass}>过渡台词</span>}
+                description="进入这个小节时，在正式讲解加载完成之前，老师立即先说的第一句话。用来填补网络等待的空白，不需要很长，一两句自然的过渡语就够了。"
+                headingLevel={3}
+                hintLabel="查看过渡台词说明"
+              />
+              <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+            </div>
             <div className="divide-y divide-[var(--border)]">
               {scriptLines.map((line, index) => (
                 <div key={index} className={fieldClass}>
@@ -1100,15 +1109,6 @@ export function TeachingScriptNodeForm({
               <span className={formFieldLabelClass}>再举一个例子</span>
               <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
             </label>
-            <div className={fieldClass}>
-              <CardTitleWithHint
-                title={<span id="buffer-line-label" className={formFieldLabelClass}>过渡台词</span>}
-                description="点击“继续下一步”后，在下一句真正的内容加载出来之前，老师立刻先说的这句话。用来填补网络等待的空白，不需要很长，一两句自然的过渡语就够了。"
-                headingLevel={3}
-                hintLabel="查看过渡台词说明"
-              />
-              <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" defaultValue={configuredText(node, "bufferLine")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
-            </div>
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
               <div className="mt-4 grid gap-4">

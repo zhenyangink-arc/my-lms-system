@@ -155,6 +155,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /buffer_line_zh/);
   assert.match(editor, /ariaLabelledBy="buffer-line-label"/);
   assert.match(editor, /min-h-24 resize-y/);
+  assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
   assert.match(scriptRuntime, /configuredText\(nextNode\.configuration, "bufferLine", locale\)/);
   assert.match(editor, /教学内容/);
   assert.match(editor, /学生展示内容/);
