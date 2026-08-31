@@ -12,6 +12,7 @@ import {
   scriptSegmentAutoContinues,
   studentTask,
   taskEventKey,
+  upcomingScriptNodeBufferLine,
   visualCue,
   type ScriptNodeRow,
 } from "@/lib/learning-agent-script-runtime";
@@ -166,10 +167,17 @@ export async function POST(request: Request) {
       "X-Learning-Agent-Auto-Continue",
       hasNextSegment && scriptSegmentAutoContinues(node.configuration, resolved.selectedScriptSegmentIndex) ? "true" : "false",
     );
-    headers.set(
-      "X-Learning-Agent-Buffer-Line",
-      encodeURIComponent(configuredText(node.configuration, "bufferLine", input.locale)),
-    );
+    const upcomingBufferLine = upcomingScriptNodeBufferLine({
+      selectedNode: node,
+      scriptNodes,
+      nodeByKey,
+      locale: input.locale,
+      segmentIndex: resolved.selectedScriptSegmentIndex,
+      segmentCount: resolved.selectedScriptSegmentCount,
+    });
+    if (upcomingBufferLine !== null) {
+      headers.set("X-Learning-Agent-Buffer-Line", encodeURIComponent(upcomingBufferLine));
+    }
   }
 
   const fallback = resolved.scriptedContent

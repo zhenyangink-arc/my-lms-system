@@ -147,13 +147,15 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(scriptRuntime, /scriptSegmentIndex/);
   assert.match(respondRoute, /继续下一句/);
   assert.match(respondRoute, /X-Learning-Agent-Buffer-Line/);
+  assert.match(scriptRuntime, /upcomingScriptNodeBufferLine/);
+  assert.match(scriptRuntime, /segmentIndex < segmentCount - 1/);
   assert.match(actions, /bufferLineZh: String\(formData\.get\("buffer_line_zh"\) \?\? ""\)/);
   assert.match(actions, /configuration\.bufferLine = \{ "zh-CN": input\.bufferLineZh \}/);
   assert.match(editor, /过渡台词/);
   assert.match(editor, /buffer_line_zh/);
   assert.match(editor, /ariaLabelledBy="buffer-line-label"/);
   assert.match(editor, /min-h-24 resize-y/);
-  assert.match(respondRoute, /configuredText\(selectedScriptNode\.configuration, "bufferLine", input\.locale\)/);
+  assert.match(scriptRuntime, /configuredText\(nextNode\.configuration, "bufferLine", locale\)/);
   assert.match(editor, /教学内容/);
   assert.match(editor, /学生展示内容/);
   assert.match(editor, /formSectionClass/);
@@ -391,8 +393,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /当前教学展示/);
   assert.match(shell, /pointer-events-none fixed bottom-\[300px\] z-40/);
   assert.match(shell, /X-Learning-Agent-Buffer-Line/);
-  assert.match(shell, /const bufferLine = tutorNextBufferLine \|\|/);
-  assert.match(shell, /setTutorNextBufferLine\(activeModule\?\.openingBufferLine\[locale\] \|\| activeModule\?\.openingBufferLine\["zh-CN"\] \|\| ""\)/);
+  assert.match(shell, /const shouldPlayBuffer = \(requestIntent === "start" \|\| intent === "ready"\) && tutorNextBufferLine !== null/);
+  assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
+  assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
   assert.match(shell, /!tutorStarted \? "left-1\/2 -translate-x-1\/2" : "right-0 translate-x-\[310px\]"/);
   assert.match(shell, /pointer-events-auto absolute left-full z-10 ml-2 w-fit/);
   assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);

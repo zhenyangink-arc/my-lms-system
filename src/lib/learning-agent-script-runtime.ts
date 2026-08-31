@@ -142,6 +142,40 @@ export function isTerminalScriptNode(node: ScriptNodeRow, nodes: ScriptNodeRow[]
   return !nodes.some((candidate) => candidate.sort_order > node.sort_order);
 }
 
+/**
+ * Returns the buffer line that must already be on the client before the next
+ * section request starts. A multi-line section is still one section, so its
+ * internal script segments never receive another buffer line.
+ */
+export function upcomingScriptNodeBufferLine(input: {
+  selectedNode: ScriptNodeRow;
+  scriptNodes: ScriptNodeRow[];
+  nodeByKey: Map<string, ScriptNodeRow>;
+  locale: Locale;
+  segmentIndex: number;
+  segmentCount: number;
+}) {
+  const {
+    selectedNode,
+    scriptNodes,
+    nodeByKey,
+    locale,
+    segmentIndex,
+    segmentCount,
+  } = input;
+  if (
+    segmentIndex < segmentCount - 1
+    || isTerminalScriptNode(selectedNode, scriptNodes)
+  ) {
+    return null;
+  }
+  const nextNode = selectedNode.next_node_key
+    ? nodeByKey.get(selectedNode.next_node_key) ?? null
+    : scriptNodes.find((node) => node.sort_order > selectedNode.sort_order) ?? null;
+  if (!nextNode || nextNode.id === selectedNode.id) return null;
+  return configuredText(nextNode.configuration, "bufferLine", locale);
+}
+
 export function taskEventKey(nodeId: string, task: Record<string, unknown>) {
   return `${nodeId}:${String(task.eventType ?? "")}:${String(task.targetKey ?? "")}`;
 }
@@ -425,7 +459,7 @@ export async function resolveScriptCharacter(
   scriptedContent: string,
   locale: Locale,
 ) {
-  let selectedCharacter = selectedScriptNode
+  const selectedCharacter = selectedScriptNode
     ? virtualCharacterForScriptSegment(selectedScriptNode.configuration, selectedScriptSegmentIndex)
     : null;
   if (selectedScriptNode && selectedCharacter && selectedCharacter.voiceEnabled !== false) {

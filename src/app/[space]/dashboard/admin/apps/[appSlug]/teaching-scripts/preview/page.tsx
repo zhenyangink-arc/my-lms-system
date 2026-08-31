@@ -2,7 +2,9 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { configuredText } from "@/lib/learning-agent-script-runtime";
 import { loadSmartDigitalTextbook } from "@/lib/smart-digital-textbook";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { SmartTextbookShell } from "@/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/SmartTextbookShell";
 
 const scriptVersionIdSchema = z.uuid();
@@ -29,6 +31,19 @@ export default async function TeachingScriptPreviewPage({
   const startNodeKey = resolvedSearchParams.startNodeKey?.trim() || undefined;
   const parsedModuleIndex = Number(resolvedSearchParams.moduleIndex);
   const startModuleIndex = Number.isInteger(parsedModuleIndex) && parsedModuleIndex >= 0 ? parsedModuleIndex : undefined;
+  const admin = createAdminClient();
+  let previewOpeningNodeQuery = admin
+    .from("learning_agent_script_nodes")
+    .select("configuration")
+    .eq("script_version_id", parsedScriptVersionId.data)
+    .order("sort_order")
+    .limit(1);
+  if (startNodeKey) previewOpeningNodeQuery = previewOpeningNodeQuery.eq("node_key", startNodeKey);
+  const { data: previewOpeningNode } = await previewOpeningNodeQuery.maybeSingle();
+  const previewOpeningBufferLine = {
+    "zh-CN": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "zh-CN"),
+    "ko-KR": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "ko-KR"),
+  };
 
   const smartTextbook = await loadSmartDigitalTextbook({
     textbookSlug: "korean-level-one-smart",
@@ -54,6 +69,7 @@ export default async function TeachingScriptPreviewPage({
       previewScriptVersionId={parsedScriptVersionId.data}
       previewStartNodeKey={startNodeKey}
       previewStartModuleIndex={startModuleIndex}
+      previewOpeningBufferLine={previewOpeningBufferLine}
     />
   );
 }

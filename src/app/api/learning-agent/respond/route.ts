@@ -12,6 +12,7 @@ import {
   ScriptStepValidationError,
   studentTask,
   taskEventKey,
+  upcomingScriptNodeBufferLine,
   visualCue,
   type ScriptNodeRow,
 } from "@/lib/learning-agent-script-runtime";
@@ -498,10 +499,17 @@ export async function POST(request: Request) {
         ? (input.locale === "ko-KR" ? "다음 대사" : "继续下一句")
         : configuredText(selectedScriptNode.configuration, "continueLabel", input.locale)),
     );
-    headers.set(
-      "X-Learning-Agent-Buffer-Line",
-      encodeURIComponent(configuredText(selectedScriptNode.configuration, "bufferLine", input.locale)),
-    );
+    const upcomingBufferLine = upcomingScriptNodeBufferLine({
+      selectedNode: selectedScriptNode,
+      scriptNodes,
+      nodeByKey,
+      locale: input.locale,
+      segmentIndex: selectedScriptSegmentIndex,
+      segmentCount: selectedScriptSegmentCount,
+    });
+    if (upcomingBufferLine !== null) {
+      headers.set("X-Learning-Agent-Buffer-Line", encodeURIComponent(upcomingBufferLine));
+    }
   }
 
   const fallback = scriptedContent || localized(step.content, input.locale);
