@@ -5906,7 +5906,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
               <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
                 <section
-                  className={`relative border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_18px_48px_rgba(15,23,42,0.08)] ${tutorStarted ? "rounded-[1.25rem]" : `flex-1 rounded-2xl ${teachingAreaExpanded ? "p-3" : "p-4"}`}`}
+                  className={tutorStarted
+                    ? "relative"
+                    : `relative flex-1 rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-3" : "p-4"}`}
                   style={tutorStarted ? { containerType: "inline-size", aspectRatio: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.aspectRatio } : undefined}
                   aria-labelledby="teaching-blackboard-title"
                 >
@@ -5943,8 +5945,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <TeachingBlackboardSlideView slide={tutorDisplay.activeSlide} className="absolute inset-0 rounded-[calc(1.25rem-1px)] border-0" />
                   ) : null}
                   {tutorStarted && !tutorDisplay?.activeSlide && (
-                    <div className="absolute inset-0 overflow-hidden rounded-[calc(1.25rem-1px)] bg-[linear-gradient(145deg,var(--card)_0%,color-mix(in_srgb,var(--status-warning)_5%,var(--card))_100%)] p-[clamp(1.25rem,5cqw,3.25rem)]">
-                      <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_center,var(--border-subtle)_1px,transparent_1px)] [background-size:24px_24px]" aria-hidden="true" />
+                    <div className="absolute inset-0 p-[clamp(1.25rem,5cqw,3.25rem)]">
                       <div className={`relative z-10 flex h-full min-h-0 flex-col ${teachingAreaCharacterPlacement.x < 50 ? "items-end" : "items-start"}`}>
                         <p className={`max-w-[62%] text-[clamp(1.05rem,3.2cqw,2rem)] font-bold leading-tight text-[var(--foreground)] ${teachingAreaCharacterPlacement.x < 50 ? "text-right" : "text-left"}`}>
                           {tutorDisplay?.title?.[locale] || localize(activeModule.title)}

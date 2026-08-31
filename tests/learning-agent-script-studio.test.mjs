@@ -416,7 +416,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /minimumHeightPx/);
   assert.match(shell, /TeachingBlackboardSlideView slide=\{tutorDisplay\.activeSlide\} className="absolute inset-0/);
   assert.match(shell, /w-\[62%\]/);
-  assert.match(shell, /radial-gradient\(circle_at_center/);
+  assert.doesNotMatch(shell, /radial-gradient\(circle_at_center/);
+  assert.match(shell, /className=\{tutorStarted[\s\S]*\? "relative"/);
   assert.match(shell, /sticky top-0 z-20/);
   assert.match(skeleton, /aspectRatio: "16 \/ 9"/);
   assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);
