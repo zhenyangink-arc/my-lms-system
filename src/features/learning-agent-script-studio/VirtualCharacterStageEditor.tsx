@@ -115,20 +115,19 @@ export function VirtualCharacterStageEditor({
           <div className="absolute inset-x-0 top-0 flex h-[12%] items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]">
             <span className="text-[clamp(0.6rem,1.7cqw,0.85rem)] font-bold text-[var(--foreground)]">教学区</span>
           </div>
-          <div className="absolute left-[12%] top-[16%] flex max-w-[76%] items-center gap-[1.2cqw] text-[clamp(0.42rem,1.1cqw,0.65rem)] text-[var(--foreground-secondary)]">
+          <div className="absolute left-[18%] top-[16%] flex max-w-[64%] items-center gap-[1.2cqw] text-[clamp(0.42rem,1.1cqw,0.65rem)] text-[var(--foreground-secondary)]">
             <span className="font-bold text-[var(--foreground-muted)]">当前教学</span>
             <span className="font-semibold">第 1 章 · 你好？</span>
             <span className="h-[1.6cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
             <span className="font-bold text-[var(--foreground)]">课前导航</span>
           </div>
-          <div className="absolute left-[12%] top-[23%] w-[76%] overflow-hidden rounded-[1.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.6cqw_4cqw_rgba(15,23,42,0.08)]" style={{ aspectRatio: "16 / 9" }}>
+          <div className="absolute left-[18%] top-[23%] w-[64%] overflow-hidden rounded-[1.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.6cqw_4cqw_rgba(15,23,42,0.08)]" style={{ aspectRatio: "16 / 9" }}>
             {activeBlackboardSlide ? (
               <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
             ) : (
               <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
             )}
           </div>
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[8%] border-t border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)]" aria-hidden="true" />
           <button
             type="button"
             disabled={disabled}
