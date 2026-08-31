@@ -513,8 +513,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
 });
 
 test("金老师正式语音与台词哈希、时间轴及二维口型保持同步", async () => {
-  const [migration, speechRoute, shell, styles, provisioner, frameBuilder, scriptRuntime2] = await Promise.all([
+  const [migration, inheritanceMigration, speechRoute, shell, styles, provisioner, frameBuilder, scriptRuntime2] = await Promise.all([
     readFile(new URL("supabase/migrations/202608280006_add_learning_agent_script_audio_assets.sql", root), "utf8"),
+    readFile(new URL("supabase/migrations/202608310001_inherit_learning_agent_script_audio.sql", root), "utf8"),
     readFile(new URL("src/app/api/learning-agent/speech/[assetId]/route.ts", root), "utf8"),
     readFile(new URL("src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx", root), "utf8"),
     readFile(new URL("src/app/globals.css", root), "utf8"),
@@ -526,6 +527,13 @@ test("金老师正式语音与台词哈希、时间轴及二维口型保持同�
   assert.match(migration, /content_hash text not null/);
   assert.match(migration, /cue_timeline jsonb not null/);
   assert.match(migration, /revoke all on table public\.learning_agent_script_audio_assets from public, anon, authenticated/);
+  assert.match(inheritanceMigration, /create or replace function public\.create_learning_agent_script_draft/);
+  assert.match(inheritanceMigration, /source_node\.node_key = target_node\.node_key/);
+  assert.match(inheritanceMigration, /draft_node\.node_key = source_node\.node_key/);
+  assert.match(inheritanceMigration, /source_node\.teacher_script = target_node\.teacher_script/);
+  assert.match(inheritanceMigration, /source_node\.configuration->'bufferLine'/);
+  assert.match(inheritanceMigration, /source_asset\.object_key/);
+  assert.match(inheritanceMigration, /on conflict \(script_node_id, locale, segment_index\) do nothing/);
   assert.match(scriptRuntime2, /sha256Text\(exactScriptSegment\)/);
   assert.match(scriptRuntime2, /exactScriptSegment === scriptedContent/);
   assert.match(scriptRuntime2, /speechAssetId/);
