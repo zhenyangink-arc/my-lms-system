@@ -391,6 +391,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(taskEventsRoute, /\.update\(\{ status: "completed" \}\)/);
   assert.match(shell, /tutorDisplay/);
   assert.match(shell, /data-learning-agent-blackboard/);
+  assert.match(shell, /tutorStarted \? "overflow-y-auto" : "overflow-hidden"/);
+  assert.match(shell, /minHeight: tutorStarted \? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.blackboard\.minimumHeightPx : 0/);
   assert.match(shell, /sticky top-0 z-20/);
   assert.match(skeleton, /minimumHeightPx: 960/);
   assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);

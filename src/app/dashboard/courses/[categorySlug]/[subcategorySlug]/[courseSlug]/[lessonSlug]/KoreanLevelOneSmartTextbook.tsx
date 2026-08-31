@@ -5873,7 +5873,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           </div>
           {(!teachingAreaCollapsed || teachingAreaExpanded) && (
             <div
-              className={`smart-textbook-scroll flex min-h-0 flex-1 flex-col overflow-y-auto pb-6 pt-5 ${teachingAreaExpanded ? "mx-auto w-full px-10" : "px-6"}`}
+              className={`smart-textbook-scroll flex min-h-0 flex-1 flex-col pb-6 pt-5 ${tutorStarted ? "overflow-y-auto" : "overflow-hidden"} ${teachingAreaExpanded ? "mx-auto w-full px-10" : "px-6"}`}
               style={teachingAreaExpanded ? { maxWidth: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx } : undefined}
               data-smart-textbook-teaching-area
             >
@@ -5893,7 +5893,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               </div>
 
               <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
-                <section className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm" style={{ minHeight: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx }} aria-labelledby="teaching-blackboard-title">
+                <section
+                  className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] p-4 shadow-sm ${tutorStarted ? "" : "flex-1"}`}
+                  style={{ minHeight: tutorStarted ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx : 0 }}
+                  aria-labelledby="teaching-blackboard-title"
+                >
                   <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-xl leading-8" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
                     {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
