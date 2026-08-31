@@ -5,6 +5,7 @@ import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { normalizeTeachingBlackboardSlides } from "@/lib/teaching-blackboard";
 import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
 
 export type TeachingScriptActionState = {
@@ -27,6 +28,7 @@ const nodeSchema = z.object({
   displayItemsZh: z.string().trim().max(1000, "教学展示要点不能超过1000个字。"),
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
+  displaySlidesJson: z.string().max(100000, "黑板画面内容过多，请减少画面或文字。"),
   virtualCharacterKind: z.literal("uply-teacher"),
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
@@ -256,6 +258,7 @@ export async function saveTeachingScriptNodeAction(
       displayItemsZh: String(formData.get("display_items_zh") ?? ""),
       displayKorean: String(formData.get("display_korean") ?? ""),
       displayTranslationZh: String(formData.get("display_translation_zh") ?? ""),
+      displaySlidesJson: String(formData.get("display_slides_json") ?? ""),
       virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "uply-teacher"),
       virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
       scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
@@ -305,6 +308,18 @@ export async function saveTeachingScriptNodeAction(
     }
 
     const input = parsed.data;
+    let displaySlides = [] as ReturnType<typeof normalizeTeachingBlackboardSlides>;
+    if (input.displaySlidesJson) {
+      try {
+        displaySlides = normalizeTeachingBlackboardSlides(JSON.parse(input.displaySlidesJson));
+      } catch {
+        return {
+          status: "error",
+          message: "黑板画面数据不正确，请刷新页面后重新编辑。",
+          fieldErrors: { displaySlidesJson: ["黑板画面无法读取。"] },
+        };
+      }
+    }
     const admin = createAdminClient();
     const { data: current } = await admin
       .from("learning_agent_script_nodes")
@@ -326,7 +341,16 @@ export async function saveTeachingScriptNodeAction(
       .split("\n")
       .map((item) => item.trim())
       .filter(Boolean);
-    if (input.displayTitleZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
+    const meaningfulSlides = displaySlides.flatMap((slide) => {
+      const elements = slide.elements.filter((element) => element.content.trim() || element.translation?.trim());
+      return elements.length ? [{ ...slide, elements }] : [];
+    });
+    if (meaningfulSlides.length) {
+      configuration.display = {
+        mode: "slides",
+        slides: meaningfulSlides,
+      };
+    } else if (input.displayTitleZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
       configuration.display = {
         kind: input.displayKind,
         title: { "zh-CN": input.displayTitleZh },

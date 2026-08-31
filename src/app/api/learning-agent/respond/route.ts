@@ -25,6 +25,7 @@ import {
   type StudentFeature,
 } from "@/lib/student-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { teachingBlackboardDisplayForSegment } from "@/lib/teaching-blackboard";
 
 const requestSchema = z.object({
   textbookId: z.uuid(),
@@ -466,7 +467,10 @@ export async function POST(request: Request) {
     headers.set("X-Learning-Agent-Script-Node-Type", selectedScriptNode.node_type);
     headers.set(
       "X-Learning-Agent-Display",
-      headerJson(selectedScriptNode.configuration?.display ?? null),
+      headerJson(teachingBlackboardDisplayForSegment(
+        selectedScriptNode.configuration?.display ?? null,
+        selectedScriptSegmentIndex,
+      )),
     );
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
     headers.set(

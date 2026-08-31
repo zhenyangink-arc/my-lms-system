@@ -44,8 +44,10 @@ import {
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useTransition } from "react";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
 import { bufferLineForRequest, bufferSpeechAssetForRequest } from "@/lib/learning-agent-buffer-state";
 import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
+import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 
 import type {
@@ -114,6 +116,8 @@ type TutorDisplay = {
   items?: Partial<Record<SmartLocale, string[]>>;
   korean?: string;
   translation?: Partial<Record<SmartLocale, string>>;
+  mode?: "slides";
+  activeSlide?: TeachingBlackboardSlide | null;
 };
 
 type TutorTask = {
@@ -5898,8 +5902,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   style={{ minHeight: tutorStarted ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx : 0 }}
                   aria-labelledby="teaching-blackboard-title"
                 >
-                  <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
-                    {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
+                  <h3 id="teaching-blackboard-title" className={tutorStarted && tutorDisplay?.activeSlide ? "sr-only" : `${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
+                    {tutorDisplay?.activeSlide?.name || tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
                   {!tutorStarted && (
                     <div className="relative z-30 mt-4 grid max-w-xl gap-2 sm:grid-cols-2">
@@ -5927,7 +5931,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       )}
                     </div>
                   )}
-                  {tutorStarted && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
+                  {tutorStarted && tutorDisplay?.activeSlide ? (
+                    <TeachingBlackboardSlideView slide={tutorDisplay.activeSlide} className="rounded-xl" />
+                  ) : null}
+                  {tutorStarted && !tutorDisplay?.activeSlide && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
                     <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
                       {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
                         <li key={`${item}-${itemIndex}`} className={`flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 font-semibold text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-xs leading-5"}`}>
@@ -5937,7 +5944,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       ))}
                     </ol>
                   )}
-                  {tutorStarted && tutorDisplay?.korean && (
+                  {tutorStarted && !tutorDisplay?.activeSlide && tutorDisplay?.korean && (
                     <div className="mt-3 border-l-2 border-[var(--status-warning)] pl-3">
                       <p lang="ko" className={`whitespace-pre-line font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"}`}>{tutorDisplay.korean}</p>
                       {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-xs leading-5" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}

@@ -25,6 +25,7 @@ import {
   TEACHER_KIM_POSE_LABELS,
   type TeacherKimPose,
 } from "@/lib/teacher-kim-character";
+import { TeachingBlackboardEditor } from "./TeachingBlackboardEditor";
 import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
 
 const initialState: TeachingScriptActionState = { status: "idle" };
@@ -46,19 +47,6 @@ function localizedConfigurationText(configuration: Record<string, unknown>, key:
   const value = configuration[key];
   if (!value || typeof value !== "object" || Array.isArray(value)) return "";
   return String((value as Record<string, unknown>)["zh-CN"] ?? "");
-}
-
-function displayLocalizedText(display: Record<string, unknown>, key: string) {
-  return localizedConfigurationText(display, key);
-}
-
-function displayLocalizedItems(display: Record<string, unknown>) {
-  const value = display.items;
-  if (!value || typeof value !== "object" || Array.isArray(value)) return "";
-  const items = (value as Record<string, unknown>)["zh-CN"];
-  return Array.isArray(items)
-    ? items.filter((item): item is string => typeof item === "string").join("\n")
-    : "";
 }
 
 function FieldError({ id, errors }: { id?: string; errors?: string[] }) {
@@ -438,6 +426,7 @@ const errorSectionByField: Partial<Record<string, EditorSection>> = {
   displayItemsZh: "content",
   displayKorean: "content",
   displayTranslationZh: "content",
+  displaySlidesJson: "content",
   virtualCharacterKind: "content",
   virtualCharacterPosition: "content",
   studentTaskKind: "content",
@@ -1142,12 +1131,11 @@ export function TeachingScriptNodeForm({
           <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="display-content-group-title">
             <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="display-content-group-title">学生展示内容</span>} description="安排学生此时看到和操作的内容；没有额外展示时可以全部留空，老师台词仍会正常出现。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看学生展示内容说明" />
+              <CardTitleWithHint title={<span id="display-content-group-title">黑板内容</span>} description="这是学生展示内容：像编辑演示文稿一样安排学生看到的重点。黑板只放标题、要点和例句，老师的详细讲解仍在“老师台词”里编辑。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看黑板内容说明" />
             </div>
-            <label className={fieldClass}><span className={formFieldLabelClass}>展示标题</span><input name="display_title_zh" defaultValue={displayLocalizedText(display, "title")} disabled={!editable} maxLength={80} className={inputClass} /></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>展示要点</span><span><FormattableTextarea name="display_items_zh" defaultValue={displayLocalizedItems(display)} onDirty={markDirty} disabled={!editable} rows={5} maxLength={1000} placeholder="每行填写一个要点" className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs">每行一个要点，顺序就是学生看到的顺序。</span></span></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>韩语内容</span><FormattableTextarea name="display_korean" defaultValue={String(display.korean ?? "")} onDirty={markDirty} disabled={!editable} rows={4} maxLength={1000} className={`${inputClass} resize-y py-3 text-base leading-7`} /></label>
-            <label className={fieldClass}><span className={formFieldLabelClass}>中文释义</span><FormattableTextarea name="display_translation_zh" defaultValue={displayLocalizedText(display, "translation")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 leading-6`} /></label>
+            <input type="hidden" name="display_items_zh" value="" />
+            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} />
+            <FieldError errors={state.fieldErrors?.displaySlidesJson} />
             </section>
 
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">

@@ -20,6 +20,7 @@ import {
 } from "@/lib/learning-agent-script-runtime";
 import { decodePreviewState, encodePreviewState, type PreviewState } from "@/lib/learning-agent-preview-state";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { teachingBlackboardDisplayForSegment } from "@/lib/teaching-blackboard";
 
 const requestSchema = z.object({
   scriptVersionId: z.uuid(),
@@ -142,7 +143,10 @@ export async function POST(request: Request) {
       : false;
     headers.set("X-Learning-Agent-Script-Node", node.node_key);
     headers.set("X-Learning-Agent-Script-Node-Type", node.node_type);
-    headers.set("X-Learning-Agent-Display", headerJson(node.configuration?.display ?? null));
+    headers.set("X-Learning-Agent-Display", headerJson(teachingBlackboardDisplayForSegment(
+      node.configuration?.display ?? null,
+      resolved.selectedScriptSegmentIndex,
+    )));
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
     headers.set("X-Learning-Agent-Character", headerJson(selectedCharacter));
     headers.set("X-Learning-Agent-Interaction", headerJson(resolved.responseInteraction));
