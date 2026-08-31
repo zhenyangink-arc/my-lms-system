@@ -50,9 +50,16 @@ test("legacy display fields become one editable slide without copying teacher sc
   assert.equal(slides[0].elements[2].translation, "你好？");
 });
 
-test("legacy displays are returned unchanged by segment resolution", () => {
-  const legacy = { title: { "zh-CN": "旧内容" } };
-  assert.equal(teachingBlackboardDisplayForSegment(legacy, 3), legacy);
+test("legacy displays use the same canvas representation as the admin stage", () => {
+  const legacy = {
+    title: { "zh-CN": "旧内容" },
+    items: { "zh-CN": ["第一项", "第二项"] },
+  };
+  const resolved = teachingBlackboardDisplayForSegment(legacy, 3);
+  const authoredSlide = teachingBlackboardSlidesFromDisplay(legacy)[0];
+
+  assert.equal(resolved.mode, "slides");
+  assert.deepEqual(resolved.activeSlide, authoredSlide);
 });
 
 test("an intentionally empty later slide clears the previous blackboard", () => {

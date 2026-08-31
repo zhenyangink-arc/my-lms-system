@@ -185,8 +185,10 @@ export function teachingBlackboardSlideFitsHeader(slide: TeachingBlackboardSlide
 
 export function teachingBlackboardDisplayForSegment(value: unknown, segmentIndex: number) {
   const source = record(value);
-  if (!source || source.mode !== "slides") return value;
-  const slides = normalizeTeachingBlackboardSlides(source.slides);
+  if (!source) return value;
+  const slides = source.mode === "slides"
+    ? normalizeTeachingBlackboardSlides(source.slides)
+    : teachingBlackboardSlidesFromDisplay(source);
   if (!slides.length) return { ...source, slides, activeSlide: null };
   const ordered = [...slides].sort((left, right) => left.segmentIndex - right.segmentIndex);
   const activeSlide = ordered.filter((slide) => slide.segmentIndex <= segmentIndex).at(-1) ?? ordered[0];
