@@ -5897,6 +5897,32 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   <h3 id="teaching-blackboard-title" className={`${teachingAreaExpanded ? "text-xl leading-8" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
                     {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
+                  {!tutorStarted && (
+                    <div className="relative z-30 mt-4 grid max-w-xl gap-2 sm:grid-cols-2">
+                      <button
+                        type="button"
+                        onClick={() => startTutorLesson(false)}
+                        disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                        className={`${tutorHasPreviousSession ? "" : "sm:col-span-2"} inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--status-warning)] px-5 py-3.5 text-sm font-bold text-white shadow-[0_8px_22px_color-mix(in_srgb,var(--status-warning)_22%,transparent)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_26px_color-mix(in_srgb,var(--status-warning)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none`}
+                      >
+                        <Play size={16} fill="currentColor" aria-hidden="true" />
+                        {tutorHasPreviousSession
+                          ? (locale === "ko-KR" ? "이어서 학습" : "继续学习")
+                          : (locale === "ko-KR" ? "준비됐어요. 수업 시작" : "我准备好了，开始学习")}
+                      </button>
+                      {tutorHasPreviousSession && (
+                        <button
+                          type="button"
+                          onClick={restartTutorLesson}
+                          disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
+                          className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-3.5 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        >
+                          <RotateCcw size={16} aria-hidden="true" />
+                          {locale === "ko-KR" ? "처음부터 다시 시작" : "重新开始"}
+                        </button>
+                      )}
+                    </div>
+                  )}
                   {tutorStarted && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
                     <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
                       {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
@@ -6113,32 +6139,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <CheckCircle2 size={14} aria-hidden="true" />
                     {locale === "ko-KR" ? "설명을 마쳤어요" : "本节讲解已完成"}
                   </p>
-                )}
-                {!tutorStarted && (
-                  <div className="mt-5 grid gap-2 sm:grid-cols-2">
-                    <button
-                      type="button"
-                      onClick={() => startTutorLesson(false)}
-                      disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
-                      className={`${tutorHasPreviousSession ? "" : "sm:col-span-2"} inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl bg-[var(--status-warning)] px-5 py-3.5 text-sm font-bold text-white shadow-[0_8px_22px_color-mix(in_srgb,var(--status-warning)_22%,transparent)] transition hover:-translate-y-0.5 hover:shadow-[0_10px_26px_color-mix(in_srgb,var(--status-warning)_30%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 motion-reduce:transform-none disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none`}
-                    >
-                      <Play size={16} fill="currentColor" aria-hidden="true" />
-                      {tutorHasPreviousSession
-                        ? (locale === "ko-KR" ? "이어서 학습" : "继续学习")
-                        : (locale === "ko-KR" ? "준비됐어요. 수업 시작" : "我准备好了，开始学习")}
-                    </button>
-                    {tutorHasPreviousSession && (
-                      <button
-                        type="button"
-                        onClick={restartTutorLesson}
-                        disabled={!textbook.agent || tutorStatus === "thinking" || tutorStatus === "streaming"}
-                        className="inline-flex min-h-13 w-full items-center justify-center gap-2 rounded-2xl border border-[var(--border-subtle)] bg-[var(--card)] px-5 py-3.5 text-sm font-bold text-[var(--foreground-secondary)] transition hover:border-[var(--status-warning)] hover:text-[var(--foreground)] disabled:cursor-not-allowed disabled:opacity-50"
-                      >
-                        <RotateCcw size={16} aria-hidden="true" />
-                        {locale === "ko-KR" ? "처음부터 다시 시작" : "重新开始"}
-                      </button>
-                    )}
-                  </div>
                 )}
               </section>
 
