@@ -34,7 +34,7 @@ export default async function TeachingScriptPreviewPage({
   const admin = createAdminClient();
   let previewOpeningNodeQuery = admin
     .from("learning_agent_script_nodes")
-    .select("configuration")
+    .select("id,configuration")
     .eq("script_version_id", parsedScriptVersionId.data)
     .order("sort_order")
     .limit(1);
@@ -44,6 +44,18 @@ export default async function TeachingScriptPreviewPage({
     "zh-CN": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "zh-CN"),
     "ko-KR": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "ko-KR"),
   };
+  const { data: previewBufferSpeechAssets } = previewOpeningNode?.id
+    ? await admin
+        .from("learning_agent_script_audio_assets")
+        .select("id,locale")
+        .eq("script_node_id", previewOpeningNode.id)
+        .eq("segment_index", 199)
+        .eq("production_status", "ready")
+    : { data: [] as { id: string; locale: string }[] };
+  const previewOpeningBufferSpeechAssetId = Object.fromEntries((previewBufferSpeechAssets ?? []).map((asset) => [
+    asset.locale === "ko-KR" ? "ko-KR" : "zh-CN",
+    String(asset.id),
+  ]));
 
   const smartTextbook = await loadSmartDigitalTextbook({
     textbookSlug: "korean-level-one-smart",
@@ -70,6 +82,7 @@ export default async function TeachingScriptPreviewPage({
       previewStartNodeKey={startNodeKey}
       previewStartModuleIndex={startModuleIndex}
       previewOpeningBufferLine={previewOpeningBufferLine}
+      previewOpeningBufferSpeechAssetId={previewOpeningBufferSpeechAssetId}
     />
   );
 }

@@ -385,6 +385,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(textbookLoader, /openingBufferLine: LocalizedText/);
   assert.match(textbookLoader, /openingBufferLineByModuleId\.get\(String\(module\.id\)\) \?\? null\)/);
   assert.match(textbookLoader, /node\.configuration\?\.bufferLine \?\? null/);
+  assert.match(textbookLoader, /openingBufferSpeechAssetId/);
+  assert.match(textbookLoader, /activeSessionBufferSpeechAssetIdsByNodeId/);
   assert.match(route, /if \(input\.restart && existingSession\)/);
   assert.match(route, /\.update\(\{ status: "abandoned" \}\)/);
   assert.match(route, /scriptedSessionCompleted/);
@@ -410,6 +412,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
   assert.match(shell, /requestAbortController\.signal\.addEventListener\("abort", finish, \{ once: true \}\)/);
   assert.match(shell, /X-Learning-Agent-Buffer-Speech-Asset/);
+  assert.match(shell, /initialModule\?\.openingBufferSpeechAssetId/);
   assert.match(shell, /去学习区听音频/);
   assert.match(shell, /recordTutorLearningEvent/);
   assert.match(shell, /data-learning-target="scene:image"/);

@@ -76,6 +76,7 @@ export type SmartTextbookModule = {
    * "开始学习" — at that point no `/respond` call has happened yet, so this
    * is the only buffer line that can exist without waiting on a request. */
   openingBufferLine: LocalizedText;
+  openingBufferSpeechAssetId: Partial<Record<SmartLocale, string>>;
   nodes: SmartTextbookNode[];
 };
 
@@ -118,6 +119,7 @@ export type SmartTextbookData = {
   activeTeachingSessions: Record<string, {
     id: string;
     bufferLine: LocalizedText;
+    bufferSpeechAssetId: Partial<Record<SmartLocale, string>>;
   }>;
 };
 
@@ -322,26 +324,49 @@ export async function loadSmartDigitalTextbook(
   const { data: openingFirstNodes } = openingVersionIds.length
     ? await admin
         .from("learning_agent_script_nodes")
-        .select("script_version_id,sort_order,configuration")
+        .select("id,script_version_id,sort_order,configuration")
         .in("script_version_id", openingVersionIds)
         .order("sort_order")
-    : { data: [] as { script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
+    : { data: [] as { id: string; script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
   const openingBufferLineByVersionId = new Map<string, unknown>();
+  const openingNodeIdByVersionId = new Map<string, string>();
   for (const node of openingFirstNodes ?? []) {
     const versionId = String(node.script_version_id);
     if (!openingBufferLineByVersionId.has(versionId)) {
       openingBufferLineByVersionId.set(versionId, node.configuration?.bufferLine ?? null);
+      openingNodeIdByVersionId.set(versionId, String(node.id));
     }
+  }
+  const openingNodeIds = [...openingNodeIdByVersionId.values()];
+  const { data: openingBufferSpeechAssets } = openingNodeIds.length
+    ? await admin
+        .from("learning_agent_script_audio_assets")
+        .select("id,script_node_id,locale")
+        .in("script_node_id", openingNodeIds)
+        .eq("segment_index", 199)
+        .eq("production_status", "ready")
+    : { data: [] as { id: string; script_node_id: string; locale: string }[] };
+  const bufferSpeechAssetIdsByNodeId = new Map<string, Partial<Record<SmartLocale, string>>>();
+  for (const asset of openingBufferSpeechAssets ?? []) {
+    const nodeId = String(asset.script_node_id);
+    const ids = bufferSpeechAssetIdsByNodeId.get(nodeId) ?? {};
+    ids[asset.locale === "ko-KR" ? "ko-KR" : "zh-CN"] = String(asset.id);
+    bufferSpeechAssetIdsByNodeId.set(nodeId, ids);
   }
   const openingLessonModuleById = new Map((openingLessons ?? []).map((lesson) => [
     String(lesson.id),
     String(lesson.module_id),
   ]));
   const openingBufferLineByModuleId = new Map<string, unknown>();
+  const openingBufferSpeechAssetIdByModuleId = new Map<string, Partial<Record<SmartLocale, string>>>();
   for (const version of openingScriptVersions ?? []) {
     const moduleId = openingLessonModuleById.get(String(version.lesson_id));
     if (moduleId) {
       openingBufferLineByModuleId.set(moduleId, openingBufferLineByVersionId.get(String(version.id)) ?? null);
+      openingBufferSpeechAssetIdByModuleId.set(
+        moduleId,
+        bufferSpeechAssetIdsByNodeId.get(openingNodeIdByVersionId.get(String(version.id)) ?? "") ?? {},
+      );
     }
   }
 
@@ -453,6 +478,21 @@ export async function loadSmartDigitalTextbook(
       String(node.id),
       asObject(node.configuration).bufferLine ?? null,
     ]));
+    const { data: activeSessionBufferSpeechAssets } = activeSessionNodeIds.length
+      ? await admin
+          .from("learning_agent_script_audio_assets")
+          .select("id,script_node_id,locale")
+          .in("script_node_id", activeSessionNodeIds)
+          .eq("segment_index", 199)
+          .eq("production_status", "ready")
+      : { data: [] as { id: string; script_node_id: string; locale: string }[] };
+    const activeSessionBufferSpeechAssetIdsByNodeId = new Map<string, Partial<Record<SmartLocale, string>>>();
+    for (const asset of activeSessionBufferSpeechAssets ?? []) {
+      const nodeId = String(asset.script_node_id);
+      const ids = activeSessionBufferSpeechAssetIdsByNodeId.get(nodeId) ?? {};
+      ids[asset.locale === "ko-KR" ? "ko-KR" : "zh-CN"] = String(asset.id);
+      activeSessionBufferSpeechAssetIdsByNodeId.set(nodeId, ids);
+    }
     for (const session of activeSessionRows ?? []) {
       const moduleId = lessonModuleById.get(String(session.lesson_id));
       if (moduleId && !activeTeachingSessions[moduleId]) {
@@ -461,6 +501,9 @@ export async function loadSmartDigitalTextbook(
           bufferLine: localized(session.current_node_id
             ? activeSessionBufferLineByNodeId.get(String(session.current_node_id)) ?? null
             : null),
+          bufferSpeechAssetId: session.current_node_id
+            ? activeSessionBufferSpeechAssetIdsByNodeId.get(String(session.current_node_id)) ?? {}
+            : {},
         };
       }
     }
@@ -584,6 +627,7 @@ export async function loadSmartDigitalTextbook(
     title: localized(module.title),
     description: localized(module.description),
     openingBufferLine: localized(openingBufferLineByModuleId.get(String(module.id)) ?? null),
+    openingBufferSpeechAssetId: openingBufferSpeechAssetIdByModuleId.get(String(module.id)) ?? {},
     nodes: (nodes ?? [])
       .filter((node) => node.module_id === module.id)
       .map((node) => ({

@@ -92,6 +92,7 @@ export type SmartTextbookShellProps = {
   previewStartNodeKey?: string;
   /** Buffer line for the preview's actual start node, including draft versions. */
   previewOpeningBufferLine?: Partial<Record<SmartLocale, string>>;
+  previewOpeningBufferSpeechAssetId?: Partial<Record<SmartLocale, string>>;
   /** Open the 学习区 on this module instead of the first one, so it matches whichever module's script is being previewed. */
   previewStartModuleIndex?: number;
 };
@@ -4219,7 +4220,7 @@ function Activity({
   );
 }
 
-export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine }: SmartTextbookShellProps) {
+export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId }: SmartTextbookShellProps) {
   const isPreviewMode = Boolean(previewScriptVersionId);
   const textbookRef = useRef<HTMLDivElement>(null);
   const tutorWindowRef = useRef<HTMLDivElement>(null);
@@ -4290,13 +4291,34 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [tutorAnswerCorrect, setTutorAnswerCorrect] = useState<boolean | null>(null);
   const [tutorContinueLabel, setTutorContinueLabel] = useState("");
   const [tutorNextBufferLine, setTutorNextBufferLine] = useState<string | null>(() => {
-    if (previewScriptVersionId) return previewOpeningBufferLine?.["zh-CN"] ?? "";
+    const initialLocale = textbook.preference.locale;
+    if (previewScriptVersionId) {
+      return previewOpeningBufferLine?.[initialLocale] ?? previewOpeningBufferLine?.["zh-CN"] ?? "";
+    }
     const initialModule = textbook.modules[previewStartModuleIndex ?? 0];
     const resumedBufferLine = textbook.activeTeachingSessions[initialModule?.id ?? ""]?.bufferLine;
-    return resumedBufferLine?.["zh-CN"] ?? initialModule?.openingBufferLine["zh-CN"] ?? "";
+    return resumedBufferLine?.[initialLocale]
+      ?? resumedBufferLine?.["zh-CN"]
+      ?? initialModule?.openingBufferLine[initialLocale]
+      ?? initialModule?.openingBufferLine["zh-CN"]
+      ?? "";
   });
   const [tutorActiveBufferLine, setTutorActiveBufferLine] = useState<string | null>(null);
-  const [tutorNextBufferSpeechAssetId, setTutorNextBufferSpeechAssetId] = useState<string | null>(null);
+  const [tutorNextBufferSpeechAssetId, setTutorNextBufferSpeechAssetId] = useState<string | null>(() => {
+    const initialLocale = textbook.preference.locale;
+    if (previewScriptVersionId) {
+      return previewOpeningBufferSpeechAssetId?.[initialLocale]
+        ?? previewOpeningBufferSpeechAssetId?.["zh-CN"]
+        ?? null;
+    }
+    const initialModule = textbook.modules[previewStartModuleIndex ?? 0];
+    const sessionAssetIds = textbook.activeTeachingSessions[initialModule?.id ?? ""]?.bufferSpeechAssetId;
+    return sessionAssetIds?.[initialLocale]
+      ?? sessionAssetIds?.["zh-CN"]
+      ?? initialModule?.openingBufferSpeechAssetId[initialLocale]
+      ?? initialModule?.openingBufferSpeechAssetId["zh-CN"]
+      ?? null;
+  });
   const [tutorAutoContinue, setTutorAutoContinue] = useState(false);
   const tutorAutoContinuingRef = useRef(false);
   const [tutorTerminal, setTutorTerminal] = useState(false);
@@ -4322,6 +4344,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       || activeModule?.openingBufferLine[locale]
       || activeModule?.openingBufferLine["zh-CN"]
       || "";
+  const activeOpeningBufferSpeechAssetId = isPreviewMode
+    ? previewOpeningBufferSpeechAssetId?.[locale] || previewOpeningBufferSpeechAssetId?.["zh-CN"] || null
+    : activeSessionBufferLine
+      ? activeSessionBufferLine && (textbook.activeTeachingSessions[activeModule?.id ?? ""]?.bufferSpeechAssetId[locale]
+        || textbook.activeTeachingSessions[activeModule?.id ?? ""]?.bufferSpeechAssetId["zh-CN"]
+        || null)
+      : activeModule?.openingBufferSpeechAssetId[locale]
+        || activeModule?.openingBufferSpeechAssetId["zh-CN"]
+        || null;
   const activeNodes = activeModule?.nodes ?? [];
   const t = ui[locale];
   const agentName = textbook.agent?.displayName[locale]
@@ -4492,7 +4523,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
     setTutorNextBufferLine(activeOpeningBufferLine);
-    setTutorNextBufferSpeechAssetId(null);
+    setTutorNextBufferSpeechAssetId(activeOpeningBufferSpeechAssetId);
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -4694,7 +4725,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorAnswerCorrect(null);
     setTutorContinueLabel("");
     setTutorNextBufferLine(activeOpeningBufferLine);
-    setTutorNextBufferSpeechAssetId(null);
+    setTutorNextBufferSpeechAssetId(activeOpeningBufferSpeechAssetId);
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
@@ -5012,7 +5043,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     const restartBufferLine = restart
       ? activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || ""
       : undefined;
-    void tutorReply("explain", undefined, restart, restartBufferLine, restart ? null : undefined);
+    const restartBufferSpeechAssetId = restart
+      ? activeModule?.openingBufferSpeechAssetId[locale] || activeModule?.openingBufferSpeechAssetId["zh-CN"] || null
+      : undefined;
+    void tutorReply("explain", undefined, restart, restartBufferLine, restartBufferSpeechAssetId);
   }
 
   function restartTutorLesson() {
