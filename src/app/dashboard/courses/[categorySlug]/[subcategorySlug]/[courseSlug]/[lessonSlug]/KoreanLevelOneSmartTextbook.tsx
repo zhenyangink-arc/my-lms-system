@@ -5048,6 +5048,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     tutorPausedRef.current = false;
     setTutorPaused(false);
     setTutorStarted(true);
+    if (!isPreviewMode) {
+      setTutorDisplay(activeModule.openingTeachingDisplay as TutorDisplay | null);
+    }
     const restartBufferLine = restart
       ? activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || ""
       : undefined;

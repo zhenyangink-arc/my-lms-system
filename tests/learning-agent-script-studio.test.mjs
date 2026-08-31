@@ -402,6 +402,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /重新开始/);
   assert.match(shell, /tutorHasPreviousSession/);
   assert.match(shell, /function restartTutorLesson\(\)/);
+  assert.match(shell, /setTutorDisplay\(activeModule\.openingTeachingDisplay as TutorDisplay \| null\)/);
   assert.match(shell, /if \(confirmed\) startTutorLesson\(true\)/);
   assert.match(shell, /退出学习/);
   assert.match(shell, /mt-3 grid grid-cols-2 gap-1 border-t/);
@@ -415,6 +416,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(textbookLoader, /activeTeachingSessions/);
   assert.match(textbookLoader, /\.eq\("status", "active"\)/);
   assert.match(textbookLoader, /openingBufferLine: LocalizedText/);
+  assert.match(textbookLoader, /openingTeachingDisplay: TeachingBlackboardDisplay \| null/);
+  assert.match(textbookLoader, /teachingBlackboardDisplayForSegment\(node\.configuration\?\.display \?\? null, 0\)/);
+  assert.match(textbookLoader, /openingTeachingDisplay: openingTeachingDisplayByModuleId\.get/);
   assert.match(textbookLoader, /openingBufferLineByModuleId\.get\(String\(module\.id\)\) \?\? null\)/);
   assert.match(textbookLoader, /node\.configuration\?\.bufferLine \?\? null/);
   assert.match(textbookLoader, /openingBufferSpeechAssetId/);

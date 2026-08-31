@@ -2,6 +2,7 @@ import "server-only";
 
 import { createR2SignedObjectUrl } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { teachingBlackboardDisplayForSegment, type TeachingBlackboardDisplay } from "@/lib/teaching-blackboard";
 
 export type SmartLocale = "zh-CN" | "ko-KR";
 export type SmartSupportMode = "chinese" | "bilingual" | "immersion";
@@ -77,6 +78,9 @@ export type SmartTextbookModule = {
    * is the only buffer line that can exist without waiting on a request. */
   openingBufferLine: LocalizedText;
   openingBufferSpeechAssetId: Partial<Record<SmartLocale, string>>;
+  /** The first published canvas is included in the page payload so the
+   * opening buffer line never speaks over an unrelated placeholder. */
+  openingTeachingDisplay: TeachingBlackboardDisplay | null;
   nodes: SmartTextbookNode[];
 };
 
@@ -329,11 +333,16 @@ export async function loadSmartDigitalTextbook(
         .order("sort_order")
     : { data: [] as { id: string; script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
   const openingBufferLineByVersionId = new Map<string, unknown>();
+  const openingTeachingDisplayByVersionId = new Map<string, TeachingBlackboardDisplay | null>();
   const openingNodeIdByVersionId = new Map<string, string>();
   for (const node of openingFirstNodes ?? []) {
     const versionId = String(node.script_version_id);
     if (!openingBufferLineByVersionId.has(versionId)) {
       openingBufferLineByVersionId.set(versionId, node.configuration?.bufferLine ?? null);
+      openingTeachingDisplayByVersionId.set(
+        versionId,
+        teachingBlackboardDisplayForSegment(node.configuration?.display ?? null, 0) as TeachingBlackboardDisplay | null,
+      );
       openingNodeIdByVersionId.set(versionId, String(node.id));
     }
   }
@@ -359,10 +368,12 @@ export async function loadSmartDigitalTextbook(
   ]));
   const openingBufferLineByModuleId = new Map<string, unknown>();
   const openingBufferSpeechAssetIdByModuleId = new Map<string, Partial<Record<SmartLocale, string>>>();
+  const openingTeachingDisplayByModuleId = new Map<string, TeachingBlackboardDisplay | null>();
   for (const version of openingScriptVersions ?? []) {
     const moduleId = openingLessonModuleById.get(String(version.lesson_id));
     if (moduleId) {
       openingBufferLineByModuleId.set(moduleId, openingBufferLineByVersionId.get(String(version.id)) ?? null);
+      openingTeachingDisplayByModuleId.set(moduleId, openingTeachingDisplayByVersionId.get(String(version.id)) ?? null);
       openingBufferSpeechAssetIdByModuleId.set(
         moduleId,
         bufferSpeechAssetIdsByNodeId.get(openingNodeIdByVersionId.get(String(version.id)) ?? "") ?? {},
@@ -628,6 +639,7 @@ export async function loadSmartDigitalTextbook(
     description: localized(module.description),
     openingBufferLine: localized(openingBufferLineByModuleId.get(String(module.id)) ?? null),
     openingBufferSpeechAssetId: openingBufferSpeechAssetIdByModuleId.get(String(module.id)) ?? {},
+    openingTeachingDisplay: openingTeachingDisplayByModuleId.get(String(module.id)) ?? null,
     nodes: (nodes ?? [])
       .filter((node) => node.module_id === module.id)
       .map((node) => ({
