@@ -22,8 +22,12 @@ export type VirtualCharacterStagePerformance = {
 const inputClass = "app-input min-h-11 w-full border px-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-65 sm:text-sm";
 
 function lineLabel(line: string, index: number) {
-  const plain = line.replace(/\[(?:\/?b|\/?u|\/?color(?:=[^\]]+)?)\]/gi, "").replace(/\s+/g, " ").trim();
+  const plain = plainScriptLine(line);
   return `台词 ${index + 1}${plain ? `：${plain.slice(0, 24)}${plain.length > 24 ? "…" : ""}` : ""}`;
+}
+
+function plainScriptLine(line: string) {
+  return line.replace(/\[(?:\/?b|\/?u|\/?color(?:=[^\]]+)?)\]/gi, "").replace(/\s+/g, " ").trim();
 }
 
 export function VirtualCharacterStageEditor({
@@ -104,16 +108,14 @@ export function VirtualCharacterStageEditor({
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
-          className="relative aspect-video w-full overflow-hidden border border-[var(--border)] bg-[linear-gradient(180deg,var(--surface-soft),var(--card))] shadow-sm"
+          className="relative aspect-video w-full border border-[var(--border)] bg-[linear-gradient(180deg,var(--surface-soft),var(--card))] shadow-sm"
+          style={{ containerType: "inline-size" }}
         >
           {activeBlackboardSlide ? (
             <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
           ) : (
             <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
           )}
-          <div className="pointer-events-none absolute left-3 top-3 z-10 max-w-[70%] border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_92%,transparent)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)] shadow-sm backdrop-blur-sm">
-            {lineLabel(scriptLines[safeIndex] ?? "", safeIndex)}
-          </div>
           <button
             type="button"
             disabled={disabled}
@@ -126,9 +128,10 @@ export function VirtualCharacterStageEditor({
             style={{
               left: `${performance.characterX}%`,
               bottom: `${performance.characterY}%`,
-              height: `${76 * performance.characterScale}%`,
+              height: "76%",
               aspectRatio: "1 / 2",
-              transform: "translateX(-50%)",
+              transform: `translateX(-50%) scale(${performance.characterScale})`,
+              transformOrigin: "bottom center",
             }}
             aria-label={`金老师，当前动作${TEACHER_KIM_POSE_LABELS[performance.pose]}。拖动或使用方向键调整位置，按住 Shift 可一次移动 5%。`}
           >
@@ -140,6 +143,18 @@ export function VirtualCharacterStageEditor({
               unoptimized
               className="pointer-events-none object-contain drop-shadow-[0_12px_18px_rgba(15,23,42,0.16)]"
             />
+            <span className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-2 block w-max max-w-[clamp(8rem,18cqw,12rem)] text-left">
+              <span className="relative block rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
+                <span className="absolute bottom-4 -left-1.5 h-3 w-3 rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                <span className="flex min-w-0 items-center justify-between gap-3">
+                  <span className="truncate text-xs font-bold text-[var(--foreground)]">UPLY 韩语-金老师</span>
+                  <span className="shrink-0 text-[10px] font-bold text-[var(--status-success)]">台词预览</span>
+                </span>
+                <span className="mt-2 block whitespace-pre-line text-[11px] font-normal leading-5 text-[var(--foreground-secondary)]">
+                  {plainScriptLine(scriptLines[safeIndex] ?? "") || "这句台词还没有内容"}
+                </span>
+              </span>
+            </span>
             <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
           </button>
         </div>

@@ -179,6 +179,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /人物动作/);
   assert.match(characterStage, /TeachingBlackboardSlideView/);
   assert.match(characterStage, /activeBlackboardSlide/);
+  assert.match(characterStage, /bottom-\[54%\] left-full/);
+  assert.match(characterStage, /plainScriptLine\(scriptLines\[safeIndex\]/);
+  assert.match(characterStage, /translateX\(-50%\) scale\(\$\{performance\.characterScale\}\)/);
+  assert.match(characterStage, /transformOrigin: "bottom center"/);
+  assert.doesNotMatch(characterStage, /absolute left-3 top-3/);
   assert.match(editor, /onSlidesChange=\{setBlackboardSlides\}/);
   assert.match(actions, /characterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
