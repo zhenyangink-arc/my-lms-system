@@ -5978,11 +5978,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute right-full z-10 mr-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
+                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
                           >
                         <div className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
                           {teachingAreaCharacter?.kind === "uply-teacher" && (
-                            <span className="absolute bottom-4 -right-1.5 h-3 w-3 rotate-45 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                            <span className="absolute bottom-4 -left-1.5 h-3 w-3 rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
                           )}
                           <div className="flex min-w-0 items-center justify-between gap-3">
                             <p className="truncate text-xs font-bold text-[var(--foreground)]">{agentName}</p>
