@@ -4,22 +4,74 @@ export type TeachingVirtualCharacterPlacement = {
   scale: number;
 };
 
+export type TeachingVirtualCharacterPreviewGeometry = {
+  aspectRatio: string;
+  headerHeightPercent: number;
+  metadataLeftPercent: number;
+  metadataTopPercent: number;
+  blackboardLeftPercent: number;
+  blackboardTopPercent: number;
+  blackboardWidthPercent: number;
+  bubbleWidthPercent: number;
+};
+
 export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
   characterHeightPercent: 48,
   maximumBottomPercent: 80,
   viewportTopPx: 0,
   viewportBottomPx: 0,
   preview: {
-    aspectRatio: "16 / 9",
-    headerHeightPercent: 5.25,
-    metadataLeftPercent: 27.7,
-    metadataTopPercent: 7.25,
-    blackboardLeftPercent: 27.7,
-    blackboardTopPercent: 11,
-    blackboardWidthPercent: 44.6,
-    bubbleWidthPercent: 10,
+    fallbackViewportWidthPx: 1920,
+    fallbackViewportHeightPx: 1080,
+    focusedContentMaxWidthPx: 920,
+    contentInsetPx: 32,
+    learningHeaderHeightPx: 56,
+    contentTopPaddingPx: 20,
+    metadataHeightPx: 20,
+    blackboardGapPx: 16,
+    bubbleMaxWidthPx: 192,
   },
 } as const;
+
+export function teachingVirtualCharacterPreviewGeometry(
+  viewportWidth: unknown,
+  viewportHeight: unknown,
+): TeachingVirtualCharacterPreviewGeometry {
+  const width = finiteNumber(
+    viewportWidth,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
+    320,
+    7680,
+  );
+  const height = finiteNumber(
+    viewportHeight,
+    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
+    320,
+    4320,
+  );
+  const focusedWidth = Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.focusedContentMaxWidthPx, width);
+  const blackboardWidthPx = Math.max(
+    256,
+    focusedWidth - TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentInsetPx * 2,
+  );
+  const blackboardWidthPercent = blackboardWidthPx / width * 100;
+  const blackboardLeftPercent = (100 - blackboardWidthPercent) / 2;
+  const metadataTopPx = TEACHING_VIRTUAL_CHARACTER_STAGE.preview.learningHeaderHeightPx
+    + TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentTopPaddingPx;
+  const blackboardTopPx = metadataTopPx
+    + TEACHING_VIRTUAL_CHARACTER_STAGE.preview.metadataHeightPx
+    + TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardGapPx;
+  return {
+    aspectRatio: `${width} / ${height}`,
+    headerHeightPercent: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.learningHeaderHeightPx / height * 100,
+    metadataLeftPercent: blackboardLeftPercent,
+    metadataTopPercent: metadataTopPx / height * 100,
+    blackboardLeftPercent,
+    blackboardTopPercent: blackboardTopPx / height * 100,
+    blackboardWidthPercent,
+    bubbleWidthPercent: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.bubbleMaxWidthPx / width * 100,
+  };
+}
 
 function finiteNumber(value: unknown, fallback: number, minimum: number, maximum: number) {
   const parsed = Number(value);

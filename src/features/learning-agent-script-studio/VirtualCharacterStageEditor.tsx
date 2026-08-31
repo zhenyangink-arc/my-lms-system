@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
 import { Move } from "lucide-react";
 
 import {
@@ -11,7 +11,7 @@ import {
 } from "@/lib/teacher-kim-character";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
-import { TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
+import { teachingVirtualCharacterPreviewGeometry, TEACHING_VIRTUAL_CHARACTER_STAGE } from "@/lib/teaching-virtual-character";
 
 export type VirtualCharacterStagePerformance = {
   pose: TeacherKimPose;
@@ -52,6 +52,23 @@ export function VirtualCharacterStageEditor({
 }) {
   const stageRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
+  const [previewViewport, setPreviewViewport] = useState<{ width: number; height: number }>(() => ({
+    width: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
+    height: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
+  }));
+
+  useEffect(() => {
+    function syncPreviewViewport() {
+      setPreviewViewport({
+        width: window.screen.width || window.innerWidth,
+        height: window.screen.height || window.innerHeight,
+      });
+    }
+    syncPreviewViewport();
+    window.addEventListener("resize", syncPreviewViewport);
+    return () => window.removeEventListener("resize", syncPreviewViewport);
+  }, []);
+
   const safeIndex = Math.max(0, Math.min(performances.length - 1, selectedIndex));
   const performance = performances[safeIndex];
   if (!performance) return null;
@@ -59,6 +76,7 @@ export function VirtualCharacterStageEditor({
     .sort((left, right) => left.segmentIndex - right.segmentIndex)
     .filter((slide) => slide.segmentIndex <= safeIndex)
     .at(-1) ?? blackboardSlides[0] ?? null;
+  const previewGeometry = teachingVirtualCharacterPreviewGeometry(previewViewport.width, previewViewport.height);
 
   function moveToPointer(event: ReactPointerEvent<HTMLButtonElement>) {
     const rect = stageRef.current?.getBoundingClientRect();
@@ -111,35 +129,36 @@ export function VirtualCharacterStageEditor({
           ref={stageRef}
           className="relative w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm"
           style={{
-            aspectRatio: TEACHING_VIRTUAL_CHARACTER_STAGE.preview.aspectRatio,
+            aspectRatio: previewGeometry.aspectRatio,
             containerType: "inline-size",
           }}
         >
           <div
             className="absolute inset-x-0 top-0 flex items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]"
-            style={{ height: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.headerHeightPercent}%` }}
+            style={{ height: `${previewGeometry.headerHeightPercent}%` }}
           >
             <span className="text-[clamp(0.6rem,1.7cqw,0.85rem)] font-bold text-[var(--foreground)]">教学区</span>
           </div>
           <div
             className="absolute flex items-center gap-[0.7cqw] text-[clamp(0.35rem,0.68cqw,0.58rem)] text-[var(--foreground-secondary)]"
             style={{
-              left: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.metadataLeftPercent}%`,
-              top: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.metadataTopPercent}%`,
-              maxWidth: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent}%`,
+              left: `${previewGeometry.metadataLeftPercent}%`,
+              top: `${previewGeometry.metadataTopPercent}%`,
+              width: `${previewGeometry.blackboardWidthPercent}%`,
             }}
           >
             <span className="font-bold text-[var(--foreground-muted)]">当前教学</span>
             <span className="font-semibold">第 1 章 · 你好？</span>
             <span className="h-[0.8cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
             <span className="font-bold text-[var(--foreground)]">课前导航</span>
+            <span className="ml-auto shrink-0 font-semibold text-[var(--primary)]">预览台词 {safeIndex + 1} / {scriptLines.length}</span>
           </div>
           <div
             className="absolute overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
             style={{
-              left: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardLeftPercent}%`,
-              top: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardTopPercent}%`,
-              width: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent}%`,
+              left: `${previewGeometry.blackboardLeftPercent}%`,
+              top: `${previewGeometry.blackboardTopPercent}%`,
+              width: `${previewGeometry.blackboardWidthPercent}%`,
               aspectRatio: "16 / 9",
             }}
           >
@@ -178,7 +197,7 @@ export function VirtualCharacterStageEditor({
             />
             <span
               className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-[0.55cqw] block w-max text-left"
-              style={{ maxWidth: `${TEACHING_VIRTUAL_CHARACTER_STAGE.preview.bubbleWidthPercent}cqw` }}
+              style={{ maxWidth: `${previewGeometry.bubbleWidthPercent}cqw` }}
             >
               <span className="relative block rounded-[0.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[0.65cqw] shadow-sm">
                 <span className="absolute bottom-[1.5cqw] left-[-0.55cqw] h-[1.1cqw] w-[1.1cqw] rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />

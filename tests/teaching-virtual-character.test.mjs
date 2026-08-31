@@ -4,6 +4,7 @@ import test from "node:test";
 import {
   defaultTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
+  teachingVirtualCharacterPreviewGeometry,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
 } from "../src/lib/teaching-virtual-character.ts";
 
@@ -36,13 +37,15 @@ test("invalid placement values fall back without propagating NaN", () => {
 });
 
 test("admin preview uses the same wide teaching-stage geometry as the learner view", () => {
-  assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.aspectRatio, "16 / 9");
   assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.viewportTopPx, 0);
   assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.viewportBottomPx, 0);
-  assert.ok(TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent < 50);
+  const widescreen = teachingVirtualCharacterPreviewGeometry(1920, 1080);
+  const laptop = teachingVirtualCharacterPreviewGeometry(1680, 1050);
+  assert.equal(widescreen.aspectRatio, "1920 / 1080");
+  assert.ok(widescreen.blackboardWidthPercent < 50);
+  assert.ok(laptop.blackboardWidthPercent > 50);
   assert.equal(
-    TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardLeftPercent * 2
-      + TEACHING_VIRTUAL_CHARACTER_STAGE.preview.blackboardWidthPercent,
+    laptop.blackboardLeftPercent * 2 + laptop.blackboardWidthPercent,
     100,
   );
 });

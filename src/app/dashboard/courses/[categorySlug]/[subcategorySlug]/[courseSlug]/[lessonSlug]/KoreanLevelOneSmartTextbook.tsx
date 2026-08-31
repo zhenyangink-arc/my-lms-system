@@ -4339,6 +4339,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [ahanIdleVisible, setAhanIdleVisible] = useState(false);
   const [learningAreaManuallyHidden, setLearningAreaManuallyHidden] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [fullscreenRequestFailed, setFullscreenRequestFailed] = useState(false);
   const [immersiveChromeVisible, setImmersiveChromeVisible] = useState(true);
   const immersiveChromeHideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const [preferenceError, setPreferenceError] = useState("");
@@ -4537,6 +4538,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
+    setFullscreenRequestFailed(false);
   }, [activeModule?.id]);
 
   useEffect(() => {
@@ -4739,6 +4741,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
+    setFullscreenRequestFailed(false);
     if (document.fullscreenElement === textbookRef.current) {
       void document.exitFullscreen().catch(() => undefined);
     }
@@ -5045,10 +5048,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   function startTutorLesson(restart = false) {
     if (tutorStatus === "thinking" || tutorStatus === "streaming") return;
-    const textbookElement = textbookRef.current;
-    if (!isPreviewMode && !document.fullscreenElement && textbookElement?.requestFullscreen) {
-      void textbookElement.requestFullscreen().catch(() => undefined);
-    }
+    if (!isPreviewMode && !document.fullscreenElement) requestImmersiveFullscreen();
     tutorVisitedModuleIdsRef.current.add(activeModule.id);
     setTutorHasPreviousSession(true);
     setTeachingAreaCollapsed(false);
@@ -5401,7 +5401,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
   useEffect(() => {
     function syncFullscreenState() {
-      setIsFullscreen(document.fullscreenElement === textbookRef.current);
+      const active = document.fullscreenElement === textbookRef.current;
+      setIsFullscreen(active);
+      if (active) setFullscreenRequestFailed(false);
     }
 
     document.addEventListener("fullscreenchange", syncFullscreenState);
@@ -5416,11 +5418,24 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       if (document.fullscreenElement === textbookElement) {
         await document.exitFullscreen();
       } else if (textbookElement.requestFullscreen) {
-        await textbookElement.requestFullscreen();
+        await textbookElement.requestFullscreen({ navigationUI: "hide" });
+        setFullscreenRequestFailed(false);
       }
     } catch {
-      // 浏览器拒绝全屏时保留当前教材界面，不中断学习。
+      setFullscreenRequestFailed(true);
     }
+  }
+
+  function requestImmersiveFullscreen() {
+    const textbookElement = textbookRef.current;
+    if (!textbookElement?.requestFullscreen) {
+      setFullscreenRequestFailed(true);
+      return;
+    }
+    setFullscreenRequestFailed(false);
+    void textbookElement.requestFullscreen({ navigationUI: "hide" })
+      .then(() => setFullscreenRequestFailed(false))
+      .catch(() => setFullscreenRequestFailed(true));
   }
 
   function keepImmersiveChromeVisible() {
@@ -5768,6 +5783,16 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
             aria-hidden="true"
           />
         </>
+      )}
+      {tutorStarted && fullscreenRequestFailed && !isFullscreen && (
+        <button
+          type="button"
+          onClick={requestImmersiveFullscreen}
+          className="fixed right-4 top-4 z-[90] inline-flex min-h-11 items-center gap-2 rounded-xl border border-[var(--border-subtle)] bg-[var(--card)] px-4 text-xs font-bold text-[var(--foreground-secondary)] shadow-lg hover:border-[var(--primary)] hover:text-[var(--primary)]"
+        >
+          <Maximize2 size={15} aria-hidden="true" />
+          {locale === "ko-KR" ? "전체 화면으로 계속" : "进入全屏"}
+        </button>
       )}
       {tutorCompanion && !learningAreaHidden && !showTutorAnswerDialog && (
         <div
