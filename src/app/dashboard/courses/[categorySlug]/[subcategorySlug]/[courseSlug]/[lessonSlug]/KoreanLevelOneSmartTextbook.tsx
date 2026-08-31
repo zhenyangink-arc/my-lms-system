@@ -5906,11 +5906,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
               <div className="sticky top-0 z-20 mt-4 shrink-0 bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] pb-3" data-learning-agent-blackboard>
                 <section
-                  className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-3" : "p-4"} ${tutorStarted ? "" : "flex-1"}`}
-                  style={{ minHeight: tutorStarted ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.minimumHeightPx : 0 }}
+                  className={`relative border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_18px_48px_rgba(15,23,42,0.08)] ${tutorStarted ? "rounded-[1.25rem]" : `flex-1 rounded-2xl ${teachingAreaExpanded ? "p-3" : "p-4"}`}`}
+                  style={tutorStarted ? { containerType: "inline-size", aspectRatio: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.blackboard.aspectRatio } : undefined}
                   aria-labelledby="teaching-blackboard-title"
                 >
-                  <h3 id="teaching-blackboard-title" className={tutorStarted && tutorDisplay?.activeSlide ? "sr-only" : `${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
+                  <h3 id="teaching-blackboard-title" className={tutorStarted ? "sr-only" : `${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"} font-bold text-[var(--foreground)]`}>
                     {tutorDisplay?.activeSlide?.name || tutorDisplay?.title?.[locale] || localize(activeModule.title)}
                   </h3>
                   {!tutorStarted && (
@@ -5940,28 +5940,40 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     </div>
                   )}
                   {tutorStarted && tutorDisplay?.activeSlide ? (
-                    <TeachingBlackboardSlideView slide={tutorDisplay.activeSlide} className="rounded-xl" />
+                    <TeachingBlackboardSlideView slide={tutorDisplay.activeSlide} className="absolute inset-0 rounded-[calc(1.25rem-1px)] border-0" />
                   ) : null}
-                  {tutorStarted && !tutorDisplay?.activeSlide && (tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
-                    <ol className={`mt-3 grid gap-2 ${tutorDisplay?.kind === "sequence" ? "grid-cols-2" : ""}`}>
-                      {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
-                        <li key={`${item}-${itemIndex}`} className={`flex min-w-0 items-start gap-2 rounded-xl bg-[var(--surface-soft)] px-3 py-2 font-semibold text-[var(--foreground-secondary)] ${teachingAreaExpanded ? "text-sm leading-6" : "text-xs leading-5"}`}>
-                          <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[9px] font-bold text-[var(--status-warning)]">{itemIndex + 1}</span>
-                          <span>{item}</span>
-                        </li>
-                      ))}
-                    </ol>
-                  )}
-                  {tutorStarted && !tutorDisplay?.activeSlide && tutorDisplay?.korean && (
-                    <div className="mt-3 border-l-2 border-[var(--status-warning)] pl-3">
-                      <p lang="ko" className={`whitespace-pre-line font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-base leading-7" : "text-sm leading-6"}`}>{tutorDisplay.korean}</p>
-                      {tutorDisplay.translation?.[locale] && <p className={`mt-1 text-[var(--foreground-muted)] ${teachingAreaExpanded ? "text-xs leading-5" : "text-[11px] leading-5"}`}>{tutorDisplay.translation[locale]}</p>}
+                  {tutorStarted && !tutorDisplay?.activeSlide && (
+                    <div className="absolute inset-0 overflow-hidden rounded-[calc(1.25rem-1px)] bg-[linear-gradient(145deg,var(--card)_0%,color-mix(in_srgb,var(--status-warning)_5%,var(--card))_100%)] p-[clamp(1.25rem,5cqw,3.25rem)]">
+                      <div className="absolute inset-0 opacity-50 [background-image:radial-gradient(circle_at_center,var(--border-subtle)_1px,transparent_1px)] [background-size:24px_24px]" aria-hidden="true" />
+                      <div className={`relative z-10 flex h-full min-h-0 flex-col ${teachingAreaCharacterPlacement.x < 50 ? "items-end" : "items-start"}`}>
+                        <p className={`max-w-[62%] text-[clamp(1.05rem,3.2cqw,2rem)] font-bold leading-tight text-[var(--foreground)] ${teachingAreaCharacterPlacement.x < 50 ? "text-right" : "text-left"}`}>
+                          {tutorDisplay?.title?.[locale] || localize(activeModule.title)}
+                        </p>
+                        {(tutorDisplay?.items?.[locale]?.length ?? 0) > 0 && (
+                          <ol className="mt-[clamp(1rem,3cqw,2rem)] grid min-h-0 w-[62%] content-start gap-[clamp(0.5rem,1.5cqw,0.9rem)] text-left">
+                            {tutorDisplay?.items?.[locale]?.map((item, itemIndex) => (
+                              <li key={`${item}-${itemIndex}`} className="flex min-w-0 items-center gap-[clamp(0.6rem,1.8cqw,1rem)] rounded-[clamp(0.75rem,2cqw,1rem)] border border-[var(--border-subtle)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] px-[clamp(0.75rem,2cqw,1.25rem)] py-[clamp(0.6rem,1.5cqw,0.9rem)] shadow-sm backdrop-blur-sm">
+                                <span className="flex h-[clamp(1.4rem,3.2cqw,2rem)] w-[clamp(1.4rem,3.2cqw,2rem)] shrink-0 items-center justify-center rounded-full bg-[var(--status-warning-surface)] text-[clamp(0.65rem,1.4cqw,0.8rem)] font-bold tabular-nums text-[var(--status-warning)]">{itemIndex + 1}</span>
+                                <span className="min-w-0 text-[clamp(0.72rem,1.85cqw,1rem)] font-semibold leading-snug text-[var(--foreground-secondary)]">{item}</span>
+                              </li>
+                            ))}
+                          </ol>
+                        )}
+                        {tutorDisplay?.korean && (
+                          <div className={`mt-auto max-w-[62%] ${teachingAreaCharacterPlacement.x < 50 ? "border-r-2 border-[var(--status-warning)] pr-[clamp(0.75rem,2cqw,1.25rem)] text-right" : "border-l-2 border-[var(--status-warning)] pl-[clamp(0.75rem,2cqw,1.25rem)] text-left"}`}>
+                            <p lang="ko" className="whitespace-pre-line text-[clamp(0.9rem,2.6cqw,1.5rem)] font-bold leading-snug text-[var(--foreground)]">{tutorDisplay.korean}</p>
+                            {tutorDisplay.translation?.[locale] && <p className="mt-1 text-[clamp(0.68rem,1.55cqw,0.88rem)] leading-relaxed text-[var(--foreground-muted)]">{tutorDisplay.translation[locale]}</p>}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   )}
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
                   <div
-                    className={`pointer-events-none fixed top-[64px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"} ${!tutorStarted ? "bottom-[180px]" : teachingAreaExpanded ? "bottom-[240px]" : "bottom-[300px]"}`}
-                    style={{
+                    className={tutorStarted
+                      ? "pointer-events-none absolute inset-0 z-40"
+                      : `pointer-events-none fixed bottom-[180px] top-[64px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"}`}
+                    style={tutorStarted ? undefined : {
                       width: teachingAreaExpanded
                         ? "100%"
                         : teachingAreaCollapsed
@@ -5971,7 +5983,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     }}
                   >
                     <div
-                      className={`absolute z-20 flex items-end justify-center transition-[left,bottom,transform] duration-300 motion-reduce:transition-none ${teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"}`}
+                      className={`absolute z-20 flex items-end justify-center transition-[left,bottom,transform] duration-300 motion-reduce:transition-none ${tutorStarted ? "w-[clamp(8rem,23cqw,15rem)]" : teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"}`}
                       style={{
                         left: `${tutorStarted ? teachingAreaCharacterPlacement.x : 50}%`,
                         bottom: `${tutorStarted ? teachingAreaCharacterPlacement.y : 0}%`,
@@ -5980,7 +5992,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       }}
                     >
                       <div
-                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[clamp(24rem,48vh,32rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
+                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${tutorStarted ? "h-[clamp(10rem,42.75cqw,27rem)]" : teachingAreaExpanded ? "h-[clamp(24rem,48vh,32rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
                         data-speaking={tutorSpeechStatus === "playing" || undefined}
                       >
                         {teachingAreaCharacterFrames && ([
@@ -6001,7 +6013,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
+                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${tutorStarted ? "bottom-[54%] max-w-[clamp(8rem,18cqw,12rem)]" : teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
                           >
                         <div className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
                           {teachingAreaCharacter?.kind === "uply-teacher" && (

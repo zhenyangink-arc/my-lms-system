@@ -68,7 +68,7 @@ export const SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT = {
     focusedContentMaxWidthPx: 920,
   },
   blackboard: {
-    minimumHeightPx: 768,
+    aspectRatio: "16 / 9",
   },
   learningHeader: {
     heightPx: 56,
