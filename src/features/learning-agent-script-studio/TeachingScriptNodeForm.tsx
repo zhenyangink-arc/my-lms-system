@@ -949,13 +949,15 @@ export function TeachingScriptNodeForm({
                 headingLevel={3}
                 hintLabel="查看过渡台词说明"
               />
-              <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
-              <ScriptSpeechReview
-                text={bufferLineZh}
-                performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})}
-                asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === 199)}
-                fromPublishedVersion={node.speechAssetsFromPublishedVersion}
-              />
+              <div className="min-w-0">
+                <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+                <ScriptSpeechReview
+                  text={bufferLineZh}
+                  performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})}
+                  asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === 199)}
+                  fromPublishedVersion={node.speechAssetsFromPublishedVersion}
+                />
+              </div>
             </div>
             <div className="divide-y divide-[var(--border)]">
               {scriptLines.map((line, index) => (
