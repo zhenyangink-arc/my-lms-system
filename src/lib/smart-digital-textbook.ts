@@ -330,7 +330,7 @@ export async function loadSmartDigitalTextbook(
         .from("learning_agent_script_nodes")
         .select("id,script_version_id,sort_order,configuration")
         .in("script_version_id", openingVersionIds)
-        .order("sort_order")
+        .eq("sort_order", 1)
     : { data: [] as { id: string; script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
   const openingBufferLineByVersionId = new Map<string, unknown>();
   const openingTeachingDisplayByVersionId = new Map<string, TeachingBlackboardDisplay | null>();
