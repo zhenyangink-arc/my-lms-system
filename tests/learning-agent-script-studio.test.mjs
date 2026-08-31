@@ -403,7 +403,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);
   assert.match(cleanupMigration, /\(configuration -> 'display'\) - 'body'/);
   assert.doesNotMatch(shell, /当前教学展示/);
-  assert.match(shell, /inset-x-0 bottom-\[240px\] mx-auto px-8/);
+  assert.match(shell, /!tutorStarted \? "bottom-\[180px\]" : teachingAreaExpanded \? "bottom-\[240px\]" : "bottom-\[300px\]"/);
   assert.match(shell, /X-Learning-Agent-Buffer-Line/);
   assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine, locale\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);

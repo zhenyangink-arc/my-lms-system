@@ -5945,7 +5945,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   )}
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
                   <div
-                    className={`pointer-events-none fixed z-40 ${teachingAreaExpanded ? "inset-x-0 bottom-[240px] mx-auto px-8" : "bottom-[300px] left-0 px-6"}`}
+                    className={`pointer-events-none fixed z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"} ${!tutorStarted ? "bottom-[180px]" : teachingAreaExpanded ? "bottom-[240px]" : "bottom-[300px]"}`}
                     style={{
                       width: teachingAreaExpanded
                         ? "100%"
