@@ -5989,9 +5989,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       maxWidth: teachingAreaExpanded ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx : undefined,
                     }}
                   >
-                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[32rem]" : "w-[24rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : "right-0 translate-x-[310px]"}`} aria-hidden="true">
+                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[20rem]" : "w-[18rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : "right-0 translate-x-[clamp(3rem,8vw,10rem)]"}`}>
                       <div
-                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[46rem]" : "h-[34rem]"}`}
+                        className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[clamp(30rem,60vh,40rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
                         data-speaking={tutorSpeechStatus === "playing" || undefined}
                       >
                         {teachingAreaCharacterFrames && ([
@@ -6012,11 +6012,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[34rem] max-w-sm" : "bottom-[24rem] max-w-xs"}`}
+                            className={`pointer-events-auto absolute right-full z-10 mr-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${teachingAreaExpanded ? "bottom-[clamp(22rem,42vh,30rem)] max-w-sm" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
                           >
                         <div className={`relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] shadow-sm ${teachingAreaExpanded ? "p-4" : "p-3"}`}>
                           {teachingAreaCharacter?.kind === "uply-teacher" && (
-                            <span className="absolute bottom-4 -left-1.5 h-3 w-3 rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                            <span className="absolute bottom-4 -right-1.5 h-3 w-3 rotate-45 border-r border-t border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
                           )}
                           <div className="flex min-w-0 items-center justify-between gap-3">
                             <p className={`truncate font-bold text-[var(--foreground)] ${teachingAreaExpanded ? "text-sm" : "text-xs"}`}>{agentName}</p>

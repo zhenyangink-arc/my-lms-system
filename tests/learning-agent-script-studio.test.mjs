@@ -405,8 +405,10 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine, locale\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
-  assert.match(shell, /!tutorStarted \? "left-1\/2 -translate-x-1\/2" : "right-0 translate-x-\[310px\]"/);
-  assert.match(shell, /pointer-events-auto absolute left-full z-10 ml-2 w-fit/);
+  assert.match(shell, /!tutorStarted \? "left-1\/2 -translate-x-1\/2" : "right-0 translate-x-\[clamp\(3rem,8vw,10rem\)\]"/);
+  assert.match(shell, /translate-x-\[clamp\(3rem,8vw,10rem\)\]/);
+  assert.match(shell, /h-\[clamp\(30rem,60vh,40rem\)\]/);
+  assert.match(shell, /pointer-events-auto absolute right-full z-10 mr-2 w-fit/);
   assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);
   assert.match(shell, /tutorIsSpeakingNow = tutorStatus === "thinking"/);
   assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
