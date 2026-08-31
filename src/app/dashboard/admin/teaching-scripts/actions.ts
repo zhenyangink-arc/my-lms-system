@@ -39,6 +39,9 @@ const nodeSchema = z.object({
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
     pose: z.enum(TEACHER_KIM_POSES),
+    characterX: z.coerce.number().min(10).max(90),
+    characterY: z.coerce.number().min(0).max(30),
+    characterScale: z.coerce.number().min(0.75).max(1.25),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
     voiceRate: z.coerce.number().min(0.75).max(1.25),
@@ -218,6 +221,9 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
       },
       scriptPerformances: [{
         pose: "explaining",
+        characterX: 75,
+        characterY: 0,
+        characterScale: 1,
         voiceEnabled: true,
         voiceLanguage: "auto",
         voiceRate: 1,
@@ -249,6 +255,9 @@ export async function saveTeachingScriptNodeAction(
     const scriptVoiceLanguages = formData.getAll("script_voice_language").map(String);
     const scriptVoiceRates = formData.getAll("script_voice_rate").map(String);
     const scriptAutoContinues = formData.getAll("script_auto_continue").map(String);
+    const scriptCharacterXs = formData.getAll("script_character_x").map(String);
+    const scriptCharacterYs = formData.getAll("script_character_y").map(String);
+    const scriptCharacterScales = formData.getAll("script_character_scale").map(String);
     const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
     const interactionOptionRows = formData.getAll("interaction_option").map(String);
     const parsed = nodeSchema.safeParse({
@@ -269,6 +278,9 @@ export async function saveTeachingScriptNodeAction(
       virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
       scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
         pose: scriptPoses[index] ?? "explaining",
+        characterX: scriptCharacterXs[index] ?? "75",
+        characterY: scriptCharacterYs[index] ?? "0",
+        characterScale: scriptCharacterScales[index] ?? "1",
         voiceEnabled: (scriptVoices[index] ?? "on") === "on",
         voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
         voiceRate: scriptVoiceRates[index] ?? "1",

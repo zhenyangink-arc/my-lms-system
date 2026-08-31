@@ -25,7 +25,9 @@ import {
   TEACHER_KIM_POSE_LABELS,
   type TeacherKimPose,
 } from "@/lib/teacher-kim-character";
+import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
 import { TeachingBlackboardEditor } from "./TeachingBlackboardEditor";
+import { VirtualCharacterStageEditor } from "./VirtualCharacterStageEditor";
 import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
 
 const initialState: TeachingScriptActionState = { status: "idle" };
@@ -454,6 +456,9 @@ type ScriptPerformance = {
   voiceRate: number;
   /** Only honored in the platform-owner preview: skip waiting for "继续" and play straight into the next 台词. */
   autoContinueToNext: boolean;
+  characterX: number;
+  characterY: number;
+  characterScale: number;
 };
 
 type InteractionOptionEditor = {
@@ -470,12 +475,16 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     ? performance.voiceLanguage
     : "auto";
   const voiceRate = Number(performance.voiceRate);
+  const placement = normalizeTeachingVirtualCharacterPlacement(performance, fallback.position);
   return {
     pose,
     voiceEnabled: performance.voiceEnabled !== false,
     voiceLanguage,
     voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
     autoContinueToNext: performance.autoContinueToNext === true,
+    characterX: placement.x,
+    characterY: placement.y,
+    characterScale: placement.scale,
   };
 }
 
@@ -613,6 +622,7 @@ export function TeachingScriptNodeForm({
     rate: scriptPerformanceConfiguration(storedScriptPerformances[0], virtualCharacter).voiceRate,
   }));
   const [editorSection, setEditorSection] = useState<EditorSection>("script");
+  const [selectedCharacterLineIndex, setSelectedCharacterLineIndex] = useState(0);
   const [dirty, setDirty] = useState(false);
   const [visualCueTargetKey, setVisualCueTargetKey] = useState(storedVisualCueTargetKey);
   const [visualCuePageKey, setVisualCuePageKey] = useState(
@@ -1040,6 +1050,9 @@ export function TeachingScriptNodeForm({
                       fromPublishedVersion={node.speechAssetsFromPublishedVersion}
                     />
                     <input type="hidden" name="script_auto_continue" value={scriptPerformances[index]?.autoContinueToNext ? "on" : "off"} />
+                    <input type="hidden" name="script_character_x" value={String(scriptPerformances[index]?.characterX ?? 75)} />
+                    <input type="hidden" name="script_character_y" value={String(scriptPerformances[index]?.characterY ?? 0)} />
+                    <input type="hidden" name="script_character_scale" value={String(scriptPerformances[index]?.characterScale ?? 1)} />
                     <div className="mt-2 flex flex-wrap gap-1">
                       {index < scriptLines.length - 1 && (
                         <button
@@ -1140,17 +1153,19 @@ export function TeachingScriptNodeForm({
 
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
             <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="virtual-character-group-title">虚拟人物</span>} description="金老师会固定出现在每个教学小节；每句台词的动作和语音在“老师台词”中设置。" headingLevel={4} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看虚拟人物说明" />
+              <CardTitleWithHint title={<span id="virtual-character-group-title">虚拟人物</span>} description="逐句设置金老师出现的位置、大小和动作。舞台中的效果会同步到学生端；语音仍在“老师台词”中设置。" headingLevel={4} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看虚拟人物说明" />
             </div>
-            <div className={fieldClass}>
-              <span className={formFieldLabelClass}>授课老师</span>
-              <div className="flex min-h-11 items-center gap-2 border border-[var(--status-success)] bg-[var(--status-success-surface)] px-3 text-sm font-semibold text-[var(--foreground)]">
-                <CheckCircle2 size={16} className="shrink-0 text-[var(--status-success)]" aria-hidden="true" />
-                <span>韩语金老师（每个小节固定显示）</span>
-              </div>
-              <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
-            </div>
-            <label className={fieldClass}><span className={formFieldLabelClass}>出现位置</span><select name="virtual_character_position" defaultValue={String(virtualCharacter.position ?? "right")} disabled={!editable} className={inputClass}><option value="right">学习区右侧</option><option value="left">学习区左侧</option></select></label>
+            <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
+            <input type="hidden" name="virtual_character_position" value={(scriptPerformances[0]?.characterX ?? 75) < 50 ? "left" : "right"} />
+            <VirtualCharacterStageEditor
+              scriptLines={scriptLines}
+              performances={scriptPerformances}
+              selectedIndex={selectedCharacterLineIndex}
+              onSelectedIndexChange={setSelectedCharacterLineIndex}
+              onPerformanceChange={(index, patch) => setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, ...patch } : item))}
+              disabled={!editable}
+              onDirty={markDirty}
+            />
             </section>
 
             <section className={formGroupClass} aria-labelledby="learning-area-group-title">

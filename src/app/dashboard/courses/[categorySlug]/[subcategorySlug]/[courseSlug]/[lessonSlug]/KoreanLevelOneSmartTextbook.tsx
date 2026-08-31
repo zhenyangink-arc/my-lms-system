@@ -49,6 +49,7 @@ import { bufferLineForRequest, bufferSpeechAssetForRequest } from "@/lib/learnin
 import { RICH_TEXT_COLOR_VALUES, type RichChar } from "@/lib/rich-teaching-text";
 import type { TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import type { TeacherKimPose } from "@/lib/teacher-kim-character";
+import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
 
 import type {
   SmartLocale,
@@ -148,6 +149,9 @@ type TutorCharacter = {
   kind?: "uply-teacher";
   pose?: TeacherKimPose;
   position?: "left" | "right";
+  characterX?: number;
+  characterY?: number;
+  characterScale?: number;
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
   voiceRate?: number;
@@ -5563,6 +5567,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const teachingAreaCharacterFrames = teachingAreaCharacter?.kind === "uply-teacher"
     ? tutorCharacterImages[teachingAreaCharacter.pose ?? "greeting"]
     : null;
+  const teachingAreaCharacterPlacement = normalizeTeachingVirtualCharacterPlacement(
+    teachingAreaCharacter,
+    teachingAreaCharacter?.position,
+  );
 
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
@@ -5952,7 +5960,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   )}
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
                   <div
-                    className={`pointer-events-none fixed z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"} ${!tutorStarted ? "bottom-[180px]" : teachingAreaExpanded ? "bottom-[240px]" : "bottom-[300px]"}`}
+                    className={`pointer-events-none fixed top-[64px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"} ${!tutorStarted ? "bottom-[180px]" : teachingAreaExpanded ? "bottom-[240px]" : "bottom-[300px]"}`}
                     style={{
                       width: teachingAreaExpanded
                         ? "100%"
@@ -5962,7 +5970,15 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       maxWidth: teachingAreaExpanded ? SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx : undefined,
                     }}
                   >
-                    <div className={`absolute bottom-0 z-20 flex items-end justify-center ${teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"} ${!tutorStarted ? "left-1/2 -translate-x-1/2" : teachingAreaExpanded ? "right-0 translate-x-[clamp(2.5rem,6.4vw,8rem)]" : "right-0 translate-x-[clamp(3rem,8vw,10rem)]"}`}>
+                    <div
+                      className={`absolute z-20 flex items-end justify-center transition-[left,bottom,transform] duration-300 motion-reduce:transition-none ${teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"}`}
+                      style={{
+                        left: `${tutorStarted ? teachingAreaCharacterPlacement.x : 50}%`,
+                        bottom: `${tutorStarted ? teachingAreaCharacterPlacement.y : 0}%`,
+                        transform: `translateX(-50%) scale(${tutorStarted ? teachingAreaCharacterPlacement.scale : 1})`,
+                        transformOrigin: "bottom center",
+                      }}
+                    >
                       <div
                         className={`kim-teacher-breathe relative aspect-[1/2] w-auto max-w-full drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] motion-reduce:animate-none ${teachingAreaExpanded ? "h-[clamp(24rem,48vh,32rem)]" : "h-[clamp(26rem,56vh,34rem)]"}`}
                         data-speaking={tutorSpeechStatus === "playing" || undefined}

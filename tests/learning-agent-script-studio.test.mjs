@@ -86,6 +86,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
     new URL("src/features/learning-agent-script-studio/TeachingScriptNodeForm.tsx", root),
     "utf8",
   );
+  const characterStage = await readFile(
+    new URL("src/features/learning-agent-script-studio/VirtualCharacterStageEditor.tsx", root),
+    "utf8",
+  );
   const respondRoute = await readFile(
     new URL("src/app/api/learning-agent/respond/route.ts", root),
     "utf8",
@@ -167,6 +171,14 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /formGroupClass/);
   assert.match(editor, /aria-labelledby="display-content-group-title"/);
   assert.match(editor, /aria-labelledby="virtual-character-group-title"/);
+  assert.match(editor, /script_character_x/);
+  assert.match(editor, /script_character_y/);
+  assert.match(editor, /script_character_scale/);
+  assert.match(editor, /VirtualCharacterStageEditor/);
+  assert.match(characterStage, /拖动金老师调整位置/);
+  assert.match(characterStage, /人物动作/);
+  assert.match(actions, /characterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
+  assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
   assert.match(editor, /小节讲解/);
@@ -201,7 +213,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /display_items_zh/);
   assert.match(editor, /student_task_target_key/);
   assert.match(editor, /要求学生播放并完整听完指定表达/);
-  assert.match(editor, /韩语金老师/);
+  assert.match(characterStage, /金老师/);
   assert.match(editor, /script_pose/);
   assert.match(editor, /朗读这句台词/);
   assert.match(editor, /ScriptSpeechReview/);
@@ -214,7 +226,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /configuration\.scriptPerformances/);
   assert.match(actions, /virtualCharacterKind: z\.literal\("uply-teacher"\)/);
   assert.match(actions, /configuration: \{\s+virtualCharacter: \{/);
-  assert.match(editor, /韩语金老师（每个小节固定显示）/);
+  assert.match(characterStage, /人物位置和动作会随当前台词切换/);
   assert.match(editor, /name="virtual_character_kind" value="uply-teacher"/);
   assert.doesNotMatch(editor, /不显示虚拟人物/);
   assert.match(respondRoute, /X-Learning-Agent-Character/);
@@ -408,7 +420,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine, locale\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
-  assert.match(shell, /translate-x-\[clamp\(2\.5rem,6\.4vw,8rem\)\]/);
+  assert.match(shell, /teachingAreaCharacterPlacement\.x/);
+  assert.match(shell, /teachingAreaCharacterPlacement\.y/);
+  assert.match(shell, /teachingAreaCharacterPlacement\.scale/);
   assert.match(shell, /h-\[clamp\(24rem,48vh,32rem\)\]/);
   assert.match(shell, /pointer-events-auto absolute left-full z-10 ml-2 w-fit/);
   assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);
