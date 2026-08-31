@@ -6014,26 +6014,26 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                               : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
                           </p>
                           {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
-                            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+                            <div className="mt-3 grid grid-cols-2 gap-1 border-t border-[var(--border-subtle)] pt-3">
                               <button
                                 type="button"
                                 onClick={toggleTutorSpeech}
                                 disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
-                                className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
+                                className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
                               >
-                                {tutorSpeechStatus === "playing" ? <Pause size={12} aria-hidden="true" /> : <Play size={12} aria-hidden="true" />}
+                                {tutorSpeechStatus === "playing" ? <Pause size={10} aria-hidden="true" /> : <Play size={10} aria-hidden="true" />}
                                 {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
                               </button>
-                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
-                                <RotateCcw size={12} aria-hidden="true" />
+                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
+                                <RotateCcw size={10} aria-hidden="true" />
                                 {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
                               </button>
-                              <button type="button" onClick={exitTutorLesson} className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--destructive)] transition hover:bg-[color-mix(in_srgb,var(--destructive)_6%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
-                                <X size={12} aria-hidden="true" />
+                              <button type="button" onClick={exitTutorLesson} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--destructive)] transition hover:bg-[color-mix(in_srgb,var(--destructive)_6%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                                <X size={10} aria-hidden="true" />
                                 {locale === "ko-KR" ? "학습 종료" : "退出学习"}
                               </button>
-                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
-                                {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
+                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
+                                {tutorSpeechMuted ? <VolumeX size={10} aria-hidden="true" /> : <Volume2 size={10} aria-hidden="true" />}
                                 {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
                               </button>
                             </div>
@@ -6093,26 +6093,26 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                               : "先观察右侧学习区中的场景。准备好后，听一听核心表达，再完成当前活动。")}
                           </p>
                           {tutorSpeechStatus !== "idle" && tutorSpeechPlaybackRef.current && (
-                            <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-[var(--border-subtle)] pt-3">
+                            <div className="mt-3 grid grid-cols-2 gap-1 border-t border-[var(--border-subtle)] pt-3">
                               <button
                                 type="button"
                                 onClick={toggleTutorSpeech}
                                 disabled={tutorPaused || tutorSpeechStatus === "loading" || tutorSpeechStatus === "error" || tutorSpeechStatus === "ended"}
-                                className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
+                                className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:opacity-40"
                               >
-                                {tutorSpeechStatus === "playing" ? <Pause size={12} aria-hidden="true" /> : <Play size={12} aria-hidden="true" />}
+                                {tutorSpeechStatus === "playing" ? <Pause size={10} aria-hidden="true" /> : <Play size={10} aria-hidden="true" />}
                                 {tutorSpeechStatus === "playing" ? (locale === "ko-KR" ? "일시 정지" : "暂停") : (locale === "ko-KR" ? "계속 듣기" : "继续播放")}
                               </button>
-                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
-                                <RotateCcw size={12} aria-hidden="true" />
+                              <button type="button" onClick={replayTutorSpeech} disabled={tutorPaused} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40">
+                                <RotateCcw size={10} aria-hidden="true" />
                                 {locale === "ko-KR" ? "다시 듣기" : "重新播放"}
                               </button>
-                              <button type="button" onClick={exitTutorLesson} className="inline-flex min-h-8 items-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--destructive)] transition hover:bg-[color-mix(in_srgb,var(--destructive)_6%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
-                                <X size={12} aria-hidden="true" />
+                              <button type="button" onClick={exitTutorLesson} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--destructive)] transition hover:bg-[color-mix(in_srgb,var(--destructive)_6%,transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                                <X size={10} aria-hidden="true" />
                                 {locale === "ko-KR" ? "학습 종료" : "退出学习"}
                               </button>
-                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="ml-auto inline-flex min-h-9 items-center gap-1.5 rounded-lg px-2.5 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
-                                {tutorSpeechMuted ? <VolumeX size={14} aria-hidden="true" /> : <Volume2 size={14} aria-hidden="true" />}
+                              <button type="button" onClick={() => setTutorSpeechMuted((current) => !current)} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1.5 text-[8px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)]" aria-pressed={tutorSpeechMuted}>
+                                {tutorSpeechMuted ? <VolumeX size={10} aria-hidden="true" /> : <Volume2 size={10} aria-hidden="true" />}
                                 {tutorSpeechMuted ? (locale === "ko-KR" ? "음소거 해제" : "取消静音") : (locale === "ko-KR" ? "음소거" : "静音")}
                               </button>
                             </div>
