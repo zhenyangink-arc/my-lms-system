@@ -375,7 +375,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /function restartTutorLesson\(\)/);
   assert.match(shell, /if \(confirmed\) startTutorLesson\(true\)/);
   assert.match(shell, /退出学习/);
-  assert.match(shell, /onClick=\{exitTutorLesson\} className="inline-flex min-h-9 items-center/);
+  assert.match(shell, /onClick=\{exitTutorLesson\} className="inline-flex min-h-8 items-center/);
   assert.doesNotMatch(shell, /title=\{locale === "ko-KR" \? "학습 종료" : "退出学习"\}/);
   assert.match(shell, /已完成的教材进度不会丢失/);
   assert.match(shell, /const showTutorAnswerDialog = tutorStarted\s+&& !tutorPaused/);
