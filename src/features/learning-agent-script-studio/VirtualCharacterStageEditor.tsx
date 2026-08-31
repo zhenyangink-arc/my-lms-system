@@ -105,7 +105,7 @@ export function VirtualCharacterStageEditor({
   }
 
   return (
-    <div className="grid gap-4 px-4 py-4 xl:grid-cols-[minmax(28rem,1fr)_16rem]">
+    <div className="space-y-4 px-4 py-4">
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
@@ -156,14 +156,14 @@ export function VirtualCharacterStageEditor({
               unoptimized
               className="pointer-events-none object-contain drop-shadow-[0_12px_18px_rgba(15,23,42,0.16)]"
             />
-            <span className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-2 block w-max max-w-[clamp(8rem,18cqw,12rem)] text-left">
-              <span className="relative block rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
-                <span className="absolute bottom-4 -left-1.5 h-3 w-3 rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
-                <span className="flex min-w-0 items-center justify-between gap-3">
-                  <span className="truncate text-xs font-bold text-[var(--foreground)]">UPLY 韩语-金老师</span>
-                  <span className="shrink-0 text-[10px] font-bold text-[var(--status-success)]">台词预览</span>
+            <span className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-[0.8cqw] block w-max max-w-[15cqw] text-left">
+              <span className="relative block rounded-[1.2cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[1.1cqw] shadow-sm">
+                <span className="absolute bottom-[1.5cqw] left-[-0.55cqw] h-[1.1cqw] w-[1.1cqw] rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
+                <span className="flex min-w-0 items-center justify-between gap-[0.9cqw]">
+                  <span className="truncate text-[1.15cqw] font-bold leading-none text-[var(--foreground)]">UPLY 韩语-金老师</span>
+                  <span className="shrink-0 text-[0.9cqw] font-bold leading-none text-[var(--status-success)]">台词预览</span>
                 </span>
-                <span className="mt-2 block whitespace-pre-line text-[11px] font-normal leading-5 text-[var(--foreground-secondary)]">
+                <span className="mt-[0.8cqw] block whitespace-pre-line text-[1.05cqw] font-normal leading-[1.55] text-[var(--foreground-secondary)]">
                   {plainScriptLine(scriptLines[safeIndex] ?? "") || "这句台词还没有内容"}
                 </span>
               </span>
@@ -174,7 +174,7 @@ export function VirtualCharacterStageEditor({
         <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。拖动金老师调整位置，也可以聚焦人物后使用方向键；人物位置和动作会随当前台词切换。</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
         <label className="block space-y-1.5 text-sm font-medium">
           <span className="block font-semibold text-[var(--foreground)]">设置哪句台词</span>
           <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
@@ -195,7 +195,7 @@ export function VirtualCharacterStageEditor({
           <span className="flex items-center justify-between gap-2 font-semibold text-[var(--foreground)]"><span>人物大小</span><span className="tabular-nums text-[var(--foreground-muted)]">{Math.round(performance.characterScale * 100)}%</span></span>
           <input type="range" min={75} max={125} step={5} value={Math.round(performance.characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, { characterScale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
         </label>
-        <button type="button" onClick={() => { onPerformanceChange(safeIndex, { characterX: 75, characterY: 0, characterScale: 1 }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复默认位置</button>
+        <button type="button" onClick={() => { onPerformanceChange(safeIndex, { characterX: 75, characterY: 0, characterScale: 1 }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复默认位置</button>
       </div>
     </div>
   );
