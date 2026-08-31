@@ -1,4 +1,4 @@
-import type { PointerEvent as ReactPointerEvent } from "react";
+import type { KeyboardEvent as ReactKeyboardEvent, PointerEvent as ReactPointerEvent } from "react";
 
 import type { TeachingBlackboardElement, TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 
@@ -46,12 +46,14 @@ export function TeachingBlackboardSlideView({
   selectedElementId,
   onElementPointerDown,
   onElementClick,
+  onElementKeyDown,
 }: {
   slide: TeachingBlackboardSlide;
   className?: string;
   selectedElementId?: string | null;
   onElementPointerDown?: (event: ReactPointerEvent<HTMLDivElement>, element: TeachingBlackboardElement) => void;
   onElementClick?: (element: TeachingBlackboardElement) => void;
+  onElementKeyDown?: (event: ReactKeyboardEvent<HTMLDivElement>, element: TeachingBlackboardElement) => void;
 }) {
   return (
     <div className={`relative aspect-video w-full overflow-hidden border border-[var(--border-subtle)] ${backgroundClass[slide.background]} ${className}`} style={{ containerType: "inline-size" }}>
@@ -70,6 +72,10 @@ export function TeachingBlackboardSlideView({
           }}
           onPointerDown={onElementPointerDown ? (event) => onElementPointerDown(event, element) : undefined}
           onClick={onElementClick ? () => onElementClick(element) : undefined}
+          onKeyDown={onElementKeyDown ? (event) => onElementKeyDown(event, element) : undefined}
+          role={onElementClick ? "button" : undefined}
+          tabIndex={onElementClick ? 0 : undefined}
+          aria-label={onElementClick ? `${element.type === "bullets" ? "要点" : element.type === "expression" ? "韩语例句" : "文字"}：${element.content.slice(0, 40) || "空内容"}` : undefined}
         >
           <BlackboardElementContent element={element} />
         </div>

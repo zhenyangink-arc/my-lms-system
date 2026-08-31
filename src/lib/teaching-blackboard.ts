@@ -1,6 +1,10 @@
 export const TEACHING_BLACKBOARD_ELEMENT_TYPES = ["text", "bullets", "expression"] as const;
 export const TEACHING_BLACKBOARD_BACKGROUNDS = ["plain", "warm", "grid"] as const;
 export const TEACHING_BLACKBOARD_TONES = ["default", "primary", "highlight", "muted"] as const;
+export const MAX_TEACHING_BLACKBOARD_SLIDES = 30;
+export const MAX_TEACHING_BLACKBOARD_ELEMENTS = 12;
+export const MAX_TEACHING_BLACKBOARD_HEADER_LENGTH = 6000;
+export const MAX_TEACHING_BLACKBOARD_JSON_LENGTH = 500000;
 
 export type TeachingBlackboardElementType = typeof TEACHING_BLACKBOARD_ELEMENT_TYPES[number];
 export type TeachingBlackboardBackground = typeof TEACHING_BLACKBOARD_BACKGROUNDS[number];
@@ -51,6 +55,25 @@ function safeId(value: unknown, fallback: string) {
   return /^[a-zA-Z0-9_-]{1,80}$/.test(parsed) ? parsed : fallback;
 }
 
+function uniqueId(candidate: string, usedIds: Set<string>, fallbackPrefix: string) {
+  if (!usedIds.has(candidate)) {
+    usedIds.add(candidate);
+    return candidate;
+  }
+  let suffix = usedIds.size + 1;
+  let next = `${fallbackPrefix}-${suffix}`;
+  while (usedIds.has(next)) {
+    suffix += 1;
+    next = `${fallbackPrefix}-${suffix}`;
+  }
+  usedIds.add(next);
+  return next;
+}
+
+function stripLegacyFormatting(value: string) {
+  return value.replace(/\[(?:\/?b|\/?u|\/?color(?:=[^\]]+)?)\]/gi, "");
+}
+
 export function normalizeTeachingBlackboardElement(value: unknown, index: number): TeachingBlackboardElement | null {
   const source = record(value);
   if (!source) return null;
@@ -88,20 +111,25 @@ export function normalizeTeachingBlackboardSlides(value: unknown): TeachingBlack
     : Array.isArray(record(value)?.slides)
       ? record(value)?.slides as unknown[]
       : [];
-  return sourceSlides.slice(0, 30).flatMap((value, slideIndex) => {
+  const usedSlideIds = new Set<string>();
+  return sourceSlides.slice(0, MAX_TEACHING_BLACKBOARD_SLIDES).flatMap((value, slideIndex) => {
     const source = record(value);
     if (!source) return [];
     const background = TEACHING_BLACKBOARD_BACKGROUNDS.includes(source.background as TeachingBlackboardBackground)
       ? source.background as TeachingBlackboardBackground
       : "plain";
+    const usedElementIds = new Set<string>();
     const elements = Array.isArray(source.elements)
-      ? source.elements.slice(0, 12).flatMap((element, elementIndex) => {
+      ? source.elements.slice(0, MAX_TEACHING_BLACKBOARD_ELEMENTS).flatMap((element, elementIndex) => {
           const normalized = normalizeTeachingBlackboardElement(element, elementIndex);
-          return normalized ? [normalized] : [];
+          return normalized ? [{
+            ...normalized,
+            id: uniqueId(normalized.id, usedElementIds, "element"),
+          }] : [];
         })
       : [];
     return [{
-      id: safeId(source.id, `slide-${slideIndex + 1}`),
+      id: uniqueId(safeId(source.id, `slide-${slideIndex + 1}`), usedSlideIds, "slide"),
       name: String(source.name ?? `画面 ${slideIndex + 1}`).trim().slice(0, 40) || `画面 ${slideIndex + 1}`,
       segmentIndex: Math.round(finiteNumber(source.segmentIndex, slideIndex, 0, 49)),
       background,
@@ -122,13 +150,13 @@ export function teachingBlackboardSlidesFromDisplay(value: unknown): TeachingBla
   if (savedSlides.length) return savedSlides;
   if (!source) return [];
 
-  const title = localizedText(source.title);
+  const title = stripLegacyFormatting(localizedText(source.title));
   const itemsSource = record(source.items)?.["zh-CN"];
   const items = Array.isArray(itemsSource)
-    ? itemsSource.filter((item): item is string => typeof item === "string").join("\n")
+    ? itemsSource.filter((item): item is string => typeof item === "string").map(stripLegacyFormatting).join("\n")
     : "";
-  const korean = String(source.korean ?? "").trim();
-  const translation = localizedText(source.translation);
+  const korean = stripLegacyFormatting(String(source.korean ?? "").trim());
+  const translation = stripLegacyFormatting(localizedText(source.translation));
   if (!title && !items && !korean && !translation) return [];
 
   const elements: TeachingBlackboardElement[] = [];
@@ -145,6 +173,14 @@ export function teachingBlackboardSlidesFromDisplay(value: unknown): TeachingBla
     y: title || items ? 72 : 26, width: 86, height: 20, fontSize: 27, fontWeight: 700, align: "left", tone: "highlight",
   });
   return [{ id: "legacy-slide", name: "画面 1", segmentIndex: 0, background: "plain", elements }];
+}
+
+export function teachingBlackboardSlideHeaderLength(slide: TeachingBlackboardSlide) {
+  return encodeURIComponent(JSON.stringify({ mode: "slides", activeSlide: slide })).length;
+}
+
+export function teachingBlackboardSlideFitsHeader(slide: TeachingBlackboardSlide) {
+  return teachingBlackboardSlideHeaderLength(slide) <= MAX_TEACHING_BLACKBOARD_HEADER_LENGTH;
 }
 
 export function teachingBlackboardDisplayForSegment(value: unknown, segmentIndex: number) {

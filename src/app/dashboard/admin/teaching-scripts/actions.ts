@@ -5,7 +5,13 @@ import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { normalizeTeachingBlackboardSlides } from "@/lib/teaching-blackboard";
+import {
+  MAX_TEACHING_BLACKBOARD_ELEMENTS,
+  MAX_TEACHING_BLACKBOARD_JSON_LENGTH,
+  MAX_TEACHING_BLACKBOARD_SLIDES,
+  normalizeTeachingBlackboardSlides,
+  teachingBlackboardSlideFitsHeader,
+} from "@/lib/teaching-blackboard";
 import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
 
 export type TeachingScriptActionState = {
@@ -28,7 +34,7 @@ const nodeSchema = z.object({
   displayItemsZh: z.string().trim().max(1000, "教学展示要点不能超过1000个字。"),
   displayKorean: z.string().trim().max(1000, "韩语展示内容不能超过1000个字。"),
   displayTranslationZh: z.string().trim().max(600, "中文释义不能超过600个字。"),
-  displaySlidesJson: z.string().max(100000, "黑板画面内容过多，请减少画面或文字。"),
+  displaySlidesJson: z.string().max(MAX_TEACHING_BLACKBOARD_JSON_LENGTH, "黑板画面内容过多，请减少画面或文字。"),
   virtualCharacterKind: z.literal("uply-teacher"),
   virtualCharacterPosition: z.enum(["left", "right"]),
   scriptPerformances: z.array(z.object({
@@ -311,7 +317,30 @@ export async function saveTeachingScriptNodeAction(
     let displaySlides = [] as ReturnType<typeof normalizeTeachingBlackboardSlides>;
     if (input.displaySlidesJson) {
       try {
-        displaySlides = normalizeTeachingBlackboardSlides(JSON.parse(input.displaySlidesJson));
+        const decoded = JSON.parse(input.displaySlidesJson) as unknown;
+        const decodedRecord = decoded && typeof decoded === "object" && !Array.isArray(decoded)
+          ? decoded as Record<string, unknown>
+          : null;
+        const rawSlides = Array.isArray(decoded) ? decoded : decodedRecord?.slides;
+        if (Array.isArray(rawSlides) && rawSlides.length > MAX_TEACHING_BLACKBOARD_SLIDES) {
+          return {
+            status: "error",
+            message: `一个小节最多只能保存${MAX_TEACHING_BLACKBOARD_SLIDES}张黑板画面。`,
+            fieldErrors: { displaySlidesJson: ["黑板画面数量超过上限。"] },
+          };
+        }
+        if (Array.isArray(rawSlides) && rawSlides.some((slide) => {
+          if (!slide || typeof slide !== "object" || Array.isArray(slide)) return false;
+          return Array.isArray((slide as Record<string, unknown>).elements)
+            && ((slide as Record<string, unknown>).elements as unknown[]).length > MAX_TEACHING_BLACKBOARD_ELEMENTS;
+        })) {
+          return {
+            status: "error",
+            message: `单张黑板画面最多只能放置${MAX_TEACHING_BLACKBOARD_ELEMENTS}项内容。`,
+            fieldErrors: { displaySlidesJson: ["单张画面的内容数量超过上限。"] },
+          };
+        }
+        displaySlides = normalizeTeachingBlackboardSlides(decoded);
       } catch {
         return {
           status: "error",
@@ -341,14 +370,27 @@ export async function saveTeachingScriptNodeAction(
       .split("\n")
       .map((item) => item.trim())
       .filter(Boolean);
-    const meaningfulSlides = displaySlides.flatMap((slide) => {
-      const elements = slide.elements.filter((element) => element.content.trim() || element.translation?.trim());
-      return elements.length ? [{ ...slide, elements }] : [];
-    });
-    if (meaningfulSlides.length) {
+    const maximumSegmentIndex = Math.max(0, nonEmptyScriptIndexes.length - 1);
+    const normalizedSlides = displaySlides.map((slide) => ({
+      ...slide,
+      segmentIndex: Math.min(slide.segmentIndex, maximumSegmentIndex),
+      elements: slide.elements.filter((element) => element.content.trim() || element.translation?.trim()),
+    }));
+    const hasMeaningfulSlide = normalizedSlides.some((slide) => slide.elements.length > 0);
+    const oversizedSlide = normalizedSlides.find((slide) => !teachingBlackboardSlideFitsHeader(slide));
+    if (oversizedSlide) {
+      return {
+        status: "error",
+        message: `黑板画面“${oversizedSlide.name}”的文字过多，请拆成多张画面。`,
+        fieldErrors: { displaySlidesJson: ["单张黑板画面的文字过多，请减少文字或拆分画面。"] },
+      };
+    }
+    if (hasMeaningfulSlide) {
       configuration.display = {
         mode: "slides",
-        slides: meaningfulSlides,
+        // Preserve intentionally empty slides after the first authored slide;
+        // they let the teacher clear the blackboard for a later script line.
+        slides: normalizedSlides,
       };
     } else if (input.displayTitleZh || displayItems.length || input.displayKorean || input.displayTranslationZh) {
       configuration.display = {
