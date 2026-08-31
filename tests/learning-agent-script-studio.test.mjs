@@ -376,7 +376,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /if \(confirmed\) startTutorLesson\(true\)/);
   assert.match(shell, /退出学习/);
   assert.match(shell, /mt-3 grid grid-cols-2 gap-1 border-t/);
-  assert.match(shell, /onClick=\{exitTutorLesson\} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1\.5 text-\[6px\]/);
+  assert.match(shell, /onClick=\{exitTutorLesson\} className="inline-flex min-h-7 items-center justify-start gap-1 rounded-lg px-1\.5 text-\[8px\]/);
   assert.doesNotMatch(shell, /title=\{locale === "ko-KR" \? "학습 종료" : "退出学习"\}/);
   assert.match(shell, /已完成的教材进度不会丢失/);
   assert.match(shell, /const showTutorAnswerDialog = tutorStarted\s+&& !tutorPaused/);
