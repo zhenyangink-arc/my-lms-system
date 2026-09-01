@@ -164,7 +164,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /moveTeachingScriptNodeAction/);
   assert.match(actions, /publishTeachingScriptAction/);
   assert.match(editor, /老师台词/);
-  assert.match(editor, /max-w-\[75rem\]/);
+  assert.doesNotMatch(editor, /max-w-\[75rem\]/);
   assert.match(editor, /小节基本设置/);
   assert.match(editor, /开场过渡/);
   assert.match(editor, /正式讲解/);

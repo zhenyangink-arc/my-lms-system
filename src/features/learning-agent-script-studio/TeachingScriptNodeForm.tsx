@@ -831,7 +831,7 @@ export function TeachingScriptNodeForm({
   }, [state.fieldErrors, state.status]);
 
   return (
-    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="mx-auto max-w-[75rem] space-y-4" key={node.id}>
+    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
