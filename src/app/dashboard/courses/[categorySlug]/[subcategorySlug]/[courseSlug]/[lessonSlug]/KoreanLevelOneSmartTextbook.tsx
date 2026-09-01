@@ -6116,11 +6116,11 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       ? {
                           top: TEACHING_VIRTUAL_CHARACTER_STAGE.viewportTopPx,
                           bottom: TEACHING_VIRTUAL_CHARACTER_STAGE.viewportBottomPx,
-                          width: teachingAreaExpanded
-                            ? "100%"
-                            : teachingAreaCollapsed
-                              ? `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.collapsedWidthPx}px`
-                              : `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent}%`,
+                          // Authored character coordinates use the complete teaching-stage
+                          // viewport, exactly like the admin stage editor. Restricting this
+                          // layer to the left teaching column made the same x percentage
+                          // land near the screen centre for students.
+                          width: "100%",
                           containerType: "inline-size",
                         }
                       : {
