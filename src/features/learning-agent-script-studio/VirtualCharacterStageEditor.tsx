@@ -338,24 +338,21 @@ export function VirtualCharacterStageEditor({
           }}
         >
           <div
-            className="absolute inset-x-0 top-0 flex items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)]"
+            className="absolute inset-x-0 top-0 flex items-center justify-center border-b border-[var(--border-subtle)] bg-[var(--card)] px-[1.2cqw]"
             style={{ height: `${previewGeometry.headerHeightPercent}%` }}
           >
+            <div className="absolute left-[1.2cqw] flex max-w-[calc(50%_-_4cqw)] min-w-0 items-center gap-[0.7cqw] overflow-hidden" data-teaching-context>
+              <span className="shrink-0 text-[clamp(0.35rem,0.68cqw,0.58rem)] font-bold text-[var(--foreground-muted)]">当前教学</span>
+              <span className="truncate text-[clamp(0.35rem,0.68cqw,0.58rem)] font-semibold text-[var(--foreground-secondary)]">第 1 章 · 你好？</span>
+              <span className="h-[0.8cqw] w-px shrink-0 bg-[var(--border-subtle)]" aria-hidden="true" />
+              <span className="truncate text-[clamp(0.35rem,0.68cqw,0.58rem)] font-bold text-[var(--foreground)]">课前导航</span>
+            </div>
             <span className="text-[clamp(0.6rem,1.7cqw,0.85rem)] font-bold text-[var(--foreground)]">教学区</span>
-          </div>
-          <div
-            className="absolute flex items-center gap-[0.7cqw] text-[clamp(0.35rem,0.68cqw,0.58rem)] text-[var(--foreground-secondary)]"
-            style={{
-              left: `${previewGeometry.metadataLeftPercent}%`,
-              top: `${previewGeometry.metadataTopPercent}%`,
-              width: `${previewGeometry.blackboardWidthPercent}%`,
-            }}
-          >
-            <span className="font-bold text-[var(--foreground-muted)]">当前教学</span>
-            <span className="font-semibold">第 1 章 · 你好？</span>
-            <span className="h-[0.8cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
-            <span className="font-bold text-[var(--foreground)]">课前导航</span>
-            {!isFullscreen ? <span className="ml-auto shrink-0 font-semibold text-[var(--primary)]">预览台词 {safeIndex + 1} / {scriptLines.length}</span> : null}
+            {!isFullscreen ? (
+              <span className="absolute right-[1.2cqw] max-w-[calc(50%_-_4cqw)] truncate text-[clamp(0.35rem,0.68cqw,0.58rem)] font-semibold text-[var(--primary)]">
+                预览台词 {safeIndex + 1} / {scriptLines.length}
+              </span>
+            ) : null}
           </div>
           <div
             className="pointer-events-none absolute z-[5] overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"

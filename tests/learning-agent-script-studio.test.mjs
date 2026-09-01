@@ -249,6 +249,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /离教学区底部/);
   assert.match(characterStage, /teachingVirtualCharacterPreviewGeometry/);
   assert.match(characterStage, /previewGeometry\.aspectRatio/);
+  assert.match(characterStage, /data-teaching-context/);
+  assert.ok(characterStage.indexOf("data-teaching-context") < characterStage.indexOf('aria-label="黑板。'));
   assert.match(characterStage, /left: `\$\{boundedBlackboardPlacement\.x\}%`/);
   assert.match(characterStage, /previewGeometry\.blackboardWidthPercent/);
   assert.match(characterStage, /constrainTeachingBlackboardPlacementToViewport/);
