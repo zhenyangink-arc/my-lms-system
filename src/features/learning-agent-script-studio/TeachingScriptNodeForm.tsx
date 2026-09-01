@@ -1166,18 +1166,9 @@ export function TeachingScriptNodeForm({
           </div>
 
           <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
-            <section className={formGroupClass} aria-labelledby="display-content-group-title">
-            <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="display-content-group-title">黑板内容</span>} description="这是学生展示内容：像编辑演示文稿一样安排学生看到的重点。黑板只放标题、要点和例句，老师的详细讲解仍在“老师台词”里编辑。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看黑板内容说明" />
-            </div>
-            <input type="hidden" name="display_items_zh" value="" />
-            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} onSlidesChange={setBlackboardSlides} />
-            <FieldError errors={state.fieldErrors?.displaySlidesJson} />
-            </section>
-
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
             <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="virtual-character-group-title">虚拟人物</span>} description="逐句设置金老师出现的位置、大小和动作。舞台中的效果会同步到学生端；语音仍在“老师台词”中设置。" headingLevel={4} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看虚拟人物说明" />
+              <CardTitleWithHint title={<span id="virtual-character-group-title">教学舞台</span>} description="这里按学生端的完整教学区比例预览。先选择台词，再直接拖动黑板和金老师；位置、大小和动作会同步到学生端。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看教学舞台说明" />
             </div>
             <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
             <input type="hidden" name="virtual_character_position" value={(scriptPerformances[0]?.characterX ?? 75) < 50 ? "left" : "right"} />
@@ -1195,10 +1186,25 @@ export function TeachingScriptNodeForm({
             />
             </section>
 
-            <section className={formGroupClass} aria-labelledby="learning-area-group-title">
+            <section className={formGroupClass} aria-labelledby="display-content-group-title">
             <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="learning-area-group-title">学习区联动</span>} description="需要学生看图或听右侧音频时再设置。" headingLevel={4} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看学习区联动说明" />
+              <CardTitleWithHint title={<span id="display-content-group-title">黑板画面</span>} description="像编辑演示文稿一样制作标题、要点和例句，并指定每张画面在哪句台词出现。老师的详细讲解仍在“老师台词”里编辑。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看黑板画面说明" />
             </div>
+            <input type="hidden" name="display_items_zh" value="" />
+            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} onSlidesChange={setBlackboardSlides} />
+            <FieldError errors={state.fieldErrors?.displaySlidesJson} />
+            </section>
+
+            <details className={`${formGroupClass} group`} aria-labelledby="learning-area-group-title">
+            <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+              <span className="min-w-0">
+                <span id="learning-area-group-title" className="block text-sm font-bold text-[var(--foreground)]">学习区联动</span>
+                <span className="mt-0.5 block truncate text-xs text-[var(--foreground-muted)]">{selectedLearningTargetPath || (studentTaskKind !== "none" ? "已安排学生操作" : "未设置，仅播放教学内容")}</span>
+              </span>
+              <span className="shrink-0 text-xs font-semibold text-[var(--primary)] group-open:hidden">展开设置</span>
+              <span className="hidden shrink-0 text-xs font-semibold text-[var(--foreground-muted)] group-open:inline">收起</span>
+            </summary>
+            <div className="border-t border-[var(--border)]">
             <div className={fieldClass}>
               <CardTitleWithHint
                 title="老师讲解指向"
@@ -1363,7 +1369,8 @@ export function TeachingScriptNodeForm({
                 </fieldset>
               </div>
             </div>
-            </section>
+            </div>
+            </details>
           </div>
 
           <div id="teaching-interaction-panel" hidden={editorSection !== "interaction"} role="tabpanel" aria-labelledby="teaching-interaction-tab" className={panelClass}>

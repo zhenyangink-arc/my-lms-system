@@ -219,7 +219,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
   assert.match(scriptRuntime, /configuredText\(nextNode\.configuration, "bufferLine", locale\)/);
   assert.match(editor, /画面与人物/);
-  assert.match(editor, /学生展示内容/);
+  assert.match(editor, /教学舞台/);
+  assert.match(editor, /黑板画面/);
+  assert.ok(editor.indexOf('id="virtual-character-group-title"') < editor.indexOf('id="display-content-group-title"'));
+  assert.match(editor, /<details className=\{`\$\{formGroupClass\} group`\} aria-labelledby="learning-area-group-title">/);
+  assert.match(editor, /未设置，仅播放教学内容/);
   assert.match(editor, /formSectionClass/);
   assert.match(editor, /formGroupClass/);
   assert.match(editor, /aria-labelledby="display-content-group-title"/);
@@ -230,6 +234,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /VirtualCharacterStageEditor/);
   assert.match(characterStage, /拖动金老师调整位置/);
   assert.match(characterStage, /人物动作/);
+  assert.match(characterStage, /当前预览台词/);
+  assert.match(characterStage, />金老师</);
   assert.match(characterStage, /TeachingBlackboardSlideView/);
   assert.match(characterStage, /activeBlackboardSlide/);
   assert.match(characterStage, /bottom-\[54%\] left-full/);
@@ -251,7 +257,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /黑板和金老师|拖动黑板/);
   assert.doesNotMatch(characterStage, /inset-x-0 bottom-0 h-\[8%\]/);
   assert.match(characterStage, /space-y-4 px-4 py-4/);
-  assert.match(characterStage, /md:grid-cols-2 xl:grid-cols-5/);
+  assert.match(characterStage, /md:grid-cols-2 xl:grid-cols-4/);
   assert.match(characterStage, /previewGeometry\.bubbleWidthPercent/);
   assert.match(characterStage, /预览台词 \{safeIndex \+ 1\}/);
   assert.doesNotMatch(characterStage, /absolute left-3 top-3/);
@@ -296,7 +302,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /后续流程/);
   assert.doesNotMatch(editor, /学生端预览/);
   assert.match(editor, /CardTitleWithHint/);
-  assert.match(editor, /hintLabel="查看学习区联动说明"/);
+  assert.match(editor, /展开设置/);
   assert.match(editor, /description=\{step\.description\}/);
   assert.match(editor, /hintLabel=\{`查看\$\{step\.label\}说明`\}/);
   assert.match(editor, /absolute right-2\.5 top-1\/2/);

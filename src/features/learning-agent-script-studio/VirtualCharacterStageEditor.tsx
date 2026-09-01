@@ -219,6 +219,18 @@ export function VirtualCharacterStageEditor({
       <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
       <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
       <div className="space-y-4 px-4 py-4">
+      <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--muted)]/25 p-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-sm font-bold text-[var(--foreground)]">当前预览台词</p>
+          <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">切换台词可检查对应的黑板画面、人物动作和站位。</p>
+        </div>
+        <label className="block min-w-0 sm:w-[min(32rem,52%)]">
+          <span className="sr-only">设置哪句台词</span>
+          <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
+            {scriptLines.map((line, index) => <option key={index} value={index}>{lineLabel(line, index)}</option>)}
+          </select>
+        </label>
+      </div>
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
@@ -334,13 +346,9 @@ export function VirtualCharacterStageEditor({
         <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。可以拖动黑板或拖动金老师调整位置，也可以聚焦后使用方向键；按住 Shift 可一次移动 5%。人物位置和动作会随当前台词切换，黑板位置用于当前教学小节。</p>
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-        <label className="block space-y-1.5 text-sm font-medium">
-          <span className="block font-semibold text-[var(--foreground)]">设置哪句台词</span>
-          <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
-            {scriptLines.map((line, index) => <option key={index} value={index}>{lineLabel(line, index)}</option>)}
-          </select>
-        </label>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+        <p className="mb-3 text-sm font-bold text-[var(--foreground)]">金老师</p>
+        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <label className="block space-y-1.5 text-sm font-medium">
           <span className="block font-semibold text-[var(--foreground)]">人物动作</span>
           <select value={performance.pose} onChange={(event) => { onPerformanceChange(safeIndex, { pose: event.target.value as TeacherKimPose }); onDirty(); }} disabled={disabled} className={inputClass}>
@@ -356,9 +364,10 @@ export function VirtualCharacterStageEditor({
           <input type="range" min={75} max={125} step={5} value={Math.round(performance.characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, { characterScale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
         </label>
         <button type="button" onClick={() => { onPerformanceChange(safeIndex, { characterX: 75, characterY: 0, characterScale: 1 }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复默认位置</button>
+        </div>
       </div>
-      <div className="border-t border-[var(--border-subtle)] pt-4">
-        <p className="mb-3 text-sm font-semibold text-[var(--foreground)]">黑板位置</p>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+        <p className="mb-3 text-sm font-bold text-[var(--foreground)]">黑板</p>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <div className="grid grid-cols-2 gap-2">
             <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" inputMode="numeric" min={Math.ceil(blackboardBounds.minimumXPercent)} max={Math.floor(blackboardBounds.maximumXPercent)} value={Math.round(boundedBlackboardPlacement.x)} onChange={(event) => { updateBlackboardPlacement({ x: Number(event.target.value) || blackboardBounds.minimumXPercent }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
