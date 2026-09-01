@@ -169,6 +169,9 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /开场过渡/);
   assert.match(editor, /正式讲解/);
   assert.match(editor, /朗读与人物设置/);
+  assert.match(editor, /xl:grid-cols-2 xl:divide-x xl:divide-y-0/);
+  assert.match(editor, /mt-3 grid items-start gap-3 xl:grid-cols-2/);
+  assert.match(editor, /grid items-start gap-3 bg-\[var\(--muted\)\]\/15 p-4 xl:grid-cols-2/);
   assert.match(editor, /rounded-xl border border-\[var\(--border\)\] bg-\[var\(--card\)\] p-4 shadow-sm/);
   assert.match(editor, /增加台词/);
   assert.match(editor, /scriptLines\.map/);

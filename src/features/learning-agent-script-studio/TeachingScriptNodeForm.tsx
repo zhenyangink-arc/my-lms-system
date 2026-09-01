@@ -891,6 +891,7 @@ export function TeachingScriptNodeForm({
             <div className={formSectionClass}>
               <CardTitleWithHint title={<span id="script-group-title">小节基本设置</span>} description="设置小节名称和默认语音；默认语音可以一键应用到下面全部正式台词。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看小节基本设置说明" />
             </div>
+            <div className="grid divide-y divide-[var(--border)] xl:grid-cols-2 xl:divide-x xl:divide-y-0">
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>小节名称</span>
               <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} aria-invalid={Boolean(state.fieldErrors?.titleZh?.length) || undefined} aria-describedby={state.fieldErrors?.titleZh?.length ? "title-zh-error" : undefined} className={inputClass} />
@@ -945,18 +946,21 @@ export function TeachingScriptNodeForm({
                 </button>
               </div>
             </div>
+            </div>
             <div className={formSectionClass}>
               <CardTitleWithHint title="开场过渡" description="学生进入这个小节时，金老师在正式讲解加载前立即朗读的简短开场。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看开场过渡说明" />
             </div>
-            <div className={fieldClass}>
+            <div className="px-4 py-3">
               <CardTitleWithHint
-                title={<span id="buffer-line-label" className={formFieldLabelClass}>过渡台词</span>}
+                title={<span id="buffer-line-label" className="text-sm font-semibold">过渡台词</span>}
                 description="进入这个小节时，在正式讲解加载完成之前，老师立即先说的第一句话。用来填补网络等待的空白，不需要很长，一两句自然的过渡语就够了。"
                 headingLevel={3}
                 hintLabel="查看过渡台词说明"
               />
-              <div className="min-w-0 rounded-lg bg-[var(--muted)]/20 p-3">
-                <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+              <div className="mt-3 grid items-start gap-3 xl:grid-cols-2">
+                <div className="min-w-0 rounded-lg bg-[var(--muted)]/20 p-3">
+                  <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
+                </div>
                 <ScriptSpeechReview
                   text={bufferLineZh}
                   performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})}
@@ -968,7 +972,7 @@ export function TeachingScriptNodeForm({
             <div className={formSectionClass}>
               <CardTitleWithHint title="正式讲解" description="每条台词独立校对语音；人物动作、朗读语言和语速放在展开设置中。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看正式讲解说明" />
             </div>
-            <div className="space-y-3 bg-[var(--muted)]/15 p-4">
+            <div className="grid items-start gap-3 bg-[var(--muted)]/15 p-4 xl:grid-cols-2">
               {scriptLines.map((line, index) => (
                 <article key={index} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm">
                   <div className="mb-2 flex items-center justify-between gap-3">
@@ -990,7 +994,7 @@ export function TeachingScriptNodeForm({
                     />
                     <details className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--muted)]/20 px-3 py-2">
                       <summary className="min-h-8 cursor-pointer text-xs font-semibold leading-8 text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">朗读与人物设置</summary>
-                      <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2 xl:grid-cols-4">
+                      <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2">
                       <label className="space-y-1.5 text-xs font-medium">
                         <span className="block font-semibold text-[var(--foreground)]">人物动作</span>
                         <select
@@ -1105,7 +1109,7 @@ export function TeachingScriptNodeForm({
                 </article>
               ))}
               {editable && (
-                <div className="py-2">
+                <div className="py-2 xl:col-span-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -1125,7 +1129,7 @@ export function TeachingScriptNodeForm({
                   </button>
                 </div>
               )}
-              {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="text-xs text-[var(--status-danger)]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
+              {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="text-xs text-[var(--status-danger)] xl:col-span-2" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
             </div>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>没听懂时的提示</span>
