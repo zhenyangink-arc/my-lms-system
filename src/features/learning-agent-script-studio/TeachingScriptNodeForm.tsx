@@ -373,9 +373,12 @@ function ScriptSpeechReview({
     : state === "stale" || state === "missing"
       ? "text-[var(--status-warning)]"
       : "text-[var(--muted-foreground)]";
+  const reviewSurfaceClass = state === "ready"
+    ? "border-[var(--status-success)]/25 bg-[var(--status-success-surface)]"
+    : "border-[var(--border)] bg-[var(--card)]";
 
   return (
-    <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2.5" aria-busy={audioStatus === "loading" || checking}>
+    <div className={`mt-2 rounded-lg border px-3 py-2.5 ${reviewSurfaceClass}`} aria-busy={audioStatus === "loading" || checking}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className={`inline-flex min-w-0 items-center gap-1.5 text-xs font-semibold ${statusClass}`}>
           <StatusIcon size={15} className={state === "checking" ? "animate-spin motion-reduce:animate-none" : ""} aria-hidden="true" />
@@ -888,10 +891,10 @@ export function TeachingScriptNodeForm({
         <div className="min-w-0">
           <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" aria-labelledby="teaching-script-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="script-group-title">
-            <div className={formSectionClass}>
+            <div className="border-l-2 border-l-transparent bg-[var(--muted)]/50 px-4 py-3">
               <CardTitleWithHint title={<span id="script-group-title">小节基本设置</span>} description="设置小节名称和默认语音；默认语音可以一键应用到下面全部正式台词。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看小节基本设置说明" />
             </div>
-            <div className="grid divide-y divide-[var(--border)] xl:grid-cols-2 xl:divide-x xl:divide-y-0">
+            <div className="grid divide-y divide-[var(--border)] bg-[var(--muted)]/15 xl:grid-cols-2 xl:divide-x xl:divide-y-0">
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>小节名称</span>
               <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} aria-invalid={Boolean(state.fieldErrors?.titleZh?.length) || undefined} aria-describedby={state.fieldErrors?.titleZh?.length ? "title-zh-error" : undefined} className={inputClass} />
@@ -947,7 +950,7 @@ export function TeachingScriptNodeForm({
               </div>
             </div>
             </div>
-            <div className={formSectionClass}>
+            <div className="border-l-4 border-l-[var(--primary)] bg-[var(--accent)]/45 px-4 py-3">
               <CardTitleWithHint title="开场过渡" description="学生进入这个小节时，金老师在正式讲解加载前立即朗读的简短开场。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看开场过渡说明" />
             </div>
             <div className="px-4 py-3">
@@ -958,7 +961,7 @@ export function TeachingScriptNodeForm({
                 hintLabel="查看过渡台词说明"
               />
               <div className="mt-3 grid items-start gap-3 xl:grid-cols-2">
-                <div className="min-w-0 rounded-lg bg-[var(--muted)]/20 p-3">
+                <div className="min-w-0 rounded-lg bg-[var(--accent)]/30 p-3">
                   <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
                 </div>
                 <ScriptSpeechReview
@@ -969,15 +972,18 @@ export function TeachingScriptNodeForm({
                 />
               </div>
             </div>
-            <div className={formSectionClass}>
+            <div className="border-l-4 border-l-[var(--primary)] bg-[var(--card)] px-4 py-3">
               <CardTitleWithHint title="正式讲解" description="每条台词独立校对语音；人物动作、朗读语言和语速放在展开设置中。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看正式讲解说明" />
             </div>
-            <div className="grid items-start gap-3 bg-[var(--muted)]/15 p-4 xl:grid-cols-2">
+            <div className="grid items-start gap-4 bg-[var(--muted)]/25 p-4 xl:grid-cols-2">
               {scriptLines.map((line, index) => (
                 <article key={index} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <label htmlFor={`script-line-${index}`} className="text-sm font-bold text-[var(--foreground)]">台词 {index + 1}</label>
-                    <span className="text-xs text-[var(--muted-foreground)]">正式讲解</span>
+                  <div className="mb-3 flex items-center justify-between gap-3">
+                    <label htmlFor={`script-line-${index}`} className="flex items-center gap-2 text-sm font-bold text-[var(--foreground)]">
+                      <span className="flex size-7 items-center justify-center rounded-full bg-[var(--primary)] text-xs text-[var(--primary-foreground)]">{index + 1}</span>
+                      <span>台词 {index + 1}</span>
+                    </label>
+                    {index < scriptLines.length - 1 && scriptPerformances[index]?.autoContinueToNext && <span className="rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-semibold text-[var(--primary)]">已连接下一句</span>}
                   </div>
                     <FormattableTextarea
                       id={`script-line-${index}`}
@@ -992,7 +998,7 @@ export function TeachingScriptNodeForm({
                       maxLength={1600}
                       className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
                     />
-                    <details className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--muted)]/20 px-3 py-2">
+                    <details className="mt-2 border-t border-[var(--border)] px-1 py-2">
                       <summary className="min-h-8 cursor-pointer text-xs font-semibold leading-8 text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">朗读与人物设置</summary>
                       <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2">
                       <label className="space-y-1.5 text-xs font-medium">
@@ -1131,14 +1137,19 @@ export function TeachingScriptNodeForm({
               )}
               {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="text-xs text-[var(--status-danger)] xl:col-span-2" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
             </div>
-            <label className={fieldClass}>
-              <span className={formFieldLabelClass}>没听懂时的提示</span>
-              <FormattableTextarea name="hint_zh" defaultValue={configuredText(node, "hint")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
-            </label>
-            <label className={fieldClass}>
-              <span className={formFieldLabelClass}>再举一个例子</span>
-              <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
-            </label>
+            <div className="border-l-2 border-l-transparent bg-[var(--muted)]/50 px-4 py-3">
+              <CardTitleWithHint title="补充讲解" description="学生主动表示没听懂或需要更多例子时，才展示这里的内容。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看补充讲解说明" />
+            </div>
+            <div className="grid gap-4 bg-[var(--muted)]/15 p-4 xl:grid-cols-2">
+              <label className="space-y-2 text-sm font-medium">
+                <span className="font-semibold text-[var(--foreground)]">没听懂时的提示</span>
+                <FormattableTextarea name="hint_zh" defaultValue={configuredText(node, "hint")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+              </label>
+              <label className="space-y-2 text-sm font-medium">
+                <span className="font-semibold text-[var(--foreground)]">再举一个例子</span>
+                <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+              </label>
+            </div>
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
               <div className="mt-4 grid gap-4">

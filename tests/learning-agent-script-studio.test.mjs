@@ -169,9 +169,14 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /开场过渡/);
   assert.match(editor, /正式讲解/);
   assert.match(editor, /朗读与人物设置/);
+  assert.match(editor, /reviewSurfaceClass/);
+  assert.match(editor, /status-success-surface/);
+  assert.match(editor, /已连接下一句/);
+  assert.match(editor, /补充讲解/);
+  assert.doesNotMatch(editor, /text-xs text-\[var\(--muted-foreground\)\]">正式讲解/);
   assert.match(editor, /xl:grid-cols-2 xl:divide-x xl:divide-y-0/);
   assert.match(editor, /mt-3 grid items-start gap-3 xl:grid-cols-2/);
-  assert.match(editor, /grid items-start gap-3 bg-\[var\(--muted\)\]\/15 p-4 xl:grid-cols-2/);
+  assert.match(editor, /grid items-start gap-4 bg-\[var\(--muted\)\]\/25 p-4 xl:grid-cols-2/);
   assert.match(editor, /rounded-xl border border-\[var\(--border\)\] bg-\[var\(--card\)\] p-4 shadow-sm/);
   assert.match(editor, /增加台词/);
   assert.match(editor, /scriptLines\.map/);
@@ -289,7 +294,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /md:grid-cols-\[7rem_minmax\(0,1fr\)\]/);
   assert.match(editor, /min-w-\[9\.5rem\] flex-1/);
   assert.match(editor, /rounded-lg bg-\[var\(--muted\)\]\/30 p-3/);
-  assert.match(editor, /rounded-lg bg-\[var\(--muted\)\]\/20 p-3/);
+  assert.match(editor, /rounded-lg bg-\[var\(--accent\)\]\/30 p-3/);
   assert.doesNotMatch(editor, /<p className="app-muted-text mt-1 text-xs leading-5">需要学生看图/);
   assert.match(editor, /display_items_zh/);
   assert.match(editor, /student_task_target_key/);
