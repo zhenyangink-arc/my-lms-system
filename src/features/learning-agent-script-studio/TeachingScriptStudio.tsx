@@ -320,7 +320,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
       </section>
 
       <div className={`grid min-h-[760px] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] ${columnsGridClass}`}>
-        <nav className="border-b bg-[var(--muted)]/25 xl:sticky xl:top-20 xl:max-h-[calc(100dvh-6rem)] xl:self-start xl:border-b-0 xl:border-r" aria-label="课程结构">
+        <nav className="border-b bg-[var(--muted)]/25 xl:sticky xl:top-0 xl:max-h-[calc(100dvh-1rem)] xl:self-start xl:border-b-0 xl:border-r" aria-label="课程结构">
           <div className="flex min-h-16 items-center justify-between gap-2 border-b px-4 py-3">
             {showStructureNav && (
               <div className="min-w-0">

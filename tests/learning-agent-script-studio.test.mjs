@@ -151,7 +151,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /id="subsection-editor-title">第 \{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /小节 · \{selectedNode\.title\["zh-CN"\]\}/);
   assert.match(studio, /sticky top-0 z-30/);
-  assert.match(studio, /xl:sticky xl:top-20/);
+  assert.match(studio, /xl:sticky xl:top-0/);
+  assert.doesNotMatch(studio, /xl:sticky xl:top-20/);
   assert.match(studio, /仅第 1 章可预览完整流程/);
   assert.doesNotMatch(studio, /title="目前只有第 1 章接了真实学生页面/);
   assert.match(actions, /createTeachingScriptDraftAction/);
