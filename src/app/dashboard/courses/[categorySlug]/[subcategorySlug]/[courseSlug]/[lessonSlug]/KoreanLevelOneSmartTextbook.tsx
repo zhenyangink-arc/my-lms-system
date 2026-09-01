@@ -42,6 +42,7 @@ import {
   XCircle,
 } from "lucide-react";
 import { type CSSProperties, type PointerEvent as ReactPointerEvent, type ReactNode, useEffect, useRef, useState, useSyncExternalStore, useTransition } from "react";
+import { createPortal } from "react-dom";
 
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
@@ -105,6 +106,18 @@ function teachingViewportFromSnapshot(snapshot: string) {
     width: Number.isFinite(width) ? width : TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportWidthPx,
     height: Number.isFinite(height) ? height : TEACHING_VIRTUAL_CHARACTER_STAGE.preview.fallbackViewportHeightPx,
   };
+}
+
+function TeachingStagePortal({
+  active,
+  target,
+  children,
+}: {
+  active: boolean;
+  target: HTMLElement | null;
+  children: ReactNode;
+}) {
+  return active && target ? createPortal(children, target) : children;
 }
 
 export type SmartTextbookShellProps = {
@@ -6110,6 +6123,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     </div>
                   )}
                 {teachingAreaCharacter?.kind === "uply-teacher" && (
+                  <TeachingStagePortal active={tutorStarted} target={textbookRef.current}>
                   <div
                     className={tutorStarted
                       ? "pointer-events-none fixed left-0 z-40"
@@ -6250,6 +6264,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   )}
                   </div>
                   </div>
+                  </TeachingStagePortal>
                 )}
                 {teachingAreaCharacter?.kind !== "uply-teacher" && (
                   <div className="relative z-10 pt-2">

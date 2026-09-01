@@ -551,6 +551,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /top: TEACHING_VIRTUAL_CHARACTER_STAGE\.viewportTopPx/);
   assert.match(shell, /bottom: TEACHING_VIRTUAL_CHARACTER_STAGE\.viewportBottomPx/);
   assert.match(shell, /width: "100%",[\s\S]*containerType: "size"/);
+  assert.match(shell, /createPortal\(children, target\)/);
+  assert.match(shell, /TeachingStagePortal active=\{tutorStarted\} target=\{textbookRef\.current\}/);
   assert.doesNotMatch(shell, /tutorStarted[\s\S]{0,600}width: teachingAreaExpanded/);
   assert.match(shell, /height: tutorStarted \? `\$\{TEACHING_VIRTUAL_CHARACTER_STAGE\.characterHeightPercent\}%`/);
   assert.match(shell, /bottom-\[180px\] top-\[64px\]/);
