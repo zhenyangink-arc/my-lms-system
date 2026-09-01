@@ -5998,6 +5998,26 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         >
           <div className="relative flex shrink-0 items-center justify-center border-b border-[color-mix(in_srgb,var(--status-warning)_4%,var(--border-subtle))] px-2" style={{ height: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.heightPx }}>
             {(!teachingAreaCollapsed || teachingAreaExpanded) && (
+              <div className="absolute left-3 flex max-w-[calc(50%_-_3.5rem)] min-w-0 items-center gap-2 overflow-hidden sm:left-4" data-teaching-context>
+                <span className="hidden shrink-0 text-[10px] font-bold text-[var(--foreground-muted)] 2xl:inline">
+                  {locale === "ko-KR" ? "현재 수업" : "当前教学"}
+                </span>
+                <span className="truncate text-xs font-semibold text-[var(--foreground-secondary)]">
+                  {chapterLabel} · {localize(textbook.chapter.title)}
+                </span>
+                <span className="hidden h-3.5 w-px shrink-0 bg-[var(--border-subtle)] sm:block" aria-hidden="true" />
+                <CardTitleWithHint
+                  title={localize(activeModule.title)}
+                  description={localize(activeModule.description)}
+                  headingLevel={3}
+                  className="hidden min-w-0 items-center sm:flex"
+                  titleClassName="truncate text-xs font-bold leading-5 text-[var(--foreground)]"
+                  hintClassName="-my-3 -mr-3 shrink-0"
+                  hintLabel={locale === "ko-KR" ? "현재 수업 안내 보기" : "查看当前教学说明"}
+                />
+              </div>
+            )}
+            {(!teachingAreaCollapsed || teachingAreaExpanded) && (
               <div className="flex min-w-0 items-center justify-center gap-2.5 px-12">
                 <Presentation size={19} className="shrink-0 text-[var(--status-warning)]" aria-hidden="true" />
                 <h2 className="truncate text-base font-bold text-[var(--foreground)]">{locale === "ko-KR" ? "수업 영역" : "教学区"}</h2>
@@ -6031,21 +6051,6 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               style={teachingAreaExpanded ? { maxWidth: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.focusedContentMaxWidthPx } : undefined}
               data-smart-textbook-teaching-area
             >
-              <div className="flex min-w-0 items-center gap-2.5">
-                <span className="shrink-0 text-[10px] font-bold text-[var(--foreground-muted)]">{locale === "ko-KR" ? "현재 수업" : "当前教学"}</span>
-                <span className="shrink-0 text-[12px] font-semibold text-[var(--foreground-secondary)]">{chapterLabel} · {localize(textbook.chapter.title)}</span>
-                <span className="h-3.5 w-px shrink-0 bg-[var(--border-subtle)]" aria-hidden="true" />
-                <CardTitleWithHint
-                  title={localize(activeModule.title)}
-                  description={localize(activeModule.description)}
-                  headingLevel={3}
-                  className="min-w-0 items-center"
-                  titleClassName="truncate text-sm font-bold leading-5 text-[var(--foreground)]"
-                  hintClassName="-my-3 -mr-3 shrink-0"
-                  hintLabel={locale === "ko-KR" ? "현재 수업 안내 보기" : "查看当前教学说明"}
-                />
-              </div>
-
               <div
                 className={immersiveBlackboardPositioned
                   ? "pointer-events-none fixed z-20 transition-[left,top,transform] duration-300 motion-reduce:transition-none"

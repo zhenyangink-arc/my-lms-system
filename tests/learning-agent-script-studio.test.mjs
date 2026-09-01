@@ -602,6 +602,8 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /显示学习区/);
   assert.doesNotMatch(shell, /互动学习区|상호작용 학습 영역/);
   assert.match(shell, /after:left-\[var\(--learning-header-inset\)\] after:right-\[var\(--learning-header-inset\)\]/);
+  assert.match(shell, /data-teaching-context/);
+  assert.ok(shell.indexOf("data-teaching-context") < shell.lastIndexOf("data-smart-textbook-teaching-area"));
   assert.match(shell, /learningHeaderTargets\.map/);
   assert.match(shell, /getSmartTextbookSkeletonPageLabels/);
   assert.match(shell, /learningHeaderCompletionPercent/);
