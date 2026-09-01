@@ -209,7 +209,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /buffer_line_zh/);
   assert.match(editor, /buffer_line_ko/);
   assert.match(editor, /item\.locale === "zh-CN" && item\.segmentIndex === 199/);
-  assert.match(editor, /item\.locale === "ko-KR" && item\.segmentIndex === 199/);
+  assert.doesNotMatch(editor, /item\.locale === "ko-KR" && item\.segmentIndex === 199/);
+  assert.doesNotMatch(editor, /韩文标题与台词/);
+  assert.match(editor, /type="hidden" name="title_ko" value=\{node\.title\["ko-KR"\]\}/);
+  assert.match(editor, /type="hidden" name="buffer_line_ko" value=\{configuredText\(node, "bufferLine", "ko-KR"\)\}/);
+  assert.match(editor, /type="hidden" name="script_ko" value=\{node\.script\["ko-KR"\]\}/);
   assert.match(editor, /ariaLabelledBy="buffer-line-label"/);
   assert.match(editor, /min-h-24 resize-y/);
   assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
