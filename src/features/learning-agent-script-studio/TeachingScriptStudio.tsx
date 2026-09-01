@@ -426,7 +426,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   <CardTitleWithHint
                     title={
                       <span className="flex flex-wrap items-center gap-2">
-                        <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节 · {selectedNode.title["zh-CN"]}</span>
+                        <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节</span>
                         <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
                       </span>
                     }

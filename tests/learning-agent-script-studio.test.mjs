@@ -148,6 +148,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /aria-controls=\{selected \? `teaching-step-\$\{lessonModule\.id\}-nodes` : undefined\}/);
   assert.match(studio, /expanded \? "rotate-180"/);
   assert.match(studio, /发布学习步骤/);
+  assert.match(studio, /id="subsection-editor-title">第 \{selectedVersion\.nodes\.findIndex/);
+  assert.doesNotMatch(studio, /小节 · \{selectedNode\.title\["zh-CN"\]\}/);
   assert.match(studio, /sticky top-0 z-30/);
   assert.match(studio, /xl:sticky xl:top-20/);
   assert.match(studio, /仅第 1 章可预览完整流程/);
@@ -269,7 +271,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /hintLabel="查看学习区联动说明"/);
   assert.match(editor, /description=\{step\.description\}/);
   assert.match(editor, /hintLabel=\{`查看\$\{step\.label\}说明`\}/);
-  assert.match(editor, /absolute right-3 top-1\/2/);
+  assert.match(editor, /absolute right-2\.5 top-1\/2/);
+  assert.match(editor, /md:grid-cols-\[7rem_minmax\(0,1fr\)\]/);
+  assert.match(editor, /min-w-\[9\.5rem\] flex-1/);
+  assert.match(editor, /rounded-lg bg-\[var\(--muted\)\]\/30 p-3/);
+  assert.match(editor, /rounded-lg bg-\[var\(--muted\)\]\/20 p-3/);
   assert.doesNotMatch(editor, /<p className="app-muted-text mt-1 text-xs leading-5">需要学生看图/);
   assert.match(editor, /display_items_zh/);
   assert.match(editor, /student_task_target_key/);

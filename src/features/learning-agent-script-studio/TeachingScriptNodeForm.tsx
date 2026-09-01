@@ -375,7 +375,7 @@ function ScriptSpeechReview({
       : "text-[var(--muted-foreground)]";
 
   return (
-    <div className="mt-3 border border-[var(--border)] bg-[var(--muted)]/25 px-3 py-3" aria-busy={audioStatus === "loading" || checking}>
+    <div className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 py-2.5" aria-busy={audioStatus === "loading" || checking}>
       <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
         <span className={`inline-flex min-w-0 items-center gap-1.5 text-xs font-semibold ${statusClass}`}>
           <StatusIcon size={15} className={state === "checking" ? "animate-spin motion-reduce:animate-none" : ""} aria-hidden="true" />
@@ -506,7 +506,7 @@ const editorSteps: Array<{
 ];
 
 const panelClass = "space-y-4";
-const fieldClass = "grid gap-2 px-4 py-4 text-sm font-medium md:grid-cols-[10rem_minmax(0,1fr)]";
+const fieldClass = "grid gap-2 px-4 py-3 text-sm font-medium md:grid-cols-[7rem_minmax(0,1fr)]";
 const inputClass = "app-input min-h-11 w-full border px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-65";
 const formGroupClass = "overflow-hidden rounded-xl divide-y divide-[var(--border)] border border-[var(--border)] bg-[var(--card)]";
 const formSectionClass = "border-l-2 border-l-[var(--primary)] bg-[var(--muted)]/30 px-4 py-3";
@@ -836,14 +836,14 @@ export function TeachingScriptNodeForm({
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
 
-      <div className="grid grid-cols-2 gap-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/35 p-1 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
+      <div className="flex flex-wrap gap-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/35 p-1" role="tablist" aria-label="教学小节编辑步骤">
         {editorSteps.map((step, index) => {
           const Icon = step.icon;
           const selected = editorSection === step.id;
           return (
             <div
               key={step.id}
-              className={`relative min-h-14 rounded-lg transition ${selected ? "bg-[var(--card)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]/70"}`}
+              className={`relative min-h-12 min-w-[9.5rem] flex-1 rounded-lg transition sm:flex-none ${selected ? "bg-[var(--card)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]/70"}`}
             >
               <button
                 ref={(element) => { tabRefs.current[index] = element; }}
@@ -856,7 +856,7 @@ export function TeachingScriptNodeForm({
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setEditorSection(step.id)}
                 onKeyDown={(event) => handleEditorTabKeyDown(event, index)}
-                className="flex min-h-14 w-full min-w-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-3 pr-12 text-left text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
+                className="flex min-h-12 w-full min-w-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-2 pr-10 text-left text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
               >
                 <span className="tabular-nums text-[var(--muted-foreground)]">{index + 1}</span>
                 <Icon size={15} className="shrink-0" aria-hidden="true" />
@@ -866,7 +866,7 @@ export function TeachingScriptNodeForm({
                 title={<span className="sr-only">{step.label}</span>}
                 description={step.description}
                 headingLevel={3}
-                className="absolute right-3 top-1/2 shrink-0 -translate-y-1/2 gap-0"
+                className="absolute right-2.5 top-1/2 shrink-0 -translate-y-1/2 gap-0"
                 titleClassName="sr-only"
                 hintLabel={`查看${step.label}说明`}
               />
@@ -905,7 +905,7 @@ export function TeachingScriptNodeForm({
                 hintClassName="-my-3 -mr-3"
                 hintLabel="查看小节默认语音说明"
               />
-              <div className="flex flex-wrap items-end gap-3">
+              <div className="flex flex-wrap items-end gap-3 rounded-lg bg-[var(--muted)]/30 p-3">
                 <label className="space-y-1.5 text-xs font-medium">
                   <span className="block font-semibold text-[var(--foreground)]">朗读语言</span>
                   <select
@@ -939,7 +939,7 @@ export function TeachingScriptNodeForm({
                     markDirty();
                     setScriptPerformances((current) => current.map((item) => ({ ...item, voiceEnabled: true, voiceLanguage: sectionDefaultVoice.language, voiceRate: sectionDefaultVoice.rate })));
                   }}
-                  className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"
+                  className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 sm:ml-auto"
                 >
                   应用到全部台词
                 </button>
@@ -952,7 +952,7 @@ export function TeachingScriptNodeForm({
                 headingLevel={3}
                 hintLabel="查看过渡台词说明"
               />
-              <div className="min-w-0">
+              <div className="min-w-0 rounded-lg bg-[var(--muted)]/20 p-3">
                 <FormattableTextarea id="buffer-line-zh" name="buffer_line_zh" value={bufferLineZh} onChange={setBufferLineZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={200} placeholder="例如：稍等一下，我看看这里怎么讲…" ariaLabelledBy="buffer-line-label" className={`${inputClass} min-h-24 resize-y py-3 text-sm leading-6`} />
                 <ScriptSpeechReview
                   text={bufferLineZh}
