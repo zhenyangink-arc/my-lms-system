@@ -113,8 +113,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(service, /publishedSpeechAssetsByLessonAndKey/);
   assert.match(service, /left\.order - right\.order/);
   assert.doesNotMatch(service, /left\.chapterNumber - right\.chapterNumber \|\| left\.code\.localeCompare/);
-  assert.match(studio, /章节与学习步骤/);
-  assert.match(studio, /自定义教学流程/);
+  assert.match(studio, /课程结构/);
+  assert.doesNotMatch(studio, /自定义教学流程/);
   assert.match(studio, /新增小节/);
   assert.match(studio, /第 \{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /aria-modal="true"/);
@@ -128,8 +128,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /请先保存当前小节，再执行这个操作/);
   assert.match(studio, /FormSubmitButton/);
   assert.match(studio, /正在校验并发布/);
-  assert.match(studio, /xl:grid-cols-\[15rem_19rem_minmax\(0,1fr\)\]/);
-  assert.match(studio, /max-h-80 overflow-y-auto/);
+  assert.match(studio, /xl:grid-cols-\[20rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /showStructureNav/);
+  assert.doesNotMatch(studio, /showStepList/);
+  assert.match(studio, /发布学习步骤/);
+  assert.match(studio, /sticky top-0 z-30/);
+  assert.match(studio, /xl:sticky xl:top-20/);
   assert.match(studio, /仅第 1 章可预览完整流程/);
   assert.doesNotMatch(studio, /title="目前只有第 1 章接了真实学生页面/);
   assert.match(actions, /createTeachingScriptDraftAction/);
@@ -168,7 +172,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /min-h-24 resize-y/);
   assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
   assert.match(scriptRuntime, /configuredText\(nextNode\.configuration, "bufferLine", locale\)/);
-  assert.match(editor, /教学内容/);
+  assert.match(editor, /画面与人物/);
   assert.match(editor, /学生展示内容/);
   assert.match(editor, /formSectionClass/);
   assert.match(editor, /formGroupClass/);
@@ -241,8 +245,9 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(editor, /2xl:grid-cols-\[minmax\(0,4fr\)_minmax\(0,6fr\)\]/);
   assert.doesNotMatch(editor, /展示方式/);
   assert.doesNotMatch(editor, /展示说明/);
-  assert.match(editor, /互动设置/);
-  assert.match(editor, /流程设置/);
+  assert.match(editor, /画面与人物/);
+  assert.match(editor, /学生互动/);
+  assert.match(editor, /后续流程/);
   assert.doesNotMatch(editor, /学生端预览/);
   assert.match(editor, /CardTitleWithHint/);
   assert.match(editor, /hintLabel="查看学习区联动说明"/);

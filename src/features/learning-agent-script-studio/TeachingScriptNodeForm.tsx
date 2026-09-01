@@ -500,15 +500,15 @@ const editorSteps: Array<{
   icon: typeof ScrollText;
 }> = [
   { id: "script", label: "老师台词", description: "先写这一小节怎么讲", icon: ScrollText },
-  { id: "content", label: "教学内容", description: "再安排学生看到什么", icon: BookOpenText },
-  { id: "interaction", label: "互动设置", description: "按需让学生参与", icon: MessageCircleQuestion },
-  { id: "flow", label: "流程设置", description: "最后决定如何继续", icon: Route },
+  { id: "content", label: "画面与人物", description: "安排黑板内容、人物动作和学习区联动", icon: BookOpenText },
+  { id: "interaction", label: "学生互动", description: "按需让学生参与并设置反馈", icon: MessageCircleQuestion },
+  { id: "flow", label: "后续流程", description: "最后决定如何进入下一小节", icon: Route },
 ];
 
 const panelClass = "space-y-4";
 const fieldClass = "grid gap-2 px-4 py-4 text-sm font-medium md:grid-cols-[10rem_minmax(0,1fr)]";
 const inputClass = "app-input min-h-11 w-full border px-3 outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-65";
-const formGroupClass = "divide-y divide-[var(--border)] border border-[var(--border)] bg-[var(--card)]";
+const formGroupClass = "overflow-hidden rounded-xl divide-y divide-[var(--border)] border border-[var(--border)] bg-[var(--card)]";
 const formSectionClass = "border-l-2 border-l-[var(--primary)] bg-[var(--muted)]/30 px-4 py-3";
 const formSectionTitleClass = "text-sm font-semibold leading-6 text-[var(--foreground)]";
 const formFieldLabelClass = "pt-3 font-semibold leading-6 text-[var(--foreground)]";
@@ -830,22 +830,20 @@ export function TeachingScriptNodeForm({
     window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
   }, [state.fieldErrors, state.status]);
 
-  const nextNode = allNodes.find((item) => item.key === nextNodeKey);
-
   return (
     <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
 
-      <div className="grid grid-cols-2 gap-2 border-b border-[var(--border)] pb-4 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
+      <div className="grid grid-cols-2 gap-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/35 p-1 sm:grid-cols-4" role="tablist" aria-label="教学小节编辑步骤">
         {editorSteps.map((step, index) => {
           const Icon = step.icon;
           const selected = editorSection === step.id;
           return (
             <div
               key={step.id}
-              className={`relative min-h-14 border transition ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)] bg-[var(--card)]"}`}
+              className={`relative min-h-14 rounded-lg transition ${selected ? "bg-[var(--card)] text-[var(--primary)] shadow-sm" : "text-[var(--foreground-secondary)] hover:bg-[var(--card)]/70"}`}
             >
               <button
                 ref={(element) => { tabRefs.current[index] = element; }}
@@ -858,7 +856,7 @@ export function TeachingScriptNodeForm({
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setEditorSection(step.id)}
                 onKeyDown={(event) => handleEditorTabKeyDown(event, index)}
-                className="flex min-h-14 w-full min-w-0 items-center gap-2 whitespace-nowrap px-3 py-3 pr-12 text-left text-xs font-bold transition hover:bg-[var(--muted)]/35 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
+                className="flex min-h-14 w-full min-w-0 items-center gap-2 whitespace-nowrap rounded-lg px-3 py-3 pr-12 text-left text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]"
               >
                 <span className="tabular-nums text-[var(--muted-foreground)]">{index + 1}</span>
                 <Icon size={15} className="shrink-0" aria-hidden="true" />
@@ -1428,7 +1426,7 @@ export function TeachingScriptNodeForm({
       </div>
 
       {editable && (
-        <div className="sticky bottom-0 z-10 flex min-h-16 items-center justify-between gap-4 border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-[0_-8px_20px_color-mix(in_srgb,var(--background)_78%,transparent)]">
+        <div className="sticky bottom-0 z-20 flex min-h-16 items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-[0_-8px_20px_color-mix(in_srgb,var(--background)_78%,transparent)]">
           <p className={state.status === "error" ? "text-sm text-[var(--status-danger)]" : dirty ? "text-sm font-medium text-[var(--status-warning)]" : state.status === "success" ? "text-sm text-[var(--status-success)]" : "text-sm text-[var(--muted-foreground)]"} role={state.status === "error" ? "alert" : "status"} aria-live="polite">{dirty ? "有未保存的修改。保存后才会写入草稿。" : state.message || "修改会先保存到草稿，不会立即影响学生。"}</p>
           <button type="submit" disabled={pending} className="inline-flex min-h-11 shrink-0 items-center justify-center bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">{pending ? "正在保存…" : "保存当前小节"}</button>
         </div>
