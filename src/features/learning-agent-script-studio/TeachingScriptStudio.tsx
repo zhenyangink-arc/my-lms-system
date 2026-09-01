@@ -102,6 +102,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
     ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&moduleIndex=${previewModuleIndex}`
     : "";
   const [showStructureNav, setShowStructureNav] = useState(true);
+  const [collapsedChapterNumbers, setCollapsedChapterNumbers] = useState<Set<number>>(() => new Set());
   const [expandedModuleId, setExpandedModuleId] = useState(firstModule?.id ?? "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
@@ -178,6 +179,15 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
     setVersionId(nextVersion?.id ?? "");
     setNodeId(nextVersion?.nodes[0]?.id ?? "");
     setExpandedModuleId(nextModuleId);
+  }
+
+  function toggleChapter(chapterNumber: number) {
+    setCollapsedChapterNumbers((current) => {
+      const next = new Set(current);
+      if (next.has(chapterNumber)) next.delete(chapterNumber);
+      else next.add(chapterNumber);
+      return next;
+    });
   }
 
   function selectVersion(nextVersionId: string) {
@@ -293,10 +303,17 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           </div>
           {showStructureNav && (
           <div className="max-h-[32rem] overflow-y-auto p-2 xl:max-h-[calc(100dvh-10rem)]">
-            {chapters.map(([chapterNumber, modules]) => (
+            {chapters.map(([chapterNumber, modules]) => {
+              const chapterExpanded = !collapsedChapterNumbers.has(chapterNumber);
+              return (
               <section key={chapterNumber} className="mb-4">
-                <h3 className="px-2 py-2 text-xs font-semibold text-[var(--muted-foreground)]">第 {chapterNumber} 章 · {modules[0]?.chapterTitle["zh-CN"]}</h3>
-                <div className="space-y-1">
+                <h3>
+                  <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-xs font-semibold text-[var(--muted-foreground)] transition hover:bg-[var(--card)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
+                    <span>第 {chapterNumber} 章 · {modules[0]?.chapterTitle["zh-CN"]}</span>
+                    <ChevronDown size={15} className={`shrink-0 transition-transform motion-reduce:transition-none ${chapterExpanded ? "rotate-180" : ""}`} aria-hidden="true" />
+                  </button>
+                </h3>
+                {chapterExpanded && <div id={`teaching-chapter-${chapterNumber}-steps`} className="space-y-1">
                   {modules.map((lessonModule) => {
                     const version = preferredVersion(lessonModule);
                     const selected = lessonModule.id === selectedModule.id;
@@ -350,9 +367,10 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                       </div>
                     );
                   })}
-                </div>
+                </div>}
               </section>
-            ))}
+              );
+            })}
           </div>
           )}
         </nav>
