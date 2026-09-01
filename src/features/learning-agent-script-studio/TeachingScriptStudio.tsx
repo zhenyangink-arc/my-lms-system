@@ -101,13 +101,50 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const previewUrl = previewLessonSupported && selectedVersion
     ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&moduleIndex=${previewModuleIndex}`
     : "";
+  const navigationMemoryKey = `${pathname}:teaching-script-navigation:v1`;
   const [showStructureNav, setShowStructureNav] = useState(true);
-  const [collapsedChapterNumbers, setCollapsedChapterNumbers] = useState<Set<number>>(() => new Set());
-  const [expandedModuleId, setExpandedModuleId] = useState(firstModule?.id ?? "");
+  const [collapsedChapterNumbers, setCollapsedChapterNumbers] = useState<Set<number>>(
+    () => new Set(data.modules.map((item) => item.chapterNumber)),
+  );
+  const [expandedModuleId, setExpandedModuleId] = useState("");
+  const [navigationMemoryReady, setNavigationMemoryReady] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
     ? "xl:grid-cols-[20rem_minmax(0,1fr)]"
     : "xl:grid-cols-[3.5rem_minmax(0,1fr)]";
+
+  useEffect(() => {
+    const restoreNavigationMemory = window.setTimeout(() => {
+      const allChapterNumbers = new Set(data.modules.map((item) => item.chapterNumber));
+      try {
+        const stored = window.localStorage.getItem(navigationMemoryKey);
+        if (stored) {
+          const memory = JSON.parse(stored) as { expandedChapterNumbers?: unknown; expandedModuleId?: unknown };
+          const expandedChapterNumbers = Array.isArray(memory.expandedChapterNumbers)
+            ? new Set(memory.expandedChapterNumbers.filter((value): value is number => typeof value === "number"))
+            : new Set<number>();
+          setCollapsedChapterNumbers(new Set([...allChapterNumbers].filter((chapterNumber) => !expandedChapterNumbers.has(chapterNumber))));
+          setExpandedModuleId(typeof memory.expandedModuleId === "string" && data.modules.some((item) => item.id === memory.expandedModuleId) ? memory.expandedModuleId : "");
+        }
+      } catch {
+        window.localStorage.removeItem(navigationMemoryKey);
+      } finally {
+        setNavigationMemoryReady(true);
+      }
+    }, 0);
+    return () => window.clearTimeout(restoreNavigationMemory);
+  }, [data.modules, navigationMemoryKey]);
+
+  useEffect(() => {
+    if (!navigationMemoryReady) return;
+    const expandedChapterNumbers = [...new Set(data.modules.map((item) => item.chapterNumber))]
+      .filter((chapterNumber) => !collapsedChapterNumbers.has(chapterNumber));
+    try {
+      window.localStorage.setItem(navigationMemoryKey, JSON.stringify({ expandedChapterNumbers, expandedModuleId }));
+    } catch {
+      // The navigation still works when browser storage is unavailable.
+    }
+  }, [collapsedChapterNumbers, data.modules, expandedModuleId, navigationMemoryKey, navigationMemoryReady]);
 
   useEffect(() => {
     if (!hasUnsavedChanges) return;

@@ -133,6 +133,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(studio, /showStepList/);
   assert.match(studio, /expandedModuleId/);
   assert.match(studio, /collapsedChapterNumbers/);
+  assert.match(studio, /teaching-script-navigation:v1/);
+  assert.match(studio, /window\.localStorage\.getItem\(navigationMemoryKey\)/);
+  assert.match(studio, /window\.localStorage\.setItem\(navigationMemoryKey/);
+  assert.match(studio, /const \[expandedModuleId, setExpandedModuleId\] = useState\(""\)/);
+  assert.match(studio, /new Set\(data\.modules\.map\(\(item\) => item\.chapterNumber\)\)/);
   assert.match(studio, /toggleChapter\(chapterNumber\)/);
   assert.match(studio, /aria-expanded=\{chapterExpanded\}/);
   assert.match(studio, /teaching-chapter-\$\{chapterNumber\}-steps/);
