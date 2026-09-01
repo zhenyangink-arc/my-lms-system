@@ -2,9 +2,10 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
-import { configuredText } from "@/lib/learning-agent-script-runtime";
+import { configuredText, virtualCharacterForScriptSegment } from "@/lib/learning-agent-script-runtime";
 import { loadSmartDigitalTextbook } from "@/lib/smart-digital-textbook";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { teachingBlackboardDisplayForSegment, type TeachingBlackboardDisplay } from "@/lib/teaching-blackboard";
 import { SmartTextbookShell } from "@/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/SmartTextbookShell";
 
 const scriptVersionIdSchema = z.uuid();
@@ -44,6 +45,19 @@ export default async function TeachingScriptPreviewPage({
     "zh-CN": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "zh-CN"),
     "ko-KR": configuredText(previewOpeningNode?.configuration ?? null, "bufferLine", "ko-KR"),
   };
+  const previewOpeningConfiguration = previewOpeningNode?.configuration
+    && typeof previewOpeningNode.configuration === "object"
+    && !Array.isArray(previewOpeningNode.configuration)
+    ? previewOpeningNode.configuration as Record<string, unknown>
+    : {};
+  const previewOpeningTeachingDisplay = teachingBlackboardDisplayForSegment(
+    previewOpeningConfiguration.display ?? null,
+    0,
+  ) as TeachingBlackboardDisplay | null;
+  const previewOpeningTeachingCharacter = virtualCharacterForScriptSegment(
+    previewOpeningConfiguration,
+    0,
+  );
   const { data: previewBufferSpeechAssets } = previewOpeningNode?.id
     ? await admin
         .from("learning_agent_script_audio_assets")
@@ -83,6 +97,8 @@ export default async function TeachingScriptPreviewPage({
       previewStartModuleIndex={startModuleIndex}
       previewOpeningBufferLine={previewOpeningBufferLine}
       previewOpeningBufferSpeechAssetId={previewOpeningBufferSpeechAssetId}
+      previewOpeningTeachingDisplay={previewOpeningTeachingDisplay}
+      previewOpeningTeachingCharacter={previewOpeningTeachingCharacter}
     />
   );
 }

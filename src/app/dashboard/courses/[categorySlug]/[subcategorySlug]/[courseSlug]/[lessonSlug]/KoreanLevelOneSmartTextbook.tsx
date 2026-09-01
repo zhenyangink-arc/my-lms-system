@@ -138,6 +138,10 @@ export type SmartTextbookShellProps = {
   /** Buffer line for the preview's actual start node, including draft versions. */
   previewOpeningBufferLine?: Partial<Record<SmartLocale, string>>;
   previewOpeningBufferSpeechAssetId?: Partial<Record<SmartLocale, string>>;
+  /** First-frame stage data for admin full-flow preview. Keeping it in the
+   * RSC payload avoids showing the default board while preview-respond loads. */
+  previewOpeningTeachingDisplay?: TutorDisplay | null;
+  previewOpeningTeachingCharacter?: TutorCharacter | null;
   /** Open the 学习区 on this module instead of the first one, so it matches whichever module's script is being previewed. */
   previewStartModuleIndex?: number;
 };
@@ -4273,7 +4277,7 @@ function Activity({
   );
 }
 
-export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId }: SmartTextbookShellProps) {
+export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId, previewOpeningTeachingDisplay, previewOpeningTeachingCharacter }: SmartTextbookShellProps) {
   const isPreviewMode = Boolean(previewScriptVersionId);
   const textbookRef = useRef<HTMLDivElement>(null);
   const tutorWindowRef = useRef<HTMLDivElement>(null);
@@ -5101,13 +5105,17 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setLearningAreaManuallyHidden(false);
     tutorPausedRef.current = false;
     setTutorPaused(false);
-    if (!isPreviewMode) {
-      const resumableStage = restart ? null : textbook.activeTeachingSessions[activeModule.id];
-      const preloadedCharacter = (resumableStage?.teachingCharacter
-        ?? activeModule.openingTeachingCharacter) as TutorCharacter | null;
-      setTutorDisplay((resumableStage?.teachingDisplay ?? activeModule.openingTeachingDisplay) as TutorDisplay | null);
-      setTutorCharacter(preloadedCharacter ?? undefined);
-    }
+    const resumableStage = !isPreviewMode && !restart
+      ? textbook.activeTeachingSessions[activeModule.id]
+      : null;
+    const preloadedDisplay = isPreviewMode
+      ? previewOpeningTeachingDisplay
+      : resumableStage?.teachingDisplay ?? activeModule.openingTeachingDisplay;
+    const preloadedCharacter = isPreviewMode
+      ? previewOpeningTeachingCharacter
+      : resumableStage?.teachingCharacter ?? activeModule.openingTeachingCharacter;
+    setTutorDisplay((preloadedDisplay ?? null) as TutorDisplay | null);
+    setTutorCharacter((preloadedCharacter ?? null) as TutorCharacter | null);
     setTutorStarted(true);
     const restartBufferLine = restart
       ? activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || ""

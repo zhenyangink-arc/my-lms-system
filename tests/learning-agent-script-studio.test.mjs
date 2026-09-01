@@ -446,7 +446,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
 });
 
 test("学生教学区逐节点讲解并用真实活动答案完成理解检查", async () => {
-  const [route, shell, skeleton, cleanupMigration, textbookLoader, taskEventsRoute, runtime] = await Promise.all([
+  const [route, shell, skeleton, cleanupMigration, textbookLoader, taskEventsRoute, runtime, previewPage] = await Promise.all([
     readFile(new URL("src/app/api/learning-agent/respond/route.ts", root), "utf8"),
     readFile(new URL("src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx", root), "utf8"),
     readFile(new URL("src/lib/smart-textbook-skeleton.ts", root), "utf8"),
@@ -454,6 +454,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
     readFile(new URL("src/lib/smart-digital-textbook.ts", root), "utf8"),
     readFile(new URL("src/app/api/learning-agent/events/route.ts", root), "utf8"),
     readFile(new URL("src/lib/learning-agent-script-runtime.ts", root), "utf8"),
+    readFile(new URL("src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/preview/page.tsx", root), "utf8"),
   ]);
   assert.match(route, /const scriptVersionId = currentPublishedScript\?\.id \?\? existingSession\?\.script_version_id/);
   assert.match(route, /const sessionStatus = scriptNodes\.length > 0/);
@@ -497,7 +498,13 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /function restartTutorLesson\(\)/);
   assert.match(shell, /resumableStage\?\.teachingDisplay \?\? activeModule\.openingTeachingDisplay/);
   assert.match(shell, /resumableStage\?\.teachingCharacter[\s\S]{0,100}\?\? activeModule\.openingTeachingCharacter/);
-  assert.ok(shell.indexOf("setTutorDisplay((resumableStage") < shell.indexOf("setTutorStarted(true)"));
+  assert.match(shell, /isPreviewMode\s+\? previewOpeningTeachingDisplay/);
+  assert.match(shell, /isPreviewMode\s+\? previewOpeningTeachingCharacter/);
+  assert.ok(shell.indexOf("setTutorDisplay((preloadedDisplay") < shell.indexOf("setTutorStarted(true)"));
+  assert.match(previewPage, /teachingBlackboardDisplayForSegment/);
+  assert.match(previewPage, /virtualCharacterForScriptSegment/);
+  assert.match(previewPage, /previewOpeningTeachingDisplay=\{previewOpeningTeachingDisplay\}/);
+  assert.match(previewPage, /previewOpeningTeachingCharacter=\{previewOpeningTeachingCharacter\}/);
   assert.match(shell, /requestImmersiveFullscreen/);
   assert.match(shell, /requestFullscreen\(\{ navigationUI: "hide" \}\)/);
   assert.match(shell, /fullscreenRequestFailed/);
