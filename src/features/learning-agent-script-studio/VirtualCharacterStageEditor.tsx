@@ -285,26 +285,31 @@ export function VirtualCharacterStageEditor({
       <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
       <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
       <div className={`space-y-4 ${isFullscreen ? "p-0" : "px-4 py-4"}`}>
-      <div className={`flex flex-col gap-3 border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between ${isFullscreen ? "fixed inset-x-3 top-3 z-50 rounded-xl shadow-lg" : "rounded-xl"}`}>
-        {!isFullscreen ? (
+      {isFullscreen ? (
+        <button type="button" onClick={() => void toggleFullscreen()} className="fixed right-3 top-3 z-50 inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] px-3 text-xs font-bold text-[var(--foreground-secondary)] shadow-lg backdrop-blur-md hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+          <Minimize2 size={15} aria-hidden="true" />
+          退出全屏
+        </button>
+      ) : (
+        <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
             <p className="text-sm font-bold text-[var(--foreground)]">当前预览台词</p>
             <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">切换台词可检查对应的黑板画面、人物动作和站位。</p>
           </div>
-        ) : null}
-        <div className="flex min-w-0 gap-2 sm:w-[min(38rem,60%)]">
-        <label className="block min-w-0 flex-1">
-          <span className="sr-only">设置哪句台词</span>
-          <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
-            {scriptLines.map((line, index) => <option key={index} value={index}>{lineLabel(line, index)}</option>)}
-          </select>
-        </label>
-        <button type="button" onClick={() => void toggleFullscreen()} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
-          {isFullscreen ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}
-          {isFullscreen ? "退出全屏" : "放大全屏"}
-        </button>
+          <div className="flex min-w-0 gap-2 sm:w-[min(38rem,60%)]">
+            <label className="block min-w-0 flex-1">
+              <span className="sr-only">设置哪句台词</span>
+              <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
+                {scriptLines.map((line, index) => <option key={index} value={index}>{lineLabel(line, index)}</option>)}
+              </select>
+            </label>
+            <button type="button" onClick={() => void toggleFullscreen()} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+              <Maximize2 size={15} aria-hidden="true" />
+              放大全屏
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       {isFullscreen ? (
         <div className="fixed bottom-3 right-3 z-50 w-[min(22rem,calc(100%-1.5rem))] rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 shadow-lg backdrop-blur-md">
           <div className="mb-2 flex items-center justify-between gap-3">
@@ -350,7 +355,7 @@ export function VirtualCharacterStageEditor({
             <span className="font-semibold">第 1 章 · 你好？</span>
             <span className="h-[0.8cqw] w-px bg-[var(--border-subtle)]" aria-hidden="true" />
             <span className="font-bold text-[var(--foreground)]">课前导航</span>
-            <span className="ml-auto shrink-0 font-semibold text-[var(--primary)]">预览台词 {safeIndex + 1} / {scriptLines.length}</span>
+            {!isFullscreen ? <span className="ml-auto shrink-0 font-semibold text-[var(--primary)]">预览台词 {safeIndex + 1} / {scriptLines.length}</span> : null}
           </div>
           <div
             className="pointer-events-none absolute z-[5] overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
