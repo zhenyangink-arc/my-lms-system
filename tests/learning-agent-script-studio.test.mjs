@@ -129,6 +129,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /FormSubmitButton/);
   assert.match(studio, /正在校验并发布/);
   assert.match(studio, /xl:grid-cols-\[20rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /xl:grid-cols-\[minmax\(0,1fr\)\]/);
+  assert.doesNotMatch(studio, /xl:grid-cols-\[3\.5rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /!showStructureNav &&/);
+  assert.match(studio, /aria-label="显示课程结构"/);
   assert.match(studio, /showStructureNav/);
   assert.doesNotMatch(studio, /showStepList/);
   assert.match(studio, /expandedModuleId/);

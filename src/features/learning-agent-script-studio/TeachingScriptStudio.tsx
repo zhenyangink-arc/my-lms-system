@@ -111,7 +111,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
     ? "xl:grid-cols-[20rem_minmax(0,1fr)]"
-    : "xl:grid-cols-[3.5rem_minmax(0,1fr)]";
+    : "xl:grid-cols-[minmax(0,1fr)]";
 
   useEffect(() => {
     const restoreNavigationMemory = window.setTimeout(() => {
@@ -320,7 +320,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
       </section>
 
       <div className={`grid min-h-[760px] overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)] ${columnsGridClass}`}>
-        <nav className="border-b bg-[var(--muted)]/25 xl:sticky xl:top-0 xl:max-h-[calc(100dvh-1rem)] xl:self-start xl:border-b-0 xl:border-r" aria-label="课程结构">
+        <nav className={`${showStructureNav ? "block" : "hidden"} border-b bg-[var(--muted)]/25 xl:sticky xl:top-0 xl:max-h-[calc(100dvh-1rem)] xl:self-start xl:border-b-0 xl:border-r`} aria-label="课程结构">
           <div className="flex min-h-16 items-center justify-between gap-2 border-b px-4 py-3">
             {showStructureNav && (
               <div className="min-w-0">
@@ -422,19 +422,26 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           {selectedNode && selectedVersion ? (
             <>
               <header className="flex min-h-16 items-center justify-between gap-4 border-b bg-[var(--card)] px-5 py-3">
-                <div className="min-w-0">
-                  <CardTitleWithHint
-                    title={
-                      <span className="flex flex-wrap items-center gap-2">
-                        <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节</span>
-                        <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
-                      </span>
-                    }
-                    description="依次设置老师台词、画面与人物、学生互动和后续流程。"
-                    headingLevel={2}
-                    titleClassName="text-base font-bold"
-                    hintLabel="查看教学小节编辑说明"
-                  />
+                <div className="flex min-w-0 items-center gap-3">
+                  {!showStructureNav && (
+                    <button type="button" onClick={() => setShowStructureNav(true)} aria-label="显示课程结构" aria-expanded={false} className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                      <PanelLeftOpen size={15} aria-hidden="true" />
+                    </button>
+                  )}
+                  <div className="min-w-0">
+                    <CardTitleWithHint
+                      title={
+                        <span className="flex flex-wrap items-center gap-2">
+                          <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节</span>
+                          <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
+                        </span>
+                      }
+                      description="依次设置老师台词、画面与人物、学生互动和后续流程。"
+                      headingLevel={2}
+                      titleClassName="text-base font-bold"
+                      hintLabel="查看教学小节编辑说明"
+                    />
+                  </div>
                 </div>
                 {editable && selectedVersion.nodes.length > 1 && (
                   <details className="group relative">
