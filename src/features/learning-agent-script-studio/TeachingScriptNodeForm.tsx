@@ -831,7 +831,7 @@ export function TeachingScriptNodeForm({
   }, [state.fieldErrors, state.status]);
 
   return (
-    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
+    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="mx-auto max-w-[75rem] space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
@@ -889,7 +889,7 @@ export function TeachingScriptNodeForm({
           <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" aria-labelledby="teaching-script-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="script-group-title">
             <div className={formSectionClass}>
-              <CardTitleWithHint title={<span id="script-group-title">小节讲解</span>} description="小节名称和老师台词由你决定。提示与补充例子只在学生主动需要时出现。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看小节讲解说明" />
+              <CardTitleWithHint title={<span id="script-group-title">小节基本设置</span>} description="设置小节名称和默认语音；默认语音可以一键应用到下面全部正式台词。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看小节基本设置说明" />
             </div>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>小节名称</span>
@@ -945,6 +945,9 @@ export function TeachingScriptNodeForm({
                 </button>
               </div>
             </div>
+            <div className={formSectionClass}>
+              <CardTitleWithHint title="开场过渡" description="学生进入这个小节时，金老师在正式讲解加载前立即朗读的简短开场。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看开场过渡说明" />
+            </div>
             <div className={fieldClass}>
               <CardTitleWithHint
                 title={<span id="buffer-line-label" className={formFieldLabelClass}>过渡台词</span>}
@@ -962,11 +965,16 @@ export function TeachingScriptNodeForm({
                 />
               </div>
             </div>
-            <div className="divide-y divide-[var(--border)]">
+            <div className={formSectionClass}>
+              <CardTitleWithHint title="正式讲解" description="每条台词独立校对语音；人物动作、朗读语言和语速放在展开设置中。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看正式讲解说明" />
+            </div>
+            <div className="space-y-3 bg-[var(--muted)]/15 p-4">
               {scriptLines.map((line, index) => (
-                <div key={index} className={fieldClass}>
-                  <label htmlFor={`script-line-${index}`} className={formFieldLabelClass}>台词 {index + 1}</label>
-                  <div>
+                <article key={index} className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <label htmlFor={`script-line-${index}`} className="text-sm font-bold text-[var(--foreground)]">台词 {index + 1}</label>
+                    <span className="text-xs text-[var(--muted-foreground)]">正式讲解</span>
+                  </div>
                     <FormattableTextarea
                       id={`script-line-${index}`}
                       name="script_zh"
@@ -980,7 +988,9 @@ export function TeachingScriptNodeForm({
                       maxLength={1600}
                       className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
                     />
-                    <div className="mt-3 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                    <details className="mt-2 rounded-lg border border-[var(--border)] bg-[var(--muted)]/20 px-3 py-2">
+                      <summary className="min-h-8 cursor-pointer text-xs font-semibold leading-8 text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">朗读与人物设置</summary>
+                      <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2 xl:grid-cols-4">
                       <label className="space-y-1.5 text-xs font-medium">
                         <span className="block font-semibold text-[var(--foreground)]">人物动作</span>
                         <select
@@ -1046,7 +1056,8 @@ export function TeachingScriptNodeForm({
                           <input type="hidden" name="script_voice_rate" value={String(scriptPerformances[index]?.voiceRate ?? 1)} />
                         </>
                       )}
-                    </div>
+                      </div>
+                    </details>
                     <ScriptSpeechReview
                       text={line}
                       performance={scriptPerformances[index] ?? scriptPerformanceConfiguration(null, {})}
@@ -1091,11 +1102,10 @@ export function TeachingScriptNodeForm({
                         </button>
                       )}
                     </div>
-                  </div>
-                </div>
+                </article>
               ))}
               {editable && (
-                <div className="px-4 py-4 md:pl-[11.5rem]">
+                <div className="py-2">
                   <button
                     type="button"
                     onClick={() => {
@@ -1115,7 +1125,7 @@ export function TeachingScriptNodeForm({
                   </button>
                 </div>
               )}
-              {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="px-4 pb-4 text-xs text-[var(--status-danger)] md:pl-[11.5rem]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
+              {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="text-xs text-[var(--status-danger)]" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
             </div>
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>没听懂时的提示</span>

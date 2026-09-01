@@ -164,6 +164,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /moveTeachingScriptNodeAction/);
   assert.match(actions, /publishTeachingScriptAction/);
   assert.match(editor, /老师台词/);
+  assert.match(editor, /max-w-\[75rem\]/);
+  assert.match(editor, /小节基本设置/);
+  assert.match(editor, /开场过渡/);
+  assert.match(editor, /正式讲解/);
+  assert.match(editor, /朗读与人物设置/);
+  assert.match(editor, /rounded-xl border border-\[var\(--border\)\] bg-\[var\(--card\)\] p-4 shadow-sm/);
   assert.match(editor, /增加台词/);
   assert.match(editor, /scriptLines\.map/);
   assert.doesNotMatch(editor, /TypewriterPreview/);
@@ -248,7 +254,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
-  assert.match(editor, /小节讲解/);
+  assert.match(editor, /小节基本设置/);
   assert.match(editor, /学生互动/);
   assert.match(editor, /完成后的流程/);
   assert.ok(editor.indexOf('id: "script"') < editor.indexOf('id: "content"'));
