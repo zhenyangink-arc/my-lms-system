@@ -1,8 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
-import { AlignCenter, AlignLeft, AlignRight, Copy, Languages, List, Plus, Trash2, Type } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, useTransition, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { AlignCenter, AlignLeft, AlignRight, Copy, Languages, List, LoaderCircle, Plus, Trash2, Type } from "lucide-react";
 
+import {
+  deleteBlackboardLayoutTemplateAction,
+  saveBlackboardLayoutTemplateAction,
+} from "@/app/dashboard/admin/teaching-scripts/actions";
 import { TeachingBlackboardSlideView } from "@/components/learning-agent/TeachingBlackboardSlide";
 import {
   teachingBlackboardSlidesFromDisplay,
@@ -15,6 +19,7 @@ import {
   type TeachingBlackboardSlide,
   type TeachingBlackboardTone,
 } from "@/lib/teaching-blackboard";
+import type { BlackboardLayoutTemplate } from "./types";
 
 const controlClass = "app-input min-h-11 w-full border px-2.5 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-60 sm:text-xs";
 const smallButtonClass = "inline-flex min-h-11 items-center justify-center gap-1.5 border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50";
@@ -31,6 +36,12 @@ function defaultElement(type: TeachingBlackboardElementType, count: number): Tea
   if (type === "bullets") return { ...common, type, content: "第一个要点\n第二个要点", height: 34, fontSize: 20, tone: "primary" };
   if (type === "expression") return { ...common, type, content: "안녕하세요?", translation: "你好？", height: 22, fontSize: 28, fontWeight: 700, tone: "highlight" };
   return { ...common, type, content: "输入黑板文字", fontSize: 28, fontWeight: 700 };
+}
+
+function defaultContentForType(type: TeachingBlackboardElementType): { content: string; translation?: string } {
+  if (type === "bullets") return { content: "第一个要点\n第二个要点" };
+  if (type === "expression") return { content: "안녕하세요?", translation: "你好？" };
+  return { content: "输入黑板文字" };
 }
 
 function emptySlide(index: number, segmentIndex: number): TeachingBlackboardSlide {
@@ -54,12 +65,16 @@ export function TeachingBlackboardEditor({
   disabled,
   onDirty,
   onSlidesChange,
+  layoutTemplates,
+  returnTo,
 }: {
   display: Record<string, unknown>;
   scriptLines: string[];
   disabled?: boolean;
   onDirty: () => void;
   onSlidesChange?: (slides: TeachingBlackboardSlide[]) => void;
+  layoutTemplates: BlackboardLayoutTemplate[];
+  returnTo: string;
 }) {
   const [slides, setSlides] = useState<TeachingBlackboardSlide[]>(() => {
     const saved = teachingBlackboardSlidesFromDisplay(display);
@@ -85,6 +100,11 @@ export function TeachingBlackboardEditor({
   const oversizedSlideNames = useMemo(() => slidesForSave
     .filter((slide) => !teachingBlackboardSlideFitsHeader(slide))
     .map((slide) => slide.name), [slidesForSave]);
+  const [layoutTemplateId, setLayoutTemplateId] = useState("");
+  const [newLayoutTemplateName, setNewLayoutTemplateName] = useState("");
+  const [saveLayoutPending, startSaveLayoutTransition] = useTransition();
+  const [deleteLayoutPending, startDeleteLayoutTransition] = useTransition();
+  const [layoutTemplateError, setLayoutTemplateError] = useState("");
 
   useEffect(() => {
     onSlidesChange?.(slidesForSave);
@@ -147,6 +167,80 @@ export function TeachingBlackboardEditor({
     const next = slides.filter((slide) => slide.id !== selectedSlide.id);
     commit(() => next);
     setSelectedSlideId(next[Math.min(index, next.length - 1)].id);
+    setSelectedElementId(null);
+  }
+
+  function saveCurrentLayoutAsTemplate() {
+    const name = newLayoutTemplateName.trim();
+    if (!name || !selectedSlide || selectedSlide.elements.length === 0) return;
+    setLayoutTemplateError("");
+    startSaveLayoutTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("name", name);
+        formData.set("background", selectedSlide.background);
+        formData.set("elements_json", JSON.stringify(selectedSlide.elements.map((element) => ({
+          type: element.type,
+          x: element.x,
+          y: element.y,
+          width: element.width,
+          height: element.height,
+          fontSize: Math.round(element.fontSize),
+          fontWeight: element.fontWeight,
+          align: element.align,
+          tone: element.tone,
+        }))));
+        formData.set("return_to", returnTo);
+        await saveBlackboardLayoutTemplateAction(formData);
+        setNewLayoutTemplateName("");
+      } catch (error) {
+        setLayoutTemplateError(error instanceof Error ? error.message : "保存版式失败，请重试。");
+      }
+    });
+  }
+
+  function deleteLayoutTemplate(templateId: string) {
+    if (!window.confirm("确定删除这个版式吗？")) return;
+    setLayoutTemplateError("");
+    startDeleteLayoutTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("template_id", templateId);
+        formData.set("return_to", returnTo);
+        await deleteBlackboardLayoutTemplateAction(formData);
+        if (layoutTemplateId === templateId) setLayoutTemplateId("");
+      } catch (error) {
+        setLayoutTemplateError(error instanceof Error ? error.message : "删除版式失败，请重试。");
+      }
+    });
+  }
+
+  function applyLayoutTemplateToSlide() {
+    const template = layoutTemplates.find((item) => item.id === layoutTemplateId);
+    if (!template || !selectedSlide) return;
+    commit((current) => current.map((slide) => {
+      if (slide.id !== selectedSlide.id) return slide;
+      const mapped: TeachingBlackboardElement[] = template.elements.map((spec, index) => {
+        const existing = slide.elements[index];
+        const fallback = defaultContentForType(spec.type);
+        return {
+          id: existing?.id ?? nextId("element"),
+          type: spec.type,
+          content: existing?.content ?? fallback.content,
+          translation: spec.type === "expression" ? (existing?.translation ?? fallback.translation) : undefined,
+          x: spec.x,
+          y: spec.y,
+          width: spec.width,
+          height: spec.height,
+          fontSize: spec.fontSize,
+          fontWeight: spec.fontWeight,
+          align: spec.align,
+          tone: spec.tone,
+        };
+      });
+      const preservedTail = slide.elements.slice(template.elements.length);
+      return { ...slide, background: template.background, elements: [...mapped, ...preservedTail] };
+    }));
     setSelectedElementId(null);
   }
 
@@ -308,6 +402,62 @@ export function TeachingBlackboardEditor({
                   <button type="button" onClick={duplicateSlide} disabled={disabled || slides.length >= MAX_TEACHING_BLACKBOARD_SLIDES} className={smallButtonClass}><Copy size={13} aria-hidden="true" />复制</button>
                   <button type="button" onClick={removeSlide} disabled={disabled} className={`${smallButtonClass} text-[var(--status-danger)]`}><Trash2 size={13} aria-hidden="true" />删除</button>
                 </div>
+              </div>
+
+              <div data-style-template-controls className="space-y-2 border-t border-[var(--border)] pt-3">
+                <span className="block text-xs font-bold text-[var(--foreground)]">版式模板</span>
+                <p className="text-xs leading-5 text-[var(--foreground-muted)]">把这张画面各个内容框的位置、大小和样式存成版式；套用到别的画面时会尽量保留原有文字，只改排版。</p>
+                <label className="block space-y-1">
+                  <span className="text-xs text-[var(--foreground-muted)]">应用版式</span>
+                  <div className="flex items-center gap-1.5">
+                    <select value={layoutTemplateId} onChange={(event) => setLayoutTemplateId(event.target.value)} disabled={disabled} className={`${controlClass} flex-1`}>
+                      <option value="">选择版式…</option>
+                      {layoutTemplates.map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}
+                    </select>
+                    {layoutTemplateId && (
+                      <button
+                        type="button"
+                        onClick={() => deleteLayoutTemplate(layoutTemplateId)}
+                        disabled={deleteLayoutPending}
+                        aria-label="删除这个版式"
+                        className={`${smallButtonClass} shrink-0 px-2 text-[var(--status-danger)]`}
+                      >
+                        {deleteLayoutPending ? <LoaderCircle size={13} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Trash2 size={13} aria-hidden="true" />}
+                      </button>
+                    )}
+                    <button
+                      type="button"
+                      disabled={disabled || !layoutTemplateId}
+                      onClick={applyLayoutTemplateToSlide}
+                      className={`${smallButtonClass} shrink-0 px-2.5`}
+                    >
+                      应用
+                    </button>
+                  </div>
+                </label>
+                <div className="flex items-end gap-1.5">
+                  <label className="flex-1 space-y-1">
+                    <span className="text-xs text-[var(--foreground-muted)]">存为新版式</span>
+                    <input
+                      value={newLayoutTemplateName}
+                      onChange={(event) => setNewLayoutTemplateName(event.target.value)}
+                      disabled={disabled}
+                      maxLength={60}
+                      placeholder="例如：标题+要点+例句"
+                      className={controlClass}
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    disabled={disabled || saveLayoutPending || !newLayoutTemplateName.trim() || !selectedSlide.elements.length}
+                    onClick={saveCurrentLayoutAsTemplate}
+                    className={`${smallButtonClass} shrink-0`}
+                  >
+                    {saveLayoutPending ? <LoaderCircle size={13} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : null}
+                    存为版式
+                  </button>
+                </div>
+                {layoutTemplateError && <p className="text-xs text-[var(--status-danger)]">{layoutTemplateError}</p>}
               </div>
 
               <div className="border-t border-[var(--border)] pt-3">

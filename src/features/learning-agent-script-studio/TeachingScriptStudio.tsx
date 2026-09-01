@@ -111,7 +111,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const [navigationMemoryReady, setNavigationMemoryReady] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
-    ? "xl:grid-cols-[20rem_minmax(0,1fr)]"
+    ? "xl:grid-cols-[15rem_minmax(0,1fr)]"
     : "xl:grid-cols-[minmax(0,1fr)]";
 
   useEffect(() => {
@@ -337,9 +337,8 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
         <nav className={`${showStructureNav ? "block" : "hidden"} border-b bg-[var(--muted)]/25 xl:sticky xl:top-0 xl:max-h-[calc(100dvh-1rem)] xl:self-start xl:border-b-0 xl:border-r`} aria-label="课程结构">
           <div className="flex min-h-16 items-center justify-between gap-2 border-b px-4 py-3">
             {showStructureNav && (
-              <div className="min-w-0">
+              <div className="min-w-0 flex-1 text-center">
                 <h2 className="text-sm font-bold">课程结构</h2>
-                <p className="mt-0.5 text-xs text-[var(--muted-foreground)]">章节、学习步骤与教学小节</p>
               </div>
             )}
             <button
@@ -359,13 +358,10 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
               return (
               <section key={chapterNumber} className="mb-4">
                 <h3>
-                  <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-16 w-full items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3 py-2.5 text-left transition hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
+                  <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3 py-2 text-left transition hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
                     <span className="flex min-w-0 items-center gap-2.5">
-                      <span className="shrink-0 rounded-md bg-[var(--card)] px-2 py-1 text-[10px] font-bold text-[var(--muted-foreground)] shadow-sm">第 {chapterNumber} 章</span>
-                      <span className="min-w-0">
-                        <span className="block truncate text-sm font-bold text-[var(--foreground)]">{modules[0]?.chapterTitle["zh-CN"]}</span>
-                        <span className="mt-0.5 block text-[11px] font-normal text-[var(--muted-foreground)]">{modules.length} 个学习步骤</span>
-                      </span>
+                      <span className="shrink-0 rounded-md bg-[var(--card)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--muted-foreground)] shadow-sm">第 {chapterNumber} 章</span>
+                      <span className="min-w-0 truncate text-[11px] font-bold text-[var(--foreground)]">{modules[0]?.chapterTitle["zh-CN"]}</span>
                     </span>
                     <ChevronDown size={15} className={`shrink-0 transition-transform motion-reduce:transition-none ${chapterExpanded ? "rotate-180" : ""}`} aria-hidden="true" />
                   </button>
@@ -378,14 +374,14 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                     const stepLabel = moduleLabels[lessonModule.code] ?? lessonModule.title["zh-CN"];
                     return (
                       <div key={lessonModule.id} className="space-y-1">
-                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-expanded={expanded} aria-controls={selected ? `teaching-step-${lessonModule.id}-nodes` : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节，${expanded ? "收起" : "展开"}`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
-                          <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-0.5 block text-xs font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
-                          <span className="flex shrink-0 items-center gap-2 text-xs text-[var(--muted-foreground)]"><span className="tabular-nums">{lessonModule.order}</span><ChevronDown size={15} className={`transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`} aria-hidden="true" /></span>
+                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-expanded={expanded} aria-controls={selected ? `teaching-step-${lessonModule.id}-nodes` : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节，${expanded ? "收起" : "展开"}`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-[11px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
+                          <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-0.5 block text-[9px] font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
+                          <span className="flex shrink-0 items-center gap-2 text-[9px] text-[var(--muted-foreground)]"><span className="tabular-nums">{lessonModule.order}</span><ChevronDown size={15} className={`transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`} aria-hidden="true" /></span>
                         </button>
                         {expanded && (
                           <div id={`teaching-step-${lessonModule.id}-nodes`} className="ml-3 border-l border-[var(--border)] py-2 pl-3">
                             <div className="mb-2 flex min-h-11 items-center justify-between gap-2">
-                              <span className="text-xs font-bold text-[var(--foreground-secondary)]">教学小节</span>
+                              <span className="text-[10px] font-bold text-[var(--foreground-secondary)]">教学小节</span>
                               {editable && selectedVersion && (
                                 <form action={addTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}>
                                   <input type="hidden" name="version_id" value={selectedVersion.id} />
@@ -406,12 +402,12 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                                     <li key={node.id} className="flex min-w-0 gap-1.5">
                                       <button type="button" onClick={() => selectNode(node.id)} aria-current={nodeSelected ? "step" : undefined} aria-label={`第 ${index + 1} 小节：${node.title["zh-CN"]}，${hasInteraction ? "包含学生互动" : "老师讲解"}${node.configuration.terminal === true ? "，本步骤结束" : ""}`} className={`flex min-h-14 min-w-0 flex-1 items-start gap-2 rounded-lg border px-2.5 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${nodeSelected ? "border-[var(--primary)] bg-[var(--card)] shadow-sm" : "border-transparent hover:bg-[var(--card)]"}`}>
                                         <span className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums ${nodeSelected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border)] bg-[var(--card)]"}`}>{index + 1}</span>
-                                        <span className="min-w-0 flex-1"><span className="block text-xs font-semibold leading-5">{node.title["zh-CN"]}</span><span className="mt-0.5 block text-xs leading-5 text-[var(--muted-foreground)]">{hasInteraction ? "学生互动" : "老师讲解"}{node.configuration.terminal === true ? " · 结束" : ""}</span></span>
+                                        <span className="min-w-0 flex-1"><span className="block text-[10px] font-semibold leading-5">{node.title["zh-CN"]}</span><span className="mt-0.5 block text-[9px] leading-5 text-[var(--muted-foreground)]">{hasInteraction ? "学生互动" : "老师讲解"}{node.configuration.terminal === true ? " · 结束" : ""}</span></span>
                                       </button>
                                       {editable && (
-                                        <div className="flex w-11 shrink-0 flex-col gap-1">
-                                          <form action={moveTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}><input type="hidden" name="node_id" value={node.id} /><input type="hidden" name="direction" value="up" /><input type="hidden" name="return_to" value={returnTo} /><FormSubmitButton pendingLabel={`正在上移“${node.title["zh-CN"]}”`} iconOnly disabled={index === 0} aria-label={`上移“${node.title["zh-CN"]}”`} className="flex size-11 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-30"><ArrowUp size={14} aria-hidden="true" /></FormSubmitButton></form>
-                                          <form action={moveTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}><input type="hidden" name="node_id" value={node.id} /><input type="hidden" name="direction" value="down" /><input type="hidden" name="return_to" value={returnTo} /><FormSubmitButton pendingLabel={`正在下移“${node.title["zh-CN"]}”`} iconOnly disabled={index === selectedVersion.nodes.length - 1} aria-label={`下移“${node.title["zh-CN"]}”`} className="flex size-11 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-30"><ArrowDown size={14} aria-hidden="true" /></FormSubmitButton></form>
+                                        <div className="flex w-7 shrink-0 flex-col gap-1">
+                                          <form action={moveTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}><input type="hidden" name="node_id" value={node.id} /><input type="hidden" name="direction" value="up" /><input type="hidden" name="return_to" value={returnTo} /><FormSubmitButton pendingLabel={`正在上移“${node.title["zh-CN"]}”`} iconOnly disabled={index === 0} aria-label={`上移“${node.title["zh-CN"]}”`} className="flex size-7 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-30"><ArrowUp size={12} aria-hidden="true" /></FormSubmitButton></form>
+                                          <form action={moveTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}><input type="hidden" name="node_id" value={node.id} /><input type="hidden" name="direction" value="down" /><input type="hidden" name="return_to" value={returnTo} /><FormSubmitButton pendingLabel={`正在下移“${node.title["zh-CN"]}”`} iconOnly disabled={index === selectedVersion.nodes.length - 1} aria-label={`下移“${node.title["zh-CN"]}”`} className="flex size-7 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-30"><ArrowDown size={12} aria-hidden="true" /></FormSubmitButton></form>
                                         </div>
                                       )}
                                     </li>
@@ -446,7 +442,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                     <CardTitleWithHint
                       title={
                         <span className="flex flex-wrap items-center gap-2">
-                          <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节</span>
+                          <span id="subsection-editor-title">{selectedModule.textbookTitle["zh-CN"]} · 第{selectedModule.chapterNumber}章 · {moduleLabels[selectedModule.code] ?? selectedModule.title["zh-CN"]} · 第{selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1}小节</span>
                           <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
                         </span>
                       }
@@ -470,7 +466,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   </details>
                 )}
               </header>
-              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} formId={selectedNodeFormId} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} chapterNumber={selectedModule.chapterNumber} returnTo={returnTo} editable={editable} onDirtyChange={setHasUnsavedChanges} onPendingChange={setNodeSavePending} /></div>
+              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} formId={selectedNodeFormId} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} templates={data.characterStyleTemplates} blackboardLayoutTemplates={data.blackboardLayoutTemplates} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} returnTo={returnTo} editable={editable} onDirtyChange={setHasUnsavedChanges} onPendingChange={setNodeSavePending} /></div>
             </>
           ) : <div className="flex min-h-80 items-center justify-center p-8 text-center text-sm text-[var(--muted-foreground)]">请先选择一个教学小节。</div>}
         </section>

@@ -1811,6 +1811,10 @@
   animation: a-han-completed 560ms ease-in-out 1;
 }
 
+.a-han-companion[data-phase="clicking"] {
+  animation: a-han-clicking 260ms ease-out 1;
+}
+
 .a-han-idle-companion {
   animation: a-han-idle-breathe 5.8s cubic-bezier(.45, 0, .55, 1) infinite;
   transform-origin: 50% 100%;
@@ -1826,6 +1830,12 @@
 @keyframes a-han-completed {
   0%, 100% { transform: translateY(0) scale(1); }
   45% { transform: translateY(-7px) scale(1.04); }
+}
+
+@keyframes a-han-clicking {
+  0% { transform: translateY(0) rotate(0deg); }
+  55% { transform: translateY(3px) rotate(-4deg); }
+  100% { transform: translateY(0) rotate(0deg); }
 }
 
 @keyframes a-han-idle-breathe {

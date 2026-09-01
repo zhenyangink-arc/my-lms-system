@@ -184,12 +184,17 @@ type TutorVisualCue = {
   durationMs?: number;
 };
 
+type TutorPetAction = {
+  targetKey?: string;
+  action?: "click";
+};
+
 type TutorCompanionPosition = {
   x: number;
   y: number;
   facing: "left" | "right";
   targetKey: string;
-  phase: "travelling" | "waiting" | "completed";
+  phase: "travelling" | "waiting" | "clicking" | "completed";
 };
 
 type TutorCharacter = {
@@ -4294,6 +4299,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   );
   const tutorVisitedModuleIdsRef = useRef(new Set(Object.keys(textbook.activeTeachingSessions)));
   const tutorCompanionTrackingFrameRef = useRef<number | null>(null);
+  const petActionRunRef = useRef(0);
   const textbookViewStateKey = `smart-textbook-view:${textbook.id}`;
   const [activeIndex, setActiveIndex] = useState(() => (isPreviewMode && typeof previewStartModuleIndex === "number"
     ? Math.max(0, Math.min(textbook.modules.length - 1, previewStartModuleIndex))
@@ -4928,6 +4934,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       const encodedDisplay = response.headers.get("X-Learning-Agent-Display");
       const encodedTask = response.headers.get("X-Learning-Agent-Task");
       const encodedVisualCue = response.headers.get("X-Learning-Agent-Visual-Cue");
+      const encodedPetAction = response.headers.get("X-Learning-Agent-Pet-Action");
       const encodedInteraction = response.headers.get("X-Learning-Agent-Interaction");
       const encodedCharacter = response.headers.get("X-Learning-Agent-Character");
       const encodedScriptRich = response.headers.get("X-Learning-Agent-Script-Rich");
@@ -5006,6 +5013,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           : null);
       } catch {
         // A malformed optional cue must never block the teacher response.
+      }
+      try {
+        const decodedPetAction = encodedPetAction ? JSON.parse(decodeURIComponent(encodedPetAction)) : null;
+        runTutorPetAction(decodedPetAction && typeof decodedPetAction === "object" && !Array.isArray(decodedPetAction)
+          ? decodedPetAction as TutorPetAction
+          : null);
+      } catch {
+        // A malformed optional pet action must never block the teacher response.
       }
       const nextTutorTaskCompleted = response.headers.get("X-Learning-Agent-Task-Completed") === "true";
       setTutorTaskCompleted(nextTutorTaskCompleted);
@@ -5148,6 +5163,23 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   }
 
   function prepareLearningTarget(targetKey: string) {
+    if (targetKey.startsWith(`${activeModule.code}:header`)) return;
+    // The teaching-area chrome (show/collapse/expand) renders regardless of
+    // which learning page is active, so it needs no page switch to reveal it.
+    // Without this guard, an orientation-module key like
+    // "orientation:teaching-area:collapse" falls through to the generic
+    // "orientation:" branch below and incorrectly forces missionPage back to 0.
+    if (targetKey.startsWith(`${activeModule.code}:teaching-area`)) return;
+    const pagePrefix = `${activeModule.code}:page:`;
+    if (targetKey.startsWith(pagePrefix)) {
+      const skeleton = getSmartTextbookSkeletonModule(activeModule.code);
+      const pageIndex = skeleton ? (skeleton.pages as readonly string[]).indexOf(targetKey.slice(pagePrefix.length)) : -1;
+      if (pageIndex >= 0) {
+        if (activeModule.code === "patterns") setPatternPage(pageIndex as 0 | 1 | 2);
+        else setMissionPage(pageIndex as 0 | 1 | 2 | 3);
+      }
+      return;
+    }
     if (targetKey.startsWith("orientation:")) {
       if (targetKey === "orientation:page:diagnosis" || targetKey.startsWith("orientation:diagnosis")) {
         setMissionPage(1);
@@ -5278,6 +5310,95 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       }, reduceMotion ? 0 : 360);
     };
     window.requestAnimationFrame(() => window.requestAnimationFrame(() => revealTarget(0)));
+  }
+
+  function runTutorPetAction(action: TutorPetAction | null) {
+    // Bump the run token even for a no-op call so a stale in-flight chain from
+    // the previous node (still ticking through its own setTimeouts) is disarmed
+    // as soon as the script moves past it, instead of clicking a now-wrong target.
+    const runId = ++petActionRunRef.current;
+    const isCurrentRun = () => petActionRunRef.current === runId;
+    if (!action?.targetKey || action.action !== "click") return;
+    const targetKey = action.targetKey;
+    const goClick = (attempt: number) => {
+      if (!isCurrentRun()) return;
+      const target = visibleLearningTarget(targetKey);
+      if (!target) {
+        if (attempt === 0) prepareLearningTarget(targetKey);
+        if (attempt < 6) window.setTimeout(() => goClick(attempt + 1), 120);
+        return;
+      }
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      target.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "center" });
+      window.setTimeout(() => {
+        if (!isCurrentRun()) return;
+        const destination = tutorCompanionTargetPosition(target, targetKey);
+        const arriveDelayMs = reduceMotion ? 0 : 600;
+        if (reduceMotion) {
+          setTutorCompanion(destination);
+        } else {
+          setTutorCompanion((current) => {
+            if (current) return { ...destination, phase: "travelling" };
+            const teachingArea = document.querySelector<HTMLElement>("[data-smart-textbook-teaching-area]");
+            const teachingBounds = teachingArea?.getBoundingClientRect();
+            return {
+              x: Math.round(Math.max(8, (teachingBounds?.right ?? 112) - 104)),
+              y: Math.round(Math.max(8, (teachingBounds?.bottom ?? window.innerHeight) - 116)),
+              facing: "right",
+              targetKey,
+              phase: "travelling",
+            };
+          });
+          window.setTimeout(() => {
+            if (!isCurrentRun()) return;
+            setTutorCompanion((current) => current?.targetKey === targetKey
+              ? { ...destination, phase: "travelling" }
+              : current);
+          }, 40);
+          window.setTimeout(() => {
+            if (!isCurrentRun()) return;
+            setTutorCompanion((current) => current && current.targetKey === targetKey
+              ? { ...current, phase: "waiting" }
+              : current);
+          }, arriveDelayMs);
+        }
+        // Let the mascot settle beside the target for a beat before it "taps" it,
+        // so the click doesn't fire before the student can see where it landed.
+        window.setTimeout(() => {
+          if (!isCurrentRun()) return;
+          setTutorCompanion((current) => current && current.targetKey === targetKey
+            ? { ...current, phase: "clicking" }
+            : current);
+          window.setTimeout(() => {
+            if (!isCurrentRun()) return;
+            visibleLearningTarget(targetKey)?.click();
+            setTutorCompanion((current) => current && current.targetKey === targetKey
+              ? { ...current, phase: "completed" }
+              : current);
+            window.setTimeout(() => {
+              if (!isCurrentRun()) return;
+              setTutorCompanion((current) => {
+                if (!current) return null;
+                const teachingArea = document.querySelector<HTMLElement>("[data-smart-textbook-teaching-area]");
+                const teachingBounds = teachingArea?.getBoundingClientRect();
+                return {
+                  x: Math.round(Math.max(8, (teachingBounds?.right ?? 112) - 104)),
+                  y: Math.round(Math.max(8, (teachingBounds?.bottom ?? window.innerHeight) - 116)),
+                  facing: "left",
+                  targetKey: "",
+                  phase: "travelling",
+                };
+              });
+            }, 520);
+            window.setTimeout(() => {
+              if (!isCurrentRun()) return;
+              setTutorCompanion(null);
+            }, 1120);
+          }, reduceMotion ? 0 : 260);
+        }, arriveDelayMs + (reduceMotion ? 0 : 320));
+      }, reduceMotion ? 0 : 360);
+    };
+    window.requestAnimationFrame(() => window.requestAnimationFrame(() => goClick(0)));
   }
 
   async function recordTutorLearningEvent(event: { eventType: "audio_completed"; targetKey: string }) {
@@ -6038,6 +6159,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
             {learningAreaManuallyHidden && !tutorFocusMode ? (
               <button
                 type="button"
+                data-learning-target={`${activeModule.code}:teaching-area:show-learning-area`}
                 onClick={() => setLearningAreaManuallyHidden(false)}
                 className="absolute right-2 inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
                 aria-label={locale === "ko-KR" ? "학습 영역 표시" : "显示学习区"}
@@ -6045,17 +6167,31 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 <PanelRightOpen size={17} aria-hidden="true" />
                 <span>{locale === "ko-KR" ? "학습 영역 표시" : "显示学习区"}</span>
               </button>
-            ) : !teachingAreaExpanded ? <button
-              type="button"
-              onClick={() => setTeachingAreaCollapsed((value) => !value)}
-              className={`inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[var(--foreground-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] ${teachingAreaCollapsed ? "" : "absolute right-2"}`}
-              aria-label={locale === "ko-KR"
-                ? teachingAreaCollapsed ? "수업 영역 펼치기" : "수업 영역 접기"
-                : teachingAreaCollapsed ? "展开教学区" : "收起教学区"}
-              aria-expanded={!teachingAreaCollapsed}
-            >
-              {teachingAreaCollapsed ? <PanelLeftOpen size={17} aria-hidden="true" /> : <PanelLeftClose size={17} aria-hidden="true" />}
-            </button> : null}
+            ) : !teachingAreaExpanded ? (
+              teachingAreaCollapsed ? (
+                <button
+                  type="button"
+                  data-learning-target={`${activeModule.code}:teaching-area:expand`}
+                  onClick={() => setTeachingAreaCollapsed(false)}
+                  className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[var(--foreground-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+                  aria-label={locale === "ko-KR" ? "수업 영역 펼치기" : "展开教学区"}
+                  aria-expanded={false}
+                >
+                  <PanelLeftOpen size={17} aria-hidden="true" />
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  data-learning-target={`${activeModule.code}:teaching-area:collapse`}
+                  onClick={() => setTeachingAreaCollapsed(true)}
+                  className="absolute right-2 inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-[var(--foreground-muted)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
+                  aria-label={locale === "ko-KR" ? "수업 영역 접기" : "收起教学区"}
+                  aria-expanded={true}
+                >
+                  <PanelLeftClose size={17} aria-hidden="true" />
+                </button>
+              )
+            ) : null}
           </div>
           {(!teachingAreaCollapsed || teachingAreaExpanded) && (
             <div
@@ -6416,8 +6552,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
 
         <div className={`relative min-h-0 min-w-0 flex-1 flex-col overflow-hidden ${learningAreaHidden ? "hidden" : "flex"}`} data-learning-area-hidden={learningAreaHidden || undefined}>
         <div
-          data-learning-target={activeModule.code === "orientation" ? "orientation:header" : undefined}
-          tabIndex={activeModule.code === "orientation" ? -1 : undefined}
+          data-learning-target={`${activeModule.code}:header`}
+          tabIndex={-1}
           className="relative hidden shrink-0 items-center gap-3 bg-[var(--card)] after:absolute after:bottom-0 after:left-[var(--learning-header-inset)] after:right-[var(--learning-header-inset)] after:h-px after:bg-[var(--border-subtle)] after:content-[''] xl:flex"
           style={{
             height: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.learningHeader.heightPx,
@@ -6427,7 +6563,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
         >
           <button
             type="button"
-            data-learning-target={activeModule.code === "orientation" ? "orientation:header:hide" : undefined}
+            data-learning-target={`${activeModule.code}:header:hide`}
             onClick={() => setLearningAreaManuallyHidden(true)}
             className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)]"
             aria-label={locale === "ko-KR" ? "학습 영역 숨기기" : "隐藏学习区"}
@@ -6441,9 +6577,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 <button
                   key={target}
                   type="button"
-                  data-learning-target={activeModule.code === "orientation"
-                    ? `orientation:header:tab:${targetIndex === 0 ? "scene" : "diagnosis"}`
-                    : undefined}
+                  data-learning-target={`${activeModule.code}:header:tab:${learningHeaderSkeleton?.pages[targetIndex] ?? targetIndex}`}
                   aria-current={learningHeaderCurrentTargetIndex === targetIndex ? "page" : undefined}
                   onClick={() => learningHeaderUsesPatterns
                     ? setPatternPage(targetIndex as 0 | 1 | 2)
@@ -6457,13 +6591,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
           )}
           {learningHeaderTargets.length > 0 && (
             <div className="flex shrink-0 items-center gap-2" aria-label={locale === "ko-KR" ? "현재 목표 진행률" : "当前目标进度"}>
-              <div data-learning-target={activeModule.code === "orientation" ? "orientation:header:progress" : undefined} tabIndex={activeModule.code === "orientation" ? -1 : undefined} className="flex items-center gap-2 outline-none">
+              <div data-learning-target={`${activeModule.code}:header:progress`} tabIndex={-1} className="flex items-center gap-2 outline-none">
                 <div className="hidden h-1.5 w-14 overflow-hidden rounded-full bg-[var(--border-subtle)] 2xl:block" role="progressbar" aria-label={locale === "ko-KR" ? "현재 목표 실제 완료율" : "当前目标实际完成度"} aria-valuemin={0} aria-valuemax={100} aria-valuenow={learningHeaderCompletionPercent}>
                   <div className={`h-full rounded-full transition-[width] duration-300 motion-reduce:transition-none ${learningHeaderCompletionPercent === 100 ? "bg-[var(--status-success)]" : "bg-[var(--primary)]"}`} style={{ width: `${learningHeaderCompletionPercent}%` }} />
                 </div>
                 <span className={`text-[11px] font-bold tabular-nums ${learningHeaderCompletionPercent === 100 ? "text-[var(--status-success)]" : "text-[var(--primary)]"}`} aria-live="polite">{learningHeaderCompletionPercent}%</span>
               </div>
-              <span data-learning-target={activeModule.code === "orientation" ? "orientation:header:goal" : undefined} tabIndex={activeModule.code === "orientation" ? -1 : undefined} className="whitespace-nowrap text-[11px] font-bold tabular-nums text-[var(--foreground-muted)] outline-none" aria-live="polite">
+              <span data-learning-target={`${activeModule.code}:header:goal`} tabIndex={-1} className="whitespace-nowrap text-[11px] font-bold tabular-nums text-[var(--foreground-muted)] outline-none" aria-live="polite">
                 {locale === "ko-KR" ? "목표" : "目标"} {learningHeaderCurrentTargetIndex + 1} / {learningHeaderTargets.length}
               </span>
             </div>
@@ -6643,8 +6777,8 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
               <article
                 key={node.id}
                 data-learning-target={nodeIndex === 0
-                  ? activeModule.code === "orientation"
-                    ? missionPage === 0 ? "orientation:page:scene" : "orientation:page:diagnosis"
+                  ? sharedModuleSkeleton
+                    ? `${activeModule.code}:page:${sharedModuleSkeleton.pages[(activeModule.code === "patterns" ? patternPage : missionPage) as number] ?? sharedModuleSkeleton.pages[0]}`
                     : "content:current"
                   : undefined}
                 tabIndex={nodeIndex === 0 ? -1 : undefined}

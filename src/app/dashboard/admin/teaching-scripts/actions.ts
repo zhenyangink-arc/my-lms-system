@@ -70,6 +70,8 @@ const nodeSchema = z.object({
   visualCueTargetKey: z.string().trim().max(200, "讲解指向不能超过200个字符。")
     .regex(/^[a-zA-Z0-9:_-]*$/, "讲解指向格式不正确。"),
   visualCueEffect: z.enum(["pulse"]),
+  petActionTargetKey: z.string().trim().max(200, "宠物代点目标不能超过200个字符。")
+    .regex(/^[a-zA-Z0-9:_-]*$/, "宠物代点目标格式不正确。"),
   visualCuePulseCount: z.coerce.number().int().min(1).max(4),
   visualCueDurationMs: z.coerce.number().int().min(400).max(2500),
   interactionKind: z.enum(["none", "single_choice", "referenced_activity"]),
@@ -100,6 +102,13 @@ const nodeSchema = z.object({
       code: "custom",
       path: ["studentTaskTargetKey"],
       message: "请选择学生需要完成的按钮或表达。",
+    });
+  }
+  if (input.petActionTargetKey.startsWith("activity:")) {
+    context.addIssue({
+      code: "custom",
+      path: ["petActionTargetKey"],
+      message: "宠物代点不能指向答题类目标，请改选播放音频、翻页等按钮。",
     });
   }
   if (input.interactionKind === "single_choice") {
@@ -319,6 +328,7 @@ export async function saveTeachingScriptNodeAction(
       visualCueEffect: String(formData.get("visual_cue_effect") ?? "pulse"),
       visualCuePulseCount: String(formData.get("visual_cue_pulse_count") ?? "2"),
       visualCueDurationMs: String(formData.get("visual_cue_duration_ms") ?? "1000"),
+      petActionTargetKey: String(formData.get("pet_action_target_key") ?? ""),
       interactionKind: String(formData.get("interaction_kind") ?? "none"),
       interactionPromptZh: String(formData.get("interaction_prompt_zh") ?? ""),
       interactionOptions: interactionOptionRows.length
@@ -478,6 +488,14 @@ export async function saveTeachingScriptNodeAction(
     } else {
       Reflect.deleteProperty(configuration, "visualCue");
     }
+    if (input.petActionTargetKey) {
+      configuration.petAction = {
+        targetKey: input.petActionTargetKey,
+        action: "click",
+      };
+    } else {
+      Reflect.deleteProperty(configuration, "petAction");
+    }
     const interactionOptions = input.interactionOptions;
     if (input.interactionKind === "single_choice") {
       configuration.interaction = {
@@ -567,6 +585,107 @@ export async function saveTeachingScriptNodeAction(
   } catch (error) {
     return { status: "error", message: error instanceof Error ? error.message : "教学小节保存失败。" };
   }
+}
+
+export async function saveCharacterStyleTemplateAction(formData: FormData) {
+  const { user } = await requirePlatformOwner();
+  const nodeId = uuid.parse(String(formData.get("node_id") ?? ""));
+  const name = String(formData.get("name") ?? "").trim();
+  const path = returnPath(formData);
+  if (!name) throw new Error("请填写模板名称。");
+  if (name.length > 60) throw new Error("模板名称不能超过60个字。");
+  const admin = createAdminClient();
+  const { data: sourceNode } = await admin
+    .from("learning_agent_script_nodes")
+    .select("configuration")
+    .eq("id", nodeId)
+    .maybeSingle();
+  if (!sourceNode) throw new Error("找不到这个教学小节。");
+  const configuration = sourceNode.configuration && typeof sourceNode.configuration === "object"
+    ? sourceNode.configuration as Record<string, unknown>
+    : {};
+  const performances = Array.isArray(configuration.scriptPerformances)
+    ? configuration.scriptPerformances as Record<string, unknown>[]
+    : [];
+  const firstPerformance = performances[0];
+  if (!firstPerformance) throw new Error("当前小节还没有台词，无法存为模板。");
+  const virtualCharacter = configuration.virtualCharacter && typeof configuration.virtualCharacter === "object"
+    ? configuration.virtualCharacter as Record<string, unknown>
+    : {};
+  const display = configuration.display && typeof configuration.display === "object"
+    ? configuration.display as Record<string, unknown>
+    : {};
+  const blackboardPlacement = normalizeTeachingBlackboardPlacement(display.placement);
+  const { error } = await admin.from("learning_agent_character_style_templates").insert({
+    name,
+    virtual_character_position: virtualCharacter.position === "left" ? "left" : "right",
+    character_x: Number(firstPerformance.characterX ?? 75),
+    character_y: Number(firstPerformance.characterY ?? 0),
+    character_scale: Number(firstPerformance.characterScale ?? 1),
+    dialogue_x: Number(firstPerformance.dialogueX ?? 85),
+    dialogue_y: Number(firstPerformance.dialogueY ?? 30),
+    blackboard_x: blackboardPlacement.x,
+    blackboard_y: blackboardPlacement.y,
+    blackboard_scale: blackboardPlacement.scale,
+    created_by: user.id,
+  });
+  if (error) throw new Error("保存模板失败，请重试。");
+  refreshStudio(path);
+}
+
+export async function deleteCharacterStyleTemplateAction(formData: FormData) {
+  await requirePlatformOwner();
+  const templateId = uuid.parse(String(formData.get("template_id") ?? ""));
+  const path = returnPath(formData);
+  const admin = createAdminClient();
+  await admin.from("learning_agent_character_style_templates").delete().eq("id", templateId);
+  refreshStudio(path);
+}
+
+const blackboardLayoutElementSchema = z.object({
+  type: z.enum(["text", "bullets", "expression"]),
+  x: z.number().min(0).max(100),
+  y: z.number().min(0).max(100),
+  width: z.number().min(8).max(100),
+  height: z.number().min(6).max(100),
+  fontSize: z.number().int().min(12).max(56),
+  fontWeight: z.union([z.literal(400), z.literal(600), z.literal(700)]),
+  align: z.enum(["left", "center", "right"]),
+  tone: z.enum(["default", "primary", "highlight", "muted"]),
+});
+
+export async function saveBlackboardLayoutTemplateAction(formData: FormData) {
+  const { user } = await requirePlatformOwner();
+  const name = String(formData.get("name") ?? "").trim();
+  const background = z.enum(["plain", "warm", "grid"]).parse(String(formData.get("background") ?? "plain"));
+  const path = returnPath(formData);
+  if (!name) throw new Error("请填写版式名称。");
+  if (name.length > 60) throw new Error("版式名称不能超过60个字。");
+  let elementsInput: unknown;
+  try {
+    elementsInput = JSON.parse(String(formData.get("elements_json") ?? "[]"));
+  } catch {
+    throw new Error("版式数据不正确，请重试。");
+  }
+  const elements = z.array(blackboardLayoutElementSchema).min(1, "这张画面还没有内容，无法存为版式。").max(MAX_TEACHING_BLACKBOARD_ELEMENTS).parse(elementsInput);
+  const admin = createAdminClient();
+  const { error } = await admin.from("learning_agent_blackboard_layout_templates").insert({
+    name,
+    background,
+    elements,
+    created_by: user.id,
+  });
+  if (error) throw new Error("保存版式失败，请重试。");
+  refreshStudio(path);
+}
+
+export async function deleteBlackboardLayoutTemplateAction(formData: FormData) {
+  await requirePlatformOwner();
+  const templateId = uuid.parse(String(formData.get("template_id") ?? ""));
+  const path = returnPath(formData);
+  const admin = createAdminClient();
+  await admin.from("learning_agent_blackboard_layout_templates").delete().eq("id", templateId);
+  refreshStudio(path);
 }
 
 export async function moveTeachingScriptNodeAction(formData: FormData) {

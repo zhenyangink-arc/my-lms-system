@@ -6,6 +6,7 @@ import { getAuthContext } from "@/lib/auth";
 import {
   configuredText,
   headerJson,
+  petAction,
   resolveScriptCharacter,
   resolveScriptStep,
   ScriptStepValidationError,
@@ -153,6 +154,10 @@ export async function POST(request: Request) {
     headers.set(
       "X-Learning-Agent-Visual-Cue",
       headerJson(input.intent === "start" || input.intent === "ready" ? visualCue(node.configuration) : null),
+    );
+    headers.set(
+      "X-Learning-Agent-Pet-Action",
+      headerJson(input.intent === "start" || input.intent === "ready" ? petAction(node.configuration) : null),
     );
     headers.set("X-Learning-Agent-Task-Completed", selectedTaskCompleted ? "true" : "false");
     headers.set("X-Learning-Agent-Question-Options", headerJson(resolved.questionOptions));

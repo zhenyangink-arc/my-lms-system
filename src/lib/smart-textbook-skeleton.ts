@@ -14,7 +14,7 @@ export const SMART_TEXTBOOK_SHARED_SKELETON = {
   },
   vocabulary: {
     pages: ["scene_and_words", "vocabulary_practice"],
-    pageLabels: [{ "zh-CN": "情景与表达", "ko-KR": "장면과 표현" }, { "zh-CN": "情景诊断", "ko-KR": "장면 진단" }],
+    pageLabels: [{ "zh-CN": "情景词汇", "ko-KR": "장면 어휘" }, { "zh-CN": "词汇练习", "ko-KR": "어휘 연습" }],
     contentSlots: ["lead", "vocabulary", "dialogueGroups"],
     activitySlots: ["vocabulary_check"],
   },

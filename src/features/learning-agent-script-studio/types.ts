@@ -71,8 +71,43 @@ export type TeachingScriptModule = {
   versions: TeachingScriptVersion[];
 };
 
+export type CharacterStyleTemplate = {
+  id: string;
+  name: string;
+  virtualCharacterPosition: "left" | "right";
+  characterX: number;
+  characterY: number;
+  characterScale: number;
+  dialogueX: number;
+  dialogueY: number;
+  blackboardX: number;
+  blackboardY: number;
+  blackboardScale: number;
+};
+
+export type BlackboardLayoutTemplateElement = {
+  type: "text" | "bullets" | "expression";
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  fontSize: number;
+  fontWeight: 400 | 600 | 700;
+  align: "left" | "center" | "right";
+  tone: "default" | "primary" | "highlight" | "muted";
+};
+
+export type BlackboardLayoutTemplate = {
+  id: string;
+  name: string;
+  background: "plain" | "warm" | "grid";
+  elements: BlackboardLayoutTemplateElement[];
+};
+
 export type TeachingScriptStudioData = {
   appId: string;
   modules: TeachingScriptModule[];
+  characterStyleTemplates: CharacterStyleTemplate[];
+  blackboardLayoutTemplates: BlackboardLayoutTemplate[];
 };
 import type { SmartTextbookLearningTarget } from "@/lib/smart-textbook-learning-targets";

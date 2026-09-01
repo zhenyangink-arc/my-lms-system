@@ -116,7 +116,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /课程结构/);
   assert.doesNotMatch(studio, /自定义教学流程/);
   assert.match(studio, /新增小节/);
-  assert.match(studio, /第 \{selectedVersion\.nodes\.findIndex/);
+  assert.match(studio, /\{selectedModule\.textbookTitle\["zh-CN"\]\} · 第\{selectedModule\.chapterNumber\}章 · \{moduleLabels\[selectedModule\.code\] \?\? selectedModule\.title\["zh-CN"\]\} · 第\{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /aria-modal="true"/);
   assert.match(studio, /编辑已发布版本/);
   assert.match(studio, /继续编辑草稿/);
@@ -128,7 +128,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /请先保存当前小节，再执行这个操作/);
   assert.match(studio, /FormSubmitButton/);
   assert.match(studio, /正在校验并发布/);
-  assert.match(studio, /xl:grid-cols-\[20rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /xl:grid-cols-\[15rem_minmax\(0,1fr\)\]/);
   assert.match(studio, /xl:grid-cols-\[minmax\(0,1fr\)\]/);
   assert.doesNotMatch(studio, /xl:grid-cols-\[3\.5rem_minmax\(0,1fr\)\]/);
   assert.match(studio, /!showStructureNav &&/);
@@ -145,7 +145,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /toggleChapter\(chapterNumber\)/);
   assert.match(studio, /aria-expanded=\{chapterExpanded\}/);
   assert.match(studio, /teaching-chapter-\$\{chapterNumber\}-steps/);
-  assert.match(studio, /\{modules\.length\} 个学习步骤/);
+  assert.doesNotMatch(studio, /\{modules\.length\} 个学习步骤/);
   assert.match(studio, /bg-\[var\(--muted\)\]\/60/);
   assert.match(studio, /setExpandedModuleId\(\(current\) => current === nextModuleId \? "" : nextModuleId\)/);
   assert.match(studio, /aria-expanded=\{expanded\}/);
@@ -157,7 +157,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /editable && selectedNode && selectedNodeFormId/);
   assert.match(studio, /summary className="inline-flex min-h-11[^"]*border border-\[var\(--border\)\] bg-\[var\(--muted\)\]/);
   assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布学习步骤"));
-  assert.match(studio, /id="subsection-editor-title">第 \{selectedVersion\.nodes\.findIndex/);
+  assert.match(studio, /id="subsection-editor-title">\{selectedModule\.textbookTitle\["zh-CN"\]\} · 第\{selectedModule\.chapterNumber\}章 · \{moduleLabels\[selectedModule\.code\] \?\? selectedModule\.title\["zh-CN"\]\} · 第\{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /小节 · \{selectedNode\.title\["zh-CN"\]\}/);
   assert.match(studio, /sticky top-0 z-30/);
   assert.match(studio, /xl:sticky xl:top-0/);
@@ -372,13 +372,15 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /moduleOrder=\{selectedModule\.order\}/);
   assert.match(studio, /learningTargets=\{selectedModule\.learningTargets\}/);
   assert.match(studio, /moduleCode=\{selectedModule\.code\}/);
-  assert.match(studio, /chapterNumber=\{selectedModule\.chapterNumber\}/);
+  assert.doesNotMatch(studio, /chapterNumber=\{selectedModule\.chapterNumber\}/);
   assert.match(service, /buildOrientationLearningTargets/);
+  assert.match(service, /staticTargets: learningTargetRegistry\.get\("orientation"\) \?\? \[\]/);
+  assert.doesNotMatch(service, /module_code\) === "orientation" && Number\(chapter\.chapter_number\) === 1/);
   assert.match(editor, /setVisualCueTargetKey/);
   assert.match(editor, /setVisualCuePageKey/);
   assert.match(editor, /setVisualCueRegionKey/);
-  assert.match(editor, /moduleCode === "orientation" && chapterNumber === 1/);
-  assert.match(editor, /buildOrientationLearningTargets\(\{ activities \}\)/);
+  assert.match(editor, /moduleCode === "orientation"\s*\n\s*\? buildOrientationLearningTargets\(\{ activities \}\)/);
+  assert.doesNotMatch(editor, /chapterNumber === 1/);
   assert.match(editor, /availableLearningTargets\.length > 0/);
   assert.match(editor, /onInput=\{\(event\) => event\.stopPropagation\(\)\}/);
   assert.match(editor, /selectLearningTargetPage\(event\.target\.value\)/);

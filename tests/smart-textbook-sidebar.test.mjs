@@ -922,7 +922,7 @@ test("临时韩语示范音发布为可替换的 R2 音频版本", async () => {
 test("教学脚本可以定位当前步骤正文和数据库互动活动", async () => {
   const source = await readFile(sourceUrl, "utf8");
 
-  assert.match(source, /missionPage === 0 \? "orientation:page:scene" : "orientation:page:diagnosis"/);
+  assert.match(source, /`\$\{activeModule\.code\}:page:\$\{sharedModuleSkeleton\.pages\[/);
   assert.match(source, /data-learning-target=\{`activity:\$\{activity\.id\}`\}/);
   assert.match(source, /data-learning-target="scene:image"/);
   assert.match(source, /data-learning-target="orientation:scene"/);
@@ -934,7 +934,7 @@ test("教学脚本可以定位当前步骤正文和数据库互动活动", async
   assert.match(source, /eventType: "audio_completed"/);
   assert.match(source, /utterance\.onend = \(\) => finish\(true\)/);
   assert.match(source, /utterance\.onerror = \(\) => finish\(false\)/);
-  assert.match(source, /orientation:header:tab:/);
+  assert.match(source, /\$\{activeModule\.code\}:header:tab:\$\{learningHeaderSkeleton\?\.pages\[targetIndex\]/);
   assert.match(source, /function visibleLearningTarget/);
   assert.match(source, /getBoundingClientRect\(\)/);
   assert.match(source, /requestAnimationFrame\(\(\) => window\.requestAnimationFrame/);

@@ -1,15 +1,18 @@
 "use client";
 
-import { type KeyboardEvent as ReactKeyboardEvent, useActionState, useEffect, useRef, useState } from "react";
+import { type KeyboardEvent as ReactKeyboardEvent, type SyntheticEvent as ReactSyntheticEvent, useActionState, useEffect, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowDown, ArrowUp, BookOpenText, CheckCircle2, Link2, LoaderCircle, MessageCircleQuestion, Pause, Play, Plus, RotateCcw, Route, ScrollText, Trash2, VolumeX } from "lucide-react";
 
 import {
+  deleteCharacterStyleTemplateAction,
+  saveCharacterStyleTemplateAction,
   saveTeachingScriptNodeAction,
   type TeachingScriptActionState,
 } from "@/app/dashboard/admin/teaching-scripts/actions";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
+  buildGenericModuleLearningTargets,
   buildOrientationLearningTargets,
   type SmartTextbookLearningTarget,
 } from "@/lib/smart-textbook-learning-targets";
@@ -33,7 +36,7 @@ import {
 } from "@/lib/teaching-virtual-character";
 import { TeachingBlackboardEditor } from "./TeachingBlackboardEditor";
 import { VirtualCharacterStageEditor } from "./VirtualCharacterStageEditor";
-import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
+import type { BlackboardLayoutTemplate, CharacterStyleTemplate, TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
 
 const initialState: TeachingScriptActionState = { status: "idle" };
 const HINT_SPEECH_SEGMENT_INDEX = 197;
@@ -444,6 +447,7 @@ const errorSectionByField: Partial<Record<string, EditorSection>> = {
   studentTaskKind: "content",
   studentTaskTargetKey: "content",
   visualCueTargetKey: "content",
+  petActionTargetKey: "content",
   interactionKind: "interaction",
   interactionPromptZh: "interaction",
   interactionOptions: "interaction",
@@ -550,9 +554,10 @@ export function TeachingScriptNodeForm({
   allNodes,
   activities,
   learningTargets,
+  templates,
+  blackboardLayoutTemplates,
   moduleCode,
   moduleOrder,
-  chapterNumber,
   returnTo,
   editable,
   onDirtyChange,
@@ -563,9 +568,10 @@ export function TeachingScriptNodeForm({
   allNodes: TeachingScriptNode[];
   activities: TeachingScriptActivity[];
   learningTargets: SmartTextbookLearningTarget[];
+  templates: CharacterStyleTemplate[];
+  blackboardLayoutTemplates: BlackboardLayoutTemplate[];
   moduleCode: string;
   moduleOrder: number;
-  chapterNumber: number;
   returnTo: string;
   editable: boolean;
   onDirtyChange: (dirty: boolean) => void;
@@ -578,6 +584,7 @@ export function TeachingScriptNodeForm({
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const display = objectConfiguration(node, "display");
   const studentTask = objectConfiguration(node, "studentTask");
+  const petAction = objectConfiguration(node, "petAction");
   const visualCue = objectConfiguration(node, "visualCue");
   const virtualCharacter = objectConfiguration(node, "virtualCharacter");
   const interaction = objectConfiguration(node, "interaction");
@@ -603,9 +610,9 @@ export function TeachingScriptNodeForm({
   };
   const availableLearningTargets = learningTargets.length > 0
     ? learningTargets
-    : moduleCode === "orientation" && chapterNumber === 1
+    : moduleCode === "orientation"
       ? buildOrientationLearningTargets({ activities })
-      : [];
+      : buildGenericModuleLearningTargets({ moduleCode, activities });
   const knownVisualCueTargetKeys = new Set([
     "",
     "content:current",
@@ -617,6 +624,8 @@ export function TeachingScriptNodeForm({
   const actionableLearningTargets = availableLearningTargets.filter((item) => item.supportsStudentAction);
   const storedStudentTaskTargetKey = String(studentTask.targetKey ?? "");
   const storedStudentTaskTarget = actionableLearningTargets.find((item) => item.key === storedStudentTaskTargetKey);
+  const storedPetActionTargetKey = String(petAction.targetKey ?? "");
+  const storedPetActionTarget = actionableLearningTargets.find((item) => item.key === storedPetActionTargetKey);
   const [scriptLines, setScriptLines] = useState(() => {
     const lines = node.script["zh-CN"].split(/\n\s*\n/);
     return lines.length > 0 ? lines : [""];
@@ -646,6 +655,12 @@ export function TeachingScriptNodeForm({
     normalizeTeachingBlackboardPlacement(display.placement),
   );
   const [dirty, setDirty] = useState(false);
+  const applyStyleDetailsRef = useRef<HTMLDetailsElement | null>(null);
+  const [currentNodeTemplateId, setCurrentNodeTemplateId] = useState("");
+  const [newTemplateName, setNewTemplateName] = useState("");
+  const [saveTemplatePending, startSaveTemplateTransition] = useTransition();
+  const [saveTemplateError, setSaveTemplateError] = useState("");
+  const [deleteTemplatePending, startDeleteTemplateTransition] = useTransition();
   const [visualCueTargetKey, setVisualCueTargetKey] = useState(storedVisualCueTargetKey);
   const [visualCuePageKey, setVisualCuePageKey] = useState(
     storedLearningTarget?.pageKey ?? (storedVisualCueTargetKey ? "legacy" : ""),
@@ -662,6 +677,11 @@ export function TeachingScriptNodeForm({
     storedStudentTaskTarget?.pageKey ?? (storedStudentTaskTargetKey ? "legacy" : ""),
   );
   const [studentTaskRegionKey, setStudentTaskRegionKey] = useState(storedStudentTaskTarget?.regionKey ?? "");
+  const [petActionTargetKey, setPetActionTargetKey] = useState(storedPetActionTargetKey);
+  const [petActionPageKey, setPetActionPageKey] = useState(
+    storedPetActionTarget?.pageKey ?? (storedPetActionTargetKey ? "legacy" : ""),
+  );
+  const [petActionRegionKey, setPetActionRegionKey] = useState(storedPetActionTarget?.regionKey ?? "");
   const [interactionKind, setInteractionKind] = useState(initialInteractionKind);
   const [referenceActivityId, setReferenceActivityId] = useState(node.referenceActivityId ?? "");
   const [flowMode, setFlowMode] = useState<FlowMode>(initialFlowMode);
@@ -719,11 +739,83 @@ export function TeachingScriptNodeForm({
         .filter((item, index, values) => index === 0 || item !== values[index - 1])
         .join(" → ")
     : "";
+  const selectedPetActionTarget = actionableLearningTargets.find((item) => item.key === petActionTargetKey);
+  const petActionPages = Array.from(new Map(
+    actionableLearningTargets.map((item) => [item.pageKey, { key: item.pageKey, label: item.pageLabel }]),
+  ).values());
+  const petActionRegions = Array.from(new Map(
+    actionableLearningTargets
+      .filter((item) => item.pageKey === petActionPageKey)
+      .map((item) => [item.regionKey, { key: item.regionKey, label: item.regionLabel }]),
+  ).values());
+  const petActionObjects = actionableLearningTargets.filter((item) =>
+    item.pageKey === petActionPageKey && item.regionKey === petActionRegionKey,
+  );
+  const selectedPetActionPath = selectedPetActionTarget
+    ? [selectedPetActionTarget.pageLabel, selectedPetActionTarget.regionLabel, selectedPetActionTarget.label]
+        .filter((item, index, values) => index === 0 || item !== values[index - 1])
+        .join(" → ")
+    : "";
 
-  function markDirty() {
+  function markDirty(event?: ReactSyntheticEvent) {
     if (!editable) return;
+    if (event && event.target instanceof Element && event.target.closest("[data-style-template-controls]")) return;
     setDirty(true);
     onDirtyChange(true);
+  }
+
+  function saveCurrentStyleAsTemplate() {
+    const name = newTemplateName.trim();
+    if (!name) return;
+    if (dirty) {
+      window.alert("请先保存当前小节，再存为模板。");
+      return;
+    }
+    setSaveTemplateError("");
+    startSaveTemplateTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("node_id", node.id);
+        formData.set("name", name);
+        formData.set("return_to", returnTo);
+        await saveCharacterStyleTemplateAction(formData);
+        setNewTemplateName("");
+      } catch (error) {
+        setSaveTemplateError(error instanceof Error ? error.message : "保存模板失败，请重试。");
+      }
+    });
+  }
+
+  function deleteTemplate(templateId: string) {
+    if (!window.confirm("确定删除这个模板吗？")) return;
+    setSaveTemplateError("");
+    startDeleteTemplateTransition(async () => {
+      try {
+        const formData = new FormData();
+        formData.set("template_id", templateId);
+        formData.set("return_to", returnTo);
+        await deleteCharacterStyleTemplateAction(formData);
+        if (currentNodeTemplateId === templateId) setCurrentNodeTemplateId("");
+      } catch (error) {
+        setSaveTemplateError(error instanceof Error ? error.message : "删除模板失败，请重试。");
+      }
+    });
+  }
+
+  function applyTemplateToCurrentNode() {
+    const template = templates.find((item) => item.id === currentNodeTemplateId);
+    if (!template) return;
+    markDirty();
+    setScriptPerformances((current) => current.map((item) => ({
+      ...item,
+      characterX: template.characterX,
+      characterY: template.characterY,
+      characterScale: template.characterScale,
+      dialogueX: template.dialogueX,
+      dialogueY: template.dialogueY,
+    })));
+    setBlackboardPlacement({ x: template.blackboardX, y: template.blackboardY, scale: template.blackboardScale });
+    applyStyleDetailsRef.current?.removeAttribute("open");
   }
 
   function handleEditorTabKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
@@ -786,6 +878,29 @@ export function TeachingScriptNodeForm({
       item.pageKey === studentTaskPageKey && item.regionKey === regionKey,
     );
     setStudentTaskTargetKey(nextTarget?.key ?? "");
+  }
+
+  function selectPetActionPage(pageKey: string) {
+    markDirty();
+    setPetActionPageKey(pageKey);
+    if (!pageKey) {
+      setPetActionRegionKey("");
+      setPetActionTargetKey("");
+      return;
+    }
+    const pageTargets = actionableLearningTargets.filter((item) => item.pageKey === pageKey);
+    const nextTarget = pageTargets[0];
+    setPetActionRegionKey(nextTarget?.regionKey ?? "");
+    setPetActionTargetKey(nextTarget?.key ?? "");
+  }
+
+  function selectPetActionRegion(regionKey: string) {
+    markDirty();
+    setPetActionRegionKey(regionKey);
+    const nextTarget = actionableLearningTargets.find((item) =>
+      item.pageKey === petActionPageKey && item.regionKey === regionKey,
+    );
+    setPetActionTargetKey(nextTarget?.key ?? "");
   }
 
   function updateInteractionOption(index: number, value: string) {
@@ -1180,8 +1295,69 @@ export function TeachingScriptNodeForm({
 
           <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
-            <div className={formSectionClass}>
+            <div className={`${formSectionClass} flex flex-wrap items-center justify-between gap-3`}>
               <CardTitleWithHint title={<span id="virtual-character-group-title">教学舞台</span>} description="这里按学生端的完整教学区比例预览。先选择台词，再直接拖动黑板和金老师；位置、大小和动作会同步到学生端。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看教学舞台说明" />
+              <details ref={applyStyleDetailsRef} className="group relative shrink-0">
+                <summary
+                  className={`inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden ${!editable ? "pointer-events-none opacity-45" : ""}`}
+                >
+                  样式模板
+                </summary>
+                <div data-style-template-controls className="absolute right-0 top-full z-40 mt-2 w-[min(22rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
+                  <p className="text-xs leading-5 text-[var(--muted-foreground)]">把当前小节满意的人物位置、大小和黑板位置存成模板；打开别的小节后，选这个模板点应用，就能保持一致的站位。</p>
+                  <div className="mt-3 flex items-end gap-2 border-b border-[var(--border)] pb-3">
+                    <label className="flex-1 space-y-1.5 text-xs font-medium">
+                      <span className="block font-semibold text-[var(--foreground)]">把当前小节的样式存为新模板</span>
+                      <input
+                        value={newTemplateName}
+                        onChange={(event) => setNewTemplateName(event.target.value)}
+                        disabled={!editable}
+                        maxLength={60}
+                        placeholder="例如：老师站右侧-标准"
+                        className={inputClass}
+                      />
+                    </label>
+                    <button
+                      type="button"
+                      disabled={!editable || saveTemplatePending || !newTemplateName.trim()}
+                      onClick={saveCurrentStyleAsTemplate}
+                      className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg border border-[var(--primary)] px-2.5 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"
+                    >
+                      {saveTemplatePending ? <LoaderCircle size={13} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : null}
+                      存为模板
+                    </button>
+                  </div>
+                  <label className="mt-3 block space-y-1.5 text-xs font-medium">
+                    <span className="block font-semibold text-[var(--foreground)]">把模板应用到当前小节（还需手动保存）</span>
+                    <div className="flex items-center gap-2">
+                      <select value={currentNodeTemplateId} onChange={(event) => setCurrentNodeTemplateId(event.target.value)} className={`${inputClass} flex-1`}>
+                        <option value="">选择模板…</option>
+                        {templates.map((template) => <option key={template.id} value={template.id}>{template.name}</option>)}
+                      </select>
+                      {currentNodeTemplateId && (
+                        <button
+                          type="button"
+                          onClick={() => deleteTemplate(currentNodeTemplateId)}
+                          disabled={deleteTemplatePending}
+                          aria-label="删除这个模板"
+                          className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--status-danger)] transition hover:bg-[var(--status-danger-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"
+                        >
+                          {deleteTemplatePending ? <LoaderCircle size={13} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Trash2 size={13} aria-hidden="true" />}
+                        </button>
+                      )}
+                      <button
+                        type="button"
+                        disabled={!editable || !currentNodeTemplateId}
+                        onClick={applyTemplateToCurrentNode}
+                        className="inline-flex min-h-9 shrink-0 items-center rounded-lg border border-[var(--primary)] px-2.5 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45"
+                      >
+                        应用
+                      </button>
+                    </div>
+                  </label>
+                  {saveTemplateError && <p className="mt-1.5 text-[11px] text-[var(--status-danger)]">{saveTemplateError}</p>}
+                </div>
+              </details>
             </div>
             <input type="hidden" name="virtual_character_kind" value="uply-teacher" />
             <input type="hidden" name="virtual_character_position" value={(scriptPerformances[0]?.characterX ?? 75) < 50 ? "left" : "right"} />
@@ -1204,7 +1380,7 @@ export function TeachingScriptNodeForm({
               <CardTitleWithHint title={<span id="display-content-group-title">黑板画面</span>} description="像编辑演示文稿一样制作标题、要点和例句，并指定每张画面在哪句台词出现。老师的详细讲解仍在“老师台词”里编辑。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看黑板画面说明" />
             </div>
             <input type="hidden" name="display_items_zh" value="" />
-            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} onSlidesChange={setBlackboardSlides} />
+            <TeachingBlackboardEditor key={node.id} display={display} scriptLines={scriptLines} disabled={!editable} onDirty={markDirty} onSlidesChange={setBlackboardSlides} layoutTemplates={blackboardLayoutTemplates} returnTo={returnTo} />
             <FieldError errors={state.fieldErrors?.displaySlidesJson} />
             </section>
 
@@ -1212,7 +1388,7 @@ export function TeachingScriptNodeForm({
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
               <span className="min-w-0">
                 <span id="learning-area-group-title" className="block text-sm font-bold text-[var(--foreground)]">学习区联动</span>
-                <span className="mt-0.5 block truncate text-xs text-[var(--foreground-muted)]">{selectedLearningTargetPath || (studentTaskKind !== "none" ? "已安排学生操作" : "未设置，仅播放教学内容")}</span>
+                <span className="mt-0.5 block truncate text-xs text-[var(--foreground-muted)]">{[selectedLearningTargetPath || (studentTaskKind !== "none" ? "已安排学生操作" : "未设置，仅播放教学内容"), selectedPetActionTarget ? "已设置宠物代点" : ""].filter(Boolean).join("・")}</span>
               </span>
               <span className="shrink-0 text-xs font-semibold text-[var(--primary)] group-open:hidden">展开设置</span>
               <span className="hidden shrink-0 text-xs font-semibold text-[var(--foreground-muted)] group-open:inline">收起</span>
@@ -1380,6 +1556,66 @@ export function TeachingScriptNodeForm({
                     </div>
                   </div>
                 </fieldset>
+              </div>
+            </div>
+            <div className={fieldClass}>
+              <CardTitleWithHint
+                title="宠物代点"
+                description="选择后，播放到这个小节时阿韩会自动走到这个按钮旁边并真的帮学生点一下；只能选播放音频、翻页这类非计分按钮，不能选答题选项，避免代替学生完成需要评分的互动。"
+                headingLevel={4}
+                titleClassName={formFieldLabelClass}
+                hintClassName="-my-3 -mr-3"
+                hintLabel="查看宠物代点说明"
+              />
+              <div>
+                {actionableLearningTargets.length > 0 ? (
+                  <div className="grid gap-3 lg:grid-cols-3">
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span>
+                      <select value={petActionPageKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionPage(event.target.value); }} disabled={!editable} className={inputClass}>
+                        <option value="">不代点，仅正常讲解</option>
+                        {petActionPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}
+                        {petActionPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}
+                      </select>
+                    </label>
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span>
+                      <select value={petActionRegionKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionRegion(event.target.value); }} disabled={!editable || !petActionPageKey || petActionPageKey === "legacy"} className={inputClass}>
+                        {!petActionRegionKey && <option value="">请先选择页面</option>}
+                        {petActionRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span>
+                      <select
+                        value={selectedPetActionTarget?.key ?? ""}
+                        onInput={(event) => event.stopPropagation()}
+                        onChange={(event) => { event.stopPropagation(); markDirty(); setPetActionTargetKey(event.target.value); }}
+                        disabled={!editable || !petActionRegionKey}
+                        aria-invalid={Boolean(state.fieldErrors?.petActionTargetKey?.length) || undefined}
+                        aria-describedby={state.fieldErrors?.petActionTargetKey?.length ? "pet-action-target-error" : undefined}
+                        className={inputClass}
+                      >
+                        {!selectedPetActionTarget && <option value="">请先选择区域</option>}
+                        {petActionObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                ) : (
+                  <p className="app-muted-text text-xs leading-5">当前学习步骤还没有可代点的按钮或表达。</p>
+                )}
+                <input type="hidden" name="pet_action_target_key" value={petActionTargetKey} />
+                {selectedPetActionPath && (
+                  <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
+                    当前代点目标：{selectedPetActionPath}
+                  </p>
+                )}
+                {petActionPageKey === "legacy" && (
+                  <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]" role="alert">
+                    这条小节保存的是旧目标，请重新选择要代点的按钮或表达。
+                  </p>
+                )}
+                <FieldError id="pet-action-target-error" errors={state.fieldErrors?.petActionTargetKey} />
               </div>
             </div>
             </div>

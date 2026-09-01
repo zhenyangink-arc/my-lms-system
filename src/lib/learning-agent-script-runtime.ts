@@ -69,6 +69,13 @@ export function virtualCharacter(configuration: Record<string, unknown> | null) 
     : null;
 }
 
+export function petAction(configuration: Record<string, unknown> | null) {
+  const value = configuration?.petAction;
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : null;
+}
+
 export type ScriptVirtualCharacter = {
   kind: "uply-teacher";
   pose: TeacherKimPose;

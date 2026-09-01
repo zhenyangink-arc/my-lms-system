@@ -7,6 +7,7 @@ import {
   headerJson,
   isTerminalScriptNode,
   localized,
+  petAction,
   resolveScriptCharacter,
   resolveScriptStep,
   ScriptStepValidationError,
@@ -482,6 +483,12 @@ export async function POST(request: Request) {
       "X-Learning-Agent-Visual-Cue",
       headerJson(input.intent === "start" || input.intent === "ready"
         ? visualCue(selectedScriptNode.configuration)
+        : null),
+    );
+    headers.set(
+      "X-Learning-Agent-Pet-Action",
+      headerJson(input.intent === "start" || input.intent === "ready"
+        ? petAction(selectedScriptNode.configuration)
         : null),
     );
     headers.set("X-Learning-Agent-Task-Completed", selectedTaskCompleted ? "true" : "false");

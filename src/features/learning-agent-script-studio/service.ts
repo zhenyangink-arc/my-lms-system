@@ -3,9 +3,12 @@ import "server-only";
 import { redirect } from "next/navigation";
 
 import { requirePlatformOwner } from "@/lib/admin";
-import { buildOrientationLearningTargets } from "@/lib/smart-textbook-learning-targets";
+import { buildGenericModuleLearningTargets, buildOrientationLearningTargets, type SmartTextbookLearningTarget } from "@/lib/smart-textbook-learning-targets";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type {
+  BlackboardLayoutTemplate,
+  BlackboardLayoutTemplateElement,
+  CharacterStyleTemplate,
   LocalizedText,
   TeachingScriptActivity,
   TeachingScriptModule,
@@ -33,6 +36,91 @@ function ids(rows: Row[]) {
   return rows.map((row) => String(row.id)).filter(Boolean);
 }
 
+async function loadCharacterStyleTemplates(admin: ReturnType<typeof createAdminClient>): Promise<CharacterStyleTemplate[]> {
+  const { data, error } = await admin
+    .from("learning_agent_character_style_templates")
+    .select("id,name,virtual_character_position,character_x,character_y,character_scale,dialogue_x,dialogue_y,blackboard_x,blackboard_y,blackboard_scale")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error("无法读取样式模板。");
+  return (data ?? []).map((row) => ({
+    id: String(row.id),
+    name: String(row.name),
+    virtualCharacterPosition: row.virtual_character_position === "left" ? "left" : "right",
+    characterX: Number(row.character_x),
+    characterY: Number(row.character_y),
+    characterScale: Number(row.character_scale),
+    dialogueX: Number(row.dialogue_x),
+    dialogueY: Number(row.dialogue_y),
+    blackboardX: Number(row.blackboard_x),
+    blackboardY: Number(row.blackboard_y),
+    blackboardScale: Number(row.blackboard_scale),
+  }));
+}
+
+function normalizeBlackboardLayoutTemplateElement(value: unknown): BlackboardLayoutTemplateElement | null {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return null;
+  const record = value as Record<string, unknown>;
+  const type = record.type === "bullets" || record.type === "expression" ? record.type : "text";
+  const align = record.align === "center" || record.align === "right" ? record.align : "left";
+  const tone = record.tone === "primary" || record.tone === "highlight" || record.tone === "muted" ? record.tone : "default";
+  const fontWeight = record.fontWeight === 400 || record.fontWeight === 700 ? record.fontWeight : 600;
+  return {
+    type,
+    x: Number(record.x) || 0,
+    y: Number(record.y) || 0,
+    width: Number(record.width) || 8,
+    height: Number(record.height) || 6,
+    fontSize: Number(record.fontSize) || 20,
+    fontWeight,
+    align,
+    tone,
+  };
+}
+
+async function loadBlackboardLayoutTemplates(admin: ReturnType<typeof createAdminClient>): Promise<BlackboardLayoutTemplate[]> {
+  const { data, error } = await admin
+    .from("learning_agent_blackboard_layout_templates")
+    .select("id,name,background,elements")
+    .order("created_at", { ascending: false });
+  if (error) throw new Error("无法读取黑板版式模板。");
+  return (data ?? []).map((row) => ({
+    id: String(row.id),
+    name: String(row.name),
+    background: row.background === "warm" || row.background === "grid" ? row.background : "plain",
+    elements: (Array.isArray(row.elements) ? row.elements : [])
+      .map(normalizeBlackboardLayoutTemplateElement)
+      .filter((element): element is BlackboardLayoutTemplateElement => element !== null),
+  }));
+}
+
+async function loadSmartTextbookLearningTargetRegistry(
+  admin: ReturnType<typeof createAdminClient>,
+): Promise<Map<string, SmartTextbookLearningTarget[]>> {
+  const { data, error } = await admin
+    .from("smart_textbook_learning_target_registry")
+    .select("module_code,target_key,page_key,page_label,region_key,region_label,label,scope,kind,supports_student_action")
+    .order("sort_order");
+  if (error) throw new Error("无法读取智能教材目标注册表。");
+  const byModuleCode = new Map<string, SmartTextbookLearningTarget[]>();
+  for (const row of data ?? []) {
+    const moduleCode = String(row.module_code);
+    const items = byModuleCode.get(moduleCode) ?? [];
+    items.push({
+      key: String(row.target_key),
+      pageKey: String(row.page_key),
+      pageLabel: String(row.page_label),
+      regionKey: String(row.region_key),
+      regionLabel: String(row.region_label),
+      label: String(row.label),
+      scope: row.scope as SmartTextbookLearningTarget["scope"],
+      kind: row.kind as SmartTextbookLearningTarget["kind"],
+      supportsStudentAction: row.supports_student_action === true,
+    });
+    byModuleCode.set(moduleCode, items);
+  }
+  return byModuleCode;
+}
+
 export async function getTeachingScriptStudioData(
   studentAppId: string,
 ): Promise<TeachingScriptStudioData> {
@@ -49,7 +137,7 @@ export async function getTeachingScriptStudioData(
 
   const textbookRows = (textbooks ?? []) as Row[];
   const textbookIds = ids(textbookRows);
-  if (!textbookIds.length) return { appId: studentAppId, modules: [] };
+  if (!textbookIds.length) return { appId: studentAppId, modules: [], characterStyleTemplates: await loadCharacterStyleTemplates(admin), blackboardLayoutTemplates: await loadBlackboardLayoutTemplates(admin) };
 
   const { data: versions, error: versionError } = await admin
     .from("digital_textbook_versions")
@@ -76,7 +164,7 @@ export async function getTeachingScriptStudioData(
   if (chapterError) throw new Error("无法读取教材章节。");
   const chapterRows = (chapters ?? []) as Row[];
   const chapterIds = ids(chapterRows);
-  if (!chapterIds.length) return { appId: studentAppId, modules: [] };
+  if (!chapterIds.length) return { appId: studentAppId, modules: [], characterStyleTemplates: await loadCharacterStyleTemplates(admin), blackboardLayoutTemplates: await loadBlackboardLayoutTemplates(admin) };
 
   const { data: modules, error: moduleError } = await admin
     .from("digital_textbook_modules")
@@ -262,6 +350,8 @@ export async function getTeachingScriptStudioData(
     versionsByLesson.set(lessonId, items);
   }
 
+  const learningTargetRegistry = await loadSmartTextbookLearningTargetRegistry(admin);
+
   const result: TeachingScriptModule[] = moduleRows.flatMap((module) => {
     const chapter = chapterById.get(String(module.chapter_id));
     if (!chapter) return [];
@@ -282,12 +372,17 @@ export async function getTeachingScriptStudioData(
       textbookTitle: localized(textbook.title),
       lessonId,
       activities: activitiesByModule.get(String(module.id)) ?? [],
-      learningTargets: String(module.module_code) === "orientation" && Number(chapter.chapter_number) === 1
+      learningTargets: String(module.module_code) === "orientation"
         ? buildOrientationLearningTargets({
             content: (contentNodesByModule.get(String(module.id))?.[0]?.content ?? {}) as Record<string, unknown>,
             activities: activitiesByModule.get(String(module.id)) ?? [],
+            staticTargets: learningTargetRegistry.get("orientation") ?? [],
           })
-        : [],
+        : buildGenericModuleLearningTargets({
+            moduleCode: String(module.module_code),
+            activities: activitiesByModule.get(String(module.id)) ?? [],
+            staticTargets: learningTargetRegistry.get(String(module.module_code)) ?? [],
+          }),
       versions: lessonId ? versionsByLesson.get(lessonId) ?? [] : [],
     }];
   });
@@ -299,5 +394,7 @@ export async function getTeachingScriptStudioData(
         || left.order - right.order
         || left.code.localeCompare(right.code),
     ),
+    characterStyleTemplates: await loadCharacterStyleTemplates(admin),
+    blackboardLayoutTemplates: await loadBlackboardLayoutTemplates(admin),
   };
 }
