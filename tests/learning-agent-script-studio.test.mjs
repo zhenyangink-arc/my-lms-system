@@ -173,6 +173,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /status-success-surface/);
   assert.match(editor, /已连接下一句/);
   assert.match(editor, /补充讲解/);
+  assert.match(editor, /已填写 \{supplementalExplanationCount\}\/2/);
+  assert.match(editor, /HINT_SPEECH_SEGMENT_INDEX = 197/);
+  assert.match(editor, /EXAMPLE_SPEECH_SEGMENT_INDEX = 198/);
+  assert.match(editor, /name="hint_zh" value=\{hintZh\}/);
+  assert.match(editor, /name="example_zh" value=\{exampleZh\}/);
   assert.doesNotMatch(editor, /text-xs text-\[var\(--muted-foreground\)\]">正式讲解/);
   assert.match(editor, /xl:grid-cols-2 xl:divide-x xl:divide-y-0/);
   assert.match(editor, /mt-3 grid items-start gap-3 xl:grid-cols-2/);
@@ -618,6 +623,11 @@ test("金老师正式语音与台词哈希、时间轴及二维口型保持同�
   assert.match(provisioner, /learning-agent\/speech\/teacher-kim\/v1/);
   assert.match(provisioner, /\.in\("status", \["published", "draft"\]\)/);
   assert.match(provisioner, /contentHash\.slice\(0, 16\)/);
+  assert.match(provisioner, /HINT_SEGMENT_INDEX = 197/);
+  assert.match(provisioner, /EXAMPLE_SEGMENT_INDEX = 198/);
+  assert.match(provisioner, /kind: "supplemental"/);
+  assert.match(scriptRuntime2, /speechSegmentIndex === 197/);
+  assert.match(scriptRuntime2, /speechSegmentIndex === 198/);
   assert.match(shell, /parseTutorSpeechManifest/);
   assert.match(shell, /activeCue\?\.charEnd/);
   assert.match(shell, /tutorSpeechInProgress/);

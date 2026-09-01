@@ -14,6 +14,8 @@ const VOICES = {
   "ko-KR": "ko-KR-SunHiNeural",
 };
 const LOCALES = ["zh-CN", "ko-KR"];
+const HINT_SEGMENT_INDEX = 197;
+const EXAMPLE_SEGMENT_INDEX = 198;
 const BUFFER_LINE_SEGMENT_INDEX = 199;
 const DEFAULT_BUFFER_LINES = {
   "zh-CN": "稍等一下，我看看这里怎么讲…",
@@ -122,7 +124,7 @@ async function durationMs(filePath) {
 async function generateSegment({ workDir, node, locale, segmentIndex, text }) {
   const performance = scriptPerformance(
     node.configuration,
-    segmentIndex === BUFFER_LINE_SEGMENT_INDEX ? 0 : segmentIndex,
+    segmentIndex >= HINT_SEGMENT_INDEX ? 0 : segmentIndex,
   );
   const chunks = splitBySpokenLanguage(text, locale);
   const rate = edgeRate(performance.voiceRate);
@@ -260,6 +262,10 @@ async function main() {
           rawText: localizedExact(node.configuration?.bufferLine, locale) || DEFAULT_BUFFER_LINES[locale],
           kind: "buffer-line",
         });
+        const hint = localizedExact(node.configuration?.hint, locale);
+        const example = localizedExact(node.configuration?.example, locale);
+        if (hint) speechJobs.push({ segmentIndex: HINT_SEGMENT_INDEX, rawText: hint, kind: "supplemental" });
+        if (example) speechJobs.push({ segmentIndex: EXAMPLE_SEGMENT_INDEX, rawText: example, kind: "supplemental" });
         for (const { segmentIndex, rawText, kind } of speechJobs) {
           // Voice generation and its cache hash must never see [b]/[u]/[color]
           // markup: TTS would read the tags aloud, and formatting-only edits
@@ -267,7 +273,7 @@ async function main() {
           const text = stripRichText(rawText);
           const performance = scriptPerformance(
             node.configuration,
-            segmentIndex === BUFFER_LINE_SEGMENT_INDEX ? 0 : segmentIndex,
+            segmentIndex >= HINT_SEGMENT_INDEX ? 0 : segmentIndex,
           );
           if (kind === "script" && performance.voiceEnabled === false) continue;
           const contentHash = createHash("sha256").update(text, "utf8").digest("hex");

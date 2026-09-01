@@ -36,6 +36,8 @@ import { VirtualCharacterStageEditor } from "./VirtualCharacterStageEditor";
 import type { TeachingScriptActivity, TeachingScriptNode, TeachingScriptSpeechAsset } from "./types";
 
 const initialState: TeachingScriptActionState = { status: "idle" };
+const HINT_SPEECH_SEGMENT_INDEX = 197;
+const EXAMPLE_SPEECH_SEGMENT_INDEX = 198;
 
 function configuredText(node: TeachingScriptNode, key: string, locale: "zh-CN" | "ko-KR" = "zh-CN") {
   const value = node.configuration[key];
@@ -613,6 +615,8 @@ export function TeachingScriptNodeForm({
   });
   const [bufferLineZh, setBufferLineZh] = useState(() => configuredText(node, "bufferLine", "zh-CN"));
   const [bufferLineKo, setBufferLineKo] = useState(() => configuredText(node, "bufferLine", "ko-KR"));
+  const [hintZh, setHintZh] = useState(() => configuredText(node, "hint", "zh-CN"));
+  const [exampleZh, setExampleZh] = useState(() => configuredText(node, "example", "zh-CN"));
   const storedScriptPerformances = Array.isArray(node.configuration.scriptPerformances)
     ? node.configuration.scriptPerformances
     : [];
@@ -661,6 +665,7 @@ export function TeachingScriptNodeForm({
   const [interactionCorrectOptionIndex, setInteractionCorrectOptionIndex] = useState(() =>
     Math.max(0, Math.min(initialInteractionOptions.length - 1, node.interactionSecret?.correctOptionIndex ?? 0)),
   );
+  const supplementalExplanationCount = Number(Boolean(hintZh.trim())) + Number(Boolean(exampleZh.trim()));
 
   const selectedLearningTarget = availableLearningTargets.find((item) => item.key === visualCueTargetKey);
   const learningTargetPages = Array.from(new Map(
@@ -1137,19 +1142,24 @@ export function TeachingScriptNodeForm({
               )}
               {state.fieldErrors?.scriptZh?.length ? <div id="script-zh-error" className="text-xs text-[var(--status-danger)] xl:col-span-2" role="alert">{state.fieldErrors.scriptZh[0]}</div> : null}
             </div>
-            <div className="border-l-2 border-l-transparent bg-[var(--muted)]/50 px-4 py-3">
-              <CardTitleWithHint title="补充讲解" description="学生主动表示没听懂或需要更多例子时，才展示这里的内容。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看补充讲解说明" />
-            </div>
-            <div className="grid gap-4 bg-[var(--muted)]/15 p-4 xl:grid-cols-2">
-              <label className="space-y-2 text-sm font-medium">
-                <span className="font-semibold text-[var(--foreground)]">没听懂时的提示</span>
-                <FormattableTextarea name="hint_zh" defaultValue={configuredText(node, "hint")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
-              </label>
-              <label className="space-y-2 text-sm font-medium">
-                <span className="font-semibold text-[var(--foreground)]">再举一个例子</span>
-                <FormattableTextarea name="example_zh" defaultValue={configuredText(node, "example")} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
-              </label>
-            </div>
+            <details className="group bg-[var(--muted)]/15">
+              <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 border-l-2 border-l-transparent bg-[var(--muted)]/50 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+                <span className="text-sm font-semibold text-[var(--foreground)]">补充讲解</span>
+                <span className="rounded-full bg-[var(--card)] px-2.5 py-1 text-[11px] font-semibold text-[var(--muted-foreground)]">已填写 {supplementalExplanationCount}/2</span>
+              </summary>
+              <div className="grid gap-4 border-t border-[var(--border)] p-4 xl:grid-cols-2">
+                <div className="space-y-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+                  <label htmlFor="hint-zh" className="block text-sm font-semibold text-[var(--foreground)]">没听懂时的提示</label>
+                  <FormattableTextarea id="hint-zh" name="hint_zh" value={hintZh} onChange={setHintZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+                  <ScriptSpeechReview text={hintZh} performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})} asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === HINT_SPEECH_SEGMENT_INDEX)} fromPublishedVersion={node.speechAssetsFromPublishedVersion} />
+                </div>
+                <div className="space-y-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+                  <label htmlFor="example-zh" className="block text-sm font-semibold text-[var(--foreground)]">再举一个例子</label>
+                  <FormattableTextarea id="example-zh" name="example_zh" value={exampleZh} onChange={setExampleZh} onDirty={markDirty} disabled={!editable} rows={3} maxLength={600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+                  <ScriptSpeechReview text={exampleZh} performance={scriptPerformances[0] ?? scriptPerformanceConfiguration(null, {})} asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === EXAMPLE_SPEECH_SEGMENT_INDEX)} fromPublishedVersion={node.speechAssetsFromPublishedVersion} />
+                </div>
+              </div>
+            </details>
             <details className="px-4 py-4">
               <summary className="cursor-pointer text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">韩文标题与台词</summary>
               <div className="mt-4 grid gap-4">

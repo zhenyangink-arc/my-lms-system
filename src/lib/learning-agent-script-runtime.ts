@@ -505,11 +505,22 @@ export async function resolveScriptCharacter(
   scriptedContent: string,
   locale: Locale,
 ) {
+  const hint = configuredText(selectedScriptNode?.configuration ?? null, "hint", locale);
+  const example = configuredText(selectedScriptNode?.configuration ?? null, "example", locale);
+  const speechSegmentIndex = scriptedContent && scriptedContent === hint
+    ? 197
+    : scriptedContent && scriptedContent === example
+      ? 198
+      : selectedScriptSegmentIndex;
   const selectedCharacter = selectedScriptNode
     ? virtualCharacterForScriptSegment(selectedScriptNode.configuration, selectedScriptSegmentIndex)
     : null;
   if (selectedScriptNode && selectedCharacter && selectedCharacter.voiceEnabled !== false) {
-    const exactScriptSegment = stripRichText(teacherScriptSegments(selectedScriptNode, locale)[selectedScriptSegmentIndex] ?? "");
+    const exactScriptSegment = speechSegmentIndex === 197
+      ? stripRichText(hint)
+      : speechSegmentIndex === 198
+        ? stripRichText(example)
+        : stripRichText(teacherScriptSegments(selectedScriptNode, locale)[selectedScriptSegmentIndex] ?? "");
     if (exactScriptSegment && exactScriptSegment === scriptedContent) {
       const contentHash = await sha256Text(exactScriptSegment);
       const { data: speechAsset } = await admin
@@ -517,7 +528,7 @@ export async function resolveScriptCharacter(
         .select("id")
         .eq("script_node_id", selectedScriptNode.id)
         .eq("locale", locale)
-        .eq("segment_index", selectedScriptSegmentIndex)
+        .eq("segment_index", speechSegmentIndex)
         .eq("content_hash", contentHash)
         .eq("production_status", "ready")
         .maybeSingle();
