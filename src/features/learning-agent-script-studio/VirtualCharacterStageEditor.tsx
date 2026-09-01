@@ -286,10 +286,12 @@ export function VirtualCharacterStageEditor({
       <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
       <div className={`space-y-4 ${isFullscreen ? "p-0" : "px-4 py-4"}`}>
       <div className={`flex flex-col gap-3 border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between ${isFullscreen ? "fixed inset-x-3 top-3 z-50 rounded-xl shadow-lg" : "rounded-xl"}`}>
-        <div className="min-w-0">
-          <p className="text-sm font-bold text-[var(--foreground)]">当前预览台词</p>
-          <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">切换台词可检查对应的黑板画面、人物动作和站位。</p>
-        </div>
+        {!isFullscreen ? (
+          <div className="min-w-0">
+            <p className="text-sm font-bold text-[var(--foreground)]">当前预览台词</p>
+            <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">切换台词可检查对应的黑板画面、人物动作和站位。</p>
+          </div>
+        ) : null}
         <div className="flex min-w-0 gap-2 sm:w-[min(38rem,60%)]">
         <label className="block min-w-0 flex-1">
           <span className="sr-only">设置哪句台词</span>
