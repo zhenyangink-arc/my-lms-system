@@ -141,9 +141,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /scriptLines\.map/);
   assert.doesNotMatch(editor, /TypewriterPreview/);
   assert.doesNotMatch(editor, /setPreviewScriptIndex/);
-  assert.match(editor, /livePreviewUrl/);
-  assert.match(editor, /真实学生端预览/);
-  assert.match(editor, /setLivePreviewNonce/);
+  assert.doesNotMatch(editor, /livePreviewUrl/);
+  assert.doesNotMatch(editor, /真实学生端预览/);
+  assert.doesNotMatch(editor, /setLivePreviewNonce/);
+  assert.doesNotMatch(editor, /<iframe/);
+  assert.doesNotMatch(studio, /livePreviewUrl=/);
+  assert.match(editor, /顶部“预览完整流程”/);
   assert.doesNotMatch(editor, />上一句</);
   assert.doesNotMatch(editor, />下一句</);
   assert.match(actions, /getAll\("script_zh"\)/);
@@ -240,7 +243,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(editor, /展示说明/);
   assert.match(editor, /互动设置/);
   assert.match(editor, /流程设置/);
-  assert.match(editor, /学生端预览/);
+  assert.doesNotMatch(editor, /学生端预览/);
   assert.match(editor, /CardTitleWithHint/);
   assert.match(editor, /hintLabel="查看学习区联动说明"/);
   assert.match(editor, /description=\{step\.description\}/);

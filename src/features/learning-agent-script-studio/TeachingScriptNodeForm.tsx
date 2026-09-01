@@ -545,7 +545,6 @@ export function TeachingScriptNodeForm({
   chapterNumber,
   returnTo,
   editable,
-  livePreviewUrl,
   onDirtyChange,
 }: {
   node: TeachingScriptNode;
@@ -557,8 +556,6 @@ export function TeachingScriptNodeForm({
   chapterNumber: number;
   returnTo: string;
   editable: boolean;
-  /** Real student-page preview for this exact node, jumped straight to it. */
-  livePreviewUrl?: string;
   onDirtyChange: (dirty: boolean) => void;
 }) {
   const router = useRouter();
@@ -816,13 +813,11 @@ export function TeachingScriptNodeForm({
     });
   }
 
-  const [livePreviewNonce, setLivePreviewNonce] = useState(0);
   useEffect(() => {
     if (state.status === "success") {
       setDirty(false);
       onDirtyChange(false);
       router.refresh();
-      setLivePreviewNonce((current) => current + 1);
     }
   }, [onDirtyChange, router, state.status]);
 
@@ -1074,8 +1069,8 @@ export function TeachingScriptNodeForm({
                             setScriptPerformances((current) => current.map((item, performanceIndex) => performanceIndex === index ? { ...item, autoContinueToNext: !item.autoContinueToNext } : item));
                           }}
                           aria-pressed={scriptPerformances[index]?.autoContinueToNext ?? false}
-                          aria-label={`连接台词 ${index + 1} 和台词 ${index + 2}，预览时自动连续播放，不用点“继续”`}
-                          title="仅在真实学生端预览里生效：连接后这两句会自动连续播放，不用中途点“继续”；真实学生不受影响。"
+                          aria-label={`连接台词 ${index + 1} 和台词 ${index + 2}，完整流程预览时自动连续播放，不用点“继续”`}
+                          title="仅在顶部“预览完整流程”里生效：连接后这两句会自动连续播放，不用中途点“继续”；真实学生不受影响。"
                           className={`inline-flex min-h-11 items-center gap-1.5 px-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50 ${scriptPerformances[index]?.autoContinueToNext ? "text-[var(--primary)]" : "text-[var(--foreground-secondary)]"}`}
                         >
                           <Link2 size={15} aria-hidden="true" />
@@ -1430,36 +1425,6 @@ export function TeachingScriptNodeForm({
           </div>
         </div>
 
-        {livePreviewUrl && (
-          <aside aria-label="真实学生端预览" className="w-full border border-[var(--border)] bg-[var(--card)]">
-            <div className="flex items-center justify-between gap-2 border-b border-[var(--border)] px-4 py-3">
-              <CardTitleWithHint
-                title="真实学生端预览"
-                description="这里直接嵌入学生实际使用的页面，从当前这个小节开始播放，不会产生学习记录。整体按比例缩小显示，只看个大概效果；需要看清细节或实际操作时，点里面的“全屏”会弹出正常大小的完整视图。显示的是已保存的内容——改完台词要先点下面的“保存当前小节”，再点右边的刷新才会看到新内容。"
-                headingLevel={3}
-                titleClassName="text-sm font-bold"
-                hintClassName="-my-2"
-                hintLabel="查看真实学生端预览说明"
-              />
-              <button
-                type="button"
-                onClick={() => setLivePreviewNonce((current) => current + 1)}
-                className="inline-flex min-h-11 shrink-0 items-center gap-1.5 border border-[var(--border)] px-3 text-xs font-semibold text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]"
-              >
-                <RotateCcw size={13} aria-hidden="true" />刷新
-              </button>
-            </div>
-            <div className="overflow-hidden" style={{ containerType: "inline-size", aspectRatio: "1400 / 900" }}>
-              <iframe
-                key={livePreviewNonce}
-                src={livePreviewUrl}
-                title="真实学生端预览"
-                allowFullScreen
-                style={{ width: "1400px", height: "900px", border: 0, transformOrigin: "top left", transform: "scale(calc(100cqw / 1400px))" }}
-              />
-            </div>
-          </aside>
-        )}
       </div>
 
       {editable && (
