@@ -44,7 +44,7 @@ export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
     minimumTopPercent: 0,
     maximumTopPercent: 70,
     minimumScale: 0.75,
-    maximumScale: 1.25,
+    maximumScale: 1.5,
   },
   preview: {
     fallbackViewportWidthPx: 1920,

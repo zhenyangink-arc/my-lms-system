@@ -19,6 +19,11 @@ test("blackboard placement uses the same bounded stage coordinates as the editor
     { x: 68, y: 24, scale: 1.15 },
   );
   assert.deepEqual(
+    normalizeTeachingBlackboardPlacement({ x: 50, y: 0, scale: 1.5 }),
+    { x: 50, y: 0, scale: 1.5 },
+  );
+  assert.equal(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.maximumScale, 1.5);
+  assert.deepEqual(
     normalizeTeachingBlackboardPlacement({ x: 999, y: -10, scale: 0.2 }),
     { x: 90, y: 0, scale: 0.75 },
   );
