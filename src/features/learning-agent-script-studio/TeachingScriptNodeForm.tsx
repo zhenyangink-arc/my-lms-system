@@ -545,6 +545,7 @@ function teachingActivityLabel(type: string) {
 }
 
 export function TeachingScriptNodeForm({
+  formId,
   node,
   allNodes,
   activities,
@@ -555,7 +556,9 @@ export function TeachingScriptNodeForm({
   returnTo,
   editable,
   onDirtyChange,
+  onPendingChange,
 }: {
+  formId?: string;
   node: TeachingScriptNode;
   allNodes: TeachingScriptNode[];
   activities: TeachingScriptActivity[];
@@ -566,6 +569,7 @@ export function TeachingScriptNodeForm({
   returnTo: string;
   editable: boolean;
   onDirtyChange: (dirty: boolean) => void;
+  onPendingChange: (pending: boolean) => void;
 }) {
   const router = useRouter();
   const [state, action, pending] = useActionState(saveTeachingScriptNodeAction, initialState);
@@ -834,6 +838,9 @@ export function TeachingScriptNodeForm({
 
   const formErrorMessages = Object.values(state.fieldErrors ?? {}).flat();
   useEffect(() => {
+    onPendingChange(pending);
+  }, [onPendingChange, pending]);
+  useEffect(() => {
     if (state.status !== "error" || !state.fieldErrors) return;
     const firstInvalidField = Object.keys(state.fieldErrors).find((key) => state.fieldErrors?.[key]?.length);
     const section = firstInvalidField ? errorSectionByField[firstInvalidField] : undefined;
@@ -842,7 +849,7 @@ export function TeachingScriptNodeForm({
   }, [state.fieldErrors, state.status]);
 
   return (
-    <form ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
+    <form id={formId} ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
@@ -1459,9 +1466,8 @@ export function TeachingScriptNodeForm({
       </div>
 
       {editable && (
-        <div className="sticky bottom-0 z-20 flex min-h-16 items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3 shadow-[0_-8px_20px_color-mix(in_srgb,var(--background)_78%,transparent)]">
+        <div className="px-1 pt-1">
           <p className={state.status === "error" ? "text-sm text-[var(--status-danger)]" : dirty ? "text-sm font-medium text-[var(--status-warning)]" : state.status === "success" ? "text-sm text-[var(--status-success)]" : "text-sm text-[var(--muted-foreground)]"} role={state.status === "error" ? "alert" : "status"} aria-live="polite">{dirty ? "有未保存的修改。保存后才会写入草稿。" : state.message || "修改会先保存到草稿，不会立即影响学生。"}</p>
-          <button type="submit" disabled={pending} className="inline-flex min-h-11 shrink-0 items-center justify-center bg-[var(--primary)] px-5 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60">{pending ? "正在保存…" : "保存当前小节"}</button>
         </div>
       )}
     </form>

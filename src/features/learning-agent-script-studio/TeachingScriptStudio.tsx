@@ -3,7 +3,7 @@
 import { type ButtonHTMLAttributes, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { usePathname } from "next/navigation";
-import { ArrowDown, ArrowUp, ChevronDown, ExternalLink, FilePenLine, LoaderCircle, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Plus, Send, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ExternalLink, FilePenLine, LoaderCircle, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Plus, Save, Send, Trash2 } from "lucide-react";
 
 import {
   addTeachingScriptNodeAction,
@@ -107,6 +107,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
     () => new Set(data.modules.map((item) => item.chapterNumber)),
   );
   const [expandedModuleId, setExpandedModuleId] = useState("");
+  const [nodeSavePending, setNodeSavePending] = useState(false);
   const [navigationMemoryReady, setNavigationMemoryReady] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
@@ -190,6 +191,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const returnTo = pathname;
   const draft = selectedModule.versions.find((item) => item.status === "draft");
   const editable = selectedVersion?.status === "draft";
+  const selectedNodeFormId = selectedNode ? `teaching-script-node-form-${selectedNode.id}` : undefined;
 
   function confirmDiscardChanges() {
     if (!hasUnsavedChanges) return true;
@@ -296,9 +298,21 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
               </span>
             )
           )}
+          {editable && selectedNode && selectedNodeFormId && (
+            <button
+              type="submit"
+              form={selectedNodeFormId}
+              disabled={nodeSavePending}
+              aria-busy={nodeSavePending}
+              className="inline-flex min-h-11 items-center gap-2 border border-[var(--primary)] bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 disabled:cursor-wait disabled:opacity-60"
+            >
+              {nodeSavePending ? <LoaderCircle size={15} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Save size={15} aria-hidden="true" />}
+              {nodeSavePending ? "正在保存…" : "保存当前小节"}
+            </button>
+          )}
           {editable && selectedVersion && (
             <details className="group relative">
-              <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 bg-[var(--primary)] px-4 text-sm font-semibold text-[var(--primary-foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
+              <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 border border-[var(--border)] bg-[var(--muted)] px-4 text-sm font-semibold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 [&::-webkit-details-marker]:hidden">
                 <Send size={15} aria-hidden="true" />发布学习步骤
               </summary>
               <div className="absolute right-0 top-full z-40 mt-2 w-[min(23rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
@@ -456,7 +470,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   </details>
                 )}
               </header>
-              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} chapterNumber={selectedModule.chapterNumber} returnTo={returnTo} editable={editable} onDirtyChange={setHasUnsavedChanges} /></div>
+              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} formId={selectedNodeFormId} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} chapterNumber={selectedModule.chapterNumber} returnTo={returnTo} editable={editable} onDirtyChange={setHasUnsavedChanges} onPendingChange={setNodeSavePending} /></div>
             </>
           ) : <div className="flex min-h-80 items-center justify-center p-8 text-center text-sm text-[var(--muted-foreground)]">请先选择一个教学小节。</div>}
         </section>

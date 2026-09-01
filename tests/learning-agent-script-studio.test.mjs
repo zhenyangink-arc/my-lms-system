@@ -152,6 +152,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /aria-controls=\{selected \? `teaching-step-\$\{lessonModule\.id\}-nodes` : undefined\}/);
   assert.match(studio, /expanded \? "rotate-180"/);
   assert.match(studio, /发布学习步骤/);
+  assert.match(studio, /form=\{selectedNodeFormId\}/);
+  assert.match(studio, /nodeSavePending \? "正在保存…" : "保存当前小节"/);
+  assert.match(studio, /editable && selectedNode && selectedNodeFormId/);
+  assert.match(studio, /summary className="inline-flex min-h-11[^"]*border border-\[var\(--border\)\] bg-\[var\(--muted\)\]/);
+  assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布学习步骤"));
   assert.match(studio, /id="subsection-editor-title">第 \{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /小节 · \{selectedNode\.title\["zh-CN"\]\}/);
   assert.match(studio, /sticky top-0 z-30/);
@@ -348,7 +353,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(companionRoute, /learning-agent\/companions\/a-han\/v2\/runtime\/posters\/seated-combing\.webp/);
   assert.match(companionRoute, /createR2SignedObjectUrl/);
   assert.doesNotMatch(editor, /\/images\/virtual-characters/);
-  assert.match(editor, /保存当前小节/);
+  assert.doesNotMatch(editor, />保存当前小节</);
+  assert.doesNotMatch(editor, /sticky bottom-0/);
+  assert.match(editor, /id=\{formId\}/);
+  assert.match(editor, /onPendingChange\(pending\)/);
   assert.match(editor, /老师讲解指向/);
   assert.match(editor, /hintLabel="查看老师讲解指向说明"/);
   assert.doesNotMatch(editor, /app-muted-text mt-1\.5 block text-xs leading-5">选择后，学生端会自动切到对应页面/);
