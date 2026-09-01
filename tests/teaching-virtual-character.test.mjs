@@ -71,30 +71,30 @@ test("blackboard can adapt below the authoring minimum on an extremely short vie
 });
 
 test("legacy left and right positions become usable stage coordinates", () => {
-  assert.deepEqual(defaultTeachingVirtualCharacterPlacement("left"), { x: 25, y: 0, scale: 1 });
-  assert.deepEqual(defaultTeachingVirtualCharacterPlacement("right"), { x: 75, y: 0, scale: 1 });
-  assert.deepEqual(normalizeTeachingVirtualCharacterPlacement({}, "left"), { x: 25, y: 0, scale: 1 });
+  assert.deepEqual(defaultTeachingVirtualCharacterPlacement("left"), { x: 25, y: 0, scale: 1, dialogueX: 35, dialogueY: 30 });
+  assert.deepEqual(defaultTeachingVirtualCharacterPlacement("right"), { x: 75, y: 0, scale: 1, dialogueX: 85, dialogueY: 30 });
+  assert.deepEqual(normalizeTeachingVirtualCharacterPlacement({}, "left"), { x: 25, y: 0, scale: 1, dialogueX: 35, dialogueY: 30 });
 });
 
 test("per-line virtual character placement is normalized to the editable stage", () => {
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: 62, characterY: 14, characterScale: 1.15 }),
-    { x: 62, y: 14, scale: 1.15 },
+    { x: 62, y: 14, scale: 1.15, dialogueX: 72, dialogueY: 44 },
   );
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: 999, characterY: -20, characterScale: 0.2 }),
-    { x: 90, y: 0, scale: 0.75 },
+    { x: 90, y: 0, scale: 0.75, dialogueX: 92, dialogueY: 30 },
   );
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: 50, characterY: 999, characterScale: 1 }),
-    { x: 50, y: TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, scale: 1 },
+    { x: 50, y: TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, scale: 1, dialogueX: 60, dialogueY: 90 },
   );
 });
 
 test("invalid placement values fall back without propagating NaN", () => {
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: "bad", characterY: null, characterScale: undefined }, "right"),
-    { x: 75, y: 0, scale: 1 },
+    { x: 75, y: 0, scale: 1, dialogueX: 85, dialogueY: 30 },
   );
 });
 

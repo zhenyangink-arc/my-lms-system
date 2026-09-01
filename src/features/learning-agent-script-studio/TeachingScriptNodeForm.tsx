@@ -469,6 +469,8 @@ type ScriptPerformance = {
   characterX: number;
   characterY: number;
   characterScale: number;
+  dialogueX: number;
+  dialogueY: number;
 };
 
 type InteractionOptionEditor = {
@@ -495,6 +497,8 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     characterX: placement.x,
     characterY: placement.y,
     characterScale: placement.scale,
+    dialogueX: placement.dialogueX,
+    dialogueY: placement.dialogueY,
   };
 }
 
@@ -1082,6 +1086,8 @@ export function TeachingScriptNodeForm({
                     <input type="hidden" name="script_character_x" value={String(scriptPerformances[index]?.characterX ?? 75)} />
                     <input type="hidden" name="script_character_y" value={String(scriptPerformances[index]?.characterY ?? 0)} />
                     <input type="hidden" name="script_character_scale" value={String(scriptPerformances[index]?.characterScale ?? 1)} />
+                    <input type="hidden" name="script_dialogue_x" value={String(scriptPerformances[index]?.dialogueX ?? 85)} />
+                    <input type="hidden" name="script_dialogue_y" value={String(scriptPerformances[index]?.dialogueY ?? 30)} />
                     <div className="mt-2 flex flex-wrap gap-1">
                       {index < scriptLines.length - 1 && (
                         <button

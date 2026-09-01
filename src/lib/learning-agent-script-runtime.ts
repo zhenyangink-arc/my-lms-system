@@ -102,6 +102,8 @@ export function virtualCharacterForScriptSegment(
     characterX: placement.x,
     characterY: placement.y,
     characterScale: placement.scale,
+    dialogueX: placement.dialogueX,
+    dialogueY: placement.dialogueY,
     voiceEnabled: (performance.voiceEnabled ?? character.voiceEnabled) !== false,
     voiceLanguage,
     voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,

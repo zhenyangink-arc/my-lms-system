@@ -182,6 +182,8 @@ type TutorCharacter = {
   characterX?: number;
   characterY?: number;
   characterScale?: number;
+  dialogueX?: number;
+  dialogueY?: number;
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
   voiceRate?: number;
@@ -6121,7 +6123,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                           // layer to the left teaching column made the same x percentage
                           // land near the screen centre for students.
                           width: "100%",
-                          containerType: "inline-size",
+                          containerType: "size",
                         }
                       : {
                           width: teachingAreaExpanded
@@ -6164,7 +6166,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute left-full z-10 ml-2 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${tutorStarted ? "bottom-[54%] max-w-[clamp(8rem,18cqw,12rem)]" : teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] max-w-xs"}`}
+                            className={`pointer-events-auto absolute z-10 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${tutorStarted ? "max-w-[clamp(8rem,18cqw,12rem)]" : teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] left-full ml-2 max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] left-full ml-2 max-w-xs"}`}
+                            style={tutorStarted ? {
+                              left: `calc(50% + ${(teachingAreaCharacterPlacement.dialogueX - teachingAreaCharacterPlacement.x) / teachingAreaCharacterPlacement.scale}cqw)`,
+                              bottom: `${(teachingAreaCharacterPlacement.dialogueY - teachingAreaCharacterPlacement.y) / teachingAreaCharacterPlacement.scale}cqh`,
+                              transform: `translate(-50%, 50%) scale(${1 / teachingAreaCharacterPlacement.scale})`,
+                              transformOrigin: "center",
+                            } : undefined}
                           >
                         <div className="relative rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-sm">
                           {teachingAreaCharacter?.kind === "uply-teacher" && (

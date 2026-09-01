@@ -2,6 +2,8 @@ export type TeachingVirtualCharacterPlacement = {
   x: number;
   y: number;
   scale: number;
+  dialogueX: number;
+  dialogueY: number;
 };
 
 export type TeachingBlackboardPlacement = {
@@ -103,10 +105,13 @@ function finiteNumber(value: unknown, fallback: number, minimum: number, maximum
 }
 
 export function defaultTeachingVirtualCharacterPlacement(position: unknown): TeachingVirtualCharacterPlacement {
+  const x = position === "left" ? 25 : 75;
   return {
-    x: position === "left" ? 25 : 75,
+    x,
     y: 0,
     scale: 1,
+    dialogueX: Math.min(92, x + 10),
+    dialogueY: 30,
   };
 }
 
@@ -118,10 +123,14 @@ export function normalizeTeachingVirtualCharacterPlacement(
     ? value as Record<string, unknown>
     : {};
   const fallback = defaultTeachingVirtualCharacterPlacement(positionFallback);
+  const x = finiteNumber(source.characterX, fallback.x, 10, 90);
+  const y = finiteNumber(source.characterY, fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent);
   return {
-    x: finiteNumber(source.characterX, fallback.x, 10, 90),
-    y: finiteNumber(source.characterY, fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
+    x,
+    y,
     scale: finiteNumber(source.characterScale, fallback.scale, 0.75, 1.25),
+    dialogueX: finiteNumber(source.dialogueX, Math.min(92, x + 10), 5, 95),
+    dialogueY: finiteNumber(source.dialogueY, Math.min(90, y + 30), 5, 90),
   };
 }
 

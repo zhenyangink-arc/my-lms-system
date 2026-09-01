@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import { useRef, useSyncExternalStore, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
-import { Move } from "lucide-react";
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent as ReactKeyboardEvent, type PointerEvent as ReactPointerEvent } from "react";
+import { Maximize2, Minimize2, Move } from "lucide-react";
 
 import {
   TEACHER_KIM_POSES,
@@ -48,6 +48,8 @@ export type VirtualCharacterStagePerformance = {
   characterX: number;
   characterY: number;
   characterScale: number;
+  dialogueX: number;
+  dialogueY: number;
 };
 
 const inputClass = "app-input min-h-11 w-full border px-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-65 sm:text-sm";
@@ -84,10 +86,19 @@ export function VirtualCharacterStageEditor({
   disabled?: boolean;
   onDirty: () => void;
 }) {
+  const editorRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
   const draggingRef = useRef(false);
+  const dialogueDraggingRef = useRef(false);
   const blackboardDraggingRef = useRef(false);
   const blackboardDragOffsetRef = useRef({ x: 0, y: 0 });
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  useEffect(() => {
+    const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === editorRef.current);
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
+  }, []);
   const previewViewport = viewportFromSnapshot(useSyncExternalStore(
     subscribeToViewport,
     currentViewportSnapshot,
@@ -165,6 +176,61 @@ export function VirtualCharacterStageEditor({
     onDirty();
   }
 
+  function moveDialogueToPointer(event: ReactPointerEvent<HTMLButtonElement>) {
+    const rect = stageRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const dialogueX = Math.max(5, Math.min(95, ((event.clientX - rect.left) / rect.width) * 100));
+    const dialogueY = Math.max(5, Math.min(90, 100 - ((event.clientY - rect.top) / rect.height) * 100));
+    onPerformanceChange(safeIndex, { dialogueX, dialogueY });
+  }
+
+  function handleDialoguePointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (disabled) return;
+    event.currentTarget.setPointerCapture(event.pointerId);
+    dialogueDraggingRef.current = true;
+    moveDialogueToPointer(event);
+  }
+
+  function handleDialoguePointerMove(event: ReactPointerEvent<HTMLButtonElement>) {
+    if (!dialogueDraggingRef.current || disabled) return;
+    moveDialogueToPointer(event);
+  }
+
+  function handleDialoguePointerEnd() {
+    if (dialogueDraggingRef.current) onDirty();
+    dialogueDraggingRef.current = false;
+  }
+
+  function handleDialogueKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>) {
+    if (disabled) return;
+    const step = event.shiftKey ? 5 : 1;
+    const patch = event.key === "ArrowLeft"
+      ? { dialogueX: Math.max(5, performance.dialogueX - step) }
+      : event.key === "ArrowRight"
+        ? { dialogueX: Math.min(95, performance.dialogueX + step) }
+        : event.key === "ArrowUp"
+          ? { dialogueY: Math.min(90, performance.dialogueY + step) }
+          : event.key === "ArrowDown"
+            ? { dialogueY: Math.max(5, performance.dialogueY - step) }
+            : null;
+    if (!patch) return;
+    event.preventDefault();
+    onPerformanceChange(safeIndex, patch);
+    onDirty();
+  }
+
+  async function toggleFullscreen() {
+    try {
+      if (document.fullscreenElement === editorRef.current) {
+        await document.exitFullscreen();
+        return;
+      }
+      await editorRef.current?.requestFullscreen({ navigationUI: "hide" });
+    } catch {
+      // The browser can reject fullscreen when the user gesture is interrupted.
+    }
+  }
+
   function moveBlackboardToPointer(event: ReactPointerEvent<HTMLButtonElement>) {
     const rect = stageRef.current?.getBoundingClientRect();
     if (!rect) return;
@@ -214,27 +280,51 @@ export function VirtualCharacterStageEditor({
   }
 
   return (
-    <>
+    <div ref={editorRef} className={`overflow-y-auto bg-[var(--background)] ${isFullscreen ? "h-screen" : ""}`}>
       <input type="hidden" name="blackboard_x" value={String(blackboardPlacement.x)} />
       <input type="hidden" name="blackboard_y" value={String(blackboardPlacement.y)} />
       <input type="hidden" name="blackboard_scale" value={String(blackboardPlacement.scale)} />
-      <div className="space-y-4 px-4 py-4">
-      <div className="flex flex-col gap-3 rounded-xl border border-[var(--border)] bg-[var(--muted)]/25 p-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className={`space-y-4 ${isFullscreen ? "p-0" : "px-4 py-4"}`}>
+      <div className={`flex flex-col gap-3 border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 backdrop-blur-md sm:flex-row sm:items-center sm:justify-between ${isFullscreen ? "fixed inset-x-3 top-3 z-50 rounded-xl shadow-lg" : "rounded-xl"}`}>
         <div className="min-w-0">
           <p className="text-sm font-bold text-[var(--foreground)]">当前预览台词</p>
           <p className="mt-0.5 text-xs text-[var(--foreground-muted)]">切换台词可检查对应的黑板画面、人物动作和站位。</p>
         </div>
-        <label className="block min-w-0 sm:w-[min(32rem,52%)]">
+        <div className="flex min-w-0 gap-2 sm:w-[min(38rem,60%)]">
+        <label className="block min-w-0 flex-1">
           <span className="sr-only">设置哪句台词</span>
           <select value={safeIndex} onChange={(event) => onSelectedIndexChange(Number(event.target.value))} disabled={disabled} className={inputClass}>
             {scriptLines.map((line, index) => <option key={index} value={index}>{lineLabel(line, index)}</option>)}
           </select>
         </label>
+        <button type="button" onClick={() => void toggleFullscreen()} className="inline-flex min-h-11 shrink-0 items-center gap-2 rounded-lg border border-[var(--border)] bg-[var(--card)] px-3 text-xs font-bold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+          {isFullscreen ? <Minimize2 size={15} aria-hidden="true" /> : <Maximize2 size={15} aria-hidden="true" />}
+          {isFullscreen ? "退出全屏" : "放大全屏"}
+        </button>
+        </div>
       </div>
+      {isFullscreen ? (
+        <div className="fixed bottom-3 right-3 z-50 w-[min(22rem,calc(100%-1.5rem))] rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 shadow-lg backdrop-blur-md">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <p className="text-xs font-bold text-[var(--foreground)]">全屏舞台工具</p>
+            <p className="text-[10px] text-[var(--foreground-muted)]">位置可直接拖动</p>
+          </div>
+          <div className="grid grid-cols-2 gap-3">
+            <label className="block space-y-1 text-xs font-semibold text-[var(--foreground-secondary)]">
+              <span className="flex items-center justify-between gap-2"><span>黑板大小</span><span className="tabular-nums">{Math.round(boundedBlackboardPlacement.scale * 100)}%</span></span>
+              <input type="range" min={Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale, blackboardBounds.maximumScale) * 100} max={blackboardBounds.maximumScale * 100} step={1} value={Math.round(boundedBlackboardPlacement.scale * 100)} onChange={(event) => { updateBlackboardPlacement({ scale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-8 w-full accent-[var(--primary)]" />
+            </label>
+            <label className="block space-y-1 text-xs font-semibold text-[var(--foreground-secondary)]">
+              <span className="flex items-center justify-between gap-2"><span>老师大小</span><span className="tabular-nums">{Math.round(performance.characterScale * 100)}%</span></span>
+              <input type="range" min={75} max={125} step={5} value={Math.round(performance.characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, { characterScale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-8 w-full accent-[var(--primary)]" />
+            </label>
+          </div>
+        </div>
+      ) : null}
       <div className="min-w-0 space-y-2">
         <div
           ref={stageRef}
-          className="relative w-full overflow-hidden rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm"
+          className={`relative w-full overflow-hidden border border-[var(--border)] bg-[color-mix(in_srgb,var(--status-warning)_3%,var(--card))] shadow-sm ${isFullscreen ? "rounded-none" : "rounded-xl"}`}
           style={{
             aspectRatio: previewGeometry.aspectRatio,
             containerType: "inline-size",
@@ -325,25 +415,28 @@ export function VirtualCharacterStageEditor({
               unoptimized
               className="pointer-events-none object-contain drop-shadow-[0_12px_18px_rgba(15,23,42,0.16)]"
             />
-            <span
-              className="pointer-events-none absolute bottom-[54%] left-full z-30 ml-[0.55cqw] block w-max text-left"
-              style={{ maxWidth: `${previewGeometry.bubbleWidthPercent}cqw` }}
-            >
-              <span className="relative block rounded-[0.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[0.65cqw] shadow-sm">
-                <span className="absolute bottom-[1.5cqw] left-[-0.55cqw] h-[1.1cqw] w-[1.1cqw] rotate-45 border-b border-l border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)]" aria-hidden="true" />
-                <span className="flex min-w-0 items-center justify-between gap-[0.45cqw]">
-                  <span className="truncate text-[0.66cqw] font-bold leading-none text-[var(--foreground)]">UPLY 韩语-金老师</span>
-                  <span className="shrink-0 text-[0.54cqw] font-bold leading-none text-[var(--status-success)]">台词预览</span>
-                </span>
-                <span className="mt-[0.5cqw] block whitespace-pre-line text-[0.62cqw] font-normal leading-[1.55] text-[var(--foreground-secondary)]">
-                  {plainScriptLine(scriptLines[safeIndex] ?? "") || "这句台词还没有内容"}
-                </span>
-              </span>
-            </span>
             <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
           </button>
+          <button
+            type="button"
+            disabled={disabled}
+            onPointerDown={handleDialoguePointerDown}
+            onPointerMove={handleDialoguePointerMove}
+            onPointerUp={handleDialoguePointerEnd}
+            onPointerCancel={handleDialoguePointerEnd}
+            onKeyDown={handleDialogueKeyDown}
+            className="group absolute z-30 touch-none select-none text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed"
+            style={{ left: `${performance.dialogueX}%`, bottom: `${performance.dialogueY}%`, width: `${previewGeometry.bubbleWidthPercent}%`, transform: "translate(-50%, 50%)" }}
+            aria-label="老师对话框。拖动或使用方向键调整位置，按住 Shift 可一次移动 5%。"
+          >
+            <span className="relative block rounded-[0.8cqw] border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-[0.65cqw] shadow-sm">
+              <span className="flex min-w-0 items-center justify-between gap-[0.45cqw]"><span className="truncate text-[0.66cqw] font-bold leading-none">UPLY 韩语-金老师</span><span className="shrink-0 text-[0.54cqw] font-bold text-[var(--status-success)]">台词预览</span></span>
+              <span className="mt-[0.5cqw] block whitespace-pre-line text-[0.62cqw] font-normal leading-[1.55] text-[var(--foreground-secondary)]">{plainScriptLine(scriptLines[safeIndex] ?? "") || "这句台词还没有内容"}</span>
+              <span className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--card)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={14} /></span>
+            </span>
+          </button>
         </div>
-        <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。可以拖动黑板或拖动金老师调整位置，也可以聚焦后使用方向键；按住 Shift 可一次移动 5%。人物位置和动作会随当前台词切换，黑板位置用于当前教学小节。</p>
+        <p className="text-xs leading-5 text-[var(--foreground-muted)]">画布对应学生端完整教学区。可以拖动黑板、金老师和对话框调整位置，也可以聚焦后使用方向键；按住 Shift 可一次移动 5%。</p>
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
@@ -380,7 +473,15 @@ export function VirtualCharacterStageEditor({
           <button type="button" onClick={() => { onBlackboardPlacementChange(defaultTeachingBlackboardPlacement()); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复黑板默认位置</button>
         </div>
       </div>
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+        <p className="mb-3 text-sm font-bold text-[var(--foreground)]">老师对话框</p>
+        <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" min={5} max={95} value={Math.round(performance.dialogueX)} onChange={(event) => { onPerformanceChange(safeIndex, { dialogueX: Math.max(5, Math.min(95, Number(event.target.value) || 5)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">离教学区底部 %</span><input type="number" min={5} max={90} value={Math.round(performance.dialogueY)} onChange={(event) => { onPerformanceChange(safeIndex, { dialogueY: Math.max(5, Math.min(90, Number(event.target.value) || 5)) }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          <button type="button" onClick={() => { onPerformanceChange(safeIndex, { dialogueX: Math.min(92, performance.characterX + 10), dialogueY: Math.min(90, performance.characterY + 30) }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50">放回老师旁边</button>
+        </div>
       </div>
-    </>
+      </div>
+    </div>
   );
 }
