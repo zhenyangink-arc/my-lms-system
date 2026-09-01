@@ -342,6 +342,7 @@ export async function loadSmartDigitalTextbook(
   const openingBufferLineByVersionId = new Map<string, unknown>();
   const openingTeachingDisplayByVersionId = new Map<string, TeachingBlackboardDisplay | null>();
   const openingTeachingCharacterByVersionId = new Map<string, ScriptVirtualCharacter | null>();
+  const openingConfigurationByVersionId = new Map<string, JsonObject>();
   const openingNodeIdByVersionId = new Map<string, string>();
   for (const node of openingFirstNodes ?? []) {
     const versionId = String(node.script_version_id);
@@ -355,6 +356,7 @@ export async function loadSmartDigitalTextbook(
         versionId,
         virtualCharacterForScriptSegment(node.configuration, 0),
       );
+      openingConfigurationByVersionId.set(versionId, asObject(node.configuration));
       openingNodeIdByVersionId.set(versionId, String(node.id));
     }
   }
@@ -377,6 +379,10 @@ export async function loadSmartDigitalTextbook(
   const openingLessonModuleById = new Map((openingLessons ?? []).map((lesson) => [
     String(lesson.id),
     String(lesson.module_id),
+  ]));
+  const publishedScriptVersionByLessonId = new Map((openingScriptVersions ?? []).map((version) => [
+    String(version.lesson_id),
+    String(version.id),
   ]));
   const openingBufferLineByModuleId = new Map<string, unknown>();
   const openingBufferSpeechAssetIdByModuleId = new Map<string, Partial<Record<SmartLocale, string>>>();
@@ -483,28 +489,96 @@ export async function loadSmartDigitalTextbook(
     const { data: activeSessionRows } = teachingLessonIds.length
       ? await admin
           .from("learning_agent_sessions")
-          .select("id,lesson_id,current_node_id,teaching_state,updated_at")
+          .select("id,lesson_id,script_version_id,current_node_id,teaching_state,updated_at")
           .eq("tenant_id", options.tenantId)
           .eq("student_id", options.userId)
           .eq("status", "active")
           .in("lesson_id", teachingLessonIds)
           .order("updated_at", { ascending: false })
-      : { data: [] as { id: string; lesson_id: string; current_node_id: string | null; teaching_state: Record<string, unknown> | null; updated_at: string }[] };
+      : { data: [] as { id: string; lesson_id: string; script_version_id: string | null; current_node_id: string | null; teaching_state: Record<string, unknown> | null; updated_at: string }[] };
     const activeSessionNodeIds = [...new Set((activeSessionRows ?? [])
       .map((session) => session.current_node_id ? String(session.current_node_id) : "")
       .filter(Boolean))];
     const { data: activeSessionNodes } = activeSessionNodeIds.length
       ? await admin
           .from("learning_agent_script_nodes")
-          .select("id,configuration")
+          .select("id,script_version_id,node_key,configuration")
           .in("id", activeSessionNodeIds)
-      : { data: [] as { id: string; configuration: unknown }[] };
-    const activeSessionNodeById = new Map((activeSessionNodes ?? []).map((node) => [String(node.id), asObject(node.configuration)]));
-    const { data: activeSessionBufferSpeechAssets } = activeSessionNodeIds.length
+      : { data: [] as { id: string; script_version_id: string; node_key: string; configuration: unknown }[] };
+    const activeSessionNodeById = new Map((activeSessionNodes ?? []).map((node) => [String(node.id), {
+      id: String(node.id),
+      scriptVersionId: String(node.script_version_id),
+      nodeKey: String(node.node_key),
+      configuration: asObject(node.configuration),
+    }]));
+
+    // `/respond` always executes the current published script. Mirror its
+    // migration here so the server-rendered first frame cannot briefly show
+    // an older session's stage before the response replaces it.
+    const migratedSessionTargets = (activeSessionRows ?? []).flatMap((session) => {
+      const publishedVersionId = publishedScriptVersionByLessonId.get(String(session.lesson_id));
+      const sessionVersionId = session.script_version_id ? String(session.script_version_id) : null;
+      const currentNode = session.current_node_id
+        ? activeSessionNodeById.get(String(session.current_node_id))
+        : null;
+      return publishedVersionId && sessionVersionId && sessionVersionId !== publishedVersionId && currentNode?.nodeKey
+        ? [{ publishedVersionId, nodeKey: currentNode.nodeKey }]
+        : [];
+    });
+    const migratedVersionIds = [...new Set(migratedSessionTargets.map((target) => target.publishedVersionId))];
+    const migratedNodeKeys = [...new Set(migratedSessionTargets.map((target) => target.nodeKey))];
+    const { data: migratedSessionNodes } = migratedVersionIds.length && migratedNodeKeys.length
+      ? await admin
+          .from("learning_agent_script_nodes")
+          .select("id,script_version_id,node_key,configuration")
+          .in("script_version_id", migratedVersionIds)
+          .in("node_key", migratedNodeKeys)
+      : { data: [] as { id: string; script_version_id: string; node_key: string; configuration: unknown }[] };
+    const migratedSessionNodeByVersionAndKey = new Map((migratedSessionNodes ?? []).map((node) => [
+      `${String(node.script_version_id)}:${String(node.node_key)}`,
+      { id: String(node.id), configuration: asObject(node.configuration) },
+    ]));
+    const resolvedSessionStages = (activeSessionRows ?? []).map((session) => {
+      const currentNodeId = session.current_node_id ? String(session.current_node_id) : "";
+      const currentNode = activeSessionNodeById.get(currentNodeId) ?? null;
+      const publishedVersionId = publishedScriptVersionByLessonId.get(String(session.lesson_id));
+      const sessionVersionId = session.script_version_id ? String(session.script_version_id) : null;
+      const versionChanged = Boolean(sessionVersionId && publishedVersionId && sessionVersionId !== publishedVersionId);
+      const publishedOpeningNodeId = publishedVersionId
+        ? openingNodeIdByVersionId.get(publishedVersionId) ?? ""
+        : "";
+      const publishedOpeningNode = publishedVersionId
+        ? {
+            id: publishedOpeningNodeId,
+            configuration: openingConfigurationByVersionId.get(publishedVersionId) ?? {},
+          }
+        : null;
+      const resolvedNode = versionChanged && publishedVersionId && currentNode?.nodeKey
+        ? migratedSessionNodeByVersionAndKey.get(`${publishedVersionId}:${currentNode.nodeKey}`) ?? publishedOpeningNode
+        : !sessionVersionId && publishedVersionId
+          ? publishedOpeningNode
+          : publishedVersionId && sessionVersionId === publishedVersionId && currentNode?.scriptVersionId !== publishedVersionId
+            ? publishedOpeningNode
+            : currentNode;
+      const teachingState = asObject(session.teaching_state);
+      const canResumeSegment = !versionChanged
+        && Boolean(sessionVersionId)
+        && resolvedNode?.id === currentNodeId
+        && teachingState.scriptSegmentNodeId === currentNodeId;
+      return {
+        session,
+        resolvedNode,
+        segmentIndex: canResumeSegment ? Math.max(0, Number(teachingState.scriptSegmentIndex) || 0) : 0,
+      };
+    });
+    const resolvedSessionNodeIds = [...new Set(resolvedSessionStages
+      .map(({ resolvedNode }) => resolvedNode?.id ?? "")
+      .filter(Boolean))];
+    const { data: activeSessionBufferSpeechAssets } = resolvedSessionNodeIds.length
       ? await admin
           .from("learning_agent_script_audio_assets")
           .select("id,script_node_id,locale")
-          .in("script_node_id", activeSessionNodeIds)
+          .in("script_node_id", resolvedSessionNodeIds)
           .eq("segment_index", 199)
           .eq("production_status", "ready")
       : { data: [] as { id: string; script_node_id: string; locale: string }[] };
@@ -515,20 +589,16 @@ export async function loadSmartDigitalTextbook(
       ids[asset.locale === "ko-KR" ? "ko-KR" : "zh-CN"] = String(asset.id);
       activeSessionBufferSpeechAssetIdsByNodeId.set(nodeId, ids);
     }
-    for (const session of activeSessionRows ?? []) {
+    for (const { session, resolvedNode, segmentIndex } of resolvedSessionStages) {
       const moduleId = lessonModuleById.get(String(session.lesson_id));
       if (moduleId && !activeTeachingSessions[moduleId]) {
-        const currentNodeId = session.current_node_id ? String(session.current_node_id) : "";
-        const currentConfiguration = activeSessionNodeById.get(currentNodeId) ?? {};
-        const teachingState = asObject(session.teaching_state);
-        const segmentIndex = teachingState.scriptSegmentNodeId === currentNodeId
-          ? Math.max(0, Number(teachingState.scriptSegmentIndex) || 0)
-          : 0;
+        const resolvedNodeId = resolvedNode?.id ?? "";
+        const currentConfiguration = resolvedNode?.configuration ?? {};
         activeTeachingSessions[moduleId] = {
           id: String(session.id),
           bufferLine: localized(currentConfiguration.bufferLine ?? null),
-          bufferSpeechAssetId: currentNodeId
-            ? activeSessionBufferSpeechAssetIdsByNodeId.get(currentNodeId) ?? {}
+          bufferSpeechAssetId: resolvedNodeId
+            ? activeSessionBufferSpeechAssetIdsByNodeId.get(resolvedNodeId) ?? {}
             : {},
           teachingDisplay: teachingBlackboardDisplayForSegment(currentConfiguration.display ?? null, segmentIndex) as TeachingBlackboardDisplay | null,
           teachingCharacter: virtualCharacterForScriptSegment(currentConfiguration, segmentIndex),

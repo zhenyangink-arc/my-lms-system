@@ -534,6 +534,11 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(textbookLoader, /node\.configuration\?\.bufferLine \?\? null/);
   assert.match(textbookLoader, /openingBufferSpeechAssetId/);
   assert.match(textbookLoader, /activeSessionBufferSpeechAssetIdsByNodeId/);
+  assert.match(textbookLoader, /id,lesson_id,script_version_id,current_node_id,teaching_state,updated_at/);
+  assert.match(textbookLoader, /publishedScriptVersionByLessonId/);
+  assert.match(textbookLoader, /migratedSessionNodeByVersionAndKey/);
+  assert.match(textbookLoader, /!sessionVersionId && publishedVersionId/);
+  assert.match(textbookLoader, /segmentIndex: canResumeSegment \? Math\.max/);
   assert.match(route, /if \(input\.restart && existingSession\)/);
   assert.match(route, /\.update\(\{ status: "abandoned" \}\)/);
   assert.match(route, /scriptedSessionCompleted/);
