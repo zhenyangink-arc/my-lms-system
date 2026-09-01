@@ -3,7 +3,7 @@
 import { type ButtonHTMLAttributes, type ReactNode, useEffect, useMemo, useState } from "react";
 import { useFormStatus } from "react-dom";
 import { usePathname } from "next/navigation";
-import { ArrowDown, ArrowUp, ExternalLink, FilePenLine, LoaderCircle, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Plus, Send, Trash2 } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronDown, ExternalLink, FilePenLine, LoaderCircle, MoreHorizontal, PanelLeftClose, PanelLeftOpen, Plus, Send, Trash2 } from "lucide-react";
 
 import {
   addTeachingScriptNodeAction,
@@ -102,6 +102,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
     ? `${pathname}/preview?scriptVersionId=${encodeURIComponent(selectedVersion.id)}&moduleIndex=${previewModuleIndex}`
     : "";
   const [showStructureNav, setShowStructureNav] = useState(true);
+  const [expandedModuleId, setExpandedModuleId] = useState(firstModule?.id ?? "");
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
     ? "xl:grid-cols-[20rem_minmax(0,1fr)]"
@@ -166,12 +167,17 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   }
 
   function selectLearningStep(nextModuleId: string) {
-    if (nextModuleId === selectedModule.id || !confirmDiscardChanges()) return;
+    if (nextModuleId === selectedModule.id) {
+      setExpandedModuleId((current) => current === nextModuleId ? "" : nextModuleId);
+      return;
+    }
+    if (!confirmDiscardChanges()) return;
     const nextModule = data.modules.find((item) => item.id === nextModuleId);
     const nextVersion = preferredVersion(nextModule);
     setModuleId(nextModuleId);
     setVersionId(nextVersion?.id ?? "");
     setNodeId(nextVersion?.nodes[0]?.id ?? "");
+    setExpandedModuleId(nextModuleId);
   }
 
   function selectVersion(nextVersionId: string) {
@@ -294,15 +300,16 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   {modules.map((lessonModule) => {
                     const version = preferredVersion(lessonModule);
                     const selected = lessonModule.id === selectedModule.id;
+                    const expanded = selected && expandedModuleId === lessonModule.id;
                     const stepLabel = moduleLabels[lessonModule.code] ?? lessonModule.title["zh-CN"];
                     return (
                       <div key={lessonModule.id} className="space-y-1">
-                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
+                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-expanded={expanded} aria-controls={selected ? `teaching-step-${lessonModule.id}-nodes` : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节，${expanded ? "收起" : "展开"}`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
                           <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-0.5 block text-xs font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
-                          <span className="shrink-0 tabular-nums text-xs text-[var(--muted-foreground)]">{lessonModule.order}</span>
+                          <span className="flex shrink-0 items-center gap-2 text-xs text-[var(--muted-foreground)]"><span className="tabular-nums">{lessonModule.order}</span><ChevronDown size={15} className={`transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`} aria-hidden="true" /></span>
                         </button>
-                        {selected && (
-                          <div className="ml-3 border-l border-[var(--border)] py-2 pl-3">
+                        {expanded && (
+                          <div id={`teaching-step-${lessonModule.id}-nodes`} className="ml-3 border-l border-[var(--border)] py-2 pl-3">
                             <div className="mb-2 flex min-h-11 items-center justify-between gap-2">
                               <span className="text-xs font-bold text-[var(--foreground-secondary)]">教学小节</span>
                               {editable && selectedVersion && (
