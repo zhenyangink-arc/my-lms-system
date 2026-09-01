@@ -136,6 +136,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /toggleChapter\(chapterNumber\)/);
   assert.match(studio, /aria-expanded=\{chapterExpanded\}/);
   assert.match(studio, /teaching-chapter-\$\{chapterNumber\}-steps/);
+  assert.match(studio, /\{modules\.length\} 个学习步骤/);
+  assert.match(studio, /bg-\[var\(--muted\)\]\/60/);
   assert.match(studio, /setExpandedModuleId\(\(current\) => current === nextModuleId \? "" : nextModuleId\)/);
   assert.match(studio, /aria-expanded=\{expanded\}/);
   assert.match(studio, /aria-controls=\{selected \? `teaching-step-\$\{lessonModule\.id\}-nodes` : undefined\}/);

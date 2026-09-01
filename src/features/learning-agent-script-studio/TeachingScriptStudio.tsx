@@ -308,8 +308,14 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
               return (
               <section key={chapterNumber} className="mb-4">
                 <h3>
-                  <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-11 w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-xs font-semibold text-[var(--muted-foreground)] transition hover:bg-[var(--card)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
-                    <span>第 {chapterNumber} 章 · {modules[0]?.chapterTitle["zh-CN"]}</span>
+                  <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-16 w-full items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3 py-2.5 text-left transition hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
+                    <span className="flex min-w-0 items-center gap-2.5">
+                      <span className="shrink-0 rounded-md bg-[var(--card)] px-2 py-1 text-[10px] font-bold text-[var(--muted-foreground)] shadow-sm">第 {chapterNumber} 章</span>
+                      <span className="min-w-0">
+                        <span className="block truncate text-sm font-bold text-[var(--foreground)]">{modules[0]?.chapterTitle["zh-CN"]}</span>
+                        <span className="mt-0.5 block text-[11px] font-normal text-[var(--muted-foreground)]">{modules.length} 个学习步骤</span>
+                      </span>
+                    </span>
                     <ChevronDown size={15} className={`shrink-0 transition-transform motion-reduce:transition-none ${chapterExpanded ? "rotate-180" : ""}`} aria-hidden="true" />
                   </button>
                 </h3>
