@@ -3,6 +3,7 @@ import "server-only";
 import { createR2SignedObjectUrl } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { teachingBlackboardDisplayForSegment, type TeachingBlackboardDisplay } from "@/lib/teaching-blackboard";
+import { virtualCharacterForScriptSegment, type ScriptVirtualCharacter } from "@/lib/learning-agent-script-runtime";
 
 export type SmartLocale = "zh-CN" | "ko-KR";
 export type SmartSupportMode = "chinese" | "bilingual" | "immersion";
@@ -81,6 +82,10 @@ export type SmartTextbookModule = {
   /** The first published canvas is included in the page payload so the
    * opening buffer line never speaks over an unrelated placeholder. */
   openingTeachingDisplay: TeachingBlackboardDisplay | null;
+  /** The first published performance shares the initial page payload with
+   * the canvas, preventing the teacher and dialogue from jumping after the
+   * first `/respond` request returns. */
+  openingTeachingCharacter: ScriptVirtualCharacter | null;
   nodes: SmartTextbookNode[];
 };
 
@@ -124,6 +129,8 @@ export type SmartTextbookData = {
     id: string;
     bufferLine: LocalizedText;
     bufferSpeechAssetId: Partial<Record<SmartLocale, string>>;
+    teachingDisplay: TeachingBlackboardDisplay | null;
+    teachingCharacter: ScriptVirtualCharacter | null;
   }>;
 };
 
@@ -334,6 +341,7 @@ export async function loadSmartDigitalTextbook(
     : { data: [] as { id: string; script_version_id: string; sort_order: number; configuration: Record<string, unknown> | null }[] };
   const openingBufferLineByVersionId = new Map<string, unknown>();
   const openingTeachingDisplayByVersionId = new Map<string, TeachingBlackboardDisplay | null>();
+  const openingTeachingCharacterByVersionId = new Map<string, ScriptVirtualCharacter | null>();
   const openingNodeIdByVersionId = new Map<string, string>();
   for (const node of openingFirstNodes ?? []) {
     const versionId = String(node.script_version_id);
@@ -342,6 +350,10 @@ export async function loadSmartDigitalTextbook(
       openingTeachingDisplayByVersionId.set(
         versionId,
         teachingBlackboardDisplayForSegment(node.configuration?.display ?? null, 0) as TeachingBlackboardDisplay | null,
+      );
+      openingTeachingCharacterByVersionId.set(
+        versionId,
+        virtualCharacterForScriptSegment(node.configuration, 0),
       );
       openingNodeIdByVersionId.set(versionId, String(node.id));
     }
@@ -369,11 +381,13 @@ export async function loadSmartDigitalTextbook(
   const openingBufferLineByModuleId = new Map<string, unknown>();
   const openingBufferSpeechAssetIdByModuleId = new Map<string, Partial<Record<SmartLocale, string>>>();
   const openingTeachingDisplayByModuleId = new Map<string, TeachingBlackboardDisplay | null>();
+  const openingTeachingCharacterByModuleId = new Map<string, ScriptVirtualCharacter | null>();
   for (const version of openingScriptVersions ?? []) {
     const moduleId = openingLessonModuleById.get(String(version.lesson_id));
     if (moduleId) {
       openingBufferLineByModuleId.set(moduleId, openingBufferLineByVersionId.get(String(version.id)) ?? null);
       openingTeachingDisplayByModuleId.set(moduleId, openingTeachingDisplayByVersionId.get(String(version.id)) ?? null);
+      openingTeachingCharacterByModuleId.set(moduleId, openingTeachingCharacterByVersionId.get(String(version.id)) ?? null);
       openingBufferSpeechAssetIdByModuleId.set(
         moduleId,
         bufferSpeechAssetIdsByNodeId.get(openingNodeIdByVersionId.get(String(version.id)) ?? "") ?? {},
@@ -469,13 +483,13 @@ export async function loadSmartDigitalTextbook(
     const { data: activeSessionRows } = teachingLessonIds.length
       ? await admin
           .from("learning_agent_sessions")
-          .select("id,lesson_id,current_node_id,updated_at")
+          .select("id,lesson_id,current_node_id,teaching_state,updated_at")
           .eq("tenant_id", options.tenantId)
           .eq("student_id", options.userId)
           .eq("status", "active")
           .in("lesson_id", teachingLessonIds)
           .order("updated_at", { ascending: false })
-      : { data: [] as { id: string; lesson_id: string; current_node_id: string | null; updated_at: string }[] };
+      : { data: [] as { id: string; lesson_id: string; current_node_id: string | null; teaching_state: Record<string, unknown> | null; updated_at: string }[] };
     const activeSessionNodeIds = [...new Set((activeSessionRows ?? [])
       .map((session) => session.current_node_id ? String(session.current_node_id) : "")
       .filter(Boolean))];
@@ -485,10 +499,7 @@ export async function loadSmartDigitalTextbook(
           .select("id,configuration")
           .in("id", activeSessionNodeIds)
       : { data: [] as { id: string; configuration: unknown }[] };
-    const activeSessionBufferLineByNodeId = new Map((activeSessionNodes ?? []).map((node) => [
-      String(node.id),
-      asObject(node.configuration).bufferLine ?? null,
-    ]));
+    const activeSessionNodeById = new Map((activeSessionNodes ?? []).map((node) => [String(node.id), asObject(node.configuration)]));
     const { data: activeSessionBufferSpeechAssets } = activeSessionNodeIds.length
       ? await admin
           .from("learning_agent_script_audio_assets")
@@ -507,14 +518,20 @@ export async function loadSmartDigitalTextbook(
     for (const session of activeSessionRows ?? []) {
       const moduleId = lessonModuleById.get(String(session.lesson_id));
       if (moduleId && !activeTeachingSessions[moduleId]) {
+        const currentNodeId = session.current_node_id ? String(session.current_node_id) : "";
+        const currentConfiguration = activeSessionNodeById.get(currentNodeId) ?? {};
+        const teachingState = asObject(session.teaching_state);
+        const segmentIndex = teachingState.scriptSegmentNodeId === currentNodeId
+          ? Math.max(0, Number(teachingState.scriptSegmentIndex) || 0)
+          : 0;
         activeTeachingSessions[moduleId] = {
           id: String(session.id),
-          bufferLine: localized(session.current_node_id
-            ? activeSessionBufferLineByNodeId.get(String(session.current_node_id)) ?? null
-            : null),
-          bufferSpeechAssetId: session.current_node_id
-            ? activeSessionBufferSpeechAssetIdsByNodeId.get(String(session.current_node_id)) ?? {}
+          bufferLine: localized(currentConfiguration.bufferLine ?? null),
+          bufferSpeechAssetId: currentNodeId
+            ? activeSessionBufferSpeechAssetIdsByNodeId.get(currentNodeId) ?? {}
             : {},
+          teachingDisplay: teachingBlackboardDisplayForSegment(currentConfiguration.display ?? null, segmentIndex) as TeachingBlackboardDisplay | null,
+          teachingCharacter: virtualCharacterForScriptSegment(currentConfiguration, segmentIndex),
         };
       }
     }
@@ -640,6 +657,7 @@ export async function loadSmartDigitalTextbook(
     openingBufferLine: localized(openingBufferLineByModuleId.get(String(module.id)) ?? null),
     openingBufferSpeechAssetId: openingBufferSpeechAssetIdByModuleId.get(String(module.id)) ?? {},
     openingTeachingDisplay: openingTeachingDisplayByModuleId.get(String(module.id)) ?? null,
+    openingTeachingCharacter: openingTeachingCharacterByModuleId.get(String(module.id)) ?? null,
     nodes: (nodes ?? [])
       .filter((node) => node.module_id === module.id)
       .map((node) => ({

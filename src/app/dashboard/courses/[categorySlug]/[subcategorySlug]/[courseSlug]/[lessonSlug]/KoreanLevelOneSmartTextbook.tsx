@@ -5101,10 +5101,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setLearningAreaManuallyHidden(false);
     tutorPausedRef.current = false;
     setTutorPaused(false);
-    setTutorStarted(true);
     if (!isPreviewMode) {
-      setTutorDisplay(activeModule.openingTeachingDisplay as TutorDisplay | null);
+      const resumableStage = restart ? null : textbook.activeTeachingSessions[activeModule.id];
+      const preloadedCharacter = (resumableStage?.teachingCharacter
+        ?? activeModule.openingTeachingCharacter) as TutorCharacter | null;
+      setTutorDisplay((resumableStage?.teachingDisplay ?? activeModule.openingTeachingDisplay) as TutorDisplay | null);
+      setTutorCharacter(preloadedCharacter ?? undefined);
     }
+    setTutorStarted(true);
     const restartBufferLine = restart
       ? activeModule?.openingBufferLine[locale] || activeModule?.openingBufferLine["zh-CN"] || ""
       : undefined;

@@ -2,7 +2,7 @@ import "server-only";
 
 import { parseRichText, richCharsToPlainText, stripRichText, type RichChar } from "@/lib/rich-teaching-text";
 import type { createAdminClient } from "@/lib/supabase/admin";
-import { isTeacherKimPose } from "@/lib/teacher-kim-character";
+import { isTeacherKimPose, type TeacherKimPose } from "@/lib/teacher-kim-character";
 import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
 
 type AdminClient = ReturnType<typeof createAdminClient>;
@@ -69,10 +69,24 @@ export function virtualCharacter(configuration: Record<string, unknown> | null) 
     : null;
 }
 
+export type ScriptVirtualCharacter = {
+  kind: "uply-teacher";
+  pose: TeacherKimPose;
+  position: "left" | "right";
+  characterX: number;
+  characterY: number;
+  characterScale: number;
+  dialogueX: number;
+  dialogueY: number;
+  voiceEnabled: boolean;
+  voiceLanguage: "auto" | Locale;
+  voiceRate: number;
+};
+
 export function virtualCharacterForScriptSegment(
   configuration: Record<string, unknown> | null,
   segmentIndex: number,
-) {
+): ScriptVirtualCharacter | null {
   const character = virtualCharacter(configuration);
   if (!character || character.kind !== "uply-teacher") return null;
   const performances = Array.isArray(configuration?.scriptPerformances)

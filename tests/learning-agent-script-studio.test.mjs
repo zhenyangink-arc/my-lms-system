@@ -495,7 +495,9 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /重新开始/);
   assert.match(shell, /tutorHasPreviousSession/);
   assert.match(shell, /function restartTutorLesson\(\)/);
-  assert.match(shell, /setTutorDisplay\(activeModule\.openingTeachingDisplay as TutorDisplay \| null\)/);
+  assert.match(shell, /resumableStage\?\.teachingDisplay \?\? activeModule\.openingTeachingDisplay/);
+  assert.match(shell, /resumableStage\?\.teachingCharacter[\s\S]{0,100}\?\? activeModule\.openingTeachingCharacter/);
+  assert.ok(shell.indexOf("setTutorDisplay((resumableStage") < shell.indexOf("setTutorStarted(true)"));
   assert.match(shell, /requestImmersiveFullscreen/);
   assert.match(shell, /requestFullscreen\(\{ navigationUI: "hide" \}\)/);
   assert.match(shell, /fullscreenRequestFailed/);
@@ -520,9 +522,14 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(textbookLoader, /\.eq\("status", "active"\)/);
   assert.match(textbookLoader, /openingBufferLine: LocalizedText/);
   assert.match(textbookLoader, /openingTeachingDisplay: TeachingBlackboardDisplay \| null/);
+  assert.match(textbookLoader, /openingTeachingCharacter: ScriptVirtualCharacter \| null/);
   assert.match(textbookLoader, /teachingBlackboardDisplayForSegment\(node\.configuration\?\.display \?\? null, 0\)/);
+  assert.match(textbookLoader, /virtualCharacterForScriptSegment\(node\.configuration, 0\)/);
   assert.match(textbookLoader, /\.eq\("sort_order", 1\)/);
   assert.match(textbookLoader, /openingTeachingDisplay: openingTeachingDisplayByModuleId\.get/);
+  assert.match(textbookLoader, /openingTeachingCharacter: openingTeachingCharacterByModuleId\.get/);
+  assert.match(textbookLoader, /teachingDisplay: teachingBlackboardDisplayForSegment\(currentConfiguration\.display \?\? null, segmentIndex\)/);
+  assert.match(textbookLoader, /teachingCharacter: virtualCharacterForScriptSegment\(currentConfiguration, segmentIndex\)/);
   assert.match(textbookLoader, /openingBufferLineByModuleId\.get\(String\(module\.id\)\) \?\? null\)/);
   assert.match(textbookLoader, /node\.configuration\?\.bufferLine \?\? null/);
   assert.match(textbookLoader, /openingBufferSpeechAssetId/);
