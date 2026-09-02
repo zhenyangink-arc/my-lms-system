@@ -106,6 +106,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
     new URL("src/lib/learning-agent-script-runtime.ts", root),
     "utf8",
   );
+  const splitTemplateCoordinatesMigration = await readFile(
+    new URL("supabase/migrations/202609020001_add_split_character_style_template_coordinates.sql", root),
+    "utf8",
+  );
   assert.match(service, /requirePlatformOwner\(\)/);
   assert.match(service, /learning_agent_script_versions/);
   assert.match(service, /learning_agent_script_nodes/);
@@ -128,7 +132,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /请先保存当前小节，再执行这个操作/);
   assert.match(studio, /FormSubmitButton/);
   assert.match(studio, /正在校验并发布/);
-  assert.match(studio, /xl:grid-cols-\[15rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /xl:grid-cols-\[18rem_minmax\(0,1fr\)\]/);
   assert.match(studio, /xl:grid-cols-\[minmax\(0,1fr\)\]/);
   assert.doesNotMatch(studio, /xl:grid-cols-\[3\.5rem_minmax\(0,1fr\)\]/);
   assert.match(studio, /!showStructureNav &&/);
@@ -164,6 +168,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(studio, /xl:sticky xl:top-20/);
   assert.match(studio, /仅第 1 章可预览完整流程/);
   assert.doesNotMatch(studio, /title="目前只有第 1 章接了真实学生页面/);
+  assert.match(studio, /当前学习步骤检查概览/);
+  assert.match(studio, /正式语音就绪/);
+  assert.match(studio, /AlertDialogTitle/);
+  assert.doesNotMatch(studio, /确定删除“版本 .*window\.confirm/);
   assert.match(actions, /createTeachingScriptDraftAction/);
   assert.match(actions, /saveTeachingScriptNodeAction/);
   assert.match(actions, /moveTeachingScriptNodeAction/);
@@ -236,11 +244,20 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /script_character_x/);
   assert.match(editor, /script_character_y/);
   assert.match(editor, /script_character_scale/);
+  assert.match(editor, /script_split_character_x/);
+  assert.match(editor, /script_split_character_y/);
+  assert.match(editor, /script_split_character_scale/);
+  assert.match(editor, /script_split_dialogue_x/);
+  assert.match(editor, /script_split_dialogue_y/);
   assert.match(editor, /VirtualCharacterStageEditor/);
   assert.match(characterStage, /拖动黑板、金老师和对话框调整位置/);
   assert.match(characterStage, /人物动作/);
   assert.match(characterStage, /当前预览台词/);
-  assert.match(characterStage, />金老师</);
+  assert.match(characterStage, /金老师 · \{splitMode \? "3:7 双区" : "全屏教学"\}/);
+  assert.match(characterStage, /全屏教学/);
+  assert.match(characterStage, /3:7 双区/);
+  assert.match(characterStage, /setStageMode\("immersive"\)/);
+  assert.match(characterStage, /setStageMode\("split"\)/);
   assert.match(characterStage, /TeachingBlackboardSlideView/);
   assert.match(characterStage, /activeBlackboardSlide/);
   assert.match(characterStage, /performance\.dialogueX/);
@@ -248,15 +265,16 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /放大全屏/);
   assert.match(characterStage, /全屏舞台工具/);
   assert.match(characterStage, /plainScriptLine\(scriptLines\[safeIndex\]/);
-  assert.match(characterStage, /translateX\(-50%\) scale\(\$\{performance\.characterScale\}\)/);
+  assert.match(characterStage, /translateX\(-50%\) scale\(\$\{characterScale\}\)/);
   assert.match(characterStage, /transformOrigin: "bottom center"/);
-  assert.match(characterStage, /画布对应学生端完整教学区/);
+  assert.match(characterStage, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
+  assert.match(characterStage, /教学区 \$\{splitTeachingAreaWidthPercent\}%、学习区 \$\{splitLearningAreaWidthPercent\}%/);
   assert.match(characterStage, /离教学区底部/);
   assert.match(characterStage, /teachingVirtualCharacterPreviewGeometry/);
   assert.match(characterStage, /previewGeometry\.aspectRatio/);
   assert.match(characterStage, /data-teaching-context/);
   assert.ok(characterStage.indexOf("data-teaching-context") < characterStage.indexOf('aria-label="黑板。'));
-  assert.match(characterStage, /left: `\$\{boundedBlackboardPlacement\.x\}%`/);
+  assert.match(characterStage, /left: `\$\{splitMode \? splitTeachingAreaCenterPercent : boundedBlackboardPlacement\.x\}%`/);
   assert.match(characterStage, /previewGeometry\.blackboardWidthPercent/);
   assert.match(characterStage, /constrainTeachingBlackboardPlacementToViewport/);
   assert.match(characterStage, /teachingBlackboardPlacementBounds/);
@@ -268,12 +286,24 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(characterStage, /inset-x-0 bottom-0 h-\[8%\]/);
   assert.match(characterStage, /isFullscreen \? "p-0" : "px-4 py-4"/);
   assert.match(characterStage, /md:grid-cols-2 xl:grid-cols-4/);
-  assert.match(characterStage, /previewGeometry\.bubbleWidthPercent/);
+  assert.match(characterStage, /TEACHING_VIRTUAL_CHARACTER_STAGE\.dialogueBubble\.minimumWidthPx/);
+  assert.match(characterStage, /width: dialogueBubbleWidth/);
   assert.match(characterStage, /预览台词 \{safeIndex \+ 1\}/);
   assert.doesNotMatch(characterStage, /absolute left-3 top-3/);
   assert.match(editor, /onSlidesChange=\{setBlackboardSlides\}/);
   assert.match(actions, /characterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
   assert.match(actions, /characterY: z\.coerce\.number\(\)\.min\(0\)\.max\(TEACHING_VIRTUAL_CHARACTER_STAGE\.maximumBottomPercent\)/);
+  assert.match(actions, /splitCharacterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
+  assert.match(actions, /splitCharacterScale: z\.coerce\.number\(\)\.min\(0\.5\)\.max\(1\.25\)/);
+  assert.match(actions, /splitDialogueX: z\.coerce\.number\(\)\.min\(5\)\.max\(95\)/);
+  assert.match(actions, /split_character_x: Number\(firstPerformance\.splitCharacterX/);
+  assert.match(actions, /split_dialogue_y: Number\(firstPerformance\.splitDialogueY/);
+  assert.match(service, /split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y/);
+  assert.match(editor, /splitCharacterX: template\.splitCharacterX/);
+  assert.match(editor, /splitDialogueY: template\.splitDialogueY/);
+  for (const column of ["split_character_x", "split_character_y", "split_character_scale", "split_dialogue_x", "split_dialogue_y"]) {
+    assert.match(splitTemplateCoordinatesMigration, new RegExp(`add column if not exists ${column}`));
+  }
   assert.match(actions, /blackboardX: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardY: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardScale: z\.coerce\.number\(\)/);
@@ -285,6 +315,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /max=\{blackboardBounds\.maximumScale \* 100\}/);
   assert.match(actions, /mode: "slides",\s+placement: blackboardPlacement,\s+slides: \[\]/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
+  assert.match(scriptRuntime, /normalizeSplitTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
   assert.match(editor, /小节基本设置/);
@@ -302,7 +333,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /aria-labelledby="teaching-interaction-tab"/);
   assert.match(editor, /aria-labelledby="teaching-flow-tab"/);
   assert.match(editor, /onDirtyChange/);
-  assert.match(editor, /有未保存的修改。保存后才会写入草稿/);
+  assert.match(editor, /停止输入后会自动保存/);
+  assert.match(editor, /form\.requestSubmit\(\)/);
+  assert.match(editor, /submittedVersionRef\.current === dirtyVersionRef\.current/);
+  assert.match(editor, /submittedModeRef\.current !== "auto"/);
   assert.match(editor, /aria-describedby=\{state\.fieldErrors\?\.titleZh/);
   assert.doesNotMatch(editor, /2xl:grid-cols-\[minmax\(0,4fr\)_minmax\(0,6fr\)\]/);
   assert.doesNotMatch(editor, /展示方式/);
@@ -312,7 +346,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /后续流程/);
   assert.doesNotMatch(editor, /学生端预览/);
   assert.match(editor, /CardTitleWithHint/);
-  assert.match(editor, /展开设置/);
+  assert.match(editor, /展开高级设置/);
   assert.match(editor, /description=\{step\.description\}/);
   assert.match(editor, /hintLabel=\{`查看\$\{step\.label\}说明`\}/);
   assert.match(editor, /absolute right-2\.5 top-1\/2/);
@@ -398,6 +432,12 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /hidden=\{studentTaskKind === "none"\}/);
   assert.match(editor, /学生操作设置/);
   assert.match(editor, /hintLabel="查看学生操作说明"/);
+  assert.match(editor, /title="宠物操作"/);
+  assert.match(editor, /hintLabel="查看宠物操作说明"/);
+  assert.doesNotMatch(editor, /宠物代点|当前代点目标|可代点/);
+  assert.doesNotMatch(actions, /宠物代点/);
+  assert.match(actions, /宠物操作不能指向答题类目标/);
+  assert.ok(editor.indexOf('title="宠物操作"') < editor.indexOf('title="学生操作"'));
   assert.match(editor, /学生需要操作哪里/);
   assert.match(editor, /3\. 选择按钮或表达/);
   assert.match(editor, /actionableLearningTargets/);
@@ -578,13 +618,18 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.doesNotMatch(shell, /tutorDisplay\?\.body|tutorDisplay\.body/);
   assert.match(cleanupMigration, /\(configuration -> 'display'\) - 'body'/);
   assert.doesNotMatch(shell, /当前教学展示/);
-  assert.match(shell, /tutorStarted[\s\S]*"pointer-events-none fixed left-0 z-40"/);
+  assert.match(shell, /tutorStarted[\s\S]*teachingAreaCollapsed \? "hidden" : "hidden overflow-hidden xl:block"/);
   assert.match(shell, /top: TEACHING_VIRTUAL_CHARACTER_STAGE\.viewportTopPx/);
   assert.match(shell, /bottom: TEACHING_VIRTUAL_CHARACTER_STAGE\.viewportBottomPx/);
-  assert.match(shell, /width: "100%",[\s\S]*containerType: "size"/);
+  assert.match(shell, /width: teachingAreaExpanded[\s\S]*\? "100%"[\s\S]*teachingAreaCollapsed[\s\S]*SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.collapsedWidthPx[\s\S]*SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(shell, /createPortal\(children, target\)/);
   assert.match(shell, /TeachingStagePortal active=\{tutorStarted\} target=\{textbookRef\.current\}/);
-  assert.doesNotMatch(shell, /tutorStarted[\s\S]{0,600}width: teachingAreaExpanded/);
+  assert.match(shell, /data-teaching-stage-layout=\{teachingAreaExpanded \? "immersive" : "split"\}/);
+  assert.match(shell, /normalizeSplitTeachingVirtualCharacterPlacement/);
+  assert.match(shell, /teachingStageCharacterPlacement = teachingAreaExpanded/);
+  assert.match(shell, /: splitTeachingAreaCharacterPlacement/);
+  assert.match(shell, /teachingAreaExpanded \? "" : teachingAreaCollapsed \? "hidden" : "hidden overflow-hidden xl:block"/);
+  assert.match(shell, /TEACHING_VIRTUAL_CHARACTER_STAGE\.dialogueBubble\.preferredWidthCqw/);
   assert.match(shell, /height: tutorStarted \? `\$\{TEACHING_VIRTUAL_CHARACTER_STAGE\.characterHeightPercent\}%`/);
   assert.match(shell, /bottom-\[180px\] top-\[64px\]/);
   assert.match(shell, /tutorStarted \? "h-full"/);
@@ -592,12 +637,12 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine, locale\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
-  assert.match(shell, /teachingAreaCharacterPlacement\.x/);
-  assert.match(shell, /teachingAreaCharacterPlacement\.y/);
-  assert.match(shell, /teachingAreaCharacterPlacement\.scale/);
+  assert.match(shell, /teachingStageCharacterPlacement\.x/);
+  assert.match(shell, /teachingStageCharacterPlacement\.y/);
+  assert.match(shell, /teachingStageCharacterPlacement\.scale/);
   assert.match(shell, /h-\[clamp\(24rem,48vh,32rem\)\]/);
-  assert.match(shell, /teachingAreaCharacterPlacement\.dialogueX/);
-  assert.match(shell, /teachingAreaCharacterPlacement\.dialogueY/);
+  assert.match(shell, /teachingStageCharacterPlacement\.dialogueX/);
+  assert.match(shell, /teachingStageCharacterPlacement\.dialogueY/);
   assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);
   assert.match(shell, /tutorIsSpeakingNow = tutorStatus === "thinking"/);
   assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
@@ -621,7 +666,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /data-smart-textbook-teaching-area/);
   assert.match(shell, /shouldUseSmartTextbookTeachingFocusMode/);
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.focusMode\.revealForActivityAction/);
-  assert.match(shell, /const learningAreaHidden = tutorFocusMode \|\| learningAreaManuallyHidden/);
+  assert.match(shell, /const learningAreaHidden = shouldHideSmartTextbookLearningArea\(\{/);
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(shell, /data-learning-area-hidden/);
   assert.match(shell, /learningAreaHidden \? "hidden" : "flex"/);

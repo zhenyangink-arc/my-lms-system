@@ -6,6 +6,7 @@ import {
   defaultTeachingBlackboardPlacement,
   defaultTeachingVirtualCharacterPlacement,
   normalizeTeachingBlackboardPlacement,
+  normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   teachingBlackboardPlacementBounds,
   teachingVirtualCharacterPreviewGeometry,
@@ -100,6 +101,34 @@ test("invalid placement values fall back without propagating NaN", () => {
   assert.deepEqual(
     normalizeTeachingVirtualCharacterPlacement({ characterX: "bad", characterY: null, characterScale: undefined }, "right"),
     { x: 75, y: 0, scale: 1, dialogueX: 85, dialogueY: 30 },
+  );
+});
+
+test("3:7 teaching layout keeps an independent per-line character and dialogue placement", () => {
+  assert.deepEqual(
+    normalizeSplitTeachingVirtualCharacterPlacement({
+      characterX: 75,
+      characterY: 4,
+      characterScale: 1,
+      splitCharacterX: 54,
+      splitCharacterY: 12,
+      splitCharacterScale: 0.7,
+      splitDialogueX: 42,
+      splitDialogueY: 48,
+    }),
+    { x: 54, y: 12, scale: 0.7, dialogueX: 42, dialogueY: 48 },
+  );
+});
+
+test("legacy scripts receive safe 3:7 defaults without changing fullscreen coordinates", () => {
+  assert.deepEqual(
+    normalizeSplitTeachingVirtualCharacterPlacement({
+      characterX: 75,
+      characterY: 6,
+      characterScale: 1.1,
+      dialogueY: 36,
+    }),
+    { x: 68, y: 6, scale: 0.82, dialogueX: 78, dialogueY: 36 },
   );
 });
 

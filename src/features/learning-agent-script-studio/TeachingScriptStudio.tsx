@@ -13,9 +13,19 @@ import {
   moveTeachingScriptNodeAction,
   publishTeachingScriptAction,
 } from "@/app/dashboard/admin/teaching-scripts/actions";
+import {
+  AlertDialog,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import { TeachingScriptNodeForm } from "./TeachingScriptNodeForm";
-import type { TeachingScriptModule, TeachingScriptStudioData } from "./types";
+import type { TeachingScriptModule, TeachingScriptStudioData, TeachingScriptVersion } from "./types";
 
 const moduleLabels: Record<string, string> = {
   orientation: "课前导航",
@@ -38,6 +48,22 @@ function preferredVersion(lessonModule?: TeachingScriptModule) {
   return lessonModule?.versions.find((item) => item.status === "draft")
     ?? lessonModule?.versions.find((item) => item.status === "published")
     ?? lessonModule?.versions[0];
+}
+
+function scriptVersionSummary(version?: TeachingScriptVersion) {
+  const nodes = version?.nodes ?? [];
+  const interactionNodes = nodes.filter((node) => {
+    const interaction = node.configuration.interaction;
+    const studentTask = node.configuration.studentTask;
+    return Boolean(node.referenceActivityId)
+      || Boolean(interaction && typeof interaction === "object" && !Array.isArray(interaction))
+      || Boolean(studentTask && typeof studentTask === "object" && !Array.isArray(studentTask));
+  }).length;
+  const readySpeechAssets = nodes.reduce((total, node) => total + node.speechAssets.filter((asset) => asset.productionStatus === "ready").length, 0);
+  const incompleteNodes = nodes.filter((node) => !node.title["zh-CN"].trim() || !node.script["zh-CN"].trim()).length;
+  const hasEnding = nodes.some((node) => node.configuration.terminal === true);
+  const reviewIssues = Number(nodes.length === 0) + incompleteNodes + Number(nodes.length > 0 && !hasEnding);
+  return { nodeCount: nodes.length, interactionNodes, readySpeechAssets, reviewIssues };
 }
 
 function CreateDraftButton({
@@ -111,8 +137,9 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
   const [navigationMemoryReady, setNavigationMemoryReady] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const columnsGridClass = showStructureNav
-    ? "xl:grid-cols-[15rem_minmax(0,1fr)]"
+    ? "xl:grid-cols-[18rem_minmax(0,1fr)]"
     : "xl:grid-cols-[minmax(0,1fr)]";
+  const selectedVersionSummary = scriptVersionSummary(selectedVersion);
 
   useEffect(() => {
     const restoreNavigationMemory = window.setTimeout(() => {
@@ -258,6 +285,16 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
             titleClassName="min-w-0"
             hintLabel="查看教学脚本编排说明"
           />
+          {selectedVersion && (
+            <div className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-[var(--muted-foreground)]" aria-label="当前学习步骤检查概览">
+              <span>{selectedVersionSummary.nodeCount} 个教学小节</span>
+              <span>{selectedVersionSummary.interactionNodes} 个学生互动</span>
+              <span>{selectedVersionSummary.readySpeechAssets} 条正式语音就绪</span>
+              <span className={selectedVersionSummary.reviewIssues > 0 ? "font-semibold text-[var(--status-warning)]" : "font-semibold text-[var(--status-success)]"}>
+                {selectedVersionSummary.reviewIssues > 0 ? `待检查 ${selectedVersionSummary.reviewIssues} 项` : "基础检查通过"}
+              </span>
+            </div>
+          )}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
           {selectedModule.versions.length > 1 && (
@@ -267,18 +304,29 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
           {selectedVersion?.status === "published" && !draft && selectedModule.lessonId && <form action={createTeachingScriptDraftAction}><input type="hidden" name="lesson_id" value={selectedModule.lessonId} /><input type="hidden" name="return_to" value={returnTo} /><CreateDraftButton /></form>}
           {!selectedVersion && selectedModule.lessonId && <form action={createTeachingScriptDraftAction}><input type="hidden" name="lesson_id" value={selectedModule.lessonId} /><input type="hidden" name="return_to" value={returnTo} /><CreateDraftButton idleLabel="新建教学脚本" pendingLabel="正在新建…" /></form>}
           {selectedVersion?.status === "archived" && (
-            <form
-              action={deleteTeachingScriptVersionAction}
-              onSubmit={(event) => {
-                if (!window.confirm(`确定删除“版本 ${selectedVersion.number}”吗？这个操作无法撤销。`)) event.preventDefault();
-              }}
-            >
-              <input type="hidden" name="version_id" value={selectedVersion.id} />
-              <input type="hidden" name="return_to" value={returnTo} />
-              <FormSubmitButton pendingLabel="正在删除版本…" className="inline-flex min-h-11 items-center gap-2 border border-[var(--destructive)] px-3 text-sm font-semibold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)] disabled:cursor-wait disabled:opacity-60">
+            <AlertDialog>
+              <AlertDialogTrigger type="button" className="inline-flex min-h-11 items-center gap-2 border border-[var(--destructive)] px-3 text-sm font-semibold text-[var(--destructive)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)]">
                 <Trash2 size={15} aria-hidden="true" />删除这个历史版本
-              </FormSubmitButton>
-            </form>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>删除版本 {selectedVersion.number}？</AlertDialogTitle>
+                  <AlertDialogDescription className="leading-6">
+                    只有没有学生作答记录的归档版本才能删除。删除后无法恢复，当前已发布版本和草稿不会受到影响。
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <form action={deleteTeachingScriptVersionAction}>
+                  <input type="hidden" name="version_id" value={selectedVersion.id} />
+                  <input type="hidden" name="return_to" value={returnTo} />
+                  <AlertDialogFooter>
+                    <AlertDialogCancel type="button">取消</AlertDialogCancel>
+                    <FormSubmitButton pendingLabel="正在删除版本…" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[var(--destructive)] px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)] disabled:cursor-wait disabled:opacity-60">
+                      <Trash2 size={15} aria-hidden="true" />确认删除
+                    </FormSubmitButton>
+                  </AlertDialogFooter>
+                </form>
+              </AlertDialogContent>
+            </AlertDialog>
           )}
           {selectedVersion && (
             previewLessonSupported ? (
@@ -297,6 +345,11 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                 <ExternalLink size={15} aria-hidden="true" />仅第 1 章可预览完整流程
               </span>
             )
+          )}
+          {editable && selectedNode && selectedNodeFormId && (
+            <span className={`text-xs font-medium ${nodeSavePending ? "text-[var(--muted-foreground)]" : hasUnsavedChanges ? "text-[var(--status-warning)]" : "text-[var(--status-success)]"}`} role="status" aria-live="polite">
+              {nodeSavePending ? "正在保存" : hasUnsavedChanges ? "等待自动保存" : "草稿已保存"}
+            </span>
           )}
           {editable && selectedNode && selectedNodeFormId && (
             <button
@@ -360,8 +413,8 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                 <h3>
                   <button type="button" onClick={() => toggleChapter(chapterNumber)} aria-expanded={chapterExpanded} aria-controls={`teaching-chapter-${chapterNumber}-steps`} className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border border-[var(--border)] bg-[var(--muted)]/60 px-3 py-2 text-left transition hover:bg-[var(--muted)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)]">
                     <span className="flex min-w-0 items-center gap-2.5">
-                      <span className="shrink-0 rounded-md bg-[var(--card)] px-1.5 py-0.5 text-[8px] font-bold text-[var(--muted-foreground)] shadow-sm">第 {chapterNumber} 章</span>
-                      <span className="min-w-0 truncate text-[11px] font-bold text-[var(--foreground)]">{modules[0]?.chapterTitle["zh-CN"]}</span>
+                      <span className="shrink-0 rounded-md bg-[var(--card)] px-2 py-1 text-xs font-bold text-[var(--muted-foreground)] shadow-sm">第 {chapterNumber} 章</span>
+                      <span className="min-w-0 truncate text-sm font-bold text-[var(--foreground)]">{modules[0]?.chapterTitle["zh-CN"]}</span>
                     </span>
                     <ChevronDown size={15} className={`shrink-0 transition-transform motion-reduce:transition-none ${chapterExpanded ? "rotate-180" : ""}`} aria-hidden="true" />
                   </button>
@@ -372,16 +425,17 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                     const selected = lessonModule.id === selectedModule.id;
                     const expanded = selected && expandedModuleId === lessonModule.id;
                     const stepLabel = moduleLabels[lessonModule.code] ?? lessonModule.title["zh-CN"];
+                    const versionStatus = version ? versionLabel(version.status) : "未创建";
                     return (
                       <div key={lessonModule.id} className="space-y-1">
-                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-expanded={expanded} aria-controls={selected ? `teaching-step-${lessonModule.id}-nodes` : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节，${expanded ? "收起" : "展开"}`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2 text-left text-[11px] transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
-                          <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-0.5 block text-[9px] font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节</span></span>
-                          <span className="flex shrink-0 items-center gap-2 text-[9px] text-[var(--muted-foreground)]"><span className="tabular-nums">{lessonModule.order}</span><ChevronDown size={15} className={`transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`} aria-hidden="true" /></span>
+                        <button type="button" onClick={() => selectLearningStep(lessonModule.id)} aria-current={selected ? "page" : undefined} aria-expanded={expanded} aria-controls={selected ? `teaching-step-${lessonModule.id}-nodes` : undefined} aria-label={`第 ${chapterNumber} 章第 ${lessonModule.order} 步：${stepLabel}，${version?.nodes.length ?? 0} 个教学小节，${versionStatus}，${expanded ? "收起" : "展开"}`} className={`flex min-h-12 w-full items-center justify-between gap-3 rounded-lg border px-3 py-2.5 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold" : "border-transparent hover:bg-[var(--card)]"}`}>
+                          <span className="min-w-0"><span className="block truncate">{stepLabel}</span><span className="mt-1 block text-xs font-normal text-[var(--muted-foreground)]">{version?.nodes.length ?? 0} 个教学小节 · {versionStatus}</span></span>
+                          <span className="flex shrink-0 items-center gap-2 text-xs text-[var(--muted-foreground)]"><span className="tabular-nums">{lessonModule.order}</span><ChevronDown size={15} className={`transition-transform motion-reduce:transition-none ${expanded ? "rotate-180" : ""}`} aria-hidden="true" /></span>
                         </button>
                         {expanded && (
                           <div id={`teaching-step-${lessonModule.id}-nodes`} className="ml-3 border-l border-[var(--border)] py-2 pl-3">
                             <div className="mb-2 flex min-h-11 items-center justify-between gap-2">
-                              <span className="text-[10px] font-bold text-[var(--foreground-secondary)]">教学小节</span>
+                              <span className="text-xs font-bold text-[var(--foreground-secondary)]">教学小节</span>
                               {editable && selectedVersion && (
                                 <form action={addTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}>
                                   <input type="hidden" name="version_id" value={selectedVersion.id} />
@@ -402,7 +456,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                                     <li key={node.id} className="flex min-w-0 gap-1.5">
                                       <button type="button" onClick={() => selectNode(node.id)} aria-current={nodeSelected ? "step" : undefined} aria-label={`第 ${index + 1} 小节：${node.title["zh-CN"]}，${hasInteraction ? "包含学生互动" : "老师讲解"}${node.configuration.terminal === true ? "，本步骤结束" : ""}`} className={`flex min-h-14 min-w-0 flex-1 items-start gap-2 rounded-lg border px-2.5 py-2.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${nodeSelected ? "border-[var(--primary)] bg-[var(--card)] shadow-sm" : "border-transparent hover:bg-[var(--card)]"}`}>
                                         <span className={`mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full text-xs font-bold tabular-nums ${nodeSelected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border)] bg-[var(--card)]"}`}>{index + 1}</span>
-                                        <span className="min-w-0 flex-1"><span className="block text-[10px] font-semibold leading-5">{node.title["zh-CN"]}</span><span className="mt-0.5 block text-[9px] leading-5 text-[var(--muted-foreground)]">{hasInteraction ? "学生互动" : "老师讲解"}{node.configuration.terminal === true ? " · 结束" : ""}</span></span>
+                                        <span className="min-w-0 flex-1"><span className="block text-sm font-semibold leading-5">{node.title["zh-CN"]}</span><span className="mt-1 block text-xs leading-5 text-[var(--muted-foreground)]">{hasInteraction ? "学生互动" : "老师讲解"}{node.configuration.terminal === true ? " · 结束" : ""}</span></span>
                                       </button>
                                       {editable && (
                                         <div className="flex w-7 shrink-0 flex-col gap-1">
@@ -457,11 +511,27 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   <details className="group relative">
                     <summary className="flex size-11 cursor-pointer list-none items-center justify-center rounded-lg border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden" aria-label="更多小节操作"><MoreHorizontal size={17} aria-hidden="true" /></summary>
                     <div className="absolute right-0 top-full z-20 mt-2 w-48 rounded-xl border border-[var(--border)] bg-[var(--card)] p-2 shadow-lg">
-                      <form action={deleteTeachingScriptNodeAction} onSubmit={(event) => { if (!window.confirm(`确定删除“${selectedNode.title["zh-CN"]}”吗？当前未保存的修改也会丢失。`)) event.preventDefault(); else setHasUnsavedChanges(false); }}>
-                        <input type="hidden" name="node_id" value={selectedNode.id} />
-                        <input type="hidden" name="return_to" value={returnTo} />
-                        <FormSubmitButton pendingLabel="正在删除…" className="inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--destructive)] transition hover:bg-[var(--status-danger-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)] disabled:cursor-wait disabled:opacity-60"><Trash2 size={15} aria-hidden="true" />删除当前小节</FormSubmitButton>
-                      </form>
+                      <AlertDialog>
+                        <AlertDialogTrigger type="button" className="inline-flex min-h-11 w-full items-center gap-2 rounded-lg px-3 text-sm font-semibold text-[var(--destructive)] transition hover:bg-[var(--status-danger-surface)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)]">
+                          <Trash2 size={15} aria-hidden="true" />删除当前小节
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>删除“{selectedNode.title["zh-CN"]}”？</AlertDialogTitle>
+                            <AlertDialogDescription className="leading-6">
+                              删除后无法恢复。当前学习步骤必须至少保留一个教学小节；如有未保存修改，也会一并丢失。
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <form action={deleteTeachingScriptNodeAction} onSubmit={() => setHasUnsavedChanges(false)}>
+                            <input type="hidden" name="node_id" value={selectedNode.id} />
+                            <input type="hidden" name="return_to" value={returnTo} />
+                            <AlertDialogFooter>
+                              <AlertDialogCancel type="button">取消</AlertDialogCancel>
+                              <FormSubmitButton pendingLabel="正在删除…" className="inline-flex min-h-10 items-center justify-center gap-2 rounded-md bg-[var(--destructive)] px-4 text-sm font-semibold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--destructive)] disabled:cursor-wait disabled:opacity-60"><Trash2 size={15} aria-hidden="true" />确认删除</FormSubmitButton>
+                            </AlertDialogFooter>
+                          </form>
+                        </AlertDialogContent>
+                      </AlertDialog>
                     </div>
                   </details>
                 )}

@@ -1,7 +1,6 @@
 "use client";
 
 import { type KeyboardEvent as ReactKeyboardEvent, type SyntheticEvent as ReactSyntheticEvent, useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { AlertTriangle, ArrowDown, ArrowUp, BookOpenText, CheckCircle2, Link2, LoaderCircle, MessageCircleQuestion, Pause, Play, Plus, RotateCcw, Route, ScrollText, Trash2, VolumeX } from "lucide-react";
 
 import {
@@ -31,6 +30,7 @@ import {
 import { teachingBlackboardSlidesFromDisplay, type TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import {
   normalizeTeachingBlackboardPlacement,
+  normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   type TeachingBlackboardPlacement,
 } from "@/lib/teaching-virtual-character";
@@ -133,10 +133,6 @@ function FormattableTextarea({
   const [selection, setSelection] = useState<{ start: number; end: number } | null>(null);
   const wrapperRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-
-  useEffect(() => {
-    if (isControlled) setInternalValue(value ?? "");
-  }, [isControlled, value]);
 
   const currentValue = isControlled ? (value ?? "") : internalValue;
 
@@ -261,9 +257,9 @@ function ScriptSpeechReview({
   useEffect(() => {
     let cancelled = false;
     const normalized = stripRichText(text).trim();
-    setContentHash("");
-    setChecking(Boolean(normalized));
     const timer = window.setTimeout(() => {
+      setContentHash("");
+      setChecking(Boolean(normalized));
       if (!normalized) {
         setChecking(false);
         return;
@@ -288,8 +284,11 @@ function ScriptSpeechReview({
       audio.pause();
       audioRef.current = null;
     }
-    setAudioStatus("idle");
-    setAudioError("");
+    const timer = window.setTimeout(() => {
+      setAudioStatus("idle");
+      setAudioError("");
+    }, 0);
+    return () => window.clearTimeout(timer);
   }, [asset?.id, contentHash, performance.voiceEnabled, performance.voiceRate]);
 
   useEffect(() => () => audioRef.current?.pause(), []);
@@ -475,6 +474,11 @@ type ScriptPerformance = {
   characterScale: number;
   dialogueX: number;
   dialogueY: number;
+  splitCharacterX: number;
+  splitCharacterY: number;
+  splitCharacterScale: number;
+  splitDialogueX: number;
+  splitDialogueY: number;
 };
 
 type InteractionOptionEditor = {
@@ -492,6 +496,7 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     : "auto";
   const voiceRate = Number(performance.voiceRate);
   const placement = normalizeTeachingVirtualCharacterPlacement(performance, fallback.position);
+  const splitPlacement = normalizeSplitTeachingVirtualCharacterPlacement(performance, fallback.position);
   return {
     pose,
     voiceEnabled: performance.voiceEnabled !== false,
@@ -503,6 +508,11 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     characterScale: placement.scale,
     dialogueX: placement.dialogueX,
     dialogueY: placement.dialogueY,
+    splitCharacterX: splitPlacement.x,
+    splitCharacterY: splitPlacement.y,
+    splitCharacterScale: splitPlacement.scale,
+    splitDialogueX: splitPlacement.dialogueX,
+    splitDialogueY: splitPlacement.dialogueY,
   };
 }
 
@@ -577,11 +587,13 @@ export function TeachingScriptNodeForm({
   onDirtyChange: (dirty: boolean) => void;
   onPendingChange: (pending: boolean) => void;
 }) {
-  const router = useRouter();
-  const [state, action, pending] = useActionState(saveTeachingScriptNodeAction, initialState);
   const formRef = useRef<HTMLFormElement | null>(null);
   const errorSummaryRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
+  const dirtyVersionRef = useRef(0);
+  const submittedVersionRef = useRef(0);
+  const nextSubmitModeRef = useRef<"auto" | "manual">("manual");
+  const submittedModeRef = useRef<"auto" | "manual">("manual");
   const display = objectConfiguration(node, "display");
   const studentTask = objectConfiguration(node, "studentTask");
   const petAction = objectConfiguration(node, "petAction");
@@ -655,6 +667,9 @@ export function TeachingScriptNodeForm({
     normalizeTeachingBlackboardPlacement(display.placement),
   );
   const [dirty, setDirty] = useState(false);
+  const [saveFeedback, setSaveFeedback] = useState<"idle" | "dirty" | "saving" | "saved" | "error">("idle");
+  const [lastSavedAt, setLastSavedAt] = useState<Date | null>(null);
+  const [lastSubmittedMode, setLastSubmittedMode] = useState<"auto" | "manual">("manual");
   const applyStyleDetailsRef = useRef<HTMLDetailsElement | null>(null);
   const [currentNodeTemplateId, setCurrentNodeTemplateId] = useState("");
   const [newTemplateName, setNewTemplateName] = useState("");
@@ -692,7 +707,37 @@ export function TeachingScriptNodeForm({
   const [interactionCorrectOptionIndex, setInteractionCorrectOptionIndex] = useState(() =>
     Math.max(0, Math.min(initialInteractionOptions.length - 1, node.interactionSecret?.correctOptionIndex ?? 0)),
   );
+  const [state, action, pending] = useActionState(async (previousState: TeachingScriptActionState, formData: FormData) => {
+    const result = await saveTeachingScriptNodeAction(previousState, formData);
+    if (result.status === "success") {
+      setLastSavedAt(new Date());
+      if (submittedVersionRef.current === dirtyVersionRef.current) {
+        setDirty(false);
+        setSaveFeedback("saved");
+        onDirtyChange(false);
+      } else {
+        setSaveFeedback("dirty");
+      }
+    } else if (result.status === "error") {
+      setSaveFeedback("error");
+      setDirty(true);
+      onDirtyChange(true);
+      if (submittedModeRef.current !== "auto" && result.fieldErrors) {
+        const firstInvalidField = Object.keys(result.fieldErrors).find((key) => result.fieldErrors?.[key]?.length);
+        const section = firstInvalidField ? errorSectionByField[firstInvalidField] : undefined;
+        if (section) setEditorSection(section);
+        window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
+      }
+    }
+    return result;
+  }, initialState);
   const supplementalExplanationCount = Number(Boolean(hintZh.trim())) + Number(Boolean(exampleZh.trim()));
+  const editorStepStates: Record<EditorSection, string> = {
+    script: scriptLines.some((line) => line.trim()) ? "已填写" : "待填写",
+    content: blackboardSlides.some((slide) => slide.elements.some((element) => element.content.trim() || element.translation?.trim())) ? "已设置" : "可选",
+    interaction: interactionKind !== "none" || studentTaskKind !== "none" ? "已设置" : "可选",
+    flow: flowMode === "end" || flowMode === "sequence" || nextNodeKey ? "已设置" : "待设置",
+  };
 
   const selectedLearningTarget = availableLearningTargets.find((item) => item.key === visualCueTargetKey);
   const learningTargetPages = Array.from(new Map(
@@ -760,7 +805,9 @@ export function TeachingScriptNodeForm({
   function markDirty(event?: ReactSyntheticEvent) {
     if (!editable) return;
     if (event && event.target instanceof Element && event.target.closest("[data-style-template-controls]")) return;
+    dirtyVersionRef.current += 1;
     setDirty(true);
+    setSaveFeedback("dirty");
     onDirtyChange(true);
   }
 
@@ -813,6 +860,11 @@ export function TeachingScriptNodeForm({
       characterScale: template.characterScale,
       dialogueX: template.dialogueX,
       dialogueY: template.dialogueY,
+      splitCharacterX: template.splitCharacterX,
+      splitCharacterY: template.splitCharacterY,
+      splitCharacterScale: template.splitCharacterScale,
+      splitDialogueX: template.splitDialogueX,
+      splitDialogueY: template.splitDialogueY,
     })));
     setBlackboardPlacement({ x: template.blackboardX, y: template.blackboardY, scale: template.blackboardScale });
     applyStyleDetailsRef.current?.removeAttribute("open");
@@ -944,27 +996,38 @@ export function TeachingScriptNodeForm({
   }
 
   useEffect(() => {
-    if (state.status === "success") {
-      setDirty(false);
-      onDirtyChange(false);
-      router.refresh();
-    }
-  }, [onDirtyChange, router, state.status]);
+    if (!editable || !dirty || pending || saveFeedback !== "dirty") return;
+    const timer = window.setTimeout(() => {
+      const form = formRef.current;
+      if (!form) return;
+      nextSubmitModeRef.current = "auto";
+      form.requestSubmit();
+    }, 1800);
+    return () => window.clearTimeout(timer);
+  }, [dirty, editable, pending, saveFeedback]);
 
   const formErrorMessages = Object.values(state.fieldErrors ?? {}).flat();
   useEffect(() => {
     onPendingChange(pending);
   }, [onPendingChange, pending]);
-  useEffect(() => {
-    if (state.status !== "error" || !state.fieldErrors) return;
-    const firstInvalidField = Object.keys(state.fieldErrors).find((key) => state.fieldErrors?.[key]?.length);
-    const section = firstInvalidField ? errorSectionByField[firstInvalidField] : undefined;
-    if (section) setEditorSection(section);
-    window.requestAnimationFrame(() => errorSummaryRef.current?.focus());
-  }, [state.fieldErrors, state.status]);
 
   return (
-    <form id={formId} ref={formRef} action={action} onChangeCapture={markDirty} onInputCapture={markDirty} className="space-y-4" key={node.id}>
+    <form
+      id={formId}
+      ref={formRef}
+      action={action}
+      onSubmitCapture={() => {
+        submittedModeRef.current = nextSubmitModeRef.current;
+        setLastSubmittedMode(nextSubmitModeRef.current);
+        nextSubmitModeRef.current = "manual";
+        submittedVersionRef.current = dirtyVersionRef.current;
+        setSaveFeedback("saving");
+      }}
+      onChangeCapture={markDirty}
+      onInputCapture={markDirty}
+      className="space-y-4"
+      key={node.id}
+    >
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
@@ -994,6 +1057,9 @@ export function TeachingScriptNodeForm({
                 <span className="tabular-nums text-[var(--muted-foreground)]">{index + 1}</span>
                 <Icon size={15} className="shrink-0" aria-hidden="true" />
                 <span>{step.label}</span>
+                <span className={`ml-auto text-[11px] font-medium ${editorStepStates[step.id] === "待填写" || editorStepStates[step.id] === "待设置" ? "text-[var(--status-warning)]" : "text-[var(--muted-foreground)]"}`}>
+                  {editorStepStates[step.id]}
+                </span>
               </button>
               <CardTitleWithHint
                 title={<span className="sr-only">{step.label}</span>}
@@ -1103,7 +1169,7 @@ export function TeachingScriptNodeForm({
               </div>
             </div>
             <div className="border-l-4 border-l-[var(--primary)] bg-[var(--card)] px-4 py-3">
-              <CardTitleWithHint title="正式讲解" description="每条台词独立校对语音；人物动作、朗读语言和语速放在展开设置中。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看正式讲解说明" />
+              <CardTitleWithHint title="正式讲解" description="先完成台词正文和语音校对；朗读语言、语速及人物动作统一收在每句的高级设置中。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看正式讲解说明" />
             </div>
             <div className="grid items-start gap-4 bg-[var(--muted)]/25 p-4 xl:grid-cols-2">
               {scriptLines.map((line, index) => (
@@ -1129,7 +1195,7 @@ export function TeachingScriptNodeForm({
                       className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
                     />
                     <details className="mt-2 border-t border-[var(--border)] px-1 py-2">
-                      <summary className="min-h-8 cursor-pointer text-xs font-semibold leading-8 text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">朗读与人物设置</summary>
+                      <summary className="min-h-8 cursor-pointer text-xs font-semibold leading-8 text-[var(--foreground-secondary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">朗读与人物设置（高级）</summary>
                       <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2">
                       <label className="space-y-1.5 text-xs font-medium">
                         <span className="block font-semibold text-[var(--foreground)]">人物动作</span>
@@ -1210,6 +1276,11 @@ export function TeachingScriptNodeForm({
                     <input type="hidden" name="script_character_scale" value={String(scriptPerformances[index]?.characterScale ?? 1)} />
                     <input type="hidden" name="script_dialogue_x" value={String(scriptPerformances[index]?.dialogueX ?? 85)} />
                     <input type="hidden" name="script_dialogue_y" value={String(scriptPerformances[index]?.dialogueY ?? 30)} />
+                    <input type="hidden" name="script_split_character_x" value={String(scriptPerformances[index]?.splitCharacterX ?? 68)} />
+                    <input type="hidden" name="script_split_character_y" value={String(scriptPerformances[index]?.splitCharacterY ?? 0)} />
+                    <input type="hidden" name="script_split_character_scale" value={String(scriptPerformances[index]?.splitCharacterScale ?? 0.82)} />
+                    <input type="hidden" name="script_split_dialogue_x" value={String(scriptPerformances[index]?.splitDialogueX ?? 78)} />
+                    <input type="hidden" name="script_split_dialogue_y" value={String(scriptPerformances[index]?.splitDialogueY ?? 30)} />
                     <div className="mt-2 flex flex-wrap gap-1">
                       {index < scriptLines.length - 1 && (
                         <button
@@ -1296,7 +1367,7 @@ export function TeachingScriptNodeForm({
           <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
             <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
             <div className={`${formSectionClass} flex flex-wrap items-center justify-between gap-3`}>
-              <CardTitleWithHint title={<span id="virtual-character-group-title">教学舞台</span>} description="这里按学生端的完整教学区比例预览。先选择台词，再直接拖动黑板和金老师；位置、大小和动作会同步到学生端。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看教学舞台说明" />
+              <CardTitleWithHint title={<span id="virtual-character-group-title">教学舞台</span>} description="可分别切换“全屏教学”和“3:7 双区”预览。每种布局独立保存金老师与台词框的位置；黑板位置仅用于全屏教学。" headingLevel={3} titleClassName={formSectionTitleClass} hintClassName="-my-2" hintLabel="查看教学舞台说明" />
               <details ref={applyStyleDetailsRef} className="group relative shrink-0">
                 <summary
                   className={`inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden ${!editable ? "pointer-events-none opacity-45" : ""}`}
@@ -1388,9 +1459,9 @@ export function TeachingScriptNodeForm({
             <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
               <span className="min-w-0">
                 <span id="learning-area-group-title" className="block text-sm font-bold text-[var(--foreground)]">学习区联动</span>
-                <span className="mt-0.5 block truncate text-xs text-[var(--foreground-muted)]">{[selectedLearningTargetPath || (studentTaskKind !== "none" ? "已安排学生操作" : "未设置，仅播放教学内容"), selectedPetActionTarget ? "已设置宠物代点" : ""].filter(Boolean).join("・")}</span>
+                <span className="mt-0.5 block truncate text-xs text-[var(--foreground-muted)]">{[selectedLearningTargetPath || (studentTaskKind !== "none" ? "已安排学生操作" : "未设置，仅播放教学内容"), selectedPetActionTarget ? "已设置宠物操作" : ""].filter(Boolean).join("・")}</span>
               </span>
-              <span className="shrink-0 text-xs font-semibold text-[var(--primary)] group-open:hidden">展开设置</span>
+              <span className="shrink-0 text-xs font-semibold text-[var(--primary)] group-open:hidden">展开高级设置</span>
               <span className="hidden shrink-0 text-xs font-semibold text-[var(--foreground-muted)] group-open:inline">收起</span>
             </summary>
             <div className="border-t border-[var(--border)]">
@@ -1503,6 +1574,66 @@ export function TeachingScriptNodeForm({
             </div>
             <div className={fieldClass}>
               <CardTitleWithHint
+                title="宠物操作"
+                description="选择后，播放到这个小节时阿韩会自动走到目标旁边并执行操作；只能选播放音频、翻页这类非计分按钮，不能选答题选项，避免代替学生完成需要评分的互动。"
+                headingLevel={4}
+                titleClassName={formFieldLabelClass}
+                hintClassName="-my-3 -mr-3"
+                hintLabel="查看宠物操作说明"
+              />
+              <div>
+                {actionableLearningTargets.length > 0 ? (
+                  <div className="grid gap-3 lg:grid-cols-3">
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span>
+                      <select value={petActionPageKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionPage(event.target.value); }} disabled={!editable} className={inputClass}>
+                        <option value="">不安排宠物操作</option>
+                        {petActionPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}
+                        {petActionPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}
+                      </select>
+                    </label>
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span>
+                      <select value={petActionRegionKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionRegion(event.target.value); }} disabled={!editable || !petActionPageKey || petActionPageKey === "legacy"} className={inputClass}>
+                        {!petActionRegionKey && <option value="">请先选择页面</option>}
+                        {petActionRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}
+                      </select>
+                    </label>
+                    <label className="space-y-1.5">
+                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span>
+                      <select
+                        value={selectedPetActionTarget?.key ?? ""}
+                        onInput={(event) => event.stopPropagation()}
+                        onChange={(event) => { event.stopPropagation(); markDirty(); setPetActionTargetKey(event.target.value); }}
+                        disabled={!editable || !petActionRegionKey}
+                        aria-invalid={Boolean(state.fieldErrors?.petActionTargetKey?.length) || undefined}
+                        aria-describedby={state.fieldErrors?.petActionTargetKey?.length ? "pet-action-target-error" : undefined}
+                        className={inputClass}
+                      >
+                        {!selectedPetActionTarget && <option value="">请先选择区域</option>}
+                        {petActionObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
+                      </select>
+                    </label>
+                  </div>
+                ) : (
+                  <p className="app-muted-text text-xs leading-5">当前学习步骤还没有可供宠物操作的按钮或表达。</p>
+                )}
+                <input type="hidden" name="pet_action_target_key" value={petActionTargetKey} />
+                {selectedPetActionPath && (
+                  <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
+                    当前宠物操作目标：{selectedPetActionPath}
+                  </p>
+                )}
+                {petActionPageKey === "legacy" && (
+                  <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]" role="alert">
+                    这条小节保存的是旧目标，请重新选择宠物要操作的按钮或表达。
+                  </p>
+                )}
+                <FieldError id="pet-action-target-error" errors={state.fieldErrors?.petActionTargetKey} />
+              </div>
+            </div>
+            <div className={fieldClass}>
+              <CardTitleWithHint
                 title="学生操作"
                 description="这是学生必须亲自完成的操作；没有完成时，“继续下一步”会保持不可用。"
                 headingLevel={4}
@@ -1556,66 +1687,6 @@ export function TeachingScriptNodeForm({
                     </div>
                   </div>
                 </fieldset>
-              </div>
-            </div>
-            <div className={fieldClass}>
-              <CardTitleWithHint
-                title="宠物代点"
-                description="选择后，播放到这个小节时阿韩会自动走到这个按钮旁边并真的帮学生点一下；只能选播放音频、翻页这类非计分按钮，不能选答题选项，避免代替学生完成需要评分的互动。"
-                headingLevel={4}
-                titleClassName={formFieldLabelClass}
-                hintClassName="-my-3 -mr-3"
-                hintLabel="查看宠物代点说明"
-              />
-              <div>
-                {actionableLearningTargets.length > 0 ? (
-                  <div className="grid gap-3 lg:grid-cols-3">
-                    <label className="space-y-1.5">
-                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span>
-                      <select value={petActionPageKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionPage(event.target.value); }} disabled={!editable} className={inputClass}>
-                        <option value="">不代点，仅正常讲解</option>
-                        {petActionPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}
-                        {petActionPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}
-                      </select>
-                    </label>
-                    <label className="space-y-1.5">
-                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span>
-                      <select value={petActionRegionKey} onInput={(event) => event.stopPropagation()} onChange={(event) => { event.stopPropagation(); selectPetActionRegion(event.target.value); }} disabled={!editable || !petActionPageKey || petActionPageKey === "legacy"} className={inputClass}>
-                        {!petActionRegionKey && <option value="">请先选择页面</option>}
-                        {petActionRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}
-                      </select>
-                    </label>
-                    <label className="space-y-1.5">
-                      <span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span>
-                      <select
-                        value={selectedPetActionTarget?.key ?? ""}
-                        onInput={(event) => event.stopPropagation()}
-                        onChange={(event) => { event.stopPropagation(); markDirty(); setPetActionTargetKey(event.target.value); }}
-                        disabled={!editable || !petActionRegionKey}
-                        aria-invalid={Boolean(state.fieldErrors?.petActionTargetKey?.length) || undefined}
-                        aria-describedby={state.fieldErrors?.petActionTargetKey?.length ? "pet-action-target-error" : undefined}
-                        className={inputClass}
-                      >
-                        {!selectedPetActionTarget && <option value="">请先选择区域</option>}
-                        {petActionObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}
-                      </select>
-                    </label>
-                  </div>
-                ) : (
-                  <p className="app-muted-text text-xs leading-5">当前学习步骤还没有可代点的按钮或表达。</p>
-                )}
-                <input type="hidden" name="pet_action_target_key" value={petActionTargetKey} />
-                {selectedPetActionPath && (
-                  <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
-                    当前代点目标：{selectedPetActionPath}
-                  </p>
-                )}
-                {petActionPageKey === "legacy" && (
-                  <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]" role="alert">
-                    这条小节保存的是旧目标，请重新选择要代点的按钮或表达。
-                  </p>
-                )}
-                <FieldError id="pet-action-target-error" errors={state.fieldErrors?.petActionTargetKey} />
               </div>
             </div>
             </div>
@@ -1703,7 +1774,21 @@ export function TeachingScriptNodeForm({
 
       {editable && (
         <div className="px-1 pt-1">
-          <p className={state.status === "error" ? "text-sm text-[var(--status-danger)]" : dirty ? "text-sm font-medium text-[var(--status-warning)]" : state.status === "success" ? "text-sm text-[var(--status-success)]" : "text-sm text-[var(--muted-foreground)]"} role={state.status === "error" ? "alert" : "status"} aria-live="polite">{dirty ? "有未保存的修改。保存后才会写入草稿。" : state.message || "修改会先保存到草稿，不会立即影响学生。"}</p>
+          <p
+            className={saveFeedback === "error" ? "text-sm text-[var(--status-danger)]" : saveFeedback === "dirty" ? "text-sm font-medium text-[var(--status-warning)]" : saveFeedback === "saved" ? "text-sm text-[var(--status-success)]" : "text-sm text-[var(--muted-foreground)]"}
+            role={saveFeedback === "error" ? "alert" : "status"}
+            aria-live="polite"
+          >
+            {saveFeedback === "saving"
+              ? lastSubmittedMode === "auto" ? "正在自动保存到草稿…" : "正在保存到草稿…"
+              : saveFeedback === "error"
+                ? `${lastSubmittedMode === "auto" ? "自动保存失败" : "保存失败"}：${state.message || "请稍后重试。"} 修改仍保留在当前页面。`
+                : saveFeedback === "dirty"
+                  ? "有未保存的修改，停止输入后会自动保存。"
+                  : saveFeedback === "saved" && lastSavedAt
+                    ? `已保存到草稿 · ${lastSavedAt.toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit" })}`
+                    : "修改会自动保存到草稿，不会立即影响学生。"}
+          </p>
         </div>
       )}
     </form>

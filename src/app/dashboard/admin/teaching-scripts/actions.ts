@@ -57,6 +57,11 @@ const nodeSchema = z.object({
     characterScale: z.coerce.number().min(0.75).max(1.25),
     dialogueX: z.coerce.number().min(5).max(95),
     dialogueY: z.coerce.number().min(5).max(90),
+    splitCharacterX: z.coerce.number().min(10).max(90),
+    splitCharacterY: z.coerce.number().min(0).max(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
+    splitCharacterScale: z.coerce.number().min(0.5).max(1.25),
+    splitDialogueX: z.coerce.number().min(5).max(95),
+    splitDialogueY: z.coerce.number().min(5).max(90),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
     voiceRate: z.coerce.number().min(0.75).max(1.25),
@@ -70,8 +75,8 @@ const nodeSchema = z.object({
   visualCueTargetKey: z.string().trim().max(200, "讲解指向不能超过200个字符。")
     .regex(/^[a-zA-Z0-9:_-]*$/, "讲解指向格式不正确。"),
   visualCueEffect: z.enum(["pulse"]),
-  petActionTargetKey: z.string().trim().max(200, "宠物代点目标不能超过200个字符。")
-    .regex(/^[a-zA-Z0-9:_-]*$/, "宠物代点目标格式不正确。"),
+  petActionTargetKey: z.string().trim().max(200, "宠物操作目标不能超过200个字符。")
+    .regex(/^[a-zA-Z0-9:_-]*$/, "宠物操作目标格式不正确。"),
   visualCuePulseCount: z.coerce.number().int().min(1).max(4),
   visualCueDurationMs: z.coerce.number().int().min(400).max(2500),
   interactionKind: z.enum(["none", "single_choice", "referenced_activity"]),
@@ -108,7 +113,7 @@ const nodeSchema = z.object({
     context.addIssue({
       code: "custom",
       path: ["petActionTargetKey"],
-      message: "宠物代点不能指向答题类目标，请改选播放音频、翻页等按钮。",
+      message: "宠物操作不能指向答题类目标，请改选播放音频、翻页等按钮。",
     });
   }
   if (input.interactionKind === "single_choice") {
@@ -250,6 +255,11 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
         characterScale: 1,
         dialogueX: 85,
         dialogueY: 30,
+        splitCharacterX: 68,
+        splitCharacterY: 0,
+        splitCharacterScale: 0.82,
+        splitDialogueX: 78,
+        splitDialogueY: 30,
         voiceEnabled: true,
         voiceLanguage: "auto",
         voiceRate: 1,
@@ -286,6 +296,11 @@ export async function saveTeachingScriptNodeAction(
     const scriptCharacterScales = formData.getAll("script_character_scale").map(String);
     const scriptDialogueXs = formData.getAll("script_dialogue_x").map(String);
     const scriptDialogueYs = formData.getAll("script_dialogue_y").map(String);
+    const scriptSplitCharacterXs = formData.getAll("script_split_character_x").map(String);
+    const scriptSplitCharacterYs = formData.getAll("script_split_character_y").map(String);
+    const scriptSplitCharacterScales = formData.getAll("script_split_character_scale").map(String);
+    const scriptSplitDialogueXs = formData.getAll("script_split_dialogue_x").map(String);
+    const scriptSplitDialogueYs = formData.getAll("script_split_dialogue_y").map(String);
     const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
     const interactionOptionRows = formData.getAll("interaction_option").map(String);
     const parsed = nodeSchema.safeParse({
@@ -314,6 +329,11 @@ export async function saveTeachingScriptNodeAction(
         characterScale: scriptCharacterScales[index] ?? "1",
         dialogueX: scriptDialogueXs[index] ?? String(Math.min(92, Number(scriptCharacterXs[index] ?? 75) + 10)),
         dialogueY: scriptDialogueYs[index] ?? String(Math.min(90, Number(scriptCharacterYs[index] ?? 0) + 30)),
+        splitCharacterX: scriptSplitCharacterXs[index] ?? String(Math.max(32, Math.min(68, Number(scriptCharacterXs[index] ?? 75)))),
+        splitCharacterY: scriptSplitCharacterYs[index] ?? scriptCharacterYs[index] ?? "0",
+        splitCharacterScale: scriptSplitCharacterScales[index] ?? String(Math.min(0.82, Number(scriptCharacterScales[index] ?? 1))),
+        splitDialogueX: scriptSplitDialogueXs[index] ?? String(Math.min(92, Math.max(32, Math.min(68, Number(scriptCharacterXs[index] ?? 75))) + 10)),
+        splitDialogueY: scriptSplitDialogueYs[index] ?? scriptDialogueYs[index] ?? "30",
         voiceEnabled: (scriptVoices[index] ?? "on") === "on",
         voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
         voiceRate: scriptVoiceRates[index] ?? "1",
@@ -624,6 +644,11 @@ export async function saveCharacterStyleTemplateAction(formData: FormData) {
     character_scale: Number(firstPerformance.characterScale ?? 1),
     dialogue_x: Number(firstPerformance.dialogueX ?? 85),
     dialogue_y: Number(firstPerformance.dialogueY ?? 30),
+    split_character_x: Number(firstPerformance.splitCharacterX ?? 68),
+    split_character_y: Number(firstPerformance.splitCharacterY ?? 0),
+    split_character_scale: Number(firstPerformance.splitCharacterScale ?? 0.82),
+    split_dialogue_x: Number(firstPerformance.splitDialogueX ?? 78),
+    split_dialogue_y: Number(firstPerformance.splitDialogueY ?? 30),
     blackboard_x: blackboardPlacement.x,
     blackboard_y: blackboardPlacement.y,
     blackboard_scale: blackboardPlacement.scale,

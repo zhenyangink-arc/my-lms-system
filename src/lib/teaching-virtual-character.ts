@@ -36,6 +36,11 @@ export const TEACHING_VIRTUAL_CHARACTER_STAGE = {
   maximumBottomPercent: 80,
   viewportTopPx: 0,
   viewportBottomPx: 0,
+  dialogueBubble: {
+    minimumWidthPx: 128,
+    preferredWidthCqw: 18,
+    maximumWidthPx: 192,
+  },
   blackboard: {
     defaultXPercent: 50,
     defaultTopPercent: 11,
@@ -131,6 +136,26 @@ export function normalizeTeachingVirtualCharacterPlacement(
     scale: finiteNumber(source.characterScale, fallback.scale, 0.75, 1.25),
     dialogueX: finiteNumber(source.dialogueX, Math.min(92, x + 10), 5, 95),
     dialogueY: finiteNumber(source.dialogueY, Math.min(90, y + 30), 5, 90),
+  };
+}
+
+export function normalizeSplitTeachingVirtualCharacterPlacement(
+  value: unknown,
+  positionFallback: unknown = "right",
+): TeachingVirtualCharacterPlacement {
+  const source = value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+  const immersive = normalizeTeachingVirtualCharacterPlacement(source, positionFallback);
+  const fallbackX = Math.max(32, Math.min(68, immersive.x));
+  const x = finiteNumber(source.splitCharacterX, fallbackX, 10, 90);
+  const y = finiteNumber(source.splitCharacterY, immersive.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent);
+  return {
+    x,
+    y,
+    scale: finiteNumber(source.splitCharacterScale, Math.min(immersive.scale, 0.82), 0.5, 1.25),
+    dialogueX: finiteNumber(source.splitDialogueX, Math.min(92, x + 10), 5, 95),
+    dialogueY: finiteNumber(source.splitDialogueY, Math.min(90, y + 30), 5, 90),
   };
 }
 

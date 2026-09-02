@@ -65,6 +65,7 @@ export const SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT = {
   teachingArea: {
     defaultWidthPercent: 30,
     collapsedWidthPx: 64,
+    splitMinimumViewportWidthPx: 1280,
     focusedContentMaxWidthPx: 920,
   },
   blackboard: {
@@ -110,4 +111,15 @@ export function shouldUseSmartTextbookTeachingFocusMode(input: {
     && !input.answerRequired
     && input.action !== SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction
     && !input.hasPendingLearningTask;
+}
+
+export function shouldHideSmartTextbookLearningArea(input: {
+  tutorFocusMode: boolean;
+  teachingFocusDismissed: boolean;
+  learningAreaManuallyHidden: boolean;
+  teachingAreaSplitAvailable: boolean;
+}) {
+  return (input.tutorFocusMode
+    && (!input.teachingFocusDismissed || !input.teachingAreaSplitAvailable))
+    || input.learningAreaManuallyHidden;
 }

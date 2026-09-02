@@ -53,6 +53,7 @@ import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 import {
   constrainTeachingBlackboardPlacementToViewport,
   normalizeTeachingBlackboardPlacement,
+  normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
   type TeachingBlackboardPlacement,
@@ -80,6 +81,7 @@ import {
 import {
   getSmartTextbookSkeletonModule,
   getSmartTextbookSkeletonPageLabels,
+  shouldHideSmartTextbookLearningArea,
   shouldUseSmartTextbookTeachingFocusMode,
   SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
 } from "@/lib/smart-textbook-skeleton";
@@ -206,6 +208,11 @@ type TutorCharacter = {
   characterScale?: number;
   dialogueX?: number;
   dialogueY?: number;
+  splitCharacterX?: number;
+  splitCharacterY?: number;
+  splitCharacterScale?: number;
+  splitDialogueX?: number;
+  splitDialogueY?: number;
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
   voiceRate?: number;
@@ -4310,7 +4317,13 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const [locale, setLocale] = useState<SmartLocale>(textbook.preference.locale);
   const [supportMode, setSupportMode] = useState<SmartSupportMode>(textbook.preference.supportMode);
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const teachingViewport = teachingViewportFromSnapshot(useSyncExternalStore(
+    subscribeToTeachingViewport,
+    currentTeachingViewportSnapshot,
+    () => TEACHING_VIEWPORT_FALLBACK,
+  ));
   const [teachingAreaCollapsed, setTeachingAreaCollapsed] = useState(false);
+  const [teachingFocusDismissed, setTeachingFocusDismissed] = useState(false);
   const [assistantCollapsed, setAssistantCollapsed] = useState(true);
   const [tutorWindowPosition, setTutorWindowPosition] = useState<{ x: number; y: number } | null>(null);
   const [mobilePanel, setMobilePanel] = useState<"path" | "assistant" | null>(null);
@@ -4515,7 +4528,14 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     action: tutorAction,
     hasPendingLearningTask: Boolean(tutorTask && !tutorTaskCompleted),
   });
-  const learningAreaHidden = tutorFocusMode || learningAreaManuallyHidden;
+  const teachingAreaSplitAvailable = teachingViewport.width
+    >= SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.splitMinimumViewportWidthPx;
+  const learningAreaHidden = shouldHideSmartTextbookLearningArea({
+    tutorFocusMode,
+    teachingFocusDismissed,
+    learningAreaManuallyHidden,
+    teachingAreaSplitAvailable,
+  });
   const teachingAreaExpanded = learningAreaHidden;
   const learningHeaderNode = activeNodes[0];
   const learningHeaderSkeleton = activeModule ? getSmartTextbookSkeletonModule(activeModule.code) : null;
@@ -4580,6 +4600,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorSessionId(savedTutorSessionId);
     setTutorHasPreviousSession(tutorVisitedModuleIdsRef.current.has(activeModule?.id ?? ""));
     setTutorStarted(false);
+    setTeachingFocusDismissed(false);
     setTutorPaused(false);
     setTutorStatus("idle");
     setTutorQuestionOptions([]);
@@ -4593,6 +4614,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     setTutorTerminal(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
+    setTeachingFocusDismissed(false);
     setFullscreenRequestFailed(false);
   }, [activeModule?.id]);
 
@@ -5116,6 +5138,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     tutorVisitedModuleIdsRef.current.add(activeModule.id);
     setTutorHasPreviousSession(true);
     setTeachingAreaCollapsed(false);
+    setTeachingFocusDismissed(false);
     setTutorAction(null);
     setLearningAreaManuallyHidden(false);
     tutorPausedRef.current = false;
@@ -5801,11 +5824,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
     teachingAreaCharacter,
     teachingAreaCharacter?.position,
   );
-  const teachingViewport = teachingViewportFromSnapshot(useSyncExternalStore(
-    subscribeToTeachingViewport,
-    currentTeachingViewportSnapshot,
-    () => TEACHING_VIEWPORT_FALLBACK,
-  ));
+  const splitTeachingAreaCharacterPlacement = normalizeSplitTeachingVirtualCharacterPlacement(
+    teachingAreaCharacter,
+    teachingAreaCharacter?.position,
+  );
   const teachingAreaBlackboardPlacement = constrainTeachingBlackboardPlacementToViewport(
     normalizeTeachingBlackboardPlacement(tutorDisplay?.placement),
     teachingViewport.width,
@@ -5814,6 +5836,9 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const immersiveBlackboardPositioned = tutorStarted && teachingAreaExpanded;
   const immersiveBlackboardWidthPx = TEACHING_VIRTUAL_CHARACTER_STAGE.preview.focusedContentMaxWidthPx
     - TEACHING_VIRTUAL_CHARACTER_STAGE.preview.contentInsetPx * 2;
+  const teachingStageCharacterPlacement = teachingAreaExpanded
+    ? teachingAreaCharacterPlacement
+    : splitTeachingAreaCharacterPlacement;
 
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
@@ -6167,6 +6192,23 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 <PanelRightOpen size={17} aria-hidden="true" />
                 <span>{locale === "ko-KR" ? "학습 영역 표시" : "显示学习区"}</span>
               </button>
+            ) : teachingAreaExpanded && tutorFocusMode ? (
+              <button
+                type="button"
+                data-learning-target={`${activeModule.code}:teaching-area:collapse`}
+                onClick={() => {
+                  setLearningAreaManuallyHidden(false);
+                  setTeachingAreaCollapsed(false);
+                  setTeachingFocusDismissed(true);
+                }}
+                className="absolute right-2 hidden min-h-11 items-center justify-center gap-2 rounded-xl px-3 text-xs font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] hover:text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 xl:inline-flex"
+                aria-label={locale === "ko-KR" ? "수업 영역 접기" : "收起教学区"}
+                aria-expanded={true}
+                title={locale === "ko-KR" ? "수업 영역 접기" : "收起教学区"}
+              >
+                <PanelLeftClose size={17} aria-hidden="true" />
+                <span className="hidden sm:inline">{locale === "ko-KR" ? "수업 영역 접기" : "收起教学区"}</span>
+              </button>
             ) : !teachingAreaExpanded ? (
               teachingAreaCollapsed ? (
                 <button
@@ -6179,7 +6221,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 >
                   <PanelLeftOpen size={17} aria-hidden="true" />
                 </button>
-              ) : (
+              ) : !tutorStarted ? (
                 <button
                   type="button"
                   data-learning-target={`${activeModule.code}:teaching-area:collapse`}
@@ -6190,7 +6232,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                 >
                   <PanelLeftClose size={17} aria-hidden="true" />
                 </button>
-              )
+              ) : null
             ) : null}
           </div>
           {(!teachingAreaCollapsed || teachingAreaExpanded) && (
@@ -6279,17 +6321,18 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   <TeachingStagePortal active={tutorStarted} target={textbookRef.current}>
                   <div
                     className={tutorStarted
-                      ? "pointer-events-none fixed left-0 z-40"
+                      ? `pointer-events-none fixed left-0 z-40 ${teachingAreaExpanded ? "" : teachingAreaCollapsed ? "hidden" : "hidden overflow-hidden xl:block"}`
                       : `pointer-events-none fixed bottom-[180px] top-[64px] z-40 ${teachingAreaExpanded ? "inset-x-0 mx-auto px-8" : "left-0 px-6"}`}
+                    data-teaching-stage-layout={teachingAreaExpanded ? "immersive" : "split"}
                     style={tutorStarted
                       ? {
                           top: TEACHING_VIRTUAL_CHARACTER_STAGE.viewportTopPx,
                           bottom: TEACHING_VIRTUAL_CHARACTER_STAGE.viewportBottomPx,
-                          // Authored character coordinates use the complete teaching-stage
-                          // viewport, exactly like the admin stage editor. Restricting this
-                          // layer to the left teaching column made the same x percentage
-                          // land near the screen centre for students.
-                          width: "100%",
+                          width: teachingAreaExpanded
+                            ? "100%"
+                            : teachingAreaCollapsed
+                              ? `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.collapsedWidthPx}px`
+                              : `${SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent}%`,
                           containerType: "size",
                         }
                       : {
@@ -6304,10 +6347,10 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                     <div
                       className={`absolute z-20 flex items-end justify-center transition-[left,bottom,transform] duration-300 motion-reduce:transition-none ${tutorStarted ? "aspect-[1/2]" : teachingAreaExpanded ? "w-[16rem]" : "w-[18rem]"}`}
                       style={{
-                        left: `${tutorStarted ? teachingAreaCharacterPlacement.x : 50}%`,
-                        bottom: `${tutorStarted ? teachingAreaCharacterPlacement.y : 0}%`,
+                        left: `${tutorStarted ? teachingStageCharacterPlacement.x : 50}%`,
+                        bottom: `${tutorStarted ? teachingStageCharacterPlacement.y : 0}%`,
                         height: tutorStarted ? `${TEACHING_VIRTUAL_CHARACTER_STAGE.characterHeightPercent}%` : undefined,
-                        transform: `translateX(-50%) scale(${tutorStarted ? teachingAreaCharacterPlacement.scale : 1})`,
+                        transform: `translateX(-50%) scale(${tutorStarted ? teachingStageCharacterPlacement.scale : 1})`,
                         transformOrigin: "bottom center",
                       }}
                     >
@@ -6333,11 +6376,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                         ))}
                         {tutorBubbleVisible && (
                           <div
-                            className={`pointer-events-auto absolute z-10 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${tutorStarted ? "max-w-[clamp(8rem,18cqw,12rem)]" : teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] left-full ml-2 max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] left-full ml-2 max-w-xs"}`}
+                            className={`pointer-events-auto absolute z-10 w-fit motion-safe:animate-[smart-textbook-float-in_180ms_ease-out] ${tutorStarted ? "" : teachingAreaExpanded ? "bottom-[clamp(17.5rem,33.6vh,24rem)] left-full ml-2 max-w-xs" : "bottom-[clamp(18rem,36vh,24rem)] left-full ml-2 max-w-xs"}`}
                             style={tutorStarted ? {
-                              left: `calc(50% + ${(teachingAreaCharacterPlacement.dialogueX - teachingAreaCharacterPlacement.x) / teachingAreaCharacterPlacement.scale}cqw)`,
-                              bottom: `${(teachingAreaCharacterPlacement.dialogueY - teachingAreaCharacterPlacement.y) / teachingAreaCharacterPlacement.scale}cqh`,
-                              transform: `translate(-50%, 50%) scale(${1 / teachingAreaCharacterPlacement.scale})`,
+                              left: `calc(50% + ${(teachingStageCharacterPlacement.dialogueX - teachingStageCharacterPlacement.x) / teachingStageCharacterPlacement.scale}cqw)`,
+                              bottom: `${(teachingStageCharacterPlacement.dialogueY - teachingStageCharacterPlacement.y) / teachingStageCharacterPlacement.scale}cqh`,
+                              width: `clamp(${TEACHING_VIRTUAL_CHARACTER_STAGE.dialogueBubble.minimumWidthPx}px, ${TEACHING_VIRTUAL_CHARACTER_STAGE.dialogueBubble.preferredWidthCqw}cqw, ${TEACHING_VIRTUAL_CHARACTER_STAGE.dialogueBubble.maximumWidthPx}px)`,
+                              transform: `translate(-50%, 50%) scale(${1 / teachingStageCharacterPlacement.scale})`,
                               transformOrigin: "center",
                             } : undefined}
                           >

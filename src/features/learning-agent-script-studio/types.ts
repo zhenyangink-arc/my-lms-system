@@ -80,6 +80,11 @@ export type CharacterStyleTemplate = {
   characterScale: number;
   dialogueX: number;
   dialogueY: number;
+  splitCharacterX: number;
+  splitCharacterY: number;
+  splitCharacterScale: number;
+  splitDialogueX: number;
+  splitDialogueY: number;
   blackboardX: number;
   blackboardY: number;
   blackboardScale: number;

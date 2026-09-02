@@ -39,7 +39,7 @@ function ids(rows: Row[]) {
 async function loadCharacterStyleTemplates(admin: ReturnType<typeof createAdminClient>): Promise<CharacterStyleTemplate[]> {
   const { data, error } = await admin
     .from("learning_agent_character_style_templates")
-    .select("id,name,virtual_character_position,character_x,character_y,character_scale,dialogue_x,dialogue_y,blackboard_x,blackboard_y,blackboard_scale")
+    .select("id,name,virtual_character_position,character_x,character_y,character_scale,dialogue_x,dialogue_y,split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y,blackboard_x,blackboard_y,blackboard_scale")
     .order("created_at", { ascending: false });
   if (error) throw new Error("无法读取样式模板。");
   return (data ?? []).map((row) => ({
@@ -51,6 +51,11 @@ async function loadCharacterStyleTemplates(admin: ReturnType<typeof createAdminC
     characterScale: Number(row.character_scale),
     dialogueX: Number(row.dialogue_x),
     dialogueY: Number(row.dialogue_y),
+    splitCharacterX: Number(row.split_character_x),
+    splitCharacterY: Number(row.split_character_y),
+    splitCharacterScale: Number(row.split_character_scale),
+    splitDialogueX: Number(row.split_dialogue_x),
+    splitDialogueY: Number(row.split_dialogue_y),
     blackboardX: Number(row.blackboard_x),
     blackboardY: Number(row.blackboard_y),
     blackboardScale: Number(row.blackboard_scale),

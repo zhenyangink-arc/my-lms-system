@@ -4,6 +4,7 @@ import test from "node:test";
 
 import {
   getSmartTextbookSkeletonPageLabels,
+  shouldHideSmartTextbookLearningArea,
   shouldUseSmartTextbookTeachingFocusMode,
   SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT,
   SMART_TEXTBOOK_SHARED_SKELETON,
@@ -173,6 +174,18 @@ test("第 1—16 章共用完整的模块分页和教学区状态规则", () => 
     action: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction,
     hasPendingLearningTask: false,
   }), false);
+  assert.equal(shouldHideSmartTextbookLearningArea({
+    tutorFocusMode: true,
+    teachingFocusDismissed: true,
+    learningAreaManuallyHidden: false,
+    teachingAreaSplitAvailable: true,
+  }), false, "桌面端收起全屏教学后应恢复 3:7");
+  assert.equal(shouldHideSmartTextbookLearningArea({
+    tutorFocusMode: true,
+    teachingFocusDismissed: true,
+    learningAreaManuallyHidden: false,
+    teachingAreaSplitAvailable: false,
+  }), true, "窄屏不支持 3:7，应继续保持完整教学区");
 });
 
 test("智能教材所有章节共用稳定、可操作的步骤导航骨架", async () => {
@@ -222,10 +235,19 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(skeleton, /"zh-CN": "情景诊断", "ko-KR": "장면 진단"/);
   assert.match(skeleton, /defaultWidthPercent: 30/);
   assert.match(skeleton, /collapsedWidthPx: 64/);
+  assert.match(skeleton, /splitMinimumViewportWidthPx: 1280/);
   assert.match(skeleton, /aspectRatio: "16 \/ 9"/);
   assert.match(skeleton, /contentInsetPx: 48/);
   assert.match(source, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(source, /shouldUseSmartTextbookTeachingFocusMode/);
+  assert.match(source, /const teachingAreaSplitAvailable = teachingViewport\.width/);
+  assert.match(source, /splitMinimumViewportWidthPx/);
+  assert.match(source, /const learningAreaHidden = shouldHideSmartTextbookLearningArea\(\{/);
+  assert.match(source, /teachingAreaExpanded && tutorFocusMode \? \(/);
+  assert.match(source, /setLearningAreaManuallyHidden\(false\);\s*setTeachingAreaCollapsed\(false\);\s*setTeachingFocusDismissed\(true\);/);
+  assert.match(source, /hidden min-h-11[\s\S]*xl:inline-flex/);
+  assert.match(source, /\) : !tutorStarted \? \(\s*<button[\s\S]*setTeachingAreaCollapsed\(true\)/);
+  assert.match(source, /<span className="hidden sm:inline">\{locale === "ko-KR" \? "수업 영역 접기" : "收起教学区"\}<\/span>/);
   assert.match(source, /title=\{isGrammarPractice \?[\s\S]*: activity\.prompt\[locale\]\}/);
   assert.match(source, /description=\{activity\.instruction\[locale\]\}/);
   assert.match(source, /hintLabel=\{locale === "ko-KR" \? "문제 풀이 안내 보기" : "查看答题说明"\}/);

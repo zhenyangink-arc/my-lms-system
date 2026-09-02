@@ -3,7 +3,7 @@ import "server-only";
 import { parseRichText, richCharsToPlainText, stripRichText, type RichChar } from "@/lib/rich-teaching-text";
 import type { createAdminClient } from "@/lib/supabase/admin";
 import { isTeacherKimPose, type TeacherKimPose } from "@/lib/teacher-kim-character";
-import { normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
+import { normalizeSplitTeachingVirtualCharacterPlacement, normalizeTeachingVirtualCharacterPlacement } from "@/lib/teaching-virtual-character";
 
 type AdminClient = ReturnType<typeof createAdminClient>;
 
@@ -85,6 +85,11 @@ export type ScriptVirtualCharacter = {
   characterScale: number;
   dialogueX: number;
   dialogueY: number;
+  splitCharacterX: number;
+  splitCharacterY: number;
+  splitCharacterScale: number;
+  splitDialogueX: number;
+  splitDialogueY: number;
   voiceEnabled: boolean;
   voiceLanguage: "auto" | Locale;
   voiceRate: number;
@@ -110,6 +115,7 @@ export function virtualCharacterForScriptSegment(
       : "explaining";
   const position = character.position === "left" ? "left" : "right";
   const placement = normalizeTeachingVirtualCharacterPlacement(performance, position);
+  const splitPlacement = normalizeSplitTeachingVirtualCharacterPlacement(performance, position);
   const voiceLanguage = performance.voiceLanguage === "zh-CN" || performance.voiceLanguage === "ko-KR"
     ? performance.voiceLanguage
     : character.voiceLanguage === "zh-CN" || character.voiceLanguage === "ko-KR"
@@ -125,6 +131,11 @@ export function virtualCharacterForScriptSegment(
     characterScale: placement.scale,
     dialogueX: placement.dialogueX,
     dialogueY: placement.dialogueY,
+    splitCharacterX: splitPlacement.x,
+    splitCharacterY: splitPlacement.y,
+    splitCharacterScale: splitPlacement.scale,
+    splitDialogueX: splitPlacement.dialogueX,
+    splitDialogueY: splitPlacement.dialogueY,
     voiceEnabled: (performance.voiceEnabled ?? character.voiceEnabled) !== false,
     voiceLanguage,
     voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
