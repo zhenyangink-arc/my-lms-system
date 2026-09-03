@@ -536,7 +536,7 @@ export function TeachingScriptStudio({ data }: { data: TeachingScriptStudioData 
                   </details>
                 )}
               </header>
-              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} formId={selectedNodeFormId} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} templates={data.characterStyleTemplates} blackboardLayoutTemplates={data.blackboardLayoutTemplates} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} returnTo={returnTo} editable={editable} onDirtyChange={setHasUnsavedChanges} onPendingChange={setNodeSavePending} /></div>
+              <div className="p-4 lg:p-6"><TeachingScriptNodeForm key={selectedNode.id} formId={selectedNodeFormId} node={selectedNode} allNodes={selectedVersion.nodes} activities={selectedModule.activities} learningTargets={selectedModule.learningTargets} templates={data.characterStyleTemplates} blackboardLayoutTemplates={data.blackboardLayoutTemplates} moduleCode={selectedModule.code} moduleOrder={selectedModule.order} returnTo={returnTo} editable={editable} previewUrl={previewUrl} onDirtyChange={setHasUnsavedChanges} onPendingChange={setNodeSavePending} /></div>
             </>
           ) : <div className="flex min-h-80 items-center justify-center p-8 text-center text-sm text-[var(--muted-foreground)]">请先选择一个教学小节。</div>}
         </section>

@@ -4,8 +4,10 @@ import test from "node:test";
 import {
   constrainTeachingBlackboardPlacementToViewport,
   defaultTeachingBlackboardPlacement,
+  defaultTeachingNarrowCharacterPlacement,
   defaultTeachingVirtualCharacterPlacement,
   normalizeTeachingBlackboardPlacement,
+  normalizeNarrowTeachingVirtualCharacterPlacement,
   normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   teachingBlackboardPlacementBounds,
@@ -130,6 +132,27 @@ test("legacy scripts receive safe 3:7 defaults without changing fullscreen coord
     }),
     { x: 68, y: 6, scale: 0.82, dialogueX: 78, dialogueY: 36 },
   );
+});
+
+test("narrow floating character keeps its own independent position and size, separate from immersive and split placements", () => {
+  assert.deepEqual(defaultTeachingNarrowCharacterPlacement(), { x: 90, y: 6, scale: 0.6 });
+  assert.deepEqual(
+    normalizeNarrowTeachingVirtualCharacterPlacement({
+      characterX: 75,
+      characterScale: 1.1,
+      splitCharacterX: 54,
+      splitCharacterScale: 0.82,
+      narrowCharacterX: 22,
+      narrowCharacterY: 40,
+      narrowCharacterScale: 0.9,
+    }),
+    { x: 22, y: 40, scale: 0.9 },
+  );
+  assert.deepEqual(
+    normalizeNarrowTeachingVirtualCharacterPlacement({ narrowCharacterX: 999, narrowCharacterY: -20, narrowCharacterScale: 5 }),
+    { x: 90, y: 0, scale: 1.25 },
+  );
+  assert.deepEqual(normalizeNarrowTeachingVirtualCharacterPlacement({}), { x: 90, y: 6, scale: 0.6 });
 });
 
 test("admin preview uses the same wide teaching-stage geometry as the learner view", () => {

@@ -53,6 +53,7 @@ import type { TeacherKimPose } from "@/lib/teacher-kim-character";
 import {
   constrainTeachingBlackboardPlacementToViewport,
   normalizeTeachingBlackboardPlacement,
+  normalizeNarrowTeachingVirtualCharacterPlacement,
   normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
@@ -213,6 +214,9 @@ type TutorCharacter = {
   splitCharacterScale?: number;
   splitDialogueX?: number;
   splitDialogueY?: number;
+  narrowCharacterX?: number;
+  narrowCharacterY?: number;
+  narrowCharacterScale?: number;
   voiceEnabled?: boolean;
   voiceLanguage?: "auto" | SmartLocale;
   voiceRate?: number;
@@ -4292,6 +4296,7 @@ function Activity({
 export function SmartTextbookShell({ backHref, textbook, trackingDisabled, completionHref, completionLabel, previewScriptVersionId, previewStartNodeKey, previewStartModuleIndex, previewOpeningBufferLine, previewOpeningBufferSpeechAssetId, previewOpeningTeachingDisplay, previewOpeningTeachingCharacter }: SmartTextbookShellProps) {
   const isPreviewMode = Boolean(previewScriptVersionId);
   const textbookRef = useRef<HTMLDivElement>(null);
+  const narrowTeacherWrapperRef = useRef<HTMLDivElement>(null);
   const tutorWindowRef = useRef<HTMLDivElement>(null);
   const tutorAnswerDialogRef = useRef<HTMLElement>(null);
   const tutorContinueButtonRef = useRef<HTMLButtonElement>(null);
@@ -4324,6 +4329,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   ));
   const [teachingAreaCollapsed, setTeachingAreaCollapsed] = useState(false);
   const [teachingFocusDismissed, setTeachingFocusDismissed] = useState(false);
+  const [narrowTeacherCardOpen, setNarrowTeacherCardOpen] = useState(false);
   const [assistantCollapsed, setAssistantCollapsed] = useState(true);
   const [tutorWindowPosition, setTutorWindowPosition] = useState<{ x: number; y: number } | null>(null);
   const [mobilePanel, setMobilePanel] = useState<"path" | "assistant" | null>(null);
@@ -5563,11 +5569,12 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
       if (event.key !== "Escape") return;
       if (mobilePanel) setMobilePanel(null);
       if (!assistantCollapsed) setAssistantCollapsed(true);
+      if (narrowTeacherCardOpen) setNarrowTeacherCardOpen(false);
     }
 
     window.addEventListener("keydown", closeTutorWithEscape);
     return () => window.removeEventListener("keydown", closeTutorWithEscape);
-  }, [assistantCollapsed, mobilePanel]);
+  }, [assistantCollapsed, mobilePanel, narrowTeacherCardOpen]);
 
   useEffect(() => {
     function keepTutorWindowInView() {
@@ -5839,6 +5846,24 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
   const teachingStageCharacterPlacement = teachingAreaExpanded
     ? teachingAreaCharacterPlacement
     : splitTeachingAreaCharacterPlacement;
+  // 3:7 分栏在窄浏览器窗口（<1280px）里放不下，教学区会被判定为不展开；这里改用
+  // 可拖拽小头像替代整块隐藏，避免金老师在讲解/答题任一状态下彻底消失。
+  const teachingAreaNarrowMinimized = tutorStarted && !teachingAreaExpanded && !teachingAreaSplitAvailable;
+  const teachingAreaNarrowCharacterPlacement = normalizeNarrowTeachingVirtualCharacterPlacement(teachingAreaCharacter);
+
+  useEffect(() => {
+    if (!teachingAreaNarrowMinimized) setNarrowTeacherCardOpen(false);
+  }, [teachingAreaNarrowMinimized]);
+
+  useEffect(() => {
+    if (!narrowTeacherCardOpen) return;
+    function closeOnOutsidePointerDown(event: PointerEvent) {
+      if (narrowTeacherWrapperRef.current?.contains(event.target as Node)) return;
+      setNarrowTeacherCardOpen(false);
+    }
+    document.addEventListener("pointerdown", closeOnOutsidePointerDown);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointerDown);
+  }, [narrowTeacherCardOpen]);
 
   function renderTutorPanel(showHeader = true, floating = false) {
     return (
@@ -6317,7 +6342,7 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                       </div>
                     </div>
                   )}
-                {teachingAreaCharacter?.kind === "uply-teacher" && (
+                {teachingAreaCharacter?.kind === "uply-teacher" && !teachingAreaNarrowMinimized && (
                   <TeachingStagePortal active={tutorStarted} target={textbookRef.current}>
                   <div
                     className={tutorStarted
@@ -6461,6 +6486,90 @@ export function SmartTextbookShell({ backHref, textbook, trackingDisabled, compl
                   )}
                   </div>
                   </div>
+                  </TeachingStagePortal>
+                )}
+                {teachingAreaCharacter?.kind === "uply-teacher" && teachingAreaNarrowMinimized && (
+                  <TeachingStagePortal active={tutorStarted} target={textbookRef.current}>
+                    <div
+                      ref={narrowTeacherWrapperRef}
+                      className="pointer-events-none fixed z-40 flex flex-col items-end gap-2"
+                      style={{
+                        left: `${teachingAreaNarrowCharacterPlacement.x}%`,
+                        bottom: `${teachingAreaNarrowCharacterPlacement.y}%`,
+                        transform: "translateX(-50%)",
+                      }}
+                    >
+                      {narrowTeacherCardOpen && (
+                        <div id="narrow-teacher-card" className="pointer-events-auto w-[min(84vw,320px)] rounded-2xl border border-[color-mix(in_srgb,var(--status-warning)_20%,var(--border-subtle))] bg-[var(--card)] p-3 shadow-[0_18px_40px_rgba(15,23,42,0.2)] motion-safe:animate-[smart-textbook-float-in_180ms_ease-out]">
+                          <div className="flex min-w-0 items-center justify-between gap-3">
+                            <p className="truncate text-xs font-bold text-[var(--foreground)]">{agentName}</p>
+                            <p className={`shrink-0 text-[10px] font-bold ${tutorStatus === "error" ? "text-[var(--destructive)]" : "text-[var(--status-success)]"}`}>
+                              {tutorPaused
+                                ? (locale === "ko-KR" ? "학습 일시 정지" : "学习已暂停")
+                                : tutorSpeechStatus === "loading"
+                                  ? (locale === "ko-KR" ? "음성 준비 중" : "语音准备中")
+                                  : tutorSpeechStatus === "playing"
+                                    ? (locale === "ko-KR" ? "설명 중" : "正在讲课")
+                                    : tutorStatus === "thinking" || tutorStatus === "streaming"
+                                      ? (locale === "ko-KR" ? "설명 중" : "讲解中")
+                                      : (locale === "ko-KR" ? "수업 중" : "教学中")}
+                            </p>
+                          </div>
+                          <p className="mt-2 max-h-32 overflow-y-auto whitespace-pre-line text-[11px] leading-5 text-[var(--foreground-secondary)]" aria-live="polite">
+                            {tutorStatus === "thinking"
+                              ? (tutorActiveBufferLine || (locale === "ko-KR" ? "다음 내용을 준비하고 있어요…" : "正在准备接下来的内容…"))
+                              : tutorText ? renderRichTutorText(tutorText, tutorTextRich) : " "}
+                          </p>
+                          <div className="mt-3 grid grid-cols-2 gap-1 border-t border-[var(--border-subtle)] pt-3">
+                            <button
+                              type="button"
+                              onClick={tutorPaused ? resumeTutorLesson : pauseTutorLesson}
+                              disabled={tutorTerminal}
+                              className="inline-flex min-h-8 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--foreground-secondary)] transition hover:bg-[var(--surface-soft)] disabled:cursor-not-allowed disabled:opacity-40"
+                            >
+                              {tutorPaused ? <Play size={11} fill="currentColor" aria-hidden="true" /> : <Pause size={11} aria-hidden="true" />}
+                              {tutorPaused ? (locale === "ko-KR" ? "계속" : "继续") : (locale === "ko-KR" ? "정지" : "暂停")}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={exitTutorLesson}
+                              className="inline-flex min-h-8 items-center justify-center gap-1 rounded-lg px-2 text-[10px] font-bold text-[var(--destructive)] transition hover:bg-[color-mix(in_srgb,var(--destructive)_6%,transparent)]"
+                            >
+                              <X size={11} aria-hidden="true" />
+                              {locale === "ko-KR" ? "종료" : "退出"}
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setNarrowTeacherCardOpen((current) => !current)}
+                        aria-expanded={narrowTeacherCardOpen}
+                        aria-controls="narrow-teacher-card"
+                        aria-label={locale === "ko-KR" ? `${agentName} 대사 보기` : `查看${agentName}台词`}
+                        className="kim-teacher-breathe pointer-events-auto relative aspect-[1/2] shrink-0 motion-reduce:animate-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
+                        style={{ height: `${TEACHING_VIRTUAL_CHARACTER_STAGE.characterHeightPercent * teachingAreaNarrowCharacterPlacement.scale}vh` }}
+                        data-speaking={tutorSpeechStatus === "playing" || undefined}
+                        data-learning-target={`${activeModule.code}:teaching-area:narrow-avatar`}
+                      >
+                        {teachingAreaCharacterFrames && ([
+                          ["idle", teachingAreaCharacterFrames.idle, ""],
+                          ["speaking", teachingAreaCharacterFrames.speaking, "kim-teacher-speaking-frame"],
+                          ["blink", teachingAreaCharacterFrames.blink, "kim-teacher-blink-frame"],
+                        ] as const).map(([frame, source, frameClass]) => (
+                          <Image
+                            key={frame}
+                            src={source}
+                            alt=""
+                            width={512}
+                            height={1024}
+                            unoptimized
+                            loading="eager"
+                            className={`pointer-events-none absolute inset-0 h-full w-full object-contain drop-shadow-[0_14px_20px_rgba(15,23,42,0.16)] ${frameClass}`}
+                          />
+                        ))}
+                      </button>
+                    </div>
                   </TeachingStagePortal>
                 )}
                 {teachingAreaCharacter?.kind !== "uply-teacher" && (

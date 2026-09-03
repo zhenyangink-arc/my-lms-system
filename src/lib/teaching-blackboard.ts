@@ -3,13 +3,20 @@ import {
   type TeachingBlackboardPlacement,
 } from "./teaching-virtual-character.ts";
 
-export const TEACHING_BLACKBOARD_ELEMENT_TYPES = ["text", "bullets", "expression"] as const;
+export const TEACHING_BLACKBOARD_ELEMENT_TYPES = ["text", "bullets", "expression", "image", "video"] as const;
 export const TEACHING_BLACKBOARD_BACKGROUNDS = ["plain", "warm", "grid"] as const;
 export const TEACHING_BLACKBOARD_TONES = ["default", "primary", "highlight", "muted"] as const;
 export const MAX_TEACHING_BLACKBOARD_SLIDES = 30;
 export const MAX_TEACHING_BLACKBOARD_ELEMENTS = 12;
 export const MAX_TEACHING_BLACKBOARD_HEADER_LENGTH = 6000;
 export const MAX_TEACHING_BLACKBOARD_JSON_LENGTH = 500000;
+/** Image/video elements don't get uploaded through this app — an admin puts
+ * the file into R2 themselves and pastes in its object key, which must live
+ * under this prefix (split by kind: `${BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX}
+ * image/...` or `.../video/...`). Both the verify action and the serving
+ * route check against this, so the route can never be used to fetch objects
+ * outside this namespace. */
+export const BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX = "blackboard/";
 
 export type TeachingBlackboardElementType = typeof TEACHING_BLACKBOARD_ELEMENT_TYPES[number];
 export type TeachingBlackboardBackground = typeof TEACHING_BLACKBOARD_BACKGROUNDS[number];
@@ -93,8 +100,9 @@ export function normalizeTeachingBlackboardElement(value: unknown, index: number
   const tone = TEACHING_BLACKBOARD_TONES.includes(source.tone as TeachingBlackboardTone)
     ? source.tone as TeachingBlackboardTone
     : "default";
-  const width = finiteNumber(source.width, 84, 4, 100);
-  const height = finiteNumber(source.height, 24, 4, 100);
+  const isMedia = type === "image" || type === "video";
+  const width = finiteNumber(source.width, isMedia ? 60 : 84, 4, 100);
+  const height = finiteNumber(source.height, isMedia ? 50 : 24, 4, 100);
   return {
     id: safeId(source.id, `element-${index + 1}`),
     type,

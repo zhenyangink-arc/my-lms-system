@@ -15,6 +15,7 @@ import { SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT } from "@/lib/smart-textbook-skel
 import {
   constrainTeachingBlackboardPlacementToViewport,
   defaultTeachingBlackboardPlacement,
+  defaultTeachingNarrowCharacterPlacement,
   teachingBlackboardPlacementBounds,
   teachingVirtualCharacterPreviewGeometry,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
@@ -56,9 +57,12 @@ export type VirtualCharacterStagePerformance = {
   splitCharacterScale: number;
   splitDialogueX: number;
   splitDialogueY: number;
+  narrowCharacterX: number;
+  narrowCharacterY: number;
+  narrowCharacterScale: number;
 };
 
-type TeachingStageMode = "immersive" | "split";
+type TeachingStageMode = "immersive" | "split" | "narrow";
 
 const inputClass = "app-input min-h-11 w-full border px-3 text-base outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-65 sm:text-sm";
 
@@ -69,6 +73,95 @@ function lineLabel(line: string, index: number) {
 
 function plainScriptLine(line: string) {
   return line.replace(/\[(?:\/?b|\/?u|\/?color(?:=[^\]]+)?)\]/gi, "").replace(/\s+/g, " ").trim();
+}
+
+// Rendered at a fixed desktop size, then scaled down with a CSS transform to
+// fit whatever pixel size the (percentage-based, responsive) learning-area
+// box happens to resolve to — a real iframe can't itself be told "render as
+// if you were 1600px wide" any other way. 1600×1000 comfortably clears the
+// 1280px breakpoint the real page's own layout switches on, so this shows
+// the normal desktop split rather than its narrow-window fallback.
+const LEARNING_AREA_PREVIEW_REFERENCE_WIDTH_PX = 1600;
+const LEARNING_AREA_PREVIEW_REFERENCE_HEIGHT_PX = 1000;
+// The embedded page is the *whole* real screen, teaching column included —
+// left uncropped it would draw a second "教学区" bar next to this editor's
+// own teaching-area column. Crop that fraction off the left edge so only the
+// real 学习区 content shows, matching the same 30/70 split the real page
+// itself uses (SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea).
+const LEARNING_AREA_PREVIEW_TEACHING_WIDTH_PX = LEARNING_AREA_PREVIEW_REFERENCE_WIDTH_PX
+  * SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent / 100;
+const LEARNING_AREA_PREVIEW_CROPPED_WIDTH_PX = LEARNING_AREA_PREVIEW_REFERENCE_WIDTH_PX - LEARNING_AREA_PREVIEW_TEACHING_WIDTH_PX;
+
+/** The real, live 学习区 content (read-only) inside the 3:7 双区 stage
+ * preview, in place of an empty placeholder — scaled to fit via a fixed-size
+ * iframe + CSS transform since the container's pixel size is only known at
+ * render time. Falls back to a short explanation when this module's chapter
+ * doesn't support the live preview (only chapter 1 does today).
+ *
+ * 全屏学习 (narrow) doesn't use this: its container is close to the *full*
+ * stage width, far wider than the 70%-wide column this content is designed
+ * for, so scaling it to fill that width zooms in a lot more than at its
+ * natural size — 金老师's own size (a fixed percentage of stage height,
+ * unrelated to that zoom) then looks mismatched against the now much
+ * larger real people in the content. 全屏学习 shows a plain placeholder
+ * instead; only 3:7 双区 gets the real embed, since its container width
+ * naturally matches this content's own 70%-wide column.
+ *
+ * The embedded page is the *whole* real screen, teaching column included —
+ * left uncropped it would draw a second "教学区" bar next to this editor's
+ * own teaching-area column. So the teaching column is always cropped off
+ * first, leaving only the real 学习区 content at the same 30/70 ratio the
+ * real page itself uses. That cropped content is then scaled to fill the
+ * container's *width* edge to edge — the same width the character's X/Y
+ * placement percentages below are measured against (100% = the stage's own
+ * edge). Fitting by height instead (or letterboxing to preserve both)
+ * would leave blank margin on the sides, so a placement that lines up with
+ * the preview's content wouldn't line up with the real page anymore —
+ * accurate positioning matters more here than avoiding a crop below the
+ * fold. */
+function ScaledLearningAreaPreview({ previewUrl }: { previewUrl?: string }) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
+
+  useEffect(() => {
+    const node = containerRef.current;
+    if (!node) return;
+    const updateWidth = () => setContainerWidth(node.getBoundingClientRect().width);
+    updateWidth();
+    const observer = new ResizeObserver(updateWidth);
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  if (!previewUrl) {
+    return (
+      <div className="flex h-full w-full items-center justify-center p-[3cqw] text-center text-[clamp(0.6rem,1.2cqw,0.85rem)] leading-relaxed text-[var(--foreground-muted)]">
+        真实学习区预览目前只支持第 1 章，其余章节暂时用占位区域代替。
+      </div>
+    );
+  }
+
+  const scale = containerWidth > 0 ? containerWidth / LEARNING_AREA_PREVIEW_CROPPED_WIDTH_PX : 0;
+  return (
+    <div ref={containerRef} className="relative h-full w-full overflow-hidden">
+      {scale > 0 ? (
+        <iframe
+          src={previewUrl}
+          title="学习区真实内容预览（只读）"
+          tabIndex={-1}
+          aria-hidden="true"
+          className="pointer-events-none absolute top-0 border-0"
+          style={{
+            left: `${-LEARNING_AREA_PREVIEW_TEACHING_WIDTH_PX * scale}px`,
+            width: `${LEARNING_AREA_PREVIEW_REFERENCE_WIDTH_PX}px`,
+            height: `${LEARNING_AREA_PREVIEW_REFERENCE_HEIGHT_PX}px`,
+            transform: `scale(${scale})`,
+            transformOrigin: "top left",
+          }}
+        />
+      ) : null}
+    </div>
+  );
 }
 
 export function VirtualCharacterStageEditor({
@@ -82,6 +175,7 @@ export function VirtualCharacterStageEditor({
   onBlackboardPlacementChange,
   disabled,
   onDirty,
+  previewUrl,
 }: {
   scriptLines: string[];
   performances: VirtualCharacterStagePerformance[];
@@ -93,6 +187,9 @@ export function VirtualCharacterStageEditor({
   onBlackboardPlacementChange: (patch: Partial<TeachingBlackboardPlacement>) => void;
   disabled?: boolean;
   onDirty: () => void;
+  /** "预览完整流程" link for this module's chapter — empty/undefined when the
+   * chapter doesn't support the live preview (only chapter 1 does today). */
+  previewUrl?: string;
 }) {
   const editorRef = useRef<HTMLDivElement | null>(null);
   const stageRef = useRef<HTMLDivElement | null>(null);
@@ -119,11 +216,18 @@ export function VirtualCharacterStageEditor({
   const performance = performances[safeIndex];
   if (!performance) return null;
   const splitMode = stageMode === "split";
-  const characterX = splitMode ? performance.splitCharacterX : performance.characterX;
-  const characterY = splitMode ? performance.splitCharacterY : performance.characterY;
-  const characterScale = splitMode ? performance.splitCharacterScale : performance.characterScale;
+  const narrowMode = stageMode === "narrow";
+  const characterX = narrowMode ? performance.narrowCharacterX : splitMode ? performance.splitCharacterX : performance.characterX;
+  const characterY = narrowMode ? performance.narrowCharacterY : splitMode ? performance.splitCharacterY : performance.characterY;
+  const characterScale = narrowMode ? performance.narrowCharacterScale : splitMode ? performance.splitCharacterScale : performance.characterScale;
   const dialogueX = splitMode ? performance.splitDialogueX : performance.dialogueX;
   const dialogueY = splitMode ? performance.splitDialogueY : performance.dialogueY;
+  // Which VirtualCharacterStagePerformance fields the active stage mode reads
+  // and writes its character position/size through — computed once so drag,
+  // keyboard, and the numeric inputs below don't each re-derive it.
+  const characterXKey = narrowMode ? "narrowCharacterX" : splitMode ? "splitCharacterX" : "characterX";
+  const characterYKey = narrowMode ? "narrowCharacterY" : splitMode ? "splitCharacterY" : "characterY";
+  const characterScaleKey = narrowMode ? "narrowCharacterScale" : splitMode ? "splitCharacterScale" : "characterScale";
   const splitTeachingAreaWidthPercent = SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.teachingArea.defaultWidthPercent;
   const splitLearningAreaWidthPercent = 100 - splitTeachingAreaWidthPercent;
   const splitTeachingAreaCenterPercent = splitTeachingAreaWidthPercent / 2;
@@ -160,9 +264,7 @@ export function VirtualCharacterStageEditor({
     const x = Math.max(10, Math.min(90, ((event.clientX - rect.left) / rect.width) * 100));
     const pointerY = Math.max(0, Math.min(100, ((event.clientY - rect.top) / rect.height) * 100));
     const y = Math.max(0, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, 100 - pointerY));
-    onPerformanceChange(safeIndex, splitMode
-      ? { splitCharacterX: x, splitCharacterY: y }
-      : { characterX: x, characterY: y });
+    onPerformanceChange(safeIndex, { [characterXKey]: x, [characterYKey]: y });
   }
 
   function handlePointerDown(event: ReactPointerEvent<HTMLButtonElement>) {
@@ -186,21 +288,13 @@ export function VirtualCharacterStageEditor({
     if (disabled) return;
     const step = event.shiftKey ? 5 : 1;
     const patch = event.key === "ArrowLeft"
-      ? splitMode
-        ? { splitCharacterX: Math.max(10, characterX - step) }
-        : { characterX: Math.max(10, characterX - step) }
+      ? { [characterXKey]: Math.max(10, characterX - step) }
       : event.key === "ArrowRight"
-        ? splitMode
-          ? { splitCharacterX: Math.min(90, characterX + step) }
-          : { characterX: Math.min(90, characterX + step) }
+        ? { [characterXKey]: Math.min(90, characterX + step) }
         : event.key === "ArrowUp"
-          ? splitMode
-            ? { splitCharacterY: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, characterY + step) }
-            : { characterY: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, characterY + step) }
+          ? { [characterYKey]: Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, characterY + step) }
           : event.key === "ArrowDown"
-            ? splitMode
-              ? { splitCharacterY: Math.max(0, characterY - step) }
-              : { characterY: Math.max(0, characterY - step) }
+            ? { [characterYKey]: Math.max(0, characterY - step) }
             : null;
     if (!patch) return;
     event.preventDefault();
@@ -326,8 +420,8 @@ export function VirtualCharacterStageEditor({
       <button
         type="button"
         onClick={() => setStageMode("immersive")}
-        aria-pressed={!splitMode}
-        className={`min-h-9 rounded-md px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${!splitMode ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}
+        aria-pressed={!splitMode && !narrowMode}
+        className={`min-h-9 rounded-md px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${!splitMode && !narrowMode ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}
       >
         全屏教学
       </button>
@@ -338,6 +432,14 @@ export function VirtualCharacterStageEditor({
         className={`min-h-9 rounded-md px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${splitMode ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}
       >
         3:7 双区
+      </button>
+      <button
+        type="button"
+        onClick={() => setStageMode("narrow")}
+        aria-pressed={narrowMode}
+        className={`min-h-9 rounded-md px-3 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] ${narrowMode ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "text-[var(--foreground-secondary)] hover:bg-[var(--surface-soft)]"}`}
+      >
+        全屏学习
       </button>
     </div>
   );
@@ -380,17 +482,17 @@ export function VirtualCharacterStageEditor({
       {isFullscreen ? (
         <div className="fixed bottom-3 right-3 z-50 w-[min(22rem,calc(100%-1.5rem))] rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_94%,transparent)] p-3 shadow-lg backdrop-blur-md">
           <div className="mb-2 flex items-center justify-between gap-3">
-            <p className="text-xs font-bold text-[var(--foreground)]">{splitMode ? "3:7 双区舞台工具" : "全屏舞台工具"}</p>
+            <p className="text-xs font-bold text-[var(--foreground)]">{narrowMode ? "全屏学习舞台工具" : splitMode ? "3:7 双区舞台工具" : "全屏舞台工具"}</p>
             <p className="text-[10px] text-[var(--foreground-muted)]">位置可直接拖动</p>
           </div>
-          <div className={`grid gap-3 ${splitMode ? "grid-cols-1" : "grid-cols-2"}`}>
-            {!splitMode ? <label className="block space-y-1 text-xs font-semibold text-[var(--foreground-secondary)]">
+          <div className={`grid gap-3 ${splitMode || narrowMode ? "grid-cols-1" : "grid-cols-2"}`}>
+            {!splitMode && !narrowMode ? <label className="block space-y-1 text-xs font-semibold text-[var(--foreground-secondary)]">
               <span className="flex items-center justify-between gap-2"><span>黑板大小</span><span className="tabular-nums">{Math.round(boundedBlackboardPlacement.scale * 100)}%</span></span>
               <input type="range" min={Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.minimumScale, blackboardBounds.maximumScale) * 100} max={blackboardBounds.maximumScale * 100} step={1} value={Math.round(boundedBlackboardPlacement.scale * 100)} onChange={(event) => { updateBlackboardPlacement({ scale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-8 w-full accent-[var(--primary)]" />
             </label> : null}
             <label className="block space-y-1 text-xs font-semibold text-[var(--foreground-secondary)]">
               <span className="flex items-center justify-between gap-2"><span>老师大小</span><span className="tabular-nums">{Math.round(characterScale * 100)}%</span></span>
-              <input type="range" min={splitMode ? 50 : 75} max={125} step={5} value={Math.round(characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, splitMode ? { splitCharacterScale: Number(event.target.value) / 100 } : { characterScale: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-8 w-full accent-[var(--primary)]" />
+              <input type="range" min={splitMode || narrowMode ? 50 : 75} max={125} step={5} value={Math.round(characterScale * 100)} onChange={(event) => { onPerformanceChange(safeIndex, { [characterScaleKey]: Number(event.target.value) / 100 }); onDirty(); }} disabled={disabled} className="min-h-8 w-full accent-[var(--primary)]" />
             </label>
           </div>
         </div>
@@ -414,7 +516,11 @@ export function VirtualCharacterStageEditor({
               <span className="h-[0.8cqw] w-px shrink-0 bg-[var(--border-subtle)]" aria-hidden="true" />
               <span className="truncate text-[clamp(0.35rem,0.68cqw,0.58rem)] font-bold text-[var(--foreground)]">课前导航</span>
             </div>
-            <span className={`absolute -translate-x-1/2 font-bold text-[var(--foreground)] ${splitMode ? "text-[clamp(0.45rem,1cqw,0.7rem)]" : "text-[clamp(0.6rem,1.7cqw,0.85rem)]"}`} style={{ left: `${splitMode ? splitTeachingAreaCenterPercent : 50}%` }}>教学区</span>
+            {narrowMode ? (
+              <span className="absolute left-1/2 -translate-x-1/2 text-[clamp(0.5rem,1.4cqw,0.78rem)] font-bold text-[var(--foreground)]">学习区（金老师悬浮）</span>
+            ) : (
+              <span className={`absolute -translate-x-1/2 font-bold text-[var(--foreground)] ${splitMode ? "text-[clamp(0.45rem,1cqw,0.7rem)]" : "text-[clamp(0.6rem,1.7cqw,0.85rem)]"}`} style={{ left: `${splitMode ? splitTeachingAreaCenterPercent : 50}%` }}>教学区</span>
+            )}
             {splitMode ? <span className="absolute -translate-x-1/2 text-[clamp(0.45rem,1cqw,0.7rem)] font-bold text-[var(--foreground)]" style={{ left: `${splitLearningAreaCenterPercent}%` }}>学习区</span> : null}
             {!isFullscreen ? (
               <span className="absolute right-[1.2cqw] max-w-[calc(50%_-_4cqw)] truncate text-[clamp(0.35rem,0.68cqw,0.58rem)] font-semibold text-[var(--primary)]">
@@ -423,28 +529,35 @@ export function VirtualCharacterStageEditor({
             ) : null}
           </div>
           {splitMode ? (
-            <div className="pointer-events-none absolute bottom-0 right-0 border-l border-[var(--border)] bg-[var(--card)]" style={{ left: `${splitTeachingAreaWidthPercent}%`, top: `${previewGeometry.headerHeightPercent}%` }}>
-              <div className="mx-auto mt-[8cqw] h-[22cqw] w-[72%] rounded-[1.2cqw] border border-dashed border-[var(--border)] bg-[var(--surface-soft)]" />
+            <div className="pointer-events-none absolute bottom-0 right-0 overflow-hidden border-l border-[var(--border)] bg-[var(--card)]" style={{ left: `${splitTeachingAreaWidthPercent}%`, top: `${previewGeometry.headerHeightPercent}%` }}>
+              <ScaledLearningAreaPreview previewUrl={previewUrl} />
             </div>
           ) : null}
-          <div
-            className="pointer-events-none absolute z-[5] overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
-            style={{
-              left: `${splitMode ? splitTeachingAreaCenterPercent : boundedBlackboardPlacement.x}%`,
-              top: `${splitMode ? Math.max(8, previewGeometry.headerHeightPercent + 2) : boundedBlackboardPlacement.y}%`,
-              width: `${splitMode ? splitBlackboardWidthPercent : previewGeometry.blackboardWidthPercent}%`,
-              aspectRatio: "16 / 9",
-              transform: `translateX(-50%) scale(${splitMode ? 1 : boundedBlackboardPlacement.scale})`,
-              transformOrigin: "top center",
-            }}
-          >
-            {activeBlackboardSlide ? (
-              <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
-            ) : (
-              <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
-            )}
-          </div>
-          {!splitMode ? <button
+          {narrowMode ? (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center overflow-hidden bg-[var(--card)] p-[4cqw]" style={{ top: `${previewGeometry.headerHeightPercent}%` }}>
+              <div className="h-full w-full rounded-[1.2cqw] border border-dashed border-[var(--border)] bg-[var(--surface-soft)]" />
+            </div>
+          ) : null}
+          {!narrowMode ? (
+            <div
+              className="pointer-events-none absolute z-[5] overflow-hidden rounded-[1.1cqw] border border-[color-mix(in_srgb,var(--status-warning)_16%,var(--border-subtle))] bg-[var(--card)] shadow-[0_1.2cqw_3cqw_rgba(15,23,42,0.08)]"
+              style={{
+                left: `${splitMode ? splitTeachingAreaCenterPercent : boundedBlackboardPlacement.x}%`,
+                top: `${splitMode ? Math.max(8, previewGeometry.headerHeightPercent + 2) : boundedBlackboardPlacement.y}%`,
+                width: `${splitMode ? splitBlackboardWidthPercent : previewGeometry.blackboardWidthPercent}%`,
+                aspectRatio: "16 / 9",
+                transform: `translateX(-50%) scale(${splitMode ? 1 : boundedBlackboardPlacement.scale})`,
+                transformOrigin: "top center",
+              }}
+            >
+              {activeBlackboardSlide ? (
+                <TeachingBlackboardSlideView slide={activeBlackboardSlide} className="absolute inset-0 border-0" />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-xs text-[var(--foreground-muted)]">当前台词还没有黑板画面</div>
+              )}
+            </div>
+          ) : null}
+          {!splitMode && !narrowMode ? <button
             type="button"
             disabled={disabled}
             onPointerDown={handleBlackboardPointerDown}
@@ -487,7 +600,7 @@ export function VirtualCharacterStageEditor({
               transform: `translateX(-50%) scale(${characterScale})`,
               transformOrigin: "bottom center",
             }}
-            aria-label={`金老师，当前动作${TEACHER_KIM_POSE_LABELS[performance.pose]}。拖动或使用方向键调整位置，按住 Shift 可一次移动 5%。`}
+            aria-label={`金老师，当前动作${TEACHER_KIM_POSE_LABELS[performance.pose]}。拖动或使用方向键调整位置，按住 Shift 可一次移动 5%。${narrowMode ? "全屏学习时悬浮在学习区最上层。" : ""}`}
           >
             <Image
               src={`/api/learning-agent/characters/${performance.pose}-idle`}
@@ -499,6 +612,7 @@ export function VirtualCharacterStageEditor({
             />
             <span className="absolute left-1/2 top-1/2 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_88%,transparent)] text-[var(--foreground-secondary)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={17} /></span>
           </button>
+          {!narrowMode ? (
           <button
             type="button"
             disabled={disabled}
@@ -517,13 +631,14 @@ export function VirtualCharacterStageEditor({
               <span className="absolute left-1/2 top-1/2 flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-[var(--border)] bg-[var(--card)] opacity-0 shadow-sm transition group-hover:opacity-100 group-focus-visible:opacity-100" aria-hidden="true"><Move size={14} /></span>
             </span>
           </button>
+          ) : null}
           </div>
         </div>
-        <p className="text-xs leading-5 text-[var(--foreground-muted)]">{splitMode ? `当前按学生端教学区 ${splitTeachingAreaWidthPercent}%、学习区 ${splitLearningAreaWidthPercent}% 的双区比例预览；这里单独保存金老师和台词框的位置。` : "当前按学生端沉浸式完整教学区预览；可以拖动黑板、金老师和对话框调整位置。"}也可以聚焦后使用方向键，按住 Shift 可一次移动 5%。</p>
+        <p className="text-xs leading-5 text-[var(--foreground-muted)]">{narrowMode ? "当前按浏览器窗口过窄（小于 1280px）时的全屏学习预览：学习区占满屏幕，金老师以完整全身悬浮在学习区最上层，可以拖动位置、调整大小。" : splitMode ? `当前按学生端教学区 ${splitTeachingAreaWidthPercent}%、学习区 ${splitLearningAreaWidthPercent}% 的双区比例预览；这里单独保存金老师和台词框的位置。` : "当前按学生端沉浸式完整教学区预览；可以拖动黑板、金老师和对话框调整位置。"}也可以聚焦后使用方向键，按住 Shift 可一次移动 5%。</p>
       </div>
 
       <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
-        <p className="mb-3 text-sm font-bold text-[var(--foreground)]">金老师 · {splitMode ? "3:7 双区" : "全屏教学"}</p>
+        <p className="mb-3 text-sm font-bold text-[var(--foreground)]">金老师 · {narrowMode ? "全屏学习" : splitMode ? "3:7 双区" : "全屏教学"}</p>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <label className="block space-y-1.5 text-sm font-medium">
           <span className="block font-semibold text-[var(--foreground)]">人物动作</span>
@@ -532,17 +647,17 @@ export function VirtualCharacterStageEditor({
           </select>
         </label>
         <div className="grid grid-cols-2 gap-2">
-          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" inputMode="numeric" min={10} max={90} value={Math.round(characterX)} onChange={(event) => { const value = Math.max(10, Math.min(90, Number(event.target.value) || 10)); onPerformanceChange(safeIndex, splitMode ? { splitCharacterX: value } : { characterX: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
-          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">离教学区底部 %</span><input type="number" inputMode="numeric" min={0} max={TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent} value={Math.round(characterY)} onChange={(event) => { const value = Math.max(0, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, Number(event.target.value) || 0)); onPerformanceChange(safeIndex, splitMode ? { splitCharacterY: value } : { characterY: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" inputMode="numeric" min={10} max={90} value={Math.round(characterX)} onChange={(event) => { const value = Math.max(10, Math.min(90, Number(event.target.value) || 10)); onPerformanceChange(safeIndex, { [characterXKey]: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
+          <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">{narrowMode ? "离屏幕底部" : "离教学区底部"} %</span><input type="number" inputMode="numeric" min={0} max={TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent} value={Math.round(characterY)} onChange={(event) => { const value = Math.max(0, Math.min(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent, Number(event.target.value) || 0)); onPerformanceChange(safeIndex, { [characterYKey]: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
         </div>
         <label className="block space-y-1.5 text-sm font-medium">
           <span className="flex items-center justify-between gap-2 font-semibold text-[var(--foreground)]"><span>人物大小</span><span className="tabular-nums text-[var(--foreground-muted)]">{Math.round(characterScale * 100)}%</span></span>
-          <input type="range" min={splitMode ? 50 : 75} max={125} step={5} value={Math.round(characterScale * 100)} onChange={(event) => { const value = Number(event.target.value) / 100; onPerformanceChange(safeIndex, splitMode ? { splitCharacterScale: value } : { characterScale: value }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
+          <input type="range" min={splitMode || narrowMode ? 50 : 75} max={125} step={5} value={Math.round(characterScale * 100)} onChange={(event) => { const value = Number(event.target.value) / 100; onPerformanceChange(safeIndex, { [characterScaleKey]: value }); onDirty(); }} disabled={disabled} className="min-h-11 w-full accent-[var(--primary)]" />
         </label>
-        <button type="button" onClick={() => { onPerformanceChange(safeIndex, splitMode ? { splitCharacterX: 68, splitCharacterY: 0, splitCharacterScale: 0.82 } : { characterX: 75, characterY: 0, characterScale: 1 }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复当前模式默认位置</button>
+        <button type="button" onClick={() => { const fallback = narrowMode ? defaultTeachingNarrowCharacterPlacement() : splitMode ? { x: 68, y: 0, scale: 0.82 } : { x: 75, y: 0, scale: 1 }; onPerformanceChange(safeIndex, { [characterXKey]: fallback.x, [characterYKey]: fallback.y, [characterScaleKey]: fallback.scale }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复当前模式默认位置</button>
         </div>
       </div>
-      {!splitMode ? <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+      {stageMode === "immersive" ? <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
         <p className="mb-3 text-sm font-bold text-[var(--foreground)]">黑板</p>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
           <div className="grid grid-cols-2 gap-2">
@@ -556,14 +671,14 @@ export function VirtualCharacterStageEditor({
           <button type="button" onClick={() => { onBlackboardPlacementChange(defaultTeachingBlackboardPlacement()); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 w-full self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">恢复黑板默认位置</button>
         </div>
       </div> : null}
-      <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
+      {!narrowMode ? <div className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-3">
         <p className="mb-3 text-sm font-bold text-[var(--foreground)]">老师对话框 · {splitMode ? "3:7 双区" : "全屏教学"}</p>
         <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
           <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">横向位置 %</span><input type="number" min={5} max={95} value={Math.round(dialogueX)} onChange={(event) => { const value = Math.max(5, Math.min(95, Number(event.target.value) || 5)); onPerformanceChange(safeIndex, splitMode ? { splitDialogueX: value } : { dialogueX: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
           <label className="block space-y-1.5 text-sm font-medium"><span className="block font-semibold text-[var(--foreground)]">离教学区底部 %</span><input type="number" min={5} max={90} value={Math.round(dialogueY)} onChange={(event) => { const value = Math.max(5, Math.min(90, Number(event.target.value) || 5)); onPerformanceChange(safeIndex, splitMode ? { splitDialogueY: value } : { dialogueY: value }); onDirty(); }} disabled={disabled} className={inputClass} /></label>
           <button type="button" onClick={() => { const nextDialogueX = Math.min(92, characterX + 10); const nextDialogueY = Math.min(90, characterY + 30); onPerformanceChange(safeIndex, splitMode ? { splitDialogueX: nextDialogueX, splitDialogueY: nextDialogueY } : { dialogueX: nextDialogueX, dialogueY: nextDialogueY }); onDirty(); }} disabled={disabled} className="inline-flex min-h-11 self-end items-center justify-center border border-[var(--border)] px-3 text-sm font-semibold text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:text-[var(--primary)] disabled:opacity-50">放回老师旁边</button>
         </div>
-      </div>
+      </div> : null}
       </div>
     </div>
   );

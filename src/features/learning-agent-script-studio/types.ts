@@ -35,6 +35,9 @@ export type TeachingScriptNode = {
   nextNodeKey: string | null;
   remediationNodeKey: string | null;
   required: boolean;
+  /** Server row's `updated_at`, echoed back on save as a compare-and-swap
+   * token — see `nodeUpdatedAt` in saveTeachingScriptNodeAction. */
+  updatedAt: string;
   speechAssets: TeachingScriptSpeechAsset[];
   speechAssetsFromPublishedVersion: boolean;
   interactionSecret: {
@@ -85,6 +88,9 @@ export type CharacterStyleTemplate = {
   splitCharacterScale: number;
   splitDialogueX: number;
   splitDialogueY: number;
+  narrowCharacterX: number;
+  narrowCharacterY: number;
+  narrowCharacterScale: number;
   blackboardX: number;
   blackboardY: number;
   blackboardScale: number;

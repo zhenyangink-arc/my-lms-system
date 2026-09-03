@@ -12,6 +12,17 @@ export type TeachingBlackboardPlacement = {
   scale: number;
 };
 
+/** Where the floating character sits when the browser window is too narrow
+ * (<1280px) for the 3:7 split, so the learning area can take the full width
+ * without the teacher disappearing entirely. Same full-body rendering as the
+ * other two layouts, just floating over the learning area instead of living
+ * in its own teaching-area column. */
+export type TeachingNarrowCharacterPlacement = {
+  x: number;
+  y: number;
+  scale: number;
+};
+
 export type TeachingBlackboardPlacementBounds = {
   minimumXPercent: number;
   maximumXPercent: number;
@@ -109,6 +120,41 @@ function finiteNumber(value: unknown, fallback: number, minimum: number, maximum
   return Number.isFinite(parsed) ? Math.max(minimum, Math.min(maximum, parsed)) : fallback;
 }
 
+function asRecord(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? value as Record<string, unknown>
+    : {};
+}
+
+/** Field names a stage layout (immersive / 3:7 split / …) reads its character
+ * placement from. Every layout that positions a full character + dialogue
+ * bubble (as opposed to the narrow floating avatar, which only has x/y) goes
+ * through {@link resolveVirtualCharacterPlacement} with one of these. */
+type VirtualCharacterPlacementFields = {
+  x: string;
+  y: string;
+  scale: string;
+  dialogueX: string;
+  dialogueY: string;
+};
+
+function resolveVirtualCharacterPlacement(
+  source: Record<string, unknown>,
+  fields: VirtualCharacterPlacementFields,
+  fallback: { x: number; y: number; scale: number },
+  scaleBounds: readonly [number, number],
+): TeachingVirtualCharacterPlacement {
+  const x = finiteNumber(source[fields.x], fallback.x, 10, 90);
+  const y = finiteNumber(source[fields.y], fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent);
+  return {
+    x,
+    y,
+    scale: finiteNumber(source[fields.scale], fallback.scale, scaleBounds[0], scaleBounds[1]),
+    dialogueX: finiteNumber(source[fields.dialogueX], Math.min(92, x + 10), 5, 95),
+    dialogueY: finiteNumber(source[fields.dialogueY], Math.min(90, y + 30), 5, 90),
+  };
+}
+
 export function defaultTeachingVirtualCharacterPlacement(position: unknown): TeachingVirtualCharacterPlacement {
   const x = position === "left" ? 25 : 75;
   return {
@@ -120,42 +166,61 @@ export function defaultTeachingVirtualCharacterPlacement(position: unknown): Tea
   };
 }
 
+const IMMERSIVE_PLACEMENT_FIELDS: VirtualCharacterPlacementFields = {
+  x: "characterX",
+  y: "characterY",
+  scale: "characterScale",
+  dialogueX: "dialogueX",
+  dialogueY: "dialogueY",
+};
+const IMMERSIVE_SCALE_BOUNDS = [0.75, 1.25] as const;
+
+const SPLIT_PLACEMENT_FIELDS: VirtualCharacterPlacementFields = {
+  x: "splitCharacterX",
+  y: "splitCharacterY",
+  scale: "splitCharacterScale",
+  dialogueX: "splitDialogueX",
+  dialogueY: "splitDialogueY",
+};
+const SPLIT_SCALE_BOUNDS = [0.5, 1.25] as const;
+
 export function normalizeTeachingVirtualCharacterPlacement(
   value: unknown,
   positionFallback: unknown = "right",
 ): TeachingVirtualCharacterPlacement {
-  const source = value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
   const fallback = defaultTeachingVirtualCharacterPlacement(positionFallback);
-  const x = finiteNumber(source.characterX, fallback.x, 10, 90);
-  const y = finiteNumber(source.characterY, fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent);
-  return {
-    x,
-    y,
-    scale: finiteNumber(source.characterScale, fallback.scale, 0.75, 1.25),
-    dialogueX: finiteNumber(source.dialogueX, Math.min(92, x + 10), 5, 95),
-    dialogueY: finiteNumber(source.dialogueY, Math.min(90, y + 30), 5, 90),
-  };
+  return resolveVirtualCharacterPlacement(asRecord(value), IMMERSIVE_PLACEMENT_FIELDS, fallback, IMMERSIVE_SCALE_BOUNDS);
 }
 
 export function normalizeSplitTeachingVirtualCharacterPlacement(
   value: unknown,
   positionFallback: unknown = "right",
 ): TeachingVirtualCharacterPlacement {
-  const source = value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
+  const source = asRecord(value);
+  // 3:7 双区没有单独设置过时，退回到"全屏教学"那一份坐标收窄、缩小后的位置，
+  // 而不是和它共用同一个默认值——两种布局的可用空间差太多了。
   const immersive = normalizeTeachingVirtualCharacterPlacement(source, positionFallback);
-  const fallbackX = Math.max(32, Math.min(68, immersive.x));
-  const x = finiteNumber(source.splitCharacterX, fallbackX, 10, 90);
-  const y = finiteNumber(source.splitCharacterY, immersive.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent);
+  const fallback = {
+    x: Math.max(32, Math.min(68, immersive.x)),
+    y: immersive.y,
+    scale: Math.min(immersive.scale, 0.82),
+  };
+  return resolveVirtualCharacterPlacement(source, SPLIT_PLACEMENT_FIELDS, fallback, SPLIT_SCALE_BOUNDS);
+}
+
+export function defaultTeachingNarrowCharacterPlacement(): TeachingNarrowCharacterPlacement {
+  return { x: 90, y: 6, scale: 0.6 };
+}
+
+export function normalizeNarrowTeachingVirtualCharacterPlacement(
+  value: unknown,
+): TeachingNarrowCharacterPlacement {
+  const source = asRecord(value);
+  const fallback = defaultTeachingNarrowCharacterPlacement();
   return {
-    x,
-    y,
-    scale: finiteNumber(source.splitCharacterScale, Math.min(immersive.scale, 0.82), 0.5, 1.25),
-    dialogueX: finiteNumber(source.splitDialogueX, Math.min(92, x + 10), 5, 95),
-    dialogueY: finiteNumber(source.splitDialogueY, Math.min(90, y + 30), 5, 90),
+    x: finiteNumber(source.narrowCharacterX, fallback.x, 10, 90),
+    y: finiteNumber(source.narrowCharacterY, fallback.y, 0, TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
+    scale: finiteNumber(source.narrowCharacterScale, fallback.scale, 0.5, 1.25),
   };
 }
 
@@ -168,9 +233,7 @@ export function defaultTeachingBlackboardPlacement(): TeachingBlackboardPlacemen
 }
 
 export function normalizeTeachingBlackboardPlacement(value: unknown): TeachingBlackboardPlacement {
-  const source = value && typeof value === "object" && !Array.isArray(value)
-    ? value as Record<string, unknown>
-    : {};
+  const source = asRecord(value);
   const fallback = defaultTeachingBlackboardPlacement();
   return {
     x: finiteNumber(

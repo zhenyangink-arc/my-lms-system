@@ -39,7 +39,7 @@ function ids(rows: Row[]) {
 async function loadCharacterStyleTemplates(admin: ReturnType<typeof createAdminClient>): Promise<CharacterStyleTemplate[]> {
   const { data, error } = await admin
     .from("learning_agent_character_style_templates")
-    .select("id,name,virtual_character_position,character_x,character_y,character_scale,dialogue_x,dialogue_y,split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y,blackboard_x,blackboard_y,blackboard_scale")
+    .select("id,name,virtual_character_position,character_x,character_y,character_scale,dialogue_x,dialogue_y,split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y,narrow_character_x,narrow_character_y,narrow_character_scale,blackboard_x,blackboard_y,blackboard_scale")
     .order("created_at", { ascending: false });
   if (error) throw new Error("无法读取样式模板。");
   return (data ?? []).map((row) => ({
@@ -56,6 +56,9 @@ async function loadCharacterStyleTemplates(admin: ReturnType<typeof createAdminC
     splitCharacterScale: Number(row.split_character_scale),
     splitDialogueX: Number(row.split_dialogue_x),
     splitDialogueY: Number(row.split_dialogue_y),
+    narrowCharacterX: Number(row.narrow_character_x),
+    narrowCharacterY: Number(row.narrow_character_y),
+    narrowCharacterScale: Number(row.narrow_character_scale),
     blackboardX: Number(row.blackboard_x),
     blackboardY: Number(row.blackboard_y),
     blackboardScale: Number(row.blackboard_scale),
@@ -217,7 +220,7 @@ export async function getTeachingScriptStudioData(
   const { data: scriptNodes } = scriptVersionIds.length
     ? await admin
         .from("learning_agent_script_nodes")
-        .select("id,script_version_id,node_key,node_type,sort_order,title,teacher_script,configuration,reference_activity_id,action_type,next_node_key,remediation_node_key,is_required")
+        .select("id,script_version_id,node_key,node_type,sort_order,title,teacher_script,configuration,reference_activity_id,action_type,next_node_key,remediation_node_key,is_required,updated_at")
         .in("script_version_id", scriptVersionIds)
         .order("sort_order")
     : { data: [] };
@@ -327,6 +330,7 @@ export async function getTeachingScriptStudioData(
       nextNodeKey: row.next_node_key ? String(row.next_node_key) : null,
       remediationNodeKey: row.remediation_node_key ? String(row.remediation_node_key) : null,
       required: row.is_required !== false,
+      updatedAt: String(row.updated_at ?? ""),
       speechAssets: directSpeechAssets.length ? directSpeechAssets : publishedSpeechAssets,
       speechAssetsFromPublishedVersion: directSpeechAssets.length === 0 && publishedSpeechAssets.length > 0,
       interactionSecret: interactionSecret ? {

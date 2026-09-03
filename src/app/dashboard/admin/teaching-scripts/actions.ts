@@ -4,8 +4,10 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { checkR2ObjectExists, listR2Objects } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
+  BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX,
   MAX_TEACHING_BLACKBOARD_ELEMENTS,
   MAX_TEACHING_BLACKBOARD_JSON_LENGTH,
   MAX_TEACHING_BLACKBOARD_SLIDES,
@@ -14,9 +16,26 @@ import {
 } from "@/lib/teaching-blackboard";
 import { TEACHER_KIM_POSES } from "@/lib/teacher-kim-character";
 import {
+  normalizeNarrowTeachingVirtualCharacterPlacement,
+  normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingBlackboardPlacement,
+  normalizeTeachingVirtualCharacterPlacement,
   TEACHING_VIRTUAL_CHARACTER_STAGE,
 } from "@/lib/teaching-virtual-character";
+
+/** The "画面与人物" stage editor sends one JSON blob per script line (see
+ * `script_placement` below) instead of a dozen parallel hidden inputs. Reuse
+ * the same normalizers the client and the runtime already use so this stays
+ * the single place that knows how each layout falls back when a field is
+ * missing. */
+function parsedScriptPlacement(raw: string | undefined): unknown {
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return {};
+  }
+}
 
 export type TeachingScriptActionState = {
   status: "idle" | "success" | "error";
@@ -27,6 +46,10 @@ export type TeachingScriptActionState = {
 const uuid = z.uuid("数据编号不正确。");
 const nodeSchema = z.object({
   nodeId: z.uuid(),
+  // Echoed back from the row the client last saw (see TeachingScriptNode.updatedAt)
+  // and checked as a compare-and-swap token on write, so two overlapping saves
+  // for the same node can't silently clobber each other — see the update call.
+  nodeUpdatedAt: z.string().min(1, "页面数据已过期，请刷新页面后重试。"),
   nodeKey: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "小节标识只能使用小写字母、数字和连字符。"),
   nodeType: z.enum(["opening", "explanation", "example", "question", "instruction", "summary"]),
   titleZh: z.string().trim().min(1, "请填写小节名称。").max(80, "小节名称不能超过80个字。"),
@@ -62,6 +85,9 @@ const nodeSchema = z.object({
     splitCharacterScale: z.coerce.number().min(0.5).max(1.25),
     splitDialogueX: z.coerce.number().min(5).max(95),
     splitDialogueY: z.coerce.number().min(5).max(90),
+    narrowCharacterX: z.coerce.number().min(10).max(90),
+    narrowCharacterY: z.coerce.number().min(0).max(TEACHING_VIRTUAL_CHARACTER_STAGE.maximumBottomPercent),
+    narrowCharacterScale: z.coerce.number().min(0.5).max(1.25),
     voiceEnabled: z.boolean(),
     voiceLanguage: z.enum(["auto", "zh-CN", "ko-KR"]),
     voiceRate: z.coerce.number().min(0.75).max(1.25),
@@ -260,6 +286,9 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
         splitCharacterScale: 0.82,
         splitDialogueX: 78,
         splitDialogueY: 30,
+        narrowCharacterX: 90,
+        narrowCharacterY: 6,
+        narrowCharacterScale: 0.6,
         voiceEnabled: true,
         voiceLanguage: "auto",
         voiceRate: 1,
@@ -291,20 +320,13 @@ export async function saveTeachingScriptNodeAction(
     const scriptVoiceLanguages = formData.getAll("script_voice_language").map(String);
     const scriptVoiceRates = formData.getAll("script_voice_rate").map(String);
     const scriptAutoContinues = formData.getAll("script_auto_continue").map(String);
-    const scriptCharacterXs = formData.getAll("script_character_x").map(String);
-    const scriptCharacterYs = formData.getAll("script_character_y").map(String);
-    const scriptCharacterScales = formData.getAll("script_character_scale").map(String);
-    const scriptDialogueXs = formData.getAll("script_dialogue_x").map(String);
-    const scriptDialogueYs = formData.getAll("script_dialogue_y").map(String);
-    const scriptSplitCharacterXs = formData.getAll("script_split_character_x").map(String);
-    const scriptSplitCharacterYs = formData.getAll("script_split_character_y").map(String);
-    const scriptSplitCharacterScales = formData.getAll("script_split_character_scale").map(String);
-    const scriptSplitDialogueXs = formData.getAll("script_split_dialogue_x").map(String);
-    const scriptSplitDialogueYs = formData.getAll("script_split_dialogue_y").map(String);
+    const scriptPlacements = formData.getAll("script_placement").map(String);
     const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
+    const virtualCharacterPosition = String(formData.get("virtual_character_position") ?? "right");
     const interactionOptionRows = formData.getAll("interaction_option").map(String);
     const parsed = nodeSchema.safeParse({
       nodeId: String(formData.get("node_id") ?? ""),
+      nodeUpdatedAt: String(formData.get("node_updated_at") ?? ""),
       nodeKey: String(formData.get("node_key") ?? ""),
       nodeType: String(formData.get("node_type") ?? ""),
       titleZh: String(formData.get("title_zh") ?? ""),
@@ -321,24 +343,33 @@ export async function saveTeachingScriptNodeAction(
       blackboardY: String(formData.get("blackboard_y") ?? TEACHING_VIRTUAL_CHARACTER_STAGE.blackboard.defaultTopPercent),
       blackboardScale: String(formData.get("blackboard_scale") ?? "1"),
       virtualCharacterKind: String(formData.get("virtual_character_kind") ?? "uply-teacher"),
-      virtualCharacterPosition: String(formData.get("virtual_character_position") ?? "right"),
-      scriptPerformances: nonEmptyScriptIndexes.map((index) => ({
-        pose: scriptPoses[index] ?? "explaining",
-        characterX: scriptCharacterXs[index] ?? "75",
-        characterY: scriptCharacterYs[index] ?? "0",
-        characterScale: scriptCharacterScales[index] ?? "1",
-        dialogueX: scriptDialogueXs[index] ?? String(Math.min(92, Number(scriptCharacterXs[index] ?? 75) + 10)),
-        dialogueY: scriptDialogueYs[index] ?? String(Math.min(90, Number(scriptCharacterYs[index] ?? 0) + 30)),
-        splitCharacterX: scriptSplitCharacterXs[index] ?? String(Math.max(32, Math.min(68, Number(scriptCharacterXs[index] ?? 75)))),
-        splitCharacterY: scriptSplitCharacterYs[index] ?? scriptCharacterYs[index] ?? "0",
-        splitCharacterScale: scriptSplitCharacterScales[index] ?? String(Math.min(0.82, Number(scriptCharacterScales[index] ?? 1))),
-        splitDialogueX: scriptSplitDialogueXs[index] ?? String(Math.min(92, Math.max(32, Math.min(68, Number(scriptCharacterXs[index] ?? 75))) + 10)),
-        splitDialogueY: scriptSplitDialogueYs[index] ?? scriptDialogueYs[index] ?? "30",
-        voiceEnabled: (scriptVoices[index] ?? "on") === "on",
-        voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
-        voiceRate: scriptVoiceRates[index] ?? "1",
-        autoContinueToNext: (scriptAutoContinues[index] ?? "off") === "on",
-      })),
+      virtualCharacterPosition,
+      scriptPerformances: nonEmptyScriptIndexes.map((index) => {
+        const placementSource = parsedScriptPlacement(scriptPlacements[index]);
+        const immersive = normalizeTeachingVirtualCharacterPlacement(placementSource, virtualCharacterPosition);
+        const split = normalizeSplitTeachingVirtualCharacterPlacement(placementSource, virtualCharacterPosition);
+        const narrow = normalizeNarrowTeachingVirtualCharacterPlacement(placementSource);
+        return {
+          pose: scriptPoses[index] ?? "explaining",
+          characterX: immersive.x,
+          characterY: immersive.y,
+          characterScale: immersive.scale,
+          dialogueX: immersive.dialogueX,
+          dialogueY: immersive.dialogueY,
+          splitCharacterX: split.x,
+          splitCharacterY: split.y,
+          splitCharacterScale: split.scale,
+          splitDialogueX: split.dialogueX,
+          splitDialogueY: split.dialogueY,
+          narrowCharacterX: narrow.x,
+          narrowCharacterY: narrow.y,
+          narrowCharacterScale: narrow.scale,
+          voiceEnabled: (scriptVoices[index] ?? "on") === "on",
+          voiceLanguage: scriptVoiceLanguages[index] ?? "auto",
+          voiceRate: scriptVoiceRates[index] ?? "1",
+          autoContinueToNext: (scriptAutoContinues[index] ?? "off") === "on",
+        };
+      }),
       studentTaskKind: String(formData.get("student_task_kind") ?? "none"),
       studentTaskFollowVisualCue: formData.get("student_task_follow_visual_cue") === "on",
       studentTaskInstructionZh: String(formData.get("student_task_instruction_zh") ?? ""),
@@ -418,7 +449,7 @@ export async function saveTeachingScriptNodeAction(
     const admin = createAdminClient();
     const { data: current } = await admin
       .from("learning_agent_script_nodes")
-      .select("id,script_version_id,configuration,learning_agent_script_versions!inner(lesson_id,status)")
+      .select("id,script_version_id,configuration,updated_at,learning_agent_script_versions!inner(lesson_id,status)")
       .eq("id", input.nodeId)
       .maybeSingle();
     const joinedVersion = Array.isArray(current?.learning_agent_script_versions)
@@ -426,6 +457,13 @@ export async function saveTeachingScriptNodeAction(
       : current?.learning_agent_script_versions;
     if (!current || !joinedVersion || joinedVersion.status !== "draft") {
       return { status: "error", message: "只有草稿中的教学小节可以修改。" };
+    }
+    // Someone else (or another open tab) saved this node since the page was
+    // loaded — writing now would silently clobber their change. The `.eq`
+    // on the update below re-checks this atomically; this early check just
+    // gives a friendlier message for the common (non-racing) case.
+    if (String(current.updated_at) !== input.nodeUpdatedAt) {
+      return { status: "error", message: "这个小节已经被其他操作更新，请刷新页面后重新编辑，避免覆盖别人的修改。" };
     }
 
     const existingConfiguration = current.configuration && typeof current.configuration === "object"
@@ -553,7 +591,11 @@ export async function saveTeachingScriptNodeAction(
         ? "focus_activity"
         : "none";
 
-    const { error } = await admin
+    // `.eq("updated_at", ...)` makes this a compare-and-swap: if another save
+    // landed between the read above and this write, zero rows match and the
+    // update is a silent no-op instead of clobbering that newer data — the
+    // empty `data` below is how we detect that race and surface it.
+    const { data: updated, error } = await admin
       .from("learning_agent_script_nodes")
       .update({
         node_key: input.nodeKey,
@@ -567,12 +609,17 @@ export async function saveTeachingScriptNodeAction(
         remediation_node_key: input.interactionKind === "referenced_activity" ? input.remediationNodeKey || null : null,
         is_required: true,
       })
-      .eq("id", input.nodeId);
+      .eq("id", input.nodeId)
+      .eq("updated_at", input.nodeUpdatedAt)
+      .select("id");
     if (error) {
       return {
         status: "error",
         message: error.code === "23505" ? "小节标识已经存在，请换一个标识。" : "教学小节保存失败，请稍后重试。",
       };
+    }
+    if (!updated || updated.length === 0) {
+      return { status: "error", message: "这个小节已经被其他操作更新，请刷新页面后重新编辑，避免覆盖别人的修改。" };
     }
 
     if (input.interactionKind === "single_choice") {
@@ -649,6 +696,9 @@ export async function saveCharacterStyleTemplateAction(formData: FormData) {
     split_character_scale: Number(firstPerformance.splitCharacterScale ?? 0.82),
     split_dialogue_x: Number(firstPerformance.splitDialogueX ?? 78),
     split_dialogue_y: Number(firstPerformance.splitDialogueY ?? 30),
+    narrow_character_x: Number(firstPerformance.narrowCharacterX ?? 90),
+    narrow_character_y: Number(firstPerformance.narrowCharacterY ?? 6),
+    narrow_character_scale: Number(firstPerformance.narrowCharacterScale ?? 0.6),
     blackboard_x: blackboardPlacement.x,
     blackboard_y: blackboardPlacement.y,
     blackboard_scale: blackboardPlacement.scale,
@@ -711,6 +761,44 @@ export async function deleteBlackboardLayoutTemplateAction(formData: FormData) {
   const admin = createAdminClient();
   await admin.from("learning_agent_blackboard_layout_templates").delete().eq("id", templateId);
   refreshStudio(path);
+}
+
+/**
+ * 黑板图片/视频不在这里上传——素材由管理员自己放进 Cloudflare R2（约定放在
+ * blackboard/image/ 或 blackboard/video/ 前缀下），这里只负责校验管理员填写
+ * 的对象键是否真的指向一个已存在的文件，避免存了一个打不开的死链接。
+ */
+export async function verifyBlackboardMediaObjectAction(input: { objectKey: string; kind: "image" | "video" }) {
+  await requirePlatformOwner();
+  if (input.kind !== "image" && input.kind !== "video") return { ok: false, message: "无效的素材类型。" };
+  const objectKey = String(input.objectKey ?? "").trim();
+  const expectedPrefix = `${BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX}${input.kind}/`;
+  if (!objectKey.startsWith(expectedPrefix)) {
+    return { ok: false, message: `对象键需要以 ${expectedPrefix} 开头。` };
+  }
+  try {
+    const result = await checkR2ObjectExists(objectKey);
+    if (!result.exists) return { ok: false, message: "R2 里没有找到这个对象，请检查路径是否正确。" };
+    return { ok: true, size: result.size, contentType: result.contentType };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : "校验失败，请重试。" };
+  }
+}
+
+/** 让管理员从 R2 里已有的文件里挑，而不是凭记忆手打对象键。按最近修改时间
+ * 倒序排列，方便找到刚放进去的文件；这两个前缀下的文件数量不会大到需要
+ * 翻页，所以一次性取一整页（最多 1000 个）。 */
+export async function listBlackboardMediaObjectsAction(input: { kind: "image" | "video" }) {
+  await requirePlatformOwner();
+  if (input.kind !== "image" && input.kind !== "video") return { ok: false, message: "无效的素材类型。" };
+  const prefix = `${BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX}${input.kind}/`;
+  try {
+    const { objects, isTruncated } = await listR2Objects(prefix);
+    const sorted = [...objects].sort((left, right) => right.lastModified.localeCompare(left.lastModified));
+    return { ok: true, objects: sorted, truncated: isTruncated };
+  } catch (error) {
+    return { ok: false, message: error instanceof Error ? error.message : "获取文件列表失败。" };
+  }
 }
 
 export async function moveTeachingScriptNodeAction(formData: FormData) {

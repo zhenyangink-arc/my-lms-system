@@ -110,6 +110,14 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
     new URL("supabase/migrations/202609020001_add_split_character_style_template_coordinates.sql", root),
     "utf8",
   );
+  const narrowTemplateCoordinatesMigration = await readFile(
+    new URL("supabase/migrations/202609020002_add_narrow_character_style_template_coordinates.sql", root),
+    "utf8",
+  );
+  const narrowScaleMigration = await readFile(
+    new URL("supabase/migrations/202609020003_add_narrow_character_scale.sql", root),
+    "utf8",
+  );
   assert.match(service, /requirePlatformOwner\(\)/);
   assert.match(service, /learning_agent_script_versions/);
   assert.match(service, /learning_agent_script_nodes/);
@@ -176,6 +184,14 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /saveTeachingScriptNodeAction/);
   assert.match(actions, /moveTeachingScriptNodeAction/);
   assert.match(actions, /publishTeachingScriptAction/);
+  // Two overlapping saves for the same node must not let the one that lands
+  // last silently overwrite the other's changes — the update is a
+  // compare-and-swap against the row's own updated_at, not a blind write.
+  assert.match(actions, /nodeUpdatedAt: z\.string\(\)\.min\(1,/);
+  assert.match(actions, /String\(current\.updated_at\) !== input\.nodeUpdatedAt/);
+  assert.match(actions, /\.eq\("id", input\.nodeId\)\s*\n\s*\.eq\("updated_at", input\.nodeUpdatedAt\)/);
+  assert.match(actions, /if \(!updated \|\| updated\.length === 0\)/);
+  assert.match(editor, /<input type="hidden" name="node_updated_at" value=\{node\.updatedAt\} \/>/);
   assert.match(editor, /老师台词/);
   assert.doesNotMatch(editor, /max-w-\[75rem\]/);
   assert.match(editor, /小节基本设置/);
@@ -241,23 +257,55 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /formGroupClass/);
   assert.match(editor, /aria-labelledby="display-content-group-title"/);
   assert.match(editor, /aria-labelledby="virtual-character-group-title"/);
-  assert.match(editor, /script_character_x/);
-  assert.match(editor, /script_character_y/);
-  assert.match(editor, /script_character_scale/);
-  assert.match(editor, /script_split_character_x/);
-  assert.match(editor, /script_split_character_y/);
-  assert.match(editor, /script_split_character_scale/);
-  assert.match(editor, /script_split_dialogue_x/);
-  assert.match(editor, /script_split_dialogue_y/);
+  assert.match(editor, /name="script_placement" value=\{scriptPlacementPayload\(scriptPerformances\[index\]\)\}/);
+  assert.match(editor, /function scriptPlacementPayload\(performance: ScriptPerformance \| undefined\)/);
+  for (const field of ["characterX", "characterY", "characterScale", "dialogueX", "dialogueY", "splitCharacterX", "splitCharacterY", "splitCharacterScale", "splitDialogueX", "splitDialogueY", "narrowCharacterX", "narrowCharacterY", "narrowCharacterScale"]) {
+    assert.match(editor, new RegExp(`${field}: performance\\?\\.${field} \\?\\?`));
+  }
+  assert.match(actions, /const scriptPlacements = formData\.getAll\("script_placement"\)\.map\(String\)/);
+  assert.match(actions, /function parsedScriptPlacement/);
+  assert.match(actions, /normalizeTeachingVirtualCharacterPlacement\(placementSource, virtualCharacterPosition\)/);
+  assert.match(actions, /normalizeSplitTeachingVirtualCharacterPlacement\(placementSource, virtualCharacterPosition\)/);
+  assert.match(actions, /normalizeNarrowTeachingVirtualCharacterPlacement\(placementSource\)/);
   assert.match(editor, /VirtualCharacterStageEditor/);
   assert.match(characterStage, /拖动黑板、金老师和对话框调整位置/);
   assert.match(characterStage, /人物动作/);
   assert.match(characterStage, /当前预览台词/);
-  assert.match(characterStage, /金老师 · \{splitMode \? "3:7 双区" : "全屏教学"\}/);
+  assert.match(characterStage, /金老师 · \{narrowMode \? "全屏学习" : splitMode \? "3:7 双区" : "全屏教学"\}/);
   assert.match(characterStage, /全屏教学/);
   assert.match(characterStage, /3:7 双区/);
+  assert.match(characterStage, /全屏学习/);
   assert.match(characterStage, /setStageMode\("immersive"\)/);
   assert.match(characterStage, /setStageMode\("split"\)/);
+  assert.match(characterStage, /setStageMode\("narrow"\)/);
+  // 全屏教学 button must not also light up while narrow mode is active — it
+  // reads !splitMode alone (true in both immersive and narrow), so without
+  // excluding narrowMode too, switching to 全屏学习 highlighted 全屏教学 as well.
+  assert.match(characterStage, /aria-pressed=\{!splitMode && !narrowMode\}/);
+  assert.match(characterStage, /\$\{!splitMode && !narrowMode \? "bg-\[var\(--primary\)\] text-\[var\(--primary-foreground\)\]"/);
+  assert.match(characterStage, /characterXKey = narrowMode \? "narrowCharacterX" : splitMode \? "splitCharacterX" : "characterX"/);
+  assert.match(characterStage, /onPerformanceChange\(safeIndex, \{ \[characterXKey\]: x, \[characterYKey\]: y \}\)/);
+  // 学习区真实内容预览（iframe embed of the live preview, always cropped so
+  // it never draws a second 教学区 next to this editor's own, and scaled to
+  // fill the container by width edge to edge so it stays in the same
+  // coordinate space 金老师's X/Y placement percentages use). Split (3:7)
+  // only — narrow (全屏学习)'s container is far wider than this content's
+  // native 70%-wide column, so filling it by width zooms in enough that
+  // 金老师's own fixed size looks mismatched against it; narrow shows a
+  // plain placeholder box instead.
+  assert.match(studio, /const previewUrl = previewLessonSupported && selectedVersion/);
+  assert.match(studio, /previewUrl=\{previewUrl\}/);
+  assert.match(editor, /previewUrl,\n\s*onDirtyChange,/);
+  assert.match(editor, /previewUrl\?: string;/);
+  assert.match(editor, /onDirty=\{markDirty\}\n\s*previewUrl=\{previewUrl\}\n\s*\/>/);
+  assert.match(characterStage, /function ScaledLearningAreaPreview\(\{ previewUrl \}: \{ previewUrl\?: string \}\)/);
+  assert.match(characterStage, /真实学习区预览目前只支持第 1 章/);
+  assert.match(characterStage, /const scale = containerWidth > 0 \? containerWidth \/ LEARNING_AREA_PREVIEW_CROPPED_WIDTH_PX : 0/);
+  assert.match(characterStage, /left: `\$\{-LEARNING_AREA_PREVIEW_TEACHING_WIDTH_PX \* scale\}px`/);
+  assert.equal((characterStage.match(/<ScaledLearningAreaPreview previewUrl=\{previewUrl\} \/>/g) ?? []).length, 1);
+  assert.match(characterStage, /\{narrowMode \? \(\n\s*<div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-center justify-center overflow-hidden bg-\[var\(--card\)\]/);
+  assert.match(characterStage, /border border-dashed border-\[var\(--border\)\] bg-\[var\(--surface-soft\)\]/);
+  assert.match(characterStage, /pointer-events-none absolute top-0 border-0/);
   assert.match(characterStage, /TeachingBlackboardSlideView/);
   assert.match(characterStage, /activeBlackboardSlide/);
   assert.match(characterStage, /performance\.dialogueX/);
@@ -298,12 +346,25 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /splitDialogueX: z\.coerce\.number\(\)\.min\(5\)\.max\(95\)/);
   assert.match(actions, /split_character_x: Number\(firstPerformance\.splitCharacterX/);
   assert.match(actions, /split_dialogue_y: Number\(firstPerformance\.splitDialogueY/);
-  assert.match(service, /split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y/);
+  assert.match(service, /split_character_x,split_character_y,split_character_scale,split_dialogue_x,split_dialogue_y,narrow_character_x,narrow_character_y,narrow_character_scale/);
   assert.match(editor, /splitCharacterX: template\.splitCharacterX/);
   assert.match(editor, /splitDialogueY: template\.splitDialogueY/);
   for (const column of ["split_character_x", "split_character_y", "split_character_scale", "split_dialogue_x", "split_dialogue_y"]) {
     assert.match(splitTemplateCoordinatesMigration, new RegExp(`add column if not exists ${column}`));
   }
+  assert.match(actions, /narrowCharacterX: z\.coerce\.number\(\)\.min\(10\)\.max\(90\)/);
+  assert.match(actions, /narrowCharacterY: z\.coerce\.number\(\)\.min\(0\)\.max\(TEACHING_VIRTUAL_CHARACTER_STAGE\.maximumBottomPercent\)/);
+  assert.match(actions, /narrowCharacterScale: z\.coerce\.number\(\)\.min\(0\.5\)\.max\(1\.25\)/);
+  assert.match(actions, /narrow_character_x: Number\(firstPerformance\.narrowCharacterX/);
+  assert.match(actions, /narrow_character_y: Number\(firstPerformance\.narrowCharacterY/);
+  assert.match(actions, /narrow_character_scale: Number\(firstPerformance\.narrowCharacterScale/);
+  assert.match(editor, /narrowCharacterX: template\.narrowCharacterX/);
+  assert.match(editor, /narrowCharacterY: template\.narrowCharacterY/);
+  assert.match(editor, /narrowCharacterScale: template\.narrowCharacterScale/);
+  for (const column of ["narrow_character_x", "narrow_character_y"]) {
+    assert.match(narrowTemplateCoordinatesMigration, new RegExp(`add column if not exists ${column}`));
+  }
+  assert.match(narrowScaleMigration, /add column if not exists narrow_character_scale/);
   assert.match(actions, /blackboardX: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardY: z\.coerce\.number\(\)/);
   assert.match(actions, /blackboardScale: z\.coerce\.number\(\)/);
@@ -316,6 +377,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(actions, /mode: "slides",\s+placement: blackboardPlacement,\s+slides: \[\]/);
   assert.match(scriptRuntime, /normalizeTeachingVirtualCharacterPlacement/);
   assert.match(scriptRuntime, /normalizeSplitTeachingVirtualCharacterPlacement/);
+  assert.match(scriptRuntime, /normalizeNarrowTeachingVirtualCharacterPlacement/);
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
   assert.match(editor, /小节基本设置/);
@@ -374,8 +436,6 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(characterStage, /黑板画面、人物动作和站位/);
   assert.match(actions, /dialogueX: z\.coerce\.number\(\)\.min\(5\)\.max\(95\)/);
   assert.match(actions, /dialogueY: z\.coerce\.number\(\)\.min\(5\)\.max\(90\)/);
-  assert.match(editor, /name="script_dialogue_x"/);
-  assert.match(editor, /name="script_dialogue_y"/);
   assert.match(editor, /name="virtual_character_kind" value="uply-teacher"/);
   assert.doesNotMatch(editor, /不显示虚拟人物/);
   assert.match(respondRoute, /X-Learning-Agent-Character/);
@@ -810,4 +870,161 @@ test("教学区能以数据库事件确认学生完整听完右侧指定表达",
   assert.match(eventRoute, /learning_agent_task_events/);
   assert.match(eventRoute, /current_node_id/);
   assert.match(eventRoute, /该操作不是当前老师布置的学习任务/);
+});
+
+test("黑板内容可以直接在画面框里双击编辑、选中后一键删除", async () => {
+  const slideView = await readFile(
+    new URL("src/components/learning-agent/TeachingBlackboardSlide.tsx", root),
+    "utf8",
+  );
+  const blackboardEditor = await readFile(
+    new URL("src/features/learning-agent-script-studio/TeachingBlackboardEditor.tsx", root),
+    "utf8",
+  );
+  // 内容框本身可以直接双击进入编辑、选中后一键删除，不用再去右侧属性栏找——
+  // 属性栏在窄屏（低于 xl 断点）时会被挤到画布下方，容易被当成“没有删除功能”。
+  assert.match(slideView, /editingElementId\?: string \| null/);
+  assert.match(slideView, /onElementDoubleClick\?: \(element: TeachingBlackboardElement\) => void/);
+  assert.match(slideView, /onElementDelete\?: \(element: TeachingBlackboardElement\) => void/);
+  assert.match(slideView, /onElementContentChange\?: \(element: TeachingBlackboardElement, content: string\) => void/);
+  assert.match(slideView, /const isEditing = editingElementId === element\.id/);
+  assert.match(slideView, /<textarea/);
+  assert.match(slideView, /onChange=\{\(event: ReactChangeEvent<HTMLTextAreaElement>\) => \{ autosizeTextarea\(event\.currentTarget\); onElementContentChange\?\.\(element, event\.target\.value\); \}\}/);
+  assert.match(slideView, /aria-label="删除这个黑板内容"/);
+  assert.match(blackboardEditor, /const \[editingElementId, setEditingElementId\] = useState<string \| null>\(null\)/);
+  assert.match(blackboardEditor, /function updateElementById\(elementId: string, patch: Partial<TeachingBlackboardElement>\)/);
+  assert.match(blackboardEditor, /function removeElementById\(elementId: string\)/);
+  assert.match(blackboardEditor, /function beginEditingElement\(element: TeachingBlackboardElement\)/);
+  assert.match(blackboardEditor, /\(event\.key === "Delete" \|\| event\.key === "Backspace"\) && selectedElementId === element\.id/);
+  assert.match(blackboardEditor, /onElementDoubleClick=\{beginEditingElement\}/);
+  assert.match(blackboardEditor, /onElementDelete=\{\(element\) => removeElementById\(element\.id\)\}/);
+  assert.match(blackboardEditor, /双击内容可直接改文字，选中后可直接删除/);
+});
+
+test("黑板画面可以放置图片和视频——素材是管理员自己放进 R2 的，这里只填对象键并校验", async () => {
+  const r2 = await readFile(new URL("src/lib/r2.ts", root), "utf8");
+  const blackboard = await readFile(new URL("src/lib/teaching-blackboard.ts", root), "utf8");
+  const slideView = await readFile(new URL("src/components/learning-agent/TeachingBlackboardSlide.tsx", root), "utf8");
+  const blackboardEditor = await readFile(new URL("src/features/learning-agent-script-studio/TeachingBlackboardEditor.tsx", root), "utf8");
+  const actions = await readFile(new URL("src/app/dashboard/admin/teaching-scripts/actions.ts", root), "utf8");
+  const mediaRoute = await readFile(new URL("src/app/api/learning-agent/blackboard-media/route.ts", root), "utf8");
+
+  // 类型定义与对象键前缀约定（不再有上传大小上限——文件已经在 R2 里了，
+  // 这里不负责限制大小，只负责校验它存在）。
+  assert.match(blackboard, /export const TEACHING_BLACKBOARD_ELEMENT_TYPES = \["text", "bullets", "expression", "image", "video"\] as const/);
+  assert.match(blackboard, /export const BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX = "blackboard\/"/);
+  assert.doesNotMatch(blackboard, /MAX_TEACHING_BLACKBOARD_IMAGE_BYTES/);
+  assert.doesNotMatch(blackboard, /MAX_TEACHING_BLACKBOARD_VIDEO_BYTES/);
+
+  // r2.ts 新增一个不需要预知大小的存在性检查（跟 assertR2ObjectUpload 的
+  // 区别：那个是校验"刚上传完的文件"，这个是校验"别处放进去的文件"）。
+  assert.match(r2, /export async function checkR2ObjectExists\(objectKey: string\)/);
+  assert.match(r2, /if \(response\.status === 404\) return \{ exists: false as const \};/);
+
+  // 没有上传 action 了，只有一个校验 action：按 kind 检查对象键前缀，再问
+  // R2 这个对象是否真的存在。
+  assert.doesNotMatch(actions, /createBlackboardMediaUploadUrlAction/);
+  assert.doesNotMatch(actions, /confirmBlackboardMediaUploadAction/);
+  assert.match(actions, /import \{ checkR2ObjectExists, listR2Objects \} from "@\/lib\/r2"/);
+  assert.match(actions, /export async function verifyBlackboardMediaObjectAction\(input: \{ objectKey: string; kind: "image" \| "video" \}\)/);
+  assert.match(actions, /await requirePlatformOwner\(\);/);
+  assert.match(actions, /const expectedPrefix = `\$\{BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX\}\$\{input\.kind\}\/`/);
+  assert.match(actions, /if \(!objectKey\.startsWith\(expectedPrefix\)\)/);
+  assert.match(actions, /const result = await checkR2ObjectExists\(objectKey\)/);
+  assert.match(actions, /if \(!result\.exists\) return \{ ok: false, message: "R2 里没有找到这个对象，请检查路径是否正确。" \}/);
+
+  // 学生端/管理端播放走同一个鉴权路由，图片走 302 重定向到签名地址，
+  // 视频走代理转发（支持 Range，签名地址不直接暴露给浏览器）——
+  // 跟现有的教师头像路由、教材音频路由是同一套安全模型。这部分不受这次
+  // "不在这里上传"的改动影响，路由本身不知道对象是怎么放进 R2 的。
+  assert.match(mediaRoute, /canUseStudentFeature\(role, normalizeMembershipTier\(profile\?\.membership_tier\), "korean_course"\)/);
+  assert.match(mediaRoute, /if \(dest === "document"\)/);
+  assert.match(mediaRoute, /const isImage = objectKey\.startsWith\(`\$\{BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX\}image\/`\)/);
+  assert.match(mediaRoute, /const isVideo = objectKey\.startsWith\(`\$\{BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX\}video\/`\)/);
+  assert.match(mediaRoute, /status: 302/);
+  assert.match(mediaRoute, /const range = request\.headers\.get\("range"\)/);
+
+  // 画面里渲染图片/视频，图片走 <img> + eslint-disable（私有动态素材，不是
+  // next/image 能优化的静态资源），视频原生 controls，且视频的点击不能被
+  // 拖拽逻辑吃掉。
+  assert.match(slideView, /function blackboardMediaSrc\(objectKey: string\)/);
+  assert.match(slideView, /eslint-disable-next-line @next\/next\/no-img-element/);
+  assert.match(slideView, /<video src=\{blackboardMediaSrc\(element\.content\)\} controls onPointerDown=\{\(event\) => event\.stopPropagation\(\)\}/);
+
+  // 编辑器里没有文件选择器了；"+图片"/"+视频" 跟文字/要点一样直接加一个
+  // 空内容的元素，选中后在侧栏填对象键、点"校验对象是否存在"。
+  assert.doesNotMatch(blackboardEditor, /type="file"/);
+  assert.doesNotMatch(blackboardEditor, /openMediaFilePicker/);
+  assert.match(blackboardEditor, /if \(type === "image" \|\| type === "video"\) return \{ \.\.\.common, type, content: "", width: 60, height: 50, fontSize: 22 \};/);
+  assert.match(blackboardEditor, /onClick=\{\(\) => addElement\("image"\)\}/);
+  assert.match(blackboardEditor, /onClick=\{\(\) => addElement\("video"\)\}/);
+  assert.match(blackboardEditor, /function verifyMediaObject\(element: TeachingBlackboardElement\)/);
+  assert.match(blackboardEditor, /verifyBlackboardMediaObjectAction\(\{ objectKey, kind \}\)/);
+  assert.match(blackboardEditor, /placeholder=\{`\$\{BLACKBOARD_MEDIA_OBJECT_KEY_PREFIX\}\$\{selectedElement\.type\}\/示例文件\.\$\{selectedElement\.type === "image" \? "png" : "mp4"\}`\}/);
+  assert.match(blackboardEditor, /<ImageIcon size=\{14\} aria-hidden="true" \/>图片/);
+  assert.match(blackboardEditor, /<VideoIcon size=\{14\} aria-hidden="true" \/>视频/);
+
+  // 版式模板只描述文字类内容框的排版；图片/视频不参与"存为版式"，套用版式
+  // 时也不能顶掉已经填好的图片/视频（按数组下标对齐会把媒体元素误判成
+  // 模板槽位，把对象键覆盖掉）。
+  assert.match(blackboardEditor, /const textLikeElements = selectedSlide\?\.elements\.filter\(\(element\) => element\.type !== "image" && element\.type !== "video"\) \?\? \[\]/);
+  assert.match(blackboardEditor, /const mediaElements = slide\.elements\.filter\(\(element\) => element\.type === "image" \|\| element\.type === "video"\)/);
+  assert.match(blackboardEditor, /elements: \[\.\.\.mapped, \.\.\.preservedTail, \.\.\.mediaElements\]/);
+});
+
+test("R2 里已有的图片/视频可以直接浏览挑选，不用凭记忆手打对象键", async () => {
+  const r2 = await readFile(new URL("src/lib/r2.ts", root), "utf8");
+  const actions = await readFile(new URL("src/app/dashboard/admin/teaching-scripts/actions.ts", root), "utf8");
+  const blackboardEditor = await readFile(new URL("src/features/learning-agent-script-studio/TeachingBlackboardEditor.tsx", root), "utf8");
+
+  // 用 S3 兼容的 ListObjectsV2 列出某个前缀下的对象；响应是 XML（这条链路
+  // 跑在服务端，没有现成的 DOM 解析器），用正则抓 Contents/Key/Size/
+  // LastModified 就够了，不为这一个调用点引入 XML 库。单页最多 1000 个，
+  // 黑板素材的量级用不上翻页。
+  assert.match(r2, /export async function listR2Objects\(prefix: string, maxKeys = 1000\)/);
+  assert.match(r2, /url\.searchParams\.set\("list-type", "2"\)/);
+  assert.match(r2, /function parseListObjectsXml\(xml: string\)/);
+  assert.match(r2, /<Contents>\(\[\\s\\S\]\*\?\)<\\\/Contents>/);
+
+  // 列表 action：按最近修改时间倒序，方便找到刚放进去的文件。
+  assert.match(actions, /export async function listBlackboardMediaObjectsAction\(input: \{ kind: "image" \| "video" \}\)/);
+  assert.match(actions, /const \{ objects, isTruncated \} = await listR2Objects\(prefix\)/);
+  assert.match(actions, /right\.lastModified\.localeCompare\(left\.lastModified\)/);
+
+  // 编辑器里的浏览面板：搜索框（按文件名过滤已加载的列表）、刷新、关闭，
+  // 图片给缩略图、视频给通用图标，点了就把 content 设成那个对象键并关闭
+  // 面板；面板只在当前选中的元素上显示（elementId 匹配）。
+  assert.match(blackboardEditor, /function loadMediaBrowser\(elementId: string, kind: "image" \| "video"\)/);
+  assert.match(blackboardEditor, /function selectMediaObject\(element: TeachingBlackboardElement, objectKey: string\)/);
+  assert.match(blackboardEditor, /updateElementById\(element\.id, \{ content: objectKey \}\);/);
+  assert.match(blackboardEditor, /function MediaBrowserPanel\(\{/);
+  assert.match(blackboardEditor, /browser\.objects\.filter\(\(item\) => item\.key\.toLowerCase\(\)\.includes\(query\)\)/);
+  assert.match(blackboardEditor, /mediaBrowser && mediaBrowser\.elementId === selectedElement\.id/);
+  assert.match(blackboardEditor, /onClick=\{\(\) => loadMediaBrowser\(selectedElement\.id, selectedElement\.type as "image" \| "video"\)\}/);
+  assert.match(blackboardEditor, /浏览 R2 里已有的\{selectedElement\.type === "image" \? "图片" : "视频"\}/);
+});
+
+test("图片/视频元素的双击编辑、无障碍标签、截断提示、kind 校验都不会踩坑", async () => {
+  const actions = await readFile(new URL("src/app/dashboard/admin/teaching-scripts/actions.ts", root), "utf8");
+  const slideView = await readFile(new URL("src/components/learning-agent/TeachingBlackboardSlide.tsx", root), "utf8");
+  const blackboardEditor = await readFile(new URL("src/features/learning-agent-script-studio/TeachingBlackboardEditor.tsx", root), "utf8");
+
+  // 双击（或选中后按 Enter）图片/视频元素不能进入通用文字编辑模式——content
+  // 存的是 R2 对象键，不是给人看的文字，编辑要走侧栏的浏览/校验，不是画面
+  // 里冒出一个显示原始对象键的 textarea。
+  assert.match(blackboardEditor, /if \(element\.type === "image" \|\| element\.type === "video"\) return;\s*\n\s*setEditingElementId\(element\.id\);/);
+
+  // 无障碍标签要说"图片"/"视频"，不能落到通用的"文字"分支去读一串对象键。
+  assert.match(slideView, /element\.type === "image" \|\| element\.type === "video"/);
+  assert.match(slideView, /\$\{element\.type === "image" \? "图片" : "视频"\}：\$\{element\.content \|\| "尚未设置对象键"\}/);
+
+  // 列表超过 1000 个时不能悄悄只显示一部分还看起来像全部——用户要能看出来
+  // 列表不完整。
+  assert.match(blackboardEditor, /truncated\?: boolean;/);
+  assert.match(blackboardEditor, /objects: result\.objects \?\? \[\], truncated: result\.truncated/);
+  assert.match(blackboardEditor, /文件超过 1000 个，只显示了一部分，用搜索缩小范围。/);
+
+  // 校验 action 也要校验 kind 本身（跟列表 action 一致）——这是一个 server
+  // action，光靠 TypeScript 的参数类型不能保证运行时收到的就是合法值。
+  assert.match(actions, /export async function verifyBlackboardMediaObjectAction\(input: \{ objectKey: string; kind: "image" \| "video" \}\) \{\s*\n\s*await requirePlatformOwner\(\);\s*\n\s*if \(input\.kind !== "image" && input\.kind !== "video"\) return \{ ok: false, message: "无效的素材类型。" \};/);
 });

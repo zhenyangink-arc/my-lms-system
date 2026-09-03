@@ -122,6 +122,71 @@ export async function assertR2ObjectUpload(objectKey: string, expectedSize: numb
   }
 }
 
+function decodeXmlEntities(value: string) {
+  return value
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, "\"")
+    .replace(/&apos;/g, "'")
+    .replace(/&amp;/g, "&");
+}
+
+/** S3-compatible `ListObjectsV2` returns XML, and this runs server-side where
+ * there's no DOM parser available — the response shape is small, stable, and
+ * fully within our control (we're the only caller), so a couple of targeted
+ * regexes are simpler than pulling in an XML library for one call site. */
+function parseListObjectsXml(xml: string) {
+  const objects = Array.from(xml.matchAll(/<Contents>([\s\S]*?)<\/Contents>/g)).map((match) => {
+    const block = match[1];
+    const key = decodeXmlEntities(block.match(/<Key>([\s\S]*?)<\/Key>/)?.[1] ?? "");
+    const size = Number(block.match(/<Size>([\s\S]*?)<\/Size>/)?.[1] ?? 0);
+    const lastModified = block.match(/<LastModified>([\s\S]*?)<\/LastModified>/)?.[1] ?? "";
+    return { key, size: Number.isFinite(size) ? size : 0, lastModified };
+  });
+  const isTruncated = /<IsTruncated>true<\/IsTruncated>/.test(xml);
+  return { objects, isTruncated };
+}
+
+/** Lists objects under a prefix — used to let an admin browse/pick from
+ * files someone already placed in R2, rather than typing an object key from
+ * memory. `maxKeys` caps at 1000 (S3's own per-request maximum); this app's
+ * media prefixes are small enough that a single page comfortably covers
+ * everything, so this doesn't implement multi-page continuation — a caller
+ * that gets `isTruncated: true` back just knows there's more than fit. */
+export async function listR2Objects(prefix: string, maxKeys = 1000) {
+  const { accountId, bucketName, signer } = getSigningContext();
+  const url = new URL(`https://${accountId}.r2.cloudflarestorage.com/${encodeURIComponent(bucketName)}`);
+  url.searchParams.set("list-type", "2");
+  url.searchParams.set("prefix", prefix);
+  url.searchParams.set("max-keys", String(Math.max(1, Math.min(1000, maxKeys))));
+
+  const signedRequest = await signer.sign(new Request(url, { method: "GET" }));
+  const response = await fetch(signedRequest);
+  if (!response.ok) {
+    throw new Error(`R2 list failed with status ${response.status}`);
+  }
+  return parseListObjectsXml(await response.text());
+}
+
+/** Checks whether an object already placed in R2 (by some process other than
+ * this app's own upload flow) actually exists, without knowing its expected
+ * size ahead of time — unlike assertR2ObjectUpload, which validates a just-
+ * completed upload against a known size. */
+export async function checkR2ObjectExists(objectKey: string) {
+  const response = await fetchSignedObject("HEAD", objectKey);
+  if (response.status === 404) return { exists: false as const };
+  if (!response.ok) {
+    throw new Error(`R2 object check failed with status ${response.status}`);
+  }
+  const size = Number(response.headers.get("content-length"));
+  const contentType = response.headers.get("content-type") ?? undefined;
+  return {
+    exists: true as const,
+    size: Number.isSafeInteger(size) ? size : undefined,
+    contentType,
+  };
+}
+
 export async function deleteR2Object(objectKey: string) {
   const response = await fetchSignedObject("DELETE", objectKey);
 

@@ -30,6 +30,7 @@ import {
 import { teachingBlackboardSlidesFromDisplay, type TeachingBlackboardSlide } from "@/lib/teaching-blackboard";
 import {
   normalizeTeachingBlackboardPlacement,
+  normalizeNarrowTeachingVirtualCharacterPlacement,
   normalizeSplitTeachingVirtualCharacterPlacement,
   normalizeTeachingVirtualCharacterPlacement,
   type TeachingBlackboardPlacement,
@@ -479,6 +480,9 @@ type ScriptPerformance = {
   splitCharacterScale: number;
   splitDialogueX: number;
   splitDialogueY: number;
+  narrowCharacterX: number;
+  narrowCharacterY: number;
+  narrowCharacterScale: number;
 };
 
 type InteractionOptionEditor = {
@@ -497,6 +501,7 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
   const voiceRate = Number(performance.voiceRate);
   const placement = normalizeTeachingVirtualCharacterPlacement(performance, fallback.position);
   const splitPlacement = normalizeSplitTeachingVirtualCharacterPlacement(performance, fallback.position);
+  const narrowPlacement = normalizeNarrowTeachingVirtualCharacterPlacement(performance);
   return {
     pose,
     voiceEnabled: performance.voiceEnabled !== false,
@@ -513,7 +518,32 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     splitCharacterScale: splitPlacement.scale,
     splitDialogueX: splitPlacement.dialogueX,
     splitDialogueY: splitPlacement.dialogueY,
+    narrowCharacterX: narrowPlacement.x,
+    narrowCharacterY: narrowPlacement.y,
+    narrowCharacterScale: narrowPlacement.scale,
   };
+}
+
+/** All three stage layouts' coordinates for one script line, as a single
+ * hidden field instead of a dozen parallel `script_*_x`/`script_*_y` inputs.
+ * `saveTeachingScriptNodeAction` parses this straight back through the same
+ * normalizers that produced it. */
+function scriptPlacementPayload(performance: ScriptPerformance | undefined) {
+  return JSON.stringify({
+    characterX: performance?.characterX ?? 75,
+    characterY: performance?.characterY ?? 0,
+    characterScale: performance?.characterScale ?? 1,
+    dialogueX: performance?.dialogueX ?? 85,
+    dialogueY: performance?.dialogueY ?? 30,
+    splitCharacterX: performance?.splitCharacterX ?? 68,
+    splitCharacterY: performance?.splitCharacterY ?? 0,
+    splitCharacterScale: performance?.splitCharacterScale ?? 0.82,
+    splitDialogueX: performance?.splitDialogueX ?? 78,
+    splitDialogueY: performance?.splitDialogueY ?? 30,
+    narrowCharacterX: performance?.narrowCharacterX ?? 90,
+    narrowCharacterY: performance?.narrowCharacterY ?? 6,
+    narrowCharacterScale: performance?.narrowCharacterScale ?? 0.6,
+  });
 }
 
 const editorSteps: Array<{
@@ -570,6 +600,7 @@ export function TeachingScriptNodeForm({
   moduleOrder,
   returnTo,
   editable,
+  previewUrl,
   onDirtyChange,
   onPendingChange,
 }: {
@@ -584,6 +615,11 @@ export function TeachingScriptNodeForm({
   moduleOrder: number;
   returnTo: string;
   editable: boolean;
+  /** Same "预览完整流程" link the studio header uses — empty string when this
+   * module's chapter doesn't support the live preview (only chapter 1 does).
+   * Lets the stage editor show the real 学习区 content instead of a blank
+   * placeholder in split/narrow mode. */
+  previewUrl?: string;
   onDirtyChange: (dirty: boolean) => void;
   onPendingChange: (pending: boolean) => void;
 }) {
@@ -865,6 +901,9 @@ export function TeachingScriptNodeForm({
       splitCharacterScale: template.splitCharacterScale,
       splitDialogueX: template.splitDialogueX,
       splitDialogueY: template.splitDialogueY,
+      narrowCharacterX: template.narrowCharacterX,
+      narrowCharacterY: template.narrowCharacterY,
+      narrowCharacterScale: template.narrowCharacterScale,
     })));
     setBlackboardPlacement({ x: template.blackboardX, y: template.blackboardY, scale: template.blackboardScale });
     applyStyleDetailsRef.current?.removeAttribute("open");
@@ -1029,6 +1068,7 @@ export function TeachingScriptNodeForm({
       key={node.id}
     >
       <input type="hidden" name="node_id" value={node.id} />
+      <input type="hidden" name="node_updated_at" value={node.updatedAt} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
 
@@ -1271,16 +1311,7 @@ export function TeachingScriptNodeForm({
                       fromPublishedVersion={node.speechAssetsFromPublishedVersion}
                     />
                     <input type="hidden" name="script_auto_continue" value={scriptPerformances[index]?.autoContinueToNext ? "on" : "off"} />
-                    <input type="hidden" name="script_character_x" value={String(scriptPerformances[index]?.characterX ?? 75)} />
-                    <input type="hidden" name="script_character_y" value={String(scriptPerformances[index]?.characterY ?? 0)} />
-                    <input type="hidden" name="script_character_scale" value={String(scriptPerformances[index]?.characterScale ?? 1)} />
-                    <input type="hidden" name="script_dialogue_x" value={String(scriptPerformances[index]?.dialogueX ?? 85)} />
-                    <input type="hidden" name="script_dialogue_y" value={String(scriptPerformances[index]?.dialogueY ?? 30)} />
-                    <input type="hidden" name="script_split_character_x" value={String(scriptPerformances[index]?.splitCharacterX ?? 68)} />
-                    <input type="hidden" name="script_split_character_y" value={String(scriptPerformances[index]?.splitCharacterY ?? 0)} />
-                    <input type="hidden" name="script_split_character_scale" value={String(scriptPerformances[index]?.splitCharacterScale ?? 0.82)} />
-                    <input type="hidden" name="script_split_dialogue_x" value={String(scriptPerformances[index]?.splitDialogueX ?? 78)} />
-                    <input type="hidden" name="script_split_dialogue_y" value={String(scriptPerformances[index]?.splitDialogueY ?? 30)} />
+                    <input type="hidden" name="script_placement" value={scriptPlacementPayload(scriptPerformances[index])} />
                     <div className="mt-2 flex flex-wrap gap-1">
                       {index < scriptLines.length - 1 && (
                         <button
@@ -1443,6 +1474,7 @@ export function TeachingScriptNodeForm({
               onBlackboardPlacementChange={(patch) => setBlackboardPlacement((current) => ({ ...current, ...patch }))}
               disabled={!editable}
               onDirty={markDirty}
+              previewUrl={previewUrl}
             />
             </section>
 
