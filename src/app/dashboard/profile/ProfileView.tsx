@@ -11,6 +11,7 @@ import {
 } from "lucide-react";
 
 import { ProfileForm, type StudentProfileInitialValue } from "./ProfileForm";
+import { ProfileDialogView } from "./ProfileDialogView";
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
 
 export type ProfileChecklistItem = { label: string; done: boolean };
@@ -28,6 +29,160 @@ export type ProfileViewProps = {
   embedded?: boolean;
 };
 
+function ProfileDialogSummary({
+  displayName,
+  roleLabel,
+  email,
+  emailConfirmed,
+  avatarUrl,
+  createdAtLabel,
+  lastSignInLabel,
+  checklist,
+}: Omit<ProfileViewProps, "initialValue" | "embedded">) {
+  const doneCount = checklist.filter((item) => item.done).length;
+  const completionPercent = Math.round((doneCount / checklist.length) * 100);
+  const pendingItems = checklist.filter((item) => !item.done);
+  const visiblePendingItems = pendingItems.slice(0, 3);
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <section className="relative isolate overflow-hidden bg-slate-950 px-5 py-6 text-white sm:px-6">
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute -right-20 -top-24 -z-10 size-64 rounded-full bg-emerald-400/20 blur-3xl"
+        />
+        <div className="flex min-w-0 items-center gap-4">
+          <span
+            className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-bold text-slate-950 ring-1 ring-white/20"
+            style={{
+              backgroundColor: avatarUrl ? undefined : "#6ee7b7",
+              backgroundImage: avatarUrl ? `url("${avatarUrl}")` : undefined,
+            }}
+          >
+            {!avatarUrl && (displayName.trim().slice(0, 1) || "学")}
+          </span>
+          <div className="min-w-0 flex-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="rounded-full bg-white/10 px-2.5 py-1 text-xs font-bold text-slate-200">
+                {roleLabel}
+              </span>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
+                  emailConfirmed
+                    ? "bg-emerald-300/15 text-emerald-200"
+                    : "bg-amber-300/15 text-amber-200"
+                }`}
+              >
+                <ShieldCheck size={12} aria-hidden="true" />
+                {emailConfirmed ? "邮箱已验证" : "邮箱待验证"}
+              </span>
+            </div>
+            <p className="mt-2 truncate text-xl font-bold tracking-tight">
+              {displayName}
+            </p>
+            <p className="mt-1 flex min-w-0 items-center gap-1.5 text-sm text-slate-300">
+              <Mail size={14} className="shrink-0" aria-hidden="true" />
+              <span className="truncate">{email}</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div className="space-y-5 p-5 sm:p-6">
+        <section aria-labelledby="profile-completion-title">
+          <div className="flex items-end justify-between gap-4">
+            <div>
+              <h3
+                id="profile-completion-title"
+                className="text-sm font-bold text-slate-900"
+              >
+                资料完成度
+              </h3>
+              <p className="mt-1 text-xs leading-5 text-slate-500">
+                完整资料有助于生成更准确的学习与留学建议。
+              </p>
+            </div>
+            <strong className="shrink-0 text-2xl font-bold tabular-nums text-emerald-700">
+              {completionPercent}%
+            </strong>
+          </div>
+          <div
+            role="progressbar"
+            aria-label="个人资料完成度"
+            aria-valuemin={0}
+            aria-valuemax={100}
+            aria-valuenow={completionPercent}
+            className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100"
+          >
+            <span
+              className="block h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400"
+              style={{ width: `${completionPercent}%` }}
+            />
+          </div>
+        </section>
+
+        <dl className="grid gap-px overflow-hidden rounded-2xl border border-slate-200 bg-slate-200 sm:grid-cols-2">
+          <div className="bg-slate-50 p-4">
+            <dt className="flex items-center gap-2 text-xs font-bold text-slate-500">
+              <CalendarDays size={14} aria-hidden="true" />
+              加入时间
+            </dt>
+            <dd className="mt-2 text-sm font-bold text-slate-900">
+              {createdAtLabel}
+            </dd>
+          </div>
+          <div className="bg-slate-50 p-4">
+            <dt className="flex items-center gap-2 text-xs font-bold text-slate-500">
+              <Clock3 size={14} aria-hidden="true" />
+              最近登录
+            </dt>
+            <dd className="mt-2 text-sm font-bold text-slate-900">
+              {lastSignInLabel}
+            </dd>
+          </div>
+        </dl>
+
+        {pendingItems.length > 0 ? (
+          <section aria-labelledby="profile-pending-title">
+            <div className="flex items-center justify-between gap-3">
+              <h3
+                id="profile-pending-title"
+                className="text-sm font-bold text-slate-900"
+              >
+                建议优先完善
+              </h3>
+              <span className="text-xs font-bold text-slate-500">
+                还差 {pendingItems.length} 项
+              </span>
+            </div>
+            <ul className="mt-3 flex flex-wrap gap-2">
+              {visiblePendingItems.map((item) => (
+                <li
+                  key={item.label}
+                  className="rounded-full bg-amber-50 px-3 py-1.5 text-xs font-bold text-amber-800 ring-1 ring-amber-600/15"
+                >
+                  {item.label}
+                </li>
+              ))}
+              {pendingItems.length > visiblePendingItems.length ? (
+                <li className="rounded-full bg-slate-100 px-3 py-1.5 text-xs font-bold text-slate-600">
+                  另外 {pendingItems.length - visiblePendingItems.length} 项
+                </li>
+              ) : null}
+            </ul>
+          </section>
+        ) : (
+          <p className="flex items-center gap-2 rounded-2xl bg-emerald-50 px-4 py-3 text-sm font-bold text-emerald-800">
+            <CheckCircle2 size={17} aria-hidden="true" />
+            个人资料已经全部完善
+          </p>
+        )}
+
+      </div>
+    </div>
+  );
+}
+
 export function ProfileView({
   displayName,
   roleLabel,
@@ -41,7 +196,23 @@ export function ProfileView({
   embedded = false,
 }: ProfileViewProps) {
   if (embedded) {
-    return <ProfileForm initialValue={initialValue} variant="dialog" />;
+    return (
+      <ProfileDialogView
+        summary={(
+          <ProfileDialogSummary
+            displayName={displayName}
+            roleLabel={roleLabel}
+            email={email}
+            emailConfirmed={emailConfirmed}
+            avatarUrl={avatarUrl}
+            createdAtLabel={createdAtLabel}
+            lastSignInLabel={lastSignInLabel}
+            checklist={checklist}
+          />
+        )}
+        form={<ProfileForm initialValue={initialValue} variant="dialog" />}
+      />
+    );
   }
 
   const doneCount = checklist.filter((item) => item.done).length;

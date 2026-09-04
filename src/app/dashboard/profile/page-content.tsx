@@ -52,7 +52,11 @@ function AccountDate({ value }: { value: string | null | undefined }) {
   return <LocalDateTime value={value} options={ACCOUNT_DATE_OPTIONS} fallback="暂无记录" />;
 }
 
-export async function ProfileContent({ embedded = false }: { embedded?: boolean } = {}) {
+export async function ProfileContent({
+  embedded = false,
+}: {
+  embedded?: boolean;
+} = {}) {
   const { supabase, user } = await requireActiveUser();
   const { data, error } = await supabase
     .from("profiles")
