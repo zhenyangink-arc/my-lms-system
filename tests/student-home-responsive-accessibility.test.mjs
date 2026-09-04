@@ -5,19 +5,60 @@ import test from "node:test";
 const source = (relativePath) => readFile(new URL(`../${relativePath}`, import.meta.url), "utf8");
 
 test("门户顶栏在手机端收敛内容且保持 44px 核心触控区", async () => {
-  const [topbar, accountMenu, portal] = await Promise.all([
+  const [topbar, appSwitcher, rewardsMenu, notificationMenu, accountMenu, profileView, profileDialog, profileForm, portal] = await Promise.all([
     source("src/app/[space]/PortalTopbar.tsx"),
+    source("src/app/[space]/PortalAppSwitcher.tsx"),
+    source("src/app/[space]/PortalRewardsMenu.tsx"),
+    source("src/app/[space]/PortalNotificationMenu.tsx"),
     source("src/app/[space]/PortalAccountMenu.tsx"),
+    source("src/app/dashboard/profile/ProfileView.tsx"),
+    source("src/app/dashboard/profile/ProfileDialogView.tsx"),
+    source("src/app/dashboard/profile/ProfileForm.tsx"),
     source("src/app/[space]/page.tsx"),
   ]);
 
   assert.match(topbar, /px-4[^"]*sm:px-6[^"]*lg:px-8/);
   assert.match(topbar, /className="hidden shrink-0 items-center gap-1 lg:flex"/);
   assert.match(topbar, /hidden max-w-28 truncate[^"]*sm:block/);
-  assert.match(topbar, /h-11 shrink-0[^"]*sm:px-4/);
+  assert.match(topbar, /<PortalAppSwitcher apps=\{apps\} \/>/);
+  assert.doesNotMatch(topbar, /max-w-7xl/);
+  assert.match(appSwitcher, /className="group inline-flex h-11 shrink-0/);
+  assert.match(appSwitcher, /<span className="hidden sm:inline">/);
+  assert.match(appSwitcher, /aria-label=\{available \? "选择要进入的应用"/);
+  assert.match(topbar, /<PortalRewardsMenu \/>/);
+  assert.match(rewardsMenu, /className="hidden shrink-0 items-center gap-1 xl:flex"/);
+  assert.match(rewardsMenu, /aria-label="查看积分"/);
+  assert.match(rewardsMenu, /aria-label="打开礼物中心"/);
+  assert.match(rewardsMenu, /积分功能尚未开通/);
+  assert.match(rewardsMenu, /礼物中心尚未开通/);
+  assert.match(topbar, /<PortalNotificationMenu/);
+  assert.match(notificationMenu, /className="relative inline-flex h-11 w-11 shrink-0/);
+  assert.match(notificationMenu, /`消息中心，共 \$\{count\} 条提示`/);
+  assert.match(notificationMenu, /aria-hidden="true"[\s\S]+bg-rose-500/);
+  assert.match(notificationMenu, /max-w-\[calc\(100vw-2rem\)\]/);
+  assert.match(notificationMenu, /w-\[min\(64rem,calc\(100vw-2rem\)\)\]/);
+  assert.match(notificationMenu, /md:grid-cols-3/);
+  assert.match(notificationMenu, /title="平台提示"/);
+  assert.match(notificationMenu, /title="老师提示"/);
+  assert.match(notificationMenu, /title="学习消息"/);
   assert.match(accountMenu, /className="hidden max-w-32 leading-tight md:block"/);
   assert.match(accountMenu, /className="flex h-11 items-center/);
+  assert.match(accountMenu, /sm:max-w-2xl/);
+  assert.doesNotMatch(accountMenu, /1180px/);
+  assert.match(accountMenu, /aria-label=\{activeDialog === "profile" \? "关闭个人资料"/);
+  assert.match(profileView, /if \(embedded\) \{[\s\S]+<ProfileDialogSummary/);
+  assert.match(profileView, /role="progressbar"/);
+  assert.match(profileDialog, /编辑个人资料/);
+  assert.match(profileDialog, /返回资料概览/);
+  assert.doesNotMatch(profileDialog, /next\/link|href=/);
+  assert.match(profileForm, /if \(simple\) \{[\s\S]+<ProfileDialogSection/);
+  assert.match(profileForm, /sm:grid-cols-2/);
+  assert.match(profileForm, /fieldset className="border-0 border-b border-slate-200/);
+  assert.match(profileForm, /min-h-11 w-full rounded-lg/);
   assert.match(portal, /focus:min-h-11/);
+  assert.doesNotMatch(portal, /max-w-7xl/);
+  assert.match(portal, /id="learning-summary"/);
+  assert.match(portal, /id="student-apps"/);
 });
 
 test("标题提示支持悬停、聚焦、触屏点击、外部关闭和可访问名称", async () => {

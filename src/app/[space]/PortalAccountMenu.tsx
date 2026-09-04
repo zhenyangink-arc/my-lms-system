@@ -1,11 +1,12 @@
 "use client";
 
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { ChevronDown, Settings, UserRound } from "lucide-react";
+import { ChevronDown, Settings, UserRound, X } from "lucide-react";
 
 import { LogoutButton } from "@/app/dashboard/LogoutButton";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -70,23 +71,23 @@ export function PortalAccountMenu({
           aria-haspopup="menu"
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
-          className="flex h-11 items-center gap-2 rounded-xl px-1 text-left transition hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 sm:px-2"
+          className="flex h-11 items-center gap-2 rounded-xl px-1 text-left text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-2"
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-sm font-bold text-white shadow-sm">
+          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-300 to-teal-300 text-[11px] font-black text-slate-950 shadow-sm ring-1 ring-white/15">
             {initial}
           </span>
           <span className="hidden max-w-32 leading-tight md:block">
-            <span className="block truncate text-sm font-semibold text-slate-900">
+            <span className="block truncate text-xs font-bold text-white">
               {userName}
             </span>
-            <span className="block truncate text-xs text-slate-500">
+            <span className="block truncate text-[10px] font-medium text-slate-400">
               {accountLabel}
             </span>
           </span>
           <ChevronDown
             aria-hidden="true"
             size={16}
-            className={`hidden text-slate-400 transition-transform md:block ${isOpen ? "rotate-180" : ""}`}
+            className={`hidden text-slate-500 transition-transform md:block ${isOpen ? "rotate-180" : ""}`}
           />
         </button>
 
@@ -126,11 +127,19 @@ export function PortalAccountMenu({
         }}
       >
         <DialogContent
+          showCloseButton={false}
           overlayClassName="bg-slate-950/35 backdrop-blur-sm"
           className={activeDialog === "profile"
-            ? "grid h-[calc(100dvh-2rem)] max-h-[960px] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden rounded-[1.75rem] bg-slate-50 p-0 sm:max-w-[min(1180px,calc(100vw-2rem))]"
+            ? "grid max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden rounded-[1.75rem] bg-slate-50 p-0 sm:max-w-2xl"
             : "grid max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)] gap-0 overflow-hidden rounded-[1.75rem] bg-slate-50 p-0 sm:max-w-xl"}
         >
+          <DialogClose
+            type="button"
+            aria-label={activeDialog === "profile" ? "关闭个人资料" : "关闭设置"}
+            className="absolute right-2.5 top-2.5 z-10 inline-flex h-11 w-11 items-center justify-center rounded-xl text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+          >
+            <X size={18} aria-hidden="true" />
+          </DialogClose>
           <DialogHeader className="border-b border-slate-200 bg-white px-6 py-5 pr-14">
             <DialogTitle className="text-xl font-black text-slate-950">
               {activeDialog === "profile" ? "个人资料" : "设置"}
@@ -141,7 +150,7 @@ export function PortalAccountMenu({
                 : "调整学习工作台的主题与显示效果。"}
             </DialogDescription>
           </DialogHeader>
-          <div className="min-h-0 overflow-y-auto p-4 sm:p-6">
+          <div className="min-h-0 overflow-y-auto p-4 sm:p-5">
             {activeDialog === "profile" ? profileContent : settingsContent}
           </div>
         </DialogContent>

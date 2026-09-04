@@ -18,6 +18,10 @@ import { redirect } from "next/navigation";
 import { ProfileContent } from "@/app/dashboard/profile/page-content";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
+  loadAbilityPortrait,
+  type AbilityPortraitData,
+} from "@/features/student-ability-portrait/api/service";
+import {
   loadPortalHomeLearningSummary,
   selectPortalHomeLearningSummary,
   type PortalHomeLearningSummary,
@@ -25,6 +29,7 @@ import {
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { getCourseLearningPath } from "@/features/student-home-learning/routes";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
+import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
   MEMBERSHIP_TIER_LABELS,
   normalizeMembershipTier,
@@ -42,7 +47,9 @@ import {
   type StudentAppSlug,
   type StudentAppStatus,
 } from "@/lib/student-apps";
+import { AbilityPortrait } from "./AbilityPortrait";
 import { PortalSettingsPanel } from "./PortalSettingsPanel";
+import type { PortalNotificationItem } from "./PortalNotificationMenu";
 import { PortalTopbar } from "./PortalTopbar";
 
 type ProgressRow = {
@@ -93,31 +100,11 @@ const appIconMap = {
 } satisfies Record<StudentAppSlug, typeof Languages>;
 
 const appAccentClasses = {
-  emerald: {
-    icon: "bg-emerald-500/12 text-emerald-700 ring-emerald-600/15",
-    badge: "bg-emerald-500/10 text-emerald-700",
-    line: "from-emerald-500 to-teal-400",
-  },
-  sky: {
-    icon: "bg-sky-500/12 text-sky-700 ring-sky-600/15",
-    badge: "bg-sky-500/10 text-sky-700",
-    line: "from-sky-500 to-cyan-400",
-  },
-  amber: {
-    icon: "bg-amber-500/12 text-amber-700 ring-amber-600/15",
-    badge: "bg-amber-500/10 text-amber-700",
-    line: "from-amber-500 to-orange-400",
-  },
-  violet: {
-    icon: "bg-violet-500/12 text-violet-700 ring-violet-600/15",
-    badge: "bg-violet-500/10 text-violet-700",
-    line: "from-violet-500 to-fuchsia-400",
-  },
-  rose: {
-    icon: "bg-rose-500/12 text-rose-700 ring-rose-600/15",
-    badge: "bg-rose-500/10 text-rose-700",
-    line: "from-rose-500 to-orange-400",
-  },
+  emerald: "bg-emerald-500/12 text-emerald-700 ring-emerald-600/15",
+  sky: "bg-sky-500/12 text-sky-700 ring-sky-600/15",
+  amber: "bg-amber-500/12 text-amber-700 ring-amber-600/15",
+  violet: "bg-violet-500/12 text-violet-700 ring-violet-600/15",
+  rose: "bg-rose-500/12 text-rose-700 ring-rose-600/15",
 } as const;
 
 function getGreeting() {
@@ -362,55 +349,128 @@ export default async function StudentPortalPage({
   const accountLabel =
     MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile?.membership_tier)];
   const tenantName = tenant.name ?? space;
-  const portalApps = await getPortalApps({
-    supabase,
-    tenantId: tenant.id,
-    userId: user.id,
-  });
+  const [portalApps, announcementResult] = await Promise.all([
+    getPortalApps({
+      supabase,
+      tenantId: tenant.id,
+      userId: user.id,
+    }),
+    getPublishedAnnouncementsForTenant(tenant.id)
+      .then((result) => ({ announcements: result.data, failed: false }))
+      .catch((error: unknown) => {
+        console.error("[student-portal] 平台提示读取失败", error);
+        return { announcements: [], failed: true };
+      }),
+  ]);
   const koreanApp = portalApps.find((app) => app.slug === "korean");
   const primaryApp =
     portalApps.find((app) => app.portalStatus === "active") ?? portalApps[0];
   const koreanAppPath = koreanApp
     ? getStudentAppBasePath(space, "korean")
     : portalPath;
+  const announcementHref = koreanApp
+    ? getStudentAppPath(space, "korean", "/announcements")
+    : `${access.dashboardBasePath}/announcements`;
   const portalNow = new Date();
   let currentCourse: CurrentCourse | null = null;
   let learningSummaryLoadFailed = false;
   let learningSummary: PortalHomeLearningSummary =
     selectPortalHomeLearningSummary([], null, portalNow);
+  let abilityPortrait: AbilityPortraitData | null = null;
   if (koreanApp) {
-    const [loadedCurrentCourse, learningSummaryResult] = await Promise.all([
-      getCurrentKoreanCourse({ supabase, userId: user.id, space }),
-      loadPortalHomeLearningSummary({
-        supabase,
-        tenantId: tenant.id,
-        studentId: user.id,
-        studentAppId: STUDENT_APP_IDS.korean,
-        appSlug: "korean",
-        appLabel: koreanApp.portalTitle,
-        space,
-        now: portalNow,
-      })
-        .then((summary) => ({ summary, failed: false }))
-        .catch((error: unknown) => {
-          console.error("[student-portal] 今日学习摘要读取失败", error);
-          return {
-            summary: selectPortalHomeLearningSummary([], null, portalNow),
-            failed: true,
-          };
+    const [loadedCurrentCourse, learningSummaryResult, loadedAbilityPortrait] =
+      await Promise.all([
+        getCurrentKoreanCourse({ supabase, userId: user.id, space }),
+        loadPortalHomeLearningSummary({
+          supabase,
+          tenantId: tenant.id,
+          studentId: user.id,
+          studentAppId: STUDENT_APP_IDS.korean,
+          appSlug: "korean",
+          appLabel: koreanApp.portalTitle,
+          space,
+          now: portalNow,
+        })
+          .then((summary) => ({ summary, failed: false }))
+          .catch((error: unknown) => {
+            console.error("[student-portal] 今日学习摘要读取失败", error);
+            return {
+              summary: selectPortalHomeLearningSummary([], null, portalNow),
+              failed: true,
+            };
+          }),
+        loadAbilityPortrait({
+          supabase,
+          tenantId: tenant.id,
+          studentId: user.id,
+          now: portalNow,
+        }).catch((error: unknown) => {
+          console.error("[student-portal] 能力画像读取失败", error);
+          return null;
         }),
-    ]);
+      ]);
     currentCourse = loadedCurrentCourse;
     learningSummary = learningSummaryResult.summary;
     learningSummaryLoadFailed = learningSummaryResult.failed;
+    abilityPortrait = loadedAbilityPortrait;
   }
   const primaryTask = learningSummary.mostImportant;
+  const notifications: PortalNotificationItem[] = [];
+  announcementResult.announcements.slice(0, 3).forEach((announcement) => {
+    notifications.push({
+      id: `platform:${announcement.id}`,
+      kind: "platform",
+      title: announcement.title,
+      description: announcement.content,
+      meta: announcement.published_at
+        ? formatPortalDateTime(announcement.published_at)
+        : "时间待确认",
+      href: announcementHref,
+    });
+  });
+  const nearestDeadline = learningSummary.nearestDeadline;
+  if (nearestDeadline) {
+    notifications.push({
+      id: `deadline:${nearestDeadline.taskKey}`,
+      kind: "deadline",
+      title: nearestDeadline.title,
+      description: nearestDeadline.reason,
+      meta: `${formatPortalDateTime(nearestDeadline.dueAt!)} 截止`,
+      href: nearestDeadline.href,
+    });
+  }
+  if (primaryTask && primaryTask.taskKey !== nearestDeadline?.taskKey) {
+    notifications.push({
+      id: `task:${primaryTask.taskKey}`,
+      kind: "task",
+      title: primaryTask.title,
+      description: primaryTask.reason,
+      meta: getTaskTiming(primaryTask),
+      href: primaryTask.href,
+    });
+  }
+  if (learningSummary.latestFeedback) {
+    notifications.push({
+      id: `feedback:${learningSummary.latestFeedback.id}`,
+      kind: "feedback",
+      title: learningSummary.latestFeedback.title,
+      description: learningSummary.latestFeedback.feedback,
+      meta: formatPortalDateTime(learningSummary.latestFeedback.publishedAt),
+      href: learningSummary.latestFeedback.href,
+    });
+  }
   const emptyStateHref = currentCourse?.continueHref ??
     (koreanApp
       ? getCourseLearningPath(space)
       : primaryApp
         ? getStudentAppBasePath(space, primaryApp.slug)
         : portalPath);
+  const abilityPortraitToolboxHref = getStudentAppPath(space, "korean", "/toolbox");
+  const abilityPortraitUniversityTargetHref = getStudentAppPath(
+    space,
+    "study-abroad",
+    "/universities/targets",
+  );
 
   return (
     <>
@@ -427,6 +487,17 @@ export default async function StudentPortalPage({
         userName={userName}
         accountLabel={accountLabel}
         studentId={user.id}
+        notifications={notifications}
+        learningNotificationsLoadFailed={learningSummaryLoadFailed}
+        platformNotificationsLoadFailed={announcementResult.failed}
+        apps={portalApps
+          .filter((app) => app.portalStatus === "active")
+          .map((app) => ({
+            slug: app.slug,
+            title: app.portalTitle,
+            kind: app.kind,
+            href: getStudentAppBasePath(space, app.slug),
+          }))}
         profileContent={<ProfileContent embedded />}
         settingsContent={<PortalSettingsPanel />}
       />
@@ -434,14 +505,23 @@ export default async function StudentPortalPage({
       <main
         id="tenant-portal-main-content"
         tabIndex={-1}
-        className="min-h-screen scroll-mt-20 bg-[linear-gradient(180deg,#f8fafc_0%,#eef3f8_48%,#f8fafc_100%)] px-4 pb-12 pt-[6.5rem] text-slate-950 sm:px-6 lg:px-8"
+        className="min-h-screen scroll-mt-24 bg-[linear-gradient(180deg,#fbfbf7_0%,#f3f6f1_45%,#fbfbf7_100%)] px-4 pb-12 pt-28 text-slate-950 sm:px-6 lg:px-8"
       >
-        <div className="mx-auto max-w-7xl space-y-8">
+        <div className="w-full space-y-8">
+          {koreanApp && abilityPortrait ? (
+            <AbilityPortrait
+              data={abilityPortrait}
+              studentName={userName}
+              toolboxHref={abilityPortraitToolboxHref}
+              universityTargetHref={abilityPortraitUniversityTargetHref}
+            />
+          ) : null}
+
           <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl sm:p-8 lg:p-10">
             <div aria-hidden="true" className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-emerald-300/16 blur-3xl" />
             <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
               <div className="min-w-0">
-                <p className="text-sm font-black text-emerald-700">
+                <p className="text-sm font-bold text-emerald-700">
                   {getGreeting()}，{userName}
                 </p>
                 <h1 className="mt-2 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">
@@ -485,7 +565,7 @@ export default async function StudentPortalPage({
 
               <div className="rounded-3xl border border-slate-200/80 bg-slate-50/85 p-5 shadow-inner shadow-white/70">
                 <div className="flex items-center justify-between gap-4">
-                  <span className="inline-flex items-center gap-2 text-xs font-black text-slate-500">
+                  <span className="inline-flex items-center gap-2 text-xs font-bold text-slate-500">
                     <Clock3 size={14} aria-hidden="true" />
                     最近学习
                   </span>
@@ -496,7 +576,7 @@ export default async function StudentPortalPage({
                 <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="最近韩语课程进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={currentCourse?.progressPercent ?? 0}>
                   <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: `${currentCourse?.progressPercent ?? 0}%` }} />
                 </div>
-                <p className="mt-5 truncate text-base font-black text-slate-900">
+                <p className="mt-5 truncate text-base font-bold text-slate-900">
                   {currentCourse?.courseTitle ?? (koreanApp ? "还没有开始韩语课程" : "暂无韩语学习记录")}
                 </p>
                 <p className="mt-1 truncate text-sm text-slate-500">
@@ -507,8 +587,9 @@ export default async function StudentPortalPage({
           </section>
 
           <section
+            id="learning-summary"
             aria-labelledby="portal-learning-summary-title"
-            className="overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl"
+            className="scroll-mt-24 overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl"
           >
             <div className="grid lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.85fr)]">
               <div className="p-6 sm:p-8">
@@ -551,7 +632,7 @@ export default async function StudentPortalPage({
                   </div>
                 ) : primaryTask ? (
                   <div className="mt-6">
-                    <p className="text-sm font-black text-emerald-700">
+                    <p className="text-sm font-bold text-emerald-700">
                       {primaryTask.appLabel}
                     </p>
                     <CardTitleWithHint
@@ -607,10 +688,16 @@ export default async function StudentPortalPage({
                     <CheckCircle2 size={17} className="text-emerald-700" aria-hidden="true" />
                     今日剩余必做
                   </div>
-                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
-                    {learningSummaryLoadFailed ? "—" : learningSummary.requiredTodayCount}
-                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">项</span> : null}
-                  </strong>
+                  {learningSummaryLoadFailed ? (
+                    <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">—</strong>
+                  ) : learningSummary.requiredTodayCount > 0 ? (
+                    <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                      {learningSummary.requiredTodayCount}
+                      <span className="ml-1 text-sm font-bold text-slate-500">项</span>
+                    </strong>
+                  ) : (
+                    <p className="mt-2.5 text-sm font-semibold text-slate-400">今天没有必做任务</p>
+                  )}
                 </div>
 
                 <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
@@ -618,15 +705,20 @@ export default async function StudentPortalPage({
                     <CalendarClock size={17} className="text-amber-700" aria-hidden="true" />
                     即将截止
                   </div>
-                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
-                    {learningSummaryLoadFailed ? "—" : learningSummary.nearestDeadline ? 1 : 0}
-                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">项</span> : null}
-                  </strong>
-                  {!learningSummaryLoadFailed && learningSummary.nearestDeadline ? (
-                    <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
-                      {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)} · {learningSummary.nearestDeadline.title}
-                    </p>
-                  ) : null}
+                  {learningSummaryLoadFailed ? (
+                    <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">—</strong>
+                  ) : learningSummary.nearestDeadline ? (
+                    <>
+                      <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                        1<span className="ml-1 text-sm font-bold text-slate-500">项</span>
+                      </strong>
+                      <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+                        {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)} · {learningSummary.nearestDeadline.title}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2.5 text-sm font-semibold text-slate-400">近期没有截止提醒</p>
+                  )}
                 </div>
 
                 <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
@@ -634,21 +726,26 @@ export default async function StudentPortalPage({
                     <MessageSquareText size={17} className="text-sky-700" aria-hidden="true" />
                     新反馈
                   </div>
-                  <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
-                    {learningSummaryLoadFailed ? "—" : learningSummary.latestFeedback ? 1 : 0}
-                    {!learningSummaryLoadFailed ? <span className="ml-1 text-sm font-bold text-slate-500">条</span> : null}
-                  </strong>
-                  {!learningSummaryLoadFailed && learningSummary.latestFeedback ? (
-                    <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
-                      {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
-                    </p>
-                  ) : null}
+                  {learningSummaryLoadFailed ? (
+                    <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">—</strong>
+                  ) : learningSummary.latestFeedback ? (
+                    <>
+                      <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
+                        1<span className="ml-1 text-sm font-bold text-slate-500">条</span>
+                      </strong>
+                      <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+                        {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="mt-2.5 text-sm font-semibold text-slate-400">暂无新反馈</p>
+                  )}
                 </div>
               </div>
             </div>
           </section>
 
-          <section aria-labelledby="student-apps-title">
+          <section id="student-apps" aria-labelledby="student-apps-title" className="scroll-mt-24">
             <div className="flex flex-wrap items-end justify-between gap-4 px-1">
               <div>
                 <h2 id="student-apps-title" className="text-2xl font-black tracking-tight">
@@ -661,18 +758,23 @@ export default async function StudentPortalPage({
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               {portalApps.map((app) => {
                 const Icon = appIconMap[app.slug];
-                const accent = appAccentClasses[app.accent];
+                const iconAccent = appAccentClasses[app.accent];
                 const active = app.portalStatus === "active";
                 const isKorean = app.slug === "korean";
                 const cardClassName = `group relative isolate flex min-h-64 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/78 p-6 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.55)] backdrop-blur-xl transition duration-300 ${active ? "hover:-translate-y-1 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2" : "cursor-not-allowed opacity-75"} ${isKorean ? "md:col-span-2 xl:col-span-1" : ""}`;
                 const cardContent = (
                   <>
-                    <span aria-hidden="true" className={`absolute inset-x-0 top-0 h-1 bg-gradient-to-r ${accent.line}`} />
                     <div className="flex items-start justify-between gap-4">
-                      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${accent.icon}`}>
+                      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${iconAccent}`}>
                         <Icon size={23} aria-hidden="true" />
                       </span>
-                      <span className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-black ${accent.badge}`}>
+                      <span
+                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${
+                          active
+                            ? "bg-emerald-50 text-emerald-700"
+                            : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
                         {active ? (
                           <CheckCircle2 size={14} aria-hidden="true" />
                         ) : (
@@ -689,10 +791,10 @@ export default async function StudentPortalPage({
                       description={app.description}
                     />
                     <div className="mt-auto flex items-center justify-between gap-3 pt-7">
-                      <span className="text-xs font-bold text-slate-500">
+                      <span className="text-xs font-semibold text-slate-500">
                         {app.kind === "service" ? "独立服务空间" : "独立学习空间"}
                       </span>
-                      <span className="inline-flex items-center gap-1.5 text-sm font-black text-slate-900">
+                      <span className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-900">
                         {active ? "打开应用" : "等待开放"}
                         {active ? (
                           <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
