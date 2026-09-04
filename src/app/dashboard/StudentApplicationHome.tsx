@@ -51,12 +51,31 @@ const studyAbroadEntrances = [
 const focusRing =
   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2";
 
+const targetStatusLabels: Record<string, string> = {
+  researching: "了解中",
+  preparing: "准备材料",
+  applied: "已申请",
+  interview: "面试中",
+  offer: "已录取",
+  rejected: "未通过",
+  paused: "已暂停",
+};
+
+export type StudentApplicationPrimaryTarget = {
+  universityName: string;
+  programName: string | null;
+  status: string;
+  applicationDeadline: string | null;
+};
+
 export function StudentApplicationHome({
   space,
   appSlug,
+  primaryTarget = null,
 }: {
   space: string;
   appSlug: Exclude<StudentAppSlug, "korean">;
+  primaryTarget?: StudentApplicationPrimaryTarget | null;
 }) {
   const app = getStudentAppDefinition(appSlug);
   const AppIcon = appIconMap[appSlug];
@@ -80,13 +99,25 @@ export function StudentApplicationHome({
                   <AppIcon size={23} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-xs font-bold tracking-[0.18em] app-muted-text">下一步</p>
-                  <h2 id="study-abroad-next-step" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
-                    先确认你的目标大学
-                  </h2>
-                  <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text sm:text-base">
-                    目标学校和申请阶段确定后，材料清单与签证任务会按服务进度在对应页面显示。
+                  <p className="text-xs font-bold tracking-[0.18em] app-muted-text">
+                    {primaryTarget ? "当前目标" : "下一步"}
                   </p>
+                  <h2 id="study-abroad-next-step" className="mt-2 text-2xl font-bold tracking-tight sm:text-3xl">
+                    {primaryTarget ? primaryTarget.universityName : "先确认你的目标大学"}
+                  </h2>
+                  {primaryTarget ? (
+                    <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text sm:text-base">
+                      {primaryTarget.programName ?? "专业待定"} ·{" "}
+                      {targetStatusLabels[primaryTarget.status] ?? primaryTarget.status}
+                      {primaryTarget.applicationDeadline
+                        ? ` · 申请截止 ${primaryTarget.applicationDeadline}`
+                        : ""}
+                    </p>
+                  ) : (
+                    <p className="mt-3 max-w-2xl text-sm leading-7 app-muted-text sm:text-base">
+                      目标学校和申请阶段确定后，材料清单与签证任务会按服务进度在对应页面显示。
+                    </p>
+                  )}
                 </div>
               </div>
               <Link
@@ -94,7 +125,7 @@ export function StudentApplicationHome({
                 className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-xl px-5 text-sm font-bold ${focusRing}`}
                 style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}
               >
-                管理目标大学
+                {primaryTarget ? "管理目标大学" : "确认目标大学"}
                 <ArrowRight size={15} aria-hidden="true" />
               </Link>
             </div>
