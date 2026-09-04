@@ -3,7 +3,7 @@ import "server-only";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { loadStudentReviewCenter } from "@/features/student-review-center/service";
-import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
+import type { CoursePracticeCourse } from "@/lib/course-practice-catalog";
 import {
   mapReviewTask,
   type ReviewAggregateCandidate,
@@ -17,7 +17,10 @@ type LoadReviewTasksInput = {
   appSlug: string;
   appLabel: string;
   space: string;
-  now?: Date;
+  // 课程巩固目录是一次很重的查询（内部要串行查课程/课时/章节等好几轮），
+  // 今日学习任务里另外两个来源也需要同一份数据，改成共享同一个 promise，
+  // 避免每个来源各自重复查一遍。
+  catalog: Promise<CoursePracticeCourse[]>;
 };
 
 export async function loadReviewTasks({
@@ -27,11 +30,11 @@ export async function loadReviewTasks({
   appSlug,
   appLabel,
   space,
-  now = new Date(),
+  catalog: catalogPromise,
 }: LoadReviewTasksInput): Promise<HomeLearningTask[]> {
   const [reviewCenter, catalog] = await Promise.all([
     loadStudentReviewCenter({ supabase, studentId, studentAppId }),
-    loadCoursePracticeCatalog({ supabase, userId: studentId, now }),
+    catalogPromise,
   ]);
   if (reviewCenter.error) throw new Error(reviewCenter.error);
 

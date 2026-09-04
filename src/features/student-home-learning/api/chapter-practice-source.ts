@@ -2,7 +2,7 @@ import "server-only";
 
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
+import type { CoursePracticeCourse } from "@/lib/course-practice-catalog";
 import {
   mapChapterPracticeTask,
   type ChapterPracticeCandidate,
@@ -16,7 +16,8 @@ type LoadChapterPracticeTasksInput = {
   appSlug: string;
   appLabel: string;
   space: string;
-  now?: Date;
+  // 见 review-source.ts 的说明：这份目录由调用方算一次后共享给多个来源。
+  catalog: Promise<CoursePracticeCourse[]>;
 };
 
 function throwReadError(label: string, error: { message: string } | null) {
@@ -30,9 +31,9 @@ export async function loadChapterPracticeTasks({
   appSlug,
   appLabel,
   space,
-  now = new Date(),
+  catalog: catalogPromise,
 }: LoadChapterPracticeTasksInput): Promise<HomeLearningTask[]> {
-  const catalog = await loadCoursePracticeCatalog({ supabase, userId: studentId, now });
+  const catalog = await catalogPromise;
   const chapterIds = catalog.flatMap((course) => course.chapters.map((chapter) => chapter.id));
   if (chapterIds.length === 0) return [];
 

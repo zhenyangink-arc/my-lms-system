@@ -27,8 +27,12 @@ export function StudentFullscreenPrompt() {
     if (window.sessionStorage.getItem(FULLSCREEN_PROMPT_KEY) !== "pending") return;
 
     window.sessionStorage.removeItem(FULLSCREEN_PROMPT_KEY);
-    const frameId = window.requestAnimationFrame(() => setIsVisible(true));
-    return () => window.cancelAnimationFrame(frameId);
+    // 这里不能在 cleanup 里 cancelAnimationFrame：开发模式下 React Strict Mode
+    // 会把这个 effect 立刻挂载、卸载、再挂载一次。如果 cleanup 取消了第一次
+    // 挂载排的这一帧，等到第二次挂载时 sessionStorage 里的标记已经被第一次
+    // 消费掉了，条件判断直接短路返回，弹窗就再也不会出现。让这一帧原样触发，
+    // 组件本身还挂载着，调用 setIsVisible 是安全的。
+    window.requestAnimationFrame(() => setIsVisible(true));
   }, []);
 
   useEffect(() => {
@@ -87,67 +91,74 @@ export function StudentFullscreenPrompt() {
   if (!isVisible) return null;
 
   return (
-    <aside
-      className="fixed inset-x-4 bottom-24 z-[90] mx-auto max-w-md rounded-2xl border p-4 shadow-2xl backdrop-blur-xl md:bottom-6"
-      style={{
-        color: "var(--foreground)",
-        borderColor: "var(--border)",
-        backgroundColor: "color-mix(in srgb, var(--card) 94%, transparent)",
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 p-4"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) dismiss();
       }}
-      role="dialog"
-      aria-labelledby="student-fullscreen-title"
-      aria-describedby="student-fullscreen-description"
     >
-      <button
-        type="button"
-        onClick={dismiss}
-        className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/5"
-        aria-label="稍后再说"
+      <aside
+        className="relative w-full max-w-md rounded-2xl border p-4 shadow-2xl backdrop-blur-xl"
+        style={{
+          color: "var(--foreground)",
+          borderColor: "var(--border)",
+          backgroundColor: "color-mix(in srgb, var(--card) 94%, transparent)",
+        }}
+        role="dialog"
+        aria-labelledby="student-fullscreen-title"
+        aria-describedby="student-fullscreen-description"
       >
-        <X size={16} aria-hidden="true" />
-      </button>
-
-      <div className="flex gap-3 pr-8">
-        <span
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
-          style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
-        >
-          <Maximize2 size={20} aria-hidden="true" />
-        </span>
-        <div className="min-w-0">
-          <h2 id="student-fullscreen-title" className="font-bold">
-            进入全屏学习
-          </h2>
-          <p id="student-fullscreen-description" className="app-muted-text mt-1 text-xs font-bold leading-5">
-            减少页面外的干扰，获得更专注的学习体验。按 Esc 可随时退出全屏。
-          </p>
-        </div>
-      </div>
-
-      {errorMessage && (
-        <p className="mt-3 text-xs font-bold" role="alert" style={{ color: "var(--status-warning)" }}>
-          {errorMessage}
-        </p>
-      )}
-
-      <div className="mt-4 flex gap-2">
-        <button
-          type="button"
-          onClick={enterFullscreen}
-          className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90"
-          style={{ backgroundColor: "var(--primary)" }}
-        >
-          <Maximize2 size={16} aria-hidden="true" />
-          进入全屏学习
-        </button>
         <button
           type="button"
           onClick={dismiss}
-          className="app-soft-card h-10 rounded-xl border px-4 text-sm font-bold"
+          className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-full transition hover:bg-black/5"
+          aria-label="稍后再说"
         >
-          暂不进入
+          <X size={16} aria-hidden="true" />
         </button>
-      </div>
-    </aside>
+
+        <div className="flex gap-3 pr-8">
+          <span
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl"
+            style={{ color: "var(--primary-hover)", backgroundColor: "var(--accent)" }}
+          >
+            <Maximize2 size={20} aria-hidden="true" />
+          </span>
+          <div className="min-w-0">
+            <h2 id="student-fullscreen-title" className="font-bold">
+              进入全屏学习
+            </h2>
+            <p id="student-fullscreen-description" className="app-muted-text mt-1 text-xs font-bold leading-5">
+              减少页面外的干扰，获得更专注的学习体验。按 Esc 可随时退出全屏。
+            </p>
+          </div>
+        </div>
+
+        {errorMessage && (
+          <p className="mt-3 text-xs font-bold" role="alert" style={{ color: "var(--status-warning)" }}>
+            {errorMessage}
+          </p>
+        )}
+
+        <div className="mt-4 flex gap-2">
+          <button
+            type="button"
+            onClick={enterFullscreen}
+            className="inline-flex h-10 flex-1 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-white transition hover:opacity-90"
+            style={{ backgroundColor: "var(--primary)" }}
+          >
+            <Maximize2 size={16} aria-hidden="true" />
+            进入全屏学习
+          </button>
+          <button
+            type="button"
+            onClick={dismiss}
+            className="app-soft-card h-10 rounded-xl border px-4 text-sm font-bold"
+          >
+            暂不进入
+          </button>
+        </div>
+      </aside>
+    </div>
   );
 }

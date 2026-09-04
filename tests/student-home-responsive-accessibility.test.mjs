@@ -30,11 +30,11 @@ test("门户顶栏在手机端收敛内容且保持 44px 核心触控区", async
   assert.match(notificationMenu, /`消息中心，共 \$\{count\} 条提示`/);
   assert.match(notificationMenu, /aria-hidden="true"[\s\S]+bg-rose-500/);
   assert.match(notificationMenu, /max-w-\[calc\(100vw-2rem\)\]/);
-  assert.match(notificationMenu, /w-\[min\(64rem,calc\(100vw-2rem\)\)\]/);
-  assert.match(notificationMenu, /md:grid-cols-3/);
-  assert.match(notificationMenu, /title="平台提示"/);
-  assert.match(notificationMenu, /title="老师提示"/);
-  assert.match(notificationMenu, /title="学习消息"/);
+  assert.match(notificationMenu, /w-\[min\(26rem,calc\(100vw-2rem\)\)\]/);
+  assert.match(notificationMenu, /role="tablist"/);
+  assert.match(notificationMenu, /title: "平台提示"/);
+  assert.match(notificationMenu, /title: "老师提示"/);
+  assert.match(notificationMenu, /title: "学习消息"/);
   assert.match(accountMenu, /className="hidden max-w-32 leading-tight md:block"/);
   assert.match(accountMenu, /className="flex h-11 items-center/);
   assert.match(accountMenu, /sm:max-w-2xl/);

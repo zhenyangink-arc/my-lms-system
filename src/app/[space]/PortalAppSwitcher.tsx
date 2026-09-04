@@ -43,6 +43,17 @@ const appIconClasses = {
   "study-abroad": "bg-rose-50 text-rose-700 ring-rose-600/15",
 } satisfies Record<StudentAppSlug, string>;
 
+// 学习类应用点击时直接请求全屏：全屏接口必须绑在一次真实的用户手势上才会生效，
+// 这里借用点击"进入应用"本身这次手势，省掉进去之后再弹一次提示框、再点一次的步骤。
+// 服务类应用（比如留学服务）不是沉浸式学习场景，不做这个处理。
+function handleAppClick(app: PortalSwitcherApp) {
+  if (app.kind === "service") return;
+  if (!document.fullscreenEnabled || document.fullscreenElement) return;
+  document.documentElement.requestFullscreen().catch(() => {
+    // 用户拒绝或浏览器不支持时静默忽略，不影响正常进入应用。
+  });
+}
+
 export function PortalAppSwitcher({ apps }: { apps: PortalSwitcherApp[] }) {
   const available = apps.length > 0;
 
@@ -84,6 +95,7 @@ export function PortalAppSwitcher({ apps }: { apps: PortalSwitcherApp[] }) {
                 <Link
                   key={app.slug}
                   href={app.href}
+                  onClick={() => handleAppClick(app)}
                   className="group/app flex min-h-14 items-center gap-3 rounded-xl px-3 py-2 text-left transition-colors hover:bg-slate-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-1"
                 >
                   <span

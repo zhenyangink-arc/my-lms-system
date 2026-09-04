@@ -19,7 +19,6 @@ import { getStudentAppCourseScope } from "@/lib/student-app-data";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 
-
 type LessonProgressRow = {
   lesson_id: string;
   course_id: string;

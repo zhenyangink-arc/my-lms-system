@@ -7,6 +7,7 @@ import {
   type DefaultPriorityRule,
 } from "../priority.ts";
 import { getGradeFeedbackPath } from "../routes.ts";
+import { loadCoursePracticeCatalog } from "@/lib/course-practice-catalog.server";
 import { loadAssignmentExamTasks } from "./assignment-exam-source.ts";
 import { loadChapterPracticeTasks } from "./chapter-practice-source.ts";
 import { loadCourseContinuationTasks } from "./course-source.ts";
@@ -176,12 +177,16 @@ export async function loadHomeLearningTasks({
     space,
     now,
   };
+  // 课程巩固目录本身要串行查好几轮（课程→课时→章节→…），
+  // chapterPractice/specializedPractice/review 三个来源都要用它——
+  // 这里只发起一次，其余三个来源共享同一个 promise，避免各自重复查一遍。
+  const catalogPromise = loadCoursePracticeCatalog({ supabase, userId: studentId, now });
   const taskGroups = await Promise.all([
     loadAssignmentExamTasks({ ...commonInput, tenantId }),
     loadCourseContinuationTasks(commonInput),
-    loadChapterPracticeTasks(commonInput),
-    loadSpecializedPracticeTasks(commonInput),
-    loadReviewTasks(commonInput),
+    loadChapterPracticeTasks({ ...commonInput, catalog: catalogPromise }),
+    loadSpecializedPracticeTasks({ ...commonInput, catalog: catalogPromise }),
+    loadReviewTasks({ ...commonInput, catalog: catalogPromise }),
   ]);
 
   const sortedTasks = sortHomeLearningTasks(
