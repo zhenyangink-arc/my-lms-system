@@ -31,8 +31,6 @@ export async function getGuideAgentStudentContext({
     lessonProgressResult,
     attemptsResult,
     assignmentsResult,
-    targetsResult,
-    submissionsResult,
   ] = await Promise.all([
     admin
       .from("digital_textbook_node_progress")
@@ -48,11 +46,14 @@ export async function getGuideAgentStudentContext({
       .eq("user_id", studentId)
       .order("updated_at", { ascending: false })
       .limit(20),
+    // chapter_test_attempts 有 (tenant_id, student_id, test_slug) 唯一约束，每个测试只留一行，
+    // 行数天然受限于测试数量，这里的 limit 只是兜底，不影响正确性。
     admin
       .from("chapter_test_attempts")
       .select("correct_count,total_questions")
       .eq("tenant_id", tenantId)
-      .eq("student_id", studentId),
+      .eq("student_id", studentId)
+      .limit(200),
     admin
       .from("learning_assignments")
       .select("id,title,due_at,target_scope")
@@ -60,31 +61,18 @@ export async function getGuideAgentStudentContext({
       .eq("status", "published")
       .order("due_at", { ascending: true })
       .limit(50),
-    admin
-      .from("learning_assignment_targets")
-      .select("assignment_id")
-      .eq("tenant_id", tenantId)
-      .eq("student_id", studentId),
-    admin
-      .from("learning_submissions")
-      .select("assignment_id,status,attempt_number")
-      .eq("tenant_id", tenantId)
-      .eq("student_id", studentId)
-      .order("attempt_number", { ascending: false }),
   ]);
 
-  const failed = [
+  const firstRoundFailure = [
     smartProgressResult,
     lessonProgressResult,
     attemptsResult,
     assignmentsResult,
-    targetsResult,
-    submissionsResult,
   ].find((result) => result.error);
-  if (failed?.error) {
+  if (firstRoundFailure?.error) {
     console.error("[guide-agent] Failed to load student context", {
-      code: failed.error.code,
-      message: failed.error.message,
+      code: firstRoundFailure.error.code,
+      message: firstRoundFailure.error.message,
     });
     throw new Error("无法读取当前学习进度。");
   }
@@ -92,14 +80,47 @@ export async function getGuideAgentStudentContext({
   const lessonRows = (lessonProgressResult.data ?? []) as LessonProgressRow[];
   const lessonIds = lessonRows.map((row) => row.lesson_id);
   const courseIds = Array.from(new Set(lessonRows.map((row) => row.course_id)));
-  const [lessonsResult, coursesResult] = await Promise.all([
+  // learning_assignment_targets / learning_submissions 按学生全量拉取可能不小且没有天然上限，
+  // 但我们只关心上面这最多 50 个已发布作业的指派与提交状态，所以直接按 assignment_id 收窄范围——
+  // 这样既避免了全表扫描式的无上限查询，又不会像“按行数截断”那样可能漏掉某个作业的最新提交记录。
+  const assignmentIds = ((assignmentsResult.data ?? []) as AssignmentRow[]).map((row) => row.id);
+  const [lessonsResult, coursesResult, targetsResult, submissionsResult] = await Promise.all([
     lessonIds.length
       ? admin.from("lessons").select("id,title,slug").in("id", lessonIds)
       : Promise.resolve({ data: [], error: null }),
     courseIds.length
       ? admin.from("courses").select("id,title,slug").in("id", courseIds)
       : Promise.resolve({ data: [], error: null }),
+    assignmentIds.length
+      ? admin
+          .from("learning_assignment_targets")
+          .select("assignment_id")
+          .eq("tenant_id", tenantId)
+          .eq("student_id", studentId)
+          .in("assignment_id", assignmentIds)
+      : Promise.resolve({ data: [], error: null }),
+    assignmentIds.length
+      ? admin
+          .from("learning_submissions")
+          .select("assignment_id,status,submitted_at")
+          .eq("tenant_id", tenantId)
+          .eq("student_id", studentId)
+          .in("assignment_id", assignmentIds)
+          .order("submitted_at", { ascending: false })
+      : Promise.resolve({ data: [], error: null }),
   ]);
+
+  const secondRoundFailure = [lessonsResult, coursesResult, targetsResult, submissionsResult].find(
+    (result) => result.error,
+  );
+  if (secondRoundFailure?.error) {
+    console.error("[guide-agent] Failed to load student context", {
+      code: secondRoundFailure.error.code,
+      message: secondRoundFailure.error.message,
+    });
+    throw new Error("无法读取当前学习进度。");
+  }
+
   const lessonById = new Map(
     (lessonsResult.data ?? []).map((row) => [String(row.id), row]),
   );

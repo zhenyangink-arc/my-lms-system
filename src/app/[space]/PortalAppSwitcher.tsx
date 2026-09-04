@@ -51,7 +51,7 @@ export function PortalAppSwitcher({ apps }: { apps: PortalSwitcherApp[] }) {
       <PopoverTrigger
         disabled={!available}
         aria-label={available ? "选择要进入的应用" : "暂无可进入的应用"}
-        className="group inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-emerald-300 px-3 text-xs font-bold text-slate-950 shadow-[0_10px_30px_-18px_rgba(110,231,183,0.95)] transition-colors hover:bg-emerald-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-200 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 disabled:cursor-not-allowed disabled:bg-slate-700 disabled:text-slate-300 sm:px-3.5"
+        className="group inline-flex h-11 shrink-0 items-center gap-2 rounded-xl bg-emerald-100/90 px-3 text-xs font-bold text-emerald-950 ring-1 ring-emerald-600/10 transition-colors hover:bg-emerald-200/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 sm:px-3.5"
       >
         <Grid2X2 size={17} aria-hidden="true" />
         <span className="hidden sm:inline">

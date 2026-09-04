@@ -26,7 +26,8 @@ const NAVIGATION_PRIORITY: Record<string, number> = {
   "/dashboard/admin/tenants": 0,
   "/dashboard/admin/accounts": 1,
   "/dashboard/admin/permissions": 2,
-  "/dashboard/admin/token-usage": 3,
+  "/dashboard/admin/agents": 3,
+  "/dashboard/admin/token-usage": 4,
 };
 
 export function AdminWorkspaceSidebar({

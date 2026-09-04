@@ -179,13 +179,13 @@ export function PortalNotificationMenu({
       <PopoverTrigger
         aria-label={triggerLabel}
         title="消息中心"
-        className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+        className="relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-slate-900/5 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
       >
         <Bell size={19} aria-hidden="true" />
         {count > 0 ? (
           <span
             aria-hidden="true"
-            className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-rose-500 ring-2 ring-slate-950"
+            className="absolute right-2.5 top-2.5 size-2.5 rounded-full bg-rose-500 ring-2 ring-white"
           />
         ) : null}
       </PopoverTrigger>

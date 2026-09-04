@@ -20,6 +20,7 @@ const fullAccess = {
 const expectedNavigation = {
   platform_super_admin: [
     "应用中心",
+    "Agent 运营中心",
     "模型用量",
     "管理首页",
     "通知公告管理",
@@ -123,4 +124,11 @@ test("老师不会获得平台或机构负责人的专属入口", () => {
 
 test("学生不会获得任何管理导航", () => {
   assert.deepEqual(getVisibleAdminNavigation("student", fullAccess), []);
+});
+
+test("Agent 运营中心只出现在平台负责人导航中", () => {
+  for (const role of ["tenant_operator", "platform_course_inspector", "tenant_super_admin", "ceo", "admin", "teacher", "student"]) {
+    assert.equal(labelsFor(role).includes("Agent 运营中心"), false, `${role} 不应看到 Agent 运营中心`);
+  }
+  assert.equal(labelsFor("platform_super_admin").includes("Agent 运营中心"), true);
 });

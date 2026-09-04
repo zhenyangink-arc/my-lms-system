@@ -1,6 +1,6 @@
 # Management global pages
 
-- Route: `/[space]/dashboard/admin`, `/platform/dashboard/admin`, and the global management destinations `/apps`, `/announcements`, `/help`, `/token-usage`, `/accounts`, `/tenants`, `/permissions`, `/library`
+- Route: `/[space]/dashboard/admin`, `/platform/dashboard/admin`, and the global management destinations `/apps`, `/announcements`, `/help`, `/agents`, `/token-usage`, `/accounts`, `/tenants`, `/permissions`, `/library`
 - Audience: Management
 - Archetype: Operations overview for the management home; Collection for the remaining global destinations
 - Primary job: Surface permission-scoped operational work on the home page, then let staff search, filter, compare, and act on one global management collection at a time.
@@ -24,6 +24,7 @@
 | 账号管理 | `src/app/dashboard/admin/accounts/page-content.tsx` | Thin route adapter to a server-filtered `ManagementPage` collection. Creation and audit actions vary by platform/tenant role. |
 | 租户管理 | `src/app/dashboard/admin/tenants/page-content.tsx` | Thin route adapter to a `ManagementPage` collection with lifecycle/schema notices, metrics, filters, and institution table. |
 | 权限中心 | `src/app/dashboard/admin/permissions/page-content.tsx` | Thin route adapter to a `ManagementPage` governance workspace with query-string feedback, directory/matrix/grant controls, active grants, and audit records. |
+| Agent 运营中心 | `src/app/dashboard/admin/agents/page-content.tsx` | Platform-owner-only operations workspace with runtime metrics, stored conversations, structured local navigation rules, model configuration and immutable audit history. |
 | 资料库管理 | `src/app/dashboard/admin/library/page-content.tsx` | Thin route adapter to a `ManagementPage` collection with read-only notice when curation is unavailable, summary, filters, and resource table. |
 
 ## Access and state contract

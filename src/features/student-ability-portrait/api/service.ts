@@ -9,9 +9,7 @@ import {
 } from "@/components/analytics/SixDimensionRadar";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
-
-const TREND_MONTH_COUNT = 6;
-const DAY_MS = 86_400_000;
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export type AbilitySkillTier = "优势项" | "良好" | "中等" | "待提升";
 
@@ -22,11 +20,6 @@ export type AbilityPortraitSkill = {
   activityCount: number;
   tier: AbilitySkillTier | null;
   description: string;
-};
-
-export type AbilityPortraitTrendSeries = {
-  skill: LanguageSkill;
-  values: Array<number | null>;
 };
 
 export type AbilityPortraitConfidence = {
@@ -59,19 +52,10 @@ export type AbilityPortraitInsight = {
   growthSuggestions: string[];
 };
 
-export type AbilityPortraitUniversityTarget = {
-  universityName: string;
-  programName: string | null;
-  statusLabel: string;
-  daysRemaining: number | null;
-};
-
 export type AbilityPortraitData = {
   skills: AbilityPortraitSkill[];
   insight: AbilityPortraitInsight;
-  trend: { months: string[]; series: AbilityPortraitTrendSeries[] };
   confidence: AbilityPortraitConfidence;
-  universityTarget: AbilityPortraitUniversityTarget | null;
 };
 
 type ToolboxProfileRow = {
@@ -89,31 +73,6 @@ type GradeSkillProfileRow = {
   total_points: number | string;
   question_count: number | string;
   assessment_count: number | string;
-};
-
-type PracticeSessionRow = {
-  skill: LanguageSkill;
-  completed_at: string;
-  earned_score: number | string;
-  max_score: number | string;
-};
-
-type UniversityTargetRow = {
-  university_name: string;
-  program_name: string | null;
-  status: string;
-  priority: number;
-  application_deadline: string | null;
-};
-
-const universityTargetStatusLabels: Record<string, string> = {
-  researching: "了解中",
-  preparing: "准备材料",
-  applied: "已申请",
-  interview: "面试中",
-  offer: "已录取",
-  rejected: "未通过",
-  paused: "已暂停",
 };
 
 const overallLevelBuckets: Array<[number, string]> = [
@@ -216,19 +175,6 @@ function tierForScore(score: number): AbilitySkillTier {
   return "待提升";
 }
 
-function monthKey(date: Date): string {
-  return new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-  }).format(date);
-}
-
-function monthLabel(key: string): string {
-  const month = Number(key.slice(5, 7));
-  return `${month}月`;
-}
-
 function formatUpdatedAt(date: Date): string {
   return new Intl.DateTimeFormat("zh-CN", {
     timeZone: "Asia/Seoul",
@@ -251,14 +197,14 @@ export async function loadAbilityPortrait({
   studentId: string;
   now: Date;
 }): Promise<AbilityPortraitData> {
-  const trendSince = new Date(now.getTime() - 183 * DAY_MS).toISOString();
-
+  // 成绩六维是 service_role 专用聚合视图；页面鉴权完成后仍必须按
+  // 当前租户和当前学生精确收口，不能用学生会话直接读取该视图。
+  const admin = createAdminClient();
   const [
     toolboxResult,
     gradeResult,
     sessionsResult,
     aiSpeakingCountResult,
-    universityTargetResult,
   ] = await Promise.all([
     withStudentAppSchemaFallback(
       supabase
@@ -273,7 +219,7 @@ export async function loadAbilityPortrait({
           .eq("student_id", studentId),
     ),
     withStudentAppSchemaFallback(
-      supabase
+      admin
         .from("student_grade_skill_profiles")
         .select(
           "grade_category,skill,percentage,earned_points,total_points,question_count,assessment_count",
@@ -282,7 +228,7 @@ export async function loadAbilityPortrait({
         .eq("student_id", studentId)
         .eq("student_app_id", STUDENT_APP_IDS.korean),
       () =>
-        supabase
+        admin
           .from("student_grade_skill_profiles")
           .select(
             "grade_category,skill,percentage,earned_points,total_points,question_count,assessment_count",
@@ -292,26 +238,24 @@ export async function loadAbilityPortrait({
     ),
     supabase
       .from("toolbox_practice_sessions")
-      .select("skill,completed_at,earned_score,max_score")
+      .select("id", { count: "exact", head: true })
       .eq("student_id", studentId)
-      .eq("status", "completed")
-      .gte("completed_at", trendSince)
-      .order("completed_at", { ascending: true }),
+      .eq("status", "completed"),
     supabase
       .from("toolbox_practice_attempts")
       .select("id", { count: "exact", head: true })
       .eq("student_id", studentId)
       .eq("skill", "speaking")
       .eq("evaluated_by", "ai"),
-    supabase
-      .from("student_university_targets")
-      .select("university_name,program_name,status,priority,application_deadline")
-      .eq("user_id", studentId)
-      .order("priority", { ascending: false })
-      .order("application_deadline", { ascending: true, nullsFirst: false })
-      .limit(1)
-      .maybeSingle(),
   ]);
+  const readError =
+    toolboxResult.error ??
+    gradeResult.error ??
+    sessionsResult.error ??
+    aiSpeakingCountResult.error;
+  if (readError) {
+    throw new Error("学习能力画像数据读取失败", { cause: readError });
+  }
 
   const toolboxBySkill = new Map(
     ((toolboxResult.data ?? []) as ToolboxProfileRow[]).map((row) => [
@@ -428,38 +372,6 @@ export async function loadAbilityPortrait({
     growthSuggestions,
   };
 
-  const practiceSessions = (sessionsResult.data ?? []) as PracticeSessionRow[];
-  const months: string[] = [];
-  for (let offset = TREND_MONTH_COUNT - 1; offset >= 0; offset -= 1) {
-    const date = new Date(now.getTime());
-    date.setMonth(date.getMonth() - offset);
-    const key = monthKey(date);
-    if (!months.includes(key)) months.push(key);
-  }
-  const monthSet = new Set(months);
-  const bucket = new Map<string, Map<LanguageSkill, { earned: number; max: number }>>();
-  for (const session of practiceSessions) {
-    const key = monthKey(new Date(session.completed_at));
-    if (!monthSet.has(key)) continue;
-    const monthBucket = bucket.get(key) ?? new Map<LanguageSkill, { earned: number; max: number }>();
-    const current = monthBucket.get(session.skill) ?? { earned: 0, max: 0 };
-    current.earned += Number(session.earned_score) || 0;
-    current.max += Number(session.max_score) || 0;
-    monthBucket.set(session.skill, current);
-    bucket.set(key, monthBucket);
-  }
-  const trend = {
-    months: months.map(monthLabel),
-    series: languageSkillOrder.map((skill) => ({
-      skill,
-      values: months.map((month) => {
-        const totals = bucket.get(month)?.get(skill);
-        if (!totals || totals.max <= 0) return null;
-        return Math.round((totals.earned / totals.max) * 1000) / 10;
-      }),
-    })),
-  };
-
   const homeworkCount = gradeRows
     .filter((row) => row.grade_category === "homework")
     .reduce((sum, row) => sum + (Number(row.assessment_count) || 0), 0);
@@ -467,7 +379,7 @@ export async function loadAbilityPortrait({
     .filter((row) => row.grade_category === "exam")
     .reduce((sum, row) => sum + (Number(row.assessment_count) || 0), 0);
   const aiSpeakingCount = aiSpeakingCountResult.count ?? 0;
-  const practiceSessionCount = practiceSessions.length;
+  const practiceSessionCount = sessionsResult.count ?? 0;
   const totalEvidence =
     homeworkCount + examCount + aiSpeakingCount + practiceSessionCount;
   const confidence: AbilityPortraitConfidence = {
@@ -478,27 +390,8 @@ export async function loadAbilityPortrait({
     totalEvidence,
     levelLabel:
       totalEvidence >= 15 ? "高可信度" : totalEvidence >= 6 ? "中等可信度" : "积累中",
-    stars: Math.max(1, Math.min(5, Math.round(totalEvidence / 4) || 1)),
+    stars: Math.min(5, Math.ceil(totalEvidence / 4)),
   };
 
-  const targetRow = universityTargetResult.data as UniversityTargetRow | null;
-  const universityTarget: AbilityPortraitUniversityTarget | null = targetRow
-    ? {
-        universityName: targetRow.university_name,
-        programName: targetRow.program_name,
-        statusLabel:
-          universityTargetStatusLabels[targetRow.status] ?? targetRow.status,
-        daysRemaining: (() => {
-          if (!targetRow.application_deadline) return null;
-          const remaining = Math.ceil(
-            (new Date(targetRow.application_deadline).getTime() -
-              now.getTime()) /
-              DAY_MS,
-          );
-          return remaining >= 0 ? remaining : null;
-        })(),
-      }
-    : null;
-
-  return { skills, insight, trend, confidence, universityTarget };
+  return { skills, insight, confidence };
 }

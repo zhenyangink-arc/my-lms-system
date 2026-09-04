@@ -5,10 +5,9 @@ import test from "node:test";
 const source = (relativePath) => readFile(new URL(`../${relativePath}`, import.meta.url), "utf8");
 
 test("门户顶栏在手机端收敛内容且保持 44px 核心触控区", async () => {
-  const [topbar, appSwitcher, rewardsMenu, notificationMenu, accountMenu, profileView, profileDialog, profileForm, portal] = await Promise.all([
+  const [topbar, appSwitcher, notificationMenu, accountMenu, profileView, profileDialog, profileForm, portal] = await Promise.all([
     source("src/app/[space]/PortalTopbar.tsx"),
     source("src/app/[space]/PortalAppSwitcher.tsx"),
-    source("src/app/[space]/PortalRewardsMenu.tsx"),
     source("src/app/[space]/PortalNotificationMenu.tsx"),
     source("src/app/[space]/PortalAccountMenu.tsx"),
     source("src/app/dashboard/profile/ProfileView.tsx"),
@@ -17,7 +16,7 @@ test("门户顶栏在手机端收敛内容且保持 44px 核心触控区", async
     source("src/app/[space]/page.tsx"),
   ]);
 
-  assert.match(topbar, /px-4[^"]*sm:px-6[^"]*lg:px-8/);
+  assert.match(topbar, /px-3[^"]*sm:px-5[^"]*lg:px-6/);
   assert.match(topbar, /className="hidden shrink-0 items-center gap-1 lg:flex"/);
   assert.match(topbar, /hidden max-w-28 truncate[^"]*sm:block/);
   assert.match(topbar, /<PortalAppSwitcher apps=\{apps\} \/>/);
@@ -25,12 +24,7 @@ test("门户顶栏在手机端收敛内容且保持 44px 核心触控区", async
   assert.match(appSwitcher, /className="group inline-flex h-11 shrink-0/);
   assert.match(appSwitcher, /<span className="hidden sm:inline">/);
   assert.match(appSwitcher, /aria-label=\{available \? "选择要进入的应用"/);
-  assert.match(topbar, /<PortalRewardsMenu \/>/);
-  assert.match(rewardsMenu, /className="hidden shrink-0 items-center gap-1 xl:flex"/);
-  assert.match(rewardsMenu, /aria-label="查看积分"/);
-  assert.match(rewardsMenu, /aria-label="打开礼物中心"/);
-  assert.match(rewardsMenu, /积分功能尚未开通/);
-  assert.match(rewardsMenu, /礼物中心尚未开通/);
+  assert.doesNotMatch(topbar, /PortalRewardsMenu/);
   assert.match(topbar, /<PortalNotificationMenu/);
   assert.match(notificationMenu, /className="relative inline-flex h-11 w-11 shrink-0/);
   assert.match(notificationMenu, /`消息中心，共 \$\{count\} 条提示`/);
@@ -104,4 +98,19 @@ test("状态同时使用图标和文字，摘要加载失败提供恢复入口",
   assert.match(institution, /学习概览加载失败/);
   assert.match(styles, /\.student-system-welcome-eyebrow \{[\s\S]*?font-size: 12px;/);
   assert.match(styles, /\.student-system-welcome-status small \{[\s\S]*?font-size: 12px;/);
+});
+
+test("能力画像使用受控聚合读取，局部失败不会触发开发错误层", async () => {
+  const [abilityService, portal] = await Promise.all([
+    source("src/features/student-ability-portrait/api/service.ts"),
+    source("src/app/[space]/page.tsx"),
+  ]);
+
+  assert.match(abilityService, /createAdminClient/);
+  assert.match(
+    abilityService,
+    /admin[\s\S]+from\("student_grade_skill_profiles"\)[\s\S]+eq\("tenant_id", tenantId\)[\s\S]+eq\("student_id", studentId\)[\s\S]+eq\("student_app_id", STUDENT_APP_IDS\.korean\)/,
+  );
+  assert.match(portal, /能力数据暂时无法读取/);
+  assert.doesNotMatch(portal, /console\.error/);
 });

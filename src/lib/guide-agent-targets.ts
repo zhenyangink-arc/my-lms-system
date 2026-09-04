@@ -3,6 +3,25 @@ export type GuideAgentHighlightTarget = {
   path?: string;
 };
 
+export const GUIDE_AGENT_DESTINATIONS = [
+  { label: "成长首页", path: "/dashboard" },
+  { label: "课程中心", path: "/dashboard/courses" },
+  { label: "韩语1级课程", path: "/dashboard/courses/korean/korean-basic/korean-beginner" },
+  { label: "课程巩固", path: "/dashboard/practice/course" },
+  { label: "专项练习", path: "/dashboard/practice/skills" },
+  { label: "错题与复习", path: "/dashboard/practice/review#guide-target-review-questions" },
+  { label: "作业与考试", path: "/dashboard/assignments" },
+  { label: "韩语作业", path: "/dashboard/assignments/korean" },
+  { label: "大学中心", path: "/dashboard/universities" },
+  { label: "目标大学", path: "/dashboard/universities/targets" },
+  { label: "大学资料库", path: "/dashboard/universities/library" },
+  { label: "通知提醒", path: "/dashboard#reminders" },
+] as const;
+
+export function isAllowedGuideDestination(path: string) {
+  return GUIDE_AGENT_DESTINATIONS.some((destination) => destination.path === path);
+}
+
 const BEGINNER_COURSE_PATH =
   "/dashboard/courses/korean/korean-basic/korean-beginner/hangul-introduction";
 const REVIEW_QUESTIONS_PATH =

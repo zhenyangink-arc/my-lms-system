@@ -8,6 +8,7 @@ import { normalizeDashboardPathname, scopeDashboardPath } from "@/lib/dashboard-
 
 const SEGMENT_LABELS: Record<string, string> = {
   admin: "管理中心",
+  agents: "Agent 运营中心",
   accounts: "账号管理",
   analytics: "数据分析",
   assessments: "测评管理",

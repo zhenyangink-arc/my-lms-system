@@ -32,6 +32,8 @@ type GuideAgentChatProps = {
   triggerVariant?: "dashboard" | "portal";
   portalTriggerAppearance?: "light" | "dark";
   portalTriggerShowLabel?: boolean;
+  /** 由页面上其他入口（比如首页提问框）转交过来、需要代为发送一次的问题。 */
+  initialPrompt?: { id: number; message: string } | null;
 };
 
 type GuideAgentAction = {
@@ -134,6 +136,7 @@ export function GuideAgentChat({
   triggerVariant = "dashboard",
   portalTriggerAppearance = "light",
   portalTriggerShowLabel = false,
+  initialPrompt,
 }: GuideAgentChatProps) {
   const router = useRouter();
   const {
@@ -161,6 +164,7 @@ export function GuideAgentChat({
   const floatingDragRef = useRef<FloatingDragState | null>(null);
   const suppressFloatingClickRef = useRef(false);
   const highlightTimersRef = useRef<number[]>([]);
+  const lastForwardedPromptIdRef = useRef<number | null>(null);
 
   function clampFloatingPosition(
     position: FloatingPosition,
@@ -243,6 +247,19 @@ export function GuideAgentChat({
   }, [isOpen, loading]);
 
   useEffect(() => {
+    if (
+      !initialPrompt ||
+      loading ||
+      lastForwardedPromptIdRef.current === initialPrompt.id
+    ) {
+      return;
+    }
+    lastForwardedPromptIdRef.current = initialPrompt.id;
+    void sendMessage(initialPrompt.message);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialPrompt, loading]);
+
+  useEffect(() => {
     function handleEscape(event: globalThis.KeyboardEvent) {
       if (event.key === "Escape") setIsOpen(false);
     }
@@ -308,8 +325,8 @@ export function GuideAgentChat({
     highlightTimersRef.current.push(timer);
   }
 
-  async function sendMessage() {
-    const message = input.trim();
+  async function sendMessage(overrideMessage?: string) {
+    const message = (overrideMessage ?? input).trim();
 
     if (!message || loading) return;
 
@@ -438,7 +455,11 @@ export function GuideAgentChat({
         throw new Error("导航助手回复意外中断");
       }
     } catch (error) {
-      console.error("[GuideAgentChat] Unable to send message", error);
+      console.warn("[GuideAgentChat] Unable to send message", error);
+      const failureMessage =
+        error instanceof Error && error.message.trim()
+          ? error.message
+          : "学习助手暂时没有响应，请稍后再试。";
       setMessages((current) => {
         if (assistantMessageAdded) {
           return current.map((item) =>
@@ -447,7 +468,7 @@ export function GuideAgentChat({
                   ...item,
                   content: streamedAnswer
                     ? `${streamedAnswer}\n\n（回答中断，请再试一次。）`
-                    : "抱歉，我暂时没能连接到学习助手。请稍后再试一次。",
+                    : failureMessage,
                   isError: true,
                 }
               : item,
@@ -459,7 +480,7 @@ export function GuideAgentChat({
           {
             id: assistantMessageId,
             role: "assistant",
-            content: "抱歉，我暂时没能连接到学习助手。请稍后再试一次。",
+            content: failureMessage,
             isError: true,
           },
         ];

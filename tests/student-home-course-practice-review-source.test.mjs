@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
@@ -16,6 +17,27 @@ const context = {
   appLabel: "韩语",
   space: "school",
 };
+
+test("门户当前课程只读取正式课时，并用已通过的前置章节跳过历史漏记的字母课", async () => {
+  const [currentCourseSource, portalSource] = await Promise.all([
+    readFile(
+      new URL(
+        "../src/features/student-current-course/api/service.ts",
+        import.meta.url,
+      ),
+      "utf8",
+    ),
+    readFile(new URL("../src/app/[space]/page.tsx", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(currentCourseSource, /from\("lessons"\)/);
+  assert.match(currentCourseSource, /from\("chapter_test_attempts"\)/);
+  assert.match(currentCourseSource, /lesson\.unlock_mode !== "prerequisite_passed"/);
+  assert.match(currentCourseSource, /completedLessonIds\.add\(prerequisiteLessonId\)/);
+  assert.doesNotMatch(currentCourseSource, /loadCoursePracticeCatalog/);
+  assert.match(portalSource, /getLessonDisplayTitle\(currentCourse\.lessonTitle\)/);
+  assert.match(portalSource, /currentCourse\?\.continueHref/);
+});
 
 function courseCandidate(overrides = {}) {
   return {

@@ -235,6 +235,7 @@ Canonical base: `/[space]/dashboard/admin` or `/platform/dashboard/admin`
 | 消息与支持 | 通知公告管理 | `/announcements` | `Conditional` | admin, ceo, tenant_super_admin, platform_super_admin + capability |
 | 消息与支持 | 帮助中心管理 | `/help` | `Conditional` | teacher, ceo, tenant_super_admin, platform_super_admin + capability |
 | 平台与组织 | 模型用量 | `/token-usage` | `Conditional` | ceo, tenant_super_admin, platform_super_admin |
+| 平台与组织 | Agent 运营中心 | `/agents` | `Conditional` | platform_super_admin only |
 | 平台与组织 | 账号管理 | `/accounts` | `Conditional` | ceo, tenant_super_admin, platform_super_admin |
 | 平台与组织 | 租户管理 | `/tenants` | `Conditional` | platform_super_admin, tenant_operator + capability |
 | 平台与组织 | 权限中心 | `/permissions` | `Conditional` | platform_super_admin only |
@@ -249,7 +250,7 @@ Canonical base: `/[space]/dashboard/admin` or `/platform/dashboard/admin`
 | CEO | 管理首页、应用中心、公告、帮助、资料库、模型用量、账号管理 |
 | Tenant super admin | 与 CEO 相同 |
 | Tenant operator | 应用中心、租户管理 |
-| Platform super admin | 管理首页、应用中心、公告、帮助、资料库、模型用量、账号、租户、权限 |
+| Platform super admin | 管理首页、应用中心、公告、帮助、资料库、Agent 运营中心、模型用量、账号、租户、权限 |
 | Platform course inspector | 课程前台巡检 |
 | Student | 无管理端入口 |
 

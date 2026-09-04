@@ -9,6 +9,14 @@ import {
   useState,
 } from "react";
 
+/**
+ * 页面上其他不在 GuideAgentProvider 子树里的组件（比如门户首页的提问框），
+ * 通过这个全局事件把问题转交给学习助手：助手打开自己、代为发送。
+ */
+export const GUIDE_AGENT_ASK_EVENT = "guide-agent-ask";
+
+export type GuideAgentAskEventDetail = { message: string };
+
 export type GuideAgentMessageRole = "user" | "assistant";
 
 export type GuideAgentMessage = {

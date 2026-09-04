@@ -17,7 +17,7 @@ export function PortalRewardsMenu() {
         <PopoverTrigger
           aria-label="查看积分"
           title="积分"
-          className="group inline-flex h-11 items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-bold text-slate-200 transition-colors hover:border-amber-300/25 hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+          className="group inline-flex h-11 items-center gap-2 rounded-xl border border-slate-200/80 bg-white/55 px-3 text-xs font-bold text-slate-700 transition-colors hover:bg-white hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
           <Coins size={17} aria-hidden="true" className="text-amber-300" />
           <span>积分</span>
@@ -51,7 +51,7 @@ export function PortalRewardsMenu() {
         <PopoverTrigger
           aria-label="打开礼物中心"
           title="礼物中心"
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-slate-300 transition-colors hover:bg-white/10 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+          className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-slate-600 transition-colors hover:bg-slate-900/5 hover:text-slate-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
         >
           <Gift size={18} aria-hidden="true" />
         </PopoverTrigger>

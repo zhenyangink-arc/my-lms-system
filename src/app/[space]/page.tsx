@@ -6,17 +6,21 @@ import {
   CalendarClock,
   Calculator,
   CheckCircle2,
+  ChevronRight,
   CircleAlert,
   Clock3,
   GraduationCap,
   Languages,
   MessageSquareText,
-  PlayCircle,
 } from "lucide-react";
 import { redirect } from "next/navigation";
 
 import { ProfileContent } from "@/app/dashboard/profile/page-content";
 import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import {
+  loadStudentCurrentKoreanCourse,
+  type StudentCurrentCourse,
+} from "@/features/student-current-course/api/service";
 import {
   loadAbilityPortrait,
   type AbilityPortraitData,
@@ -31,13 +35,6 @@ import { getCourseLearningPath } from "@/features/student-home-learning/routes";
 import { requireDashboardAccess } from "@/lib/dashboard-access";
 import { getPublishedAnnouncementsForTenant } from "@/lib/published-tenant-content";
 import {
-  MEMBERSHIP_TIER_LABELS,
-  normalizeMembershipTier,
-} from "@/lib/student-permissions";
-import {
-  withStudentAppSchemaFallback,
-} from "@/lib/student-app-data";
-import {
   getStudentAppBasePath,
   getStudentAppPath,
   getStudentPortalPath,
@@ -48,26 +45,15 @@ import {
   type StudentAppStatus,
 } from "@/lib/student-apps";
 import { AbilityPortrait } from "./AbilityPortrait";
+import { PortalAskBar } from "./PortalAskBar";
+import { PortalAvatarCard } from "./PortalAvatarCard";
+import { PortalMottoCard } from "./PortalMottoCard";
+import { PortalPersonalInfoCard } from "./PortalPersonalInfoCard";
 import { PortalSettingsPanel } from "./PortalSettingsPanel";
+import { PortalTagsCard } from "./PortalTagsCard";
+import { isInterestTag } from "./interest-tags";
 import type { PortalNotificationItem } from "./PortalNotificationMenu";
 import { PortalTopbar } from "./PortalTopbar";
-
-type ProgressRow = {
-  lesson_id: string;
-  course_id: string;
-  status: string;
-  progress_percent: number | null;
-  started_at: string | null;
-  last_viewed_at: string | null;
-  completed_at: string | null;
-};
-
-type CurrentCourse = {
-  courseTitle: string;
-  lessonTitle: string;
-  progressPercent: number;
-  continueHref: string;
-};
 
 type TenantAppRelation = {
   slug: string;
@@ -122,10 +108,6 @@ function getGreeting() {
   return "晚上好";
 }
 
-function getActivityTime(row: ProgressRow) {
-  return row.last_viewed_at ?? row.completed_at ?? row.started_at ?? "";
-}
-
 function formatPortalDateTime(value: string): string {
   const parsed = new Date(value);
   if (Number.isNaN(parsed.getTime())) return "时间待确认";
@@ -146,6 +128,105 @@ function getTaskTiming(task: HomeLearningTask): string {
   }
   if (task.startsAt) return `${formatPortalDateTime(task.startsAt)} 开始`;
   return task.status === "in_progress" ? "可以继续完成" : "现在可以开始";
+}
+
+function getLessonDisplayTitle(title: string): string {
+  return title.replace(/^第\s*\d+\s*课[：:\s]*/, "").trim() || title;
+}
+
+function PortalAppsSection({
+  apps,
+  space,
+}: {
+  apps: PortalApp[];
+  space: string;
+}) {
+  return (
+    <section
+      id="student-apps"
+      aria-labelledby="student-apps-title"
+      className="scroll-mt-24 rounded-[1.75rem] border border-slate-200/80 bg-white/90 p-5 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] sm:p-6"
+    >
+      <div className="flex flex-wrap items-end justify-between gap-3 px-1">
+        <h2
+          id="student-apps-title"
+          className="text-2xl font-bold tracking-[-0.03em] text-slate-950"
+        >
+          学习与服务应用
+        </h2>
+        <p className="text-sm font-medium text-slate-500">
+          共 {apps.length} 个应用
+        </p>
+      </div>
+
+      <div className="mt-5 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 sm:grid-cols-3 xl:grid-cols-5">
+        {apps.map((app) => {
+          const Icon = appIconMap[app.slug];
+          const iconAccent = appAccentClasses[app.accent];
+          const active = app.portalStatus === "active";
+
+          return (
+            <article
+              key={app.slug}
+              className={`relative flex min-h-44 min-w-0 flex-col rounded-[1.35rem] border p-4 transition-colors motion-reduce:transition-none sm:min-h-48 sm:p-5 ${
+                active
+                  ? "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/70"
+                  : "border-slate-200/60 bg-slate-50/70 text-slate-500"
+              }`}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <span
+                  className={`flex size-12 shrink-0 items-center justify-center rounded-2xl ring-1 ${iconAccent}`}
+                >
+                  <Icon size={22} aria-hidden="true" />
+                </span>
+                <span
+                  className={`inline-flex min-h-7 items-center gap-1 rounded-full px-2.5 text-xs font-semibold ${
+                    active
+                      ? "bg-emerald-50 text-emerald-700"
+                      : "bg-slate-200/70 text-slate-600"
+                  }`}
+                >
+                  {active ? (
+                    <CheckCircle2 size={13} aria-hidden="true" />
+                  ) : (
+                    <Clock3 size={13} aria-hidden="true" />
+                  )}
+                  {active ? "可进入" : "建设中"}
+                </span>
+              </div>
+
+              <CardTitleWithHint
+                className="mt-5"
+                headingLevel={3}
+                title={app.portalTitle}
+                titleClassName="text-lg font-bold tracking-tight text-slate-950"
+                description={app.description}
+                hintClassName="relative z-10"
+                hintLabel={`查看${app.portalTitle}说明`}
+              />
+
+              <div className="mt-auto pt-5">
+                {active ? (
+                  <Link
+                    href={getStudentAppBasePath(space, app.slug)}
+                    className="inline-flex min-h-11 w-full items-center justify-between rounded-xl bg-slate-950 px-4 text-sm font-semibold text-white transition-colors hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 motion-reduce:transition-none"
+                  >
+                    打开应用
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
+                ) : (
+                  <p className="flex min-h-11 items-center text-sm font-medium text-slate-500">
+                    等待开放
+                  </p>
+                )}
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </section>
+  );
 }
 
 async function getPortalApps({
@@ -174,7 +255,6 @@ async function getPortalApps({
       .eq("student_id", userId)
       .eq("status", "active"),
   ]);
-
   if (error) return [];
 
   const configuredApps = (data as unknown as TenantAppRow[])
@@ -223,111 +303,6 @@ async function getPortalApps({
   );
 }
 
-async function getCurrentKoreanCourse({
-  supabase,
-  userId,
-  space,
-}: {
-  supabase: Awaited<ReturnType<typeof requireDashboardAccess>>["auth"]["supabase"];
-  userId: string;
-  space: string;
-}): Promise<CurrentCourse | null> {
-  const { data: rootCategory } = await withStudentAppSchemaFallback(
-    supabase
-      .from("course_categories")
-      .select("id, slug")
-      .is("parent_id", null)
-      .eq("student_app_id", STUDENT_APP_IDS.korean)
-      .eq("is_published", true)
-      .maybeSingle(),
-    () =>
-      supabase
-        .from("course_categories")
-        .select("id, slug")
-        .is("parent_id", null)
-        .eq("slug", "korean")
-        .eq("is_published", true)
-        .maybeSingle(),
-  );
-
-  if (!rootCategory) return null;
-
-  const { data: subcategoryData } = await supabase
-    .from("course_categories")
-    .select("id, slug")
-    .eq("parent_id", rootCategory.id)
-    .eq("is_published", true);
-  const subcategories = subcategoryData ?? [];
-  const subcategoryIds = subcategories.map((category) => category.id);
-  if (subcategoryIds.length === 0) return null;
-
-  const { data: courseData } = await supabase
-    .from("courses")
-    .select("id, title, slug, category_id")
-    .in("category_id", subcategoryIds)
-    .eq("is_published", true);
-  const courses = courseData ?? [];
-  const courseIds = courses.map((course) => course.id);
-  if (courseIds.length === 0) return null;
-
-  const { data: progressData } = await supabase
-    .from("lesson_progress")
-    .select(
-      "lesson_id, course_id, status, progress_percent, started_at, last_viewed_at, completed_at",
-    )
-    .eq("user_id", userId)
-    .in("course_id", courseIds);
-  const progressRows = (progressData ?? []) as ProgressRow[];
-  const latestProgress = [...progressRows]
-    .filter((row) => getActivityTime(row))
-    .sort((a, b) => getActivityTime(b).localeCompare(getActivityTime(a)))[0];
-
-  if (!latestProgress) return null;
-  const course = courses.find((item) => item.id === latestProgress.course_id);
-  if (!course) return null;
-
-  const { data: lessonData } = await supabase
-    .from("lessons")
-    .select("id, title, slug")
-    .eq("course_id", course.id)
-    .eq("is_published", true)
-    .order("sort_order", { ascending: true });
-  const lessons = lessonData ?? [];
-  const currentLesson = lessons.find(
-    (lesson) => lesson.id === latestProgress.lesson_id,
-  );
-  if (!currentLesson) return null;
-
-  const progressByLessonId = new Map(
-    progressRows
-      .filter((row) => row.course_id === course.id)
-      .map((row) => [row.lesson_id, row]),
-  );
-  const totalProgress = lessons.reduce((sum, lesson) => {
-    const progress = progressByLessonId.get(lesson.id);
-    if (progress?.status === "completed") return sum + 100;
-    return sum + Math.max(0, Math.min(100, progress?.progress_percent ?? 0));
-  }, 0);
-  const progressPercent =
-    lessons.length > 0 ? Math.round(totalProgress / lessons.length) : 0;
-  const subcategory = subcategories.find(
-    (category) => category.id === course.category_id,
-  );
-
-  return {
-    courseTitle: course.title,
-    lessonTitle: currentLesson.title,
-    progressPercent,
-    continueHref: subcategory
-      ? getStudentAppPath(
-          space,
-          "korean",
-          `/courses/korean/${subcategory.slug}/${course.slug}/${currentLesson.slug}`,
-        )
-      : getStudentAppPath(space, "korean", "/courses"),
-  };
-}
-
 export default async function StudentPortalPage({
   params,
 }: {
@@ -346,10 +321,14 @@ export default async function StudentPortalPage({
   const portalPath = getStudentPortalPath(space);
   const userName =
     profile?.full_name || user.user_metadata?.name || user.email || "同学";
-  const accountLabel =
-    MEMBERSHIP_TIER_LABELS[normalizeMembershipTier(profile?.membership_tier)];
+  const accountLabel = "学生账户";
   const tenantName = tenant.name ?? space;
-  const [portalApps, announcementResult] = await Promise.all([
+  const [
+    portalApps,
+    announcementResult,
+    personalSpaceResult,
+    primaryUniversityTargetResult,
+  ] = await Promise.all([
     getPortalApps({
       supabase,
       tenantId: tenant.id,
@@ -358,10 +337,49 @@ export default async function StudentPortalPage({
     getPublishedAnnouncementsForTenant(tenant.id)
       .then((result) => ({ announcements: result.data, failed: false }))
       .catch((error: unknown) => {
-        console.error("[student-portal] 平台提示读取失败", error);
+        console.warn("[student-portal] 平台提示读取失败", error);
         return { announcements: [], failed: true };
       }),
+    supabase
+      .from("profiles")
+      .select("avatar_path, motto, interest_tags, address_city, created_at")
+      .eq("id", user.id)
+      .maybeSingle(),
+    supabase
+      .from("student_university_targets")
+      .select("university_name,program_name")
+      .eq("user_id", user.id)
+      .order("priority", { ascending: false })
+      .order("created_at", { ascending: false })
+      .limit(1)
+      .maybeSingle(),
   ]);
+  if (personalSpaceResult.error) {
+    console.warn("[student-portal] 个人资料读取失败", personalSpaceResult.error);
+  }
+  if (primaryUniversityTargetResult.error) {
+    console.warn(
+      "[student-portal] 目标学校读取失败",
+      primaryUniversityTargetResult.error,
+    );
+  }
+  const personalSpaceProfile = personalSpaceResult.data;
+  let avatarUrl: string | null = null;
+  if (personalSpaceProfile?.avatar_path) {
+    const { data: signedAvatar } = await supabase.storage
+      .from("profile-photos")
+      .createSignedUrl(personalSpaceProfile.avatar_path, 60 * 60);
+    avatarUrl = signedAvatar?.signedUrl ?? null;
+  }
+  const motto = personalSpaceProfile?.motto ?? null;
+  const interestTags = (personalSpaceProfile?.interest_tags ?? []).filter(isInterestTag);
+  const addressCity = personalSpaceProfile?.address_city ?? null;
+  const primaryUniversityTarget = primaryUniversityTargetResult.data;
+  const joinedAtLabel = new Intl.DateTimeFormat("zh-CN", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  }).format(new Date(personalSpaceProfile?.created_at ?? user.created_at));
   const koreanApp = portalApps.find((app) => app.slug === "korean");
   const primaryApp =
     portalApps.find((app) => app.portalStatus === "active") ?? portalApps[0];
@@ -372,15 +390,27 @@ export default async function StudentPortalPage({
     ? getStudentAppPath(space, "korean", "/announcements")
     : `${access.dashboardBasePath}/announcements`;
   const portalNow = new Date();
-  let currentCourse: CurrentCourse | null = null;
+  let currentCourse: StudentCurrentCourse | null = null;
+  let currentCourseLoadFailed = false;
   let learningSummaryLoadFailed = false;
   let learningSummary: PortalHomeLearningSummary =
     selectPortalHomeLearningSummary([], null, portalNow);
   let abilityPortrait: AbilityPortraitData | null = null;
+  let abilityPortraitLoadFailed = false;
   if (koreanApp) {
-    const [loadedCurrentCourse, learningSummaryResult, loadedAbilityPortrait] =
+    const [currentCourseResult, learningSummaryResult, loadedAbilityPortrait] =
       await Promise.all([
-        getCurrentKoreanCourse({ supabase, userId: user.id, space }),
+        loadStudentCurrentKoreanCourse({
+          supabase,
+          studentId: user.id,
+          space,
+          now: portalNow,
+        })
+          .then((course) => ({ course, failed: false }))
+          .catch((error: unknown) => {
+            console.warn("[student-portal] 当前课程读取失败", error);
+            return { course: null, failed: true };
+          }),
         loadPortalHomeLearningSummary({
           supabase,
           tenantId: tenant.id,
@@ -393,7 +423,7 @@ export default async function StudentPortalPage({
         })
           .then((summary) => ({ summary, failed: false }))
           .catch((error: unknown) => {
-            console.error("[student-portal] 今日学习摘要读取失败", error);
+            console.warn("[student-portal] 今日学习摘要读取失败", error);
             return {
               summary: selectPortalHomeLearningSummary([], null, portalNow),
               failed: true,
@@ -404,15 +434,19 @@ export default async function StudentPortalPage({
           tenantId: tenant.id,
           studentId: user.id,
           now: portalNow,
-        }).catch((error: unknown) => {
-          console.error("[student-portal] 能力画像读取失败", error);
-          return null;
-        }),
+        })
+          .then((portrait) => ({ portrait, failed: false }))
+          .catch((error: unknown) => {
+            console.warn("[student-portal] 能力画像读取失败", error);
+            return { portrait: null, failed: true };
+          }),
       ]);
-    currentCourse = loadedCurrentCourse;
+    currentCourse = currentCourseResult.course;
+    currentCourseLoadFailed = currentCourseResult.failed;
     learningSummary = learningSummaryResult.summary;
     learningSummaryLoadFailed = learningSummaryResult.failed;
-    abilityPortrait = loadedAbilityPortrait;
+    abilityPortrait = loadedAbilityPortrait.portrait;
+    abilityPortraitLoadFailed = loadedAbilityPortrait.failed;
   }
   const primaryTask = learningSummary.mostImportant;
   const notifications: PortalNotificationItem[] = [];
@@ -465,13 +499,6 @@ export default async function StudentPortalPage({
       : primaryApp
         ? getStudentAppBasePath(space, primaryApp.slug)
         : portalPath);
-  const abilityPortraitToolboxHref = getStudentAppPath(space, "korean", "/toolbox");
-  const abilityPortraitUniversityTargetHref = getStudentAppPath(
-    space,
-    "study-abroad",
-    "/universities/targets",
-  );
-
   return (
     <>
       <a
@@ -486,6 +513,7 @@ export default async function StudentPortalPage({
         tenantName={tenantName}
         userName={userName}
         accountLabel={accountLabel}
+        avatarUrl={avatarUrl}
         studentId={user.id}
         notifications={notifications}
         learningNotificationsLoadFailed={learningSummaryLoadFailed}
@@ -505,97 +533,144 @@ export default async function StudentPortalPage({
       <main
         id="tenant-portal-main-content"
         tabIndex={-1}
-        className="min-h-screen scroll-mt-24 bg-[linear-gradient(180deg,#fbfbf7_0%,#f3f6f1_45%,#fbfbf7_100%)] px-4 pb-12 pt-28 text-slate-950 sm:px-6 lg:px-8"
+        className="relative min-h-screen scroll-mt-24 overflow-hidden bg-[#f3f5f2] px-4 pb-12 pt-28 text-slate-950 sm:px-6 lg:px-8"
       >
-        <div className="w-full space-y-8">
-          {koreanApp && abilityPortrait ? (
-            <AbilityPortrait
-              data={abilityPortrait}
-              studentName={userName}
-              toolboxHref={abilityPortraitToolboxHref}
-              universityTargetHref={abilityPortraitUniversityTargetHref}
-            />
-          ) : null}
+        <span aria-hidden="true" className="pointer-events-none absolute -left-48 top-16 size-[30rem] rounded-full bg-emerald-100/55 blur-3xl" />
+        <div className="relative mx-auto w-full max-w-[1440px] space-y-6">
+          <PortalAskBar greeting={getGreeting()} userName={userName} />
 
-          <section className="relative isolate overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 p-6 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl sm:p-8 lg:p-10">
-            <div aria-hidden="true" className="absolute -right-20 -top-24 -z-10 h-72 w-72 rounded-full bg-emerald-300/16 blur-3xl" />
-            <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_21rem]">
-              <div className="min-w-0">
-                <p className="text-sm font-bold text-emerald-700">
-                  {getGreeting()}，{userName}
-                </p>
-                <h1 className="mt-2 max-w-2xl text-3xl font-black tracking-tight sm:text-4xl">
-                  选择今天要进入的学习应用
-                </h1>
-                <div className="mt-7 flex flex-wrap gap-3">
-                  {currentCourse ? (
-                    <Link
-                      href={currentCourse.continueHref}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                    >
-                      <PlayCircle size={18} aria-hidden="true" />
-                      继续韩语学习
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </Link>
-                  ) : koreanApp ? (
-                    <Link
-                      href={getStudentAppPath(space, "korean", "/courses")}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                    >
-                      <Languages size={18} aria-hidden="true" />
-                      开始韩语学习
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </Link>
-                  ) : primaryApp ? (
-                    <Link
-                      href={getStudentAppBasePath(space, primaryApp.slug)}
-                      className="inline-flex min-h-11 items-center gap-2 rounded-xl bg-slate-950 px-5 text-sm font-black text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
-                    >
-                      <PlayCircle size={18} aria-hidden="true" />
-                      进入{primaryApp.portalTitle}
-                      <ArrowRight size={16} aria-hidden="true" />
-                    </Link>
-                  ) : (
-                    <span className="inline-flex min-h-11 items-center rounded-xl bg-slate-200 px-5 text-sm font-bold text-slate-500">
-                      暂无已开通应用
-                    </span>
-                  )}
-                </div>
+          <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(22rem,0.72fr)_minmax(0,1.28fr)]">
+            <section
+              id="personal-space"
+              aria-label="我的个人资料"
+              className={`flex h-full flex-col overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/92 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] ${koreanApp ? "" : "xl:col-span-2"}`}
+            >
+              <div className="grid sm:grid-cols-[12rem_minmax(0,1fr)]">
+                <PortalAvatarCard
+                  studentName={userName}
+                  avatarUrl={avatarUrl}
+                  embedded
+                />
+                <PortalPersonalInfoCard
+                  studentName={userName}
+                  targetUniversity={primaryUniversityTarget?.university_name ?? null}
+                  targetProgram={primaryUniversityTarget?.program_name ?? null}
+                  targetLoadFailed={Boolean(primaryUniversityTargetResult.error)}
+                  addressCity={addressCity}
+                  joinedAtLabel={joinedAtLabel}
+                  embedded
+                />
               </div>
-
-              <div className="rounded-3xl border border-slate-200/80 bg-slate-50/85 p-5 shadow-inner shadow-white/70">
-                <div className="flex items-center justify-between gap-4">
-                  <span className="inline-flex items-center gap-2 text-xs font-bold text-slate-500">
-                    <Clock3 size={14} aria-hidden="true" />
-                    最近学习
+              <div className="grid border-t border-slate-200/75 sm:grid-cols-2 sm:divide-x sm:divide-slate-200/75">
+                <PortalTagsCard tags={interestTags} embedded />
+                <PortalMottoCard motto={motto} embedded />
+              </div>
+              {koreanApp ? (
+                <Link
+                  href={currentCourse?.continueHref ?? getCourseLearningPath(space)}
+                  className="group mt-auto flex min-h-24 items-center gap-4 border-y border-slate-200/75 bg-slate-50/80 px-5 py-4 transition-colors hover:bg-emerald-50/45 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-emerald-600 motion-reduce:transition-none sm:px-6 xl:mb-7"
+                >
+                  <span className="flex size-12 shrink-0 items-center justify-center rounded-[1.1rem] bg-emerald-100 text-emerald-700 shadow-sm ring-1 ring-emerald-200/80">
+                    <BookOpen size={19} aria-hidden="true" />
                   </span>
-                  <strong className="text-2xl font-black tabular-nums text-emerald-700">
-                    {currentCourse?.progressPercent ?? 0}%
-                  </strong>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-xs font-bold text-slate-500">
+                      学习状况
+                    </span>
+                    <span className="mt-1.5 flex min-w-0 flex-wrap items-center gap-1.5">
+                      <strong className="shrink-0 text-sm font-black text-slate-950">
+                        韩语学习
+                      </strong>
+                      {currentCourse ? (
+                        <>
+                          <ChevronRight size={14} aria-hidden="true" className="shrink-0 text-slate-300" />
+                          <strong className="min-w-0 text-sm font-black text-slate-700">
+                            {getLessonDisplayTitle(currentCourse.lessonTitle)}
+                          </strong>
+                        </>
+                      ) : null}
+                    </span>
+                    <span className="mt-1 block text-xs font-semibold leading-5 text-slate-500">
+                      {currentCourse
+                        ? `${currentCourse.courseTitle} · 正式课程`
+                        : currentCourseLoadFailed
+                          ? "课程进度暂时无法读取，可进入课程页查看"
+                          : "尚未开始正式课程，可从课程页选择"}
+                    </span>
+                  </span>
+                  {currentCourse ? (
+                    <span className="hidden w-28 shrink-0 sm:block">
+                      <span className="flex items-center justify-between text-xs font-semibold text-slate-500">
+                        <span>当前进度</span>
+                        <span className="tabular-nums text-emerald-700">
+                          {Math.round(currentCourse.progressPercent)}%
+                        </span>
+                      </span>
+                      <span className="mt-2 block h-1.5 overflow-hidden rounded-full bg-slate-200/80">
+                        <span
+                          className="block h-full rounded-full bg-emerald-500"
+                          style={{ width: `${currentCourse.progressPercent}%` }}
+                        />
+                      </span>
+                    </span>
+                  ) : null}
+                  <span className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-full bg-white px-3.5 text-xs font-black text-slate-700 shadow-sm ring-1 ring-slate-200 transition group-hover:bg-slate-950 group-hover:text-white">
+                    {currentCourse
+                      ? currentCourse.status === "completed"
+                        ? "查看"
+                        : "继续"
+                      : "课程"}
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </span>
+                </Link>
+              ) : null}
+            </section>
+
+            {koreanApp && abilityPortrait ? (
+              <AbilityPortrait data={abilityPortrait} />
+            ) : koreanApp && abilityPortraitLoadFailed ? (
+              <section className="flex h-full min-h-72 flex-col rounded-[1.75rem] border border-slate-200/80 bg-white/92 p-5 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)] sm:p-6">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <CardTitleWithHint
+                    headingLevel={2}
+                    title="学习能力画像"
+                    titleClassName="text-2xl font-bold tracking-[-0.035em] text-slate-950"
+                    description="依据韩语学习中的作业、测试和专项练习生成。"
+                    hintLabel="查看能力画像说明"
+                  />
+                  <p className="rounded-full bg-slate-50 px-3 py-1.5 text-xs font-semibold text-slate-500 ring-1 ring-slate-200/80">
+                    数据来源：<span className="text-slate-800">韩语学习</span>
+                  </p>
                 </div>
-                <div className="mt-4 h-2 overflow-hidden rounded-full bg-slate-200" role="progressbar" aria-label="最近韩语课程进度" aria-valuemin={0} aria-valuemax={100} aria-valuenow={currentCourse?.progressPercent ?? 0}>
-                  <div className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-teal-400" style={{ width: `${currentCourse?.progressPercent ?? 0}%` }} />
+                <div className="mt-5 flex flex-1 flex-col items-center justify-center rounded-[1.35rem] bg-slate-50/80 p-6 text-center ring-1 ring-slate-200/70" role="alert">
+                  <CircleAlert size={24} className="text-amber-700" aria-hidden="true" />
+                  <p className="mt-3 text-sm font-bold text-slate-800">
+                    能力数据暂时无法读取
+                  </p>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">
+                    其他门户功能不受影响，可以稍后重新加载。
+                  </p>
+                  <a
+                    href={portalPath}
+                    className="mt-4 inline-flex min-h-11 items-center rounded-xl bg-slate-950 px-4 text-sm font-bold text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2"
+                  >
+                    重新加载
+                  </a>
                 </div>
-                <p className="mt-5 truncate text-base font-bold text-slate-900">
-                  {currentCourse?.courseTitle ?? (koreanApp ? "还没有开始韩语课程" : "暂无韩语学习记录")}
-                </p>
-                <p className="mt-1 truncate text-sm text-slate-500">
-                  {currentCourse?.lessonTitle ?? (koreanApp ? "进入韩语应用选择第一门课程" : "开通韩语应用后在这里显示进度")}
-                </p>
-              </div>
-            </div>
-          </section>
+              </section>
+            ) : null}
+          </div>
 
           <section
             id="learning-summary"
             aria-labelledby="portal-learning-summary-title"
-            className="scroll-mt-24 overflow-hidden rounded-[2rem] border border-white/90 bg-white/82 shadow-[0_24px_80px_-48px_rgba(15,23,42,0.45)] backdrop-blur-2xl"
+            className="scroll-mt-24 overflow-hidden rounded-[1.75rem] border border-slate-200/80 bg-white/92 shadow-[0_22px_60px_-44px_rgba(15,23,42,0.38)]"
           >
             <div className="grid lg:grid-cols-[minmax(0,1.45fr)_minmax(20rem,0.85fr)]">
               <div className="p-6 sm:p-8">
                 <h2
                   id="portal-learning-summary-title"
-                  className="text-2xl font-black tracking-tight text-slate-950"
+                  className="text-2xl font-bold tracking-[-0.03em] text-slate-950"
                 >
                   今天最重要
                 </h2>
@@ -703,17 +778,17 @@ export default async function StudentPortalPage({
                 <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-600">
                     <CalendarClock size={17} className="text-amber-700" aria-hidden="true" />
-                    即将截止
+                    最近截止
                   </div>
                   {learningSummaryLoadFailed ? (
                     <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">—</strong>
                   ) : learningSummary.nearestDeadline ? (
                     <>
-                      <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
-                        1<span className="ml-1 text-sm font-bold text-slate-500">项</span>
+                      <strong className="mt-2 text-base font-bold text-slate-950">
+                        {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)}
                       </strong>
-                      <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
-                        {formatPortalDateTime(learningSummary.nearestDeadline.dueAt!)} · {learningSummary.nearestDeadline.title}
+                      <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
+                        {learningSummary.nearestDeadline.title}
                       </p>
                     </>
                   ) : (
@@ -724,102 +799,29 @@ export default async function StudentPortalPage({
                 <div className="flex min-h-32 flex-col justify-center bg-slate-50/90 p-5 sm:p-6">
                   <div className="flex items-center gap-2 text-sm font-bold text-slate-600">
                     <MessageSquareText size={17} className="text-sky-700" aria-hidden="true" />
-                    新反馈
+                    最近反馈
                   </div>
                   {learningSummaryLoadFailed ? (
                     <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">—</strong>
                   ) : learningSummary.latestFeedback ? (
                     <>
-                      <strong className="mt-2 text-3xl font-black tabular-nums text-slate-950">
-                        1<span className="ml-1 text-sm font-bold text-slate-500">条</span>
+                      <strong className="mt-2 text-base font-bold text-slate-950">
+                        已发布
                       </strong>
-                      <p className="mt-1 line-clamp-1 text-xs font-semibold text-slate-500">
+                      <p className="mt-1 line-clamp-2 text-xs font-medium leading-5 text-slate-500">
                         {learningSummary.latestFeedback.title} · {formatPortalDateTime(learningSummary.latestFeedback.publishedAt)}
                       </p>
                     </>
                   ) : (
-                    <p className="mt-2.5 text-sm font-semibold text-slate-400">暂无新反馈</p>
+                    <p className="mt-2.5 text-sm font-semibold text-slate-400">暂无老师反馈</p>
                   )}
                 </div>
               </div>
             </div>
           </section>
 
-          <section id="student-apps" aria-labelledby="student-apps-title" className="scroll-mt-24">
-            <div className="flex flex-wrap items-end justify-between gap-4 px-1">
-              <div>
-                <h2 id="student-apps-title" className="text-2xl font-black tracking-tight">
-                  学习与服务应用
-                </h2>
-              </div>
-              <p className="text-sm font-semibold text-slate-500">共 {portalApps.length} 个应用</p>
-            </div>
+          <PortalAppsSection apps={portalApps} space={space} />
 
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-              {portalApps.map((app) => {
-                const Icon = appIconMap[app.slug];
-                const iconAccent = appAccentClasses[app.accent];
-                const active = app.portalStatus === "active";
-                const isKorean = app.slug === "korean";
-                const cardClassName = `group relative isolate flex min-h-64 flex-col overflow-hidden rounded-[1.75rem] border border-white/90 bg-white/78 p-6 shadow-[0_20px_60px_-42px_rgba(15,23,42,0.55)] backdrop-blur-xl transition duration-300 ${active ? "hover:-translate-y-1 hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-900 focus-visible:ring-offset-2" : "cursor-not-allowed opacity-75"} ${isKorean ? "md:col-span-2 xl:col-span-1" : ""}`;
-                const cardContent = (
-                  <>
-                    <div className="flex items-start justify-between gap-4">
-                      <span className={`flex h-12 w-12 items-center justify-center rounded-2xl ring-1 ${iconAccent}`}>
-                        <Icon size={23} aria-hidden="true" />
-                      </span>
-                      <span
-                        className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-bold ${
-                          active
-                            ? "bg-emerald-50 text-emerald-700"
-                            : "bg-slate-100 text-slate-500"
-                        }`}
-                      >
-                        {active ? (
-                          <CheckCircle2 size={14} aria-hidden="true" />
-                        ) : (
-                          <Clock3 size={14} aria-hidden="true" />
-                        )}
-                        {active ? "可进入" : "建设中"}
-                      </span>
-                    </div>
-                    <CardTitleWithHint
-                      className="mt-7"
-                      headingLevel={3}
-                      title={app.portalTitle}
-                      titleClassName="text-xl font-black tracking-tight"
-                      description={app.description}
-                    />
-                    <div className="mt-auto flex items-center justify-between gap-3 pt-7">
-                      <span className="text-xs font-semibold text-slate-500">
-                        {app.kind === "service" ? "独立服务空间" : "独立学习空间"}
-                      </span>
-                      <span className="inline-flex items-center gap-1.5 text-sm font-bold text-slate-900">
-                        {active ? "打开应用" : "等待开放"}
-                        {active ? (
-                          <ArrowRight size={15} className="transition group-hover:translate-x-1" aria-hidden="true" />
-                        ) : null}
-                      </span>
-                    </div>
-                  </>
-                );
-
-                return active ? (
-                  <Link
-                    key={app.slug}
-                    href={getStudentAppBasePath(space, app.slug)}
-                    className={cardClassName}
-                  >
-                    {cardContent}
-                  </Link>
-                ) : (
-                  <article key={app.slug} className={cardClassName}>
-                    {cardContent}
-                  </article>
-                );
-              })}
-            </div>
-          </section>
         </div>
       </main>
     </>

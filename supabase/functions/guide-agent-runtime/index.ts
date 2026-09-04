@@ -64,21 +64,24 @@ async function loadAgentProfile(agentCode: string): Promise<AgentProfile | null>
   const key = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
   if (!url || !key) return null;
   const headers = { apikey: key, Authorization: `Bearer ${key}` };
-  const profileResponse = await fetch(
-    `${url}/rest/v1/learning_agent_profiles?agent_code=eq.${encodeURIComponent(agentCode)}&status=eq.published&select=id,agent_code,display_name&limit=1`,
+  // 用 PostgREST 的关联查询一次性拿到 profile + secrets，避免每次提问都串行发两次请求。
+  const response = await fetch(
+    `${url}/rest/v1/learning_agent_profile_secrets` +
+      `?select=agent_profile_id,system_prompt,provider,model,reply_policy,learning_agent_profiles!inner(id,agent_code,display_name)` +
+      `&learning_agent_profiles.agent_code=eq.${encodeURIComponent(agentCode)}` +
+      `&learning_agent_profiles.status=eq.published&limit=1`,
     { headers },
   );
-  if (!profileResponse.ok) return null;
-  const profiles = await profileResponse.json() as Array<Pick<AgentProfile, "id" | "agent_code" | "display_name">>;
-  const profile = profiles[0];
-  if (!profile) return null;
-  const secretResponse = await fetch(
-    `${url}/rest/v1/learning_agent_profile_secrets?agent_profile_id=eq.${encodeURIComponent(profile.id)}&select=system_prompt,provider,model,reply_policy&limit=1`,
-    { headers },
-  );
-  if (!secretResponse.ok) return null;
-  const secrets = await secretResponse.json() as Array<Pick<AgentProfile, "system_prompt" | "provider" | "model" | "reply_policy">>;
-  return secrets[0] ? { ...profile, ...secrets[0] } : null;
+  if (!response.ok) return null;
+  const rows = await response.json() as Array<
+    Pick<AgentProfile, "system_prompt" | "provider" | "model" | "reply_policy"> & {
+      agent_profile_id: string;
+      learning_agent_profiles: Pick<AgentProfile, "id" | "agent_code" | "display_name">;
+    }
+  >;
+  const row = rows[0];
+  if (!row) return null;
+  return { ...row.learning_agent_profiles, ...row };
 }
 
 function getUserId(request: Request) {

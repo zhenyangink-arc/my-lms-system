@@ -117,7 +117,11 @@ export function CardTitleWithHint({
             onFocus={openHint}
             onBlur={() => setIsOpen(false)}
             onClick={() => {
-              if (!isOpen) openHint();
+              if (isOpen) {
+                setIsOpen(false);
+              } else {
+                openHint();
+              }
             }}
             className={`flex h-11 w-11 shrink-0 cursor-help items-start justify-center bg-transparent pt-1 outline-none transition focus-visible:rounded-full focus-visible:ring-2 ${
               tone === "inverse"

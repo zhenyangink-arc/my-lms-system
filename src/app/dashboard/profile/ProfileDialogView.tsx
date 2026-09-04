@@ -4,6 +4,8 @@ import type { ReactNode } from "react";
 import { useState } from "react";
 import { ArrowLeft, PencilLine } from "lucide-react";
 
+import { useProfileDialogMode } from "./ProfileDialogModeContext";
+
 export function ProfileDialogView({
   summary,
   form,
@@ -11,7 +13,8 @@ export function ProfileDialogView({
   summary: ReactNode;
   form: ReactNode;
 }) {
-  const [editing, setEditing] = useState(false);
+  const startMode = useProfileDialogMode();
+  const [editing, setEditing] = useState(startMode === "edit");
 
   return (
     <div>

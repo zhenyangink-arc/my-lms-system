@@ -105,10 +105,92 @@ test("UPLY 导航助手由站内 Agent 运行时驱动且不再依赖 Dify", asy
   assert.match(migration, /guide_agent_messages/);
   assert.match(route, /getGuideAgentStudentContext/);
   assert.match(route, /functions\/v1\/guide-agent-runtime/);
-  assert.match(route, /resolveGuideNavigationTarget/);
+  assert.match(route, /resolveGuideAgentRule/);
   assert.match(runtime, /feature_code: "guide_agent"/);
   assert.match(runtime, /learning_agent_profile_secrets/);
   assert.match(component, /UPLY 导航助手/);
   assert.doesNotMatch(route, /Dify|DIFY_/);
   assert.doesNotMatch(envExample, /Dify|DIFY_/);
+});
+
+test("门户提问框可连续转交消息，助手失败只显示局部提示", async () => {
+  const lazyChat = await readFile(
+    new URL("src/components/guide-agent/LazyGuideAgentChat.tsx", root),
+    "utf8",
+  );
+  const chat = await readFile(
+    new URL("src/components/guide-agent/GuideAgentChat.tsx", root),
+    "utf8",
+  );
+  const route = await readFile(
+    new URL("src/app/api/agent-chat/route.ts", root),
+    "utf8",
+  );
+
+  assert.match(lazyChat, /promptSequenceRef\.current \+= 1/);
+  assert.match(lazyChat, /id: promptSequenceRef\.current/);
+  assert.match(chat, /lastForwardedPromptIdRef/);
+  assert.match(chat, /initialPrompt\.message/);
+  assert.match(chat, /failureMessage/);
+  assert.doesNotMatch(chat, /console\.error/);
+  assert.doesNotMatch(route, /console\.error/);
+});
+
+test("Agent 运营中心仅平台负责人可见并支持会话、规则与审计", async () => {
+  const migration = await readFile(
+    new URL("supabase/migrations/202609040002_agent_operations_center.sql", root),
+    "utf8",
+  );
+  const navigation = await readFile(
+    new URL("src/app/dashboard/admin/admin-navigation.ts", root),
+    "utf8",
+  );
+  const page = await readFile(
+    new URL("src/app/dashboard/admin/agents/page-content.tsx", root),
+    "utf8",
+  );
+  const service = await readFile(
+    new URL("src/features/agent-operations/service.ts", root),
+    "utf8",
+  );
+  const actions = await readFile(
+    new URL("src/features/agent-operations/actions.ts", root),
+    "utf8",
+  );
+  const agentRoute = await readFile(
+    new URL("src/app/api/agent-chat/route.ts", root),
+    "utf8",
+  );
+  const hardeningMigration = await readFile(
+    new URL("supabase/migrations/202609040004_harden_agent_operations.sql", root),
+    "utf8",
+  );
+
+  assert.match(migration, /guide_agent_navigation_rules/);
+  assert.match(migration, /guide_agent_operation_logs/);
+  assert.match(migration, /revoke all on public\.guide_agent_navigation_rules from public, anon, authenticated/);
+  assert.match(migration, /grant all on public\.guide_agent_navigation_rules to service_role/);
+  assert.match(navigation, /label: "Agent 运营中心"[\s\S]*roles: \["platform_super_admin"\]/);
+  assert.match(service, /requirePlatformOwner\(\)/);
+  assert.match(actions, /requirePlatformOwner\(\)/);
+  assert.match(actions, /isAllowedGuideDestination/);
+  assert.match(actions, /saveAgentBehaviorConfig/);
+  assert.match(actions, /system_prompt/);
+  assert.match(page, /运行概览/);
+  assert.match(page, /会话记录/);
+  assert.match(page, /导航规则/);
+  assert.match(page, /Agent 配置/);
+  assert.match(page, /操作日志/);
+  assert.match(agentRoute, /response_mode: "local_rule"/);
+  assert.match(agentRoute, /response_mode: "model"/);
+  assert.match(agentRoute, /X-Guide-Agent-Mode/);
+  assert.match(agentRoute, /recordGuideAgentFailure/);
+  assert.match(hardeningMigration, /guide_agent_navigation_rule_versions/);
+  assert.match(hardeningMigration, /guide_agent_failures/);
+  assert.match(hardeningMigration, /enforce_guide_agent_event_append_only/);
+  assert.match(hardeningMigration, /save_guide_agent_navigation_rule[\s\S]*guide_agent_operation_logs/);
+  assert.match(hardeningMigration, /list_guide_agent_conversations/);
+  assert.match(actions, /rollbackAgentNavigationRule/);
+  assert.match(page, /failureRate/);
+  assert.match(page, /会话分页/);
 });

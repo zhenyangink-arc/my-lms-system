@@ -5,6 +5,10 @@ import { ChevronDown, Settings, UserRound, X } from "lucide-react";
 
 import { LogoutButton } from "@/app/dashboard/LogoutButton";
 import {
+  ProfileDialogModeProvider,
+  type ProfileDialogMode,
+} from "@/app/dashboard/profile/ProfileDialogModeContext";
+import {
   Dialog,
   DialogClose,
   DialogContent,
@@ -12,10 +16,15 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  PORTAL_PROFILE_OPEN_EVENT,
+  type PortalProfileOpenMode,
+} from "./PortalProfileTrigger";
 
 type PortalAccountMenuProps = {
   userName: string;
   accountLabel: string;
+  avatarUrl: string | null;
   profileContent: ReactNode;
   settingsContent: ReactNode;
 };
@@ -23,11 +32,13 @@ type PortalAccountMenuProps = {
 export function PortalAccountMenu({
   userName,
   accountLabel,
+  avatarUrl,
   profileContent,
   settingsContent,
 }: PortalAccountMenuProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [activeDialog, setActiveDialog] = useState<"profile" | "settings" | null>(null);
+  const [profileMode, setProfileMode] = useState<ProfileDialogMode>("summary");
   const menuRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const initial = Array.from(userName.trim())[0]?.toUpperCase() || "U";
@@ -57,8 +68,21 @@ export function PortalAccountMenu({
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    function openProfile(event: Event) {
+      const detail = (event as CustomEvent<{ mode?: PortalProfileOpenMode }>).detail;
+      setIsOpen(false);
+      setProfileMode(detail?.mode === "edit" ? "edit" : "summary");
+      setActiveDialog("profile");
+    }
+
+    window.addEventListener(PORTAL_PROFILE_OPEN_EVENT, openProfile);
+    return () => window.removeEventListener(PORTAL_PROFILE_OPEN_EVENT, openProfile);
+  }, []);
+
   function openDialog(dialog: "profile" | "settings") {
     setIsOpen(false);
+    if (dialog === "profile") setProfileMode("summary");
     setActiveDialog(dialog);
   }
 
@@ -71,16 +95,19 @@ export function PortalAccountMenu({
           aria-haspopup="menu"
           aria-expanded={isOpen}
           onClick={() => setIsOpen((open) => !open)}
-          className="flex h-11 items-center gap-2 rounded-xl px-1 text-left text-white transition-colors hover:bg-white/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950 sm:px-2"
+          className="flex h-11 items-center gap-2 rounded-xl px-1 text-left text-slate-950 transition-colors hover:bg-slate-900/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white sm:px-2"
         >
-          <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-300 to-teal-300 text-[11px] font-black text-slate-950 shadow-sm ring-1 ring-white/15">
-            {initial}
+          <span
+            className="flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-emerald-300 to-teal-300 bg-cover bg-center text-[11px] font-black text-slate-950 shadow-sm ring-1 ring-white/70"
+            style={avatarUrl ? { backgroundImage: `url("${avatarUrl}")` } : undefined}
+          >
+            {avatarUrl ? null : initial}
           </span>
           <span className="hidden max-w-32 leading-tight md:block">
-            <span className="block truncate text-xs font-bold text-white">
+            <span className="block truncate text-xs font-bold text-slate-950">
               {userName}
             </span>
-            <span className="block truncate text-[10px] font-medium text-slate-400">
+            <span className="block truncate text-xs font-medium text-slate-500">
               {accountLabel}
             </span>
           </span>
@@ -151,7 +178,11 @@ export function PortalAccountMenu({
             </DialogDescription>
           </DialogHeader>
           <div className="min-h-0 overflow-y-auto p-4 sm:p-5">
-            {activeDialog === "profile" ? profileContent : settingsContent}
+            {activeDialog === "profile" ? (
+              <ProfileDialogModeProvider mode={profileMode}>
+                {profileContent}
+              </ProfileDialogModeProvider>
+            ) : settingsContent}
           </div>
         </DialogContent>
       </Dialog>

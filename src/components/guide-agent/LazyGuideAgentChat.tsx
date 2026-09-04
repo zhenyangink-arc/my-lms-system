@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { Bot } from "lucide-react";
 
 import {
+  GUIDE_AGENT_ASK_EVENT,
   GuideAgentProvider,
+  type GuideAgentAskEventDetail,
   useGuideAgent,
 } from "./GuideAgentProvider";
 
@@ -85,7 +87,29 @@ function LazyGuideAgentChatContent({
   showLabel: boolean;
 }) {
   const [activated, setActivated] = useState(false);
+  const promptSequenceRef = useRef(0);
+  const [pendingPrompt, setPendingPrompt] = useState<{
+    id: number;
+    message: string;
+  } | null>(null);
   const { setIsOpen } = useGuideAgent();
+
+  useEffect(() => {
+    function handleAsk(event: Event) {
+      const detail = (event as CustomEvent<GuideAgentAskEventDetail>).detail;
+      if (!detail?.message) return;
+      promptSequenceRef.current += 1;
+      setPendingPrompt({
+        id: promptSequenceRef.current,
+        message: detail.message,
+      });
+      setIsOpen(true);
+      setActivated(true);
+    }
+
+    window.addEventListener(GUIDE_AGENT_ASK_EVENT, handleAsk);
+    return () => window.removeEventListener(GUIDE_AGENT_ASK_EVENT, handleAsk);
+  }, [setIsOpen]);
 
   if (activated) {
     const GuideAgentChat = appearance === "dark"
@@ -99,6 +123,7 @@ function LazyGuideAgentChatContent({
         triggerVariant="portal"
         portalTriggerAppearance={appearance}
         portalTriggerShowLabel={showLabel}
+        initialPrompt={pendingPrompt}
       />
     );
   }
