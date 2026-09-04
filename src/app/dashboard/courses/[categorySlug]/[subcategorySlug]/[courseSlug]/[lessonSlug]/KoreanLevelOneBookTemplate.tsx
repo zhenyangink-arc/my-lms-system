@@ -503,6 +503,9 @@ export function KoreanEbookTableOfContents({
 }) {
   return (
     <div className="flex h-full flex-col justify-center text-center">
+      <p className="text-xs font-bold text-[var(--foreground-secondary)]">
+        第 {lessonNumber} 课
+      </p>
       <h3 className="mt-3 text-2xl font-bold tracking-tight text-[var(--foreground)]">
         目录
       </h3>

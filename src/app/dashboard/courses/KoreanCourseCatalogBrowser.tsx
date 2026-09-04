@@ -355,12 +355,14 @@ export function KoreanCourseCatalogBrowser({
                       <div className="flex flex-1 flex-col p-5">
                         {!course.coverObjectKey ? (
                           <div className="min-w-0">
-                            <p className="course-level-kicker mb-1 text-xs font-bold">{levelPresentation.label}</p>
+                            <p className="course-level-kicker mb-1 text-xs font-bold">
+                              第 {course.sequence} 课 · {levelPresentation.label}
+                            </p>
                           <CardTitleWithHint
                             title={course.title}
                             description={course.description}
                             headingLevel={3}
-                            titleClassName="line-clamp-2 text-xl font-bold leading-7 tracking-tight"
+                            titleClassName="line-clamp-2 min-h-14 text-xl font-bold leading-7 tracking-tight"
                           />
                           </div>
                         ) : null}
