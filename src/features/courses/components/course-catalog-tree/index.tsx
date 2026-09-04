@@ -7,18 +7,22 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import type { CourseCatalogActionOptions } from "../course-catalog-action-dialogs";
 import {
+  CourseCatalogSortProvider,
+  CourseCatalogTableHeaderRow,
   FolderCard,
   FolderTitleCell,
   PublicationCell,
   RowActionsCell,
   StructureHealthCell,
+  getCourseCatalogSortValue,
   type CourseCatalogFolderRow,
+  type CourseCatalogSortKey,
+  type CourseCatalogSortState,
 } from "./columns";
 import {
   CourseCatalogToolbar,
@@ -66,8 +70,30 @@ export function CourseCatalogFolderTable({
     INITIAL_COURSE_CATALOG_FILTERS,
   );
   const [view, setView] = useState<"grid" | "list">("grid");
-  const filteredRows = useMemo(() => filterRows(rows, filters), [rows, filters]);
-
+  const [sort, setSort] = useState<CourseCatalogSortState>(null);
+  const filteredRows = useMemo(
+    () => filterRows(rows, filters),
+    [rows, filters],
+  );
+  const sortedRows = useMemo(() => {
+    if (!sort) return filteredRows;
+    const { key, direction } = sort;
+    const sorted = [...filteredRows].sort((a, b) => {
+      const left = getCourseCatalogSortValue(a, key);
+      const right = getCourseCatalogSortValue(b, key);
+      if (left < right) return direction === "asc" ? -1 : 1;
+      if (left > right) return direction === "asc" ? 1 : -1;
+      return 0;
+    });
+    return sorted;
+  }, [filteredRows, sort]);
+  const handleSortChange = (key: CourseCatalogSortKey) => {
+    setSort((current) => {
+      if (current?.key !== key) return { key, direction: "asc" };
+      if (current.direction === "asc") return { key, direction: "desc" };
+      return null;
+    });
+  };
   return (
     <DataTable
       toolbar={
@@ -90,7 +116,7 @@ export function CourseCatalogFolderTable({
     >
       {view === "grid" ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(220px,1fr))] gap-4 p-4">
-          {filteredRows.map((row) => (
+          {sortedRows.map((row) => (
             <FolderCard
               key={row.key}
               row={row}
@@ -104,41 +130,40 @@ export function CourseCatalogFolderTable({
           ))}
         </div>
       ) : (
-        <Table className="min-w-[860px]">
-          <TableHeader className="bg-[var(--surface-soft)]">
-            <TableRow>
-              <TableHead className="px-4 text-xs">目录结构</TableHead>
-              <TableHead className="px-4 text-xs">结构情况</TableHead>
-              <TableHead className="px-4 text-xs">上架与开放</TableHead>
-              <TableHead className="px-4 text-right text-xs">操作</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filteredRows.map((row) => (
-              <TableRow key={row.key}>
-                <TableCell className="px-4 py-3 text-xs">
-                  <FolderTitleCell row={row} catalogRoute={catalogRoute} />
-                </TableCell>
-                <TableCell className="px-4 py-3 text-xs">
-                  <StructureHealthCell row={row} />
-                </TableCell>
-                <TableCell className="px-4 py-3 text-xs">
-                  <PublicationCell row={row} />
-                </TableCell>
-                <TableCell className="px-4 py-3 text-xs">
-                  <RowActionsCell
-                    row={row}
-                    canManage={canManage}
-                    options={options}
-                    dashboardBasePath={dashboardBasePath}
-                    routeBasePath={routeBasePath}
-                    folderParam={folderParam}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <CourseCatalogSortProvider
+          value={{ sort, onSortChange: handleSortChange }}
+        >
+          <Table className="min-w-[860px]">
+            <TableHeader className="bg-[var(--surface-soft)]">
+              <CourseCatalogTableHeaderRow />
+            </TableHeader>
+            <TableBody>
+              {sortedRows.map((row) => (
+                <TableRow key={row.key}>
+                  <TableCell className="px-4 py-3 text-xs">
+                    <FolderTitleCell row={row} catalogRoute={catalogRoute} />
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-xs">
+                    <StructureHealthCell row={row} />
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-xs">
+                    <PublicationCell row={row} />
+                  </TableCell>
+                  <TableCell className="px-4 py-3 text-xs">
+                    <RowActionsCell
+                      row={row}
+                      canManage={canManage}
+                      options={options}
+                      dashboardBasePath={dashboardBasePath}
+                      routeBasePath={routeBasePath}
+                      folderParam={folderParam}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </CourseCatalogSortProvider>
       )}
     </DataTable>
   );
