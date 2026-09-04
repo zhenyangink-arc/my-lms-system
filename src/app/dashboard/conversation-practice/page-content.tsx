@@ -1,0 +1,150 @@
+import Link from "next/link";
+import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
+import { ArrowRight, BookOpen, CheckCircle2, Clock3, Eye, MessageCircleMore, MessagesSquare, Sparkles } from "lucide-react";
+import { redirect } from "next/navigation";
+
+import { requireActiveUser } from "@/lib/auth";
+import {
+  getConversationPracticeAccess,
+  getConversationPracticeBasePath,
+} from "@/lib/conversation-practice";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
+import { getManagementAppPath } from "@/lib/management-app-path";
+import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
+import { STUDENT_APP_IDS, getStudentAppBasePath } from "@/lib/student-apps";
+import {
+  canUseStudentFeature,
+  normalizeMembershipTier,
+} from "@/lib/student-permissions";
+import {
+  CONVERSATION_CATEGORY_LABELS,
+  CONVERSATION_DIFFICULTY_LABELS,
+  type ConversationCategory,
+  type ConversationDifficulty,
+} from "./config";
+
+
+type ScenarioRow = {
+  id: string;
+  title: string;
+  description: string;
+  category: ConversationCategory;
+  difficulty: ConversationDifficulty;
+  duration_minutes: number;
+  is_featured: boolean;
+};
+type ProgressRow = { scenario_id: string; status: "practicing" | "completed"; practice_count: number; confidence: number | null };
+
+const difficultyTone: Record<ConversationDifficulty, { color: string; soft: string }> = {
+  beginner: { color: "var(--status-success)", soft: "var(--status-success-surface)" },
+  intermediate: { color: "var(--primary)", soft: "var(--accent)" },
+  advanced: { color: "var(--status-warning)", soft: "var(--status-warning-surface)" },
+};
+
+export default async function ConversationPracticePage() {
+  const { profile, tenant } = await requireActiveUser();
+  const userRole = profile?.role ?? "student";
+  const tier = normalizeMembershipTier(profile?.membership_tier);
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
+  if (
+    userRole === "student" &&
+    !canUseStudentFeature(userRole, tier, "conversation_course")
+  ) {
+    if (
+      canUseStudentFeature(userRole, tier, "ai_conversation_experience")
+    ) {
+      redirect(`${basePath}/ai-experience`);
+    }
+    redirect(getStudentAppBasePath(tenant?.slug ?? "", "korean"));
+  }
+
+  const { supabase, user, canManage, role } = await getConversationPracticeAccess();
+  const [scenariosResult, progressResult] = await Promise.all([
+    withStudentAppSchemaFallback(
+      supabase
+        .from("conversation_practice_scenarios")
+        .select("id,title,description,category,difficulty,duration_minutes,is_featured")
+        .eq("student_app_id", STUDENT_APP_IDS.korean)
+        .eq("status", "published")
+        .order("is_featured", { ascending: false })
+        .order("sort_order", { ascending: true })
+        .order("created_at", { ascending: false }),
+      () =>
+        supabase
+          .from("conversation_practice_scenarios")
+          .select("id,title,description,category,difficulty,duration_minutes,is_featured")
+          .eq("status", "published")
+          .order("is_featured", { ascending: false })
+          .order("sort_order", { ascending: true })
+          .order("created_at", { ascending: false }),
+    ),
+    role === "student"
+      ? supabase
+          .from("conversation_practice_progress")
+          .select("scenario_id,status,practice_count,confidence")
+          .eq("user_id", user.id)
+      : Promise.resolve({ data: [] as ProgressRow[], error: null }),
+  ]);
+  const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
+  const scenarioIds = new Set(scenarios.map((scenario) => scenario.id));
+  const progress = ((progressResult.data ?? []) as ProgressRow[]).filter(
+    (item) => scenarioIds.has(item.scenario_id),
+  );
+  const progressByScenario = new Map(progress.map((item) => [item.scenario_id, item]));
+  const completedCount = progress.filter((item) => item.status === "completed").length;
+  const practiceCount = progress.reduce((sum, item) => sum + item.practice_count, 0);
+  const metricCards = canManage
+    ? [["已发布场景", scenarios.length, MessagesSquare, "var(--primary)", "var(--accent)"], ["入门场景", scenarios.filter((item) => item.difficulty === "beginner").length, Sparkles, "var(--status-success)", "var(--status-success-surface)"], ["推荐场景", scenarios.filter((item) => item.is_featured).length, MessageCircleMore, "var(--status-warning)", "var(--status-warning-surface)"]]
+    : [["开放场景", scenarios.length, MessagesSquare, "var(--primary)", "var(--accent)"], ["累计练习", practiceCount, MessageCircleMore, "var(--support)", "var(--support-surface)"], ["已经掌握", completedCount, CheckCircle2, "var(--status-success)", "var(--status-success-surface)"]];
+
+  return (
+    <div className="pb-12">
+      <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
+        {canManage && (
+          <div className="flex justify-end">
+            <Link href={getManagementAppPath(getDashboardBasePath(tenant?.slug), "korean", "conversation")} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={15} aria-hidden="true" /></Link>
+          </div>
+        )}
+        <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--accent), var(--card), var(--accent))" }}>
+          <div className={canManage ? "grid gap-5 xl:grid-cols-[minmax(0,1fr)_520px] xl:items-center" : "grid"}>
+            {canManage && <div><span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-xs font-bold" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><Eye size={14} aria-hidden="true" />学生端只读预览</span><DashboardTitleWithHint className="mt-3" headingLevel={2} title="检查学生实际看到的会话内容" description="这里仅展示已发布场景，不提供编辑入口。需要修改内容、发布场景或查看练习数据时，请进入后台管理。" /></div>}
+            <div className={canManage ? "dashboard-title-metrics" : "grid grid-cols-3 gap-2"}>{metricCards.map(([label, value, Icon, color, soft]) => { const MetricIcon = Icon as typeof MessagesSquare; return <div key={String(label)} className="app-card rounded-2xl border p-4 text-center"><span className="mx-auto flex h-9 w-9 items-center justify-center rounded-xl" style={{ color: String(color), backgroundColor: String(soft) }}><MetricIcon size={17} aria-hidden="true" /></span><p className="mt-2 text-2xl font-bold">{String(value)}</p><p className="app-muted-text text-xs font-bold">{String(label)}</p></div>; })}</div>
+          </div>
+        </section>
+
+        <section className="grid gap-4 md:grid-cols-2">
+          <Link href={`${basePath}/ai-experience`} className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><MessageCircleMore size={21} aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1"><b className="block text-base">智能交流体验</b><span className="app-muted-text mt-1 block text-xs leading-5">进入智能口语陪练，开始即时对话与表达练习。</span></span>
+            <ArrowRight className="shrink-0 transition group-hover:translate-x-1" size={18} style={{ color: "var(--primary)" }} aria-hidden="true" />
+          </Link>
+          <Link href={`${basePath}/course`} className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}><BookOpen size={21} aria-hidden="true" /></span>
+            <span className="min-w-0 flex-1"><b className="block text-base">进入课程</b><span className="app-muted-text mt-1 block text-xs leading-5">返回课程中心，继续系统学习与巩固表达。</span></span>
+            <ArrowRight className="shrink-0 transition group-hover:translate-x-1" size={18} style={{ color: "var(--status-success)" }} aria-hidden="true" />
+          </Link>
+        </section>
+
+        {(scenariosResult.error || progressResult.error) && <section role="alert" className="rounded-2xl border p-4 text-sm font-bold" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)", borderColor: "var(--status-warning)" }}>会话练习数据暂时无法读取，请稍后刷新重试。</section>}
+
+        <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
+          {scenarios.map((scenario) => {
+            const itemProgress = progressByScenario.get(scenario.id);
+            const tone = difficultyTone[scenario.difficulty];
+            return (
+              <div key={scenario.id} className="app-card group relative h-full rounded-[1.75rem] border p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
+                <Link href={`${basePath}/${scenario.id}`} aria-label={scenario.title} className="absolute inset-0 rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2" />
+                <div className="pointer-events-none relative flex h-full flex-col">
+                  <div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>{CONVERSATION_CATEGORY_LABELS[scenario.category]}</span><span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: tone.color, backgroundColor: tone.soft }}>{CONVERSATION_DIFFICULTY_LABELS[scenario.difficulty]}</span>{scenario.is_featured && <span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}>推荐</span>}<ArrowRight className="ml-auto transition group-hover:translate-x-1" size={16} aria-hidden="true" /></div>
+                  <DashboardTitleWithHint className="mt-4" title={scenario.title} description={scenario.description || "打开场景查看完整情景、示范对话和重点表达。"} headingLevel={2} hintClassName="pointer-events-auto relative z-10" titleClassName="text-lg font-bold leading-7" />
+                  <div className="mt-auto flex items-end justify-between gap-3 border-t pt-4" style={{ borderColor: "var(--border-subtle)" }}><span className="app-muted-text inline-flex items-center gap-1 text-xs font-bold"><Clock3 size={12} aria-hidden="true" />建议 {scenario.duration_minutes} 分钟</span>{itemProgress && <span className="text-xs font-bold" style={{ color: itemProgress.status === "completed" ? "var(--status-success)" : "var(--primary)" }}>{itemProgress.status === "completed" ? "已掌握" : `已练习 ${itemProgress.practice_count} 次`}</span>}</div>
+                </div>
+              </div>
+            );
+          })}
+          {!scenariosResult.error && scenarios.length === 0 && <div className="app-card col-span-full rounded-[1.75rem] border border-dashed p-8 text-center"><MessagesSquare className="mx-auto opacity-30" size={36} aria-hidden="true" /><h2 className="mt-4 font-bold">当前还没有开放的会话场景</h2><p className="app-muted-text mt-2 text-sm">后台发布第一个场景后，会自动显示在这里。</p></div>}
+        </section>
+      </div>
+    </div>
+  );
+}
