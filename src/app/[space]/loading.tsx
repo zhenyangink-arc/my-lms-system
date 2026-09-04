@@ -5,7 +5,7 @@ export default function StudentPortalLoading() {
       aria-label="正在加载学生应用门户"
       aria-busy="true"
     >
-      <div className="mx-auto w-full max-w-[1440px] animate-pulse space-y-6 motion-reduce:animate-none">
+      <div className="mx-auto w-full max-w-[1680px] animate-pulse space-y-6 motion-reduce:animate-none">
         <div className="grid items-end gap-5 px-1 py-4 lg:grid-cols-[minmax(17rem,0.65fr)_minmax(0,1.35fr)] lg:gap-8 lg:py-6">
           <div>
             <div className="h-10 w-56 rounded-xl bg-slate-200/80" />

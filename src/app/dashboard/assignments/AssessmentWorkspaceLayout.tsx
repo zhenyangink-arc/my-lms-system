@@ -87,7 +87,7 @@ export function AssessmentWorkspaceLayout({
   return (
     <div className="assessment-workspace min-h-svh">
       <header className="assessment-workspace-nav sticky top-0 z-50 border-b">
-        <div className="mx-auto flex min-h-16 w-full max-w-[1440px] flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2 sm:px-5 lg:min-h-[72px] lg:flex-nowrap lg:px-8">
+        <div className="mx-auto flex min-h-16 w-full max-w-[1680px] flex-wrap items-center gap-x-4 gap-y-2 px-3 py-2 sm:px-5 lg:min-h-[72px] lg:flex-nowrap lg:px-8">
           <div className="flex min-w-0 flex-1 items-center gap-2 lg:flex-none">
             <Link
               href={scopeDashboardPath("/dashboard", dashboardBasePath)}

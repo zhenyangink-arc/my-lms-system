@@ -564,7 +564,7 @@ export async function DeepLearningPage({
     }
 
     return (
-      <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+      <div className="mx-auto w-full max-w-[1680px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
         <LazyKnowledgeResearchWorkbench
           chapterSlug={selectedKnowledgeChapter.slug}
           courseTitle={selectedCourse.title}
@@ -603,7 +603,7 @@ export async function DeepLearningPage({
   }
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <div className="mx-auto w-full max-w-[1680px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       {!forcedArea && <nav className="app-card mt-4 grid grid-cols-3 gap-1 rounded-2xl border p-1.5" aria-label="深化学习功能">
         <Link
           href="?area=knowledge"

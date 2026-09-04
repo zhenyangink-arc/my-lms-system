@@ -56,7 +56,7 @@ export function PracticeSectionIntro({ basePath }: { basePath: string }) {
   const Icon = introduction.icon;
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 pt-4 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-[1680px] px-4 pt-4 sm:px-6 lg:px-8">
       <section
         className="app-card relative overflow-hidden rounded-[28px] border p-5 sm:p-6"
         aria-labelledby={`practice-intro-${introduction.slug}`}

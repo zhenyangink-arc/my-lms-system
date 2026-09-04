@@ -31,7 +31,7 @@ export function PracticeHubNavigation({ basePath }: { basePath: string }) {
   const pathname = usePathname();
 
   return (
-    <div className="mx-auto w-full max-w-[1440px] px-4 pt-5 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-[1680px] px-4 pt-5 sm:px-6 lg:px-8">
       <nav
         className="app-card grid grid-cols-3 gap-1.5 rounded-2xl border p-1.5"
         aria-label="巩固中心功能"

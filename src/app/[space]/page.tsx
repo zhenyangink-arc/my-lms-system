@@ -536,7 +536,7 @@ export default async function StudentPortalPage({
         className="relative min-h-screen scroll-mt-24 overflow-hidden bg-[#f3f5f2] px-4 pb-12 pt-28 text-slate-950 sm:px-6 lg:px-8"
       >
         <span aria-hidden="true" className="pointer-events-none absolute -left-48 top-16 size-[30rem] rounded-full bg-emerald-100/55 blur-3xl" />
-        <div className="relative mx-auto w-full max-w-[1440px] space-y-6">
+        <div className="relative mx-auto w-full max-w-[1680px] space-y-6">
           <PortalAskBar greeting={getGreeting()} userName={userName} />
 
           <div className="grid items-stretch gap-5 xl:grid-cols-[minmax(22rem,0.72fr)_minmax(0,1.28fr)]">

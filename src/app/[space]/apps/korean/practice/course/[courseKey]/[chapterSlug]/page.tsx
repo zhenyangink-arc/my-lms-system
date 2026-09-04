@@ -102,7 +102,7 @@ export default async function KoreanKnowledgeResearchLessonPage({
     : skillsBasePath;
 
   return (
-    <main className="mx-auto w-full max-w-[1440px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
+    <main className="mx-auto w-full max-w-[1680px] overflow-x-clip px-4 py-5 sm:px-6 sm:py-6 lg:px-8">
       <ChapterPracticeDetail
         unit={practiceUnit}
         courseKey={course.slug}
