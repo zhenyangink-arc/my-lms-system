@@ -68,7 +68,7 @@ function formatDuration(seconds: number) {
   return `${minutes} 分 ${String(remainingSeconds).padStart(2, "0")} 秒`;
 }
 
-export function FormalConversationPractice() {
+export function FormalConversationPractice({ basePath }: { basePath: string }) {
   const [phase, setPhase] = useState<"setup" | "session" | "summary">("setup");
   const [scenario, setScenario] = useState<(typeof scenarios)[number]>("自由交流");
   const [difficulty, setDifficulty] = useState<FormalPracticeConfig["difficulty"]>("beginner");
@@ -134,6 +134,7 @@ export function FormalConversationPractice() {
     return (
       <ConversationAiExperience
         variant="formal"
+        basePath={basePath}
         formalConfig={config}
         formalSessionKey={sessionKey ?? undefined}
         onFormalFinish={(result) => {
@@ -204,7 +205,7 @@ export function FormalConversationPractice() {
               <RotateCcw size={15} aria-hidden="true" />再练一次
             </button>
             <Link
-              href="/dashboard/conversation-practice/ai-experience"
+              href={`${basePath}/ai-experience`}
               className="app-card inline-flex h-11 items-center justify-center gap-2 rounded-xl border px-5 text-sm font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2"
             >
               返回智能交流 <ArrowRight size={15} aria-hidden="true" />
@@ -217,7 +218,7 @@ export function FormalConversationPractice() {
 
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-8 sm:px-6 lg:px-8">
-      <Link href="/dashboard/conversation-practice/ai-experience" className="app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+      <Link href={`${basePath}/ai-experience`} className="app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
         <ArrowLeft size={14} aria-hidden="true" />返回练习方式
       </Link>
       <section className="app-card overflow-hidden rounded-[2rem] border">

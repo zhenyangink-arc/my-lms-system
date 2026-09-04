@@ -1,5 +1,10 @@
 import { DashboardTitleWithHint } from "@/app/dashboard/DashboardTitleWithHint";
-import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import {
+  getConversationPracticeAccess,
+  getConversationPracticeBasePath,
+} from "@/lib/conversation-practice";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
+import { getManagementAppPath } from "@/lib/management-app-path";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
 import { requireStudentPageFeature } from "@/lib/student-permissions-server";
@@ -87,7 +92,8 @@ export default async function ConversationScenarioPage({
 }: {
   params: Promise<{ scenarioId: string }>;
 }) {
-  await requireStudentPageFeature("conversation_course");
+  const { tenant } = await requireStudentPageFeature("conversation_course");
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
   const { scenarioId } = await params;
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
   const [scenarioResult, progressResult] = await Promise.all([
@@ -130,7 +136,7 @@ export default async function ConversationScenarioPage({
             请稍后刷新页面重试，或返回会话练习选择其他场景。
           </p>
           <Link
-            href="/dashboard/conversation-practice"
+            href={basePath}
             className={`mt-5 inline-flex items-center gap-2 rounded-xl px-4 py-3 text-sm font-bold ${focusRing}`}
             style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}
           >
@@ -151,7 +157,7 @@ export default async function ConversationScenarioPage({
   return (
     <div className="mx-auto w-full max-w-[1500px] space-y-5 px-4 py-6 sm:px-6 lg:px-8">
       <Link
-        href="/dashboard/conversation-practice"
+        href={basePath}
         className={`app-muted-text inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}
       >
         <ArrowLeft size={14} aria-hidden="true" />返回会话练习
@@ -205,7 +211,7 @@ export default async function ConversationScenarioPage({
               <DashboardTitleWithHint headingLevel={2} titleClassName="font-bold" title="学生端只读预览" description="这里显示学生看到的已发布内容，不会写入练习记录。" />
             </div>
             <Link
-              href={`/dashboard/admin/conversation-practice/${scenario.id}`}
+              href={getManagementAppPath(getDashboardBasePath(tenant?.slug), "korean", "conversation")}
               className={`inline-flex items-center justify-center gap-1.5 rounded-xl px-4 py-2.5 text-xs font-bold ${focusRing}`}
               style={{ color: "var(--primary-foreground)", backgroundColor: "var(--support)" }}
             >

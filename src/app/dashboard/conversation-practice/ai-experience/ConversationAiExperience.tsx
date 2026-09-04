@@ -251,11 +251,13 @@ function readBlobAsBase64(blob: Blob) {
 
 export function ConversationAiExperience({
   variant = "quick",
+  basePath,
   formalConfig,
   formalSessionKey,
   onFormalFinish,
 }: {
   variant?: "quick" | "formal";
+  basePath: string;
   formalConfig?: FormalPracticeConfig;
   formalSessionKey?: string;
   onFormalFinish?: (summary: FormalPracticeSummary) => void;
@@ -924,7 +926,7 @@ export function ConversationAiExperience({
 
   return (
     <div className={`${styles.themeScope} mx-auto w-full max-w-[1500px] px-4 py-6 sm:px-6 lg:px-8`}>
-      <Link href="/dashboard/conversation-practice/ai-experience" className={`app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}>
+      <Link href={`${basePath}/ai-experience`} className={`app-muted-text mb-4 inline-flex items-center gap-2 rounded-lg text-xs font-bold ${focusRing}`}>
         <ArrowLeft size={14} aria-hidden="true" />返回练习方式
       </Link>
       <div className={`grid gap-5 ${isFormal ? "grid-cols-1" : "lg:grid-cols-[250px_minmax(0,1fr)]"}`}>

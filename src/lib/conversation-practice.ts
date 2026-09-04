@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { isValidRole, type UserRole } from "@/lib/admin";
 import { requireActiveUser } from "@/lib/auth";
 import { hasExplicitPermission } from "@/lib/permissions/access";
+import { getStudentAppPath } from "@/lib/student-apps";
 import { getTenantAppCapabilityContext } from "@/lib/tenant-app-capabilities";
 
 export type ConversationPracticeAccess = {
@@ -15,9 +16,15 @@ export type ConversationPracticeAccess = {
   canManageContent: boolean;
   role: UserRole;
   tenantId: string | null;
+  tenantSlug: string | null;
   supabase: Awaited<ReturnType<typeof requireActiveUser>>["supabase"];
   user: Awaited<ReturnType<typeof requireActiveUser>>["user"];
 };
+
+/** 会话练习功能固定挂在韩语应用下，租户内学生端页面都从这里拼接跳转路径。 */
+export function getConversationPracticeBasePath(tenantSlug: string | null) {
+  return getStudentAppPath(tenantSlug ?? "", "korean", "conversation-practice");
+}
 
 export async function getConversationPracticeAccess(
   studentAppId?: string,
@@ -25,6 +32,7 @@ export async function getConversationPracticeAccess(
   const { supabase, user, profile, tenant } = await requireActiveUser();
   const role = isValidRole(profile?.role) ? profile.role : "student";
   const tenantId = tenant?.id ?? null;
+  const tenantSlug = tenant?.slug ?? null;
 
   if (studentAppId && tenant) {
     const appAccess = await getTenantAppCapabilityContext(
@@ -36,6 +44,7 @@ export async function getConversationPracticeAccess(
       canManageContent: false,
       role,
       tenantId,
+      tenantSlug,
       supabase,
       user,
     };
@@ -48,6 +57,7 @@ export async function getConversationPracticeAccess(
       canManageContent,
       role,
       tenantId,
+      tenantSlug,
       supabase,
       user,
     };
@@ -55,11 +65,11 @@ export async function getConversationPracticeAccess(
 
   // 老师可浏览会话练习数据，但页面只显示自己负责的学生；不能新建/编辑场景。
   if (role === "teacher") {
-    return { canManage: true, canManageContent: false, role, tenantId, supabase, user };
+    return { canManage: true, canManageContent: false, role, tenantId, tenantSlug, supabase, user };
   }
 
   if (role !== "admin" || !tenant) {
-    return { canManage: false, canManageContent: false, role, tenantId, supabase, user };
+    return { canManage: false, canManageContent: false, role, tenantId, tenantSlug, supabase, user };
   }
 
   const assigned = await hasExplicitPermission(
@@ -74,6 +84,7 @@ export async function getConversationPracticeAccess(
     canManageContent: false,
     role,
     tenantId,
+    tenantSlug,
     supabase,
     user,
   };

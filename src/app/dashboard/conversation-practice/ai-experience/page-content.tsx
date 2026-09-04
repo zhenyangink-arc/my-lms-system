@@ -11,16 +11,18 @@ import {
   Timer,
 } from "lucide-react";
 
+import { getConversationPracticeBasePath } from "@/lib/conversation-practice";
 import { requireStudentPageFeature } from "@/lib/student-permissions-server";
 import styles from "./ai-experience.module.css";
 
 export default async function AiExperiencePage() {
-  await requireStudentPageFeature("ai_conversation_experience");
+  const { tenant } = await requireStudentPageFeature("ai_conversation_experience");
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
 
   return (
     <div className={`${styles.pageShell} min-h-[calc(100vh-76px)] pb-12`}>
       <div className="mx-auto w-full max-w-[1280px] px-4 pt-5 sm:px-6 lg:px-8">
-        <Link href="/dashboard/conversation-practice" className="app-muted-text inline-flex items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
+        <Link href={basePath} className="app-muted-text inline-flex items-center gap-2 rounded-lg text-xs font-bold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2">
           <ArrowLeft size={14} aria-hidden="true" />返回会话练习
         </Link>
         <header className="mx-auto max-w-3xl pb-7 pt-8 text-center sm:pt-12">
@@ -29,7 +31,7 @@ export default async function AiExperiencePage() {
 
         <section className="grid gap-5 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)]">
           <Link
-            href="/dashboard/conversation-practice/ai-experience/quick"
+            href={`${basePath}/ai-experience/quick`}
             className="app-card group flex min-h-[360px] flex-col overflow-hidden rounded-[2rem] border p-6 transition hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 sm:p-8"
           >
             <div className="flex items-start justify-between gap-4">
@@ -62,7 +64,7 @@ export default async function AiExperiencePage() {
           </Link>
 
           <Link
-            href="/dashboard/conversation-practice/ai-experience/practice"
+            href={`${basePath}/ai-experience/practice`}
             className="group relative flex min-h-[360px] flex-col overflow-hidden rounded-[2rem] border p-6 transition hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] focus-visible:ring-offset-2 sm:p-8"
             style={{ color: "var(--primary-foreground)", backgroundColor: "var(--primary)" }}
           >

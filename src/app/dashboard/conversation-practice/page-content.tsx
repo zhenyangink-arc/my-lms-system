@@ -4,9 +4,14 @@ import { ArrowRight, BookOpen, CheckCircle2, Clock3, Eye, MessageCircleMore, Mes
 import { redirect } from "next/navigation";
 
 import { requireActiveUser } from "@/lib/auth";
-import { getConversationPracticeAccess } from "@/lib/conversation-practice";
+import {
+  getConversationPracticeAccess,
+  getConversationPracticeBasePath,
+} from "@/lib/conversation-practice";
+import { getDashboardBasePath } from "@/lib/dashboard-path";
+import { getManagementAppPath } from "@/lib/management-app-path";
 import { withStudentAppSchemaFallback } from "@/lib/student-app-data";
-import { STUDENT_APP_IDS } from "@/lib/student-apps";
+import { STUDENT_APP_IDS, getStudentAppBasePath } from "@/lib/student-apps";
 import {
   canUseStudentFeature,
   normalizeMembershipTier,
@@ -37,9 +42,10 @@ const difficultyTone: Record<ConversationDifficulty, { color: string; soft: stri
 };
 
 export default async function ConversationPracticePage() {
-  const { profile } = await requireActiveUser();
+  const { profile, tenant } = await requireActiveUser();
   const userRole = profile?.role ?? "student";
   const tier = normalizeMembershipTier(profile?.membership_tier);
+  const basePath = getConversationPracticeBasePath(tenant?.slug ?? null);
   if (
     userRole === "student" &&
     !canUseStudentFeature(userRole, tier, "conversation_course")
@@ -47,9 +53,9 @@ export default async function ConversationPracticePage() {
     if (
       canUseStudentFeature(userRole, tier, "ai_conversation_experience")
     ) {
-      redirect("/dashboard/conversation-practice/ai-experience");
+      redirect(`${basePath}/ai-experience`);
     }
-    redirect("/dashboard");
+    redirect(getStudentAppBasePath(tenant?.slug ?? "", "korean"));
   }
 
   const { supabase, user, canManage, role } = await getConversationPracticeAccess();
@@ -96,7 +102,7 @@ export default async function ConversationPracticePage() {
       <div className="mx-auto mt-5 w-full max-w-[1500px] space-y-5 px-4 sm:px-6 lg:px-8">
         {canManage && (
           <div className="flex justify-end">
-            <Link href="/dashboard/admin/conversation-practice" className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={15} aria-hidden="true" /></Link>
+            <Link href={getManagementAppPath(getDashboardBasePath(tenant?.slug), "korean", "conversation")} className="inline-flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm font-bold text-white" style={{ backgroundColor: "var(--support)" }}>进入后台管理<ArrowRight size={15} aria-hidden="true" /></Link>
           </div>
         )}
         <section className="app-card overflow-hidden rounded-3xl border p-5 sm:p-6" style={{ background: "linear-gradient(125deg, var(--accent), var(--card), var(--accent))" }}>
@@ -107,12 +113,12 @@ export default async function ConversationPracticePage() {
         </section>
 
         <section className="grid gap-4 md:grid-cols-2">
-          <Link href="/dashboard/conversation-practice/ai-experience" className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
+          <Link href={`${basePath}/ai-experience`} className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}><MessageCircleMore size={21} aria-hidden="true" /></span>
             <span className="min-w-0 flex-1"><b className="block text-base">智能交流体验</b><span className="app-muted-text mt-1 block text-xs leading-5">进入智能口语陪练，开始即时对话与表达练习。</span></span>
             <ArrowRight className="shrink-0 transition group-hover:translate-x-1" size={18} style={{ color: "var(--primary)" }} aria-hidden="true" />
           </Link>
-          <Link href="/dashboard/conversation-practice/course" className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
+          <Link href={`${basePath}/course`} className="app-card group flex items-center gap-4 rounded-3xl border p-5 transition hover:-translate-y-0.5 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2">
             <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl" style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}><BookOpen size={21} aria-hidden="true" /></span>
             <span className="min-w-0 flex-1"><b className="block text-base">进入课程</b><span className="app-muted-text mt-1 block text-xs leading-5">返回课程中心，继续系统学习与巩固表达。</span></span>
             <ArrowRight className="shrink-0 transition group-hover:translate-x-1" size={18} style={{ color: "var(--status-success)" }} aria-hidden="true" />
@@ -127,7 +133,7 @@ export default async function ConversationPracticePage() {
             const tone = difficultyTone[scenario.difficulty];
             return (
               <div key={scenario.id} className="app-card group relative h-full rounded-[1.75rem] border p-5 transition hover:-translate-y-0.5 hover:shadow-lg">
-                <Link href={`/dashboard/conversation-practice/${scenario.id}`} aria-label={scenario.title} className="absolute inset-0 rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2" />
+                <Link href={`${basePath}/${scenario.id}`} aria-label={scenario.title} className="absolute inset-0 rounded-[1.75rem] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2" />
                 <div className="pointer-events-none relative flex h-full flex-col">
                   <div className="flex flex-wrap items-center gap-2"><span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}>{CONVERSATION_CATEGORY_LABELS[scenario.category]}</span><span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: tone.color, backgroundColor: tone.soft }}>{CONVERSATION_DIFFICULTY_LABELS[scenario.difficulty]}</span>{scenario.is_featured && <span className="rounded-full px-2.5 py-1 text-xs font-bold" style={{ color: "var(--status-warning)", backgroundColor: "var(--status-warning-surface)" }}>推荐</span>}<ArrowRight className="ml-auto transition group-hover:translate-x-1" size={16} aria-hidden="true" /></div>
                   <DashboardTitleWithHint className="mt-4" title={scenario.title} description={scenario.description || "打开场景查看完整情景、示范对话和重点表达。"} headingLevel={2} hintClassName="pointer-events-auto relative z-10" titleClassName="text-lg font-bold leading-7" />
