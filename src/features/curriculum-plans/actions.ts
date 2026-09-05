@@ -63,6 +63,17 @@ export async function createCurriculumTemplateAction(
     const courseId = courseIdValue ? uuid.parse(courseIdValue) : null;
     const supabase = await createClient();
 
+    if (courseId) {
+      const { data: course, error: courseError } = await supabase
+        .from("courses")
+        .select("id")
+        .eq("id", courseId)
+        .eq("student_app_id", access.appId)
+        .eq("content_scope", "platform")
+        .maybeSingle();
+      if (courseError || !course) throw new Error("只能选择当前韩语应用的平台课程。");
+    }
+
     let version = 1;
     if (courseId) {
       const { data } = await supabase
@@ -108,27 +119,74 @@ export async function addCurriculumTemplateItemAction(
     const day = z.coerce.number().int().min(1).max(366).parse(text(formData, "day"));
     const startTime = z.string().regex(/^\d{2}:\d{2}$/).parse(text(formData, "start_time"));
     const [hour, minute] = startTime.split(":").map(Number);
+    if (hour < 9 || hour > 23 || minute > 59 || hour === 12 || hour === 18) {
+      throw new Error("开始时间需在 09:00–23:59，且避开 12 点和 18 点休息时段。");
+    }
     const durationMinutes = z.coerce.number().int().min(5).max(720).parse(text(formData, "duration_minutes"));
-    const title = z.string().min(1).max(200).parse(text(formData, "title"));
-    const destinationPath = text(formData, "destination_path");
+    const selectedActivityType = activityType.parse(text(formData, "activity_type"));
+    const lessonIdValue = text(formData, "lesson_id");
+    const lessonId = lessonIdValue ? uuid.parse(lessonIdValue) : null;
+    const customTitle = text(formData, "title");
+    let title = customTitle;
+    let destinationPath = text(formData, "destination_path");
+    let sourceType: "lesson" | "manual" = "manual";
+    let sourceId: string | null = null;
     if (destinationPath && !destinationPath.startsWith("/")) throw new Error("学习入口必须以 / 开头。");
     const supabase = await createClient();
     const { data: template, error: templateError } = await supabase
       .from("curriculum_plan_templates")
-      .select("id,duration_days,status,student_app_id")
+      .select("id,duration_days,status,student_app_id,course_id")
       .eq("id", templateId)
       .eq("student_app_id", access.appId)
       .single();
     if (templateError || !template || template.status !== "draft") throw new Error("只能编辑当前应用的草稿计划。");
     if (day > Number(template.duration_days)) throw new Error(`该计划只有 ${template.duration_days} 天。`);
+    if (selectedActivityType === "course") {
+      if (!lessonId || !template.course_id) throw new Error("课程学习必须绑定该计划课程中的真实课时。");
+      const { data: lesson, error: lessonError } = await supabase
+        .from("lessons")
+        .select("id,course_id,title,slug,is_published")
+        .eq("id", lessonId)
+        .eq("course_id", template.course_id)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (lessonError || !lesson) throw new Error("所选课时不存在、未发布或不属于该计划课程。");
+      const { data: course, error: courseError } = await supabase
+        .from("courses")
+        .select("id,slug,category_id,student_app_id,content_scope")
+        .eq("id", lesson.course_id)
+        .eq("student_app_id", access.appId)
+        .eq("content_scope", "platform")
+        .maybeSingle();
+      if (courseError || !course?.category_id) throw new Error("所选课时的课程路径不完整。");
+      const { data: subcategory, error: subcategoryError } = await supabase
+        .from("course_categories")
+        .select("id,slug,parent_id")
+        .eq("id", course.category_id)
+        .maybeSingle();
+      if (subcategoryError || !subcategory?.parent_id) throw new Error("所选课时的课程分类路径不完整。");
+      const { data: parent, error: parentError } = await supabase
+        .from("course_categories")
+        .select("id,slug")
+        .eq("id", subcategory.parent_id)
+        .maybeSingle();
+      if (parentError || !parent) throw new Error("所选课时的上级课程分类不存在。");
+      title = customTitle || String(lesson.title);
+      destinationPath = `/dashboard/courses/${parent.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`;
+      sourceType = "lesson";
+      sourceId = String(lesson.id);
+    } else {
+      if (lessonId) throw new Error("只有课程学习活动可以绑定课时。");
+      title = z.string().min(1).max(200).parse(customTitle);
+    }
     const { error } = await supabase.from("curriculum_plan_template_items").insert({
       template_id: templateId,
       day_offset: day - 1,
       start_minute: hour * 60 + minute,
       duration_minutes: durationMinutes,
-      activity_type: activityType.parse(text(formData, "activity_type")),
-      source_type: "manual",
-      source_id: null,
+      activity_type: selectedActivityType,
+      source_type: sourceType,
+      source_id: sourceId,
       title,
       destination_path: destinationPath || null,
       instructions: text(formData, "instructions") || null,
@@ -160,13 +218,16 @@ export async function publishCurriculumTemplateAction(
       .select("id", { count: "exact", head: true })
       .eq("template_id", templateId);
     if (countError || !count) throw new Error("至少添加一个计划项目后才能发布。");
-    const { error } = await supabase
+    const { data: publishedTemplate, error } = await supabase
       .from("curriculum_plan_templates")
       .update({ status: "published", published_by: access.userId, published_at: new Date().toISOString() })
       .eq("id", templateId)
       .eq("student_app_id", access.appId)
-      .eq("status", "draft");
+      .eq("status", "draft")
+      .select("id")
+      .maybeSingle();
     if (error) throw new Error(error.message);
+    if (!publishedTemplate) throw new Error("该草稿不存在或已被其他人发布，请刷新页面。");
     revalidatePath(path);
     redirect(resultPath(path, "success", "标准计划已发布，机构现在可以采用。"));
   } catch (error) {
@@ -218,25 +279,16 @@ export async function publishInstitutionCurriculumPlanAction(
         .in("student_id", studentIds);
       if (error || data?.length !== studentIds.length) throw new Error("老师只能向自己负责的学生发布计划。");
     }
-    const publishedAt = new Date().toISOString();
-    const title = text(formData, "title") || template.title;
-    const { data: plan, error: planError } = await supabase
-      .from("institution_curriculum_plans")
-      .insert({
-        tenant_id: access.tenantId!, student_app_id: access.appId, template_id: templateId,
-        title, starts_at: startsAt.toISOString(), ends_at: endsAt.toISOString(), status: "published",
-        created_by: access.userId, published_by: access.userId, published_at: publishedAt,
-      })
-      .select("id")
-      .single();
-    if (planError || !plan) throw new Error(planError?.message ?? "机构计划创建失败。");
-    const { error: assignmentError } = await supabase.from("institution_curriculum_plan_students").insert(
-      studentIds.map((studentId) => ({ plan_id: plan.id, tenant_id: access.tenantId!, student_id: studentId, assigned_by: access.userId })),
-    );
-    if (assignmentError) {
-      await supabase.from("institution_curriculum_plans").delete().eq("id", plan.id);
-      throw new Error(assignmentError.message);
-    }
+    const title = z.string().min(1).max(180).parse(text(formData, "title") || template.title);
+    const { error: publishError } = await supabase.rpc("publish_institution_curriculum_plan", {
+      p_student_app_id: access.appId,
+      p_template_id: templateId,
+      p_title: title,
+      p_starts_at: startsAt.toISOString(),
+      p_ends_at: endsAt.toISOString(),
+      p_student_ids: studentIds,
+    });
+    if (publishError) throw new Error(publishError.message);
     revalidatePath(path);
     revalidatePath(`/${space}/apps/korean`);
     redirect(resultPath(path, "success", "机构学习计划已发布，学生端会按实际日期显示。"));

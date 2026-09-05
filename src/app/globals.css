@@ -4941,6 +4941,26 @@ a:hover > .student-system-recent-row {
   background: #f1eafa;
 }
 
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="student_plan"] {
+  background: #e8f7ef;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="student_plan"][data-activity="course"] {
+  background: #eaf3ff;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="student_plan"]:is([data-activity="vocabulary"], [data-activity="grammar"]) {
+  background: #fff3d9;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="student_plan"]:is([data-activity="reading"], [data-activity="writing"], [data-activity="review"]) {
+  background: #f1eafa;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="student_plan"]:is([data-activity="chapter_test"], [data-activity="stage_exam"], [data-activity="final_exam"]) {
+  background: #f7e8f0;
+}
+
 .app-shell[data-student-app="korean"] .korean-schedule-card > span,
 .app-shell[data-student-app="korean"] .korean-schedule-card > strong,
 .app-shell[data-student-app="korean"] .korean-schedule-card > small {
@@ -5095,6 +5115,7 @@ a:hover > .student-system-recent-row {
 }
 
 .app-shell[data-student-app="korean"] .korean-week-slot {
+  position: relative;
   min-width: 0;
   min-height: 30px;
   border-top: 1px solid #edf1ee;
@@ -5133,7 +5154,17 @@ a:hover > .student-system-recent-row {
 }
 
 .app-shell[data-student-app="korean"] .korean-week-slot .korean-week-more {
-  min-height: 20px;
+  position: absolute;
+  top: 2px;
+  right: 4px;
+  z-index: 1;
+  min-height: 0;
+  border-radius: 999px;
+  padding: 1px 3px;
+  color: #66716e;
+  background: rgba(255, 255, 255, 0.86);
+  font-size: 7px;
+  line-height: 1.2;
 }
 
 .app-shell[data-student-app="korean"] .korean-quick-start {
@@ -6346,6 +6377,31 @@ html
 .app-shell[data-student-app="korean"][data-student-background="night"]
   .korean-schedule-card[data-source="review"] {
   background: #2c2638;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="student_plan"] {
+  background: #1b3028;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="student_plan"][data-activity="course"] {
+  background: #1c2a39;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="student_plan"]:is([data-activity="vocabulary"], [data-activity="grammar"]) {
+  background: #352c1d;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="student_plan"]:is([data-activity="reading"], [data-activity="writing"], [data-activity="review"]) {
+  background: #2c2638;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="student_plan"]:is([data-activity="chapter_test"], [data-activity="stage_exam"], [data-activity="final_exam"]) {
+  background: #33242d;
 }
 
 .app-shell[data-student-app="korean"][data-student-background="night"]

@@ -264,7 +264,7 @@ export async function loadPublishedStudentCurriculumTasks({
         description: plan.title,
         status: schedule.endsAt < now
           ? item.isRequired ? "overdue" : "available"
-          : schedule.startsAt <= now ? "in_progress" : "available",
+          : schedule.startsAt <= now ? "in_progress" : "not_started",
         priority: item.isRequired ? "high" : "normal",
         required: item.isRequired,
         startsAt: schedule.startsAt.toISOString(),

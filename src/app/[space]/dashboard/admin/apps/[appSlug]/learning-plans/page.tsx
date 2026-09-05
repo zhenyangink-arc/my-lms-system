@@ -45,6 +45,22 @@ export default async function CurriculumLearningPlansPage({
       .order("sort_order"),
   ]);
   if (courseResult.error) throw new Error("课程目录读取失败", { cause: courseResult.error });
+  const courseRows = courseResult.data ?? [];
+  const courseIds = courseRows.map((course) => String(course.id));
+  const lessonResult = context.access.scope === "platform" && courseIds.length
+    ? await supabase
+        .from("lessons")
+        .select("id,course_id,title")
+        .in("course_id", courseIds)
+        .eq("is_published", true)
+        .order("sort_order")
+    : { data: [], error: null };
+  if (lessonResult.error) throw new Error("课时目录读取失败", { cause: lessonResult.error });
+  const lessons = (lessonResult.data ?? []).map((lesson) => ({
+    id: String(lesson.id),
+    courseId: String(lesson.course_id),
+    title: String(lesson.title),
+  }));
 
   return (
     <ManagementApplicationSectionFrame {...context}>
@@ -52,7 +68,8 @@ export default async function CurriculumLearningPlansPage({
         space={space}
         appSlug={appSlug}
         scope={context.access.scope}
-        courses={(courseResult.data ?? []).map((course) => ({ id: String(course.id), title: String(course.title) }))}
+        courses={courseRows.map((course) => ({ id: String(course.id), title: String(course.title) }))}
+        lessons={lessons}
         {...workspace}
         success={first(query.success)}
         error={first(query.error)}

@@ -148,6 +148,20 @@ const TASK_SOURCE_LABELS: Record<HomeLearningTask["sourceType"], string> = {
   student_plan: "学习计划",
 };
 
+const PLAN_ACTIVITY_LABELS: Record<string, string> = {
+  course: "课程学习",
+  listening: "听力练习",
+  speaking: "口语练习",
+  reading: "阅读练习",
+  writing: "写作练习",
+  vocabulary: "单词练习",
+  grammar: "语法练习",
+  chapter_test: "章节测试",
+  stage_exam: "阶段考试",
+  final_exam: "结课考试",
+  review: "复习整理",
+};
+
 const TASK_STATUS_LABELS: Record<HomeLearningTask["status"], string> = {
   not_started: "未开始",
   available: "可开始",
@@ -188,18 +202,21 @@ function buildCurrentWeek(nowISOString: string) {
 }
 
 function taskDateKey(task: HomeLearningTask) {
-  const value = task.dueAt ?? task.startsAt;
+  const value = task.startsAt ?? task.dueAt;
   return value ? toSeoulDateKey(value) : null;
 }
 
-function taskTimeLabel(task: HomeLearningTask, fallbackToday: boolean) {
-  if (task.dueAt) return `截止 ${SEOUL_TIME.format(new Date(task.dueAt))}`;
+function taskTimeLabel(task: HomeLearningTask) {
+  if (task.startsAt && task.dueAt) {
+    return `${SEOUL_TIME.format(new Date(task.startsAt))}–${SEOUL_TIME.format(new Date(task.dueAt))}`;
+  }
   if (task.startsAt) return `开始 ${SEOUL_TIME.format(new Date(task.startsAt))}`;
-  return fallbackToday ? "今日重点" : null;
+  if (task.dueAt) return `截止 ${SEOUL_TIME.format(new Date(task.dueAt))}`;
+  return "时间待定";
 }
 
 function taskScheduleHour(task: HomeLearningTask) {
-  const value = task.dueAt ?? task.startsAt;
+  const value = task.startsAt ?? task.dueAt;
   if (!value) return 9;
   const hour = Number(SEOUL_TIME.format(new Date(value)).slice(0, 2));
   const boundedHour = Math.max(
@@ -293,7 +310,7 @@ function WeeklyLearningPlan({
                     taskDateKey(task) === day.dateString &&
                     taskScheduleHour(task) === slot.hour,
                 );
-                const visibleTasks = datedTasks.slice(0, 2);
+                const visibleTasks = datedTasks.slice(0, 1);
                 const hiddenCount = Math.max(
                   0,
                   datedTasks.length - visibleTasks.length,
@@ -311,11 +328,12 @@ function WeeklyLearningPlan({
                         href={task.href}
                         className="korean-schedule-card"
                         data-source={task.sourceType}
+                        data-activity={task.sourceType === "student_plan" ? task.skill ?? undefined : undefined}
                       >
-                        <span>{TASK_SOURCE_LABELS[task.sourceType]}</span>
+                        <span>{task.sourceType === "student_plan" ? PLAN_ACTIVITY_LABELS[task.skill ?? ""] ?? TASK_SOURCE_LABELS.student_plan : TASK_SOURCE_LABELS[task.sourceType]}</span>
                         <strong>{task.title}</strong>
                         <small>
-                          {taskTimeLabel(task, false)} · {TASK_STATUS_LABELS[task.status]}
+                          {taskTimeLabel(task)} · {TASK_STATUS_LABELS[task.status]}
                         </small>
                       </Link>
                     ))}
