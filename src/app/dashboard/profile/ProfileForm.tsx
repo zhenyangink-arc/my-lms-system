@@ -1,0 +1,773 @@
+"use client";
+
+import { ChangeEvent, useActionState, useMemo, useState } from "react";
+import {
+  AlertCircle,
+  Camera,
+  CheckCircle2,
+  Gauge,
+  GraduationCap,
+  LoaderCircle,
+  Save,
+  UserRound,
+} from "lucide-react";
+
+import { CHINA_PROVINCES, CHINA_REGION_CITIES } from "./china-cities";
+import { updateProfileAction } from "./actions";
+import { initialUpdateProfileState } from "./profile-state";
+
+export type StudentProfileInitialValue = {
+  fullName: string;
+  gender: string;
+  birthDate: string;
+  avatarUrl: string | null;
+  province: string;
+  city: string;
+  educationLevel: string;
+  educationStatus: string;
+  completionDate: string;
+  academicAverage: string;
+  gaokaoHasScore: boolean | null;
+  gaokaoScore: string;
+  englishLevel: string;
+  mathLevel: string;
+  hasKorean: boolean | null;
+  topikLevel: string;
+  hasWorkExperience: boolean | null;
+};
+
+const BIRTH_YEARS = Array.from({ length: 81 }, (_, index) => String(2020 - index));
+const MONTHS = Array.from({ length: 12 }, (_, index) => String(index + 1).padStart(2, "0"));
+const ABILITY_LEVELS = [
+  ["A1", "低"],
+  ["A2", "中下"],
+  ["B1", "中"],
+  ["B2", "中上"],
+  ["C1", "高"],
+  ["C2", "极高"],
+] as const;
+const LOWER_EDUCATION_LEVELS = new Set(["high_school", "secondary_vocational", "technical_school"]);
+
+function daysInMonth(yearText: string, monthText: string) {
+  const year = Number(yearText);
+  const month = Number(monthText);
+  if (!year || !month) return 31;
+  if (month === 2) {
+    const leapYear = year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
+    return leapYear ? 29 : 28;
+  }
+  return [4, 6, 9, 11].includes(month) ? 30 : 31;
+}
+
+function booleanValue(value: boolean | null) {
+  if (value === true) return "yes";
+  if (value === false) return "no";
+  return "";
+}
+
+function isValidDottedDate(value: string) {
+  const match = /^(\d{4})\.(0[1-9]|1[0-2])\.(0[1-9]|[12]\d|3[01])$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  if (year < 1900 || year > 2100) return false;
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() === month - 1 && date.getUTCDate() === day;
+}
+
+function ProfileTableSection({
+  icon: Icon,
+  title,
+  simple = false,
+}: {
+  icon: typeof UserRound;
+  title: string;
+  simple?: boolean;
+}) {
+  if (simple) {
+    return (
+      <tr className="border-y border-slate-200 bg-slate-50">
+        <th colSpan={3} className="px-4 py-2 text-left text-xs font-bold text-slate-900 sm:px-5">
+          {title}
+        </th>
+      </tr>
+    );
+  }
+
+  return (
+    <tr
+      className="border-y"
+      style={{
+        backgroundColor: "color-mix(in srgb, var(--accent) 58%, var(--primary) 42%)",
+        borderColor: "color-mix(in srgb, var(--primary) 62%, var(--border))",
+      }}
+    >
+      <th colSpan={3} className="px-4 py-2 text-left sm:px-5">
+        <span className="flex items-center gap-2.5 text-base font-bold" style={{ color: "var(--primary-hover)" }}>
+          <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-white/65">
+            <Icon size={18} style={{ color: "var(--primary)" }} aria-hidden="true" />
+          </span>
+          {title}
+        </span>
+      </th>
+    </tr>
+  );
+}
+
+function ProfileTableRow({
+  number,
+  label,
+  children,
+  simple = false,
+}: {
+  number: number;
+  label: string;
+  children: React.ReactNode;
+  simple?: boolean;
+}) {
+  return (
+    <tr className={simple ? "border-t border-slate-200 align-top" : "border-t align-top app-divider"}>
+      <td className="w-14 px-3 py-2 text-center sm:w-16 sm:px-4 sm:py-2">
+        {simple ? (
+          <span className="text-xs font-semibold tabular-nums text-slate-400">{String(number).padStart(2, "0")}</span>
+        ) : (
+          <span className="inline-flex h-7 min-w-7 items-center justify-center rounded-full px-2 text-xs font-bold text-white" style={{ backgroundColor: "var(--primary)" }}>
+            {number}
+          </span>
+        )}
+      </td>
+      <th scope="row" className={simple ? "w-32 px-3 py-2 text-left text-xs font-semibold text-slate-700 sm:w-40 sm:px-5" : "w-32 px-3 py-2 text-left text-xs font-bold sm:w-44 sm:px-5"}>
+        {label}
+      </th>
+      <td className="min-w-[260px] px-3 py-2 sm:px-5 sm:py-2">{children}</td>
+    </tr>
+  );
+}
+
+function ProfileDialogSection({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: typeof UserRound;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className="border-0 border-b border-slate-200 pb-6 last:border-b-0 last:pb-0">
+      <legend className="w-full p-0">
+        <span className="inline-flex items-center gap-2 text-sm font-bold text-slate-900">
+          <Icon size={17} className="text-emerald-700" aria-hidden="true" />
+          {title}
+        </span>
+      </legend>
+      <div className="mt-4 grid gap-4 sm:grid-cols-2">{children}</div>
+    </fieldset>
+  );
+}
+
+function ProfileDialogField({
+  label,
+  htmlFor,
+  wide = false,
+  children,
+}: {
+  label: string;
+  htmlFor?: string;
+  wide?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={wide ? "sm:col-span-2" : undefined}>
+      {htmlFor ? (
+        <label
+          htmlFor={htmlFor}
+          className="mb-2 block text-sm font-bold text-slate-700"
+        >
+          {label}
+        </label>
+      ) : (
+        <span className="mb-2 block text-sm font-bold text-slate-700">
+          {label}
+        </span>
+      )}
+      {children}
+    </div>
+  );
+}
+
+export function ProfileForm({
+  initialValue,
+  variant = "default",
+}: {
+  initialValue: StudentProfileInitialValue;
+  variant?: "default" | "dialog";
+}) {
+  const simple = variant === "dialog";
+  const fieldClass = simple
+    ? "min-h-11 w-full rounded-lg border border-slate-200 bg-slate-50/70 px-3.5 py-2.5 text-base font-medium text-slate-900 outline-none transition focus:border-emerald-600 focus:bg-white focus:ring-2 focus:ring-emerald-100 sm:text-sm"
+    : "profile-table-input w-full rounded-2xl border px-3.5 py-3 text-sm font-semibold outline-none transition";
+  const inputSurfaceClass = simple
+    ? "border-slate-300 bg-white focus-within:border-indigo-500 focus-within:ring-2 focus-within:ring-indigo-100"
+    : "profile-table-input";
+  const [state, formAction, pending] = useActionState(updateProfileAction, initialUpdateProfileState);
+  const birthParts = initialValue.birthDate ? initialValue.birthDate.split("-") : ["", "", ""];
+  const [birthYear, setBirthYear] = useState(birthParts[0] ?? "");
+  const [birthMonth, setBirthMonth] = useState(birthParts[1] ?? "");
+  const [birthDay, setBirthDay] = useState(birthParts[2] ?? "");
+  const [province, setProvince] = useState(initialValue.province);
+  const [city, setCity] = useState(initialValue.city);
+  const [educationLevel, setEducationLevel] = useState(initialValue.educationLevel);
+  const [educationStatus, setEducationStatus] = useState(initialValue.educationStatus);
+  const [completionDate, setCompletionDate] = useState(initialValue.completionDate);
+  const [academicAverage, setAcademicAverage] = useState(initialValue.academicAverage);
+  const [gaokaoHasScore, setGaokaoHasScore] = useState(booleanValue(initialValue.gaokaoHasScore));
+  const [hasKorean, setHasKorean] = useState(booleanValue(initialValue.hasKorean));
+  const [photoPreview, setPhotoPreview] = useState(initialValue.avatarUrl);
+
+  const cityOptions = CHINA_REGION_CITIES[province] ?? [];
+  const dayOptions = useMemo(
+    () => Array.from({ length: daysInMonth(birthYear, birthMonth) }, (_, index) => String(index + 1).padStart(2, "0")),
+    [birthYear, birthMonth]
+  );
+  const needsGaokao = LOWER_EDUCATION_LEVELS.has(educationLevel);
+  const completionDateWarning = completionDate !== "" && !isValidDottedDate(completionDate);
+  const academicAverageNumber = Number(academicAverage);
+  const academicAverageWarning =
+    academicAverage !== "" &&
+    (!Number.isFinite(academicAverageNumber) || academicAverageNumber < 0 || academicAverageNumber > 100);
+
+  function handleProvinceChange(event: ChangeEvent<HTMLSelectElement>) {
+    const nextProvince = event.target.value;
+    setProvince(nextProvince);
+    setCity(CHINA_REGION_CITIES[nextProvince]?.[0] ?? "");
+  }
+
+  function handlePhotoChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    if (!Object.hasOwn({ "image/jpeg": true, "image/png": true, "image/webp": true }, file.type) || file.size > 2 * 1024 * 1024) {
+      event.target.value = "";
+      return;
+    }
+    // 使用本地数据地址即时预览，真正的私有存储上传仍由服务端完成。
+    const reader = new FileReader();
+    reader.onload = () => setPhotoPreview(typeof reader.result === "string" ? reader.result : initialValue.avatarUrl);
+    reader.readAsDataURL(file);
+  }
+
+  const abilityRowStart = needsGaokao ? 11 : 10;
+
+  if (simple) {
+    return (
+      <form action={formAction} className="space-y-6 rounded-2xl bg-white p-4 sm:p-5">
+        <ProfileDialogSection icon={UserRound} title="基本信息">
+          <ProfileDialogField label="个人照片" wide>
+            <div className="flex flex-wrap items-center gap-4">
+              <span
+                className="flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-slate-100 bg-cover bg-center text-base font-bold text-slate-500"
+                style={{
+                  backgroundImage: photoPreview
+                    ? `url("${photoPreview}")`
+                    : undefined,
+                }}
+              >
+                {!photoPreview && (initialValue.fullName.slice(0, 1) || "学")}
+              </span>
+              <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 rounded-lg border border-slate-200 bg-slate-50/70 px-4 text-sm font-bold text-slate-700 transition-colors hover:bg-slate-100 focus-within:ring-2 focus-within:ring-emerald-600 focus-within:ring-offset-2">
+                <Camera size={16} aria-hidden="true" />
+                更换照片
+                <input
+                  name="photo"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  className="sr-only"
+                  onChange={handlePhotoChange}
+                />
+              </label>
+            </div>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="真实姓名" htmlFor="dialog-profile-name">
+            <input
+              id="dialog-profile-name"
+              name="fullName"
+              required
+              minLength={2}
+              maxLength={50}
+              autoComplete="name"
+              defaultValue={initialValue.fullName}
+              aria-invalid={Boolean(state.fieldErrors?.fullName)}
+              aria-describedby={state.fieldErrors?.fullName ? "dialog-profile-name-error" : undefined}
+              className={fieldClass}
+            />
+            {state.fieldErrors?.fullName ? (
+              <span id="dialog-profile-name-error" className="mt-1.5 block text-xs font-bold text-red-600">
+                {state.fieldErrors.fullName}
+              </span>
+            ) : null}
+          </ProfileDialogField>
+
+          <ProfileDialogField label="性别">
+            <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="性别">
+              {[["male", "男"], ["female", "女"]].map(([value, label]) => (
+                <label
+                  key={value}
+                  className="flex min-h-11 cursor-pointer items-center justify-center gap-2 rounded-lg bg-slate-50 px-3 text-sm font-bold text-slate-700 ring-1 ring-inset ring-slate-200 transition-colors hover:bg-slate-100 focus-within:ring-2 focus-within:ring-emerald-600"
+                >
+                  <input
+                    name="gender"
+                    type="radio"
+                    value={value}
+                    required
+                    defaultChecked={initialValue.gender === value}
+                    className="accent-emerald-600"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="出生日期" wide>
+            <div className="grid grid-cols-3 overflow-hidden rounded-lg border border-slate-200 bg-slate-50/70 focus-within:border-emerald-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
+              <select
+                name="birthYear"
+                required
+                value={birthYear}
+                onChange={(event) => setBirthYear(event.target.value)}
+                className="min-h-11 min-w-0 bg-transparent px-3 text-base font-medium outline-none sm:text-sm"
+                aria-label="出生年份"
+              >
+                <option value="">年</option>
+                {BIRTH_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
+              </select>
+              <select
+                name="birthMonth"
+                required
+                value={birthMonth}
+                onChange={(event) => setBirthMonth(event.target.value)}
+                className="min-h-11 min-w-0 border-l border-slate-200 bg-transparent px-3 text-base font-medium outline-none sm:text-sm"
+                aria-label="出生月份"
+              >
+                <option value="">月</option>
+                {MONTHS.map((month) => <option key={month} value={month}>{month}</option>)}
+              </select>
+              <select
+                name="birthDay"
+                required
+                value={birthDay}
+                onChange={(event) => setBirthDay(event.target.value)}
+                className="min-h-11 min-w-0 border-l border-slate-200 bg-transparent px-3 text-base font-medium outline-none sm:text-sm"
+                aria-label="出生日期"
+              >
+                <option value="">日</option>
+                {dayOptions.map((day) => <option key={day} value={day}>{day}</option>)}
+              </select>
+            </div>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="省级地区" htmlFor="dialog-profile-province">
+            <select
+              id="dialog-profile-province"
+              name="province"
+              required
+              value={province}
+              onChange={handleProvinceChange}
+              className={fieldClass}
+            >
+              <option value="">请选择</option>
+              {CHINA_PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="市级地区" htmlFor="dialog-profile-city">
+            <select
+              id="dialog-profile-city"
+              name="city"
+              required
+              value={city}
+              onChange={(event) => setCity(event.target.value)}
+              disabled={!province}
+              className={`${fieldClass} disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-60`}
+            >
+              <option value="">请选择</option>
+              {cityOptions.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </ProfileDialogField>
+        </ProfileDialogSection>
+
+        <ProfileDialogSection icon={GraduationCap} title="教育经历与在校成绩">
+          <ProfileDialogField label="教育阶段" htmlFor="dialog-profile-education-level">
+            <select
+              id="dialog-profile-education-level"
+              name="educationLevel"
+              required
+              value={educationLevel}
+              onChange={(event) => setEducationLevel(event.target.value)}
+              className={fieldClass}
+            >
+              <option value="">请选择</option>
+              <option value="bachelor">本科</option>
+              <option value="associate">大专</option>
+              <option value="high_school">高中</option>
+              <option value="secondary_vocational">中专</option>
+              <option value="technical_school">技工学校</option>
+            </select>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="就读状态" htmlFor="dialog-profile-education-status">
+            <select
+              id="dialog-profile-education-status"
+              name="educationStatus"
+              required
+              value={educationStatus}
+              onChange={(event) => setEducationStatus(event.target.value)}
+              className={fieldClass}
+            >
+              <option value="">请选择</option>
+              <option value="graduated">毕业</option>
+              <option value="studying">在读</option>
+            </select>
+          </ProfileDialogField>
+
+          <ProfileDialogField
+            label={educationStatus === "studying" ? "预计毕业日期" : "毕业日期"}
+            htmlFor="dialog-profile-completion-date"
+          >
+            <input
+              id="dialog-profile-completion-date"
+              name="completionDate"
+              type="text"
+              required
+              inputMode="numeric"
+              maxLength={10}
+              pattern="[0-9]{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])"
+              placeholder="例如：2020.06.01"
+              title="请按照 2020.06.01 的格式填写"
+              value={completionDate}
+              onChange={(event) => setCompletionDate(event.target.value)}
+              aria-invalid={completionDateWarning || Boolean(state.fieldErrors?.completionDate)}
+              aria-describedby={(completionDateWarning || state.fieldErrors?.completionDate) ? "dialog-profile-completion-error" : undefined}
+              className={fieldClass}
+            />
+            {(completionDateWarning || state.fieldErrors?.completionDate) ? (
+              <span id="dialog-profile-completion-error" className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600">
+                <AlertCircle size={13} aria-hidden="true" />
+                {state.fieldErrors?.completionDate ?? "日期格式不正确。"}
+              </span>
+            ) : null}
+          </ProfileDialogField>
+
+          <ProfileDialogField label="平均成绩（百分制）" htmlFor="dialog-profile-average">
+            <div className="flex overflow-hidden rounded-lg border border-slate-200 bg-slate-50/70 focus-within:border-emerald-600 focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100">
+              <input
+                id="dialog-profile-average"
+                name="academicAverage"
+                type="number"
+                required
+                min="0"
+                max="100"
+                step="0.01"
+                inputMode="decimal"
+                value={academicAverage}
+                onChange={(event) => setAcademicAverage(event.target.value)}
+                placeholder="例如：86.50"
+                aria-invalid={academicAverageWarning || Boolean(state.fieldErrors?.academicAverage)}
+                className="min-h-11 min-w-0 flex-1 bg-transparent px-3.5 text-base font-medium outline-none sm:text-sm"
+              />
+              <span className="flex items-center border-l border-slate-200 px-3 text-sm font-bold text-slate-500">%</span>
+            </div>
+            {(academicAverageWarning || state.fieldErrors?.academicAverage) ? (
+              <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600">
+                <AlertCircle size={13} aria-hidden="true" />
+                {state.fieldErrors?.academicAverage ?? "成绩必须在 0—100 之间。"}
+              </span>
+            ) : null}
+          </ProfileDialogField>
+
+          {needsGaokao ? (
+            <ProfileDialogField label="高考成绩" wide>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <select
+                  name="gaokaoHasScore"
+                  required
+                  value={gaokaoHasScore}
+                  onChange={(event) => setGaokaoHasScore(event.target.value)}
+                  aria-label="是否有高考成绩"
+                  className={fieldClass}
+                >
+                  <option value="">请选择有或无</option>
+                  <option value="yes">有</option>
+                  <option value="no">无</option>
+                </select>
+                {gaokaoHasScore === "yes" ? (
+                  <input
+                    name="gaokaoScore"
+                    aria-label="高考分数"
+                    type="number"
+                    required
+                    min="0"
+                    max="750"
+                    step="0.01"
+                    placeholder="高考分数"
+                    defaultValue={initialValue.gaokaoScore}
+                    className={fieldClass}
+                  />
+                ) : null}
+              </div>
+            </ProfileDialogField>
+          ) : null}
+        </ProfileDialogSection>
+
+        <ProfileDialogSection icon={Gauge} title="能力评估">
+          <ProfileDialogField label="英语能力" htmlFor="dialog-profile-english">
+            <select id="dialog-profile-english" name="englishLevel" required defaultValue={initialValue.englishLevel} className={fieldClass}>
+              <option value="">请选择</option>
+              {ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
+            </select>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="数学能力" htmlFor="dialog-profile-math">
+            <select id="dialog-profile-math" name="mathLevel" required defaultValue={initialValue.mathLevel} className={fieldClass}>
+              <option value="">请选择</option>
+              {ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
+            </select>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="韩语能力" wide>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <select
+                name="hasKorean"
+                required
+                value={hasKorean}
+                onChange={(event) => setHasKorean(event.target.value)}
+                aria-label="是否有韩语成绩"
+                className={fieldClass}
+              >
+                <option value="">请选择有或无</option>
+                <option value="yes">有韩语成绩</option>
+                <option value="no">无韩语成绩</option>
+              </select>
+              {hasKorean === "yes" ? (
+                <select
+                  name="topikLevel"
+                  required
+                  aria-label="韩国语能力考试等级"
+                  defaultValue={initialValue.topikLevel}
+                  className={fieldClass}
+                >
+                  <option value="">请选择韩国语能力考试等级</option>
+                  {[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>韩国语能力考试 {level} 级</option>)}
+                </select>
+              ) : null}
+            </div>
+          </ProfileDialogField>
+
+          <ProfileDialogField label="工作经历" htmlFor="dialog-profile-work">
+            <select id="dialog-profile-work" name="hasWorkExperience" required defaultValue={booleanValue(initialValue.hasWorkExperience)} className={fieldClass}>
+              <option value="">请选择</option>
+              <option value="yes">有</option>
+              <option value="no">无</option>
+            </select>
+          </ProfileDialogField>
+        </ProfileDialogSection>
+
+        {state.message ? (
+          <p
+            aria-live="polite"
+            className={`flex items-center gap-2 rounded-lg px-4 py-3 text-sm font-bold ${
+              state.status === "success"
+                ? "bg-emerald-50 text-emerald-800"
+                : "bg-red-50 text-red-700"
+            }`}
+          >
+            {state.status === "success" ? (
+              <CheckCircle2 size={16} aria-hidden="true" />
+            ) : (
+              <AlertCircle size={16} aria-hidden="true" />
+            )}
+            {state.message}
+          </p>
+        ) : null}
+
+        <div className="sticky bottom-0 -mx-4 -mb-4 flex flex-col gap-3 border-t border-slate-200 bg-white/95 px-4 py-4 backdrop-blur sm:-mx-5 sm:-mb-5 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+          <p className="text-sm text-slate-500">修改完成后统一保存。</p>
+          <button
+            type="submit"
+            disabled={pending}
+            className="inline-flex min-h-11 w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-emerald-600 px-5 text-sm font-bold text-white transition-colors hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+          >
+            {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}
+            {pending ? "正在保存资料" : "保存修改"}
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  return (
+    <form action={formAction} className={simple ? "overflow-hidden rounded-xl border border-slate-200 bg-white" : "app-card overflow-hidden rounded-3xl border"}>
+      <div className="overflow-x-auto">
+        <table className={simple ? "w-full min-w-[640px] border-collapse" : "w-full min-w-[680px] border-collapse"}>
+          <colgroup>
+            <col className="w-16" />
+            <col className="w-44" />
+            <col />
+          </colgroup>
+          <thead>
+            <tr className={simple ? "border-b border-slate-200 bg-slate-100" : undefined} style={simple ? undefined : { backgroundColor: "color-mix(in srgb, var(--support) 68%, var(--foreground-secondary) 32%)" }}>
+              <th className={simple ? "px-3 py-2 text-center text-xs font-semibold text-slate-500" : "px-3 py-2 text-center text-xs font-bold text-white"}>序号</th>
+              <th className={simple ? "px-5 py-2 text-left text-xs font-semibold text-slate-500" : "px-5 py-2 text-left text-xs font-bold text-white"}>资料项目</th>
+              <th className={simple ? "px-5 py-2 text-left text-xs font-semibold text-slate-500" : "px-5 py-2 text-left text-xs font-bold text-white"}>资料内容</th>
+            </tr>
+          </thead>
+          <tbody>
+            <ProfileTableSection icon={UserRound} title="基本信息" simple={simple} />
+            <ProfileTableRow number={1} label="个人照片" simple={simple}>
+              <div className="flex items-center gap-4">
+                <span
+                  className={simple ? "flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg bg-slate-100 bg-cover bg-center text-base font-bold text-slate-500" : "flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-cover bg-center text-xl font-bold"}
+                  style={{
+                    color: simple ? undefined : "var(--support)",
+                    backgroundColor: simple ? undefined : "var(--surface-soft)",
+                    backgroundImage: photoPreview ? `url("${photoPreview}")` : undefined,
+                  }}
+                >
+                  {!photoPreview && (initialValue.fullName.slice(0, 1) || "学")}
+                </span>
+                <label className={`${inputSurfaceClass} inline-flex cursor-pointer items-center gap-2 border px-4 py-2.5 text-sm ${simple ? "rounded-lg font-semibold text-slate-700" : "rounded-xl font-bold"}`}>
+                  <Camera size={15} aria-hidden="true" />上传照片
+                  <input name="photo" type="file" accept="image/jpeg,image/png,image/webp" className="sr-only" onChange={handlePhotoChange} />
+                </label>
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={2} label="真实姓名" simple={simple}>
+              <input name="fullName" required minLength={2} maxLength={50} autoComplete="name" defaultValue={initialValue.fullName} className={fieldClass} />
+              {state.fieldErrors?.fullName && <span className="mt-1.5 block text-xs text-red-600">{state.fieldErrors.fullName}</span>}
+            </ProfileTableRow>
+            <ProfileTableRow number={3} label="性别" simple={simple}>
+              <div className="grid max-w-sm grid-cols-2 gap-2">
+                {[["male", "男"], ["female", "女"]].map(([value, label]) => (
+                  <label key={value} className={`${inputSurfaceClass} flex cursor-pointer items-center justify-center gap-2 border px-3 text-sm ${simple ? "rounded-lg py-2.5 font-semibold text-slate-700" : "rounded-2xl py-3 font-bold"}`}>
+                    <input name="gender" type="radio" value={value} required defaultChecked={initialValue.gender === value} className="accent-[var(--primary)]" />{label}
+                  </label>
+                ))}
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={4} label="出生日期" simple={simple}>
+              <div className={`${inputSurfaceClass} grid max-w-xl grid-cols-[1.3fr_1fr_1fr] overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`}>
+                <select name="birthYear" required value={birthYear} onChange={(event) => setBirthYear(event.target.value)} className="bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生年份">
+                  <option value="">年</option>{BIRTH_YEARS.map((year) => <option key={year} value={year}>{year}</option>)}
+                </select>
+                <select name="birthMonth" required value={birthMonth} onChange={(event) => setBirthMonth(event.target.value)} className="app-divider border-l bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生月份">
+                  <option value="">月</option>{MONTHS.map((month) => <option key={month} value={month}>{month}</option>)}
+                </select>
+                <select name="birthDay" required value={birthDay} onChange={(event) => setBirthDay(event.target.value)} className="app-divider border-l bg-transparent px-3 py-3 text-sm font-semibold outline-none" aria-label="出生日期">
+                  <option value="">日</option>{dayOptions.map((day) => <option key={day} value={day}>{day}</option>)}
+                </select>
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={5} label="居住地址" simple={simple}>
+              <div className={`${inputSurfaceClass} grid max-w-xl grid-cols-2 overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`}>
+                <select name="province" required value={province} onChange={handleProvinceChange} className="bg-transparent px-3.5 py-3 text-sm font-semibold outline-none">
+                  <option value="">省级地区</option>{CHINA_PROVINCES.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+                <select name="city" required value={city} onChange={(event) => setCity(event.target.value)} disabled={!province} className="app-divider border-l bg-transparent px-3.5 py-3 text-sm font-semibold outline-none disabled:opacity-50">
+                  <option value="">市级地区</option>{cityOptions.map((item) => <option key={item} value={item}>{item}</option>)}
+                </select>
+              </div>
+            </ProfileTableRow>
+
+            <ProfileTableSection icon={GraduationCap} title="教育经历与在校成绩" simple={simple} />
+            <ProfileTableRow number={6} label="教育阶段" simple={simple}>
+              <select name="educationLevel" required value={educationLevel} onChange={(event) => setEducationLevel(event.target.value)} className={fieldClass}>
+                <option value="">请选择</option><option value="bachelor">本科</option><option value="associate">大专</option><option value="high_school">高中</option><option value="secondary_vocational">中专</option><option value="technical_school">技工学校</option>
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={7} label="就读状态" simple={simple}>
+              <select name="educationStatus" required value={educationStatus} onChange={(event) => setEducationStatus(event.target.value)} className={fieldClass}>
+                <option value="">请选择</option><option value="graduated">毕业</option><option value="studying">在读</option>
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={8} label={educationStatus === "studying" ? "预计毕业日期" : "毕业日期"} simple={simple}>
+              <input
+                name="completionDate" type="text" required inputMode="numeric" maxLength={10}
+                pattern="[0-9]{4}\.(0[1-9]|1[0-2])\.(0[1-9]|[12][0-9]|3[01])"
+                placeholder="例如：2020.06.01" title="请按照 2020.06.01 的格式填写"
+                value={completionDate} onChange={(event) => setCompletionDate(event.target.value)}
+                aria-invalid={completionDateWarning || Boolean(state.fieldErrors?.completionDate)}
+                className={fieldClass} style={completionDateWarning ? { borderColor: "#dc2626" } : undefined}
+              />
+              {(completionDateWarning || state.fieldErrors?.completionDate) && (
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.completionDate ?? "日期格式不正确。"}</span>
+              )}
+            </ProfileTableRow>
+            <ProfileTableRow number={9} label="平均成绩（百分制）" simple={simple}>
+              <span className={`${inputSurfaceClass} flex items-center overflow-hidden border ${simple ? "rounded-lg" : "rounded-2xl"}`} style={academicAverageWarning ? { borderColor: "#dc2626" } : undefined}>
+                <input
+                  name="academicAverage" type="number" required min="0" max="100" step="0.01" inputMode="decimal"
+                  value={academicAverage} onChange={(event) => setAcademicAverage(event.target.value)} placeholder="例如：86.50"
+                  aria-invalid={academicAverageWarning || Boolean(state.fieldErrors?.academicAverage)}
+                  className="min-w-0 flex-1 bg-transparent px-3.5 py-3 text-sm font-semibold outline-none"
+                />
+                <span className="border-l px-3 text-sm font-bold app-muted-text app-divider">%</span>
+              </span>
+              {(academicAverageWarning || state.fieldErrors?.academicAverage) && (
+                <span className="mt-1.5 flex items-center gap-1.5 text-xs font-bold text-red-600"><AlertCircle size={13} aria-hidden="true" />{state.fieldErrors?.academicAverage ?? "成绩必须在 0—100 之间。"}</span>
+              )}
+            </ProfileTableRow>
+            {needsGaokao && (
+              <ProfileTableRow number={10} label="高考成绩" simple={simple}>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <select name="gaokaoHasScore" required value={gaokaoHasScore} onChange={(event) => setGaokaoHasScore(event.target.value)} className={fieldClass}>
+                    <option value="">请选择有或无</option><option value="yes">有</option><option value="no">无</option>
+                  </select>
+                  {gaokaoHasScore === "yes" && <input name="gaokaoScore" aria-label="高考分数" type="number" required min="0" max="750" step="0.01" placeholder="高考分数" defaultValue={initialValue.gaokaoScore} className={fieldClass} />}
+                </div>
+              </ProfileTableRow>
+            )}
+
+            <ProfileTableSection icon={Gauge} title="能力评估" simple={simple} />
+            <ProfileTableRow number={abilityRowStart} label="英语能力" simple={simple}>
+              <select name="englishLevel" required defaultValue={initialValue.englishLevel} className={fieldClass}>
+                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 1} label="数学能力" simple={simple}>
+              <select name="mathLevel" required defaultValue={initialValue.mathLevel} className={fieldClass}>
+                <option value="">请选择</option>{ABILITY_LEVELS.map(([level, description], index) => <option key={level} value={level}>第 {index + 1} 级 · {description}</option>)}
+              </select>
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 2} label="韩语能力" simple={simple}>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <select name="hasKorean" required value={hasKorean} onChange={(event) => setHasKorean(event.target.value)} className={fieldClass}>
+                  <option value="">请选择有或无</option><option value="yes">有韩语成绩</option><option value="no">无韩语成绩</option>
+                </select>
+                {hasKorean === "yes" && <select name="topikLevel" required aria-label="韩国语能力考试等级" defaultValue={initialValue.topikLevel} className={fieldClass}>
+                  <option value="">请选择韩国语能力考试等级</option>{[1, 2, 3, 4, 5, 6].map((level) => <option key={level} value={level}>韩国语能力考试 {level} 级</option>)}
+                </select>}
+              </div>
+            </ProfileTableRow>
+            <ProfileTableRow number={abilityRowStart + 3} label="工作经历" simple={simple}>
+              <select name="hasWorkExperience" required defaultValue={booleanValue(initialValue.hasWorkExperience)} className={fieldClass}>
+                <option value="">请选择</option><option value="yes">有</option><option value="no">无</option>
+              </select>
+            </ProfileTableRow>
+          </tbody>
+        </table>
+      </div>
+
+      {state.message && <p aria-live="polite" className="mx-4 mt-5 flex items-center gap-2 rounded-2xl px-4 py-3 text-sm font-bold sm:mx-6" style={state.status === "success" ? { color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" } : { color: "#dc2626", backgroundColor: "#fef2f2" }}>{state.status === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}{state.message}</p>}
+
+      <div className={simple ? "sticky bottom-0 flex flex-col gap-3 border-t border-slate-200 bg-white p-4 sm:flex-row sm:items-center sm:justify-between sm:px-5" : "flex flex-col gap-3 border-t p-4 app-divider sm:flex-row sm:items-center sm:justify-between sm:p-6"} style={simple ? undefined : { backgroundColor: "var(--surface-soft)" }}>
+        <p className={simple ? "text-sm text-slate-500" : "text-sm font-bold app-muted-text"}>请确认全部项目后统一保存。</p>
+        <button type="submit" disabled={pending} className={simple ? "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto" : "inline-flex w-full shrink-0 items-center justify-center gap-2 rounded-2xl px-6 py-3.5 text-sm font-bold text-white shadow-lg transition hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"} style={simple ? undefined : { backgroundColor: "var(--primary)" }}>
+          {pending ? <LoaderCircle size={17} className="animate-spin" aria-hidden="true" /> : <Save size={17} aria-hidden="true" />}
+          {pending ? "正在保存资料" : "保存全部资料"}
+        </button>
+      </div>
+    </form>
+  );
+}

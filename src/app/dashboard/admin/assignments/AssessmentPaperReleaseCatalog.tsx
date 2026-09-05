@@ -1,0 +1,823 @@
+"use client";
+
+import { CheckCircle2, CircleAlert, Search, Send, UsersRound, X } from "lucide-react";
+import { useActionState, useMemo, useState } from "react";
+
+import { initialLearningAssignmentActionState } from "@/app/dashboard/assignments/action-state";
+import { publishAssessmentPaperAction } from "./paper-actions";
+
+export type ReleasePaper = {
+  id: string;
+  paperCode: string;
+  title: string;
+  description: string;
+  chapterTitle: string;
+  chapterNumber: number;
+  durationMinutes: number | null;
+  passingScore: number | null;
+  allowResubmission: boolean;
+  totalPoints: number;
+  questionCount: number;
+  version: number;
+  quality: {
+    snapshotMatches: boolean;
+    allSkills: boolean;
+    objectiveKeys: boolean;
+    listeningReady: boolean;
+    sourceCountsMatch: boolean;
+    ready: boolean;
+  };
+};
+
+export type ReleasePaperQuestion = {
+  id: string;
+  paperId: string;
+  prompt: string;
+  options: string[];
+  points: number;
+  sortOrder: number;
+};
+
+type StudentOption = { id: string; name: string; email: string; tier: string };
+type CourseOption = { id: string; title: string };
+
+function localDateTimeValue(date: Date) {
+  const adjusted = new Date(date.getTime() - date.getTimezoneOffset() * 60_000);
+  return adjusted.toISOString().slice(0, 16);
+}
+
+export function AssessmentPaperReleaseCatalog({
+  paperType,
+  papers,
+  questions,
+  courses,
+  students,
+  canTargetAllStudents,
+}: {
+  paperType: "homework" | "exam";
+  papers: ReleasePaper[];
+  questions: ReleasePaperQuestion[];
+  courses: CourseOption[];
+  students: StudentOption[];
+  canTargetAllStudents: boolean;
+}) {
+  const [selectedPaperId, setSelectedPaperId] = useState("");
+  const [targetScope, setTargetScope] = useState(
+    canTargetAllStudents ? "all_students" : "selected_students"
+  );
+  const [selectedStudentIds, setSelectedStudentIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [studentQuery, setStudentQuery] = useState("");
+  const [retakePaperId, setRetakePaperId] = useState("");
+  const [retakeStudentIds, setRetakeStudentIds] = useState<Set<string>>(
+    new Set()
+  );
+  const [retakeStudentQuery, setRetakeStudentQuery] = useState("");
+  const [retakeScorePolicy, setRetakeScorePolicy] = useState("highest");
+  const boundAction = publishAssessmentPaperAction.bind(null, paperType);
+  const [state, formAction, pending] = useActionState(
+    boundAction,
+    initialLearningAssignmentActionState
+  );
+  const questionsByPaper = useMemo(() => {
+    const grouped = new Map<string, ReleasePaperQuestion[]>();
+    questions.forEach((question) => {
+      const current = grouped.get(question.paperId) ?? [];
+      current.push(question);
+      grouped.set(question.paperId, current);
+    });
+    grouped.forEach((items) =>
+      items.sort((left, right) => left.sortOrder - right.sortOrder)
+    );
+    return grouped;
+  }, [questions]);
+  const selectedPaper = papers.find((paper) => paper.id === selectedPaperId);
+  const selectedQuestions = selectedPaper
+    ? questionsByPaper.get(selectedPaper.id) ?? []
+    : [];
+  const qualityChecks = selectedPaper
+    ? [
+        ["题量与总分快照一致", selectedPaper.quality.snapshotMatches],
+        ["六项学习内容齐全", selectedPaper.quality.allSkills],
+        ["客观题判定答案齐全", selectedPaper.quality.objectiveKeys],
+        ["听力材料配置完整", selectedPaper.quality.listeningReady],
+        ["词汇、语法和六项题量与平台源稿一致", selectedPaper.quality.sourceCountsMatch],
+      ] as const
+    : [];
+  const typeLabel = paperType === "homework" ? "作业" : "考试";
+  const now = new Date();
+  const defaultStart = localDateTimeValue(
+    new Date(now.getTime() + 60 * 60 * 1000)
+  );
+  const defaultDue = localDateTimeValue(
+    new Date(
+      now.getTime() +
+        (paperType === "homework" ? 7 * 24 * 60 : 3 * 60) * 60 * 1000
+    )
+  );
+  const defaultRetakeStart = localDateTimeValue(
+    new Date(now.getTime() + 27 * 60 * 60 * 1000)
+  );
+  const defaultRetakeDue = localDateTimeValue(
+    new Date(now.getTime() + 75 * 60 * 60 * 1000)
+  );
+  const filteredStudents = students.filter((student) => {
+    const keyword = studentQuery.trim().toLowerCase();
+    return (
+      !keyword ||
+      `${student.name} ${student.email} ${student.tier}`
+        .toLowerCase()
+        .includes(keyword)
+    );
+  });
+  const eligibleRetakeStudents = students.filter(
+    (student) =>
+      targetScope === "all_students" || selectedStudentIds.has(student.id)
+  );
+  const filteredRetakeStudents = eligibleRetakeStudents.filter((student) => {
+    const keyword = retakeStudentQuery.trim().toLowerCase();
+    return (
+      !keyword ||
+      `${student.name} ${student.email} ${student.tier}`
+        .toLowerCase()
+        .includes(keyword)
+    );
+  });
+  const selectedEligibleRetakeCount = eligibleRetakeStudents.filter((student) =>
+    retakeStudentIds.has(student.id)
+  ).length;
+
+  function openPaper(paperId: string) {
+    setSelectedPaperId(paperId);
+    setTargetScope(canTargetAllStudents ? "all_students" : "selected_students");
+    setSelectedStudentIds(new Set());
+    setStudentQuery("");
+    setRetakePaperId("");
+    setRetakeStudentIds(new Set());
+    setRetakeStudentQuery("");
+    setRetakeScorePolicy("highest");
+  }
+
+  function toggleStudent(studentId: string) {
+    setSelectedStudentIds((current) => {
+      const next = new Set(current);
+      if (next.has(studentId)) next.delete(studentId);
+      else next.add(studentId);
+      return next;
+    });
+  }
+
+  function toggleRetakeStudent(studentId: string) {
+    setRetakeStudentIds((current) => {
+      const next = new Set(current);
+      if (next.has(studentId)) next.delete(studentId);
+      else next.add(studentId);
+      return next;
+    });
+  }
+
+  return (
+    <>
+      <section
+        className="border"
+        style={{
+          borderColor: "var(--border)",
+          backgroundColor: "var(--card)",
+        }}
+      >
+        <div className="flex items-center justify-between gap-3 border-b px-4 py-3.5">
+          <div>
+            <h2 className="text-sm font-semibold">平台标准{typeLabel}卷</h2>
+          </div>
+          <span className="font-mono text-xs font-bold tabular-nums">
+            {papers.length} 套可用
+          </span>
+        </div>
+
+        <div className="overflow-x-auto">
+          <table className="w-full table-fixed border-collapse text-left">
+            <colgroup>
+              <col className="w-[20%]" />
+              <col className="w-[20%]" />
+              <col className="w-[8%]" />
+              <col className="w-[8%]" />
+              <col className="w-[8%]" />
+              <col className="w-[9%]" />
+              <col className="w-[7%]" />
+              <col className="w-[20%]" />
+            </colgroup>
+            <thead
+              className="sticky top-0 z-20 backdrop-blur-xl"
+              style={{
+                backgroundColor:
+                  "color-mix(in srgb, var(--card) 84%, transparent)",
+              }}
+            >
+              <tr className="border-b app-muted-text">
+                {[
+                  `标准${typeLabel}卷`,
+                  "来源章节",
+                  "题量",
+                  "总分",
+                  "时长",
+                  "及格线",
+                  "版本",
+                  "操作",
+                ].map((label, index) => (
+                  <th
+                    key={label}
+                    className={`${index > 0 ? "border-l" : ""} px-3 py-2 text-[11px] font-bold ${
+                      index >= 2 && index <= 6
+                        ? "text-center"
+                        : index === 7
+                          ? "text-right"
+                          : ""
+                    }`}
+                  >
+                    {label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {papers.map((paper) => (
+                <tr
+                  key={paper.id}
+                  className="border-b last:border-b-0 hover:bg-[var(--surface-soft)]"
+                  style={{ borderColor: "var(--border-subtle)" }}
+                >
+                  <td className="px-3 py-2">
+                    <p className="text-sm font-bold">{paper.title}</p>
+                    <p className="app-muted-text mt-0.5 font-mono text-[10px]">
+                      {paper.paperCode}
+                    </p>
+                  </td>
+                  <td className="border-l px-3 py-2 text-xs">
+                    第{paper.chapterNumber}章 · {paper.chapterTitle}
+                  </td>
+                  <td className="border-l px-3 py-2 text-center font-mono text-xs">
+                    {paper.questionCount}
+                  </td>
+                  <td className="border-l px-3 py-2 text-center font-mono text-xs">
+                    {paper.totalPoints}
+                  </td>
+                  <td className="border-l px-3 py-2 text-center font-mono text-xs">
+                    {paper.durationMinutes ?? "—"}
+                  </td>
+                  <td className="border-l px-3 py-2 text-center font-mono text-xs">
+                    {paper.passingScore ?? "—"}
+                  </td>
+                  <td className="border-l px-3 py-2 text-center font-mono text-xs">
+                    版本 {paper.version}
+                  </td>
+                  <td className="border-l px-3 py-2 text-right">
+                    <button
+                      type="button"
+                      onClick={() => openPaper(paper.id)}
+                      className="inline-flex min-h-11 items-center gap-1.5 px-2 text-[11px] font-bold text-[var(--support)] hover:underline"
+                    >
+                      {paper.quality.ready ? <UsersRound size={12} /> : <CircleAlert size={12} />}
+                      {paper.quality.ready ? "指向学生并发布" : "查看发布问题"}
+                    </button>
+                  </td>
+                </tr>
+              ))}
+              {papers.length === 0 && (
+                <tr>
+                  <td
+                    colSpan={8}
+                    className="app-muted-text px-5 py-12 text-center text-xs"
+                  >
+                    平台暂时没有提供可用的标准{typeLabel}卷。
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      {selectedPaper && (
+        <div
+          className="fixed inset-0 z-[80] flex justify-end bg-black/20"
+          role="presentation"
+          onClick={() => {
+            if (!pending) setSelectedPaperId("");
+          }}
+        >
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={`release-paper-${selectedPaper.id}`}
+            className="app-card flex h-dvh w-full max-w-[1180px] flex-col overflow-hidden border-l"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-4 border-b px-5 py-4 sm:px-6">
+              <div>
+                <p className="app-muted-text font-mono text-[11px] font-bold">
+                  {selectedPaper.paperCode} · 版本 {selectedPaper.version}
+                </p>
+                <h2
+                  id={`release-paper-${selectedPaper.id}`}
+                  className="mt-1 text-xl font-semibold"
+                >
+                  指向学生并发布
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedPaperId("")}
+                disabled={pending}
+                aria-label="关闭发布抽屉"
+                className="app-soft-card flex h-10 w-10 items-center justify-center rounded-xl border disabled:opacity-50"
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form action={formAction} className="flex min-h-0 flex-1 flex-col">
+              <input type="hidden" name="paper_id" value={selectedPaper.id} />
+              <div className="min-h-0 flex-1 overflow-auto">
+                <section className="border-b px-5 py-4 sm:px-6">
+                  <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
+                    <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${selectedPaper.quality.ready ? "bg-[var(--status-success-surface)] text-[var(--status-success)]" : "bg-[var(--status-danger-surface)] text-[var(--status-danger)]"}`}>
+                      {selectedPaper.quality.ready ? <CheckCircle2 size={18} aria-hidden="true" /> : <CircleAlert size={18} aria-hidden="true" />}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <h3 className="text-sm font-semibold">发布前质量检查</h3>
+                      <p className="app-muted-text mt-1 text-xs">全部通过后才能发布，服务端还会在创建任务前再次复核。</p>
+                      <ul className="mt-3 grid gap-2 sm:grid-cols-2">
+                        {qualityChecks.map(([label, passed]) => (
+                          <li key={label} className="flex items-center gap-2 text-xs font-semibold">
+                            {passed ? <CheckCircle2 size={15} className="text-[var(--status-success)]" aria-hidden="true" /> : <CircleAlert size={15} className="text-[var(--status-danger)]" aria-hidden="true" />}
+                            <span>{label}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </section>
+                <section className="border-b">
+                  <table className="w-full border-collapse text-left">
+                    <tbody>
+                      <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
+                        <th className="app-muted-text w-32 px-5 py-2 text-[11px] font-bold">试卷名称</th>
+                        <td className="border-l px-4 py-2 text-xs font-bold">{selectedPaper.title}</td>
+                        <th className="app-muted-text w-28 border-l px-4 py-2 text-[11px] font-bold">题量 / 总分</th>
+                        <td className="w-32 border-l px-4 py-2 text-center font-mono text-xs">{selectedPaper.questionCount} / {selectedPaper.totalPoints}</td>
+                      </tr>
+                      <tr>
+                        <th className="app-muted-text px-5 py-2 text-[11px] font-bold">来源章节</th>
+                        <td className="border-l px-4 py-2 text-xs">第{selectedPaper.chapterNumber}章 · {selectedPaper.chapterTitle}</td>
+                        <th className="app-muted-text border-l px-4 py-2 text-[11px] font-bold">时长 / 及格线</th>
+                        <td className="border-l px-4 py-2 text-center font-mono text-xs">{selectedPaper.durationMinutes ?? "—"} / {selectedPaper.passingScore ?? "—"}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+
+                <section className="border-b">
+                  <div className="border-b px-5 py-3">
+                    <h3 className="text-sm font-semibold">试卷题目</h3>
+                    <p className="app-muted-text mt-0.5 text-[11px]">
+                      发布后题目内容固定，之后修改题库不会影响已发布的试卷。
+                    </p>
+                  </div>
+                  <div className="max-h-72 overflow-auto">
+                    <table className="w-full min-w-[780px] table-fixed border-collapse text-left">
+                      <colgroup>
+                        <col className="w-16" />
+                        <col className="w-[44%]" />
+                        <col />
+                        <col className="w-20" />
+                      </colgroup>
+                      <thead className="sticky top-0 z-10 bg-[var(--card)]">
+                        <tr className="border-b app-muted-text">
+                          <th className="px-3 py-2 text-center text-[11px] font-bold">题号</th>
+                          <th className="border-l px-4 py-2 text-[11px] font-bold">题目</th>
+                          <th className="border-l px-4 py-2 text-[11px] font-bold">选项</th>
+                          <th className="border-l px-3 py-2 text-center text-[11px] font-bold">分值</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedQuestions.map((question, index) => (
+                          <tr key={question.id} className="border-b align-top last:border-b-0" style={{ borderColor: "var(--border-subtle)" }}>
+                            <td className="px-3 py-2 text-center font-mono text-xs">{String(index + 1).padStart(2, "0")}</td>
+                            <td className="border-l px-4 py-2 text-xs font-bold leading-5">{question.prompt}</td>
+                            <td className="app-muted-text border-l px-4 py-2 text-[11px] leading-5">
+                              {question.options.length > 0 ? question.options.map((option, optionIndex) => (
+                                <p key={`${question.id}-${optionIndex}`}>第 {optionIndex + 1} 项：{option}</p>
+                              )) : "—"}
+                            </td>
+                            <td className="border-l px-3 py-2 text-center font-mono text-xs">{question.points}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </section>
+
+                <section className="border-b">
+                  <div className="border-b px-5 py-3">
+                    <h3 className="text-sm font-semibold">发布安排</h3>
+                  </div>
+                  <table className="w-full border-collapse">
+                    <tbody>
+                      <tr className="border-b" style={{ borderColor: "var(--border-subtle)" }}>
+                        <td className="w-1/3 px-4 py-2">
+                          <label className="text-[11px] font-bold">
+                            关联机构课程
+                            <select name="course_id" defaultValue="" className="app-input mt-1.5 w-full rounded-lg border px-3 py-2.5 text-xs">
+                              <option value="">不关联具体课程</option>
+                              {courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}
+                            </select>
+                          </label>
+                        </td>
+                        <td className="w-1/3 border-l px-4 py-2">
+                          <label className="text-[11px] font-bold">
+                            开始时间
+                            <input name="starts_at" type="datetime-local" required defaultValue={defaultStart} className="app-input mt-1.5 w-full rounded-lg border px-3 py-2.5 text-xs" />
+                          </label>
+                        </td>
+                        <td className="w-1/3 border-l px-4 py-2">
+                          <label className="text-[11px] font-bold">
+                            截止时间
+                            <input name="due_at" type="datetime-local" required defaultValue={defaultDue} className="app-input mt-1.5 w-full rounded-lg border px-3 py-2.5 text-xs" />
+                          </label>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colSpan={3} className="px-4 py-2">
+                          {paperType === "homework" && (
+                            <div className="mb-3 grid gap-3 rounded-xl border px-3 py-3 sm:grid-cols-[minmax(0,1fr)_180px]">
+                              <label className="flex min-h-11 items-start gap-3 text-xs font-bold">
+                                <input name="unlock_after_chapter_completion" type="checkbox" defaultChecked className="mt-1" />
+                                <span>完成对应章节后开放<span className="app-muted-text mt-1 block font-normal leading-5">学生完成本章后开始计算自己的提交时间。</span></span>
+                              </label>
+                              <label className="text-[11px] font-bold">完成后提交天数<input name="due_days_after_unlock" type="number" min={1} max={30} step={1} defaultValue={3} className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm" /></label>
+                            </div>
+                          )}
+                          <label className="text-[11px] font-bold">
+                            机构补充通知
+                            <textarea name="institution_note" rows={2} maxLength={2000} placeholder="可填写学习提醒，不会改变平台试卷内容。" className="app-input mt-1.5 w-full resize-y rounded-lg border px-3 py-2.5 text-xs leading-5" />
+                          </label>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </section>
+
+                {paperType === "exam" && (
+                  <section className="border-b">
+                    <div className="border-b px-5 py-3">
+                      <h3 className="text-sm font-semibold">考试设置</h3>
+                    </div>
+                    <div className="grid gap-4 px-4 py-4 md:grid-cols-2 xl:grid-cols-4">
+                      <label className="text-[11px] font-bold">
+                        允许提交次数
+                        <input
+                          name="max_attempts"
+                          type="number"
+                          min={1}
+                          max={10}
+                          step={1}
+                          required
+                          defaultValue={selectedPaper.allowResubmission ? 2 : 1}
+                          className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm"
+                        />
+                        <span className="app-muted-text mt-1 block font-normal leading-5">
+                          包含首次提交，最多 10 次。
+                        </span>
+                      </label>
+                      <label className="text-[11px] font-bold">
+                        成绩公开时间
+                        <input
+                          name="grade_release_at"
+                          type="datetime-local"
+                          required
+                          defaultValue={defaultDue}
+                          className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                        />
+                        <span className="app-muted-text mt-1 block font-normal leading-5">
+                          可晚于提交截止时间公开。
+                        </span>
+                      </label>
+                      <label className="flex min-h-11 items-start gap-3 rounded-xl border px-3 py-3 text-xs font-bold">
+                        <input
+                          name="allow_late_submission"
+                          type="checkbox"
+                          className="mt-0.5"
+                        />
+                        <span>
+                          允许迟交
+                          <span className="app-muted-text mt-1 block font-normal leading-5">
+                            截止后仍可提交，直到任务关闭。
+                          </span>
+                        </span>
+                      </label>
+                      <fieldset className="grid gap-2 rounded-xl border px-3 py-3">
+                        <legend className="px-1 text-xs font-bold">随机排列</legend>
+                        <label className="flex min-h-8 items-center gap-2 text-xs font-semibold">
+                          <input name="shuffle_questions" type="checkbox" />
+                          随机排列题目
+                        </label>
+                        <label className="flex min-h-8 items-center gap-2 text-xs font-semibold">
+                          <input name="shuffle_options" type="checkbox" />
+                          随机排列选择题选项
+                        </label>
+                      </fieldset>
+                    </div>
+                  </section>
+                )}
+
+                <section className={paperType === "exam" ? "border-b" : undefined}>
+                  <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
+                    <h3 className="text-sm font-semibold">指向学生</h3>
+                    {canTargetAllStudents && (
+                      <label className="inline-flex min-h-11 items-center gap-2 text-xs font-bold">
+                        <input type="radio" name="target_scope" value="all_students" checked={targetScope === "all_students"} onChange={() => setTargetScope("all_students")} />
+                        全部在籍学生
+                      </label>
+                    )}
+                    <label className="inline-flex items-center gap-2 text-xs font-bold">
+                      <input type="radio" name="target_scope" value="selected_students" checked={targetScope === "selected_students"} onChange={() => setTargetScope("selected_students")} />
+                      指定学生
+                    </label>
+                    {!canTargetAllStudents && (
+                      <span className="app-muted-text text-[11px]">
+                        老师只能布置给自己负责的学生
+                      </span>
+                    )}
+                    {targetScope === "selected_students" && (
+                      <>
+                        <span className="app-muted-text text-[11px]">已选 {selectedStudentIds.size} 人</span>
+                        <label className="app-input ml-auto flex items-center gap-2 rounded-lg border px-3">
+                          <Search size={13} className="app-muted-text" />
+                          <input value={studentQuery} onChange={(event) => setStudentQuery(event.target.value)} placeholder="搜索姓名、邮箱或等级" className="w-52 bg-transparent py-2 text-xs outline-none" />
+                        </label>
+                      </>
+                    )}
+                  </div>
+                  {targetScope === "selected_students" && (
+                    <div className="max-h-64 overflow-auto">
+                      <table className="w-full border-collapse text-left">
+                        <thead className="sticky top-0 z-10 bg-[var(--card)]">
+                          <tr className="border-b app-muted-text">
+                            <th className="w-14 px-4 py-2 text-center text-[11px] font-bold">选择</th>
+                            <th className="border-l px-4 py-2 text-[11px] font-bold">学生</th>
+                            <th className="w-56 border-l px-4 py-2 text-[11px] font-bold">邮箱</th>
+                            <th className="w-28 border-l px-4 py-2 text-center text-[11px] font-bold">等级</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {filteredStudents.map((student) => (
+                            <tr key={student.id} className="cursor-pointer border-b last:border-b-0 hover:bg-[var(--surface-soft)]" style={{ borderColor: "var(--border-subtle)" }} onClick={() => toggleStudent(student.id)}>
+                              <td className="px-4 py-2 text-center">
+                                <input name="target_ids" value={student.id} type="checkbox" checked={selectedStudentIds.has(student.id)} onChange={() => toggleStudent(student.id)} onClick={(event) => event.stopPropagation()} />
+                              </td>
+                              <td className="border-l px-4 py-2 text-xs font-bold">{student.name}</td>
+                              <td className="app-muted-text border-l px-4 py-2 text-xs">{student.email}</td>
+                              <td className="border-l px-4 py-2 text-center text-xs">{student.tier}</td>
+                            </tr>
+                          ))}
+                          {filteredStudents.length === 0 && (
+                            <tr><td colSpan={4} className="app-muted-text px-5 py-8 text-center text-xs">没有匹配的在籍学生。</td></tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </section>
+
+                {paperType === "exam" && (
+                  <section>
+                    <div className="flex flex-wrap items-center gap-4 border-b px-5 py-3">
+                      <h3 className="text-sm font-semibold">补考规则</h3>
+                      <label className="inline-flex min-h-11 items-center gap-2 text-xs font-bold">
+                        <input
+                          type="checkbox"
+                          checked={Boolean(retakePaperId)}
+                          onChange={(event) => {
+                            setRetakePaperId(
+                              event.target.checked ? selectedPaper.id : ""
+                            );
+                            if (!event.target.checked) {
+                              setRetakeStudentIds(new Set());
+                            }
+                          }}
+                        />
+                        为本任务设置补考
+                      </label>
+                      {!retakePaperId && (
+                        <span className="app-muted-text text-[11px]">
+                          不设置时，本次考试只有常规提交次数。
+                        </span>
+                      )}
+                    </div>
+                    {retakePaperId && (
+                      <div className="space-y-4 px-4 py-4">
+                        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                          <label className="text-[11px] font-bold">
+                            补考卷
+                            <select
+                              name="retake_paper_id"
+                              value={retakePaperId}
+                              onChange={(event) =>
+                                setRetakePaperId(event.target.value)
+                              }
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            >
+                              <option value={selectedPaper.id}>
+                                使用原卷 · {selectedPaper.title}
+                              </option>
+                              {papers
+                                .filter((paper) => paper.id !== selectedPaper.id)
+                                .map((paper) => (
+                                  <option key={paper.id} value={paper.id}>
+                                    补考卷 · {paper.title}（版本 {paper.version}）
+                                  </option>
+                                ))}
+                            </select>
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            补考开始时间
+                            <input
+                              name="retake_starts_at"
+                              type="datetime-local"
+                              required
+                              defaultValue={defaultRetakeStart}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            />
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            补考截止时间
+                            <input
+                              name="retake_due_at"
+                              type="datetime-local"
+                              required
+                              defaultValue={defaultRetakeDue}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            />
+                          </label>
+                          <label className="text-[11px] font-bold">
+                            最终成绩采用规则
+                            <select
+                              name="retake_score_policy"
+                              value={retakeScorePolicy}
+                              onChange={(event) =>
+                                setRetakeScorePolicy(event.target.value)
+                              }
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-xs"
+                            >
+                              <option value="highest">首次与补考取最高分</option>
+                              <option value="latest">采用补考最新分</option>
+                              <option value="weighted">首次与补考加权</option>
+                            </select>
+                          </label>
+                        </div>
+
+                        {retakeScorePolicy === "weighted" && (
+                          <label className="block max-w-xs text-[11px] font-bold">
+                            首次成绩占比（%）
+                            <input
+                              name="retake_original_weight_percent"
+                              type="number"
+                              min={1}
+                              max={99}
+                              step={1}
+                              required
+                              defaultValue={50}
+                              className="app-input mt-1.5 min-h-11 w-full rounded-lg border px-3 text-sm"
+                            />
+                            <span className="app-muted-text mt-1 block font-normal">
+                              补考成绩占比为剩余比例。
+                            </span>
+                          </label>
+                        )}
+
+                        <div className="rounded-xl border">
+                          {eligibleRetakeStudents
+                            .filter((student) => retakeStudentIds.has(student.id))
+                            .map((student) => (
+                              <input
+                                key={`retake-target-${student.id}`}
+                                type="hidden"
+                                name="retake_student_ids"
+                                value={student.id}
+                              />
+                            ))}
+                          <div className="flex flex-wrap items-center gap-3 border-b px-4 py-3">
+                            <strong className="text-xs">补考学生名单</strong>
+                            <span className="app-muted-text text-[11px]">
+                              已选 {selectedEligibleRetakeCount} 人
+                            </span>
+                            <label className="app-input ml-auto flex min-h-11 items-center gap-2 rounded-lg border px-3">
+                              <Search
+                                size={13}
+                                className="app-muted-text"
+                                aria-hidden="true"
+                              />
+                              <span className="sr-only">搜索补考学生</span>
+                              <input
+                                value={retakeStudentQuery}
+                                onChange={(event) =>
+                                  setRetakeStudentQuery(event.target.value)
+                                }
+                                placeholder="搜索补考学生"
+                                className="w-48 bg-transparent py-2 text-xs outline-none"
+                              />
+                            </label>
+                          </div>
+                          <div className="max-h-56 overflow-auto">
+                            <table className="w-full border-collapse text-left">
+                              <thead className="sticky top-0 z-10 bg-[var(--card)]">
+                                <tr className="border-b app-muted-text">
+                                  <th className="w-14 px-4 py-2 text-center text-[11px] font-bold">
+                                    选择
+                                  </th>
+                                  <th className="border-l px-4 py-2 text-[11px] font-bold">
+                                    学生
+                                  </th>
+                                  <th className="w-56 border-l px-4 py-2 text-[11px] font-bold">
+                                    邮箱
+                                  </th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {filteredRetakeStudents.map((student) => (
+                                  <tr
+                                    key={student.id}
+                                    className="cursor-pointer border-b last:border-b-0 hover:bg-[var(--surface-soft)]"
+                                    style={{ borderColor: "var(--border-subtle)" }}
+                                    onClick={() => toggleRetakeStudent(student.id)}
+                                  >
+                                    <td className="px-4 py-2 text-center">
+                                      <input
+                                        type="checkbox"
+                                        checked={retakeStudentIds.has(student.id)}
+                                        onChange={() =>
+                                          toggleRetakeStudent(student.id)
+                                        }
+                                        onClick={(event) =>
+                                          event.stopPropagation()
+                                        }
+                                      />
+                                    </td>
+                                    <td className="border-l px-4 py-2 text-xs font-bold">
+                                      {student.name}
+                                    </td>
+                                    <td className="app-muted-text border-l px-4 py-2 text-xs">
+                                      {student.email}
+                                    </td>
+                                  </tr>
+                                ))}
+                                {filteredRetakeStudents.length === 0 && (
+                                  <tr>
+                                    <td
+                                      colSpan={3}
+                                      className="app-muted-text px-5 py-8 text-center text-xs"
+                                    >
+                                      {eligibleRetakeStudents.length === 0
+                                        ? "请先在考试名单中选择学生。"
+                                        : "没有匹配的考试学生。"}
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </section>
+                )}
+              </div>
+
+              <div className="border-t px-5 py-4 sm:px-6">
+                {state.message && (
+                  <p className="mb-3 text-xs font-bold" style={{ color: state.status === "error" ? "#c94f45" : "var(--status-success)" }}>
+                    {state.message}
+                  </p>
+                )}
+                <div className="flex justify-end gap-2">
+                  <button type="button" onClick={() => setSelectedPaperId("")} disabled={pending} className="app-soft-card rounded-lg border px-4 py-2.5 text-xs font-bold disabled:opacity-50">
+                    取消
+                  </button>
+                  <button type="submit" disabled={!selectedPaper.quality.ready || pending || (targetScope === "selected_students" && selectedStudentIds.size === 0) || (Boolean(retakePaperId) && selectedEligibleRetakeCount === 0)} className="inline-flex min-h-11 items-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-50" style={{ backgroundColor: "var(--support)" }}>
+                    <Send size={14} />
+                    {!selectedPaper.quality.ready
+                      ? "质检未通过"
+                      : pending
+                        ? "正在发布…"
+                        : `确认发布${typeLabel}`}
+                  </button>
+                </div>
+              </div>
+            </form>
+          </section>
+        </div>
+      )}
+    </>
+  );
+}
