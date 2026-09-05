@@ -1,13 +1,16 @@
-import { CalendarClock, CheckCircle2, Clock3, Copy, Send, UserPlus, UsersRound } from "lucide-react";
+import { CalendarClock, CheckCircle2, Clock3, Copy, Send, Trash2, UserPlus, UsersRound, XCircle } from "lucide-react";
 
 import {
   addCurriculumTemplateItemAction,
   addStudentsToInstitutionPlanAction,
+  cancelInstitutionPlanAction,
   createCurriculumTemplateAction,
+  deleteCurriculumTemplateAction,
   duplicateCurriculumTemplateAction,
   generateChapterScheduleAction,
   publishCurriculumTemplateAction,
   publishInstitutionCurriculumPlanAction,
+  retireCurriculumTemplateAction,
 } from "../actions";
 import type {
   CurriculumPlanStudent,
@@ -15,6 +18,7 @@ import type {
   CurriculumPlanTemplateItem,
   InstitutionCurriculumPlan,
 } from "../types";
+import { ConfirmSubmitButton } from "./ConfirmSubmitButton";
 import { StudentPicker } from "./StudentPicker";
 
 type CourseOption = { id: string; title: string };
@@ -146,7 +150,27 @@ function PlatformWorkspace({
               <div><div className="flex items-center gap-2"><h2 className="font-semibold text-slate-900">{template.title}</h2><span className={`rounded-full px-2 py-1 text-[11px] ${template.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{template.status === "published" ? "已发布" : template.status === "draft" ? "草稿" : "已停用"}</span></div><p className="mt-1 text-sm text-slate-500">版本 {template.version} · {template.durationDays} 天 · {templateItems.length} 项安排</p></div>
               <div className="flex shrink-0 items-center gap-2">
                 {template.status === "draft" && templateItems.length > 0 ? <form action={publishCurriculumTemplateAction.bind(null, space, appSlug, template.id)}><button className="inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-700 px-3 text-sm font-semibold text-white hover:bg-emerald-800"><Send size={15} />发布标准计划</button></form> : null}
+                {template.status === "draft" ? (
+                  <form action={deleteCurriculumTemplateAction.bind(null, space, appSlug, template.id)}>
+                    <ConfirmSubmitButton
+                      confirmText="确定删除这份草稿吗？已添加的课程、练习和考试安排会一并删除，无法恢复。"
+                      className="inline-flex h-9 items-center gap-2 rounded-xl border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 hover:bg-rose-50"
+                    >
+                      <Trash2 size={15} />删除草稿
+                    </ConfirmSubmitButton>
+                  </form>
+                ) : null}
                 {template.status !== "draft" ? <form action={duplicateCurriculumTemplateAction.bind(null, space, appSlug, template.id)}><button className="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"><Copy size={15} />复制为新草稿</button></form> : null}
+                {template.status === "published" ? (
+                  <form action={retireCurriculumTemplateAction.bind(null, space, appSlug, template.id)}>
+                    <ConfirmSubmitButton
+                      confirmText="确定停用这份标准计划吗？停用后机构不能再采用它，但已经发布给学生的机构计划不受影响。"
+                      className="inline-flex h-9 items-center gap-2 rounded-xl border border-rose-200 bg-white px-3 text-sm font-semibold text-rose-700 hover:bg-rose-50"
+                    >
+                      <XCircle size={15} />停用
+                    </ConfirmSubmitButton>
+                  </form>
+                ) : null}
               </div>
             </div>
             {mixedLevels.length > 1 ? (
@@ -219,6 +243,8 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
             {plans.map((plan) => {
               const unassignedStudents = students.filter((student) => !plan.studentIds.includes(student.id));
               const canAppendStudents = ["published", "active"].includes(plan.status);
+              const statusLabel = plan.status === "cancelled" ? "已取消" : plan.status === "completed" ? "已结束" : plan.status === "active" ? "进行中" : "已发布";
+              const statusTone = plan.status === "cancelled" ? "bg-slate-100 text-slate-500" : plan.status === "completed" ? "bg-slate-100 text-slate-600" : "bg-emerald-50 text-emerald-700";
               return (
                 <li key={plan.id} className="py-3 text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
@@ -232,17 +258,27 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
                           已开始学习 {plan.progress.startedStudentCount}/{plan.progress.trackedStudentCount} 名学生
                         </span>
                       ) : null}
-                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-700">{plan.studentIds.length} 名学生 · 已发布</span>
+                      <span className={`rounded-full px-2 py-1 text-xs ${statusTone}`}>{plan.studentIds.length} 名学生 · {statusLabel}</span>
                     </div>
                   </div>
                   {canAppendStudents ? (
-                    <details className="mt-2">
-                      <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">追加学生</summary>
-                      <form action={addStudentsToInstitutionPlanAction.bind(null, space, appSlug, plan.id)} className="mt-2 space-y-2">
-                        <StudentPicker students={unassignedStudents} emptyMessage="所有已开通学生都已加入本计划。" />
-                        <button disabled={!unassignedStudents.length} className="inline-flex h-9 items-center gap-2 rounded-xl bg-slate-900 px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"><UserPlus size={14} />追加到本计划</button>
+                    <div className="mt-2 flex flex-wrap items-center gap-3">
+                      <details>
+                        <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">追加学生</summary>
+                        <form action={addStudentsToInstitutionPlanAction.bind(null, space, appSlug, plan.id)} className="mt-2 space-y-2">
+                          <StudentPicker students={unassignedStudents} emptyMessage="所有已开通学生都已加入本计划。" />
+                          <button disabled={!unassignedStudents.length} className="inline-flex h-9 items-center gap-2 rounded-xl bg-slate-900 px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"><UserPlus size={14} />追加到本计划</button>
+                        </form>
+                      </details>
+                      <form action={cancelInstitutionPlanAction.bind(null, space, appSlug, plan.id)}>
+                        <ConfirmSubmitButton
+                          confirmText="确定取消这份机构计划吗？取消后学生端会立刻看不到这份计划，此操作无法撤回。"
+                          className="text-xs font-semibold text-rose-600 hover:text-rose-700"
+                        >
+                          取消发布
+                        </ConfirmSubmitButton>
                       </form>
-                    </details>
+                    </div>
                   ) : null}
                 </li>
               );

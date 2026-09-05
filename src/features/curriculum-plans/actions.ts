@@ -396,6 +396,104 @@ export async function duplicateCurriculumTemplateAction(
   }
 }
 
+export async function deleteCurriculumTemplateAction(
+  space: string,
+  appSlug: string,
+  templateIdValue: string,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const templateId = uuid.parse(templateIdValue);
+    const supabase = await createClient();
+    const { data: template, error: templateError } = await supabase
+      .from("curriculum_plan_templates")
+      .select("id,status")
+      .eq("id", templateId)
+      .eq("student_app_id", access.appId)
+      .maybeSingle();
+    if (templateError || !template) throw new Error("找不到要删除的标准计划。");
+    if (template.status !== "draft") throw new Error("已发布或停用的标准计划不能删除，请改为复制成新草稿。");
+    const { error: itemsError } = await supabase
+      .from("curriculum_plan_template_items")
+      .delete()
+      .eq("template_id", templateId);
+    if (itemsError) throw new Error(itemsError.message);
+    const { error: deleteError } = await supabase
+      .from("curriculum_plan_templates")
+      .delete()
+      .eq("id", templateId)
+      .eq("status", "draft");
+    if (deleteError) throw new Error(deleteError.message);
+    revalidatePath(path);
+    redirect(resultPath(path, "success", "草稿已删除。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function retireCurriculumTemplateAction(
+  space: string,
+  appSlug: string,
+  templateIdValue: string,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const templateId = uuid.parse(templateIdValue);
+    const supabase = await createClient();
+    const { data: retired, error } = await supabase
+      .from("curriculum_plan_templates")
+      .update({ status: "retired" })
+      .eq("id", templateId)
+      .eq("student_app_id", access.appId)
+      .eq("status", "published")
+      .select("id")
+      .maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!retired) throw new Error("该计划不是已发布状态，无法停用。");
+    revalidatePath(path);
+    redirect(resultPath(path, "success", "标准计划已停用，机构无法再采用，已发布给学生的机构计划不受影响。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function cancelInstitutionPlanAction(
+  space: string,
+  appSlug: string,
+  planIdValue: string,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requireInstitutionPublisher(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const planId = uuid.parse(planIdValue);
+    const supabase = await createClient();
+    let query = supabase
+      .from("institution_curriculum_plans")
+      .update({ status: "cancelled" })
+      .eq("id", planId)
+      .eq("tenant_id", access.tenantId!)
+      .eq("student_app_id", access.appId)
+      .in("status", ["published", "active"]);
+    if (access.role === "teacher") query = query.eq("created_by", access.userId);
+    const { data: cancelled, error } = await query.select("id").maybeSingle();
+    if (error) throw new Error(error.message);
+    if (!cancelled) throw new Error("找不到该计划，或它已经结束、不属于你。");
+    revalidatePath(path);
+    revalidatePath(`/${space}/apps/korean`);
+    redirect(resultPath(path, "success", "机构计划已取消，学生端不会再显示本计划。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
 export async function generateChapterScheduleAction(
   space: string,
   appSlug: string,

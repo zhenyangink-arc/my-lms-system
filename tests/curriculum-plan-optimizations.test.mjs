@@ -70,6 +70,26 @@ test("平台负责人可以按固定间隔把一节课的智能教材章节批�
   assert.match(sql, /课程学习必须绑定真实课时或章节/);
 });
 
+test("平台负责人可以删除草稿、停用已发布模板；机构负责人可以取消已发布的机构计划，操作前都有二次确认", async () => {
+  const actions = await read("src/features/curriculum-plans/actions.ts");
+  assert.match(actions, /export async function deleteCurriculumTemplateAction/);
+  assert.match(actions, /已发布或停用的标准计划不能删除，请改为复制成新草稿/);
+  assert.match(actions, /export async function retireCurriculumTemplateAction/);
+  assert.match(actions, /status: "retired"/);
+  assert.match(actions, /export async function cancelInstitutionPlanAction/);
+  assert.match(actions, /status: "cancelled"/);
+
+  const [confirmButton, workspace] = await Promise.all([
+    read("src/features/curriculum-plans/components/ConfirmSubmitButton.tsx"),
+    read("src/features/curriculum-plans/components/CurriculumPlanWorkspace.tsx"),
+  ]);
+  assert.match(confirmButton, /"use client"/);
+  assert.match(confirmButton, /window\.confirm\(confirmText\)/);
+  assert.match(workspace, /deleteCurriculumTemplateAction\.bind\(null, space, appSlug, template\.id\)/);
+  assert.match(workspace, /retireCurriculumTemplateAction\.bind\(null, space, appSlug, template\.id\)/);
+  assert.match(workspace, /cancelInstitutionPlanAction\.bind\(null, space, appSlug, plan\.id\)/);
+});
+
 test("机构负责人和管理员被授权读取所管课程的 lesson_progress，进度徽章才不会对他们始终为空", async () => {
   const sql = await read("supabase/migrations/202609050006_curriculum_plan_progress_visibility.sql");
   assert.match(sql, /create policy "institution leaders read lesson progress for curriculum plans"/);
