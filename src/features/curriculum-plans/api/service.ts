@@ -181,16 +181,59 @@ export async function loadCurriculumPlanWorkspace({
     values.push(String(row.student_id));
     studentIdsByPlan.set(String(row.plan_id), values);
   }
-  const plans: InstitutionCurriculumPlan[] = planRows.map((row) => ({
-    id: row.id,
-    templateId: row.template_id,
-    title: row.title,
-    startsAt: row.starts_at,
-    endsAt: row.ends_at,
-    status: row.status,
-    publishedAt: row.published_at,
-    studentIds: studentIdsByPlan.get(row.id) ?? [],
-  }));
+
+  const lessonIdsByTemplate = new Map<string, string[]>();
+  for (const item of items) {
+    if (item.sourceType !== "lesson" || !item.sourceId) continue;
+    const values = lessonIdsByTemplate.get(item.templateId) ?? [];
+    values.push(item.sourceId);
+    lessonIdsByTemplate.set(item.templateId, values);
+  }
+  const allTrackedLessonIds = [...new Set([...lessonIdsByTemplate.values()].flat())];
+  const allTrackedStudentIds = [...new Set(planRows.flatMap((row) => studentIdsByPlan.get(row.id) ?? []))];
+  const startedStudentsByLesson = new Map<string, Set<string>>();
+  if (allTrackedLessonIds.length && allTrackedStudentIds.length) {
+    const { data: progressRows, error: progressError } = await supabase
+      .from("lesson_progress")
+      .select("user_id,lesson_id")
+      .in("lesson_id", allTrackedLessonIds)
+      .in("user_id", allTrackedStudentIds)
+      .neq("status", "not_started");
+    if (progressError) throw new Error("学生学习进度读取失败", { cause: progressError });
+    for (const row of (progressRows ?? []) as { user_id: string; lesson_id: string }[]) {
+      const set = startedStudentsByLesson.get(row.lesson_id) ?? new Set<string>();
+      set.add(row.user_id);
+      startedStudentsByLesson.set(row.lesson_id, set);
+    }
+  }
+
+  const plans: InstitutionCurriculumPlan[] = planRows.map((row) => {
+    const planStudentIds = studentIdsByPlan.get(row.id) ?? [];
+    const lessonIds = lessonIdsByTemplate.get(row.template_id) ?? [];
+    let progress: InstitutionCurriculumPlan["progress"] = null;
+    if (lessonIds.length && planStudentIds.length) {
+      const startedStudents = new Set<string>();
+      for (const lessonId of lessonIds) {
+        const set = startedStudentsByLesson.get(lessonId);
+        if (!set) continue;
+        for (const studentId of planStudentIds) {
+          if (set.has(studentId)) startedStudents.add(studentId);
+        }
+      }
+      progress = { trackedStudentCount: planStudentIds.length, startedStudentCount: startedStudents.size };
+    }
+    return {
+      id: row.id,
+      templateId: row.template_id,
+      title: row.title,
+      startsAt: row.starts_at,
+      endsAt: row.ends_at,
+      status: row.status,
+      publishedAt: row.published_at,
+      studentIds: planStudentIds,
+      progress,
+    };
+  });
   const students: CurriculumPlanStudent[] = (profileResult.data ?? []).map((row) => ({
     id: String(row.id),
     name: String(row.full_name ?? row.login_id ?? "学生"),
@@ -231,7 +274,6 @@ export async function loadPublishedStudentCurriculumTasks({
     .eq("tenant_id", tenantId)
     .eq("student_app_id", studentAppId)
     .in("status", ["published", "active"])
-    .lte("starts_at", new Date(now.getTime() + 45 * 86_400_000).toISOString())
     .gte("ends_at", new Date(now.getTime() - 7 * 86_400_000).toISOString())
     .order("starts_at", { ascending: true });
   if (planResult.error) throw new Error("学生正式学习计划读取失败", { cause: planResult.error });

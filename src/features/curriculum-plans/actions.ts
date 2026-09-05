@@ -35,6 +35,22 @@ async function requirePlatformOwner(space: string, appSlug: string) {
   return access;
 }
 
+async function nextTemplateVersion(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  studentAppId: string,
+  courseId: string | null,
+) {
+  let query = supabase
+    .from("curriculum_plan_templates")
+    .select("version")
+    .eq("student_app_id", studentAppId)
+    .order("version", { ascending: false })
+    .limit(1);
+  query = courseId ? query.eq("course_id", courseId) : query.is("course_id", null);
+  const { data } = await query.maybeSingle();
+  return Number(data?.version ?? 0) + 1;
+}
+
 async function requireInstitutionPublisher(space: string, appSlug: string) {
   const access = await requireManagementAppAccess(space, appSlug);
   if (
@@ -74,18 +90,7 @@ export async function createCurriculumTemplateAction(
       if (courseError || !course) throw new Error("只能选择当前韩语应用的平台课程。");
     }
 
-    let version = 1;
-    if (courseId) {
-      const { data } = await supabase
-        .from("curriculum_plan_templates")
-        .select("version")
-        .eq("student_app_id", access.appId)
-        .eq("course_id", courseId)
-        .order("version", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-      version = Number(data?.version ?? 0) + 1;
-    }
+    const version = await nextTemplateVersion(supabase, access.appId, courseId);
     const { error } = await supabase.from("curriculum_plan_templates").insert({
       student_app_id: access.appId,
       course_id: courseId,
@@ -178,6 +183,22 @@ export async function addCurriculumTemplateItemAction(
     } else {
       if (lessonId) throw new Error("只有课程学习活动可以绑定课时。");
       title = z.string().min(1).max(200).parse(customTitle);
+    }
+    const newStart = hour * 60 + minute;
+    const newEnd = newStart + durationMinutes;
+    const { data: sameDayItems, error: sameDayError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select("title,start_minute,duration_minutes")
+      .eq("template_id", templateId)
+      .eq("day_offset", day - 1);
+    if (sameDayError) throw new Error(sameDayError.message);
+    const conflict = (sameDayItems ?? []).find((row) => {
+      const existingStart = Number(row.start_minute);
+      const existingEnd = existingStart + Number(row.duration_minutes);
+      return newStart < existingEnd && existingStart < newEnd;
+    });
+    if (conflict) {
+      throw new Error(`第 ${day} 天 ${startTime} 与「${conflict.title}」的时间段冲突，请调整开始时间或时长。`);
     }
     const { error } = await supabase.from("curriculum_plan_template_items").insert({
       template_id: templateId,
@@ -292,6 +313,139 @@ export async function publishInstitutionCurriculumPlanAction(
     revalidatePath(path);
     revalidatePath(`/${space}/apps/korean`);
     redirect(resultPath(path, "success", "机构学习计划已发布，学生端会按实际日期显示。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function duplicateCurriculumTemplateAction(
+  space: string,
+  appSlug: string,
+  templateIdValue: string,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const templateId = uuid.parse(templateIdValue);
+    const supabase = await createClient();
+    const { data: source, error: sourceError } = await supabase
+      .from("curriculum_plan_templates")
+      .select("id,student_app_id,course_id,title,description,duration_days")
+      .eq("id", templateId)
+      .eq("student_app_id", access.appId)
+      .single();
+    if (sourceError || !source) throw new Error("找不到要复制的标准计划。");
+    const { data: sourceItemRows, error: itemsError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select(TEMPLATE_ITEM_COLUMNS)
+      .eq("template_id", templateId);
+    if (itemsError) throw new Error("复制计划明细失败。", { cause: itemsError });
+
+    const version = await nextTemplateVersion(supabase, access.appId, source.course_id);
+    const { data: newTemplate, error: insertError } = await supabase
+      .from("curriculum_plan_templates")
+      .insert({
+        student_app_id: source.student_app_id,
+        course_id: source.course_id,
+        title: source.title,
+        description: source.description,
+        duration_days: source.duration_days,
+        version,
+        status: "draft",
+        created_by: access.userId,
+      })
+      .select("id")
+      .single();
+    if (insertError || !newTemplate) throw new Error("创建新草稿失败。", { cause: insertError });
+
+    const sourceItems = (sourceItemRows ?? []).map((row) => mapTemplateItem(row as never));
+    if (sourceItems.length) {
+      const { error: copyError } = await supabase.from("curriculum_plan_template_items").insert(
+        sourceItems.map((item) => ({
+          template_id: newTemplate.id,
+          day_offset: item.dayOffset,
+          start_minute: item.startMinute,
+          duration_minutes: item.durationMinutes,
+          activity_type: item.activityType,
+          source_type: item.sourceType,
+          source_id: item.sourceId,
+          title: item.title,
+          destination_path: item.destinationPath,
+          instructions: item.instructions,
+          is_required: item.isRequired,
+          sort_order: item.sortOrder,
+        })),
+      );
+      if (copyError) throw new Error("复制计划明细失败。", { cause: copyError });
+    }
+    revalidatePath(path);
+    redirect(resultPath(path, "success", "已复制为新草稿，可继续编辑后再发布。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function addStudentsToInstitutionPlanAction(
+  space: string,
+  appSlug: string,
+  planIdValue: string,
+  formData: FormData,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requireInstitutionPublisher(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const planId = uuid.parse(planIdValue);
+    const studentIds = [...new Set(formData.getAll("student_ids").map(String))].map((id) => uuid.parse(id));
+    if (studentIds.length === 0) throw new Error("请至少选择一名要追加的学生。");
+    const supabase = await createClient();
+    const { data: plan, error: planError } = await supabase
+      .from("institution_curriculum_plans")
+      .select("id,status,created_by")
+      .eq("id", planId)
+      .eq("tenant_id", access.tenantId!)
+      .eq("student_app_id", access.appId)
+      .single();
+    if (planError || !plan) throw new Error("找不到该机构学习计划。");
+    if (!["published", "active"].includes(plan.status)) throw new Error("该计划已结束或尚未发布，无法追加学生。");
+    if (access.role === "teacher" && plan.created_by !== access.userId) {
+      throw new Error("只能向自己发布的计划追加学生。");
+    }
+    const enrollmentQuery = await supabase
+      .from("student_app_enrollments")
+      .select("student_id")
+      .eq("tenant_id", access.tenantId!)
+      .eq("app_id", access.appId)
+      .eq("status", "active")
+      .in("student_id", studentIds);
+    if (enrollmentQuery.error || enrollmentQuery.data?.length !== studentIds.length) {
+      throw new Error("所选学生中包含未开通本应用的账号。");
+    }
+    if (access.role === "teacher") {
+      const { data, error } = await supabase
+        .from("tenant_student_assignments")
+        .select("student_id")
+        .eq("tenant_id", access.tenantId!)
+        .eq("teacher_id", access.userId)
+        .in("student_id", studentIds);
+      if (error || data?.length !== studentIds.length) throw new Error("老师只能向自己负责的学生发布计划。");
+    }
+    const { error: insertError } = await supabase.from("institution_curriculum_plan_students").upsert(
+      studentIds.map((studentId) => ({
+        plan_id: planId,
+        tenant_id: access.tenantId!,
+        student_id: studentId,
+        assigned_by: access.userId,
+      })),
+      { onConflict: "plan_id,student_id", ignoreDuplicates: true },
+    );
+    if (insertError) throw new Error(insertError.message);
+    revalidatePath(path);
+    revalidatePath(`/${space}/apps/korean`);
+    redirect(resultPath(path, "success", "已追加学生，对方下次进入学习首页即可看到本计划。"));
   } catch (error) {
     unstable_rethrow(error);
     redirect(resultPath(path, "error", errorMessage(error)));

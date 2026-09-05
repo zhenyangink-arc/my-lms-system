@@ -1,8 +1,10 @@
-import { CalendarClock, CheckCircle2, Clock3, Send, UsersRound } from "lucide-react";
+import { CalendarClock, CheckCircle2, Clock3, Copy, Send, UserPlus, UsersRound } from "lucide-react";
 
 import {
   addCurriculumTemplateItemAction,
+  addStudentsToInstitutionPlanAction,
   createCurriculumTemplateAction,
+  duplicateCurriculumTemplateAction,
   publishCurriculumTemplateAction,
   publishInstitutionCurriculumPlanAction,
 } from "../actions";
@@ -12,6 +14,7 @@ import type {
   CurriculumPlanTemplateItem,
   InstitutionCurriculumPlan,
 } from "../types";
+import { StudentPicker } from "./StudentPicker";
 
 type CourseOption = { id: string; title: string };
 type LessonOption = { id: string; courseId: string; title: string };
@@ -32,6 +35,11 @@ const ACTIVITY_LABELS: Record<CurriculumPlanTemplateItem["activityType"], string
 
 const inputClass =
   "h-10 w-full rounded-xl border border-slate-200 bg-white px-3 text-sm text-slate-800 outline-none transition focus:border-emerald-500 focus:ring-2 focus:ring-emerald-100";
+
+function extractLevelLabel(title: string) {
+  const match = title.match(/(\d+)\s*级/);
+  return match ? `${match[1]}级` : null;
+}
 
 function timeLabel(item: CurriculumPlanTemplateItem) {
   const hour = Math.floor(item.startMinute / 60).toString().padStart(2, "0");
@@ -116,12 +124,35 @@ function PlatformWorkspace({
       {templates.map((template) => {
         const templateItems = items.filter((item) => item.templateId === template.id);
         const templateLessons = lessons.filter((lesson) => lesson.courseId === template.courseId);
+        const mixedLevels = [
+          ...new Set(
+            templateItems
+              .filter((item) => item.sourceType === "lesson")
+              .map((item) => extractLevelLabel(item.title))
+              .filter((level): level is string => Boolean(level)),
+          ),
+        ];
+        const lessonGroups = new Map<string, LessonOption[]>();
+        for (const lesson of templateLessons) {
+          const level = extractLevelLabel(lesson.title) ?? "其他课时";
+          const list = lessonGroups.get(level) ?? [];
+          list.push(lesson);
+          lessonGroups.set(level, list);
+        }
         return (
           <section key={template.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div><div className="flex items-center gap-2"><h2 className="font-semibold text-slate-900">{template.title}</h2><span className={`rounded-full px-2 py-1 text-[11px] ${template.status === "published" ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}>{template.status === "published" ? "已发布" : template.status === "draft" ? "草稿" : "已停用"}</span></div><p className="mt-1 text-sm text-slate-500">版本 {template.version} · {template.durationDays} 天 · {templateItems.length} 项安排</p></div>
-              {template.status === "draft" && templateItems.length > 0 ? <form action={publishCurriculumTemplateAction.bind(null, space, appSlug, template.id)}><button className="inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-700 px-3 text-sm font-semibold text-white hover:bg-emerald-800"><Send size={15} />发布标准计划</button></form> : null}
+              <div className="flex shrink-0 items-center gap-2">
+                {template.status === "draft" && templateItems.length > 0 ? <form action={publishCurriculumTemplateAction.bind(null, space, appSlug, template.id)}><button className="inline-flex h-9 items-center gap-2 rounded-xl bg-emerald-700 px-3 text-sm font-semibold text-white hover:bg-emerald-800"><Send size={15} />发布标准计划</button></form> : null}
+                {template.status !== "draft" ? <form action={duplicateCurriculumTemplateAction.bind(null, space, appSlug, template.id)}><button className="inline-flex h-9 items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 hover:bg-slate-50"><Copy size={15} />复制为新草稿</button></form> : null}
+              </div>
             </div>
+            {mixedLevels.length > 1 ? (
+              <p className="mt-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                该计划混合了 {mixedLevels.join("、")} 的课时，请确认是否符合预期。
+              </p>
+            ) : null}
             <TemplateSchedule items={templateItems} />
             {template.status === "draft" ? (
               <details className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
@@ -131,7 +162,7 @@ function PlatformWorkspace({
                   <label className="text-xs font-medium text-slate-600">开始时间<input name="start_time" type="time" required defaultValue="09:00" className={`${inputClass} mt-1`} /></label>
                   <label className="text-xs font-medium text-slate-600">时长（分钟）<input name="duration_minutes" type="number" min={5} max={720} required defaultValue={50} className={`${inputClass} mt-1`} /></label>
                   <label className="text-xs font-medium text-slate-600">活动类型<select name="activity_type" className={`${inputClass} mt-1`}>{Object.entries(ACTIVITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
-                  <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实课时<select name="lesson_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非课程活动，不绑定课时</option>{templateLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</select></label>
+                  <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实课时<select name="lesson_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非课程活动，不绑定课时</option>{[...lessonGroups.entries()].map(([level, levelLessons]) => <optgroup key={level} label={level}>{levelLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</optgroup>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">标题<input name="title" maxLength={200} className={`${inputClass} mt-1`} placeholder="绑定课时后可留空，其他活动必填" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-3">学生端入口<input name="destination_path" className={`${inputClass} mt-1`} placeholder="/dashboard/courses/...（可选）" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">学习要求<input name="instructions" maxLength={1000} className={`${inputClass} mt-1`} placeholder="完成课程后进行听力练习" /></label>
@@ -159,13 +190,52 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
             <summary className="cursor-pointer text-sm font-semibold text-slate-800">采用此计划并发布给学生</summary>
             <form action={publishInstitutionCurriculumPlanAction.bind(null, space, appSlug, template.id)} className="mt-4 space-y-4">
               <div className="grid gap-3 md:grid-cols-2"><label className="text-xs font-medium text-slate-600">机构计划名称<input name="title" defaultValue={template.title} className={`${inputClass} mt-1`} /></label><label className="text-xs font-medium text-slate-600">第一项开始时间（韩国时间）<input name="starts_at" type="datetime-local" required className={`${inputClass} mt-1`} /></label></div>
-              <fieldset><legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"><UsersRound size={16} />选择学生</legend><div className="grid max-h-48 gap-2 overflow-y-auto rounded-xl border border-slate-200 bg-white p-3 sm:grid-cols-2 lg:grid-cols-3">{students.length ? students.map((student) => <label key={student.id} className="flex items-center gap-2 rounded-lg px-2 py-2 text-sm hover:bg-slate-50"><input type="checkbox" name="student_ids" value={student.id} /><span>{student.name}{student.loginId ? <small className="ml-1 text-slate-400">{student.loginId}</small> : null}</span></label>) : <p className="text-sm text-slate-500">当前没有可分配的已开通学生。</p>}</div></fieldset>
+              <fieldset><legend className="mb-2 flex items-center gap-2 text-sm font-semibold text-slate-700"><UsersRound size={16} />选择学生</legend><StudentPicker students={students} /></fieldset>
               <button disabled={!students.length} className="inline-flex h-10 items-center gap-2 rounded-xl bg-slate-900 px-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"><Send size={15} />发布机构计划</button>
             </form>
           </details>
         </section>;
       })}
-      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm"><div className="mb-3 flex items-center gap-2"><Clock3 size={18} className="text-slate-500" /><h2 className="font-semibold text-slate-900">已发布计划</h2></div>{plans.length ? <ul className="divide-y divide-slate-100">{plans.map((plan) => <li key={plan.id} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"><div><strong className="text-slate-800">{plan.title}</strong><p className="text-xs text-slate-500">{formatDateTime(plan.startsAt)} 至 {formatDateTime(plan.endsAt)}</p></div><span className="rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-700">{plan.studentIds.length} 名学生 · 已发布</span></li>)}</ul> : <p className="text-sm text-slate-500">还没有机构执行计划。</p>}</section>
+      <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="mb-3 flex items-center gap-2"><Clock3 size={18} className="text-slate-500" /><h2 className="font-semibold text-slate-900">已发布计划</h2></div>
+        {plans.length ? (
+          <ul className="divide-y divide-slate-100">
+            {plans.map((plan) => {
+              const unassignedStudents = students.filter((student) => !plan.studentIds.includes(student.id));
+              const canAppendStudents = ["published", "active"].includes(plan.status);
+              return (
+                <li key={plan.id} className="py-3 text-sm">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <strong className="text-slate-800">{plan.title}</strong>
+                      <p className="text-xs text-slate-500">{formatDateTime(plan.startsAt)} 至 {formatDateTime(plan.endsAt)}</p>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2">
+                      {plan.progress ? (
+                        <span className="rounded-full bg-sky-50 px-2 py-1 text-xs text-sky-700">
+                          已开始学习 {plan.progress.startedStudentCount}/{plan.progress.trackedStudentCount} 名学生
+                        </span>
+                      ) : null}
+                      <span className="rounded-full bg-emerald-50 px-2 py-1 text-xs text-emerald-700">{plan.studentIds.length} 名学生 · 已发布</span>
+                    </div>
+                  </div>
+                  {canAppendStudents ? (
+                    <details className="mt-2">
+                      <summary className="cursor-pointer text-xs font-semibold text-slate-500 hover:text-slate-700">追加学生</summary>
+                      <form action={addStudentsToInstitutionPlanAction.bind(null, space, appSlug, plan.id)} className="mt-2 space-y-2">
+                        <StudentPicker students={unassignedStudents} emptyMessage="所有已开通学生都已加入本计划。" />
+                        <button disabled={!unassignedStudents.length} className="inline-flex h-9 items-center gap-2 rounded-xl bg-slate-900 px-3 text-xs font-semibold text-white disabled:cursor-not-allowed disabled:opacity-40"><UserPlus size={14} />追加到本计划</button>
+                      </form>
+                    </details>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p className="text-sm text-slate-500">还没有机构执行计划。</p>
+        )}
+      </section>
     </div>
   );
 }

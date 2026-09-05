@@ -48,6 +48,11 @@ export type CurriculumPlanTemplateItem = {
   sortOrder: number;
 };
 
+export type InstitutionCurriculumPlanProgress = {
+  trackedStudentCount: number;
+  startedStudentCount: number;
+};
+
 export type InstitutionCurriculumPlan = {
   id: string;
   templateId: string;
@@ -57,6 +62,7 @@ export type InstitutionCurriculumPlan = {
   status: InstitutionCurriculumPlanStatus;
   publishedAt: string | null;
   studentIds: string[];
+  progress: InstitutionCurriculumPlanProgress | null;
 };
 
 export type CurriculumPlanStudent = {
