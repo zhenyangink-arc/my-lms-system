@@ -56,6 +56,20 @@ test("学生资料查询走服务端管理客户端，避免老师因 profiles �
   assert.match(service, /createAdminClient\(\)\.from\("profiles"\)\.select\("id,full_name,login_id"\)\.in\("id", studentIds\)/);
 });
 
+test("平台负责人可以按固定间隔把一节课的智能教材章节批量排进计划，跳过总览章节并校验总天数", async () => {
+  const [actions, sql] = await Promise.all([
+    read("src/features/curriculum-plans/actions.ts"),
+    read("supabase/migrations/202609050011_curriculum_plan_chapter_source_support.sql"),
+  ]);
+  assert.match(actions, /export async function generateChapterScheduleAction/);
+  assert.match(actions, /endsWith\("-00"\)/);
+  assert.match(actions, /source_type: "chapter"/);
+  assert.match(actions, /超出计划总天数/);
+  assert.match(actions, /destination_path: `\$\{destinationPath\}\?chapter=\$\{chapter\.slug\}`/);
+  assert.match(sql, /source_type not in \('lesson', 'chapter'\)/);
+  assert.match(sql, /课程学习必须绑定真实课时或章节/);
+});
+
 test("机构负责人和管理员被授权读取所管课程的 lesson_progress，进度徽章才不会对他们始终为空", async () => {
   const sql = await read("supabase/migrations/202609050006_curriculum_plan_progress_visibility.sql");
   assert.match(sql, /create policy "institution leaders read lesson progress for curriculum plans"/);

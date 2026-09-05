@@ -35,6 +35,34 @@ async function requirePlatformOwner(space: string, appSlug: string) {
   return access;
 }
 
+async function resolveLessonDestinationPath(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  lesson: { course_id: string; slug: string },
+  appId: string,
+) {
+  const { data: course, error: courseError } = await supabase
+    .from("courses")
+    .select("id,slug,category_id,student_app_id,content_scope")
+    .eq("id", lesson.course_id)
+    .eq("student_app_id", appId)
+    .eq("content_scope", "platform")
+    .maybeSingle();
+  if (courseError || !course?.category_id) throw new Error("所选课时的课程路径不完整。");
+  const { data: subcategory, error: subcategoryError } = await supabase
+    .from("course_categories")
+    .select("id,slug,parent_id")
+    .eq("id", course.category_id)
+    .maybeSingle();
+  if (subcategoryError || !subcategory?.parent_id) throw new Error("所选课时的课程分类路径不完整。");
+  const { data: parent, error: parentError } = await supabase
+    .from("course_categories")
+    .select("id,slug")
+    .eq("id", subcategory.parent_id)
+    .maybeSingle();
+  if (parentError || !parent) throw new Error("所选课时的上级课程分类不存在。");
+  return `/dashboard/courses/${parent.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`;
+}
+
 async function nextTemplateVersion(
   supabase: Awaited<ReturnType<typeof createClient>>,
   studentAppId: string,
@@ -156,28 +184,8 @@ export async function addCurriculumTemplateItemAction(
         .eq("is_published", true)
         .maybeSingle();
       if (lessonError || !lesson) throw new Error("所选课时不存在、未发布或不属于该计划课程。");
-      const { data: course, error: courseError } = await supabase
-        .from("courses")
-        .select("id,slug,category_id,student_app_id,content_scope")
-        .eq("id", lesson.course_id)
-        .eq("student_app_id", access.appId)
-        .eq("content_scope", "platform")
-        .maybeSingle();
-      if (courseError || !course?.category_id) throw new Error("所选课时的课程路径不完整。");
-      const { data: subcategory, error: subcategoryError } = await supabase
-        .from("course_categories")
-        .select("id,slug,parent_id")
-        .eq("id", course.category_id)
-        .maybeSingle();
-      if (subcategoryError || !subcategory?.parent_id) throw new Error("所选课时的课程分类路径不完整。");
-      const { data: parent, error: parentError } = await supabase
-        .from("course_categories")
-        .select("id,slug")
-        .eq("id", subcategory.parent_id)
-        .maybeSingle();
-      if (parentError || !parent) throw new Error("所选课时的上级课程分类不存在。");
       title = customTitle || String(lesson.title);
-      destinationPath = `/dashboard/courses/${parent.slug}/${subcategory.slug}/${course.slug}/${lesson.slug}`;
+      destinationPath = await resolveLessonDestinationPath(supabase, lesson, access.appId);
       sourceType = "lesson";
       sourceId = String(lesson.id);
     } else {
@@ -212,7 +220,7 @@ export async function addCurriculumTemplateItemAction(
       destination_path: destinationPath || null,
       instructions: text(formData, "instructions") || null,
       is_required: formData.get("is_required") === "on",
-      sort_order: day * 10000 + hour * 100 + minute,
+      sort_order: hour * 100 + minute,
     });
     if (error) throw new Error(error.message);
     revalidatePath(path);
@@ -382,6 +390,112 @@ export async function duplicateCurriculumTemplateAction(
     }
     revalidatePath(path);
     redirect(resultPath(path, "success", "已复制为新草稿，可继续编辑后再发布。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function generateChapterScheduleAction(
+  space: string,
+  appSlug: string,
+  templateIdValue: string,
+  formData: FormData,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const templateId = uuid.parse(templateIdValue);
+    const lessonId = uuid.parse(text(formData, "lesson_id"));
+    const startDay = z.coerce.number().int().min(1).max(366).parse(text(formData, "start_day"));
+    const intervalDays = z.coerce.number().int().min(1).max(30).parse(text(formData, "interval_days"));
+    const startTime = z.string().regex(/^\d{2}:\d{2}$/).parse(text(formData, "start_time"));
+    const [hour, minute] = startTime.split(":").map(Number);
+    if (hour < 9 || hour > 23 || minute > 59 || hour === 12 || hour === 18) {
+      throw new Error("开始时间需在 09:00–23:59，且避开 12 点和 18 点休息时段。");
+    }
+    const durationMinutes = z.coerce.number().int().min(5).max(720).parse(text(formData, "duration_minutes"));
+    const isRequired = formData.get("is_required") === "on";
+    const supabase = await createClient();
+
+    const { data: template, error: templateError } = await supabase
+      .from("curriculum_plan_templates")
+      .select("id,duration_days,status,student_app_id,course_id")
+      .eq("id", templateId)
+      .eq("student_app_id", access.appId)
+      .single();
+    if (templateError || !template || template.status !== "draft") throw new Error("只能编辑当前应用的草稿计划。");
+    if (!template.course_id) throw new Error("请先给标准计划绑定课程，再批量生成章节。");
+
+    const { data: lesson, error: lessonError } = await supabase
+      .from("lessons")
+      .select("id,course_id,slug,is_published")
+      .eq("id", lessonId)
+      .eq("course_id", template.course_id)
+      .eq("is_published", true)
+      .maybeSingle();
+    if (lessonError || !lesson) throw new Error("所选课时不存在、未发布或不属于该计划课程。");
+
+    const { data: chapterRows, error: chapterError } = await supabase
+      .from("course_chapters")
+      .select("id,slug,title")
+      .eq("lesson_id", lesson.id)
+      .eq("is_published", true)
+      .order("sort_order");
+    if (chapterError) throw new Error(chapterError.message);
+    const chapters = (chapterRows ?? []).filter((chapter) => !String(chapter.slug).endsWith("-00"));
+    if (chapters.length === 0) throw new Error("该课时没有可用于排课的正式章节。");
+
+    const lastDay = startDay + (chapters.length - 1) * intervalDays;
+    if (lastDay > Number(template.duration_days)) {
+      throw new Error(
+        `${chapters.length} 章按每 ${intervalDays} 天一章、从第 ${startDay} 天开始排，会排到第 ${lastDay} 天，超出计划总天数（${template.duration_days} 天）。请调整起始天数、间隔天数，或把计划总天数改大后重试。`,
+      );
+    }
+
+    const destinationPath = await resolveLessonDestinationPath(supabase, lesson, access.appId);
+    const newStart = hour * 60 + minute;
+    const newEnd = newStart + durationMinutes;
+    const dayOffsets = chapters.map((_, index) => startDay - 1 + index * intervalDays);
+
+    const { data: existingItems, error: existingError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select("title,day_offset,start_minute,duration_minutes")
+      .eq("template_id", templateId)
+      .in("day_offset", dayOffsets);
+    if (existingError) throw new Error(existingError.message);
+    const conflict = (existingItems ?? []).find((row) => {
+      const existingStart = Number(row.start_minute);
+      const existingEnd = existingStart + Number(row.duration_minutes);
+      return newStart < existingEnd && existingStart < newEnd;
+    });
+    if (conflict) {
+      throw new Error(`第 ${Number(conflict.day_offset) + 1} 天与「${conflict.title}」的时间段冲突，请调整开始时间或时长后重试。`);
+    }
+
+    const { error: insertError } = await supabase.from("curriculum_plan_template_items").insert(
+      chapters.map((chapter, index) => {
+        const dayOffset = startDay - 1 + index * intervalDays;
+        return {
+          template_id: templateId,
+          day_offset: dayOffset,
+          start_minute: newStart,
+          duration_minutes: durationMinutes,
+          activity_type: "course",
+          source_type: "chapter",
+          source_id: chapter.id,
+          title: chapter.title,
+          destination_path: `${destinationPath}?chapter=${chapter.slug}`,
+          instructions: null,
+          is_required: isRequired,
+          sort_order: hour * 100 + minute,
+        };
+      }),
+    );
+    if (insertError) throw new Error(insertError.message);
+    revalidatePath(path);
+    redirect(resultPath(path, "success", `已按每 ${intervalDays} 天一章生成 ${chapters.length} 项课程安排。`));
   } catch (error) {
     unstable_rethrow(error);
     redirect(resultPath(path, "error", errorMessage(error)));

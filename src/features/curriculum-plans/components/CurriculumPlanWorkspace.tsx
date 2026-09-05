@@ -5,6 +5,7 @@ import {
   addStudentsToInstitutionPlanAction,
   createCurriculumTemplateAction,
   duplicateCurriculumTemplateAction,
+  generateChapterScheduleAction,
   publishCurriculumTemplateAction,
   publishInstitutionCurriculumPlanAction,
 } from "../actions";
@@ -154,6 +155,21 @@ function PlatformWorkspace({
               </p>
             ) : null}
             <TemplateSchedule items={templateItems} />
+            {template.status === "draft" && templateLessons.length > 0 ? (
+              <details className="mt-4 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/40 p-4">
+                <summary className="cursor-pointer text-sm font-semibold text-emerald-800">批量按章节生成排课（比如一门课的多章内容）</summary>
+                <p className="mt-2 text-xs text-slate-500">选一节有正式章节内容的课时，按固定间隔自动把每一章排成一项课程学习，之后仍可逐项调整。</p>
+                <form action={generateChapterScheduleAction.bind(null, space, appSlug, template.id)} className="mt-4 grid gap-3 md:grid-cols-6">
+                  <label className="text-xs font-medium text-slate-600 md:col-span-2">选择课时<select name="lesson_id" required className={`${inputClass} mt-1`} defaultValue=""><option value="" disabled>选择要展开章节的课时</option>{[...lessonGroups.entries()].map(([level, levelLessons]) => <optgroup key={level} label={level}>{levelLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</optgroup>)}</select></label>
+                  <label className="text-xs font-medium text-slate-600">起始第几天<input name="start_day" type="number" min={1} max={template.durationDays} required defaultValue={1} className={`${inputClass} mt-1`} /></label>
+                  <label className="text-xs font-medium text-slate-600">间隔天数<input name="interval_days" type="number" min={1} max={30} required defaultValue={2} className={`${inputClass} mt-1`} /></label>
+                  <label className="text-xs font-medium text-slate-600">开始时间<input name="start_time" type="time" required defaultValue="09:00" className={`${inputClass} mt-1`} /></label>
+                  <label className="text-xs font-medium text-slate-600">时长（分钟）<input name="duration_minutes" type="number" min={5} max={720} required defaultValue={45} className={`${inputClass} mt-1`} /></label>
+                  <label className="mt-5 flex h-10 items-center gap-2 text-sm text-slate-700"><input name="is_required" type="checkbox" defaultChecked />设为必修</label>
+                  <button className="h-10 rounded-xl bg-emerald-700 text-sm font-semibold text-white hover:bg-emerald-800 md:col-start-6">批量生成</button>
+                </form>
+              </details>
+            ) : null}
             {template.status === "draft" ? (
               <details className="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50/60 p-4">
                 <summary className="cursor-pointer text-sm font-semibold text-slate-700">添加课程、练习或考试</summary>

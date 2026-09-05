@@ -48,7 +48,8 @@ test("课程学习项目绑定真实已发布课时，并由服务端构造学�
   assert.match(actions, /课程学习必须绑定该计划课程中的真实课时/);
   assert.match(actions, /\.from\("lessons"\)/);
   assert.match(actions, /\.eq\("course_id", template\.course_id\)/);
-  assert.match(actions, /destinationPath = `\/dashboard\/courses\//);
+  assert.match(actions, /destinationPath = await resolveLessonDestinationPath\(supabase, lesson, access\.appId\)/);
+  assert.match(actions, /return `\/dashboard\/courses\//);
   assert.match(actions, /sourceType = "lesson"/);
   assert.match(sql, /new\.activity_type = 'course'/);
   assert.match(sql, /lesson\.course_id = v_course_id/);
