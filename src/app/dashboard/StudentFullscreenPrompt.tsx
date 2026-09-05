@@ -5,13 +5,21 @@ import { Maximize2, X } from "lucide-react";
 
 const FULLSCREEN_PROMPT_KEY = "student-fullscreen-prompt";
 const STUDENT_FULLSCREEN_ATTRIBUTE = "data-student-fullscreen";
+const BROWSER_FULLSCREEN_TOLERANCE = 48;
 
 function isBrowserFullscreen() {
-  const widthMatches = Math.abs(window.innerWidth - window.screen.width) <= 2;
-  const heightMatches = Math.abs(window.innerHeight - window.screen.height) <= 2;
+  const viewportWidth = window.visualViewport?.width ?? window.innerWidth;
+  const viewportHeight = window.visualViewport?.height ?? window.innerHeight;
+  const widthMatches =
+    Math.abs(viewportWidth - window.screen.width) <= BROWSER_FULLSCREEN_TOLERANCE;
+  const heightMatches =
+    Math.abs(viewportHeight - window.screen.height) <= BROWSER_FULLSCREEN_TOLERANCE;
   const displayModeFullscreen = window.matchMedia("(display-mode: fullscreen)").matches;
 
-  return widthMatches && heightMatches || displayModeFullscreen;
+  // F11 fullscreen does not set document.fullscreenElement. Browser and OS
+  // scaling can also leave a small edge gap, so matching within two pixels was
+  // too strict and left the ordinary floating-window layout active.
+  return (widthMatches && heightMatches) || displayModeFullscreen;
 }
 
 export function markStudentFullscreenPromptPending() {

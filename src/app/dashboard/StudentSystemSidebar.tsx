@@ -37,6 +37,7 @@ import {
 } from "@/components/ui/sheet";
 
 import {
+  MEMBERSHIP_TIER_LABELS,
   type MembershipTier,
   type StudentFeature,
 } from "@/lib/student-permissions";
@@ -60,6 +61,7 @@ import { LogoutButton } from "./LogoutButton";
 
 type Props = {
   studentId?: string;
+  userName: string;
   userRole: string;
   membershipTier: MembershipTier;
   canAccessAnnouncements: boolean;
@@ -169,6 +171,7 @@ function isActive(pathname: string, href: string) {
 
 export function StudentSystemSidebar({
   studentId,
+  userName,
   userRole,
   membershipTier,
   canAccessAnnouncements,
@@ -346,8 +349,26 @@ export function StudentSystemSidebar({
         </nav>
 
         <div className="student-system-sidebar-foot">
-          <span className="student-system-sidebar-status" aria-hidden="true" />
-          学习服务正常
+          {studentAppSlug === "korean" ? (
+            <>
+              <span className="student-system-sidebar-user-avatar" aria-hidden="true">
+                {userName.trim().slice(0, 1).toUpperCase()}
+              </span>
+              <span className="min-w-0">
+                <strong className="block truncate">{userName}</strong>
+                <small className="block truncate">
+                  {userRole === "platform_course_inspector"
+                    ? "平台课程巡检员"
+                    : MEMBERSHIP_TIER_LABELS[membershipTier]}
+                </small>
+              </span>
+            </>
+          ) : (
+            <>
+              <span className="student-system-sidebar-status" aria-hidden="true" />
+              学习服务正常
+            </>
+          )}
         </div>
       </aside>
 

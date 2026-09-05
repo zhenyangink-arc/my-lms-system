@@ -6,6 +6,7 @@ import {
   BarChart3,
   BookOpenCheck,
   CalendarCheck2,
+  CalendarRange,
   ClipboardCheck,
   FileCheck2,
   GraduationCap,
@@ -41,6 +42,12 @@ type SectionDefinition = {
 };
 
 const learningSections: Record<string, SectionDefinition> = {
+  "learning-plans": {
+    title: "学习计划",
+    description: "平台维护标准流程，机构按实际开课时间发布，学生按周查看正式安排。",
+    icon: CalendarRange,
+    capability: "manageAssessments",
+  },
   "class-today": {
     title: "班级今日情况",
     description: "查看教学分配范围内学生今天的任务状态与学习情况。",

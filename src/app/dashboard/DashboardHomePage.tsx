@@ -12,6 +12,7 @@ import {
   selectRequiredTodayTasks,
 } from "@/features/student-home-learning/api/service";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
+import { loadPublishedStudentCurriculumTasks } from "@/features/curriculum-plans/api/service";
 import { requireActiveUser } from "@/lib/auth";
 import { getDashboardBasePath, scopeDashboardPath } from "@/lib/dashboard-path";
 import { getStudentAppBasePath } from "@/lib/student-apps";
@@ -166,10 +167,8 @@ export default async function DashboardHomePage() {
 
   let studentName = "同学";
   let recentActivity: ActivityItem[] = [];
-  let completedLessonsCount = 0;
   let inProgressLessonsCount = 0;
   let streakDays = 0;
-  let thisWeekCompletedCount = 0;
   let vocabularyThisWeekSeconds = 0;
   let hero: ActivityItem | null = null;
   let reminders: ReminderItem[] = [];
@@ -187,6 +186,7 @@ export default async function DashboardHomePage() {
   let yearTotalMinutes = 0;
   let courseProgressList: CourseProgressItem[] = [];
   let dailyLearningTasks: HomeLearningTask[] = [];
+  let weeklyPlanTasks: HomeLearningTask[] = [];
   let dailyLearningLoadFailed = false;
 
   if (user) {
@@ -210,11 +210,26 @@ export default async function DashboardHomePage() {
             return { tasks: [] as HomeLearningTask[], failed: true };
           })
       : Promise.resolve({ tasks: [] as HomeLearningTask[], failed: false });
-    const [koreanScope, dailyLearningResult] = await Promise.all([
+    const weeklyPlanTasksPromise = auth.tenant
+      ? loadPublishedStudentCurriculumTasks({
+          supabase,
+          tenantId: auth.tenant.id,
+          studentId: user.id,
+          studentAppId: STUDENT_APP_IDS.korean,
+          dashboardBasePath,
+          now: requestNow,
+        }).catch((error: unknown) => {
+          console.error("[student-home] 正式学习计划读取失败", error);
+          return [] as HomeLearningTask[];
+        })
+      : Promise.resolve([] as HomeLearningTask[]);
+    const [koreanScope, dailyLearningResult, formalPlanTasks] = await Promise.all([
       getStudentAppCourseScope(supabase, "korean"),
       dailyLearningTasksPromise,
+      weeklyPlanTasksPromise,
     ]);
     dailyLearningTasks = dailyLearningResult.tasks;
+    weeklyPlanTasks = formalPlanTasks;
     dailyLearningLoadFailed = dailyLearningResult.failed;
     const weekStart = getWeekStartISOString();
     const seoulTodayString = toSeoulDateString(new Date());
@@ -293,19 +308,8 @@ export default async function DashboardHomePage() {
 
     const progressRows = (progressData ?? []) as LessonProgressRow[];
 
-    completedLessonsCount = progressRows.filter(
-      (row) => row.status === "completed"
-    ).length;
-
     inProgressLessonsCount = progressRows.filter(
       (row) => row.status === "in_progress"
-    ).length;
-
-    thisWeekCompletedCount = progressRows.filter(
-      (row) =>
-        row.status === "completed" &&
-        row.completed_at &&
-        row.completed_at >= weekStart
     ).length;
 
     const learningTimeLogs = (learningTimeLogData ?? []) as {
@@ -560,8 +564,6 @@ export default async function DashboardHomePage() {
       })
       .filter((item): item is ActivityItem => item !== null);
 
-    hero = recentActivity[0] ?? null;
-
     if (touchedCourseIdsInOrder.length > 0) {
       const totalCountByCourse = new Map<string, number>();
       for (const row of touchedLessonsData ?? []) {
@@ -617,6 +619,19 @@ export default async function DashboardHomePage() {
         })
         .filter((item): item is CourseProgressItem => item !== null);
     }
+
+    const incompleteCourseIds = new Set(
+      courseProgressList
+        .filter((course) => course.percent < 100)
+        .map((course) => course.courseId),
+    );
+    hero =
+      recentActivity.find(
+        (item) =>
+          item.status !== "completed" &&
+          item.progressPercent < 100 &&
+          incompleteCourseIds.has(item.courseId),
+      ) ?? null;
 
     const questionLessonMap = new Map(
       (questionLessonsData ?? []).map((lesson) => [lesson.id, lesson.slug])
@@ -697,6 +712,8 @@ export default async function DashboardHomePage() {
   const heroHref = hero?.href
     ? scopeDashboardPath(hero.href, dashboardBasePath)
     : null;
+  const courseContinuationTask =
+    dailyLearningTasks.find((task) => task.sourceType === "course") ?? null;
 
   return (
     <SystemGrowthHomeView
@@ -707,13 +724,12 @@ export default async function DashboardHomePage() {
       heroHref={heroHref}
       heroLessonProgress={heroLessonProgress}
       heroCourseProgress={heroCourseProgress}
+      courseContinuationTask={courseContinuationTask}
       reminders={reminders}
       recentActivity={recentActivity}
       courseProgressList={courseProgressList}
       weekActivityDays={weekActivityDays}
-      completedLessonsCount={completedLessonsCount}
       inProgressLessonsCount={inProgressLessonsCount}
-      thisWeekCompletedCount={thisWeekCompletedCount}
       streakDays={streakDays}
       todayStudyMinutes={todayStudyMinutes}
       recentSevenDayStudyMinutes={recentSevenDayStudyMinutes}
@@ -739,6 +755,7 @@ export default async function DashboardHomePage() {
         xLabelUnit: "月",
       }}
       dailyLearningTasks={dailyLearningTasks}
+      weeklyPlanTasks={weeklyPlanTasks}
       requiredTodayTasks={selectRequiredTodayTasks(dailyLearningTasks, requestNow)}
       dailyLearningLoadFailed={dailyLearningLoadFailed}
       dailyLearningNowISOString={requestNow.toISOString()}

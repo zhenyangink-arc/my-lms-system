@@ -1,8 +1,9 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
-import { Bell, Eye, Home, Settings, UserRound } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Bell, ChevronRight, Eye, Search, Settings } from "lucide-react";
 
 import { LazyGuideAgentChat } from "@/components/guide-agent/LazyGuideAgentChat";
 import {
@@ -13,9 +14,14 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import {
+  getStudentAppDefinition,
   getStudentPortalPathFromWorkspace,
   type StudentAppSlug,
 } from "@/lib/student-apps";
+import {
+  normalizeDashboardPathname,
+  scopeDashboardPath,
+} from "@/lib/dashboard-path";
 import { LogoutButton } from "./LogoutButton";
 import { ReminderDialog, type TeacherReplyReminder } from "./ReminderDialog";
 
@@ -36,6 +42,33 @@ const LEGACY_TRANSPARENCY_STORAGE_KEYS = [
 const BACKGROUND_THEME_OPTIONS = ["auto", "morning", "afternoon", "night"] as const;
 type BackgroundTheme = (typeof BACKGROUND_THEME_OPTIONS)[number];
 type ResolvedBackgroundTheme = Exclude<BackgroundTheme, "auto">;
+
+const TOPBAR_INDEX_LABELS = [
+  ["/dashboard/announcements", "通知公告"],
+  ["/dashboard/assignments", "学习任务"],
+  ["/dashboard/conversation-practice", "会话练习"],
+  ["/dashboard/courses", "韩语课程"],
+  ["/dashboard/grades", "我的成绩"],
+  ["/dashboard/help", "帮助中心"],
+  ["/dashboard/library", "资料库"],
+  ["/dashboard/practice", "巩固中心"],
+  ["/dashboard/progress", "学习进度"],
+  ["/dashboard/records", "学习记录"],
+  ["/dashboard/documents", "申请材料"],
+  ["/dashboard/universities", "目标大学"],
+  ["/dashboard/visa", "签证准备"],
+] as const;
+
+function getTopbarIndexLabel(pathname: string, studentAppSlug?: StudentAppSlug) {
+  const matchedLabel = TOPBAR_INDEX_LABELS.find(([prefix]) =>
+    pathname === prefix || pathname.startsWith(`${prefix}/`),
+  )?.[1];
+
+  if (matchedLabel) return matchedLabel;
+  return studentAppSlug
+    ? getStudentAppDefinition(studentAppSlug).title
+    : "学习空间";
+}
 
 function findStudentShell() {
   return document.querySelector<HTMLElement>(
@@ -113,13 +146,16 @@ type Props = {
 export function StudentSystemTopbar({
   userName,
   accountLabel,
-  dateLabel,
   unreadCount,
   teacherReminders,
   dashboardBasePath,
   studentId,
+  studentAppSlug,
 }: Props) {
   const siteHomeHref = getStudentPortalPathFromWorkspace(dashboardBasePath);
+  const router = useRouter();
+  const pathname = normalizeDashboardPathname(usePathname());
+  const indexLabel = getTopbarIndexLabel(pathname, studentAppSlug);
   const [reminderOpen, setReminderOpen] = useState(false);
   const [appearanceOpen, setAppearanceOpen] = useState(false);
   const [backgroundTheme, setBackgroundTheme] =
@@ -174,6 +210,17 @@ export function StudentSystemTopbar({
     );
   };
 
+  const submitCourseSearch = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const query = String(formData.get("q") ?? "").trim();
+    const coursesHref = scopeDashboardPath(
+      "/dashboard/courses",
+      dashboardBasePath,
+    );
+    router.push(query ? `${coursesHref}?q=${encodeURIComponent(query)}` : coursesHref);
+  };
+
   return (
     <>
       <ReminderDialog
@@ -183,26 +230,33 @@ export function StudentSystemTopbar({
       />
 
       <header className="student-system-topbar">
-        <div className="student-system-greeting min-w-0">
-          <span className="student-system-avatar" aria-hidden="true">
-            {userName.trim().slice(0, 1).toUpperCase() || <UserRound size={16} />}
-          </span>
-          <div className="min-w-0">
-            <p className="truncate">你好，{userName}</p>
-            <p className="truncate">{dateLabel}</p>
-          </div>
-        </div>
+        <nav className="student-system-breadcrumb" aria-label="当前位置">
+          <Link href={siteHomeHref}>首页</Link>
+          <ChevronRight size={12} aria-hidden={true} />
+          <span aria-current="page">{indexLabel}</span>
+        </nav>
+
+        {studentAppSlug === "korean" && (
+          <form
+            className="student-system-header-search"
+            role="search"
+            onSubmit={submitCourseSearch}
+          >
+            <Search size={14} aria-hidden="true" />
+            <label className="sr-only" htmlFor="student-course-search">
+              搜索韩语课程
+            </label>
+            <input
+              id="student-course-search"
+              name="q"
+              type="search"
+              placeholder="搜索课程名称或简介"
+              autoComplete="off"
+            />
+          </form>
+        )}
 
         <nav className="student-system-toolbar" aria-label="学生工具栏">
-          <Link
-            href={siteHomeHref}
-            className="student-system-tool-button"
-            title="返回应用中心"
-            aria-label="返回应用中心"
-          >
-            <Home size={18} aria-hidden="true" />
-          </Link>
-
           <LazyGuideAgentChat
             studentId={studentId}
             dashboardBasePath={dashboardBasePath}

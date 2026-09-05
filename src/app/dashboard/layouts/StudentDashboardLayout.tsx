@@ -12,6 +12,7 @@ import { StudentTopbar } from "../StudentTopbar";
 export function StudentDashboardLayout({
   children,
   studentId,
+  userName,
   membershipTier,
   canAccessAnnouncements,
   dashboardBasePath,
@@ -35,6 +36,7 @@ export function StudentDashboardLayout({
       data-dashboard-layout="student"
       data-dashboard-ui="student"
       data-student-shell="system"
+      data-student-app={studentAppSlug}
     >
       <a
         href="#student-main-content"
@@ -52,6 +54,7 @@ export function StudentDashboardLayout({
         sidebar={
           <StudentSystemSidebar
             studentId={studentId}
+            userName={userName}
             userRole={userRole}
             membershipTier={membershipTier}
             canAccessAnnouncements={canAccessAnnouncements}

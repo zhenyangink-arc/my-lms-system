@@ -111,6 +111,485 @@
   }
 }
 
+/*
+  Korean learning workspace · quiet desktop material
+
+  The reference is translated into three reusable layers: a cool matte desktop,
+  a softly tinted navigation rail, and an opaque warm-white learning canvas.
+  Color stays structural; lesson types and status colors remain owned by content.
+*/
+html .app-shell[data-student-shell="system"][data-student-app="korean"] {
+  --background: #f7f9f9;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f7f9f8;
+  --foreground: #2a3331;
+  --foreground-secondary: #5c6764;
+  --foreground-muted: #8b9592;
+  --border: #e5ebe9;
+  --border-subtle: #eef2f1;
+  --primary: #587871;
+  --primary-hover: #45655e;
+  --primary-foreground: #ffffff;
+  --accent: #edf3f1;
+  --support: #77728a;
+  --support-surface: #f2f0f6;
+  --status-success: #577962;
+  --status-success-surface: #edf4ef;
+  --status-warning: #8f6b31;
+  --status-warning-surface: #f8f1e4;
+  --student-content-surface: #ffffff;
+  --student-glass-surface: rgba(255, 255, 255, 0.92);
+  --student-glass-surface-hover: #ffffff;
+  --student-card-level-2-surface: #f8faf9;
+  --student-card-level-2-surface-hover: #ffffff;
+  --student-card-level-3-surface: #f1f5f4;
+  --student-card-level-3-surface-hover: #f7faf9;
+  --student-button-neutral-surface: rgba(255, 255, 255, 0.82);
+  --student-button-neutral-surface-hover: #ffffff;
+  --student-button-accent-surface: #587871;
+  --student-button-accent-surface-hover: #45655e;
+  --student-menu-surface: rgba(255, 255, 255, 0.96);
+  --student-settings-popover-surface: rgba(255, 255, 255, 0.97);
+  --korean-desktop: #e8edef;
+  --korean-sidebar: #f2f7f6;
+  --korean-sidebar-deep: #edf4f2;
+  --korean-canvas: #ffffff;
+  --korean-line: rgba(64, 79, 76, 0.07);
+  --korean-ink: #2a3331;
+  --korean-muted: #8b9592;
+  padding: clamp(18px, 2.1vw, 34px);
+  background:
+    radial-gradient(circle at 14% 5%, rgba(255, 255, 255, 0.8), transparent 34rem),
+    linear-gradient(145deg, #f0f3f4 0%, var(--korean-desktop) 62%, #e3e9ea 100%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-window {
+  max-width: 1680px;
+  height: calc(100dvh - clamp(36px, 4.2vw, 68px));
+  border-color: rgba(255, 255, 255, 0.38);
+  border-radius: 30px;
+  background: linear-gradient(180deg, var(--korean-sidebar), var(--korean-sidebar-deep));
+  box-shadow:
+    0 34px 74px -46px rgba(66, 80, 78, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.92) inset;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell[data-student-app="korean"] .student-system-sidebar {
+  width: 218px;
+  border-right: 0;
+  background:
+    radial-gradient(circle at 20% 2%, rgba(255, 255, 255, 0.92), transparent 18rem),
+    linear-gradient(180deg, rgba(244, 249, 248, 0.98), rgba(237, 244, 242, 0.97));
+  box-shadow: none;
+  backdrop-filter: blur(18px) saturate(108%);
+  -webkit-backdrop-filter: blur(18px) saturate(108%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-brand {
+  min-height: 72px;
+  margin-inline: 16px;
+  border-bottom-color: rgba(42, 55, 54, 0.07);
+  padding-inline: 4px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-brand-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background: #242a29;
+  box-shadow: 0 8px 18px -13px rgba(26, 34, 33, 0.72);
+}
+
+.app-shell[data-student-app="korean"] .student-system-brand strong {
+  color: var(--korean-ink);
+  font-size: 13px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav {
+  padding: 8px 14px 18px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-group {
+  padding-top: 14px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-group h2 {
+  margin: 0 8px 7px;
+  color: var(--korean-muted);
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-group > div {
+  gap: 2px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link {
+  min-height: 38px;
+  gap: 9px;
+  border: 0;
+  border-radius: 999px;
+  padding-inline: 11px;
+  color: #4f5b59;
+  font-size: 13px;
+  font-weight: 610;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link:hover {
+  color: var(--korean-ink);
+  background: rgba(255, 255, 255, 0.52);
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link[aria-current="page"] {
+  color: var(--korean-ink);
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 7px 20px -16px rgba(41, 50, 49, 0.5),
+    0 1px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.app-shell[data-student-app="korean"] .student-system-sidebar-foot {
+  min-height: 70px;
+  margin: 0 14px 12px;
+  gap: 10px;
+  border-top-color: rgba(42, 55, 54, 0.07);
+  padding: 13px 7px 4px;
+  color: var(--korean-ink);
+}
+
+.student-system-sidebar-user-avatar {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: none;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.72);
+  border-radius: 50%;
+  color: #f7f9f8;
+  background: #82938f;
+  box-shadow: 0 6px 15px -11px rgba(31, 42, 40, 0.66);
+  font-size: 12px;
+  font-weight: 720;
+}
+
+.student-system-sidebar-foot strong {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.student-system-sidebar-foot small {
+  margin-top: 2px;
+  color: var(--foreground-muted);
+  font-size: 9px;
+  font-weight: 560;
+}
+
+.app-shell[data-student-app="korean"] .student-system-workspace {
+  z-index: 1;
+  margin: 7px 7px 7px 0;
+  border: 1px solid rgba(44, 55, 54, 0.06);
+  border-radius: 23px;
+  background: var(--korean-canvas);
+  box-shadow:
+    -16px 0 36px -34px rgba(68, 82, 79, 0.22),
+    0 1px 0 rgba(255, 255, 255, 0.98) inset;
+}
+
+.app-shell[data-student-app="korean"] .student-system-topbar {
+  min-height: 62px;
+  margin: 9px 10px 0;
+  border: 1px solid var(--korean-line);
+  border-radius: 14px;
+  padding-inline: 17px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 5px 18px -17px rgba(56, 70, 67, 0.24);
+  backdrop-filter: blur(14px) saturate(105%);
+  -webkit-backdrop-filter: blur(14px) saturate(105%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-avatar {
+  width: 34px;
+  height: 34px;
+  border-color: rgba(255, 255, 255, 0.72);
+  background: #82938f;
+  box-shadow: none;
+  font-size: 12px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-greeting p:first-child {
+  color: var(--korean-ink);
+  font-size: 13px;
+  font-weight: 680;
+}
+
+.app-shell[data-student-app="korean"] .student-system-greeting p:last-child {
+  color: var(--korean-muted);
+  font-size: 11px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-account {
+  display: none;
+}
+
+.app-shell[data-student-app="korean"] .student-system-main {
+  background: var(--korean-canvas);
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-workspace,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-workspace {
+  margin: 0;
+  border-block: 0;
+  border-right: 0;
+  border-radius: 22px 0 0 22px;
+}
+
+@media (max-width: 1279px) {
+  .app-shell[data-student-app="korean"] .student-system-sidebar {
+    width: 204px;
+  }
+}
+
+/* Korean home · low-saturation learning surfaces */
+.app-shell[data-student-app="korean"] .korean-home {
+  max-width: 1420px;
+  padding-bottom: 32px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-intro {
+  display: flex;
+  min-height: 92px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 8px 4px 18px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-intro-copy > p {
+  max-width: 480px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-intro > div:last-child {
+  flex: none;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel {
+  min-width: 0;
+  border: 1px solid rgba(52, 65, 63, 0.08);
+  border-radius: 18px;
+  padding: 18px;
+  background: #ffffff;
+  box-shadow:
+    0 18px 38px -35px rgba(56, 70, 67, 0.26),
+    0 1px 0 rgba(255, 255, 255, 1) inset;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel--primary {
+  border-color: rgba(76, 103, 97, 0.12);
+  padding: clamp(19px, 2vw, 25px);
+  background:
+    radial-gradient(circle at 92% 0%, rgba(255, 255, 255, 0.96), transparent 20rem),
+    linear-gradient(135deg, #f5faf8 0%, #fdfbf7 100%);
+  box-shadow:
+    0 22px 50px -40px rgba(66, 87, 82, 0.28),
+    0 1px 0 #ffffff inset;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel--soft {
+  background: #fbfcfa;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel--notice {
+  border-color: rgba(113, 107, 130, 0.12);
+  background: #f8f7fb;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-span-full {
+  grid-column: 1 / -1;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-span-7 {
+  grid-column: span 7;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-span-6 {
+  grid-column: span 6;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-span-5 {
+  grid-column: span 5;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel :is(h2, h3, strong) {
+  color: #303936;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel .app-muted-text,
+.app-shell[data-student-app="korean"] .korean-home-panel .text-\[var\(--foreground-muted\)\] {
+  color: #87918e;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-metrics > p {
+  color: #68736f;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-metrics > div {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  margin-top: 12px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-metrics > div > div {
+  min-width: 0;
+  border-left: 1px solid rgba(52, 65, 63, 0.08);
+  padding-inline: 18px;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-metrics > div > div:first-child {
+  border-left: 0;
+  padding-left: 0;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-metrics > div > div:last-child {
+  padding-right: 0;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel a,
+.app-shell[data-student-app="korean"] .korean-home-panel button {
+  transition:
+    color 140ms ease,
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel a:focus-visible,
+.app-shell[data-student-app="korean"] .korean-home-panel button:focus-visible {
+  outline-color: color-mix(in srgb, var(--primary) 56%, transparent);
+}
+
+@media (max-width: 1199px) {
+  .app-shell[data-student-app="korean"] :is(
+    .korean-home-span-5,
+    .korean-home-span-6,
+    .korean-home-span-7
+  ) {
+    grid-column: span 6;
+  }
+}
+
+@media (max-width: 899px) {
+  .app-shell[data-student-app="korean"] .korean-home-intro {
+    min-height: 0;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-intro > p {
+    text-align: left;
+  }
+
+  .app-shell[data-student-app="korean"] :is(
+    .korean-home-span-5,
+    .korean-home-span-6,
+    .korean-home-span-7
+  ) {
+    grid-column: 1 / -1;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 18px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div > div:nth-child(3) {
+    border-left: 0;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 559px) {
+  .app-shell[data-student-app="korean"] .korean-home {
+    padding-inline: 12px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-grid {
+    gap: 10px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-panel {
+    border-radius: 16px;
+    padding: 15px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div {
+    grid-template-columns: 1fr;
+    row-gap: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div > div {
+    border-top: 1px solid rgba(52, 65, 63, 0.08);
+    border-left: 0;
+    padding: 12px 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div > div:first-child {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-home-metrics > div > div:last-child {
+    padding-bottom: 0;
+  }
+}
+
+@media (max-width: 767px) {
+  html .app-shell[data-student-shell="system"][data-student-app="korean"] {
+    padding: 0;
+    background: #f2f4f3;
+  }
+
+  .app-shell[data-student-app="korean"] .student-system-window {
+    height: auto;
+    border-radius: 0;
+    background: var(--korean-canvas);
+  }
+
+  .app-shell[data-student-app="korean"] .student-system-workspace {
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .app-shell[data-student-app="korean"] .student-system-topbar {
+    min-height: 62px;
+    margin: 0;
+    border-width: 0 0 1px;
+    border-radius: 0;
+    padding-inline: 12px;
+    background: rgba(251, 251, 250, 0.92);
+  }
+}
+
 @keyframes kim-teacher-breathe {
   0%, 100% { transform: translateY(0) scale(1); }
   50% { transform: translateY(-3px) scale(1.005); }
@@ -4049,5 +4528,2062 @@ a:hover > .student-system-recent-row {
   .student-system-primary-button:hover,
   .student-system-course-card:hover {
     transform: none;
+  }
+}
+
+/* Korean dashboard home · compact learning planner */
+.app-shell[data-student-app="korean"] .korean-dashboard-home {
+  width: 100%;
+  max-width: 1420px;
+  margin-inline: auto;
+  padding-bottom: 28px;
+}
+
+.app-shell[data-student-app="korean"] .korean-dashboard-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 390px);
+  align-items: center;
+  gap: 22px;
+  padding: 16px 2px 14px;
+}
+
+.app-shell[data-student-app="korean"] .korean-dashboard-title h1 {
+  color: #242d2b;
+  font-size: clamp(24px, 2.2vw, 32px);
+  font-weight: 760;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+}
+
+.app-shell[data-student-app="korean"] .korean-dashboard-title p {
+  margin-top: 7px;
+  color: #8a9491;
+  font-size: 13px;
+  font-weight: 520;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card {
+  position: relative;
+  display: grid;
+  min-height: 82px;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: center;
+  column-gap: 14px;
+  overflow: hidden;
+  border: 1px solid #e9eef5;
+  border-radius: 15px;
+  padding: 13px 15px 13px 78px;
+  color: #33404e;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(255, 255, 255, 0.92) 0 24px, transparent 25px),
+    linear-gradient(135deg, #f3f7fd, #eef3fb);
+  box-shadow: 0 16px 34px -30px rgba(72, 91, 119, 0.32);
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card::before {
+  position: absolute;
+  top: 18px;
+  left: 24px;
+  width: 34px;
+  height: 42px;
+  border: 1px solid rgba(140, 121, 82, 0.2);
+  border-radius: 7px;
+  content: "한글";
+  color: #8f7c58;
+  background: #fffaf0;
+  box-shadow: 0 7px 15px -12px rgba(80, 67, 43, 0.5);
+  font-size: 10px;
+  font-weight: 650;
+  line-height: 42px;
+  text-align: center;
+  transform: rotate(-7deg);
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card > span,
+.app-shell[data-student-app="korean"] .korean-focus-card > strong,
+.app-shell[data-student-app="korean"] .korean-focus-card > small {
+  grid-column: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card > span {
+  color: #6e7c8d;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card > strong {
+  margin-top: 3px;
+  font-size: 13px;
+  font-weight: 730;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card > small {
+  margin-top: 2px;
+  color: #8b96a4;
+  font-size: 10px;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card > svg {
+  grid-column: 2;
+  grid-row: 1 / 4;
+  align-self: center;
+  color: #718095;
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card:hover {
+  border-color: #dce5f2;
+  background:
+    radial-gradient(circle at 15% 50%, #ffffff 0 24px, transparent 25px),
+    linear-gradient(135deg, #f7f9fd, #f1f5fb);
+}
+
+.app-shell[data-student-app="korean"] .korean-overview-grid {
+  display: grid;
+  grid-template-columns: minmax(330px, 1.7fr) repeat(3, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.app-shell[data-student-app="korean"] :is(.korean-progress-card, .korean-stat-card) {
+  min-width: 0;
+  min-height: 116px;
+  border: 1px solid #ebefee;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 14px 30px -29px rgba(57, 71, 68, 0.28);
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 15px 17px;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-ring {
+  --progress: 0deg;
+  display: grid;
+  width: 74px;
+  height: 74px;
+  flex: none;
+  place-items: center;
+  border-radius: 50%;
+  background: conic-gradient(#75c9ad var(--progress), #eef3f1 0);
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-ring::before {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  content: "";
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-ring > span {
+  position: absolute;
+  color: #66716e;
+  font-size: 12px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-ring strong {
+  color: #24302d;
+  font-size: 21px;
+  font-weight: 760;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-card > div:last-child > span,
+.app-shell[data-student-app="korean"] .korean-progress-card > div:last-child > strong {
+  display: block;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-card > div:last-child > span {
+  color: #707b78;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-card > div:last-child > strong {
+  margin-top: 4px;
+  color: #303a37;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-card a {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  gap: 3px;
+  margin-top: 3px;
+  color: #6f86c8;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-segments {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(12px, 1fr));
+  gap: 4px;
+  margin-top: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-segments i {
+  height: 5px;
+  border-radius: 999px;
+  background: #edf2f0;
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-segments i[data-complete="true"] {
+  background: #75c9ad;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 14px 15px;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card > span {
+  display: grid;
+  width: 30px;
+  height: 30px;
+  place-items: center;
+  border-radius: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card > small {
+  margin-top: 7px;
+  color: #737d7a;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card > strong {
+  margin-top: 2px;
+  color: #26312e;
+  font-size: 20px;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card > p {
+  margin-top: 2px;
+  color: #98a19f;
+  font-size: 9px;
+  font-weight: 550;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card--warm > span {
+  color: #ee8461;
+  background: #fff1eb;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card--blue > span {
+  color: #6e8ed9;
+  background: #eef3ff;
+}
+
+.app-shell[data-student-app="korean"] .korean-stat-card--mint > span {
+  color: #5b9d82;
+  background: #edf8f3;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-plan {
+  margin-top: 16px;
+}
+
+.app-shell[data-student-app="korean"] .korean-section-heading {
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.app-shell[data-student-app="korean"] .korean-section-heading h2 {
+  color: #28312f;
+  font-size: 16px;
+  font-weight: 740;
+  letter-spacing: -0.02em;
+}
+
+.app-shell[data-student-app="korean"] .korean-section-heading p {
+  margin-top: 2px;
+  color: #98a19f;
+  font-size: 10px;
+}
+
+.app-shell[data-student-app="korean"] .korean-section-heading a,
+.app-shell[data-student-app="korean"] .korean-week-range {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #e9edec;
+  border-radius: 999px;
+  padding-inline: 11px;
+  color: #75807d;
+  background: #ffffff;
+  font-size: 10px;
+  font-weight: 620;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-grid {
+  display: grid;
+  min-height: 250px;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  overflow: hidden;
+  border: 1px solid #e9edec;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day {
+  min-width: 0;
+  border-left: 1px solid #eef1f0;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day:first-child {
+  border-left: 0;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day > header {
+  position: relative;
+  display: flex;
+  min-height: 48px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-bottom: 1px solid #eef1f0;
+  color: #8d9693;
+  background: #fbfcfc;
+  font-size: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day > header > span {
+  color: #65706d;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day > header > strong {
+  font-weight: 560;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day > header > small {
+  position: absolute;
+  right: 7px;
+  border-radius: 999px;
+  padding: 2px 5px;
+  color: #ffffff;
+  background: #2d3533;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day[data-today="true"] > header {
+  color: #ffffff;
+  background: #2d3533;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day[data-today="true"] > header > :is(span, strong) {
+  color: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day[data-today="true"] > header > small {
+  color: #2d3533;
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-content {
+  display: flex;
+  min-height: 200px;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 8px;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 39px, #f3f5f4 40px);
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card {
+  display: block;
+  min-height: 62px;
+  border: 1px solid rgba(103, 111, 130, 0.08);
+  border-radius: 8px;
+  padding: 8px;
+  color: #48514f;
+  background: #eff5ff;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="assignment"] {
+  background: #fff3d9;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="exam"] {
+  background: #f7e8f0;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="course"] {
+  background: #eaf3ff;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="chapter_practice"],
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="specialized_practice"] {
+  background: #e8f7ef;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card[data-source="review"] {
+  background: #f1eafa;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card > span,
+.app-shell[data-student-app="korean"] .korean-schedule-card > strong,
+.app-shell[data-student-app="korean"] .korean-schedule-card > small {
+  display: block;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card > span {
+  color: #7d8683;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card > strong {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  font-size: 10px;
+  font-weight: 710;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card > small {
+  margin-top: 5px;
+  color: #7f8986;
+  font-size: 8px;
+  font-weight: 560;
+}
+
+.app-shell[data-student-app="korean"] .korean-schedule-card:hover {
+  border-color: rgba(86, 105, 100, 0.18);
+  box-shadow: 0 8px 18px -16px rgba(63, 79, 75, 0.38);
+}
+
+.app-shell[data-student-app="korean"] .korean-activity-note {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 7px;
+  padding: 6px 7px;
+  color: #5e846f;
+  background: rgba(239, 248, 243, 0.9);
+  font-size: 8px;
+  font-weight: 620;
+}
+
+.app-shell[data-student-app="korean"] :is(.korean-week-empty, .korean-week-more) {
+  display: grid;
+  min-height: 42px;
+  place-items: center;
+  color: #a2aaa8;
+  font-size: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-more {
+  min-height: 24px;
+  color: #71817d;
+}
+
+/* Weekly plan timeline: 09:00–23:50, aligned across all seven days. */
+.app-shell[data-student-app="korean"] .korean-week-grid {
+  display: block;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior-inline: contain;
+  scrollbar-gutter: stable;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-table {
+  display: grid;
+  min-width: 1080px;
+  grid-template-columns: 88px repeat(7, minmax(138px, 1fr));
+  grid-auto-rows: minmax(30px, auto);
+}
+
+.app-shell[data-student-app="korean"] :is(
+  .korean-week-corner,
+  .korean-week-day-header
+) {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  min-height: 34px;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  border-bottom: 1px solid #dce1dc;
+  border-left: 1px solid #dce1dc;
+  color: #8d9693;
+  background: #f8faf9;
+  font-size: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-corner {
+  left: 0;
+  z-index: 3;
+  border-left: 0;
+  color: #76807d;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header > span {
+  color: #65706d;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header > strong {
+  font-weight: 560;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header > small {
+  position: absolute;
+  right: 7px;
+  border-radius: 999px;
+  padding: 2px 5px;
+  color: #ffffff;
+  background: #2d3533;
+  font-size: 8px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header[data-today="true"] {
+  color: #ffffff;
+  background: #2d3533;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header[data-today="true"] > :is(span, strong) {
+  color: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-header[data-today="true"] > small {
+  color: #2d3533;
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-time {
+  position: sticky;
+  left: 0;
+  z-index: 1;
+  display: grid;
+  min-height: 30px;
+  place-items: center;
+  border-top: 1px solid #edf1ee;
+  color: #7d8784;
+  background: #fbfcfc;
+  font-size: 8px;
+  font-weight: 620;
+  font-variant-numeric: tabular-nums;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot {
+  min-width: 0;
+  min-height: 30px;
+  border-top: 1px solid #edf1ee;
+  border-left: 1px solid #edf1ee;
+  padding: 1px 2px;
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot[data-today="true"] {
+  background: #fbfdfc;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-schedule-card {
+  min-height: 0;
+  padding: 2px 4px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-schedule-card > span {
+  font-size: 7px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-schedule-card > strong {
+  margin-top: 1px;
+  font-size: 9px;
+  line-height: 1.15;
+  -webkit-line-clamp: 1;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-schedule-card > small {
+  margin-top: 1px;
+  font-size: 7px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-schedule-card + .korean-schedule-card {
+  margin-top: 4px;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-slot .korean-week-more {
+  min-height: 20px;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start {
+  margin-top: 14px;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start > header {
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start h2 {
+  color: #2d3634;
+  font-size: 14px;
+  font-weight: 730;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start header p {
+  margin-top: 1px;
+  color: #9ba4a1;
+  font-size: 9px;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start header a {
+  display: inline-flex;
+  min-height: 32px;
+  align-items: center;
+  gap: 4px;
+  color: #7485bc;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-start > div {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card {
+  position: relative;
+  display: grid;
+  min-height: 64px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  grid-template-rows: auto auto;
+  align-content: center;
+  column-gap: 9px;
+  border: 1px solid rgba(79, 91, 88, 0.05);
+  border-radius: 12px;
+  padding: 9px 10px;
+  color: #404a47;
+  background: #f4efff;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card[data-tone="blue"] { background: #edf4ff; }
+.app-shell[data-student-app="korean"] .korean-quick-card[data-tone="sand"] { background: #fff3df; }
+.app-shell[data-student-app="korean"] .korean-quick-card[data-tone="mint"] { background: #eaf8f1; }
+.app-shell[data-student-app="korean"] .korean-quick-card[data-tone="rose"] { background: #fbecef; }
+
+.app-shell[data-student-app="korean"] .korean-quick-card > span {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  grid-row: 1 / 3;
+  place-items: center;
+  border-radius: 10px;
+  color: #796bae;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card > strong {
+  align-self: end;
+  font-size: 10px;
+  font-weight: 710;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card > small {
+  align-self: start;
+  overflow: hidden;
+  color: #8e9794;
+  font-size: 8px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card > svg {
+  grid-column: 3;
+  grid-row: 1 / 3;
+  align-self: center;
+  color: #9da6a3;
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card:hover {
+  border-color: rgba(83, 104, 99, 0.12);
+  box-shadow: 0 9px 20px -18px rgba(58, 73, 69, 0.32);
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview {
+  margin-top: 18px;
+  border-top: 1px solid #eef1f0;
+  padding-top: 8px;
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview > summary {
+  display: flex;
+  min-height: 44px;
+  cursor: pointer;
+  align-items: center;
+  gap: 10px;
+  color: #56625f;
+  font-size: 12px;
+  font-weight: 680;
+  list-style: none;
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview > summary::-webkit-details-marker {
+  display: none;
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview > summary::before {
+  content: "+";
+  color: #7d8885;
+  font-size: 16px;
+  font-weight: 450;
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview[open] > summary::before {
+  content: "−";
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview > summary small {
+  color: #a0a8a6;
+  font-size: 10px;
+  font-weight: 520;
+}
+
+.app-shell[data-student-app="korean"] .korean-more-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+  padding-top: 10px;
+}
+
+.app-shell[data-student-app="korean"] .korean-dashboard-message {
+  margin-top: 16px;
+  border: 1px solid #e9edec;
+  border-radius: 15px;
+  padding: 18px;
+  background: #ffffff;
+}
+
+.app-shell[data-student-app="korean"] .korean-course-list,
+.app-shell[data-student-app="korean"] .korean-recent-list {
+  margin-top: 8px;
+}
+
+.app-shell[data-student-app="korean"] .korean-course-list > article {
+  border-top: 1px solid #eef1f0;
+  padding-block: 11px;
+}
+
+.app-shell[data-student-app="korean"] .korean-course-list > article:first-child {
+  border-top: 0;
+}
+
+.app-shell[data-student-app="korean"] .korean-course-list > article > span {
+  display: inline-flex;
+  margin-block: 5px;
+  border-radius: 999px;
+  padding: 3px 7px;
+  color: #8f6b31;
+  background: #f8f1e4;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.app-shell[data-student-app="korean"] .korean-empty-copy {
+  margin-top: 12px;
+  color: #87918e;
+  font-size: 12px;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list > div {
+  border-top: 1px solid #eef1f0;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list > div:first-child {
+  border-top: 0;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list a {
+  display: flex;
+  min-height: 52px;
+  align-items: center;
+  gap: 10px;
+  color: #52605c;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list a > span {
+  min-width: 0;
+  flex: 1;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list a :is(strong, small) {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell[data-student-app="korean"] .korean-recent-list a strong { font-size: 11px; }
+.app-shell[data-student-app="korean"] .korean-recent-list a small { margin-top: 2px; color: #939c99; font-size: 9px; }
+
+.app-shell[data-student-app="korean"] .korean-reminder-row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  margin-top: 10px;
+  border-radius: 12px;
+  padding: 13px;
+  color: #6e6682;
+  background: #f7f4fb;
+}
+
+.app-shell[data-student-app="korean"] .korean-reminder-row span { min-width: 0; }
+.app-shell[data-student-app="korean"] .korean-reminder-row :is(strong, small) { display: block; }
+.app-shell[data-student-app="korean"] .korean-reminder-row strong { font-size: 11px; }
+.app-shell[data-student-app="korean"] .korean-reminder-row small { margin-top: 3px; color: #978fa7; font-size: 9px; }
+
+@media (max-width: 1199px) {
+  .app-shell[data-student-app="korean"] .korean-overview-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .app-shell[data-student-app="korean"] .korean-progress-card {
+    grid-column: 1 / -1;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(5) {
+    border-left: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(n + 5) {
+    border-top: 1px solid #eef1f0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-quick-start > div {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 899px) {
+  .app-shell[data-student-app="korean"] .korean-dashboard-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-focus-card {
+    max-width: none;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day,
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(5) {
+    border-top: 1px solid #eef1f0;
+    border-left: 1px solid #eef1f0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(odd) {
+    border-left: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day-content {
+    min-height: 150px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-more-grid > * {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 639px) {
+  .app-shell[data-student-app="korean"] .korean-dashboard-home {
+    padding-inline: 12px;
+    padding-top: 10px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-dashboard-title h1 {
+    font-size: 25px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-overview-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-progress-card {
+    grid-column: auto;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-stat-card {
+    min-height: 102px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+    padding-bottom: 8px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day,
+  .app-shell[data-student-app="korean"] .korean-week-day:nth-child(n) {
+    border-top: 1px solid #eef1f0;
+    border-left: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day:first-child {
+    border-top: 0;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-week-day-content {
+    min-height: 82px;
+    background-image: none;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-quick-start > div {
+    grid-template-columns: 1fr;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-quick-card {
+    min-height: 68px;
+  }
+
+  .app-shell[data-student-app="korean"] .korean-more-overview > summary {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+    padding-block: 8px;
+  }
+}
+
+/* Korean dashboard home · softer luminance for long study sessions */
+html .app-shell[data-student-shell="system"][data-student-app="korean"] {
+  --background: #f7f9f8;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f7f9f8;
+  --border: #d4dad6;
+  --border-subtle: #dde2de;
+  --accent: #e1e8e4;
+  --student-content-surface: #ffffff;
+  --student-glass-surface: rgba(235, 240, 236, 0.78);
+  --student-glass-surface-hover: rgba(243, 245, 241, 0.88);
+  --student-card-level-2-surface: #f8faf9;
+  --student-card-level-2-surface-hover: #ffffff;
+  --student-card-level-3-surface: #f2f6f4;
+  --student-card-level-3-surface-hover: #f8faf9;
+  --student-button-neutral-surface: rgba(236, 240, 236, 0.74);
+  --student-button-neutral-surface-hover: rgba(244, 246, 242, 0.88);
+  --student-menu-surface: rgba(236, 240, 236, 0.88);
+  --student-settings-popover-surface: rgba(236, 240, 236, 0.88);
+  --korean-desktop: #d2d8d6;
+  --korean-sidebar: #e9f3f3;
+  --korean-sidebar-deep: #f0f0f0;
+  --korean-canvas: #ffffff;
+  --korean-line: rgba(55, 69, 65, 0.1);
+  --korean-fullscreen-edge: #000000;
+  background: #000000;
+  backdrop-filter: blur(26px) saturate(106%);
+  -webkit-backdrop-filter: blur(26px) saturate(106%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-window {
+  border-color: rgba(248, 250, 247, 0.48);
+  background: rgba(232, 242, 243, 0.9);
+  box-shadow:
+    0 30px 68px -46px rgba(50, 64, 60, 0.42),
+    0 1px 0 rgba(252, 253, 250, 0.68) inset,
+    1px 0 0 rgba(249, 251, 248, 0.34) inset;
+  backdrop-filter: blur(28px) saturate(112%);
+  -webkit-backdrop-filter: blur(28px) saturate(112%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-sidebar {
+  border-right: 1px solid rgba(255, 255, 255, 0.62);
+  background-color: rgba(232, 242, 244, 0.96);
+  background-image:
+    radial-gradient(
+      ellipse 138% 42% at 12% -6%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      ellipse 112% 64% at 116% 34%,
+      rgba(174, 219, 225, 0.66) 0%,
+      rgba(196, 228, 232, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 132% 54% at -14% 106%,
+      rgba(204, 206, 231, 0.5) 0%,
+      rgba(222, 222, 239, 0) 68%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(247, 251, 251, 0.96) 0%,
+      rgba(226, 241, 244, 0.95) 42%,
+      rgba(235, 244, 245, 0.94) 67%,
+      rgba(229, 230, 239, 0.95) 100%
+    );
+  box-shadow:
+    1px 0 0 rgba(255, 255, 255, 0.82) inset,
+    -1px 0 0 rgba(255, 255, 255, 0.34) inset,
+    12px 0 34px -30px rgba(45, 64, 70, 0.32);
+  backdrop-filter: blur(22px) saturate(110%);
+  -webkit-backdrop-filter: blur(22px) saturate(110%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link:hover {
+  color: #252b30;
+  background: rgba(255, 255, 255, 0.48);
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link[aria-current="page"] {
+  color: #171b20;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow:
+    0 7px 18px -14px rgba(35, 49, 54, 0.3),
+    0 1px 0 rgba(255, 255, 255, 0.96) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.42);
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-link {
+  color: #414a50;
+}
+
+.app-shell[data-student-app="korean"] .student-system-nav-group h2 {
+  color: #879397;
+}
+
+.app-shell[data-student-app="korean"] :is(.student-system-brand, .student-system-sidebar-foot) {
+  border-color: rgba(73, 91, 95, 0.07);
+}
+
+.app-shell[data-student-app="korean"] .student-system-workspace {
+  border-color: rgba(249, 251, 248, 0.5);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    -16px 0 36px -34px rgba(46, 61, 56, 0.34),
+    0 1px 0 rgba(252, 253, 250, 0.6) inset;
+  backdrop-filter: blur(22px) saturate(108%);
+  -webkit-backdrop-filter: blur(22px) saturate(108%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-main {
+  background: transparent;
+}
+
+.app-shell[data-student-app="korean"] .student-system-topbar {
+  min-height: 58px;
+  margin: 0;
+  border-width: 0 0 1px;
+  border-color: rgba(79, 94, 91, 0.08);
+  border-radius: 22px 22px 0 0;
+  padding-inline: 17px;
+  background: rgba(255, 255, 255, 0.86);
+  box-shadow:
+    0 10px 26px -24px rgba(43, 57, 52, 0.34),
+    0 1px 0 rgba(255, 255, 255, 0.82) inset;
+  backdrop-filter: blur(18px) saturate(108%);
+  -webkit-backdrop-filter: blur(18px) saturate(108%);
+}
+
+.app-shell[data-student-app="korean"] .student-system-breadcrumb {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+  color: var(--foreground-muted);
+  font-size: 10px;
+  font-weight: 600;
+}
+
+.app-shell[data-student-app="korean"] .student-system-breadcrumb a {
+  color: var(--foreground-muted);
+  transition: color 140ms ease;
+}
+
+.app-shell[data-student-app="korean"] .student-system-breadcrumb a:hover {
+  color: var(--foreground);
+}
+
+.app-shell[data-student-app="korean"] .student-system-breadcrumb a:focus-visible {
+  border-radius: 4px;
+  outline: 2px solid color-mix(in srgb, var(--primary) 34%, transparent);
+  outline-offset: 3px;
+}
+
+.app-shell[data-student-app="korean"] .student-system-breadcrumb span {
+  overflow: hidden;
+  color: var(--foreground);
+  font-size: 11px;
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-shell[data-student-app="korean"] .student-system-header-search {
+  display: none;
+  width: min(320px, 30vw);
+  min-width: 180px;
+  min-height: 34px;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  border: 1px solid rgba(79, 94, 91, 0.11);
+  border-radius: 11px;
+  padding: 0 11px;
+  color: var(--foreground-muted);
+  background: rgba(255, 255, 255, 0.62);
+  transition:
+    border-color 140ms ease,
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
+.app-shell[data-student-app="korean"] .student-system-header-search:focus-within {
+  border-color: color-mix(in srgb, var(--primary) 38%, transparent);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--primary) 12%, transparent);
+}
+
+.app-shell[data-student-app="korean"] .student-system-header-search input {
+  min-width: 0;
+  flex: 1;
+  border: 0;
+  outline: 0;
+  color: var(--foreground);
+  background: transparent;
+  font-size: 12px;
+}
+
+.app-shell[data-student-app="korean"]
+  .student-system-header-search
+  input::placeholder {
+  color: var(--foreground-muted);
+}
+
+@media (min-width: 900px) {
+  .app-shell[data-student-app="korean"] .student-system-header-search {
+    display: flex;
+  }
+}
+
+.app-shell[data-student-app="korean"] .student-system-toolbar {
+  gap: 6px;
+}
+
+.app-shell[data-student-app="korean"] :is(
+  .student-system-tool-button,
+  .student-system-toolbar > button[aria-controls="guide-agent-chat-panel"],
+  .student-system-logout button
+) {
+  width: 34px !important;
+  height: 34px !important;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.72) !important;
+  box-shadow: 0 5px 14px -13px rgba(32, 45, 51, 0.5);
+}
+
+@media (max-width: 767px) {
+  .app-shell[data-student-app="korean"] .student-system-topbar {
+    min-height: 62px;
+    border-radius: 0;
+    padding-inline: 12px;
+  }
+
+  .app-shell[data-student-app="korean"] :is(
+    .student-system-tool-button,
+    .student-system-toolbar > button[aria-controls="guide-agent-chat-panel"],
+    .student-system-logout button
+  ) {
+    width: 44px !important;
+    height: 44px !important;
+  }
+}
+
+.app-shell[data-student-app="korean"] :is(
+  .korean-progress-card,
+  .korean-stat-card,
+  .korean-home-panel,
+  .korean-dashboard-message
+) {
+  border-color: rgba(249, 250, 247, 0.52);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow:
+    0 14px 30px -29px rgba(43, 56, 52, 0.42),
+    0 1px 0 rgba(252, 253, 250, 0.62) inset;
+  backdrop-filter: blur(12px) saturate(106%);
+  -webkit-backdrop-filter: blur(12px) saturate(106%);
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel--soft {
+  background: rgba(249, 251, 249, 0.92);
+}
+
+.app-shell[data-student-app="korean"] .korean-home-panel--notice {
+  background: rgba(250, 248, 252, 0.94);
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card {
+  border-color: #d7dde1;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(244, 243, 237, 0.88) 0 24px, transparent 25px),
+    linear-gradient(135deg, #e7ebed, #e2e7eb);
+}
+
+.app-shell[data-student-app="korean"] .korean-focus-card:hover {
+  border-color: #cbd3d7;
+  background:
+    radial-gradient(circle at 15% 50%, #f2f1eb 0 24px, transparent 25px),
+    linear-gradient(135deg, #ebeeef, #e6eaec);
+}
+
+.app-shell[data-student-app="korean"] .korean-progress-ring::before,
+.app-shell[data-student-app="korean"] .korean-week-grid,
+.app-shell[data-student-app="korean"] .korean-week-range,
+.app-shell[data-student-app="korean"] .korean-section-heading a {
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.app-shell[data-student-app="korean"] .korean-week-grid,
+.app-shell[data-student-app="korean"] .korean-week-range,
+.app-shell[data-student-app="korean"] .korean-section-heading a {
+  border-color: #d7ddd8;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day,
+.app-shell[data-student-app="korean"] .korean-week-day > header {
+  border-color: #dce1dc;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day > header {
+  background: #f8faf9;
+}
+
+.app-shell[data-student-app="korean"] .korean-week-day-content {
+  background-color: #ffffff;
+  background-image: repeating-linear-gradient(to bottom, transparent 0 39px, #edf1ee 40px);
+}
+
+.app-shell[data-student-app="korean"] .korean-quick-card > span {
+  background: rgba(241, 242, 237, 0.74);
+}
+
+.app-shell[data-student-app="korean"] .korean-more-overview {
+  border-top-color: #d8ded9;
+}
+
+/* Korean workspace · true fullscreen geometry */
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-shell="system"][data-student-app="korean"],
+html:fullscreen
+  .app-shell[data-student-shell="system"][data-student-app="korean"] {
+  width: 100dvw;
+  height: 100dvh;
+  box-sizing: border-box;
+  padding: 8px;
+  background: var(--korean-fullscreen-edge) !important;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-window,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-window {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.58);
+  border-radius: 28px;
+  box-shadow:
+    0 18px 44px -28px rgba(40, 55, 50, 0.42),
+    0 1px 0 rgba(255, 255, 255, 0.72) inset;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-workspace,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-workspace {
+  height: auto;
+  min-height: 0;
+  align-self: stretch;
+  margin: 7px 7px 7px 0;
+  border: 1px solid rgba(249, 251, 248, 0.5);
+  border-radius: 23px;
+  box-shadow:
+    -16px 0 36px -34px rgba(46, 61, 56, 0.34),
+    0 1px 0 rgba(252, 253, 250, 0.6) inset;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-sidebar,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-sidebar {
+  height: 100%;
+  min-height: 0;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-main,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-main {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-topbar,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-topbar {
+  margin: 0;
+  border-width: 0 0 1px;
+  border-radius: 22px 22px 0 0;
+  box-shadow:
+    0 10px 26px -24px rgba(43, 57, 52, 0.34),
+    0 1px 0 rgba(252, 253, 250, 0.78) inset;
+}
+
+html[data-student-fullscreen="true"]
+  .app-shell[data-student-app="korean"]
+  .student-system-main
+  .korean-dashboard-home,
+html:fullscreen
+  .app-shell[data-student-app="korean"]
+  .student-system-main
+  .korean-dashboard-home {
+  width: 100%;
+  max-width: 1480px;
+  margin-inline: auto;
+}
+
+/* Korean workspace · time-of-day ambience */
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-app="korean"][data-student-background="morning"] {
+  --background: #f7f9f8;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #f7f9f8;
+  --foreground: #2a3331;
+  --foreground-secondary: #5c6764;
+  --foreground-muted: #8b9592;
+  --border: #d4dad6;
+  --border-subtle: #dde2de;
+  --primary: #587871;
+  --primary-hover: #45655e;
+  --primary-foreground: #ffffff;
+  --accent: #e1e8e4;
+  --korean-sidebar: #dce9eb;
+  --korean-sidebar-deep: #dfe4e8;
+  --korean-canvas: #f8faf9;
+  --korean-fullscreen-edge: #cfd8d5;
+  --korean-morning-sidebar-base: #dbe9eb;
+  --korean-morning-sidebar-image: linear-gradient(
+    180deg,
+    #e7f0f1 0%,
+    #d4e5e8 48%,
+    #dde2e8 100%
+  );
+  background:
+    radial-gradient(circle at 14% 5%, rgba(238, 242, 239, 0.72), transparent 34rem),
+    linear-gradient(145deg, #dce1df 0%, #d2d8d6 62%, #cbd2d0 100%);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="morning"]
+  .student-system-window {
+  background-color: var(--korean-morning-sidebar-base);
+  background-image: var(--korean-morning-sidebar-image);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="morning"]
+  .student-system-sidebar {
+  border-right: 0;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="morning"]
+  .student-system-workspace {
+  background: rgba(248, 250, 249, 0.96);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-app="korean"][data-student-background="afternoon"] {
+  --background: #fbf8f2;
+  --card: #ffffff;
+  --surface: #ffffff;
+  --surface-soft: #fbf8f2;
+  --foreground: #342f29;
+  --foreground-secondary: #6c6359;
+  --foreground-muted: #948b81;
+  --border: #ded7cb;
+  --border-subtle: #ebe5dc;
+  --primary: #74624d;
+  --primary-hover: #5d4e3c;
+  --primary-foreground: #ffffff;
+  --accent: #f1e8d8;
+  --korean-sidebar: #f1eee9;
+  --korean-sidebar-deep: #dedad4;
+  --korean-fullscreen-edge: #d8ccbd;
+  background:
+    radial-gradient(circle at 12% 3%, rgba(255, 246, 225, 0.78), transparent 31rem),
+    radial-gradient(circle at 92% 88%, rgba(194, 211, 211, 0.42), transparent 34rem),
+    linear-gradient(145deg, #d8ccbd 0%, #e2d9cd 52%, #cbd6d5 100%);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="afternoon"]
+  .student-system-window {
+  background: rgba(241, 236, 228, 0.88);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="afternoon"]
+  .student-system-sidebar {
+  background-color: rgba(243, 236, 225, 0.96);
+  background-image:
+    radial-gradient(
+      ellipse 138% 42% at 12% -6%,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    radial-gradient(
+      ellipse 112% 64% at 116% 34%,
+      rgba(236, 201, 148, 0.56) 0%,
+      rgba(241, 222, 190, 0) 70%
+    ),
+    radial-gradient(
+      ellipse 130% 52% at -12% 106%,
+      rgba(195, 220, 224, 0.46) 0%,
+      rgba(213, 227, 229, 0) 68%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(252, 249, 243, 0.96) 0%,
+      rgba(245, 232, 211, 0.95) 43%,
+      rgba(244, 239, 229, 0.94) 67%,
+      rgba(230, 239, 240, 0.95) 100%
+    );
+}
+
+.app-shell[data-student-app="korean"][data-student-background="afternoon"]
+  :is(.student-system-workspace, .student-system-topbar) {
+  background: rgba(255, 253, 249, 0.9);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-app="korean"][data-student-background="night"] {
+  color-scheme: dark;
+  --background: #0f1517;
+  --card: #192224;
+  --card-foreground: #edf2f0;
+  --surface: #171f21;
+  --surface-soft: #12191b;
+  --foreground: #edf2f0;
+  --foreground-secondary: #b4bfbc;
+  --foreground-muted: #85918e;
+  --border: #2b3638;
+  --border-subtle: #222c2e;
+  --primary: #7fa99f;
+  --primary-hover: #99c0b7;
+  --primary-foreground: #0c1514;
+  --accent: #253335;
+  --support: #aaa4c2;
+  --support-surface: #292735;
+  --status-success: #8fc5a5;
+  --status-success-surface: #20342a;
+  --status-warning: #d3b173;
+  --status-warning-surface: #372e20;
+  --popover: #182123;
+  --popover-foreground: #edf2f0;
+  --student-content-surface: #111719;
+  --student-glass-surface: rgba(23, 31, 33, 0.86);
+  --student-glass-surface-hover: rgba(31, 42, 44, 0.94);
+  --student-card-level-2-surface: #192224;
+  --student-card-level-2-surface-hover: #202a2d;
+  --student-card-level-3-surface: #151d1f;
+  --student-card-level-3-surface-hover: #1b2527;
+  --student-button-neutral-surface: rgba(31, 42, 44, 0.88);
+  --student-button-neutral-surface-hover: rgba(42, 56, 59, 0.96);
+  --student-button-accent-surface: #71998f;
+  --student-button-accent-surface-hover: #86aea5;
+  --student-menu-surface: rgba(24, 33, 35, 0.96);
+  --student-settings-popover-surface: rgba(24, 33, 35, 0.96);
+  --korean-sidebar: #151e21;
+  --korean-sidebar-deep: #101619;
+  --korean-canvas: #111719;
+  --korean-line: rgba(255, 255, 255, 0.07);
+  --korean-ink: #edf2f0;
+  --korean-muted: #85918e;
+  --korean-fullscreen-edge: #0b1012;
+  background:
+    radial-gradient(circle at 18% -8%, rgba(74, 105, 108, 0.24), transparent 32rem),
+    radial-gradient(circle at 90% 88%, rgba(53, 65, 85, 0.22), transparent 34rem),
+    linear-gradient(145deg, #0b1012 0%, #121a1d 52%, #080c0e 100%);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-window {
+  border-color: rgba(255, 255, 255, 0.1);
+  background: rgba(12, 18, 20, 0.94);
+  box-shadow:
+    0 30px 68px -42px rgba(0, 0, 0, 0.88),
+    0 1px 0 rgba(255, 255, 255, 0.07) inset;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-sidebar {
+  border-right-color: rgba(255, 255, 255, 0.07);
+  background-color: #151e21;
+  background-image:
+    radial-gradient(
+      ellipse 135% 48% at 12% -8%,
+      rgba(94, 127, 127, 0.2) 0%,
+      rgba(94, 127, 127, 0) 66%
+    ),
+    linear-gradient(180deg, #182326 0%, #141e21 48%, #101619 100%);
+  box-shadow:
+    1px 0 0 rgba(255, 255, 255, 0.06) inset,
+    10px 0 30px -26px rgba(0, 0, 0, 0.76);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-workspace {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(17, 23, 25, 0.96);
+  box-shadow:
+    -14px 0 32px -28px rgba(0, 0, 0, 0.82),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-topbar {
+  border-color: rgba(255, 255, 255, 0.07);
+  background: rgba(22, 30, 32, 0.9);
+  box-shadow:
+    0 10px 28px -22px rgba(0, 0, 0, 0.86),
+    0 1px 0 rgba(255, 255, 255, 0.06) inset;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(
+    .student-system-tool-button,
+    .student-system-toolbar > button[aria-controls="guide-agent-chat-panel"],
+    .student-system-logout button
+  ) {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: rgba(31, 42, 44, 0.88) !important;
+  box-shadow: 0 5px 14px -12px rgba(0, 0, 0, 0.72);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.student-system-brand strong, .student-system-sidebar-foot) {
+  color: #edf2f0;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.student-system-brand, .student-system-sidebar-foot) {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-nav-link {
+  color: #b4bfbc;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-nav-link:hover {
+  color: #f3f7f5;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-nav-link[aria-current="page"] {
+  color: #f5f8f7;
+  background: #283336;
+  box-shadow:
+    0 8px 20px -14px rgba(0, 0, 0, 0.8),
+    0 1px 0 rgba(255, 255, 255, 0.08) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.04);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-nav-group h2 {
+  color: #798684;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(
+    .korean-dashboard-title h1,
+    .korean-section-heading h2,
+    .korean-quick-start h2,
+    .korean-home-panel :is(h2, h3, strong),
+    .korean-progress-ring strong,
+    .korean-progress-card > div:last-child > strong,
+    .korean-stat-card > strong
+  ) {
+  color: #edf2f0;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(
+    .korean-dashboard-title p,
+    .korean-section-heading p,
+    .korean-quick-start header p,
+    .korean-stat-card > p,
+    .korean-quick-card > small,
+    .korean-home-panel .app-muted-text,
+    .korean-home-panel .text-\[var\(--foreground-muted\)\]
+  ) {
+  color: #85918e;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-progress-card, .korean-stat-card, .korean-home-panel, .korean-dashboard-message) {
+  border-color: rgba(255, 255, 255, 0.07);
+  background: rgba(25, 34, 36, 0.92);
+  box-shadow:
+    0 18px 36px -30px rgba(0, 0, 0, 0.86),
+    0 1px 0 rgba(255, 255, 255, 0.05) inset;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-home-panel--soft, .korean-home-panel--notice) {
+  background: rgba(21, 29, 31, 0.94);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-focus-card {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #dce5e2;
+  background:
+    radial-gradient(circle at 15% 50%, rgba(47, 58, 59, 0.9) 0 24px, transparent 25px),
+    linear-gradient(135deg, #1d282b, #182225);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-focus-card:hover {
+  border-color: rgba(151, 191, 183, 0.18);
+  background:
+    radial-gradient(circle at 15% 50%, #354244 0 24px, transparent 25px),
+    linear-gradient(135deg, #222f32, #1c272a);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-focus-card::before {
+  border-color: rgba(211, 190, 147, 0.18);
+  color: #d8c79f;
+  background: #332f27;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-progress-ring {
+  background: conic-gradient(#79aa9c var(--progress), #293436 0);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-progress-ring::before {
+  background: #192224;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-progress-segments i {
+  background: #293436;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-week-grid, .korean-week-range, .korean-section-heading a) {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #a8b4b1;
+  background: #171f21;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-week-day, .korean-week-day > header) {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day > header {
+  color: #84908d;
+  background: #151d1f;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day > header > span {
+  color: #b4bfbc;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day[data-today="true"] > header {
+  color: #f5f8f7;
+  background: #2a393b;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day-content {
+  background-color: #12191b;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    transparent 0 39px,
+    rgba(255, 255, 255, 0.045) 40px
+  );
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-week-corner, .korean-week-day-header) {
+  border-color: rgba(255, 255, 255, 0.07);
+  color: #84908d;
+  background: #151d1f;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day-header > span {
+  color: #b4bfbc;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-day-header[data-today="true"] {
+  color: #f5f8f7;
+  background: #2a393b;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-time {
+  border-color: rgba(255, 255, 255, 0.045);
+  color: #84908d;
+  background: #151d1f;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-slot {
+  border-color: rgba(255, 255, 255, 0.045);
+  background: #12191b;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-week-slot[data-today="true"] {
+  background: #141d1e;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card {
+  border-color: rgba(255, 255, 255, 0.07);
+  color: #dce5e2;
+  background: #1b2938;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="assignment"] {
+  background: #352c1d;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="exam"] {
+  background: #33242d;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="course"] {
+  background: #1c2a39;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(
+    .korean-schedule-card[data-source="chapter_practice"],
+    .korean-schedule-card[data-source="specialized_practice"]
+  ) {
+  background: #1b3028;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-schedule-card[data-source="review"] {
+  background: #2c2638;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-schedule-card > span, .korean-schedule-card > small) {
+  color: #9aa7a4;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-activity-note {
+  color: #9bc5af;
+  background: rgba(31, 57, 47, 0.9);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card {
+  border-color: rgba(255, 255, 255, 0.06);
+  color: #dce5e2;
+  background: #282339;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card[data-tone="blue"] {
+  background: #1e2b3b;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card[data-tone="sand"] {
+  background: #352d20;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card[data-tone="mint"] {
+  background: #1d3029;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card[data-tone="rose"] {
+  background: #35242c;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-card > span {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-more-overview {
+  border-top-color: rgba(255, 255, 255, 0.07);
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-more-overview > summary {
+  color: #b4bfbc;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(
+    .korean-focus-card > span,
+    .korean-progress-ring > span,
+    .korean-progress-card > div:last-child > span,
+    .korean-stat-card > small
+  ) {
+  color: #aab6b3;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  :is(.korean-focus-card > small, .korean-week-empty, .korean-week-more) {
+  color: #85918e;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-progress-card a,
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-quick-start header a {
+  color: #9eb5df;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-stat-card--warm > span {
+  color: #ee9a7d;
+  background: #3a2924;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-stat-card--blue > span {
+  color: #9bb3ee;
+  background: #232d43;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-stat-card--mint > span {
+  color: #86c5aa;
+  background: #20362f;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-home-metrics > p {
+  color: #b4bfbc;
+}
+
+.app-shell[data-student-app="korean"][data-student-background="night"]
+  .korean-home-metrics > div > div {
+  border-color: rgba(255, 255, 255, 0.07);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-app="korean"][data-student-background] {
+  --korean-outer-background: #000000;
+  --korean-fullscreen-edge: #000000;
+  background: var(--korean-outer-background);
+  backdrop-filter: blur(26px) saturate(106%);
+  -webkit-backdrop-filter: blur(26px) saturate(106%);
+}
+
+html
+  .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-app="korean"][data-student-background="night"] {
+  --korean-outer-background: #000000;
+  --korean-fullscreen-edge: #000000;
+  background: var(--korean-outer-background);
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"]
+  :is(
+    .student-system-window,
+    .student-system-sidebar,
+    .student-system-workspace,
+    .student-system-topbar,
+    .korean-progress-card,
+    .korean-stat-card,
+    .korean-home-panel,
+    .korean-dashboard-message
+  ) {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"]
+  .student-system-window {
+  background: var(--korean-sidebar);
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"]
+  .student-system-sidebar {
+  background: var(--korean-sidebar);
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"]
+  :is(.student-system-workspace, .student-system-topbar) {
+  background: var(--korean-canvas);
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"]
+  :is(
+    .korean-progress-card,
+    .korean-stat-card,
+    .korean-home-panel,
+    .korean-dashboard-message
+  ) {
+  background: var(--card);
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-shell="system"][data-student-app="korean"] {
+  background: var(--korean-outer-background, #000000) !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-shell[data-student-shell="system"][data-student-app="korean"] {
+    background: var(--korean-outer-background, #000000) !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .app-shell[data-student-app="korean"] :is(
+    .student-system-window,
+    .student-system-sidebar,
+    .student-system-workspace,
+    .student-system-topbar,
+    .korean-progress-card,
+    .korean-stat-card,
+    .korean-home-panel,
+    .korean-dashboard-message
+  ) {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .app-shell[data-student-app="korean"] .student-system-window {
+    background: var(--korean-sidebar);
+  }
+
+  .app-shell[data-student-app="korean"] .student-system-sidebar {
+    background: var(--korean-sidebar);
+  }
+
+  .app-shell[data-student-app="korean"] :is(.student-system-workspace, .student-system-topbar) {
+    background: var(--korean-canvas);
+  }
+
+  .app-shell[data-student-app="korean"] :is(
+    .korean-progress-card,
+    .korean-stat-card,
+    .korean-home-panel,
+    .korean-dashboard-message
+  ) {
+    background: var(--card);
+  }
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"][data-student-background="night"]
+  .student-system-window {
+  background: var(--korean-sidebar);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-shell[data-student-app="korean"][data-student-background="night"]
+    .student-system-window {
+    background: var(--korean-sidebar);
+  }
+}
+
+html[data-student-transparency="reduced"]
+  .app-shell[data-student-app="korean"][data-student-background="morning"]
+  .student-system-sidebar {
+  background: transparent;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-shell[data-student-app="korean"][data-student-background="morning"]
+    .student-system-sidebar {
+    background: transparent;
   }
 }

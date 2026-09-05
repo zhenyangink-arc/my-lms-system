@@ -3,6 +3,7 @@
 import { useDeferredValue, useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSearchParams } from "next/navigation";
 import {
   ArrowRight,
   BookOpen,
@@ -124,8 +125,9 @@ export function KoreanCourseCatalogBrowser({
 }: {
   sections: KoreanCourseCatalogSection[];
 }) {
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<StatusFilter>("all");
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState(() => searchParams.get("q") ?? "");
   const deferredSearch = useDeferredValue(search);
 
   const filteredSections = useMemo(() => {

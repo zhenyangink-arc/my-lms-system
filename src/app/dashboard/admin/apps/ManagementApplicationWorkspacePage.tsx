@@ -5,6 +5,7 @@ import {
   BarChart3,
   BookOpenCheck,
   CalendarCheck2,
+  CalendarRange,
   ClipboardCheck,
   FileCheck2,
   GraduationCap,
@@ -47,6 +48,7 @@ type WorkspaceModule = {
   platformOwnerOnly?: boolean;
   tenantTeacherOnly?: boolean;
   institutionExecutiveOnly?: boolean;
+  platformOwnerOrTenant?: boolean;
 };
 
 const MODULE_GROUP_ORDER = [
@@ -68,6 +70,16 @@ const MODULE_GROUP_TONE: Record<string, string> = {
 };
 
 const learningModules: WorkspaceModule[] = [
+  {
+    key: "learning-plans",
+    title: "学习计划",
+    description: "平台制定标准学习流程，机构设置开课时间并发布给学生。",
+    icon: CalendarRange,
+    group: "教学与考核",
+    capability: "manageAssessments",
+    appSlugs: ["korean"],
+    platformOwnerOrTenant: true,
+  },
   {
     key: "class-today",
     title: "班级今日情况",
@@ -330,7 +342,10 @@ export async function ManagementApplicationWorkspacePage({
           (access.role === "tenant_super_admin" || access.role === "ceo"))) &&
       (!module.platformOwnerOnly ||
         (access.scope === "platform" &&
-          access.globalRole === "platform_owner")),
+          access.globalRole === "platform_owner")) &&
+      (!module.platformOwnerOrTenant ||
+        access.scope === "tenant" ||
+        access.globalRole === "platform_owner"),
   );
   const moduleGroups = MODULE_GROUP_ORDER.map((group) => ({
     group,

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import {
   ArrowRight,
   BellRing,
@@ -11,9 +12,7 @@ import {
   Headphones,
   Mic,
   Shapes,
-  Sparkles,
-  Target,
-  Trophy,
+  Timer,
 } from "lucide-react";
 
 import { LocalDateTime } from "@/components/LocalDateTime";
@@ -24,7 +23,6 @@ import {
   ContinueLastLearningCard,
   DailyLearningLoadFailedCard,
   LearningEntryNav,
-  MostImportantTaskCard,
   RequiredTodayCard,
   TodaySuggestionsCard,
 } from "./DailyLearningWorkspace";
@@ -82,13 +80,12 @@ type Props = {
   heroHref: string | null;
   heroLessonProgress: number;
   heroCourseProgress: GrowthCourseProgressItem | null;
+  courseContinuationTask: HomeLearningTask | null;
   reminders: GrowthReminderItem[];
   recentActivity: GrowthActivityItem[];
   courseProgressList: GrowthCourseProgressItem[];
   weekActivityDays: GrowthWeekActivityDay[];
-  completedLessonsCount: number;
   inProgressLessonsCount: number;
-  thisWeekCompletedCount: number;
   streakDays: number;
   todayStudyMinutes: number;
   recentSevenDayStudyMinutes: number;
@@ -101,6 +98,7 @@ type Props = {
   monthStudy: StudyRangeData;
   yearStudy: StudyRangeData;
   dailyLearningTasks: HomeLearningTask[];
+  weeklyPlanTasks: HomeLearningTask[];
   requiredTodayTasks: HomeLearningTask[];
   dailyLearningLoadFailed: boolean;
   dailyLearningNowISOString: string;
@@ -116,25 +114,100 @@ const DATE_OPTIONS: Intl.DateTimeFormatOptions = {
   minute: "2-digit",
 };
 
+const SEOUL_DATE_KEY = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "Asia/Seoul",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+const SEOUL_TIME = new Intl.DateTimeFormat("zh-CN", {
+  timeZone: "Asia/Seoul",
+  hour: "2-digit",
+  minute: "2-digit",
+  hour12: false,
+});
+
+const STUDY_TIME_SLOTS = Array.from({ length: 15 }, (_, index) => {
+  const hour = index + 9;
+  const hourLabel = String(hour).padStart(2, "0");
+  return {
+    hour,
+    label: `${hourLabel}:00～${hourLabel}:50`,
+  };
+}).filter(({ hour }) => hour !== 12 && hour !== 18);
+
+const TASK_SOURCE_LABELS: Record<HomeLearningTask["sourceType"], string> = {
+  assignment: "作业",
+  exam: "考试",
+  course: "课程",
+  chapter_practice: "章节巩固",
+  specialized_practice: "专项训练",
+  review: "错题复习",
+  teacher_recommendation: "老师推荐",
+  student_plan: "学习计划",
+};
+
+const TASK_STATUS_LABELS: Record<HomeLearningTask["status"], string> = {
+  not_started: "未开始",
+  available: "可开始",
+  in_progress: "进行中",
+  submitted: "已提交",
+  pending_grading: "待批改",
+  completed: "已完成",
+  overdue: "已逾期",
+  locked: "未开放",
+  unavailable: "暂不可用",
+};
+
 function formatMinutes(minutes: number) {
   if (minutes < 60) return `${Math.round(minutes)} 分钟`;
   const hours = minutes / 60;
   return `${Number.isInteger(hours) ? hours : hours.toFixed(1)} 小时`;
 }
 
-function formatWeekday(dateString: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    weekday: "short",
-  }).format(new Date(`${dateString}T12:00:00Z`));
+function toSeoulDateKey(value: string | Date) {
+  return SEOUL_DATE_KEY.format(typeof value === "string" ? new Date(value) : value);
 }
 
-function formatShortDate(dateString: string) {
-  return new Intl.DateTimeFormat("zh-CN", {
-    timeZone: "Asia/Seoul",
-    month: "numeric",
-    day: "numeric",
-  }).format(new Date(`${dateString}T12:00:00Z`));
+function buildCurrentWeek(nowISOString: string) {
+  const todayKey = toSeoulDateKey(nowISOString);
+  const [year, month, day] = todayKey.split("-").map(Number);
+  const todayUtc = Date.UTC(year, month - 1, day);
+  const weekday = new Date(todayUtc).getUTCDay();
+  const mondayUtc = todayUtc - (weekday === 0 ? 6 : weekday - 1) * 86_400_000;
+
+  return Array.from({ length: 7 }, (_, index) => {
+    const date = new Date(mondayUtc + index * 86_400_000);
+    return {
+      dateString: date.toISOString().slice(0, 10),
+      dayNumber: date.getUTCDate(),
+      weekday: new Intl.DateTimeFormat("zh-CN", { weekday: "short", timeZone: "UTC" }).format(date),
+    };
+  });
+}
+
+function taskDateKey(task: HomeLearningTask) {
+  const value = task.dueAt ?? task.startsAt;
+  return value ? toSeoulDateKey(value) : null;
+}
+
+function taskTimeLabel(task: HomeLearningTask, fallbackToday: boolean) {
+  if (task.dueAt) return `截止 ${SEOUL_TIME.format(new Date(task.dueAt))}`;
+  if (task.startsAt) return `开始 ${SEOUL_TIME.format(new Date(task.startsAt))}`;
+  return fallbackToday ? "今日重点" : null;
+}
+
+function taskScheduleHour(task: HomeLearningTask) {
+  const value = task.dueAt ?? task.startsAt;
+  if (!value) return 9;
+  const hour = Number(SEOUL_TIME.format(new Date(value)).slice(0, 2));
+  const boundedHour = Math.max(
+    9,
+    Math.min(23, Number.isFinite(hour) ? hour : 9),
+  );
+  if (boundedHour === 12 || boundedHour === 18) return boundedHour + 1;
+  return boundedHour;
 }
 
 function SystemProgress({ value, label }: { value: number; label: string }) {
@@ -154,12 +227,109 @@ function SystemProgress({ value, label }: { value: number; label: string }) {
         aria-valuemax={100}
         aria-valuenow={safeValue}
       >
-        <span
-          className="block h-full rounded-full bg-[var(--primary)]"
-          style={{ width: `${safeValue}%` }}
-        />
+        <span className="block h-full rounded-full bg-[var(--primary)]" style={{ width: `${safeValue}%` }} />
       </div>
     </div>
+  );
+}
+
+function WeeklyLearningPlan({
+  tasks,
+  activityDays,
+  nowISOString,
+}: {
+  tasks: HomeLearningTask[];
+  activityDays: GrowthWeekActivityDay[];
+  nowISOString: string;
+}) {
+  const days = buildCurrentWeek(nowISOString);
+  const todayKey = toSeoulDateKey(nowISOString);
+  const activityByDate = new Map(activityDays.map((day) => [day.dateString, day]));
+  const rangeLabel = `${days[0].dateString.slice(5).replace("-", "/")}–${days[6].dateString.slice(5).replace("-", "/")}`;
+
+  return (
+    <section className="korean-week-plan" aria-labelledby="weekly-plan-title">
+      <header className="korean-section-heading">
+        <div>
+          <h2 id="weekly-plan-title">本周学习计划</h2>
+          <p>课程、作业和练习均来自当前真实学习任务</p>
+        </div>
+        <span className="korean-week-range">
+          <CalendarDays size={15} aria-hidden="true" />
+          {rangeLabel}
+        </span>
+      </header>
+
+      <div
+        className="korean-week-grid"
+        role="region"
+        aria-label="本周七日分时学习安排，可横向滚动"
+        tabIndex={0}
+      >
+        <div className="korean-week-table">
+          <div className="korean-week-corner" aria-hidden="true">时间</div>
+          {days.map((day) => {
+            const activity = activityByDate.get(day.dateString);
+            return (
+              <div
+                key={`header-${day.dateString}`}
+                className="korean-week-day-header"
+                data-today={day.dateString === todayKey ? "true" : undefined}
+                aria-label={`${day.dayNumber}日 ${day.weekday}${day.dateString === todayKey ? "，今天" : ""}${activity?.minutes ? `，已学习${activity.minutes}分钟` : ""}`}
+              >
+                <span>{day.dayNumber}</span>
+                <strong>{day.weekday}</strong>
+                {day.dateString === todayKey && <small>今天</small>}
+              </div>
+            );
+          })}
+
+          {STUDY_TIME_SLOTS.map((slot) => (
+            <div key={slot.hour} className="contents">
+              <div className="korean-week-time">{slot.label}</div>
+              {days.map((day) => {
+                const datedTasks = tasks.filter(
+                  (task) =>
+                    taskDateKey(task) === day.dateString &&
+                    taskScheduleHour(task) === slot.hour,
+                );
+                const visibleTasks = datedTasks.slice(0, 2);
+                const hiddenCount = Math.max(
+                  0,
+                  datedTasks.length - visibleTasks.length,
+                );
+
+                return (
+                  <div
+                    key={`${day.dateString}-${slot.hour}`}
+                    className="korean-week-slot"
+                    data-today={day.dateString === todayKey ? "true" : undefined}
+                  >
+                    {visibleTasks.map((task) => (
+                      <Link
+                        key={task.taskKey}
+                        href={task.href}
+                        className="korean-schedule-card"
+                        data-source={task.sourceType}
+                      >
+                        <span>{TASK_SOURCE_LABELS[task.sourceType]}</span>
+                        <strong>{task.title}</strong>
+                        <small>
+                          {taskTimeLabel(task, false)} · {TASK_STATUS_LABELS[task.status]}
+                        </small>
+                      </Link>
+                    ))}
+                    {hiddenCount > 0 && (
+                      <span className="korean-week-more">另有 {hiddenCount} 项</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -167,13 +337,16 @@ export function SystemGrowthHomeView({
   dashboardBasePath,
   studentName,
   greeting,
+  hero,
+  heroHref,
+  heroLessonProgress,
+  heroCourseProgress,
+  courseContinuationTask,
   reminders,
   recentActivity,
   courseProgressList,
   weekActivityDays,
-  completedLessonsCount,
   inProgressLessonsCount,
-  thisWeekCompletedCount,
   streakDays,
   todayStudyMinutes,
   recentSevenDayStudyMinutes,
@@ -186,6 +359,7 @@ export function SystemGrowthHomeView({
   monthStudy,
   yearStudy,
   dailyLearningTasks,
+  weeklyPlanTasks,
   requiredTodayTasks,
   dailyLearningLoadFailed,
   dailyLearningNowISOString,
@@ -196,64 +370,14 @@ export function SystemGrowthHomeView({
   const visibleCourses = courseProgressList.slice(0, 3);
   const secondaryRecentActivity = recentActivity.slice(1, 4);
   const primaryReminder = reminders[0] ?? null;
-  const weeklyGoalPercent = Math.min(
-    100,
-    Math.round((recentSevenDayActiveDays / 5) * 100),
-  );
-
-  const metrics = [
-    {
-      label: "正在学习",
-      value: `${inProgressLessonsCount} 个课时`,
-      note: inProgressLessonsCount > 0 ? "从上次位置继续即可" : "选择一节新课开始学习",
-      icon: BookOpen,
-      color: "var(--primary)",
-      soft: "var(--accent)",
-    },
-    {
-      label: "累计完成",
-      value: `${completedLessonsCount} 个课时`,
-      note: "来自课程学习进度",
-      icon: Trophy,
-      color: "var(--status-success)",
-      soft: "var(--status-success-surface)",
-    },
-    {
-      label: "本周完成",
-      value: `${thisWeekCompletedCount} 个课时`,
-      note: "按首尔时间周一重新统计",
-      icon: CheckCircle2,
-      color: "var(--support)",
-      soft: "var(--support-surface)",
-    },
-    {
-      label: "本周目标",
-      value: `${weeklyGoalPercent}%`,
-      note: `目标每周学习 5 天，已完成 ${recentSevenDayActiveDays} 天`,
-      icon: Target,
-      color: "var(--status-warning)",
-      soft: "var(--status-warning-surface)",
-    },
-  ];
-
-  const reminderContent = primaryReminder ? (
-    <span className="flex min-h-16 items-center gap-3 px-4 py-3">
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--primary)]">
-        <BellRing size={18} aria-hidden="true" />
-      </span>
-      <span className="min-w-0 flex-1">
-        <strong className="block truncate text-sm font-bold">{primaryReminder.title}</strong>
-        <span className="app-muted-text mt-1 block truncate text-xs font-medium">
-          {primaryReminder.subtitle}
-          {reminders.length > 1 ? `，另有 ${reminders.length - 1} 条老师回复` : ""}
-        </span>
-      </span>
-      <span className="inline-flex min-h-10 shrink-0 items-center gap-1 rounded-xl bg-[var(--primary)] px-3 text-xs font-semibold text-white">
-        查看回复
-        <ArrowRight size={14} aria-hidden="true" />
-      </span>
-    </span>
-  ) : null;
+  const weeklyGoalPercent = Math.min(100, Math.round((recentSevenDayActiveDays / 5) * 100));
+  const focusHref = courseContinuationTask?.href ?? heroHref ?? coursesHref;
+  const focusTitle = courseContinuationTask
+    ? courseContinuationTask.title.replace(/^继续学习\s*/, "")
+    : hero?.lessonTitle ?? "查看全部韩语课程";
+  const focusNote =
+    courseContinuationTask?.description ?? hero?.courseTitle ?? null;
+  const courseProgress = heroCourseProgress?.percent ?? heroLessonProgress;
 
   const studyRanges = [
     {
@@ -261,10 +385,8 @@ export function SystemGrowthHomeView({
       label: "近 7 天",
       periodLabel: "最近 7 天",
       values: weekActivityDays.map((day) => day.minutes),
-      axisLabels: weekActivityDays.map((day) => formatWeekday(day.dateString)),
-      tips: weekActivityDays.map(
-        (day) => `${formatShortDate(day.dateString)} · ${formatMinutes(day.minutes)} · 完成 ${day.completedCount} 个课时`,
-      ),
+      axisLabels: weekActivityDays.map((day) => new Intl.DateTimeFormat("zh-CN", { timeZone: "Asia/Seoul", weekday: "short" }).format(new Date(`${day.dateString}T12:00:00Z`))),
+      tips: weekActivityDays.map((day) => `${day.dateString.slice(5).replace("-", "月")}日 · ${formatMinutes(day.minutes)} · 完成 ${day.completedCount} 个课时`),
     },
     {
       id: "month" as const,
@@ -285,338 +407,207 @@ export function SystemGrowthHomeView({
   ];
 
   const practiceEntries = [
-    {
-      label: "单词练习",
-      description: vocabularyThisWeekMinutes > 0
-        ? `本周已练习 ${vocabularyThisWeekMinutes} 分钟`
-        : "核心词语与语境搭配",
-      href: vocabularyHref,
-      icon: BookText,
-      color: "var(--primary)",
-      soft: "var(--accent)",
-    },
-    {
-      label: "口语练习",
-      description: "情境表达与朗读模仿",
-      href: `${toolboxHref}/speaking`,
-      icon: Mic,
-      color: "var(--status-warning)",
-      soft: "var(--status-warning-surface)",
-    },
-    {
-      label: "语法练习",
-      description: "句型结构与语言运用",
-      href: `${toolboxHref}/grammar`,
-      icon: Shapes,
-      color: "var(--support)",
-      soft: "var(--support-surface)",
-    },
-    {
-      label: "听力练习",
-      description: "听音辨义与关键信息",
-      href: `${toolboxHref}/listening`,
-      icon: Headphones,
-      color: "var(--status-success)",
-      soft: "var(--status-success-surface)",
-    },
+    { label: "背单词", description: vocabularyThisWeekMinutes > 0 ? `本周 ${vocabularyThisWeekMinutes} 分钟` : "核心词语与语境", href: vocabularyHref, icon: BookText, tone: "lilac" },
+    { label: "听力练习", description: "从短对话开始", href: `${toolboxHref}/listening`, icon: Headphones, tone: "blue" },
+    { label: "口语练习", description: "跟读与情境表达", href: `${toolboxHref}/speaking`, icon: Mic, tone: "sand" },
+    { label: "语法课程", description: "句型结构与运用", href: `${toolboxHref}/grammar`, icon: Shapes, tone: "mint" },
+    { label: "开始测验", description: "检验学习效果", href: assignmentsHref, icon: CheckCircle2, tone: "rose" },
   ];
 
   return (
-    <div className="software-growth-home px-4 pb-10 pt-4 sm:px-6 sm:pt-5 xl:px-7">
-      <h2 className="sr-only">成长首页</h2>
+    <div className="software-growth-home korean-dashboard-home px-4 pb-10 pt-4 sm:px-6 xl:px-7">
+      <header className="korean-dashboard-hero">
+        <div className="korean-dashboard-title">
+          <h1>韩语学习</h1>
+          <p>{greeting}，{studentName}。每天进步一点，继续完成今天真实可用的学习任务。</p>
+        </div>
+        <Link href={focusHref} className="korean-focus-card">
+          <span>继续学习</span>
+          <strong>{focusTitle}</strong>
+          {focusNote && <small>{focusNote}</small>}
+          <ArrowRight size={17} aria-hidden="true" />
+        </Link>
+      </header>
 
-      <div className="border-b border-[var(--border)] pb-4">
-        <div className="flex items-center gap-3">
-          <span className="text-[var(--primary)]" aria-hidden="true">
-            <Sparkles size={18} />
-          </span>
-          <div className="min-w-0">
-            <span className="text-xs font-semibold text-[var(--primary-hover)]">今日学习</span>
-            <h2 className="text-lg font-bold tracking-tight">{greeting}，{studentName}</h2>
+      <section className="korean-overview-grid" aria-label="本周学习概览">
+        <article className="korean-progress-card">
+          <div className="korean-progress-ring" style={{ "--progress": `${weeklyGoalPercent * 3.6}deg` } as CSSProperties}>
+            <span><strong>{recentSevenDayActiveDays}</strong>/5</span>
           </div>
-        </div>
-        <p className="mt-1 text-sm text-[var(--foreground-muted)]">
-          {todayStudyMinutes > 0
-            ? `今天已留下 ${formatMinutes(todayStudyMinutes)} 的有效学习记录。`
-            : "从当前课程继续，今天的学习记录会自动汇总。"}
-        </p>
-        <div className="mt-3 flex flex-wrap items-center gap-4 text-xs font-semibold">
-          <span className="inline-flex items-center gap-1.5">
-            <CheckCircle2 size={15} aria-hidden="true" />
-            学习节奏：{recentSevenDayStudyMinutes > 0 ? "持续积累中" : "等待开始"}
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-[var(--status-warning)]">
-            <Flame size={14} aria-hidden="true" />
-            {streakDays > 0 ? `连续学习 ${streakDays} 天` : "今天开始积累"}
-          </span>
-        </div>
-      </div>
-
-      <div className="divide-y divide-[var(--border)]">
-        <div className="py-4">
-          {dailyLearningLoadFailed ? (
-            <DailyLearningLoadFailedCard reloadHref={dashboardBasePath} coursesHref={coursesHref} />
-          ) : (
-            <MostImportantTaskCard
-              tasks={dailyLearningTasks}
-              nowISOString={dailyLearningNowISOString}
-              coursesHref={coursesHref}
-            />
-          )}
-        </div>
-
-        {!dailyLearningLoadFailed && (
-          <>
-            <div className="py-4">
-              <RequiredTodayCard
-                requiredTodayTasks={requiredTodayTasks}
-                nowISOString={dailyLearningNowISOString}
-                coursesHref={coursesHref}
-              />
+          <div className="min-w-0 flex-1">
+            <span>本周学习进度</span>
+            <strong>完成 {recentSevenDayActiveDays} 个学习日</strong>
+            <span className="sr-only">目标每周学习 5 天，已完成 {recentSevenDayActiveDays} 天</span>
+            <div className="korean-progress-segments" aria-label={`每周 5 天目标，已完成 ${recentSevenDayActiveDays} 天`}>
+              {Array.from({ length: 5 }, (_, index) => <i key={index} data-complete={index < recentSevenDayActiveDays ? "true" : undefined} />)}
             </div>
-
-            <div className="py-4">
-              <ContinueLastLearningCard tasks={dailyLearningTasks} coursesHref={coursesHref} />
-            </div>
-
-            <div className="py-4">
-              <TodaySuggestionsCard tasks={dailyLearningTasks} coursePracticeHref={coursePracticeHref} />
-            </div>
-          </>
-        )}
-
-        <div className="py-4">
-          <p className="text-sm font-bold tracking-tight">学习数据概览</p>
-          <div className="mt-3 flex flex-wrap gap-x-8 gap-y-3">
-            {metrics.map((metric) => {
-              const Icon = metric.icon;
-              return (
-                <div key={metric.label} className="flex items-center gap-2.5">
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full" style={{ color: metric.color, backgroundColor: metric.soft }}>
-                    <Icon size={15} aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-lg font-bold leading-tight tracking-tight tabular-nums">{metric.value}</p>
-                    <p className="app-muted-text text-xs font-medium">{metric.label}</p>
-                  </div>
-                </div>
-              );
-            })}
+            <Link href={recordsHref}>查看详情 <ArrowRight size={13} aria-hidden="true" /></Link>
           </div>
+        </article>
+
+        <article className="korean-stat-card korean-stat-card--warm">
+          <span><Flame size={17} aria-hidden="true" /></span>
+          <small>连续学习</small>
+          <strong>{streakDays} 天</strong>
+          <p>{streakDays > 0 ? "继续保持当前节奏" : "今天开始积累"}</p>
+        </article>
+
+        <article className="korean-stat-card korean-stat-card--blue">
+          <span><Clock3 size={17} aria-hidden="true" /></span>
+          <small>近 7 天学习</small>
+          <strong>{formatMinutes(recentSevenDayStudyMinutes)}</strong>
+          <p>今天 {formatMinutes(todayStudyMinutes)}</p>
+        </article>
+
+        <article className="korean-stat-card korean-stat-card--mint">
+          <span><Timer size={17} aria-hidden="true" /></span>
+          <small>总学习时长</small>
+          <strong>{formatMinutes(yearStudy.totalMinutes)}</strong>
+          <p>{yearStudy.label}累计</p>
+        </article>
+      </section>
+
+      {dailyLearningLoadFailed ? (
+        <div className="korean-dashboard-message">
+          <DailyLearningLoadFailedCard reloadHref={dashboardBasePath} coursesHref={coursesHref} />
         </div>
+      ) : (
+        <WeeklyLearningPlan tasks={weeklyPlanTasks} activityDays={weekActivityDays} nowISOString={dailyLearningNowISOString} />
+      )}
 
-        <div className="py-4" aria-labelledby="course-progress-title">
-          <header className="flex items-start justify-between gap-3">
-            <div className="flex items-start gap-3">
-              <span
-                className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}
-                aria-hidden="true"
-              >
-                <BookOpen size={13} />
-              </span>
-              <h2 id="course-progress-title" className="text-sm font-bold tracking-tight">课程进度</h2>
-            </div>
-            <Link href={coursesHref} className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-[var(--primary-hover)] hover:underline">
-              查看全部 <ArrowRight size={12} aria-hidden="true" />
-            </Link>
-          </header>
-
-          {visibleCourses.length > 0 ? (
-            <div className="mt-2 divide-y divide-[var(--border-subtle)]">
-              {visibleCourses.map((course) => (
-                <div key={course.courseId} className="relative flex items-center gap-3 py-2.5 first:pt-0">
-                  <Link
-                    href={course.href ? scopeDashboardPath(course.href, dashboardBasePath) : coursesHref}
-                    className="absolute inset-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
-                    aria-label={!course.href ? `${course.title}入口待完善，前往课程目录` : course.title}
-                  />
-                  <BookOpen size={16} className="shrink-0 text-[var(--primary)]" aria-hidden="true" />
-                  <div className="pointer-events-none relative min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <DashboardTitleWithHint
-                        title={course.title}
-                        description={course.href
-                          ? course.teacherName ? `${course.teacherName} 老师` : "自主学习课程"
-                          : "课程仍保留显示，可从课程目录继续查找"}
-                        headingLevel={3}
-                        hintClassName="pointer-events-auto relative z-10"
-                        titleClassName="text-sm font-bold leading-5"
-                      />
-                      {!course.href && (
-                        <span className="shrink-0 rounded-full bg-[var(--status-warning-surface)] px-2 py-0.5 text-xs font-semibold text-[var(--status-warning)]">入口待完善</span>
-                      )}
-                    </div>
-                    <div className="mt-1.5 max-w-64">
-                      <SystemProgress value={course.percent} label={`${course.completedCount}/${course.totalCount} 课时`} />
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="mt-2 flex items-center gap-3">
-              <BookOpen size={20} className="shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
-              <div className="min-w-0 flex-1">
-                <DashboardTitleWithHint
-                  title="还没有课程进度"
-                  description="进入课程学习后，这里会形成你的课程地图。"
-                  headingLevel={3}
-                  titleClassName="text-sm font-bold"
-                />
-              </div>
-              <Link href={coursesHref} className="inline-flex min-h-11 shrink-0 items-center text-sm font-semibold text-[var(--primary-hover)] hover:underline">
-                浏览课程
+      <nav className="korean-quick-start" aria-label="快速开始学习">
+        <header>
+          <div>
+            <h2>快速开始学习</h2>
+            <p>选择一个方向，立即进入练习</p>
+          </div>
+          <Link href={toolboxHref}>查看全部 <ArrowRight size={13} aria-hidden="true" /></Link>
+        </header>
+        <div>
+          {practiceEntries.map((entry) => {
+            const Icon = entry.icon;
+            return (
+              <Link key={entry.label} href={entry.href} className="korean-quick-card" data-tone={entry.tone}>
+                <span><Icon size={18} aria-hidden="true" /></span>
+                <strong>{entry.label}</strong>
+                <small>{entry.description}</small>
+                <ArrowRight size={14} aria-hidden="true" />
               </Link>
-            </div>
-          )}
+            );
+          })}
         </div>
+      </nav>
 
-        <div className="py-4" aria-labelledby="study-trend-title">
-          <StudentStudyTrendPanel ranges={studyRanges} />
-          <div className="mt-3 flex flex-wrap items-start gap-2">
-            <CalendarDays size={15} className="mt-0.5 shrink-0 text-[var(--primary-hover)]" aria-hidden="true" />
-            <div className="min-w-0 flex-1">
-              <strong className="block text-xs font-semibold">最近 7 天学习建议</strong>
-              <p className="app-muted-text mt-1 text-xs font-medium leading-5">
-                {recentSevenDayStudyMinutes === 0
-                  ? "还没有有效学习记录。完成一次短学习后，系统会从真实数据开始分析。"
-                  : recentSevenDayActiveDays >= 5
-                    ? "学习节奏稳定。建议优先完成正在进行的章节，保持当前连续性。"
-                    : `已有 ${recentSevenDayActiveDays} 天有效学习。把学习分散到更多天，比单日集中更容易保持。`}
-              </p>
-            </div>
-            <Link href={recordsHref} className="inline-flex min-h-11 shrink-0 items-center gap-1 text-xs font-semibold text-[var(--primary-hover)] hover:underline">
+      <details className="korean-more-overview">
+        <summary>
+          <span>更多学习概览</span>
+          <small>任务、课程进度和学习趋势</small>
+        </summary>
+
+        <div className="korean-more-grid">
+          <div className="korean-home-panel korean-home-span-7">
+            <RequiredTodayCard requiredTodayTasks={requiredTodayTasks} nowISOString={dailyLearningNowISOString} coursesHref={coursesHref} />
+          </div>
+          <div className="korean-home-panel korean-home-span-5">
+            <ContinueLastLearningCard tasks={dailyLearningTasks} coursesHref={coursesHref} />
+          </div>
+          <div className="korean-home-panel korean-home-span-full">
+            <TodaySuggestionsCard tasks={dailyLearningTasks} coursePracticeHref={coursePracticeHref} />
+          </div>
+
+          <section className="korean-home-panel korean-home-span-5" aria-labelledby="course-progress-title">
+            <header className="korean-section-heading">
+              <div>
+                <h2 id="course-progress-title">课程进度</h2>
+                <p>最近学习课程的真实完成情况</p>
+              </div>
+              <Link href={coursesHref}>查看全部 <ArrowRight size={13} aria-hidden="true" /></Link>
+            </header>
+            {visibleCourses.length > 0 ? (
+              <div className="korean-course-list">
+                {visibleCourses.map((course) => (
+                  <article key={course.courseId}>
+                    <DashboardTitleWithHint
+                      title={course.title}
+                      description={course.href ? course.teacherName ? `${course.teacherName} 老师` : "自主学习课程" : "入口待完善，可从课程目录继续查找"}
+                      headingLevel={3}
+                      titleClassName="text-sm font-bold"
+                    />
+                    {!course.href && <span>入口待完善</span>}
+                    <SystemProgress value={course.percent} label={`${course.completedCount}/${course.totalCount} 课时`} />
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p className="korean-empty-copy">进入课程学习后，这里会形成你的课程进度。</p>
+            )}
+          </section>
+
+          <section className="korean-home-panel korean-home-span-7" aria-labelledby="study-trend-title">
+            <StudentStudyTrendPanel ranges={studyRanges} />
+            <Link href={recordsHref} className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-[var(--primary-hover)]">
               学习记录 <ArrowRight size={12} aria-hidden="true" />
             </Link>
-          </div>
-        </div>
+          </section>
 
-        {secondaryRecentActivity.length > 0 && (
-          <div className="py-4" aria-labelledby="recent-learning-title">
-            <header className="flex items-start justify-between gap-3">
-              <div className="flex items-start gap-2.5">
-                <span
-                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                  style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}
-                  aria-hidden="true"
-                >
-                  <Clock3 size={13} />
-                </span>
-                <h2 id="recent-learning-title" className="text-sm font-bold tracking-tight">
-                  最近学习位置
-                </h2>
+          {secondaryRecentActivity.length > 0 && (
+            <section className="korean-home-panel korean-home-span-6" aria-labelledby="recent-learning-title">
+              <header className="korean-section-heading">
+                <div><h2 id="recent-learning-title">最近学习位置</h2><p>继续最近打开的课程内容</p></div>
+              </header>
+              <div className="korean-recent-list">
+                {secondaryRecentActivity.map((item) => (
+                  <div key={item.lessonId}>
+                    {item.href ? (
+                      <Link href={scopeDashboardPath(item.href, dashboardBasePath)}>
+                        <BookOpen size={16} aria-hidden="true" />
+                        <span><strong>{item.lessonTitle}</strong><small>{item.courseTitle}</small></span>
+                        <LocalDateTime value={item.lastViewedAt} options={DATE_OPTIONS} />
+                      </Link>
+                    ) : (
+                      <span><BookOpen size={16} aria-hidden="true" /><strong>{item.lessonTitle}</strong></span>
+                    )}
+                  </div>
+                ))}
               </div>
-              <Link
-                href={coursesHref}
-                className="inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-[var(--primary-hover)] hover:underline"
-              >
-                全部课程 <ArrowRight size={12} aria-hidden="true" />
-              </Link>
-            </header>
-            <div className="mt-2 divide-y divide-[var(--border-subtle)]">
-              {secondaryRecentActivity.map((item) => {
-                const content = (
-                  <span className="flex min-h-11 items-center gap-3 py-2">
-                    <BookOpen size={16} className="shrink-0 text-[var(--primary)]" aria-hidden="true" />
-                    <span className="min-w-0 flex-1">
-                      <strong className="block truncate text-sm font-semibold">{item.lessonTitle}</strong>
-                      <span className="app-muted-text mt-0.5 block truncate text-xs font-medium">{item.courseTitle}</span>
-                    </span>
-                    <span className="app-muted-text shrink-0 text-xs font-medium">
-                      <LocalDateTime value={item.lastViewedAt} options={DATE_OPTIONS} />
-                    </span>
-                  </span>
-                );
+            </section>
+          )}
 
-                return item.href ? (
-                  <Link
-                    key={item.lessonId}
-                    href={scopeDashboardPath(item.href, dashboardBasePath)}
-                    className="block hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
-                  >
-                    {content}
-                  </Link>
+          {primaryReminder && (
+            <section className="korean-home-panel korean-home-panel--notice korean-home-span-6">
+              <header className="korean-section-heading"><div><h2>老师回复</h2><p>你有新的学习反馈</p></div></header>
+              {primaryReminder.href ? (
+                primaryReminder.kind === "teacher_reply" ? (
+                  <form action={scopeDashboardPath(primaryReminder.href, dashboardBasePath)} method="post">
+                    <button type="submit" className="korean-reminder-row w-full cursor-pointer text-left">
+                      <BellRing size={18} aria-hidden="true" />
+                      <span><strong>{primaryReminder.title}</strong><small>{primaryReminder.subtitle}</small></span>
+                      <ArrowRight size={15} aria-hidden="true" />
+                    </button>
+                  </form>
                 ) : (
-                  <div key={item.lessonId}>{content}</div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {primaryReminder && reminderContent && (
-          <div className="py-4">
-            {primaryReminder.href ? (
-              primaryReminder.kind === "teacher_reply" ? (
-                <form
-                  action={scopeDashboardPath(primaryReminder.href, dashboardBasePath)}
-                  method="post"
-                >
-                  <button type="submit" className="block w-full cursor-pointer text-left">
-                    {reminderContent}
-                  </button>
-                </form>
+                  <Link href={scopeDashboardPath(primaryReminder.href, dashboardBasePath)} className="korean-reminder-row">
+                    <BellRing size={18} aria-hidden="true" />
+                    <span><strong>{primaryReminder.title}</strong><small>{primaryReminder.subtitle}</small></span>
+                    <ArrowRight size={15} aria-hidden="true" />
+                  </Link>
+                )
               ) : (
-                <Link
-                  href={scopeDashboardPath(primaryReminder.href, dashboardBasePath)}
-                  className="block"
-                >
-                  {reminderContent}
-                </Link>
-              )
-            ) : (
-              <div>{reminderContent}</div>
-            )}
+                <div className="korean-reminder-row">
+                  <BellRing size={18} aria-hidden="true" />
+                  <span><strong>{primaryReminder.title}</strong><small>{primaryReminder.subtitle}</small></span>
+                </div>
+              )}
+            </section>
+          )}
+
+          <div className="korean-home-panel korean-home-span-full">
+            <LearningEntryNav coursesHref={coursesHref} assignmentsHref={assignmentsHref} coursePracticeHref={coursePracticeHref} specializedPracticeHref={toolboxHref} reviewHref={reviewHref} />
           </div>
-        )}
-
-        <div className="py-4">
-          <LearningEntryNav
-            coursesHref={coursesHref}
-            assignmentsHref={assignmentsHref}
-            coursePracticeHref={coursePracticeHref}
-            specializedPracticeHref={toolboxHref}
-            reviewHref={reviewHref}
-          />
         </div>
+      </details>
 
-        <div className="py-4" aria-labelledby="growth-tools-title">
-          <header className="flex items-start gap-2.5">
-            <span
-              className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-              style={{ color: "var(--support)", backgroundColor: "var(--support-surface)" }}
-              aria-hidden="true"
-            >
-              <Target size={13} />
-            </span>
-            <h2 id="growth-tools-title" className="text-sm font-bold tracking-tight">专项训练入口</h2>
-          </header>
-          <div className="mt-2 flex flex-col divide-y divide-[var(--border-subtle)]">
-            {practiceEntries.map((entry) => {
-              const Icon = entry.icon;
-              return (
-                <Link
-                  key={entry.label}
-                  href={entry.href}
-                  className="group flex min-h-11 items-center gap-2.5 py-2 transition hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]"
-                >
-                  <Icon size={16} className="shrink-0" style={{ color: entry.color }} aria-hidden="true" />
-                  <span className="min-w-0 flex-1">
-                    <strong className="block text-sm font-bold">{entry.label}</strong>
-                    <span className="app-muted-text block text-xs font-medium">{entry.description}</span>
-                  </span>
-                  <ArrowRight size={14} className="shrink-0 text-[var(--foreground-muted)]" aria-hidden="true" />
-                </Link>
-              );
-            })}
-          </div>
-          <Link href={toolboxHref} className="mt-2 inline-flex min-h-11 items-center gap-1 text-xs font-semibold text-[var(--primary-hover)] hover:underline">
-            查看全部专项训练 <ArrowRight size={12} aria-hidden="true" />
-          </Link>
-        </div>
-      </div>
-
+      <span className="sr-only">正在学习 {inProgressLessonsCount} 个课时，当前课程进度 {courseProgress}%</span>
     </div>
   );
 }
