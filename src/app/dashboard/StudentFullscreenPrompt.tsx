@@ -27,6 +27,16 @@ export function StudentFullscreenPrompt() {
     if (window.sessionStorage.getItem(FULLSCREEN_PROMPT_KEY) !== "pending") return;
 
     window.sessionStorage.removeItem(FULLSCREEN_PROMPT_KEY);
+
+    // 应用切换器点击"进入应用"时会直接请求一次全屏，这时导航到这里挂载的
+    // 时候浏览器其实已经是全屏状态了；这个标记只是登录时留下的"找机会提醒
+    // 一次"，不代表现在真的还需要提醒。先看当前是不是已经全屏，是的话直接
+    // 消费掉标记，不用再弹一次。
+    if (document.fullscreenElement || isBrowserFullscreen()) {
+      hasEnteredFullscreen.current = true;
+      return;
+    }
+
     // 这里不能在 cleanup 里 cancelAnimationFrame：开发模式下 React Strict Mode
     // 会把这个 effect 立刻挂载、卸载、再挂载一次。如果 cleanup 取消了第一次
     // 挂载排的这一帧，等到第二次挂载时 sessionStorage 里的标记已经被第一次

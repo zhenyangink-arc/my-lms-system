@@ -465,13 +465,13 @@
    显式的成功、提醒、AI 等语义色仍由页面自身控制，不被这里覆盖。 */
 .app-shell[data-dashboard-ui="student"] .app-card,
 .app-shell[data-dashboard-ui="student"] .app-theme-card {
-  border-color: color-mix(in srgb, var(--border) 88%, white 12%);
+  border-color: var(--border);
   backdrop-filter: blur(20px) saturate(110%);
   -webkit-backdrop-filter: blur(20px) saturate(110%);
   box-shadow:
     0 18px 42px -28px color-mix(in srgb, var(--foreground) 16%, transparent),
     0 2px 8px -5px color-mix(in srgb, var(--foreground) 12%, transparent),
-    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+    inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
 }
 
 /* 通用学生卡片使用固定的低饱和渐变；Student OS 在自己的作用域内
@@ -525,8 +525,8 @@
 
 .app-shell[data-dashboard-ui="student"] .app-soft-card,
 .app-shell[data-dashboard-ui="student"] .app-theme-soft {
-  background-color: color-mix(in srgb, white 82%, var(--surface-soft) 18%);
-  border-color: color-mix(in srgb, var(--border) 92%, white 8%);
+  background-color: var(--surface-soft);
+  border-color: var(--border);
   backdrop-filter: blur(12px) saturate(105%);
   -webkit-backdrop-filter: blur(12px) saturate(105%);
 }
@@ -557,7 +557,7 @@
 
 .app-shell[data-dashboard-ui="student"] .app-input {
   background-color: var(--card);
-  box-shadow: inset 0 1px 0 color-mix(in srgb, white 48%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, white 12%, transparent);
 }
 
 .app-shell[data-dashboard-ui="student"] .app-input:focus-within,
@@ -2082,28 +2082,12 @@
   --growth-shadow-raised: 0 18px 44px -32px rgba(0, 0, 0, 0.78),
     inset 0 1px 0 rgba(255, 255, 255, 0.12);
   background-color: #030303;
-  background-image:
-    radial-gradient(
-      ellipse 66rem 46rem at -8% -10%,
-      #3a3108 0%,
-      transparent 68%
-    ),
-    radial-gradient(
-      ellipse 58rem 42rem at 108% 0%,
-      #24142c 0%,
-      transparent 66%
-    ),
-    radial-gradient(
-      ellipse 62rem 42rem at 38% 98%,
-      #282109 0%,
-      transparent 72%
-    ),
-    linear-gradient(
-      145deg,
-      #030303 0%,
-      #0d0d0d 50%,
-      #020202 100%
-    );
+  background-image: linear-gradient(
+    145deg,
+    #030303 0%,
+    #0d0d0d 50%,
+    #020202 100%
+  );
 }
 
 .app-shell[data-dashboard-ui="student"][data-student-shell="system"][data-student-background="night"]:has(

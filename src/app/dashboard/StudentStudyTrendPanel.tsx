@@ -1,5 +1,6 @@
 "use client";
 
+import { TrendingUp } from "lucide-react";
 import { useMemo, useState } from "react";
 
 type StudyRange = {
@@ -46,13 +47,22 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h2 id="study-trend-title" className="text-base font-bold tracking-tight">
-            学习趋势
-          </h2>
-          <p className="app-muted-text mt-1 text-xs font-medium">
-            按周、月、年查看有效学习时间
-          </p>
+        <div className="flex items-start gap-2.5">
+          <span
+            className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
+            style={{ color: "var(--status-success)", backgroundColor: "var(--status-success-surface)" }}
+            aria-hidden="true"
+          >
+            <TrendingUp size={14} />
+          </span>
+          <div>
+            <h2 id="study-trend-title" className="text-base font-bold tracking-tight">
+              学习趋势
+            </h2>
+            <p className="app-muted-text mt-1 text-xs font-medium">
+              按周、月、年查看有效学习时间
+            </p>
+          </div>
         </div>
         <div
           className="grid grid-cols-3 rounded-xl border border-[var(--border-subtle)] bg-[var(--surface-soft)] p-1"
@@ -81,9 +91,9 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
         </div>
       </div>
 
-      <div className="mt-5 overflow-x-auto pb-1" tabIndex={0} aria-label={`${range.periodLabel}学习柱状图，可横向滚动`}>
+      <div className="mt-3 overflow-x-auto pb-1" tabIndex={0} aria-label={`${range.periodLabel}学习柱状图，可横向滚动`}>
         <div
-          className="grid h-52 items-end gap-1.5 border-b border-[var(--border-subtle)] px-1 pt-8"
+          className="grid h-36 items-end gap-1.5 border-b border-[var(--border-subtle)] px-1 pt-6"
           style={{
             minWidth: `${minimumChartWidth}px`,
             gridTemplateColumns: `repeat(${range.values.length}, minmax(0, 1fr))`,
@@ -147,7 +157,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 grid overflow-hidden rounded-xl border border-[var(--border-subtle)] sm:grid-cols-3">
+      <div className="mt-3 grid overflow-hidden rounded-xl border border-[var(--border-subtle)] sm:grid-cols-3">
         {[
           ["有效学习", formatMinutes(summary.total)],
           [range.id === "year" ? "活跃月份" : "活跃天数", `${summary.activeCount} ${range.id === "year" ? "个月" : "天"}`],
@@ -155,7 +165,7 @@ export function StudentStudyTrendPanel({ ranges }: Props) {
         ].map(([label, value]) => (
           <div
             key={label}
-            className="border-t p-3 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0"
+            className="border-t p-2.5 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0"
             style={{ borderColor: "var(--border-subtle)" }}
           >
             <span className="app-muted-text block text-xs font-medium">{label}</span>
