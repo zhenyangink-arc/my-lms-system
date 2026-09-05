@@ -184,13 +184,20 @@ export async function loadCurriculumPlanWorkspace({
   }
 
   const lessonIdsByTemplate = new Map<string, string[]>();
+  const testIdsByTemplate = new Map<string, string[]>();
   for (const item of items) {
-    if (item.sourceType !== "lesson" || !item.sourceId) continue;
-    const values = lessonIdsByTemplate.get(item.templateId) ?? [];
-    values.push(item.sourceId);
-    lessonIdsByTemplate.set(item.templateId, values);
+    if (item.sourceType === "lesson" && item.sourceId) {
+      const values = lessonIdsByTemplate.get(item.templateId) ?? [];
+      values.push(item.sourceId);
+      lessonIdsByTemplate.set(item.templateId, values);
+    } else if (item.sourceType === "chapter_test" && item.sourceId) {
+      const values = testIdsByTemplate.get(item.templateId) ?? [];
+      values.push(item.sourceId);
+      testIdsByTemplate.set(item.templateId, values);
+    }
   }
   const allTrackedLessonIds = [...new Set([...lessonIdsByTemplate.values()].flat())];
+  const allTrackedTestIds = [...new Set([...testIdsByTemplate.values()].flat())];
   const allTrackedStudentIds = [...new Set(planRows.flatMap((row) => studentIdsByPlan.get(row.id) ?? []))];
   const startedStudentsByLesson = new Map<string, Set<string>>();
   if (allTrackedLessonIds.length && allTrackedStudentIds.length) {
@@ -207,15 +214,37 @@ export async function loadCurriculumPlanWorkspace({
       startedStudentsByLesson.set(row.lesson_id, set);
     }
   }
+  const attemptedStudentsByTest = new Map<string, Set<string>>();
+  if (allTrackedTestIds.length && allTrackedStudentIds.length) {
+    const { data: attemptRows, error: attemptError } = await supabase
+      .from("chapter_test_attempts")
+      .select("student_id,test_id")
+      .in("test_id", allTrackedTestIds)
+      .in("student_id", allTrackedStudentIds);
+    if (attemptError) throw new Error("学生测试进度读取失败", { cause: attemptError });
+    for (const row of (attemptRows ?? []) as { student_id: string; test_id: string }[]) {
+      const set = attemptedStudentsByTest.get(row.test_id) ?? new Set<string>();
+      set.add(row.student_id);
+      attemptedStudentsByTest.set(row.test_id, set);
+    }
+  }
 
   const plans: InstitutionCurriculumPlan[] = planRows.map((row) => {
     const planStudentIds = studentIdsByPlan.get(row.id) ?? [];
     const lessonIds = lessonIdsByTemplate.get(row.template_id) ?? [];
+    const testIds = testIdsByTemplate.get(row.template_id) ?? [];
     let progress: InstitutionCurriculumPlan["progress"] = null;
-    if (lessonIds.length && planStudentIds.length) {
+    if ((lessonIds.length || testIds.length) && planStudentIds.length) {
       const startedStudents = new Set<string>();
       for (const lessonId of lessonIds) {
         const set = startedStudentsByLesson.get(lessonId);
+        if (!set) continue;
+        for (const studentId of planStudentIds) {
+          if (set.has(studentId)) startedStudents.add(studentId);
+        }
+      }
+      for (const testId of testIds) {
+        const set = attemptedStudentsByTest.get(testId);
         if (!set) continue;
         for (const studentId of planStudentIds) {
           if (set.has(studentId)) startedStudents.add(studentId);

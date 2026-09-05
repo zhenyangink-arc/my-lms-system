@@ -25,6 +25,7 @@ import { StudentPicker } from "./StudentPicker";
 
 type CourseOption = { id: string; title: string };
 type LessonOption = { id: string; courseId: string; title: string };
+type ChapterTestOption = { id: string; lessonId: string; title: string };
 
 const ACTIVITY_LABELS: Record<CurriculumPlanTemplateItem["activityType"], string> = {
   course: "课程学习",
@@ -134,6 +135,7 @@ function PlatformWorkspace({
   appSlug,
   courses,
   lessons,
+  chapterTests,
   templates,
   items,
 }: {
@@ -141,6 +143,7 @@ function PlatformWorkspace({
   appSlug: string;
   courses: CourseOption[];
   lessons: LessonOption[];
+  chapterTests: ChapterTestOption[];
   templates: CurriculumPlanTemplate[];
   items: CurriculumPlanTemplateItem[];
 }) {
@@ -163,6 +166,8 @@ function PlatformWorkspace({
       {templates.map((template) => {
         const templateItems = items.filter((item) => item.templateId === template.id);
         const templateLessons = lessons.filter((lesson) => lesson.courseId === template.courseId);
+        const templateLessonIds = new Set(templateLessons.map((lesson) => lesson.id));
+        const templateChapterTests = chapterTests.filter((test) => templateLessonIds.has(test.lessonId));
         const mixedLevels = [
           ...new Set(
             templateItems
@@ -240,6 +245,7 @@ function PlatformWorkspace({
                   <label className="text-xs font-medium text-slate-600">时长（分钟）<input name="duration_minutes" type="number" min={5} max={720} required defaultValue={50} className={`${inputClass} mt-1`} /></label>
                   <label className="text-xs font-medium text-slate-600">活动类型<select name="activity_type" className={`${inputClass} mt-1`}>{Object.entries(ACTIVITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实课时<select name="lesson_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非课程活动，不绑定课时</option>{[...lessonGroups.entries()].map(([level, levelLessons]) => <optgroup key={level} label={level}>{levelLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</optgroup>)}</select></label>
+                  <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实测试<select name="chapter_test_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非测试活动，不绑定测试</option>{templateChapterTests.map((test) => <option key={test.id} value={test.id}>{test.title}</option>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">标题<input name="title" maxLength={200} className={`${inputClass} mt-1`} placeholder="绑定课时后可留空，其他活动必填" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-3">学生端入口<input name="destination_path" className={`${inputClass} mt-1`} placeholder="/dashboard/courses/...（可选）" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">学习要求<input name="instructions" maxLength={1000} className={`${inputClass} mt-1`} placeholder="完成课程后进行听力练习" /></label>
@@ -329,6 +335,6 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
   );
 }
 
-export function CurriculumPlanWorkspace({ space, appSlug, scope, courses, lessons, templates, items, students, plans, success, error }: { space: string; appSlug: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
-  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} templates={templates} items={items} students={students} plans={plans} />}</div>;
+export function CurriculumPlanWorkspace({ space, appSlug, scope, courses, lessons, chapterTests, templates, items, students, plans, success, error }: { space: string; appSlug: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; chapterTests: ChapterTestOption[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
+  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} chapterTests={chapterTests} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} templates={templates} items={items} students={students} plans={plans} />}</div>;
 }

@@ -61,6 +61,22 @@ export default async function CurriculumLearningPlansPage({
     courseId: String(lesson.course_id),
     title: String(lesson.title),
   }));
+  const lessonIds = lessons.map((lesson) => lesson.id);
+  const chapterTestResult = context.access.scope === "platform" && lessonIds.length
+    ? await supabase
+        .from("chapter_tests")
+        .select("id,lesson_id,title")
+        .in("lesson_id", lessonIds)
+        .eq("student_app_id", context.access.appId)
+        .eq("status", "published")
+        .order("chapter_number")
+    : { data: [], error: null };
+  if (chapterTestResult.error) throw new Error("章节测试目录读取失败", { cause: chapterTestResult.error });
+  const chapterTests = (chapterTestResult.data ?? []).map((test) => ({
+    id: String(test.id),
+    lessonId: String(test.lesson_id),
+    title: String(test.title),
+  }));
 
   return (
     <ManagementApplicationSectionFrame {...context}>
@@ -70,6 +86,7 @@ export default async function CurriculumLearningPlansPage({
         scope={context.access.scope}
         courses={courseRows.map((course) => ({ id: String(course.id), title: String(course.title) }))}
         lessons={lessons}
+        chapterTests={chapterTests}
         {...workspace}
         success={first(query.success)}
         error={first(query.error)}

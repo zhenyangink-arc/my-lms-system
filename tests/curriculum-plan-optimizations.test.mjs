@@ -105,6 +105,23 @@ test("草稿计划里的单条项目可以单独调整时间或删除，发布�
   assert.match(workspace, /deleteCurriculumTemplateItemAction\.bind\(null, editable\.space, editable\.appSlug, item\.id\)/);
 });
 
+test("章节测试活动类型必须绑定真实测试，进度徽章会合并课程和测试两种完成信号", async () => {
+  const [actions, service, sql] = await Promise.all([
+    read("src/features/curriculum-plans/actions.ts"),
+    read("src/features/curriculum-plans/api/service.ts"),
+    read("supabase/migrations/202609050016_curriculum_plan_chapter_test_source_support.sql"),
+  ]);
+  assert.match(actions, /selectedActivityType === "chapter_test"/);
+  assert.match(actions, /\.from\("chapter_tests"\)/);
+  assert.match(actions, /sourceType = "chapter_test"/);
+  assert.match(service, /testIdsByTemplate/);
+  assert.match(service, /from\("chapter_test_attempts"\)/);
+  assert.match(service, /attemptedStudentsByTest/);
+  assert.match(sql, /new\.activity_type = 'chapter_test'/);
+  assert.match(sql, /章节测试必须绑定真实测试/);
+  assert.match(sql, /章节测试项目必须全部绑定真实测试/);
+});
+
 test("机构负责人和管理员被授权读取所管课程的 lesson_progress，进度徽章才不会对他们始终为空", async () => {
   const sql = await read("supabase/migrations/202609050006_curriculum_plan_progress_visibility.sql");
   assert.match(sql, /create policy "institution leaders read lesson progress for curriculum plans"/);

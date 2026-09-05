@@ -159,10 +159,12 @@ export async function addCurriculumTemplateItemAction(
     const selectedActivityType = activityType.parse(text(formData, "activity_type"));
     const lessonIdValue = text(formData, "lesson_id");
     const lessonId = lessonIdValue ? uuid.parse(lessonIdValue) : null;
+    const chapterTestIdValue = text(formData, "chapter_test_id");
+    const chapterTestId = chapterTestIdValue ? uuid.parse(chapterTestIdValue) : null;
     const customTitle = text(formData, "title");
     let title = customTitle;
     let destinationPath = text(formData, "destination_path");
-    let sourceType: "lesson" | "manual" = "manual";
+    let sourceType: "lesson" | "chapter_test" | "manual" = "manual";
     let sourceId: string | null = null;
     if (destinationPath && !destinationPath.startsWith("/")) throw new Error("学习入口必须以 / 开头。");
     const supabase = await createClient();
@@ -188,8 +190,31 @@ export async function addCurriculumTemplateItemAction(
       destinationPath = await resolveLessonDestinationPath(supabase, lesson, access.appId);
       sourceType = "lesson";
       sourceId = String(lesson.id);
+    } else if (selectedActivityType === "chapter_test") {
+      if (!chapterTestId || !template.course_id) throw new Error("章节测试必须绑定该计划课程中的真实测试。");
+      const { data: chapterTest, error: chapterTestError } = await supabase
+        .from("chapter_tests")
+        .select("id,slug,title,lesson_id,status")
+        .eq("id", chapterTestId)
+        .eq("student_app_id", access.appId)
+        .eq("status", "published")
+        .maybeSingle();
+      if (chapterTestError || !chapterTest) throw new Error("所选测试不存在或未发布。");
+      const { data: lesson, error: lessonError } = await supabase
+        .from("lessons")
+        .select("id,course_id,slug,is_published")
+        .eq("id", chapterTest.lesson_id)
+        .eq("course_id", template.course_id)
+        .eq("is_published", true)
+        .maybeSingle();
+      if (lessonError || !lesson) throw new Error("所选测试所属课时不属于该计划课程或未发布。");
+      title = customTitle || String(chapterTest.title);
+      const lessonPath = await resolveLessonDestinationPath(supabase, lesson, access.appId);
+      destinationPath = `${lessonPath}?chapter=${chapterTest.slug}`;
+      sourceType = "chapter_test";
+      sourceId = String(chapterTest.id);
     } else {
-      if (lessonId) throw new Error("只有课程学习活动可以绑定课时。");
+      if (lessonId || chapterTestId) throw new Error("只有课程学习或章节测试活动可以绑定真实内容。");
       title = z.string().min(1).max(200).parse(customTitle);
     }
     const newStart = hour * 60 + minute;
