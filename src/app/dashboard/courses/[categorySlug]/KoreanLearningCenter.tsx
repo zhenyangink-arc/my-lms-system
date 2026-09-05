@@ -119,6 +119,20 @@ function getChapterSequenceLabel(chapters: CourseChapter[], chapterIndex: number
   return String(chapterIndex + (startsWithOverview ? 0 : 1)).padStart(2, "0");
 }
 
+function isPrepLesson(lesson: Lesson) {
+  return lesson.title.startsWith("预备课");
+}
+
+function getLessonSequenceLabel(lessonItems: LessonItem[], lessonIndex: number) {
+  const item = lessonItems[lessonIndex];
+  if (!item || isPrepLesson(item.lesson)) return "预备课";
+  const levelPosition = lessonItems
+    .slice(0, lessonIndex + 1)
+    .filter((prior) => prior.course.id === item.course.id && !isPrepLesson(prior.lesson))
+    .length;
+  return `第 ${levelPosition} 课`;
+}
+
 export function KoreanLearningCenter({
   variant = "korean",
   parentCategory,
@@ -746,7 +760,7 @@ export function KoreanLearningCenter({
 
                       <div className="mt-5">
                         <p className="text-[11px] font-bold tracking-[.14em] app-muted-text">
-                          韩语初级 · 第 {lessonIndex + 1} 课
+                          {item.course.title} · {getLessonSequenceLabel(visibleLessonItems, lessonIndex)}
                         </p>
                         <CardTitleWithHint
                           className="mt-2"
