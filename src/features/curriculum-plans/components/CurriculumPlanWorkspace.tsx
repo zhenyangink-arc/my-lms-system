@@ -6,11 +6,13 @@ import {
   cancelInstitutionPlanAction,
   createCurriculumTemplateAction,
   deleteCurriculumTemplateAction,
+  deleteCurriculumTemplateItemAction,
   duplicateCurriculumTemplateAction,
   generateChapterScheduleAction,
   publishCurriculumTemplateAction,
   publishInstitutionCurriculumPlanAction,
   retireCurriculumTemplateAction,
+  updateCurriculumTemplateItemAction,
 } from "../actions";
 import type {
   CurriculumPlanStudent,
@@ -76,7 +78,13 @@ function StatusMessage({ success, error }: { success?: string; error?: string })
   );
 }
 
-function TemplateSchedule({ items }: { items: CurriculumPlanTemplateItem[] }) {
+function TemplateSchedule({
+  items,
+  editable,
+}: {
+  items: CurriculumPlanTemplateItem[];
+  editable?: { space: string; appSlug: string; durationDays: number };
+}) {
   if (!items.length) return <p className="py-3 text-sm text-slate-500">尚未添加课程、练习或考试安排。</p>;
   return (
     <ol className="mt-4 grid gap-2 lg:grid-cols-2">
@@ -89,6 +97,32 @@ function TemplateSchedule({ items }: { items: CurriculumPlanTemplateItem[] }) {
             </span>
           </div>
           <p className="mt-1 text-xs text-slate-500">{timeLabel(item)}{item.isRequired ? " · 必修" : " · 选修"}</p>
+          {editable ? (
+            <details className="mt-2">
+              <summary className="cursor-pointer text-[11px] font-semibold text-slate-500 hover:text-slate-700">调整时间 / 删除</summary>
+              <div className="mt-2 space-y-2">
+                <form
+                  action={updateCurriculumTemplateItemAction.bind(null, editable.space, editable.appSlug, item.id)}
+                  className="grid gap-2 sm:grid-cols-2"
+                >
+                  <label className="text-[11px] font-medium text-slate-600">第几天<input name="day" type="number" min={1} max={editable.durationDays} required defaultValue={item.dayOffset + 1} className={`${inputClass} mt-1 h-9`} /></label>
+                  <label className="text-[11px] font-medium text-slate-600">开始时间<input name="start_time" type="time" required defaultValue={`${Math.floor(item.startMinute / 60).toString().padStart(2, "0")}:${(item.startMinute % 60).toString().padStart(2, "0")}`} className={`${inputClass} mt-1 h-9`} /></label>
+                  <label className="text-[11px] font-medium text-slate-600">时长（分钟）<input name="duration_minutes" type="number" min={5} max={720} required defaultValue={item.durationMinutes} className={`${inputClass} mt-1 h-9`} /></label>
+                  <label className="mt-5 flex h-9 items-center gap-2 text-xs text-slate-700"><input name="is_required" type="checkbox" defaultChecked={item.isRequired} />设为必修</label>
+                  <label className="text-[11px] font-medium text-slate-600 sm:col-span-2">学习要求<input name="instructions" maxLength={1000} defaultValue={item.instructions ?? ""} className={`${inputClass} mt-1 h-9`} /></label>
+                  <button className="h-9 rounded-xl border border-slate-300 bg-white text-xs font-semibold text-slate-800 hover:bg-slate-50 sm:col-span-2">保存修改</button>
+                </form>
+                <form action={deleteCurriculumTemplateItemAction.bind(null, editable.space, editable.appSlug, item.id)}>
+                  <ConfirmSubmitButton
+                    confirmText={`确定删除「${item.title}」这一项吗？此操作无法撤回。`}
+                    className="text-[11px] font-semibold text-rose-600 hover:text-rose-700"
+                  >
+                    删除这一项
+                  </ConfirmSubmitButton>
+                </form>
+              </div>
+            </details>
+          ) : null}
         </li>
       ))}
     </ol>
@@ -178,7 +212,10 @@ function PlatformWorkspace({
                 该计划混合了 {mixedLevels.join("、")} 的课时，请确认是否符合预期。
               </p>
             ) : null}
-            <TemplateSchedule items={templateItems} />
+            <TemplateSchedule
+              items={templateItems}
+              editable={template.status === "draft" ? { space, appSlug, durationDays: template.durationDays } : undefined}
+            />
             {template.status === "draft" && templateLessons.length > 0 ? (
               <details className="mt-4 rounded-2xl border border-dashed border-emerald-300 bg-emerald-50/40 p-4">
                 <summary className="cursor-pointer text-sm font-semibold text-emerald-800">批量按章节生成排课（比如一门课的多章内容）</summary>

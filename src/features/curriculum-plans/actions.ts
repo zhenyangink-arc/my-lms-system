@@ -231,6 +231,111 @@ export async function addCurriculumTemplateItemAction(
   }
 }
 
+export async function updateCurriculumTemplateItemAction(
+  space: string,
+  appSlug: string,
+  itemIdValue: string,
+  formData: FormData,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const itemId = uuid.parse(itemIdValue);
+    const day = z.coerce.number().int().min(1).max(366).parse(text(formData, "day"));
+    const startTime = z.string().regex(/^\d{2}:\d{2}$/).parse(text(formData, "start_time"));
+    const [hour, minute] = startTime.split(":").map(Number);
+    if (hour < 9 || hour > 23 || minute > 59 || hour === 12 || hour === 18) {
+      throw new Error("开始时间需在 09:00–23:59，且避开 12 点和 18 点休息时段。");
+    }
+    const durationMinutes = z.coerce.number().int().min(5).max(720).parse(text(formData, "duration_minutes"));
+    const instructions = text(formData, "instructions");
+    const isRequired = formData.get("is_required") === "on";
+    const supabase = await createClient();
+
+    const { data: item, error: itemError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select("id,template_id,title,curriculum_plan_templates!inner(id,duration_days,status,student_app_id)")
+      .eq("id", itemId)
+      .eq("curriculum_plan_templates.student_app_id", access.appId)
+      .maybeSingle();
+    if (itemError || !item) throw new Error("找不到要修改的计划项目。");
+    const template = Array.isArray(item.curriculum_plan_templates)
+      ? item.curriculum_plan_templates[0]
+      : item.curriculum_plan_templates;
+    if (!template || template.status !== "draft") throw new Error("只能修改当前应用草稿计划里的项目。");
+    if (day > Number(template.duration_days)) throw new Error(`该计划只有 ${template.duration_days} 天。`);
+
+    const newStart = hour * 60 + minute;
+    const newEnd = newStart + durationMinutes;
+    const { data: sameDayItems, error: sameDayError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select("id,title,start_minute,duration_minutes")
+      .eq("template_id", template.id)
+      .eq("day_offset", day - 1)
+      .neq("id", itemId);
+    if (sameDayError) throw new Error(sameDayError.message);
+    const conflict = (sameDayItems ?? []).find((row) => {
+      const existingStart = Number(row.start_minute);
+      const existingEnd = existingStart + Number(row.duration_minutes);
+      return newStart < existingEnd && existingStart < newEnd;
+    });
+    if (conflict) {
+      throw new Error(`第 ${day} 天 ${startTime} 与「${conflict.title}」的时间段冲突，请调整开始时间或时长。`);
+    }
+
+    const { error } = await supabase
+      .from("curriculum_plan_template_items")
+      .update({
+        day_offset: day - 1,
+        start_minute: newStart,
+        duration_minutes: durationMinutes,
+        instructions: instructions || null,
+        is_required: isRequired,
+        sort_order: hour * 100 + minute,
+      })
+      .eq("id", itemId);
+    if (error) throw new Error(error.message);
+    revalidatePath(path);
+    redirect(resultPath(path, "success", "计划项目已更新。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
+export async function deleteCurriculumTemplateItemAction(
+  space: string,
+  appSlug: string,
+  itemIdValue: string,
+) {
+  let path = `/${space}/dashboard/admin/apps/${appSlug}/learning-plans`;
+  try {
+    const access = await requirePlatformOwner(space, appSlug);
+    path = `${access.appPath}/learning-plans`;
+    const itemId = uuid.parse(itemIdValue);
+    const supabase = await createClient();
+    const { data: item, error: itemError } = await supabase
+      .from("curriculum_plan_template_items")
+      .select("id,curriculum_plan_templates!inner(id,status,student_app_id)")
+      .eq("id", itemId)
+      .eq("curriculum_plan_templates.student_app_id", access.appId)
+      .maybeSingle();
+    if (itemError || !item) throw new Error("找不到要删除的计划项目。");
+    const template = Array.isArray(item.curriculum_plan_templates)
+      ? item.curriculum_plan_templates[0]
+      : item.curriculum_plan_templates;
+    if (!template || template.status !== "draft") throw new Error("只能删除当前应用草稿计划里的项目。");
+    const { error } = await supabase.from("curriculum_plan_template_items").delete().eq("id", itemId);
+    if (error) throw new Error(error.message);
+    revalidatePath(path);
+    redirect(resultPath(path, "success", "计划项目已删除。"));
+  } catch (error) {
+    unstable_rethrow(error);
+    redirect(resultPath(path, "error", errorMessage(error)));
+  }
+}
+
 export async function publishCurriculumTemplateAction(
   space: string,
   appSlug: string,

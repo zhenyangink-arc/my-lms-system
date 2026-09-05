@@ -90,6 +90,21 @@ test("平台负责人可以删除草稿、停用已发布模板；机构负责�
   assert.match(workspace, /cancelInstitutionPlanAction\.bind\(null, space, appSlug, plan\.id\)/);
 });
 
+test("草稿计划里的单条项目可以单独调整时间或删除，发布后的模板不受影响", async () => {
+  const [actions, workspace] = await Promise.all([
+    read("src/features/curriculum-plans/actions.ts"),
+    read("src/features/curriculum-plans/components/CurriculumPlanWorkspace.tsx"),
+  ]);
+  assert.match(actions, /export async function updateCurriculumTemplateItemAction/);
+  assert.match(actions, /只能修改当前应用草稿计划里的项目/);
+  assert.match(actions, /export async function deleteCurriculumTemplateItemAction/);
+  assert.match(actions, /只能删除当前应用草稿计划里的项目/);
+  assert.match(workspace, /editable\?: \{ space: string; appSlug: string; durationDays: number \}/);
+  assert.match(workspace, /editable=\{template\.status === "draft" \? \{ space, appSlug, durationDays: template\.durationDays \} : undefined\}/);
+  assert.match(workspace, /updateCurriculumTemplateItemAction\.bind\(null, editable\.space, editable\.appSlug, item\.id\)/);
+  assert.match(workspace, /deleteCurriculumTemplateItemAction\.bind\(null, editable\.space, editable\.appSlug, item\.id\)/);
+});
+
 test("机构负责人和管理员被授权读取所管课程的 lesson_progress，进度徽章才不会对他们始终为空", async () => {
   const sql = await read("supabase/migrations/202609050006_curriculum_plan_progress_visibility.sql");
   assert.match(sql, /create policy "institution leaders read lesson progress for curriculum plans"/);
