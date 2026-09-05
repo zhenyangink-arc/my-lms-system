@@ -5,6 +5,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { HomeLearningTask } from "@/features/student-home-learning/api/types";
 import { createHomeLearningTaskKey } from "@/features/student-home-learning/priority";
 import { scopeDashboardPath } from "@/lib/dashboard-path";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { expandPlanItemTime, itemOffsetMinutes } from "../time";
 import type {
   CurriculumPlanStudent,
@@ -169,7 +170,7 @@ export async function loadCurriculumPlanWorkspace({
           .in("plan_id", planIds)
       : Promise.resolve({ data: [], error: null }),
     studentIds.length
-      ? supabase.from("profiles").select("id,full_name,login_id").in("id", studentIds)
+      ? createAdminClient().from("profiles").select("id,full_name,login_id").in("id", studentIds)
       : Promise.resolve({ data: [], error: null }),
   ]);
   if (assignmentResult.error) throw new Error("计划学生分配读取失败", { cause: assignmentResult.error });
