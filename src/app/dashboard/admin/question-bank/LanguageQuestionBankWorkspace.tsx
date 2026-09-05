@@ -49,9 +49,9 @@ type ChapterRow = {
 };
 
 const lessonGroups = [
-  { courseKey: "hangul-introduction", label: "第 1 课：韩文字母入门" },
-  { courseKey: "korean-level-one", label: "第 2 课：韩国语1级" },
-  { courseKey: "korean-level-two", label: "第 3 课：韩国语2级" },
+  { courseKey: "hangul-introduction", label: "预备课：韩文字母入门" },
+  { courseKey: "korean-level-one", label: "第 1 课：韩国语1级" },
+  { courseKey: "korean-level-two", label: "第 2 课：韩国语2级" },
 ] as const;
 
 const skills: LanguageSkill[] = ["listening", "speaking", "reading", "writing"];

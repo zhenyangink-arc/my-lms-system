@@ -758,7 +758,7 @@ try {
   const formalUrl = `${APP_URL}/${TENANT_SLUG}/apps/korean/practice/course/korean-beginner/basic-pronunciation`;
   await page.goto(formalUrl);
   await page
-    .getByRole("heading", { name: "第 2 课：韩国语1级", exact: true })
+    .getByRole("heading", { name: "第 1 课：韩国语1级", exact: true })
     .waitFor();
   await page.getByText(/这组训练对应哪一课？/).first().waitFor();
   const formalText = await page.locator("body").innerText();
@@ -974,7 +974,7 @@ try {
 
   await secondPage.goto(`${APP_URL}/${TENANT_SLUG}/apps/korean/practice/course`);
   const formalChapterCard = secondPage.locator("a").filter({
-    has: secondPage.getByText("第 2 课：韩国语1级", { exact: true }),
+    has: secondPage.getByText("第 1 课：韩国语1级", { exact: true }),
   });
   await formalChapterCard.getByText(/巩固中|待加强|已掌握/).waitFor();
   await secondContext.close();
