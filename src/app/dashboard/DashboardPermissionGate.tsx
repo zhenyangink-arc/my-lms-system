@@ -1,0 +1,191 @@
+"use client";
+
+import type { FormEvent, MouseEvent, ReactNode } from "react";
+import { useState } from "react";
+import { LockKeyhole, Sparkles } from "lucide-react";
+import { usePathname } from "next/navigation";
+import { normalizeDashboardPathname } from "@/lib/dashboard-path";
+
+import {
+  MEMBERSHIP_TIER_LABELS,
+  canUseStudentFeature,
+  getFeatureDeniedMessage,
+  type MembershipTier,
+  type StudentFeature,
+} from "@/lib/student-permissions";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import type { StudentAppSlug } from "@/lib/student-apps";
+import { StudentPageHeader } from "./StudentPageHeader";
+
+function featureFromPath(pathname: string): StudentFeature {
+  if (pathname.startsWith("/dashboard/assignments")) return "learning_assignments";
+  if (pathname.startsWith("/dashboard/conversation-practice/ai-experience")) {
+    return "ai_conversation_experience";
+  }
+  if (pathname.startsWith("/dashboard/conversation-practice")) {
+    return "conversation_course";
+  }
+  if (pathname.startsWith("/dashboard/documents")) return "application_documents";
+  if (pathname.startsWith("/dashboard/visa")) return "visa_tasks";
+  if (pathname.startsWith("/dashboard/universities")) return "university_target";
+  if (pathname.startsWith("/dashboard/announcements") || pathname.startsWith("/dashboard/help") || pathname.startsWith("/dashboard/profile") || pathname.startsWith("/dashboard/settings")) {
+    return "message_services";
+  }
+  return "restricted_operation";
+}
+
+function isRestrictedDashboardSection(pathname: string) {
+  return [
+    "/dashboard/courses",
+    "/dashboard/practice",
+    "/dashboard/progress",
+    "/dashboard/assignments",
+    "/dashboard/conversation-practice",
+    "/dashboard/grades",
+    "/dashboard/records",
+    "/dashboard/library",
+    "/dashboard/universities",
+    "/dashboard/documents",
+    "/dashboard/visa",
+  ].some((path) => pathname === path || pathname.startsWith(`${path}/`));
+}
+
+function isImmersiveKoreanTextbookPath(
+  pathname: string,
+  studentAppSlug?: StudentAppSlug,
+) {
+  if (studentAppSlug !== "korean") return false;
+
+  return /^\/dashboard\/courses\/korean\/[^/]+\/[^/]+\/(hangul-introduction|basic-pronunciation)$/.test(
+    pathname,
+  );
+}
+
+export function DashboardPermissionGate({
+  children,
+  sidebar,
+  topbar,
+  auditBadge,
+  userRole,
+  membershipTier,
+  studentAppSlug,
+}: {
+  children: ReactNode;
+  sidebar: ReactNode;
+  topbar: ReactNode;
+  auditBadge?: ReactNode;
+  userRole: string;
+  membershipTier: MembershipTier;
+  studentAppSlug?: StudentAppSlug;
+}) {
+  const pathname = normalizeDashboardPathname(usePathname());
+  const isImmersiveTextbook = isImmersiveKoreanTextbookPath(
+    pathname,
+    studentAppSlug,
+  );
+  const [deniedFeature, setDeniedFeature] = useState<StudentFeature | null>(null);
+  const routeFeature = featureFromPath(pathname);
+  const routeIsDenied =
+    isRestrictedDashboardSection(pathname) &&
+    !canUseStudentFeature(
+      userRole,
+      membershipTier,
+      routeFeature === "restricted_operation"
+        ? "dashboard_section"
+        : routeFeature
+    );
+
+  function denyWhenNeeded(feature: StudentFeature) {
+    if (canUseStudentFeature(userRole, membershipTier, feature)) return false;
+    setDeniedFeature(feature);
+    return true;
+  }
+
+  function handleSubmitCapture(event: FormEvent<HTMLDivElement>) {
+    const form = event.target as HTMLFormElement;
+    if (form.method.toLowerCase() === "get") return;
+    const feature = (form.dataset.permission as StudentFeature | undefined) ?? featureFromPath(pathname);
+    if (denyWhenNeeded(feature)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  function handleClickCapture(event: MouseEvent<HTMLDivElement>) {
+    const target = event.target as HTMLElement;
+    const operation = target.closest<HTMLElement>("[data-student-operation]");
+    if (!operation) return;
+    const feature = (operation.dataset.permission as StudentFeature | undefined) ?? featureFromPath(pathname);
+    if (denyWhenNeeded(feature)) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  }
+
+  return (
+    <>
+      <div className="contents" onSubmitCapture={handleSubmitCapture} onClickCapture={handleClickCapture}>
+        {!routeIsDenied && (
+          isImmersiveTextbook ? (
+            <main
+              id="student-main-content"
+              tabIndex={-1}
+              className="relative min-h-[100dvh] min-w-0"
+              data-immersive-korean-textbook
+            >
+              {auditBadge}
+              {children}
+            </main>
+          ) : (
+            <div className="student-system-window mx-auto flex min-h-[calc(100dvh-32px)] w-full overflow-hidden">
+              {sidebar}
+
+              <div className="student-system-workspace min-w-0 flex-1">
+                {topbar}
+                {auditBadge}
+
+                <main
+                  id="student-main-content"
+                  tabIndex={-1}
+                  className="app-student-main student-system-main min-w-0 scroll-mt-20"
+                >
+                  {pathname !== "/dashboard/courses" && (
+                    <StudentPageHeader
+                      pathname={pathname}
+                      studentAppSlug={studentAppSlug}
+                    />
+                  )}
+                  {children}
+                </main>
+              </div>
+            </div>
+          )
+        )}
+      </div>
+
+      <Dialog open={routeIsDenied || deniedFeature !== null} onOpenChange={(open) => !open && !routeIsDenied && setDeniedFeature(null)}>
+        <DialogContent className="sm:max-w-md" showCloseButton={!routeIsDenied} overlayClassName="bg-black/80 supports-backdrop-filter:backdrop-blur-none">
+          <DialogHeader>
+            <div className="mb-2 flex h-12 w-12 items-center justify-center rounded-2xl" style={{ color: "var(--primary)", backgroundColor: "var(--accent)" }}>
+              <LockKeyhole size={22} />
+            </div>
+            <DialogTitle>当前操作暂无权限</DialogTitle>
+            <DialogDescription className="leading-6">
+              {routeIsDenied ? getFeatureDeniedMessage("dashboard_section") : deniedFeature ? getFeatureDeniedMessage(deniedFeature) : "当前操作暂未开放。"}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="app-soft-card flex items-center gap-3 rounded-2xl border p-4 text-sm">
+            <Sparkles size={17} style={{ color: "var(--support)" }} />
+            <div><p className="font-bold">当前档位：{MEMBERSHIP_TIER_LABELS[membershipTier]}</p><p className="app-muted-text mt-1 text-xs">管理员授权后，该板块即可正常进入观看。</p></div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
