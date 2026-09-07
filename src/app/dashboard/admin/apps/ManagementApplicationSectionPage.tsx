@@ -1,0 +1,244 @@
+import type { ReactNode } from "react";
+import Link from "next/link";
+import { notFound, redirect } from "next/navigation";
+import {
+  ArrowLeft,
+  BarChart3,
+  BookOpenCheck,
+  CalendarCheck2,
+  CalendarRange,
+  ClipboardCheck,
+  FileCheck2,
+  GraduationCap,
+  MessageSquareText,
+  NotebookTabs,
+  PanelsTopLeft,
+  Settings2,
+  ShieldCheck,
+  Stamp,
+  Target,
+  UsersRound,
+  Wrench,
+  Workflow,
+} from "lucide-react";
+
+import { ManagementPage } from "@/components/layout/management-page";
+import { cn } from "@/lib/utils";
+import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
+import {
+  requireManagementAppAccess,
+  type ManagementAppAccess,
+} from "@/lib/management-apps";
+
+export type SectionSearchParams = Record<
+  string,
+  string | string[] | undefined
+>;
+
+type SectionDefinition = {
+  title: string;
+  description: string;
+  icon: typeof BookOpenCheck;
+  capability: keyof ManagementAppAccess["capabilities"];
+};
+
+const learningSections: Record<string, SectionDefinition> = {
+  "learning-plans": {
+    title: "学习计划",
+    description: "平台维护标准流程，机构按实际开课时间发布，学生按周查看正式安排。",
+    icon: CalendarRange,
+    capability: "manageAssessments",
+  },
+  "class-today": {
+    title: "班级今日情况",
+    description: "查看教学分配范围内学生今天的任务状态与学习情况。",
+    icon: CalendarCheck2,
+    capability: "viewAnalytics",
+  },
+  students: {
+    title: "学生与教学分配",
+    description: "管理应用授权、负责老师与应用内教学关系。",
+    icon: UsersRound,
+    capability: "manageStudents",
+  },
+  content: {
+    title: "课程结构",
+    description: "管理分类、课程、课时、章节顺序以及学生端开放规则。",
+    icon: BookOpenCheck,
+    capability: "manageContent",
+  },
+  assessments: {
+    title: "作业与考试",
+    description: "按应用管理章节测试、老师作业和正式考试。",
+    icon: ClipboardCheck,
+    capability: "manageAssessments",
+  },
+  textbooks: {
+    title: "教材制作",
+    description: "按课程章节制作教材内容、维护版本并发布给学生。",
+    icon: PanelsTopLeft,
+    capability: "manageContent",
+  },
+  "teaching-scripts": {
+    title: "教学脚本",
+    description: "按节点编排教学 Agent 的讲解、提问、反馈和发布版本。",
+    icon: Workflow,
+    capability: "manageContent",
+  },
+  grades: {
+    title: "成绩分析",
+    description: "按应用汇总老师作业、正式考试和六维能力。",
+    icon: BarChart3,
+    capability: "viewAnalytics",
+  },
+  records: {
+    title: "学习记录",
+    description: "按应用查看有效学习时间、课程进度与辅导记录。",
+    icon: NotebookTabs,
+    capability: "viewAnalytics",
+  },
+  toolbox: {
+    title: "练习工具",
+    description: "管理练习入口、课程词汇和语法库。",
+    icon: Wrench,
+    capability: "manageContent",
+  },
+  "practice-center": {
+    title: "巩固中心管理",
+    description: "按真实课程树查看每章巩固内容覆盖状态。",
+    icon: Target,
+    capability: "manageContent",
+  },
+  "practice-insights": {
+    title: "巩固学情",
+    description: "查看负责学生的真实巩固进度、薄弱章节和薄弱能力。",
+    icon: Target,
+    capability: "viewAnalytics",
+  },
+  conversation: {
+    title: "会话与课堂",
+    description: "管理会话场景和学生练习记录。",
+    icon: MessageSquareText,
+    capability: "manageAssessments",
+  },
+  "completion-review": {
+    title: "结课资格",
+    description: "机构核对资格缺口并管理证书，平台查看按政策版本区分的跨机构趋势。",
+    icon: Stamp,
+    capability: "manageAssessments",
+  },
+  settings: {
+    title: "应用设置",
+    description: "管理机构开放状态和当前应用权限。",
+    icon: Settings2,
+    capability: "manageTenantAvailability",
+  },
+};
+
+const serviceSections: Record<string, SectionDefinition> = {
+  students: {
+    title: "服务学生",
+    description: "管理留学服务授权、负责员工和服务关系。",
+    icon: UsersRound,
+    capability: "manageStudents",
+  },
+  content: {
+    title: "留学课程",
+    description: "管理留学服务课程、课时和发布状态。",
+    icon: BookOpenCheck,
+    capability: "manageContent",
+  },
+  universities: {
+    title: "目标大学",
+    description: "维护大学资料、申请条件和学生目标。",
+    icon: GraduationCap,
+    capability: "manageContent",
+  },
+  documents: {
+    title: "申请材料",
+    description: "核对学生材料、退回补充并保留审核记录。",
+    icon: FileCheck2,
+    capability: "manageAssessments",
+  },
+  visa: {
+    title: "签证管理",
+    description: "跟进签证档案、办理任务和审核意见。",
+    icon: ShieldCheck,
+    capability: "manageAssessments",
+  },
+  records: {
+    title: "服务记录",
+    description: "查看服务进度、逾期事项和内部跟进记录。",
+    icon: NotebookTabs,
+    capability: "viewAnalytics",
+  },
+  analytics: {
+    title: "服务分析",
+    description: "查看学生阶段分布、材料完成率和服务风险。",
+    icon: BarChart3,
+    capability: "viewAnalytics",
+  },
+  settings: {
+    title: "应用设置",
+    description: "管理机构开放状态和当前应用权限。",
+    icon: Settings2,
+    capability: "manageTenantAvailability",
+  },
+};
+
+export function firstSectionParam(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+export async function requireManagementApplicationSection(
+  space: string,
+  appSlug: string,
+  section: string,
+) {
+  const access = await requireManagementAppAccess(space, appSlug);
+  const definitions =
+    access.app.kind === "service" ? serviceSections : learningSections;
+  const definition = definitions[section];
+
+  if (!definition) notFound();
+  if (!access.capabilities[definition.capability]) redirect(access.appPath);
+
+  return { access, definition, section };
+}
+
+export function ManagementApplicationSectionFrame({
+  access,
+  definition,
+  children,
+  className,
+}: {
+  access: ManagementAppAccess;
+  definition: SectionDefinition;
+  children: ReactNode;
+  className?: string;
+}) {
+  return (
+    <ManagementPage
+      title={definition.title}
+      description={definition.description}
+      className={cn(`management-app-tone-${access.app.accent}`, className)}
+      meta={
+        <span>
+          {access.scope === "platform" ? "平台标准空间" : access.tenantName}
+        </span>
+      }
+      action={
+        <Link
+          href={access.appPath}
+          className="management-secondary-button inline-flex items-center gap-1.5 border px-3 text-xs font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] focus-visible:ring-offset-2"
+        >
+          <ArrowLeft size={14} aria-hidden="true" />
+          返回{access.appTitle}
+          <RouteLinkStatus />
+        </Link>
+      }
+    >
+      {children}
+    </ManagementPage>
+  );
+}
