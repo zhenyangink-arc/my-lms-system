@@ -1,0 +1,1165 @@
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx /tmp/uply-student-ui-integration.bUmZfS/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx	2026-09-10 18:37:33.958771392 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx	2026-09-11 12:14:04.431922967 +0900
+@@ -762,7 +762,7 @@
+         if (runtimeAdmission !== "legacy") {
+             return <LessonActivityBoundary lessonId={lesson.id}>
+                 {liveClassBanner}
+-                {runtimeAdmission === "runtime" ? <PublishedRuntimeEntry />
++                {runtimeAdmission === "runtime" ? <PublishedRuntimeEntry backHref={courseDirectoryHref} />
+                     : <p role="alert">教材运行服务暂不可用，请返回课程后重试。</p>}
+             </LessonActivityBoundary>;
+         }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/dialogue-groups.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/dialogue-groups.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/dialogue-groups.tsx	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/dialogue-groups.tsx	2026-09-11 06:46:56.554117107 +0900
+@@ -0,0 +1,79 @@
++'use client';
++
++import {createContext, useContext, useCallback, useEffect, useRef, useState, type ReactNode} from 'react';
++import type {ContentCard} from '../core/services';
++import {RevealBoundary, useRevealBoundary} from './reveal-boundary';
++import {CardTitleWithHint} from '../../../components/ui/card-title-with-hint';
++import {useLearningState,useRuntimeServices} from './runtime-context';
++import type {LearningTools} from '../core/learning-tools';
++
++const GroupVisibility=createContext(true);
++export const useDialogueGroupVisible=()=>useContext(GroupVisibility);
++
++function DialogueGroup({group,active,select,children}:{group:ContentCard;active:boolean;select:()=>void;children:ReactNode}){
++  const revealParent=useRevealBoundary();
++  const reveal=useCallback(()=>{revealParent();select();},[revealParent,select]);
++  return <GroupVisibility.Provider value={active}><RevealBoundary reveal={reveal}><div role="tabpanel" id={`dialogue-panel-${group.partId}`} aria-labelledby={`dialogue-tab-${group.partId}`} hidden={!active}>{children}</div></RevealBoundary></GroupVisibility.Provider>;
++}
++
++/** A visual grouping of existing frozen parts. Hidden groups keep their target
++ * owners mounted so Teacher reveal/focus can select the real group. */
++export function DialogueGroups({card,renderGroup,tools}:{card:ContentCard;renderGroup:(group:ContentCard)=>ReactNode;tools:LearningTools|null}){
++  const {context}=useRuntimeServices();
++  const {steps,targets,playbackOwner}=useLearningState();
++  const active=useRef<AbortController|null>(null);
++  const [playing,setPlaying]=useState(false),[playError,setPlayError]=useState(''),[nextLine,setNextLine]=useState(0);
++  const stop=useCallback(()=>{active.current?.abort();active.current=null;setPlaying(false);},[]);
++  useEffect(()=>{const off=steps.onDispose(stop);return()=>{off();active.current?.abort();};},[steps,stop]);
++  useEffect(()=>{stop();},[playbackOwner,stop]);
++  const storageKey=`uply-runtime:${context.runtimeSessionId}:${context.snapshotId}:dialogue:${card.partId}`;
++  const [selected,setSelected]=useState(()=>{
++    try{const saved=sessionStorage.getItem(storageKey);if(saved&&card.children.some(g=>g.partId===saved))return saved;}catch{/* Optional presentation state. */}
++    return card.children[0]?.partId;
++  });
++  useEffect(()=>{try{sessionStorage.setItem(storageKey,selected??'');}catch{/* Storage unavailable leaves the first group usable. */}},[storageKey,selected]);
++  const buttons=useRef(new Map<string,HTMLButtonElement>());
++  const selectedRef=useRef(selected);
++  const activate=useCallback((id:string)=>{
++    if(selectedRef.current!==id){active.current?.abort();active.current=null;}
++    selectedRef.current=id;setSelected(id);
++  },[]);
++  useEffect(()=>{stop();setNextLine(0);setPlayError('');},[selected,stop]);
++  const group=card.children.find(g=>g.partId===selected);
++  const owners=group?.children.map(line=>tools?.playback.find(p=>p.partId===line.partId&&p.kind==='browser-tts'))??[];
++  const playable=owners.length>0&&owners.every(Boolean)&&!playbackOwner;
++  const play=async(all:boolean)=>{
++    stop();setPlayError('');if(!playable)return;
++    const controller=new AbortController();active.current=controller;setPlaying(true);
++    const selectedOwners=all?owners:[owners[nextLine%owners.length]];
++    try{
++      for(const owner of selectedOwners){controller.signal.throwIfAborted();await targets.command(owner!.target,'play',controller.signal);}
++      if(!controller.signal.aborted&&!all)setNextLine(i=>(i+1)%owners.length);
++    }catch{if(!controller.signal.aborted)setPlayError('播放未完成，可以重新播放或阅读对话。');}
++    finally{if(active.current===controller){active.current=null;setPlaying(false);}}
++  };
++  return <section className="runtime-dialogue-groups">
++    <CardTitleWithHint title={card.title} description="选择一组对话，点击句子旁的播放按钮练习。" headingLevel={3}/>
++    {tools&&<div className="runtime-dialogue-controls">
++      <button type="button" disabled={!playable||playing} onClick={()=>void play(false)}>{nextLine===0?'逐句练习':'下一句'}</button>
++      <button type="button" disabled={!playable||playing} onClick={()=>void play(true)}>整组播放</button>
++      {playing&&<button type="button" onClick={stop}>停止播放</button>}
++      {playbackOwner&&<span role="status">请先完成老师指定的播放任务。</span>}
++      {playError&&<p role="alert">{playError}</p>}
++    </div>}
++    <div className="runtime-dialogue-tabs" role="tablist" aria-label="选择对话组">
++      {card.children.map((group,index)=><button key={group.partId} type="button" role="tab" id={`dialogue-tab-${group.partId}`} aria-controls={`dialogue-panel-${group.partId}`} aria-selected={selected===group.partId} tabIndex={selected===group.partId?0:-1}
++        ref={element=>{if(element)buttons.current.set(group.partId,element);else buttons.current.delete(group.partId);}}
++        onClick={()=>activate(group.partId)} onKeyDown={event=>{
++          const next=event.key==='ArrowRight'?(index+1)%card.children.length:event.key==='ArrowLeft'?(index+card.children.length-1)%card.children.length:event.key==='Home'?0:event.key==='End'?card.children.length-1:null;
++          if(next===null)return;event.preventDefault();const id=card.children[next].partId;activate(id);buttons.current.get(id)?.focus();
++        }}>{group.title}</button>)}
++    </div>
++    {card.children.map(group=><SelectableGroup key={group.partId} group={group} active={selected===group.partId} activate={activate}>{renderGroup(group)}</SelectableGroup>)}
++  </section>;
++}
++
++function SelectableGroup({group,active,activate,children}:{group:ContentCard;active:boolean;activate:(id:string)=>void;children:ReactNode}){
++  const select=useCallback(()=>activate(group.partId),[activate,group.partId]);
++  return <DialogueGroup group={group} active={active} select={select}>{children}</DialogueGroup>;
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/learning-content.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/learning-content.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/learning-content.tsx	2026-09-11 05:44:06.095580364 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/learning-content.tsx	2026-09-11 11:55:47.830966747 +0900
+@@ -13,12 +13,18 @@
+ import {learningToolsSchema,type LearningTools} from '../core/learning-tools';
+ import {GrammarPlayback,LearningNavigation} from './learning-tools';
+ import {LearningPanelOwner} from './learning-panel';
++import {DialogueGroups} from './dialogue-groups';
++import {SceneImage} from './scene-image';
+ 
+-function Card({card,manifest,blockId,recordingOwned,tools}:{card:ContentCard;manifest:LessonManifestV1;blockId:string;recordingOwned:Set<string>;tools:LearningTools|null}){
++function Card({card,manifest,blockId,recordingOwned,tools,depth=0}:{card:ContentCard;manifest:LessonManifestV1;blockId:string;recordingOwned:Set<string>;tools:LearningTools|null;depth?:number}){
+   const {playbackOwner,steps}=useLearningState();
+   const declaration=manifest.runtimeTargets.find(t=>t.blockId===blockId&&t.partId===card.partId);
+   const activeTask=playbackOwner?.target===declaration?.id&&playbackOwner?.generation===steps.generation;
+-  const content=<article className="runtime-card"><h3>{card.title}</h3>{card.paragraphs.map((p,i)=><p key={i}>{p}</p>)}{!activeTask&&tools?.playback.some(p=>p.kind==='browser-tts'&&p.partId===card.partId)&&<GrammarPlayback tools={tools} partId={card.partId}/>} {card.children.map(c=><Card key={c.partId} card={c} manifest={manifest} blockId={blockId} recordingOwned={recordingOwned} tools={tools}/>)}</article>;
++  if(card.section==='dialogueGroups'){
++    const groups=<DialogueGroups card={card} tools={tools} renderGroup={group=><Card card={group} manifest={manifest} blockId={blockId} recordingOwned={recordingOwned} tools={tools} depth={depth+1}/>}/>;
++    return declaration?<RuntimeTarget declaration={declaration}>{groups}</RuntimeTarget>:groups;
++  }
++  const content=<article className="runtime-card runtime-content-card" data-section={card.section} data-depth={depth}><h3>{card.title}</h3>{card.paragraphs.length>0&&<div className="runtime-card-copy">{card.paragraphs.map((p,i)=><p key={i}>{p}</p>)}</div>}{!activeTask&&tools?.playback.some(p=>p.kind==='browser-tts'&&p.partId===card.partId)&&<GrammarPlayback tools={tools} partId={card.partId}/>} {card.children.length>0&&<div className="runtime-card-children">{card.children.map(c=><Card key={c.partId} card={c} manifest={manifest} blockId={blockId} recordingOwned={recordingOwned} tools={tools} depth={depth+1}/>)}</div>}</article>;
+   // Recording executors own these mounted handles when enabled; retain the
+   // original projection and target behavior for older service contexts.
+   return declaration&&!recordingOwned.has(declaration.id)&&!tools?.navigation.some(n=>n.target===declaration.id)?<RuntimeTarget declaration={declaration}>{content}{playbackOwner?.target===declaration.id&&playbackOwner.generation===steps.generation&&<TtsPlaybackOwner owner={playbackOwner}/>}</RuntimeTarget>:content;
+@@ -56,5 +62,5 @@
+     return <Card key={card.partId} card={card} manifest={manifest} blockId={block.id} recordingOwned={recordingOwned} tools={tools}/>;
+   };
+   const navigation=tools?<LearningNavigation tools={tools}/>:null,panel=content.panels?.find(p=>p.navigation);
+-  return <>{content.unsupported.map(message=><p role="status" key={message}>{message}</p>)}{content.cards.map(card=>{const p=content.panels?.find(p=>p.contentPartId===card.partId);return p?<LearningPanelOwner key={p.partId} panel={p}>{renderCard(card)}</LearningPanelOwner>:renderCard(card);})}{panel?<LearningPanelOwner panel={panel}>{navigation}</LearningPanelOwner>:navigation}<ActivityExecutor panels={content.panels} capsuleRef={block.props.capsuleRef} externallyExecutedRefs={recordingActivities} renderExternal={ref=><RecordingExecutor capsuleRef={block.props.capsuleRef} manifest={manifest} activityRef={ref} omitFullRecall/>}/>{services.recording&&!services.learningFlow&&<RecordingExecutor capsuleRef={block.props.capsuleRef} manifest={manifest} omitFullRecall={Boolean(repeat)}/>}</>;
++  return <>{content.cards.some(c=>c.section==='dialogueGroups'||c.section==='dialogueScenes')&&<SceneImage capsuleRef={block.props.capsuleRef} title={block.title?.[services.context.locale]??block.title?.['zh-CN']??'当前学习情景'}/>} {content.unsupported.map(message=><p role="status" key={message}>{message}</p>)}{content.cards.map(card=>{const p=content.panels?.find(p=>p.contentPartId===card.partId);return p?<LearningPanelOwner key={p.partId} panel={p}>{renderCard(card)}</LearningPanelOwner>:renderCard(card);})}{panel?<LearningPanelOwner panel={panel}>{navigation}</LearningPanelOwner>:navigation}<ActivityExecutor panels={content.panels} capsuleRef={block.props.capsuleRef} externallyExecutedRefs={recordingActivities} renderExternal={ref=><RecordingExecutor capsuleRef={block.props.capsuleRef} manifest={manifest} activityRef={ref} omitFullRecall/>}/>{services.recording&&!services.learningFlow&&<RecordingExecutor capsuleRef={block.props.capsuleRef} manifest={manifest} omitFullRecall={Boolean(repeat)}/>}</>;
+ }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/learning-tools.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/learning-tools.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/learning-tools.tsx	2026-09-10 13:30:30.816988153 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/learning-tools.tsx	2026-09-11 06:43:23.607663489 +0900
+@@ -1,19 +1,33 @@
+ 'use client';
+-import {useEffect,useMemo,useState} from 'react';
++import {useEffect,useMemo,useState,useRef} from 'react';
+ import type {LearningTools} from '../core/learning-tools';
+ import {learningDestinationSchema} from '../core/learning-tools';
+ import {useLearningState,useRuntimeServices} from './runtime-context';
+ import {RuntimeTarget} from './target';
++import {useRevealBoundary} from './reveal-boundary';
++import {flushSync} from 'react-dom';
++import {useDialogueGroupVisible} from './dialogue-groups';
++import {playRepeatLine} from '../core/repeat-playback';
+ 
+ /** Existing grammar Browser TTS behavior. This is NOT a teaching wait grant. */
+ export function GrammarPlayback({tools,partId}:{tools:LearningTools;partId:string}){
+   const {steps,targets}=useLearningState(),[error,setError]=useState('');
++  const reveal=useRevealBoundary();
++  const visible=useDialogueGroupVisible(),stopPlayback=useRef<()=>void>(()=>{});
++  useEffect(()=>{if(!visible)stopPlayback.current();},[visible]);
+   useEffect(()=>{const owner=tools.playback.find(p=>p.partId===partId);if(owner?.kind!=='browser-tts')return;
+-    let utterance:SpeechSynthesisUtterance|null=null;
+-    const stop=()=>{if(utterance){utterance.onend=null;utterance.onerror=null;window.speechSynthesis.cancel();utterance=null;}};
+-    const off=targets.mountLearningOwner(tools,partId,async signal=>{signal.throwIfAborted();if(!('speechSynthesis'in window))throw Error('TTS_UNAVAILABLE');stop();utterance=new SpeechSynthesisUtterance(owner.text);utterance.lang=owner.locale;utterance.rate=.82;window.speechSynthesis.speak(utterance);});
++    let active:AbortController|null=null;
++    const stop=()=>{active?.abort();active=null;};
++    stopPlayback.current=stop;
++    const off=targets.mountLearningOwner(tools,partId,async signal=>{
++      signal.throwIfAborted();flushSync(reveal);if(!('speechSynthesis'in window))throw Error('TTS_UNAVAILABLE');stop();
++      const controller=new AbortController();active=controller;
++      try{await playRepeatLine(owner.text,AbortSignal.any([signal,controller.signal]),{
++        create:text=>new SpeechSynthesisUtterance(text),speak:value=>window.speechSynthesis.speak(value),cancel:()=>window.speechSynthesis.cancel(),
++      });}finally{if(active===controller)active=null;}
++    });
+     const dispose=steps.onDispose(stop);return()=>{dispose();off();stop();};
+-  },[tools,partId,steps,targets]);
++  },[tools,partId,steps,targets,reveal]);
+   const owner=tools.playback.find(p=>p.partId===partId);
+   return <><button type="button" onClick={()=>{setError('');if(owner)void targets.command(owner.target,'play').catch(()=>setError('当前浏览器无法点读，请重试。'));}}>例句点读</button>{error&&<p role="alert">{error}</p>}</>;
+ }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx	2026-09-10 18:37:33.790968035 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx	2026-09-11 12:15:32.629569968 +0900
+@@ -18,7 +18,7 @@
+ let booting:Promise<Bootstrap>|null=null;
+ /** Only HTTP wiring/lifecycle here. Same Renderer, same domain ports; browser
+  * stores an untrusted opaque locator, never admission policy or private binding. */
+-export function PublishedRuntimeEntry(){
++export function PublishedRuntimeEntry({backHref}:{backHref?:string}){
+  const [state,setState]=useState<{kind:'loading'}|{kind:'error'}|{kind:'ready';data:Bootstrap;services:RuntimeServices}>({kind:'loading'});
+  useEffect(()=>{
+   let disposed=false;const abort=new AbortController();let installed:RuntimeServices|undefined;
+@@ -46,5 +46,13 @@
+  },[]);
+  if(state.kind==='loading')return <p role="status">正在加载已发布教材…</p>;
+  if(state.kind==='error')return <div role="alert"><p>教材会话或服务暂不可用。请返回课程；不会自动切换版本或提交方式。</p><button type="button" onClick={()=>{try{sessionStorage.removeItem(storageKey);}catch{}location.reload();}}>重新检查入场条件</button></div>;
+- return <LessonRuntime manifest={state.data.manifest} services={state.services} resume={state.data.continuation.activeStepId} validationMode="complete"/>;
++ return <LessonRuntime manifest={state.data.manifest} services={state.services} resume={state.data.continuation.activeStepId} validationMode="complete" backHref={backHref} onLocaleChange={async locale=>{
++   const current=state;setState({kind:'loading'});
++   try{
++    await current.services.teacherRuntime?.close();
++    await send('learning',{operation:'language',sessionRef:current.data.sessionRef,locale},AbortSignal.timeout(30000));
++    try{sessionStorage.removeItem(storageKey);}catch{}
++    location.reload();
++   }catch{setState({kind:'error'});}
++ }}/>;
+ }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime-root.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime-root.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime-root.tsx	2026-09-11 06:02:32.884437288 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime-root.tsx	2026-09-11 12:15:32.477747878 +0900
+@@ -11,15 +11,15 @@
+ import { StepNavigation } from './step-navigation';
+ import './runtime.css';
+ 
+-export function RuntimeRoot({manifest:input,services,resume,validationMode='complete'}:{manifest:unknown;services:RuntimeServices;resume?:string;validationMode?:'complete'|'learning'}){
++export function RuntimeRoot({manifest:input,services,resume,validationMode='complete',backHref,onLocaleChange}:{manifest:unknown;services:RuntimeServices;resume?:string;validationMode?:'complete'|'learning';backHref?:string;onLocaleChange?:(locale:'zh-CN'|'ko-KR')=>Promise<void>}){
+   const checked=validationMode==='learning'?validateLearningActivation(input):validateRuntimeActivation(input);
+   const context=runtimeContextSchema.safeParse(services.context);
+   if(!checked.success||!context.success||context.data.snapshotId!==(checked.success?checked.data.snapshot.id:null))return <p role="alert">教材暂不能激活：必需的 Runtime 能力或上下文未通过验证。</p>;
+-  return <RuntimeServiceContext key={`${context.data.runtimeSessionId}:${context.data.snapshotId}`} services={services}><LearningStateProvider manifest={checked.data} resume={resume}><RuntimeClassroom manifest={checked.data} omitTeacher={validationMode==='learning'}/></LearningStateProvider></RuntimeServiceContext>;
++  return <RuntimeServiceContext key={`${context.data.runtimeSessionId}:${context.data.snapshotId}`} services={services}><LearningStateProvider manifest={checked.data} resume={resume}><RuntimeClassroom manifest={checked.data} omitTeacher={validationMode==='learning'} backHref={backHref} onLocaleChange={onLocaleChange}/></LearningStateProvider></RuntimeServiceContext>;
+ }
+ export const LessonRuntime=RuntimeRoot;
+ 
+-export function RuntimeClassroom({manifest,omitTeacher=false}:{manifest:LessonManifestV1;omitTeacher?:boolean}){
++export function RuntimeClassroom({manifest,omitTeacher=false,backHref,onLocaleChange}:{manifest:LessonManifestV1;omitTeacher?:boolean;backHref?:string;onLocaleChange?:(locale:'zh-CN'|'ko-KR')=>Promise<void>}){
+   const {steps,setActivePart}=useLearningState(),{context}=useRuntimeServices();
+   useSyncExternalStore(steps.subscribe,steps.snapshot,steps.snapshot);
+   const step=manifest.steps.find(s=>s.id===steps.activeStepId)!;
+@@ -27,6 +27,7 @@
+   useEffect(()=>{if(restored.current)return;restored.current=true;try{const saved=sessionStorage.getItem(`uply-runtime:${context.snapshotId}:step`);if(saved&&steps.canEnter(saved))steps.go(saved);}catch{/* Invalid or inaccessible persisted IDs cannot override navigation policy. */}},[steps,context.snapshotId]);
+   useEffect(()=>{setActivePart(null);if(step.id!==steps.activeStepId)return;try{sessionStorage.setItem(`uply-runtime:${context.snapshotId}:step`,step.id);}catch{/* Resume is optional UI state. */}},[step.id,steps,context.snapshotId,setActivePart]);
+   return <TemplateRenderer layout={manifest.layout} activeStepId={step.id}
++    chapter={{title:manifest.chapter.title[context.locale]??manifest.chapter.title['zh-CN']??'',position:manifest.navigation.items.indexOf(step.id)+1,total:manifest.navigation.items.length,locale:context.locale,backHref,onLocaleChange}}
+     teaching={<RegionRenderer key={`teaching:${step.id}`} manifest={manifest} step={step} regionId="teaching" omitLegacyTeacher={omitTeacher}/>}
+     interaction={<div key={`interaction:${step.id}`}><h1>{step.title[context.locale]??step.title['zh-CN']}</h1><RegionRenderer manifest={manifest} step={step} regionId="interaction"/></div>}
+     navigation={<StepNavigation manifest={manifest}/>}/>;
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime-toolbar.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime-toolbar.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime-toolbar.tsx	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime-toolbar.tsx	2026-09-11 12:24:04.926243306 +0900
+@@ -0,0 +1,36 @@
++'use client';
++import {useEffect,useState,type RefObject,type ReactNode} from 'react';
++import {courseReturnHref} from '../core/course-return';
++
++export function RuntimeToolbar({container,title,position,total,locale,children,backHref,onLocaleChange}:{container:RefObject<HTMLDivElement|null>;title:string;position:number;total:number;locale:'zh-CN'|'ko-KR';children:ReactNode;backHref?:string;onLocaleChange?:(locale:'zh-CN'|'ko-KR')=>Promise<void>}){
++  const [fullscreen,setFullscreen]=useState(false),[available,setAvailable]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState('');
++  const ko=locale==='ko-KR';
++  const back=courseReturnHref(backHref);
++  useEffect(()=>{
++    let live=true;
++    const sync=()=>{if(live){setFullscreen(document.fullscreenElement===container.current);setAvailable(Boolean(document.fullscreenEnabled&&container.current?.requestFullscreen));}};
++    sync();document.addEventListener('fullscreenchange',sync);
++    const element=container.current;
++    return()=>{live=false;document.removeEventListener('fullscreenchange',sync);if(element&&document.fullscreenElement===element)void document.exitFullscreen().catch(()=>{});};
++  },[container]);
++  const toggle=async()=>{
++    if(busy)return;setBusy(true);setError('');
++    try{if(document.fullscreenElement===container.current)await document.exitFullscreen();else await container.current?.requestFullscreen();}
++    catch{setError(ko?'전체 화면을 사용할 수 없습니다. 일반 화면에서 계속 학습할 수 있습니다.':'暂时无法进入全屏，可以继续在当前窗口学习。');}
++    finally{setBusy(false);}
++  };
++  return <header className="runtime-toolbar">
++    <div className="runtime-toolbar-actions">
++      {onLocaleChange?<label className="runtime-language">{ko?'언어':'语言'} <select aria-label={ko?'언어':'语言'} value={locale} disabled={busy} onChange={event=>{
++        const value=event.target.value;if(value===locale||!['zh-CN','ko-KR'].includes(value))return;
++        if(!window.confirm(ko?'언어를 변경하면 교재를 다시 엽니다. 제출하지 않은 입력은 사라집니다. 계속하시겠습니까?':'切换语言将重新进入教材，未提交的输入不会保留。是否继续？'))return;
++        setBusy(true);void onLocaleChange(value as 'zh-CN'|'ko-KR').catch(()=>{setError(ko?'언어를 변경하지 못했습니다. 다시 시도해 주세요.':'语言切换失败，请重试。');setBusy(false);});
++      }}><option value="zh-CN">中文</option><option value="ko-KR">한국어</option></select></label>:<span className="runtime-language" aria-label={ko?'현재 인터페이스 언어':'当前界面语言'}>{ko?'한국어':'中文'}</span>}
++      {available&&<button type="button" disabled={busy} aria-pressed={fullscreen} onClick={()=>void toggle()}>{ko?(fullscreen?'전체 화면 종료':'전체 화면'):(fullscreen?'退出全屏':'全屏')}</button>}
++      {children}
++    </div>
++    <div className="runtime-chapter-location"><strong>{title}</strong><span aria-label={ko?`학습 단계 ${position}/${total}`:`学习步骤 ${position}/${total}`}>{position} / {total}</span></div>
++    {back&&<a className="runtime-course-return" href={back}>{ko?'강좌로 돌아가기':'返回课程'}</a>}
++    {error&&<p className="runtime-toolbar-error" role="status">{error}</p>}
++  </header>;
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime.css /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime.css
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/runtime.css	2026-09-11 06:02:32.884183731 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/runtime.css	2026-09-11 17:21:21.040587783 +0900
+@@ -1,11 +1,22 @@
+-.lesson-runtime {color:var(--foreground,#203530); background:var(--background,#f5f8f7); font-size:1rem; line-height:1.65; font-family:var(--font-sans,system-ui,sans-serif);height:calc(100dvh - 2rem);min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid var(--border,#dce5e1);border-radius:18px;}
++.lesson-runtime {color:var(--foreground,#203530);background:var(--background,#f5f8f7);font:400 1rem/1.65 var(--font-sans,system-ui,sans-serif);height:calc(100dvh - 2rem);min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden;border:1px solid var(--border,#dce5e1);border-radius:18px;}
+ .lesson-runtime,.lesson-runtime * {box-sizing:border-box;}
+ .runtime-toolbar {display:flex;align-items:center;padding:10px 20px;border-bottom:1px solid var(--border,#dce5e1);background:var(--card,#fff);}
++.runtime-toolbar {gap:16px;flex-wrap:wrap;}
++.runtime-toolbar-actions {display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
++.runtime-language {font-size:.875rem;padding:8px;color:var(--foreground,#203530);}
++.runtime-chapter-location {display:flex;align-items:center;gap:16px;margin-left:auto;min-width:0;flex-wrap:wrap;}
++.runtime-chapter-location span {font-variant-numeric:tabular-nums;font-size:.875rem;white-space:nowrap;}
++.runtime-toolbar-error {flex-basis:100%;}
++.runtime-course-return {display:inline-flex;align-items:center;min-height:44px;padding:8px 12px;color:inherit;border-radius:8px;text-decoration:none;}
++.runtime-course-return:hover {background:var(--accent,#e8f0ec);}
++.runtime-course-return:focus-visible {outline:2px solid var(--primary,#527b6f);outline-offset:3px;}
++.lesson-runtime:fullscreen {height:100dvh;width:100%;border:0;border-radius:0;}
++@media(max-width:640px){.runtime-toolbar {padding:8px 12px;gap:8px;}.runtime-chapter-location {order:-1;flex-basis:100%;margin:0;justify-content:space-between;}.runtime-toolbar-actions {flex-wrap:wrap;}}
+ .runtime-classroom {min-height:0;overflow:auto;padding:20px;align-items:start;scrollbar-gutter:stable;}
+ .runtime-teaching[hidden] {display:none;}
+-.runtime-interaction>div>h1 {font-size:1.4rem;font-weight:700;line-height:1.4;margin:0 0 20px;letter-spacing:-.02em;}
+-.lesson-runtime h2 {font-size:1.15rem;font-weight:650;line-height:1.5;margin:0 0 12px;}
+-.lesson-runtime h3 {font-size:1rem;font-weight:600;line-height:1.5;margin:0 0 8px;}
++.runtime-interaction>div>h1 {font-size:1.4rem;font-weight:750;line-height:1.4;margin:0 0 20px;letter-spacing:-.02em;}
++.lesson-runtime h2 {font-size:1.15rem;font-weight:700;line-height:1.5;margin:0 0 12px;}
++.lesson-runtime h3 {font-size:1rem;font-weight:700;line-height:1.5;margin:0 0 8px;}
+ .lesson-runtime p {margin:8px 0;}
+ .lesson-runtime .runtime-card {background:var(--card,#fff);border-color:var(--border,#dce5e1);padding:20px;border-radius:14px;margin-block:0 16px;}
+ .lesson-runtime .runtime-card .runtime-card {box-shadow:none;background:var(--background,#f5f8f7);padding:16px;}
+@@ -23,6 +34,40 @@
+ .runtime-teacher-executor[data-teacher-phase=idle] .runtime-teacher-controls {margin:auto 0;justify-content:center;}
+ .runtime-teacher-executor .runtime-teacher-controls button:first-child {background:var(--primary,#527b6f);color:var(--primary-foreground,#fff);}
+ .runtime-target {scroll-margin:16px;}
++.runtime-scene-image {margin:0 0 20px;overflow:hidden;border-radius:16px;background:var(--card,#fff);}
++.runtime-scene-image img {display:block;width:100%;height:auto;max-height:440px;object-fit:contain;}
++.runtime-scene-error {padding:12px;margin-bottom:16px;border:1px solid var(--border,#dce5e1);border-radius:12px;}
++.runtime-scene-error button {margin-left:12px;}
++.runtime-card-children>.runtime-target {min-width:0;}
++.runtime-dialogue-groups {padding:20px;background:var(--surface-soft,var(--background,#f5f8f7));border:1px solid var(--border,#dce5e1);border-radius:18px;margin-block:16px;}
++.runtime-dialogue-tabs {display:flex;flex-wrap:wrap;gap:8px;margin-block:16px;}
++.runtime-dialogue-controls {display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-block:12px;}
++.lesson-runtime .runtime-dialogue-tabs button[aria-selected=true] {color:var(--primary,#527b6f);background:var(--accent,#e8f0ec);border-color:var(--primary,#527b6f);font-weight:700;}
++.runtime-dialogue-groups [role=tabpanel][hidden] {display:none;}
++.runtime-dialogue-groups [role=tabpanel]>.runtime-target>.runtime-card {padding:0;border:0;background:transparent;margin:0;}
++.runtime-dialogue-groups [role=tabpanel]>.runtime-target>.runtime-card>h3 {position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);}
++.runtime-dialogue-groups .runtime-card-children {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
++.lesson-runtime .runtime-dialogue-groups .runtime-card-children .runtime-content-card {padding:16px;margin:0;height:100%;border:1px solid var(--border,#dce5e1);border-radius:14px;background:var(--card,#fff);}
++.runtime-dialogue-groups [data-depth="2"] h3 {font-size:.8rem;color:var(--foreground-muted,#63736e);}
++.runtime-dialogue-groups [data-depth="2"] .runtime-card-copy p:first-child {font-size:1.15rem;font-weight:700;}
++@media(max-width:640px){.runtime-dialogue-groups {padding:14px;}.runtime-dialogue-groups .runtime-card-children {grid-template-columns:1fr;}}
++
++/* Compatibility content keeps its frozen identity while receiving a clear,
++   slot-driven presentation. No title matching or arbitrary style enters here. */
++.runtime-content-card[data-section="lead"],.runtime-content-card[data-section="coach"] {border:0;background:transparent;padding:0 2px;margin-bottom:14px;}
++.runtime-content-card[data-section="lead"] h3,.runtime-content-card[data-section="coach"] h3 {font-size:.78rem;color:var(--foreground-muted,#63736e);letter-spacing:.04em;}
++.runtime-content-card[data-section="lead"] .runtime-card-copy,.runtime-content-card[data-section="coach"] .runtime-card-copy {border-left:3px solid var(--primary,#527b6f);padding:2px 0 2px 14px;color:var(--foreground-secondary,#40534d);}
++.runtime-content-card[data-section="targets"]>.runtime-card-children {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
++.runtime-content-card[data-section="targets"]>.runtime-card-children>.runtime-card {margin:0;min-height:108px;display:flex;flex-direction:column;justify-content:center;}
++.runtime-content-card[data-section="dialogueGroups"]>.runtime-card-children,.runtime-content-card[data-section="dialogueScenes"]>.runtime-card-children {display:grid;gap:14px;}
++.runtime-content-card[data-section="dialogueGroups"]>.runtime-card-children>.runtime-card>.runtime-card-children,.runtime-content-card[data-section="dialogueScenes"]>.runtime-card-children>.runtime-card>.runtime-card-children {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;}
++.runtime-content-card[data-section="dialogueGroups"] [data-depth="2"],.runtime-content-card[data-section="dialogueScenes"] [data-depth="2"] {background:var(--card,#fff);border:1px solid var(--border,#dce5e1);border-radius:12px;padding:14px;margin:0;}
++.runtime-content-card[data-section="dialogueGroups"] [data-depth="2"] h3,.runtime-content-card[data-section="dialogueScenes"] [data-depth="2"] h3 {font-size:.78rem;color:var(--foreground-muted,#63736e);}
++.runtime-content-card[data-section="dialogueGroups"] [data-depth="2"] .runtime-card-copy p:first-child,.runtime-content-card[data-section="dialogueScenes"] [data-depth="2"] .runtime-card-copy p:first-child {font-size:1.08rem;font-weight:750;color:var(--foreground,#203530);}
++.runtime-content-card[data-section="vocabulary"]>.runtime-card-children {display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;}
++.runtime-content-card[data-section="vocabulary"]>.runtime-card-children>.runtime-card {margin:0;background:var(--card,#fff);}
++.runtime-content-card[data-section="grammarCards"]>.runtime-card-children,.runtime-content-card[data-section="patternCards"]>.runtime-card-children {display:grid;gap:14px;}
++.runtime-content-card[data-section="reading"] .runtime-card-copy,.runtime-content-card[data-section="originalExample"] .runtime-card-copy {font-size:1.05rem;line-height:1.9;max-width:74ch;}
+ @media(min-width:1280px){
+  .lesson-runtime[data-layout=split-classroom] .runtime-classroom {overflow:hidden;align-items:stretch;}
+  .lesson-runtime[data-layout=split-classroom] .runtime-teaching,.lesson-runtime[data-layout=split-classroom] .runtime-interaction {overflow:auto;min-height:0;scrollbar-gutter:stable;padding:4px;}
+@@ -35,6 +80,7 @@
+  .lesson-runtime .runtime-navigation {padding:8px 12px;}
+  .lesson-runtime .runtime-steps {flex-wrap:nowrap;overflow-x:auto;padding-bottom:6px;}
+  .runtime-steps li {flex:0 0 124px;}
++ .runtime-content-card[data-section="targets"]>.runtime-card-children,.runtime-content-card[data-section="dialogueGroups"]>.runtime-card-children>.runtime-card>.runtime-card-children,.runtime-content-card[data-section="dialogueScenes"]>.runtime-card-children>.runtime-card>.runtime-card-children {grid-template-columns:1fr;}
+ }
+ .runtime-classroom {display:grid;grid-template-columns:minmax(0,1fr);gap:1rem;}
+ .runtime-teaching,.runtime-interaction {min-width:0;}
+@@ -42,7 +88,8 @@
+ .lesson-runtime button {min-height:44px;padding:.5rem .8rem;border:1px solid var(--border);border-radius:.5rem;cursor:pointer;}
+ .lesson-runtime button:disabled {cursor:not-allowed;opacity:.6;}
+ .lesson-runtime button:focus-visible,.runtime-target:focus-visible {outline:3px solid var(--primary);outline-offset:3px;}
+-.lesson-runtime button[aria-current=step] {background:var(--primary,#527b6f);color:var(--primary-foreground,#fff);font-weight:650;}
++.lesson-runtime button[aria-current=step] {background:var(--primary,#527b6f);color:var(--primary-foreground,#fff);font-weight:700;}
++.lesson-runtime button[aria-current=step]:hover:not(:disabled) {background:var(--primary,#527b6f);color:var(--primary-foreground,#fff);}
+ .runtime-navigation {margin-top:1rem;border-top:1px solid var(--border);padding-top:1rem;}
+ .runtime-steps {display:flex;gap:.5rem;flex-wrap:wrap;list-style:none;padding:0;}
+ .runtime-step-actions {display:flex;justify-content:space-between;gap:.5rem;}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/scene-image.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/scene-image.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/scene-image.tsx	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/scene-image.tsx	2026-09-11 11:55:21.364980781 +0900
+@@ -0,0 +1,28 @@
++'use client';
++import {useEffect,useState} from 'react';
++import {useLearningState,useRuntimeServices} from './runtime-context';
++
++/** Optional node illustration. Media failure never hides instructional text. */
++export function SceneImage({capsuleRef,title}:{capsuleRef:string;title:string}){
++  const {sceneImage}=useRuntimeServices(),{steps}=useLearningState();
++  const [state,setState]=useState<{kind:'loading'|'empty'|'error'}|{kind:'ready';url:string}>({kind:'loading'});
++  const [retry,setRetry]=useState(0);
++  useEffect(()=>{
++    if(!sceneImage)return;
++    const lease=steps.lease(),controller=new AbortController();let live=true,url:string|undefined;
++    const signal=AbortSignal.any([lease.signal,controller.signal]);setState({kind:'loading'});
++    sceneImage(capsuleRef,signal).then(blob=>{
++      if(!live||signal.aborted||!steps.isCurrent(lease))return;
++      if(!blob){setState({kind:'empty'});return;}
++      if(!['image/png','image/jpeg','image/webp','image/avif'].includes(blob.type)||!blob.size||blob.size>10*1024*1024)throw Error('IMAGE_BYTES');
++      url=URL.createObjectURL(blob);setState({kind:'ready',url});
++    }).catch(()=>{if(live&&!signal.aborted&&steps.isCurrent(lease))setState({kind:'error'});});
++    return()=>{live=false;controller.abort();if(url)URL.revokeObjectURL(url);};
++  },[sceneImage,capsuleRef,steps,retry]);
++  if(!sceneImage||state.kind==='empty')return null;
++  if(state.kind==='loading')return <p role="status">正在加载情景图片…</p>;
++  if(state.kind==='error')return <div className="runtime-scene-error" role="status">情景图片暂不可用，仍可继续阅读和练习。<button type="button" onClick={()=>setRetry(n=>n+1)}>重试图片</button></div>;
++  if(state.kind!=='ready')return null;
++  // eslint-disable-next-line @next/next/no-img-element -- Authorized Blob, not a public optimization URL.
++  return <figure className="runtime-scene-image"><img src={state.url} alt={`${title}：情景配图`} onError={()=>setState({kind:'error'})}/></figure>;
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/template-renderer.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/template-renderer.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/template-renderer.tsx	2026-09-11 06:02:32.884356576 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/template-renderer.tsx	2026-09-11 12:15:05.178737785 +0900
+@@ -1,15 +1,16 @@
+ 'use client';
+-import { useCallback, useState, type ReactNode } from 'react';
++import { useCallback, useState, useRef, type ReactNode } from 'react';
+ import type { LayoutV1 } from '../../../lib/smart-textbook-runtime-v1/contracts';
+ import { RevealBoundary } from './reveal-boundary';
++import {RuntimeToolbar} from './runtime-toolbar';
+ 
+-export function TemplateRenderer({layout,teaching,interaction,navigation,activeStepId}:{layout:LayoutV1;teaching:ReactNode;interaction:ReactNode;navigation:ReactNode;activeStepId?:string}){
++export function TemplateRenderer({layout,teaching,interaction,navigation,activeStepId,chapter}:{layout:LayoutV1;teaching:ReactNode;interaction:ReactNode;navigation:ReactNode;activeStepId?:string;chapter?:{title:string;position:number;total:number;locale:'zh-CN'|'ko-KR';backHref?:string;onLocaleChange?:(locale:'zh-CN'|'ko-KR')=>Promise<void>}}){
+   const [collapsed,setCollapsed]=useState(false);
++  const container=useRef<HTMLDivElement>(null);
+   const reveal=useCallback(()=>setCollapsed(false),[]);
+-  return <div className="lesson-runtime" data-layout={layout.preset} data-ratio={layout.desktopRatio} data-collapsed={collapsed}>
+-    <div className="runtime-toolbar">
+-      {layout.teachingCollapsible&&<button type="button" aria-expanded={!collapsed} onClick={()=>setCollapsed(v=>!v)}>{collapsed?'展开教学区':'收起教学区'}</button>}
+-    </div>
++  const collapse=layout.teachingCollapsible&&<button type="button" aria-expanded={!collapsed} onClick={()=>setCollapsed(v=>!v)}>{collapsed?'展开教学区':'收起教学区'}</button>;
++  return <div ref={container} className="lesson-runtime" data-layout={layout.preset} data-ratio={layout.desktopRatio} data-collapsed={collapsed}>
++    {chapter?<RuntimeToolbar container={container} {...chapter}>{collapse}</RuntimeToolbar>:<div className="runtime-toolbar">{collapse}</div>}
+     <div className="runtime-classroom">
+       <section className="runtime-teaching" aria-label="教学区" hidden={collapsed}>
+         <RevealBoundary reveal={reveal}><div hidden={collapsed}>{teaching}</div></RevealBoundary>
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/tts-playback-owner.tsx /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/tts-playback-owner.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/components/tts-playback-owner.tsx	2026-09-09 08:57:51.539843380 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/components/tts-playback-owner.tsx	2026-09-11 06:39:18.261178459 +0900
+@@ -2,15 +2,22 @@
+ import { useEffect,useRef,useState } from 'react';
+ import { speakAuthorizedUtterance,type TtsPlaybackOwner as Owner } from '../core/playback';
+ import { useLearningState,useRuntimeServices } from './runtime-context';
++import {useRevealBoundary} from './reveal-boundary';
++import {flushSync} from 'react-dom';
++import {useDialogueGroupVisible} from './dialogue-groups';
+ 
+ /** Real mounted browser media owner; the surrounding text element never invents play. */
+ export function TtsPlaybackOwner({owner}:{owner:Owner}){
+   const services=useRuntimeServices(),{steps,targets}=useLearningState();
++  const reveal=useRevealBoundary();
+   const [status,setStatus]=useState(''),[observed,setObserved]=useState(false),active=useRef<AbortController|null>(null);
++  const visible=useDialogueGroupVisible();
++  useEffect(()=>{if(!visible)active.current?.abort();},[visible]);
+   useEffect(()=>{
+     if(!services.tts)return;
+     const stop=()=>{active.current?.abort();active.current=null;};
+     const unmount=targets.mountTtsOwner(owner,async signal=>{
++      signal.throwIfAborted();flushSync(reveal);
+       stop();const controller=new AbortController();active.current=controller;const cancel=()=>controller.abort();signal.addEventListener('abort',cancel,{once:true});
+       try{setStatus('正在播放授权示范…');const result=await speakAuthorizedUtterance(services.tts!,controller.signal,{
+         create:text=>new SpeechSynthesisUtterance(text),speak:utterance=>window.speechSynthesis.speak(utterance),cancel:()=>window.speechSynthesis.cancel(),
+@@ -19,6 +26,6 @@
+       finally{signal.removeEventListener('abort',cancel);if(active.current===controller)active.current=null;}
+     });
+     const off=steps.onDispose(stop);return()=>{stop();off();unmount();};
+-  },[owner,services,steps,targets]);
++  },[owner,services,steps,targets,reveal]);
+   return <div><button type="button" disabled={observed} onClick={()=>void targets.command(owner.target,'play').catch(()=>{})}>播放老师指定的表达</button><button type="button" onClick={()=>active.current?.abort()}>停止示范</button>{status&&<p role="status">{status}</p>}</div>;
+ }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/course-return.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/course-return.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/course-return.ts	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/course-return.ts	2026-09-11 12:11:45.690504881 +0900
+@@ -0,0 +1,7 @@
++/** Host-provided course route only. Never infer navigation from browser history,
++ * chapter titles or Manifest content. */
++export function courseReturnHref(value:string|undefined):string|null{
++  if(!value||!value.startsWith('/')||value.startsWith('//')||/[\\\s#%]/.test(value))return null;
++  if(!/^\/(?:[a-zA-Z0-9_-]+\/)?dashboard\/courses(?:\/[a-zA-Z0-9_-]+)*\/?(?:\?course=[a-zA-Z0-9_-]+)?$/.test(value))return null;
++  return value;
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/learning-session-transport.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/learning-session-transport.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/learning-session-transport.ts	2026-09-11 05:44:06.303336904 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/learning-session-transport.ts	2026-09-11 12:14:03.817642801 +0900
+@@ -35,6 +35,7 @@
+   }
+   const first=()=>{const b=m.blocks.find(b=>b.stepId===activeStep&&b.type==='compat.learning.v1');if(!b||b.type!=='compat.learning.v1')throw Error('SESSION_STEP');return b.props.capsuleRef;};
+   return {...base,
++    sceneImage:(c,s)=>run(c,{op:'scene-image'},s),
+     learning:(c,s)=>run(c,{op:'content'},s),submit:(a,response,s)=>run(capsule(a),{op:'native-submit',activity:token(a),response},s),
+     refresh:s=>run(first(),{op:'refresh'},s),
+     activities:{load:(c,s)=>run(c,{op:'activities'},s),submit:(a,response,s)=>run(capsule(a),{op:'submit',activity:token(a),response},s)},
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/services.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/services.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/services.ts	2026-09-10 15:17:21.586888446 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/services.ts	2026-09-11 11:52:55.917422623 +0900
+@@ -16,11 +16,21 @@
+   guidedRepeat:Array<{progressRef:string;segmentIds:string[]}>;
+   speakingEvidence:Array<{activityRef:string;evidenceId:string}>;
+ };
+-export type ContentCard = { partId:string; title:string; paragraphs:string[]; children:ContentCard[] };
++export type LearningSectionKind =
++  | 'lead' | 'coach' | 'pattern' | 'nextNode' | 'patternCards' | 'quickResponse'
++  | 'substitutions' | 'personalOutput' | 'substitutionGroups' | 'grammarCards'
++  | 'vocabulary' | 'dialogueFlow' | 'dialogueScenes' | 'listenFor'
++  | 'repeatLines' | 'repeatTracks' | 'speakingFrame' | 'listeningFocus'
++  | 'outputChecklist' | 'listenSpeakPages' | 'listeningContext'
++  | 'speakingCriteria' | 'formalAudioStatus' | 'rubric' | 'reading' | 'questions'
++  | 'writingFrame' | 'originalExample' | 'checklist' | 'returnMap'
++  | 'targets' | 'completion' | 'dialogueGroups';
++export type ContentCard = { partId:string; title:string; paragraphs:string[]; children:ContentCard[]; section?:LearningSectionKind };
+ /** Safe per-Step display projection. Not a raw Capsule, SmartTextbookData or DB row. */
+ export type LearningPanel = {partId:string;title:string;contentPartId:string|null;activityRefs:string[];nativeChoices:boolean;navigation:boolean};
+ export type LearningContent = { revision:string; capsuleRef:string; stepId:string; cards:ContentCard[]; unsupported:string[];panels?:LearningPanel[] };
+ export type RuntimeServices = {
++  sceneImage?(capsuleRef:string,signal:AbortSignal):Promise<Blob|null>;
+   learningTools?: import('./learning-tools').LearningToolServices;
+   learningFlow?: import('./learning-flow').LearningFlowServices;
+   recording?: import('./recording').RecordingRuntimeServices;
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/target-registry.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/target-registry.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/core/target-registry.ts	2026-09-10 15:20:34.963271091 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/core/target-registry.ts	2026-09-11 06:43:23.442856622 +0900
+@@ -27,7 +27,8 @@
+     const unregister=this.steps.onDispose(dispose);
+     return ()=>{unregister();dispose();};
+   }
+-  async command(target: string, command: TargetCommand) {
++  async command(target: string, command: TargetCommand, cancellation?:AbortSignal) {
++    cancellation?.throwIfAborted();
+     const declaration=this.declarations.find(t=>t.id===target);
+     if(!declaration||!parseRuntimeTarget(target)||!declaration.capabilities.includes(command))throw Error('TARGET_CAPABILITY_DENIED');
+     if(declaration.stepId!==this.steps.activeStepId)throw Error('TARGET_UNAVAILABLE');
+@@ -42,7 +43,7 @@
+       }
+     }
+     const learning=this.learningOwners.get(target);
+-    if(command==='play'&&learning){if(!declaration||!this.handles.has(target)||declaration.stepId!==this.steps.activeStepId||learning.generation!==this.steps.generation)throw Error('TARGET_UNAVAILABLE');const lease=this.steps.lease();await learning.play(lease.signal);if(!this.steps.isCurrent(lease))throw Error('STALE_GENERATION');return;}
++    if(command==='play'&&learning){if(!declaration||!this.handles.has(target)||declaration.stepId!==this.steps.activeStepId||learning.generation!==this.steps.generation)throw Error('TARGET_UNAVAILABLE');const lease=this.steps.lease();await learning.play(cancellation?AbortSignal.any([lease.signal,cancellation]):lease.signal);if(!this.steps.isCurrent(lease))throw Error('STALE_GENERATION');return;}
+     const playback=this.playbackOwners.get(target);
+     if(command==='play'&&playback){
+       if(!declaration||!this.handles.has(target)||declaration.stepId!==this.steps.activeStepId||playback.owner.generation!==this.steps.generation)throw Error('TARGET_UNAVAILABLE');
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/application-runtime.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/application-runtime.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/application-runtime.server.ts	2026-09-11 04:29:54.525059904 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/application-runtime.server.ts	2026-09-11 12:15:04.872097117 +0900
+@@ -12,6 +12,8 @@
+ import {authorizeRuntimeApplication} from './application-access.server';
+ import {validateRuntimeActivation} from '../core/block-registry';
+ import {withChapterOneRuntimeRequest} from '../../../lib/smart-textbook-publishing/authoring.server';
++import {changeRuntimeLanguage} from './runtime-language.server';
++import {saveSmartTextbookPreferenceAction} from '../../../app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/smart-textbook-actions';
+ 
+ const requests=new AsyncLocalStorage<{request:Request;dependency?:ReturnType<typeof assertRuntimeDependencies>}>();
+ function request(){const r=requests.getStore();if(!r)throw Error('RUNTIME_REQUEST_CONTEXT');return r.request;}
+@@ -35,6 +37,7 @@
+ });
+ const ref=z.string().regex(/^learning-session-[0-9a-f-]{36}$/);
+ const learningRequest=z.discriminatedUnion('operation',[
++ z.strictObject({operation:z.literal('language'),sessionRef:ref,locale:z.enum(['zh-CN','ko-KR'])}),
+  z.strictObject({operation:z.literal('bootstrap'),sessionRef:ref.optional()}),
+  z.strictObject({operation:z.enum(['catalog','resume']),sessionRef:ref}),
+  z.strictObject({operation:z.enum(['enter','dispatch']),payload:z.unknown()}),
+@@ -53,6 +56,7 @@
+   if(kind==='teacher'){if(upload)throw Error('UNEXPECTED_BYTES');return teacher.dispatch(input);}
+   const r=learningRequest.parse(input);
+   if(upload&&(r.operation!=='dispatch'))throw Error('UNEXPECTED_BYTES');
++  if(r.operation==='language')return changeRuntimeLanguage({sessionRef:r.sessionRef,locale:r.locale},{resolve:input=>resolver.resolve(input),admit:runtimeAdmissionPolicy,save:saveSmartTextbookPreferenceAction,revoke:input=>learning.revoke(input)});
+   if(r.operation==='bootstrap'){
+    let sessionRef=r.sessionRef;
+    if(!sessionRef){
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts	2026-09-10 13:54:16.236593961 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/audit-learning-boundary.server.ts	2026-09-11 11:52:56.558671192 +0900
+@@ -12,6 +12,8 @@
+ import {auditRecording} from './audit-recording.server';
+ import {GET as listening} from '../../../app/api/smart-textbook-runtime-audit/listening/route';
+ import {patternAudioBytes} from './pattern-media.server';
++import {sceneImageBytes} from './scene-image.server';
++import {readSceneImage} from './scene-image-storage.server';
+ import type {RecordingRuntimeServices} from '../core/recording';
+ 
+ const requests=new AsyncLocalStorage<Request>();
+@@ -37,7 +39,7 @@
+     url.search=new URLSearchParams({sessionId,capsuleRef,pageId,kind}).toString();
+     const response=await listening(new Request(url,{headers:request.headers,signal}));if(!response.ok)throw Error('AUDIT_MEDIA_UNAVAILABLE');return response;
+   }
+-  return {recording,learning:(c:string)=>auditLearning(local(c)),submit:(activityRef:string,response:string)=>{
++  return {recording,sceneImage:(c:string,s:AbortSignal)=>sceneImageBytes(a.manifest,a.bindings,auditSession(a.scope.actorId,sessionId).data.source,c,s,readSceneImage),learning:(c:string)=>auditLearning(local(c)),submit:(activityRef:string,response:string)=>{
+     const block=a.manifest.blocks.find(b=>b.type==='multiple_choice'&&b.props.activityRef===activityRef);
+     const capsule=a.bindings.capsules.find(c=>c.kind==='learning'&&c.stepId===block?.stepId);
+     if(!capsule)throw Error('NATIVE_ACTIVITY_SCOPE');
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/learning-boundary.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/learning-boundary.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/learning-boundary.server.ts	2026-09-11 05:32:03.483376263 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/learning-boundary.server.ts	2026-09-11 12:14:03.970463720 +0900
+@@ -10,6 +10,7 @@
+ const token=z.string().regex(/^activity-ref-[0-9a-f]{32}$/);
+ const stable=z.string().min(1).max(200);
+ const requestSchema=z.discriminatedUnion('op',[
++  z.strictObject({op:z.literal('scene-image')}),
+   z.strictObject({op:z.enum(['content','activities','pages','patterns','repeat','tools','restore','refresh','recording-load'])}),
+   z.strictObject({op:z.literal('submit'),activity:token,response:activityResponseSchema}),
+   z.strictObject({op:z.literal('native-submit'),activity:token,response:stable}),
+@@ -31,7 +32,7 @@
+ // Rendering/domain ports share this authority subset. Published-only private
+ // association data must not become a requirement of isolated owner Preview.
+ type Authority=Omit<Awaited<ReturnType<ReturnType<typeof createRuntimeLearningSessionResolver>['resolve']>>,'manifestDigest'|'privateBindingDigest'|'publishedData'>;
+-type Ports=Pick<RuntimeServices,'learning'|'refresh'|'learningFlow'|'activities'|'pages'|'patterns'|'guidedRepeat'|'learningTools'|'recording'>&Partial<Pick<RuntimeServices,'submit'>>;
++type Ports=Pick<RuntimeServices,'sceneImage'|'learning'|'refresh'|'learningFlow'|'activities'|'pages'|'patterns'|'guidedRepeat'|'learningTools'|'recording'>&Partial<Pick<RuntimeServices,'submit'>>;
+ async function boundaryStage<T>(stage:string,task:()=>PromiseLike<T>):Promise<T>{
+   try{return await task();}
+   catch(error){console.error(`[UPLY_LEARNING_BOUNDARY_REJECTED] ${stage}`);throw error;}
+@@ -88,6 +89,7 @@
+       const recordingScope={capsuleRef:c,activityRef:activity?.ref??'',target:t.id};
+       const run=async()=>{switch(q.op){
+         case 'content':return p.learning(c,combined);
++        case 'scene-image':return required(p.sceneImage)(c,combined);
+         case 'activities':return required(p.activities).load(c,combined);
+         case 'pages':return required(p.pages).load(c,combined);
+         case 'patterns':return required(p.patterns).load(c,combined);
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts	2026-09-10 18:36:26.736546942 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts	2026-09-11 12:14:04.123284640 +0900
+@@ -7,6 +7,8 @@
+ import {recordingActivityBinding} from '../../../lib/recording-domain-gateway.server';
+ import {projectLearningContent} from '../../../lib/smart-textbook-legacy-adapter/runtime-content.server';
+ import {publishedTeacherScope} from './published-teacher-scope.server';
++import {sceneImageBytes} from './scene-image.server';
++import {readSceneImage} from './scene-image-storage.server';
+ 
+ /** Concrete composition, NOT a deployed route. Request headers come from the
+  * trusted server transport, never a client-supplied Request/identity envelope.
+@@ -34,7 +36,7 @@
+       const a=await current();if(a.scope.actorId!==userId||a.scope.tenantId!==tenantId)throw Error('LEARNING_SESSION_OWNER');
+       return {...a,recording,request:await request()};
+     },expected);
+-    return {...ports,recording,learning:async(capsuleRef,signal)=>{signal.throwIfAborted();const a=await current();signal.throwIfAborted();return projectLearningContent(a.bindings,capsuleRef,a.locale);}};
++    return {...ports,recording,sceneImage:async(c,signal)=>{const a=await current();return sceneImageBytes(a.manifest,a.bindings,a.publishedData.source,c,signal,readSceneImage);},learning:async(capsuleRef,signal)=>{signal.throwIfAborted();const a=await current();signal.throwIfAborted();return projectLearningContent(a.bindings,capsuleRef,a.locale);}};
+   });
+   // Private installation ports; do not serialize these functions or their scope.
+   return {issue:()=>resolver.issue(),revoke:(input:unknown)=>resolver.revoke(input),teacher:publishedTeacherScope(resolver,boundary),...boundary};
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/runtime-language.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/runtime-language.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/runtime-language.server.ts	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/runtime-language.server.ts	2026-09-11 12:15:04.722272686 +0900
+@@ -0,0 +1,14 @@
++import 'server-only';
++import {z} from 'zod';
++const inputSchema=z.strictObject({sessionRef:z.string().regex(/^learning-session-[0-9a-f-]{36}$/),locale:z.enum(['zh-CN','ko-KR'])});
++type Ports={resolve:(input:{sessionRef:string})=>Promise<{manifest:{textbook:{id:string}}}>;admit:()=>Promise<{eligible:boolean}>;save:(input:{textbookId:string;locale:'zh-CN'|'ko-KR';supportMode:'bilingual'})=>Promise<{ok:boolean}>;revoke:(input:{sessionRef:string})=>Promise<unknown>};
++/** Reauthorize existing scope, persist via the original preference service, then
++ * invalidate the old session. Never mutate locale on an executing session. */
++export async function changeRuntimeLanguage(input:unknown,p:Ports){
++  const r=inputSchema.parse(input),a=await p.resolve({sessionRef:r.sessionRef});
++  if(!(await p.admit()).eligible)throw Error('RUNTIME_ADMISSION_CLOSED');
++  const saved=await p.save({textbookId:a.manifest.textbook.id,locale:r.locale,supportMode:'bilingual'});
++  if(!saved.ok)throw Error('LANGUAGE_SAVE_FAILED');
++  await p.revoke({sessionRef:r.sessionRef});
++  return {reloadRequired:true as const};
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/scene-image-storage.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/scene-image-storage.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/scene-image-storage.server.ts	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/scene-image-storage.server.ts	2026-09-11 11:52:55.759607554 +0900
+@@ -0,0 +1,6 @@
++import 'server-only';
++import {createR2SignedObjectUrl} from '../../../lib/r2';
++export async function readSceneImage(key:string,signal:AbortSignal){
++  signal.throwIfAborted();
++  return fetch(await createR2SignedObjectUrl(key),{signal,cache:'no-store',redirect:'error'});
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/scene-image.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/scene-image.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/features/smart-textbook-runtime/server/scene-image.server.ts	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/features/smart-textbook-runtime/server/scene-image.server.ts	2026-09-11 11:52:55.606786633 +0900
+@@ -0,0 +1,30 @@
++import 'server-only';
++import type {LessonManifestV1} from '../../../lib/smart-textbook-runtime-v1/contracts.ts';
++import type {PrivateBindings} from '../../../lib/smart-textbook-legacy-adapter/capsules.server.ts';
++import type {LegacyChapterOneSource} from '../../../lib/smart-textbook-legacy-adapter/source.server.ts';
++
++/** Mirrors the old orientation/dialogue panel's first ready node image.
++ * Source and bindings must be from the same authorized immutable bundle. */
++export function resolveSceneImage(m:LessonManifestV1,b:PrivateBindings,source:Pick<LegacyChapterOneSource,'media'>,capsuleRef:string){
++  const c=b.capsules.find(c=>c.id===capsuleRef);
++  const block=m.blocks.find(x=>x.type==='compat.learning.v1'&&x.props.capsuleRef===capsuleRef);
++  if(c?.kind!=='learning'||!block||block.stepId!==c.stepId)throw Error('SCENE_CAPSULE');
++  if(!c.sections.some(s=>s.slot==='dialogueGroups'||s.slot==='dialogueScenes'))return null;
++  const row=source.media.find(a=>a.node_id===c.nodeId&&a.media_type==='image'&&a.production_status==='ready'&&a.object_key);
++  if(!row)return null;
++  const bindings=b.media.filter(x=>x.sourceId===row.id);
++  const binding=bindings[0],ref=m.mediaRefs.find(x=>x.id===binding?.ref);
++  if(bindings.length!==1||!ref||ref.kind!=='image'||ref.readiness!=='ready'||ref.access!=='lesson'||binding.access!=='lesson'||ref.revision!==binding.revision||binding.objectKey!==row.object_key)throw Error('SCENE_BINDING');
++  return binding;
++}
++
++/** Byte transport is injected by the server. No location or private row escapes. */
++export async function sceneImageBytes(m:LessonManifestV1,b:PrivateBindings,source:Pick<LegacyChapterOneSource,'media'>,capsuleRef:string,signal:AbortSignal,read:(key:string,signal:AbortSignal)=>Promise<Response>):Promise<Blob|null>{
++  signal.throwIfAborted();const binding=resolveSceneImage(m,b,source,capsuleRef);if(!binding)return null;
++  const response=await read(binding.objectKey!,signal),mime=response.headers.get('content-type')?.split(';')[0]??'';
++  if(!response.ok||!['image/png','image/jpeg','image/webp','image/avif'].includes(mime)||!response.body)throw Error('SCENE_IMAGE_UNAVAILABLE');
++  const reader=response.body.getReader(),chunks:Uint8Array<ArrayBuffer>[]=[];let size=0;
++  try{while(true){signal.throwIfAborted();const part=await reader.read();if(part.done)break;size+=part.value.byteLength;if(size>10*1024*1024)throw Error('SCENE_IMAGE_SIZE');chunks.push(new Uint8Array(part.value));}
++    signal.throwIfAborted();if(!size)throw Error('SCENE_IMAGE_EMPTY');return new Blob(chunks,{type:mime});
++  }finally{await reader.cancel();reader.releaseLock();}
++}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts /tmp/uply-student-ui-integration.bUmZfS/src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts	2026-09-10 13:34:19.103467089 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/src/lib/smart-textbook-legacy-adapter/runtime-content.server.ts	2026-09-11 17:35:48.616231742 +0900
+@@ -1,6 +1,6 @@
+ import 'server-only';
+ import { capsuleSchema, type PrivateBindings } from './capsules.server.ts';
+-import type { LearningContent, ContentCard } from '../../features/smart-textbook-runtime/core/services.ts';
++import type { LearningContent, ContentCard, LearningSectionKind } from '../../features/smart-textbook-runtime/core/services.ts';
+ import {learningPanels} from './panel-projection.server.ts';
+ 
+ /** Explicit safe display projection. Private activity policy, media locations and teacher
+@@ -14,11 +14,11 @@
+     if(!identity)throw Error('FROZEN_PART_IDENTITY_MISSING');
+     return identity.partId;
+   };
+-  const card=(partId:string,title:string,paragraphs:string[],children:ContentCard[]=[]):ContentCard=>({partId,title,paragraphs:paragraphs.filter(Boolean),children});
++  const card=(partId:string,title:string,paragraphs:string[],children:ContentCard[]=[],section?:LearningSectionKind):ContentCard=>({partId,title,paragraphs:paragraphs.filter(Boolean),children,...(section?{section}:{})});
+   const cards:ContentCard[]=[],unsupported:string[]=[];
+   for(const section of capsule.sections){
+     const id=section.partId,path=`content.${section.slot}`;
+-    const add=(title:string,paragraphs:string[],children:ContentCard[]=[])=>cards.push(card(id,title,paragraphs,children));
++    const add=(title:string,paragraphs:string[],children:ContentCard[]=[])=>cards.push(card(id,title,paragraphs,children,section.slot));
+     switch(section.slot){
+       case 'lead': add('学习内容',[local(section.body)]);break;
+       case 'coach': add('学习提示',[local(section.body)]);break;
+@@ -53,6 +53,8 @@
+       default: { const impossible:never=section; throw Error(`Unmapped section ${String(impossible)}`); }
+     }
+   }
+-  if(capsule.activities.some(a=>!a.activityKey.startsWith('orientation-')))unsupported.push('复杂活动、听说录音及页进度执行尚待完成；本投影仅显示教学内容。');
++  // This projector describes content, not executable service readiness. The
++  // Runtime registry/admission and executors enforce capabilities separately.
++  // Activity keys cannot establish that an already implemented executor is absent.
+   return {revision:capsule.revision,capsuleRef:ref,stepId:capsule.stepId,cards,unsupported,panels:learningPanels(capsule,locale)};
+ }
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/learning-session-4a12.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/learning-session-4a12.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/learning-session-4a12.mjs	2026-09-10 13:54:16.410390296 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/learning-session-4a12.mjs	2026-09-11 11:56:55.082158771 +0900
+@@ -2,6 +2,7 @@
+ import {flowFixture,capsules,scope} from './runtime-4a9.mjs';
+ import {serverModule} from './runtime-4a2.server.mjs';
+ const {createLearningBoundary}=await import('../../src/features/smart-textbook-runtime/server/learning-boundary.server.ts');
++const {sceneImageBytes}=await import('../../src/features/smart-textbook-runtime/server/scene-image.server.ts');
+ const {activityExecutions}=await import('../../src/features/smart-textbook-runtime/server/activity-binding.server.ts');
+ const {activityPages}=await import('../../src/features/smart-textbook-runtime/server/activity-pages.server.ts');
+ const {patternExecutions}=await import('../../src/features/smart-textbook-runtime/server/pattern-binding.server.ts');
+@@ -20,6 +21,8 @@
+     if(input!==sessionRef)throw Error('ISOLATED_SESSION');return {sessionId:sessionRef,snapshotId:manifest.snapshot.id,expiresAt,manifest,bindings:compiled.bindings,services:compiled.services,nodes:source.nodes,scope,locale:'zh-CN'};
+   }},async()=>({
+     learning:async c=>content[c],refresh:async()=>state,
++    // Real frozen binding resolver with isolated PNG transport, never remote media.
++    sceneImage:(c,s)=>sceneImageBytes(manifest,compiled.bindings,source,c,s,async()=>new Response(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=','base64'),{headers:{'content-type':'image/png'}})),
+     submit:(a,response)=>flow.submitNative(find(a),a,response),
+     activities:{load:async c=>activityExecutions(manifest,compiled.bindings,c,'zh-CN'),submit:(a,r)=>flow.submit(find(a),a,r)},
+     pages:{load:async c=>activityPages(compiled.bindings,compiled.services,c,'zh-CN'),check:(c,p,r)=>flow.pageCheck(c,p,r),audio:async(c,p)=>{
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/mounted-recording-4a12.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/mounted-recording-4a12.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/mounted-recording-4a12.mjs	2026-09-10 13:56:58.453498919 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/mounted-recording-4a12.mjs	2026-09-11 12:54:47.480124546 +0900
+@@ -9,6 +9,7 @@
+ const {activityPages}=await import('../../src/features/smart-textbook-runtime/server/activity-pages.server.ts');
+ const {patternExecutions}=await import('../../src/features/smart-textbook-runtime/server/pattern-binding.server.ts');
+ const {learningTools}=await import('../../src/features/smart-textbook-runtime/server/learning-tools.server.ts');
++const {sceneImageBytes}=await import('../../src/features/smart-textbook-runtime/server/scene-image.server.ts');
+ 
+ /** Mounted real Chromium MediaRecorder -> existing production service -> real
+  * isolated SQL supplied by rehearsal -> actual Reader -> same React provider.
+@@ -21,6 +22,7 @@
+       scope:{authorized:true,actorId:authority.owner.studentId,tenantId:authority.owner.tenantId,versionId:manifest.version.id,sourceRevision:compiled.report.sourceRevision}};
+   }},async()=>({
+     recording,learning:async c=>content[c],refresh:async()=> (await refresh()).server,
++    sceneImage:(c,s)=>sceneImageBytes(manifest,compiled.bindings,source,c,s,async()=>new Response(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=','base64'),{headers:{'content-type':'image/png'}})),
+     activities:{load:async c=>activityExecutions(manifest,compiled.bindings,c,'zh-CN'),submit:async()=>{throw Error('Not a general grader test');}},
+     pages:{load:async c=>activityPages(compiled.bindings,compiled.services,c,'zh-CN')},patterns:{load:async c=>patternExecutions(manifest,compiled.bindings,c,'zh-CN')},
+     guidedRepeat:{load:async()=>null},learningTools:{load:async c=>learningTools(manifest,compiled.bindings,compiled.services,c,source.nodes)},
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/published-chapter-one.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/published-chapter-one.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/published-chapter-one.mjs	2026-09-11 04:33:54.652673291 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/published-chapter-one.mjs	2026-09-11 17:22:07.274425313 +0900
+@@ -11,6 +11,9 @@
+ // Only SQL/auth/byte transports are substituted. Publisher, capture projection,
+ // immutable repository, published Loader and durable resolver are real modules.
+ export const publishedOverrides={};
++// Isolated byte transport only: retain the real scene binding, authorization and
++// MIME/size validation. Never contact object storage during this SQL rehearsal.
++publishedOverrides['./scene-image-storage.server']='export async function readSceneImage(key,signal){signal.throwIfAborted();return new Response(Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=","base64"),{headers:{"content-type":"image/png"}});}';
+ for(const p of ['../auth','../../../lib/auth','@/lib/auth'])publishedOverrides[p]='export async function requireActiveUser(){return globalThis.__publishedChapter.auth;} export async function getAuthContext(){return globalThis.__publishedChapter.auth;} export function isActiveProfileStatus(s){return s==="active";}';
+ for(const p of ['../supabase/admin','../../../lib/supabase/admin','@/lib/supabase/admin'])publishedOverrides[p]='export function createAdminClient(){return globalThis.__publishedChapter.admin;}';
+ publishedOverrides['next/server']='export class NextResponse extends Response{static json(x,o){return Response.json(x,o);}}';
+@@ -88,6 +91,11 @@
+       if(table==='digital_textbook_speaking_evidence')return rpc.from(table);
+       ident(table);let predicates=[],orders=[],limit='',head=false,signal,columns='';
+       const b={select(c,options={}){columns=c;head=!!options.head;return b;},eq(k,v){predicates.push(`${ident(k)}=${value(v)}`);return b;},is(k,v){if(v!==null)throw Error('IS transport');predicates.push(`${ident(k)} is null`);return b;},in(k,vs){predicates.push(vs.length?`${ident(k)} in (${vs.map(value)})`:'false');return b;},
++        async upsert(row,options){
++          if(table!=='digital_textbook_preferences'||options.onConflict!=='tenant_id,student_id,textbook_id')throw Error('Unexpected preference upsert');
++          const result=await db.raw(service(`insert into public.digital_textbook_preferences(${Object.keys(row).map(ident)}) values(${Object.values(row).map(value)}) on conflict(tenant_id,student_id,textbook_id) do update set interface_locale=excluded.interface_locale,support_mode=excluded.support_mode,updated_at=excluded.updated_at`));
++          return {data:null,error:result.code?{message:result.stderr}:null};
++        },
+         order(k,{ascending=true}={}){orders.push(`${ident(k)} ${ascending?'asc':'desc'}`);return b;},limit(n){if(!Number.isInteger(n))throw Error('limit');limit=` limit ${n}`;return b;},abortSignal(s){signal=s;return b;},
+         or(expression){const m=/^created_at\.(lt|gt)\.([^,]+),and\(created_at.eq.([^,]+),id\.(lte|gt)\.([a-f0-9-]+)\)$/.exec(expression);if(!m||m[2]!==m[3])throw Error('SQL cursor');predicates.push(`(created_at ${m[1]==='lt'?'<':'>'} ${q(m[2])} or (created_at=${q(m[3])} and id ${m[4]==='lte'?'<=':'>'} ${q(m[5])}))`);return b;},
+         async maybeSingle(){const r=await finish();return {...r,data:r.data?.[0]??null};},async single(){return b.maybeSingle();},then(resolve,reject){return finish().then(resolve,reject);}};
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/runtime-4a-browser.tsx /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/runtime-4a-browser.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/runtime-4a-browser.tsx	2026-09-10 15:27:12.894931245 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/runtime-4a-browser.tsx	2026-09-11 11:54:48.678284523 +0900
+@@ -20,6 +20,8 @@
+     submit:async(ref,response,signal)=>{const r=await fetch('/submit',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({ref,response}),signal});return r.json();},
+     teacher:{turn:async()=>{throw Error('No teacher transport in browser harness');},cancel:async()=>{}},
+   };
++  if(data.sceneImage)services.sceneImage=async(_ref,signal)=>{const r=await fetch('/scene-image',{signal});if(!r.ok)throw Error('Scene test transport');return r.blob();};
++  if(data.presentationTools)services.learningTools={load:async(ref,signal)=>{signal.throwIfAborted();return data.presentationTools[ref];},open:async()=>{throw Error('No navigation transport in presentation test');}};
+   if(data.authoritativeHistory)services.refresh=async signal=>{const r=await fetch('/history',{signal});if(!r.ok)throw Error('History unavailable');return r.json();};
+   if(data.recording){services.recording=recordingTransport(data.context.runtimeSessionId,data.context.snapshotId);const url=new URL(location.href);url.searchParams.set('recordingAudit',data.context.runtimeSessionId);history.replaceState(history.state,'',url);}
+   if(data.guidedRepeat){
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/runtime-4b1b-browser.tsx /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/runtime-4b1b-browser.tsx
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/fixtures/runtime-4b1b-browser.tsx	2026-09-10 18:40:43.572569112 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/fixtures/runtime-4b1b-browser.tsx	2026-09-11 12:19:47.992327213 +0900
+@@ -2,4 +2,4 @@
+ import {StrictMode} from 'react';
+ import {PublishedRuntimeEntry} from '../../src/features/smart-textbook-runtime/components/published-runtime-entry';
+ // Only bootstraps the actual new app component; no substitute Renderer/ports.
+-createRoot(document.getElementById('root')!).render(<StrictMode><PublishedRuntimeEntry/></StrictMode>);
++createRoot(document.getElementById('root')!).render(<StrictMode><PublishedRuntimeEntry backHref="/student/dashboard/courses/korean?course=korean-level-one"/></StrictMode>);
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a-browser.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a-browser.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a-browser.test.mjs	2026-09-11 06:02:32.884513724 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a-browser.test.mjs	2026-09-11 12:07:04.983448966 +0900
+@@ -3,17 +3,20 @@
+ import { createServer } from 'node:http';
+ import { build } from 'esbuild';
+ import { chromium } from '@playwright/test';
+-import { manifest,content,context,state,gradePreview } from './fixtures/runtime-4a.mjs';
++import { compiled,manifest,content,context,state,gradePreview } from './fixtures/runtime-4a.mjs';
++const {contentUtterances}=await import('../src/features/smart-textbook-runtime/server/content-playback.server.ts');
+ import { minimalManifest,blockManifest } from './fixtures/smart-textbook-runtime-v1/samples.mjs';
+ 
+ test('actual React Renderer in Chromium: layouts, 8 Steps, MC server roundtrip, targets and lifecycle',async t=>{
+   const bundle=await build({entryPoints:['tests/fixtures/runtime-4a-browser.tsx'],bundle:true,write:false,outdir:'/tmp/runtime-4a-generated',platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'}});
+   const js=bundle.outputFiles.find(f=>f.path.endsWith('.js')).text,css=bundle.outputFiles.find(f=>f.path.endsWith('.css')).text;
+-  let selected=structuredClone(manifest),submissions=[],delaySubmit=false,releaseSubmit;
++  let selected=structuredClone(manifest),submissions=[],delaySubmit=false,releaseSubmit,presentationTools,sceneImage=false,imageFailure=false;
+   const server=createServer(async(req,res)=>{try{
+     if(req.url==='/bundle.js'){res.setHeader('content-type','text/javascript');return res.end(js);}
+     if(req.url==='/style.css'){res.setHeader('content-type','text/css');return res.end(css);}
+-    if(req.url==='/data'){res.setHeader('content-type','application/json');return res.end(JSON.stringify({manifest:selected,context:{...context,snapshotId:selected.snapshot.id},state:{...state,snapshotId:selected.snapshot.id},content}));}
++    if(req.url==='/data'){res.setHeader('content-type','application/json');return res.end(JSON.stringify({manifest:selected,context:{...context,snapshotId:selected.snapshot.id},state:{...state,snapshotId:selected.snapshot.id},content,presentationTools,sceneImage}));}
++    // Explicit isolated image transport; never presented as real textbook artwork.
++    if(req.url==='/scene-image'){if(imageFailure){res.statusCode=503;return res.end();}res.setHeader('content-type','image/png');return res.end(Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAusB9Wl6pN8AAAAASUVORK5CYII=','base64'));}
+     if(req.url==='/submit'){let body='';for await(const chunk of req)body+=chunk;const input=JSON.parse(body);submissions.push(input);if(delaySubmit)await new Promise(r=>releaseSubmit=r);res.setHeader('content-type','application/json');return res.end(JSON.stringify(await gradePreview(input.ref,input.response)));}
+     res.setHeader('content-type','text/html');res.end('<html lang="zh-CN"><head><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><div id="root"></div><script type="module" src="/bundle.js"></script></body></html>');
+   }catch{res.statusCode=500;res.end('test transport rejected');}});
+@@ -21,6 +24,35 @@
+   const browser=await chromium.launch({headless:true}),page=await browser.newPage({viewport:{width:1440,height:1000},reducedMotion:'reduce'}),errors=[];
+   page.on('pageerror',e=>errors.push(e.message));const url=`http://127.0.0.1:${server.address().port}`;
+   try{
++    await t.test('chapter toolbar follows real Step position and fullscreen exits without resetting learning',async()=>{
++      await page.goto(url);await page.locator('.runtime-chapter-location').waitFor();
++      assert.equal(await page.locator('.runtime-chapter-location strong').innerText(),manifest.chapter.title['zh-CN']);
++      assert.equal(await page.locator('.runtime-chapter-location span').innerText(),'1 / 8');
++      await page.getByRole('button',{name:manifest.steps[1].title['zh-CN'],exact:true}).click();
++      assert.equal(await page.locator('.runtime-chapter-location span').innerText(),'2 / 8');
++      await page.getByRole('button',{name:'全屏',exact:true}).click();
++      await page.waitForFunction(()=>document.fullscreenElement?.classList.contains('lesson-runtime'));
++      await page.getByRole('button',{name:'退出全屏',exact:true}).click();
++      await page.waitForFunction(()=>!document.fullscreenElement);
++      assert.equal(await page.locator('.runtime-chapter-location span').innerText(),'2 / 8');
++      await page.setViewportSize({width:390,height:844});
++      assert.ok(await page.locator('.runtime-toolbar').evaluate(e=>e.scrollWidth<=e.clientWidth));
++      await page.setViewportSize({width:1440,height:1000});
++      await page.getByRole('button',{name:manifest.steps[0].title['zh-CN'],exact:true}).click();
++    });
++    await t.test('scene bytes mount locally, failure preserves teaching content, retry and Step disposal revoke Blob',async()=>{
++      sceneImage=true;imageFailure=true;
++      await page.addInitScript(()=>{window.revokedImages=[];const revoke=URL.revokeObjectURL.bind(URL);URL.revokeObjectURL=u=>{window.revokedImages.push(u);revoke(u);};});
++      await page.goto(url);await page.getByRole('button',{name:'重试图片'}).waitFor();
++      assert.equal(await page.locator('form').count(),3);
++      imageFailure=false;await page.getByRole('button',{name:'重试图片'}).click();
++      const img=page.locator('.runtime-scene-image img');await img.waitFor();await page.waitForFunction(()=>document.querySelector('.runtime-scene-image img')?.naturalWidth>0);
++      const blob=await img.getAttribute('src');assert.match(blob,/^blob:/);
++      await page.getByRole('button',{name:selected.steps[1].title['zh-CN'],exact:true}).click();
++      await page.waitForFunction(u=>window.revokedImages.includes(u),blob);assert.equal(await page.locator('.runtime-scene-image').count(),0);
++      await page.getByRole('button',{name:selected.steps[0].title['zh-CN'],exact:true}).click();
++      sceneImage=false;
++    });
+     await t.test('strict Runtime refuses genuinely unsupported video; minimal native Runtime activates',async()=>{
+       selected=blockManifest('video');
+       await page.goto(url+'/?mode=strict');await page.getByRole('alert').waitFor();assert.match(await page.locator('body').innerText(),/暂不能激活/);
+@@ -31,6 +63,25 @@
+       for(const form of await page.locator('form').all()){await form.locator('input').first().check();await form.getByRole('button',{name:'提交答案',exact:true}).click();await form.getByText('回答正确',{exact:true}).waitFor();assert.match(await form.innerText(),/预览检查/);}
+       assert.equal(new Set(submissions.map(s=>s.ref)).size,3);assert.equal(await page.locator('nav').count(),1);
+     });
++    await t.test('dialogue tabs use frozen group IDs, keyboard selection and Teacher reveal selects hidden group',async()=>{
++      const block=manifest.blocks.find(b=>b.type==='compat.learning.v1');
++      const groups=content[block.props.capsuleRef].cards.find(c=>c.section==='dialogueGroups').children;
++      const tabs=page.getByRole('tablist',{name:'选择对话组'});
++      assert.equal(await tabs.getByRole('tab').count(),4);
++      await tabs.getByRole('tab').first().focus();await page.keyboard.press('End');
++      assert.equal(await tabs.getByRole('tab').last().getAttribute('aria-selected'),'true');
++      const line=groups[0].children[0],target=manifest.runtimeTargets.find(t=>t.blockId===block.id&&t.partId===line.partId);
++      await page.evaluate(async id=>{await window.testCommand(id,'reveal');await window.testCommand(id,'focus');},target.id);
++      assert.equal(await tabs.getByRole('tab').first().getAttribute('aria-selected'),'true');
++      assert.equal(await page.getByRole('tabpanel').count(),1);
++      assert.equal(await page.evaluate(()=>document.activeElement?.getAttribute('data-runtime-target')),target.id);
++      await tabs.getByRole('tab').last().click();await page.reload();
++      await page.waitForFunction(()=>document.querySelector('[role=tablist] [role=tab]:last-child')?.getAttribute('aria-selected')==='true');
++      await tabs.getByRole('tab').first().click();
++      await page.setViewportSize({width:390,height:844});
++      assert.equal(await tabs.evaluate(el=>el.scrollWidth<=el.clientWidth),true);
++      await page.setViewportSize({width:1440,height:1000});
++    });
+     await t.test('mounted stable part reveal focus highlight; unavailable play rejected; dispose cancels highlight',async()=>{
+       const block=manifest.blocks.find(b=>b.type==='compat.learning.v1');
+       const flatten=cards=>cards.flatMap(c=>[c,...flatten(c.children)]);
+@@ -59,18 +110,29 @@
+       await page.evaluate(id=>window.testCommand(id,'reveal'),block.runtimeTarget);assert.equal(await page.locator('.lesson-runtime').getAttribute('data-collapsed'),'false');
+     });
+     await t.test('split/stacked layout, ratio, collapsed teaching and bounded responsive layout',async()=>{
+-      const footer=await page.locator('.runtime-navigation').boundingBox();assert(footer.y+footer.height<=1000,'navigation stays inside viewport');
+-      const interaction=page.locator('.runtime-interaction');assert.equal(await interaction.evaluate(el=>getComputedStyle(el).overflowY),'auto');
+-      await page.screenshot({path:'/tmp/uply-runtime-ui-desktop.png',fullPage:true});
+       assert.equal(await page.locator('.lesson-runtime').getAttribute('data-ratio'),'30-70');
+       await page.getByRole('button',{name:'收起教学区',exact:true}).click();assert.equal(await page.locator('.lesson-runtime').getAttribute('data-collapsed'),'true');
+       await page.setViewportSize({width:390,height:844});assert.equal(await page.locator('.runtime-classroom').evaluate(el=>getComputedStyle(el).display),'grid');
+       selected.layout.preset='stacked-classroom';selected.layout.desktopRatio='50-50';await page.reload();await page.locator('.lesson-runtime').waitFor();assert.equal(await page.locator('.lesson-runtime').getAttribute('data-layout'),'stacked-classroom');
+-      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),'mobile has no page overflow');
+-      const mobileFooter=await page.locator('.runtime-navigation').boundingBox();assert(mobileFooter.y+mobileFooter.height<=844);
+-      await page.screenshot({path:'/tmp/uply-runtime-ui-mobile.png',fullPage:true});
+       await page.evaluate(()=>window.testUnmount());assert.equal(await page.locator('.lesson-runtime').count(),0);
+     });
++    await t.test('group playback waits for each real onend; group switch and Step disposal cancel the queue',async()=>{
++      selected=structuredClone(manifest);
++      presentationTools=Object.fromEntries(selected.blocks.filter(b=>b.type==='compat.learning.v1').map(b=>[b.props.capsuleRef,{
++        snapshotId:selected.snapshot.id,capsuleRef:b.props.capsuleRef,navigation:[],playback:contentUtterances(compiled.bindings,b.props.capsuleRef).map(p=>({...p,kind:'browser-tts',locale:'ko-KR',target:selected.runtimeTargets.find(t=>t.blockId===b.id&&t.partId===p.partId).id})),
++      }]));
++      await page.addInitScript(()=>{window.spoken=[];window.cancelled=0;window.SpeechSynthesisUtterance=class{constructor(text){this.text=text;}};Object.defineProperty(window,'speechSynthesis',{value:{speak(u){window.spoken.push(u);},cancel(){window.cancelled++;}}});});
++      await page.goto(url);await page.getByRole('button',{name:selected.steps[0].title['zh-CN'],exact:true}).click();
++      const tabs=page.getByRole('tablist',{name:'选择对话组'});await tabs.getByRole('tab').first().click();
++      await page.getByRole('button',{name:'整组播放',exact:true}).click();await page.waitForFunction(()=>window.spoken.length===1);
++      await page.evaluate(()=>window.spoken[0].onend());await page.waitForFunction(()=>window.spoken.length===2);
++      await page.evaluate(()=>window.spoken[1].onend());await page.getByRole('button',{name:'停止播放',exact:true}).waitFor({state:'hidden'});
++      await page.getByRole('button',{name:'整组播放',exact:true}).click();await page.waitForFunction(()=>window.spoken.length===3);
++      await tabs.getByRole('tab').nth(1).click();assert.equal(await page.evaluate(()=>window.spoken[2].onend),null);
++      await page.getByRole('button',{name:'整组播放',exact:true}).click();await page.waitForFunction(()=>window.spoken.length===4);
++      await page.getByRole('button',{name:selected.steps[1].title['zh-CN'],exact:true}).click();assert.equal(await page.evaluate(()=>window.spoken[3].onend),null);
++      assert.ok(await page.evaluate(()=>window.cancelled)>=2);presentationTools=undefined;
++    });
+     await t.test('support drawer opens via stable target, all desktop ratio presets remain bounded',async()=>{
+       selected=minimalManifest();const b=selected.blocks[0];b.region='interaction.support';selected.steps[0].regions=[{region:b.region,blockIds:[b.id]}];selected.regions.push({id:'interaction.support',role:'support',parent:'interaction',content:'blocks',allowedBlockTypes:['text']});selected.layout.supportPresentation='drawer';
+       await page.setViewportSize({width:1440,height:1000});
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a11-session.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a11-session.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a11-session.test.mjs	2026-09-10 12:37:07.713565557 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a11-session.test.mjs	2026-09-11 11:56:31.213129573 +0900
+@@ -8,7 +8,7 @@
+ async function setup(){
+   const f=await isolatedSessionFixture(),calls=[];
+   const called=(name)=>(...args)=>{calls.push({name,args});return Promise.resolve(name);};
+-  const boundary=createLearningBoundary(f.resolver,async()=>({learning:called('content'),refresh:async()=>f.history.authority.recording? (await f.reader(signal())).server:null,
++  const boundary=createLearningBoundary(f.resolver,async()=>({sceneImage:called('scene-image'),learning:called('content'),refresh:async()=>f.history.authority.recording? (await f.reader(signal())).server:null,
+     activities:{load:called('activities'),submit:called('submit')},pages:{load:called('pages'),check:called('page-check'),audio:called('audio'),transcript:called('transcript')},
+     learningFlow:{restore:called('restore'),revealPage:called('page-reveal'),finishPages:called('pages-finish'),finishPattern:called('pattern-finish')},
+     patterns:{load:called('patterns'),check:called('pattern-check'),audio:called('pattern-audio')},guidedRepeat:{load:called('repeat'),mark:called('repeat-mark')},
+@@ -25,6 +25,14 @@
+   await assert.rejects(()=>f.boundary.dispatch(f.request({op:'content'},root('grammar')),signal()),/STEP/);assert.equal(f.calls.length,0);
+   const catalog=await f.boundary.catalog(f.ref);assert.equal(catalog.length,19);assert(catalog.every(x=>/^activity-ref-/.test(x.serviceRef)));
+ });
++test('scene image requests use the opaque session target only; client object locations and cross-Step access reject',async()=>{
++  const f=await setup();
++  for(const field of ['objectKey','url','mediaRef','nodeId','studentId'])await assert.rejects(()=>f.boundary.dispatch(f.request({op:'scene-image',[field]:'injected'}),signal()));
++  await assert.rejects(()=>f.boundary.dispatch(f.request({op:'scene-image'},root('dialogue')),signal()),/STEP/);
++  assert.equal(f.calls.length,0);
++  assert.equal(await f.boundary.dispatch(f.request({op:'scene-image'}),signal()),'scene-image');
++  assert.equal(f.calls[0].args[0],capsules.find(c=>c.stepId===manifest.steps.find(s=>s.key==='orientation').id).id);
++});
+ test('4A11 session boundary routes every domain family through server-resolved capsule/activity; no client database identities',async()=>{
+   const f=await setup();await f.boundary.enter({sessionRef:f.ref.sessionRef,target:root('listen_speak'),generation:0});
+   const c=capsules.find(c=>c.stepId===manifest.steps.find(s=>s.key==='listen_speak').id),a=c.activities.find(a=>a.activityKey==='speaking-introduction'),activity=identity('activity-ref',a.activityId);
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a14-browser.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a14-browser.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a14-browser.test.mjs	2026-09-10 16:13:54.369870428 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a14-browser.test.mjs	2026-09-11 12:54:16.792085281 +0900
+@@ -83,7 +83,10 @@
+     await page.evaluate(target=>window.testCommand(target,'play'),taskTarget);
+     assert.equal(responses.filter(r=>r.operation==='observeTts').length,observations);
+     assert(f.media.length>0&&f.characters.length>0);assert(f.media.every(m=>!evidence.speech.some(a=>a.id===m.assetId&&a.segment_index===199)));
+-    await teacher.getByRole('button',{name:'停止讲解'}).click();await page.waitForTimeout(100);assert.equal(await page.evaluate(()=>window.blobs.size),0);
++    await teacher.getByRole('button',{name:'停止讲解'}).click();await page.waitForTimeout(100);
++    // Stopping Teacher must release its audio/character URLs, not the still
++    // mounted learning scene. Every surviving URL must belong to that image.
++    assert.equal(await page.evaluate(()=>[...window.blobs].filter(u=>![...document.querySelectorAll('.runtime-scene-image img')].some(img=>img.src===u)).length),0);
+     const enter=async index=>{await page.locator('nav').getByRole('button',{name:manifest.steps[index].title['zh-CN'],exact:true}).click();await page.waitForTimeout(80);};
+     await t.test('real Audio pause/resume, Step cancellation, detached late ended',async()=>{
+       f.setAudioDuration(2);await teacher.getByRole('button',{name:'开始讲解'}).click();
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a9-browser.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a9-browser.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4a9-browser.test.mjs	2026-09-10 11:22:55.367114042 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4a9-browser.test.mjs	2026-09-11 17:21:21.205394713 +0900
+@@ -3,6 +3,7 @@
+ import {createServer} from 'node:http';
+ import {build} from 'esbuild';
+ import {chromium} from '@playwright/test';
++import {mkdir} from 'node:fs/promises';
+ import {compiled,manifest,source,context,state,content,gradePreview} from './fixtures/runtime-4a.mjs';
+ import {capsule,flowFixture} from './fixtures/runtime-4a9.mjs';
+ import {executions,serverModule} from './fixtures/runtime-4a2.server.mjs';
+@@ -51,6 +52,25 @@
+     const module=()=>page.getByRole('region',{name:'本步骤练习流程',exact:true});
+     const choose=async n=>{const button=module().getByRole('group',{name:'子活动',exact:true}).getByRole('button').nth(n);await button.click();await page.waitForFunction(n=>document.querySelector('[aria-label="子活动"]')?.querySelectorAll('button')[n]?.getAttribute('aria-pressed')==='true',n);};
+     const answer=async form=>{for(const field of await form.locator('fieldset fieldset').all()){const radios=field.locator('input[type=radio]');if(await radios.count())await radios.first().check();else await field.locator('input').fill('학습');}};
++    await t.test('eight Step desktop/narrow visual geometry: no page overflow, navigation remains reachable',async()=>{
++      const output=process.env.UPLY_UI_SCREENSHOTS;if(output)await mkdir(output,{recursive:true});
++      for(const width of [1440,375]){
++        await page.setViewportSize({width,height:900});
++        for(const step of manifest.steps){
++          await enter(step.key);await page.waitForLoadState('networkidle');
++          const active=page.locator('nav button[aria-current="step"]');await page.mouse.move(0,0);await page.waitForTimeout(180);
++          const background=await active.evaluate(e=>getComputedStyle(e).backgroundColor);
++          await active.hover();await page.waitForTimeout(180);
++          assert.equal(await active.evaluate(e=>getComputedStyle(e).backgroundColor),background,'selected Step hover must retain selected contrast');
++          await page.mouse.move(0,0);
++          assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),`${step.key}/${width}: page overflow`);
++          const nav=await page.locator('nav').boundingBox();assert(nav&&nav.width<=width,`${step.key}/${width}: navigation width`);
++          assert.equal(await page.locator('.runtime-chapter-location span').innerText(),`${manifest.steps.indexOf(step)+1} / 8`);
++          if(output)await page.screenshot({path:`${output}/${width}-${step.key}.png`,fullPage:true});
++        }
++      }
++      await page.setViewportSize({width:1440,height:900});await enter('orientation');
++    });
+     await t.test('eight steps and orientation three retain layout/navigation',async()=>{for(const s of manifest.steps)assert.equal(await page.locator('nav').getByRole('button',{name:s.title['zh-CN'],exact:true}).count(),1);await page.locator('form').first().waitFor();assert.equal(await page.locator('form').count(),3);for(const key of manifest.steps.map(s=>s.key)){await enter(key);assert.equal(await page.locator('nav').count(),1);}});
+     await t.test('vocabulary per-item input → original submit → reload responses, not completion',async()=>{
+       await enter('vocabulary');const form=module().locator('form');await form.waitFor();for(const button of await form.getByRole('group',{name:'题目定位'}).getByRole('button').all()){await button.click();await form.locator('input[type=radio]').first().check();}
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4b1b.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4b1b.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-4b1b.test.mjs	2026-09-11 04:53:37.989024333 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-4b1b.test.mjs	2026-09-11 17:22:07.433239264 +0900
+@@ -16,6 +16,8 @@
+  let f,browser,http;const saved={...process.env},originalFetch=globalThis.fetch;
+  try{
+   f=await publishedChapterFixture();const {db}=f;
++  await db.query(`alter table public.digital_textbook_preferences add column support_mode text, add column updated_at timestamptz;
++    alter table public.digital_textbook_preferences add unique(tenant_id,student_id,textbook_id);`);
+   await db.query(await readFile('supabase/migrations/202609100003_runtime_admission_control.sql','utf8'));
+   const secret=randomBytes(32);await db.query(`insert into recording_private.proof_keys values('admission-isolated',decode('${secret.toString('hex')}','hex'),true)`);
+   const parent=randomUUID(),category=randomUUID(),course=randomUUID(),lesson=randomUUID();
+@@ -152,7 +154,7 @@
+   await t.test('4B1C single-version owner editing, request drain, republish and stale-session denial', {timeout:300000},async()=>{
+    await verifySingleVersionAuthoring({f,call,overrides});
+   });
+-  await t.test('Chromium mounts ACTUAL PublishedRuntimeEntry via ACTUAL application HTTP, reload and stop', {timeout:150000},async()=>{
++  await t.test('Chromium mounts ACTUAL PublishedRuntimeEntry via ACTUAL application HTTP, reload and stop', {timeout:300000},async()=>{
+    const js=await build({entryPoints:['tests/fixtures/runtime-4b1b-browser.tsx'],bundle:true,write:false,outdir:'/tmp/runtime4b1b-client',platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'}});
+    const payloads=[],errors=[];http=createServer(async(req,res)=>{try{
+     if(req.url==='/bundle.js'||req.url==='/style.css'){const ext=req.url.endsWith('.js')?'.js':'.css';res.setHeader('content-type',ext==='.js'?'text/javascript':'text/css');return res.end(js.outputFiles.find(f=>f.path.endsWith(ext)).text);}
+@@ -162,6 +164,27 @@
+    }catch(e){errors.push(e.message);res.statusCode=500;res.end('{}');}});
+    await new Promise(r=>http.listen(0,'127.0.0.1',r));browser=await chromium.launch({headless:true});const page=await browser.newPage();page.setDefaultTimeout(40000);page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(`http://127.0.0.1:${http.address().port}`);await page.locator('form').first().waitFor();assert.equal(await page.locator('form').count(),3);assert.equal(await page.locator('nav ol button').count(),8);
++   if(process.env.UPLY_UI_SCREENSHOTS){
++    await (await import('node:fs/promises')).mkdir(process.env.UPLY_UI_SCREENSHOTS,{recursive:true});
++    const titles=await page.locator('nav ol button').allTextContents();
++    for(const width of [1440,375]){
++     await page.setViewportSize({width,height:900});
++     for(let i=0;i<titles.length;i++){
++      await page.locator('nav ol button').nth(i).click();await page.mouse.move(0,0);
++      await page.waitForLoadState('networkidle');
++      await page.getByRole('heading',{name:titles[i],exact:true}).waitFor();
++      await page.locator('.runtime-content-card').first().waitFor();
++      if(i===0)await page.locator('form').first().waitFor();
++      else await page.getByRole('group',{name:'子活动',exact:true}).waitFor();
++      await page.waitForTimeout(200);
++      if(i===0||i===4)await page.waitForFunction(()=>document.querySelector('.runtime-scene-image img')?.naturalWidth>0);
++      assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));
++      assert.equal(await page.getByText('复杂活动、听说录音及页进度执行尚待完成；本投影仅显示教学内容。',{exact:true}).count(),0);
++      await page.screenshot({path:`${process.env.UPLY_UI_SCREENSHOTS}/${width}-step-${i+1}.png`,fullPage:true});
++     }
++    }
++    await page.setViewportSize({width:1440,height:900});await page.locator('nav ol button').first().click();await page.locator('form').first().waitFor();
++   }
+    await page.getByText('修订后的见面问候检查', {exact:true}).waitFor();
+    const form=page.locator('form').filter({hasText:'修订后的见面问候检查'});await form.locator('input').nth(1).check();
+    const submission=page.waitForResponse(r=>r.url().endsWith('/learning')&&r.request().postDataJSON()?.payload?.request?.op==='native-submit');
+@@ -172,6 +195,12 @@
+    assert((await teaching.locator('.runtime-teacher-caption').innerText()).length>0);
+    const original=await page.evaluate(()=>sessionStorage.getItem('uply-published-chapter-one-session'));
+    await page.reload();await page.locator('nav').waitFor();assert.equal(await page.evaluate(()=>sessionStorage.getItem('uply-published-chapter-one-session')),original);
++   assert.equal(await page.getByRole('link',{name:'返回课程'}).getAttribute('href'),'/student/dashboard/courses/korean?course=korean-level-one');
++   page.once('dialog',dialog=>dialog.accept());
++   await page.getByLabel('语言',{exact:true}).selectOption('ko-KR');
++   await page.getByRole('link',{name:'강좌로 돌아가기'}).waitFor();
++   assert.notEqual(await page.evaluate(()=>sessionStorage.getItem('uply-published-chapter-one-session')),original);
++   assert.equal((await call({operation:'bootstrap',sessionRef:original})).status,409,'language change revokes the old durable session');
+    await db.query('update runtime_publish_private.admission_control set enabled=false');await page.reload();await page.locator('nav').waitFor();
+    const fresh=await browser.newPage();await fresh.goto(`http://127.0.0.1:${http.address().port}`);await fresh.getByRole('alert').waitFor();
+    assert.deepEqual(errors,[]);assert(!payloads.some(p=>/answer_key|objectKey|object_key|secret|proof|tenantId|studentId/.test(p)));
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-course-return.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-course-return.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-course-return.test.mjs	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-course-return.test.mjs	2026-09-11 12:11:45.845323459 +0900
+@@ -0,0 +1,7 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {courseReturnHref} from '../src/features/smart-textbook-runtime/core/course-return.ts';
++test('host course destinations accepted; external, encoded and unrelated locations rejected',()=>{
++  for(const path of ['/dashboard/courses','/student/dashboard/courses/korean/level-one','/dashboard/courses/korean?course=korean-level-one'])assert.equal(courseReturnHref(path),path);
++  for(const path of [undefined,'https://example.com','//example.com','/\\example.com','/dashboard/courses/../admin','/dashboard/courses/%2e%2e/admin','/dashboard/admin','/dashboard/courses?redirect=x'])assert.equal(courseReturnHref(path),null);
++});
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-language.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-language.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-language.test.mjs	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-language.test.mjs	2026-09-11 12:16:06.758576437 +0900
+@@ -0,0 +1,19 @@
++import './fixtures/smart-textbook-legacy-adapter/register-server-only.mjs';
++import test from 'node:test';
++import assert from 'node:assert/strict';
++const {changeRuntimeLanguage}=await import('../src/features/smart-textbook-runtime/server/runtime-language.server.ts');
++const input={sessionRef:'learning-session-00000000-0000-4000-8000-000000000001',locale:'ko-KR'};
++function fixture(){const calls=[];return {calls,ports:{resolve:async()=>{calls.push('resolve');return {manifest:{textbook:{id:'trusted-textbook'}}};},admit:async()=>{calls.push('admit');return {eligible:true};},save:async x=>{calls.push(x);return {ok:true};},revoke:async()=>{calls.push('revoke');}}};}
++test('language change uses authorized textbook, original preference port, then revokes session',async()=>{
++ const {calls,ports}=fixture();assert.deepEqual(await changeRuntimeLanguage(input,ports),{reloadRequired:true});
++ assert.deepEqual(calls,['resolve','admit',{textbookId:'trusted-textbook',locale:'ko-KR',supportMode:'bilingual'},'revoke']);
++});
++test('reject injected identities, invalid language, revoked authority and closed admission before save',async()=>{
++ for(const extra of [{studentId:'x'},{textbookId:'x'},{locale:'en-US'}]){const f=fixture();await assert.rejects(changeRuntimeLanguage({...input,...extra},f.ports));assert.equal(f.calls.length,0);}
++ for(const stage of ['resolve','admit']){const f=fixture();f.ports[stage]=async()=>{throw Error('denied');};await assert.rejects(changeRuntimeLanguage(input,f.ports));assert(!f.calls.some(x=>typeof x==='object'));}
++ const f=fixture();f.ports.admit=async()=>({eligible:false});await assert.rejects(changeRuntimeLanguage(input,f.ports),/CLOSED/);assert.deepEqual(f.calls,['resolve']);
++});
++test('save failure does not revoke; revoke failure never reports successful reload',async()=>{
++ const f=fixture();f.ports.save=async()=>({ok:false});await assert.rejects(changeRuntimeLanguage(input,f.ports),/SAVE/);assert(!f.calls.includes('revoke'));
++ const g=fixture();g.ports.revoke=async()=>{throw Error('revoke unavailable');};await assert.rejects(changeRuntimeLanguage(input,g.ports),/revoke/);
++});
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-presentation.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-presentation.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-presentation.test.mjs	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-presentation.test.mjs	2026-09-11 06:32:36.466028806 +0900
+@@ -0,0 +1,32 @@
++import assert from 'node:assert/strict';
++import test from 'node:test';
++import {readFileSync} from 'node:fs';
++import {content,manifest} from './fixtures/runtime-4a.mjs';
++
++const stepContent=key=>{
++  const step=manifest.steps.find(item=>item.key===key);
++  const block=manifest.blocks.find(item=>item.stepId===step.id&&item.type==='compat.learning.v1');
++  return content[block.props.capsuleRef];
++};
++
++test('legacy slots project closed presentation semantics without title inference',()=>{
++  const orientation=stepContent('orientation');
++  assert.equal(orientation.cards.find(card=>card.title==='学习内容').section,'lead');
++  assert.equal(orientation.cards.find(card=>card.title==='学习提示').section,'coach');
++  assert.equal(orientation.cards.find(card=>card.title==='学习目标').section,'targets');
++  assert.equal(orientation.cards.find(card=>card.title==='对话练习').section,'dialogueGroups');
++  assert.equal(stepContent('vocabulary').cards.find(card=>card.title==='核心词汇').section,'vocabulary');
++  assert.equal(stepContent('grammar').cards.find(card=>card.title==='语法理解').section,'grammarCards');
++});
++
++test('presentation remains a safe public projection',()=>{
++  const payload=JSON.stringify(content);
++  assert.doesNotMatch(payload,/answer_key|object_key|signedUrl|service_role|tenantId|studentId/);
++});
++
++test('runtime styling covers semantic learning sections and responsive navigation',()=>{
++  const css=readFileSync('src/features/smart-textbook-runtime/components/runtime.css','utf8');
++  for(const section of ['lead','coach','targets','dialogueGroups','dialogueScenes','vocabulary','grammarCards','patternCards'])assert.match(css,new RegExp(`data-section="${section}"`));
++  assert.match(css,/runtime-steps[^}]*overflow-x:auto/);
++  assert.match(css,/prefers-reduced-motion:reduce/);
++});
+diff -ruN /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-scene-image.test.mjs /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-scene-image.test.mjs
+--- /home/yangzhen/releases/uply-first-enable-20260910/source/tests/smart-textbook-runtime-scene-image.test.mjs	1970-01-01 09:00:00.000000000 +0900
++++ /tmp/uply-student-ui-integration.bUmZfS/tests/smart-textbook-runtime-scene-image.test.mjs	2026-09-11 11:54:20.289551720 +0900
+@@ -0,0 +1,29 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {source,manifest,compiled} from './fixtures/runtime-4a.mjs';
++const {resolveSceneImage,sceneImageBytes}=await import('../src/features/smart-textbook-runtime/server/scene-image.server.ts');
++const b=compiled.bindings;
++const c=b.capsules.find(c=>c.kind==='learning'&&c.sections.some(s=>s.slot==='dialogueGroups'));
++const signal=()=>new AbortController().signal;
++test('scene image uses actual frozen node image and never an unrelated chapter asset',()=>{
++  const row=source.media.find(x=>x.node_id===c.nodeId&&x.media_type==='image'&&x.production_status==='ready'&&x.object_key);
++  assert.ok(row);assert.equal(resolveSceneImage(manifest,b,source,c.id).sourceId,row.id);
++  assert.equal(resolveSceneImage(manifest,b,{media:source.media.filter(x=>x.node_id!==c.nodeId)},c.id),null);
++  assert.throws(()=>resolveSceneImage(manifest,b,source,'wrong-capsule'),/SCENE_CAPSULE/);
++});
++test('pending, mismatched object/revision and ambiguous private association never become playable',()=>{
++  const row=resolveSceneImage(manifest,b,source,c.id);
++  const pending=structuredClone(source);pending.media.filter(x=>x.node_id===c.nodeId).forEach(x=>x.production_status='pending');
++  assert.equal(resolveSceneImage(manifest,b,pending,c.id),null);
++  for(const field of ['objectKey','revision']){const bad=structuredClone(b);bad.media.find(x=>x.ref===row.ref)[field]='wrong';assert.throws(()=>resolveSceneImage(manifest,bad,source,c.id),/SCENE_BINDING/);}
++  const bad=structuredClone(b);bad.media.push({...row});assert.throws(()=>resolveSceneImage(manifest,bad,source,c.id),/SCENE_BINDING/);
++});
++test('authorized bytes only; SVG/HTML, empty and over-limit bytes rejected; abort respected',async()=>{
++  const read=async()=>new Response(new Uint8Array([137,80,78,71]),{headers:{'content-type':'image/png'}});
++  const result=await sceneImageBytes(manifest,b,source,c.id,signal(),read);
++  assert.ok(result instanceof Blob);assert.equal(result.size,4);assert.equal(result.type,'image/png');
++  assert.equal(JSON.stringify(result),'{}');
++  for(const mime of ['image/svg+xml','text/html'])await assert.rejects(sceneImageBytes(manifest,b,source,c.id,signal(),async()=>new Response('<svg/>',{headers:{'content-type':mime}})),/SCENE_IMAGE_UNAVAILABLE/);
++  for(const size of [0,10*1024*1024+1])await assert.rejects(sceneImageBytes(manifest,b,source,c.id,signal(),async()=>new Response(new Uint8Array(size),{headers:{'content-type':'image/png'}})),/SCENE_IMAGE_(EMPTY|SIZE)/);
++  const stop=new AbortController();stop.abort();await assert.rejects(sceneImageBytes(manifest,b,source,c.id,stop.signal,read),/abort/i);
++});
