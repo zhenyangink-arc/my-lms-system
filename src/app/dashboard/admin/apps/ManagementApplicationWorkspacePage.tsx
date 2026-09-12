@@ -1,3 +1,4 @@
+import { teachingOperationsSteps } from "./TeachingOperationsNavigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -349,7 +350,7 @@ export async function ManagementApplicationWorkspacePage({
   );
   const moduleGroups = MODULE_GROUP_ORDER.map((group) => ({
     group,
-    items: modules.filter((module) => module.group === group),
+    items: modules.filter((module) => module.group === group).map(module => ({ ...module, title: teachingOperationsSteps(access).find(step => step.key === module.key)?.title ?? module.title })),
   })).filter((entry) => entry.items.length > 0);
   const metrics = [
     { label: access.app.kind === "service" ? "服务项目" : "课程内容", value: countValue(courseResult) },

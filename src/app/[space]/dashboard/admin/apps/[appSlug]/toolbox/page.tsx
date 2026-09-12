@@ -1,4 +1,6 @@
 import {
+  firstSectionParam,
+  type SectionSearchParams,
   ManagementApplicationSectionFrame,
   requireManagementApplicationSection,
 } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
@@ -6,10 +8,13 @@ import GrowthToolboxListing from "@/features/growth-toolbox/components/growth-to
 
 export default async function ManagementAppToolboxRoute({
   params,
+  searchParams,
 }: {
   params: Promise<{ space: string; appSlug: string }>;
+  searchParams: Promise<SectionSearchParams>;
 }) {
   const { space, appSlug } = await params;
+  const chapterId = firstSectionParam((await searchParams).chapter);
   const context = await requireManagementApplicationSection(
     space,
     appSlug,
@@ -17,8 +22,8 @@ export default async function ManagementAppToolboxRoute({
   );
 
   return (
-    <ManagementApplicationSectionFrame {...context}>
-      <GrowthToolboxListing studentAppId={context.access.appId} />
+    <ManagementApplicationSectionFrame {...context} chapterId={chapterId}>
+      <GrowthToolboxListing chapterId={chapterId} studentAppId={context.access.appId} />
     </ManagementApplicationSectionFrame>
   );
 }

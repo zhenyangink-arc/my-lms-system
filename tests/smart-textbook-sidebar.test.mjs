@@ -166,14 +166,20 @@ test("第 1—16 章共用完整的模块分页和教学区状态规则", () => 
     tutorStarted: true,
     answerRequired: false,
     action: null,
-    hasPendingLearningTask: false,
+    hasActiveLearningTask: false,
   }), true);
   assert.equal(shouldUseSmartTextbookTeachingFocusMode({
     tutorStarted: true,
     answerRequired: false,
     action: SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction,
-    hasPendingLearningTask: false,
+    hasActiveLearningTask: false,
   }), false);
+  assert.equal(shouldUseSmartTextbookTeachingFocusMode({
+    tutorStarted: true,
+    answerRequired: false,
+    action: null,
+    hasActiveLearningTask: true,
+  }), false, "学生操作完成后仍应保留学习区，直到老师进入反馈");
   assert.equal(shouldHideSmartTextbookLearningArea({
     tutorFocusMode: true,
     teachingFocusDismissed: true,
@@ -242,7 +248,7 @@ test("智能教材所有章节共用稳定、可操作的步骤导航骨架", as
   assert.match(source, /shouldUseSmartTextbookTeachingFocusMode/);
   assert.match(source, /const teachingAreaSplitAvailable = teachingViewport\.width/);
   assert.match(source, /splitMinimumViewportWidthPx/);
-  assert.match(source, /const learningAreaHidden = tutorLearningLayout === "teaching"/);
+  assert.match(source, /const learningAreaHidden = tutorStarted && tutorUsesVideo \? tutorFocusMode : shouldHideSmartTextbookLearningArea/);
   assert.match(source, /teachingAreaExpanded && tutorFocusMode \? \(/);
   assert.match(source, /setLearningAreaManuallyHidden\(false\);\s*setTeachingAreaCollapsed\(false\);\s*setTeachingFocusDismissed\(true\);/);
   assert.match(source, /hidden min-h-11[\s\S]*xl:inline-flex/);

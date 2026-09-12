@@ -1,4 +1,4 @@
-import { ManagementPlatformApplicationOverviewPage } from "@/app/dashboard/admin/apps/ManagementPlatformApplicationOverviewPage";
+import { PlatformInsightPage } from "@/features/platform-learning-insights/PlatformInsightPage";
 import {
   ManagementApplicationSectionFrame,
   requireManagementApplicationSection,
@@ -8,8 +8,10 @@ import { LearningRecordListingContent } from "@/features/learning-records/compon
 
 export default async function ManagementAppRecordsRoute({
   params,
+  searchParams,
 }: {
   params: Promise<{ space: string; appSlug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { space, appSlug } = await params;
   const context = await requireManagementApplicationSection(
@@ -23,8 +25,9 @@ export default async function ManagementAppRecordsRoute({
     content = <ManagementStudyAbroadInsightPage mode="records" />;
   } else if (context.access.scope === "platform") {
     content = (
-      <ManagementPlatformApplicationOverviewPage
-        access={context.access}
+      <PlatformInsightPage
+        appSlug={appSlug}
+        searchParams={await searchParams}
         mode="records"
       />
     );

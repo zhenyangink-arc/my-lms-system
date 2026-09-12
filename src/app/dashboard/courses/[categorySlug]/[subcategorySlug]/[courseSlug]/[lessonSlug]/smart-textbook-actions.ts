@@ -11,6 +11,8 @@ import {
 } from "@/lib/student-permissions";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { withRecordingDomain, type RecordingDomainRequest } from "@/lib/recording-domain.server";
+import { createRecordingGateway, recordingActivityBinding } from "@/lib/recording-domain-gateway.server";
 
 import {
   submitSmartTextbookActivityForContext,
@@ -117,6 +119,16 @@ export async function completeDialogueRoleplayAction(input: unknown) {
   const requiredTurns = lines.map((_, index) => index).filter((index) => index % 2 === roleParity);
   if (requiredTurns.length === 0) return { ok: false as const, message: "当前角色没有可录制的话轮。" };
 
+  const execute = async (domain?: RecordingDomainRequest) => {
+  if (domain?.domain === 'v2') {
+    const gateway = createRecordingGateway(admin, domain, await recordingActivityBinding(admin, activity.id));
+    const result = await gateway.roleplay(parsed.data.sceneId, parsed.data.roleSide);
+    const record = (Array.isArray(result) ? result[0] : result) as { node_completed?: boolean; completion_percent?: number };
+    if (!record) return { ok: false as const, message: '角色实战进度暂时没有保存，请重试。' };
+    refreshStudentHomeLearningData({ tenantId: tenant.id, studentId: user.id, studentAppId: STUDENT_APP_IDS.korean });
+    return { ok: true as const, preview: false, nodeId: String(activity.node_id), nodeCompleted: record.node_completed === true,
+      completionPercent: Math.max(0, Math.min(100, Number(record.completion_percent) || 0)) };
+  }
   const { data: evidence } = await admin
     .from("digital_textbook_speaking_evidence")
     .select("id,metadata")
@@ -161,6 +173,7 @@ export async function completeDialogueRoleplayAction(input: unknown) {
       completionPercent: Math.max(0, Math.min(100, Number(progress?.completion_percent) || 0)),
     };
   }
+  if (domain) await domain.beforeWrite();
   const { data: recordData, error } = await admin.rpc("record_smart_textbook_attempt", {
     p_tenant_id: tenant.id,
     p_student_id: user.id,
@@ -174,6 +187,7 @@ export async function completeDialogueRoleplayAction(input: unknown) {
   });
   const record = Array.isArray(recordData) ? recordData[0] : recordData;
   if (error || !record) return { ok: false as const, message: "角色实战进度暂时没有保存，请重试。" };
+  if (domain) await domain.beforeWrite();
   await admin
     .from("digital_textbook_speaking_evidence")
     .update({ consumed_at: new Date().toISOString(), consumed_attempt_number: Number(record.attempt_number) })
@@ -186,6 +200,10 @@ export async function completeDialogueRoleplayAction(input: unknown) {
     nodeCompleted: record.node_completed === true,
     completionPercent: Math.max(0, Math.min(100, Number(record.completion_percent) || 0)),
   };
+  };
+  if (preview) return execute();
+  try { return await withRecordingDomain(admin, { tenantId: tenant.id, studentId: user.id }, execute); }
+  catch { return { ok: false as const, message: '录音服务维护中或证据不可消费，请刷新后重试。' }; }
 }
 
 export async function checkSmartTextbookActivityPageAction(input: unknown) {

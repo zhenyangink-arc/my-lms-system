@@ -1,0 +1,213 @@
+diff --git a/src/features/digital-textbook/workbench/chapter-workbench.tsx b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+index 9529fe0..e0c3be5 100644
+--- a/src/features/digital-textbook/workbench/chapter-workbench.tsx
++++ b/src/features/digital-textbook/workbench/chapter-workbench.tsx
+@@ -7,7 +7,8 @@ import { chapterWorkbenchAction } from './actions';
+ import type { ChapterWorkbenchData, PublicationCheck, WorkbenchActivity, WorkbenchResult } from './contracts';
+ 
+ type Props = { initial: ChapterWorkbenchData; previewHref: string; contentHref: string; scriptsHref: string };
+-const surface = 'rounded-xl border border-border bg-background p-5';
++const surface = 'rounded-xl border border-border bg-card p-5';
++const linkStyle = 'inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
+ const field = 'w-full rounded-md border border-input bg-background p-3 text-sm focus-visible:outline-2 focus-visible:outline-primary';
+ 
+ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHref }: Props) {
+@@ -20,6 +21,7 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+   const [busy, setBusy] = useState(false);
+   const lock = useRef(false);
+   const [editor, setEditor] = useState<WorkbenchActivity|null>(null);
++  const [section, setSection] = useState<'activities'|'teaching'|'publish'>('activities');
+   const step = data.steps.find(s=>s.id===active);
+   async function run(input: unknown): Promise<WorkbenchResult|null> {
+     if(lock.current) return null;
+@@ -61,51 +63,85 @@ export function ChapterWorkbench({ initial, previewHref, contentHref, scriptsHre
+       setEditor(null);setCheck(null);setMessage('题干和正确选项已一并保存，尚未发布。');
+     }
+   }
+-  return <div className="space-y-6" aria-busy={busy}>
+-    <section className={surface}>
+-      <CardTitleWithHint title={`第一章 · ${data.title}`} headingLevel={1} description="当前工作台接通第一章既有编辑与发布链，不是模板设计器。教学脚本仍由原制作入口维护。" />
+-      <p className="mt-3 text-sm text-muted-foreground">{data.steps.length} 个学习步骤 · {data.steps.reduce((sum,s)=>sum+s.nodes.reduce((n,node)=>n+node.activities.length,0),0)} 个活动 · 教材版本 {data.version}</p>
+-      <p className="mt-2 break-all text-sm">最近发布：{data.pointer?`第 ${data.pointer.generation} 次 · ${data.pointer.snapshotId}`:'尚无发布记录'}</p>
+-      <div className="mt-4 flex flex-wrap gap-3">
+-        <Button disabled={busy||!!editor||state==='editing'} onClick={begin}>{state==='draining'?'重新检查编辑条件':state==='editing'?'已进入编辑':'进入编辑'}</Button>
+-        <Button variant="outline" disabled={busy} onClick={refresh}>刷新内容</Button>
+-        <Button variant="outline" disabled={busy||!!editor} onClick={validate}>校验待发布内容</Button>
+-        <Button disabled={busy||!!editor||!check} onClick={publish}>发布校验版本</Button>
+-        <Link href={previewHref} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 items-center underline underline-offset-4">预览已保存内容（新窗口）</Link>
++  return <div className="overflow-hidden rounded-2xl border border-border bg-card" aria-busy={busy}>
++    <header className="space-y-5 border-b border-border p-5 sm:p-7">
++      <div className="flex flex-wrap items-start justify-between gap-4">
++        <div className="min-w-0 space-y-2">
++          <p className="text-sm text-muted-foreground">第一章内容工作台</p>
++          <CardTitleWithHint title={data.title} headingLevel={1} description="查看学习步骤与活动。支持的单选题可在进入编辑后修改，保存后需要校验并发布。" titleClassName="text-2xl font-semibold tracking-tight"/>
++          <p className="text-sm text-muted-foreground">{data.steps.length} 个学习步骤 · {data.steps.reduce((sum,s)=>sum+s.nodes.reduce((n,node)=>n+node.activities.length,0),0)} 个活动 · 第 {data.version} 版</p>
++        </div>
++        <div className="flex flex-wrap gap-2">
++          <Link href={previewHref} target="_blank" rel="noopener noreferrer" className={linkStyle}>预览已保存内容（新窗口）</Link>
++          <Button className="min-h-11" disabled={busy||!!editor||state==='editing'} onClick={begin}>{state==='draining'?'重新检查编辑条件':state==='editing'?'已进入编辑':'进入编辑'}</Button>
++        </div>
+       </div>
+-      <p role={failed?'alert':'status'} aria-live="polite" className={`mt-4 rounded-md border p-3 text-sm ${failed?'border-destructive text-destructive':'border-border'}`}>{busy?'正在处理，请勿重复操作…':message}</p>
+-      {check&&<div className="mt-3 break-all text-sm"><p>校验结果：{check.steps} 个步骤 / {check.activities} 个活动</p><p>内容摘要：{check.digest}</p></div>}
+-    </section>
+-    <div className="grid items-start gap-6 lg:grid-cols-[240px_minmax(0,1fr)]">
+-      <nav aria-label="章节学习步骤" className={`${surface} space-y-2`}>
+-        {data.steps.map((s,i)=><button key={s.id} type="button" aria-current={active===s.id?'step':undefined} disabled={busy||!!editor}
+-          className={`w-full rounded-md px-3 py-3 text-left text-sm focus-visible:outline-2 focus-visible:outline-primary disabled:opacity-50 ${active===s.id?'bg-primary text-primary-foreground':'hover:bg-muted'}`}
+-          onClick={()=>setActive(s.id)}>{i+1}. {s.title}</button>)}
++      <nav aria-label="工作台功能" className="flex flex-wrap gap-1">
++        {([['activities','活动内容'],['teaching','教学脚本'],['publish','校验发布']] as const).map(([key,label])=><button key={key} type="button" onClick={()=>setSection(key)} disabled={busy||!!editor} aria-current={section===key?'page':undefined} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${section===key?'bg-primary/10 text-primary':'text-muted-foreground hover:bg-muted'}`}>{label}</button>)}
+       </nav>
+-      {step&&<div className="min-w-0 space-y-5">
+-        <section className={surface}>
+-          <CardTitleWithHint title={step.title} description={step.description} headingLevel={2}/>
+-          <div className="mt-4 flex flex-wrap gap-4 text-sm"><Link href={contentHref} className="underline">现有词汇与语法管理</Link><Link href={scriptsHref} className="underline">教学脚本管理</Link></div>
+-          <p className="mt-3 text-sm text-muted-foreground">本页可修改有明确正确选项的单选题题干与答案。其他内容保留原制作入口；复杂活动配置和布局在此只读，不会被转换或删除。</p>
++      <p role={failed?'alert':'status'} aria-live="polite" className={`rounded-lg px-4 py-3 text-sm leading-6 ${failed?'bg-destructive/10 text-destructive':state==='editing'?'bg-amber-50 text-amber-900 dark:bg-amber-950/40 dark:text-amber-200':'bg-muted/60 text-muted-foreground'}`}>{busy?'正在处理，请勿重复操作…':message}</p>
++    </header>
++    {section==='publish'?<div className="grid items-start gap-5 p-5 sm:p-7 xl:grid-cols-[minmax(0,1fr)_280px]">
++      <div className="space-y-5">
++        <section className={`${surface} space-y-4`}>
++          <CardTitleWithHint headingLevel={2} title="检查待发布内容" description="校验已保存的题目、资源和教学依赖；发布时仍会再次检查，防止校验后内容被改动。" titleClassName="text-lg font-semibold"/>
++          <p className="text-sm leading-6 text-muted-foreground">{check?`校验通过：${check.steps} 个步骤、${check.activities} 个活动。`:'先保存全部修改，再进行发布检查。'}</p>
++          <Button variant="outline" className="min-h-11" disabled={busy||!!editor} onClick={validate}>校验待发布内容</Button>
+         </section>
+-        {step.teaching.map((t,i)=><details key={`${t.title}-${i}`} className={surface}><summary className="cursor-pointer font-medium">{t.title} · 已发布教学脚本 v{t.version}</summary><p className="mt-4 whitespace-pre-wrap text-sm leading-7">{t.script||'此节点没有教学台词。'}</p></details>)}
+-        {step.nodes.map(node=><section key={node.id} className={`${surface} space-y-4`}>
+-          <h3 className="font-semibold">{node.title}</h3>
+-          {node.activities.map(a=><article key={a.id} className="rounded-lg border border-border p-4">
+-            {editor?.id===a.id?<form className="space-y-4" onSubmit={e=>{e.preventDefault();void save();}}>
++        <section className={`${surface} space-y-4`}>
++          <h2 className="text-lg font-semibold">确认发布</h2>
++          <p className="text-sm leading-6 text-muted-foreground">发布成功后，测试账号返回课程并重新进入，加载本次内容。此操作不会扩大测试账号范围。</p>
++          <Button className="min-h-11" disabled={busy||!!editor||!check} onClick={publish}>发布校验版本</Button>
++          {!check&&<p className="text-sm text-muted-foreground">完成上方校验后可发布。</p>}
++        </section>
++      </div>
++      <aside className={`${surface} space-y-4`}>
++        <h2 className="font-semibold">发布记录</h2>
++        <p className="text-sm">{data.pointer?`最近发布：第 ${data.pointer.generation} 次`:'尚无发布记录'}</p>
++        <p className="text-sm leading-6 text-muted-foreground">进入编辑会暂停教材测试运行。即使没有修改，也要重新校验发布才能恢复。</p>
++        <Button variant="outline" className="min-h-11" disabled={busy} onClick={refresh}>刷新内容</Button>
++        <details className="border-t border-border pt-3"><summary className="cursor-pointer py-2 text-sm text-muted-foreground">查看发布详情</summary><div className="space-y-3 break-all pt-3 text-xs leading-6 text-muted-foreground">{data.pointer&&<p>发布标识：{data.pointer.snapshotId}</p>}{check&&<p>内容摘要：{check.digest}</p>}{!data.pointer&&!check&&<p>暂无详情</p>}</div></details>
++      </aside>
++    </div>:<div className="grid min-w-0 lg:grid-cols-[240px_minmax(0,1fr)]">
++      <aside className="min-w-0 border-b border-border bg-muted/20 p-3 lg:border-b-0 lg:border-r">
++        <h2 className="px-3 py-3 text-sm font-semibold">学习步骤</h2>
++        <nav aria-label="章节学习步骤" className="max-h-64 space-y-1 overflow-y-auto lg:max-h-[70vh]">
++          {data.steps.map((s,i)=><button key={s.id} type="button" aria-current={active===s.id?'step':undefined} disabled={busy||!!editor}
++            className={`flex min-h-14 w-full items-center gap-3 rounded-lg px-3 py-3 text-left text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:opacity-50 ${active===s.id?'bg-primary/10 text-primary':'hover:bg-muted'}`}
++            onClick={()=>setActive(s.id)}><span className="flex size-7 shrink-0 items-center justify-center rounded-md border border-border bg-card text-xs tabular-nums">{i+1}</span><span className="min-w-0"><span className="block font-medium">{s.title}</span><span className="mt-1 block text-xs text-muted-foreground">{s.nodes.reduce((sum,n)=>sum+n.activities.length,0)} 个活动</span></span></button>)}
++        </nav>
++      </aside>
++      {step&&<div className="min-w-0 space-y-5 p-5 sm:p-7">
++        <div className="flex flex-wrap items-start justify-between gap-4">
++          <CardTitleWithHint title={step.title} description={step.description} headingLevel={2} titleClassName="text-xl font-semibold"/>
++          <Link href={section==='teaching'?scriptsHref:contentHref} className="inline-flex min-h-11 items-center text-sm text-primary underline-offset-4 hover:underline">{section==='teaching'?'前往教学脚本管理':'词汇与语法编辑入口'}</Link>
++        </div>
++        {section==='teaching'?<>
++          <p className="text-sm text-muted-foreground">本页展示已发布台词，修改请前往教学脚本管理。</p>
++          {step.teaching.map((t,i)=><section key={`${t.title}-${i}`} className={`${surface} space-y-4`}><div className="flex flex-wrap items-center justify-between gap-2"><h3 className="font-semibold">{t.title}</h3><span className="text-xs text-muted-foreground">已发布 v{t.version}</span></div><p className="whitespace-pre-wrap text-sm leading-7">{t.script||'此节点没有教学台词。'}</p></section>)}
++          {!step.teaching.length&&<p className="rounded-lg bg-muted/40 p-5 text-sm text-muted-foreground">当前步骤没有可展示的教学脚本。</p>}
++        </>:<>
++          <p className="text-sm text-muted-foreground">{editor?'正在编辑题目，保存或取消后可切换步骤。':state==='editing'?'选择题目进行修改，保存后到“校验发布”完成发布。':'当前为查看模式，点击顶部“进入编辑”后可修改支持的题目。'}</p>
++          {step.nodes.map(node=><section key={node.id} className="space-y-3">
++            <div className="flex flex-wrap items-center justify-between gap-2"><h3 className="text-sm font-semibold text-muted-foreground">{node.title}</h3><span className="text-xs text-muted-foreground">{node.activities.length} 个活动</span></div>
++            {node.activities.map((a,index)=><article key={a.id} className={`${surface} space-y-3`}>
++              <div className="flex items-center justify-between gap-2"><span className="text-xs text-muted-foreground">题目 {index+1}</span><span className="text-xs text-muted-foreground">{a.editable?'可编辑题干与答案':'当前只读'}</span></div>
++                          {editor?.id===a.id?<form className="space-y-4" onSubmit={e=>{e.preventDefault();void save();}}>
+               <div className="space-y-2 text-sm"><label htmlFor="workbench-prompt-zh">中文题干</label><textarea id="workbench-prompt-zh" required maxLength={4000} disabled={busy} className={field} value={editor.prompt} onChange={e=>setEditor({...editor,prompt:e.target.value})}/></div>
+               <div className="space-y-2 text-sm"><label htmlFor="workbench-prompt-ko">韩文题干</label><textarea id="workbench-prompt-ko" required maxLength={4000} disabled={busy} className={field} value={editor.koreanPrompt} onChange={e=>setEditor({...editor,koreanPrompt:e.target.value})}/></div>
+               <div className="space-y-2 text-sm"><label htmlFor="workbench-answer">正确选项（仅负责人可见）</label><select id="workbench-answer" disabled={busy} className={field} value={editor.answerIndex??''} onChange={e=>setEditor({...editor,answerIndex:Number(e.target.value)})}>{editor.options.map((o,i)=><option key={i} value={i}>{i+1}. {o}</option>)}</select></div>
+-              <div className="flex gap-3"><Button type="submit" disabled={busy}>保存题目</Button><Button variant="outline" disabled={busy} onClick={()=>setEditor(null)}>取消修改</Button></div>
++              <div className="flex flex-wrap gap-3"><Button type="submit" disabled={busy}>保存题目</Button><Button type="button" variant="outline" disabled={busy} onClick={()=>setEditor(null)}>取消修改</Button></div>
+             </form>:<>
+               <CardTitleWithHint title={a.prompt||'未填写题干'} description={a.instruction} headingLevel={4}/>
+-              {a.options.length>0&&<ol className="my-3 list-inside list-decimal space-y-2 text-sm">{a.options.map((o,i)=><li key={i}>{o}{a.answerIndex===i?'（正确选项）':''}</li>)}</ol>}
++              {a.koreanPrompt&&a.koreanPrompt!==a.prompt&&<p lang="ko" className="text-sm leading-6 text-muted-foreground">{a.koreanPrompt}</p>}
++              {a.options.length>0&&<ol className="my-3 grid list-inside list-decimal gap-2 text-sm xl:grid-cols-2">{a.options.map((o,i)=><li key={i} className={`rounded-lg px-3 py-2 ${a.answerIndex===i?'bg-primary/5 text-foreground':'bg-muted/40'}`}>{o}{a.answerIndex===i?'（正确选项）':''}</li>)}</ol>}
+               {a.editable?<Button variant="outline" className="mt-3" disabled={busy||!!editor||state!=='editing'} onClick={()=>{setEditor({...a});setCheck(null);}}>编辑题干与答案</Button>:<p className="mt-3 text-sm text-muted-foreground">当前只读 · 复杂活动仍使用原服务与完成规则</p>}
+             </>}
+-          </article>)}
+-          {!node.activities.length&&<p className="text-sm text-muted-foreground">此内容节点没有独立活动，请通过预览查看学习内容。</p>}
+-        </section>)}
++            </article>)}
++            {!node.activities.length&&<p className="rounded-lg border border-dashed border-border p-5 text-sm text-muted-foreground">此节点没有独立题目，可通过顶部预览查看学习内容。</p>}
++          </section>)}
++        </>}
+       </div>}
+-    </div>
++    </div>}
+   </div>;
+ }
+diff --git a/src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/workbench/page.tsx b/src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/workbench/page.tsx
+index 5e1bd0b..1ff7c04 100644
+--- a/src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/workbench/page.tsx
++++ b/src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/workbench/page.tsx
+@@ -13,7 +13,7 @@ export default async function ChapterWorkbenchPage({params}:{params:Promise<{spa
+   const result=await chapterWorkbenchOperation({operation:'read'});
+   const base=context.access.appPath;
+   return <ManagementApplicationSectionFrame {...context}>
+-    <Link href={`${base}/textbooks`} className="mb-5 inline-block text-sm underline">返回教材列表</Link>
++    <Link href={`${base}/textbooks?chapter=cda24fb8-c93b-4a19-9577-4418350ff708`} className="mb-4 inline-flex min-h-11 items-center text-sm text-muted-foreground hover:text-foreground">← 返回第一章教材制作</Link>
+     {result.ok&&result.kind==='read'?<ChapterWorkbench initial={result.data}
+       contentHref={`${base}/textbooks?chapter=cda24fb8-c93b-4a19-9577-4418350ff708`}
+       previewHref={`${base}/teaching-scripts/runtime-v1-preview`}
+diff --git a/tests/digital-textbook-workbench.test.mjs b/tests/digital-textbook-workbench.test.mjs
+index f59451a..f29c319 100644
+--- a/tests/digital-textbook-workbench.test.mjs
++++ b/tests/digital-textbook-workbench.test.mjs
+@@ -52,20 +52,29 @@ test('chapter workbench: authorized real DB edit/check/publish, Chromium author
+       if(req.url==='/operation'){let raw='';for await(const chunk of req)raw+=chunk;const result=await call(JSON.parse(raw));payloads.push(JSON.stringify(result));res.setHeader('content-type','application/json');res.end(JSON.stringify(result));return;}
+       const loaded=await call({operation:'read'});if(!loaded.ok)throw Error('read');
+       const initial=JSON.stringify(loaded.data).replaceAll('<','\\u003c');
+-      res.setHeader('content-type','text/html; charset=utf-8');res.end(`<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><main class="mx-auto max-w-7xl p-4"><div id="root"></div></main><script>window.initial=${initial}</script><script type="module" src="/bundle.js"></script></body></html>`);
++      res.setHeader('content-type','text/html; charset=utf-8');res.end(`<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"></head><body><main data-dashboard-ui="management" data-management-workspace="platform" class="p-4"><div id="root"></div></main><script>window.initial=${initial}</script><script type="module" src="/bundle.js"></script></body></html>`);
+     }catch{res.statusCode=500;res.end('isolated failure');}});
+     await new Promise(resolve=>http.listen(0,'127.0.0.1',resolve));
+     browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
+     await page.goto(`http://127.0.0.1:${http.address().port}`);
+     await page.waitForTimeout(500);
+     assert.deepEqual(errors,[],'browser mount');
+-    await mkdir('/tmp/uply-workbench-visual',{recursive:true});
++    await mkdir('/tmp/uply-workbench-redesign-visual',{recursive:true});
+     for(const width of [1440,375]){
+       await page.setViewportSize({width,height:950});
+-      await page.screenshot({path:`/tmp/uply-workbench-visual/${width}.png`,fullPage:true});
++      await page.screenshot({path:`/tmp/uply-workbench-redesign-visual/${width}.png`,fullPage:true});
+       assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1),'no horizontal overflow');
+     }
+     await page.setViewportSize({width:1440,height:950});
++    await page.getByRole('button',{name:'教学脚本',exact:true}).click();
++    assert.equal(await page.getByRole('button',{name:'编辑题干与答案'}).count(),0);
++    await page.getByText('本页展示已发布台词，修改请前往教学脚本管理。').waitFor();
++    await page.screenshot({path:'/tmp/uply-workbench-redesign-visual/teaching.png',fullPage:true});
++    await page.getByRole('button',{name:'校验发布',exact:true}).click();
++    assert(await page.getByRole('button',{name:'发布校验版本'}).isDisabled());
++    assert.equal(await page.getByRole('navigation',{name:'章节学习步骤'}).count(),0);
++    await page.screenshot({path:'/tmp/uply-workbench-redesign-visual/publish.png',fullPage:true});
++    await page.getByRole('button',{name:'活动内容',exact:true}).click();
+     await t.test('browser enters edit, all 8 steps navigate, saves prompt/answer, validates and publishes',async()=>{
+       await page.getByRole('button',{name:'进入编辑',exact:true}).click();
+       await page.getByRole('button',{name:'已进入编辑',exact:true}).waitFor();
+@@ -73,11 +82,18 @@ test('chapter workbench: authorized real DB edit/check/publish, Chromium author
+       await page.getByRole('navigation',{name:'章节学习步骤'}).getByRole('button').first().click();
+       assert.equal(await page.getByRole('button',{name:'编辑题干与答案'}).count(),3);
+       await page.getByRole('button',{name:'编辑题干与答案'}).first().click();
++      await page.getByLabel('中文题干',{exact:true}).fill('取消后不应保存');
++      await page.getByRole('button',{name:'取消修改',exact:true}).click();
++      assert.equal(await page.getByText('取消后不应保存',{exact:true}).count(),0);
++      const canceled=await call({operation:'read'});
++      assert.equal(canceled.data.steps.flatMap(s=>s.nodes.flatMap(n=>n.activities)).find(x=>x.id===a.id).prompt,a.prompt);
++      await page.getByRole('button',{name:'编辑题干与答案'}).first().click();
+       await page.getByLabel('中文题干',{exact:true}).fill('工作台保存后的真实隔离题干');
+       await page.getByLabel('正确选项（仅负责人可见）').selectOption('1');
+-      assert(await page.getByRole('button',{name:'校验待发布内容'}).isDisabled());
++      assert(await page.getByRole('button',{name:'校验发布',exact:true}).isDisabled());
+       await page.getByRole('button',{name:'保存题目',exact:true}).click();
+       await page.getByText('题干和正确选项已一并保存，尚未发布。').waitFor();
++      await page.getByRole('button',{name:'校验发布',exact:true}).click();
+       await page.getByRole('button',{name:'校验待发布内容'}).click();
+       await page.getByText('校验通过。发布将再次检查内容和当前发布版本。').waitFor();
+       await page.getByRole('button',{name:'发布校验版本'}).click();

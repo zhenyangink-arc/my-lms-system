@@ -1,0 +1,586 @@
+diff --git a/src/app/api/smart-textbook-runtime/learning/route.ts b/src/app/api/smart-textbook-runtime/learning/route.ts
+new file mode 100644
+index 0000000..546ec58
+--- /dev/null
++++ b/src/app/api/smart-textbook-runtime/learning/route.ts
+@@ -0,0 +1,3 @@
++import {runtimeApplicationPost} from '@/features/smart-textbook-runtime/server/application-http.server';
++export const runtime='nodejs';
++export async function POST(request:Request){return runtimeApplicationPost(request,'learning');}
+diff --git a/src/app/api/smart-textbook-runtime/teacher/route.ts b/src/app/api/smart-textbook-runtime/teacher/route.ts
+new file mode 100644
+index 0000000..30ba3ab
+--- /dev/null
++++ b/src/app/api/smart-textbook-runtime/teacher/route.ts
+@@ -0,0 +1,3 @@
++import {runtimeApplicationPost} from '@/features/smart-textbook-runtime/server/application-http.server';
++export const runtime='nodejs';
++export async function POST(request:Request){return runtimeApplicationPost(request,'teacher');}
+diff --git a/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx b/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx
+index 061a357..1051707 100644
+--- a/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx
++++ b/src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/page-content.tsx
+@@ -18,6 +18,8 @@ import {
+ } from "lucide-react";
+ 
+ import { requireActiveUser } from "@/lib/auth";
++import { runtimePageDecision } from "@/features/smart-textbook-runtime/server/application-admission.server";
++import { PublishedRuntimeEntry } from "@/features/smart-textbook-runtime/components/published-runtime-entry";
+ import { LiveClassEntryBanner } from "@/app/dashboard/live/LiveClassEntryBanner";
+ import { isPlatformCourseAuditorRole } from "@/lib/admin";
+ import {
+@@ -751,6 +753,19 @@ export default async function LessonDetailPage({
+ 
+     if (isKoreanLevelOne && hasLessonAccess) {
+         const requestedChapterNumber = requestedChapter?.match(/-(\d{2})$/)?.[1];
++        // Runs only after the existing lesson/sequence/chapter access checks.
++        // Default-off, exact Chapter 1; non-cohort and other chapters keep Shell.
++        const runtimeAdmission = await runtimePageDecision({
++            chapterNumber: requestedChapterNumber ? Number(requestedChapterNumber) : 0,
++            platformAudit: isPlatformAudit,
++        });
++        if (runtimeAdmission !== "legacy") {
++            return <LessonActivityBoundary lessonId={lesson.id}>
++                {liveClassBanner}
++                {runtimeAdmission === "runtime" ? <PublishedRuntimeEntry />
++                    : <p role="alert">教材运行服务暂不可用，请返回课程后重试。</p>}
++            </LessonActivityBoundary>;
++        }
+         const smartTextbook = await loadSmartDigitalTextbook({
+             textbookSlug: "korean-level-one-smart",
+             chapterNumber: Math.max(
+diff --git a/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx b/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx
+new file mode 100644
+index 0000000..c20173f
+--- /dev/null
++++ b/src/features/smart-textbook-runtime/components/published-runtime-entry.tsx
+@@ -0,0 +1,50 @@
++'use client';
++import {useEffect,useState} from 'react';
++import {LessonRuntime} from './runtime-root';
++import {withLearningSession} from '../core/learning-session-transport';
++import {teacherRuntimeHttp} from '../core/teacher-http';
++import type {RuntimeServices} from '../core/services';
++import type {LessonManifestV1} from '../../../lib/smart-textbook-runtime-v1/contracts';
++
++async function send(kind:'learning'|'teacher',input:unknown,signal:AbortSignal,blob?:Blob):Promise<unknown>{
++ let body:BodyInit,headers:HeadersInit|undefined;
++ if(blob){const form=new FormData();form.set('request',JSON.stringify(input));form.set('recording',blob,'recording.webm');body=form;}
++ else{headers={'Content-Type':'application/json'};body=JSON.stringify(input);}
++ const r=await fetch(`/api/smart-textbook-runtime/${kind}`,{method:'POST',headers,body,signal,credentials:'same-origin',cache:'no-store'});
++ if(!r.ok)throw Error('RUNTIME_REQUEST_REJECTED');return r.headers.get('content-type')?.startsWith('application/json')?r.json():r.blob();
++}
++type Bootstrap={manifest:LessonManifestV1;sessionRef:string;catalog:Array<{runtimeRef:string;serviceRef:string}>;continuation:{generation:number;activeStepId:string};context:RuntimeServices['context'];state:RuntimeServices['initialState']};
++const storageKey='uply-published-chapter-one-session';
++let booting:Promise<Bootstrap>|null=null;
++/** Only HTTP wiring/lifecycle here. Same Renderer, same domain ports; browser
++ * stores an untrusted opaque locator, never admission policy or private binding. */
++export function PublishedRuntimeEntry(){
++ const [state,setState]=useState<{kind:'loading'}|{kind:'error'}|{kind:'ready';data:Bootstrap;services:RuntimeServices}>({kind:'loading'});
++ useEffect(()=>{
++  let disposed=false;const abort=new AbortController();let installed:RuntimeServices|undefined;
++  // A StrictMode replay shares the in-flight issue, avoiding orphan sessions.
++  if(!booting){let ref:string|null=null;try{ref=sessionStorage.getItem(storageKey);}catch{}
++   booting=send('learning',{operation:'bootstrap',...(ref?{sessionRef:ref}:{})},AbortSignal.timeout(30000)).then(value=>{
++    const data=value as Bootstrap;
++    try{sessionStorage.setItem(storageKey,data.sessionRef);}catch{}
++    return data;
++   });
++  }
++  const pending=booting;
++  void pending.then(data=>{
++   if(disposed)return;
++   const teacher=teacherRuntimeHttp(data.sessionRef,(body,signal)=>send('teacher',body,signal));
++   const base:RuntimeServices={context:data.context,initialState:data.state,
++    learning:async()=>{throw Error('USE_LEARNING_BOUNDARY');},submit:async()=>{throw Error('USE_LEARNING_BOUNDARY');},
++    teacherRuntime:teacher,tts:teacher.tts,teacher:{turn:async()=>{throw Error('USE_TEACHER_BOUNDARY');},cancel:()=>teacher.close()}};
++   installed=withLearningSession(base,data.manifest,data.sessionRef,data.catalog,
++    (payload,signal,blob)=>send('learning',{operation:'dispatch',payload},signal,blob),
++    async(payload,signal)=>await send('learning',{operation:'enter',payload},signal) as {generation:number},data.continuation);
++   setState({kind:'ready',data,services:installed});
++  }).catch(()=>{if(!disposed)setState({kind:'error'});}).finally(()=>{if(booting===pending)booting=null;});
++  return()=>{disposed=true;abort.abort();void installed?.teacherRuntime?.close().catch(()=>{});};
++ },[]);
++ if(state.kind==='loading')return <p role="status">正在加载已发布教材…</p>;
++ if(state.kind==='error')return <div role="alert"><p>教材会话或服务暂不可用。请返回课程；不会自动切换版本或提交方式。</p><button type="button" onClick={()=>{try{sessionStorage.removeItem(storageKey);}catch{}location.reload();}}>重新检查入场条件</button></div>;
++ return <LessonRuntime manifest={state.data.manifest} services={state.services} resume={state.data.continuation.activeStepId} validationMode="complete"/>;
++}
+diff --git a/src/features/smart-textbook-runtime/server/application-access.server.ts b/src/features/smart-textbook-runtime/server/application-access.server.ts
+new file mode 100644
+index 0000000..e21d239
+--- /dev/null
++++ b/src/features/smart-textbook-runtime/server/application-access.server.ts
+@@ -0,0 +1,32 @@
++import 'server-only';
++import { authorizePublishedCourse, chapterOnePublicationScope } from '../../../lib/smart-textbook-publishing/loader.server';
++import { isLessonUnlocked,getUnlockedChapterSlugs,type LessonUnlockRule,type ChapterUnlockRule } from '../../../lib/course-unlocks';
++import { loadSmartDigitalTextbookChapterProgress } from '../../../lib/smart-digital-textbook';
++
++/** Request-time authorization for the same canonical lesson as page-content.
++ * Reuses its evaluators (including overview completion); NOT just chapter RLS.
++ * No owner audit bypass is installed in the formal learner API. */
++export async function authorizeRuntimeApplication(){
++ const a=await authorizePublishedCourse(chapterOnePublicationScope),db=a.auth.supabase;
++ if(a.auth.profile?.role!=='student')throw Error('RUNTIME_LEARNER_REQUIRED');
++ const one=async(query:PromiseLike<{data:unknown;error:unknown}>)=>{const r=await query;if(r.error||!r.data)throw Error('RUNTIME_COURSE_ACCESS');return r.data as {id:string};};
++ const parent=await one(db.from('course_categories').select('id').eq('slug','korean').is('parent_id',null).eq('is_published',true).maybeSingle());
++ const category=await one(db.from('course_categories').select('id').eq('slug','korean-basic').eq('parent_id',parent.id).eq('is_published',true).maybeSingle());
++ const course=await one(db.from('courses').select('id').eq('slug','korean-beginner').eq('category_id',category.id).eq('is_published',true).maybeSingle());
++ const lessons=await db.from('lessons').select('id,slug,unlock_mode,prerequisite_lesson_id,prerequisite_chapter_id,available_from,is_manually_locked').eq('course_id',course.id).eq('is_published',true).order('sort_order');
++ const lessonRows=lessons.data as (LessonUnlockRule&{slug:string})[]|null;
++ const lesson=lessonRows?.find(l=>l.slug==='basic-pronunciation');if(lessons.error||!lesson||!lessonRows)throw Error('RUNTIME_LESSON_ACCESS');
++ const chapters=await db.from('course_chapters').select('id,slug,unlock_mode,prerequisite_chapter_id,available_from,is_manually_locked').eq('lesson_id',lesson.id).eq('is_published',true).order('sort_order');
++ const passed=await a.admin.from('chapter_test_attempts').select('test_slug').eq('student_id',a.auth.user.id).eq('tenant_id',a.tenantId).eq('passed',true);
++ const completed=await db.from('lesson_progress').select('lesson_id').eq('user_id',a.auth.user.id).eq('status','completed').in('lesson_id',lessonRows.map(l=>l.id));
++ if(chapters.error||passed.error||completed.error||!chapters.data||!passed.data||!completed.data)throw Error('RUNTIME_ACCESS_HISTORY');
++ const prerequisiteIds=lessonRows.flatMap(l=>l.prerequisite_chapter_id?[l.prerequisite_chapter_id]:[]),prerequisites=new Map<string,string>();
++ if(prerequisiteIds.length){const r=await db.from('course_chapters').select('id,slug').in('id',prerequisiteIds);if(r.error||!r.data)throw Error('RUNTIME_PREREQUISITE');r.data.forEach(c=>prerequisites.set(c.id,c.slug));}
++ const passedSlugs=new Set<string>(passed.data.map(r=>r.test_slug));
++ if(!isLessonUnlocked({lesson,lessonIndex:lessonRows.indexOf(lesson),orderedLessons:lessonRows,completedLessonIds:new Set(completed.data.map(r=>r.lesson_id)),prerequisiteChapterSlugById:prerequisites,passedChapterSlugs:passedSlugs}))throw Error('RUNTIME_LESSON_LOCKED');
++ const completion=new Set(passedSlugs);
++ const overview=await loadSmartDigitalTextbookChapterProgress({textbookSlug:'korean-level-one-smart',chapterNumber:0,userId:a.auth.user.id,tenantId:a.tenantId,trackingDisabled:false});
++ if(overview>=100)completion.add('korean-level-one-00');
++ if(!getUnlockedChapterSlugs({chapters:chapters.data as ChapterUnlockRule[],passedChapterSlugs:passedSlugs,completedChapterSlugs:completion}).has('korean-level-one-01'))throw Error('RUNTIME_CHAPTER_LOCKED');
++ return a;
++}
+diff --git a/src/features/smart-textbook-runtime/server/application-admission.server.ts b/src/features/smart-textbook-runtime/server/application-admission.server.ts
+new file mode 100644
+index 0000000..acd0f0e
+--- /dev/null
++++ b/src/features/smart-textbook-runtime/server/application-admission.server.ts
+@@ -0,0 +1,42 @@
++import 'server-only';
++import {createHmac,randomUUID} from 'node:crypto';
++import {z} from 'zod';
++import {requireActiveUser} from '../../../lib/auth';
++import {createAdminClient} from '../../../lib/supabase/admin';
++import {recordingEvidenceV2,EnvironmentRecordingProofKeyProvider} from '../../../lib/recording-domain.server';
++import {authorizeRuntimeApplication} from './application-access.server';
++import {loadPublishedRuntimeSnapshot} from '../../../lib/smart-textbook-publishing/loader.server';
++import {validateRuntimeActivation} from '../core/block-registry';
++
++const policySchema=z.strictObject({eligible:z.boolean(),revision:z.number().int().positive()});
++/** DB policy is read on EVERY decision. Env is a deployment ceiling, not a
++ * replica-local kill switch. No request parameter can choose a cohort or mode. */
++export async function runtimeAdmissionPolicy(){
++ if(process.env.SMART_TEXTBOOK_RUNTIME_ADMISSION_ENABLED!=='true')return {eligible:false,revision:0};
++ const auth=await requireActiveUser();if(!auth.tenant||auth.profile?.role!=='student')return {eligible:false,revision:0};
++ const r=await createAdminClient().rpc('runtime_admission_state_v1',{p_tenant:auth.tenant.id,p_student:auth.user.id});
++ if(r.error)throw Error('RUNTIME_ADMISSION_CONTROL_UNAVAILABLE');return policySchema.parse(r.data);
++}
++export async function assertRuntimeDependencies(){
++ const a=await authorizeRuntimeApplication(),owner={tenantId:a.tenantId,studentId:a.auth.user.id};
++ const config=recordingEvidenceV2(process.env,owner);if(config.domain!=='v2')throw Error('RUNTIME_REQUIRES_RECORDING_V2');
++ const key=await new EnvironmentRecordingProofKeyProvider().get(),nonce=randomUUID(),time=Math.floor(Date.now()/1000);
++ const message=['runtime-admission/1',owner.tenantId,owner.studentId,config.epoch,config.instance,key.keyId,nonce,time].join('|');
++ const r=await a.admin.rpc('runtime_recording_dependency_v1',{p_tenant:owner.tenantId,p_student:owner.studentId,p_epoch:config.epoch,p_instance:config.instance,
++  p_key:key.keyId,p_nonce:nonce,p_time:time,p_mac:createHmac('sha256',key.secret).update(message).digest('hex')});
++ if(r.error||r.data?.ready!==true||r.data.epoch!==config.epoch)throw Error('RUNTIME_RECORDING_DEPENDENCY_UNAVAILABLE');
++ // Presence/shape, not a claim of remote object health. Byte owners still use
++ // normal authorization and report storage outages; never substitute Preview.
++ for(const k of ['R2_ACCOUNT_ID','R2_ACCESS_KEY_ID','R2_SECRET_ACCESS_KEY','R2_BUCKET_NAME'])if(!process.env[k])throw Error('RUNTIME_MEDIA_CONFIG_MISSING');
++ if(!/^[a-z0-9]+$/i.test(process.env.R2_ACCOUNT_ID!))throw Error('RUNTIME_MEDIA_CONFIG_INVALID');
++ return a;
++}
++export async function runtimePageDecision(input:{chapterNumber:number;platformAudit:boolean}):Promise<'legacy'|'runtime'|'unavailable'>{
++ if(input.chapterNumber!==1||input.platformAudit)return 'legacy';
++ try{
++  const p=await runtimeAdmissionPolicy();if(!p.eligible)return 'legacy';
++  await assertRuntimeDependencies();const current=await loadPublishedRuntimeSnapshot();
++  if(!validateRuntimeActivation(current.bundle.manifest).success)throw Error('RUNTIME_CAPABILITY');
++  return 'runtime';
++ }catch{return 'unavailable';}
++}
+diff --git a/src/features/smart-textbook-runtime/server/application-http.server.ts b/src/features/smart-textbook-runtime/server/application-http.server.ts
+new file mode 100644
+index 0000000..c7ab4f9
+--- /dev/null
++++ b/src/features/smart-textbook-runtime/server/application-http.server.ts
+@@ -0,0 +1,23 @@
++import 'server-only';
++import {applicationRuntimeRequest} from './application-runtime.server';
++
++const headers={'Cache-Control':'private, no-store','X-Content-Type-Options':'nosniff','Cross-Origin-Resource-Policy':'same-origin'};
++/** Bounded transport only; opaque envelopes are closed by existing boundaries. */
++export async function runtimeApplicationPost(request:Request,kind:'learning'|'teacher'){
++ if(request.headers.get('origin')!==new URL(request.url).origin||request.headers.get('sec-fetch-site')==='cross-site')return new Response(null,{status:403,headers});
++ try{
++  const reader=request.body?.getReader();if(!reader)throw Error('EMPTY');const chunks:Uint8Array<ArrayBuffer>[]=[];let size=0;
++  while(true){const v=await reader.read();if(v.done)break;size+=v.value.byteLength;if(size>11*1024*1024){await reader.cancel();return new Response(null,{status:413,headers});}chunks.push(new Uint8Array(v.value));}
++  const copy=new Request(request.url,{method:'POST',headers:request.headers,body:new Blob(chunks)});let input:unknown,blob:Blob|undefined;
++  if(request.headers.get('content-type')?.startsWith('multipart/form-data')){
++   const f=await copy.formData();if([...f.keys()].some(k=>!['request','recording'].includes(k))||f.getAll('request').length!==1||f.getAll('recording').length!==1)throw Error('FIELDS');
++   const raw=f.get('request');if(typeof raw!=='string'||raw.length>65536)throw Error('ENVELOPE');input=JSON.parse(raw);
++   const file=f.get('recording');if(!(file instanceof File))throw Error('FILE');blob=file;
++  }else{if(size>65536||!request.headers.get('content-type')?.startsWith('application/json'))throw Error('JSON');input=await copy.json();}
++  const value=await applicationRuntimeRequest(request,kind,input,blob);
++  return value instanceof Blob?new Response(value,{headers:{...headers,'Content-Type':value.type}}):Response.json(value??null,{headers});
++ }catch{
++  // Never log exception payloads, private revisions, storage details or proofs.
++  return Response.json({code:'RUNTIME_REQUEST_REJECTED',message:'教材请求未通过权限、会话或服务检查，请返回课程后重试。'},{status:409,headers});
++ }
++}
+diff --git a/src/features/smart-textbook-runtime/server/application-runtime.server.ts b/src/features/smart-textbook-runtime/server/application-runtime.server.ts
+new file mode 100644
+index 0000000..ad4a46f
+--- /dev/null
++++ b/src/features/smart-textbook-runtime/server/application-runtime.server.ts
+@@ -0,0 +1,74 @@
++import 'server-only';
++import {AsyncLocalStorage} from 'node:async_hooks';
++import {z} from 'zod';
++import {createProductionLearningBoundary} from './production-learning-boundary.server';
++import {createRuntimeLearningSessionResolver} from './learning-session.server';
++import {createTeacherRuntimeBoundary} from './teacher-boundary.server';
++import {productionTeacherBackend} from './production-teacher-backend.server';
++import {proxyAuthorizedSpeech,proxyAuthorizedCharacter} from './audit-speech.server';
++import {GET as speech} from '../../../app/api/learning-agent/speech/[assetId]/route';
++import {GET as character} from '../../../app/api/learning-agent/characters/[pose]/route';
++import {assertRuntimeDependencies,runtimeAdmissionPolicy} from './application-admission.server';
++import {authorizeRuntimeApplication} from './application-access.server';
++import {validateRuntimeActivation} from '../core/block-registry';
++
++const requests=new AsyncLocalStorage<{request:Request;dependency?:ReturnType<typeof assertRuntimeDependencies>}>();
++function request(){const r=requests.getStore();if(!r)throw Error('RUNTIME_REQUEST_CONTEXT');return r.request;}
++function dependencies(){const r=requests.getStore();if(!r)throw Error('RUNTIME_REQUEST_CONTEXT');return r.dependency??=assertRuntimeDependencies();}
++// Coalesce duplicate checks WITHIN one HTTP request only, never across requests,
++// sessions, or replicas. Domain leases still independently recheck each write.
++const learning=createProductionLearningBoundary(async()=>request(),dependencies);
++const resolver=createRuntimeLearningSessionResolver();
++const teacher=createTeacherRuntimeBoundary({
++ authorize:async()=>{const a=await authorizeRuntimeApplication();return {actorId:a.auth.user.id,tenantId:a.tenantId,role:'learner'};},
++ resolveScope:learning.teacher.resolveScope,
++ createBackend:productionTeacherBackend({request,scope:learning.teacher.domainScope}),
++ readSpeech:async({assetId,signal})=>{
++  const r=new Request(request().url,{headers:request().headers,signal:AbortSignal.any([signal,request().signal])});
++  return (await proxyAuthorizedSpeech(r,()=>speech(r,{params:Promise.resolve({assetId})}),`https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`)).blob();
++ },
++ readCharacter:async(pose,signal)=>{
++  const r=new Request(request().url,{headers:request().headers,signal:AbortSignal.any([signal,request().signal])});
++  return (await proxyAuthorizedCharacter(r,()=>character(r,{params:Promise.resolve({pose})}),`https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`)).blob();
++ },
++});
++const ref=z.string().regex(/^learning-session-[0-9a-f-]{36}$/);
++const learningRequest=z.discriminatedUnion('operation',[
++ z.strictObject({operation:z.literal('bootstrap'),sessionRef:ref.optional()}),
++ z.strictObject({operation:z.enum(['catalog','resume']),sessionRef:ref}),
++ z.strictObject({operation:z.enum(['enter','dispatch']),payload:z.unknown()}),
++]);
++
++/** Real app transport composition. No audit Route, compiler, Preview store or
++ * fixture. Existing sessions remain pinned when NEW admission is stopped. */
++export async function applicationRuntimeRequest(req:Request,kind:'learning'|'teacher',input:unknown,upload?:Blob){
++ return requests.run({request:req},async()=>{
++  // An installed dependency outage never falls through to legacy/preview writes.
++  await dependencies();
++  if(kind==='teacher'){if(upload)throw Error('UNEXPECTED_BYTES');return teacher.dispatch(input);}
++  const r=learningRequest.parse(input);
++  if(upload&&(r.operation!=='dispatch'))throw Error('UNEXPECTED_BYTES');
++  if(r.operation==='bootstrap'){
++   let sessionRef=r.sessionRef;
++   if(!sessionRef){
++    const policy=await runtimeAdmissionPolicy();if(!policy.eligible)throw Error('RUNTIME_ADMISSION_CLOSED');
++    sessionRef=(await learning.issue()).sessionRef;
++    const after=await runtimeAdmissionPolicy();
++    if(!after.eligible||after.revision!==policy.revision){await learning.revoke({sessionRef});throw Error('RUNTIME_ADMISSION_CHANGED');}
++   }
++   // Never substitute current pointer for the durable session's snapshot.
++   const a=await resolver.resolve({sessionRef});
++   if(!validateRuntimeActivation(a.manifest).success)throw Error('RUNTIME_CAPABILITY');
++   const continuation=await learning.resume({sessionRef}),catalog=await learning.catalog({sessionRef});
++   const block=a.manifest.blocks.find(b=>b.type==='compat.learning.v1'&&b.stepId===continuation.activeStepId);
++   if(!block)throw Error('RUNTIME_ACTIVE_STEP');
++   const state=await learning.dispatch({sessionRef,generation:continuation.generation,target:block.runtimeTarget,request:{op:'refresh'}},req.signal);
++   return {manifest:a.manifest,sessionRef,catalog,continuation,state,
++    context:{runtimeSessionId:sessionRef,snapshotId:a.snapshotId,sourceState:'published',trackingDisabled:false,locale:a.locale,supportMode:'bilingual'}};
++  }
++  if(r.operation==='catalog')return learning.catalog({sessionRef:r.sessionRef});
++  if(r.operation==='resume')return learning.resume({sessionRef:r.sessionRef});
++  if(r.operation==='enter'||r.operation==='dispatch')return r.operation==='enter'?learning.enter(r.payload):learning.dispatch(r.payload,req.signal,upload);
++  throw Error('RUNTIME_OPERATION');
++ });
++}
+diff --git a/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts b/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts
+index 8baad3d..8d63f1a 100644
+--- a/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts
++++ b/src/features/smart-textbook-runtime/server/production-learning-boundary.server.ts
+@@ -11,8 +11,11 @@ import {publishedTeacherScope} from './published-teacher-scope.server';
+ /** Concrete composition, NOT a deployed route. Request headers come from the
+  * trusted server transport, never a client-supplied Request/identity envelope.
+  * Recording writes retain the existing gateway's disabled-v2 fail-closed gate. */
+-export function createProductionLearningBoundary(request:()=>Promise<Request>){
+-  const resolver=createRuntimeLearningSessionResolver();
++export function createProductionLearningBoundary(request:()=>Promise<Request>,guard:()=>Promise<unknown>=async()=>{}){
++  const original=createRuntimeLearningSessionResolver();
++  // Application admission dependencies and LIVE chapter access are rechecked
++  // at the existing resolver boundary, including each installed domain callback.
++  const resolver={...original,issue:async()=>{await guard();return original.issue();},resolve:async(input:unknown)=>{await guard();return original.resolve(input);}};
+   const boundary=createLearningBoundary(resolver,async initial=>{
+     const expected={sessionId:initial.sessionId,snapshotId:initial.snapshotId};
+     const current=()=>resolver.resolve({sessionRef:initial.sessionId});
+diff --git a/supabase/migrations/202609100003_runtime_admission_control.sql b/supabase/migrations/202609100003_runtime_admission_control.sql
+new file mode 100644
+index 0000000..ec509b0
+--- /dev/null
++++ b/supabase/migrations/202609100003_runtime_admission_control.sql
+@@ -0,0 +1,66 @@
++-- Isolated Phase 4B-1B only. Does not enable Runtime or Recording.
++begin;
++create table runtime_publish_private.admission_control (
++ singleton boolean primary key default true check(singleton),
++ enabled boolean not null default false,
++ revision bigint not null default 1 check(revision>0),
++ cohort jsonb not null default '[]' check(jsonb_typeof(cohort)='array')
++);
++insert into runtime_publish_private.admission_control values(true,false,1,'[]');
++alter table runtime_publish_private.admission_control enable row level security;
++revoke all on runtime_publish_private.admission_control from public,anon,authenticated,service_role;
++-- Operator control plane only; no browser-facing toggle. Monotonic revisions
++-- invalidate an admission which overlapped any policy change, including ABA.
++create function runtime_publish_private.admission_revision() returns trigger
++ language plpgsql set search_path='' as $$
++begin
++ if tg_op='DELETE' then raise exception 'ADMISSION_CONTROL_REQUIRED';end if;
++ if exists(select 1 from jsonb_array_elements(new.cohort) c where jsonb_typeof(c)<>'object'
++   or (select count(*) from jsonb_object_keys(c))<>2 or not(c?'tenantId' and c?'studentId')
++   or (c->>'tenantId')!~'^[0-9a-f-]{36}$' or (c->>'studentId')!~'^[0-9a-f-]{36}$') then
++  raise exception 'ADMISSION_COHORT_INVALID';end if;
++ new.revision=old.revision+1;return new;
++end$$;
++create trigger admission_revision before update or delete on runtime_publish_private.admission_control
++ for each row execute function runtime_publish_private.admission_revision();
++create function public.runtime_admission_state_v1(p_tenant uuid,p_student uuid) returns jsonb
++ language sql stable security definer set search_path='' as $$
++ select jsonb_build_object('eligible',enabled and cohort @> jsonb_build_array(jsonb_build_object('tenantId',p_tenant,'studentId',p_student)),
++ 'revision',revision) from runtime_publish_private.admission_control where singleton;
++$$;
++-- Read-only prerequisite proof. This is NOT an evidence proof or permission to
++-- bypass the coordinator lease. A fresh server HMAC confirms the app key matches
++-- an enabled DB key without returning either secret. No evidence/attempt writes.
++create function public.runtime_recording_dependency_v1(p_tenant uuid,p_student uuid,p_epoch bigint,p_instance text,
++ p_key text,p_nonce uuid,p_time bigint,p_mac text) returns jsonb
++ language plpgsql security definer set search_path='' as $$
++declare k bytea; message text; valid boolean; signature text; fn regprocedure;
++begin
++ if abs(extract(epoch from clock_timestamp())::bigint-p_time)>30 then raise exception 'ADMISSION_KEY_EXPIRED';end if;
++ select secret into k from recording_private.proof_keys where id=p_key and enabled;
++ message='runtime-admission/1|'||p_tenant||'|'||p_student||'|'||p_epoch||'|'||p_instance||'|'||p_key||'|'||p_nonce||'|'||p_time;
++ if k is null or encode(recording_private.mac(convert_to(message,'UTF8'),k),'hex') is distinct from p_mac then
++  raise exception 'ADMISSION_KEY_MISMATCH';end if;
++ select exists(select 1 from recording_private.domain_control c where c.singleton and c.state='open'
++  and c.enabled and c.epoch=p_epoch and c.cohort @> jsonb_build_array(jsonb_build_object('tenantId',p_tenant,'studentId',p_student))
++  and exists(select 1 from recording_private.domain_instances where id=p_instance and acknowledged_epoch=p_epoch)) into valid;
++ if not valid then raise exception 'ADMISSION_RECORDING_FENCED';end if;
++ foreach signature in array array[
++  'public.record_smart_textbook_speaking_attempt_v2(uuid,uuid,uuid,uuid,jsonb,uuid,jsonb,jsonb)',
++  'public.complete_smart_textbook_roleplay_v2(uuid,uuid,uuid,uuid,text,text,jsonb,jsonb)',
++  'public.claim_smart_textbook_recording_delete_v2(uuid,uuid,uuid,uuid,uuid,jsonb)',
++  'public.finalize_smart_textbook_recording_delete_v2(uuid,uuid,uuid,uuid,uuid,jsonb)',
++  'public.recording_domain_request_v1(text,uuid,text,bigint,uuid,uuid,text)',
++  'public.recording_domain_upload_v1(text,uuid,text,bigint,uuid,uuid,text,uuid)'
++ ] loop
++  fn=to_regprocedure(signature);
++  if fn is null or not has_function_privilege('service_role',fn,'EXECUTE') then raise exception 'ADMISSION_RECORDING_RPC_MISSING';end if;
++ end loop;
++ return jsonb_build_object('ready',true,'epoch',p_epoch);
++end$$;
++revoke all on function runtime_publish_private.admission_revision() from public,anon,authenticated,service_role;
++revoke all on function public.runtime_admission_state_v1(uuid,uuid) from public,anon,authenticated;
++revoke all on function public.runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text) from public,anon,authenticated;
++grant execute on function public.runtime_admission_state_v1(uuid,uuid) to service_role;
++grant execute on function public.runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text) to service_role;
++commit;
+diff --git a/tests/fixtures/published-chapter-one.mjs b/tests/fixtures/published-chapter-one.mjs
+index 32e4c85..f2c8292 100644
+--- a/tests/fixtures/published-chapter-one.mjs
++++ b/tests/fixtures/published-chapter-one.mjs
+@@ -79,7 +79,7 @@ export async function publishedChapterFixture(){
+       if(table.startsWith('learning_agent_')&&!['learning_agent_profiles','learning_agent_lessons','learning_agent_script_versions','learning_agent_script_nodes','learning_agent_script_audio_assets'].includes(table))return original.admin.from(table);
+       if(table==='digital_textbook_speaking_evidence')return rpc.from(table);
+       ident(table);let predicates=[],orders=[],limit='',head=false,signal,columns='';
+-      const b={select(c,options={}){columns=c;head=!!options.head;return b;},eq(k,v){predicates.push(`${ident(k)}=${value(v)}`);return b;},in(k,vs){predicates.push(vs.length?`${ident(k)} in (${vs.map(value)})`:'false');return b;},
++      const b={select(c,options={}){columns=c;head=!!options.head;return b;},eq(k,v){predicates.push(`${ident(k)}=${value(v)}`);return b;},is(k,v){if(v!==null)throw Error('IS transport');predicates.push(`${ident(k)} is null`);return b;},in(k,vs){predicates.push(vs.length?`${ident(k)} in (${vs.map(value)})`:'false');return b;},
+         order(k,{ascending=true}={}){orders.push(`${ident(k)} ${ascending?'asc':'desc'}`);return b;},limit(n){if(!Number.isInteger(n))throw Error('limit');limit=` limit ${n}`;return b;},abortSignal(s){signal=s;return b;},
+         or(expression){const m=/^created_at\.(lt|gt)\.([^,]+),and\(created_at.eq.([^,]+),id\.(lte|gt)\.([a-f0-9-]+)\)$/.exec(expression);if(!m||m[2]!==m[3])throw Error('SQL cursor');predicates.push(`(created_at ${m[1]==='lt'?'<':'>'} ${q(m[2])} or (created_at=${q(m[3])} and id ${m[4]==='lte'?'<=':'>'} ${q(m[5])}))`);return b;},
+         async maybeSingle(){const r=await finish();return {...r,data:r.data?.[0]??null};},async single(){return b.maybeSingle();},then(resolve,reject){return finish().then(resolve,reject);}};
+diff --git a/tests/fixtures/runtime-4b1b-browser.tsx b/tests/fixtures/runtime-4b1b-browser.tsx
+new file mode 100644
+index 0000000..6832ad7
+--- /dev/null
++++ b/tests/fixtures/runtime-4b1b-browser.tsx
+@@ -0,0 +1,5 @@
++import {createRoot} from 'react-dom/client';
++import {StrictMode} from 'react';
++import {PublishedRuntimeEntry} from '../../src/features/smart-textbook-runtime/components/published-runtime-entry';
++// Only bootstraps the actual new app component; no substitute Renderer/ports.
++createRoot(document.getElementById('root')!).render(<StrictMode><PublishedRuntimeEntry/></StrictMode>);
+diff --git a/tests/smart-textbook-runtime-4b1b.test.mjs b/tests/smart-textbook-runtime-4b1b.test.mjs
+new file mode 100644
+index 0000000..2730cb3
+--- /dev/null
++++ b/tests/smart-textbook-runtime-4b1b.test.mjs
+@@ -0,0 +1,164 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import {randomBytes,randomUUID} from 'node:crypto';
++import {readFile} from 'node:fs/promises';
++import {createServer} from 'node:http';
++import {build} from 'esbuild';
++import {chromium} from '@playwright/test';
++import {publishedChapterFixture,publishedOverrides} from './fixtures/published-chapter-one.mjs';
++import {serverModule} from './fixtures/runtime-4a2.server.mjs';
++import {literal as q,json,service} from './fixtures/recording-v2-postgres.mjs';
++import {source} from './fixtures/runtime-4a.mjs';
++import {wav} from './fixtures/teacher-boundary-4a14.mjs';
++
++test('4B1B actual app admission + SQL dependencies + formal HTTP + published Runtime',{timeout:300000},async t=>{
++ let f,browser,http;const saved={...process.env},originalFetch=globalThis.fetch;
++ try{
++  f=await publishedChapterFixture();const {db}=f;
++  await db.query(await readFile('supabase/migrations/202609100003_runtime_admission_control.sql','utf8'));
++  const secret=randomBytes(32);await db.query(`insert into recording_private.proof_keys values('admission-isolated',decode('${secret.toString('hex')}','hex'),true)`);
++  const parent=randomUUID(),category=randomUUID(),course=randomUUID(),lesson=randomUUID();
++  await db.query(`create table public.course_categories(id uuid,slug text,parent_id uuid,is_published boolean);
++   create table public.courses(id uuid,slug text,category_id uuid,is_published boolean);
++   create table public.lessons(id uuid,slug text,course_id uuid,is_published boolean,sort_order int,unlock_mode text,prerequisite_lesson_id uuid,prerequisite_chapter_id uuid,available_from timestamptz,is_manually_locked boolean);
++   create table public.course_chapters(id uuid,slug text,lesson_id uuid,is_published boolean,sort_order int,unlock_mode text,prerequisite_chapter_id uuid,available_from timestamptz,is_manually_locked boolean);
++   create table public.lesson_progress(lesson_id uuid,user_id uuid,status text);
++   create table public.chapter_test_attempts(test_slug text,student_id uuid,tenant_id uuid,passed boolean);
++   insert into public.course_categories values(${q(parent)},'korean',null,true),(${q(category)},'korean-basic',${q(parent)},true);
++   insert into public.courses values(${q(course)},'korean-beginner',${q(category)},true);
++   insert into public.lessons values(${q(lesson)},'basic-pronunciation',${q(course)},true,1,'immediate',null,null,null,false);
++   insert into public.course_chapters values(gen_random_uuid(),'korean-level-one-01',${q(lesson)},true,1,'immediate',null,null,false);
++   grant select on all tables in schema public to service_role;`);
++  await db.query(`alter table public.chapter_tests add column if not exists status text default 'published';alter table public.chapter_tests add column if not exists updated_at timestamptz default now();
++   alter table public.digital_textbooks add column if not exists updated_at timestamptz default now();
++   alter table public.digital_textbook_versions add column if not exists updated_at timestamptz default now();
++   alter table public.digital_textbook_chapters add column if not exists updated_at timestamptz default now();
++   alter table public.digital_textbook_chapters add column if not exists production_status text;
++   create table public.chapter_test_questions(id uuid default gen_random_uuid(),test_id uuid,is_chapter_test_item boolean,question_type text,prompt text,options jsonb,correct_option int,status text,updated_at timestamptz);
++   insert into public.chapter_test_questions(test_id,is_chapter_test_item,question_type,prompt,options,correct_option,status) select id,true,'single_choice','隔离发布校验题','["a","b","c","d"]',0,'draft' from public.chapter_tests;
++   create schema if not exists private;
++   create function auth.uid() returns uuid language sql as $$select ${q(f.student)}::uuid$$;
++   create function private.is_platform_owner() returns boolean language sql as $$select exists(select 1 from public.profiles where id=auth.uid() and global_role='platform_owner')$$;`);
++  await db.query(await readFile('supabase/migrations/202608180032_platform_owner_publish_textbook_chapter.sql','utf8'));
++  Object.assign(process.env,{RECORDING_EVIDENCE_PROOF_KEY_ID:'admission-isolated',RECORDING_EVIDENCE_PROOF_SECRET_HEX:secret.toString('hex'),
++   R2_ACCOUNT_ID:'isolated',R2_ACCESS_KEY_ID:'isolated',R2_SECRET_ACCESS_KEY:'isolated',R2_BUCKET_NAME:'isolated'});
++  const overrides={...publishedOverrides,
++   '@/lib/r2':'export async function createR2SignedObjectUrl(key){return globalThis.__isolatedBytes.sign(key);} export async function checkR2ObjectExists(){throw Error("No student objects in this test");} export async function createR2SignedUploadUrl(){throw Error("No upload");} export async function deleteR2Object(){throw Error("No delete");}'};
++  const objects=new Map();globalThis.__isolatedBytes={sign(key){const token=randomUUID(),type=key.endsWith('.png')?'image/png':'audio/wav';objects.set(token,{type,bytes:type==='audio/wav'?wav():Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAC0lEQVR42mP8/x8AAwMCAO+aWQAAAABJRU5ErkJggg==','base64')});return `https://isolated.r2.cloudflarestorage.com/${token}`;}};
++  globalThis.fetch=async(input,init)=>{const url=new URL(typeof input==='string'?input:input instanceof URL?input.href:input.url);if(url.hostname==='isolated.r2.cloudflarestorage.com'){const r=objects.get(url.pathname.slice(1));if(!r)throw Error('Unknown isolated object');return new Response(r.bytes,{headers:{'content-type':r.type}});}if(!['127.0.0.1','localhost'].includes(url.hostname))throw Error('NETWORK_OUTSIDE_ISOLATION');return originalFetch(input,init);};
++  const admission=await serverModule('src/features/smart-textbook-runtime/server/application-admission.server.ts',overrides);
++  const api=await serverModule('src/app/api/smart-textbook-runtime/learning/route.ts',overrides);
++  // A single bundled app HTTP module shares the SAME installed teacher/learning
++  // presentation owners, as a Next server module graph does.
++  const app=await serverModule('src/features/smart-textbook-runtime/server/application-http.server.ts',overrides);
++  const call=async(input,headers={})=>api.POST(new Request('https://isolated.invalid/api/smart-textbook-runtime/learning',{method:'POST',headers:{origin:'https://isolated.invalid','content-type':'application/json',...headers},body:JSON.stringify(input)}));
++  const enable=()=>db.query(`update runtime_publish_private.admission_control set enabled=true,cohort=${json([{tenantId:f.tenant,studentId:f.student}])}`);
++  const page=()=>admission.runtimePageDecision({chapterNumber:1,platformAudit:false});
++  await t.test('default off/non-cohort/other chapters/audit use legacy; client flags do not enable',async()=>{
++   delete process.env.SMART_TEXTBOOK_RUNTIME_ADMISSION_ENABLED;assert.equal(await page(),'legacy');
++   assert.equal((await call({operation:'bootstrap',enabled:true},{'x-runtime-enabled':'true',cookie:'runtime=true'})).status,409);
++   process.env.SMART_TEXTBOOK_RUNTIME_ADMISSION_ENABLED='true';assert.equal(await page(),'legacy');await enable();
++   const actor=f.auth.user.id;f.auth.user.id=randomUUID();assert.equal(await page(),'legacy','enabled policy excludes non-cohort');f.auth.user.id=actor;
++   assert.equal(await admission.runtimePageDecision({chapterNumber:2,platformAudit:false}),'legacy');
++   assert.equal(await admission.runtimePageDecision({chapterNumber:1,platformAudit:true}),'legacy');
++   assert.equal(await page(),'unavailable','no published pointer');
++  });
++  const pointer=await f.publisher.publishChapterOne(null);
++  await t.test('central stop overlapping issue revokes orphan locator; control ACL and invalid policy rejected',async()=>{
++   for(const role of ['anon','authenticated','service_role'])assert.notEqual((await db.raw(`set role ${role};update runtime_publish_private.admission_control set enabled=true`)).code,0);
++   assert.notEqual((await db.raw(`update runtime_publish_private.admission_control set cohort='[{"tenantId":"bad","studentId":"bad"}]'`)).code,0);
++   await db.query(`create function public.isolated_stop_admission() returns trigger language plpgsql as $$begin update runtime_publish_private.admission_control set enabled=false;return new;end$$;
++    create trigger isolated_stop_admission after insert on runtime_publish_private.sessions for each row execute function public.isolated_stop_admission();`);
++   assert.equal((await call({operation:'bootstrap'})).status,409);
++   assert.equal(await db.query('select count(*) from runtime_publish_private.sessions where not revoked'),'0');
++   await db.query('drop trigger isolated_stop_admission on runtime_publish_private.sessions;drop function public.isolated_stop_admission()');await enable();
++  });
++  await t.test('admission prerequisites: key/epoch/cohort/migration/snapshot and LIVE unlocks fail closed',async()=>{
++   assert.equal(await page(),'runtime');
++   const keys=['RECORDING_EVIDENCE_V2_ENABLED','RECORDING_EVIDENCE_PROOF_SECRET_HEX','R2_BUCKET_NAME'];
++   for(const key of keys){const old=process.env[key];delete process.env[key];assert.equal(await page(),'unavailable',key);process.env[key]=old;}
++   await db.query("update recording_private.proof_keys set enabled=false where id='admission-isolated'");assert.equal(await page(),'unavailable');await db.query("update recording_private.proof_keys set enabled=true where id='admission-isolated'");
++   process.env.RECORDING_EVIDENCE_V2_EPOCH='99';assert.equal(await page(),'unavailable');process.env.RECORDING_EVIDENCE_V2_EPOCH='2';
++   await db.query('update public.course_chapters set is_manually_locked=true');assert.equal(await page(),'unavailable');assert.equal((await call({operation:'bootstrap'})).status,409);await db.query('update public.course_chapters set is_manually_locked=false');
++   f.auth.profile.membership_tier='normal';assert.equal((await call({operation:'bootstrap'})).status,409);f.auth.profile.membership_tier='vip2';
++   await db.query(`alter function public.runtime_recording_dependency_v1(uuid,uuid,bigint,text,text,uuid,bigint,text) rename to isolated_hidden_dependency`);assert.equal(await page(),'unavailable');await db.query(`alter function public.isolated_hidden_dependency(uuid,uuid,bigint,text,text,uuid,bigint,text) rename to runtime_recording_dependency_v1`);
++  });
++  let first;
++  await t.test('actual Route bootstrap; scope is opaque, no Preview backend; stop new admission retains pinned session',async()=>{
++   const r=await call({operation:'bootstrap'});assert.equal(r.status,200);first=await r.json();assert.equal(first.manifest.steps.length,8);assert.equal(first.manifest.activityRefs.length,19);assert.equal(first.context.trackingDisabled,false);
++   assert.equal(first.manifest.blocks.filter(b=>b.type==='multiple_choice').length,3);
++   await db.query('update runtime_publish_private.admission_control set enabled=false');
++   assert.equal(await page(),'legacy');assert.equal((await call({operation:'bootstrap'})).status,409);
++   assert.equal((await call({operation:'bootstrap',sessionRef:first.sessionRef})).status,200);
++   const u=f.auth.user.id;f.auth.user.id=randomUUID();assert.equal((await call({operation:'bootstrap',sessionRef:first.sessionRef})).status,409);f.auth.user.id=u;
++   await enable();
++   assert.equal((await call({operation:'bootstrap',sessionRef:'learning-session-'+randomUUID()})).status,409);
++   assert.equal((await call({operation:'bootstrap'},{origin:'https://other.invalid'})).status,403);
++  });
++  await t.test('pointer release changes only new sessions, not existing application bootstrap',async()=>{
++   const compiler=await serverModule('src/lib/smart-textbook-legacy-adapter/final-readiness.server.ts');
++   globalThis.__releaseB=(...args)=>{const r=compiler.finalizeChapterOneNonUiReadiness(...args);r.manifest.snapshot.compilerVersion+='.4b1b-isolated';return r;};
++   const release=await serverModule('src/lib/smart-textbook-publishing/publisher.server.ts',{...overrides,'../smart-textbook-legacy-adapter/final-readiness.server':'export function finalizeChapterOneNonUiReadiness(...a){return globalThis.__releaseB(...a);}'});
++   const next=await release.publishChapterOne(pointer);const restored=await(await call({operation:'bootstrap',sessionRef:first.sessionRef})).json();assert.equal(restored.manifest.snapshot.id,first.manifest.snapshot.id);
++   const fresh=await(await call({operation:'bootstrap'})).json();assert.equal(fresh.manifest.snapshot.id,next.snapshotId);assert.notEqual(fresh.manifest.snapshot.id,first.manifest.snapshot.id);
++   await db.query(`update runtime_publish_private.sessions set expires_at=clock_timestamp()-interval '1 second' where id=${q(fresh.sessionRef.slice('learning-session-'.length))}`);
++   assert.equal((await call({operation:'bootstrap',sessionRef:fresh.sessionRef})).status,409);
++  });
++  await t.test('real dependency fence: original rejected; NEW VERSION SQL create/edit, other chapter, shared profile/parent/media effects',async()=>{
++   const reject=async sql=>assert.match((await db.raw(sql)).stderr,/IMMUTABLE/);
++   await reject(`update public.digital_textbook_activities set public_config='{}' where id=${q(source.activities[0].id)}`);
++   await reject(`update public.digital_textbook_activity_secrets set answer_key='{}' where activity_id=${q(source.activities[0].id)}`);
++   await reject(`update public.learning_agent_script_nodes set teacher_script='{}' where id=${q(source.teachingNodes[0].id)}`);
++   await reject(`update public.learning_agent_profiles set display_name='{"zh-CN":"edited"}'`);
++   await reject(`update public.digital_textbooks set title='{"zh-CN":"edited"}' where id=${q(source.textbook.id)}`);
++   await reject(`update public.digital_textbook_media_assets set production_status='ready' where id=${q(source.media.find(m=>m.production_status==='pending').id)}`);
++   const version=randomUUID(),chapter=randomUUID(),module=randomUUID(),node=randomUUID(),activity=randomUUID();
++   const clone=async(table,id,changes)=>{await db.query(`insert into public.${table} select (jsonb_populate_record(null::public.${table},to_jsonb(r)||${json(changes)})).* from public.${table} r where id=${q(id)}`);};
++   await clone('digital_textbook_versions',source.version.id,{id:version,version_number:99,status:'draft'});
++   await clone('digital_textbook_chapters',source.chapter.id,{id:chapter,version_id:version,status:'draft'});
++   await clone('digital_textbook_modules',source.modules[0].id,{id:module,chapter_id:chapter});
++   await clone('digital_textbook_nodes',source.nodes[0].id,{id:node,module_id:module});
++   await clone('digital_textbook_activities',source.activities[0].id,{id:activity,node_id:node});
++   await db.query(`update public.digital_textbook_activities set public_config='{"isolated":"editable"}' where id=${q(activity)};insert into public.digital_textbook_activity_secrets(activity_id,answer_key) values(${q(activity)},'{"kind":"index","value":1}');update public.digital_textbook_versions set status='published' where id=${q(version)};`);
++   assert.equal(await db.query(`select status from public.digital_textbook_versions where id=${q(version)}`),'published');
++   // Source-version status publication is possible in SQL; the certified fixed-ID
++   // Manifest compiler must NOT quietly publish this different identity set.
++   const capture=await db.query(service(`select public.capture_runtime_publication_v1(${q(f.student)},${json({textbookId:source.textbook.id,versionId:version,chapterId:chapter})})`));
++   assert.equal(JSON.parse(capture).digital_textbook_activities[0].id,activity);
++   const {projectPublicationCapture}=await serverModule('src/lib/smart-textbook-publishing/capture.server.ts');
++   await assert.rejects(async()=>projectPublicationCapture(JSON.parse(capture)));
++   // ACTUAL existing chapter publish workflow touches shared test/parent rows.
++   // This is a detected workflow blocker, NOT "new version publication passed".
++   await reject(`select public.publish_digital_textbook_chapter(${q(chapter)})`);
++   assert.equal(await db.query("select count(*) from public.chapter_test_questions where status='published'"),'0','whole original publish RPC rolls back');
++   const sibling=randomUUID();await clone('digital_textbook_chapters',source.chapter.id,{id:sibling,chapter_number:2});
++   await db.query(`update public.digital_textbook_chapters set title='{"zh-CN":"isolated sibling edited"}' where id=${q(sibling)}`);
++   assert.equal(await db.query(`select title->>'zh-CN' from public.digital_textbook_chapters where id=${q(sibling)}`),'isolated sibling edited');
++   await reject(`select public.publish_digital_textbook_chapter(${q(sibling)})`);
++  });
++  await t.test('Chromium mounts ACTUAL PublishedRuntimeEntry via ACTUAL application HTTP, reload and stop', {timeout:150000},async()=>{
++   const js=await build({entryPoints:['tests/fixtures/runtime-4b1b-browser.tsx'],bundle:true,write:false,outdir:'/tmp/runtime4b1b-client',platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'}});
++   const payloads=[],errors=[];http=createServer(async(req,res)=>{try{
++    if(req.url==='/bundle.js'||req.url==='/style.css'){const ext=req.url.endsWith('.js')?'.js':'.css';res.setHeader('content-type',ext==='.js'?'text/javascript':'text/css');return res.end(js.outputFiles.find(f=>f.path.endsWith(ext)).text);}
++    if(req.method==='POST'){const chunks=[];for await(const c of req)chunks.push(c);const request=new Request(`http://127.0.0.1:${http.address().port}${req.url}`,{method:'POST',headers:req.headers,body:Buffer.concat(chunks)});
++     const response=await app.runtimeApplicationPost(request,req.url.endsWith('/teacher')?'teacher':'learning');res.statusCode=response.status;response.headers.forEach((v,k)=>res.setHeader(k,v));const bytes=Buffer.from(await response.arrayBuffer());if(response.headers.get('content-type')?.startsWith('application/json'))payloads.push(bytes.toString());return res.end(bytes);}
++    res.setHeader('content-type','text/html');res.end('<html><head><link rel="stylesheet" href="/style.css"></head><body><div id="root"></div><script type="module" src="/bundle.js"></script></body></html>');
++   }catch(e){errors.push(e.message);res.statusCode=500;res.end('{}');}});
++   await new Promise(r=>http.listen(0,'127.0.0.1',r));browser=await chromium.launch({headless:true});const page=await browser.newPage();page.setDefaultTimeout(40000);page.on('pageerror',e=>errors.push(e.message));
++   await page.goto(`http://127.0.0.1:${http.address().port}`);await page.locator('form').first().waitFor();assert.equal(await page.locator('form').count(),3);assert.equal(await page.locator('nav ol button').count(),8);
++   const form=page.locator('form').first();await form.locator('input').first().check();await form.getByRole('button',{name:'提交答案'}).click();
++   await page.waitForFunction(()=>document.querySelector('form')?.textContent?.includes('隔离'));
++   const teaching=page.getByRole('region',{name:'金老师讲解',exact:true});await teaching.getByRole('button',{name:'开始讲解'}).click();
++   await page.waitForFunction(()=>['feedback','awaiting-task','awaiting-answer'].includes(document.querySelector('[data-teacher-phase]')?.getAttribute('data-teacher-phase')));
++   assert((await teaching.locator('.runtime-teacher-caption').innerText()).length>0);
++   const original=await page.evaluate(()=>sessionStorage.getItem('uply-published-chapter-one-session'));
++   await page.reload();await page.locator('nav').waitFor();assert.equal(await page.evaluate(()=>sessionStorage.getItem('uply-published-chapter-one-session')),original);
++   await db.query('update runtime_publish_private.admission_control set enabled=false');await page.reload();await page.locator('nav').waitFor();
++   const fresh=await browser.newPage();await fresh.goto(`http://127.0.0.1:${http.address().port}`);await fresh.getByRole('alert').waitFor();
++   assert.deepEqual(errors,[]);assert(!payloads.some(p=>/answer_key|objectKey|object_key|secret|proof|tenantId|studentId/.test(p)));
++  });
++ }catch(e){throw Error(e.message.slice(0,2500));}finally{
++  await browser?.close();if(http)await new Promise(r=>http.close(r));globalThis.fetch=originalFetch;delete globalThis.__isolatedBytes;delete globalThis.__releaseB;await f?.dispose();
++  for(const k of Object.keys(process.env))if(!(k in saved))delete process.env[k];Object.assign(process.env,saved);
++ }
++});

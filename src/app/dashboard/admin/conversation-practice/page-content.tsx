@@ -237,6 +237,7 @@ export async function ConversationPracticeManagementContent({
   studentAppId,
   routeBasePath = "/dashboard/admin/conversation-practice",
   embedded = false,
+  platformCatalog = false,
 }: {
   searchParams: Promise<{
     scenario?: string;
@@ -247,6 +248,7 @@ export async function ConversationPracticeManagementContent({
   studentAppId?: string;
   routeBasePath?: string;
   embedded?: boolean;
+  platformCatalog?: boolean;
 }) {
   const [{ supabase, canManageContent, role, tenantId, user }, params] = await Promise.all([
     requireConversationPracticeManager(studentAppId),
@@ -273,7 +275,19 @@ export async function ConversationPracticeManagementContent({
   if (studentAppId) {
     scenariosQuery = scenariosQuery.eq("student_app_id", studentAppId);
   }
-  const scenariosResult = await scenariosQuery;
+  if (platformCatalog) {
+    if (tenantId || !canManageContent) throw new Error("当前账号没有平台场景维护权限。");
+    scenariosQuery = scenariosQuery.is("tenant_id", null);
+  }
+  const scenarioPages: ScenarioRow[] = [];
+  let scenarioError: { message: string } | null = null;
+  for (let from = 0; ; from += 1000) {
+    const page = await scenariosQuery.order("id").range(from, from + 999);
+    if (page.error) { scenarioError = page.error; break; }
+    scenarioPages.push(...(page.data ?? []) as ScenarioRow[]);
+    if ((page.data?.length ?? 0) < 1000) break;
+  }
+  const scenariosResult = { data: scenarioError ? [] : scenarioPages, error: scenarioError };
 
   const scenarios = (scenariosResult.data ?? []) as ScenarioRow[];
   const scenarioIds = scenarios.map((scenario) => scenario.id);
@@ -287,7 +301,7 @@ export async function ConversationPracticeManagementContent({
     progressQuery = progressQuery.in("scenario_id", scenarioIds);
   }
   if (myStudentIds) progressQuery = progressQuery.in("user_id", [...myStudentIds]);
-  const progressResult = scenarioIds.length
+  const progressResult = !platformCatalog && scenarioIds.length
     ? await progressQuery
     : { data: [] as ProgressRow[], error: null };
   const progress = (progressResult.data ?? []) as ProgressRow[];
@@ -393,6 +407,7 @@ export async function ConversationPracticeManagementContent({
         <ConversationScenarioTable
           rows={rows}
           canManage={canManageContent}
+          showPracticeMetrics={!platformCatalog}
           createOpen={createOpen}
           createHref={`${routeBasePath}?mode=create`}
           closeHref={routeBasePath}
@@ -411,14 +426,14 @@ export async function ConversationPracticeManagementContent({
                 </div>
               </div>
               <ConversationScenarioForm scenario={selectedScenario} workspace />
-              <PracticeDataTable
+              {!platformCatalog && <PracticeDataTable
                 progress={sortedSelectedProgress}
                 studentNames={studentNames}
                 scenarioId={selectedScenario.id}
                 routeBasePath={routeBasePath}
                 sortKey={progressSortKey}
                 sortDirection={progressSortDirection}
-              />
+              />}
             </>
           ) : null}
         </ConversationScenarioTable>

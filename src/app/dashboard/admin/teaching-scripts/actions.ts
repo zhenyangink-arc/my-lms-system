@@ -5,6 +5,8 @@ import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
 import { learningAgentBufferPreset, LEARNING_AGENT_BUFFER_PRESET_NONE_ID } from "@/lib/learning-agent-buffer-presets";
+import { CLASSROOM_SHOT_MODES } from "@/lib/learning-agent-classroom-director";
+import { normalizeTeachingVideo, activeTeacherVideoBindings, teachingScriptSegments, teachingVideoIssues } from "@/lib/teaching-video";
 import { checkR2ObjectExists, listR2Objects } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
@@ -94,10 +96,13 @@ const nodeSchema = z.object({
     voiceRate: z.coerce.number().min(0.75).max(1.25),
     autoContinueToNext: z.boolean(),
     learningLayout: z.enum(["split", "learning", "teaching"]),
+    classroomShot: z.enum(["auto", ...CLASSROOM_SHOT_MODES]),
   })).max(50),
+  teacherVideoJson: z.string().max(150000).optional(),
   studentTaskKind: z.enum(["none", "play_expression_audio"]),
   studentTaskFollowVisualCue: z.boolean(),
   studentTaskInstructionZh: z.string().trim().max(300, "学生任务说明不能超过300个字。"),
+  operationCompleteFeedbackZh: z.string().trim().max(600, "操作完成反馈不能超过600个字。"),
   studentTaskTargetLabelZh: z.string().trim().max(100, "目标名称不能超过100个字。"),
   studentTaskTargetKey: z.string().trim().max(200, "目标位置不能超过200个字符。"),
   visualCueTargetKey: z.string().trim().max(200, "讲解指向不能超过200个字符。")
@@ -136,6 +141,13 @@ const nodeSchema = z.object({
       message: "请选择学生需要完成的按钮或表达。",
     });
   }
+  if (input.studentTaskKind === "play_expression_audio" && !input.studentTaskInstructionZh) {
+    context.addIssue({
+      code: "custom",
+      path: ["studentTaskInstructionZh"],
+      message: "请填写老师向学生说出的操作要求。",
+    });
+  }
   if (input.petActionTargetKey.startsWith("activity:")) {
     context.addIssue({
       code: "custom",
@@ -151,7 +163,7 @@ const nodeSchema = z.object({
     if (options.length < 2 || options.some((option) => !option)) {
       context.addIssue({ code: "custom", path: ["interactionOptions"], message: "请完整填写2—6个选项。" });
     }
-    if (new Set(options).size !== options.length) {
+    if (options.every(Boolean) && new Set(options).size !== options.length) {
       context.addIssue({ code: "custom", path: ["interactionOptions"], message: "互动选项不能重复。" });
     }
     if (input.interactionCorrectOption > options.length) {
@@ -245,7 +257,17 @@ export async function createTeachingScriptDraftAction(formData: FormData) {
     p_lesson_id: lessonId,
   });
   if (error) throw new Error(error.message.includes("平台负责人") ? error.message : "创建教学脚本草稿失败。");
-  if (draftVersionId) await copyPublishedInteractionSecretsToDraft(lessonId, String(draftVersionId));
+  if (draftVersionId) {
+    await copyPublishedInteractionSecretsToDraft(lessonId, String(draftVersionId));
+    const admin = createAdminClient();
+    const { data: nodes, error: queryError } = await admin.from("learning_agent_script_nodes").select("id,configuration,updated_at").eq("script_version_id", String(draftVersionId));
+    if (queryError) throw new Error("草稿已创建，但视频配置准备失败，请刷新后重试。");
+    for (const node of nodes ?? []) {
+      if (node.configuration?.teacherVideo) continue;
+      const { error: updateError } = await admin.from("learning_agent_script_nodes").update({ configuration: { ...node.configuration, teacherVideo: { ...normalizeTeachingVideo(null), mode: "video" } } }).eq("id", node.id).eq("updated_at", node.updated_at);
+      if (updateError) throw new Error("草稿已创建，但视频配置准备失败，请刷新后重试。");
+    }
+  }
   refreshStudio(path);
 }
 
@@ -294,6 +316,7 @@ export async function addTeachingScriptNodeAction(formData: FormData) {
         voiceLanguage: "auto",
         voiceRate: 1,
         learningLayout: "split",
+        classroomShot: "auto",
       }],
     },
     action_type: "none",
@@ -315,7 +338,7 @@ export async function saveTeachingScriptNodeAction(
   formData: FormData,
 ): Promise<TeachingScriptActionState> {
   try {
-    const { user } = await requirePlatformOwner();
+    const { user, supabase } = await requirePlatformOwner();
     const scriptRows = formData.getAll("script_zh").map(String);
     const scriptPoses = formData.getAll("script_pose").map(String);
     const scriptVoices = formData.getAll("script_voice").map(String);
@@ -323,6 +346,7 @@ export async function saveTeachingScriptNodeAction(
     const scriptVoiceRates = formData.getAll("script_voice_rate").map(String);
     const scriptAutoContinues = formData.getAll("script_auto_continue").map(String);
     const scriptLearningLayouts = formData.getAll("script_learning_layout").map(String);
+    const scriptClassroomShots = formData.getAll("script_classroom_shot").map(String);
     const scriptPlacements = formData.getAll("script_placement").map(String);
     const nonEmptyScriptIndexes = scriptRows.flatMap((line, index) => line.trim() ? [index] : []);
     const virtualCharacterPosition = String(formData.get("virtual_character_position") ?? "right");
@@ -334,7 +358,8 @@ export async function saveTeachingScriptNodeAction(
       nodeType: String(formData.get("node_type") ?? ""),
       titleZh: String(formData.get("title_zh") ?? ""),
       titleKo: String(formData.get("title_ko") ?? ""),
-      scriptZh: nonEmptyScriptIndexes.map((index) => scriptRows[index]).join("\n\n"),
+      scriptZh: nonEmptyScriptIndexes.map((index) => scriptRows[index].trim()).join("\n\n"),
+      teacherVideoJson: formData.has("teacher_video_json") ? String(formData.get("teacher_video_json")) : undefined,
       scriptKo: String(formData.get("script_ko") ?? ""),
       displayKind: String(formData.get("display_kind") ?? "overview"),
       displayTitleZh: String(formData.get("display_title_zh") ?? ""),
@@ -372,11 +397,13 @@ export async function saveTeachingScriptNodeAction(
           voiceRate: scriptVoiceRates[index] ?? "1",
           autoContinueToNext: (scriptAutoContinues[index] ?? "off") === "on",
           learningLayout: scriptLearningLayouts[index] ?? "split",
+          classroomShot: scriptClassroomShots[index] ?? "auto",
         };
       }),
       studentTaskKind: String(formData.get("student_task_kind") ?? "none"),
       studentTaskFollowVisualCue: formData.get("student_task_follow_visual_cue") === "on",
       studentTaskInstructionZh: String(formData.get("student_task_instruction_zh") ?? ""),
+      operationCompleteFeedbackZh: String(formData.get("operation_complete_feedback_zh") ?? ""),
       studentTaskTargetLabelZh: String(formData.get("student_task_target_label_zh") ?? ""),
       studentTaskTargetKey: String(formData.get("student_task_target_key") ?? ""),
       visualCueTargetKey: String(formData.get("visual_cue_target_key") ?? ""),
@@ -473,6 +500,16 @@ export async function saveTeachingScriptNodeAction(
       ? current.configuration as Record<string, unknown>
       : {};
     const configuration: Record<string, unknown> = { ...existingConfiguration };
+    configuration.scriptSegments = { "zh-CN": nonEmptyScriptIndexes.map((index) => scriptRows[index].trim()) };
+    if (input.teacherVideoJson !== undefined) {
+      let rawVideo: unknown;
+      try { rawVideo = JSON.parse(input.teacherVideoJson); } catch {
+        return { status: "error", message: "视频配置无效，请刷新后重试。" };
+      }
+      const video = normalizeTeachingVideo(rawVideo);
+      video.explanations = nonEmptyScriptIndexes.map((index) => video.explanations[index] ?? null);
+      configuration.teacherVideo = video;
+    }
     const displayItems = input.displayItemsZh
       .split("\n")
       .map((item) => item.trim())
@@ -533,6 +570,11 @@ export async function saveTeachingScriptNodeAction(
       };
     } else {
       Reflect.deleteProperty(configuration, "studentTask");
+    }
+    if (input.studentTaskKind !== "none" && input.operationCompleteFeedbackZh) {
+      configuration.operationCompleteFeedback = { "zh-CN": input.operationCompleteFeedbackZh };
+    } else {
+      Reflect.deleteProperty(configuration, "operationCompleteFeedback");
     }
     configuration.virtualCharacter = {
       kind: "uply-teacher",
@@ -598,13 +640,11 @@ export async function saveTeachingScriptNodeAction(
         ? "focus_activity"
         : "none";
 
-    // `.eq("updated_at", ...)` makes this a compare-and-swap: if another save
-    // landed between the read above and this write, zero rows match and the
-    // update is a silent no-op instead of clobbering that newer data — the
-    // empty `data` below is how we detect that race and surface it.
-    const { data: updated, error } = await admin
-      .from("learning_agent_script_nodes")
-      .update({
+    // Compare-and-swap, draft check, node and private answer writes are atomic.
+    const { error } = await supabase.rpc("save_teaching_script_node_atomic", {
+      p_node_id: input.nodeId,
+      p_expected_updated_at: input.nodeUpdatedAt,
+      p_node: {
         node_key: input.nodeKey,
         node_type: effectiveNodeType,
         title: { "zh-CN": input.titleZh, "ko-KR": input.titleKo },
@@ -615,35 +655,19 @@ export async function saveTeachingScriptNodeAction(
         next_node_key: input.flowMode === "jump" ? input.nextNodeKey : null,
         remediation_node_key: input.interactionKind === "referenced_activity" ? input.remediationNodeKey || null : null,
         is_required: true,
-      })
-      .eq("id", input.nodeId)
-      .eq("updated_at", input.nodeUpdatedAt)
-      .select("id");
+      },
+      p_secret: input.interactionKind === "single_choice" ? {
+        correct_option_index: input.interactionCorrectOption - 1,
+        correct_feedback: { "zh-CN": input.interactionCorrectFeedbackZh },
+        incorrect_feedback: { "zh-CN": input.interactionIncorrectFeedbackZh },
+        evaluation: { kind: "option_index" },
+      } : null,
+    });
     if (error) {
       return {
         status: "error",
-        message: error.code === "23505" ? "小节标识已经存在，请换一个标识。" : "教学小节保存失败，请稍后重试。",
+        message: error.code === "23505" ? "小节标识已经存在，请换一个标识。" : error.code === "P0001" ? error.message : "教学小节保存失败，内容与答案均未更改，请重试。",
       };
-    }
-    if (!updated || updated.length === 0) {
-      return { status: "error", message: "这个小节已经被其他操作更新，请刷新页面后重新编辑，避免覆盖别人的修改。" };
-    }
-
-    if (input.interactionKind === "single_choice") {
-      const { error: interactionSecretError } = await admin
-        .from("learning_agent_node_interaction_secrets")
-        .upsert({
-          node_id: input.nodeId,
-          correct_option_index: input.interactionCorrectOption - 1,
-          correct_feedback: { "zh-CN": input.interactionCorrectFeedbackZh },
-          incorrect_feedback: { "zh-CN": input.interactionIncorrectFeedbackZh },
-          evaluation: { kind: "option_index" },
-        }, { onConflict: "node_id" });
-      if (interactionSecretError) {
-        return { status: "error", message: "教学内容已保存，但互动答案保存失败，请重试。" };
-      }
-    } else {
-      await admin.from("learning_agent_node_interaction_secrets").delete().eq("node_id", input.nodeId);
     }
 
     await admin.from("learning_agent_publish_logs").insert({
@@ -872,14 +896,40 @@ export async function deleteTeachingScriptVersionAction(formData: FormData) {
   refreshStudio(path);
 }
 
-export async function publishTeachingScriptAction(formData: FormData) {
+export async function publishTeachingScriptAction(formData: FormData): Promise<{ ok: boolean; message?: string; nodeKey?: string }> {
   const { supabase } = await requirePlatformOwner();
   const versionId = uuid.parse(String(formData.get("version_id") ?? ""));
   const changeNote = z.string().trim().max(500).parse(String(formData.get("change_note") ?? ""));
-  const { error } = await supabase.rpc("publish_learning_agent_script_version", {
+  const { data: snapshot, error: videoQueryError } = await supabase.rpc("teaching_script_publish_snapshot", { p_version_id: versionId });
+  if (videoQueryError) return { ok: false, message: "无法检查视频配置，请重试。" };
+  const videoKeys = new Set<string>();
+  const videoNodes = snapshot?.nodes as Array<{ node_key: string; teacher_script: unknown; configuration: Record<string, unknown>; reference_activity_id: string | null }> | undefined;
+  if (!snapshot?.token || !Array.isArray(videoNodes)) return { ok: false, message: "无法读取发布快照，请重试。" };
+  for (const node of videoNodes) {
+    const video = normalizeTeachingVideo(node.configuration?.teacherVideo);
+    if (video.mode !== "video") continue;
+    const lines = teachingScriptSegments(node.teacher_script, node.configuration);
+    const task = node.configuration.studentTask as { kind?: string } | undefined;
+    const interaction = node.configuration.interaction as { kind?: string } | undefined;
+    const issues = teachingVideoIssues({ video, lines,
+      hasTask: Boolean(task?.kind && task.kind !== "none"),
+      hasQuestion: Boolean(node.reference_activity_id || (interaction?.kind && interaction.kind !== "none")),
+    });
+    if (issues.length) return { ok: false, nodeKey: node.node_key, message: issues[0].message };
+    for (const binding of activeTeacherVideoBindings(node.configuration, lines.length, node.reference_activity_id)) videoKeys.add(binding.objectKey);
+  }
+  for (const key of videoKeys) {
+    try {
+      const media = await checkR2ObjectExists(key);
+      if (!media.exists || !media.size) return { ok: false, message: `视频不存在或为空：${key}` };
+    } catch { return { ok: false, message: "无法连接视频素材库，请重试。" }; }
+  }
+  const { error } = await supabase.rpc("publish_teaching_script_checked", {
     p_script_version_id: versionId,
     p_change_note: changeNote,
+    p_expected_token: snapshot.token,
   });
-  if (error) throw new Error(error.message);
+  if (error) return { ok: false, message: error.message };
   refreshStudio(returnPath(formData));
+  return { ok: true };
 }

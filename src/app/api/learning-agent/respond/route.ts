@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
+import { normalizeTeachingVideo, teacherVideoForTurn } from "@/lib/teaching-video";
 import { z } from "zod";
 
 import { getAuthContext } from "@/lib/auth";
+import { classroomShotForScriptSegment } from "@/lib/learning-agent-classroom-director";
 import {
   configuredText,
   headerJson,
-  isTerminalScriptNode,
   localized,
   petAction,
   resolveScriptCharacter,
@@ -14,6 +15,7 @@ import {
   ScriptStepValidationError,
   studentTask,
   taskEventKey,
+  teacherScriptSegments,
   upcomingScriptNodeBufferLine,
   upcomingScriptNode,
   resolveBufferLineSpeechAssetId,
@@ -318,6 +320,9 @@ export async function POST(request: Request) {
   let selectedScriptSegmentIndex = 0;
   let selectedScriptSegmentCount = 1;
   let responseInteraction: Awaited<ReturnType<typeof resolveScriptStep>>["responseInteraction"] = null;
+  let responseStudentTask: Awaited<ReturnType<typeof resolveScriptStep>>["responseStudentTask"] = null;
+  let responsePhase: Awaited<ReturnType<typeof resolveScriptStep>>["responsePhase"] = "explanation";
+  let nodeTurnComplete = false;
   let pendingNodeAttempt: { nodeId: string; answer: string; isCorrect: boolean } | null = null;
   let scriptedSessionCompleted = false;
 
@@ -344,6 +349,9 @@ export async function POST(request: Request) {
       selectedScriptSegmentIndex = resolved.selectedScriptSegmentIndex;
       selectedScriptSegmentCount = resolved.selectedScriptSegmentCount;
       responseInteraction = resolved.responseInteraction;
+      responseStudentTask = resolved.responseStudentTask;
+      responsePhase = resolved.responsePhase;
+      nodeTurnComplete = resolved.nodeTurnComplete;
       pendingNodeAttempt = resolved.pendingNodeAttempt;
       action = resolved.action;
       scriptedSessionCompleted = resolved.isFinalStep
@@ -448,7 +456,7 @@ export async function POST(request: Request) {
     content: String(message.content),
   }));
 
-  const selectedCharacter = selectedScriptNode
+  const selectedCharacter = selectedScriptNode && normalizeTeachingVideo(selectedScriptNode.configuration?.teacherVideo).mode !== "video"
     ? await resolveScriptCharacter(admin, selectedScriptNode, selectedScriptSegmentIndex, scriptedContent, input.locale)
     : null;
 
@@ -461,18 +469,25 @@ export async function POST(request: Request) {
     "X-Learning-Agent-Progress": String(completionPercent),
   });
   if (selectedScriptNode) {
-    const selectedStudentTask = studentTask(selectedScriptNode.configuration);
+    const selectedStudentTask = responseStudentTask;
+    const selectedTeachingDisplay = teachingBlackboardDisplayForSegment(
+      selectedScriptNode.configuration?.display ?? null,
+      selectedScriptSegmentIndex,
+    );
     const selectedTaskCompleted = selectedStudentTask
       ? completedTaskEvents.has(taskEventKey(selectedScriptNode.id, selectedStudentTask))
       : false;
     headers.set("X-Learning-Agent-Script-Node", selectedScriptNode.node_key);
+    headers.set("X-Learning-Agent-Teacher-Video", headerJson(teacherVideoForTurn({
+      configuration: selectedScriptNode.configuration, nodeId: selectedScriptNode.id,
+      segmentIndex: selectedScriptSegmentIndex, phase: responsePhase, answerCorrect, intent: input.intent,
+      authoredText: teacherScriptSegments(selectedScriptNode, input.locale)[selectedScriptSegmentIndex],
+    })));
+    headers.set("X-Learning-Agent-Has-Next-Segment", selectedScriptSegmentIndex < selectedScriptSegmentCount - 1 ? "true" : "false");
     headers.set("X-Learning-Agent-Script-Node-Type", selectedScriptNode.node_type);
     headers.set(
       "X-Learning-Agent-Display",
-      headerJson(teachingBlackboardDisplayForSegment(
-        selectedScriptNode.configuration?.display ?? null,
-        selectedScriptSegmentIndex,
-      )),
+      headerJson(normalizeTeachingVideo(selectedScriptNode.configuration?.teacherVideo).mode === "video" ? null : selectedTeachingDisplay),
     );
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
     headers.set(
@@ -482,17 +497,23 @@ export async function POST(request: Request) {
     headers.set("X-Learning-Agent-Interaction", headerJson(responseInteraction));
     headers.set(
       "X-Learning-Agent-Visual-Cue",
-      headerJson(input.intent === "start" || input.intent === "ready"
+      headerJson((input.intent === "start" || input.intent === "ready") && (responsePhase === "explanation" || responsePhase === "task")
         ? visualCue(selectedScriptNode.configuration)
         : null),
     );
     headers.set(
       "X-Learning-Agent-Pet-Action",
-      headerJson(input.intent === "start" || input.intent === "ready"
+      headerJson((input.intent === "start" || input.intent === "ready") && responsePhase === "explanation"
         ? petAction(selectedScriptNode.configuration)
         : null),
     );
     headers.set("X-Learning-Agent-Task-Completed", selectedTaskCompleted ? "true" : "false");
+    headers.set("X-Learning-Agent-Teaching-Phase", responsePhase);
+    headers.set("X-Learning-Agent-Classroom-Shot", classroomShotForScriptSegment(
+      selectedScriptNode.configuration,
+      selectedScriptSegmentIndex,
+      { phase: responsePhase, hasTeachingDisplay: Boolean(selectedTeachingDisplay) },
+    ));
     headers.set("X-Learning-Agent-Question-Options", headerJson(questionOptions));
     headers.set("X-Learning-Agent-Script-Rich", headerJson(scriptedContentRich));
     headers.set(
@@ -505,11 +526,7 @@ export async function POST(request: Request) {
     }
     headers.set(
       "X-Learning-Agent-Terminal",
-      selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
-        && isTerminalScriptNode(selectedScriptNode, scriptNodes)
-        && !awaitingAnswer
-        ? "true"
-        : "false",
+      scriptedSessionCompleted ? "true" : "false",
     );
     headers.set(
       "X-Learning-Agent-Continue-Label",
@@ -517,14 +534,14 @@ export async function POST(request: Request) {
         ? (input.locale === "ko-KR" ? "다음 대사" : "继续下一句")
         : configuredText(selectedScriptNode.configuration, "continueLabel", input.locale)),
     );
-    const upcomingBufferLine = upcomingScriptNodeBufferLine({
+    const upcomingBufferLine = nodeTurnComplete ? upcomingScriptNodeBufferLine({
       selectedNode: selectedScriptNode,
       scriptNodes,
       nodeByKey,
       locale: input.locale,
       segmentIndex: selectedScriptSegmentIndex,
       segmentCount: selectedScriptSegmentCount,
-    });
+    }) : "";
     if (upcomingBufferLine) {
       headers.set("X-Learning-Agent-Buffer-Line", encodeURIComponent(upcomingBufferLine));
       const nextNode = upcomingScriptNode({

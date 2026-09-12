@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
 import {
   setApplicationTeacherAssignmentAction,
   setStaffApplicationAccessAction,
@@ -92,6 +94,13 @@ export async function ManagementApplicationPeoplePage({
         .eq("tenant_id", access.tenantId)
         .eq("student_app_id", access.appId),
     ]);
+  const planMemberships = access.app.slug === "korean"
+    ? await admin.from("institution_curriculum_plan_students")
+        .select("student_id,plan:institution_curriculum_plans!inner(student_app_id,status,tenant_id)")
+        .eq("tenant_id", access.tenantId).eq("plan.tenant_id", access.tenantId)
+        .eq("plan.student_app_id", access.appId).in("plan.status", ["published", "active"])
+    : { data: [], error: null };
+  const plannedStudents = new Set((planMemberships.data ?? []).map(row => row.student_id));
   const memberships = (membershipsResult.data ?? []) as MembershipRow[];
   const profiles = new Map(
     memberships.flatMap((membership) => {
@@ -130,6 +139,15 @@ export async function ManagementApplicationPeoplePage({
           应用授权数据暂时无法完整读取，请稍后刷新重试。
         </ManagementNotice>
       )}
+
+      {access.app.slug === "korean" && <section className="rounded-xl border p-4">
+        <CardTitleWithHint title="教学分配后的待办" description="先为学生开通应用并分配老师，再进入学习计划安排课程和考核。此处只统计当前应用的有效学生。" headingLevel={2} />
+        {planMemberships.error ? <p role="alert" className="mt-2 text-sm">计划覆盖读取失败，请刷新后重试。</p> : <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
+          <span>未分配老师：{students.filter(student => enrollmentByStudent.get(student.user_id)?.status === "active" && !assignments.some(a => a.student_id === student.user_id)).length} 人</span>
+          <span>未加入有效计划：{students.filter(student => enrollmentByStudent.get(student.user_id)?.status === "active" && !plannedStudents.has(student.user_id)).length} 人</span>
+          {access.capabilities.manageAssessments && <Link className="inline-flex min-h-11 items-center underline" href={`${access.appPath}/learning-plans`}>安排学习计划</Link>}
+        </div>}
+      </section>}
 
       <ManagementMetricStrip
         label="应用成员概况"

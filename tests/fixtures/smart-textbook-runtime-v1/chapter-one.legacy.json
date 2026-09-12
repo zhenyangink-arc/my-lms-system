@@ -1,0 +1,2611 @@
+{
+  "schemaVersion": "1.0.0",
+  "runtimeContract": "uply-runtime/1",
+  "requiredCapabilities": [
+    "layout.v1",
+    "navigation.linear.v1",
+    "progress.server.v1",
+    "block.compat.teacher.v1",
+    "block.text",
+    "block.dialogue",
+    "block.multiple_choice",
+    "block.compat.learning.v1"
+  ],
+  "snapshot": {
+    "id": "cb24e0b9-1da6-4e3a-9ea4-2ce5c5dcdee0",
+    "contentDigest": "sha256:f9fedd40b8a407e24f8929b6f7c89012337236a1b1661e93a33b6831f93aeed2",
+    "compiledAt": "2026-09-08T12:00:00Z",
+    "compilerVersion": "phase-3a-fixture-v1",
+    "scope": "chapter"
+  },
+  "textbook": {
+    "id": "7100ab2b-72b0-478e-8847-4df9b4485109",
+    "slug": "korean-level-one-smart",
+    "title": {
+      "ko-KR": "한국어 1급",
+      "zh-CN": "韩国语 1 级"
+    },
+    "appId": "korean"
+  },
+  "version": {
+    "id": "939ad4f7-3238-425e-91e9-d456c130ca68",
+    "number": 1
+  },
+  "chapter": {
+    "id": "cda24fb8-c93b-4a19-9577-4418350ff708",
+    "key": "hello",
+    "number": 1,
+    "title": {
+      "ko-KR": "안녕하세요?",
+      "zh-CN": "你好？"
+    },
+    "scenario": {
+      "ko-KR": "왕밍은 캠퍼스 언어 교환 모임에 처음 참가합니다. 국제교류센터에서 또래 학생 지민을 만나 서로 인사하고 이름과 신분을 소개한 뒤 상대의 신분을 확인하고 자연스럽게 대화를 마칩니다.",
+      "zh-CN": "王明第一次参加校园语言交换活动，在国际交流中心遇见同龄学生智敏。两人互相问候、介绍姓名与身份、确认对方身份并自然结束对话。"
+    },
+    "goal": {
+      "ko-KR": "인사, 이름, 신분, 확인 표현을 사용하여 약 30초 동안 8턴 이상의 두 역할 첫 만남 대화를 완성합니다.",
+      "zh-CN": "使用问候、姓名、身份和确认表达，完成约 30 秒、至少 8 轮的双角色初次见面对话。"
+    }
+  },
+  "localization": {
+    "defaultLocale": "zh-CN",
+    "locales": [
+      "zh-CN",
+      "ko-KR"
+    ]
+  },
+  "template": {
+    "id": "5741b20a-42f4-445b-b842-087ceede9029",
+    "key": "legacy-chapter-classroom",
+    "revision": "fixture-v1"
+  },
+  "layout": {
+    "preset": "split-classroom",
+    "desktopRatio": "30-70",
+    "splitBreakpoint": "xl",
+    "narrowOrder": [
+      "teaching",
+      "interaction"
+    ],
+    "teachingCollapsible": true,
+    "focusPolicy": "teaching-phase",
+    "supportPresentation": "inline",
+    "navigationPlacement": "bottom",
+    "density": "comfortable"
+  },
+  "regions": [
+    {
+      "id": "teaching",
+      "role": "teaching",
+      "parent": null,
+      "content": "blocks",
+      "allowedBlockTypes": [
+        "compat.teacher.v1"
+      ]
+    },
+    {
+      "id": "interaction",
+      "role": "interaction",
+      "parent": null,
+      "content": "regions",
+      "allowedBlockTypes": []
+    },
+    {
+      "id": "interaction.main",
+      "role": "main",
+      "parent": "interaction",
+      "content": "blocks",
+      "allowedBlockTypes": [
+        "text",
+        "dialogue",
+        "multiple_choice",
+        "compat.learning.v1"
+      ]
+    },
+    {
+      "id": "navigation",
+      "role": "navigation",
+      "parent": null,
+      "content": "runtime-navigation",
+      "allowedBlockTypes": []
+    }
+  ],
+  "steps": [
+    {
+      "id": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "key": "orientation",
+      "title": {
+        "zh-CN": "初次见面交流目标",
+        "ko-KR": "첫 만남의 대화 목표"
+      },
+      "order": 1,
+      "regions": [
+        {
+          "region": "teaching",
+          "blockIds": [
+            "463cb363-6d38-46a7-b8ab-40b8c0ec8784"
+          ]
+        },
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "305948f5-7985-4bc8-9012-a3ea16786159",
+            "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+            "25f73ecb-9fc5-4e02-b6ed-608031fcae27",
+            "87ccedc9-f4f3-44dc-82ca-0953c00a35e5",
+            "771d91ab-5f00-4b08-af75-c558dd8af46f",
+            "f633b146-318b-4b86-ba56-d4206e1d874f"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "1e02e69c-1324-4e27-be3c-a420aa78cb95"
+      },
+      "nextStep": "65646324-f988-4268-bc9b-4704921e57d0",
+      "teachingRef": "bb671fe7-9db1-4ab6-ad7d-90e6991aca72"
+    },
+    {
+      "id": "65646324-f988-4268-bc9b-4704921e57d0",
+      "key": "vocabulary",
+      "title": {
+        "zh-CN": "问候与人物身份",
+        "ko-KR": "인사와 인물의 신분"
+      },
+      "order": 2,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "dad96aa8-40d3-4cd6-a16a-d8625e6f1738"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "76e410dd-4144-4057-889b-f7e86fca7a1d"
+      },
+      "nextStep": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "teachingRef": null
+    },
+    {
+      "id": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "key": "grammar",
+      "title": {
+        "zh-CN": "主题助词与判断句",
+        "ko-KR": "주제 조사와 서술격 표현"
+      },
+      "order": 3,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "5010fed4-f60d-432f-82dc-ecedc025d4ec"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "ce7dd99b-f2ca-467f-a331-957c392386bd"
+      },
+      "nextStep": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "teachingRef": null
+    },
+    {
+      "id": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "key": "patterns",
+      "title": {
+        "zh-CN": "姓名与身份介绍",
+        "ko-KR": "이름과 신분 소개"
+      },
+      "order": 4,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "ac67fd2c-40a2-4521-944f-dd7f15ba1429"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "dec7bb18-1949-4563-aa30-4dcaa95c4376"
+      },
+      "nextStep": "acc3107f-7255-4d65-860b-0968491f293a",
+      "teachingRef": null
+    },
+    {
+      "id": "acc3107f-7255-4d65-860b-0968491f293a",
+      "key": "dialogue",
+      "title": {
+        "zh-CN": "初次见面对话结构",
+        "ko-KR": "첫 만남의 대화 구조"
+      },
+      "order": 5,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "86034dce-58c1-4b7e-bdc9-a169d163534b"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "6bed19a8-9692-4750-b110-c8bb09af411f"
+      },
+      "nextStep": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "teachingRef": null
+    },
+    {
+      "id": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "key": "listen_speak",
+      "title": {
+        "zh-CN": "听辨与口头表达",
+        "ko-KR": "듣기 구별과 말하기"
+      },
+      "order": 6,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "03fab82e-e91b-45a3-82e0-8ecbf9966f92"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "aef9dd9d-717a-44f4-8f4b-f065a92d1c7c"
+      },
+      "nextStep": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "teachingRef": null
+    },
+    {
+      "id": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "key": "read_write",
+      "title": {
+        "zh-CN": "个人介绍读写",
+        "ko-KR": "자기소개 읽기와 쓰기"
+      },
+      "order": 7,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "4fde6880-7b70-4dc6-abd2-e62a53803534"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "ce05b82d-f811-41a5-b649-60d14bcaf7f2"
+      },
+      "nextStep": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "teachingRef": null
+    },
+    {
+      "id": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "key": "review",
+      "title": {
+        "zh-CN": "独立交流能力",
+        "ko-KR": "독립적인 의사소통 능력"
+      },
+      "order": 8,
+      "regions": [
+        {
+          "region": "interaction.main",
+          "blockIds": [
+            "0eac0156-6591-4a49-bf3e-55f6022b380d"
+          ]
+        }
+      ],
+      "completion": {
+        "kind": "server",
+        "policyRef": "c1a72911-b382-4815-a31a-4c0474ea5370"
+      },
+      "nextStep": null,
+      "teachingRef": null
+    }
+  ],
+  "blocks": [
+    {
+      "id": "463cb363-6d38-46a7-b8ab-40b8c0ec8784",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "compat.teacher.v1",
+      "region": "teaching",
+      "order": 1,
+      "props": {
+        "teachingRef": "bb671fe7-9db1-4ab6-ad7d-90e6991aca72",
+        "capsuleRef": "02e91b35-061a-4e5e-923f-2a8237d39b0e"
+      },
+      "completion": {
+        "kind": "none"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:463cb363-6d38-46a7-b8ab-40b8c0ec8784"
+    },
+    {
+      "id": "305948f5-7985-4bc8-9012-a3ea16786159",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "text",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "첫 만남에서 어떻게 말을 시작할까요?",
+        "zh-CN": "第一次见面，怎样开口？"
+      },
+      "props": {
+        "paragraphs": [
+          {
+            "ko-KR": "왕밍은 국제교류센터에서 지민을 처음 만나 인사하고 서로의 이름과 학생 신분을 확인합니다.",
+            "zh-CN": "王明在校园国际交流中心第一次见到智敏，需要先问候，再交换双方姓名与学生身份。"
+          }
+        ]
+      },
+      "completion": {
+        "kind": "none"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:305948f5-7985-4bc8-9012-a3ea16786159"
+    },
+    {
+      "id": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "dialogue",
+      "region": "interaction.main",
+      "order": 2,
+      "props": {
+        "groups": [
+          {
+            "id": "greeting",
+            "title": {
+              "ko-KR": "인사",
+              "zh-CN": "问候"
+            },
+            "lines": [
+              {
+                "id": "03d1694d-b13e-4098-bc06-e0f9edd2fb32",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "안녕하세요?"
+                },
+                "translation": {
+                  "zh-CN": "你好？"
+                }
+              },
+              {
+                "id": "0ef4b350-92a2-4d31-ab39-a42861f813f8",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "네, 안녕하세요?"
+                },
+                "translation": {
+                  "zh-CN": "嗯，你好？"
+                }
+              }
+            ]
+          },
+          {
+            "id": "introductions",
+            "title": {
+              "ko-KR": "자기소개",
+              "zh-CN": "自我介绍"
+            },
+            "lines": [
+              {
+                "id": "a71da935-d404-4416-a809-472449503f8e",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "저는 왕밍이에요."
+                },
+                "translation": {
+                  "zh-CN": "我是王明。"
+                }
+              },
+              {
+                "id": "78a6c565-efa8-4405-8178-e02a5df4363b",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "저는 지민이에요."
+                },
+                "translation": {
+                  "zh-CN": "我是智敏。"
+                }
+              }
+            ]
+          },
+          {
+            "id": "student-status",
+            "title": {
+              "ko-KR": "신분 확인",
+              "zh-CN": "确认身份"
+            },
+            "lines": [
+              {
+                "id": "e7288c9f-e37f-49d0-bdb3-0188902b1e00",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "지민 씨는 학생이에요?"
+                },
+                "translation": {
+                  "zh-CN": "智敏是学生吗？"
+                }
+              },
+              {
+                "id": "d8db737b-56b4-4dae-a9e9-4e486cf785e3",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "네, 학생이에요."
+                },
+                "translation": {
+                  "zh-CN": "是的，是学生。"
+                }
+              }
+            ]
+          },
+          {
+            "id": "complete-first-meeting",
+            "title": {
+              "ko-KR": "전체 대화",
+              "zh-CN": "完整对话"
+            },
+            "lines": [
+              {
+                "id": "622acc53-ae43-4b34-ba22-d7c2437c9619",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "안녕하세요?"
+                },
+                "translation": {
+                  "zh-CN": "你好？"
+                }
+              },
+              {
+                "id": "bf100a1d-4a77-45b0-8e53-083cad2b795d",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "네, 안녕하세요?"
+                },
+                "translation": {
+                  "zh-CN": "嗯，你好？"
+                }
+              },
+              {
+                "id": "b5ba61ed-b0f7-40f5-9d7d-1536e5b90c82",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "저는 왕밍이에요."
+                },
+                "translation": {
+                  "zh-CN": "我是王明。"
+                }
+              },
+              {
+                "id": "3053d82e-7fb8-43b9-958b-a21ae4182504",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "저는 지민이에요."
+                },
+                "translation": {
+                  "zh-CN": "我是智敏。"
+                }
+              },
+              {
+                "id": "1ac0284b-d043-49a4-8961-f42cade2062f",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "지민 씨는 학생이에요?"
+                },
+                "translation": {
+                  "zh-CN": "智敏是学生吗？"
+                }
+              },
+              {
+                "id": "a3d9f5bd-9c8c-4d49-b4e4-889406913833",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "네, 학생이에요."
+                },
+                "translation": {
+                  "zh-CN": "是的，是学生。"
+                }
+              },
+              {
+                "id": "64be4bab-ffe9-4036-beba-1418171898be",
+                "speaker": {
+                  "zh-CN": "王明"
+                },
+                "text": {
+                  "ko-KR": "만나서 반가워요."
+                },
+                "translation": {
+                  "zh-CN": "很高兴认识你。"
+                }
+              },
+              {
+                "id": "e507ccbc-21ef-4c1c-baf1-413510c67cc0",
+                "speaker": {
+                  "zh-CN": "智敏"
+                },
+                "text": {
+                  "ko-KR": "네, 저도 만나서 반가워요."
+                },
+                "translation": {
+                  "zh-CN": "嗯，我也很高兴认识你。"
+                }
+              }
+            ]
+          }
+        ]
+      },
+      "completion": {
+        "kind": "none"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c"
+    },
+    {
+      "id": "25f73ecb-9fc5-4e02-b6ed-608031fcae27",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "multiple_choice",
+      "region": "interaction.main",
+      "order": 3,
+      "props": {
+        "activityRef": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+        "presentation": "single"
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "eddf124a-9fd5-47ab-83fd-e9f14445be9a"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:25f73ecb-9fc5-4e02-b6ed-608031fcae27"
+    },
+    {
+      "id": "87ccedc9-f4f3-44dc-82ca-0953c00a35e5",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "multiple_choice",
+      "region": "interaction.main",
+      "order": 4,
+      "props": {
+        "activityRef": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+        "presentation": "single"
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "429a7c76-56db-4947-9cb0-d4aa1b5a3122"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:87ccedc9-f4f3-44dc-82ca-0953c00a35e5"
+    },
+    {
+      "id": "771d91ab-5f00-4b08-af75-c558dd8af46f",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "multiple_choice",
+      "region": "interaction.main",
+      "order": 5,
+      "props": {
+        "activityRef": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+        "presentation": "single"
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "3cb707c3-1609-49b0-ad13-d824b858d176"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:771d91ab-5f00-4b08-af75-c558dd8af46f"
+    },
+    {
+      "id": "dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "stepId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "누구인지, 무엇을 하는지 먼저 이해하기",
+        "zh-CN": "先听懂“谁”和“做什么”"
+      },
+      "props": {
+        "capsuleRef": "24790dcc-cc0d-45ad-bb60-c8007c07b11b",
+        "activityRefs": [
+          "8a7f51e8-e982-47da-ae40-ea7698986ec4"
+        ],
+        "progressRefs": [
+          "76e410dd-4144-4057-889b-f7e86fca7a1d",
+          "e221f331-ea76-4c06-bad6-e2729570f052",
+          "99ea93bb-5c8a-4be6-bd19-22be0144fae8"
+        ],
+        "parts": [
+          {
+            "id": "9c0dc524-8368-4005-8773-1cbe7e586363",
+            "title": {
+              "zh-CN": "情景词汇",
+              "ko-KR": "장면 어휘"
+            }
+          },
+          {
+            "id": "d453f14f-d00a-42bb-95be-61faf82c2d57",
+            "title": {
+              "zh-CN": "词汇练习",
+              "ko-KR": "어휘 연습"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "76e410dd-4144-4057-889b-f7e86fca7a1d"
+      },
+      "runtimeTarget": "step:65646324-f988-4268-bc9b-4704921e57d0/block:dad96aa8-40d3-4cd6-a16a-d8625e6f1738"
+    },
+    {
+      "id": "5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "stepId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "이름과 신분을 완전하게 말하기",
+        "zh-CN": "把姓名和身份说完整"
+      },
+      "props": {
+        "capsuleRef": "bc176d04-a879-4590-a844-cf2c6e65587d",
+        "activityRefs": [
+          "3ad2226d-6490-4f6d-8743-2d1d9989d3e9",
+          "70ac0f5d-917d-48e1-a00d-b0ed3bfa8509",
+          "d2329ff4-72c2-4feb-bf62-3301ce769567"
+        ],
+        "progressRefs": [
+          "ce7dd99b-f2ca-467f-a331-957c392386bd",
+          "4549ff74-ca60-4bf4-9202-7e5b09284055",
+          "96c2f8d6-0b8f-47b5-bdc8-f4cc460f830d"
+        ],
+        "parts": [
+          {
+            "id": "e9286316-30ca-4df7-a9ec-1a0bf5aeb3fb",
+            "title": {
+              "zh-CN": "语法理解",
+              "ko-KR": "문법 이해"
+            }
+          },
+          {
+            "id": "bea8319e-72e5-4057-b0e7-aa6b158f0b50",
+            "title": {
+              "zh-CN": "语法练习",
+              "ko-KR": "문법 연습"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "ce7dd99b-f2ca-467f-a331-957c392386bd"
+      },
+      "runtimeTarget": "step:ddb8b68c-5eca-478c-aa97-26ef7f7a24ab/block:5010fed4-f60d-432f-82dc-ecedc025d4ec"
+    },
+    {
+      "id": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "stepId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "바꾸어 말하기에서 스스로 말하기까지",
+        "zh-CN": "从照着换到自己说"
+      },
+      "props": {
+        "capsuleRef": "663cd675-b3cb-439f-b75e-77c3901ad8ed",
+        "activityRefs": [
+          "5b9bf18c-bd37-4df2-9f06-2599fc695e1c",
+          "08056544-a7d0-41c0-998c-1a2a39978125",
+          "897f6b9a-e955-401d-8127-46a5adfc708a"
+        ],
+        "progressRefs": [
+          "dec7bb18-1949-4563-aa30-4dcaa95c4376",
+          "59edf4af-b5cf-4e65-b17c-f3717dbd639a",
+          "b0fa4026-dcf7-42f5-bdb1-d6d9c677a9db"
+        ],
+        "parts": [
+          {
+            "id": "e5921c04-5ab4-49e5-b10a-2a6c5493bf36",
+            "title": {
+              "zh-CN": "句型库",
+              "ko-KR": "문형 모음"
+            }
+          },
+          {
+            "id": "d6d1b76e-bae8-4c22-bcca-99df12fe659c",
+            "title": {
+              "zh-CN": "替换操练",
+              "ko-KR": "대치 연습"
+            }
+          },
+          {
+            "id": "185f5652-1eb9-4a0e-b78a-1b243f83cd4f",
+            "title": {
+              "zh-CN": "组合输出",
+              "ko-KR": "조합과 출력"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "dec7bb18-1949-4563-aa30-4dcaa95c4376"
+      },
+      "runtimeTarget": "step:016124f4-00b8-4ca5-9426-b92a0417a2a6/block:ac67fd2c-40a2-4521-944f-dd7f15ba1429"
+    },
+    {
+      "id": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "두 사람이 실제로 번갈아 말하기",
+        "zh-CN": "两个人真正轮流说"
+      },
+      "props": {
+        "capsuleRef": "0b26eb2f-f92c-4434-8088-b111951b9305",
+        "activityRefs": [
+          "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+          "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+          "0b1e3713-dfa7-4c89-8504-ae1992e2d340"
+        ],
+        "progressRefs": [
+          "6bed19a8-9692-4750-b110-c8bb09af411f",
+          "46396226-bc1c-4c9e-b833-d65083f50e24",
+          "79384950-209e-44e4-b8dc-cf2cbc152ada"
+        ],
+        "parts": [
+          {
+            "id": "27ab1032-f6b1-4dc3-9a52-1eebec92875e",
+            "title": {
+              "zh-CN": "对话说明",
+              "ko-KR": "대화 안내"
+            }
+          },
+          {
+            "id": "a4e96874-501c-487b-8f4f-05850b447503",
+            "title": {
+              "zh-CN": "场景切换",
+              "ko-KR": "장면 대화"
+            }
+          },
+          {
+            "id": "b13645fa-73a3-420a-a288-dbd9821433dc",
+            "title": {
+              "zh-CN": "理解与回应",
+              "ko-KR": "이해와 응답"
+            }
+          },
+          {
+            "id": "2ddad5f9-823d-4742-b760-6dc0d9965729",
+            "title": {
+              "zh-CN": "角色实战",
+              "ko-KR": "역할 실전"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "6bed19a8-9692-4750-b110-c8bb09af411f"
+      },
+      "runtimeTarget": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b"
+    },
+    {
+      "id": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "신분을 듣고 30초 대화 완성하기",
+        "zh-CN": "听出身份，再完成 30 秒交流"
+      },
+      "props": {
+        "capsuleRef": "16e4780a-4847-412a-9139-6e7ea2b73df7",
+        "activityRefs": [
+          "6876a867-ae78-4336-9d3a-1745a351b6ee",
+          "d52694a4-5337-4971-ab48-32a7c6821ea0"
+        ],
+        "progressRefs": [
+          "aef9dd9d-717a-44f4-8f4b-f065a92d1c7c",
+          "82de1c4b-ee6f-4351-a906-7a2146cbb811",
+          "ba6ba71c-bbbb-4371-bb60-4ad2ce5835f8"
+        ],
+        "parts": [
+          {
+            "id": "de528047-7a51-4896-a111-8e9e89bc394d",
+            "title": {
+              "zh-CN": "听前准备",
+              "ko-KR": "듣기 준비"
+            }
+          },
+          {
+            "id": "cde31ce6-4de9-4186-8247-a184936aa59d",
+            "title": {
+              "zh-CN": "听辨信息",
+              "ko-KR": "정보 듣기"
+            }
+          },
+          {
+            "id": "3b4d6f92-79b8-4de7-87b8-3f54d5271610",
+            "title": {
+              "zh-CN": "跟读复现",
+              "ko-KR": "따라 말하기"
+            }
+          },
+          {
+            "id": "987244ba-5451-4142-9bb4-248a63b97cfc",
+            "title": {
+              "zh-CN": "独立表达",
+              "ko-KR": "독립 말하기"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "aef9dd9d-717a-44f4-8f4b-f065a92d1c7c"
+      },
+      "runtimeTarget": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92"
+    },
+    {
+      "id": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "새 회원 카드를 읽고 자기소개 쓰기",
+        "zh-CN": "读一张新成员卡，写自己的介绍"
+      },
+      "props": {
+        "capsuleRef": "aca76184-5c69-435b-9f73-fded0bc6613f",
+        "activityRefs": [
+          "7ae06811-48ed-49a0-83ad-03d613a16e6b",
+          "ed75866c-2a53-4538-90ad-e71c2737dfef"
+        ],
+        "progressRefs": [
+          "ce05b82d-f811-41a5-b649-60d14bcaf7f2",
+          "5f11e6fc-528f-49d4-b6fc-c8c6e7b5fae0",
+          "89761494-6604-4a9c-a370-30d52bdd870b"
+        ],
+        "parts": [
+          {
+            "id": "3b302bbc-1103-4815-8f6d-193da472a6a6",
+            "title": {
+              "zh-CN": "阅读资料",
+              "ko-KR": "읽기 자료"
+            }
+          },
+          {
+            "id": "b9283b7b-1b11-4273-8615-81429d04e45b",
+            "title": {
+              "zh-CN": "信息理解",
+              "ko-KR": "정보 이해"
+            }
+          },
+          {
+            "id": "61214a19-9519-4f39-9d47-f1f6f2e93b55",
+            "title": {
+              "zh-CN": "写作搭建",
+              "ko-KR": "쓰기 구성"
+            }
+          },
+          {
+            "id": "788df2f8-dc8a-4c3c-8143-9978360d2611",
+            "title": {
+              "zh-CN": "独立写作",
+              "ko-KR": "독립 쓰기"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "ce05b82d-f811-41a5-b649-60d14bcaf7f2"
+      },
+      "runtimeTarget": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534"
+    },
+    {
+      "id": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "stepId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 1,
+      "title": {
+        "ko-KR": "첫 만남을 혼자 완성할 수 있나요?",
+        "zh-CN": "我能独立完成第一次见面吗？"
+      },
+      "props": {
+        "capsuleRef": "830aa735-7d8f-42a6-ad0f-65a54405132e",
+        "activityRefs": [
+          "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+          "d954746a-9f45-40ce-9c09-f639a7fe03bc"
+        ],
+        "progressRefs": [
+          "c1a72911-b382-4815-a31a-4c0474ea5370",
+          "9988f678-e962-4f12-bc02-5c7d22537f92",
+          "fedb91b4-93cd-478e-9307-0e4031d7f7f2"
+        ],
+        "parts": [
+          {
+            "id": "d3867ad1-77ea-4c81-b12b-1baf8a5dec06",
+            "title": {
+              "zh-CN": "综合自测",
+              "ko-KR": "종합 점검"
+            }
+          },
+          {
+            "id": "6f023113-e9cb-4396-87d2-0eb7918f90fe",
+            "title": {
+              "zh-CN": "能力自查",
+              "ko-KR": "능력 점검"
+            }
+          },
+          {
+            "id": "ca446a2f-0ffd-4e74-be21-879946ce1f37",
+            "title": {
+              "zh-CN": "复盘结果",
+              "ko-KR": "복습 결과"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "server",
+        "policyRef": "c1a72911-b382-4815-a31a-4c0474ea5370"
+      },
+      "runtimeTarget": "step:546b7ae4-142c-47c0-b4f9-04b3d5c02c3d/block:0eac0156-6591-4a49-bf3e-55f6022b380d"
+    },
+    {
+      "id": "f633b146-318b-4b86-ba56-d4206e1d874f",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "type": "compat.learning.v1",
+      "region": "interaction.main",
+      "order": 6,
+      "title": {
+        "zh-CN": "学习目标与提示",
+        "ko-KR": "학습 목표와 안내"
+      },
+      "props": {
+        "capsuleRef": "6f286cf9-e13f-497e-9795-45cf51f9f2cd",
+        "activityRefs": [],
+        "progressRefs": [
+          "1e02e69c-1324-4e27-be3c-a420aa78cb95"
+        ],
+        "parts": [
+          {
+            "id": "cab9bcab-a492-41a1-b0f3-807608a2162e",
+            "title": {
+              "zh-CN": "学习目标",
+              "ko-KR": "학습 목표"
+            }
+          }
+        ]
+      },
+      "completion": {
+        "kind": "none"
+      },
+      "runtimeTarget": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:f633b146-318b-4b86-ba56-d4206e1d874f"
+    }
+  ],
+  "navigation": {
+    "region": "navigation",
+    "entryStep": "42665398-c41e-4db8-9f0e-9626e126cba8",
+    "items": [
+      "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "65646324-f988-4268-bc9b-4704921e57d0",
+      "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "acc3107f-7255-4d65-860b-0968491f293a",
+      "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d"
+    ],
+    "mode": "linear",
+    "access": "free",
+    "previous": "allowed",
+    "autoAdvance": false,
+    "resume": "stable-id"
+  },
+  "completion": {
+    "authority": "server",
+    "chapterPolicyRef": "88d278bd-928d-4383-b483-9c2cf229097e"
+  },
+  "runtimeTargets": [
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:463cb363-6d38-46a7-b8ab-40b8c0ec8784",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "463cb363-6d38-46a7-b8ab-40b8c0ec8784",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:305948f5-7985-4bc8-9012-a3ea16786159",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "305948f5-7985-4bc8-9012-a3ea16786159",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:25f73ecb-9fc5-4e02-b6ed-608031fcae27",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "25f73ecb-9fc5-4e02-b6ed-608031fcae27",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened",
+        "response-submitted"
+      ],
+      "verification": "server-attempt"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:87ccedc9-f4f3-44dc-82ca-0953c00a35e5",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "87ccedc9-f4f3-44dc-82ca-0953c00a35e5",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened",
+        "response-submitted"
+      ],
+      "verification": "server-attempt"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:771d91ab-5f00-4b08-af75-c558dd8af46f",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "771d91ab-5f00-4b08-af75-c558dd8af46f",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened",
+        "response-submitted"
+      ],
+      "verification": "server-attempt"
+    },
+    {
+      "id": "step:65646324-f988-4268-bc9b-4704921e57d0/block:dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "stepId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "blockId": "dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:ddb8b68c-5eca-478c-aa97-26ef7f7a24ab/block:5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "stepId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "blockId": "5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:016124f4-00b8-4ca5-9426-b92a0417a2a6/block:ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "stepId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "blockId": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "blockId": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "blockId": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "blockId": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:546b7ae4-142c-47c0-b4f9-04b3d5c02c3d/block:0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "stepId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "blockId": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:f633b146-318b-4b86-ba56-d4206e1d874f",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "f633b146-318b-4b86-ba56-d4206e1d874f",
+      "partId": null,
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:greeting",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "greeting",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:03d1694d-b13e-4098-bc06-e0f9edd2fb32",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "03d1694d-b13e-4098-bc06-e0f9edd2fb32",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:0ef4b350-92a2-4d31-ab39-a42861f813f8",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "0ef4b350-92a2-4d31-ab39-a42861f813f8",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:introductions",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "introductions",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:a71da935-d404-4416-a809-472449503f8e",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "a71da935-d404-4416-a809-472449503f8e",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:78a6c565-efa8-4405-8178-e02a5df4363b",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "78a6c565-efa8-4405-8178-e02a5df4363b",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:student-status",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "student-status",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:e7288c9f-e37f-49d0-bdb3-0188902b1e00",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "e7288c9f-e37f-49d0-bdb3-0188902b1e00",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:d8db737b-56b4-4dae-a9e9-4e486cf785e3",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "d8db737b-56b4-4dae-a9e9-4e486cf785e3",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:complete-first-meeting",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "complete-first-meeting",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:622acc53-ae43-4b34-ba22-d7c2437c9619",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "622acc53-ae43-4b34-ba22-d7c2437c9619",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:bf100a1d-4a77-45b0-8e53-083cad2b795d",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "bf100a1d-4a77-45b0-8e53-083cad2b795d",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:b5ba61ed-b0f7-40f5-9d7d-1536e5b90c82",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "b5ba61ed-b0f7-40f5-9d7d-1536e5b90c82",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:3053d82e-7fb8-43b9-958b-a21ae4182504",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "3053d82e-7fb8-43b9-958b-a21ae4182504",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:1ac0284b-d043-49a4-8961-f42cade2062f",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "1ac0284b-d043-49a4-8961-f42cade2062f",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:a3d9f5bd-9c8c-4d49-b4e4-889406913833",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "a3d9f5bd-9c8c-4d49-b4e4-889406913833",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:64be4bab-ffe9-4036-beba-1418171898be",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "64be4bab-ffe9-4036-beba-1418171898be",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:3b255f0e-1b3b-4674-99f3-9d8a05691b2c/part:e507ccbc-21ef-4c1c-baf1-413510c67cc0",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "3b255f0e-1b3b-4674-99f3-9d8a05691b2c",
+      "partId": "e507ccbc-21ef-4c1c-baf1-413510c67cc0",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:65646324-f988-4268-bc9b-4704921e57d0/block:dad96aa8-40d3-4cd6-a16a-d8625e6f1738/part:9c0dc524-8368-4005-8773-1cbe7e586363",
+      "stepId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "blockId": "dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "partId": "9c0dc524-8368-4005-8773-1cbe7e586363",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:65646324-f988-4268-bc9b-4704921e57d0/block:dad96aa8-40d3-4cd6-a16a-d8625e6f1738/part:d453f14f-d00a-42bb-95be-61faf82c2d57",
+      "stepId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "blockId": "dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "partId": "d453f14f-d00a-42bb-95be-61faf82c2d57",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:ddb8b68c-5eca-478c-aa97-26ef7f7a24ab/block:5010fed4-f60d-432f-82dc-ecedc025d4ec/part:e9286316-30ca-4df7-a9ec-1a0bf5aeb3fb",
+      "stepId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "blockId": "5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "partId": "e9286316-30ca-4df7-a9ec-1a0bf5aeb3fb",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:ddb8b68c-5eca-478c-aa97-26ef7f7a24ab/block:5010fed4-f60d-432f-82dc-ecedc025d4ec/part:bea8319e-72e5-4057-b0e7-aa6b158f0b50",
+      "stepId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "blockId": "5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "partId": "bea8319e-72e5-4057-b0e7-aa6b158f0b50",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:016124f4-00b8-4ca5-9426-b92a0417a2a6/block:ac67fd2c-40a2-4521-944f-dd7f15ba1429/part:e5921c04-5ab4-49e5-b10a-2a6c5493bf36",
+      "stepId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "blockId": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "partId": "e5921c04-5ab4-49e5-b10a-2a6c5493bf36",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:016124f4-00b8-4ca5-9426-b92a0417a2a6/block:ac67fd2c-40a2-4521-944f-dd7f15ba1429/part:d6d1b76e-bae8-4c22-bcca-99df12fe659c",
+      "stepId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "blockId": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "partId": "d6d1b76e-bae8-4c22-bcca-99df12fe659c",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:016124f4-00b8-4ca5-9426-b92a0417a2a6/block:ac67fd2c-40a2-4521-944f-dd7f15ba1429/part:185f5652-1eb9-4a0e-b78a-1b243f83cd4f",
+      "stepId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "blockId": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "partId": "185f5652-1eb9-4a0e-b78a-1b243f83cd4f",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b/part:27ab1032-f6b1-4dc3-9a52-1eebec92875e",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "blockId": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "partId": "27ab1032-f6b1-4dc3-9a52-1eebec92875e",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b/part:a4e96874-501c-487b-8f4f-05850b447503",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "blockId": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "partId": "a4e96874-501c-487b-8f4f-05850b447503",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b/part:b13645fa-73a3-420a-a288-dbd9821433dc",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "blockId": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "partId": "b13645fa-73a3-420a-a288-dbd9821433dc",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:acc3107f-7255-4d65-860b-0968491f293a/block:86034dce-58c1-4b7e-bdc9-a169d163534b/part:2ddad5f9-823d-4742-b760-6dc0d9965729",
+      "stepId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "blockId": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "partId": "2ddad5f9-823d-4742-b760-6dc0d9965729",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92/part:de528047-7a51-4896-a111-8e9e89bc394d",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "blockId": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "partId": "de528047-7a51-4896-a111-8e9e89bc394d",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92/part:cde31ce6-4de9-4186-8247-a184936aa59d",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "blockId": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "partId": "cde31ce6-4de9-4186-8247-a184936aa59d",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92/part:3b4d6f92-79b8-4de7-87b8-3f54d5271610",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "blockId": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "partId": "3b4d6f92-79b8-4de7-87b8-3f54d5271610",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:04226145-7dd7-4a27-a4f2-03ec766f0f1a/block:03fab82e-e91b-45a3-82e0-8ecbf9966f92/part:987244ba-5451-4142-9bb4-248a63b97cfc",
+      "stepId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "blockId": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "partId": "987244ba-5451-4142-9bb4-248a63b97cfc",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534/part:3b302bbc-1103-4815-8f6d-193da472a6a6",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "blockId": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "partId": "3b302bbc-1103-4815-8f6d-193da472a6a6",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534/part:b9283b7b-1b11-4273-8615-81429d04e45b",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "blockId": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "partId": "b9283b7b-1b11-4273-8615-81429d04e45b",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534/part:61214a19-9519-4f39-9d47-f1f6f2e93b55",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "blockId": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "partId": "61214a19-9519-4f39-9d47-f1f6f2e93b55",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:01e528a1-9c86-4dd3-baa6-ee87851ac521/block:4fde6880-7b70-4dc6-abd2-e62a53803534/part:788df2f8-dc8a-4c3c-8143-9978360d2611",
+      "stepId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "blockId": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "partId": "788df2f8-dc8a-4c3c-8143-9978360d2611",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:546b7ae4-142c-47c0-b4f9-04b3d5c02c3d/block:0eac0156-6591-4a49-bf3e-55f6022b380d/part:d3867ad1-77ea-4c81-b12b-1baf8a5dec06",
+      "stepId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "blockId": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "partId": "d3867ad1-77ea-4c81-b12b-1baf8a5dec06",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:546b7ae4-142c-47c0-b4f9-04b3d5c02c3d/block:0eac0156-6591-4a49-bf3e-55f6022b380d/part:6f023113-e9cb-4396-87d2-0eb7918f90fe",
+      "stepId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "blockId": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "partId": "6f023113-e9cb-4396-87d2-0eb7918f90fe",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:546b7ae4-142c-47c0-b4f9-04b3d5c02c3d/block:0eac0156-6591-4a49-bf3e-55f6022b380d/part:ca446a2f-0ffd-4e74-be21-879946ce1f37",
+      "stepId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "blockId": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "partId": "ca446a2f-0ffd-4e74-be21-879946ce1f37",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    },
+    {
+      "id": "step:42665398-c41e-4db8-9f0e-9626e126cba8/block:f633b146-318b-4b86-ba56-d4206e1d874f/part:cab9bcab-a492-41a1-b0f3-807608a2162e",
+      "stepId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "blockId": "f633b146-318b-4b86-ba56-d4206e1d874f",
+      "partId": "cab9bcab-a492-41a1-b0f3-807608a2162e",
+      "capabilities": [
+        "reveal",
+        "focus",
+        "highlight",
+        "open"
+      ],
+      "acceptedEvents": [
+        "opened"
+      ],
+      "verification": "ui-only"
+    }
+  ],
+  "mediaRefs": [],
+  "activityRefs": [
+    {
+      "id": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "activityId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "왕밍과 지민이 처음 만났을 때 먼저 무슨 말을 했어요?",
+          "zh-CN": "王明和智敏初次见面时先说了什么？"
+        },
+        "instruction": {
+          "ko-KR": "1쪽 대화에서 두 사람이 처음 만났을 때 한 인사를 고르세요. 점수에는 포함되지 않습니다.",
+          "zh-CN": "根据第 1 页的对话选择两人初次见面时的问候；本题不计分。"
+        },
+        "options": [
+          {
+            "id": "965e3118-987e-409b-bd14-6937f9b0697e",
+            "text": {
+              "ko-KR": "안녕하세요?"
+            }
+          },
+          {
+            "id": "3ff1527d-39e5-4ffa-a3b6-9b213d1c03cd",
+            "text": {
+              "ko-KR": "얼마예요?"
+            }
+          },
+          {
+            "id": "544c8d52-5329-4c24-ad84-9d682200aab3",
+            "text": {
+              "ko-KR": "어디에 있어요?"
+            }
+          },
+          {
+            "id": "3f7089e2-e641-42e1-a09e-614f5cb241b7",
+            "text": {
+              "ko-KR": "감기에 걸렸어요."
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "ed75866c-2a53-4538-90ad-e71c2737dfef",
+      "activityId": "ed75866c-2a53-4538-90ad-e71c2737dfef",
+      "revision": "capture-20260908",
+      "type": "writing",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "언어 교환 모임의 새 회원 소개를 4~5문장으로 쓰세요.",
+          "zh-CN": "为语言交换社团写一张 4—5 句的新成员介绍卡。"
+        },
+        "instruction": {
+          "ko-KR": "예시를 베끼지 말고 안전한 자기 정보를 쓴 뒤 네 가지 평가 기준을 점검하세요.",
+          "zh-CN": "写安全的原创信息，不复制示范；完成四维量规自查。"
+        },
+        "options": [],
+        "settings": {
+          "rubric": []
+        }
+      }
+    },
+    {
+      "id": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "activityId": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "revision": "capture-20260908",
+      "type": "multiple_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "‘첫 만남 대화’를 직접 완성하는 데 도움이 되는 표현을 모두 고르세요.",
+          "zh-CN": "选择所有能直接帮助完成“初次见面对话”的表达。"
+        },
+        "instruction": {
+          "ko-KR": "맞는 표현을 모두 고르고 틀린 표현은 고르지 않아야 합니다.",
+          "zh-CN": "全部选对且不多选才算正确。"
+        },
+        "options": [
+          {
+            "id": "d6d69209-ba6b-4969-941b-ca50f1570082",
+            "text": {
+              "ko-KR": "안녕하세요?"
+            }
+          },
+          {
+            "id": "a108ef3d-ecfc-4159-8106-213538ade800",
+            "text": {
+              "ko-KR": "저는 학생이에요."
+            }
+          },
+          {
+            "id": "a720b114-0c9a-4381-92ca-e157ba5d0db6",
+            "text": {
+              "ko-KR": "만나서 반가워요."
+            }
+          },
+          {
+            "id": "eed2eb65-df4b-4511-b8d0-2333e7236f49",
+            "text": {
+              "ko-KR": "감기에 걸렸어요."
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "8a7f51e8-e982-47da-ae40-ea7698986ec4",
+      "activityId": "8a7f51e8-e982-47da-ae40-ea7698986ec4",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "핵심 어휘 12개의 뜻을 모두 확인하세요.",
+          "zh-CN": "完成 12 个核心词的词义练习。"
+        },
+        "instruction": {
+          "ko-KR": "각 단어에 맞는 뜻을 하나씩 고르고 12문항을 모두 푼 뒤 제출하세요.",
+          "zh-CN": "每个单词选择一个正确释义，12 题全部作答后统一提交。"
+        },
+        "options": [],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "activityId": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "revision": "capture-20260908",
+      "type": "ordering",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "네 개의 말덩이로 자연스러운 자기소개 만들기",
+          "zh-CN": "四个语块排成自然的自我介绍"
+        },
+        "instruction": {
+          "ko-KR": "문장을 차례로 골라 ‘인사—이름—신분—마무리’ 표현 흐름을 완성하세요.",
+          "zh-CN": "依次选择句子，完成“问候—姓名—身份—结束语”的表达路径。"
+        },
+        "options": [
+          {
+            "id": "a8181096-84fa-46b4-a312-f2d6d4cfbd6a",
+            "text": {
+              "ko-KR": "만나서 반가워요."
+            }
+          },
+          {
+            "id": "feb17b59-c181-46f5-8891-5c87f2cf342c",
+            "text": {
+              "ko-KR": "저는 학생이에요."
+            }
+          },
+          {
+            "id": "056608b3-51c2-4d1f-9a4d-e5d10af0097d",
+            "text": {
+              "ko-KR": "안녕하세요?"
+            }
+          },
+          {
+            "id": "c62a3344-7477-430e-9d27-968d43e10322",
+            "text": {
+              "ko-KR": "저는 리나예요."
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "activityId": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "두 장면의 신분 정보를 모두 바르게 정리한 것은 무엇이에요?",
+          "zh-CN": "哪一组选项同时正确概括两个场景的身份信息？"
+        },
+        "instruction": {
+          "ko-KR": "‘장면 1의 공통 신분／장면 2에서 처음 짐작한 신분’의 맞는 조합을 고르세요.",
+          "zh-CN": "选择“场景 1 共同身份／场景 2 最初误认身份”的正确组合。"
+        },
+        "options": [
+          {
+            "id": "468a7e28-6015-45e2-a4fb-a0d8c24bf8ed",
+            "text": {
+              "ko-KR": "학생／선생님"
+            }
+          },
+          {
+            "id": "b014b818-5911-4e88-85a1-85ae76015f97",
+            "text": {
+              "ko-KR": "학생／회사원"
+            }
+          },
+          {
+            "id": "b16f8cb6-e2c6-4e48-b344-137b0e5c0939",
+            "text": {
+              "ko-KR": "선생님／학생"
+            }
+          },
+          {
+            "id": "ce08132d-5efb-4ad0-a995-52e7f64058bd",
+            "text": {
+              "ko-KR": "친구／의사"
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "activityId": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "새 친구가 만나서 반가워요.라고 말했습니다. 가장 자연스러운 대답은 무엇이에요?",
+          "zh-CN": "新同学说 만나서 반가워요.，哪一句回应最自然？"
+        },
+        "instruction": {
+          "ko-KR": "상대의 말에 답하면서 첫 만남의 높임말에 맞는 문장을 고르세요.",
+          "zh-CN": "选择既回应对方、又符合初次见面礼貌体的一句。"
+        },
+        "options": [
+          {
+            "id": "bf440993-54fd-4729-90d9-49666526d167",
+            "text": {
+              "ko-KR": "저도 반가워요."
+            }
+          },
+          {
+            "id": "9de7b103-616b-47d0-af0b-03ae24edcb41",
+            "text": {
+              "ko-KR": "학생이에요?"
+            }
+          },
+          {
+            "id": "662357e5-b4a4-427b-9efa-bbe78b3da2da",
+            "text": {
+              "ko-KR": "얼마예요?"
+            }
+          },
+          {
+            "id": "76ed4ae1-8d4c-4a33-8d1e-9fed8a0128bd",
+            "text": {
+              "ko-KR": "안녕."
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "7ae06811-48ed-49a0-83ad-03d613a16e6b",
+      "activityId": "7ae06811-48ed-49a0-83ad-03d613a16e6b",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "새 회원 소개 카드를 읽고 이름, 국적, 신분에 관한 세 문제에 답하세요.",
+          "zh-CN": "阅读新成员卡，完成姓名、国籍和身份三道事实理解题。"
+        },
+        "instruction": {
+          "ko-KR": "문제마다 답을 하나만 고르고 소개 카드의 문장에서 근거를 찾으세요.",
+          "zh-CN": "每题只选一个答案，依据必须来自卡片原句。"
+        },
+        "options": [],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "d954746a-9f45-40ce-9c09-f639a7fe03bc",
+      "activityId": "d954746a-9f45-40ce-9c09-f639a7fe03bc",
+      "revision": "capture-20260908",
+      "type": "self_check",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "실제 수행을 바탕으로 다섯 가지 Can-do를 점검하고 다음 복습 위치를 정하세요.",
+          "zh-CN": "根据实际表现完成五项 Can-do 自查，并确定下一步复习位置。"
+        },
+        "instruction": {
+          "ko-KR": "다섯 항목에 모두 응답하고 복습이 필요하면 돌아갈 위치를 하나 이상, 모두 가능하면 ‘오류 없음／계속 연습’을 고르세요.",
+          "zh-CN": "五项都要回应；需要复习时至少选一个返回节点，全部能完成时选择“无错／保持练习”。"
+        },
+        "options": [],
+        "settings": {
+          "items": []
+        }
+      }
+    },
+    {
+      "id": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "activityId": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "지민의 신분이나 직업은 무엇이에요?",
+          "zh-CN": "智敏的身份／职业是什么？"
+        },
+        "instruction": {
+          "ko-KR": "대화에 직접 나온 정보만 보고, 나오지 않으면 없음을 고르세요. 점수에는 포함되지 않습니다.",
+          "zh-CN": "只依据对话中明确出现的信息作答；没有提及时选择“없음”。本题不计分。"
+        },
+        "options": [
+          {
+            "id": "b607aaa9-805a-4ded-8ed8-18925f89645e",
+            "text": {
+              "ko-KR": "학생"
+            }
+          },
+          {
+            "id": "1f2c58c8-b676-4561-91cf-dd77e8f1cb9a",
+            "text": {
+              "ko-KR": "선생님"
+            }
+          },
+          {
+            "id": "403a0ae2-1802-4b4d-a757-d24a8ba0e462",
+            "text": {
+              "ko-KR": "회사원"
+            }
+          },
+          {
+            "id": "b4d1ed54-37ca-41c0-9974-cd574e8c525d",
+            "text": {
+              "ko-KR": "없음"
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "activityId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "왕밍의 신분이나 직업은 무엇이에요?",
+          "zh-CN": "王明的身份／职业是什么？"
+        },
+        "instruction": {
+          "ko-KR": "대화에 직접 나온 정보만 보고, 나오지 않으면 없음을 고르세요. 점수에는 포함되지 않습니다.",
+          "zh-CN": "只依据对话中明确出现的信息作答；没有提及时选择“없음”。本题不计分。"
+        },
+        "options": [
+          {
+            "id": "c727072f-4fdc-4eba-a2ad-0a18e75723cc",
+            "text": {
+              "ko-KR": "학생"
+            }
+          },
+          {
+            "id": "35cee7c9-b420-44bd-84f8-89c8db19841e",
+            "text": {
+              "ko-KR": "선생님"
+            }
+          },
+          {
+            "id": "3463c16c-d2a8-42f3-918d-83adf3d5319e",
+            "text": {
+              "ko-KR": "회사원"
+            }
+          },
+          {
+            "id": "dc62e0bb-0827-45d8-b824-7234076eccbc",
+            "text": {
+              "ko-KR": "없음"
+            }
+          }
+        ],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "3ad2226d-6490-4f6d-8743-2d1d9989d3e9",
+      "activityId": "3ad2226d-6490-4f6d-8743-2d1d9989d3e9",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "알맞은 어미나 조사를 골라 여섯 문장을 완성하세요.",
+          "zh-CN": "选择合适的词尾或助词，完成六个句子。"
+        },
+        "instruction": {
+          "ko-KR": "앞말의 받침을 확인한 뒤 신분 설명, 화제 표시와 확인 질문을 구별하세요.",
+          "zh-CN": "先判断前一个词有没有收音，再区分身份说明、话题标记和确认提问。"
+        },
+        "options": [],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "70ac0f5d-917d-48e1-a00d-b0ed3bfa8509",
+      "activityId": "70ac0f5d-917d-48e1-a00d-b0ed3bfa8509",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "여섯 문장의 문법 형태가 맞는지 판단하세요.",
+          "zh-CN": "判断六个句子的语法形式是否正确。"
+        },
+        "instruction": {
+          "ko-KR": "이 과의 이에요/예요, 은/는와 확인 질문 형태만 판단하세요.",
+          "zh-CN": "只判断本课的이에요/예요、은/는和确认疑问句形式。"
+        },
+        "options": [],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "d2329ff4-72c2-4feb-bf62-3301ce769567",
+      "activityId": "d2329ff4-72c2-4feb-bf62-3301ce769567",
+      "revision": "capture-20260908",
+      "type": "fill_blank",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "두 번의 연습, 여섯 문항으로 서술격 어미, 주제 조사와 확인 의문문을 연습하세요.",
+          "zh-CN": "连续完成两轮六小题，练习判断词尾、话题助词和确认疑问句。"
+        },
+        "instruction": {
+          "ko-KR": "각 문법 항목을 두 번씩 연습하며 문장 부호는 이미 표시되어 있으므로 빈칸의 문법 형태만 쓰세요.",
+          "zh-CN": "每个语法点练习两遍；句末标点已经显示，只填写空缺的语法形式。"
+        },
+        "options": [],
+        "settings": {
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+      "activityId": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+      "revision": "capture-20260908",
+      "type": "listening",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "두 개의 첫 만남 듣기를 듣고 페이지마다 네 문제에 답하세요.",
+          "zh-CN": "完成两套初次见面听力，每页依据当前音频回答四题。"
+        },
+        "instruction": {
+          "ko-KR": "페이지마다 다른 음성을 듣고 네 문제를 푼 뒤 해당 원고를 확인하세요.",
+          "zh-CN": "每页对应一段不同音频；完成本页四题后可查看本页母稿。"
+        },
+        "options": [],
+        "settings": {
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "5b9bf18c-bd37-4df2-9f06-2599fc695e1c",
+      "activityId": "5b9bf18c-bd37-4df2-9f06-2599fc695e1c",
+      "revision": "capture-20260908",
+      "type": "single_choice",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "이어지는 대화에서 알맞은 말을 골라 왕밍과 지민의 첫 만남 대화를 완성하세요.",
+          "zh-CN": "在连续对话中选择合适的回答，让王明和智敏完成初次见面交流。"
+        },
+        "instruction": {
+          "ko-KR": "현재 한 문장씩 답하며 맞히면 대답이 글자별로 말풍선에 나타난 뒤 다음 말이 이어집니다.",
+          "zh-CN": "每次只处理当前一句；答对后回答会逐字进入气泡，并自动出现下一句。"
+        },
+        "options": [],
+        "settings": {
+          "shuffle": false,
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "897f6b9a-e955-401d-8127-46a5adfc708a",
+      "activityId": "897f6b9a-e955-401d-8127-46a5adfc708a",
+      "revision": "capture-20260908",
+      "type": "fill_blank",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "상대에게 직접 묻고 대답하며 쌍방향 첫 만남 대화를 완성하세요.",
+          "zh-CN": "主动提问并回答对方，完成一段双向的初次见面对话。"
+        },
+        "instruction": {
+          "ko-KR": "학습자가 인사, 소개, 세 번의 질문, 신분 대답과 마무리를 직접 완성합니다.",
+          "zh-CN": "学生要完成问候、介绍、三次主动提问、身份回答和礼貌结束。"
+        },
+        "options": [],
+        "settings": {
+          "showScore": false
+        }
+      }
+    },
+    {
+      "id": "0b1e3713-dfa7-4c89-8504-ae1992e2d340",
+      "activityId": "0b1e3713-dfa7-4c89-8504-ae1992e2d340",
+      "revision": "capture-20260908",
+      "type": "speaking",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "한 역할을 골라 첫 만남 대화를 차례대로 완성하세요.",
+          "zh-CN": "选择一个角色，逐轮完成初次见面对话。"
+        },
+        "instruction": {
+          "ko-KR": "상대의 말을 들은 뒤 내 차례에 녹음하고 다시 들어 확인하세요. 내용 일치도는 발음 점수가 아닙니다.",
+          "zh-CN": "系统播放对方台词；轮到你时录音、回听并确认。内容匹配度不代表发音分数。"
+        },
+        "options": [],
+        "settings": {
+          "rubric": []
+        }
+      }
+    },
+    {
+      "id": "d52694a4-5337-4971-ab48-32a7c6821ea0",
+      "activityId": "d52694a4-5337-4971-ab48-32a7c6821ea0",
+      "revision": "capture-20260908",
+      "type": "speaking",
+      "publicPresentation": {
+        "prompt": {
+          "ko-KR": "전체 원고 없이 한국어로 자신의 첫 만남 자기소개를 완성하세요.",
+          "zh-CN": "脱离完整原稿，用韩语完成一段自己的初次见面自我介绍。"
+        },
+        "instruction": {
+          "ko-KR": "먼저 표현 핵심어를 고르고 15초 이상 녹음하세요. 녹음 후 참고 표현을 볼 수 있습니다.",
+          "zh-CN": "先选择表达关键词，再录制至少 15 秒；录音完成后可以查看参考表达。"
+        },
+        "options": [],
+        "settings": {
+          "rubric": []
+        }
+      }
+    }
+  ],
+  "progressRefs": [
+    {
+      "id": "88d278bd-928d-4383-b483-9c2cf229097e",
+      "kind": "chapter"
+    },
+    {
+      "id": "1e02e69c-1324-4e27-be3c-a420aa78cb95",
+      "kind": "node"
+    },
+    {
+      "id": "eddf124a-9fd5-47ab-83fd-e9f14445be9a",
+      "kind": "activity"
+    },
+    {
+      "id": "429a7c76-56db-4947-9cb0-d4aa1b5a3122",
+      "kind": "activity"
+    },
+    {
+      "id": "3cb707c3-1609-49b0-ad13-d824b858d176",
+      "kind": "activity"
+    },
+    {
+      "id": "76e410dd-4144-4057-889b-f7e86fca7a1d",
+      "kind": "node"
+    },
+    {
+      "id": "e221f331-ea76-4c06-bad6-e2729570f052",
+      "kind": "activity-page"
+    },
+    {
+      "id": "99ea93bb-5c8a-4be6-bd19-22be0144fae8",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "ce7dd99b-f2ca-467f-a331-957c392386bd",
+      "kind": "node"
+    },
+    {
+      "id": "4549ff74-ca60-4bf4-9202-7e5b09284055",
+      "kind": "activity-page"
+    },
+    {
+      "id": "96c2f8d6-0b8f-47b5-bdc8-f4cc460f830d",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "dec7bb18-1949-4563-aa30-4dcaa95c4376",
+      "kind": "node"
+    },
+    {
+      "id": "59edf4af-b5cf-4e65-b17c-f3717dbd639a",
+      "kind": "activity-page"
+    },
+    {
+      "id": "b0fa4026-dcf7-42f5-bdb1-d6d9c677a9db",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "6bed19a8-9692-4750-b110-c8bb09af411f",
+      "kind": "node"
+    },
+    {
+      "id": "46396226-bc1c-4c9e-b833-d65083f50e24",
+      "kind": "activity-page"
+    },
+    {
+      "id": "79384950-209e-44e4-b8dc-cf2cbc152ada",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "aef9dd9d-717a-44f4-8f4b-f065a92d1c7c",
+      "kind": "node"
+    },
+    {
+      "id": "82de1c4b-ee6f-4351-a906-7a2146cbb811",
+      "kind": "activity-page"
+    },
+    {
+      "id": "ba6ba71c-bbbb-4371-bb60-4ad2ce5835f8",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "ce05b82d-f811-41a5-b649-60d14bcaf7f2",
+      "kind": "node"
+    },
+    {
+      "id": "5f11e6fc-528f-49d4-b6fc-c8c6e7b5fae0",
+      "kind": "activity-page"
+    },
+    {
+      "id": "89761494-6604-4a9c-a370-30d52bdd870b",
+      "kind": "guided-repeat"
+    },
+    {
+      "id": "c1a72911-b382-4815-a31a-4c0474ea5370",
+      "kind": "node"
+    },
+    {
+      "id": "9988f678-e962-4f12-bc02-5c7d22537f92",
+      "kind": "activity-page"
+    },
+    {
+      "id": "fedb91b4-93cd-478e-9307-0e4031d7f7f2",
+      "kind": "guided-repeat"
+    }
+  ],
+  "teachingRefs": [
+    {
+      "id": "bb671fe7-9db1-4ab6-ad7d-90e6991aca72",
+      "revision": "feb30ba7-0a5e-4e9f-83e6-8970f715ddd5",
+      "mode": "legacy",
+      "entryCueId": "ca2957d6-b148-4416-a946-1a8e75b130e4"
+    }
+  ],
+  "compatibility": {
+    "profile": "legacy-adapted",
+    "adapterRevision": "phase-3a-manual-projection-v1"
+  }
+}

@@ -600,6 +600,21 @@ html:fullscreen
   transform-origin: center bottom;
 }
 
+@keyframes kim-teacher-speaking-presence {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  42% { transform: translateY(-2px) rotate(-0.18deg); }
+  72% { transform: translateY(-1px) rotate(0.12deg); }
+}
+
+@keyframes kim-teacher-pose-enter {
+  from { opacity: 0; filter: blur(2px); }
+  to { opacity: 1; filter: blur(0); }
+}
+
+.kim-teacher-pose-transition {
+  animation: kim-teacher-pose-enter 360ms ease-out both;
+}
+
 @keyframes kim-teacher-speaking-frame {
   0%, 44%, 100% { opacity: 0; }
   45%, 88% { opacity: 1; }
@@ -617,7 +632,11 @@ html:fullscreen
 }
 
 [data-speaking="true"] .kim-teacher-speaking-frame {
-  animation: kim-teacher-speaking-frame 360ms steps(1, end) infinite;
+  animation: kim-teacher-speaking-frame var(--kim-mouth-cycle, 360ms) steps(1, end) infinite;
+}
+
+.kim-teacher-breathe[data-speaking="true"] {
+  animation: kim-teacher-speaking-presence var(--kim-gesture-cycle, 940ms) ease-in-out infinite;
 }
 
 .kim-teacher-blink-frame {
@@ -625,7 +644,8 @@ html:fullscreen
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .kim-teacher-breathe { animation: none; }
+  .kim-teacher-breathe,
+  .kim-teacher-pose-transition { animation: none; }
   .kim-teacher-speaking-frame,
   .kim-teacher-blink-frame { animation: none; }
   [data-speaking="true"] .kim-teacher-speaking-frame { opacity: 1; }
@@ -6642,4 +6662,22 @@ html[data-student-transparency="reduced"]
     .student-system-sidebar {
     background: transparent;
   }
+}
+/* Keep one teaching responsibility visible while retaining all draft inputs. */
+form[data-interaction-perspective="teacher_prompt"] #student-task-settings fieldset > div > div,
+form[data-interaction-perspective="teacher_prompt"] #custom-interaction-settings > div,
+form[data-interaction-perspective="teacher_prompt"] #custom-interaction-settings > details,
+form[data-interaction-perspective="teacher_prompt"] section:has(> div > #operation-feedback-title),
+form[data-interaction-perspective="student_response"] label:has([name="student_task_instruction_zh"]),
+form[data-interaction-perspective="student_response"] label:has([name="interaction_prompt_zh"]),
+form[data-interaction-perspective="student_response"] #custom-interaction-settings > details,
+form[data-interaction-perspective="student_response"] section:has(> div > #operation-feedback-title),
+form[data-interaction-perspective="teacher_feedback"] #student-task-settings,
+form[data-interaction-perspective="teacher_feedback"] #interaction-group-title,
+form[data-interaction-perspective="teacher_feedback"] label:has([name="interaction_kind"]),
+form[data-interaction-perspective="teacher_feedback"] #custom-interaction-settings > label,
+form[data-interaction-perspective="teacher_feedback"] #custom-interaction-settings > div,
+form[data-teacher-video-mode="video"] details:has([name="script_pose"]),
+form[data-teacher-video-mode="video"] section:has(> div > #virtual-character-group-title) {
+  display: none;
 }

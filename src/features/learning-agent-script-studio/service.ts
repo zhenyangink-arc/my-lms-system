@@ -1,4 +1,7 @@
 import "server-only";
+import { getDigitalTextbookManagementData } from "@/features/digital-textbook/api/service";
+import { chapterPracticeSnapshot, practiceSnapshotChanged, type ChapterPracticeBinding } from "@/lib/chapter-practice-binding";
+import { selectTextbookVersion } from "@/lib/course-content-workflow";
 
 import { redirect } from "next/navigation";
 
@@ -132,13 +135,13 @@ async function loadSmartTextbookLearningTargetRegistry(
 export async function getTeachingScriptStudioData(
   studentAppId: string,
 ): Promise<TeachingScriptStudioData> {
-  await requirePlatformOwner();
+  const { supabase: caller } = await requirePlatformOwner();
   if (!studentAppId) redirect("/dashboard/admin/apps");
 
   const admin = createAdminClient();
   const { data: textbooks, error: textbookError } = await admin
     .from("digital_textbooks")
-    .select("id,title")
+    .select("id,title,status")
     .eq("student_app_id", studentAppId)
     .order("created_at");
   if (textbookError) throw new Error("无法读取教学脚本对应的教材。");
@@ -155,12 +158,11 @@ export async function getTeachingScriptStudioData(
   if (versionError) throw new Error("无法读取教材版本。");
   const textbookVersionRows = (versions ?? []) as Row[];
   const activeTextbookVersionByTextbook = new Map<string, Row>();
-  for (const row of textbookVersionRows) {
-    const textbookId = String(row.textbook_id);
-    const current = activeTextbookVersionByTextbook.get(textbookId);
-    if (!current || (row.status === "published" && current.status !== "published")) {
-      activeTextbookVersionByTextbook.set(textbookId, row);
-    }
+  for (const textbookId of textbookIds) {
+    const { selected } = selectTextbookVersion(textbookVersionRows
+      .filter(row => String(row.textbook_id) === textbookId)
+      .map(row => ({ ...row, version_number: row.version_number, status: row.status })));
+    if (selected) activeTextbookVersionByTextbook.set(textbookId, selected);
   }
   const activeTextbookVersionIds = [...activeTextbookVersionByTextbook.values()].map((row) => String(row.id));
 
@@ -183,7 +185,7 @@ export async function getTeachingScriptStudioData(
   const moduleRows = (modules ?? []) as Row[];
   const moduleIds = ids(moduleRows);
 
-  const [{ data: lessons }, { data: contentNodes }] = await Promise.all([
+  const [{ data: lessons, error: lessonError }, { data: contentNodes, error: contentError }] = await Promise.all([
     admin
       .from("learning_agent_lessons")
       .select("id,module_id,status,revision")
@@ -194,36 +196,39 @@ export async function getTeachingScriptStudioData(
       .in("module_id", moduleIds)
       .order("sort_order"),
   ]);
+  if (lessonError || contentError) throw new Error("无法完整读取章节脚本与教材内容，请刷新重试。");
   const lessonRows = (lessons ?? []) as Row[];
   const contentNodeRows = (contentNodes ?? []) as Row[];
   const lessonIds = ids(lessonRows);
   const contentNodeIds = ids(contentNodeRows);
 
-  const [{ data: scriptVersions }, { data: activities }] = await Promise.all([
+  const [{ data: scriptVersions, error: scriptVersionError }, { data: activities, error: activityError }] = await Promise.all([
     lessonIds.length
       ? admin
           .from("learning_agent_script_versions")
           .select("id,lesson_id,version_number,status,title,change_note,published_at")
           .in("lesson_id", lessonIds)
           .order("version_number", { ascending: false })
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
     contentNodeIds.length
       ? admin
           .from("digital_textbook_activities")
           .select("id,node_id,activity_key,activity_type,prompt,sort_order")
           .in("node_id", contentNodeIds)
           .order("sort_order")
-      : Promise.resolve({ data: [] }),
+      : Promise.resolve({ data: [], error: null }),
   ]);
+  if (scriptVersionError || activityError) throw new Error("无法完整读取脚本版本与教材活动，请刷新重试。");
   const scriptVersionRows = (scriptVersions ?? []) as Row[];
   const scriptVersionIds = ids(scriptVersionRows);
-  const { data: scriptNodes } = scriptVersionIds.length
+  const { data: scriptNodes, error: scriptNodeError } = scriptVersionIds.length
     ? await admin
         .from("learning_agent_script_nodes")
         .select("id,script_version_id,node_key,node_type,sort_order,title,teacher_script,configuration,reference_activity_id,action_type,next_node_key,remediation_node_key,is_required,updated_at")
         .in("script_version_id", scriptVersionIds)
         .order("sort_order")
-    : { data: [] };
+    : { data: [], error: null };
+  if (scriptNodeError) throw new Error("无法读取脚本节点，请刷新重试。");
   const scriptNodeRows = (scriptNodes ?? []) as Row[];
   const scriptNodeIds = ids(scriptNodeRows);
   const [{ data: interactionSecrets }, { data: speechAssets }] = scriptNodeIds.length
@@ -342,6 +347,10 @@ export async function getTeachingScriptStudioData(
     nodesByVersion.set(versionId, items);
   }
 
+  const sourceReviewResult = await caller.rpc("list_teaching_script_source_review_status", { p_app_id: studentAppId });
+  const sourceReviewByVersion = new Map<string, TeachingScriptVersion["sourceReviewStatus"]>(
+    (sourceReviewResult.error ? [] : sourceReviewResult.data ?? []).map((row: { script_version_id: string; review_status: TeachingScriptVersion["sourceReviewStatus"] }) => [row.script_version_id, row.review_status]),
+  );
   const versionsByLesson = new Map<string, TeachingScriptVersion[]>();
   for (const row of scriptVersionRows) {
     const lessonId = String(row.lesson_id);
@@ -354,6 +363,7 @@ export async function getTeachingScriptStudioData(
       title: localized(row.title),
       changeNote: String(row.change_note ?? ""),
       publishedAt: row.published_at ? String(row.published_at) : null,
+      sourceReviewStatus: sourceReviewByVersion.get(String(row.id)) ?? "unknown",
       nodes: nodesByVersion.get(String(row.id)) ?? [],
     });
     versionsByLesson.set(lessonId, items);
@@ -361,12 +371,23 @@ export async function getTeachingScriptStudioData(
 
   const learningTargetRegistry = await loadSmartTextbookLearningTargetRegistry(admin);
 
+  const [practiceReferences, practiceTextbooks] = await Promise.all([
+    caller.from("chapter_practice_bindings").select("id,chapter_id,version_id,revision,is_enabled,snapshot,reviewed_at").eq("student_app_id", studentAppId),
+    getDigitalTextbookManagementData(studentAppId),
+  ]);
+  const practiceByChapter = new Map(((practiceReferences.data ?? []) as ChapterPracticeBinding[]).map(binding => [binding.chapter_id, binding]));
+
   const result: TeachingScriptModule[] = moduleRows.flatMap((module) => {
     const chapter = chapterById.get(String(module.chapter_id));
     if (!chapter) return [];
     const textbookId = textbookByVersion.get(String(chapter.version_id));
     const textbook = textbookId ? textbookById.get(textbookId) : null;
     if (!textbookId || !textbook) return [];
+    const binding = practiceByChapter.get(String(chapter.id));
+    const currentPractice = chapterPracticeSnapshot(practiceTextbooks.courses, String(chapter.id));
+    const practiceStatus: TeachingScriptModule["practiceStatus"] = practiceReferences.error || practiceTextbooks.hasError ? "unknown"
+      : !binding ? "unlinked" : !binding.is_enabled ? "disabled" : !currentPractice ? "unavailable"
+      : practiceSnapshotChanged(binding.snapshot, currentPractice) ? "review" : "linked";
     const lesson = lessonByModule.get(String(module.id));
     const lessonId = lesson ? String(lesson.id) : null;
     return [{
@@ -379,6 +400,17 @@ export async function getTeachingScriptStudioData(
       chapterTitle: localized(chapter.title),
       textbookId,
       textbookTitle: localized(textbook.title),
+      textbookStatus: String(textbook.status),
+      chapterStatus: String(chapter.status),
+      practiceStatus,
+      textbookVersion: {
+        id: String(chapter.version_id),
+        number: Number(activeTextbookVersionByTextbook.get(textbookId)?.version_number),
+        status: String(activeTextbookVersionByTextbook.get(textbookId)?.status),
+        newerDraftNumber: textbookVersionRows.filter(row => String(row.textbook_id) === textbookId && row.status === "draft"
+          && Number(row.version_number) > Number(activeTextbookVersionByTextbook.get(textbookId)?.version_number))
+          .reduce<number | null>((latest, row) => Math.max(latest ?? 0, Number(row.version_number)), null),
+      },
       lessonId,
       activities: activitiesByModule.get(String(module.id)) ?? [],
       learningTargets: String(module.module_code) === "orientation"

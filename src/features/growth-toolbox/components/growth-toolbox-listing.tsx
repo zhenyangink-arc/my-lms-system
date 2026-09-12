@@ -1,8 +1,15 @@
+import { requireActiveUser } from "@/lib/auth";
+import { chapterPracticeSnapshot, type ChapterPracticeBinding } from "@/lib/chapter-practice-binding";
+import { ChapterPracticeBindingPanel } from "./chapter-practice-binding";
 import {
   ManagementMetricStrip,
   ManagementNotice,
 } from "@/components/layout/management-page";
 import { getGrowthToolboxManagementData } from "../api/service";
+import { getDigitalTextbookManagementData } from "@/features/digital-textbook/api/service";
+import { textbookPracticeResources } from "@/lib/textbook-practice-resources";
+import { TextbookResourceCatalog } from "./textbook-resource-catalog";
+import { practiceSourceNotice } from "@/lib/course-content-workflow";
 import { GrowthToolboxGrammarTable } from "./grammar-table";
 import { GrowthToolboxItemsTable } from "./toolbox-items-table";
 import type { GrowthToolboxItemDisplayRow } from "./toolbox-items-table/columns";
@@ -14,10 +21,19 @@ import {
 
 export default async function GrowthToolboxListing({
   studentAppId,
+  chapterId,
 }: {
   studentAppId: string;
+  chapterId?: string;
 }) {
   const result = await getGrowthToolboxManagementData(studentAppId);
+  const textbookResult = await getDigitalTextbookManagementData(studentAppId);
+  const { supabase } = await requireActiveUser();
+  const bindingResult = chapterId && result.canManage ? await supabase.from("chapter_practice_bindings")
+    .select("id,chapter_id,version_id,revision,is_enabled,snapshot,reviewed_at")
+    .eq("student_app_id", studentAppId).eq("chapter_id", chapterId).maybeSingle() : null;
+  const currentSnapshot = chapterId && !textbookResult.hasError ? chapterPracticeSnapshot(textbookResult.courses, chapterId) : null;
+  const binding = bindingResult?.data as ChapterPracticeBinding | null;
   const courseNames = new Map(
     result.courseTree.map((course) => [course.id, course.title]),
   );
@@ -47,6 +63,8 @@ export default async function GrowthToolboxListing({
 
   return (
     <div className="space-y-6">
+      <ManagementNotice tone="warning">{practiceSourceNotice}</ManagementNotice>
+      {chapterId && <ManagementNotice>教材原文已按所选章节及版本筛选。下方独立练习库仍展示全部资源，不代表已关联到本章。</ManagementNotice>}
       {result.hasError && (
         <ManagementNotice tone="warning">
           工具入口、课程结构、词汇库或语法库数据暂时无法完整读取，请稍后刷新重试。
@@ -59,7 +77,7 @@ export default async function GrowthToolboxListing({
           { label: "工具入口", value: toolboxItems.length },
           { label: "已启用", value: enabledCount },
           { label: "词汇总数", value: result.vocabularyLibrary.length },
-          { label: "教材词汇", value: textbookVocabularyCount },
+          { label: "教材导入副本", value: textbookVocabularyCount },
           { label: "语法总数", value: result.grammarLibrary.length },
           { label: "语法音频", value: grammarAudioCount },
         ]}
@@ -77,8 +95,26 @@ export default async function GrowthToolboxListing({
         />
       </ReadOnlySection>
 
+      {chapterId && result.canManage && <ChapterPracticeBindingPanel
+        key={`${chapterId}:${binding?.revision ?? 0}:${JSON.stringify(currentSnapshot)}`}
+        appId={studentAppId} chapterId={chapterId} current={currentSnapshot}
+        binding={binding} available={Boolean(bindingResult && !bindingResult.error && !textbookResult.hasError && !result.hasError)}
+      />}
+      {!chapterId && result.canManage && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
+      {textbookResult.hasError ? (
+        <ManagementNotice tone="warning">教材来源未能完整读取，暂不提供复制入口。现有练习库仍可查看。</ManagementNotice>
+      ) : (
+        <TextbookResourceCatalog
+          resources={textbookPracticeResources(textbookResult.courses).filter(resource => !chapterId || resource.chapterId === chapterId)}
+          vocabulary={result.vocabularyLibrary}
+          grammar={result.grammarLibrary}
+          studentAppId={studentAppId}
+          canManage={result.canManage && !result.hasError}
+        />
+      )}
+
       <ReadOnlySection
-        title="词汇库"
+        title="独立词汇库"
         description="查看独立练习词库及互动教材导入来源。"
         action={result.canManage ? <CreateVocabularyDialog studentAppId={studentAppId} /> : null}
       >
@@ -90,7 +126,7 @@ export default async function GrowthToolboxListing({
       </ReadOnlySection>
 
       <ReadOnlySection
-        title="语法库"
+        title="独立语法库"
         description="查看语法结构、例句、注意事项和已配置的音频字段。"
         action={result.canManage ? <CreateGrammarDialog studentAppId={studentAppId} /> : null}
       >

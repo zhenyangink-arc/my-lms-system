@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import type { RecordingDomainRequest } from "@/lib/recording-domain.server";
 
 export const smartTextbookSubmissionSchema = z.object({
   activityId: z.string().uuid(),
@@ -726,9 +727,10 @@ function failure(
   };
 }
 
-export async function submitSmartTextbookActivityForContext(
+async function submitActivityInDomain(
   input: unknown,
   context: SubmissionContext,
+  domain?: RecordingDomainRequest,
 ): Promise<SmartTextbookSubmitResult> {
   const parsed = smartTextbookSubmissionSchema.safeParse(input);
   if (!parsed.success) return failure("提交内容无效。", context.preview);
@@ -800,7 +802,7 @@ export async function submitSmartTextbookActivityForContext(
   if (!result.ok) return failure(result.error, context.preview);
 
   const speakingEvidenceId =
-    activity.activity_type === "speaking"
+    domain?.domain === 'v2' ? String(asObject(parsed.data.response).recordingEvidenceId ?? '') : activity.activity_type === "speaking"
       ? await verifySpeakingRecordingEvidence(
           context,
           String(activity.id),
@@ -841,7 +843,14 @@ export async function submitSmartTextbookActivityForContext(
   const versionId = String(nestedChapter.version_id ?? "");
   if (!versionId) return failure("教材版本关系不完整。", false);
 
-  let { data: recordData, error: recordError } =
+  let v2Record: any = null;
+  if (domain?.domain === 'v2') {
+    const { createRecordingGateway, recordingActivityBinding } = await import('@/lib/recording-domain-gateway.server');
+    const gateway = createRecordingGateway(context.admin, domain, await recordingActivityBinding(context.admin, String(activity.id)));
+    v2Record = await gateway.speak(parsed.data.response, { answerKey: secret.answer_key, publicConfig: activity.public_config }, result.meetsCompletionRequirements === true);
+  }
+  if (domain) await domain.beforeWrite();
+  let { data: recordData, error: recordError } = domain?.domain === 'v2' ? { data: v2Record, error: null } :
     activity.activity_type === "speaking" &&
     result.meetsCompletionRequirements === true
       ? await context.admin.rpc("record_smart_textbook_speaking_attempt", {
@@ -924,4 +933,22 @@ export async function submitSmartTextbookActivityForContext(
       Math.min(100, Number(record.completion_percent) || 0),
     ),
   };
+}
+
+export async function submitSmartTextbookActivityForContext(input: unknown, context: SubmissionContext): Promise<SmartTextbookSubmitResult> {
+  const parsed = smartTextbookSubmissionSchema.safeParse(input);
+  if (!parsed.success || !context.canSubmit || context.preview || !context.tenantId) return submitActivityInDomain(input, context);
+  const { data: activity, error } = await context.supabase.from('digital_textbook_activities').select('id,activity_type')
+    .eq('id', parsed.data.activityId).maybeSingle();
+  if (error || !activity) return failure('找不到这项练习。', false);
+  if (activity.activity_type !== 'speaking') return submitActivityInDomain(input, context);
+  // Deferred server import keeps the shared pure grader importable without a
+  // server runtime; no key/gateway is loaded by grading-only consumers.
+  const { withRecordingDomain, RecordingDomainError } = await import('@/lib/recording-domain.server');
+  try {
+    return await withRecordingDomain(context.admin, { tenantId: context.tenantId, studentId: context.userId },
+      domain => submitActivityInDomain(input, context, domain));
+  } catch (e) {
+    return failure(e instanceof RecordingDomainError && e.code === 'max-attempts' ? '本活动已达到提交次数限制。' : '录音服务暂不可用或证据已被使用，请刷新后重试。', false);
+  }
 }

@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { z } from "zod";
 
 import { requirePlatformOwner } from "@/lib/admin";
+import { BUFFER_CANDIDATE_COLUMNS, selectBufferSpeechIds, type BufferCandidate } from "@/lib/learning-agent-buffer-selection.server";
 import { configuredText, virtualCharacterForScriptSegment } from "@/lib/learning-agent-script-runtime";
 import { loadSmartDigitalTextbook } from "@/lib/smart-digital-textbook";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -61,15 +62,17 @@ export default async function TeachingScriptPreviewPage({
   const { data: previewBufferSpeechAssets } = previewOpeningNode?.id
     ? await admin
         .from("learning_agent_script_audio_assets")
-        .select("id,locale")
+        .select(BUFFER_CANDIDATE_COLUMNS)
         .eq("script_node_id", previewOpeningNode.id)
         .eq("segment_index", 199)
         .eq("production_status", "ready")
-    : { data: [] as { id: string; locale: string }[] };
-  const previewOpeningBufferSpeechAssetId = Object.fromEntries((previewBufferSpeechAssets ?? []).map((asset) => [
-    asset.locale === "ko-KR" ? "ko-KR" : "zh-CN",
-    String(asset.id),
-  ]));
+    : { data: [] as BufferCandidate[] };
+  const { data: previewVersion } = await admin.from("learning_agent_script_versions")
+    .select("id,status").eq("id", parsedScriptVersionId.data).maybeSingle();
+  const previewOpeningBufferSpeechAssetId = previewOpeningNode && previewVersion
+    ? selectBufferSpeechIds([{ id: String(previewOpeningNode.id), scriptVersionId: parsedScriptVersionId.data, configuration: previewOpeningConfiguration }],
+      [previewVersion], previewBufferSpeechAssets ?? [], "authorized-owner-preview").get(String(previewOpeningNode.id)) ?? {}
+    : {};
 
   const smartTextbook = await loadSmartDigitalTextbook({
     textbookSlug: "korean-level-one-smart",

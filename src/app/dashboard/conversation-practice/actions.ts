@@ -119,6 +119,9 @@ function readScenarioInput(formData: FormData) {
 function refreshConversationPractice(scenarioId?: string) {
   revalidateDashboard("/dashboard/conversation-practice");
   revalidateDashboard("/dashboard/admin/conversation-practice");
+  revalidateDashboard("/dashboard/admin/apps/korean/conversation");
+  revalidateDashboard("/dashboard/admin/apps/korean/conversation/scenarios");
+  revalidateDashboard("/dashboard/conversation-practice", "layout");
   revalidateDashboard("/dashboard/admin");
   if (scenarioId) {
     revalidateDashboard(`/dashboard/conversation-practice/${scenarioId}`);

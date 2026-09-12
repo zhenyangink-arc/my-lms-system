@@ -1,0 +1,217 @@
+{
+  "phase": "4A-12",
+  "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+  "manifestDigest": "sha256:19bb72f491ae7f460d83867b09562e079e8bf1dfb3ee62b3de04775f88471f2e",
+  "proofDigest": "29582af1715166016c04d42d6d3368dae79e7300e1394c2ce778c658f9d6b81b",
+  "strict": {
+    "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+    "strictLearningMount": true,
+    "strictLearningReload": true,
+    "unifiedBrowserBoundary": true,
+    "previewFormalCompletion": false,
+    "steps": 8,
+    "activities": 19,
+    "requests": 390
+  },
+  "recording": {
+    "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+    "mountedRecording": true,
+    "speaking": true,
+    "roleplay": true,
+    "reload": true,
+    "serverAuthority": true,
+    "requests": 121
+  },
+  "evidence": [
+    {
+      "check": "pattern-audio",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a10-browser.test.mjs"
+    },
+    {
+      "check": "orientation-restore",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "check": "recording-group-integrated",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a7-rehearsal.test.mjs"
+    },
+    {
+      "check": "history-pagination",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a10.test.mjs"
+    },
+    {
+      "check": "session-binding",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a11-session.test.mjs"
+    },
+    {
+      "check": "full-chapter-restore",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "check": "server-authority",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a7-rehearsal.test.mjs"
+    },
+    {
+      "check": "lifecycle",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a8-browser.test.mjs"
+    },
+    {
+      "check": "unified-browser-boundary",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "check": "strict-learning-mount",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "check": "strict-learning-reload",
+      "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+      "status": "passed",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    }
+  ],
+  "activities": [
+    {
+      "ref": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "0b1e3713-dfa7-4c89-8504-ae1992e2d340",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "3ad2226d-6490-4f6d-8743-2d1d9989d3e9",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "5b9bf18c-bd37-4df2-9f06-2599fc695e1c",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "70ac0f5d-917d-48e1-a00d-b0ed3bfa8509",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "7ae06811-48ed-49a0-83ad-03d613a16e6b",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "897f6b9a-e955-401d-8127-46a5adfc708a",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "8a7f51e8-e982-47da-ae40-ea7698986ec4",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "d2329ff4-72c2-4feb-bf62-3301ce769567",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "d52694a4-5337-4971-ab48-32a7c6821ea0",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "d954746a-9f45-40ce-9c09-f639a7fe03bc",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "ed75866c-2a53-4538-90ad-e71c2737dfef",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    },
+    {
+      "ref": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "status": "equivalent",
+      "test": "tests/smart-textbook-runtime-4a12-browser.test.mjs"
+    }
+  ],
+  "readiness": {
+    "snapshotId": "snapshot-774d8fd07f5e3f6c1c1fe5f0bd6a15f2",
+    "blockers": [],
+    "learningReady": true,
+    "compatLearning": "implemented",
+    "runtimeReady": false
+  },
+  "nonUiRuntimeReady": true,
+  "strictActivation": true,
+  "runtime": {
+    "nonUiRuntimeReady": true,
+    "executableCapabilities": [
+      "layout.v1",
+      "navigation.linear.v1",
+      "progress.server.v1",
+      "block.text",
+      "block.multiple_choice",
+      "block.compat.learning.v1"
+    ],
+    "runtimeReady": false,
+    "unsupported": [
+      {
+        "path": "requiredCapabilities",
+        "message": "Unsupported capability block.compat.teacher.v1"
+      }
+    ]
+  }
+}

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ZodError } from 'zod';
 
 import { requireActiveUser } from "@/lib/auth";
 import {
@@ -12,6 +13,8 @@ import {
   deleteR2Object,
 } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { beforeRecordingWrite, withRecordingDomain, RecordingDomainError } from "@/lib/recording-domain.server";
+import { createRecordingGateway, recordingActivityBinding } from "@/lib/recording-domain-gateway.server";
 
 const RECORDING_BUCKET = "digital-textbook-student-recordings";
 const MIN_RECORDING_BYTES = 2_048;
@@ -36,7 +39,7 @@ function isGuidedRepeatMetadata(metadata: unknown) {
   return practiceKey === "repeat-line" || practiceKey === "full-recall";
 }
 
-export async function GET(
+async function legacyGET(
   request: Request,
   { params }: { params: Promise<{ activityId: string }> },
 ) {
@@ -135,7 +138,7 @@ export async function GET(
   }, { headers: { "Cache-Control": "private, no-store" } });
 }
 
-export async function POST(
+async function legacyPOST(
   request: Request,
   { params }: { params: Promise<{ activityId: string }> },
 ) {
@@ -175,6 +178,9 @@ export async function POST(
     return NextResponse.json({ message: "Invalid recording." }, { status: 400 });
   }
   const recording = formData.get("recording");
+  for (const key of ['backend','objectKey','object_key','runtimeBinding','lifecycle','tenantId','studentId','storage']) {
+    if (formData.has(key)) return NextResponse.json({ message: "Invalid recording." }, { status: 400 });
+  }
   if (!(recording instanceof File)) {
     return NextResponse.json({ message: "Recording is required." }, { status: 400 });
   }
@@ -232,6 +238,7 @@ export async function POST(
   if (usesR2) {
     try {
       const uploadUrl = await createR2SignedUploadUrl(objectKey, mimeType, recording.size);
+      await beforeRecordingWrite();
       const uploadResponse = await fetch(uploadUrl, { method: "PUT", headers: { "Content-Type": mimeType }, body: bytes });
       if (!uploadResponse.ok) throw new Error(`R2 upload failed: ${uploadResponse.status}`);
       await assertR2ObjectUpload(objectKey, recording.size);
@@ -242,6 +249,7 @@ export async function POST(
       );
     }
   } else {
+    await beforeRecordingWrite();
     const { error: uploadError } = await admin.storage
       .from(RECORDING_BUCKET)
       .upload(objectKey, bytes, {
@@ -261,6 +269,7 @@ export async function POST(
     const storedObject = objects?.find((item) => item.name === filename);
     storedSize = Number(storedObject?.metadata?.size ?? 0);
     if (metadataError || !storedObject || storedSize < MIN_RECORDING_BYTES) {
+      await beforeRecordingWrite();
       await admin.storage.from(RECORDING_BUCKET).remove([objectKey]);
       return NextResponse.json(
         { message: "Recording metadata could not be verified." },
@@ -269,6 +278,7 @@ export async function POST(
     }
   }
 
+  await beforeRecordingWrite();
   const { error: evidenceError } = await admin
     .from("digital_textbook_speaking_evidence")
     .insert({
@@ -295,6 +305,7 @@ export async function POST(
       } : {},
     });
   if (evidenceError) {
+    await beforeRecordingWrite();
     if (usesR2) await deleteR2Object(objectKey);
     else await admin.storage.from(RECORDING_BUCKET).remove([objectKey]);
     return NextResponse.json(
@@ -319,7 +330,10 @@ export async function POST(
 
     const removedEvidenceIds: string[] = [];
     for (const previous of previousEvidence ?? []) {
+      // The legacy rollback lane must not knowingly erase completion evidence.
+      if (previous.consumed_at) continue;
       try {
+        await beforeRecordingWrite();
         if ((previous.metadata as Record<string, unknown> | null)?.storage === "r2") {
           await deleteR2Object(previous.object_key);
         } else {
@@ -332,6 +346,7 @@ export async function POST(
       }
     }
     if (removedEvidenceIds.length > 0) {
+      await beforeRecordingWrite();
       await admin
         .from("digital_textbook_speaking_evidence")
         .delete()
@@ -346,7 +361,7 @@ export async function POST(
   });
 }
 
-export async function DELETE(
+async function legacyDELETE(
   request: Request,
   { params }: { params: Promise<{ activityId: string }> },
 ) {
@@ -391,6 +406,7 @@ export async function DELETE(
   }
 
   try {
+    await beforeRecordingWrite();
     if ((evidence.metadata as Record<string, unknown> | null)?.storage === "r2") {
       await deleteR2Object(evidence.object_key);
     } else {
@@ -400,6 +416,7 @@ export async function DELETE(
   } catch {
     return NextResponse.json({ message: "Recording could not be deleted." }, { status: 503 });
   }
+  await beforeRecordingWrite();
   const { error } = await admin
     .from("digital_textbook_speaking_evidence")
     .delete()
@@ -407,3 +424,33 @@ export async function DELETE(
   if (error) return NextResponse.json({ message: "Recording could not be deleted." }, { status: 503 });
   return NextResponse.json({ ok: true });
 }
+
+type RecordingRouteContext = { params: Promise<{ activityId: string }> };
+async function recordingRoute(request: Request, context: RecordingRouteContext, method: 'GET' | 'POST' | 'DELETE') {
+  const { supabase, user, tenant, profile } = await requireActiveUser();
+  if (!tenant || !canUseStudentFeature(profile?.role ?? 'student', normalizeMembershipTier(profile?.membership_tier), 'korean_course'))
+    return NextResponse.json({ message: 'Forbidden.' }, { status: 403 });
+  const { activityId } = await context.params;
+  if (!/^[0-9a-f-]{36}$/i.test(activityId)) return NextResponse.json({ message: 'Invalid recording.' }, { status: 400 });
+  const { data: activity, error } = await supabase.from('digital_textbook_activities').select('id,activity_type').eq('id', activityId).maybeSingle();
+  if (error || activity?.activity_type !== 'speaking') return NextResponse.json({ message: 'Recording was not found.' }, { status: 404 });
+  const admin = createAdminClient();
+  try {
+    return await withRecordingDomain(admin, { tenantId: tenant.id, studentId: user.id }, async domain => {
+      if (domain.domain === 'v1') return ({ GET: legacyGET, POST: legacyPOST, DELETE: legacyDELETE })[method](request, context);
+      const gateway = createRecordingGateway(admin, domain, await recordingActivityBinding(admin, activityId));
+      const query = new URL(request.url).searchParams;
+      if (method === 'POST') return NextResponse.json(await gateway.upload(await request.formData()));
+      if (method === 'DELETE') { await gateway.remove(query.get('evidenceId') ?? ''); return NextResponse.json({ ok: true }); }
+      if (query.has('evidenceId')) return gateway.playback(query.get('evidenceId')!, request);
+      return NextResponse.json({ recording: await gateway.restore(query) }, { headers: { 'Cache-Control': 'private, no-store' } });
+    });
+  } catch (error) {
+    const code = error instanceof RecordingDomainError ? error.code : error instanceof ZodError ? 'invalid' : 'unavailable';
+    return NextResponse.json({ message: 'Recording request could not be completed.', code },
+      { status: code === 'invalid' ? 400 : ['fenced','unavailable'].includes(code) ? 503 : 409 });
+  }
+}
+export async function GET(request: Request, context: RecordingRouteContext) { return recordingRoute(request, context, 'GET'); }
+export async function POST(request: Request, context: RecordingRouteContext) { return recordingRoute(request, context, 'POST'); }
+export async function DELETE(request: Request, context: RecordingRouteContext) { return recordingRoute(request, context, 'DELETE'); }

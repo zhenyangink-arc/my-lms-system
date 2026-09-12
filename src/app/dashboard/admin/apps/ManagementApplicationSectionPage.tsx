@@ -1,3 +1,5 @@
+import { LearningInsightsNavigation } from "./LearningInsightsNavigation";
+import { TeachingOperationsNavigation, teachingOperationsSteps } from "./TeachingOperationsNavigation";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
@@ -24,6 +26,8 @@ import {
 
 import { ManagementPage } from "@/components/layout/management-page";
 import { cn } from "@/lib/utils";
+import { CourseWorkflowNavigation } from "./CourseWorkflowNavigation";
+import { courseContentSteps } from "@/lib/course-content-workflow";
 import { RouteLinkStatus } from "@/app/dashboard/RouteLinkStatus";
 import {
   requireManagementAppAccess,
@@ -211,15 +215,20 @@ export function ManagementApplicationSectionFrame({
   definition,
   children,
   className,
+  section,
+  chapterId,
 }: {
   access: ManagementAppAccess;
   definition: SectionDefinition;
   children: ReactNode;
   className?: string;
+  section?: string;
+  chapterId?: string;
 }) {
+  const workflow = courseContentSteps(access);
   return (
     <ManagementPage
-      title={definition.title}
+      title={teachingOperationsSteps(access).find(step => step.key === section)?.title ?? definition.title}
       description={definition.description}
       className={cn(`management-app-tone-${access.app.accent}`, className)}
       meta={
@@ -238,6 +247,11 @@ export function ManagementApplicationSectionFrame({
         </Link>
       }
     >
+      {workflow.some((step) => step.key === section) && (
+        <CourseWorkflowNavigation access={access} section={section!} chapterId={chapterId} />
+      )}
+      {section && teachingOperationsSteps(access).some(step => step.key === section) && <TeachingOperationsNavigation access={access} section={section} />}
+      {section && <LearningInsightsNavigation access={access} section={section} />}
       {children}
     </ManagementPage>
   );

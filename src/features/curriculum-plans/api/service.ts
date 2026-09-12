@@ -7,6 +7,7 @@ import { createHomeLearningTaskKey } from "@/features/student-home-learning/prio
 import { scopeDashboardPath } from "@/lib/dashboard-path";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { expandPlanItemTime, itemOffsetMinutes } from "../time";
+import { executionKey, resolveCurriculumExecution, type CurriculumExecutionEvidence } from "../execution";
 import type {
   CurriculumPlanStudent,
   CurriculumPlanTemplate,
@@ -148,6 +149,7 @@ export async function loadCurriculumPlanWorkspace({
           .select("student_id")
           .eq("tenant_id", tenantId)
           .eq("teacher_id", viewerId)
+          .eq("student_app_id", studentAppId)
       : Promise.resolve({ data: null, error: null }),
   ]);
   if (planResult.error) throw new Error("机构执行计划读取失败", { cause: planResult.error });
@@ -183,85 +185,46 @@ export async function loadCurriculumPlanWorkspace({
     studentIdsByPlan.set(String(row.plan_id), values);
   }
 
-  const lessonIdsByTemplate = new Map<string, string[]>();
-  const testIdsByTemplate = new Map<string, string[]>();
-  for (const item of items) {
-    if (item.sourceType === "lesson" && item.sourceId) {
-      const values = lessonIdsByTemplate.get(item.templateId) ?? [];
-      values.push(item.sourceId);
-      lessonIdsByTemplate.set(item.templateId, values);
-    } else if (item.sourceType === "chapter_test" && item.sourceId) {
-      const values = testIdsByTemplate.get(item.templateId) ?? [];
-      values.push(item.sourceId);
-      testIdsByTemplate.set(item.templateId, values);
-    }
+  // Retired templates still underpin active institution plans.
+  const missingTemplateIds = [...new Set(planRows.map(row => row.template_id))].filter(id => !templates.some(t => t.id === id));
+  if (missingTemplateIds.length) {
+    const [historicalTemplates, historicalItems] = await Promise.all([
+      supabase.from("curriculum_plan_templates").select(TEMPLATE_COLUMNS).in("id", missingTemplateIds).eq("student_app_id", studentAppId),
+      supabase.from("curriculum_plan_template_items").select(TEMPLATE_ITEM_COLUMNS).in("template_id", missingTemplateIds),
+    ]);
+    if (historicalTemplates.error || historicalItems.error) throw new Error("执行计划来源读取失败");
+    templates.push(...((historicalTemplates.data ?? []) as TemplateRow[]).map(mapTemplate));
+    items.push(...((historicalItems.data ?? []) as ItemRow[]).map(mapTemplateItem));
   }
-  const allTrackedLessonIds = [...new Set([...lessonIdsByTemplate.values()].flat())];
-  const allTrackedTestIds = [...new Set([...testIdsByTemplate.values()].flat())];
-  const allTrackedStudentIds = [...new Set(planRows.flatMap((row) => studentIdsByPlan.get(row.id) ?? []))];
-  const startedStudentsByLesson = new Map<string, Set<string>>();
-  if (allTrackedLessonIds.length && allTrackedStudentIds.length) {
-    const { data: progressRows, error: progressError } = await supabase
-      .from("lesson_progress")
-      .select("user_id,lesson_id")
-      .in("lesson_id", allTrackedLessonIds)
-      .in("user_id", allTrackedStudentIds)
-      .neq("status", "not_started");
-    if (progressError) throw new Error("学生学习进度读取失败", { cause: progressError });
-    for (const row of (progressRows ?? []) as { user_id: string; lesson_id: string }[]) {
-      const set = startedStudentsByLesson.get(row.lesson_id) ?? new Set<string>();
-      set.add(row.user_id);
-      startedStudentsByLesson.set(row.lesson_id, set);
-    }
-  }
-  const attemptedStudentsByTest = new Map<string, Set<string>>();
-  if (allTrackedTestIds.length && allTrackedStudentIds.length) {
-    const { data: attemptRows, error: attemptError } = await supabase
-      .from("chapter_test_attempts")
-      .select("student_id,test_id")
-      .in("test_id", allTrackedTestIds)
-      .in("student_id", allTrackedStudentIds);
-    if (attemptError) throw new Error("学生测试进度读取失败", { cause: attemptError });
-    for (const row of (attemptRows ?? []) as { student_id: string; test_id: string }[]) {
-      const set = attemptedStudentsByTest.get(row.test_id) ?? new Set<string>();
-      set.add(row.student_id);
-      attemptedStudentsByTest.set(row.test_id, set);
-    }
-  }
-
+  const evidence = await loadCurriculumExecution(supabase, planIds);
+  const byKey = new Map(evidence.map(row => [executionKey(row.plan_id, row.item_id, row.student_id), row]));
+  const now = new Date();
   const plans: InstitutionCurriculumPlan[] = planRows.map((row) => {
-    const planStudentIds = studentIdsByPlan.get(row.id) ?? [];
-    const lessonIds = lessonIdsByTemplate.get(row.template_id) ?? [];
-    const testIds = testIdsByTemplate.get(row.template_id) ?? [];
-    let progress: InstitutionCurriculumPlan["progress"] = null;
-    if ((lessonIds.length || testIds.length) && planStudentIds.length) {
-      const startedStudents = new Set<string>();
-      for (const lessonId of lessonIds) {
-        const set = startedStudentsByLesson.get(lessonId);
-        if (!set) continue;
-        for (const studentId of planStudentIds) {
-          if (set.has(studentId)) startedStudents.add(studentId);
-        }
-      }
-      for (const testId of testIds) {
-        const set = attemptedStudentsByTest.get(testId);
-        if (!set) continue;
-        for (const studentId of planStudentIds) {
-          if (set.has(studentId)) startedStudents.add(studentId);
-        }
-      }
-      progress = { trackedStudentCount: planStudentIds.length, startedStudentCount: startedStudents.size };
-    }
+    const planStudentIds = (studentIdsByPlan.get(row.id) ?? []).filter(id => studentIds.includes(id));
+    const planItems = items.filter(item => item.templateId === row.template_id);
+    const anchor = Math.min(...planItems.map(itemOffsetMinutes));
+    const execution = planStudentIds.flatMap(studentId => planItems.map(item => {
+      const fact = byKey.get(executionKey(row.id, item.id, studentId));
+      const schedule = expandPlanItemTime(new Date(row.starts_at), anchor, item);
+      return { studentId, itemId: item.id, title: item.title, required: item.isRequired,
+        sourceType: item.sourceType, assignmentId: fact?.assignment_id ?? null,
+        ...resolveCurriculumExecution(fact, schedule, item.isRequired, now),
+        startsAt: fact?.starts_at ?? schedule.startsAt.toISOString(),
+        dueAt: fact?.due_at ?? schedule.endsAt.toISOString() };
+    }));
     return {
-      id: row.id,
-      templateId: row.template_id,
-      title: row.title,
-      startsAt: row.starts_at,
-      endsAt: row.ends_at,
-      status: row.status,
-      publishedAt: row.published_at,
-      studentIds: planStudentIds,
-      progress,
+      id: row.id, templateId: row.template_id, title: row.title, startsAt: row.starts_at,
+      endsAt: row.ends_at, status: row.status, publishedAt: row.published_at,
+      studentIds: planStudentIds, execution,
+      progress: {
+        trackedStudentCount: planStudentIds.length,
+        startedStudentCount: new Set(execution.filter(e => ["completed", "in_progress", "pending_grading"].includes(e.status)).map(e => e.studentId)).size,
+        completedCount: execution.filter(e => e.status === "completed").length,
+        overdueCount: execution.filter(e => e.status === "overdue").length,
+        pendingGradingCount: execution.filter(e => e.status === "pending_grading").length,
+        unavailableCount: execution.filter(e => e.status === "unavailable").length,
+        totalCount: execution.length,
+      },
     };
   });
   const students: CurriculumPlanStudent[] = (profileResult.data ?? []).map((row) => ({
@@ -319,12 +282,16 @@ export async function loadPublishedStudentCurriculumTasks({
   if (itemResult.error) throw new Error("学生正式学习计划明细读取失败", { cause: itemResult.error });
   const items = ((itemResult.data ?? []) as ItemRow[]).map(mapTemplateItem);
 
+  const evidence = await loadCurriculumExecution(supabase, plans.map(plan => plan.id));
+  const byKey = new Map(evidence.map(row => [executionKey(row.plan_id, row.item_id, row.student_id), row]));
   return plans.flatMap((plan) => {
     const planItems = items.filter((item) => item.templateId === plan.template_id);
     if (planItems.length === 0) return [];
     const anchorMinute = Math.min(...planItems.map(itemOffsetMinutes));
     return planItems.map((item): HomeLearningTask => {
       const schedule = expandPlanItemTime(new Date(plan.starts_at), anchorMinute, item);
+      const fact = byKey.get(executionKey(plan.id, item.id, studentId));
+      const execution = resolveCurriculumExecution(fact, schedule, item.isRequired, now);
       return {
         taskKey: createHomeLearningTaskKey(studentAppId, "student_plan", `${plan.id}:${item.id}`),
         studentAppId,
@@ -334,18 +301,18 @@ export async function loadPublishedStudentCurriculumTasks({
         sourceId: item.id,
         title: item.title,
         description: plan.title,
-        status: schedule.endsAt < now
-          ? item.isRequired ? "overdue" : "available"
-          : schedule.startsAt <= now ? "in_progress" : "not_started",
+        status: execution.status,
         priority: item.isRequired ? "high" : "normal",
         required: item.isRequired,
-        startsAt: schedule.startsAt.toISOString(),
-        dueAt: schedule.endsAt.toISOString(),
-        progressPercent: null,
-        reason: item.instructions ?? `按照${plan.title}完成本项学习。`,
-        href: item.destinationPath
-          ? scopeDashboardPath(item.destinationPath, dashboardBasePath)
-          : scopeDashboardPath("/dashboard/courses", dashboardBasePath),
+        startsAt: fact?.starts_at ?? schedule.startsAt.toISOString(),
+        dueAt: fact?.due_at ?? schedule.endsAt.toISOString(),
+        progressPercent: execution.progressPercent,
+        reason: `${execution.reason}${item.instructions ? ` ${item.instructions}` : ""}`,
+        href: fact?.assignment_id
+          ? scopeDashboardPath(`/dashboard/assignments/${fact.assignment_id}`, dashboardBasePath)
+          : item.destinationPath
+            ? scopeDashboardPath(item.destinationPath, dashboardBasePath)
+            : scopeDashboardPath("/dashboard/courses", dashboardBasePath),
         courseId: null,
         courseChapterId: null,
         skill: item.activityType,
@@ -353,4 +320,14 @@ export async function loadPublishedStudentCurriculumTasks({
       };
     });
   });
+}
+
+export async function loadCurriculumExecution(supabase: SupabaseClient, planIds: string[]): Promise<CurriculumExecutionEvidence[]> {
+  const rows: CurriculumExecutionEvidence[] = [];
+  for (let offset = 0; offset < planIds.length; offset += 50) {
+    const { data, error } = await supabase.rpc("get_curriculum_execution", { p_plan_ids: planIds.slice(offset, offset + 50) });
+    if (error || !Array.isArray(data)) throw new Error("学习计划执行结果读取失败，请稍后重试。", { cause: error });
+    rows.push(...data as CurriculumExecutionEvidence[]);
+  }
+  return rows;
 }

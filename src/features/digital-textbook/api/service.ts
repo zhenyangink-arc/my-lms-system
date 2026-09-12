@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 
 import { redirect } from "next/navigation";
 
@@ -117,7 +118,7 @@ function grammarOf(
   );
 }
 
-export async function getDigitalTextbookManagementData(
+async function loadDigitalTextbookManagementData(
   studentAppId: string,
 ): Promise<DigitalTextbookManagementResult> {
   const auth = await requireActiveUser();
@@ -440,3 +441,6 @@ export async function getDigitalTextbookManagementData(
     ),
   };
 }
+
+// Request-local deduplication; authentication still runs for each request.
+export const getDigitalTextbookManagementData = cache(loadDigitalTextbookManagementData);

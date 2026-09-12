@@ -55,6 +55,7 @@ export type TeachingScriptVersion = {
   title: LocalizedText;
   changeNote: string;
   publishedAt: string | null;
+  sourceReviewStatus: "unknown" | "unreviewed" | "changed" | "reviewed";
   nodes: TeachingScriptNode[];
 };
 
@@ -68,6 +69,10 @@ export type TeachingScriptModule = {
   chapterTitle: LocalizedText;
   textbookId: string;
   textbookTitle: LocalizedText;
+  textbookVersion: { id: string; number: number; status: string; newerDraftNumber: number | null };
+  textbookStatus: string;
+  chapterStatus: string;
+  practiceStatus: "unknown" | "unlinked" | "disabled" | "unavailable" | "review" | "linked";
   lessonId: string | null;
   activities: TeachingScriptActivity[];
   learningTargets: SmartTextbookLearningTarget[];

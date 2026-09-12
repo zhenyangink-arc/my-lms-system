@@ -1,3 +1,7 @@
+import Link from "next/link";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import type { PlanLearningSource } from "../api/sources";
+import { PlanExecutionPanel } from "./PlanExecutionPanel";
 import { CalendarClock, CheckCircle2, Clock3, Copy, Send, Trash2, UserPlus, UsersRound, XCircle } from "lucide-react";
 
 import {
@@ -29,6 +33,7 @@ type ChapterTestOption = { id: string; lessonId: string; title: string };
 
 const ACTIVITY_LABELS: Record<CurriculumPlanTemplateItem["activityType"], string> = {
   course: "课程学习",
+  chapter_practice: "章节巩固",
   listening: "听力练习",
   speaking: "口语练习",
   reading: "阅读练习",
@@ -136,6 +141,7 @@ function PlatformWorkspace({
   courses,
   lessons,
   chapterTests,
+  learningSources,
   templates,
   items,
 }: {
@@ -144,6 +150,7 @@ function PlatformWorkspace({
   courses: CourseOption[];
   lessons: LessonOption[];
   chapterTests: ChapterTestOption[];
+  learningSources: PlanLearningSource[];
   templates: CurriculumPlanTemplate[];
   items: CurriculumPlanTemplateItem[];
 }) {
@@ -152,7 +159,7 @@ function PlatformWorkspace({
       <section className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
         <div className="mb-4 flex items-start gap-3">
           <div className="rounded-xl bg-emerald-50 p-2 text-emerald-700"><CalendarClock size={20} /></div>
-          <div><h2 className="font-semibold text-slate-900">新建标准计划</h2><p className="text-sm text-slate-500">先建立周期，再逐项编排 1–16 章课程、六维练习、测试与考试。</p></div>
+          <CardTitleWithHint title="新建标准计划" description="先建立周期，再绑定真实课程、练习和试卷。机构按计划时间布置考试，执行结果自动读取学习记录。" headingLevel={2} />
         </div>
         <form action={createCurriculumTemplateAction.bind(null, space, appSlug)} className="grid gap-3 md:grid-cols-4">
           <label className="text-xs font-medium text-slate-600">对应课程<select name="course_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">暂不绑定课程</option>{courses.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}</select></label>
@@ -246,6 +253,7 @@ function PlatformWorkspace({
                   <label className="text-xs font-medium text-slate-600">活动类型<select name="activity_type" className={`${inputClass} mt-1`}>{Object.entries(ACTIVITY_LABELS).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实课时<select name="lesson_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非课程活动，不绑定课时</option>{[...lessonGroups.entries()].map(([level, levelLessons]) => <optgroup key={level} label={level}>{levelLessons.map((lesson) => <option key={lesson.id} value={lesson.id}>{lesson.title}</option>)}</optgroup>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">绑定真实测试<select name="chapter_test_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">非测试活动，不绑定测试</option>{templateChapterTests.map((test) => <option key={test.id} value={test.id}>{test.title}</option>)}</select></label>
+                  <label className="text-xs font-medium text-slate-600 md:col-span-4">绑定试卷或练习<select name="resource_id" className={`${inputClass} mt-1`} defaultValue=""><option value="">课程和章节测试使用上方选择</option>{learningSources.filter(source => source.courseId === template.courseId).map(source => <option key={source.id} value={source.id}>{source.sourceType === "assessment_paper" ? "考试卷" : source.sourceType === "chapter_practice" ? "章节巩固" : ACTIVITY_LABELS[source.skill as keyof typeof ACTIVITY_LABELS]} · {source.title}</option>)}</select></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">标题<input name="title" maxLength={200} className={`${inputClass} mt-1`} placeholder="绑定课时后可留空，其他活动必填" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-3">学生端入口<input name="destination_path" className={`${inputClass} mt-1`} placeholder="/dashboard/courses/...（可选）" /></label>
                   <label className="text-xs font-medium text-slate-600 md:col-span-2">学习要求<input name="instructions" maxLength={1000} className={`${inputClass} mt-1`} placeholder="完成课程后进行听力练习" /></label>
@@ -264,7 +272,12 @@ function PlatformWorkspace({
 function InstitutionWorkspace({ space, appSlug, templates, items, students, plans }: { space: string; appSlug: string; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[] }) {
   return (
     <div className="space-y-5">
-      {templates.length === 0 ? <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">平台尚未发布可采用的标准学习计划。</div> : templates.map((template) => {
+      <section className="rounded-xl border p-4">
+        <CardTitleWithHint title="待加入计划的学生" description="已开通本应用、在当前负责范围内，且尚未加入有效计划的学生。" headingLevel={2} />
+        <p className="mt-2 text-sm">{students.filter(student => !plans.some(plan => ["published", "active"].includes(plan.status) && plan.studentIds.includes(student.id))).map(student => student.name).join("、") || "当前有效学生均已加入计划，或尚无已开通学生。"}</p>
+        <Link className="mt-2 inline-flex min-h-11 items-center text-sm underline" href={`/${space}/dashboard/admin/apps/${appSlug}/students`}>查看学生授权与教学分配</Link>
+      </section>
+      {templates.length === 0 ? <div className="rounded-3xl border border-slate-200 bg-white p-8 text-center text-sm text-slate-500">平台尚未发布可采用的标准学习计划。</div> : templates.filter(template => template.status === "published").map((template) => {
         const templateItems = items.filter((item) => item.templateId === template.id);
         return <section key={template.id} className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex items-start gap-3"><div className="rounded-xl bg-sky-50 p-2 text-sky-700"><CheckCircle2 size={20} /></div><div><h2 className="font-semibold text-slate-900">{template.title}</h2><p className="text-sm text-slate-500">平台标准 · {template.durationDays} 天 · {templateItems.length} 项安排</p></div></div>
@@ -298,12 +311,13 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
                     <div className="flex flex-wrap items-center gap-2">
                       {plan.progress ? (
                         <span className="rounded-full bg-sky-50 px-2 py-1 text-xs text-sky-700">
-                          已开始学习 {plan.progress.startedStudentCount}/{plan.progress.trackedStudentCount} 名学生
+                          完成 {plan.progress.completedCount}/{plan.progress.totalCount} 项 · 逾期 {plan.progress.overdueCount} 项
                         </span>
                       ) : null}
                       <span className={`rounded-full px-2 py-1 text-xs ${statusTone}`}>{plan.studentIds.length} 名学生 · {statusLabel}</span>
                     </div>
                   </div>
+                  <PlanExecutionPanel plan={plan} items={items.filter(item => item.templateId === plan.templateId)} students={students} space={space} appSlug={appSlug} />
                   {canAppendStudents ? (
                     <div className="mt-2 flex flex-wrap items-center gap-3">
                       <details>
@@ -335,6 +349,6 @@ function InstitutionWorkspace({ space, appSlug, templates, items, students, plan
   );
 }
 
-export function CurriculumPlanWorkspace({ space, appSlug, scope, courses, lessons, chapterTests, templates, items, students, plans, success, error }: { space: string; appSlug: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; chapterTests: ChapterTestOption[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
-  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} chapterTests={chapterTests} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} templates={templates} items={items} students={students} plans={plans} />}</div>;
+export function CurriculumPlanWorkspace({ space, appSlug, scope, courses, lessons, chapterTests, learningSources, templates, items, students, plans, success, error }: { space: string; appSlug: string; scope: "platform" | "tenant"; courses: CourseOption[]; lessons: LessonOption[]; chapterTests: ChapterTestOption[]; learningSources: PlanLearningSource[]; templates: CurriculumPlanTemplate[]; items: CurriculumPlanTemplateItem[]; students: CurriculumPlanStudent[]; plans: InstitutionCurriculumPlan[]; success?: string; error?: string }) {
+  return <div className="space-y-5"><StatusMessage success={success} error={error} />{scope === "platform" ? <PlatformWorkspace space={space} appSlug={appSlug} courses={courses} lessons={lessons} chapterTests={chapterTests} learningSources={learningSources} templates={templates} items={items} /> : <InstitutionWorkspace space={space} appSlug={appSlug} templates={templates} items={items} students={students} plans={plans} />}</div>;
 }

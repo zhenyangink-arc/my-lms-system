@@ -115,7 +115,7 @@ function parseFolderParam(value?: string): FolderRef | null {
 }
 
 function folderHref(catalogRoute: string, ref: FolderRef | null) {
-  return ref ? `${catalogRoute}?folder=${ref.kind}:${ref.id}` : catalogRoute;
+  return ref ? `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${ref.kind}:${ref.id}` : catalogRoute;
 }
 
 function categoryRow(

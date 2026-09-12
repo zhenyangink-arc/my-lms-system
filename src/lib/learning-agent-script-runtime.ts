@@ -1,6 +1,8 @@
 import "server-only";
+import { teachingScriptSegments } from "@/lib/teaching-video";
 
-import { learningAgentBufferPresetAssetRef } from "@/lib/learning-agent-buffer-presets";
+import { BUFFER_CANDIDATE_COLUMNS, selectBufferSpeech } from "@/lib/learning-agent-buffer-selection.server";
+import { classroomResponsePhaseForTurn } from "@/lib/learning-agent-classroom-director";
 import { parseRichText, richCharsToPlainText, stripRichText, type RichChar } from "@/lib/rich-teaching-text";
 import type { createAdminClient } from "@/lib/supabase/admin";
 import { isTeacherKimPose, type TeacherKimPose } from "@/lib/teacher-kim-character";
@@ -40,9 +42,8 @@ export function configuredText(configuration: Record<string, unknown> | null, ke
 }
 
 export function teacherScriptSegments(node: ScriptNodeRow, locale: Locale) {
-  const content = localized(node.teacher_script, locale);
-  const segments = content.split(/\n\s*\n/).map((segment) => segment.trim()).filter(Boolean);
-  return segments.length > 0 ? segments : [content];
+  const segments = teachingScriptSegments(node.teacher_script, node.configuration, locale);
+  return segments.length > 0 ? segments : [""];
 }
 
 export function studentTask(configuration: Record<string, unknown> | null) {
@@ -262,21 +263,21 @@ export async function resolveBufferLineSpeechAssetId(
   node: ScriptNodeRow | null,
   locale: Locale,
   bufferLine: string,
+  audience: "published" | "authorized-owner-preview" = "published",
 ) {
   if (!node || !bufferLine) return null;
-  const presetAssetRef = learningAgentBufferPresetAssetRef(locale, bufferLine);
-  if (presetAssetRef) return presetAssetRef;
-  const contentHash = await sha256Text(bufferLine);
+  const { data: version } = await admin.from("learning_agent_script_versions")
+    .select("id,status").eq("id", node.script_version_id).maybeSingle();
+  if (!version) return null;
   const { data } = await admin
     .from("learning_agent_script_audio_assets")
-    .select("id")
+    .select(BUFFER_CANDIDATE_COLUMNS)
     .eq("script_node_id", node.id)
     .eq("locale", locale)
     .eq("segment_index", BUFFER_LINE_SEGMENT_INDEX)
-    .eq("content_hash", contentHash)
-    .eq("production_status", "ready")
-    .maybeSingle();
-  return data?.id ? String(data.id) : null;
+    .eq("production_status", "ready");
+  return selectBufferSpeech({ version, node: { id: node.id, scriptVersionId: node.script_version_id, configuration: node.configuration },
+    locale, expectedText: bufferLine, candidates: data ?? [], audience }).selectedSpeechAssetId;
 }
 
 export function taskEventKey(nodeId: string, task: Record<string, unknown>) {
@@ -318,6 +319,9 @@ export type ResolveScriptStepResult = {
   selectedScriptSegmentIndex: number;
   selectedScriptSegmentCount: number;
   responseInteraction: ReturnType<typeof nodeInteraction>;
+  responseStudentTask: ReturnType<typeof studentTask>;
+  responsePhase: "explanation" | "task" | "task_feedback" | "question";
+  nodeTurnComplete: boolean;
   pendingNodeAttempt: { nodeId: string; answer: string; isCorrect: boolean } | null;
   action: "none" | "focus_activity" | "play_expression";
   isFinalStep: boolean;
@@ -340,6 +344,12 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
   let nextTeachingState = teachingState;
   let selectedScriptSegmentIndex = 0;
   let selectedScriptSegmentCount = 1;
+
+  const advanceFromNode = (node: ScriptNodeRow) => node.configuration?.terminal === true
+    ? node
+    : node.next_node_key
+      ? nodeByKey.get(node.next_node_key) ?? null
+      : scriptNodes.find((item) => item.sort_order > node.sort_order) ?? node;
 
   if (intent === "start") {
     selectedScriptNode = currentScriptNode ?? scriptNodes[0] ?? null;
@@ -373,18 +383,45 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
         && !completedTaskEvents.has(taskEventKey(currentScriptNode.id, currentStudentTask));
       const currentRequiresAnswer = currentInteraction?.required === true
         || (currentScriptNode.node_type === "question" && Boolean(currentScriptNode.reference_activity_id));
-      if (currentRequiresAnswer && !currentAnswered) {
+      const turnPhase = teachingState.teachingTurnNodeId === currentScriptNode.id
+        ? String(teachingState.teachingTurnPhase ?? "explanation")
+        : "explanation";
+      if (turnPhase === "explanation" && requiredTaskPending) {
         selectedScriptNode = currentScriptNode;
-      } else if (intent === "ready" && requiredTaskPending) {
+        scriptedContent = localized(currentStudentTask?.instruction, locale)
+          || localized(currentStudentTask?.targetLabel, locale)
+          || (locale === "ko-KR" ? "오른쪽 학습 영역에서 안내한 활동을 완료해 보세요." : "请在右侧学习区完成老师指定的操作。");
+        nextTeachingState = {
+          ...teachingState,
+          teachingTurnNodeId: currentScriptNode.id,
+          teachingTurnPhase: "task",
+        };
+      } else if (turnPhase === "task" && requiredTaskPending) {
         selectedScriptNode = currentScriptNode;
         scriptedContent = configuredText(currentScriptNode.configuration, "taskReminder", locale)
-          || (locale === "ko-KR" ? "오른쪽 학습 영역의 과제를 먼저 완료해 주세요." : "请先完成右侧学习区中的操作任务，完成后我会带你继续。 ");
-      } else if (currentScriptNode.configuration?.terminal === true) {
+          || (locale === "ko-KR" ? "오른쪽 학습 영역의 과제를 먼저 완료해 주세요." : "请先完成右侧学习区中的操作任务，完成后我会带你继续。");
+      } else if (turnPhase === "task" && !requiredTaskPending) {
+        selectedScriptNode = currentScriptNode;
+        scriptedContent = configuredText(currentScriptNode.configuration, "operationCompleteFeedback", locale)
+          || (currentRequiresAnswer
+            ? (locale === "ko-KR" ? "잘했어요. 이제 한 가지 질문에 답해 볼까요?" : "很好，操作完成了。接下来回答老师一个问题。")
+            : (locale === "ko-KR" ? "잘했어요. 활동을 정확히 완료했어요." : "很好，你已经完成了这个操作。"));
+        nextTeachingState = {
+          ...teachingState,
+          teachingTurnNodeId: currentScriptNode.id,
+          teachingTurnPhase: "task_feedback",
+        };
+      } else if ((turnPhase === "explanation" || turnPhase === "task_feedback") && currentRequiresAnswer && !currentAnswered) {
+        selectedScriptNode = currentScriptNode;
+        nextTeachingState = {
+          ...teachingState,
+          teachingTurnNodeId: currentScriptNode.id,
+          teachingTurnPhase: "question",
+        };
+      } else if (turnPhase === "question" && currentRequiresAnswer && !currentAnswered) {
         selectedScriptNode = currentScriptNode;
       } else {
-        selectedScriptNode = currentScriptNode.next_node_key
-          ? nodeByKey.get(currentScriptNode.next_node_key) ?? null
-          : scriptNodes.find((node) => node.sort_order > currentScriptNode.sort_order) ?? currentScriptNode;
+        selectedScriptNode = advanceFromNode(currentScriptNode);
       }
     }
   } else {
@@ -400,7 +437,13 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
       : selectedScriptSegmentIndex;
     if (!segmentStateMatches) {
       selectedScriptSegmentIndex = 0;
-      nextTeachingState = { ...nextTeachingState, scriptSegmentNodeId: selectedScriptNode.id, scriptSegmentIndex: 0 };
+      nextTeachingState = {
+        ...nextTeachingState,
+        scriptSegmentNodeId: selectedScriptNode.id,
+        scriptSegmentIndex: 0,
+        teachingTurnNodeId: selectedScriptNode.id,
+        teachingTurnPhase: "explanation",
+      };
     }
   }
 
@@ -420,11 +463,34 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
       : "这个教学节点暂时没有补充例子，请继续完成当前学习步骤。";
   }
 
-  const selectedInteraction = selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
+  const selectedTurnPhaseValue = selectedScriptNode && nextTeachingState.teachingTurnNodeId === selectedScriptNode.id
+    ? String(nextTeachingState.teachingTurnPhase ?? "explanation")
+    : "explanation";
+  const selectedTurnPhase = selectedTurnPhaseValue === "task"
+    || selectedTurnPhaseValue === "task_feedback"
+    || selectedTurnPhaseValue === "question"
+    ? selectedTurnPhaseValue
+    : "explanation";
+  const interactionIsActive = selectedTurnPhase === "question" || intent === "answer";
+  const selectedInteraction = selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1 && interactionIsActive
     ? nodeInteraction(selectedScriptNode?.configuration ?? null)
     : null;
   const responseInteraction = selectedInteraction;
+  const responseStudentTask = selectedScriptNode && selectedTurnPhase === "task"
+    ? studentTask(selectedScriptNode.configuration)
+    : null;
   let pendingNodeAttempt: { nodeId: string; answer: string; isCorrect: boolean } | null = null;
+
+  // Resuming an existing session must replay the active teaching turn, not the
+  // last explanation line that happened to share the same script node.
+  if (selectedScriptNode && intent === "start" && selectedTurnPhase === "task") {
+    scriptedContent = localized(responseStudentTask?.instruction, locale)
+      || localized(responseStudentTask?.targetLabel, locale)
+      || (locale === "ko-KR" ? "오른쪽 학습 영역에서 안내한 활동을 완료해 보세요." : "请在右侧学习区完成老师指定的操作。");
+  } else if (selectedScriptNode && intent === "start" && selectedTurnPhase === "task_feedback") {
+    scriptedContent = configuredText(selectedScriptNode.configuration, "operationCompleteFeedback", locale)
+      || (locale === "ko-KR" ? "잘했어요. 활동을 정확히 완료했어요." : "很好，你已经完成了这个操作。");
+  }
 
   if (selectedScriptNode && selectedInteraction) {
     questionOptions = selectedInteraction.options;
@@ -467,13 +533,15 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
       }
       pendingNodeAttempt = { nodeId: selectedScriptNode.id, answer: input.answer, isCorrect: answerCorrect };
     } else {
+      scriptedContent = localized(selectedInteraction.prompt, locale)
+        || (locale === "ko-KR" ? "알맞은 답을 골라 보세요." : "请选择一个正确答案。");
       awaitingAnswer = teachingState.answeredNodeId !== selectedScriptNode.id && selectedInteraction.required;
     }
-  } else if (selectedScriptNode?.node_type === "question" && selectedScriptNode.reference_activity_id) {
+  } else if (interactionIsActive && selectedScriptNode?.node_type === "question" && selectedScriptNode.reference_activity_id) {
     const [{ data: referencedActivity }, { data: activitySecret }] = await Promise.all([
       admin
         .from("digital_textbook_activities")
-        .select("id,options")
+        .select("id,prompt,options")
         .eq("id", selectedScriptNode.reference_activity_id)
         .maybeSingle(),
       admin
@@ -518,25 +586,49 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
       }
       pendingNodeAttempt = { nodeId: selectedScriptNode.id, answer: input.answer, isCorrect: answerCorrect };
     } else {
+      scriptedContent = localized(referencedActivity?.prompt, locale)
+        || (locale === "ko-KR" ? "교재의 질문에 답해 보세요." : "请回答教材中的这个问题。");
       awaitingAnswer = teachingState.answeredNodeId !== selectedScriptNode.id;
     }
   }
 
-  const action: ResolveScriptStepResult["action"] = selectedScriptNode?.action_type === "focus_activity"
-    ? "focus_activity"
-    : selectedScriptNode?.action_type === "play_expression"
-      ? "play_expression"
-      : "none";
+  const action: ResolveScriptStepResult["action"] = intent === "answer" || selectedTurnPhase === "task_feedback"
+    ? "none"
+    : selectedScriptNode?.action_type === "focus_activity"
+      ? "focus_activity"
+      : selectedScriptNode?.action_type === "play_expression"
+        ? "play_expression"
+        : "none";
 
+  const finalStudentTask = selectedScriptNode ? studentTask(selectedScriptNode.configuration) : null;
+  const finalTaskRequired = finalStudentTask?.required === true;
+  const finalTaskCompleted = Boolean(selectedScriptNode && finalStudentTask
+    && completedTaskEvents.has(taskEventKey(selectedScriptNode.id, finalStudentTask)));
+  const finalRequiresAnswer = Boolean(selectedScriptNode && (
+    nodeInteraction(selectedScriptNode.configuration)?.required === true
+      || (selectedScriptNode.node_type === "question" && selectedScriptNode.reference_activity_id)
+  ));
+  const finalTurnPhase = selectedScriptNode && nextTeachingState.teachingTurnNodeId === selectedScriptNode.id
+    ? String(nextTeachingState.teachingTurnPhase ?? "explanation")
+    : "explanation";
+  const finalTaskHandled = !finalTaskRequired
+    || (finalTaskCompleted && finalTurnPhase !== "explanation" && finalTurnPhase !== "task");
+  const finalQuestionHandled = !finalRequiresAnswer || nextTeachingState.answeredNodeId === selectedScriptNode?.id;
+  const nodeTurnComplete = finalTaskHandled && finalQuestionHandled && !awaitingAnswer;
   const isFinalStep = Boolean(
     selectedScriptNode
       && selectedScriptSegmentIndex >= selectedScriptSegmentCount - 1
       && isTerminalScriptNode(selectedScriptNode, scriptNodes)
-      && !awaitingAnswer,
+      && nodeTurnComplete,
   );
 
   const scriptedContentRich = parseRichText(scriptedContent);
   scriptedContent = richCharsToPlainText(scriptedContentRich);
+  const responsePhase = classroomResponsePhaseForTurn({
+    activePhase: selectedTurnPhase,
+    intent,
+    answerCorrect,
+  });
 
   return {
     selectedScriptNode,
@@ -549,6 +641,9 @@ export async function resolveScriptStep(input: ResolveScriptStepInput): Promise<
     selectedScriptSegmentIndex,
     selectedScriptSegmentCount,
     responseInteraction,
+    responseStudentTask,
+    responsePhase,
+    nodeTurnComplete,
     pendingNodeAttempt,
     action,
     isFinalStep,

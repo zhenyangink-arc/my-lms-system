@@ -1,7 +1,9 @@
 "use client";
+import { normalizeTeachingVideo, teachingScriptSegments, teachingVideoIssues, type VideoTurnSlot } from "@/lib/teaching-video";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { TeacherVideoPicker } from "./TeacherVideoPicker";
 
 import { type KeyboardEvent as ReactKeyboardEvent, type SyntheticEvent as ReactSyntheticEvent, useActionState, useEffect, useRef, useState, useTransition } from "react";
-import { createPortal } from "react-dom";
 import { AlertTriangle, ArrowDown, ArrowUp, BookOpenText, CheckCircle2, Link2, LoaderCircle, MessageCircleQuestion, Pause, Play, Plus, RotateCcw, Route, ScrollText, Trash2, Volume2, VolumeX } from "lucide-react";
 
 import {
@@ -11,6 +13,10 @@ import {
   type TeachingScriptActionState,
 } from "@/app/dashboard/admin/teaching-scripts/actions";
 import { LEARNING_AGENT_BUFFER_PRESET_NONE_ID, LEARNING_AGENT_BUFFER_PRESETS } from "@/lib/learning-agent-buffer-presets";
+import {
+  isClassroomShotMode,
+  type ClassroomShotPreference,
+} from "@/lib/learning-agent-classroom-director";
 import {
   buildGenericModuleLearningTargets,
   buildOrientationLearningTargets,
@@ -426,7 +432,8 @@ function ScriptSpeechReview({
   );
 }
 
-type EditorSection = "script" | "content" | "interaction" | "flow";
+export type TeachingScriptEditorSection = "script" | "content" | "interaction" | "flow";
+type EditorSection = TeachingScriptEditorSection;
 
 const errorSectionByField: Partial<Record<string, EditorSection>> = {
   nodeKey: "flow",
@@ -447,8 +454,10 @@ const errorSectionByField: Partial<Record<string, EditorSection>> = {
   displaySlidesJson: "content",
   virtualCharacterKind: "content",
   virtualCharacterPosition: "content",
-  studentTaskKind: "content",
-  studentTaskTargetKey: "content",
+  studentTaskKind: "interaction",
+  studentTaskInstructionZh: "interaction",
+  studentTaskTargetKey: "interaction",
+  operationCompleteFeedbackZh: "interaction",
   visualCueTargetKey: "content",
   petActionTargetKey: "content",
   interactionKind: "interaction",
@@ -464,9 +473,58 @@ const errorSectionByField: Partial<Record<string, EditorSection>> = {
   continueLabelZh: "flow",
 };
 
+const errorFocusSelectorByField: Partial<Record<string, string>> = {
+  nodeKey: '[name="node_key"]',
+  nodeType: '[name="node_type"]',
+  titleZh: '[name="title_zh"]',
+  titleKo: '[name="title_zh"]',
+  scriptZh: '[name="script_zh"]',
+  scriptKo: '[name="script_zh"]',
+  hintZh: '[name="hint_zh"]',
+  exampleZh: '[name="example_zh"]',
+  bufferPresetId: '[role="radiogroup"][aria-label="选择系统兜底台词"] button',
+  scriptPerformances: '[name="script_pose"]',
+  virtualCharacterKind: '[name="virtual_character_kind"]',
+  virtualCharacterPosition: '[name="virtual_character_position"]',
+  studentTaskKind: '#participation-mode-options button',
+  studentTaskInstructionZh: '[name="student_task_instruction_zh"]',
+  studentTaskTargetKey: '[aria-describedby~="student-task-target-error"]',
+  operationCompleteFeedbackZh: '[name="operation_complete_feedback_zh"]',
+  visualCueTargetKey: '[name="visual_cue_target_key"]',
+  petActionTargetKey: '[aria-describedby~="pet-action-target-error"]',
+  interactionKind: '[name="interaction_kind"]',
+  interactionPromptZh: '[name="interaction_prompt_zh"]',
+  interactionOptions: '[name="interaction_option"]',
+  interactionCorrectOption: '[name="interaction_correct_option"]',
+  interactionCorrectFeedbackZh: '[name="interaction_correct_feedback_zh"]',
+  interactionIncorrectFeedbackZh: '[name="interaction_incorrect_feedback_zh"]',
+  referenceActivityId: '[name="reference_activity_id"]',
+  remediationNodeKey: '[name="remediation_node_key"]',
+  flowMode: '[role="radiogroup"][aria-label="完成后的去向"] button',
+  nextNodeKey: '[name="next_node_key"]',
+  continueLabelZh: '[name="continue_label_zh"]',
+};
+
 type FlowMode = "sequence" | "jump" | "end";
 type ScriptLearningLayout = "split" | "learning" | "teaching";
 type ParticipationMode = "listen" | "operation" | "question" | "operation_and_question";
+
+const classroomShotOptions: Array<{
+  value: ClassroomShotPreference;
+  label: string;
+  description: string;
+}> = [
+  { value: "auto", label: "自动导演", description: "根据讲解、操作、提问和反馈自动选择" },
+  { value: "teacher_closeup", label: "老师主讲", description: "突出金老师，适合开场和情绪引导" },
+  { value: "teacher_blackboard", label: "老师＋黑板", description: "老师与当前教学画面同时出现" },
+  { value: "learning_closeup", label: "教材特写", description: "把注意力交给学生需要操作的内容" },
+  { value: "interaction", label: "学生互动", description: "突出问题、选项或待完成的活动" },
+  { value: "feedback", label: "老师反馈", description: "突出完成结果与老师针对性讲解" },
+];
+
+const classroomShotLabels = Object.fromEntries(
+  classroomShotOptions.map((option) => [option.value, option.label]),
+) as Record<ClassroomShotPreference, string>;
 
 type ScriptPerformance = {
   pose: TeacherKimPose;
@@ -476,6 +534,7 @@ type ScriptPerformance = {
   /** Only honored in the platform-owner preview: skip waiting for "继续" and play straight into the next 台词. */
   autoContinueToNext: boolean;
   learningLayout: ScriptLearningLayout;
+  classroomShot: ClassroomShotPreference;
   characterX: number;
   characterY: number;
   characterScale: number;
@@ -511,6 +570,9 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
   const learningLayout = performance.learningLayout === "learning" || performance.learningLayout === "teaching"
     ? performance.learningLayout
     : "split";
+  const classroomShot = performance.classroomShot === "auto" || isClassroomShotMode(performance.classroomShot)
+    ? performance.classroomShot as ClassroomShotPreference
+    : "auto";
   return {
     pose,
     voiceEnabled: performance.voiceEnabled !== false,
@@ -518,6 +580,7 @@ function scriptPerformanceConfiguration(value: unknown, fallback: Record<string,
     voiceRate: Number.isFinite(voiceRate) ? Math.max(0.75, Math.min(1.25, voiceRate)) : 1,
     autoContinueToNext: performance.autoContinueToNext === true,
     learningLayout,
+    classroomShot,
     characterX: placement.x,
     characterY: placement.y,
     characterScale: placement.scale,
@@ -616,6 +679,13 @@ export function TeachingScriptNodeForm({
   returnTo,
   editable,
   previewUrl,
+  editorSection,
+  onEditorSectionChange,
+  showSectionNavigation = true,
+  interactionFocusRequest,
+  onStartFlowBinding,
+  flowBindingRequest,
+  onFlowBindingApplied,
   onDirtyChange,
   onPendingChange,
 }: {
@@ -635,16 +705,45 @@ export function TeachingScriptNodeForm({
    * Lets the stage editor show the real 学习区 content instead of a blank
    * placeholder in split/narrow mode. */
   previewUrl?: string;
+  editorSection: TeachingScriptEditorSection;
+  onEditorSectionChange: (section: TeachingScriptEditorSection) => void;
+  showSectionNavigation?: boolean;
+  interactionFocusRequest?: { id: number; target: "teacher_prompt" | "student_response" | "teacher_feedback" } | null;
+  onStartFlowBinding?: () => void;
+  flowBindingRequest?: { id: number; targetNodeKey: string } | null;
+  onFlowBindingApplied?: (requestId: number) => void;
   onDirtyChange: (dirty: boolean) => void;
   onPendingChange: (pending: boolean) => void;
 }) {
   const formRef = useRef<HTMLFormElement | null>(null);
+  const [teacherVideo, setTeacherVideo] = useState(() => {
+    const config = normalizeTeachingVideo(node.configuration.teacherVideo);
+    return node.configuration.teacherVideo || !editable ? config : { ...config, mode: "video" as const };
+  });
+  const visibleEditorSteps = teacherVideo.mode === "video"
+    ? editorSteps.filter((step) => step.id !== "content").map((step) => ({ ...step, label: step.id === "script" ? "1. 播放视频" : step.id === "interaction" ? "2. 学生回应与反馈" : "3. 完成后去哪里" }))
+    : editorSteps;
+  useEffect(() => {
+    if (teacherVideo.mode !== "video" || editorSection !== "content") return;
+    const frame = requestAnimationFrame(() => onEditorSectionChange("script"));
+    return () => cancelAnimationFrame(frame);
+  }, [teacherVideo.mode, editorSection, onEditorSectionChange]);
+  useEffect(() => {
+    if (!interactionFocusRequest || editorSection !== "interaction") return;
+    const frame = window.requestAnimationFrame(() => {
+      const selectors = interactionFocusRequest.target === "teacher_prompt"
+        ? ['[data-video-turn="task"] button', '[data-video-turn="question"] button', '[name="student_task_instruction_zh"]', '[name="interaction_prompt_zh"]', '[name="reference_activity_id"]', '#participation-mode-title']
+        : interactionFocusRequest.target === "student_response"
+          ? ['[aria-describedby~="student-task-target-error"]', '[name="interaction_option"]', '[name="reference_activity_id"]', '#participation-mode-title']
+          : ['[data-video-turn="operationFeedback"] button', '[data-video-turn="correctFeedback"] button', '[name="operation_complete_feedback_zh"]', '[name="interaction_correct_feedback_zh"]', '[name="remediation_node_key"]', '#participation-mode-title'];
+      const target = selectors.map((selector) => formRef.current?.querySelector<HTMLElement>(selector)).find((element) => element && element.getClientRects().length > 0);
+      target?.scrollIntoView({ behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" });
+      target?.focus({ preventScroll: true });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [editorSection, interactionFocusRequest]);
   const errorSummaryRef = useRef<HTMLDivElement | null>(null);
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const [editorStepsSlot, setEditorStepsSlot] = useState<HTMLElement | null>(null);
-  useEffect(() => {
-    setEditorStepsSlot(document.getElementById("teaching-editor-steps-slot"));
-  }, []);
   const dirtyVersionRef = useRef(0);
   const submittedVersionRef = useRef(0);
   const nextSubmitModeRef = useRef<"auto" | "manual">("manual");
@@ -694,11 +793,22 @@ export function TeachingScriptNodeForm({
   const storedPetActionTargetKey = String(petAction.targetKey ?? "");
   const storedPetActionTarget = actionableLearningTargets.find((item) => item.key === storedPetActionTargetKey);
   const [scriptLines, setScriptLines] = useState(() => {
-    const lines = node.script["zh-CN"].split(/\n\s*\n/);
+    const lines = teachingScriptSegments(node.script, node.configuration);
     return lines.length > 0 ? lines : [""];
   });
   const [bufferLineZh, setBufferLineZh] = useState(() => configuredText(node, "bufferLine", "zh-CN"));
   const [bufferLineKo, setBufferLineKo] = useState(() => configuredText(node, "bufferLine", "ko-KR"));
+  const [selectedBufferPresetId, setSelectedBufferPresetId] = useState(() => {
+    const configuredPresetId = String(node.configuration.bufferPresetId ?? "");
+    if (configuredPresetId === LEARNING_AGENT_BUFFER_PRESET_NONE_ID) return configuredPresetId;
+    if (LEARNING_AGENT_BUFFER_PRESETS.some((preset) => preset.id === configuredPresetId)) return configuredPresetId;
+    const configuredZh = configuredText(node, "bufferLine", "zh-CN").trim();
+    const configuredKo = configuredText(node, "bufferLine", "ko-KR").trim();
+    if (!configuredZh && !configuredKo) return LEARNING_AGENT_BUFFER_PRESET_NONE_ID;
+    return LEARNING_AGENT_BUFFER_PRESETS.find((preset) =>
+      preset.text["zh-CN"] === configuredZh && preset.text["ko-KR"] === configuredKo,
+    )?.id ?? "";
+  });
   const bufferPresetAudioRef = useRef<HTMLAudioElement | null>(null);
   const [bufferPresetAudioStatus, setBufferPresetAudioStatus] = useState<"idle" | "loading" | "playing" | "error">("idle");
   const [hintZh, setHintZh] = useState(() => configuredText(node, "hint", "zh-CN"));
@@ -717,12 +827,9 @@ export function TeachingScriptNodeForm({
     rate: scriptPerformanceConfiguration(storedScriptPerformances[0], virtualCharacter).voiceRate,
   }));
   const bufferLineIsEmpty = bufferLineZh.trim() === "" && bufferLineKo.trim() === "";
-  const selectedBufferPreset = LEARNING_AGENT_BUFFER_PRESETS.find((preset) =>
-    preset.text["zh-CN"] === bufferLineZh.trim() && preset.text["ko-KR"] === bufferLineKo.trim(),
-  ) ?? null;
-  const selectedBufferPresetSelectValue = bufferLineIsEmpty
-    ? LEARNING_AGENT_BUFFER_PRESET_NONE_ID
-    : selectedBufferPreset?.id ?? "";
+  const selectedBufferPreset = LEARNING_AGENT_BUFFER_PRESETS.find((preset) => preset.id === selectedBufferPresetId) ?? null;
+  const selectedBufferPresetSelectValue = selectedBufferPresetId;
+  const bufferLineUnmatched = !bufferLineIsEmpty && !selectedBufferPreset;
 
   useEffect(() => () => bufferPresetAudioRef.current?.pause(), []);
 
@@ -746,7 +853,22 @@ export function TeachingScriptNodeForm({
       setBufferPresetAudioStatus("error");
     }
   }
-  const [editorSection, setEditorSection] = useState<EditorSection>("script");
+
+  function selectBufferPreset(value: string) {
+    markDirty();
+    setBufferPresetAudioStatus("idle");
+    setSelectedBufferPresetId(value);
+    if (value === LEARNING_AGENT_BUFFER_PRESET_NONE_ID) {
+      setBufferLineZh("");
+      setBufferLineKo("");
+      return;
+    }
+    const preset = LEARNING_AGENT_BUFFER_PRESETS.find((item) => item.id === value);
+    if (!preset) return;
+    setBufferLineZh(preset.text["zh-CN"]);
+    setBufferLineKo(preset.text["ko-KR"]);
+  }
+  const setEditorSection = onEditorSectionChange;
   const [selectedCharacterLineIndex, setSelectedCharacterLineIndex] = useState(0);
   const [blackboardSlides, setBlackboardSlides] = useState<TeachingBlackboardSlide[]>(() =>
     teachingBlackboardSlidesFromDisplay(display),
@@ -824,11 +946,12 @@ export function TeachingScriptNodeForm({
   const generatedScriptSpeechCount = scriptLines.filter((_, index) =>
     node.speechAssets.some((asset) => asset.locale === "zh-CN" && asset.segmentIndex === index && asset.productionStatus === "ready"),
   ).length;
+  const videoIssues = teachingVideoIssues({ video: teacherVideo, lines: scriptLines, hasTask: studentTaskKind !== "none", hasQuestion: interactionKind !== "none" });
   const editorStepStates: Record<EditorSection, string> = {
-    script: scriptLines.some((line) => line.trim()) ? "已填写" : "待填写",
-    content: blackboardSlides.some((slide) => slide.elements.some((element) => element.content.trim() || element.translation?.trim())) ? "已设置" : "可选",
-    interaction: interactionKind !== "none" || studentTaskKind !== "none" ? "已设置" : "可选",
-    flow: flowMode === "end" || flowMode === "sequence" || nextNodeKey ? "已设置" : "待设置",
+    script: teacherVideo.mode === "video" ? videoIssues.some((issue) => issue.section === "script") ? "待配置" : "已配置" : scriptLines.some((line) => line.trim()) ? "已完成" : "需填写",
+    content: blackboardSlides.some((slide) => slide.elements.some((element) => element.content.trim() || element.translation?.trim())) ? "已完成" : "按需设置",
+    interaction: videoIssues.some((issue) => issue.section === "interaction") || (studentTaskKind !== "none" && !studentTaskTargetKey) ? "待配置" : interactionKind !== "none" || studentTaskKind !== "none" ? "待校验" : "无需回应",
+    flow: flowMode === "end" || flowMode === "sequence" || nextNodeKey ? "已完成" : "需设置",
   };
   const learningLayoutLabels: Record<ScriptLearningLayout, string> = {
     split: "教学区 30% · 学习区 70%",
@@ -904,6 +1027,54 @@ export function TeachingScriptNodeForm({
   const participationMode: ParticipationMode = studentTaskKind !== "none"
     ? interactionKind !== "none" ? "operation_and_question" : "operation"
     : interactionKind !== "none" ? "question" : "listen";
+  const interactionPerspective = interactionFocusRequest?.target ?? null;
+  const participationModePresentation = interactionPerspective === "teacher_prompt"
+    ? {
+        title: "选择老师如何发起",
+        description: "设置老师讲解之后实际说出的操作要求或问题。",
+        ariaLabel: "老师发起方式",
+        options: [
+          ["listen", "不再发起", "老师讲解后直接进入后续流程"],
+          ["operation", "发出操作要求", "老师说出要求，再让学生操作"],
+          ["question", "提出一个问题", "老师说出问题，再等待学生回答"],
+          ["operation_and_question", "先要求操作，再提问", "操作完成并反馈后，老师继续提问"],
+        ] as const,
+      }
+    : interactionPerspective === "teacher_feedback"
+      ? {
+          title: "选择老师在哪些回应后反馈",
+          description: "设置学生完成操作或回答后，老师需要给出的反馈。",
+          ariaLabel: "老师反馈方式",
+          options: [
+            ["listen", "无需单独反馈", "本小节没有学生操作或回答"],
+            ["operation", "操作完成后反馈", "确认操作完成，再进入后续流程"],
+            ["question", "回答后反馈", "根据答对或答错给出不同反馈"],
+            ["operation_and_question", "分别反馈两次", "操作完成后反馈，回答后再次反馈"],
+          ] as const,
+        }
+      : interactionPerspective === "student_response"
+        ? {
+            title: "选择学生如何回应",
+            description: "设置学生需要完成的操作、回答，或两者的先后顺序。",
+            ariaLabel: "学生回应方式",
+            options: [
+              ["listen", "无需学生回应", "学生只听老师讲解"],
+              ["operation", "完成一个操作", "学生亲自操作学习区"],
+              ["question", "回答一个问题", "学生完成理解检查或教材活动"],
+              ["operation_and_question", "操作后回答", "学生先操作，再完成理解检查"],
+            ] as const,
+          }
+        : {
+            title: "选择本小节的教学回合",
+            description: "统一安排老师发起、学生回应和老师反馈。",
+            ariaLabel: "教学回合方式",
+            options: [
+              ["listen", "只听老师讲解", "不要求操作或回答"],
+              ["operation", "完成一个操作", "学生亲自操作学习区"],
+              ["question", "回答一个问题", "完成理解检查或教材活动"],
+              ["operation_and_question", "操作后回答", "先操作，再完成理解检查"],
+            ] as const,
+          };
   const interactionSummary = interactionKind === "single_choice"
     ? "回答新建的单选检查"
     : interactionKind === "referenced_activity"
@@ -911,8 +1082,12 @@ export function TeachingScriptNodeForm({
       : "";
   const participationSummary = [
     "老师讲解",
-    studentTaskKind !== "none" ? `学生操作${effectiveStudentTaskPath ? `：${effectiveStudentTaskPath}` : "（目标待设置）"}` : "",
+    studentTaskKind !== "none" ? "老师提出操作要求" : "",
+    studentTaskKind !== "none" ? `学生完成操作${effectiveStudentTaskPath ? `：${effectiveStudentTaskPath}` : "（目标待设置）"}` : "",
+    studentTaskKind !== "none" ? "老师确认操作完成" : "",
+    interactionKind !== "none" ? "老师提出问题" : "",
     interactionSummary,
+    interactionKind !== "none" ? "老师根据回答反馈" : "",
     "进入后续流程",
   ].filter(Boolean).join(" → ");
   const selectedNextNode = allNodes.find((item) => item.key === nextNodeKey);
@@ -922,6 +1097,14 @@ export function TeachingScriptNodeForm({
       ? selectedNextNode ? `跳到第 ${selectedNextNode.order} 小节：${selectedNextNode.title["zh-CN"]}` : "跳转目标待设置"
       : "按左侧顺序进入下一小节";
   const teachingFlowSummary = participationSummary.replace(/ → 进入后续流程$/, ` → ${flowDestinationSummary}`);
+  const editorSectionDescriptions: Record<EditorSection, string> = {
+    script: teacherVideo.mode === "video" ? `${scriptLines.length} 个片段 · ${teacherVideo.explanations.filter(Boolean).length} 个视频已绑定` : `${filledScriptLineCount}/${scriptLines.length} 句台词 · ${generatedScriptSpeechCount}/${scriptLines.length} 句语音`,
+    content: blackboardSlides.length > 0
+      ? `${blackboardSlides.length} 张教学画面${selectedLearningTargetPath ? " · 已关联学习区" : ""}`
+      : selectedLearningTargetPath ? "已关联学习区" : "按需设置教学画面",
+    interaction: participationMode === "listen" ? "学生只听老师讲解" : participationSummary,
+    flow: flowDestinationSummary,
+  };
 
   function selectParticipationMode(mode: ParticipationMode) {
     markDirty();
@@ -946,12 +1129,27 @@ export function TeachingScriptNodeForm({
 
   function markDirty(event?: ReactSyntheticEvent) {
     if (!editable) return;
-    if (event && event.target instanceof Element && event.target.closest("[data-style-template-controls]")) return;
+    if (event && event.target instanceof Element && event.target.closest("[data-style-template-controls], [data-teacher-video-picker-controls]")) return;
     dirtyVersionRef.current += 1;
     setDirty(true);
     setSaveFeedback("dirty");
     onDirtyChange(true);
   }
+
+  useEffect(() => {
+    if (!flowBindingRequest || !editable) return;
+    const frame = window.requestAnimationFrame(() => {
+      markDirty();
+      setFlowMode("jump");
+      setNextNodeKey(flowBindingRequest.targetNodeKey);
+      setEditorSection("flow");
+      onFlowBindingApplied?.(flowBindingRequest.id);
+    });
+    return () => window.cancelAnimationFrame(frame);
+  // The request id is the event boundary. The callbacks intentionally aren't
+  // dependencies: applying a binding must happen exactly once per axis click.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editable, flowBindingRequest?.id]);
 
   function saveCurrentStyleAsTemplate() {
     const name = newTemplateName.trim();
@@ -1017,13 +1215,13 @@ export function TeachingScriptNodeForm({
 
   function handleEditorTabKeyDown(event: ReactKeyboardEvent<HTMLButtonElement>, index: number) {
     let nextIndex: number | null = null;
-    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % editorSteps.length;
-    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + editorSteps.length) % editorSteps.length;
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") nextIndex = (index + 1) % visibleEditorSteps.length;
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") nextIndex = (index - 1 + visibleEditorSteps.length) % visibleEditorSteps.length;
     if (event.key === "Home") nextIndex = 0;
-    if (event.key === "End") nextIndex = editorSteps.length - 1;
+    if (event.key === "End") nextIndex = visibleEditorSteps.length - 1;
     if (nextIndex === null) return;
     event.preventDefault();
-    setEditorSection(editorSteps[nextIndex].id);
+    setEditorSection(visibleEditorSteps[nextIndex].id);
     tabRefs.current[nextIndex]?.focus();
   }
 
@@ -1144,7 +1342,24 @@ export function TeachingScriptNodeForm({
     return () => window.clearTimeout(timer);
   }, [dirty, editable, pending, saveFeedback]);
 
-  const formErrorMessages = Object.values(state.fieldErrors ?? {}).flat();
+  const formErrorEntries = Object.entries(state.fieldErrors ?? {}).flatMap(([field, messages]) =>
+    messages.map((message) => ({ field, message })),
+  );
+
+  function focusErrorField(field: string) {
+    const section = errorSectionByField[field] ?? "script";
+    setEditorSection(section);
+    window.requestAnimationFrame(() => {
+      const panel = formRef.current?.querySelector<HTMLElement>(`#teaching-${section}-panel`);
+      const target = errorFocusSelectorByField[field]
+        ? panel?.querySelector<HTMLElement>(errorFocusSelectorByField[field]!)
+        : panel?.querySelector<HTMLElement>('[aria-invalid="true"]');
+      const focusTarget = target ?? panel;
+      focusTarget?.closest("details")?.setAttribute("open", "");
+      focusTarget?.scrollIntoView({ block: "center" });
+      focusTarget?.focus({ preventScroll: true });
+    });
+  }
   useEffect(() => {
     onPendingChange(pending);
   }, [onPendingChange, pending]);
@@ -1164,19 +1379,25 @@ export function TeachingScriptNodeForm({
       onChangeCapture={markDirty}
       onInputCapture={markDirty}
       className="space-y-4"
+      data-teacher-video-mode={teacherVideo.mode}
+      data-interaction-perspective={state.status === "error" ? "all" : interactionFocusRequest?.target ?? "all"}
       key={node.id}
     >
       <input type="hidden" name="node_id" value={node.id} />
       <input type="hidden" name="node_updated_at" value={node.updatedAt} />
       <input type="hidden" name="return_to" value={returnTo} />
       <input type="hidden" name="display_kind" value={String(display.kind ?? "overview")} />
+      <input type="hidden" name="teacher_video_json" value={JSON.stringify(teacherVideo)} />
 
-      {editorStepsSlot && createPortal(
-        <div className="flex flex-wrap items-center justify-end gap-1.5" role="tablist" aria-label="教学小节编辑步骤">
-          {editorSteps.map((step, index) => {
+      {showSectionNavigation || teacherVideo.mode === "video" ? <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-2.5" aria-labelledby="current-node-settings-title">
+        <div id="current-node-settings-title" className="mb-2 px-1">
+          <CardTitleWithHint headingLevel={3} title="当前小节设置" description={teacherVideo.mode === "video" ? "先选视频，再安排学生回应和完成后的去向。选择下方步骤编辑，方向键可切换步骤。" : "先完成老师台词，其余内容按需要打开。"} hintLabel="查看小节设置说明" titleClassName="text-sm font-bold" />
+        </div>
+        <div className="grid gap-2 md:grid-cols-3" role="tablist" aria-label="当前小节设置">
+          {visibleEditorSteps.map((step, index) => {
             const Icon = step.icon;
             const selected = editorSection === step.id;
-            const needsAttention = editorStepStates[step.id] === "待填写" || editorStepStates[step.id] === "待设置";
+            const needsAttention = /^(需|待)/.test(editorStepStates[step.id]);
             return (
               <button
                 key={step.id}
@@ -1186,73 +1407,77 @@ export function TeachingScriptNodeForm({
                 role="tab"
                 aria-controls={`teaching-${step.id}-panel`}
                 aria-selected={selected}
-                aria-label={`第 ${index + 1} 步：${step.label}，${editorStepStates[step.id]}`}
+                aria-label={`${step.label}，${editorStepStates[step.id]}，${editorSectionDescriptions[step.id]}`}
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setEditorSection(step.id)}
                 onKeyDown={(event) => handleEditorTabKeyDown(event, index)}
-                className={`group flex shrink-0 items-center gap-1.5 rounded-lg border px-2 py-1.5 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--card)] shadow-sm" : "border-transparent hover:border-[var(--border)] hover:bg-[var(--card)]"}`}
+                className={`group flex w-full items-center gap-2 rounded-lg border text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${step.id === "script" && teacherVideo.mode !== "video" ? "min-h-[4.75rem] px-4 py-3 md:col-span-3" : "min-h-12 px-3 py-2"} ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] hover:bg-[var(--accent)]/40"}`}
               >
-                <span className={`flex size-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold tabular-nums ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "border border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)]"}`}>{index + 1}</span>
-                <Icon size={14} className={selected ? "text-[var(--primary)]" : "text-[var(--foreground-muted)]"} aria-hidden="true" />
-                <span className="text-xs font-bold text-[var(--foreground)]">{step.label}</span>
-                <span className={`shrink-0 text-[10px] font-semibold ${needsAttention ? "text-[var(--status-warning)]" : "text-[var(--status-success)]"}`}>{editorStepStates[step.id]}</span>
+                <span className={`flex size-7 shrink-0 items-center justify-center rounded-md ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--muted)] text-[var(--foreground-secondary)]"}`}><Icon size={15} aria-hidden="true" /></span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center justify-between gap-2">
+                    <span className="block text-sm font-bold text-[var(--foreground)]">{step.label}</span>
+                    <span className={`shrink-0 text-xs font-semibold ${needsAttention ? "text-[var(--status-warning)]" : "text-[var(--status-success)]"}`}>{editorStepStates[step.id]}</span>
+                  </span>
+                  {teacherVideo.mode !== "video" && <span className="mt-1 block line-clamp-1 text-xs leading-5 text-[var(--foreground-secondary)]">{editorSectionDescriptions[step.id]}</span>}
+                </span>
               </button>
             );
           })}
-        </div>,
-        editorStepsSlot,
+        </div>
+      </section> : (
+        <div className="sr-only" aria-hidden="true">
+          {editorSteps.map((step) => <span key={step.id} id={`teaching-${step.id}-tab`}>{step.label}</span>)}
+        </div>
       )}
 
         <div className="min-w-0 space-y-4">
-      {state.status === "error" && formErrorMessages.length > 0 && (
+      {videoIssues.length > 0 && <details className="rounded-lg border border-[var(--status-warning)] bg-[var(--card)] px-3 text-sm" aria-label="视频待配置项目">
+        <summary className="min-h-11 cursor-pointer py-3 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">还有 {videoIssues.length} 项视频配置需要完成<span className="ml-2 text-xs font-normal text-[var(--muted-foreground)]">展开查看</span></summary>
+        <ul className="mt-2 space-y-1">{videoIssues.map((issue, index) => <li key={`${issue.section}-${index}`}><button type="button" className="py-1 text-left underline underline-offset-4" onClick={() => setEditorSection(issue.section)}>{issue.message}</button></li>)}</ul>
+      </details>}
+      {state.status === "error" && formErrorEntries.length > 0 && (
         <div ref={errorSummaryRef} tabIndex={-1} role="alert" className="border border-[var(--status-danger)] bg-[var(--status-danger-surface)] px-4 py-3 text-sm text-[var(--status-danger)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--status-danger)]">
-          <p className="font-semibold">当前小节有 {formErrorMessages.length} 项需要修改，已打开第一个错误所在的设置。</p>
-          <ul className="mt-2 list-disc space-y-1 pl-5 text-xs leading-5">
-            {formErrorMessages.map((message, index) => <li key={`${message}-${index}`}>{message}</li>)}
+          <p className="font-semibold">当前小节有 {formErrorEntries.length} 项需要修改。点击提示可直接定位。</p>
+          <ul className="mt-2 space-y-1">
+            {formErrorEntries.map(({ field, message }, index) => (
+              <li key={`${field}-${message}-${index}`}>
+                <button type="button" onClick={() => focusErrorField(field)} className="flex min-h-11 w-full items-center rounded-lg px-2 text-left text-xs font-semibold leading-5 underline decoration-current/40 underline-offset-4 transition hover:bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--status-danger)]">
+                  {message}
+                </button>
+              </li>
+            ))}
           </ul>
         </div>
       )}
 
       <div className="grid items-start gap-4">
         <div className="min-w-0">
-          <div id="teaching-script-panel" hidden={editorSection !== "script"} role="tabpanel" aria-labelledby="teaching-script-tab" className={panelClass}>
-            <section className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]" aria-labelledby="script-overview-title">
-              <div className="border-b border-[var(--border)] bg-[var(--muted)]/30 px-4 py-3">
-                <h3 id="script-overview-title" className="text-sm font-bold text-[var(--foreground)]">当前讲解概览</h3>
-              </div>
-              <ol className="grid divide-y divide-[var(--border)] lg:grid-cols-4 lg:divide-x lg:divide-y-0">
-                <li className="flex min-w-0 gap-3 p-4">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">1</span>
-                  <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">开场过渡</p><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">{selectedBufferPreset ? "已选择词库台词" : bufferLineIsEmpty ? "不显示过渡台词" : "需要重新选择"}</p></div>
-                </li>
-                <li className="flex min-w-0 gap-3 p-4">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">2</span>
-                  <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">正式台词</p><p className="mt-1 text-xs leading-5 tabular-nums text-[var(--foreground-secondary)]">已填写 {filledScriptLineCount}/{scriptLines.length} 句</p></div>
-                </li>
-                <li className="flex min-w-0 gap-3 p-4">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">3</span>
-                  <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">正式语音</p><p className="mt-1 text-xs leading-5 tabular-nums text-[var(--foreground-secondary)]">已生成 {generatedScriptSpeechCount}/{scriptLines.length} 句</p></div>
-                </li>
-                <li className="flex min-w-0 gap-3 p-4">
-                  <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">4</span>
-                  <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">补充讲解</p><p className="mt-1 text-xs leading-5 tabular-nums text-[var(--foreground-secondary)]">已填写 {supplementalExplanationCount}/2 项</p></div>
-                </li>
-              </ol>
-            </section>
-
+          <div id="teaching-script-panel" tabIndex={-1} hidden={editorSection !== "script"} role="tabpanel" aria-labelledby="teaching-script-tab" className={panelClass}>
+            <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-2">
+              <label className="flex flex-wrap items-center gap-3 text-sm font-semibold">老师呈现方式
+                <select className={`${inputClass} !w-auto max-w-full`} value={teacherVideo.mode} disabled={!editable} onChange={(event) => { markDirty(); setTeacherVideo((current) => ({ ...current, mode: event.target.value === "video" ? "video" : "legacy" })); }}>
+                  <option value="video">教师视频课堂</option><option value="legacy">原有形象与朗读</option>
+                </select>
+              </label>
+              {teacherVideo.mode === "video" && <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={teacherVideo.continuous} disabled={!editable} onChange={(event) => { markDirty(); setTeacherVideo((current) => ({ ...current, continuous: event.target.checked })); }} />连续播放讲解片段，遇到学生任务时等待</label>}
+            </div>
             <section className={formGroupClass} aria-labelledby="script-group-title">
             <div className="border-l-2 border-l-transparent bg-[var(--muted)]/50 px-4 py-3">
               <h3 id="script-group-title" className={formSectionTitleClass}>小节基本设置</h3>
             </div>
-            <div className="grid divide-y divide-[var(--border)] bg-[var(--muted)]/15 xl:grid-cols-[minmax(16rem,0.7fr)_minmax(0,1.3fr)] xl:divide-x xl:divide-y-0">
+            <div className="divide-y divide-[var(--border)] bg-[var(--muted)]/15">
             <label className={fieldClass}>
               <span className={formFieldLabelClass}>小节名称</span>
               <input name="title_zh" defaultValue={node.title["zh-CN"]} disabled={!editable} maxLength={80} aria-invalid={Boolean(state.fieldErrors?.titleZh?.length) || undefined} aria-describedby={state.fieldErrors?.titleZh?.length ? "title-zh-error" : undefined} className={inputClass} />
               <FieldError id="title-zh-error" errors={state.fieldErrors?.titleZh} />
             </label>
-            <div className={fieldClass}>
-              <h4 className={formFieldLabelClass}>小节默认语音</h4>
-              <div className="grid gap-3 rounded-lg bg-[var(--muted)]/30 p-3 sm:grid-cols-[minmax(9rem,1fr)_minmax(7rem,0.7fr)_auto] sm:items-end">
+            <details hidden={teacherVideo.mode === "video"} className="group">
+              <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-2.5 text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+                <span>语音默认设置</span>
+                <span className="text-xs font-medium text-[var(--muted-foreground)]">{sectionDefaultVoice.language === "auto" ? "自动判断" : sectionDefaultVoice.language === "zh-CN" ? "中文" : "韩语"} · {sectionDefaultVoice.rate === 0.85 ? "慢速" : sectionDefaultVoice.rate === 1.15 ? "稍快" : "标准"}</span>
+              </summary>
+              <div className="grid gap-3 border-t border-[var(--border)] px-4 py-3 sm:grid-cols-[minmax(9rem,1fr)_minmax(7rem,0.7fr)_auto] sm:items-end">
                 <label className="min-w-0 space-y-1.5 text-xs font-medium">
                   <span className="block font-semibold text-[var(--foreground)]">朗读语言</span>
                   <select
@@ -1291,48 +1516,44 @@ export function TeachingScriptNodeForm({
                   应用到全部台词
                 </button>
               </div>
+            </details>
             </div>
-            </div>
-            <div className="border-l-4 border-l-[var(--primary)] bg-[var(--accent)]/45 px-4 py-3">
+            <div hidden={teacherVideo.mode === "video"} className="border-l-4 border-l-[var(--primary)] bg-[var(--accent)]/45 px-4 py-3">
               <h3 className={formSectionTitleClass}>开场过渡</h3>
             </div>
-            <div className="px-4 py-3">
+            <div hidden={teacherVideo.mode === "video"} className="px-4 py-3">
               <h3 id="buffer-line-label" className="text-sm font-semibold">过渡台词</h3>
               <fieldset className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3">
                 <legend className="px-1 text-xs font-bold text-[var(--foreground)]">系统兜底台词库</legend>
-                <div className="mt-1 flex flex-col gap-2 sm:flex-row">
-                  <label className="min-w-0 flex-1">
-                    <span className="sr-only">选择系统兜底台词</span>
-                    <select
-                      name="buffer_preset_id"
-                      value={selectedBufferPresetSelectValue}
-                      required
-                      aria-invalid={Boolean(state.fieldErrors?.bufferPresetId?.length) || undefined}
-                      aria-describedby={state.fieldErrors?.bufferPresetId?.length ? "buffer-preset-error" : undefined}
-                      disabled={!editable}
-                      onChange={(event) => {
-                        const value = event.currentTarget.value;
-                        markDirty();
-                        setBufferPresetAudioStatus("idle");
-                        if (value === LEARNING_AGENT_BUFFER_PRESET_NONE_ID) {
-                          setBufferLineZh("");
-                          setBufferLineKo("");
-                          return;
-                        }
-                        const preset = LEARNING_AGENT_BUFFER_PRESETS.find((item) => item.id === value);
-                        if (!preset) return;
-                        setBufferLineZh(preset.text["zh-CN"]);
-                        setBufferLineKo(preset.text["ko-KR"]);
-                      }}
-                      className={inputClass}
-                    >
-                      <option value="" disabled>请选择一条过渡台词</option>
-                      <option value={LEARNING_AGENT_BUFFER_PRESET_NONE_ID}>不显示过渡台词</option>
-                      {LEARNING_AGENT_BUFFER_PRESETS.map((preset, index) => (
-                        <option key={preset.id} value={preset.id}>{index + 1}. {preset.text["zh-CN"]}</option>
-                      ))}
-                    </select>
-                  </label>
+                <input type="hidden" name="buffer_preset_id" value={teacherVideo.mode === "video" ? LEARNING_AGENT_BUFFER_PRESET_NONE_ID : selectedBufferPresetSelectValue} />
+                <div
+                  className="mt-1 grid gap-2 sm:grid-cols-2"
+                  role="radiogroup"
+                  aria-label="选择系统兜底台词"
+                  aria-invalid={Boolean(state.fieldErrors?.bufferPresetId?.length) || undefined}
+                  aria-describedby={state.fieldErrors?.bufferPresetId?.length ? "buffer-preset-error" : undefined}
+                >
+                  {[
+                    { id: LEARNING_AGENT_BUFFER_PRESET_NONE_ID, label: "不显示过渡台词" },
+                    ...LEARNING_AGENT_BUFFER_PRESETS.map((preset, index) => ({ id: preset.id, label: `${index + 1}. ${preset.text["zh-CN"]}` })),
+                  ].map((option) => {
+                    const selected = selectedBufferPresetSelectValue === option.id;
+                    return (
+                      <button
+                        key={option.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        disabled={!editable}
+                        onClick={() => selectBufferPreset(option.id)}
+                        className={`min-h-11 rounded-lg border px-3 py-2 text-left text-sm transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-45 ${selected ? "border-[var(--primary)] bg-[var(--accent)] font-semibold text-[var(--primary)]" : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)] hover:border-[var(--primary)] hover:bg-[var(--accent)]/45"}`}
+                      >
+                        {option.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                <div className="mt-2 flex justify-end">
                   <button
                     type="button"
                     disabled={!selectedBufferPreset || bufferPresetAudioStatus === "loading"}
@@ -1344,6 +1565,11 @@ export function TeachingScriptNodeForm({
                   </button>
                 </div>
                 {bufferPresetAudioStatus === "error" && <p className="mt-1 text-xs font-semibold text-[var(--status-danger)]" role="alert">试听语音暂时无法读取，请稍后重试。</p>}
+                {bufferLineUnmatched && (
+                  <p className="mt-2 text-xs font-semibold text-[var(--status-danger)]" role="alert">
+                    当前保存的过渡台词（“{bufferLineZh || bufferLineKo}”）不在系统兜底台词库中，可能是预设文案上线前录入的旧内容。请在上方重新选择一条，否则无法保存这个小节。
+                  </p>
+                )}
               </fieldset>
               <FieldError id="buffer-preset-error" errors={state.fieldErrors?.bufferPresetId} />
               {selectedBufferPreset && (
@@ -1373,9 +1599,9 @@ export function TeachingScriptNodeForm({
                   <div className="mb-3 flex items-center justify-between gap-3">
                     <label htmlFor={`script-line-${index}`} className="flex items-center gap-2 text-sm font-bold text-[var(--foreground)]">
                       <span className="flex size-7 items-center justify-center rounded-full bg-[var(--primary)] text-xs text-[var(--primary-foreground)]">{index + 1}</span>
-                      <span>台词 {index + 1}</span>
+                      <span>{teacherVideo.mode === "video" ? "讲解片段" : "台词"} {index + 1}</span>
                     </label>
-                    {index < scriptLines.length - 1 && scriptPerformances[index]?.autoContinueToNext && <span className="rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-semibold text-[var(--primary)]">已连接下一句</span>}
+                    {index < scriptLines.length - 1 && (teacherVideo.mode === "video" ? teacherVideo.continuous : scriptPerformances[index]?.autoContinueToNext) && <span className="rounded-full bg-[var(--accent)] px-2.5 py-1 text-[11px] font-semibold text-[var(--primary)]">{teacherVideo.mode === "video" ? "连续播放" : "已连接下一句"}</span>}
                   </div>
                     <FormattableTextarea
                       id={`script-line-${index}`}
@@ -1390,17 +1616,18 @@ export function TeachingScriptNodeForm({
                       maxLength={1600}
                       className={`${inputClass} resize-y overflow-y-hidden py-3 text-sm leading-7`}
                     />
-                    <p className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">
+                    {teacherVideo.mode === "video" && <div className="mt-3"><TeacherVideoPicker key={`${index}-${teacherVideo.explanations[index]?.objectKey ?? "empty"}`} label={`片段 ${index + 1} 的讲解视频`} value={teacherVideo.explanations[index]} transcript={line} editable={editable} onChange={(binding) => { markDirty(); setTeacherVideo((current) => { const explanations = [...current.explanations]; explanations[index] = binding; return { ...current, explanations }; }); }} /></div>}
+                    <p hidden={teacherVideo.mode === "video"} className="mt-2 text-xs leading-5 text-[var(--foreground-secondary)]">
                       {scriptPerformances[index]?.voiceEnabled === false ? "只显示文字" : `${scriptPerformances[index]?.voiceLanguage === "zh-CN" ? "中文" : scriptPerformances[index]?.voiceLanguage === "ko-KR" ? "韩语" : "自动判断语言"}朗读 · ${scriptPerformances[index]?.voiceRate === 0.85 ? "慢速" : scriptPerformances[index]?.voiceRate === 1.15 ? "稍快" : "标准语速"}`}
-                      {` · ${learningLayoutLabels[scriptPerformances[index]?.learningLayout ?? "split"]} · ${TEACHER_KIM_POSE_LABELS[scriptPerformances[index]?.pose ?? "explaining"]}`}
+                      {` · ${classroomShotLabels[scriptPerformances[index]?.classroomShot ?? "auto"]} · ${learningLayoutLabels[scriptPerformances[index]?.learningLayout ?? "split"]} · ${TEACHER_KIM_POSE_LABELS[scriptPerformances[index]?.pose ?? "explaining"]}`}
                     </p>
-                    <ScriptSpeechReview
+                    <div hidden={teacherVideo.mode === "video"}><ScriptSpeechReview
                       text={line}
                       performance={scriptPerformances[index] ?? scriptPerformanceConfiguration(null, {})}
                       asset={node.speechAssets.find((item) => item.locale === "zh-CN" && item.segmentIndex === index)}
                       fromPublishedVersion={node.speechAssetsFromPublishedVersion}
-                    />
-                    <details className="mt-2 border-t border-[var(--border)] px-1 py-2">
+                    /></div>
+                    <details hidden={teacherVideo.mode === "video"} className="mt-2 border-t border-[var(--border)] px-1 py-2">
                       <summary className="min-h-11 cursor-pointer text-xs font-semibold leading-[2.75rem] text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">展开表现设置</summary>
                       <div className="mt-2 grid gap-3 border-t border-[var(--border)] pt-3 sm:grid-cols-2">
                       <label className="space-y-1.5 text-xs font-medium">
@@ -1469,6 +1696,43 @@ export function TeachingScriptNodeForm({
                         </>
                       )}
                       <fieldset className="space-y-1.5 sm:col-span-2">
+                        <legend className="block text-xs font-semibold text-[var(--foreground)]">课堂镜头</legend>
+                        <p className="text-xs leading-5 text-[var(--foreground-secondary)]">自动导演会按照教学环节切换；只有这句台词需要特殊构图时才手动指定。</p>
+                        <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3" role="radiogroup" aria-label={`台词 ${index + 1} 的课堂镜头`}>
+                          {classroomShotOptions.map((option) => {
+                            const selected = (scriptPerformances[index]?.classroomShot ?? "auto") === option.value;
+                            return (
+                              <button
+                                key={option.value}
+                                type="button"
+                                role="radio"
+                                aria-checked={selected}
+                                disabled={!editable}
+                                onClick={() => {
+                                  markDirty();
+                                  setScriptPerformances((current) => current.map((item, performanceIndex) => {
+                                    if (performanceIndex !== index) return item;
+                                    const learningLayout: ScriptLearningLayout = option.value === "teacher_closeup"
+                                      || option.value === "teacher_blackboard"
+                                      || option.value === "feedback"
+                                      ? "teaching"
+                                      : option.value === "learning_closeup"
+                                        ? "learning"
+                                        : "split";
+                                    return { ...item, classroomShot: option.value, learningLayout };
+                                  }));
+                                }}
+                                className={`min-h-16 rounded-lg border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50 ${selected ? "border-[var(--primary)] bg-[var(--accent)] text-[var(--primary)]" : "border-[var(--border)] bg-[var(--card)] text-[var(--foreground-secondary)] hover:border-[var(--primary)]"}`}
+                              >
+                                <span className="block text-xs font-bold">{option.label}</span>
+                                <span className={`mt-1 block text-[11px] leading-4 ${selected ? "text-[var(--primary)]/80" : "text-[var(--foreground-muted)]"}`}>{option.description}</span>
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <input type="hidden" name="script_classroom_shot" value={scriptPerformances[index]?.classroomShot ?? "auto"} />
+                      </fieldset>
+                      <fieldset className="space-y-1.5 sm:col-span-2">
                         <legend className="block text-xs font-semibold text-[var(--foreground)]">说到本句时的界面</legend>
                         <div className="grid gap-2 sm:grid-cols-3" role="radiogroup" aria-label={`台词 ${index + 1} 的教学界面布局`}>
                           {([
@@ -1502,7 +1766,7 @@ export function TeachingScriptNodeForm({
                     <input type="hidden" name="script_auto_continue" value={scriptPerformances[index]?.autoContinueToNext ? "on" : "off"} />
                     <input type="hidden" name="script_placement" value={scriptPlacementPayload(scriptPerformances[index])} />
                     <div className="mt-2 flex flex-wrap gap-1">
-                      {index < scriptLines.length - 1 && (
+                      {teacherVideo.mode !== "video" && index < scriptLines.length - 1 && (
                         <button
                           type="button"
                           disabled={!editable}
@@ -1526,6 +1790,7 @@ export function TeachingScriptNodeForm({
                             markDirty();
                             const nextLines = scriptLines.filter((_, lineIndex) => lineIndex !== index);
                             setScriptLines(nextLines);
+                            setTeacherVideo((current) => ({ ...current, explanations: current.explanations.filter((_, itemIndex) => itemIndex !== index) }));
                             setScriptPerformances((current) => current.filter((_, performanceIndex) => performanceIndex !== index));
                           }}
                           aria-label={`删除台词 ${index + 1}`}
@@ -1583,7 +1848,7 @@ export function TeachingScriptNodeForm({
             </section>
           </div>
 
-          <div id="teaching-content-panel" hidden={editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
+          <div id="teaching-content-panel" tabIndex={-1} hidden={teacherVideo.mode === "video" || editorSection !== "content"} role="tabpanel" aria-labelledby="teaching-content-tab" className={panelClass}>
             <section className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]" aria-labelledby="content-sequence-title">
               <div className="border-b border-[var(--border)] bg-[var(--muted)]/30 px-4 py-3">
                 <h3 id="content-sequence-title" className="text-sm font-bold text-[var(--foreground)]">播放时会按这个顺序执行</h3>
@@ -1601,7 +1866,7 @@ export function TeachingScriptNodeForm({
                 </li>
                 <li className="flex min-w-0 gap-3 p-4">
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">2</span>
-                  <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">展示老师</p><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">已为 {scriptLines.length} 句台词设置人物表现</p></div>
+                <div className="min-w-0"><p className="text-sm font-bold text-[var(--foreground)]">{teacherVideo.mode === "video" ? "播放教师视频" : "展示老师"}</p><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">{teacherVideo.mode === "video" ? `${teacherVideo.explanations.filter(Boolean).length}/${scriptLines.length} 个讲解片段已绑定视频` : `已为 ${scriptLines.length} 句台词设置人物表现`}</p></div>
                 </li>
                 <li className="flex min-w-0 gap-3 p-4">
                   <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-[var(--primary)]">3</span>
@@ -1876,72 +2141,33 @@ export function TeachingScriptNodeForm({
                 <FieldError id="pet-action-target-error" errors={state.fieldErrors?.petActionTargetKey} />
               </div>
             </div>
-            <div className={fieldClass}>
-              <h4 className={formFieldLabelClass}>学生操作</h4>
-              <div>
-                <select name="student_task_kind" defaultValue={studentTaskKind} onChange={(event) => setStudentTaskKind(event.target.value)} aria-controls="student-task-settings" aria-expanded={studentTaskKind !== "none"} disabled={!editable} className={inputClass}><option value="none">不安排操作，只听老师讲解</option><option value="play_expression_audio">要求学生播放并完整听完指定表达</option></select>
-                <fieldset id="student-task-settings" hidden={studentTaskKind === "none"} className="mt-4 border border-[var(--border)] bg-[var(--muted)]/15">
-                  <legend className="ml-3 px-1 text-xs font-bold text-[var(--foreground-secondary)]">学生操作设置</legend>
-                  <div className="divide-y divide-[var(--border)]">
-                    <label className="grid gap-2 px-3 py-3 text-sm md:grid-cols-[8rem_minmax(0,1fr)] md:items-start"><span className="pt-2.5 font-semibold text-[var(--foreground)]">给学生的操作提示</span><textarea name="student_task_instruction_zh" defaultValue={localizedConfigurationText(studentTask, "instruction")} disabled={!editable} rows={2} maxLength={300} placeholder="例如：请点击右侧第一句，并完整听完语音。" className={`${inputClass} resize-y py-2.5 leading-6`} /></label>
-                    <div className="px-3 py-3">
-                      <p className="mb-2 text-sm font-semibold text-[var(--foreground)]">学生需要操作哪里</p>
-                      <label className="flex min-h-11 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-3 text-sm font-medium text-[var(--foreground)]">
-                        <input
-                          type="checkbox"
-                          name="student_task_follow_visual_cue"
-                          checked={studentTaskFollowsVisualCue}
-                          onChange={(event) => setStudentTaskFollowsVisualCue(event.target.checked)}
-                          disabled={!editable}
-                          className="size-4 accent-[var(--primary)]"
-                        />
-                        使用老师讲解指向的对象
-                      </label>
-                      {studentTaskFollowsVisualCue ? (
-                        effectiveStudentTaskPath ? (
-                          <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">
-                            已联动：{effectiveStudentTaskPath}
-                          </p>
-                        ) : (
-                          <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]" role="alert">
-                            当前老师讲解指向不是可操作的按钮或表达。请把讲解指向改为具体按钮或表达，或者关闭联动后单独选择。
-                          </p>
-                        )
-                      ) : (
-                        <>
-                          <div className="mt-3 grid gap-3 lg:grid-cols-3">
-                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span><select value={studentTaskPageKey} onInput={(event) => { event.stopPropagation(); selectStudentTaskPage(event.currentTarget.value); }} onChange={(event) => selectStudentTaskPage(event.currentTarget.value)} disabled={!editable} className={inputClass}><option value="">请选择页面</option>{studentTaskPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}{studentTaskPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}</select></label>
-                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span><select value={studentTaskRegionKey} onInput={(event) => { event.stopPropagation(); selectStudentTaskRegion(event.currentTarget.value); }} onChange={(event) => selectStudentTaskRegion(event.currentTarget.value)} disabled={!editable || !studentTaskPageKey || studentTaskPageKey === "legacy"} className={inputClass}>{!studentTaskRegionKey && <option value="">请先选择页面</option>}{studentTaskRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}</select></label>
-                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span><select value={selectedStudentTaskTarget?.key ?? ""} onInput={(event) => { event.stopPropagation(); markDirty(); setStudentTaskTargetKey(event.currentTarget.value); }} onChange={(event) => setStudentTaskTargetKey(event.currentTarget.value)} disabled={!editable || !studentTaskRegionKey} aria-invalid={Boolean(state.fieldErrors?.studentTaskTargetKey?.length) || undefined} aria-describedby={state.fieldErrors?.studentTaskTargetKey?.length ? "student-task-target-error" : undefined} className={inputClass}>{!selectedStudentTaskTarget && <option value="">请先选择区域</option>}{studentTaskObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
-                          </div>
-                          {selectedStudentTaskPath && <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">当前操作目标：{selectedStudentTaskPath}</p>}
-                          {studentTaskPageKey === "legacy" && <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]">这条小节保存的是旧目标，请重新选择学生要操作的按钮或表达。</p>}
-                        </>
-                      )}
-                      <input type="hidden" name="student_task_target_key" value={effectiveStudentTaskTarget?.key ?? ""} />
-                      <input type="hidden" name="student_task_target_label_zh" value={(effectiveStudentTaskTarget?.label ?? "").slice(0, 100)} />
-                      <FieldError id="student-task-target-error" errors={state.fieldErrors?.studentTaskTargetKey} />
-                    </div>
-                  </div>
-                </fieldset>
-              </div>
-            </div>
             </div>
             </details>
           </div>
 
-          <div id="teaching-interaction-panel" hidden={editorSection !== "interaction"} role="tabpanel" aria-labelledby="teaching-interaction-tab" className={panelClass}>
+          <div id="teaching-interaction-panel" tabIndex={-1} hidden={editorSection !== "interaction"} role="tabpanel" aria-labelledby="teaching-interaction-tab" className={panelClass}>
+            {teacherVideo.mode === "video" && interactionPerspective !== "teacher_feedback" && <div className="space-y-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4">
+              {studentTaskKind !== "none" && <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={teacherVideo.taskInExplanation} disabled={!editable} onChange={(event) => { markDirty(); setTeacherVideo((current) => ({ ...current, taskInExplanation: event.target.checked })); }} />讲解视频已包含操作要求，结束后直接让学生操作</label>}
+              {interactionKind !== "none" && <label className="flex min-h-11 items-center gap-2 text-sm"><input type="checkbox" checked={teacherVideo.questionInExplanation} disabled={!editable} onChange={(event) => { markDirty(); setTeacherVideo((current) => ({ ...current, questionInExplanation: event.target.checked })); }} />讲解视频已包含提问，进入回答环节时直接显示题目</label>}
+            </div>}
+            {teacherVideo.mode === "video" && interactionPerspective !== "student_response" && <div className="grid gap-3 md:grid-cols-2">
+              {([
+                ["task", "老师发起：操作要求", studentTaskKind !== "none" && !teacherVideo.taskInExplanation, "teacher_prompt"],
+                ["question", "老师发起：提出问题", interactionKind !== "none" && !teacherVideo.questionInExplanation, "teacher_prompt"],
+                ["operationFeedback", "老师反馈：操作完成", studentTaskKind !== "none", "teacher_feedback"],
+                ["correctFeedback", "老师反馈：答对", interactionKind !== "none", "teacher_feedback"],
+                ["incorrectFeedback", "老师反馈：答错", interactionKind !== "none", "teacher_feedback"],
+              ] as const).filter(([, , enabled, perspective]) => enabled && (!interactionPerspective || interactionPerspective === perspective)).map(([slot, label]) => <div key={slot} data-video-turn={slot}><TeacherVideoPicker key={`${slot}-${teacherVideo.turns[slot as VideoTurnSlot]?.objectKey ?? "empty"}`} label={label} value={teacherVideo.turns[slot as VideoTurnSlot]} editable={editable} onChange={(binding) => { markDirty(); setTeacherVideo((current) => ({ ...current, turns: { ...current.turns, [slot]: binding } })); }} /></div>)}
+            </div>}
             <section className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]" aria-labelledby="participation-mode-title">
               <div className="border-b border-[var(--border)] bg-[var(--muted)]/30 px-4 py-3">
-                <h3 id="participation-mode-title" className="text-sm font-bold text-[var(--foreground)]">这一步需要学生做什么？</h3>
+                <h3 id="participation-mode-title" tabIndex={-1} className="text-sm font-bold text-[var(--foreground)]">{interactionPerspective === "teacher_feedback" ? "学生回应后的反馈" : participationModePresentation.title}</h3>
+                <p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">{participationModePresentation.description}</p>
               </div>
-              <div className="grid gap-2 p-3 sm:grid-cols-2 xl:grid-cols-4" role="radiogroup" aria-label="学生参与方式">
-                {([
-                  ["listen", "只听老师讲解", "不要求操作或回答"],
-                  ["operation", "完成一个操作", "学生亲自操作学习区"],
-                  ["question", "回答一个问题", "完成理解检查或教材活动"],
-                  ["operation_and_question", "操作后回答", "先操作，再完成理解检查"],
-                ] as const).map(([mode, label, description]) => {
+              {interactionPerspective === "teacher_feedback" && <p className="p-4 text-sm">{participationMode === "listen" ? "本小节没有学生回应，无需配置反馈。请先在学生回应中设置操作或回答。" : "分别设置操作完成、答对和答错后的反馈。未绑定视频时显示反馈文字。"}</p>}
+              {interactionPerspective === "teacher_prompt" && <p className="p-4 text-sm">这里设置老师说出的要求或问题。需要更改学生做什么，请点击编排轴的“学生回应”。</p>}
+              <div id="participation-mode-options" hidden={interactionPerspective === "teacher_feedback" || interactionPerspective === "teacher_prompt"} className="grid gap-2 p-3 sm:grid-cols-2 xl:grid-cols-4" role="radiogroup" aria-label={participationModePresentation.ariaLabel}>
+                {participationModePresentation.options.map(([mode, label, description]) => {
                   const selected = participationMode === mode;
                   return (
                     <button
@@ -1960,19 +2186,69 @@ export function TeachingScriptNodeForm({
                 })}
               </div>
               <div className="border-t border-[var(--border)] bg-[var(--surface-soft)] px-4 py-3" role="status" aria-atomic="true">
-                <p className="text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">执行顺序：{participationSummary}</p>
+                <p className="text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">课堂执行顺序：{participationSummary}</p>
               </div>
             </section>
 
+            {participationMode !== "listen" && (
+              <ol className="grid gap-2 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 md:grid-cols-3" aria-label="当前教学回合步骤">
+                <li className={`rounded-lg p-3 ${interactionPerspective === "teacher_prompt" ? "ring-2 ring-[var(--primary)] bg-[var(--accent)]" : "bg-[var(--accent)]"}`}><span className="text-xs font-bold text-[var(--primary)]">1　老师发起</span><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">老师先说出操作要求或问题，不把任务静默地丢给学生。</p></li>
+                <li className={`rounded-lg p-3 ${interactionPerspective === "student_response" ? "ring-2 ring-[var(--primary)] bg-[var(--accent)]" : "bg-[var(--surface-soft)]"}`}><span className="text-xs font-bold text-[var(--foreground)]">2　学生回应</span><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">学生完成指定操作、选择答案，或按顺序完成两者。</p></li>
+                <li className={`rounded-lg p-3 ${interactionPerspective === "teacher_feedback" ? "ring-2 ring-[var(--status-success)] bg-[var(--status-success-surface)]" : "bg-[var(--status-success-surface)]"}`}><span className="text-xs font-bold text-[var(--status-success)]">3　老师反馈</span><p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">老师确认完成情况，再引导学生进入下一环节。</p></li>
+              </ol>
+            )}
+
+            <input type="hidden" name="student_task_kind" value={studentTaskKind} />
             {studentTaskKind !== "none" && (
-              <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] p-4" aria-labelledby="student-operation-summary-title">
-                <div className="flex flex-wrap items-center justify-between gap-3">
-                  <div className="min-w-0">
-                    <h3 id="student-operation-summary-title" className="text-sm font-bold text-[var(--foreground)]">学生操作</h3>
-                    <p className="mt-1 text-xs leading-5 text-[var(--foreground-secondary)]">{effectiveStudentTaskPath || "已经启用学生操作，但操作目标还没有设置。"}</p>
+              <details id="student-task-settings" open className="group overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--card)]">
+                <summary className="flex min-h-16 cursor-pointer list-none flex-wrap items-center justify-between gap-3 px-4 py-3 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold text-[var(--foreground)]">老师发起：提出操作要求</span>
+                    <span className="mt-1 block text-xs leading-5 text-[var(--foreground-secondary)]">{effectiveStudentTaskPath || "已经启用学生操作，但操作目标还没有设置。"}</span>
+                  </span>
+                  <span className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] group-open:hidden">设置操作目标</span>
+                  <span className="hidden min-h-11 shrink-0 items-center px-3 text-xs font-semibold text-[var(--foreground-secondary)] group-open:inline-flex">收起设置</span>
+                </summary>
+                <fieldset className="border-t border-[var(--border)] bg-[var(--muted)]/15">
+                  <legend className="sr-only">学生操作设置</legend>
+                  <div className="divide-y divide-[var(--border)]">
+                    <label className="grid gap-2 px-3 py-3 text-sm md:grid-cols-[8rem_minmax(0,1fr)] md:items-start"><span className="pt-2.5 font-semibold text-[var(--foreground)]">老师实际说的话</span><span><textarea name="student_task_instruction_zh" defaultValue={localizedConfigurationText(studentTask, "instruction")} disabled={!editable} rows={2} maxLength={300} placeholder="例如：请点击右侧第一句，并完整听完语音。" aria-invalid={Boolean(state.fieldErrors?.studentTaskInstructionZh?.length) || undefined} aria-describedby={state.fieldErrors?.studentTaskInstructionZh?.length ? "student-task-instruction-error" : undefined} className={`${inputClass} resize-y py-2.5 leading-6`} /><span className="app-muted-text mt-1 block text-xs leading-5">这句话会由老师角色说出来；说完后学生再执行操作。</span><FieldError id="student-task-instruction-error" errors={state.fieldErrors?.studentTaskInstructionZh} /></span></label>
+                    <div className="px-3 py-3">
+                      <p className="mb-2 text-sm font-semibold text-[var(--foreground)]">学生回应：需要操作哪里</p>
+                      <label className="flex min-h-11 items-center gap-2 border border-[var(--border)] bg-[var(--card)] px-3 text-sm font-medium text-[var(--foreground)]">
+                        <input type="checkbox" name="student_task_follow_visual_cue" checked={studentTaskFollowsVisualCue} onChange={(event) => setStudentTaskFollowsVisualCue(event.target.checked)} disabled={!editable} className="size-4 accent-[var(--primary)]" />
+                        使用老师讲解指向的对象
+                      </label>
+                      {studentTaskFollowsVisualCue ? (
+                        effectiveStudentTaskPath ? (
+                          <p className="mt-3 border-l-2 border-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">已联动：{effectiveStudentTaskPath}</p>
+                        ) : (
+                          <p className="mt-3 border-l-2 border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]" role="alert">当前老师讲解指向不是可操作的按钮或表达。请把讲解指向改为具体按钮或表达，或者关闭联动后单独选择。</p>
+                        )
+                      ) : (
+                        <>
+                          <div className="mt-3 grid gap-3 lg:grid-cols-3">
+                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">1. 选择页面</span><select value={studentTaskPageKey} onInput={(event) => { event.stopPropagation(); selectStudentTaskPage(event.currentTarget.value); }} onChange={(event) => selectStudentTaskPage(event.currentTarget.value)} disabled={!editable} className={inputClass}><option value="">请选择页面</option>{studentTaskPages.map((page) => <option key={page.key} value={page.key}>{page.label}</option>)}{studentTaskPageKey === "legacy" && <option value="legacy">已保存的旧目标</option>}</select></label>
+                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">2. 选择区域</span><select value={studentTaskRegionKey} onInput={(event) => { event.stopPropagation(); selectStudentTaskRegion(event.currentTarget.value); }} onChange={(event) => selectStudentTaskRegion(event.currentTarget.value)} disabled={!editable || !studentTaskPageKey || studentTaskPageKey === "legacy"} className={inputClass}>{!studentTaskRegionKey && <option value="">请先选择页面</option>}{studentTaskRegions.map((region) => <option key={region.key} value={region.key}>{region.label}</option>)}</select></label>
+                            <label className="space-y-1.5"><span className="block text-xs font-semibold text-[var(--foreground-secondary)]">3. 选择按钮或表达</span><select value={selectedStudentTaskTarget?.key ?? ""} onInput={(event) => { event.stopPropagation(); markDirty(); setStudentTaskTargetKey(event.currentTarget.value); }} onChange={(event) => setStudentTaskTargetKey(event.currentTarget.value)} disabled={!editable || !studentTaskRegionKey} aria-invalid={Boolean(state.fieldErrors?.studentTaskTargetKey?.length) || undefined} aria-describedby={state.fieldErrors?.studentTaskTargetKey?.length ? "student-task-target-error" : undefined} className={inputClass}>{!selectedStudentTaskTarget && <option value="">请先选择区域</option>}{studentTaskObjects.map((item) => <option key={item.key} value={item.key}>{item.label}</option>)}</select></label>
+                          </div>
+                          {selectedStudentTaskPath && <p className="mt-3 border-l-2 border-l-[var(--primary)] bg-[var(--accent)] px-3 py-2 text-xs font-semibold leading-5 text-[var(--foreground-secondary)]">当前操作目标：{selectedStudentTaskPath}</p>}
+                          {studentTaskPageKey === "legacy" && <p className="mt-3 border-l-2 border-l-[var(--status-warning)] bg-[var(--status-warning-surface)] px-3 py-2 text-xs leading-5 text-[var(--foreground-secondary)]">这条小节保存的是旧目标，请重新选择学生要操作的按钮或表达。</p>}
+                        </>
+                      )}
+                      <input type="hidden" name="student_task_target_key" value={effectiveStudentTaskTarget?.key ?? ""} />
+                      <input type="hidden" name="student_task_target_label_zh" value={(effectiveStudentTaskTarget?.label ?? "").slice(0, 100)} />
+                      <FieldError id="student-task-target-error" errors={state.fieldErrors?.studentTaskTargetKey} />
+                    </div>
                   </div>
-                  <button type="button" onClick={() => setEditorSection("content")} className="inline-flex min-h-11 shrink-0 items-center rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">设置操作目标</button>
-                </div>
+                </fieldset>
+              </details>
+            )}
+
+            {studentTaskKind !== "none" && (
+              <section className={formGroupClass} aria-labelledby="operation-feedback-title">
+                <div className={formSectionClass}><h3 id="operation-feedback-title" className={formSectionTitleClass}>老师反馈：学生完成操作后</h3></div>
+                <label className={fieldClass}><span className={formFieldLabelClass}>老师实际说的话</span><span><textarea name="operation_complete_feedback_zh" defaultValue={localizedConfigurationText(node.configuration, "operationCompleteFeedback")} disabled={!editable} rows={2} maxLength={600} placeholder={interactionKind !== "none" ? "例如：很好，操作完成了。接下来回答老师一个问题。" : "例如：很好，你已经完整听完了，我们继续。"} aria-invalid={Boolean(state.fieldErrors?.operationCompleteFeedbackZh?.length) || undefined} aria-describedby={state.fieldErrors?.operationCompleteFeedbackZh?.length ? "operation-feedback-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs leading-5">留空时使用系统的自然反馈；填写后会按这句话播放。</span><FieldError id="operation-feedback-error" errors={state.fieldErrors?.operationCompleteFeedbackZh} /></span></label>
               </section>
             )}
 
@@ -1981,14 +2257,14 @@ export function TeachingScriptNodeForm({
             {interactionKind !== "none" && (
             <section className={formGroupClass} aria-labelledby="interaction-group-title">
             <div className={formSectionClass}>
-              <h3 id="interaction-group-title" className={formSectionTitleClass}>学生互动</h3>
+              <h3 id="interaction-group-title" className={formSectionTitleClass}>提问回合：老师提问 → 学生回答 → 老师反馈</h3>
             </div>
-            <label className={fieldClass}><span className={formFieldLabelClass}>回应方式</span><select name="interaction_kind" value={interactionKind} onChange={(event) => setInteractionKind(event.target.value as typeof interactionKind)} aria-controls="custom-interaction-settings referenced-interaction-settings" aria-expanded={interactionKind !== "none"} disabled={!editable} className={inputClass}><option value="none">不要求学生回答</option><option value="single_choice">新建必答单选检查</option><option value="referenced_activity">使用教材已有活动</option></select></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>问题来源</span><select name="interaction_kind" value={interactionKind} onChange={(event) => setInteractionKind(event.target.value as typeof interactionKind)} aria-controls="custom-interaction-settings referenced-interaction-settings" aria-expanded={interactionKind !== "none"} disabled={!editable} className={inputClass}><option value="none">不要求学生回答</option><option value="single_choice">老师新建一个单选问题</option><option value="referenced_activity">老师引导学生完成教材活动</option></select></label>
             {interactionKind === "none" && (
               <p className="app-muted-text px-4 pb-4 text-xs leading-5">这个小节暂不需要学生互动，学生看完老师讲解后可以直接继续下一步。如果想检查学生是否听懂，可以改选“新建必答单选检查”或“使用教材已有活动”。</p>
             )}
             <div id="custom-interaction-settings" hidden={interactionKind !== "single_choice"} className="divide-y divide-[var(--border)]">
-            <label className={fieldClass}><span className={formFieldLabelClass}>老师提出的问题</span><textarea name="interaction_prompt_zh" defaultValue={localizedConfigurationText(interaction, "prompt")} disabled={!editable} rows={3} maxLength={300} aria-invalid={Boolean(state.fieldErrors?.interactionPromptZh?.length) || undefined} aria-describedby={state.fieldErrors?.interactionPromptZh?.length ? "interaction-prompt-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><FieldError id="interaction-prompt-error" errors={state.fieldErrors?.interactionPromptZh} /></label>
+            <label className={fieldClass}><span className={formFieldLabelClass}>老师实际提出的问题</span><span><textarea name="interaction_prompt_zh" defaultValue={localizedConfigurationText(interaction, "prompt")} disabled={!editable} rows={3} maxLength={300} placeholder="例如：刚才第一句问候表达是哪一个？" aria-invalid={Boolean(state.fieldErrors?.interactionPromptZh?.length) || undefined} aria-describedby={state.fieldErrors?.interactionPromptZh?.length ? "interaction-prompt-error" : undefined} className={`${inputClass} resize-y py-3 leading-6`} /><span className="app-muted-text mt-1 block text-xs leading-5">老师会先把问题说完，随后才显示回答选项。</span><FieldError id="interaction-prompt-error" errors={state.fieldErrors?.interactionPromptZh} /></span></label>
             <div className={fieldClass}>
               <span id="interaction-options-label" className={formFieldLabelClass}>学生可选回答</span>
               <fieldset aria-labelledby="interaction-options-label" aria-describedby={state.fieldErrors?.interactionOptions?.length ? "interaction-options-error" : undefined} className="min-w-0 space-y-2">
@@ -2017,7 +2293,7 @@ export function TeachingScriptNodeForm({
               <input type="hidden" name="interaction_options" value={interactionOptionRows.map((option) => option.value).join("\n")} />
               <input type="hidden" name="interaction_required" value="on" />
             </div>
-            <details className="group">
+            <details open={interactionPerspective === "teacher_feedback" || undefined} className="group">
               <summary className="flex min-h-14 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold text-[var(--foreground)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
                 <span>答题反馈设置</span>
                 <span className="text-xs text-[var(--primary)] group-open:hidden">展开</span>
@@ -2040,7 +2316,7 @@ export function TeachingScriptNodeForm({
             )}
           </div>
 
-          <div id="teaching-flow-panel" hidden={editorSection !== "flow"} role="tabpanel" aria-labelledby="teaching-flow-tab" className={panelClass}>
+          <div id="teaching-flow-panel" tabIndex={-1} hidden={editorSection !== "flow"} role="tabpanel" aria-labelledby="teaching-flow-tab" className={panelClass}>
             <section className="rounded-xl border border-[var(--border)] bg-[var(--card)] px-4 py-3" aria-labelledby="teaching-flow-summary-title">
               <h3 id="teaching-flow-summary-title" className="text-sm font-bold text-[var(--foreground)]">当前教学流程</h3>
               <p className="mt-2 text-sm font-semibold leading-6 text-[var(--foreground-secondary)]" role="status" aria-atomic="true">{teachingFlowSummary}</p>
@@ -2082,7 +2358,18 @@ export function TeachingScriptNodeForm({
               <input type="hidden" name="flow_mode" value={flowMode} />
             </fieldset>
             {flowMode === "jump" ? (
-              <label className={fieldClass}><span className={formFieldLabelClass}>跳转到</span><select name="next_node_key" value={nextNodeKey} onChange={(event) => setNextNodeKey(event.target.value)} disabled={!editable} aria-invalid={Boolean(state.fieldErrors?.nextNodeKey?.length) || undefined} aria-describedby={state.fieldErrors?.nextNodeKey?.length ? "next-node-error" : undefined} className={inputClass}><option value="">请选择目标小节</option>{allNodes.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.key}>{item.order}. {item.title["zh-CN"]}</option>)}</select><FieldError id="next-node-error" errors={state.fieldErrors?.nextNodeKey} /></label>
+              <div className={fieldClass}>
+                <span className={formFieldLabelClass}>跳转到</span>
+                <div className="space-y-2">
+                  <select name="next_node_key" value={nextNodeKey} onChange={(event) => setNextNodeKey(event.target.value)} disabled={!editable} aria-invalid={Boolean(state.fieldErrors?.nextNodeKey?.length) || undefined} aria-describedby={state.fieldErrors?.nextNodeKey?.length ? "next-node-error" : undefined} className={inputClass}><option value="">请选择目标小节</option>{allNodes.filter((item) => item.id !== node.id).map((item) => <option key={item.id} value={item.key}>{item.order}. {item.title["zh-CN"]}</option>)}</select>
+                  {onStartFlowBinding && (
+                    <button type="button" onClick={onStartFlowBinding} disabled={!editable} className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-not-allowed disabled:opacity-50">
+                      <Route size={15} aria-hidden="true" />从编排轴选择目标
+                    </button>
+                  )}
+                  <FieldError id="next-node-error" errors={state.fieldErrors?.nextNodeKey} />
+                </div>
+              </div>
             ) : <input type="hidden" name="next_node_key" value="" />}
             <input type="hidden" name="terminal" value={flowMode === "end" ? "on" : ""} />
             <input type="hidden" name="required" value="on" />

@@ -1,6 +1,6 @@
 "use client";
 
-import { type ReactNode, useEffect, useMemo, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { MessageCircleMore, Plus, Search, Star, X } from "lucide-react";
@@ -34,6 +34,7 @@ const statusColors = {
 export function ConversationScenarioTable({
   rows,
   canManage,
+  showPracticeMetrics = true,
   createOpen,
   createHref = "/dashboard/admin/conversation-practice?mode=create",
   closeHref = "/dashboard/admin/conversation-practice",
@@ -41,12 +42,14 @@ export function ConversationScenarioTable({
 }: {
   rows: ConversationScenarioTableRow[];
   canManage: boolean;
+  showPracticeMetrics?: boolean;
   createOpen: boolean;
   createHref?: string;
   closeHref?: string;
   children?: ReactNode;
 }) {
   const router = useRouter();
+  const dialogRef = useRef<HTMLDivElement>(null);
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("all");
   const [status, setStatus] = useState("all");
@@ -56,11 +59,25 @@ export function ConversationScenarioTable({
   useEffect(() => {
     if (!modalOpen) return;
     const previousOverflow = document.body.style.overflow;
+    const previousFocus = document.activeElement;
     document.body.style.overflow = "hidden";
+    const focusable = () => [...(dialogRef.current?.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex="0"]') ?? [])];
+    focusable()[0]?.focus();
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") { event.preventDefault(); router.replace(closeHref, { scroll: false }); }
+      if (event.key === "Tab") {
+        const items = focusable(); const first = items[0]; const last = items.at(-1);
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+        if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+      }
+    };
+    document.addEventListener("keydown", onKey);
     return () => {
       document.body.style.overflow = previousOverflow;
+      document.removeEventListener("keydown", onKey);
+      if (previousFocus instanceof HTMLElement && previousFocus.isConnected) previousFocus.focus();
     };
-  }, [modalOpen]);
+  }, [modalOpen, closeHref, router]);
 
   const filteredRows = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -79,14 +96,14 @@ export function ConversationScenarioTable({
         <div className="flex flex-wrap items-center gap-2 border-b px-3 py-3" style={{ borderColor: "var(--border)" }}>
           <label className="relative min-w-[220px] flex-1 lg:max-w-sm">
             <Search size={13} className="app-muted-text pointer-events-none absolute left-3 top-1/2 -translate-y-1/2" />
-            <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索会话场景" className="app-input w-full rounded-[6px] border py-2 pl-8 pr-8 text-[11px] outline-none" />
+            <input value={query} onChange={(event) => setQuery(event.target.value)} aria-label="搜索会话场景" placeholder="搜索会话场景" className="app-input w-full rounded-[6px] border py-2 pl-8 pr-8 text-[11px] outline-none" />
             {query && <button type="button" onClick={() => setQuery("")} aria-label="清空搜索" className="app-muted-text absolute right-2 top-1/2 -translate-y-1/2 p-1"><X size={12} /></button>}
           </label>
-          <select value={category} onChange={(event) => setCategory(event.target.value)} className="app-input rounded-[6px] border px-3 py-2 text-[11px] outline-none">
+          <select aria-label="会话分类" value={category} onChange={(event) => setCategory(event.target.value)} className="app-input rounded-[6px] border px-3 py-2 text-[11px] outline-none">
             <option value="all">全部分类</option>
             {Array.from(new Map(rows.map((row) => [row.category, row.categoryLabel])).entries()).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
           </select>
-          <select value={status} onChange={(event) => setStatus(event.target.value)} className="app-input rounded-[6px] border px-3 py-2 text-[11px] outline-none">
+          <select aria-label="场景状态" value={status} onChange={(event) => setStatus(event.target.value)} className="app-input rounded-[6px] border px-3 py-2 text-[11px] outline-none">
             <option value="all">全部状态</option>
             <option value="published">已发布</option>
             <option value="draft">草稿</option>
@@ -103,7 +120,7 @@ export function ConversationScenarioTable({
               <tr className="app-muted-text border-b text-[10px]" style={{ borderColor: "var(--border)" }}>
                 <th className="w-[46%] px-4 py-2 font-medium">场景</th>
                 <th className="w-[16%] px-3 py-2 font-medium">内容</th>
-                <th className="w-[18%] px-3 py-2 font-medium">练习</th>
+                {showPracticeMetrics && <th className="w-[18%] px-3 py-2 font-medium">练习</th>}
                 <th className="w-[12%] px-3 py-2 font-medium">状态</th>
                 <th className="w-[8%] px-4 py-2 text-right font-medium">操作</th>
               </tr>
@@ -127,20 +144,20 @@ export function ConversationScenarioTable({
                       <div className="flex items-center gap-2"><span className="h-1 w-14 bg-[var(--surface-soft)]"><span className="block h-full" style={{ width: `${row.completeness}%`, backgroundColor: row.completeness === 100 ? "var(--status-success)" : "var(--status-warning)" }} /></span><span className="font-mono text-[9px]">{row.completeness}%</span></div>
                       {row.missingItems.length > 0 && <p className="app-muted-text mt-1 text-[9px]" title={row.missingItems.join("、")}>缺 {row.missingItems.length} 项</p>}
                     </td>
-                    <td className="app-muted-text px-3 py-2"><span>{row.studentCount} 人 · {row.practiceCount} 次</span><p className="mt-1 text-[9px]">已掌握 {row.completedCount}</p></td>
+                    {showPracticeMetrics && <td className="app-muted-text px-3 py-2"><span>{row.studentCount} 人 · {row.practiceCount} 次</span><p className="mt-1 text-[9px]">已掌握 {row.completedCount}</p></td>}
                     <td className="px-3 py-2"><span className="inline-flex rounded-full px-2 py-1 text-[9px] font-medium" style={{ color: tone.color, backgroundColor: tone.background }}>{row.statusLabel}</span></td>
                     <td className="px-4 py-2 text-right">{canManage ? <Link href={row.editHref} className="font-medium" style={{ color: "var(--primary-hover)" }}>编辑</Link> : <span className="app-muted-text">—</span>}</td>
                   </tr>
                 );
               })}
-              {filteredRows.length === 0 && <tr><td colSpan={5} className="app-muted-text px-4 py-12 text-center text-[11px]">没有符合条件的会话场景</td></tr>}
+              {filteredRows.length === 0 && <tr><td colSpan={showPracticeMetrics ? 5 : 4} className="app-muted-text px-4 py-12 text-center text-[11px]">没有符合条件的会话场景</td></tr>}
             </tbody>
           </table>
         </div>
       </section>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-[120] flex items-center justify-center bg-black/25 p-3 backdrop-blur-[1px] sm:p-5" role="dialog" aria-modal="true" aria-label={activeRow ? `${activeRow.title}编辑工作窗` : "新建会话场景工作窗"}>
+        <div ref={dialogRef} className="fixed inset-0 z-[120] flex items-center justify-center bg-black/25 p-3 backdrop-blur-[1px] sm:p-5" role="dialog" aria-modal="true" aria-label={activeRow ? `${activeRow.title}编辑工作窗` : "新建会话场景工作窗"}>
           <div className="course-editor-window app-card relative flex h-[min(920px,calc(100vh-24px))] w-full max-w-[1400px] flex-col overflow-hidden border shadow-2xl sm:h-[calc(100vh-40px)]" style={{ borderColor: "var(--border)" }}>
             <div className="flex h-12 shrink-0 items-center justify-between border-b px-4" style={{ borderColor: "var(--border)" }}>
               <div className="flex min-w-0 items-center gap-2 text-[11px]"><MessageCircleMore size={14} className="app-muted-text" /><span className="truncate font-semibold">{activeRow?.title ?? "新建会话场景"}</span></div>

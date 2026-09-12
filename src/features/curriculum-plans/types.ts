@@ -7,6 +7,7 @@ export type InstitutionCurriculumPlanStatus =
   | "cancelled";
 
 export type CurriculumPlanActivityType =
+  | "chapter_practice"
   | "course"
   | "listening"
   | "speaking"
@@ -51,6 +52,11 @@ export type CurriculumPlanTemplateItem = {
 export type InstitutionCurriculumPlanProgress = {
   trackedStudentCount: number;
   startedStudentCount: number;
+  completedCount: number;
+  overdueCount: number;
+  pendingGradingCount: number;
+  unavailableCount: number;
+  totalCount: number;
 };
 
 export type InstitutionCurriculumPlan = {
@@ -63,6 +69,11 @@ export type InstitutionCurriculumPlan = {
   publishedAt: string | null;
   studentIds: string[];
   progress: InstitutionCurriculumPlanProgress | null;
+  execution: Array<{
+    studentId: string; itemId: string; title: string; required: boolean; sourceType: string;
+    assignmentId: string | null; status: import("../student-home-learning/api/types").HomeLearningTaskStatus;
+    progressPercent: number | null; reason: string; startsAt: string; dueAt: string;
+  }>;
 };
 
 export type CurriculumPlanStudent = {

@@ -1,3 +1,5 @@
+import { getDigitalTextbookManagementData } from "@/features/digital-textbook/api/service";
+import { workflowChapters, workflowHref } from "@/lib/course-workflow-context";
 import {
   firstSectionParam,
   ManagementApplicationSectionFrame,
@@ -19,17 +21,22 @@ export default async function ManagementAppContentRoute({
     searchParams,
   ]);
 
+  const chapterId = firstSectionParam(query.chapter);
+  const canReadTextbooks = context.access.scope !== "platform" || context.access.globalRole === "platform_owner" || context.access.globalRole === "platform_admin";
+  const textbooks = chapterId && canReadTextbooks ? await getDigitalTextbookManagementData(context.access.appId) : null;
+  const chapter = textbooks && !textbooks.hasError ? workflowChapters(textbooks.courses).find(item => item.id === chapterId) : undefined;
+
   return (
-    <ManagementApplicationSectionFrame {...context}>
+    <ManagementApplicationSectionFrame {...context} chapterId={chapterId}>
       <CourseCatalogListing
         searchParams={Promise.resolve({
-          node: firstSectionParam(query.node),
-          id: firstSectionParam(query.id),
-          folder: firstSectionParam(query.folder),
+          node: firstSectionParam(query.node) ?? (chapter ? "lesson" : undefined),
+          id: firstSectionParam(query.id) ?? chapter?.lessonId,
+          folder: firstSectionParam(query.folder) ?? (chapter ? `lesson:${chapter.lessonId}` : undefined),
         })}
         studentAppId={context.access.appId}
-        routeBasePath={`${context.access.appPath}/content`}
-        textbookRoute={`${context.access.appPath}/textbooks`}
+        routeBasePath={workflowHref(context.access.appPath, "content", chapterId)}
+        textbookRoute={workflowHref(context.access.appPath, "textbooks", chapterId)}
       />
     </ManagementApplicationSectionFrame>
   );

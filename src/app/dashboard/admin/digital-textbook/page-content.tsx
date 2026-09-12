@@ -2,13 +2,16 @@ import DigitalTextbookListing from "@/features/digital-textbook/components/digit
 
 export default function DigitalTextbookAdminPage({
   studentAppId,
+  chapterId,
   courseStructureRoute,
 }: {
   studentAppId: string;
+  chapterId?: string;
   courseStructureRoute?: string;
 }) {
   return (
     <DigitalTextbookListing
+      chapterId={chapterId}
       studentAppId={studentAppId}
       courseStructureRoute={courseStructureRoute}
     />

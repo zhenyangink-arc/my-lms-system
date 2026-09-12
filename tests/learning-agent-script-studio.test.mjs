@@ -3,6 +3,12 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 import {
+  classroomResponsePhaseForTurn,
+  classroomShotForScriptSegment,
+  defaultClassroomShotForTurn,
+} from "../src/lib/learning-agent-classroom-director.ts";
+
+import {
   buildOrientationLearningTargets,
   defaultLearningTargetForPage,
   defaultLearningTargetForRegion,
@@ -20,6 +26,35 @@ test("老师讲解指向选择情景诊断后切换到第二页目标", () => {
     defaultLearningTargetForRegion(targets, "diagnosis", "page")?.key,
     "orientation:page:diagnosis",
   );
+});
+
+test("课堂导演按教学环节选择镜头并允许逐句覆盖", () => {
+  assert.equal(defaultClassroomShotForTurn({ phase: "explanation", hasTeachingDisplay: true }), "teacher_blackboard");
+  assert.equal(defaultClassroomShotForTurn({ phase: "explanation", hasTeachingDisplay: false }), "teacher_closeup");
+  assert.equal(defaultClassroomShotForTurn({ phase: "task", hasTeachingDisplay: true }), "learning_closeup");
+  assert.equal(defaultClassroomShotForTurn({ phase: "question", hasTeachingDisplay: true }), "interaction");
+  assert.equal(defaultClassroomShotForTurn({ phase: "task_feedback", hasTeachingDisplay: true }), "feedback");
+  assert.equal(classroomShotForScriptSegment({
+    scriptPerformances: [{ classroomShot: "teacher_closeup" }],
+  }, 0, { phase: "task", hasTeachingDisplay: true }), "teacher_closeup");
+  assert.equal(classroomShotForScriptSegment({
+    scriptPerformances: [{ classroomShot: "interaction" }],
+  }, 0, { phase: "task_feedback", hasTeachingDisplay: true }), "feedback");
+  assert.equal(classroomResponsePhaseForTurn({
+    activePhase: "question",
+    intent: "answer",
+    answerCorrect: true,
+  }), "task_feedback");
+  assert.equal(classroomResponsePhaseForTurn({
+    activePhase: "question",
+    intent: "answer",
+    answerCorrect: false,
+  }), "task_feedback");
+  assert.equal(classroomResponsePhaseForTurn({
+    activePhase: "question",
+    intent: "ready",
+    answerCorrect: null,
+  }), "question");
 });
 
 test("节点式教学脚本具备草稿、发布、作答记录与第一章课前导航种子", async () => {
@@ -154,7 +189,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /课程结构/);
   assert.doesNotMatch(studio, /自定义教学流程/);
   assert.match(studio, /新增小节/);
-  assert.match(studio, /\{selectedModule\.textbookTitle\["zh-CN"\]\} · 第\{selectedModule\.chapterNumber\}章 · \{moduleLabels\[selectedModule\.code\] \?\? selectedModule\.title\["zh-CN"\]\} · 第\{selectedVersion\.nodes\.findIndex/);
+  assert.match(studio, /id="subsection-editor-title">第 \{selectedVersion\.nodes\.findIndex/);
   assert.doesNotMatch(studio, /aria-modal="true"/);
   assert.match(studio, /编辑已发布版本/);
   assert.match(studio, /继续编辑草稿/);
@@ -166,39 +201,65 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(studio, /请先保存当前小节，再执行这个操作/);
   assert.match(studio, /FormSubmitButton/);
   assert.match(studio, /正在校验并发布/);
-  assert.match(studio, /xl:grid-cols-\[18rem_minmax\(0,1fr\)\]/);
-  assert.match(studio, /xl:grid-cols-\[minmax\(0,1fr\)\]/);
+  assert.match(studio, /lg:grid-cols-\[13rem_minmax\(0,1fr\)\]/);
+  assert.match(studio, /grid-cols-\[minmax\(0,1fr\)\]/);
+  assert.match(studio, /教学编排轴/);
+  assert.match(studio, /orchestrationTracks/);
+  assert.match(studio, /label: "老师发起"/);
+  assert.match(studio, /label: "学生回应"/);
+  assert.match(studio, /label: "老师反馈"/);
+  assert.match(studio, /label: "后续连接"/);
+  assert.ok(studio.indexOf('label: "老师发起"') < studio.indexOf('label: "学生回应"'));
+  assert.ok(studio.indexOf('label: "学生回应"') < studio.indexOf('label: "老师反馈"'));
+  assert.match(studio, /待填写老师实际说的话/);
+  assert.match(studio, /操作完成：\$\{operationFeedback \|\| "使用系统自然反馈"\}/);
+  assert.match(studio, /selectedOrchestrationTrackId/);
+  assert.match(studio, /orchestrationCell/);
+  assert.match(studio, /flowBindingSourceNodeId/);
+  assert.match(studio, /正在连接第 \{flowBindingSourceNode\.order\} 小节/);
+  assert.match(studio, /绑定到第 \$\{node\.order\} 小节/);
+  assert.match(studio, /onStartFlowBinding=\{startFlowBinding\}/);
+  assert.match(studio, /TeachingConnectionOverlay/);
+  assert.match(studio, /strokeDasharray="5 4"/);
+  assert.match(studio, /路径预演/);
+  assert.match(studio, /advanceAxisPreview/);
+  assert.match(studio, /检测到循环/);
+  assert.match(studio, /orchestrationNodeIssueCount/);
   assert.doesNotMatch(studio, /xl:grid-cols-\[3\.5rem_minmax\(0,1fr\)\]/);
   assert.match(studio, /!showStructureNav &&/);
   assert.match(studio, /aria-label="显示课程结构"/);
+  assert.match(studio, /showOrchestrationAxis/);
+  assert.match(studio, /aria-label="隐藏教学编排轴"/);
+  assert.match(studio, /aria-label="显示教学编排轴"/);
   assert.match(studio, /showStructureNav/);
   assert.doesNotMatch(studio, /showStepList/);
-  assert.match(studio, /expandedModuleId/);
+  assert.doesNotMatch(studio, /expandedModuleId/);
   assert.match(studio, /collapsedChapterNumbers/);
   assert.match(studio, /teaching-script-navigation:v1/);
   assert.match(studio, /window\.localStorage\.getItem\(navigationMemoryKey\)/);
   assert.match(studio, /window\.localStorage\.setItem\(navigationMemoryKey/);
-  assert.match(studio, /const \[expandedModuleId, setExpandedModuleId\] = useState\(firstModule\?\.id \?\? ""\)/);
+  assert.match(studio, /const \[collapsedChapterNumbers, setCollapsedChapterNumbers\]/);
   assert.match(studio, /chapterNumber !== firstModule\?\.chapterNumber/);
   assert.match(studio, /toggleChapter\(chapterNumber\)/);
   assert.match(studio, /aria-expanded=\{chapterExpanded\}/);
   assert.match(studio, /teaching-chapter-\$\{chapterNumber\}-steps/);
   assert.doesNotMatch(studio, /\{modules\.length\} 个学习步骤/);
   assert.match(studio, /bg-\[var\(--muted\)\]\/60/);
-  assert.match(studio, /setExpandedModuleId\(\(current\) => current === nextModuleId \? "" : nextModuleId\)/);
-  assert.match(studio, /aria-expanded=\{expanded\}/);
-  assert.match(studio, /aria-controls=\{selected \? `teaching-step-\$\{lessonModule\.id\}-nodes` : undefined\}/);
-  assert.match(studio, /expanded \? "rotate-180"/);
+  assert.match(studio, /if \(nextModuleId === selectedModule\.id\) return/);
+  assert.match(studio, /aria-labelledby="teaching-orchestration-title"/);
+  assert.match(studio, /可横向滚动的教学编排轴/);
+  assert.match(studio, /showSectionNavigation=\{!showOrchestrationAxis\}/);
+  assert.match(studio, /selectedVersion\.nodes\.map/);
   assert.match(studio, /发布学习步骤/);
   assert.match(studio, /form=\{selectedNodeFormId\}/);
   assert.match(studio, /nodeSavePending \? "正在保存…" : "保存当前小节"/);
   assert.match(studio, /editable && selectedNode && selectedNodeFormId/);
   assert.match(studio, /summary className="inline-flex min-h-11[^"]*border border-\[var\(--border\)\] bg-\[var\(--muted\)\]/);
   assert.ok(studio.indexOf('form={selectedNodeFormId}') < studio.indexOf("发布学习步骤"));
-  assert.match(studio, /id="subsection-editor-title">\{selectedModule\.textbookTitle\["zh-CN"\]\} · 第\{selectedModule\.chapterNumber\}章 · \{moduleLabels\[selectedModule\.code\] \?\? selectedModule\.title\["zh-CN"\]\} · 第\{selectedVersion\.nodes\.findIndex/);
-  assert.doesNotMatch(studio, /小节 · \{selectedNode\.title\["zh-CN"\]\}/);
+  assert.match(studio, /小节 · \{selectedNode\.title\["zh-CN"\] \|\| "未命名小节"\}/);
+  assert.match(studio, /aria-label="选择教学小节"/);
   assert.match(studio, /sticky top-0 z-30/);
-  assert.match(studio, /xl:sticky xl:top-0/);
+  assert.match(studio, /lg:self-start lg:border-b-0 lg:border-r/);
   assert.doesNotMatch(studio, /xl:sticky xl:top-20/);
   assert.match(studio, /仅第 1 章可预览完整流程/);
   assert.doesNotMatch(studio, /title="目前只有第 1 章接了真实学生页面/);
@@ -214,9 +275,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   // last silently overwrite the other's changes — the update is a
   // compare-and-swap against the row's own updated_at, not a blind write.
   assert.match(actions, /nodeUpdatedAt: z\.string\(\)\.min\(1,/);
+  assert.match(actions, /options\.every\(Boolean\) && new Set\(options\)\.size !== options\.length/);
   assert.match(actions, /String\(current\.updated_at\) !== input\.nodeUpdatedAt/);
-  assert.match(actions, /\.eq\("id", input\.nodeId\)\s*\n\s*\.eq\("updated_at", input\.nodeUpdatedAt\)/);
-  assert.match(actions, /if \(!updated \|\| updated\.length === 0\)/);
+  assert.match(actions, /rpc\("save_teaching_script_node_atomic"/);
+  assert.match(actions, /p_expected_updated_at: input.nodeUpdatedAt/);
   assert.match(editor, /<input type="hidden" name="node_updated_at" value=\{node\.updatedAt\} \/>/);
   assert.match(editor, /老师台词/);
   assert.doesNotMatch(editor, /按授课顺序完成当前小节/);
@@ -226,12 +288,19 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /说完后去哪里/);
   assert.doesNotMatch(editor, /max-w-\[75rem\]/);
   assert.match(editor, /小节基本设置/);
+  assert.match(editor, /语音默认设置/);
   assert.match(editor, /sm:grid-cols-\[minmax\(9rem,1fr\)_minmax\(7rem,0\.7fr\)_auto\]/);
   assert.match(editor, /开场过渡/);
   assert.match(editor, /正式讲解/);
-  assert.match(editor, /当前讲解概览/);
-  assert.match(editor, /<ol className="grid divide-y divide-\[var\(--border\)\] lg:grid-cols-4 lg:divide-x lg:divide-y-0">/);
-  assert.equal((editor.match(/rounded-full bg-\[var\(--accent\)\] text-xs font-bold text-\[var\(--primary\)\]/g) ?? []).length, 8);
+  assert.doesNotMatch(editor, /当前讲解概览/);
+  assert.match(editor, /editorSectionDescriptions/);
+  assert.match(editor, /点击提示可直接定位/);
+  assert.match(editor, /focusErrorField/);
+  assert.match(editor, /从编排轴选择目标/);
+  assert.match(editor, /flowBindingRequest/);
+  assert.match(editor, /setNextNodeKey\(flowBindingRequest\.targetNodeKey\)/);
+  assert.match(editor, /errorFocusSelectorByField/);
+  assert.ok(editor.includes('/^(需|待)/.test(editorStepStates[step.id])'));
   assert.match(editor, /filledScriptLineCount/);
   assert.match(editor, /generatedScriptSpeechCount/);
   assert.match(editor, /展开表现设置/);
@@ -243,12 +312,21 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /学习区全屏/);
   assert.match(editor, /教学区全屏/);
   assert.match(editor, /name="script_learning_layout"/);
+  assert.match(editor, /课堂镜头/);
+  assert.match(editor, /自动导演/);
+  assert.match(editor, /老师主讲/);
+  assert.match(editor, /老师＋黑板/);
+  assert.match(editor, /教材特写/);
+  assert.match(editor, /学生互动/);
+  assert.match(editor, /老师反馈/);
+  assert.match(editor, /name="script_classroom_shot"/);
   assert.match(actions, /learningLayout: z\.enum\(\["split", "learning", "teaching"\]\)/);
   assert.match(actions, /formData\.getAll\("script_learning_layout"\)/);
+  assert.match(actions, /formData\.getAll\("script_classroom_shot"\)/);
   assert.match(scriptRuntime, /function scriptSegmentLearningLayout/);
   assert.match(respondRoute, /X-Learning-Agent-Learning-Layout/);
   assert.match(previewRespondRoute, /X-Learning-Agent-Learning-Layout/);
-  assert.equal((bufferPresets.match(/id: "[a-z0-9-]+"/g) ?? []).length, 11);
+  assert.equal((bufferPresets.match(/id: "[a-z0-9-]+"/g) ?? []).length, 12);
   assert.match(bufferPresets, /LEARNING_AGENT_BUFFER_PRESET_NONE_ID/);
   assert.match(editor, /系统兜底台词库/);
   assert.match(editor, /试听语音/);
@@ -260,7 +338,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /name="hint_zh" value=\{hintZh\}/);
   assert.match(editor, /name="example_zh" value=\{exampleZh\}/);
   assert.doesNotMatch(editor, /text-xs text-\[var\(--muted-foreground\)\]">正式讲解/);
-  assert.match(editor, /xl:grid-cols-\[minmax\(16rem,0\.7fr\)_minmax\(0,1\.3fr\)\] xl:divide-x xl:divide-y-0/);
+  assert.match(editor, /<details hidden=\{teacherVideo\.mode === "video"\} className="group">/);
   assert.match(editor, /mt-3 grid items-stretch gap-3 xl:grid-cols-2/);
   assert.match(editor, /grid items-start gap-4 bg-\[var\(--muted\)\]\/25 p-4 xl:grid-cols-2/);
   assert.match(editor, /rounded-xl border border-\[var\(--border\)\] bg-\[var\(--card\)\] p-4 shadow-sm/);
@@ -354,7 +432,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   // plain placeholder box instead.
   assert.match(studio, /const previewUrl = previewLessonSupported && selectedVersion/);
   assert.match(studio, /previewUrl=\{previewUrl\}/);
-  assert.match(editor, /previewUrl,\n\s*onDirtyChange,/);
+  assert.match(editor, /previewUrl,\n\s*editorSection,\n\s*onEditorSectionChange,/);
   assert.match(editor, /previewUrl\?: string;/);
   assert.match(editor, /onDirty=\{markDirty\}\n\s*previewUrl=\{previewUrl\}\n\s*\/>/);
   assert.match(characterStage, /function ScaledLearningAreaPreview\(\{ previewUrl \}: \{ previewUrl\?: string \}\)/);
@@ -441,8 +519,20 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /aria-labelledby="learning-area-group-title"/);
   assert.match(editor, /formFieldLabelClass/);
   assert.match(editor, /小节基本设置/);
-  assert.match(editor, /学生互动/);
-  assert.match(editor, /这一步需要学生做什么/);
+  assert.match(editor, /选择本小节的教学回合/);
+  assert.match(editor, /选择老师如何发起/);
+  assert.match(editor, /发出操作要求/);
+  assert.match(editor, /提出一个问题/);
+  assert.match(editor, /选择学生如何回应/);
+  assert.match(editor, /无需学生回应/);
+  assert.match(editor, /选择老师在哪些回应后反馈/);
+  assert.match(editor, /操作完成后反馈/);
+  assert.match(editor, /回答后反馈/);
+  assert.match(editor, /分别反馈两次/);
+  assert.match(editor, /aria-label=\{participationModePresentation\.ariaLabel\}/);
+  assert.match(editor, /老师发起/);
+  assert.match(editor, /学生回应/);
+  assert.match(editor, /老师反馈/);
   assert.match(editor, /只听老师讲解/);
   assert.match(editor, /完成一个操作/);
   assert.match(editor, /回答一个问题/);
@@ -452,10 +542,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /interactionKind === "none" && <input type="hidden" name="interaction_kind" value="none"/);
   assert.match(editor, /完成后的流程/);
   assert.ok(editor.indexOf('id: "script"') < editor.indexOf('id: "content"'));
-  assert.match(editor, /useState<EditorSection>\("script"\)/);
+  assert.match(studio, /useState<TeachingScriptEditorSection>\("script"\)/);
   assert.match(editor, /errorSectionByField/);
   assert.match(editor, /errorSummaryRef/);
-  assert.match(editor, /当前小节有 \{formErrorMessages\.length\} 项需要修改/);
+  assert.match(editor, /当前小节有 \{formErrorEntries\.length\} 项需要修改/);
   assert.match(editor, /handleEditorTabKeyDown/);
   assert.match(editor, /tabIndex=\{selected \? 0 : -1\}/);
   assert.match(editor, /aria-labelledby="teaching-script-tab"/);
@@ -475,22 +565,25 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /学生做什么/);
   assert.match(editor, /说完后去哪里/);
   assert.doesNotMatch(editor, /学生端预览/);
-  assert.doesNotMatch(editor, /CardTitleWithHint/);
+  assert.match(editor, /CardTitleWithHint/);
+  assert.match(editor, /<details[^>]*aria-label="视频待配置项目"/);
+  assert.match(studio, /min-h-9 min-w-0 items-center/);
   assert.match(editor, /展开高级设置/);
   assert.doesNotMatch(editor, /\{step\.description\}/);
   assert.doesNotMatch(editor, /过渡台词、正式讲解、语音与逐句设置/);
   assert.doesNotMatch(editor, /黑板画面、人物动作、界面切换与学习区联动/);
   assert.match(editor, /md:grid-cols-\[7rem_minmax\(0,1fr\)\]/);
-  assert.match(editor, /createPortal/);
-  assert.match(editor, /editorStepsSlot/);
-  assert.match(editor, /getElementById\("teaching-editor-steps-slot"\)/);
-  assert.match(studio, /id="teaching-editor-steps-slot"/);
+  assert.doesNotMatch(editor, /createPortal/);
+  assert.doesNotMatch(editor, /editorStepsSlot/);
+  assert.doesNotMatch(studio, /id="teaching-editor-steps-slot"/);
+  assert.match(editor, /当前小节设置/);
+  assert.match(editor, /先完成老师台词，其余内容按需要打开/);
   assert.match(editor, /中文台词/);
   assert.match(editor, /韩文台词/);
   assert.doesNotMatch(editor, /<p className="app-muted-text mt-1 text-xs leading-5">需要学生看图/);
   assert.match(editor, /display_items_zh/);
   assert.match(editor, /student_task_target_key/);
-  assert.match(editor, /要求学生播放并完整听完指定表达/);
+  assert.match(editor, /setStudentTaskKind\("play_expression_audio"\)/);
   assert.match(characterStage, /金老师/);
   assert.match(editor, /script_pose/);
   assert.match(editor, /朗读这句台词/);
@@ -531,7 +624,7 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /整个“课前导航”学习内容区/);
   assert.match(editor, /teachingActivityLabel/);
   assert.doesNotMatch(editor, /自动切到对应页面，把这个区域滚动到中间并闪动提示/);
-  assert.match(editor, /不安排操作，只听老师讲解/);
+  assert.match(editor, /只听老师讲解/);
   assert.match(editor, /content:current/);
   assert.match(editor, /activity:\$\{activity\.id\}/);
   assert.match(studio, /moduleOrder=\{selectedModule\.order\}/);
@@ -560,10 +653,11 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /3\. 选择具体对象/);
   assert.match(editor, /当前指向：/);
   assert.match(actions, /\^\[a-zA-Z0-9:_-\]\*\$/);
-  assert.match(editor, /name="student_task_kind" defaultValue=\{studentTaskKind\}/);
+  assert.match(editor, /name="student_task_kind" value=\{studentTaskKind\}/);
   assert.match(editor, /name="interaction_kind" value=\{interactionKind\}/);
   assert.match(editor, /student-task-settings/);
-  assert.match(editor, /hidden=\{studentTaskKind === "none"\}/);
+  assert.match(editor, /studentTaskTargetKey: "interaction"/);
+  assert.match(editor, /<details id="student-task-settings"/);
   assert.match(editor, /学生操作设置/);
   assert.doesNotMatch(editor, /hintLabel="查看学生操作说明"/);
   assert.match(editor, />宠物操作<\/h4>/);
@@ -571,8 +665,10 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.doesNotMatch(editor, /宠物代点|当前代点目标|可代点/);
   assert.doesNotMatch(actions, /宠物代点/);
   assert.match(actions, /宠物操作不能指向答题类目标/);
-  assert.ok(editor.indexOf('>宠物操作</h4>') < editor.indexOf('>学生操作</h4>'));
-  assert.match(editor, /学生需要操作哪里/);
+  assert.ok(editor.indexOf('>宠物操作</h4>') < editor.indexOf('id="teaching-interaction-panel"'));
+  assert.ok(editor.indexOf('id="student-task-settings"') > editor.indexOf('id="teaching-interaction-panel"'));
+  assert.doesNotMatch(editor, /setEditorSection\("content"\)[^\n]*设置操作目标/);
+  assert.match(editor, /学生回应：需要操作哪里/);
   assert.match(editor, /3\. 选择按钮或表达/);
   assert.match(editor, /actionableLearningTargets/);
   assert.match(editor, /selectedStudentTaskTarget/);
@@ -602,8 +698,8 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /新增选项/);
   assert.match(editor, /moveInteractionOption/);
   assert.match(editor, /removeInteractionOption/);
-  assert.match(editor, /新建必答单选检查/);
-  assert.match(editor, /使用教材已有活动/);
+  assert.match(editor, /老师新建一个单选问题/);
+  assert.match(editor, /老师引导学生完成教材活动/);
   assert.match(editor, /type="hidden" name="interaction_required" value="on"/);
   assert.doesNotMatch(editor, /type="checkbox" name="interaction_required"/);
   assert.match(editor, /答错后的补充讲解/);
@@ -623,19 +719,27 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /答对后的老师反馈/);
   assert.match(editor, /fieldErrors\?\.interactionCorrectFeedbackZh/);
   assert.match(editor, /fieldErrors\?\.interactionIncorrectFeedbackZh/);
+  assert.match(editor, /name="operation_complete_feedback_zh"/);
+  assert.match(actions, /configuration\.operationCompleteFeedback/);
   assert.match(actions, /formData\.getAll\("interaction_option"\)/);
   assert.match(actions, /interactionRequired: true/);
   assert.match(actions, /flowMode: z\.enum\(\["sequence", "jump", "end"\]\)/);
   assert.match(actions, /effectiveActionType/);
   assert.match(actions, /input\.flowMode === "jump" \? input\.nextNodeKey : null/);
   assert.match(scriptRuntime, /required: true/);
-  assert.match(respondRoute, /isTerminalScriptNode/);
+  assert.match(scriptRuntime, /teachingTurnPhase: "task"/);
+  assert.match(scriptRuntime, /teachingTurnPhase: "task_feedback"/);
+  assert.match(scriptRuntime, /teachingTurnPhase: "question"/);
+  assert.match(scriptRuntime, /classroomResponsePhaseForTurn/);
+  assert.match(scriptRuntime, /responseStudentTask/);
+  assert.match(scriptRuntime, /localized\(selectedInteraction\.prompt, locale\)/);
+  assert.match(respondRoute, /scriptedSessionCompleted \? "true" : "false"/);
   assert.doesNotMatch(respondRoute, /!selectedStudentTask\?\.required \|\| selectedTaskCompleted/);
-  assert.match(actions, /learning_agent_node_interaction_secrets/);
+  assert.match(actions, /rpc\("save_teaching_script_node_atomic"/);
 });
 
 test("学生教学区逐节点讲解并用真实活动答案完成理解检查", async () => {
-  const [route, shell, skeleton, cleanupMigration, textbookLoader, taskEventsRoute, runtime, previewPage] = await Promise.all([
+  const [route, shell, skeleton, cleanupMigration, textbookLoader, taskEventsRoute, runtime, previewPage, previewRoute] = await Promise.all([
     readFile(new URL("src/app/api/learning-agent/respond/route.ts", root), "utf8"),
     readFile(new URL("src/app/dashboard/courses/[categorySlug]/[subcategorySlug]/[courseSlug]/[lessonSlug]/KoreanLevelOneSmartTextbook.tsx", root), "utf8"),
     readFile(new URL("src/lib/smart-textbook-skeleton.ts", root), "utf8"),
@@ -644,6 +748,7 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
     readFile(new URL("src/app/api/learning-agent/events/route.ts", root), "utf8"),
     readFile(new URL("src/lib/learning-agent-script-runtime.ts", root), "utf8"),
     readFile(new URL("src/app/[space]/dashboard/admin/apps/[appSlug]/teaching-scripts/preview/page.tsx", root), "utf8"),
+    readFile(new URL("src/app/api/learning-agent/preview-respond/route.ts", root), "utf8"),
   ]);
   assert.match(route, /const scriptVersionId = currentPublishedScript\?\.id \?\? existingSession\?\.script_version_id/);
   assert.match(route, /const sessionStatus = scriptNodes\.length > 0/);
@@ -663,6 +768,12 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(route, /X-Learning-Agent-Awaiting-Answer/);
   assert.match(route, /X-Learning-Agent-Answer-Correct/);
   assert.match(runtime, /currentScriptNode\.node_type === "question" && Boolean\(currentScriptNode\.reference_activity_id\)/);
+  assert.match(runtime, /nodeTurnComplete/);
+  assert.match(runtime, /intent === "start" && selectedTurnPhase === "task"/);
+  assert.match(route, /nodeTurnComplete \? upcomingScriptNodeBufferLine/);
+  assert.match(route, /responsePhase === "explanation" \|\| responsePhase === "task"/);
+  assert.match(shell, /请先听老师说完操作要求/);
+  assert.match(shell, /tutorSpeechInProgress \|\| tutorStatus !== "idle"/);
   assert.match(shell, /tutorStarted && !tutorTerminal/);
   assert.match(route, /X-Learning-Agent-Display/);
   assert.match(route, /X-Learning-Agent-Task-Completed/);
@@ -776,12 +887,12 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /bufferLineForRequest\(bufferLineOverride, tutorNextBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(activeOpeningBufferLine\)/);
   assert.match(shell, /setTutorNextBufferLine\(encodedBufferLine === null \? null : decodeURIComponent\(encodedBufferLine\)\)/);
-  assert.match(shell, /teachingStageCharacterPlacement\.x/);
-  assert.match(shell, /teachingStageCharacterPlacement\.y/);
-  assert.match(shell, /teachingStageCharacterPlacement\.scale/);
+  assert.match(shell, /directedTeachingStageCharacterPlacement\.x/);
+  assert.match(shell, /directedTeachingStageCharacterPlacement\.y/);
+  assert.match(shell, /directedTeachingStageCharacterPlacement\.scale/);
   assert.match(shell, /h-\[clamp\(24rem,48vh,32rem\)\]/);
-  assert.match(shell, /teachingStageCharacterPlacement\.dialogueX/);
-  assert.match(shell, /teachingStageCharacterPlacement\.dialogueY/);
+  assert.match(shell, /directedTeachingStageCharacterPlacement\.dialogueX/);
+  assert.match(shell, /directedTeachingStageCharacterPlacement\.dialogueY/);
   assert.match(shell, /teachingAreaCharacter\?\.kind !== "uply-teacher" &&/);
   assert.match(shell, /tutorIsSpeakingNow = tutorStatus === "thinking"/);
   assert.match(shell, /let bufferSpeechDone: Promise<void> = Promise\.resolve\(\)/);
@@ -804,17 +915,39 @@ test("学生教学区逐节点讲解并用真实活动答案完成理解检查",
   assert.match(shell, /kim-teacher-breathe/);
   assert.match(shell, /data-smart-textbook-teaching-area/);
   assert.match(shell, /shouldUseSmartTextbookTeachingFocusMode/);
+  assert.match(shell, /shouldHideSmartTextbookLearningArea/);
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.focusMode\.revealForActivityAction/);
-  assert.match(shell, /const learningAreaHidden = tutorLearningLayout === "teaching"/);
+  assert.match(shell, /const learningAreaHidden = tutorStarted && tutorUsesVideo \? tutorFocusMode : shouldHideSmartTextbookLearningArea/);
+  assert.match(shell, /hidden=\{tutorStarted && tutorUsesVideo\}/);
   assert.match(shell, /response\.headers\.get\("X-Learning-Agent-Learning-Layout"\)/);
-  assert.match(shell, /const learningAreaFullscreen = tutorLearningLayout === "learning"/);
+  assert.match(shell, /const learningAreaFullscreen = !tutorUsesVideo && tutorLearningLayout === "learning" && !learningAreaHidden/);
   assert.match(shell, /width: learningAreaFullscreen\s*\? "100%"/);
-  assert.match(shell, /nextLearningLayout !== "teaching" && \(action ===/);
+  assert.match(shell, /action === SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.focusMode\.revealForActivityAction\s*\|\| nextTutorAwaitingAnswer/);
   assert.match(shell, /setTutorLearningLayout\("split"\)/);
   assert.match(shell, /SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT\.teachingArea\.defaultWidthPercent/);
   assert.match(shell, /data-learning-area-hidden/);
   assert.match(shell, /learningAreaHidden \? "hidden" : "flex"/);
-  assert.match(shell, /learningAreaFullscreen \? "hidden" : teachingAreaExpanded \? "flex flex-col" : "hidden xl:flex xl:flex-col"/);
+  assert.match(shell, /learningAreaFullscreen \? "hidden" : teachingAreaExpanded \? "flex flex-col bg-slate-950 text-white"/);
+  assert.match(shell, /data-immersive-teaching-caption/);
+  assert.match(shell, /沉浸课堂控制/);
+  assert.match(shell, /const immersiveStagePhase/);
+  assert.match(shell, /X-Learning-Agent-Teaching-Phase/);
+  assert.match(route, /headers\.set\("X-Learning-Agent-Teaching-Phase", responsePhase\)/);
+  assert.match(previewRoute, /headers\.set\("X-Learning-Agent-Teaching-Phase", resolved\.responsePhase\)/);
+  assert.match(route, /headers\.set\("X-Learning-Agent-Classroom-Shot", classroomShotForScriptSegment/);
+  assert.match(previewRoute, /headers\.set\("X-Learning-Agent-Classroom-Shot", classroomShotForScriptSegment/);
+  assert.match(shell, /response\.headers\.get\("X-Learning-Agent-Classroom-Shot"\)/);
+  assert.match(shell, /data-classroom-shot=\{activeClassroomShot\}/);
+  assert.match(shell, /data-active-speech-cue/);
+  assert.match(shell, /tutorSpeechProgress/);
+  assert.match(shell, /teacherKimSentenceCaptionForCue/);
+  assert.match(shell, /teacherKimPoseForTeachingMoment/);
+  assert.match(shell, /teacherKimSpeechRhythmForCue/);
+  assert.match(shell, /data-teacher-pose=\{directedTeacherPose\}/);
+  assert.match(shell, /--kim-mouth-cycle/);
+  assert.match(shell, /const immersiveStageAnnouncement/);
+  assert.match(shell, /aria-hidden="true" data-active-speech-cue/);
+  assert.match(shell, /className="sr-only" role="status" aria-live="polite" aria-atomic="true"/);
   assert.match(shell, /teachingAreaExpanded \? "text-sm leading-6" : "text-\[11px\] leading-5"/);
   assert.match(shell, /setLearningAreaManuallyHidden\(true\)/);
   assert.match(shell, /setLearningAreaManuallyHidden\(false\)/);

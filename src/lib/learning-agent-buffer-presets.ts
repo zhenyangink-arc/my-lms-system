@@ -11,6 +11,7 @@ export type LearningAgentBufferPreset = {
 
 export const LEARNING_AGENT_BUFFER_PRESETS: readonly LearningAgentBufferPreset[] = [
   { id: "opening-greeting", text: { "zh-CN": "你好，欢迎来上课，我们准备好就开始吧。", "ko-KR": "안녕하세요, 수업에 오신 걸 환영해요. 준비되면 바로 시작할게요." } },
+  { id: "teacher-introduction", text: { "zh-CN": "你好，我是你们的韩语老师，金老师。接下来由我陪伴你们学习韩语。", "ko-KR": "안녕하세요, 여러분의 한국어 선생님 김 선생님이에요. 앞으로 여러분의 한국어 학습을 함께할게요." } },
   { id: "steady-look", text: { "zh-CN": "稍等一下，我看看这里怎么讲。", "ko-KR": "잠시만요, 이 부분을 어떻게 설명할지 볼게요." } },
   { id: "continue", text: { "zh-CN": "好，我们接着往下看。", "ko-KR": "좋아요, 계속해서 살펴볼게요." } },
   { id: "new-content", text: { "zh-CN": "接下来，我们看一个新的内容。", "ko-KR": "이어서 새로운 내용을 살펴볼게요." } },

@@ -104,13 +104,13 @@ export function shouldUseSmartTextbookTeachingFocusMode(input: {
   tutorStarted: boolean;
   answerRequired: boolean;
   action: string | null;
-  hasPendingLearningTask: boolean;
+  hasActiveLearningTask: boolean;
 }) {
   if (!SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.hideLearningAreaDuringTeacherScript) return false;
   return input.tutorStarted
     && !input.answerRequired
     && input.action !== SMART_TEXTBOOK_SHARED_LEARNING_LAYOUT.focusMode.revealForActivityAction
-    && !input.hasPendingLearningTask;
+    && !input.hasActiveLearningTask;
 }
 
 export function shouldHideSmartTextbookLearningArea(input: {

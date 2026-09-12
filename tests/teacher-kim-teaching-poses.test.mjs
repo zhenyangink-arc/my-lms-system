@@ -2,7 +2,39 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 import test from "node:test";
 
+import {
+  teacherKimPoseForTeachingMoment,
+  teacherKimSentenceCaptionForCue,
+  teacherKimSpeechRhythmForCue,
+} from "../src/lib/teacher-kim-character.ts";
+
 const root = new URL("../", import.meta.url);
+
+test("金老师根据教学时刻自动切换动作并按语音词点调整表现节奏", () => {
+  const base = {
+    configuredPose: "explaining",
+    teachingPhase: "explanation",
+    classroomShot: "teacher_blackboard",
+    teacherSpeaking: true,
+    answerCorrect: null,
+    sentence: "请看这里。",
+  };
+  assert.equal(teacherKimPoseForTeachingMoment({ ...base, teachingPhase: "task" }), "pointing-left");
+  assert.equal(teacherKimPoseForTeachingMoment({ ...base, classroomShot: "interaction", teacherSpeaking: false }), "listening");
+  assert.equal(teacherKimPoseForTeachingMoment({ ...base, classroomShot: "feedback", answerCorrect: true }), "encouraging");
+  assert.equal(teacherKimPoseForTeachingMoment({ ...base, classroomShot: "feedback", answerCorrect: false }), "gentle-correction");
+  assert.equal(teacherKimPoseForTeachingMoment({ ...base, sentence: "请跟我读一遍。" }), "repeat-after-me");
+
+  const normalRhythm = teacherKimSpeechRhythmForCue("你好", 0);
+  const strongRhythm = teacherKimSpeechRhythmForCue("很好！", 1);
+  assert.ok(strongRhythm.mouthCycleMs < normalRhythm.mouthCycleMs);
+  assert.equal(strongRhythm.emphasis, "strong");
+
+  assert.deepEqual(
+    teacherKimSentenceCaptionForCue("第一句。第二句！", { charStart: 4, charEnd: 6 }),
+    { text: "第二句！", spokenText: "第二", remainingText: "句！" },
+  );
+});
 
 test("金老师动作库覆盖真实教学事件并由统一白名单约束", async () => {
   const [character, actions, editor, runtime] = await Promise.all([

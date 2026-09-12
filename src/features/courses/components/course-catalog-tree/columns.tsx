@@ -135,7 +135,7 @@ function detailHref({
 }) {
   const folderQuery = folderParam ? `&folder=${folderParam}` : "";
   return routeBasePath
-    ? `${routeBasePath}?node=${row.kind}&id=${row.id}${folderQuery}#course-content`
+    ? `${routeBasePath}${routeBasePath.includes("?") ? "&" : "?"}node=${row.kind}&id=${row.id}${folderQuery}#course-content`
     : scopeDashboardPath(
         `/dashboard/admin/courses?node=${row.kind}&id=${row.id}${folderQuery}#course-content`,
         dashboardBasePath,
@@ -143,7 +143,7 @@ function detailHref({
 }
 
 function openHref(catalogRoute: string, row: CourseCatalogFolderRow) {
-  return `${catalogRoute}?folder=${row.kind}:${row.id}`;
+  return `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${row.kind}:${row.id}`;
 }
 
 export function FolderTitleCell({

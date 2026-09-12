@@ -285,15 +285,21 @@ export function CreateVocabularyDialog({
   studentAppId,
   autoOpen = false,
   onClosed,
+  initialValue,
+  originLabel,
 }: {
   studentAppId: string;
   autoOpen?: boolean;
   onClosed?: () => void;
+  initialValue?: VocabularyWordInput;
+  originLabel?: string;
 }) {
   const [open, setOpen] = useState(autoOpen);
   return (
     <VocabularyDialog
-      title="新增词汇"
+      title={initialValue ? "复制为独立词汇" : "新增词汇"}
+      initialValue={initialValue}
+      originLabel={originLabel}
       studentAppId={studentAppId}
       trigger={autoOpen ? undefined : (
         <button
@@ -416,17 +422,21 @@ function VocabularyDialog({
   trigger,
   open,
   onOpenChange,
+  initialValue,
+  originLabel,
 }: {
   title: string;
   studentAppId: string;
   item?: GrowthToolboxVocabularyItem;
+  initialValue?: VocabularyWordInput;
+  originLabel?: string;
   trigger?: React.ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
   const [draft, setDraft] = useState<VocabularyWordInput>(() =>
-    item ? toWordDraft(item) : EMPTY_WORD,
+    item ? toWordDraft(item) : structuredClone(initialValue ?? EMPTY_WORD),
   );
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
@@ -453,7 +463,7 @@ function VocabularyDialog({
       <Dialog
         open={open}
         onOpenChange={(nextOpen) => {
-          if (nextOpen) setDraft(item ? toWordDraft(item) : EMPTY_WORD);
+          if (nextOpen) setDraft(item ? toWordDraft(item) : structuredClone(initialValue ?? EMPTY_WORD));
           setMessage("");
           onOpenChange(nextOpen);
         }}
@@ -462,7 +472,9 @@ function VocabularyDialog({
           <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription className="text-xs">
-              词汇库与互动教材内容独立，保存后用于学生端单词练习。
+              {originLabel ? `来源：${originLabel}。尚未保存；确认后新增独立资源，不修改教材，也不保留自动同步关系。` : item?.source === "textbook"
+                ? "正在编辑教材导入副本：不会同步修改教材，教材更新也不会自动覆盖这里。保存后会影响学生端单词练习。"
+                : "独立练习资源，保存后用于学生端单词练习，不会修改教材。"}
             </DialogDescription>
           </DialogHeader>
           <div className="grid gap-4 px-5 sm:grid-cols-2">
@@ -533,15 +545,21 @@ export function CreateGrammarDialog({
   studentAppId,
   autoOpen = false,
   onClosed,
+  initialValue,
+  originLabel,
 }: {
   studentAppId: string;
   autoOpen?: boolean;
   onClosed?: () => void;
+  initialValue?: GrammarLibraryItemInput;
+  originLabel?: string;
 }) {
   const [open, setOpen] = useState(autoOpen);
   return (
     <GrammarDialog
-      title="新增语法"
+      title={initialValue ? "复制为独立语法" : "新增语法"}
+      initialValue={initialValue}
+      originLabel={originLabel}
       studentAppId={studentAppId}
       trigger={autoOpen ? undefined : (
         <button
@@ -664,17 +682,21 @@ function GrammarDialog({
   trigger,
   open,
   onOpenChange,
+  initialValue,
+  originLabel,
 }: {
   title: string;
   studentAppId: string;
   item?: GrowthToolboxGrammarItem;
+  initialValue?: GrammarLibraryItemInput;
+  originLabel?: string;
   trigger?: React.ReactNode;
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
   const router = useRouter();
   const [draft, setDraft] = useState<GrammarLibraryItemInput>(() =>
-    item ? toGrammarDraft(item) : EMPTY_GRAMMAR,
+    item ? toGrammarDraft(item) : structuredClone(initialValue ?? EMPTY_GRAMMAR),
   );
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState("");
@@ -701,7 +723,7 @@ function GrammarDialog({
       <Dialog
         open={open}
         onOpenChange={(nextOpen) => {
-          if (nextOpen) setDraft(item ? toGrammarDraft(item) : EMPTY_GRAMMAR);
+          if (nextOpen) setDraft(item ? toGrammarDraft(item) : structuredClone(initialValue ?? EMPTY_GRAMMAR));
           setMessage("");
           onOpenChange(nextOpen);
         }}
@@ -710,7 +732,9 @@ function GrammarDialog({
           <DialogHeader className="border-b border-[var(--border)] px-5 py-4 text-left">
             <DialogTitle>{title}</DialogTitle>
             <DialogDescription className="text-xs">
-              音频继续上传到既有 R2 路径，数据库只保存对象标识。
+              {originLabel ? `来源：${originLabel}。尚未保存；确认后新增独立资源，不修改教材，也不保留自动同步关系。` : item?.source === "textbook"
+                ? "正在编辑教材导入副本：不会与教材自动同步。保存后会影响学生端语法练习。"
+                : "独立练习资源，保存后用于学生端语法练习，不会修改教材。"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-5 px-5">

@@ -8,10 +8,11 @@ import { requireManagementAppAccess } from "@/lib/management-apps";
 import { createClient } from "@/lib/supabase/server";
 import { calculatePlanEnd, seoulLocalInputToISOString } from "./time";
 import { TEMPLATE_ITEM_COLUMNS, mapTemplateItem } from "./api/service";
+import { loadPlanLearningSources } from "./api/sources";
 
 const uuid = z.string().uuid();
 const activityType = z.enum([
-  "course", "listening", "speaking", "reading", "writing", "vocabulary",
+  "chapter_practice", "course", "listening", "speaking", "reading", "writing", "vocabulary",
   "grammar", "chapter_test", "stage_exam", "final_exam", "review",
 ]);
 
@@ -164,9 +165,9 @@ export async function addCurriculumTemplateItemAction(
     const customTitle = text(formData, "title");
     let title = customTitle;
     let destinationPath = text(formData, "destination_path");
-    let sourceType: "lesson" | "chapter_test" | "manual" = "manual";
+    let sourceType: string = "manual";
     let sourceId: string | null = null;
-    if (destinationPath && !destinationPath.startsWith("/")) throw new Error("学习入口必须以 / 开头。");
+    if (destinationPath && !/^\/dashboard(?:\/|$)/.test(destinationPath)) throw new Error("学习入口必须使用本站学生页面。");
     const supabase = await createClient();
     const { data: template, error: templateError } = await supabase
       .from("curriculum_plan_templates")
@@ -213,6 +214,19 @@ export async function addCurriculumTemplateItemAction(
       destinationPath = `${lessonPath}?chapter=${chapterTest.slug}`;
       sourceType = "chapter_test";
       sourceId = String(chapterTest.id);
+    } else if (selectedActivityType !== "review") {
+      const resourceId = uuid.parse(text(formData, "resource_id"));
+      const sources = await loadPlanLearningSources(supabase, access.appId);
+      const source = sources.find(row => row.id === resourceId && row.courseId === template.course_id);
+      const expectedType = ["stage_exam", "final_exam"].includes(selectedActivityType) ? "assessment_paper"
+        : selectedActivityType === "chapter_practice" ? "chapter_practice" : "specialized_practice";
+      if (!source || source.sourceType !== expectedType || (expectedType === "specialized_practice" && source.skill !== selectedActivityType)) {
+        throw new Error("请选择本课程中与活动类型相符的已发布试卷或练习。");
+      }
+      title = customTitle || source.title;
+      sourceType = source.sourceType;
+      sourceId = source.id;
+      destinationPath = source.path;
     } else {
       if (lessonId || chapterTestId) throw new Error("只有课程学习或章节测试活动可以绑定真实内容。");
       title = z.string().min(1).max(200).parse(customTitle);
@@ -435,6 +449,7 @@ export async function publishInstitutionCurriculumPlanAction(
         .select("student_id")
         .eq("tenant_id", access.tenantId!)
         .eq("teacher_id", access.userId)
+        .eq("student_app_id", access.appId)
         .in("student_id", studentIds);
       if (error || data?.length !== studentIds.length) throw new Error("老师只能向自己负责的学生发布计划。");
     }
@@ -772,6 +787,7 @@ export async function addStudentsToInstitutionPlanAction(
         .select("student_id")
         .eq("tenant_id", access.tenantId!)
         .eq("teacher_id", access.userId)
+        .eq("student_app_id", access.appId)
         .in("student_id", studentIds);
       if (error || data?.length !== studentIds.length) throw new Error("老师只能向自己负责的学生发布计划。");
     }
@@ -792,4 +808,17 @@ export async function addStudentsToInstitutionPlanAction(
     unstable_rethrow(error);
     redirect(resultPath(path, "error", errorMessage(error)));
   }
+}
+
+export async function dispatchCurriculumExamAction(space: string, appSlug: string, planId: string, itemId: string) {
+  const access = await requireManagementAppAccess(space, appSlug);
+  if (access.scope !== "tenant" || !access.capabilities.manageAssessments || appSlug !== "korean") throw new Error("没有布置考试权限。");
+  const path = `${access.appPath}/learning-plans`;
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("dispatch_curriculum_plan_exam", { p_plan_id: uuid.parse(planId), p_item_id: uuid.parse(itemId) });
+  if (error) redirect(resultPath(path, "error", error.message));
+  revalidatePath(path);
+  revalidatePath(`${access.appPath}/assessments`);
+  revalidatePath(access.dashboardBasePath, "layout");
+  redirect(resultPath(path, "success", "考试已按计划时间和学生名单布置。"));
 }

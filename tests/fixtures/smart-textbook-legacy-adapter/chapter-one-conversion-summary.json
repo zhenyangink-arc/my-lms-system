@@ -1,0 +1,145 @@
+{
+  "sourceRevision": "0feb9264ff035a1139cde70e9b1a4611608883d4832f06be87c4a5327f279fc0",
+  "adapterRevision": "chapter-one-adapter.1",
+  "digest": "sha256:32e2a1f75eddc82eed402fdb69191648da1f2e31cac8ee128e1836d9fe952259",
+  "runtimeReady": false,
+  "counts": {
+    "modules": 8,
+    "nodes": 8,
+    "activities": 19,
+    "media": {
+      "assets": 73,
+      "listeningTracks": 2,
+      "grammarAudio": 9,
+      "speech": 44,
+      "recordingDependencies": 2
+    },
+    "teachingNodes": 8,
+    "blocks": 12,
+    "parts": 317,
+    "identityAllocations": 498,
+    "converted": 1241,
+    "preservedInCompat": 2883,
+    "ignoredSafe": 0,
+    "unsupported": 14
+  },
+  "unsupported": [
+    {
+      "source": {
+        "path": "runtime.capabilities"
+      },
+      "result": "unsupported",
+      "reason": "All Runtime/compatibility renderers remain unimplemented; candidate cannot activate"
+    },
+    {
+      "source": {
+        "path": "progress.activity-page"
+      },
+      "result": "unsupported",
+      "reason": "Module panels are identified, but legacy activity-page item grouping/aggregation needs equivalence verification; node-level panel binding is not an activity-page service binding"
+    },
+    {
+      "source": {
+        "path": "progress.guided-repeat"
+      },
+      "result": "unsupported",
+      "reason": "Repeat track/segment identities preserved; legacy activity/track_index/segment_index service mapping not yet certified"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "017695b0-28d2-48d1-9226-7e24a1c21177",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "2acbaaa7-f2db-4f37-bfd2-f36e70b9a6c6",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "4474a908-751c-4567-bd0f-c2b4125ff53b",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "49113a34-5f93-4fbb-944c-29a52fae2e6f",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "7a75f933-b357-4fcb-a697-296cefee618c",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "mediaId": "7e0bdc46-f117-4495-bc2f-da2025324cfa",
+        "path": "alt_text"
+      },
+      "result": "unsupported",
+      "reason": "Source alt text missing; explicit fallback used in candidate"
+    },
+    {
+      "source": {
+        "moduleId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+        "teachingNodeId": "21586656-413b-406c-b9cc-452bc63ee09d",
+        "path": "configuration.studentTask"
+      },
+      "result": "unsupported",
+      "reason": "Target identity mapped, but compatibility target cannot declare playable media under current Registry; task event bridge unsupported"
+    },
+    {
+      "source": {
+        "activityId": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "path": "public_config.audioId"
+      },
+      "result": "unsupported",
+      "reason": "Unresolved explicit legacy media reference"
+    },
+    {
+      "source": {
+        "activityId": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+        "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+        "path": "public_config.tracks[1].audioId"
+      },
+      "result": "unsupported",
+      "reason": "Unresolved explicit legacy media reference"
+    },
+    {
+      "source": {
+        "nodeId": "f0e8db18-ad29-46b3-b9c1-6a0b0717fd51",
+        "path": "content.nextNode"
+      },
+      "result": "unsupported",
+      "reason": "Unresolved legacy next node destination"
+    },
+    {
+      "source": {
+        "path": "speech.voiceTimeline"
+      },
+      "result": "unsupported",
+      "reason": "Voice timeline/segment consistency and current speech resolver authorization not verified by this capture"
+    }
+  ]
+}

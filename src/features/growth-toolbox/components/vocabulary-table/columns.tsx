@@ -1,6 +1,7 @@
 "use client";
 
 import type { ColumnDef } from "@tanstack/react-table";
+import { practiceSourceLabel } from "@/lib/course-content-workflow";
 
 import { DataTableColumnHeader } from "@/components/ui/table/data-table-column-header";
 import type { GrowthToolboxVocabularyItem } from "../../api/types";
@@ -78,7 +79,7 @@ export function getGrowthToolboxVocabularyColumns(
             : "bg-amber-50 text-amber-700"
         }`}
       >
-        {row.original.source === "textbook" ? "互动教材" : "自定义"}
+        {practiceSourceLabel(row.original.source)}
       </span>
     ),
   },

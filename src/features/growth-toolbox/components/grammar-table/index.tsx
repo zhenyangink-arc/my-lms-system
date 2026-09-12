@@ -115,8 +115,8 @@ export function GrowthToolboxGrammarTable({
               label: "来源",
               value: source,
               options: [
-                { value: "textbook", label: "互动教材" },
-                { value: "custom", label: "自定义" },
+                { value: "textbook", label: "教材导入副本" },
+                { value: "custom", label: "独立练习资源" },
               ],
             },
             {

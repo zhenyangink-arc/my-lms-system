@@ -1,5 +1,5 @@
 import { ConversationPracticeManagementContent } from "@/app/dashboard/admin/conversation-practice/page-content";
-import { ManagementPlatformApplicationOverviewPage } from "@/app/dashboard/admin/apps/ManagementPlatformApplicationOverviewPage";
+import { PlatformInsightPage } from "@/features/platform-learning-insights/PlatformInsightPage";
 import {
   firstSectionParam,
   ManagementApplicationSectionFrame,
@@ -23,8 +23,9 @@ export default async function ManagementAppConversationRoute({
   return (
     <ManagementApplicationSectionFrame {...context}>
       {context.access.scope === "platform" ? (
-        <ManagementPlatformApplicationOverviewPage
-          access={context.access}
+        <PlatformInsightPage
+          appSlug={appSlug}
+          searchParams={query}
           mode="conversation"
         />
       ) : (
@@ -32,6 +33,8 @@ export default async function ManagementAppConversationRoute({
           searchParams={Promise.resolve({
             scenario: firstSectionParam(query.scenario),
             mode: firstSectionParam(query.mode),
+            progressSort: firstSectionParam(query.progressSort),
+            progressDirection: firstSectionParam(query.progressDirection),
           })}
           studentAppId={context.access.appId}
           routeBasePath={`${context.access.appPath}/conversation`}

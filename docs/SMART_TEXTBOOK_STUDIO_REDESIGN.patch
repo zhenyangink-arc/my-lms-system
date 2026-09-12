@@ -1,0 +1,391 @@
+diff --git a/src/features/digital-textbook/api/types.ts b/src/features/digital-textbook/api/types.ts
+index 847305b..f472513 100644
+--- a/src/features/digital-textbook/api/types.ts
++++ b/src/features/digital-textbook/api/types.ts
+@@ -52,6 +52,7 @@ export type DigitalTextbookModule = {
+ 
+ export type DigitalTextbookChapter = {
+   id: string;
++  title?: string;
+   number: number;
+   slug: string;
+   status: string;
+diff --git a/src/features/digital-textbook/api/service.ts b/src/features/digital-textbook/api/service.ts
+index 1d0971f..05c699b 100644
+--- a/src/features/digital-textbook/api/service.ts
++++ b/src/features/digital-textbook/api/service.ts
+@@ -35,6 +35,7 @@ type VersionRow = {
+ };
+ type ChapterRow = {
+   id: string;
++  title?: unknown;
+   version_id: string;
+   slug: string;
+   chapter_number: number;
+@@ -143,7 +144,7 @@ async function loadDigitalTextbookManagementData(
+   let textbookQuery = supabase
+     .from("digital_textbooks")
+     .select(
+-      "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
++      "id,lesson_id,slug,level_code,title,status,lessons!digital_textbooks_lesson_id_fkey(id,title,course_id),digital_textbook_versions!digital_textbook_versions_textbook_id_fkey(id,textbook_id,version_number,status,digital_textbook_chapters!digital_textbook_chapters_version_id_fkey(id,version_id,slug,chapter_number,title,status,digital_textbook_modules!digital_textbook_modules_chapter_id_fkey(id,chapter_id,module_code,digital_textbook_nodes!digital_textbook_nodes_module_id_fkey(id,module_id,content))))",
+     )
+     .eq("student_app_id", studentAppId)
+     .in(
+@@ -324,6 +325,7 @@ async function loadDigitalTextbookManagementData(
+     textbookEntry.chapters.push({
+       id: chapter.id,
+       number: chapter.chapter_number,
++      title: chapter.title ? localizedTitle(chapter.title) : undefined,
+       slug: chapter.slug,
+       status: chapter.status,
+       versionId: version.id,
+diff --git a/src/features/digital-textbook/components/digital-textbook-table/columns.tsx b/src/features/digital-textbook/components/digital-textbook-table/columns.tsx
+index e2eda9a..a188104 100644
+--- a/src/features/digital-textbook/components/digital-textbook-table/columns.tsx
++++ b/src/features/digital-textbook/components/digital-textbook-table/columns.tsx
+@@ -24,6 +24,7 @@ export type DigitalTextbookDisplayRow = {
+   versionNumber: number;
+   versionStatus: string;
+   chapterId: string;
++  chapterTitle?: string;
+   chapterNumber: number;
+   chapterSlug: string;
+   chapterStatus: string;
+diff --git a/src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx b/src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx
+index ee38c1c..f3473a4 100644
+--- a/src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx
++++ b/src/features/digital-textbook/components/digital-textbook-table/cell-action.tsx
+@@ -51,11 +51,13 @@ export function DigitalTextbookCellAction({
+   canManage,
+   canPublishChapter,
+   workbenchHref,
++  settingsOnly = false,
+ }: {
+   row: DigitalTextbookDisplayRow;
+   canManage: boolean;
+   canPublishChapter: boolean;
+   workbenchHref?: string;
++  settingsOnly?: boolean;
+ }) {
+   const router = useRouter();
+   const [panel, setPanel] = useState<EditorPanel | null>(null);
+@@ -92,7 +94,7 @@ export function DigitalTextbookCellAction({
+       <div className="flex min-w-44 flex-col items-end gap-1.5">
+         <div className="flex flex-wrap items-center justify-end gap-2">
+           {canManage && workbenchHref && <Link href={workbenchHref} className="inline-flex min-h-11 items-center rounded-md border border-border px-3 text-xs font-medium hover:bg-muted">内容与发布</Link>}
+-          {canManage && <>
++          {canManage && !settingsOnly && <>
+             <button type="button" onClick={() => setPanel('vocabulary')} className="min-h-11 rounded-md px-3 text-xs hover:bg-muted">编辑词汇</button>
+             <button type="button" onClick={() => setPanel('grammar')} className="min-h-11 rounded-md px-3 text-xs hover:bg-muted">编辑语法</button>
+           </>}
+diff --git a/src/features/digital-textbook/components/digital-textbook-listing.tsx b/src/features/digital-textbook/components/digital-textbook-listing.tsx
+index 3290c8f..35a32a3 100644
+--- a/src/features/digital-textbook/components/digital-textbook-listing.tsx
++++ b/src/features/digital-textbook/components/digital-textbook-listing.tsx
+@@ -1,14 +1,7 @@
+-import Link from "next/link";
+-import { CardTitleWithHint } from '@/components/ui/card-title-with-hint';
+-import { WORKBENCH_CHAPTER_ID } from './textbook-navigation';
+-
+-import {
+-  ManagementMetricStrip,
+-  ManagementNotice,
+-} from "@/components/layout/management-page";
++import { ManagementNotice } from "@/components/layout/management-page";
+ import { getDigitalTextbookManagementData } from "../api/service";
+-import { DigitalTextbookTable } from "./digital-textbook-table";
+ import type { DigitalTextbookDisplayRow } from "./digital-textbook-table/columns";
++import { TextbookStudio } from "./textbook-studio";
+ 
+ export default async function DigitalTextbookListing({
+   studentAppId,
+@@ -25,7 +18,7 @@ export default async function DigitalTextbookListing({
+   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
+     course.lessons.flatMap((lesson) =>
+       lesson.textbooks.flatMap((textbook) =>
+-        textbook.chapters.filter(chapter => !chapterId || chapter.id === chapterId).map((chapter) => ({
++        textbook.chapters.map((chapter) => ({
+           id: chapter.id,
+           courseId: course.id,
+           courseTitle: course.title,
+@@ -39,6 +32,7 @@ export default async function DigitalTextbookListing({
+           versionNumber: chapter.versionNumber,
+           versionStatus: chapter.versionStatus,
+           chapterId: chapter.id,
++          chapterTitle: chapter.title,
+           chapterNumber: chapter.number,
+           chapterSlug: chapter.slug,
+           chapterStatus: chapter.status,
+@@ -62,68 +56,10 @@ export default async function DigitalTextbookListing({
+       ),
+     ),
+   );
+-  const textbookCount = new Set(rows.map((row) => row.textbookId)).size;
+-  const grammarCount = rows.reduce((sum, row) => sum + row.grammarCount, 0);
+-
+-  return (
+-    <div className="space-y-6">
+-      {result.canManage && workbenchHref && rows.some(row => row.chapterId === WORKBENCH_CHAPTER_ID) && (
+-        <section aria-label="第一章制作入口" className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-border bg-card p-5">
+-          <div className="min-w-0 space-y-2">
+-            <CardTitleWithHint headingLevel={2} title="第一章内容与发布"
+-              description="在工作台查看八个学习步骤、编辑支持的题目、校验并发布。进入编辑会暂停本教材测试运行，重新发布后恢复。词汇、语法仍使用下方专用编辑器。"
+-              titleClassName="text-base font-semibold" />
+-            <p className="text-sm text-muted-foreground">查看内容 → 进入编辑 → 校验 → 发布</p>
+-          </div>
+-          <Link href={workbenchHref} className="inline-flex min-h-11 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">打开第一章工作台</Link>
+-        </section>
+-      )}
+-      {result.hasError && (
+-        <ManagementNotice tone="warning">
+-          部分教材层级或内容数据暂时无法完整读取，请稍后刷新重试。
+-        </ManagementNotice>
+-      )}
+-
+-      <ManagementMetricStrip
+-        label="教材制作概况"
+-        items={[
+-          { label: "教材", value: textbookCount },
+-          { label: "章节", value: rows.length },
+-          { label: "词汇", value: rows.reduce((sum, row) => sum + row.vocabularyCount, 0) },
+-          { label: "语法", value: grammarCount },
+-        ]}
+-      />
+-
+-      <section className="space-y-3">
+-        <div className="flex flex-wrap items-end justify-between gap-3">
+-          <div>
+-            <CardTitleWithHint headingLevel={2} title={chapterId ? '当前章节' : '全部教材章节'}
+-              description="词汇和语法可从对应章节直接编辑。第一章的新教材发布从工作台完成；其他章节沿用章节与测试发布。教材整体状态不代表新教材快照已发布。"
+-              titleClassName="text-base font-semibold" />
+-            {!result.canManage && <p className="mt-1 text-sm text-muted-foreground">当前账号为只读查看。</p>}
+-          </div>
+-          {courseStructureRoute && (
+-            <Link href={chapterId ? `${courseStructureRoute}?chapter=${encodeURIComponent(chapterId)}` : courseStructureRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
+-              返回课程结构
+-            </Link>
+-          )}
+-        </div>
+-        <DigitalTextbookTable
+-          data={rows}
+-          canManage={result.canManage}
+-          canPublishChapters={result.canPublishChapters}
+-          workbenchHref={workbenchHref}
+-        />
+-      </section>
+-      <details className="rounded-lg border border-border p-4 text-sm">
+-        <summary className="cursor-pointer font-medium">发布范围与关联功能</summary>
+-        <ul className="mt-3 list-disc space-y-2 pl-5 text-muted-foreground">
+-          <li>第一章工作台：发布已校验的新教材快照；内容编辑后需重新校验。</li>
+-          <li>章节与测试发布：同时发布关联章节测试，不发布教学脚本，也不替代新教材快照发布。</li>
+-          <li>教学脚本在上方教学脚本入口管理；独立练习库不会随教材修改自动同步。</li>
+-          <li>整本教材状态影响该教材的全部章节，请在“更多”中谨慎操作。</li>
+-        </ul>
+-      </details>
+-    </div>
+-  );
++  return <div className="space-y-4">
++    {result.hasError && <ManagementNotice tone="warning">教材内容读取不完整，请刷新后再编辑。</ManagementNotice>}
++    <TextbookStudio key={chapterId ?? 'default'} rows={rows} initialChapterId={chapterId}
++      canManage={result.canManage && !result.hasError} canPublish={result.canPublishChapters && !result.hasError}
++      workbenchHref={workbenchHref} courseStructureRoute={courseStructureRoute} />
++  </div>;
+ }
+diff --git a/src/features/digital-textbook/components/textbook-studio.tsx b/src/features/digital-textbook/components/textbook-studio.tsx
+new file mode 100644
+index 0000000..d2743f8
+--- /dev/null
++++ b/src/features/digital-textbook/components/textbook-studio.tsx
+@@ -0,0 +1,98 @@
++"use client";
++import { useState } from 'react';
++import Link from 'next/link';
++import dynamic from 'next/dynamic';
++import { BookOpen, BookText, ChevronRight, Search, Settings2 } from 'lucide-react';
++import { CardTitleWithHint } from '@/components/ui/card-title-with-hint';
++import { DigitalTextbookCellAction } from './digital-textbook-table/cell-action';
++import type { DigitalTextbookDisplayRow } from './digital-textbook-table/columns';
++import { chapterWorkbenchHref, WORKBENCH_CHAPTER_ID } from './textbook-navigation';
++
++const ContentEditor = dynamic(() => import('./digital-textbook-action-dialogs').then(m => m.DigitalTextbookContentDialog), {
++  loading: () => <p role="status" className="p-4">正在打开内容编辑器…</p>,
++});
++const buttonStyle = 'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-border px-4 text-sm font-medium hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring';
++function chapterLabel(row: DigitalTextbookDisplayRow) {
++  return row.chapterNumber === 0 ? '课程导览' : `第 ${row.chapterNumber} 章`;
++}
++
++export function TextbookStudio({ rows, initialChapterId, canManage, canPublish, workbenchHref, courseStructureRoute }: {
++  rows: DigitalTextbookDisplayRow[]; initialChapterId?: string; canManage: boolean; canPublish: boolean;
++  workbenchHref?: string; courseStructureRoute?: string;
++}) {
++  const [selectedId, setSelectedId] = useState(initialChapterId ?? rows.find(r => r.chapterId === WORKBENCH_CHAPTER_ID)?.chapterId ?? rows[0]?.chapterId);
++  const [query, setQuery] = useState('');
++  const [tab, setTab] = useState<'content' | 'publish' | 'settings'>('content');
++  const [editor, setEditor] = useState<'vocabulary' | 'grammar' | null>(null);
++  const selected = rows.find(r => r.chapterId === selectedId);
++  const groups = [...new Set(rows.map(r => r.textbookId))];
++  const href = selected && canManage ? chapterWorkbenchHref(selected.chapterId, workbenchHref) : undefined;
++  const filter = query.trim().toLocaleLowerCase();
++  const visible = rows.filter(r => `${chapterLabel(r)} ${r.chapterTitle ?? ''} ${r.chapterSlug} ${r.textbookTitle}`.toLocaleLowerCase().includes(filter));
++  function select(id: string) {
++    setSelectedId(id); setTab('content'); setEditor(null);
++    const url = new URL(window.location.href); url.searchParams.set('chapter', id);
++    window.history.replaceState(null, '', url.pathname + url.search + url.hash);
++  }
++  return <section aria-label="教材制作工作区" className="overflow-hidden rounded-2xl border border-border bg-card">
++    <div className="grid min-w-0 lg:grid-cols-[260px_minmax(0,1fr)]">
++      <aside className="min-w-0 border-b border-border bg-muted/20 lg:border-b-0 lg:border-r" aria-label="教材章节目录">
++        <div className="space-y-4 p-5">
++          <div className="flex items-center justify-between"><h2 className="text-base font-semibold">教材目录</h2><span className="text-xs text-muted-foreground">{rows.filter(r=>r.chapterNumber>0).length} 个章节</span></div>
++          <label className="flex min-h-11 items-center gap-2 rounded-lg border border-border bg-card px-3">
++            <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden="true" />
++            <input aria-label="搜索章节" value={query} onChange={e=>setQuery(e.target.value)} placeholder="搜索章节" className="w-full min-w-0 bg-transparent text-sm outline-none" />
++          </label>
++        </div>
++        <nav aria-label="选择教材章节" className="max-h-60 overflow-y-auto px-3 pb-4 lg:max-h-[68vh]">
++          {groups.map(id=>{
++            const group = visible.filter(r=>r.textbookId===id); if(!group.length)return null;
++            return <div key={id} className="mb-3">
++              <p className="px-3 py-2 text-xs font-semibold text-muted-foreground">{group[0].textbookTitle}</p>
++              {group.map(row=><button key={row.chapterId} type="button" onClick={()=>select(row.chapterId)} aria-current={selectedId===row.chapterId?'page':undefined}
++                className={`mb-1 flex min-h-14 w-full items-center gap-3 rounded-lg px-3 py-3 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${selectedId===row.chapterId?'bg-primary/10 text-primary':'hover:bg-muted'}`}>
++                <span className="flex size-8 shrink-0 items-center justify-center rounded-md border border-border bg-card text-xs font-semibold tabular-nums">{row.chapterNumber===0?<BookOpen className="size-4" aria-hidden="true"/>:String(row.chapterNumber).padStart(2,'0')}</span>
++                <span className="min-w-0 flex-1"><span className="block break-words text-sm font-medium">{row.chapterTitle || chapterLabel(row)}</span><span className="block text-xs text-muted-foreground">{chapterLabel(row)} · 第 {row.versionNumber} 版</span></span>
++                {selectedId===row.chapterId&&<ChevronRight className="size-4 shrink-0" aria-hidden="true"/>}
++              </button>)}
++            </div>;
++          })}
++          {!visible.length&&<p role="status" className="p-3 text-sm text-muted-foreground">没有匹配章节，请换个关键词。</p>}
++        </nav>
++      </aside>
++      <div className="min-w-0">
++        {!selected ? <p role="status" className="p-8">{initialChapterId?'该章节不存在或不在可查看范围内，请从目录选择。':'暂无可查看的教材章节。'}</p> : <>
++          <header className="space-y-5 border-b border-border p-5 sm:p-7">
++            <div className="flex flex-wrap items-start justify-between gap-4">
++              <div className="min-w-0 space-y-2"><p className="text-sm text-muted-foreground">{selected.textbookTitle} / {chapterLabel(selected)}</p><h2 className="break-words text-2xl font-semibold tracking-tight">{selected.chapterTitle || chapterLabel(selected)}</h2></div>
++              {href&&<Link href={href} className={`${buttonStyle} border-transparent bg-primary text-primary-foreground hover:bg-primary/90`}>打开内容工作台<ChevronRight className="size-4" aria-hidden="true"/></Link>}
++            </div>
++            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground"><span>第 {selected.versionNumber} 版</span><span>词汇 {selected.vocabularyCount}</span><span>语法条目 {selected.grammarCount}</span>{!canManage&&<span>只读查看</span>}</div>
++            <nav aria-label="当前章节制作功能" className="flex flex-wrap gap-1">
++              {([['content','内容制作'],['publish','检查与发布'],['settings','教材设置']] as const).map(([key,label])=><button key={key} type="button" aria-current={tab===key?'page':undefined} onClick={()=>setTab(key)} className={`min-h-11 rounded-lg px-4 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${tab===key?'bg-muted text-foreground':'text-muted-foreground hover:bg-muted/60'}`}>{label}</button>)}
++            </nav>
++          </header>
++          <div className="space-y-6 p-5 sm:p-7" key={selected.chapterId}>
++            {tab==='content'&&<>
++              {href&&<div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-primary/20 bg-primary/5 p-5"><div><h3 className="font-semibold">学习步骤与互动题目</h3><p className="mt-2 text-sm text-muted-foreground">在第一章工作台查看完整内容，并完成校验与发布。</p></div><span className="text-sm font-medium text-primary">第一章已接入</span></div>}
++              <div className="grid gap-4 xl:grid-cols-2">
++                {([{key:'vocabulary',title:'章节词汇',count:selected.vocabularyCount,unit:'个词汇',examples:selected.vocabularyNodes.flatMap(n=>n.vocabulary).map(w=>`${w.ko}　${w.zh}`)}, {key:'grammar',title:'章节语法',count:selected.grammarCount,unit:'个条目',examples:selected.grammarNodes.flatMap(n=>n.items).map(g=>g.title)}] as const).map(item=><section key={item.key} className="flex min-w-0 flex-col rounded-xl border border-border p-5">
++                  <div className="flex items-center justify-between gap-3"><CardTitleWithHint headingLevel={3} title={item.title} description={item.key==='vocabulary'?'编辑本章现有词汇及释义，保存后仍需按章节发布流程发布。':'此处统计专用语法编辑器可读取的条目；零条不代表学生端没有语法教学内容。'} titleClassName="text-base font-semibold"/><BookText className="size-5 text-muted-foreground" aria-hidden="true"/></div>
++                  <p className="mt-4 text-sm text-muted-foreground">{item.count} {item.unit}</p>
++                  <ul className="my-4 flex-1 space-y-2 text-sm">{item.examples.slice(0,3).map((text,i)=><li key={i} className="break-words border-b border-border/60 pb-2">{text}</li>)}{!item.examples.length&&<li className="py-4 text-muted-foreground">当前编辑器暂无可展示条目</li>}</ul>
++                  {canManage&&<button type="button" onClick={()=>setEditor(item.key)} className={`${buttonStyle} self-start`}>{item.key==='vocabulary'?'编辑词汇':'编辑语法'}</button>}
++                </section>)}
++              </div>
++              {courseStructureRoute&&<Link href={`${courseStructureRoute}?chapter=${encodeURIComponent(selected.chapterId)}`} className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-foreground">查看本章课程结构<ChevronRight className="size-4" aria-hidden="true"/></Link>}
++            </>}
++            {tab==='publish'&&<>
++              {href&&<section className="space-y-4 rounded-xl border border-border p-5"><h3 className="text-base font-semibold">新教材内容发布</h3><p className="max-w-2xl text-sm leading-6 text-muted-foreground">打开工作台，按“进入编辑 → 保存内容 → 校验 → 发布”完成。进入编辑会暂停本教材测试运行，重新发布后恢复。</p><Link href={href} className={buttonStyle}>前往校验与发布</Link></section>}
++              <section className="space-y-4 rounded-xl border border-border p-5"><CardTitleWithHint headingLevel={3} title="章节与关联测试" description="沿用现有章节发布服务，同时发布关联测试，不发布教学脚本，不更新新教材快照。" titleClassName="text-base font-semibold"/><p className="text-sm text-muted-foreground">章节状态：{selected.chapterStatus==='published'?'已发布':selected.chapterStatus==='draft'?'草稿':'已归档'}</p><DigitalTextbookCellAction row={selected} canManage={false} canPublishChapter={canPublish}/></section>
++            </>}
++            {tab==='settings'&&<section className="space-y-4 rounded-xl border border-border p-5"><div className="flex items-center gap-2"><Settings2 className="size-5" aria-hidden="true"/><h3 className="font-semibold">整本教材设置</h3></div><p className="text-sm text-muted-foreground">{selected.textbookTitle} · 操作影响这本教材的全部章节。</p><dl className="space-y-3 text-sm"><div><dt className="text-muted-foreground">教材标识</dt><dd className="break-all">{selected.textbookSlug}</dd></div><div><dt className="text-muted-foreground">章节标识</dt><dd className="break-all">{selected.chapterSlug}</dd></div></dl><DigitalTextbookCellAction row={selected} canManage={canManage} canPublishChapter={false} settingsOnly/></section>}
++          </div>
++          {editor&&canManage&&<ContentEditor open onOpenChange={open=>{if(!open)setEditor(null);}} panel={editor} row={selected}/>}</>}
++      </div>
++    </div>
++  </section>;
++}
+diff --git a/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx b/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
+index e3be32c..1b75b6b 100644
+--- a/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
++++ b/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
+@@ -10,11 +10,12 @@ export async function CourseWorkflowNavigation({ access, section, chapterId }: {
+   const steps = courseContentSteps(access);
+   // The context selector must not introduce a stricter authorization gate on the catalog.
+   const canReadTextbooks = access.scope !== "platform" || access.globalRole === "platform_owner" || access.globalRole === "platform_admin";
+-  const data = canReadTextbooks ? await getDigitalTextbookManagementData(access.appId) : null;
++  const hasChapterNavigator = section === 'textbooks';
++  const data = canReadTextbooks && !hasChapterNavigator ? await getDigitalTextbookManagementData(access.appId) : null;
+   const chapters = data && !data.hasError ? workflowChapters(data.courses) : [];
+   const selected = chapters.find(chapter => chapter.id === chapterId);
+   return <div className="mb-5 space-y-3 border-b border-[var(--border)] pb-3">
+-    {canReadTextbooks && <form action={`${access.appPath}/${section}`} method="get" className="flex flex-wrap items-end gap-2">
++    {canReadTextbooks && !hasChapterNavigator && <form action={`${access.appPath}/${section}`} method="get" className="flex flex-wrap items-end gap-2">
+       <label className="grid min-w-0 gap-1 text-sm">当前章节与教材版本
+         <select key={chapterId ?? "all"} name="chapter" defaultValue={selected?.id ?? ""} disabled={Boolean(data?.hasError)} className="app-input min-h-11 max-w-full rounded-md border px-3 sm:max-w-xl">
+           <option value="">全部章节</option>
+@@ -24,7 +25,7 @@ export async function CourseWorkflowNavigation({ access, section, chapterId }: {
+       <button type="submit" disabled={Boolean(data?.hasError)} className="min-h-11 rounded-md border border-[var(--border)] px-3 text-sm disabled:opacity-50">定位章节</button>
+     </form>}
+     {data?.hasError && <p role="status" className="text-sm">章节目录读取不完整，请刷新重试。</p>}
+-    {chapterId && !selected && !data?.hasError && <p role="status" className="text-sm">当前章节不存在或不在可查看范围内，请重新选择。</p>}
++    {!hasChapterNavigator && chapterId && !selected && !data?.hasError && <p role="status" className="text-sm">当前章节不存在或不在可查看范围内，请重新选择。</p>}
+     <nav aria-label="课程内容工作导航" className="flex flex-wrap gap-2">
+       {steps.map(step => <Link key={step.key} href={workflowHref(access.appPath, step.key, chapterId)} aria-current={section === step.key ? "page" : undefined}
+         className={`rounded-md px-3 py-2 text-sm font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${section === step.key ? "bg-[var(--surface-soft)] text-[var(--foreground)]" : "text-[var(--foreground-muted)] hover:bg-[var(--surface-soft)]"}`}>
+diff --git a/tests/textbook-navigation.test.mjs b/tests/textbook-navigation.test.mjs
+index a5fac43..60b25fb 100644
+--- a/tests/textbook-navigation.test.mjs
++++ b/tests/textbook-navigation.test.mjs
+@@ -9,10 +9,10 @@ import tailwind from '@tailwindcss/postcss';
+ 
+ test('textbook management: scoped workbench, visible editors, legacy publication and read-only access', { timeout: 120000 }, async () => {
+   const modules = ['orientation','vocabulary','grammar','patterns','dialogue','listen_speak','read_write','review'].map(code=>({code,nodeCount:1}));
+-  const chapters = ['cda24fb8-c93b-4a19-9577-4418350ff708','another-chapter'].map((id,i)=>({id,number:i+1,slug:`chapter-${i+1}`,status:'published',versionId:'v1',versionNumber:1,versionStatus:'published',modules,nodes:[],grammarNodes:[]}));
++  const chapters = Array.from({length:17},(_,i)=>i===1?'cda24fb8-c93b-4a19-9577-4418350ff708':`chapter-${i}`).map((id,i)=>({id,number:i,title:i===0?'课程导览':i===1?'你好！':`练习主题 ${i}`,slug:`chapter-${i+1}`,status:'published',versionId:'v1',versionNumber:1,versionStatus:'published',modules,nodes:[{id:`node-${i}`,vocabulary:[{ko:'안녕하세요',zh:'你好',pos:'',collocation:'',transcription:''},{ko:'학생',zh:'学生',pos:'',collocation:'',transcription:''}]}],grammarNodes:[]}));
+   const data = {hasError:false,canManage:true,canPublishChapters:true,courses:[{id:'course',title:'韩语课程',lessons:[{id:'lesson',title:'韩语一级',textbooks:[{id:'book',title:'韩语教材',slug:'korean-level-one',status:'published',chapters}]}]}]};
+-  const bundle=await build({stdin:{contents:`import React from 'react';import{createRoot}from'react-dom/client';import Listing from './src/features/digital-textbook/components/digital-textbook-listing';const q=new URLSearchParams(location.search);createRoot(document.getElementById('root')).render(await Listing({studentAppId:'test',chapterId:q.get('chapter')||undefined,workbenchHref:q.has('readonly')?undefined:'/platform/dashboard/admin/apps/korean/textbooks/workbench',courseStructureRoute:'/content'}));`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'},plugins:[{name:'isolated-transport',setup(b){
+-    b.onResolve({filter:/api\/service$/},a=>a.importer.endsWith('digital-textbook-listing.tsx')?{path:'data',namespace:'test'}:undefined);
++  const bundle=await build({stdin:{contents:`import React from 'react';import{createRoot}from'react-dom/client';import Listing from './src/features/digital-textbook/components/digital-textbook-listing';import {CourseWorkflowNavigation} from './src/app/dashboard/admin/apps/CourseWorkflowNavigation';const q=new URLSearchParams(location.search);const navigation=await CourseWorkflowNavigation({access:{app:{slug:'korean'},scope:'platform',globalRole:q.has('readonly')?'platform_admin':'platform_owner',capabilities:{manageContent:true},appId:'test',appPath:'/platform/dashboard/admin/apps/korean'},section:'textbooks',chapterId:q.get('chapter')||undefined});createRoot(document.getElementById('root')).render(<>{navigation}{await Listing({studentAppId:'test',chapterId:q.get('chapter')||undefined,workbenchHref:q.has('readonly')?undefined:'/platform/dashboard/admin/apps/korean/textbooks/workbench',courseStructureRoute:'/content'})}</>);`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'},plugins:[{name:'isolated-transport',setup(b){
++    b.onResolve({filter:/api\/service$/},a=>(a.importer.endsWith('digital-textbook-listing.tsx')||a.importer.endsWith('CourseWorkflowNavigation.tsx'))?{path:'data',namespace:'test'}:undefined);
+     b.onResolve({filter:/^next\/(navigation|dynamic|link)$/},a=>({path:a.path,namespace:'test'}));
+     b.onResolve({filter:/digital-textbook-action-dialogs$/},()=>({path:'dialog',namespace:'dialog'}));
+     b.onLoad({filter:/.*/,namespace:'dialog'},()=>({contents:'export const DigitalTextbookContentDialog = null;'}));
+@@ -23,19 +23,35 @@ test('textbook management: scoped workbench, visible editors, legacy publication
+   let browser;const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/bundle.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html; charset=utf-8');res.end(req.url==='/bundle.js'?bundle.outputFiles[0].text:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><body><main class="p-4" data-dashboard-ui="management" data-management-workspace="platform"><div id="root"></div></main><script type="module" src="/bundle.js"></script></body></html>');});
+   try{
+     await new Promise(r=>server.listen(0,'127.0.0.1',r));browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));const url=`http://127.0.0.1:${server.address().port}`;
+-    await page.goto(url);await page.getByRole('link',{name:'打开第一章工作台'}).waitFor();
+-    assert.equal(await page.getByRole('link',{name:'内容与发布',exact:true}).count(),1);
+-    assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),1);
+-    assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),2);
+-    assert.equal(await page.getByText('其他模块',{exact:false}).count(),0);
+-    await page.getByRole('button',{name:'编辑词汇',exact:true}).first().click();await page.getByRole('dialog',{name:'vocabulary',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
+-    await page.getByRole('button',{name:'编辑语法',exact:true}).first().click();await page.getByRole('dialog',{name:'grammar',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
++    await page.goto(url);await page.getByRole('link',{name:'打开内容工作台'}).waitFor();
++    assert.equal(await page.getByRole('navigation',{name:'选择教材章节'}).getByRole('button').count(),17);
++    assert.equal(await page.getByRole('table').count(),0);
++    assert.equal(await page.getByRole('combobox').count(),0);
++    assert.equal(await page.getByRole('navigation',{name:'课程内容工作导航'}).count(),1);
++    assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),0);
++    assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),1);
++    await page.getByRole('button',{name:'编辑词汇',exact:true}).click();await page.getByRole('dialog',{name:'vocabulary',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
++    await page.getByRole('button',{name:'编辑语法',exact:true}).click();await page.getByRole('dialog',{name:'grammar',exact:true}).waitFor();await page.getByRole('button',{name:'关闭',exact:true}).click();
++    await page.getByRole('button',{name:'检查与发布',exact:true}).click();
+     await page.getByRole('button',{name:'发布章节与测试',exact:true}).click();await page.getByRole('alertdialog').waitFor();await page.getByRole('button',{name:'取消',exact:true}).click();await page.getByRole('alertdialog').waitFor({state:'hidden'});
+-    await page.getByText('章节测试发布选项',{exact:true}).click();assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),2);await page.getByText('章节测试发布选项',{exact:true}).click();
+-    await mkdir('/tmp/uply-textbooks-organize-visual',{recursive:true});
+-    for(const width of [1440,375]){await page.setViewportSize({width,height:960});await page.screenshot({path:`/tmp/uply-textbooks-organize-visual/${width}.png`,fullPage:true});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
+-    await page.goto(url+'?chapter=another-chapter');await page.getByRole('heading',{name:'当前章节',exact:true}).waitFor();assert.equal(await page.getByRole('link',{name:'打开第一章工作台'}).count(),0);
+-    await page.goto(url+'?readonly');await page.getByText('当前账号为只读查看。').waitFor();assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'内容与发布',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'打开第一章工作台'}).count(),0);
++    await page.getByRole('button',{name:'教材设置',exact:true}).click();
++    assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),0);
++    await page.getByText('更多',{exact:true}).click();await page.getByRole('button',{name:'整本教材下架为草稿',exact:true}).waitFor();
++    await page.getByRole('button',{name:'内容制作',exact:true}).click();
++    await mkdir('/tmp/uply-textbook-studio-visual',{recursive:true});
++    for(const width of [1440,375]){await page.setViewportSize({width,height:960});await page.screenshot({path:`/tmp/uply-textbook-studio-visual/${width}.png`,fullPage:true});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
++    await page.setViewportSize({width:1440,height:960});
++    await page.evaluate(()=>document.documentElement.classList.add('dark'));
++    await page.screenshot({path:'/tmp/uply-textbook-studio-visual/dark.png',fullPage:true});
++    await page.evaluate(()=>document.documentElement.classList.remove('dark'));
++    await page.getByRole('navigation',{name:'选择教材章节'}).getByRole('button',{name:/练习主题 2/}).click();
++    assert.match(page.url(),/chapter=chapter-2/);await page.getByRole('heading',{name:'练习主题 2',exact:true}).waitFor();
++    assert.equal(await page.getByRole('link',{name:'打开内容工作台'}).count(),0);
++    await page.reload();await page.getByRole('heading',{name:'练习主题 2',exact:true}).waitFor();
++    await page.getByRole('textbox',{name:'搜索章节'}).fill('不存在的章节');await page.getByText('没有匹配章节，请换个关键词。').waitFor();
++    await page.goto(url+'?chapter=unknown');await page.getByText('该章节不存在或不在可查看范围内，请从目录选择。').waitFor();
++    await page.goto(url+'?readonly');await page.getByText('只读查看',{exact:true}).waitFor();assert.equal(await page.getByRole('button',{name:'编辑词汇',exact:true}).count(),0);assert.equal(await page.getByRole('link',{name:'打开内容工作台'}).count(),0);
++    await page.getByRole('button',{name:'检查与发布',exact:true}).click();assert.equal(await page.getByRole('button',{name:'发布章节与测试',exact:true}).count(),0);
+     assert.deepEqual(errors,[]);
+   }finally{await browser?.close();await new Promise(r=>server.close(r));}
+ });

@@ -6,6 +6,7 @@ import {
 } from "@/app/dashboard/admin/apps/ManagementApplicationSectionPage";
 import { loadCurriculumPlanWorkspace } from "@/features/curriculum-plans/api/service";
 import { CurriculumPlanWorkspace } from "@/features/curriculum-plans/components/CurriculumPlanWorkspace";
+import { loadPlanLearningSources } from "@/features/curriculum-plans/api/sources";
 import { createClient } from "@/lib/supabase/server";
 
 export const dynamic = "force-dynamic";
@@ -78,6 +79,8 @@ export default async function CurriculumLearningPlansPage({
     title: String(test.title),
   }));
 
+  const learningSources = context.access.scope === "platform" ? await loadPlanLearningSources(supabase, context.access.appId) : [];
+
   return (
     <ManagementApplicationSectionFrame {...context}>
       <CurriculumPlanWorkspace
@@ -86,6 +89,7 @@ export default async function CurriculumLearningPlansPage({
         scope={context.access.scope}
         courses={courseRows.map((course) => ({ id: String(course.id), title: String(course.title) }))}
         lessons={lessons}
+        learningSources={learningSources}
         chapterTests={chapterTests}
         {...workspace}
         success={first(query.success)}

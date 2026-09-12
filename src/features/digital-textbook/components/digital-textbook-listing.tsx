@@ -10,16 +10,18 @@ import type { DigitalTextbookDisplayRow } from "./digital-textbook-table/columns
 
 export default async function DigitalTextbookListing({
   studentAppId,
+  chapterId,
   courseStructureRoute,
 }: {
   studentAppId: string;
+  chapterId?: string;
   courseStructureRoute?: string;
 }) {
   const result = await getDigitalTextbookManagementData(studentAppId);
   const rows: DigitalTextbookDisplayRow[] = result.courses.flatMap((course) =>
     course.lessons.flatMap((lesson) =>
       lesson.textbooks.flatMap((textbook) =>
-        textbook.chapters.map((chapter) => ({
+        textbook.chapters.filter(chapter => !chapterId || chapter.id === chapterId).map((chapter) => ({
           id: chapter.id,
           courseId: course.id,
           courseTitle: course.title,
@@ -63,6 +65,9 @@ export default async function DigitalTextbookListing({
 
   return (
     <div className="space-y-6">
+      <ManagementNotice tone="warning">
+        发布章节会同时发布关联章节测试，不会发布教学脚本。视频课堂还需在教学脚本中完成预览与发布；独立练习库不会随教材修改自动同步。
+      </ManagementNotice>
       {result.hasError && (
         <ManagementNotice tone="warning">
           部分教材层级或内容数据暂时无法完整读取，请稍后刷新重试。
@@ -76,7 +81,7 @@ export default async function DigitalTextbookListing({
           { label: "版本", value: versionCount },
           { label: "章节", value: rows.length },
           { label: "内容模块", value: moduleCount },
-          { label: "词汇", value: result.totalVocabulary },
+          { label: "词汇", value: rows.reduce((sum, row) => sum + row.vocabularyCount, 0) },
           { label: "语法", value: grammarCount },
         ]}
       />
@@ -93,7 +98,7 @@ export default async function DigitalTextbookListing({
             </p>
           </div>
           {courseStructureRoute && (
-            <Link href={courseStructureRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
+            <Link href={chapterId ? `${courseStructureRoute}?chapter=${encodeURIComponent(chapterId)}` : courseStructureRoute} className="inline-flex h-9 items-center border border-[var(--border)] bg-[var(--card)] px-4 text-xs font-semibold hover:bg-[var(--surface-soft)]">
               返回课程结构
             </Link>
           )}

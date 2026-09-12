@@ -1,0 +1,54 @@
+{
+  "baseline": "/home/yangzhen/releases/uply-first-enable-20260910/source",
+  "baselineDescription": "Deployed student UI candidate; preceding UI patch already applied, do not reapply it",
+  "precedingUiPatchSha256": "d5a9198841fe048703bfaa12a20f81eea9c7bbeb26f4f0dd4bf762c363c26e61",
+  "source": "/tmp/uply-student-ui-integration.bUmZfS",
+  "patchSha256": "1729f3a79d34d263cb325c30f48996fdacb62e922c51d66bfb0e584fde9c5b33",
+  "files": [
+    {
+      "path": "src/lib/smart-textbook-publishing/capture.server.ts",
+      "beforeSha256": "3a4f9c72c0e93850c0d3790b29071100435d4f115aa4c9d4fa91de4655487ff3",
+      "afterSha256": "9c6b102ee18549e6f92bceddfaac92158ee7201bf795afb988a258676009c9f7"
+    },
+    {
+      "path": "src/lib/smart-textbook-publishing/publisher.server.ts",
+      "beforeSha256": "cf16496444aee1cf0d33f2ff5cf652ced128e6807f8748fd5b00ca21dcc579d0",
+      "afterSha256": "9c1114ef9159d1c20793cb664d5de74eb6a0ceda4ad16888f12eedb0ee607087"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/page.tsx",
+      "beforeSha256": "bbd92f55c3097d8172a6c50521e9eba8510462ca8cdf5b2fbe2604730cea2bc4",
+      "afterSha256": "df58e68c57031b4fbf25fae062647c26850d904156219ec1168512df4e595fd5"
+    },
+    {
+      "path": "src/app/[space]/dashboard/admin/apps/[appSlug]/textbooks/workbench/page.tsx",
+      "beforeSha256": null,
+      "afterSha256": "8427b34cc62208c60fbf45bf890a184e125189b84b6b676a53ca48548f4f6a95"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/contracts.ts",
+      "beforeSha256": null,
+      "afterSha256": "6a5102c2b0b72fab08114741a5b84a6c43668a42fab827e1ea6e20d92a187e43"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/service.server.ts",
+      "beforeSha256": null,
+      "afterSha256": "55b2f1fe2f2b26302d43ce6049f9aee211ec0db763eb74633f4d38d9c1e026e5"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/actions.ts",
+      "beforeSha256": null,
+      "afterSha256": "92873d39bf7bbeb2e58a7cf233b60b86214d2f33d918d8decce5d8533f1fe35e"
+    },
+    {
+      "path": "src/features/digital-textbook/workbench/chapter-workbench.tsx",
+      "beforeSha256": null,
+      "afterSha256": "c7f69b38adf7e6168840b220d35e1e5cfde5e82b527a06dc83187fe8619fc896"
+    },
+    {
+      "path": "tests/digital-textbook-workbench.test.mjs",
+      "beforeSha256": null,
+      "afterSha256": "cd6c51792bc8ec259d6dce073d22c8f03c6fb5aaa71ee5411332a9c2d8b758b0"
+    }
+  ]
+}

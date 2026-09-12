@@ -1,3 +1,4 @@
+import { approvedVocabulary, type PracticeSnapshotItem } from "@/lib/chapter-practice-binding";
 import { requireActiveUser } from "@/lib/auth";
 import { ToolboxStudyTimer } from "@/app/dashboard/toolbox/StudyTimer";
 import { STUDENT_APP_IDS } from "@/lib/student-apps";
@@ -20,6 +21,7 @@ type LibraryRow = {
 export default async function VocabularyPage() {
   const { supabase } = await requireActiveUser();
 
+  const { data: snapshots, error: snapshotError } = await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: STUDENT_APP_IDS.korean });
   const { data: rows } = await supabase
     .from("growth_toolbox_vocabulary")
     .select("id,ko,zh,pos,collocation,transcription,source,sort_order")
@@ -27,19 +29,25 @@ export default async function VocabularyPage() {
     .order("sort_order", { ascending: true });
 
   const library = (rows ?? []) as LibraryRow[];
-  const words: Word[] = library.map((row) => ({
+  const independentWords: Word[] = library.map((row) => ({
     ko: row.ko,
     zh: row.zh,
     pos: row.pos,
     collocation: row.collocation,
     transcription: row.transcription,
   }));
-  const textbookCount = library.filter((row) => row.source === "textbook").length;
+  const referencedWords = approvedVocabulary(((snapshots ?? []) as { snapshot: PracticeSnapshotItem[] }[]).map(row => row.snapshot));
+  const wordKey = (word: Word) => JSON.stringify([word.ko, word.zh, word.pos, word.collocation, word.transcription]);
+  const existingKeys = new Set(independentWords.map(wordKey));
+  const additionalWords = referencedWords.filter(word => !existingKeys.has(wordKey(word)));
+  const words = [...independentWords, ...additionalWords];
+  const textbookCount = additionalWords.length + library.filter((row) => row.source === "textbook").length;
   const customCount = words.length - textbookCount;
 
   return (
     <div className="mx-auto w-full max-w-5xl space-y-5 px-4 py-6 sm:px-6 lg:px-8 lg:py-8">
       <ToolboxStudyTimer skill="vocabulary" />
+      {snapshotError && !["PGRST202", "42883"].includes(snapshotError.code) && <p role="status" className="text-sm">部分教材词汇暂时无法读取，请稍后刷新。现有词库仍可练习。</p>}
       <Hero totalWords={words.length} textbookCount={textbookCount} customCount={customCount} />
       <VocabularyPractice words={words} textbookCount={textbookCount} customCount={customCount} />
     </div>

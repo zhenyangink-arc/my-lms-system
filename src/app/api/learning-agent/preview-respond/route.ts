@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
+import { normalizeTeachingVideo, teacherVideoForTurn } from "@/lib/teaching-video";
 import { z } from "zod";
 
 import { isPlatformOwnerRole } from "@/lib/admin";
 import { getAuthContext } from "@/lib/auth";
+import { classroomShotForScriptSegment } from "@/lib/learning-agent-classroom-director";
 import {
   configuredText,
   headerJson,
@@ -12,8 +14,8 @@ import {
   ScriptStepValidationError,
   scriptSegmentAutoContinues,
   scriptSegmentLearningLayout,
-  studentTask,
   taskEventKey,
+  teacherScriptSegments,
   upcomingScriptNodeBufferLine,
   upcomingScriptNode,
   resolveBufferLineSpeechAssetId,
@@ -124,7 +126,7 @@ export async function POST(request: Request) {
     completedTaskEvents: state.completedTaskEvents,
   };
 
-  const selectedCharacter = resolved.selectedScriptNode
+  const selectedCharacter = resolved.selectedScriptNode && normalizeTeachingVideo(resolved.selectedScriptNode.configuration?.teacherVideo).mode !== "video"
     ? await resolveScriptCharacter(admin, resolved.selectedScriptNode, resolved.selectedScriptSegmentIndex, resolved.scriptedContent, input.locale)
     : null;
 
@@ -139,28 +141,42 @@ export async function POST(request: Request) {
   });
   if (resolved.selectedScriptNode) {
     const node = resolved.selectedScriptNode;
-    const selectedStudentTask = studentTask(node.configuration);
+    const selectedStudentTask = resolved.responseStudentTask;
+    const selectedTeachingDisplay = teachingBlackboardDisplayForSegment(
+      node.configuration?.display ?? null,
+      resolved.selectedScriptSegmentIndex,
+    );
     const selectedTaskCompleted = selectedStudentTask
       ? completedTaskEvents.has(taskEventKey(node.id, selectedStudentTask))
       : false;
     headers.set("X-Learning-Agent-Script-Node", node.node_key);
+    headers.set("X-Learning-Agent-Teacher-Video", headerJson(teacherVideoForTurn({
+      configuration: node.configuration, nodeId: node.id,
+      segmentIndex: resolved.selectedScriptSegmentIndex, phase: resolved.responsePhase,
+      answerCorrect: resolved.answerCorrect, intent: input.intent,
+      authoredText: teacherScriptSegments(node, input.locale)[resolved.selectedScriptSegmentIndex],
+    })));
+    headers.set("X-Learning-Agent-Has-Next-Segment", resolved.selectedScriptSegmentIndex < resolved.selectedScriptSegmentCount - 1 ? "true" : "false");
     headers.set("X-Learning-Agent-Script-Node-Type", node.node_type);
-    headers.set("X-Learning-Agent-Display", headerJson(teachingBlackboardDisplayForSegment(
-      node.configuration?.display ?? null,
-      resolved.selectedScriptSegmentIndex,
-    )));
+    headers.set("X-Learning-Agent-Display", headerJson(normalizeTeachingVideo(node.configuration?.teacherVideo).mode === "video" ? null : selectedTeachingDisplay));
     headers.set("X-Learning-Agent-Task", headerJson(selectedStudentTask));
     headers.set("X-Learning-Agent-Character", headerJson(selectedCharacter));
     headers.set("X-Learning-Agent-Interaction", headerJson(resolved.responseInteraction));
     headers.set(
       "X-Learning-Agent-Visual-Cue",
-      headerJson(input.intent === "start" || input.intent === "ready" ? visualCue(node.configuration) : null),
+      headerJson((input.intent === "start" || input.intent === "ready") && (resolved.responsePhase === "explanation" || resolved.responsePhase === "task") ? visualCue(node.configuration) : null),
     );
     headers.set(
       "X-Learning-Agent-Pet-Action",
-      headerJson(input.intent === "start" || input.intent === "ready" ? petAction(node.configuration) : null),
+      headerJson((input.intent === "start" || input.intent === "ready") && resolved.responsePhase === "explanation" ? petAction(node.configuration) : null),
     );
     headers.set("X-Learning-Agent-Task-Completed", selectedTaskCompleted ? "true" : "false");
+    headers.set("X-Learning-Agent-Teaching-Phase", resolved.responsePhase);
+    headers.set("X-Learning-Agent-Classroom-Shot", classroomShotForScriptSegment(
+      node.configuration,
+      resolved.selectedScriptSegmentIndex,
+      { phase: resolved.responsePhase, hasTeachingDisplay: Boolean(selectedTeachingDisplay) },
+    ));
     headers.set("X-Learning-Agent-Question-Options", headerJson(resolved.questionOptions));
     headers.set("X-Learning-Agent-Script-Rich", headerJson(resolved.scriptedContentRich));
     headers.set(
@@ -183,14 +199,14 @@ export async function POST(request: Request) {
       "X-Learning-Agent-Auto-Continue",
       hasNextSegment && scriptSegmentAutoContinues(node.configuration, resolved.selectedScriptSegmentIndex) ? "true" : "false",
     );
-    const upcomingBufferLine = upcomingScriptNodeBufferLine({
+    const upcomingBufferLine = resolved.nodeTurnComplete ? upcomingScriptNodeBufferLine({
       selectedNode: node,
       scriptNodes,
       nodeByKey,
       locale: input.locale,
       segmentIndex: resolved.selectedScriptSegmentIndex,
       segmentCount: resolved.selectedScriptSegmentCount,
-    });
+    }) : "";
     if (upcomingBufferLine) {
       headers.set("X-Learning-Agent-Buffer-Line", encodeURIComponent(upcomingBufferLine));
       const nextNode = upcomingScriptNode({
@@ -200,7 +216,7 @@ export async function POST(request: Request) {
         segmentIndex: resolved.selectedScriptSegmentIndex,
         segmentCount: resolved.selectedScriptSegmentCount,
       });
-      const bufferSpeechAssetId = await resolveBufferLineSpeechAssetId(admin, nextNode, input.locale, upcomingBufferLine);
+      const bufferSpeechAssetId = await resolveBufferLineSpeechAssetId(admin, nextNode, input.locale, upcomingBufferLine, "authorized-owner-preview");
       if (bufferSpeechAssetId) headers.set("X-Learning-Agent-Buffer-Speech-Asset", bufferSpeechAssetId);
     }
   }

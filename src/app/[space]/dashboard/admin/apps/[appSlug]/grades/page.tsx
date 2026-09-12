@@ -1,4 +1,4 @@
-import { ManagementPlatformApplicationOverviewPage } from "@/app/dashboard/admin/apps/ManagementPlatformApplicationOverviewPage";
+import { PlatformInsightPage } from "@/features/platform-learning-insights/PlatformInsightPage";
 import {
   ManagementApplicationSectionFrame,
   requireManagementApplicationSection,
@@ -7,8 +7,10 @@ import { GradeListingContent } from "@/features/grades/components/grade-listing"
 
 export default async function ManagementAppGradesRoute({
   params,
+  searchParams,
 }: {
   params: Promise<{ space: string; appSlug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const { space, appSlug } = await params;
   const context = await requireManagementApplicationSection(
@@ -20,8 +22,9 @@ export default async function ManagementAppGradesRoute({
   return (
     <ManagementApplicationSectionFrame {...context}>
       {context.access.scope === "platform" ? (
-        <ManagementPlatformApplicationOverviewPage
-          access={context.access}
+        <PlatformInsightPage
+          appSlug={appSlug}
+          searchParams={await searchParams}
           mode="grades"
         />
       ) : (

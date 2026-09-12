@@ -1,4 +1,5 @@
 import "server-only";
+import { BUFFER_CANDIDATE_COLUMNS, selectBufferSpeechIds, type BufferCandidate } from "@/lib/learning-agent-buffer-selection.server";
 
 import { createR2SignedObjectUrl } from "@/lib/r2";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -364,18 +365,16 @@ export async function loadSmartDigitalTextbook(
   const { data: openingBufferSpeechAssets } = openingNodeIds.length
     ? await admin
         .from("learning_agent_script_audio_assets")
-        .select("id,script_node_id,locale")
+        .select(BUFFER_CANDIDATE_COLUMNS)
         .in("script_node_id", openingNodeIds)
         .eq("segment_index", 199)
         .eq("production_status", "ready")
-    : { data: [] as { id: string; script_node_id: string; locale: string }[] };
-  const bufferSpeechAssetIdsByNodeId = new Map<string, Partial<Record<SmartLocale, string>>>();
-  for (const asset of openingBufferSpeechAssets ?? []) {
-    const nodeId = String(asset.script_node_id);
-    const ids = bufferSpeechAssetIdsByNodeId.get(nodeId) ?? {};
-    ids[asset.locale === "ko-KR" ? "ko-KR" : "zh-CN"] = String(asset.id);
-    bufferSpeechAssetIdsByNodeId.set(nodeId, ids);
-  }
+    : { data: [] as BufferCandidate[] };
+  const bufferSpeechAssetIdsByNodeId = selectBufferSpeechIds(
+    (openingFirstNodes ?? []).map(node => ({ id: String(node.id), scriptVersionId: String(node.script_version_id), configuration: node.configuration })),
+    (openingScriptVersions ?? []).map(version => ({ id: String(version.id), status: "published" })),
+    openingBufferSpeechAssets ?? [],
+  );
   const openingLessonModuleById = new Map((openingLessons ?? []).map((lesson) => [
     String(lesson.id),
     String(lesson.module_id),
@@ -536,7 +535,7 @@ export async function loadSmartDigitalTextbook(
       : { data: [] as { id: string; script_version_id: string; node_key: string; configuration: unknown }[] };
     const migratedSessionNodeByVersionAndKey = new Map((migratedSessionNodes ?? []).map((node) => [
       `${String(node.script_version_id)}:${String(node.node_key)}`,
-      { id: String(node.id), configuration: asObject(node.configuration) },
+      { id: String(node.id), scriptVersionId: String(node.script_version_id), configuration: asObject(node.configuration) },
     ]));
     const resolvedSessionStages = (activeSessionRows ?? []).map((session) => {
       const currentNodeId = session.current_node_id ? String(session.current_node_id) : "";
@@ -550,6 +549,7 @@ export async function loadSmartDigitalTextbook(
       const publishedOpeningNode = publishedVersionId
         ? {
             id: publishedOpeningNodeId,
+            scriptVersionId: publishedVersionId,
             configuration: openingConfigurationByVersionId.get(publishedVersionId) ?? {},
           }
         : null;
@@ -577,18 +577,17 @@ export async function loadSmartDigitalTextbook(
     const { data: activeSessionBufferSpeechAssets } = resolvedSessionNodeIds.length
       ? await admin
           .from("learning_agent_script_audio_assets")
-          .select("id,script_node_id,locale")
+          .select(BUFFER_CANDIDATE_COLUMNS)
           .in("script_node_id", resolvedSessionNodeIds)
           .eq("segment_index", 199)
           .eq("production_status", "ready")
-      : { data: [] as { id: string; script_node_id: string; locale: string }[] };
-    const activeSessionBufferSpeechAssetIdsByNodeId = new Map<string, Partial<Record<SmartLocale, string>>>();
-    for (const asset of activeSessionBufferSpeechAssets ?? []) {
-      const nodeId = String(asset.script_node_id);
-      const ids = activeSessionBufferSpeechAssetIdsByNodeId.get(nodeId) ?? {};
-      ids[asset.locale === "ko-KR" ? "ko-KR" : "zh-CN"] = String(asset.id);
-      activeSessionBufferSpeechAssetIdsByNodeId.set(nodeId, ids);
-    }
+      : { data: [] as BufferCandidate[] };
+    // Includes historical active terminal nodes: empty buffers stay silent, never ready-row-first.
+    const activeSessionBufferSpeechAssetIdsByNodeId = selectBufferSpeechIds(
+      resolvedSessionStages.flatMap(({ resolvedNode }) => resolvedNode ? [resolvedNode] : []),
+      (openingScriptVersions ?? []).map(version => ({ id: String(version.id), status: "published" })),
+      activeSessionBufferSpeechAssets ?? [],
+    );
     for (const { session, resolvedNode, segmentIndex } of resolvedSessionStages) {
       const moduleId = lessonModuleById.get(String(session.lesson_id));
       if (moduleId && !activeTeachingSessions[moduleId]) {

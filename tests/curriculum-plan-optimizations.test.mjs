@@ -35,10 +35,10 @@ test("机构或老师可以向已发布计划追加学生，且不能越权分�
   assert.match(actions, /该计划已结束或尚未发布，无法追加学生/);
 });
 
-test("机构工作台展示学生按真实课时进度的开始情况，且学生周计划不再有固定 45 天窗口", async () => {
+test("机构工作台读取统一执行证据，且学生周计划不再有固定 45 天窗口", async () => {
   const service = await read("src/features/curriculum-plans/api/service.ts");
-  assert.match(service, /from\("lesson_progress"\)/);
-  assert.match(service, /neq\("status", "not_started"\)/);
+  assert.match(service, /loadCurriculumExecution\(supabase, planIds\)/);
+  assert.match(service, /resolveCurriculumExecution/);
   assert.match(service, /trackedStudentCount: planStudentIds\.length/);
   assert.doesNotMatch(service, /45 \* 86_400_000/);
 });
@@ -114,9 +114,8 @@ test("章节测试活动类型必须绑定真实测试，进度徽章会合并�
   assert.match(actions, /selectedActivityType === "chapter_test"/);
   assert.match(actions, /\.from\("chapter_tests"\)/);
   assert.match(actions, /sourceType = "chapter_test"/);
-  assert.match(service, /testIdsByTemplate/);
-  assert.match(service, /from\("chapter_test_attempts"\)/);
-  assert.match(service, /attemptedStudentsByTest/);
+  assert.match(service, /get_curriculum_execution/);
+  assert.match(service, /completedCount/);
   assert.match(sql, /new\.activity_type = 'chapter_test'/);
   assert.match(sql, /章节测试必须绑定真实测试/);
   assert.match(sql, /章节测试项目必须全部绑定真实测试/);

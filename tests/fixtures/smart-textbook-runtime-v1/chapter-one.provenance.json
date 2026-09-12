@@ -1,0 +1,683 @@
+{
+  "capturedAt": "2026-09-08",
+  "scope": "Read-only public projection, NOT an executable adapter or published snapshot",
+  "appId": "korean is the existing route app key, not a fabricated database UUID",
+  "sourceChapterId": "cda24fb8-c93b-4a19-9577-4418350ff708",
+  "sourceVersionId": "939ad4f7-3238-425e-91e9-d456c130ca68",
+  "sourceInventory": [
+    {
+      "moduleId": "42665398-c41e-4db8-9f0e-9626e126cba8",
+      "key": "orientation",
+      "nodeId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "activities": [
+        {
+          "id": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+          "key": "orientation-check",
+          "type": "single_choice"
+        },
+        {
+          "id": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+          "key": "orientation-jimin-occupation",
+          "type": "single_choice"
+        },
+        {
+          "id": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+          "key": "orientation-wangming-occupation",
+          "type": "single_choice"
+        }
+      ]
+    },
+    {
+      "moduleId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "key": "vocabulary",
+      "nodeId": "3d2218c7-33ed-46fb-9a25-dc4bfbbd2b3c",
+      "activities": [
+        {
+          "id": "8a7f51e8-e982-47da-ae40-ea7698986ec4",
+          "key": "vocabulary-check",
+          "type": "single_choice"
+        }
+      ]
+    },
+    {
+      "moduleId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "key": "grammar",
+      "nodeId": "e5078937-9a9d-4fb7-b92f-a6fe54fa7633",
+      "activities": [
+        {
+          "id": "3ad2226d-6490-4f6d-8743-2d1d9989d3e9",
+          "key": "grammar-choice",
+          "type": "single_choice"
+        },
+        {
+          "id": "70ac0f5d-917d-48e1-a00d-b0ed3bfa8509",
+          "key": "grammar-judgment",
+          "type": "single_choice"
+        },
+        {
+          "id": "d2329ff4-72c2-4feb-bf62-3301ce769567",
+          "key": "grammar-fill",
+          "type": "fill_blank"
+        }
+      ]
+    },
+    {
+      "moduleId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "key": "patterns",
+      "nodeId": "a751eb5a-69a9-474b-a7eb-1e9b4e5ca17e",
+      "activities": [
+        {
+          "id": "5b9bf18c-bd37-4df2-9f06-2599fc695e1c",
+          "key": "pattern-choice",
+          "type": "single_choice"
+        },
+        {
+          "id": "08056544-a7d0-41c0-998c-1a2a39978125",
+          "key": "pattern-order",
+          "type": "ordering"
+        },
+        {
+          "id": "897f6b9a-e955-401d-8127-46a5adfc708a",
+          "key": "pattern-compose",
+          "type": "fill_blank"
+        }
+      ]
+    },
+    {
+      "moduleId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "key": "dialogue",
+      "nodeId": "0b1f94b2-8979-43bb-95bb-bf129bbb542b",
+      "activities": [
+        {
+          "id": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+          "key": "dialogue-fact-check",
+          "type": "single_choice"
+        },
+        {
+          "id": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+          "key": "dialogue-response",
+          "type": "single_choice"
+        },
+        {
+          "id": "0b1e3713-dfa7-4c89-8504-ae1992e2d340",
+          "key": "dialogue-roleplay",
+          "type": "speaking"
+        }
+      ]
+    },
+    {
+      "moduleId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "key": "listen_speak",
+      "nodeId": "67ce4cfc-573b-4071-a2a5-0122274864f1",
+      "activities": [
+        {
+          "id": "6876a867-ae78-4336-9d3a-1745a351b6ee",
+          "key": "listening-identity",
+          "type": "listening"
+        },
+        {
+          "id": "d52694a4-5337-4971-ab48-32a7c6821ea0",
+          "key": "speaking-introduction",
+          "type": "speaking"
+        }
+      ]
+    },
+    {
+      "moduleId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "key": "read_write",
+      "nodeId": "a834273c-7858-4ad1-8587-97007acd90fb",
+      "activities": [
+        {
+          "id": "7ae06811-48ed-49a0-83ad-03d613a16e6b",
+          "key": "reading-profile",
+          "type": "single_choice"
+        },
+        {
+          "id": "ed75866c-2a53-4538-90ad-e71c2737dfef",
+          "key": "write-profile",
+          "type": "writing"
+        }
+      ]
+    },
+    {
+      "moduleId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "key": "review",
+      "nodeId": "f0e8db18-ad29-46b3-b9c1-6a0b0717fd51",
+      "activities": [
+        {
+          "id": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+          "key": "review-multiple",
+          "type": "multiple_choice"
+        },
+        {
+          "id": "d954746a-9f45-40ce-9c09-f639a7fe03bc",
+          "key": "self-check",
+          "type": "self_check"
+        }
+      ]
+    }
+  ],
+  "identityAssignments": [
+    {
+      "id": "965e3118-987e-409b-bd14-6937f9b0697e",
+      "sourceId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "3ff1527d-39e5-4ffa-a3b6-9b213d1c03cd",
+      "sourceId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "544c8d52-5329-4c24-ad84-9d682200aab3",
+      "sourceId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "3f7089e2-e641-42e1-a09e-614f5cb241b7",
+      "sourceId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "d6d69209-ba6b-4969-941b-ca50f1570082",
+      "sourceId": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "a108ef3d-ecfc-4159-8106-213538ade800",
+      "sourceId": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "a720b114-0c9a-4381-92ca-e157ba5d0db6",
+      "sourceId": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "eed2eb65-df4b-4511-b8d0-2333e7236f49",
+      "sourceId": "30f7ecfa-3ad6-45d1-8373-9bfeb12c220e",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "a8181096-84fa-46b4-a312-f2d6d4cfbd6a",
+      "sourceId": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "feb17b59-c181-46f5-8891-5c87f2cf342c",
+      "sourceId": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "056608b3-51c2-4d1f-9a4d-e5d10af0097d",
+      "sourceId": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "c62a3344-7477-430e-9d27-968d43e10322",
+      "sourceId": "08056544-a7d0-41c0-998c-1a2a39978125",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "468a7e28-6015-45e2-a4fb-a0d8c24bf8ed",
+      "sourceId": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "b014b818-5911-4e88-85a1-85ae76015f97",
+      "sourceId": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "b16f8cb6-e2c6-4e48-b344-137b0e5c0939",
+      "sourceId": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "ce08132d-5efb-4ad0-a995-52e7f64058bd",
+      "sourceId": "f4944f6f-cfcc-403c-a1d8-acea7ef2151f",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "bf440993-54fd-4729-90d9-49666526d167",
+      "sourceId": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "9de7b103-616b-47d0-af0b-03ae24edcb41",
+      "sourceId": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "662357e5-b4a4-427b-9efa-bbe78b3da2da",
+      "sourceId": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "76ed4ae1-8d4c-4a33-8d1e-9fed8a0128bd",
+      "sourceId": "a4e7825b-3e22-41f6-9417-8f035f0b7fe5",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "b607aaa9-805a-4ded-8ed8-18925f89645e",
+      "sourceId": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "1f2c58c8-b676-4561-91cf-dd77e8f1cb9a",
+      "sourceId": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "403a0ae2-1802-4b4d-a757-d24a8ba0e462",
+      "sourceId": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "b4d1ed54-37ca-41c0-9974-cd574e8c525d",
+      "sourceId": "6c8f70d4-a9be-4d58-b431-fa966b60f463",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "c727072f-4fdc-4eba-a2ad-0a18e75723cc",
+      "sourceId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "sourceOptionIndex": 0
+    },
+    {
+      "id": "35cee7c9-b420-44bd-84f8-89c8db19841e",
+      "sourceId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "sourceOptionIndex": 1
+    },
+    {
+      "id": "3463c16c-d2a8-42f3-918d-83adf3d5319e",
+      "sourceId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "sourceOptionIndex": 2
+    },
+    {
+      "id": "dc62e0bb-0827-45d8-b824-7234076eccbc",
+      "sourceId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5",
+      "sourceOptionIndex": 3
+    },
+    {
+      "id": "03d1694d-b13e-4098-bc06-e0f9edd2fb32",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "greeting",
+      "sourceLineIndex": 0
+    },
+    {
+      "id": "0ef4b350-92a2-4d31-ab39-a42861f813f8",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "greeting",
+      "sourceLineIndex": 1
+    },
+    {
+      "id": "a71da935-d404-4416-a809-472449503f8e",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "introductions",
+      "sourceLineIndex": 0
+    },
+    {
+      "id": "78a6c565-efa8-4405-8178-e02a5df4363b",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "introductions",
+      "sourceLineIndex": 1
+    },
+    {
+      "id": "e7288c9f-e37f-49d0-bdb3-0188902b1e00",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "student-status",
+      "sourceLineIndex": 0
+    },
+    {
+      "id": "d8db737b-56b4-4dae-a9e9-4e486cf785e3",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "student-status",
+      "sourceLineIndex": 1
+    },
+    {
+      "id": "622acc53-ae43-4b34-ba22-d7c2437c9619",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 0
+    },
+    {
+      "id": "bf100a1d-4a77-45b0-8e53-083cad2b795d",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 1
+    },
+    {
+      "id": "b5ba61ed-b0f7-40f5-9d7d-1536e5b90c82",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 2
+    },
+    {
+      "id": "3053d82e-7fb8-43b9-958b-a21ae4182504",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 3
+    },
+    {
+      "id": "1ac0284b-d043-49a4-8961-f42cade2062f",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 4
+    },
+    {
+      "id": "a3d9f5bd-9c8c-4d49-b4e4-889406913833",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 5
+    },
+    {
+      "id": "64be4bab-ffe9-4036-beba-1418171898be",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 6
+    },
+    {
+      "id": "e507ccbc-21ef-4c1c-baf1-413510c67cc0",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceGroupId": "complete-first-meeting",
+      "sourceLineIndex": 7
+    },
+    {
+      "id": "9c0dc524-8368-4005-8773-1cbe7e586363",
+      "sourceId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "sourcePageKey": "scene_and_words"
+    },
+    {
+      "id": "d453f14f-d00a-42bb-95be-61faf82c2d57",
+      "sourceId": "65646324-f988-4268-bc9b-4704921e57d0",
+      "sourcePageKey": "vocabulary_practice"
+    },
+    {
+      "id": "e9286316-30ca-4df7-a9ec-1a0bf5aeb3fb",
+      "sourceId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "sourcePageKey": "grammar_explanation"
+    },
+    {
+      "id": "bea8319e-72e5-4057-b0e7-aa6b158f0b50",
+      "sourceId": "ddb8b68c-5eca-478c-aa97-26ef7f7a24ab",
+      "sourcePageKey": "grammar_practice"
+    },
+    {
+      "id": "e5921c04-5ab4-49e5-b10a-2a6c5493bf36",
+      "sourceId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "sourcePageKey": "pattern_library"
+    },
+    {
+      "id": "d6d1b76e-bae8-4c22-bcca-99df12fe659c",
+      "sourceId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "sourcePageKey": "guided_substitution"
+    },
+    {
+      "id": "185f5652-1eb9-4a0e-b78a-1b243f83cd4f",
+      "sourceId": "016124f4-00b8-4ca5-9426-b92a0417a2a6",
+      "sourcePageKey": "combined_output"
+    },
+    {
+      "id": "27ab1032-f6b1-4dc3-9a52-1eebec92875e",
+      "sourceId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "sourcePageKey": "dialogue_guide"
+    },
+    {
+      "id": "a4e96874-501c-487b-8f4f-05850b447503",
+      "sourceId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "sourcePageKey": "scene_dialogue"
+    },
+    {
+      "id": "b13645fa-73a3-420a-a288-dbd9821433dc",
+      "sourceId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "sourcePageKey": "comprehension"
+    },
+    {
+      "id": "2ddad5f9-823d-4742-b760-6dc0d9965729",
+      "sourceId": "acc3107f-7255-4d65-860b-0968491f293a",
+      "sourcePageKey": "roleplay"
+    },
+    {
+      "id": "de528047-7a51-4896-a111-8e9e89bc394d",
+      "sourceId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "sourcePageKey": "listening_preparation"
+    },
+    {
+      "id": "cde31ce6-4de9-4186-8247-a184936aa59d",
+      "sourceId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "sourcePageKey": "listening_comprehension"
+    },
+    {
+      "id": "3b4d6f92-79b8-4de7-87b8-3f54d5271610",
+      "sourceId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "sourcePageKey": "shadowing"
+    },
+    {
+      "id": "987244ba-5451-4142-9bb4-248a63b97cfc",
+      "sourceId": "04226145-7dd7-4a27-a4f2-03ec766f0f1a",
+      "sourcePageKey": "independent_speaking"
+    },
+    {
+      "id": "3b302bbc-1103-4815-8f6d-193da472a6a6",
+      "sourceId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "sourcePageKey": "reading_source"
+    },
+    {
+      "id": "b9283b7b-1b11-4273-8615-81429d04e45b",
+      "sourceId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "sourcePageKey": "reading_comprehension"
+    },
+    {
+      "id": "61214a19-9519-4f39-9d47-f1f6f2e93b55",
+      "sourceId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "sourcePageKey": "writing_scaffold"
+    },
+    {
+      "id": "788df2f8-dc8a-4c3c-8143-9978360d2611",
+      "sourceId": "01e528a1-9c86-4dd3-baa6-ee87851ac521",
+      "sourcePageKey": "independent_writing"
+    },
+    {
+      "id": "d3867ad1-77ea-4c81-b12b-1baf8a5dec06",
+      "sourceId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "sourcePageKey": "comprehensive_check"
+    },
+    {
+      "id": "6f023113-e9cb-4396-87d2-0eb7918f90fe",
+      "sourceId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "sourcePageKey": "can_do_check"
+    },
+    {
+      "id": "ca446a2f-0ffd-4e74-be21-879946ce1f37",
+      "sourceId": "546b7ae4-142c-47c0-b4f9-04b3d5c02c3d",
+      "sourcePageKey": "review_result"
+    }
+  ],
+  "bindings": [
+    {
+      "kind": "progress",
+      "ref": "1e02e69c-1324-4e27-be3c-a420aa78cb95",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68"
+    },
+    {
+      "kind": "teaching-cue",
+      "ref": "ca2957d6-b148-4416-a946-1a8e75b130e4",
+      "ownerRef": "bb671fe7-9db1-4ab6-ad7d-90e6991aca72"
+    },
+    {
+      "kind": "capsule",
+      "ref": "02e91b35-061a-4e5e-923f-2a8237d39b0e",
+      "ownerRef": "bb671fe7-9db1-4ab6-ad7d-90e6991aca72",
+      "sourceId": "feb30ba7-0a5e-4e9f-83e6-8970f715ddd5"
+    },
+    {
+      "kind": "progress",
+      "ref": "eddf124a-9fd5-47ab-83fd-e9f14445be9a",
+      "sourceId": "aafa6ccc-4d4a-4dba-9315-2f30381e8a13"
+    },
+    {
+      "kind": "progress",
+      "ref": "429a7c76-56db-4947-9cb0-d4aa1b5a3122",
+      "sourceId": "6c8f70d4-a9be-4d58-b431-fa966b60f463"
+    },
+    {
+      "kind": "progress",
+      "ref": "3cb707c3-1609-49b0-ad13-d824b858d176",
+      "sourceId": "cb3f6d75-4a6a-4610-84dc-7d19db6ef3a5"
+    },
+    {
+      "kind": "progress",
+      "ref": "76e410dd-4144-4057-889b-f7e86fca7a1d",
+      "sourceId": "3d2218c7-33ed-46fb-9a25-dc4bfbbd2b3c"
+    },
+    {
+      "kind": "capsule",
+      "ref": "24790dcc-cc0d-45ad-bb60-c8007c07b11b",
+      "ownerRef": "dad96aa8-40d3-4cd6-a16a-d8625e6f1738",
+      "sourceId": "3d2218c7-33ed-46fb-9a25-dc4bfbbd2b3c"
+    },
+    {
+      "kind": "progress",
+      "ref": "ce7dd99b-f2ca-467f-a331-957c392386bd",
+      "sourceId": "e5078937-9a9d-4fb7-b92f-a6fe54fa7633"
+    },
+    {
+      "kind": "capsule",
+      "ref": "bc176d04-a879-4590-a844-cf2c6e65587d",
+      "ownerRef": "5010fed4-f60d-432f-82dc-ecedc025d4ec",
+      "sourceId": "e5078937-9a9d-4fb7-b92f-a6fe54fa7633"
+    },
+    {
+      "kind": "progress",
+      "ref": "dec7bb18-1949-4563-aa30-4dcaa95c4376",
+      "sourceId": "a751eb5a-69a9-474b-a7eb-1e9b4e5ca17e"
+    },
+    {
+      "kind": "capsule",
+      "ref": "663cd675-b3cb-439f-b75e-77c3901ad8ed",
+      "ownerRef": "ac67fd2c-40a2-4521-944f-dd7f15ba1429",
+      "sourceId": "a751eb5a-69a9-474b-a7eb-1e9b4e5ca17e"
+    },
+    {
+      "kind": "progress",
+      "ref": "6bed19a8-9692-4750-b110-c8bb09af411f",
+      "sourceId": "0b1f94b2-8979-43bb-95bb-bf129bbb542b"
+    },
+    {
+      "kind": "capsule",
+      "ref": "0b26eb2f-f92c-4434-8088-b111951b9305",
+      "ownerRef": "86034dce-58c1-4b7e-bdc9-a169d163534b",
+      "sourceId": "0b1f94b2-8979-43bb-95bb-bf129bbb542b"
+    },
+    {
+      "kind": "progress",
+      "ref": "aef9dd9d-717a-44f4-8f4b-f065a92d1c7c",
+      "sourceId": "67ce4cfc-573b-4071-a2a5-0122274864f1"
+    },
+    {
+      "kind": "capsule",
+      "ref": "16e4780a-4847-412a-9139-6e7ea2b73df7",
+      "ownerRef": "03fab82e-e91b-45a3-82e0-8ecbf9966f92",
+      "sourceId": "67ce4cfc-573b-4071-a2a5-0122274864f1"
+    },
+    {
+      "kind": "progress",
+      "ref": "ce05b82d-f811-41a5-b649-60d14bcaf7f2",
+      "sourceId": "a834273c-7858-4ad1-8587-97007acd90fb"
+    },
+    {
+      "kind": "capsule",
+      "ref": "aca76184-5c69-435b-9f73-fded0bc6613f",
+      "ownerRef": "4fde6880-7b70-4dc6-abd2-e62a53803534",
+      "sourceId": "a834273c-7858-4ad1-8587-97007acd90fb"
+    },
+    {
+      "kind": "progress",
+      "ref": "c1a72911-b382-4815-a31a-4c0474ea5370",
+      "sourceId": "f0e8db18-ad29-46b3-b9c1-6a0b0717fd51"
+    },
+    {
+      "kind": "capsule",
+      "ref": "830aa735-7d8f-42a6-ad0f-65a54405132e",
+      "ownerRef": "0eac0156-6591-4a49-bf3e-55f6022b380d",
+      "sourceId": "f0e8db18-ad29-46b3-b9c1-6a0b0717fd51"
+    },
+    {
+      "kind": "capsule",
+      "ref": "6f286cf9-e13f-497e-9795-45cf51f9f2cd",
+      "ownerRef": "f633b146-318b-4b86-ba56-d4206e1d874f",
+      "sourceId": "9fe730cd-a102-496e-adc5-9973b697af68",
+      "sourceFields": [
+        "coach",
+        "targets",
+        "nextNode",
+        "completion"
+      ]
+    }
+  ],
+  "coverage": [
+    {
+      "key": "orientation",
+      "status": "lead/dialogue and all 3 activities projected; teacher and remaining coach/targets/completion scoped in compatibility capsules",
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "vocabulary",
+      "status": "preserved-in-capsule",
+      "activityCount": 1,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "grammar",
+      "status": "preserved-in-capsule",
+      "activityCount": 3,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "patterns",
+      "status": "preserved-in-capsule",
+      "activityCount": 3,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "dialogue",
+      "status": "preserved-in-capsule",
+      "activityCount": 3,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "listen_speak",
+      "status": "preserved-in-capsule",
+      "activityCount": 2,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "read_write",
+      "status": "preserved-in-capsule",
+      "activityCount": 2,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    },
+    {
+      "key": "review",
+      "status": "preserved-in-capsule",
+      "activityCount": 2,
+      "sourceContent": "Not copied as arbitrary JSON; retained in scoped capsule until Phase 3B conversion coverage is verified"
+    }
+  ],
+  "limitations": [
+    "Only public prompts/options projected. Complex public_config and node content remain scoped compatibility capsules; no executable capsule exists in Phase 3A.",
+    "No media readiness claims: existing listening/recording/private transcript workflows remain behind compatibility references.",
+    "Only orientation has a published script. Other Steps have teachingRef=null.",
+    "Settings are conservative closed contract projections, not a replacement for existing server grading configuration.",
+    "Capsule binding inventory is a test declaration, not a live resolver. Step/page/track progress associations require Phase 3B private mapping; this fixture cannot be published or activated."
+  ],
+  "publishedScript": {
+    "id": "feb30ba7-0a5e-4e9f-83e6-8970f715ddd5",
+    "lesson_id": "0a1ebf2d-d987-4476-8f23-2269799e45df",
+    "version_number": 23,
+    "status": "published",
+    "nodeCount": 8,
+    "virtualCharacterCount": 8,
+    "teacherVideoCount": 0
+  }
+}

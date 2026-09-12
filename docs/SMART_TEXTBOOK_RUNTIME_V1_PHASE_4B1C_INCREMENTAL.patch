@@ -1,0 +1,584 @@
+diff --git a/src/features/smart-textbook-runtime/server/application-runtime.server.ts b/src/features/smart-textbook-runtime/server/application-runtime.server.ts
+index ad4a46f..23d299c 100644
+--- a/src/features/smart-textbook-runtime/server/application-runtime.server.ts
++++ b/src/features/smart-textbook-runtime/server/application-runtime.server.ts
+@@ -11,6 +11,7 @@ import {GET as character} from '../../../app/api/learning-agent/characters/[pose
+ import {assertRuntimeDependencies,runtimeAdmissionPolicy} from './application-admission.server';
+ import {authorizeRuntimeApplication} from './application-access.server';
+ import {validateRuntimeActivation} from '../core/block-registry';
++import {withChapterOneRuntimeRequest} from '../../../lib/smart-textbook-publishing/authoring.server';
+ 
+ const requests=new AsyncLocalStorage<{request:Request;dependency?:ReturnType<typeof assertRuntimeDependencies>}>();
+ function request(){const r=requests.getStore();if(!r)throw Error('RUNTIME_REQUEST_CONTEXT');return r.request;}
+@@ -42,7 +43,7 @@ const learningRequest=z.discriminatedUnion('operation',[
+ /** Real app transport composition. No audit Route, compiler, Preview store or
+  * fixture. Existing sessions remain pinned when NEW admission is stopped. */
+ export async function applicationRuntimeRequest(req:Request,kind:'learning'|'teacher',input:unknown,upload?:Blob){
+- return requests.run({request:req},async()=>{
++ return withChapterOneRuntimeRequest(()=>requests.run({request:req},async()=>{
+   // An installed dependency outage never falls through to legacy/preview writes.
+   await dependencies();
+   if(kind==='teacher'){if(upload)throw Error('UNEXPECTED_BYTES');return teacher.dispatch(input);}
+@@ -70,5 +71,5 @@ export async function applicationRuntimeRequest(req:Request,kind:'learning'|'tea
+   if(r.operation==='resume')return learning.resume({sessionRef:r.sessionRef});
+   if(r.operation==='enter'||r.operation==='dispatch')return r.operation==='enter'?learning.enter(r.payload):learning.dispatch(r.payload,req.signal,upload);
+   throw Error('RUNTIME_OPERATION');
+- });
++ }));
+ }
+diff --git a/src/lib/smart-textbook-publishing/authoring.server.ts b/src/lib/smart-textbook-publishing/authoring.server.ts
+new file mode 100644
+index 0000000..2d90bf6
+--- /dev/null
++++ b/src/lib/smart-textbook-publishing/authoring.server.ts
+@@ -0,0 +1,46 @@
++import 'server-only';
++import {randomUUID} from 'node:crypto';
++import {z} from 'zod';
++import {requireActiveUser} from '../auth';
++import {createAdminClient} from '../supabase/admin';
++import {chapterOnePublicationScope} from './loader.server';
++
++async function owner(){
++ const a=await requireActiveUser();
++ if(a.profile?.global_role!=='platform_owner')throw Error('PUBLICATION_OWNER_ONLY');
++ return a.user.id;
++}
++/** Retains every durable record; revokes only this textbook's test locators.
++ * A draining result is NOT permission to edit. Retry once all real requests end.
++ * There is no forced expiry or "clear all" operation. */
++export async function beginChapterOneEditing(){
++ const actor=await owner();
++ const r=await createAdminClient().rpc('begin_runtime_textbook_edit_v1',{p_actor:actor,p_textbook:chapterOnePublicationScope.textbookId});
++ if(r.error)throw Error('PUBLICATION_EDIT_WINDOW_UNAVAILABLE');
++ return z.strictObject({state:z.enum(['draining','editing']),inflight:z.number().int().nonnegative(),revision:z.number().int().positive()}).parse(r.data);
++}
++const edit=z.strictObject({activityId:z.string().uuid(),prompt:z.strictObject({'zh-CN':z.string().trim().min(1),'ko-KR':z.string().optional()}),answerIndex:z.number().int().nonnegative()});
++/** Minimal existing-domain authoring operation, not a new grader. Grading
++ * still consumes the original activity secret through the existing service. */
++export async function editChapterOneActivity(input:unknown){
++ const actor=await owner(),value=edit.parse(input);
++ const r=await createAdminClient().rpc('edit_runtime_chapter_activity_v1',{p_actor:actor,p_scope:chapterOnePublicationScope,
++  p_activity:value.activityId,p_prompt:value.prompt,p_answer:{kind:'index',value:value.answerIndex}});
++ if(r.error)throw Error('PUBLICATION_EDIT_REJECTED');
++ return z.strictObject({saved:z.literal(true)}).parse(r.data);
++}
++/** DB-owned request lifetime across separate REST/domain transactions. Keep the
++ * lease until the actual promise settles, even if the browser disconnects. A
++ * failed finish leaves editing blocked, never assumes the worker stopped. */
++export async function withChapterOneRuntimeRequest<T>(operation:()=>Promise<T>):Promise<T>{
++ const a=await requireActiveUser();if(!a.tenant)throw Error('RUNTIME_REQUEST_AUTH');
++ const admin=createAdminClient(),id=randomUUID();
++ const args={p_actor:a.user.id,p_tenant:a.tenant.id,p_textbook:chapterOnePublicationScope.textbookId,p_request:id};
++ const entered=await admin.rpc('runtime_publication_request_v1',{...args,p_operation:'enter'});
++ if(entered.error||entered.data?.ok!==true)throw Error('TEXTBOOK_TEST_RUN_STOPPED');
++ try{return await operation();}
++ finally{
++  const finished=await admin.rpc('runtime_publication_request_v1',{...args,p_operation:'leave'});
++  if(finished.error||finished.data?.ok!==true)throw Error('RUNTIME_REQUEST_FINISH_FAILED');
++ }
++}
+diff --git a/supabase/migrations/202609100004_runtime_single_version_authoring.sql b/supabase/migrations/202609100004_runtime_single_version_authoring.sql
+new file mode 100644
+index 0000000..5d3ff55
+--- /dev/null
++++ b/supabase/migrations/202609100004_runtime_single_version_authoring.sql
+@@ -0,0 +1,171 @@
++-- Phase 4B-1C, prelaunch single-version authoring. Isolated deployment only.
++-- No content, object, attempt, progress or immutable artifact is deleted.
++begin;
++create table runtime_publish_private.authoring_control (
++ textbook_id uuid primary key references public.digital_textbooks(id),
++ state text not null check(state in ('open','draining','editing')),
++ revision bigint not null default 1 check(revision>0)
++);
++create table runtime_publish_private.runtime_requests (
++ id uuid primary key, textbook_id uuid not null references public.digital_textbooks(id),
++ actor_id uuid not null, tenant_id uuid not null,
++ started_at timestamptz not null default clock_timestamp(), finished_at timestamptz
++);
++create table runtime_publish_private.retired_snapshots (
++ snapshot_id text primary key references runtime_publish_private.snapshots(id),
++ retired_by uuid not null references public.profiles(id), at timestamptz not null default clock_timestamp()
++);
++create trigger immutable_retirement before update or delete on runtime_publish_private.retired_snapshots
++ for each row execute function runtime_publish_private.immutable();
++alter table runtime_publish_private.authoring_control enable row level security;
++alter table runtime_publish_private.runtime_requests enable row level security;
++alter table runtime_publish_private.retired_snapshots enable row level security;
++revoke all on runtime_publish_private.authoring_control,runtime_publish_private.runtime_requests,runtime_publish_private.retired_snapshots from public,anon,authenticated,service_role;
++create index runtime_request_inflight on runtime_publish_private.runtime_requests(textbook_id) where finished_at is null;
++
++-- Exact, deliberately narrow audit-only projection. No status, metadata,
++-- profile configuration, learner history or permission field is exempted.
++create function runtime_publish_private.semantic_capture(p_capture jsonb) returns jsonb
++ language plpgsql immutable set search_path='' as $$
++declare result jsonb:=p_capture; name text; rows jsonb;
++begin
++ foreach name in array array['digital_textbooks','digital_textbook_versions','digital_textbook_chapters','chapter_tests'] loop
++  select coalesce(jsonb_agg(r-'updated_at' order by (r-'updated_at')::text),'[]'::jsonb)
++   into rows from jsonb_array_elements(p_capture->name) r;
++  result:=jsonb_set(result,array[name],rows);
++ end loop;
++ return result;
++end $$;
++alter function runtime_publish_private.capture(jsonb) rename to capture_rows;
++create function runtime_publish_private.capture(p_scope jsonb) returns jsonb
++ language plpgsql stable security definer set search_path='' as $$
++declare result jsonb; rev bigint;
++begin
++ result:=runtime_publish_private.semantic_capture(runtime_publish_private.capture_rows(p_scope));
++ select revision into rev from runtime_publish_private.authoring_control where textbook_id=(p_scope->>'textbookId')::uuid;
++ -- Private capture provenance, not a content column or public Manifest field.
++ -- Even cancelling an edit republishes a fresh immutable snapshot; a revoked
++ -- locator can never become valid again through identical-content republication.
++ if rev is not null then result:=jsonb_set(result,'{digital_textbooks,0,runtimeAuthoringRevision}',to_jsonb(rev)); end if;
++ return result;
++end;
++$$;
++create or replace function runtime_publish_private.check_authoring_statement() returns trigger
++ language plpgsql security definer set search_path='' as $$
++declare f runtime_publish_private.dependency_fences%rowtype;
++begin
++ for f in select d.* from runtime_publish_private.dependency_fences d
++  where not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id) order by d.snapshot_id loop
++  if runtime_publish_private.capture(f.scope) is distinct from runtime_publish_private.semantic_capture(f.capture) then
++   raise exception 'PUBLISHED_DEPENDENCY_IMMUTABLE_USE_EDIT_WINDOW' using errcode='40001';
++  end if;
++ end loop;
++ return null;
++end $$;
++create or replace function public.assert_runtime_dependency_fence_v1(p_snapshot text,p_capture jsonb) returns boolean
++ language sql stable security definer set search_path='' as $$
++ select exists(select 1 from runtime_publish_private.dependency_fences d
++  where d.snapshot_id=p_snapshot and d.capture=p_capture
++  and not exists(select 1 from runtime_publish_private.retired_snapshots r where r.snapshot_id=d.snapshot_id)
++  and not exists(select 1 from runtime_publish_private.authoring_control c where c.textbook_id=(d.scope->>'textbookId')::uuid and c.state<>'open'));
++$$;
++
++-- Leases surround the WHOLE application request, including separate domain
++-- transactions and object I/O. Never expire a lease while a worker may write.
++-- A crashed worker fails closed; no automatic TTL/force-clear operation.
++create function public.runtime_publication_request_v1(p_operation text,p_actor uuid,p_tenant uuid,p_textbook uuid,p_request uuid)
++ returns jsonb language plpgsql security definer set search_path='' as $$
++begin
++ perform runtime_publish_private.authoring_lock();
++ if p_actor is null or p_tenant is null or p_request is null or not exists(select 1 from public.profiles where id=p_actor and status='active') then raise exception 'RUNTIME_REQUEST_AUTH'; end if;
++ if p_operation='enter' then
++  if exists(select 1 from runtime_publish_private.authoring_control where textbook_id=p_textbook and state<>'open') then raise exception 'TEXTBOOK_TEST_RUN_STOPPED'; end if;
++  insert into runtime_publish_private.runtime_requests(id,textbook_id,actor_id,tenant_id) values(p_request,p_textbook,p_actor,p_tenant);
++ elsif p_operation='leave' then
++  update runtime_publish_private.runtime_requests set finished_at=coalesce(finished_at,clock_timestamp())
++   where id=p_request and textbook_id=p_textbook and actor_id=p_actor and tenant_id=p_tenant;
++  if not found then raise exception 'RUNTIME_REQUEST_OWNER'; end if;
++ else raise exception 'RUNTIME_REQUEST_OPERATION'; end if;
++ return jsonb_build_object('ok',true);
++end $$;
++
++create function public.begin_runtime_textbook_edit_v1(p_actor uuid,p_textbook uuid) returns jsonb
++ language plpgsql security definer set search_path='' as $$
++declare count_inflight bigint; rev bigint;
++begin
++ perform runtime_publish_private.owner_guard(p_actor);
++ perform runtime_publish_private.authoring_lock();
++ if not exists(select 1 from public.digital_textbooks where id=p_textbook) then raise exception 'TEXTBOOK_NOT_FOUND'; end if;
++ insert into runtime_publish_private.authoring_control values(p_textbook,'draining',1)
++  on conflict(textbook_id) do update set state=case when runtime_publish_private.authoring_control.state='editing' then 'editing' else 'draining' end,
++   revision=runtime_publish_private.authoring_control.revision+1 returning revision into rev;
++ select count(*) into count_inflight from runtime_publish_private.runtime_requests where textbook_id=p_textbook and finished_at is null;
++ if count_inflight>0 then return jsonb_build_object('state','draining','inflight',count_inflight,'revision',rev); end if;
++ -- Revocation is explicitly authorized; records remain intact. This affects
++ -- only locators of this textbook, never attempts/progress/evidence/Agent rows.
++ update runtime_publish_private.sessions set revoked=true where snapshot_id in(select id from runtime_publish_private.snapshots where textbook_id=p_textbook) and not revoked;
++ insert into runtime_publish_private.retired_snapshots(snapshot_id,retired_by)
++  select id,p_actor from runtime_publish_private.snapshots where textbook_id=p_textbook on conflict do nothing;
++ update runtime_publish_private.authoring_control set state='editing' where textbook_id=p_textbook;
++ return jsonb_build_object('state','editing','inflight',0,'revision',rev);
++end $$;
++
++-- The old session function remains private behind this serialized boundary.
++alter function public.runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text) rename to runtime_publication_session_base_v1;
++revoke all on function public.runtime_publication_session_base_v1(text,uuid,uuid,uuid,jsonb,jsonb,text) from public,anon,authenticated,service_role;
++create function public.runtime_publication_session_v1(p_operation text,p_actor uuid,p_tenant uuid,p_ref uuid default null,p_scope jsonb default null,p_expected jsonb default null,p_locale text default 'zh-CN')
++ returns jsonb language plpgsql security definer set search_path='' as $$
++declare result jsonb; book uuid;
++begin
++ perform runtime_publish_private.authoring_lock();
++ result:=public.runtime_publication_session_base_v1(p_operation,p_actor,p_tenant,p_ref,p_scope,p_expected,p_locale);
++ if p_operation<>'revoke' then
++  book:=(result#>>'{bundle,scope,textbookId}')::uuid;
++  if exists(select 1 from runtime_publish_private.authoring_control where textbook_id=book and state<>'open')
++   or exists(select 1 from runtime_publish_private.retired_snapshots where snapshot_id=result#>>'{bundle,snapshotId}') then raise exception 'TEXTBOOK_SESSION_RETIRED'; end if;
++ end if;
++ return result;
++end $$;
++
++alter function public.publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text) rename to publish_runtime_snapshot_base_v2;
++revoke all on function public.publish_runtime_snapshot_base_v2(uuid,jsonb,jsonb,text,jsonb,text) from public,anon,authenticated,service_role;
++create function public.publish_runtime_snapshot_v2(p_actor uuid,p_scope jsonb,p_expected jsonb,p_operation text,p_bundle jsonb,p_target text)
++ returns jsonb language plpgsql security definer set search_path='' as $$
++declare result jsonb; state_value text; book uuid:=(p_scope->>'textbookId')::uuid;
++begin
++ perform runtime_publish_private.owner_guard(p_actor);
++ perform runtime_publish_private.authoring_lock();
++ select state into state_value from runtime_publish_private.authoring_control where textbook_id=book;
++ if state_value='draining' then raise exception 'TEXTBOOK_DRAIN_INCOMPLETE'; end if;
++ if exists(select 1 from runtime_publish_private.retired_snapshots where snapshot_id=case when p_operation='publish' then p_bundle->>'snapshotId' else p_target end) then raise exception 'RETIRED_SNAPSHOT_NOT_EXECUTABLE'; end if;
++ result:=public.publish_runtime_snapshot_base_v2(p_actor,p_scope,p_expected,p_operation,p_bundle,p_target);
++ update runtime_publish_private.authoring_control set state='open' where textbook_id=book;
++ return result;
++end $$;
++
++-- Closed owner editing DAL for current Chapter 1. Existing authoring screens
++-- also remain protected by the same DB fence; this is not a parallel editor.
++create function public.edit_runtime_chapter_activity_v1(p_actor uuid,p_scope jsonb,p_activity uuid,p_prompt jsonb,p_answer jsonb) returns jsonb
++ language plpgsql security definer set search_path='' as $$
++begin
++ perform runtime_publish_private.owner_guard(p_actor);
++ perform runtime_publish_private.authoring_lock();
++ if not exists(select 1 from runtime_publish_private.authoring_control where textbook_id=(p_scope->>'textbookId')::uuid and state='editing') then raise exception 'EDIT_WINDOW_REQUIRED'; end if;
++ if not exists(select 1 from public.digital_textbook_activities a join public.digital_textbook_nodes n on n.id=a.node_id
++  join public.digital_textbook_modules m on m.id=n.module_id join public.digital_textbook_chapters c on c.id=m.chapter_id
++  join public.digital_textbook_versions v on v.id=c.version_id where a.id=p_activity and c.id=(p_scope->>'chapterId')::uuid
++  and v.id=(p_scope->>'versionId')::uuid and v.textbook_id=(p_scope->>'textbookId')::uuid and a.activity_type='single_choice') then raise exception 'EDIT_ACTIVITY_SCOPE'; end if;
++ if jsonb_typeof(p_prompt)<>'object' or (p_prompt-'zh-CN'-'ko-KR')<>'{}'::jsonb or not (p_prompt ? 'zh-CN') or jsonb_typeof(p_prompt->'zh-CN')<>'string'
++  or length(btrim(p_prompt->>'zh-CN'))=0 or p_prompt is null then raise exception 'EDIT_PROMPT'; end if;
++ if p_answer is null or (p_answer-'kind'-'value')<>'{}'::jsonb or p_answer->>'kind' is distinct from 'index' or jsonb_typeof(p_answer->'value')<>'number'
++  or not exists(select 1 from public.digital_textbook_activities where id=p_activity and (p_answer->>'value')::numeric=trunc((p_answer->>'value')::numeric) and (p_answer->>'value')::numeric>=0 and (p_answer->>'value')::numeric<jsonb_array_length(options)) then raise exception 'EDIT_ANSWER'; end if;
++ update public.digital_textbook_activities set prompt=p_prompt where id=p_activity;
++ update public.digital_textbook_activity_secrets set answer_key=p_answer where activity_id=p_activity;
++ if not found then raise exception 'EDIT_SECRET_MISSING'; end if;
++ return jsonb_build_object('saved',true);
++end $$;
++
++revoke all on all functions in schema runtime_publish_private from public,anon,authenticated,service_role;
++revoke all on function public.runtime_publication_request_v1(text,uuid,uuid,uuid,uuid),public.begin_runtime_textbook_edit_v1(uuid,uuid),public.edit_runtime_chapter_activity_v1(uuid,jsonb,uuid,jsonb,jsonb),public.publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text),public.runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text) from public,anon,authenticated;
++grant execute on function public.runtime_publication_request_v1(text,uuid,uuid,uuid,uuid),public.begin_runtime_textbook_edit_v1(uuid,uuid),public.edit_runtime_chapter_activity_v1(uuid,jsonb,uuid,jsonb,jsonb),public.publish_runtime_snapshot_v2(uuid,jsonb,jsonb,text,jsonb,text),public.runtime_publication_session_v1(text,uuid,uuid,uuid,jsonb,jsonb,text) to service_role;
++commit;
+diff --git a/supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql b/supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql
+new file mode 100644
+index 0000000..0e250d4
+--- /dev/null
++++ b/supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql
+@@ -0,0 +1,149 @@
++begin;
++-- A platform-owner-only release boundary for one complete digital textbook
++-- chapter. The chapter, linked test, and valid test items change state in one
++-- database transaction so students never see a partially published release.
++create or replace function public.publish_digital_textbook_chapter(
++  p_chapter_id uuid
++)
++returns jsonb
++language plpgsql
++security definer
++set search_path = ''
++as $$
++declare
++  chapter_number_value integer;
++  chapter_test_id_value uuid;
++  chapter_test_slug_value text;
++  version_id_value uuid;
++  textbook_id_value uuid;
++  question_count integer := 0;
++  invalid_question_count integer := 0;
++begin
++  if auth.uid() is null or not private.is_platform_owner() then
++    raise exception '只有平台负责人可以发布教材章节';
++  end if;
++
++  -- Global authoring lock BEFORE any row lock, same order as the Publisher.
++  perform runtime_publish_private.authoring_lock();
++
++  select
++    chapter.chapter_number,
++    chapter.chapter_test_id,
++    version.id,
++    textbook.id
++  into
++    chapter_number_value,
++    chapter_test_id_value,
++    version_id_value,
++    textbook_id_value
++  from public.digital_textbook_chapters as chapter
++  join public.digital_textbook_versions as version on version.id = chapter.version_id
++  join public.digital_textbooks as textbook on textbook.id = version.textbook_id
++  where chapter.id = p_chapter_id
++  for update of chapter, version, textbook;
++
++  if not found then
++    raise exception '没有找到要发布的教材章节';
++  end if;
++
++  if chapter_number_value > 0 and chapter_test_id_value is null then
++    raise exception '当前章节尚未关联章节测试';
++  end if;
++
++  if chapter_test_id_value is not null then
++    select
++      test.slug
++    into chapter_test_slug_value
++    from public.chapter_tests as test
++    where test.id = chapter_test_id_value
++    for update;
++
++    if chapter_test_slug_value is null then
++      raise exception '当前章节测试还没有可发布题目';
++    end if;
++
++    perform 1
++    from public.chapter_test_questions as question
++    where question.test_id = chapter_test_id_value
++    for update;
++
++    select
++      count(question.id) filter (
++        where question.is_chapter_test_item = true
++          and question.question_type = 'single_choice'
++      ),
++      count(question.id) filter (
++        where question.is_chapter_test_item = true
++          and (
++            question.question_type is distinct from 'single_choice'
++            or nullif(btrim(question.prompt), '') is null
++            or case
++              when jsonb_typeof(question.options) = 'array'
++                then jsonb_array_length(question.options) <> 4
++              else true
++            end
++            or question.correct_option is null
++            or question.correct_option < 0
++            or question.correct_option > 3
++          )
++      )
++    into question_count, invalid_question_count
++    from public.chapter_test_questions as question
++    where question.test_id = chapter_test_id_value;
++
++    if question_count = 0 then
++      raise exception '当前章节测试还没有可发布题目';
++    end if;
++
++    if invalid_question_count > 0 then
++      raise exception '章节测试存在未完成配置的题目';
++    end if;
++
++    update public.chapter_test_questions
++    set status = 'published',
++        updated_at = now()
++    where test_id = chapter_test_id_value
++      and is_chapter_test_item = true
++      and question_type = 'single_choice'
++      and status is distinct from 'published';
++
++    update public.chapter_tests
++    set status = 'published',
++        updated_at = now()
++    where id = chapter_test_id_value and status is distinct from 'published';
++  end if;
++
++  update public.digital_textbooks
++  set status = 'published',
++      updated_at = now()
++  where id = textbook_id_value and status is distinct from 'published';
++
++  update public.digital_textbook_versions
++  set status = 'published',
++      updated_at = now()
++  where id = version_id_value and status is distinct from 'published';
++
++  update public.digital_textbook_chapters
++  set status = 'published',
++      production_status = case
++        when production_status is null then null
++        else 'published'
++      end,
++      updated_at = now()
++  where id = p_chapter_id and (status is distinct from 'published' or (production_status is not null and production_status is distinct from 'published'));
++
++  return jsonb_build_object(
++    'chapterNumber', chapter_number_value,
++    'testSlug', chapter_test_slug_value,
++    'publishedQuestions', question_count
++  );
++end;
++$$;
++
++revoke all on function public.publish_digital_textbook_chapter(uuid) from public, anon, service_role;
++grant execute on function public.publish_digital_textbook_chapter(uuid) to authenticated;
++
++comment on function public.publish_digital_textbook_chapter(uuid) is
++  '平台负责人一次发布教材章节、关联章节测试及有效测试题；数据库内再次校验身份并保持事务原子性。';
++
++commit;
+diff --git a/tests/fixtures/published-chapter-one.mjs b/tests/fixtures/published-chapter-one.mjs
+index f2c8292..b4602ca 100644
+--- a/tests/fixtures/published-chapter-one.mjs
++++ b/tests/fixtures/published-chapter-one.mjs
+@@ -58,6 +58,7 @@ export async function publishedChapterFixture(){
+     await db.query(await text('202608180027_restore_objective_activity_recording.sql'));
+     await db.query(await text('202609100001_runtime_publish_foundation.sql'));
+     await db.query(await text('202609100002_runtime_publication_dependency_fence.sql'));
++    await db.query(await text('202609100004_runtime_single_version_authoring.sql'));
+     // Isolated coordinator rehearsal ONLY. No host environment/deployment change.
+     await db.query(await text('202609090002_recording_domain_coordination.sql'));
+     await db.query(`insert into recording_private.domain_instances values('publication-isolated',1);
+diff --git a/tests/fixtures/single-version-authoring.mjs b/tests/fixtures/single-version-authoring.mjs
+new file mode 100644
+index 0000000..2947c0b
+--- /dev/null
++++ b/tests/fixtures/single-version-authoring.mjs
+@@ -0,0 +1,95 @@
++import assert from 'node:assert/strict';
++import {randomUUID} from 'node:crypto';
++import {writeFile} from 'node:fs/promises';
++import {serverModule} from './runtime-4a2.server.mjs';
++import {literal as q,json,service} from './recording-v2-postgres.mjs';
++import {source} from './runtime-4a.mjs';
++
++// Actual app/Pub/Loader/domain services, only the fixture's DB/auth/bytes are
++// isolated. No detached draft, fake compiler, direct pointer write or inspection.
++export async function verifySingleVersionAuthoring({f,call,overrides}){
++ const {db,publisher,loader}=f;
++ const editing=await serverModule('src/lib/smart-textbook-publishing/authoring.server.ts',overrides);
++ const before=await loader.loadPublishedRuntimeSnapshot();
++ const bootResponse=await call({operation:'bootstrap'});assert.equal(bootResponse.status,200);
++ const old=await bootResponse.json(),m=old.manifest;
++ const activity=m.activityRefs.find(a=>a.activityId===source.activities.find(a=>a.activity_key==='orientation-check').id);
++ const target=m.blocks.find(b=>b.type==='compat.learning.v1'&&b.stepId===old.continuation.activeStepId).runtimeTarget;
++ const payload={sessionRef:old.sessionRef,generation:old.continuation.generation,target,
++  request:{op:'native-submit',activity:old.catalog.find(c=>c.runtimeRef===activity.id).serviceRef,response:activity.publicPresentation.options[0].id}};
++ const counts=async()=>db.query(`select jsonb_build_object('attempts',(select count(*) from public.digital_textbook_attempts),'evidence',(select count(*) from public.digital_textbook_speaking_evidence),'progress',(select count(*) from public.digital_textbook_node_progress))`);
++ const immutable=await db.query(`select md5(document::text) from runtime_publish_private.snapshots where id=${q(before.bundle.snapshotId)}`);
++ // Pure audit touches are allowed while semantic/status/profile/media edits
++ // remain frozen; same scope can still be loaded after these timestamps move.
++ for(const table of ['digital_textbooks','digital_textbook_versions','digital_textbook_chapters','chapter_tests'])await db.query(`update public.${table} set updated_at=clock_timestamp()`);
++ assert.equal((await loader.loadPublishedRuntimeSnapshot()).bundle.snapshotId,before.bundle.snapshotId);
++ assert.match((await db.raw(`update public.digital_textbooks set status='draft' where id=${q(source.textbook.id)}`)).stderr,/IMMUTABLE/);
++ assert.match((await db.raw(`update public.learning_agent_profiles set display_name='{"zh-CN":"不允许原地改变"}'`)).stderr,/IMMUTABLE/);
++ const profile=f.auth.profile.global_role;f.auth.profile.global_role='organization_owner';
++ await assert.rejects(editing.beginChapterOneEditing(),/OWNER_ONLY/);f.auth.profile.global_role=profile;
++ for(const role of ['anon','authenticated'])assert.notEqual((await db.raw(`set role ${role};select public.begin_runtime_textbook_edit_v1(${q(f.student)},${q(source.textbook.id)})`)).code,0);
++ const nonOwner=randomUUID();await db.query(`insert into public.profiles values(${q(nonOwner)},'organization_owner','active')`);
++ assert.match((await db.raw(service(`select public.begin_runtime_textbook_edit_v1(${q(nonOwner)},${q(source.textbook.id)})`))).stderr,/OWNER_ONLY/);
++ await assert.rejects(editing.editChapterOneActivity({activityId:activity.id,prompt:{'zh-CN':'too early'},answerIndex:1}),/REJECTED/);
++
++ // Real app request held in the actual attempt transaction. The edit window
++ // sees the durable lease even though SQL grading uses a separate connection.
++ await db.query(`create function public.pause_4b1c_attempt() returns trigger language plpgsql as $$begin perform pg_advisory_xact_lock(4171,99);perform pg_sleep(1.5);return new;end$$;
++  create trigger pause_4b1c_attempt before insert on public.digital_textbook_attempts for each row execute function public.pause_4b1c_attempt();`);
++ const submitting=call({operation:'dispatch',payload});
++ let observed=false;
++ for(let i=0;i<180;i++)if(await db.query("select count(*) from pg_locks where locktype='advisory' and classid=4171 and objid=99 and granted")!=='0'){observed=true;break;}
++ assert(observed,'real application grader is in flight');
++ const drain=await editing.beginChapterOneEditing();assert.equal(drain.state,'draining');assert(drain.inflight>0);
++ await assert.rejects(editing.editChapterOneActivity({activityId:activity.id,prompt:{'zh-CN':'not yet'},answerIndex:1}),/REJECTED/);
++ assert.equal((await call({operation:'bootstrap'})).status,409);
++ await submitting;await db.query('drop trigger pause_4b1c_attempt on public.digital_textbook_attempts');
++ assert.equal(await db.query('select count(*) from runtime_publish_private.runtime_requests where finished_at is null'),'0');
++ const baseline=await counts();
++ const stopped=await editing.beginChapterOneEditing();assert.equal(stopped.state,'editing');
++ assert.equal((await call({operation:'bootstrap',sessionRef:old.sessionRef})).status,409);
++ await assert.rejects(loader.loadPublishedRuntimeSnapshot(),/FENCE/);
++ assert.equal(await counts(),baseline,'opening an edit window does not reset progress, attempts or evidence');
++ assert.equal(await db.query(`select revoked from runtime_publish_private.sessions where id=${q(old.sessionRef.slice(17))}`),'t');
++
++ await editing.editChapterOneActivity({activityId:activity.id,prompt:{'zh-CN':'修订后的见面问候检查','ko-KR':'수정된 인사 확인'},answerIndex:1});
++ const saved=await counts();
++ // Chapter source publication is the REAL existing owner RPC, after edit.
++ await db.query(`select public.publish_digital_textbook_chapter(${q(source.chapter.id)})`);
++ const compiled=await publisher.compileChapterOnePublication();
++ assert.notEqual(compiled.snapshotId,before.bundle.snapshotId);
++ assert.equal(compiled.manifest.steps.length,8);assert.equal(compiled.manifest.activityRefs.length,19);
++ assert.deepEqual(compiled.manifest.runtimeTargets.map(t=>t.id),m.runtimeTargets.map(t=>t.id));
++ assert.deepEqual(compiled.privatePayload.source.teachingNodes,before.bundle.privatePayload.source.teachingNodes);
++ assert.equal(compiled.manifest.activityRefs.find(a=>a.id===activity.id).publicPresentation.prompt['zh-CN'],'修订后的见面问候检查');
++ assert.equal(compiled.privatePayload.dependencies.digital_textbook_activity_secrets.find(a=>a.activity_id===activity.id).answer_key.value,1);
++ // Two REAL publishers compete with the same CAS; only one advances.
++ const races=await Promise.allSettled([publisher.publishChapterOne(before.pointer),publisher.publishChapterOne(before.pointer)]);
++ assert.equal(races.filter(x=>x.status==='fulfilled').length,1);
++ assert.match(races.find(x=>x.status==='rejected').reason.message,/CONFLICT/);
++ const next=await loader.loadPublishedRuntimeSnapshot();assert.equal(next.bundle.snapshotId,compiled.snapshotId);
++ assert.equal(await counts(),saved,'publication does not manufacture new learner state');
++ assert.equal(await db.query(`select md5(document::text) from runtime_publish_private.snapshots where id=${q(before.bundle.snapshotId)}`),immutable);
++ assert.equal(before.bundle.privatePayload.dependencies.digital_textbook_activity_secrets.find(a=>a.activity_id===activity.id).answer_key.value,0);
++ assert.equal((await call({operation:'dispatch',payload})).status,409);
++ assert.equal((await call({operation:'bootstrap',sessionRef:old.sessionRef})).status,409);
++ await assert.rejects(publisher.rollbackPublication(next.bundle.scope,before.bundle.snapshotId,next.pointer),/RETIRED/);
++ const fresh=await(await call({operation:'bootstrap'})).json();assert.equal(fresh.manifest.snapshot.id,next.bundle.snapshotId);assert.notEqual(fresh.sessionRef,old.sessionRef);
++ const newPayload={...payload,sessionRef:fresh.sessionRef,generation:fresh.continuation.generation,
++  request:{...payload.request,activity:fresh.catalog.find(c=>c.runtimeRef===activity.id).serviceRef,response:activity.publicPresentation.options[1].id}};
++ const answered=await call({operation:'dispatch',payload:newPayload});assert.equal(answered.status,200);
++ const result=await answered.json();assert.equal(result.correct,true,JSON.stringify(result));
++ assert.match((await db.raw(`update public.digital_textbook_activity_secrets set answer_key='{"kind":"index","value":0}' where activity_id=${q(activity.id)}`)).stderr,/IMMUTABLE/);
++ assert.equal(await db.query('select count(*) from runtime_publish_private.runtime_requests where finished_at is null'),'0');
++ // No-op edit/cancel can also produce a fresh snapshot without resurrecting
++ // old sessions or deleting old artifacts (capture authoring revision differs).
++ assert.equal((await editing.beginChapterOneEditing()).state,'editing');
++ const unchanged=await publisher.compileChapterOnePublication();assert.notEqual(unchanged.snapshotId,next.bundle.snapshotId);
++ await publisher.publishChapterOne(next.pointer);
++ assert.equal((await call({operation:'bootstrap',sessionRef:fresh.sessionRef})).status,409);
++ await writeFile('/tmp/uply-4b1c-single-version-proof.json',JSON.stringify({before:before.bundle.manifestDigest,after:next.bundle.manifestDigest,
++  beforeSnapshot:before.bundle.snapshotId,afterSnapshot:next.bundle.snapshotId,cancelEditSnapshot:unchanged.snapshotId,
++  steps:compiled.manifest.steps.length,activities:compiled.manifest.activityRefs.length,orientation:compiled.manifest.blocks.filter(b=>b.type==='multiple_choice').length,
++  teacherVersion:compiled.privatePayload.source.teachingVersions[0].version_number,stableTargetsUnchanged:true,oldSessionRejected:true,
++  oldSnapshotPreserved:true,progressReset:false,recordingObjectsTouched:false,remainingInflight:Number(await db.query('select count(*) from runtime_publish_private.runtime_requests where finished_at is null'))},null,2));
++}
+diff --git a/tests/smart-textbook-runtime-4b1b.test.mjs b/tests/smart-textbook-runtime-4b1b.test.mjs
+index 2730cb3..f77c0bb 100644
+--- a/tests/smart-textbook-runtime-4b1b.test.mjs
++++ b/tests/smart-textbook-runtime-4b1b.test.mjs
+@@ -10,8 +10,9 @@ import {serverModule} from './fixtures/runtime-4a2.server.mjs';
+ import {literal as q,json,service} from './fixtures/recording-v2-postgres.mjs';
+ import {source} from './fixtures/runtime-4a.mjs';
+ import {wav} from './fixtures/teacher-boundary-4a14.mjs';
++import {verifySingleVersionAuthoring} from './fixtures/single-version-authoring.mjs';
+ 
+-test('4B1B actual app admission + SQL dependencies + formal HTTP + published Runtime',{timeout:300000},async t=>{
++test('4B1B/4B1C actual app admission + single-version authoring + formal HTTP + published Runtime',{timeout:600000},async t=>{
+  let f,browser,http;const saved={...process.env},originalFetch=globalThis.fetch;
+  try{
+   f=await publishedChapterFixture();const {db}=f;
+@@ -40,6 +41,7 @@ test('4B1B actual app admission + SQL dependencies + formal HTTP + published Run
+    create function auth.uid() returns uuid language sql as $$select ${q(f.student)}::uuid$$;
+    create function private.is_platform_owner() returns boolean language sql as $$select exists(select 1 from public.profiles where id=auth.uid() and global_role='platform_owner')$$;`);
+   await db.query(await readFile('supabase/migrations/202608180032_platform_owner_publish_textbook_chapter.sql','utf8'));
++  await db.query(await readFile('supabase/migrations/202609100005_chapter_publish_semantic_compatibility.sql','utf8'));
+   Object.assign(process.env,{RECORDING_EVIDENCE_PROOF_KEY_ID:'admission-isolated',RECORDING_EVIDENCE_PROOF_SECRET_HEX:secret.toString('hex'),
+    R2_ACCOUNT_ID:'isolated',R2_ACCESS_KEY_ID:'isolated',R2_SECRET_ACCESS_KEY:'isolated',R2_BUCKET_NAME:'isolated'});
+   const overrides={...publishedOverrides,
+@@ -128,13 +130,17 @@ test('4B1B actual app admission + SQL dependencies + formal HTTP + published Run
+    const {projectPublicationCapture}=await serverModule('src/lib/smart-textbook-publishing/capture.server.ts');
+    await assert.rejects(async()=>projectPublicationCapture(JSON.parse(capture)));
+    // ACTUAL existing chapter publish workflow touches shared test/parent rows.
+-   // This is a detected workflow blocker, NOT "new version publication passed".
+-   await reject(`select public.publish_digital_textbook_chapter(${q(chapter)})`);
+-   assert.equal(await db.query("select count(*) from public.chapter_test_questions where status='published'"),'0','whole original publish RPC rolls back');
++   // 4B1C corrects the former shared timestamp blocker. This is the REAL old
++   // owner RPC, not a substitute published-state UPDATE.
++   await db.query(`select public.publish_digital_textbook_chapter(${q(chapter)})`);
++   assert.equal(await db.query("select count(*) from public.chapter_test_questions where status='published'"),'1','real chapter publish completed atomically');
+    const sibling=randomUUID();await clone('digital_textbook_chapters',source.chapter.id,{id:sibling,chapter_number:2});
+    await db.query(`update public.digital_textbook_chapters set title='{"zh-CN":"isolated sibling edited"}' where id=${q(sibling)}`);
+    assert.equal(await db.query(`select title->>'zh-CN' from public.digital_textbook_chapters where id=${q(sibling)}`),'isolated sibling edited');
+-   await reject(`select public.publish_digital_textbook_chapter(${q(sibling)})`);
++   await db.query(`select public.publish_digital_textbook_chapter(${q(sibling)})`);
++  });
++  await t.test('4B1C single-version owner editing, request drain, republish and stale-session denial', {timeout:300000},async()=>{
++   await verifySingleVersionAuthoring({f,call,overrides});
+   });
+   await t.test('Chromium mounts ACTUAL PublishedRuntimeEntry via ACTUAL application HTTP, reload and stop', {timeout:150000},async()=>{
+    const js=await build({entryPoints:['tests/fixtures/runtime-4b1b-browser.tsx'],bundle:true,write:false,outdir:'/tmp/runtime4b1b-client',platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'}});
+@@ -146,8 +152,11 @@ test('4B1B actual app admission + SQL dependencies + formal HTTP + published Run
+    }catch(e){errors.push(e.message);res.statusCode=500;res.end('{}');}});
+    await new Promise(r=>http.listen(0,'127.0.0.1',r));browser=await chromium.launch({headless:true});const page=await browser.newPage();page.setDefaultTimeout(40000);page.on('pageerror',e=>errors.push(e.message));
+    await page.goto(`http://127.0.0.1:${http.address().port}`);await page.locator('form').first().waitFor();assert.equal(await page.locator('form').count(),3);assert.equal(await page.locator('nav ol button').count(),8);
+-   const form=page.locator('form').first();await form.locator('input').first().check();await form.getByRole('button',{name:'提交答案'}).click();
+-   await page.waitForFunction(()=>document.querySelector('form')?.textContent?.includes('隔离'));
++   await page.getByText('修订后的见面问候检查', {exact:true}).waitFor();
++   const form=page.locator('form').filter({hasText:'修订后的见面问候检查'});await form.locator('input').nth(1).check();
++   const submission=page.waitForResponse(r=>r.url().endsWith('/learning')&&r.request().postDataJSON()?.payload?.request?.op==='native-submit');
++   await form.getByRole('button',{name:'提交答案'}).click();
++   const graded=await submission;assert.equal(graded.status(),200);assert.equal((await graded.json()).correct,true,'actual revised answer is graded by the server');
+    const teaching=page.getByRole('region',{name:'金老师讲解',exact:true});await teaching.getByRole('button',{name:'开始讲解'}).click();
+    await page.waitForFunction(()=>['feedback','awaiting-task','awaiting-answer'].includes(document.querySelector('[data-teacher-phase]')?.getAttribute('data-teacher-phase')));
+    assert((await teaching.locator('.runtime-teacher-caption').innerText()).length>0);

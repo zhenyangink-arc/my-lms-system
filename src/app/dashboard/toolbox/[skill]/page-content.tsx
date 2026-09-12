@@ -1,3 +1,6 @@
+import { ReferencedGrammarMaterials } from "@/features/growth-toolbox/components/referenced-grammar-materials";
+import { approvedVocabulary, type PracticeSnapshotItem } from "@/lib/chapter-practice-binding";
+import { VocabularyPractice } from "../vocabulary/VocabularyPractice";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import type { LucideIcon } from "lucide-react";
@@ -606,6 +609,14 @@ export async function ToolboxSkillPage({
       };
     });
 
+  const referenceResult = selectedUnit && (skill === "vocabulary" || skill === "grammar") ? await supabase.rpc("read_chapter_practice_snapshots", { p_app_id: STUDENT_APP_IDS.korean }) : null;
+  const referenceRows = (referenceResult?.data ?? []) as { lesson_id: string; chapter_test_id: string | null; snapshot: PracticeSnapshotItem[] }[];
+  // Use the existing lesson + test relationship, never infer a match from a chapter number.
+  const chapterSnapshots = selectedUnit?.chapter.chapter_test_id ? referenceRows
+    .filter(row => row.lesson_id === selectedUnit.lesson.id && row.chapter_test_id === selectedUnit.chapter.chapter_test_id)
+    .map(row => row.snapshot) : [];
+  const chapterWords = skill === "vocabulary" ? approvedVocabulary(chapterSnapshots) : [];
+
   const catalog = courses.map((course) => ({
     ...course,
     lessons: lessons
@@ -892,6 +903,12 @@ export async function ToolboxSkillPage({
         )}
       </header>
 
+      {skill === "grammar" && <ReferencedGrammarMaterials items={chapterSnapshots.flat()} />}
+      {chapterWords.length > 0 && <section className="space-y-3">
+        <CardTitleWithHint headingLevel={2} title="本章词汇复习" description="复习老师已确认的教材词汇。词卡练习不计入正式题目成绩。" />
+        <VocabularyPractice key={selectedUnit.chapter.id} words={chapterWords} textbookCount={chapterWords.length} customCount={0} />
+      </section>}
+      {referenceResult?.error && !["PGRST202", "42883"].includes(referenceResult.error.code) && <p role="status" className="text-sm">教材复习材料暂时无法读取，请稍后刷新。</p>}
       {questionError ? (
         <section role="alert" className="app-card flex min-h-56 flex-col items-center justify-center rounded-3xl border p-8 text-center">
           <Circle className="opacity-50" size={28} aria-hidden="true" />

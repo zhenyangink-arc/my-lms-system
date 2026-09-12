@@ -73,7 +73,7 @@ async function fetchSignedObject(method: "HEAD" | "DELETE", objectKey: string) {
     new Request(createObjectUrl(accountId, bucketName, objectKey), { method }),
   );
 
-  return fetch(signedRequest);
+  return fetch(signedRequest, { signal: AbortSignal.timeout(15000) });
 }
 
 export async function createR2SignedVideoUrl(objectKey: string) {

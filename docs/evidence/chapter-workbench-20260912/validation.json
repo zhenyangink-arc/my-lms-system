@@ -1,0 +1,16 @@
+{
+  "tests": 1208,
+  "pass": 1208,
+  "fail": 0,
+  "cancelled": 0,
+  "skipped": 0,
+  "testLogSha256": "98fdb101e6eebca73feb7490e1b585bf33e1a5617d41fec9e276be6c8a310deb",
+  "buildLogSha256": "0f7cbf185663636bac8d16a4c8a60bc944d0fda4dbee75d0eee54a9c8a38e1b1",
+  "isolatedBuild": true,
+  "typescript": true,
+  "patchSha256": "1729f3a79d34d263cb325c30f48996fdacb62e922c51d66bfb0e584fde9c5b33",
+  "patchCheck": true,
+  "productionDeployment": false,
+  "productionDatabaseWrites": false,
+  "authenticatedOwnerBrowserE2E": false
+}
