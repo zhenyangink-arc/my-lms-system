@@ -1,0 +1,279 @@
+diff --git a/src/features/courses/components/course-catalog-listing.tsx b/src/features/courses/components/course-catalog-listing.tsx
+index a20cdd0..51a86f1 100644
+--- a/src/features/courses/components/course-catalog-listing.tsx
++++ b/src/features/courses/components/course-catalog-listing.tsx
+@@ -2,7 +2,6 @@ import Link from "next/link";
+ import { ChevronRight, Folders } from "lucide-react";
+ 
+ import {
+-  ManagementMetricStrip,
+   ManagementNotice,
+ } from "@/components/layout/management-page";
+ import { scopeDashboardPath } from "@/lib/dashboard-path";
+@@ -14,7 +13,7 @@ import type {
+   CourseCatalogLesson,
+   CourseCategory,
+ } from "../api/types";
+-import { CourseCatalogFolderTable } from "./course-catalog-tree";
++import { CourseStructureDirectory, CourseStructureItems } from "./course-structure-directory";
+ import type { CourseCatalogFolderRow } from "./course-catalog-tree/columns";
+ import { KIND_DEFAULT_ICON } from "./course-catalog-tree/course-catalog-visuals";
+ import {
+@@ -115,7 +114,7 @@ function parseFolderParam(value?: string): FolderRef | null {
+ }
+ 
+ function folderHref(catalogRoute: string, ref: FolderRef | null) {
+-  return ref ? `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${ref.kind}:${ref.id}` : catalogRoute;
++  return ref ? `${catalogRoute}${catalogRoute.includes("?") ? "&" : "?"}folder=${encodeURIComponent(`${ref.kind}:${ref.id}`)}` : catalogRoute;
+ }
+ 
+ function categoryRow(
+@@ -314,9 +313,13 @@ function buildBreadcrumb(
+   catalogRoute: string,
+ ): BreadcrumbEntry[] {
+   const trail: FolderRef[] = [];
++  const visited = new Set<string>();
+   let cursor: FolderRef | null = ref;
+   while (cursor) {
+     const node: FolderRef = cursor;
++    const key = `${node.kind}:${node.id}`;
++    if (visited.has(key)) break;
++    visited.add(key);
+     trail.unshift(node);
+     if (node.kind === "category") {
+       const category = data.categories.find((item) => item.id === node.id);
+@@ -366,10 +369,15 @@ export default async function CourseCatalogListing({
+ }) {
+   const selection = await searchParams;
+   const result = await getCourseManagementData(selection, studentAppId);
+-  const catalogRoute = routeBasePath ?? scopeDashboardPath(
++  const baseRoute = routeBasePath ?? scopeDashboardPath(
+     "/dashboard/admin/courses",
+     result.dashboardBasePath,
+   );
++  // An incoming textbook chapter locates the initial lesson. Directory navigation
++  // then owns its location; retaining chapter would reselect that lesson at root.
++  const directoryUrl = new URL(baseRoute, "https://internal.invalid");
++  directoryUrl.searchParams.delete("chapter");
++  const catalogRoute = `${directoryUrl.pathname}${directoryUrl.search}`;
+ 
+   const requestedFolder = parseFolderParam(selection.folder);
+   const currentFolderNode = !requestedFolder
+@@ -426,18 +434,17 @@ export default async function CourseCatalogListing({
+           当前账号可以查看平台课程，但只有平台负责人和平台管理员可以修改。
+         </ManagementNotice>
+       )}
+-      <ManagementMetricStrip
+-        label="课程结构概况"
+-        items={[
+-          {
+-            label: "顶级分类",
+-            value: result.categories.filter((item) => !item.parent_id).length,
+-          },
+-          { label: "课程", value: result.courses.length },
+-          { label: "课时", value: result.lessons.length },
+-          { label: "章节", value: result.chapters.length },
+-        ]}
+-      />
++      <header className="flex flex-wrap items-center justify-between gap-3 pb-2">
++        <h1 className="text-xl font-semibold">课程结构</h1>
++        <p className="text-sm text-[var(--foreground-muted)]">{result.courses.length} 门课程 · {result.lessons.length} 个课时 · {result.chapters.length} 个章节</p>
++      </header>
++      {selection.folder && !currentFolderNode && <ManagementNotice tone="warning">当前目录不存在或不可访问。请从左侧重新选择。</ManagementNotice>}
++      <div className="grid items-start gap-5 lg:grid-cols-[260px_minmax(0,1fr)]">
++      <CourseStructureDirectory rootHref={catalogRoute} rootActive={!folderRef} entries={[
++        ...sortBySortOrder(result.categories).map(category => ({ key: `category:${category.id}`, title: category.title, context: category.parent_id ? `分类 · ${result.categories.find(parent => parent.id === category.parent_id)?.title ?? "上级不可用"}` : "顶级分类", href: folderHref(catalogRoute, { kind: "category", id: category.id }), active: folderRef?.kind === "category" && folderRef.id === category.id })),
++        ...sortBySortOrder(result.courses).map(course => ({ key: `course:${course.id}`, title: course.title, context: `${result.categories.find(category => category.id === course.category_id)?.title ?? "未分类"} · ${result.lessons.filter(lesson => lesson.course_id === course.id).length} 个课时`, href: folderHref(catalogRoute, { kind: "course", id: course.id }), active: (folderRef?.kind === "course" && folderRef.id === course.id) || (folderRef?.kind === "lesson" && result.lessons.some(lesson => lesson.id === folderRef.id && lesson.course_id === course.id)) })),
++      ]} />
++      <div className="min-w-0 space-y-5">
+       <section className="space-y-3">
+         <nav aria-label="当前目录位置" className="flex flex-wrap items-center gap-1 text-xs text-[var(--foreground-muted)]">
+           {breadcrumb.map((crumb, index) => {
+@@ -474,9 +481,7 @@ export default async function CourseCatalogListing({
+               </span>
+             </div>
+             <p className="mt-1 text-xs text-[var(--foreground-muted)]">
+-              {folderRef
+-                ? "点击下级内容进入下一层，或使用面包屑返回上一层。"
+-                : "先建立课程层级与开放规则，再进入教材制作填写学生真正学习的内容。"}
++              {folderRef ? "管理当前目录的下级内容与开放规则。" : "管理分类、课程、课时与章节；教学内容请进入教材制作。"}
+             </p>
+           </div>
+           <div className="flex items-center gap-2">
+@@ -488,7 +493,7 @@ export default async function CourseCatalogListing({
+                 进入教材制作
+               </Link>
+             )}
+-            {result.canManage && folderRef && (
++            {result.canManage && !result.catalogErrorMessage && folderRef && (
+               <CourseCatalogEditDialog
+                 node={currentFolderNode!}
+                 options={{
+@@ -500,7 +505,7 @@ export default async function CourseCatalogListing({
+                 }}
+               />
+             )}
+-            {result.canManage && createTarget && (
++            {result.canManage && !result.catalogErrorMessage && createTarget && !Boolean(selection.folder && !currentFolderNode) && (
+               <CourseCatalogCreateDialog
+                 primary
+                 studentAppId={studentAppId}
+@@ -509,9 +514,10 @@ export default async function CourseCatalogListing({
+             )}
+           </div>
+         </div>
+-        <CourseCatalogFolderTable
++        <CourseStructureItems
++          key={folderRef ? `${folderRef.kind}:${folderRef.id}` : "root"}
+           rows={folderRows}
+-          canManage={result.canManage}
++          canManage={result.canManage && !result.catalogErrorMessage}
+           options={{
+             categories: result.categories,
+             courses: result.courses,
+@@ -519,8 +525,6 @@ export default async function CourseCatalogListing({
+             chapters: result.chapters,
+             studentAppId,
+           }}
+-          dashboardBasePath={result.dashboardBasePath}
+-          routeBasePath={catalogRoute}
+           catalogRoute={catalogRoute}
+           folderParam={folderRef ? `${folderRef.kind}:${folderRef.id}` : undefined}
+         />
+@@ -563,6 +567,8 @@ export default async function CourseCatalogListing({
+           )}
+         </section>
+       )}
++      </div>
++      </div>
+     </div>
+   );
+ }
+diff --git a/src/features/courses/components/course-structure-directory.tsx b/src/features/courses/components/course-structure-directory.tsx
+new file mode 100644
+index 0000000..365c591
+--- /dev/null
++++ b/src/features/courses/components/course-structure-directory.tsx
+@@ -0,0 +1,63 @@
++"use client";
++
++import Link from "next/link";
++import { useState } from "react";
++import { ChevronRight, Folder, Search } from "lucide-react";
++import { CourseCatalogEditDialog, type CourseCatalogActionOptions } from "./course-catalog-action-dialogs";
++import type { CourseCatalogFolderRow } from "./course-catalog-tree/columns";
++
++export type StructureEntry = { key: string; title: string; context: string; href: string; active: boolean };
++
++export function CourseStructureDirectory({ entries, rootHref, rootActive }: { entries: StructureEntry[]; rootHref: string; rootActive: boolean }) {
++  const [query, setQuery] = useState("");
++  const visible = entries.filter(entry => `${entry.title} ${entry.context}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
++  return <aside className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 lg:self-start lg:sticky lg:top-4">
++    <h2 className="mb-3 text-sm font-semibold">课程目录</h2>
++    <label className="relative block">
++      <span className="sr-only">搜索分类或课程</span><Search aria-hidden="true" className="absolute left-3 top-3.5 size-4 text-[var(--foreground-muted)]" />
++      <input value={query} onChange={event => setQuery(event.target.value)} placeholder="搜索分类或课程" className="app-input mb-3 h-11 w-full min-w-0 rounded-lg border pl-9 pr-3 text-sm" />
++    </label>
++    <nav aria-label="分类与课程" className="max-h-64 space-y-1 overflow-y-auto lg:max-h-[65vh]">
++      <Link href={rootHref} aria-current={rootActive ? "page" : undefined} className={`flex min-h-11 items-center gap-2 rounded-lg px-3 text-sm ${rootActive ? "bg-[var(--surface-soft)] font-semibold" : "hover:bg-[var(--surface-soft)]"}`}><Folder aria-hidden="true" className="size-4" />全部分类</Link>
++      {visible.map(entry => <Link key={entry.key} href={entry.href} aria-current={entry.active ? "page" : undefined} className={`block rounded-lg border px-3 py-3 focus-visible:ring-2 focus-visible:ring-[var(--primary)] ${entry.active ? "border-[var(--primary)] bg-[var(--surface-soft)]" : "border-transparent hover:bg-[var(--surface-soft)]"}`}>
++        <span className="block break-words text-sm font-medium">{entry.title}</span><span className="mt-1 block break-words text-xs text-[var(--foreground-muted)]">{entry.context}</span>
++      </Link>)}
++      {!visible.length && <p role="status" className="p-3 text-sm text-[var(--foreground-muted)]">没有匹配的分类或课程</p>}
++    </nav>
++  </aside>;
++}
++
++export function CourseStructureItems({ rows, catalogRoute, folderParam, options, canManage }: {
++  rows: CourseCatalogFolderRow[]; catalogRoute: string; folderParam?: string; options: CourseCatalogActionOptions; canManage: boolean;
++}) {
++  const [query, setQuery] = useState("");
++  const [status, setStatus] = useState("all");
++  const visible = rows.filter(row => row.title.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()) && (status === "all" || (status === "draft" ? !row.isPublished : status === "locked" ? row.isLocked : row.isPublished && !row.isLocked)));
++  const join = catalogRoute.includes("?") ? "&" : "?";
++  return <div className="overflow-hidden rounded-xl border border-[var(--border)] bg-[var(--surface)]">
++    <div className="flex flex-wrap items-end gap-3 border-b border-[var(--border)] p-4">
++      <label className="grid min-w-0 flex-1 gap-1 text-xs text-[var(--foreground-muted)]">查找当前目录<input value={query} onChange={e => setQuery(e.target.value)} placeholder="输入名称" className="app-input h-11 w-full rounded-lg border px-3 text-sm" /></label>
++      <label className="grid gap-1 text-xs text-[var(--foreground-muted)]">开放状态<select aria-label="开放状态" value={status} onChange={e => setStatus(e.target.value)} className="app-input h-11 rounded-lg border px-3 text-sm"><option value="all">全部状态</option><option value="published">已上架且未锁定</option><option value="draft">未上架</option><option value="locked">已锁定</option></select></label>
++    </div>
++    <ul className="divide-y divide-[var(--border)]">
++      {visible.map(row => {
++        const detail = `${catalogRoute}${join}node=${row.kind}&id=${encodeURIComponent(row.id)}${folderParam ? `&folder=${encodeURIComponent(folderParam)}` : ""}#course-content`;
++        const href = row.canOpen ? `${catalogRoute}${join}folder=${encodeURIComponent(`${row.kind}:${row.id}`)}` : detail;
++        return <li key={row.key} className="flex flex-wrap items-center gap-3 p-4 sm:p-5">
++          <Link href={href} className="group flex min-w-0 basis-full items-center gap-3 rounded-md focus-visible:ring-2 focus-visible:ring-[var(--primary)] sm:flex-1 sm:basis-0">
++            <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-[var(--surface-soft)] text-xs">{row.kindLabel}</span>
++            <span className="min-w-0"><span className="block break-words text-sm font-semibold group-hover:underline">{row.title}</span><span className="mt-1 block text-xs text-[var(--foreground-muted)]">{row.contentLabel}</span></span>
++            <ChevronRight aria-hidden="true" className="size-4 shrink-0 text-[var(--foreground-muted)]" />
++          </Link>
++          <span className="text-xs text-[var(--foreground-muted)]">{row.isPublished ? "已上架" : "未上架"}{row.isLocked ? " · 已锁定" : ""}</span>
++          <div className="flex items-center gap-2">
++            <Link href={detail} className="inline-flex min-h-11 items-center rounded-lg border border-[var(--border)] px-3 text-sm">查看资料</Link>
++            {canManage && <CourseCatalogEditDialog node={row.node} options={options} />}
++          </div>
++        </li>;
++      })}
++    </ul>
++    {!visible.length && <p role="status" className="p-8 text-center text-sm text-[var(--foreground-muted)]">{rows.length ? "没有符合当前条件的内容" : "当前目录还没有内容，可使用上方新建按钮添加。"}</p>}
++    <p aria-live="polite" className="border-t border-[var(--border)] px-4 py-3 text-xs text-[var(--foreground-muted)]">显示 {visible.length} / {rows.length} 项</p>
++  </div>;
++}
+diff --git a/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx b/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
+index 1b75b6b..fd5527a 100644
+--- a/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
++++ b/src/app/dashboard/admin/apps/CourseWorkflowNavigation.tsx
+@@ -10,7 +10,7 @@ export async function CourseWorkflowNavigation({ access, section, chapterId }: {
+   const steps = courseContentSteps(access);
+   // The context selector must not introduce a stricter authorization gate on the catalog.
+   const canReadTextbooks = access.scope !== "platform" || access.globalRole === "platform_owner" || access.globalRole === "platform_admin";
+-  const hasChapterNavigator = section === 'textbooks';
++  const hasChapterNavigator = section === 'textbooks' || section === 'content';
+   const data = canReadTextbooks && !hasChapterNavigator ? await getDigitalTextbookManagementData(access.appId) : null;
+   const chapters = data && !data.hasError ? workflowChapters(data.courses) : [];
+   const selected = chapters.find(chapter => chapter.id === chapterId);
+diff --git a/tests/course-structure-studio.test.mjs b/tests/course-structure-studio.test.mjs
+new file mode 100644
+index 0000000..9de8535
+--- /dev/null
++++ b/tests/course-structure-studio.test.mjs
+@@ -0,0 +1,40 @@
++import test from 'node:test';
++import assert from 'node:assert/strict';
++import { build } from 'esbuild';
++import { chromium } from '@playwright/test';
++import { createServer } from 'node:http';
++import { readFile, mkdir } from 'node:fs/promises';
++import postcss from 'postcss';
++import tailwind from '@tailwindcss/postcss';
++
++test('course structure: real listing navigation, scope, search, status, details and responsive layout', {timeout:120000}, async()=>{
++  const base={description:'',sort_order:10,is_published:true,is_manually_locked:false,unlock_mode:'immediate',duration_minutes:20};
++  const data={canManage:true,dashboardBasePath:'/platform/dashboard',categories:[{...base,id:'cat',title:'韩语课程',slug:'korean',parent_id:null}],courses:[{...base,id:'course',title:'韩语初级',slug:'level-one',category_id:'cat'}],lessons:Array.from({length:8},(_,i)=>({...base,id:`lesson-${i}`,title:`第 ${i+1} 课：${i===0?'你好！':'日常交流'}`,slug:`lesson-${i}`,course_id:'course',sort_order:i,is_published:i!==7})),chapters:[{...base,id:'chapter',title:'初次见面',slug:'hello',lesson_id:'lesson-0',completion_rule:'test_passed',chapter_test_id:null}],resources:[]};
++  const bundle=await build({stdin:{contents:`import React from 'react';import{createRoot}from'react-dom/client';import Listing from './src/features/courses/components/course-catalog-listing';const q=new URLSearchParams(location.search);createRoot(document.getElementById('root')).render(await Listing({searchParams:Promise.resolve(Object.fromEntries(q)),studentAppId:'app',routeBasePath:'/',textbookRoute:'/textbooks'}));`,resolveDir:process.cwd(),loader:'tsx'},bundle:true,write:false,platform:'browser',format:'esm',jsx:'automatic',define:{'process.env.NODE_ENV':'"development"'},plugins:[{name:'isolated-transport',setup(b){
++    b.onResolve({filter:/api\/service$/},a=>a.importer.endsWith('course-catalog-listing.tsx')?{path:'data',namespace:'test'}:undefined);
++    b.onResolve({filter:/^next\/link$/},()=>({path:'link',namespace:'test'}));
++    b.onResolve({filter:/course-catalog-action-dialogs$/},()=>({path:'dialogs',namespace:'test'}));
++    b.onResolve({filter:/course-catalog-node-view$/},()=>({path:'detail',namespace:'test'}));
++    b.onLoad({filter:/.*/,namespace:'test'},a=>({loader:'jsx',resolveDir:process.cwd(),contents:a.path==='data'?`export async function getCourseManagementData(){return {...${JSON.stringify(data)},canManage:!location.search.includes('readonly')}}`:a.path==='link'?`import React from'react';export default function Link({prefetch,...p}){return <a {...p}/>} `:a.path==='detail'?`import React from'react';export function CourseCatalogNodeView({node}){return <div data-testid="detail">{node.title}的资料</div>}`:`import React from'react';export function CourseCatalogEditDialog({node}){return <button onClick={()=>alert(node.id)}>编辑</button>}export function CourseCatalogCreateDialog({target}){return <button>新建{target.kind}</button>}` }));
++  }}]});
++  const css=(await postcss([tailwind()]).process(await readFile('src/app/globals.css','utf8'),{from:process.cwd()+'/src/app/globals.css'})).css;
++  const server=createServer((req,res)=>{res.setHeader('content-type',req.url==='/bundle.js'?'text/javascript':req.url==='/style.css'?'text/css':'text/html; charset=utf-8');res.end(req.url==='/bundle.js'?bundle.outputFiles[0].text:req.url==='/style.css'?css:'<!doctype html><html lang="zh-CN"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/style.css"><body><main class="p-4" data-dashboard-ui="management" data-management-workspace="platform"><div id="root"></div></main><script type="module" src="/bundle.js"></script></body></html>');});
++  let browser;
++  try{
++    await new Promise(r=>server.listen(0,'127.0.0.1',r));browser=await chromium.launch({headless:true});const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));const url=`http://127.0.0.1:${server.address().port}`;
++    await page.goto(url);await page.getByRole('heading',{name:'课程目录'}).waitFor();
++    await page.getByRole('navigation',{name:'分类与课程'}).getByRole('link',{name:/韩语初级/}).click();await page.getByRole('heading',{name:'韩语初级',exact:true}).waitFor();
++    assert.match(page.url(),/folder=course/);assert.equal(await page.getByRole('link',{name:'查看资料',exact:true}).count(),8);
++    await page.getByLabel('查找当前目录').fill('第 1 课');assert.equal(await page.getByRole('link',{name:'查看资料',exact:true}).count(),1);await page.getByLabel('查找当前目录').fill('');
++    await page.getByLabel('开放状态',{exact:true}).selectOption('draft');assert.equal(await page.getByRole('link',{name:'查看资料',exact:true}).count(),1);await page.getByLabel('开放状态',{exact:true}).selectOption('all');
++    await mkdir('/tmp/uply-course-structure-visual',{recursive:true});
++    for(const width of [1440,375]){await page.setViewportSize({width,height:960});await page.screenshot({path:`/tmp/uply-course-structure-visual/${width}.png`,fullPage:true});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth+1));}
++    await page.setViewportSize({width:1440,height:960});await page.evaluate(()=>document.documentElement.classList.add('dark'));await page.screenshot({path:'/tmp/uply-course-structure-visual/dark.png',fullPage:true});
++    await page.getByRole('link',{name:/第 1 课：你好/}).click();await page.getByRole('heading',{name:'第 1 课：你好！',exact:true}).waitFor();await page.reload();await page.getByRole('link',{name:'查看资料',exact:true}).click();await page.getByTestId('detail').waitFor();assert.match(await page.getByTestId('detail').textContent(),/初次见面/);
++    await page.getByRole('link',{name:'收起详情'}).click();assert.equal(await page.getByTestId('detail').count(),0);
++    await page.getByLabel('搜索分类或课程').fill('没有');await page.getByText('没有匹配的分类或课程',{exact:true}).waitFor();
++    await page.goto(url+'?readonly');await page.getByRole('heading',{name:'课程目录'}).waitFor();assert.equal(await page.getByRole('button',{name:'编辑',exact:true}).count(),0);assert.equal(await page.getByRole('button',{name:/新建/}).count(),0);
++    await page.goto(url+'?folder=course:missing');await page.getByText('当前目录不存在或不可访问。请从左侧重新选择。').waitFor();assert.equal(await page.getByRole('button',{name:/新建/}).count(),0);
++    assert.deepEqual(errors,[]);
++  }finally{await browser?.close();await new Promise(r=>server.close(r));}
++});
