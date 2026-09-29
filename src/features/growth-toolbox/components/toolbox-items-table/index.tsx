@@ -50,7 +50,9 @@ export function GrowthToolboxItemsTable({
   const [sorting, setSorting] = useState<SortingState>([
     { id: "sortOrder", desc: false },
   ]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({
+    slug: false, href: false, iconName: false,
+  });
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const columns = useMemo(
@@ -125,7 +127,7 @@ export function GrowthToolboxItemsTable({
         </p>
       }
     >
-      <Table className="min-w-[1200px]">
+      <Table className="min-w-[720px]">
         <TableHeader className="bg-[var(--surface-soft)]">
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>

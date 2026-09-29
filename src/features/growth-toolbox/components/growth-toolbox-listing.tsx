@@ -2,7 +2,6 @@ import { requireActiveUser } from "@/lib/auth";
 import { chapterPracticeSnapshot, type ChapterPracticeBinding } from "@/lib/chapter-practice-binding";
 import { ChapterPracticeBindingPanel } from "./chapter-practice-binding";
 import {
-  ManagementMetricStrip,
   ManagementNotice,
 } from "@/components/layout/management-page";
 import { getGrowthToolboxManagementData } from "../api/service";
@@ -10,6 +9,8 @@ import { getDigitalTextbookManagementData } from "@/features/digital-textbook/ap
 import { textbookPracticeResources } from "@/lib/textbook-practice-resources";
 import { TextbookResourceCatalog } from "./textbook-resource-catalog";
 import { practiceSourceNotice } from "@/lib/course-content-workflow";
+import { CardTitleWithHint } from "@/components/ui/card-title-with-hint";
+import { GrowthToolboxWorkspace, GrowthToolboxLibrary } from "./growth-toolbox-workspace";
 import { GrowthToolboxGrammarTable } from "./grammar-table";
 import { GrowthToolboxItemsTable } from "./toolbox-items-table";
 import type { GrowthToolboxItemDisplayRow } from "./toolbox-items-table/columns";
@@ -49,40 +50,16 @@ export default async function GrowthToolboxListing({
         : "未关联课程",
     }),
   );
-  const enabledCount = toolboxItems.filter((item) => item.isEnabled).length;
-  const textbookVocabularyCount = result.vocabularyLibrary.filter(
-    (item) => item.source === "textbook",
-  ).length;
-  const grammarAudioCount = result.grammarLibrary.reduce(
-    (total, item) =>
-      total +
-      item.rows.filter((row) => Boolean(row.audio)).length +
-      item.examples.filter((example) => Boolean(example.audio)).length,
-    0,
-  );
 
   return (
     <div className="space-y-6">
-      <ManagementNotice tone="warning">{practiceSourceNotice}</ManagementNotice>
-      {chapterId && <ManagementNotice>教材原文已按所选章节及版本筛选。下方独立练习库仍展示全部资源，不代表已关联到本章。</ManagementNotice>}
       {result.hasError && (
         <ManagementNotice tone="warning">
           工具入口、课程结构、词汇库或语法库数据暂时无法完整读取，请稍后刷新重试。
         </ManagementNotice>
       )}
 
-      <ManagementMetricStrip
-        label="练习工具概况"
-        items={[
-          { label: "工具入口", value: toolboxItems.length },
-          { label: "已启用", value: enabledCount },
-          { label: "词汇总数", value: result.vocabularyLibrary.length },
-          { label: "教材导入副本", value: textbookVocabularyCount },
-          { label: "语法总数", value: result.grammarLibrary.length },
-          { label: "语法音频", value: grammarAudioCount },
-        ]}
-      />
-
+      <GrowthToolboxWorkspace settings={
       <ReadOnlySection
         title="工具入口"
         description="查看学生端入口的启停状态、展示顺序和关联课程。"
@@ -94,13 +71,21 @@ export default async function GrowthToolboxListing({
           canManage={result.canManage}
         />
       </ReadOnlySection>
-
+      } chapter={<div className="space-y-4">
       {chapterId && result.canManage && <ChapterPracticeBindingPanel
         key={`${chapterId}:${binding?.revision ?? 0}:${JSON.stringify(currentSnapshot)}`}
         appId={studentAppId} chapterId={chapterId} current={currentSnapshot}
         binding={binding} available={Boolean(bindingResult && !bindingResult.error && !textbookResult.hasError && !result.hasError)}
       />}
       {!chapterId && result.canManage && <ManagementNotice>在上方选择章节与教材版本后，可核对并关联本章教材练习。</ManagementNotice>}
+      {!result.canManage && <ManagementNotice>当前权限仅可查看独立练习库和工具设置，不能管理章节练习关联。</ManagementNotice>}
+      </div>} library={<div className="space-y-5">
+      <CardTitleWithHint title="独立练习库" headingLevel={2}
+        description={`这里展示当前应用的全部独立资源，不随上方章节筛选，也不代表已关联到本章。${practiceSourceNotice}`}
+        hintLabel="独立练习库的范围与保存规则" />
+      <details className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4">
+        <summary className="cursor-pointer text-sm font-medium">从教材添加 · {chapterId ? "所选章节" : "全部章节"}</summary>
+        <div className="mt-4">
       {textbookResult.hasError ? (
         <ManagementNotice tone="warning">教材来源未能完整读取，暂不提供复制入口。现有练习库仍可查看。</ManagementNotice>
       ) : (
@@ -112,7 +97,9 @@ export default async function GrowthToolboxListing({
           canManage={result.canManage && !result.hasError}
         />
       )}
-
+        </div>
+      </details>
+      <GrowthToolboxLibrary vocabulary={
       <ReadOnlySection
         title="独立词汇库"
         description="查看独立练习词库及互动教材导入来源。"
@@ -124,7 +111,7 @@ export default async function GrowthToolboxListing({
           canManage={result.canManage}
         />
       </ReadOnlySection>
-
+      } grammar={
       <ReadOnlySection
         title="独立语法库"
         description="查看语法结构、例句、注意事项和已配置的音频字段。"
@@ -136,6 +123,8 @@ export default async function GrowthToolboxListing({
           canManage={result.canManage}
         />
       </ReadOnlySection>
+      } />
+      </div>} />
     </div>
   );
 }
@@ -154,10 +143,8 @@ function ReadOnlySection({
   return (
     <section className="space-y-3">
       <div className="flex items-end justify-between gap-3">
-        <div>
-          <h2 className="text-base font-semibold text-[var(--foreground)]">{title}</h2>
-          <p className="mt-1 text-xs text-[var(--foreground-muted)]">{description}</p>
-        </div>
+        <CardTitleWithHint title={title} description={description} headingLevel={3}
+          titleClassName="text-base font-semibold text-[var(--foreground)]" hintLabel={`${title}说明`} />
         {action}
       </div>
       {children}

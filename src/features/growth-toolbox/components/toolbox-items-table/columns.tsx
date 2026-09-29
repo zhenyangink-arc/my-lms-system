@@ -71,11 +71,6 @@ export function getGrowthToolboxItemColumns(
         <p className="font-medium text-[var(--foreground-secondary)]">
           {row.original.relatedCourseTitle}
         </p>
-        {row.original.relatedCourseId && (
-          <p className="mt-0.5 font-mono text-[10px] text-[var(--foreground-muted)]">
-            …{row.original.relatedCourseId.slice(-8)}
-          </p>
-        )}
       </div>
     ),
   },

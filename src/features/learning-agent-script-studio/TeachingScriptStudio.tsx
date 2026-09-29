@@ -336,7 +336,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
   const navigationMemoryKey = `${pathname}:teaching-script-navigation:v1`;
   const [showStructureNav, setShowStructureNav] = useState(true);
   const [publishIssue, setPublishIssue] = useState<{ message: string; nodeKey?: string } | null>(null);
-  const [showOrchestrationAxis, setShowOrchestrationAxis] = useState(true);
+  const [showOrchestrationAxis, setShowOrchestrationAxis] = useState(false);
   const [flowBindingSourceNodeId, setFlowBindingSourceNodeId] = useState<string | null>(null);
   const [flowBindingRequest, setFlowBindingRequest] = useState<{ id: number; targetNodeKey: string } | null>(null);
   const [axisPreviewNodeId, setAxisPreviewNodeId] = useState<string | null>(null);
@@ -592,29 +592,14 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
 
   return (
     <div className="space-y-4">
-      <section className="space-y-3 rounded-lg border border-[var(--border)] p-4" aria-label="本章准备情况">
-        <CardTitleWithHint headingLevel={2} title={`第 ${selectedModule.chapterNumber} 章准备情况`} description="教材发布与脚本发布分别统计。下方按正式脚本检查基础配置，不能代替视频播放、学生授权与开放规则核验。点击学习步骤可进入处理。" />
-        <p className="text-sm">对应教材版本 {selectedModule.textbookVersion.number} · {versionLabel(selectedModule.textbookVersion.status)}。教材{ textbookPublished ? "已发布" : "尚未全部发布" }；正式脚本 {publishedModuleCount}/{chapterModules.length} 个学习步骤。</p>
-        {selectedModule.textbookVersion.newerDraftNumber !== null && <p role="status" className="text-sm text-[var(--status-warning)]">教材另有版本 {selectedModule.textbookVersion.newerDraftNumber} 草稿。当前脚本仍对应版本 {selectedModule.textbookVersion.number}，教材草稿修改不会显示在这里；切换教材版本后需重新核对脚本与活动。</p>}
-        <ul className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3">
-          {chapterModules.map(item => {
-            const published = item.versions.find(version => version.status === "published");
-            const summary = scriptVersionSummary(published);
-            const reviewLabel = published?.sourceReviewStatus === "reviewed" ? "教材已复核" : published?.sourceReviewStatus === "changed" ? "教材或脚本变化待复核" : "教材待复核";
-            const status = !published || !summary.nodeCount ? "待发布脚本" : summary.reviewIssues ? `正式脚本有 ${summary.reviewIssues} 项待检查` : "正式脚本基础配置已填写";
-            return <li key={item.id}><button type="button" onClick={() => selectLearningStep(item.id)} className="w-full rounded-md border border-[var(--border)] px-3 py-2 text-left text-sm hover:bg-[var(--surface-soft)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--primary)]">
-              <span className="block font-medium">{moduleLabels[item.code] ?? item.title["zh-CN"]}</span>
-              <span className="block text-xs text-[var(--foreground-muted)]">{status} · {reviewLabel}{item.versions.some(version => version.status === "draft") ? " · 另有未发布草稿" : ""}</span>
-            </button></li>;
-          })}
-        </ul>
-        <p className="text-sm">教材练习引用：{({ unknown: "暂时无法核验", unlinked: "尚未关联", disabled: "已停用", unavailable: "教材来源不可用", review: "教材已变化，待复核", linked: "已关联，内容已核对" })[selectedModule.practiceStatus]}。
-          {pathname.endsWith("/teaching-scripts") && <Link className="ml-2 underline underline-offset-4" href={`${pathname.slice(0, -"teaching-scripts".length)}toolbox?chapter=${encodeURIComponent(selectedModule.chapterId)}`}>核对本章练习</Link>}
-        </p>
-
-      </section>
-      <ChapterReleaseCheckPanel key={selectedModule.chapterId} appId={data.appId} chapterId={selectedModule.chapterId} disabled={hasUnsavedChanges || nodeSavePending} />
-      {selectedVersion && <ScriptSourceReviewPanel key={`${selectedVersion.id}:${selectedVersion.sourceReviewStatus}`} versionId={selectedVersion.id} disabled={hasUnsavedChanges || nodeSavePending} archived={selectedVersion.status === "archived"} />}
+      <header className="flex flex-wrap items-end justify-between gap-3 px-1 pt-1">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">教学脚本</h1>
+          <p className="mt-1 text-sm text-[var(--muted-foreground)]">选择教学步骤，编写讲解，再预览与发布。</p>
+        </div>
+        <span className="text-sm text-[var(--muted-foreground)]">第 {selectedModule.chapterNumber} 章 · {publishedModuleCount}/{chapterModules.length} 个步骤已有正式脚本</span>
+      </header>
+      {selectedModule.textbookVersion.newerDraftNumber !== null && <p role="status" className="rounded-lg border border-[var(--status-warning)] bg-[var(--status-warning-surface)] px-4 py-3 text-sm">教材另有版本 {selectedModule.textbookVersion.newerDraftNumber} 草稿。当前脚本仍对应教材版本 {selectedModule.textbookVersion.number}；切换版本后需重新核对脚本与活动。</p>}
       <section className="sticky top-0 z-30 flex flex-wrap items-center justify-between gap-4 rounded-xl border border-[var(--border)] bg-[color-mix(in_srgb,var(--card)_96%,transparent)] px-4 py-3 shadow-sm backdrop-blur" aria-label="教学脚本版本工具栏">
         <div className="min-w-0 flex-1">
           <p className="mb-1 truncate text-xs font-medium text-[var(--muted-foreground)]">{selectedModule.textbookTitle["zh-CN"]} / 第 {selectedModule.chapterNumber} 章</p>
@@ -634,6 +619,13 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
           )}
         </div>
         <div className="flex flex-wrap items-center justify-end gap-2">
+          {editable && selectedVersion && (
+            <form action={addTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}>
+              <input type="hidden" name="version_id" value={selectedVersion.id} />
+              <input type="hidden" name="return_to" value={returnTo} />
+              <FormSubmitButton pendingLabel="正在新增…" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-sm font-semibold text-[var(--primary)] focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-wait disabled:opacity-60"><Plus size={15} aria-hidden="true" />新增小节</FormSubmitButton>
+            </form>
+          )}
           {selectedModule.versions.length > 1 && (
             <label className="flex min-h-11 items-center gap-2 text-sm"><span>查看版本</span><select value={selectedVersion?.id ?? ""} onChange={(event) => selectVersion(event.target.value)} className="app-input h-11 border px-3">{selectedModule.versions.map((version) => <option key={version.id} value={version.id}>版本 {version.number} · {versionLabel(version.status)}</option>)}</select></label>
           )}
@@ -706,8 +698,8 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
                 <Send size={15} aria-hidden="true" />发布学习步骤
               </summary>
               <div className="absolute right-0 top-full z-40 mt-2 w-[min(23rem,calc(100vw-2rem))] rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-xl">
-                <h3 className="text-sm font-bold text-[var(--foreground)]">发布整个学习步骤</h3>
-                <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">发布前会检查所有小节的台词、互动答案和流程连接。</p>
+                <h3 className="text-sm font-bold text-[var(--foreground)]">发布当前步骤的脚本</h3>
+                <p className="mt-1 text-xs leading-5 text-[var(--muted-foreground)]">检查本步骤全部小节的台词、互动答案和连接。此操作发布教学脚本；已发布教材快照的更新仍需在教材工作台完成。</p>
                 <form action={async (formData) => {
                   setPublishIssue(null);
                   try {
@@ -729,6 +721,20 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
           )}
         </div>
       </section>
+
+      <details className="group rounded-xl border border-[var(--border)] bg-[var(--card)]" key={`checks:${selectedModule.id}:${selectedVersion?.id}`}>
+        <summary className="flex min-h-12 cursor-pointer list-none flex-wrap items-center justify-between gap-2 rounded-xl px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+          <span className="flex items-center gap-2 font-semibold"><CheckCircle2 size={16} aria-hidden="true" />复核与发布检查</span>
+          <span className="flex items-center gap-2 text-[var(--muted-foreground)]">{selectedVersion?.sourceReviewStatus === "reviewed" ? "当前脚本已复核" : "当前脚本待复核"}<ChevronDown size={16} className="transition-transform group-open:rotate-180 motion-reduce:transition-none" aria-hidden="true" /></span>
+        </summary>
+        <div className="space-y-4 border-t p-4">
+          <p className="text-sm">教材版本 {selectedModule.textbookVersion.number} · {textbookPublished ? "已发布" : "尚未全部发布"}。练习引用：{({ unknown: "暂时无法核验", unlinked: "尚未关联", disabled: "已停用", unavailable: "教材来源不可用", review: "教材已变化，待复核", linked: "已关联，内容已核对" })[selectedModule.practiceStatus]}。
+            {pathname.endsWith("/teaching-scripts") && <Link className="ml-2 underline underline-offset-4" href={`${pathname.slice(0, -"teaching-scripts".length)}toolbox?chapter=${encodeURIComponent(selectedModule.chapterId)}`}>核对本章练习</Link>}
+          </p>
+          {selectedVersion && <ScriptSourceReviewPanel key={`${selectedVersion.id}:${selectedVersion.sourceReviewStatus}`} versionId={selectedVersion.id} disabled={hasUnsavedChanges || nodeSavePending} archived={selectedVersion.status === "archived"} />}
+          <ChapterReleaseCheckPanel key={selectedModule.chapterId} appId={data.appId} chapterId={selectedModule.chapterId} disabled={hasUnsavedChanges || nodeSavePending} />
+        </div>
+      </details>
 
       {/* No `overflow-hidden`: it silently breaks two things here — the nav
           column's `xl:sticky` (any ancestor with overflow other than visible
@@ -755,7 +761,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
             </button>
           </div>
           {showStructureNav && (
-          <div className="max-h-[32rem] overflow-y-auto p-2 xl:max-h-[calc(100dvh-10rem)]">
+          <div className="max-h-60 overflow-y-auto p-2 lg:max-h-[32rem] xl:max-h-[calc(100dvh-10rem)]">
             {chapters.map(([chapterNumber, modules]) => {
               const chapterExpanded = !collapsedChapterNumbers.has(chapterNumber);
               return (
@@ -793,16 +799,16 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
         <section className="min-w-0 bg-[var(--background)]" aria-labelledby="subsection-editor-title">
           {selectedNode && selectedVersion ? (
             <>
-              <header className="flex min-h-14 items-center justify-between gap-3 border-b bg-[var(--card)] px-4 py-2">
-                <div className="flex min-w-0 items-center gap-3">
+              <header className="flex min-h-14 flex-wrap items-center justify-between gap-3 border-b bg-[var(--card)] px-4 py-2">
+                <div className="flex min-w-0 flex-1 flex-wrap items-center gap-3">
                   {!showStructureNav && (
                     <button type="button" onClick={() => setShowStructureNav(true)} aria-label="显示课程结构" aria-expanded={false} title="显示课程结构" className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
                       <PanelLeftOpen size={15} aria-hidden="true" />
                     </button>
                   )}
                   {!showOrchestrationAxis && (
-                    <button type="button" onClick={() => setShowOrchestrationAxis(true)} aria-label="显示教学编排轴" aria-expanded={false} title="显示教学编排轴" className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
-                      <ListTree size={16} aria-hidden="true" />
+                    <button type="button" onClick={() => setShowOrchestrationAxis(true)} aria-label="显示教学编排轴" aria-expanded={false} title="显示教学编排轴" className="flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-lg border border-[var(--border)] px-3 text-sm text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">
+                      <ListTree size={16} aria-hidden="true" />流程总览
                     </button>
                   )}
                   {!showOrchestrationAxis && <select aria-label="选择教学小节" value={selectedNode.id} onChange={(event) => selectNode(event.target.value)} className="app-input h-10 max-w-52 min-w-0 rounded-lg border px-2 text-sm">
@@ -811,7 +817,7 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
                   <div className="min-w-0">
                     <h2 className="flex flex-wrap items-center gap-2 text-base font-bold">
                       <span id="subsection-editor-title">第 {selectedVersion.nodes.findIndex((item) => item.id === selectedNode.id) + 1} 小节 · {selectedNode.title["zh-CN"] || "未命名小节"}</span>
-                      <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : "已发布 · 只读"}</span>
+                      <span className={`rounded-full border px-2.5 py-1 text-xs font-semibold ${editable ? "border-[var(--status-warning)] text-[var(--status-warning)]" : "border-[var(--border)] text-[var(--muted-foreground)]"}`}>{editable ? "草稿编辑中" : `${versionLabel(selectedVersion.status)} · 只读`}</span>
                     </h2>
                   </div>
                 </div>
@@ -871,11 +877,6 @@ export function TeachingScriptStudio({ data, chapterId }: { data: TeachingScript
                               <FormSubmitButton pendingLabel="正在后移…" iconOnly disabled={selectedVersion.nodes.findIndex((node) => node.id === selectedNode.id) === selectedVersion.nodes.length - 1} aria-label={`向后移动“${selectedNode.title["zh-CN"]}”`} className="flex size-11 items-center justify-center rounded-lg border border-[var(--border)] bg-[var(--card)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:opacity-30"><ArrowRight size={15} aria-hidden="true" /></FormSubmitButton>
                             </form>
                           </div>
-                          <form action={addTeachingScriptNodeAction} onSubmit={(event) => { if (!requireSavedChanges()) event.preventDefault(); }}>
-                            <input type="hidden" name="version_id" value={selectedVersion.id} />
-                            <input type="hidden" name="return_to" value={returnTo} />
-                            <FormSubmitButton pendingLabel="正在新增…" className="inline-flex min-h-11 items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] disabled:cursor-wait disabled:opacity-60"><Plus size={15} aria-hidden="true" />新增小节</FormSubmitButton>
-                          </form>
                         </>
                       )}
                       <button type="button" onClick={() => { setShowOrchestrationAxis(false); setFlowBindingSourceNodeId(null); }} aria-label="隐藏教学编排轴" aria-expanded={true} title="隐藏教学编排轴" className="flex size-11 items-center justify-center rounded-lg border border-[var(--border)] text-[var(--foreground-secondary)] transition hover:border-[var(--primary)] hover:text-[var(--primary)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">

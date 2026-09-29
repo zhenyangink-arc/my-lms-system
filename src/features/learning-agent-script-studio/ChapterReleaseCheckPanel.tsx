@@ -28,10 +28,12 @@ export function ChapterReleaseCheckPanel({ appId, chapterId, disabled }: { appId
     });
   }
   return <section className="space-y-3 rounded-lg border border-[var(--border)] p-4">
-    <CardTitleWithHint headingLevel={2} title="学生预览与发布检查" description="检查正式教材、脚本、复核状态、视频文件与练习引用。选择学生后，以其机构授权和真实学习进度计算开放条件，不创建或使用该学生的登录会话。结果仅代表检查时状态；视频画面与播放效果仍需在脚本预览中试看。" />
-    <div className="flex flex-wrap items-end gap-3">
+    <CardTitleWithHint headingLevel={2} title="章节发布条件检查" description="检查正式教材、脚本、复核状态、视频文件与练习引用。可另选学生核对开放条件，不会登录该账号。此检查不发布教材，实际画面与播放效果请使用脚本预览。" />
+    <details className="rounded-lg border border-[var(--border)]">
+      <summary className="min-h-11 cursor-pointer px-3 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)]">指定学生核对开放条件（可选）{studentKey ? " · 已选择" : ""}</summary>
+    <div className="flex flex-wrap items-end gap-3 border-t p-3">
       <label className="grid gap-1 text-sm">查找学生
-        <input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !pending) { event.preventDefault(); search(); } }} placeholder="输入学生姓名" className="app-input min-h-11 rounded-md border px-3" />
+        <input value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === "Enter" && !pending && query.trim().length >= 2) { event.preventDefault(); search(); } }} placeholder="输入学生姓名" className="app-input min-h-11 w-full rounded-md border px-3" />
       </label>
       <button type="button" disabled={pending || query.trim().length < 2} onClick={search} className="min-h-11 rounded-md border px-3 text-sm disabled:opacity-50">查找</button>
       <label className="grid min-w-0 gap-1 text-sm">检查对象
@@ -40,8 +42,9 @@ export function ChapterReleaseCheckPanel({ appId, chapterId, disabled }: { appId
           {students.map(student => <option key={`${student.tenantId}:${student.studentId}`} value={`${student.tenantId}:${student.studentId}`}>{student.label}</option>)}
         </select>
       </label>
-      <button type="button" disabled={pending || disabled} onClick={inspect} className="min-h-11 rounded-md border px-3 text-sm disabled:opacity-50">{pending ? "正在处理…" : "检查本章准备情况"}</button>
     </div>
+    </details>
+    <button type="button" disabled={pending || disabled} onClick={inspect} className="min-h-11 rounded-md border px-3 text-sm disabled:opacity-50">{pending ? "正在处理…" : "检查本章准备情况"}</button>
     {disabled && <p className="text-sm">请先保存当前修改，再检查正式发布状态。</p>}
     {message && <p role="status" className="text-sm">{message}</p>}
     {report && <div className="space-y-2" aria-live="polite">

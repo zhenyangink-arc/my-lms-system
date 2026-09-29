@@ -1376,8 +1376,7 @@ export function TeachingScriptNodeForm({
         submittedVersionRef.current = dirtyVersionRef.current;
         setSaveFeedback("saving");
       }}
-      onChangeCapture={markDirty}
-      onInputCapture={markDirty}
+      onChange={markDirty}
       className="space-y-4"
       data-teacher-video-mode={teacherVideo.mode}
       data-interaction-perspective={state.status === "error" ? "all" : interactionFocusRequest?.target ?? "all"}
@@ -1393,7 +1392,7 @@ export function TeachingScriptNodeForm({
         <div id="current-node-settings-title" className="mb-2 px-1">
           <CardTitleWithHint headingLevel={3} title="当前小节设置" description={teacherVideo.mode === "video" ? "先选视频，再安排学生回应和完成后的去向。选择下方步骤编辑，方向键可切换步骤。" : "先完成老师台词，其余内容按需要打开。"} hintLabel="查看小节设置说明" titleClassName="text-sm font-bold" />
         </div>
-        <div className="grid gap-2 md:grid-cols-3" role="tablist" aria-label="当前小节设置">
+        <div className="grid grid-cols-2 gap-2 xl:grid-cols-4" role="tablist" aria-label="当前小节设置">
           {visibleEditorSteps.map((step, index) => {
             const Icon = step.icon;
             const selected = editorSection === step.id;
@@ -1411,15 +1410,14 @@ export function TeachingScriptNodeForm({
                 tabIndex={selected ? 0 : -1}
                 onClick={() => setEditorSection(step.id)}
                 onKeyDown={(event) => handleEditorTabKeyDown(event, index)}
-                className={`group flex w-full items-center gap-2 rounded-lg border text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${step.id === "script" && teacherVideo.mode !== "video" ? "min-h-[4.75rem] px-4 py-3 md:col-span-3" : "min-h-12 px-3 py-2"} ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] hover:bg-[var(--accent)]/40"}`}
+                className={`group flex min-h-12 w-full items-center gap-2 rounded-lg border px-3 py-2 text-left transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] ${selected ? "border-[var(--primary)] bg-[var(--accent)]" : "border-[var(--border)] bg-[var(--card)] hover:border-[var(--primary)] hover:bg-[var(--accent)]/40"}`}
               >
                 <span className={`flex size-7 shrink-0 items-center justify-center rounded-md ${selected ? "bg-[var(--primary)] text-[var(--primary-foreground)]" : "bg-[var(--muted)] text-[var(--foreground-secondary)]"}`}><Icon size={15} aria-hidden="true" /></span>
                 <span className="min-w-0 flex-1">
-                  <span className="flex items-center justify-between gap-2">
+                  <span className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
                     <span className="block text-sm font-bold text-[var(--foreground)]">{step.label}</span>
                     <span className={`shrink-0 text-xs font-semibold ${needsAttention ? "text-[var(--status-warning)]" : "text-[var(--status-success)]"}`}>{editorStepStates[step.id]}</span>
                   </span>
-                  {teacherVideo.mode !== "video" && <span className="mt-1 block line-clamp-1 text-xs leading-5 text-[var(--foreground-secondary)]">{editorSectionDescriptions[step.id]}</span>}
                 </span>
               </button>
             );
@@ -1518,10 +1516,12 @@ export function TeachingScriptNodeForm({
               </div>
             </details>
             </div>
-            <div hidden={teacherVideo.mode === "video"} className="border-l-4 border-l-[var(--primary)] bg-[var(--accent)]/45 px-4 py-3">
-              <h3 className={formSectionTitleClass}>开场过渡</h3>
-            </div>
-            <div hidden={teacherVideo.mode === "video"} className="px-4 py-3">
+            <details hidden={teacherVideo.mode === "video"} open={bufferLineUnmatched || Boolean(state.fieldErrors?.bufferPresetId?.length) || undefined} className="border-t border-[var(--border)]">
+              <summary className="flex min-h-12 cursor-pointer list-none flex-wrap items-center justify-between gap-2 px-4 py-3 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+                <span className="font-semibold">开场过渡</span>
+                <span className="text-xs text-[var(--muted-foreground)]">{bufferLineUnmatched ? "原有台词待核对" : selectedBufferPreset ? "已选择过渡台词 · 展开调整" : "不显示过渡台词 · 展开设置"}</span>
+              </summary>
+            <div className="border-t px-4 py-3">
               <h3 id="buffer-line-label" className="text-sm font-semibold">过渡台词</h3>
               <fieldset className="mt-3 rounded-xl border border-[var(--border)] bg-[var(--surface-soft)] p-3">
                 <legend className="px-1 text-xs font-bold text-[var(--foreground)]">系统兜底台词库</legend>
@@ -1590,6 +1590,7 @@ export function TeachingScriptNodeForm({
                 </div>
               )}
             </div>
+            </details>
             <div className="border-l-4 border-l-[var(--primary)] bg-[var(--card)] px-4 py-3">
               <h3 className={formSectionTitleClass}>正式讲解</h3>
             </div>
@@ -1844,7 +1845,10 @@ export function TeachingScriptNodeForm({
               </div>
             </details>
             <input type="hidden" name="title_ko" value={node.title["ko-KR"]} />
-            <input type="hidden" name="script_ko" value={node.script["ko-KR"]} />
+            <label className="block space-y-2 border-t border-[var(--border)] p-4 text-sm font-medium">
+              <span>韩语版台词（选填）</span>
+              <textarea name="script_ko" defaultValue={node.script["ko-KR"]} onChange={markDirty} disabled={!editable} rows={3} maxLength={1600} className={`${inputClass} resize-y py-3 text-sm leading-6`} />
+            </label>
             </section>
           </div>
 
@@ -1879,9 +1883,13 @@ export function TeachingScriptNodeForm({
               </ol>
             </section>
 
-            <section className={formGroupClass} aria-labelledby="virtual-character-group-title">
+            <details className={`${formGroupClass} group`} aria-labelledby="virtual-character-group-title">
+            <summary className="flex min-h-12 cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 text-sm font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden">
+              <span id="virtual-character-group-title">人物与站位（高级设置）</span>
+              <span className="text-xs font-normal text-[var(--muted-foreground)]">展开设置</span>
+            </summary>
             <div className={`${formSectionClass} flex flex-wrap items-center justify-between gap-3`}>
-              <h3 id="virtual-character-group-title" className={formSectionTitleClass}>2. 教学区布局与人物</h3>
+              <CardTitleWithHint headingLevel={3} title="教学区布局与人物" description="旧人物讲解仍使用这些设置。仅在调整人物姿态、站位或黑板位置时修改，不影响教材整体布局。" titleClassName={formSectionTitleClass} />
               <details ref={applyStyleDetailsRef} className="group relative shrink-0">
                 <summary
                   className={`inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-lg border border-[var(--primary)] px-3 text-xs font-semibold text-[var(--primary)] transition hover:bg-[var(--accent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--ring)] [&::-webkit-details-marker]:hidden ${!editable ? "pointer-events-none opacity-45" : ""}`}
@@ -1959,7 +1967,7 @@ export function TeachingScriptNodeForm({
               onDirty={markDirty}
               previewUrl={previewUrl}
             />
-            </section>
+            </details>
 
             <section className={formGroupClass} aria-labelledby="display-content-group-title">
             <div className={formSectionClass}>

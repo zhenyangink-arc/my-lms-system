@@ -372,7 +372,9 @@ test("平台负责人脚本工作台支持定位、编辑、排序和发布", as
   assert.match(editor, /type="hidden" name="title_ko" value=\{node\.title\["ko-KR"\]\}/);
   assert.doesNotMatch(editor, /name="buffer_line_zh"/);
   assert.doesNotMatch(editor, /name="buffer_line_ko"/);
-  assert.match(editor, /type="hidden" name="script_ko" value=\{node\.script\["ko-KR"\]\}/);
+  // Authors must be able to review/replace the Korean draft placeholder before
+  // publication; keep its existing field contract and read-only published state.
+  assert.match(editor, /textarea name="script_ko" defaultValue=\{node\.script\["ko-KR"\]\} onChange=\{markDirty\} disabled=\{!editable\}/);
   assert.doesNotMatch(editor, /id="buffer-line-zh"/);
   assert.ok(editor.indexOf('id="buffer-line-zh"') < editor.indexOf('id={`script-line-${index}`}'));
   assert.match(scriptRuntime, /configuredText\(nextNode\.configuration, "bufferLine", locale\)/);
