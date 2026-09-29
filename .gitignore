@@ -66,3 +66,5 @@ docs/*采购*.pdf
 # Reasonix desktop client session state (local tool, not project content)
 /.reasonix/
 /reasonix.toml
+/.next-learning-insights-e2e/
+/docs/evidence/teaching-agent-stage-1f-r7c-b/approval-b2-provisioning.before-initial-ban-workflow.json

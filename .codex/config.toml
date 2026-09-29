@@ -1,0 +1,42 @@
+#:schema https://developers.openai.com/codex/config-schema.json
+
+# Root / Supervisor
+model = "gpt-6-sol"
+model_reasoning_effort = "xhigh"
+
+[mcp_servers.chrome-devtools]
+command = "npx"
+args = [
+  "-y",
+  "chrome-devtools-mcp@latest",
+  "--browser-url=http://127.0.0.1:9222"
+]
+
+[features]
+multi_agent = true
+
+[agents]
+enabled = true
+default_subagent_model = "gpt-6-sol"
+default_subagent_reasoning_effort = "medium"
+max_concurrent_threads_per_session = 4
+
+[agents.worker_low]
+description = "GPT-6 Sol low worker for simple, bounded, low-risk tasks."
+config_file = "agents/worker-low.toml"
+
+[agents.worker_medium]
+description = "GPT-6 Sol medium worker for normal implementation, CRUD, UI, API, and routine tests."
+config_file = "agents/worker-medium.toml"
+
+[agents.worker_high]
+description = "GPT-6 Sol high worker for complex multi-file, cross-module, security, migration, and difficult debugging tasks."
+config_file = "agents/worker-high.toml"
+
+[agents.worker_xhigh]
+description = "GPT-6 Sol xhigh worker for any task where deeper reasoning, stronger reliability, or reduced rework is desirable."
+config_file = "agents/worker-xhigh.toml"
+
+[agents.worker_max]
+description = "GPT-6 Sol max worker used only when xhigh cannot reliably solve the task."
+config_file = "agents/worker-max.toml"
